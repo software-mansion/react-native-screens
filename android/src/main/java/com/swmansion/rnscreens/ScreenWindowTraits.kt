@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.pm.ActivityInfo
@@ -11,6 +10,7 @@ import android.os.Build
 import android.view.ViewParent
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.facebook.react.bridge.GuardedRunnable
@@ -38,7 +38,10 @@ object ScreenWindowTraits {
         didSetNavigationBarAppearance = true
     }
 
-    internal fun setOrientation(screen: Screen, activity: Activity?) {
+    internal fun setOrientation(
+        screen: Screen,
+        activity: Activity?,
+    ) {
         if (activity == null) {
             return
         }
@@ -47,7 +50,11 @@ object ScreenWindowTraits {
         activity.requestedOrientation = orientation
     }
 
-    internal fun setColor(screen: Screen, activity: Activity?, context: ReactContext?) {
+    internal fun setColor(
+        screen: Screen,
+        activity: Activity?,
+        context: ReactContext?,
+    ) {
         if (activity == null || context == null) {
             return
         }
@@ -75,10 +82,15 @@ object ScreenWindowTraits {
                     }
                     colorAnimation.start()
                 }
-            })
+            },
+        )
     }
 
-    internal fun setStyle(screen: Screen, activity: Activity?, context: ReactContext?) {
+    internal fun setStyle(
+        screen: Screen,
+        activity: Activity?,
+        context: ReactContext?,
+    ) {
         if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return
         }
@@ -97,7 +109,7 @@ object ScreenWindowTraits {
     internal fun setTranslucent(
         screen: Screen,
         activity: Activity?,
-        context: ReactContext?
+        context: ReactContext?,
     ) {
         if (activity == null || context == null) {
             return
@@ -127,16 +139,15 @@ object ScreenWindowTraits {
                                             windowInsets.left,
                                             0,
                                             windowInsets.right,
-                                            windowInsets.bottom
-                                        )
-                                    )
-                                    .build()
+                                            windowInsets.bottom,
+                                        ),
+                                    ).build()
                             } else {
                                 defaultInsets.replaceSystemWindowInsets(
                                     defaultInsets.systemWindowInsetLeft,
                                     0,
                                     defaultInsets.systemWindowInsetRight,
-                                    defaultInsets.systemWindowInsetBottom
+                                    defaultInsets.systemWindowInsetBottom,
                                 )
                             }
                         }
@@ -145,10 +156,14 @@ object ScreenWindowTraits {
                     }
                     ViewCompat.requestApplyInsets(decorView)
                 }
-            })
+            },
+        )
     }
 
-    internal fun setHidden(screen: Screen, activity: Activity?) {
+    internal fun setHidden(
+        screen: Screen,
+        activity: Activity?,
+    ) {
         if (activity == null) {
             return
         }
@@ -168,7 +183,10 @@ object ScreenWindowTraits {
 
     // Methods concerning navigationBar management were taken from `react-native-navigation`'s repo:
     // https://github.com/wix/react-native-navigation/blob/9bb70d81700692141a2c505c081c2d86c7f9c66e/lib/android/app/src/main/java/com/reactnativenavigation/utils/SystemUiUtils.kt
-    internal fun setNavigationBarColor(screen: Screen, activity: Activity?) {
+    internal fun setNavigationBarColor(
+        screen: Screen,
+        activity: Activity?,
+    ) {
         if (activity == null) {
             return
         }
@@ -185,7 +203,27 @@ object ScreenWindowTraits {
         window.navigationBarColor = color
     }
 
-    internal fun setNavigationBarHidden(screen: Screen, activity: Activity?) {
+    internal fun setNavigationBarTranslucent(
+        screen: Screen,
+        activity: Activity?,
+    ) {
+        if (activity == null) {
+            return
+        }
+
+        val window = activity.window
+
+        val screenForNavBarTranslucent = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_TRANSLUCENT)
+        val translucent = screenForNavBarTranslucent?.isNavigationBarTranslucent ?: false
+
+        // Following method controls whether to display edge-to-edge content that draws behind the navigation bar
+        WindowCompat.setDecorFitsSystemWindows(window, !translucent)
+    }
+
+    internal fun setNavigationBarHidden(
+        screen: Screen,
+        activity: Activity?,
+    ) {
         if (activity == null) {
             return
         }
@@ -204,12 +242,16 @@ object ScreenWindowTraits {
         } else {
             WindowInsetsControllerCompat(
                 window,
-                window.decorView
+                window.decorView,
             ).show(WindowInsetsCompat.Type.navigationBars())
         }
     }
 
-    internal fun trySetWindowTraits(screen: Screen, activity: Activity?, context: ReactContext?) {
+    internal fun trySetWindowTraits(
+        screen: Screen,
+        activity: Activity?,
+        context: ReactContext?,
+    ) {
         if (didSetOrientation) {
             setOrientation(screen, activity)
         }
@@ -221,11 +263,15 @@ object ScreenWindowTraits {
         }
         if (didSetNavigationBarAppearance) {
             setNavigationBarColor(screen, activity)
+            setNavigationBarTranslucent(screen, activity)
             setNavigationBarHidden(screen, activity)
         }
     }
 
-    private fun findScreenForTrait(screen: Screen, trait: WindowTraits): Screen? {
+    private fun findScreenForTrait(
+        screen: Screen,
+        trait: WindowTraits,
+    ): Screen? {
         val childWithTrait = childScreenWithTraitSet(screen, trait)
         if (childWithTrait != null) {
             return childWithTrait
@@ -239,7 +285,10 @@ object ScreenWindowTraits {
         }
     }
 
-    private fun findParentWithTraitSet(screen: Screen, trait: WindowTraits): Screen? {
+    private fun findParentWithTraitSet(
+        screen: Screen,
+        trait: WindowTraits,
+    ): Screen? {
         var parent: ViewParent? = screen.container
         while (parent != null) {
             if (parent is Screen) {
@@ -254,7 +303,7 @@ object ScreenWindowTraits {
 
     private fun childScreenWithTraitSet(
         screen: Screen?,
-        trait: WindowTraits
+        trait: WindowTraits,
     ): Screen? {
         screen?.fragmentWrapper?.let {
             for (sc in it.childScreenContainers) {
@@ -272,8 +321,11 @@ object ScreenWindowTraits {
         return null
     }
 
-    private fun checkTraitForScreen(screen: Screen, trait: WindowTraits): Boolean {
-        return when (trait) {
+    private fun checkTraitForScreen(
+        screen: Screen,
+        trait: WindowTraits,
+    ): Boolean =
+        when (trait) {
             WindowTraits.ORIENTATION -> screen.screenOrientation != null
             WindowTraits.COLOR -> screen.statusBarColor != null
             WindowTraits.STYLE -> screen.statusBarStyle != null
@@ -281,9 +333,9 @@ object ScreenWindowTraits {
             WindowTraits.HIDDEN -> screen.isStatusBarHidden != null
             WindowTraits.ANIMATED -> screen.isStatusBarAnimated != null
             WindowTraits.NAVIGATION_BAR_COLOR -> screen.navigationBarColor != null
+            WindowTraits.NAVIGATION_BAR_TRANSLUCENT -> screen.isNavigationBarTranslucent != null
             WindowTraits.NAVIGATION_BAR_HIDDEN -> screen.isNavigationBarHidden != null
         }
-    }
 
     private fun isColorLight(color: Int): Boolean {
         val darkness: Double =

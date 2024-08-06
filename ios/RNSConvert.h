@@ -1,10 +1,17 @@
 #ifdef RCT_NEW_ARCH_ENABLED
+#import <UIKit/UIKit.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
 namespace react = facebook::react;
 
 @interface RNSConvert : NSObject
+
++ (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigDirection)direction;
+
++ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode;
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
     (react::RNSScreenStackPresentation)stackPresentation;

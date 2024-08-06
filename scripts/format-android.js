@@ -1,13 +1,13 @@
-/* 
+/*
  * This script is a wrapper for gradle & spotlessApply to make
  * it work properly with lint-staged.
  */
 
-const { exit } = require("process");
-const { exec } = require("child_process");
+const { exit } = require('process');
+const { exec } = require('child_process');
 
 // spotless ktlint formatting task in android/build.gradle
-const spotlessApply = "./android/gradlew -p android spotlessApply";
+const spotlessApply = './android/gradlew -p android spotlessApply';
 
 // takes file as parameter passed by lint-staged (optional)
 const fileName = process.argv[2];
@@ -16,7 +16,8 @@ const fileName = process.argv[2];
 // creates file argument without space between arguments
 const fileArgument = `-PspotlessIdeHook=${fileName}`;
 
-const command = fileName !== undefined ? `${spotlessApply} ${fileArgument}` : spotlessApply;
+const command =
+  fileName !== undefined ? `${spotlessApply} ${fileArgument}` : spotlessApply;
 
 exec(command, (error, stdout) => {
   if (error) {

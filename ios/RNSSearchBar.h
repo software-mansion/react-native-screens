@@ -29,11 +29,11 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
-@property (nonatomic, copy) RCTBubblingEventBlock onChangeText;
-@property (nonatomic, copy) RCTBubblingEventBlock onCancelButtonPress;
-@property (nonatomic, copy) RCTBubblingEventBlock onSearchButtonPress;
-@property (nonatomic, copy) RCTBubblingEventBlock onFocus;
-@property (nonatomic, copy) RCTBubblingEventBlock onBlur;
+@property (nonatomic, copy) RCTDirectEventBlock onChangeText;
+@property (nonatomic, copy) RCTDirectEventBlock onCancelButtonPress;
+@property (nonatomic, copy) RCTDirectEventBlock onSearchButtonPress;
+@property (nonatomic, copy) RCTDirectEventBlock onSearchFocus;
+@property (nonatomic, copy) RCTDirectEventBlock onSearchBlur;
 #endif
 
 @end

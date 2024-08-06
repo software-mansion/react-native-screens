@@ -1,4 +1,4 @@
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const fs = require('fs');
 const path = require('path');
@@ -13,7 +13,6 @@ const rnsRoot = path.resolve(__dirname, '..');
 
 const modules = [
   '@react-navigation/native',
-  '@react-navigation/stack',
   'react-native-reanimated',
   'react-native-safe-area-context',
   'react-native-gesture-handler',
@@ -22,6 +21,8 @@ const modules = [
 
 const resolvedExts = ['.ts', '.tsx', '.js', '.jsx'];
 
+const projectNodeModules = path.join(__dirname, 'node_modules');
+
 const config = {
   projectRoot: __dirname,
   watchFolders: [rnsRoot],
@@ -29,6 +30,7 @@ const config = {
   // We need to make sure that only one version is loaded for peerDependencies
   // So we exclude them at the root, and alias them to the versions in example's node_modules
   resolver: {
+    sourceExts: ['ts', 'tsx', 'js', 'jsx', 'json'],
     blockList: exclusionList(
       modules.map(
         m =>
@@ -41,7 +43,7 @@ const config = {
       return acc;
     }, {}),
 
-    nodeModulesPaths: [path.join(__dirname, '../../')],
+    nodeModulesPaths: [projectNodeModules, path.join(__dirname, '../../')],
 
     // Since we use react-navigation as submodule it comes with it's own node_modules. While loading
     // react-navigation code, due to how module resolution algorithms works it seems that its node_modules
@@ -49,6 +51,12 @@ const config = {
     // to various errors. To mitigate this we define below custom request resolver, hijacking requests to conflicting modules and manually
     // resolving appropriate files. **Most likely** this can be achieved by proper usage of blockList but I found this method working ¯\_(ツ)_/¯
     resolveRequest: (context, moduleName, platform) => {
+      if (moduleName.startsWith('@react-navigation')) {
+        // For some reason, react-navigation packages don't want to resolve from
+        // the project's node_modules, so we need to use standard Metro resolver.
+        return context.resolveRequest(context, moduleName, platform);
+      }
+
       if (moduleName === 'react-native-screens') {
         return {
           filePath: path.join(rnsRoot, 'src', 'index.tsx'),

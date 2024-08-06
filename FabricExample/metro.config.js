@@ -1,4 +1,11 @@
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
 
 const fs = require('fs');
 const path = require('path');
@@ -22,6 +29,8 @@ const modules = [
 
 const resolvedExts = ['.ts', '.tsx', '.js', '.jsx'];
 
+const projectNodeModules = path.join(__dirname, 'node_modules');
+
 const config = {
   projectRoot: __dirname,
   watchFolders: [rnsRoot],
@@ -41,7 +50,7 @@ const config = {
       return acc;
     }, {}),
 
-    nodeModulesPaths: [path.join(__dirname, '../../')],
+    nodeModulesPaths: [projectNodeModules, path.join(__dirname, '../../')],
 
     // Since we use react-navigation as submodule it comes with it's own node_modules. While loading
     // react-navigation code, due to how module resolution algorithms works it seems that its node_modules

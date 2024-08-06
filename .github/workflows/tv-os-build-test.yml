@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: TVOSExample
@@ -25,13 +25,13 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js 18
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'yarn'
-          cache-dependency-path: 'TVOSExample/yarn.lock'
+          cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/yarn.lock
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
@@ -40,4 +40,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn tv-os
+        run: npx react-native run-ios --scheme="TVOSExample-tvOS" --simulator="Apple TV"

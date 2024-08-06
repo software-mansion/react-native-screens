@@ -1,8 +1,8 @@
 #pragma once
 
 #include <react/debug/react_native_assert.h>
-#include "RNSModalScreenShadowNode.h"
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
+#include "RNSModalScreenShadowNode.h"
 
 namespace facebook {
 namespace react {
@@ -12,16 +12,15 @@ class RNSModalScreenComponentDescriptor final
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
-  void adopt(ShadowNode& shadowNode) const override {
-    react_native_assert(
-        dynamic_cast<RNSModalScreenShadowNode*>(&shadowNode));
-    auto& screenShadowNode =
-        static_cast<RNSModalScreenShadowNode&>(shadowNode);
+  void adopt(ShadowNode &shadowNode) const override {
+    react_native_assert(dynamic_cast<RNSModalScreenShadowNode *>(&shadowNode));
+    auto &screenShadowNode =
+        static_cast<RNSModalScreenShadowNode &>(shadowNode);
 
     react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode*>(&screenShadowNode));
-    auto& layoutableShadowNode =
-        dynamic_cast<YogaLayoutableShadowNode&>(screenShadowNode);
+        dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
+    auto &layoutableShadowNode =
+        dynamic_cast<YogaLayoutableShadowNode &>(screenShadowNode);
 
     auto state =
         std::static_pointer_cast<const RNSModalScreenShadowNode::ConcreteState>(

@@ -50,6 +50,12 @@ Defaults to `false`. When `enableFreeze()` is run at the top of the application 
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
 
+### `fullScreenSwipeShadowEnabled` (iOS only)
+
+Boolean indicating whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
+doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
+default iOS shadow. Defaults to `false`.
+
 ### `gestureEnabled` (iOS only)
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
@@ -143,9 +149,10 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+
 ### `sheetAllowedDetents` (iOS only)
 
-Describes heights where a sheet can rest. 
+Describes heights where a sheet can rest.
 Works only when `stackPresentation` is set to `formSheet`.
 
 Available values:
@@ -180,16 +187,16 @@ Defaults to `false`.
 
 ### `sheetLargestUndimmedDetent` (iOS only)
 
- The largest sheet detent for which a view underneath won't be dimmed.
- Works only when `stackPresentation` is set to `formSheet`.
+The largest sheet detent for which a view underneath won't be dimmed.
+Works only when `stackPresentation` is set to `formSheet`.
 
- If this prop is set to:
+If this prop is set to:
 
- - `large` - the view underneath won't be dimmed at any detent level
- - `medium` - the view underneath will be dimmed only when detent level is `large`
- - `all` - the view underneath will be dimmed for any detent level
+- `large` - the view underneath won't be dimmed at any detent level
+- `medium` - the view underneath will be dimmed only when detent level is `large`
+- `all` - the view underneath will be dimmed for any detent level
 
- Defaults to `all`.
+Defaults to `all`.
 
 ### `stackAnimation`
 
@@ -342,7 +349,7 @@ function Home() {
     () =>
       (reaProgress.progress.value < 0.5
         ? reaProgress.progress.value * 50
-        : (1 - reaProgress.progress.value) * 50) + 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
   );
   const reaStyle = useAnimatedStyle(() => {
     return {
@@ -444,6 +451,14 @@ Controls whether the stack should be in `rtl` or `ltr` form.
 ### `disableBackButtonMenu` (iOS only)
 
 Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+
+### `backButtonDisplayMode` (iOS only)
+
+Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+
+- `default` – show given back button previous controller title, system generic or just icon based on available space
+- `generic` – show given system generic or just icon based on available space
+- `minimal` – show just an icon
 
 ### `hidden`
 

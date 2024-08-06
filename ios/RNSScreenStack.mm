@@ -1,12 +1,15 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTFabricSurface.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
+#import <React/RCTSurfaceView.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTSurfaceTouchHandler+RNSUtility.h"
 #else
 #import <React/RCTBridge.h>
 #import <React/RCTRootContentView.h>
@@ -14,6 +17,7 @@
 #import <React/RCTTouchHandler.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import "RCTTouchHandler+RNSUtility.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSScreen.h"
@@ -21,6 +25,8 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
+
+#import "UIView+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -112,12 +118,8 @@ namespace react = facebook::react;
   BOOL _invalidated;
   BOOL _isFullWidthSwiping;
   UIPercentDrivenInteractiveTransition *_interactionController;
-  BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
-#ifdef RCT_NEW_ARCH_ENABLED
-  UIView *_snapshot;
-#endif
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -136,7 +138,6 @@ namespace react = facebook::react;
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
   if (self = [super init]) {
-    _hasLayout = NO;
     _invalidated = NO;
     _manager = manager;
     [self initCommonProps];
@@ -266,18 +267,9 @@ namespace react = facebook::react;
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
-#ifdef RCT_NEW_ARCH_ENABLED
-  BOOL isScreenReadyForShowing = self.window;
-#else
-  BOOL isScreenReadyForShowing = self.window && _hasLayout;
-#endif
-  if (!isScreenReadyForShowing && !wasScreenMounted) {
-    // We wait with adding to parent controller until the stack is mounted and has its initial
-    // layout done.
-    // If we add it before layout, some of the items (specifically items from the navigation bar),
-    // won't be able to position properly. Also the position and size of such items, even if it
-    // happens to change, won't be properly updated (this is perhaps some internal issue of UIKit).
-    // If we add it when window is not attached, some of the view transitions will be bloced (i.e.
+  if (!self.window && !wasScreenMounted) {
+    // We wait with adding to parent controller until the stack is mounted.
+    // If we add it when window is not attached, some of the view transitions will be blocked (i.e.
     // modal transitions) and the internal view controler's state will get out of sync with what's
     // on screen without us knowing.
     return;
@@ -731,19 +723,8 @@ namespace react = facebook::react;
   // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
   // Without the below code the Touchable will remain active (highlighted) for the duration of back
   // gesture and onPress may fire when we release the finger.
-  UIView *parent = _controller.view;
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
-    parent = parent.superview;
-  if (parent != nil) {
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTSurfaceTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-#else
-    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-#endif
-    [touchHandler setEnabled:NO];
-    [touchHandler setEnabled:YES];
-    [touchHandler reset];
-  }
+
+  [[self rnscreens_findTouchHandlerInAncestorChain] rnscreens_cancelTouches];
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -877,6 +858,7 @@ namespace react = facebook::react;
         [_interactionController cancelInteractiveTransition];
       }
       _interactionController = nil;
+      _isFullWidthSwiping = NO;
     }
     default: {
       break;
@@ -1081,7 +1063,6 @@ namespace react = facebook::react;
   // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
   // ui queue will guarantee that the update will run after layout.
   dispatch_async(dispatch_get_main_queue(), ^{
-    self->_hasLayout = YES;
     [self maybeAddToParentAndUpdateContainer];
   });
 }
@@ -1133,14 +1114,14 @@ namespace react = facebook::react;
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self maybeAddToParentAndUpdateContainer];
-  });
+  // Container update is done after all mount operations are executed in
+  // `- [RNSScreenStackView mountingTransactionDidMount: withSurfaceTelemetry:]`
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
+
   // We should only do a snapshot of a screen that is on the top.
   // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
   // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
@@ -1148,7 +1129,7 @@ namespace react = facebook::react;
   if (screenChildComponent.window != nil &&
       ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
        screenChildComponent == [_presentedModals.lastObject view])) {
-    [screenChildComponent.controller setViewToSnapshot:_snapshot];
+    [screenChildComponent.controller setViewToSnapshot];
   }
 
   RCTAssert(
@@ -1168,24 +1149,22 @@ namespace react = facebook::react;
   screenChildComponent.reactSuperview = nil;
   [_reactSubviews removeObject:screenChildComponent];
   [screenChildComponent removeFromSuperview];
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self maybeAddToParentAndUpdateContainer];
-  });
 }
 
-- (void)takeSnapshot
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
-}
-
-- (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
-                withSurfaceTelemetry:(react::SurfaceTelemetry const &)surfaceTelemetry
-{
-  for (auto &mutation : transaction.getMutations()) {
-    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-      [self takeSnapshot];
-      return;
+  for (const auto &mutation : transaction.getMutations()) {
+    if (mutation.parentShadowView.tag == self.tag &&
+        (mutation.type == react::ShadowViewMutation::Type::Insert ||
+         mutation.type == react::ShadowViewMutation::Type::Remove)) {
+      // we need to wait until children have their layout set. At this point they don't have the layout
+      // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
+      // ui queue will guarantee that the update will run after layout.
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [self maybeAddToParentAndUpdateContainer];
+      });
+      break;
     }
   }
 }

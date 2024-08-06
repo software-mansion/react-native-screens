@@ -67,11 +67,11 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onFocus(react::RNSSearchBarEventEmitter::OnFocus{});
+        ->onSearchFocus(react::RNSSearchBarEventEmitter::OnSearchFocus{});
   }
 #else
-  if (self.onFocus) {
-    self.onFocus(@{});
+  if (self.onSearchFocus) {
+    self.onSearchFocus(@{});
   }
 #endif
 }
@@ -81,11 +81,11 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onBlur(react::RNSSearchBarEventEmitter::OnBlur{});
+        ->onSearchBlur(react::RNSSearchBarEventEmitter::OnSearchBlur{});
   }
 #else
-  if (self.onBlur) {
-    self.onBlur(@{});
+  if (self.onSearchBlur) {
+    self.onSearchBlur(@{});
   }
 #endif
 }
@@ -414,11 +414,11 @@ RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
 
-RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onFocus, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onBlur, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onSearchFocus, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onSearchBlur, RCTDirectEventBlock)
 
 #ifndef RCT_NEW_ARCH_ENABLED
 

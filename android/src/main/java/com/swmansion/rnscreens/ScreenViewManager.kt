@@ -22,7 +22,9 @@ import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
-open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
+open class ScreenViewManager :
+    ViewGroupManager<Screen>(),
+    RNSScreenManagerInterface<Screen> {
     private val delegate: ViewManagerDelegate<Screen>
 
     init {
@@ -33,24 +35,30 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
 
     override fun createViewInstance(reactContext: ThemedReactContext) = Screen(reactContext)
 
-    override fun setActivityState(view: Screen, activityState: Float) {
+    override fun setActivityState(
+        view: Screen,
+        activityState: Float,
+    ) {
         setActivityState(view, activityState.toInt())
     }
 
     override fun updateState(
         view: Screen,
         props: ReactStylesDiffMap?,
-        stateWrapper: StateWrapper?
+        stateWrapper: StateWrapper?,
     ): Any? {
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             // fabricViewStateManager should never be null in Fabric. The null check is only for Paper's empty impl.
-            view.fabricViewStateManager?.setStateWrapper(stateWrapper)
+            view.setStateWrapper(stateWrapper)
         }
         return super.updateState(view, props, stateWrapper)
     }
 
     @ReactProp(name = "activityState")
-    fun setActivityState(view: Screen, activityState: Int) {
+    fun setActivityState(
+        view: Screen,
+        activityState: Int,
+    ) {
         if (activityState == -1) {
             // Null will be provided when activityState is set as an animated value and we change
             // it from JS to be a plain value (non animated).
@@ -66,132 +74,224 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
     }
 
     @ReactProp(name = "stackPresentation")
-    override fun setStackPresentation(view: Screen, presentation: String?) {
-        view.stackPresentation = when (presentation) {
-            "push" -> Screen.StackPresentation.PUSH
-            "modal", "containedModal", "fullScreenModal", "formSheet" ->
-                Screen.StackPresentation.MODAL
-            "transparentModal", "containedTransparentModal" ->
-                Screen.StackPresentation.TRANSPARENT_MODAL
-            else -> throw JSApplicationIllegalArgumentException("Unknown presentation type $presentation")
-        }
+    override fun setStackPresentation(
+        view: Screen,
+        presentation: String?,
+    ) {
+        view.stackPresentation =
+            when (presentation) {
+                "push" -> Screen.StackPresentation.PUSH
+                "modal", "containedModal", "fullScreenModal", "formSheet" ->
+                    Screen.StackPresentation.MODAL
+                "transparentModal", "containedTransparentModal" ->
+                    Screen.StackPresentation.TRANSPARENT_MODAL
+                else -> throw JSApplicationIllegalArgumentException("Unknown presentation type $presentation")
+            }
     }
 
     @ReactProp(name = "stackAnimation")
-    override fun setStackAnimation(view: Screen, animation: String?) {
-        view.stackAnimation = when (animation) {
-            null, "default", "flip", "simple_push" -> Screen.StackAnimation.DEFAULT
-            "none" -> Screen.StackAnimation.NONE
-            "fade" -> Screen.StackAnimation.FADE
-            "slide_from_right" -> Screen.StackAnimation.SLIDE_FROM_RIGHT
-            "slide_from_left" -> Screen.StackAnimation.SLIDE_FROM_LEFT
-            "slide_from_bottom" -> Screen.StackAnimation.SLIDE_FROM_BOTTOM
-            "fade_from_bottom" -> Screen.StackAnimation.FADE_FROM_BOTTOM
-            "ios" -> Screen.StackAnimation.IOS
-            else -> throw JSApplicationIllegalArgumentException("Unknown animation type $animation")
-        }
+    override fun setStackAnimation(
+        view: Screen,
+        animation: String?,
+    ) {
+        view.stackAnimation =
+            when (animation) {
+                null, "default", "flip", "simple_push" -> Screen.StackAnimation.DEFAULT
+                "none" -> Screen.StackAnimation.NONE
+                "fade" -> Screen.StackAnimation.FADE
+                "slide_from_right" -> Screen.StackAnimation.SLIDE_FROM_RIGHT
+                "slide_from_left" -> Screen.StackAnimation.SLIDE_FROM_LEFT
+                "slide_from_bottom" -> Screen.StackAnimation.SLIDE_FROM_BOTTOM
+                "fade_from_bottom" -> Screen.StackAnimation.FADE_FROM_BOTTOM
+                "ios" -> Screen.StackAnimation.IOS
+                else -> throw JSApplicationIllegalArgumentException("Unknown animation type $animation")
+            }
     }
 
     @ReactProp(name = "gestureEnabled", defaultBoolean = true)
-    override fun setGestureEnabled(view: Screen, gestureEnabled: Boolean) {
+    override fun setGestureEnabled(
+        view: Screen,
+        gestureEnabled: Boolean,
+    ) {
         view.isGestureEnabled = gestureEnabled
     }
 
     @ReactProp(name = "replaceAnimation")
-    override fun setReplaceAnimation(view: Screen, animation: String?) {
-        view.replaceAnimation = when (animation) {
-            null, "pop" -> Screen.ReplaceAnimation.POP
-            "push" -> Screen.ReplaceAnimation.PUSH
-            else -> throw JSApplicationIllegalArgumentException("Unknown replace animation type $animation")
-        }
+    override fun setReplaceAnimation(
+        view: Screen,
+        animation: String?,
+    ) {
+        view.replaceAnimation =
+            when (animation) {
+                null, "pop" -> Screen.ReplaceAnimation.POP
+                "push" -> Screen.ReplaceAnimation.PUSH
+                else -> throw JSApplicationIllegalArgumentException("Unknown replace animation type $animation")
+            }
     }
 
     @ReactProp(name = "screenOrientation")
-    override fun setScreenOrientation(view: Screen, screenOrientation: String?) {
+    override fun setScreenOrientation(
+        view: Screen,
+        screenOrientation: String?,
+    ) {
         view.setScreenOrientation(screenOrientation)
     }
 
     @ReactProp(name = "statusBarAnimation")
-    override fun setStatusBarAnimation(view: Screen, statusBarAnimation: String?) {
+    override fun setStatusBarAnimation(
+        view: Screen,
+        statusBarAnimation: String?,
+    ) {
         val animated = statusBarAnimation != null && "none" != statusBarAnimation
         view.isStatusBarAnimated = animated
     }
 
     @ReactProp(name = "statusBarColor", customType = "Color")
-    override fun setStatusBarColor(view: Screen, statusBarColor: Int?) {
+    override fun setStatusBarColor(
+        view: Screen,
+        statusBarColor: Int?,
+    ) {
         view.statusBarColor = statusBarColor
     }
 
     @ReactProp(name = "statusBarStyle")
-    override fun setStatusBarStyle(view: Screen, statusBarStyle: String?) {
+    override fun setStatusBarStyle(
+        view: Screen,
+        statusBarStyle: String?,
+    ) {
         view.statusBarStyle = statusBarStyle
     }
 
     @ReactProp(name = "statusBarTranslucent")
-    override fun setStatusBarTranslucent(view: Screen, statusBarTranslucent: Boolean) {
+    override fun setStatusBarTranslucent(
+        view: Screen,
+        statusBarTranslucent: Boolean,
+    ) {
         view.isStatusBarTranslucent = statusBarTranslucent
     }
 
     @ReactProp(name = "statusBarHidden")
-    override fun setStatusBarHidden(view: Screen, statusBarHidden: Boolean) {
+    override fun setStatusBarHidden(
+        view: Screen,
+        statusBarHidden: Boolean,
+    ) {
         view.isStatusBarHidden = statusBarHidden
     }
 
     @ReactProp(name = "navigationBarColor", customType = "Color")
-    override fun setNavigationBarColor(view: Screen, navigationBarColor: Int?) {
+    override fun setNavigationBarColor(
+        view: Screen,
+        navigationBarColor: Int?,
+    ) {
         view.navigationBarColor = navigationBarColor
     }
 
+    @ReactProp(name = "navigationBarTranslucent")
+    override fun setNavigationBarTranslucent(
+        view: Screen,
+        navigationBarTranslucent: Boolean,
+    ) {
+        view.isNavigationBarTranslucent = navigationBarTranslucent
+    }
+
     @ReactProp(name = "navigationBarHidden")
-    override fun setNavigationBarHidden(view: Screen, navigationBarHidden: Boolean) {
+    override fun setNavigationBarHidden(
+        view: Screen,
+        navigationBarHidden: Boolean,
+    ) {
         view.isNavigationBarHidden = navigationBarHidden
     }
 
     @ReactProp(name = "nativeBackButtonDismissalEnabled")
     override fun setNativeBackButtonDismissalEnabled(
         view: Screen,
-        nativeBackButtonDismissalEnabled: Boolean
+        nativeBackButtonDismissalEnabled: Boolean,
     ) {
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
     // these props are not available on Android, however we must override their setters
-    override fun setFullScreenSwipeEnabled(view: Screen?, value: Boolean) = Unit
+    override fun setFullScreenSwipeEnabled(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
 
-    override fun setTransitionDuration(view: Screen?, value: Int) = Unit
+    override fun setFullScreenSwipeShadowEnabled(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
 
-    override fun setHideKeyboardOnSwipe(view: Screen?, value: Boolean) = Unit
+    override fun setTransitionDuration(
+        view: Screen?,
+        value: Int,
+    ) = Unit
 
-    override fun setCustomAnimationOnSwipe(view: Screen?, value: Boolean) = Unit
+    override fun setHideKeyboardOnSwipe(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
 
-    override fun setGestureResponseDistance(view: Screen?, value: ReadableMap?) = Unit
+    override fun setCustomAnimationOnSwipe(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
 
-    override fun setHomeIndicatorHidden(view: Screen?, value: Boolean) = Unit
+    override fun setGestureResponseDistance(
+        view: Screen?,
+        value: ReadableMap?,
+    ) = Unit
 
-    override fun setPreventNativeDismiss(view: Screen?, value: Boolean) = Unit
+    override fun setHomeIndicatorHidden(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
 
-    override fun setSwipeDirection(view: Screen?, value: String?) = Unit
+    override fun setPreventNativeDismiss(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
 
-    override fun setSheetAllowedDetents(view: Screen, value: String?) = Unit
+    override fun setSwipeDirection(
+        view: Screen?,
+        value: String?,
+    ) = Unit
 
-    override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) = Unit
+    override fun setSheetAllowedDetents(
+        view: Screen,
+        value: String?,
+    ) = Unit
 
-    override fun setSheetGrabberVisible(view: Screen?, value: Boolean) = Unit
+    override fun setSheetLargestUndimmedDetent(
+        view: Screen,
+        value: String?,
+    ) = Unit
 
-    override fun setSheetCornerRadius(view: Screen?, value: Float) = Unit
+    override fun setSheetGrabberVisible(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
 
-    override fun setSheetExpandsWhenScrolledToEdge(view: Screen?, value: Boolean) = Unit
+    override fun setSheetCornerRadius(
+        view: Screen?,
+        value: Float,
+    ) = Unit
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
-        ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
-        ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),
-        ScreenAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onAppear"),
-        ScreenWillDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillDisappear"),
-        ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
-        HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
-        HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
-        ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
-    )
+    override fun setSheetExpandsWhenScrolledToEdge(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
+
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
+        mutableMapOf(
+            ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
+            ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),
+            ScreenAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onAppear"),
+            ScreenWillDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillDisappear"),
+            ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
+            HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
+            HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
+            ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress"),
+        )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate
 

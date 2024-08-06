@@ -16,7 +16,9 @@ import com.swmansion.rnscreens.events.HeaderDetachedEvent
 import javax.annotation.Nonnull
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
-class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderConfig>(), RNSScreenStackHeaderConfigManagerInterface<ScreenStackHeaderConfig> {
+class ScreenStackHeaderConfigViewManager :
+    ViewGroupManager<ScreenStackHeaderConfig>(),
+    RNSScreenStackHeaderConfigManagerInterface<ScreenStackHeaderConfig> {
     private val delegate: ViewManagerDelegate<ScreenStackHeaderConfig>
 
     init {
@@ -27,16 +29,22 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
 
     override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStackHeaderConfig(reactContext)
 
-    override fun addView(parent: ScreenStackHeaderConfig, child: View, index: Int) {
+    override fun addView(
+        parent: ScreenStackHeaderConfig,
+        child: View,
+        index: Int,
+    ) {
         if (child !is ScreenStackHeaderSubview) {
             throw JSApplicationCausedNativeException(
-                "Config children should be of type " + ScreenStackHeaderSubviewManager.REACT_CLASS
+                "Config children should be of type " + ScreenStackHeaderSubviewManager.REACT_CLASS,
             )
         }
         parent.addConfigSubview(child, index)
     }
 
-    override fun onDropViewInstance(@Nonnull view: ScreenStackHeaderConfig) {
+    override fun onDropViewInstance(
+        @Nonnull view: ScreenStackHeaderConfig,
+    ) {
         view.destroy()
     }
 
@@ -44,13 +52,19 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
         parent.removeAllConfigSubviews()
     }
 
-    override fun removeViewAt(parent: ScreenStackHeaderConfig, index: Int) {
+    override fun removeViewAt(
+        parent: ScreenStackHeaderConfig,
+        index: Int,
+    ) {
         parent.removeConfigSubview(index)
     }
 
     override fun getChildCount(parent: ScreenStackHeaderConfig): Int = parent.configSubviewsCount
 
-    override fun getChildAt(parent: ScreenStackHeaderConfig, index: Int): View = parent.getConfigSubview(index)
+    override fun getChildAt(
+        parent: ScreenStackHeaderConfig,
+        index: Int,
+    ): View = parent.getConfigSubview(index)
 
     override fun needsCustomLayoutForChildren() = true
 
@@ -60,88 +74,126 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     @ReactProp(name = "title")
-    override fun setTitle(config: ScreenStackHeaderConfig, title: String?) {
+    override fun setTitle(
+        config: ScreenStackHeaderConfig,
+        title: String?,
+    ) {
         config.setTitle(title)
     }
 
     @ReactProp(name = "titleFontFamily")
-    override fun setTitleFontFamily(config: ScreenStackHeaderConfig, titleFontFamily: String?) {
+    override fun setTitleFontFamily(
+        config: ScreenStackHeaderConfig,
+        titleFontFamily: String?,
+    ) {
         config.setTitleFontFamily(titleFontFamily)
     }
 
     @ReactProp(name = "titleFontSize")
-    override fun setTitleFontSize(config: ScreenStackHeaderConfig, titleFontSize: Int) {
+    override fun setTitleFontSize(
+        config: ScreenStackHeaderConfig,
+        titleFontSize: Int,
+    ) {
         config.setTitleFontSize(titleFontSize.toFloat())
     }
 
     @ReactProp(name = "titleFontWeight")
-    override fun setTitleFontWeight(config: ScreenStackHeaderConfig, titleFontWeight: String?) {
+    override fun setTitleFontWeight(
+        config: ScreenStackHeaderConfig,
+        titleFontWeight: String?,
+    ) {
         config.setTitleFontWeight(titleFontWeight)
     }
 
     @ReactProp(name = "titleColor", customType = "Color")
-    override fun setTitleColor(config: ScreenStackHeaderConfig, titleColor: Int?) {
+    override fun setTitleColor(
+        config: ScreenStackHeaderConfig,
+        titleColor: Int?,
+    ) {
         if (titleColor != null) {
             config.setTitleColor(titleColor)
         }
     }
 
     @ReactProp(name = "backgroundColor", customType = "Color")
-    override fun setBackgroundColor(config: ScreenStackHeaderConfig, backgroundColor: Int?) {
+    override fun setBackgroundColor(
+        config: ScreenStackHeaderConfig,
+        backgroundColor: Int?,
+    ) {
         config.setBackgroundColor(backgroundColor)
     }
 
     @ReactProp(name = "hideShadow")
-    override fun setHideShadow(config: ScreenStackHeaderConfig, hideShadow: Boolean) {
+    override fun setHideShadow(
+        config: ScreenStackHeaderConfig,
+        hideShadow: Boolean,
+    ) {
         config.setHideShadow(hideShadow)
     }
 
     @ReactProp(name = "hideBackButton")
-    override fun setHideBackButton(config: ScreenStackHeaderConfig, hideBackButton: Boolean) {
+    override fun setHideBackButton(
+        config: ScreenStackHeaderConfig,
+        hideBackButton: Boolean,
+    ) {
         config.setHideBackButton(hideBackButton)
     }
 
     @ReactProp(name = "topInsetEnabled")
-    override fun setTopInsetEnabled(config: ScreenStackHeaderConfig, topInsetEnabled: Boolean) {
+    override fun setTopInsetEnabled(
+        config: ScreenStackHeaderConfig,
+        topInsetEnabled: Boolean,
+    ) {
         config.setTopInsetEnabled(topInsetEnabled)
     }
 
     @ReactProp(name = "color", customType = "Color")
-    override fun setColor(config: ScreenStackHeaderConfig, color: Int?) {
+    override fun setColor(
+        config: ScreenStackHeaderConfig,
+        color: Int?,
+    ) {
         config.setTintColor(color ?: 0)
     }
 
     @ReactProp(name = "hidden")
-    override fun setHidden(config: ScreenStackHeaderConfig, hidden: Boolean) {
+    override fun setHidden(
+        config: ScreenStackHeaderConfig,
+        hidden: Boolean,
+    ) {
         config.setHidden(hidden)
     }
 
     @ReactProp(name = "translucent")
-    override fun setTranslucent(config: ScreenStackHeaderConfig, translucent: Boolean) {
+    override fun setTranslucent(
+        config: ScreenStackHeaderConfig,
+        translucent: Boolean,
+    ) {
         config.setTranslucent(translucent)
     }
 
     @ReactProp(name = "backButtonInCustomView")
     override fun setBackButtonInCustomView(
         config: ScreenStackHeaderConfig,
-        backButtonInCustomView: Boolean
+        backButtonInCustomView: Boolean,
     ) {
         config.setBackButtonInCustomView(backButtonInCustomView)
     }
 
     @ReactProp(name = "direction")
-    override fun setDirection(config: ScreenStackHeaderConfig, direction: String?) {
+    override fun setDirection(
+        config: ScreenStackHeaderConfig,
+        direction: String?,
+    ) {
         config.setDirection(direction)
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
-        return MapBuilder.of(
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? =
+        MapBuilder.of(
             HeaderAttachedEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onAttached"),
             HeaderDetachedEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDetached"),
         )
-    }
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> = delegate
 
@@ -151,54 +203,97 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
 
     // TODO: Find better way to handle platform specific props
     private fun logNotAvailable(propName: String) {
-        Log.w("RN SCREENS", "$propName prop is not available on Android")
+        Log.w("[RNScreens]", "$propName prop is not available on Android")
     }
 
-    override fun setBackTitle(view: ScreenStackHeaderConfig?, value: String?) {
+    override fun setBackTitle(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) {
         logNotAvailable("backTitle")
     }
 
-    override fun setBackTitleFontFamily(view: ScreenStackHeaderConfig?, value: String?) {
+    override fun setBackTitleFontFamily(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) {
         logNotAvailable("backTitleFontFamily")
     }
 
-    override fun setBackTitleFontSize(view: ScreenStackHeaderConfig?, value: Int) {
+    override fun setBackTitleFontSize(
+        view: ScreenStackHeaderConfig?,
+        value: Int,
+    ) {
         logNotAvailable("backTitleFontSize")
     }
 
-    override fun setBackTitleVisible(view: ScreenStackHeaderConfig?, value: Boolean) {
+    override fun setBackTitleVisible(
+        view: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) {
         logNotAvailable("backTitleVisible")
     }
 
-    override fun setLargeTitle(view: ScreenStackHeaderConfig?, value: Boolean) {
+    override fun setLargeTitle(
+        view: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) {
         logNotAvailable("largeTitle")
     }
 
-    override fun setLargeTitleFontFamily(view: ScreenStackHeaderConfig?, value: String?) {
+    override fun setLargeTitleFontFamily(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) {
         logNotAvailable("largeTitleFontFamily")
     }
 
-    override fun setLargeTitleFontSize(view: ScreenStackHeaderConfig?, value: Int) {
+    override fun setLargeTitleFontSize(
+        view: ScreenStackHeaderConfig?,
+        value: Int,
+    ) {
         logNotAvailable("largeTitleFontSize")
     }
 
-    override fun setLargeTitleFontWeight(view: ScreenStackHeaderConfig?, value: String?) {
+    override fun setLargeTitleFontWeight(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) {
         logNotAvailable("largeTitleFontWeight")
     }
 
-    override fun setLargeTitleBackgroundColor(view: ScreenStackHeaderConfig?, value: Int?) {
+    override fun setLargeTitleBackgroundColor(
+        view: ScreenStackHeaderConfig?,
+        value: Int?,
+    ) {
         logNotAvailable("largeTitleBackgroundColor")
     }
 
-    override fun setLargeTitleHideShadow(view: ScreenStackHeaderConfig?, value: Boolean) {
+    override fun setLargeTitleHideShadow(
+        view: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) {
         logNotAvailable("largeTitleHideShadow")
     }
 
-    override fun setLargeTitleColor(view: ScreenStackHeaderConfig?, value: Int?) {
+    override fun setLargeTitleColor(
+        view: ScreenStackHeaderConfig?,
+        value: Int?,
+    ) {
         logNotAvailable("largeTitleColor")
     }
 
-    override fun setDisableBackButtonMenu(view: ScreenStackHeaderConfig?, value: Boolean) {
+    override fun setDisableBackButtonMenu(
+        view: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) {
         logNotAvailable("disableBackButtonMenu")
+    }
+
+    override fun setBackButtonDisplayMode(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) {
+        logNotAvailable("backButtonDisplayMode")
     }
 }

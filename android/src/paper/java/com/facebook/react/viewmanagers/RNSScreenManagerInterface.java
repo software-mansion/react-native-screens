@@ -21,6 +21,7 @@ public interface RNSScreenManagerInterface<T extends View> {
   void setSheetExpandsWhenScrolledToEdge(T view, boolean value);
   void setCustomAnimationOnSwipe(T view, boolean value);
   void setFullScreenSwipeEnabled(T view, boolean value);
+  void setFullScreenSwipeShadowEnabled(T view, boolean value);
   void setHomeIndicatorHidden(T view, boolean value);
   void setPreventNativeDismiss(T view, boolean value);
   void setGestureEnabled(T view, boolean value);
@@ -39,6 +40,7 @@ public interface RNSScreenManagerInterface<T extends View> {
   void setHideKeyboardOnSwipe(T view, boolean value);
   void setActivityState(T view, float value);
   void setNavigationBarColor(T view, @Nullable Integer value);
+  void setNavigationBarTranslucent(T view, boolean value);
   void setNavigationBarHidden(T view, boolean value);
   void setNativeBackButtonDismissalEnabled(T view, boolean value);
 }

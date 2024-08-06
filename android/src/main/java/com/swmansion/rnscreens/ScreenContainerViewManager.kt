@@ -6,19 +6,39 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.ViewManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenContainerManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenContainerManagerInterface
 
 @ReactModule(name = ScreenContainerViewManager.REACT_CLASS)
-class ScreenContainerViewManager : ViewGroupManager<ScreenContainer>() {
+class ScreenContainerViewManager :
+    ViewGroupManager<ScreenContainer>(),
+    RNSScreenContainerManagerInterface<ScreenContainer> {
+    private val delegate: ViewManagerDelegate<ScreenContainer>
+
+    init {
+        delegate = RNSScreenContainerManagerDelegate<ScreenContainer, ScreenContainerViewManager>(this)
+    }
+
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenContainer> = delegate
+
     override fun getName(): String = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext): ScreenContainer = ScreenContainer(reactContext)
 
-    override fun addView(parent: ScreenContainer, child: View, index: Int) {
+    override fun addView(
+        parent: ScreenContainer,
+        child: View,
+        index: Int,
+    ) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreens" }
         parent.addScreen(child, index)
     }
 
-    override fun removeViewAt(parent: ScreenContainer, index: Int) {
+    override fun removeViewAt(
+        parent: ScreenContainer,
+        index: Int,
+    ) {
         parent.removeScreenAt(index)
     }
 
@@ -28,7 +48,10 @@ class ScreenContainerViewManager : ViewGroupManager<ScreenContainer>() {
 
     override fun getChildCount(parent: ScreenContainer): Int = parent.screenCount
 
-    override fun getChildAt(parent: ScreenContainer, index: Int): View = parent.getScreenAt(index)
+    override fun getChildAt(
+        parent: ScreenContainer,
+        index: Int,
+    ): View = parent.getScreenAt(index)
 
     override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreensShadowNode(context)
 

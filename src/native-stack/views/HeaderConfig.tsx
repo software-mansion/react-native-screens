@@ -27,6 +27,7 @@ export default function HeaderConfig({
   backButtonInCustomView,
   direction,
   disableBackButtonMenu,
+  backButtonDisplayMode = 'default',
   headerBackTitle,
   headerBackTitleStyle = {},
   headerBackTitleVisible = true,
@@ -103,7 +104,7 @@ export default function HeaderConfig({
   warnOnce(
     isVisionOS &&
       (headerTitleStyle.color !== undefined || headerTintColor !== undefined),
-    'headerTitleStyle.color and headerTintColor are not supported on visionOS.'
+    'headerTitleStyle.color and headerTintColor are not supported on visionOS.',
   );
 
   return (
@@ -120,6 +121,7 @@ export default function HeaderConfig({
       color={tintColor}
       direction={direction}
       disableBackButtonMenu={disableBackButtonMenu}
+      backButtonDisplayMode={backButtonDisplayMode}
       hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}

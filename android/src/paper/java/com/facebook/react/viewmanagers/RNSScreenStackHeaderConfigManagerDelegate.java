@@ -91,6 +91,9 @@ public class RNSScreenStackHeaderConfigManagerDelegate<T extends View, U extends
       case "disableBackButtonMenu":
         mViewManager.setDisableBackButtonMenu(view, value == null ? false : (boolean) value);
         break;
+      case "backButtonDisplayMode":
+        mViewManager.setBackButtonDisplayMode(view, (String) value);
+        break;
       case "hideBackButton":
         mViewManager.setHideBackButton(view, value == null ? false : (boolean) value);
         break;

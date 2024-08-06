@@ -7,35 +7,35 @@ describe('Simple Stack Presentation', () => {
 
   it('should go to main screen', async () => {
     await expect(
-      element(by.id('root-screen-example-StackPresentation'))
+      element(by.id('root-screen-example-StackPresentation')),
     ).toBeVisible();
     await element(by.id('root-screen-example-StackPresentation')).tap();
     await expect(
-      element(by.id('stack-presentation-root-scroll-view'))
+      element(by.id('stack-presentation-root-scroll-view')),
     ).toBeVisible();
   });
 
   it('should push form screen', async () => {
     await element(by.id('stack-presentation-push-button')).tap();
     await expect(
-      element(by.id('stack-presentation-form-screen-go-back-button'))
+      element(by.id('stack-presentation-form-screen-go-back-button')),
     ).toBeVisible();
     await element(by.id('stack-presentation-form-screen-go-back-button')).tap();
     await expect(
-      element(by.id('stack-presentation-root-scroll-view'))
+      element(by.id('stack-presentation-root-scroll-view')),
     ).toBeVisible();
   });
 
   it('should open modal', async () => {
     await element(by.id('stack-presentation-modal-button')).tap();
     await expect(
-      element(by.id('stack-presentation-modal-screen-go-back-button'))
+      element(by.id('stack-presentation-modal-screen-go-back-button')),
     ).toBeVisible();
     await element(
-      by.id('stack-presentation-modal-screen-go-back-button')
+      by.id('stack-presentation-modal-screen-go-back-button'),
     ).tap();
     await expect(
-      element(by.id('stack-presentation-root-scroll-view'))
+      element(by.id('stack-presentation-root-scroll-view')),
     ).toBeVisible();
   });
 });

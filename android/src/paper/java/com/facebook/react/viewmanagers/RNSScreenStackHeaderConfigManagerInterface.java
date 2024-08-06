@@ -36,6 +36,7 @@ public interface RNSScreenStackHeaderConfigManagerInterface<T extends View> {
   void setTitleFontWeight(T view, @Nullable String value);
   void setTitleColor(T view, @Nullable Integer value);
   void setDisableBackButtonMenu(T view, boolean value);
+  void setBackButtonDisplayMode(T view, @Nullable String value);
   void setHideBackButton(T view, boolean value);
   void setBackButtonInCustomView(T view, boolean value);
   void setTopInsetEnabled(T view, boolean value);
