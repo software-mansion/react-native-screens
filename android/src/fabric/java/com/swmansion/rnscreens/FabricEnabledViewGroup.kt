@@ -16,6 +16,7 @@ abstract class FabricEnabledViewGroup(
 
     private var lastSetWidth = 0f
     private var lastSetHeight = 0f
+    private var lastSetHeaderHeight = 0.0
 
     fun setStateWrapper(wrapper: StateWrapper?) {
         mStateWrapper = wrapper
@@ -42,13 +43,16 @@ abstract class FabricEnabledViewGroup(
         // infinite UpdateState/SetState loop.
         val delta = 0.9f
         if (abs(lastSetWidth - realWidth) < delta &&
-            abs(lastSetHeight - realHeight) < delta
+            abs(lastSetHeight - realHeight) < delta &&
+            abs(lastSetHeaderHeight - headerHeight) < delta
         ) {
             return
         }
 
         lastSetWidth = realWidth
         lastSetHeight = realHeight
+        lastSetHeaderHeight = headerHeight
+
         val map: WritableMap =
             WritableNativeMap().apply {
                 putDouble("frameWidth", realWidth.toDouble())
