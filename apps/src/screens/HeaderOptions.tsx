@@ -14,6 +14,7 @@ import {
   ToastProvider,
   useToast,
 } from '../shared';
+import { BlurEffectTypes } from 'react-native-screens';
 
 type StackParamList = {
   Main: undefined;
@@ -62,6 +63,8 @@ const SettingsScreen = ({
   const [headerBackTitle, setHeaderBackTitle] = useState('Back');
   const [headerShadowVisible, setHeaderShadowVisible] = useState(false);
   const [headerTransparent, setHeaderTransparent] = useState(false);
+  const [headerBlurEffect, setHeaderBlurEffect] =
+    useState<BlurEffectTypes>('extraLight');
 
   const square = (props: { tintColor?: string }) => (
     <Square {...props} color="green" size={20} />
@@ -80,6 +83,7 @@ const SettingsScreen = ({
       headerLeft: headerItem === 'left' ? square : undefined,
       headerShadowVisible,
       headerTransparent,
+      headerBlurEffect,
     });
   }, [
     navigation,
@@ -92,6 +96,7 @@ const SettingsScreen = ({
     headerShown,
     headerShadowVisible,
     headerTransparent,
+    headerBlurEffect,
   ]);
 
   return (
@@ -169,6 +174,33 @@ const SettingsScreen = ({
         label="Header back title"
         value={headerBackTitle}
         onValueChange={setHeaderBackTitle}
+      />
+      <SettingsPicker<BlurEffectTypes>
+        label="Header blur effect"
+        value={headerBlurEffect}
+        items={[
+          'extraLight',
+          'light',
+          'dark',
+          'regular',
+          'prominent',
+          'systemUltraThinMaterial',
+          'systemThinMaterial',
+          'systemMaterial',
+          'systemThickMaterial',
+          'systemChromeMaterial',
+          'systemUltraThinMaterialLight',
+          'systemThinMaterialLight',
+          'systemMaterialLight',
+          'systemThickMaterialLight',
+          'systemChromeMaterialLight',
+          'systemUltraThinMaterialDark',
+          'systemThinMaterialDark',
+          'systemMaterialDark',
+          'systemThickMaterialDark',
+          'systemChromeMaterialDark',
+        ]}
+        onValueChange={setHeaderBlurEffect}
       />
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </ScrollView>
