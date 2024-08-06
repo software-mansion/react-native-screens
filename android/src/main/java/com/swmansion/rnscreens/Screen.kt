@@ -127,6 +127,8 @@ class Screen(
         )
     }
 
+    fun isTransparent(): Boolean = stackPresentation === StackPresentation.TRANSPARENT_MODAL
+
     private fun hasWebView(viewGroup: ViewGroup): Boolean {
         for (i in 0 until viewGroup.childCount) {
             val child = viewGroup.getChildAt(i)

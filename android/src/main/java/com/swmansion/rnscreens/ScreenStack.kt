@@ -104,7 +104,7 @@ class ScreenStack(
                 } else {
                     visibleBottom = screen
                 }
-                if (!isTransparent(screen)) {
+                if (!screen.screen.isTransparent()) {
                     break
                 }
             }
@@ -258,7 +258,7 @@ class ScreenStack(
     private fun turnOffA11yUnderTransparentScreen(visibleBottom: ScreenFragmentWrapper?) {
         if (screenWrappers.size > 1 && visibleBottom != null) {
             topScreenWrapper?.let {
-                if (isTransparent(it)) {
+                if (it.screen.isTransparent()) {
                     val screenFragmentsBeneathTop = screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {
@@ -363,9 +363,6 @@ class ScreenStack(
     }
 
     companion object {
-        private fun isTransparent(fragmentWrapper: ScreenFragmentWrapper): Boolean =
-            fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL
-
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             // On Android sdk 33 and above the animation is different and requires draw reordering.
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
