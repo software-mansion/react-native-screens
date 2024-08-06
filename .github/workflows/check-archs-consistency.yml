@@ -4,9 +4,9 @@ on:
     branches:
       - main
     paths:
-      - src/fabric/**
-      - android/src/paper/java/com/facebook/react/viewmanagers/**
-      - .github/workflows/check-archs-consistency.yml
+      - 'src/fabric/**'
+      - 'android/src/paper/java/com/facebook/react/viewmanagers/**'
+      - '.github/workflows/check-archs-consistency.yml'
   push:
     branches:
       - main
