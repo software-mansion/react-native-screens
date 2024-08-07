@@ -100,6 +100,7 @@ export { default as Test2028 } from './Test2028';
 export { default as Test2048 } from './Test2048';
 export { default as Test2069 } from './Test2069';
 export { default as Test2118 } from './Test2118';
+export { default as Test2150 } from './Test2150';
 export { default as Test2184 } from './Test2184';
 export { default as Test2223 } from './Test2223';
 export { default as Test2227 } from './Test2227';
