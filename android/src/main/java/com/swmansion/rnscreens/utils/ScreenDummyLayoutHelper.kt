@@ -47,7 +47,7 @@ internal class ScreenDummyLayoutHelper(
         try {
             System.loadLibrary(LIBRARY_NAME)
         } catch (e: UnsatisfiedLinkError) {
-            Log.w(TAG, "Failed to load $LIBRARY_NAME")
+            Log.w(TAG, "[RNScreens] Failed to load $LIBRARY_NAME library.")
         }
 
         weakInstance = WeakReference(this)
