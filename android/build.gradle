@@ -55,32 +55,6 @@ def safeAppExtGet(prop, fallback) {
     appProject?.ext?.has(prop) ? appProject.ext.get(prop) : fallback
 }
 
-def resolveReactNativeDirectory() {
-    def reactNativeLocation = safeAppExtGet("REACT_NATIVE_NODE_MODULES_DIR", null)
-    if (reactNativeLocation != null) {
-        return file(reactNativeLocation)
-    }
-
-    def reactNativeFromAppNodeModules = file("${projectDir}/../../react-native")
-    if (!isRunningInContextOfScreensRepo() && reactNativeFromAppNodeModules.exists()) {
-        return reactNativeFromAppNodeModules
-    }
-
-    def reactNativeFromProjectNodeModules = file("${rootProject.projectDir}/../node_modules/react-native")
-    if (reactNativeFromProjectNodeModules.exists()) {
-        return reactNativeFromProjectNodeModules
-    }
-
-    throw new GradleException(
-        "[RNScreens] Unable to resolve react-native location in node_modules. You should add project extension property (in `app/build.gradle`) `REACT_NATIVE_NODE_MODULES_DIR` with path to react-native."
-    )
-}
-
-def reactNativeRootDir = resolveReactNativeDirectory()
-def reactProperties = new Properties()
-file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
-def REACT_NATIVE_VERSION = reactProperties.getProperty("VERSION_NAME")
-def REACT_NATIVE_MINOR_VERSION = REACT_NATIVE_VERSION.startsWith("0.0.0-") ? 1000 : REACT_NATIVE_VERSION.split("\\.")[1].toInteger()
 def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
 
 android {
@@ -118,14 +92,12 @@ android {
             }
         }
     }
-    if (REACT_NATIVE_MINOR_VERSION >= 71) {
-        buildFeatures {
-            prefab true
-        }
-        externalNativeBuild {
-            cmake {
-                path "CMakeLists.txt"
-            }
+    buildFeatures {
+        prefab true
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
         }
     }
     lintOptions {
