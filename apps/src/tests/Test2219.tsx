@@ -1,30 +1,9 @@
 import * as React from 'react';
-import {
-  Pressable,
-  PressableProps,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
-
-interface CustomButtonProps extends PressableProps {
-  title: string;
-}
-
-const CustomButton = (props: CustomButtonProps) => (
-  <Pressable
-    style={({ pressed }) => [
-      styles.pressable,
-      { backgroundColor: pressed ? 'goldenrod' : 'lightblue' },
-    ]}
-    {...props}>
-    <Text>{props.title}</Text>
-  </Pressable>
-);
 
 export default function App() {
   const [count, setCount] = React.useState(0);
@@ -36,14 +15,8 @@ export default function App() {
           name="Screen"
           component={Screen}
           options={{
-            headerLeft: () => (
-              <CustomButton
-                title="PressIn (-)"
-                onPressIn={() => setCount(prev => prev - 1)}
-              />
-            ),
             headerRight: () => (
-              <CustomButton
+              <Button
                 onPress={() => setCount(prev => prev + 1)}
                 title="Press (+)"
               />
@@ -62,14 +35,7 @@ function Screen() {
   return (
     <View style={styles.container}>
       <Text style={styles.count}>{count}</Text>
-      <CustomButton
-        onPressIn={() => setCount(prev => prev - 1)}
-        title="PressIn (-)"
-      />
-      <CustomButton
-        onPress={() => setCount(prev => prev + 1)}
-        title="Press (+)"
-      />
+      <Button onPress={() => setCount(prev => prev + 1)} title="Press (+)" />
     </View>
   );
 }
