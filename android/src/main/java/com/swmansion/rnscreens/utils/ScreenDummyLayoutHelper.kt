@@ -237,7 +237,7 @@ internal class ScreenDummyLayoutHelper(
     }
 
     // This value is fetched / stored from UI and background thread. Volatile here ensures
-    // that updates are visible to the other thread. This
+    // that updates are visible to the other thread.
     @Volatile
     private var isLayoutInitialized = false
 
