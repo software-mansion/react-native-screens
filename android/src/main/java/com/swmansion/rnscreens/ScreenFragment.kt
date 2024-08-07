@@ -61,6 +61,8 @@ open class ScreenFragment :
     // in nested fragments. See more explanation in dispatchViewAnimationEvent
     private var isTransitioning = false
 
+    override val hiddenFromStack get() = screen.hiddenFromStack
+
     constructor() {
         throw IllegalStateException(
             "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.",

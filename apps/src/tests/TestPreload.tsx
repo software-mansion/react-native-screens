@@ -21,14 +21,21 @@ function HomeScreen() {
     >
       <Text>Home!</Text>
       <Button
+        title='Navigate to Home'
+        onPress={() => {
+          navigation.dispatch(
+            CommonActions.navigate('Home2')
+          );
+        }}
+      />
+      <Button
         title='Preload CardProfile'
         onPress={() => {
           navigation.dispatch(
             CommonActions.preload('CardProfile', { user: 'jane' })
           );
         }}
-      >
-      </Button>
+      />
       <Button
         title='Navigate to CardProfile'
         onPress={() => {
@@ -36,8 +43,7 @@ function HomeScreen() {
             CommonActions.navigate('CardProfile', { user: 'jane' })
           );
         }}
-      >
-      </Button>
+      />
       <Button
         title='Preload ModalProfile'
         onPress={() => {
@@ -45,8 +51,7 @@ function HomeScreen() {
             CommonActions.preload('ModalProfile', { user: 'jane' })
           );
         }}
-      >
-      </Button>
+      />
       <Button
         title='Navigate to ModalProfile'
         onPress={() => {
@@ -54,8 +59,7 @@ function HomeScreen() {
             CommonActions.navigate('ModalProfile', { user: 'jane' })
           );
         }}
-      >
-      </Button>
+      />
     </View>
   );
 }
@@ -99,6 +103,11 @@ const App = () => (
       <Stack.Screen
         name="Home"
         component={HomeScreen}
+      />
+      <Stack.Screen
+        name="Home2"
+        component={HomeScreen}
+        options={{ presentation: 'card' }}
       />
       <Stack.Screen
         name="CardProfile"

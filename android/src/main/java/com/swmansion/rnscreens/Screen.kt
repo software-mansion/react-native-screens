@@ -284,6 +284,12 @@ class Screen(
 
     var nativeBackButtonDismissalEnabled: Boolean = true
 
+    var hiddenFromStack: Boolean = false
+        set(hiddenFromStack) {
+            field = hiddenFromStack
+            container?.onUpdate()
+        }
+
     fun startRemovalTransition() {
         if (!isBeingRemoved) {
             isBeingRemoved = true

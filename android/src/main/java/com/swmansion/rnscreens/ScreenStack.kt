@@ -98,7 +98,7 @@ class ScreenStack(
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
         for (i in screenWrappers.indices.reversed()) {
             val screenWrapper = getScreenFragmentWrapperAt(i)
-            if (!dismissedWrappers.contains(screenWrapper)) {
+            if (!dismissedWrappers.contains(screenWrapper) && !screenWrapper.hiddenFromStack) {
                 if (newTop == null) {
                     newTop = screenWrapper
                 } else {
@@ -219,7 +219,7 @@ class ScreenStack(
                     break
                 }
                 // detach all screens that should not be visible
-                if (fragmentWrapper !== newTop && !dismissedWrappers.contains(fragmentWrapper)) {
+                if ((fragmentWrapper !== newTop && !dismissedWrappers.contains(fragmentWrapper)) || fragmentWrapper.hiddenFromStack) {
                     it.remove(fragmentWrapper.fragment)
                 }
             }

@@ -8,6 +8,8 @@ interface ScreenFragmentWrapper :
     ScreenEventDispatcher {
     var screen: Screen
 
+    val hiddenFromStack: Boolean
+
     // Communication with container
     val childScreenContainers: List<ScreenContainer>
 
