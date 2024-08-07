@@ -5,27 +5,17 @@ import { NavigationContainer } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 
-const List = () => {
-  return (
-    <FlatList
-      renderItem={({ item }) => {
-        return <Text key={item.toString()}>{item}</Text>;
-      }}
-      data={[1, 2, 3]}
-    />
-  );
-};
-
 const First = ({ navigation }: any) => (
-  <>
-    <List />
-    <Button onPress={() => navigation.navigate('Second')} title="Navigate" />
-  </>
+  <Button onPress={() => navigation.navigate('Second')} title="Navigate" />
 );
 
 const Second = ({ navigation }: any) => (
   <>
-    <List />
+    <FlatList
+      renderItem={({ item }) => <Text>{item}</Text>}
+      data={[1, 2, 3]}
+      keyExtractor={item => item.toString()}
+    />
     <Button onPress={navigation.goBack} title="Go back" />
   </>
 );
