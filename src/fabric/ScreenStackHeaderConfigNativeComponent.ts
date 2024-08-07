@@ -7,6 +7,7 @@ import type {
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 type DirectionType = 'rtl' | 'ltr';
+type TitleAlignType = 'left' | 'center';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type OnAttachedEvent = Readonly<{}>;
@@ -58,6 +59,7 @@ export interface NativeProps extends ViewProps {
   largeTitleColor?: ColorValue;
   translucent?: boolean;
   title?: string;
+  titleAlign?: WithDefault<TitleAlignType, 'left'>;
   titleFontFamily?: string;
   titleFontSize?: Int32;
   titleFontWeight?: string;

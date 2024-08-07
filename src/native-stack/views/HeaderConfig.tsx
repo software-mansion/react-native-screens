@@ -44,6 +44,7 @@ export default function HeaderConfig({
   headerStyle = {},
   headerTintColor,
   headerTitle,
+  headerTitleAlign,
   headerTitleStyle = {},
   headerTopInsetEnabled = true,
   headerTranslucent,
@@ -139,6 +140,7 @@ export default function HeaderConfig({
           ? title
           : route.name
       }
+      titleAlign={headerTitleAlign}
       titleColor={
         headerTitleStyle.color !== undefined
           ? headerTitleStyle.color

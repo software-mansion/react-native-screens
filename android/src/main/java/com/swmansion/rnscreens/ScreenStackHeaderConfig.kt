@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Build
@@ -20,6 +21,7 @@ import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 
@@ -42,6 +44,7 @@ class ScreenStackHeaderConfig(
     private var isShadowHidden = false
     private var isDestroyed = false
     private var backButtonInCustomView = false
+    private var isTitleCentered = false
     private var isTopInsetEnabled = true
     private var tintColor = 0
     private var isAttachedToWindow = false
@@ -134,6 +137,9 @@ class ScreenStackHeaderConfig(
             return null
         }
 
+    private val screenStackHeader: ScreenStackHeader?
+        get() = screenFragment?.screenStackHeader
+
     fun onUpdate() {
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
@@ -167,25 +173,35 @@ class ScreenStackHeaderConfig(
         }
 
         if (isHeaderHidden) {
-            if (toolbar.parent != null) {
-                screenFragment?.removeToolbar()
-            }
+            screenFragment?.removeToolbar()
             return
+        }
+
+        // Reattach the header, when the developer tries to change the header type
+        if (screenStackHeader?.loadedHeaderType != screen?.headerType) {
+            screenStackHeader?.updateHeaderType()
+            screenFragment?.removeToolbar()
         }
 
         if (toolbar.parent == null) {
             screenFragment?.setToolbar(toolbar)
         }
 
+        val layoutParams = toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams
         if (isTopInsetEnabled) {
             headerTopInset.let {
-                toolbar.setPadding(0, it ?: 0, 0, 0)
+                layoutParams.topMargin = it ?: 0
+                screenStackHeader?.collapsingToolbarLayout?.setContentScrimColor(Color.TRANSPARENT)
             }
         } else {
-            if (toolbar.paddingTop > 0) {
-                toolbar.setPadding(0, 0, 0, 0)
+            if (layoutParams.topMargin > 0) {
+                layoutParams.topMargin = 0
             }
         }
+
+        // As navigation icon in toolbar might not be shown after hiding and showing the toolbar,
+        // We're setting it to null before setting `supportActionBar` on activity.
+        toolbar.navigationIcon = null
 
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
@@ -216,7 +232,11 @@ class ScreenStackHeaderConfig(
         screenFragment?.setToolbarTranslucent(isHeaderTranslucent)
 
         // title
-        actionBar.title = title
+        screenStackHeader?.title = title
+
+        // centering title
+        toolbar.isTitleCentered = isTitleCentered
+
         if (TextUtils.isEmpty(title)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
             // views. When it is set to default it'd take up additional distance from the back button
@@ -226,7 +246,7 @@ class ScreenStackHeaderConfig(
 
         val titleTextView = findTitleTextViewInToolbar(toolbar)
         if (titleColor != 0) {
-            toolbar.setTitleTextColor(titleColor)
+            screenStackHeader?.titleTextColor = titleColor
         }
 
         if (titleTextView != null) {
@@ -240,14 +260,20 @@ class ScreenStackHeaderConfig(
                         context.assets,
                     )
                 titleTextView.typeface = titleTypeface
+                screenStackHeader?.titleTypeface = titleTypeface
             }
+
             if (titleFontSize > 0) {
                 titleTextView.textSize = titleFontSize
+                // TODO: Add property for changing expandedTitleTextSize
+                screenStackHeader?.fontSize = titleFontSize
             }
         }
 
         // background
-        backgroundColor?.let { toolbar.setBackgroundColor(it) }
+        backgroundColor?.let {
+            screenStackHeader?.backgroundColor = it
+        }
 
         // color
         if (tintColor != 0) {
@@ -287,18 +313,20 @@ class ScreenStackHeaderConfig(
                         toolbar.navigationIcon = null
                     }
                     toolbar.title = null
+                    // Hide title of collapsed toolbar when its type is set to medium / large.
+                    screenStackHeader?.collapsingToolbarLayout?.setCollapsedTitleTextColor(Color.TRANSPARENT)
                     params.gravity = Gravity.START
                 }
                 ScreenStackHeaderSubview.Type.RIGHT -> params.gravity = Gravity.END
                 ScreenStackHeaderSubview.Type.CENTER -> {
-                    params.width = LayoutParams.MATCH_PARENT
+                    if (screen?.headerType?.isCollapsing == false) params.width = LayoutParams.MATCH_PARENT
                     params.gravity = Gravity.CENTER_HORIZONTAL
                     toolbar.title = null
                 }
                 else -> {}
             }
             view.layoutParams = params
-            toolbar.addView(view)
+            toolbar.addView(view, 0)
             i++
         }
     }
@@ -334,6 +362,10 @@ class ScreenStackHeaderConfig(
 
     fun setTitle(title: String?) {
         this.title = title
+    }
+
+    fun setTitleCentered(titleCentered: Boolean) {
+        isTitleCentered = titleCentered
     }
 
     fun setTitleFontFamily(titleFontFamily: String?) {

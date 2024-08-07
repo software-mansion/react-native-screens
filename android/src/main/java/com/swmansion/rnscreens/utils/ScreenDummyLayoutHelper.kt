@@ -141,7 +141,7 @@ internal class ScreenDummyLayoutHelper(
                 // is still null at this execution point. We don't wanna crash in such case, thus returning zeroed height.
                 Log.e(
                     TAG,
-                    "[RNScreens] Failed to late-init layout while computing header height. This is a race-condition-bug in react-native-screens, please file an issue at https://github.com/software-mansion/react-native-screens/issues"
+                    "[RNScreens] Failed to late-init layout while computing header height. This is a race-condition-bug in react-native-screens, please file an issue at https://github.com/software-mansion/react-native-screens/issues",
                 )
                 return 0.0f
             }
@@ -189,7 +189,8 @@ internal class ScreenDummyLayoutHelper(
     private fun requireReactContext(lazyMessage: (() -> Any)? = null): ReactApplicationContext =
         requireNotNull(
             reactContextRef.get(),
-            lazyMessage ?: { "[RNScreens] Attempt to require missing react context" })
+            lazyMessage ?: { "[RNScreens] Attempt to require missing react context" },
+        )
 
     private fun requireActivity(): Activity =
         requireNotNull(requireReactContext().currentActivity) {
@@ -219,7 +220,9 @@ internal class ScreenDummyLayoutHelper(
     override fun onHostResume() {
         // This is the earliest we have guarantee that the context has a reference to an activity.
         val reactContext = requireReactContext { "[RNScreens] ReactContext missing in onHostResume! This should not happen." }
-        check(maybeInitDummyLayoutWithHeader(reactContext)) { "[RNScreens] Failed to initialise dummy layout in onHostResume. This is not expected."}
+        check(maybeInitDummyLayoutWithHeader(reactContext)) {
+            "[RNScreens] Failed to initialise dummy layout in onHostResume. This is not expected."
+        }
         reactContext.removeLifecycleEventListener(this)
     }
 

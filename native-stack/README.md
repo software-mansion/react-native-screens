@@ -165,6 +165,17 @@ Style object for header large title. Supported properties:
 - `fontSize`
 - `color`
 
+#### `headerType`
+
+The type of the header. Defaults to `small`. Possible values are:
+
+- `small`
+- `medium`
+- `large`
+
+For `medium` and `large` header type being able to scroll, the content of the screen should be wrapped in a `ScrollView` with the property `nestedScrollEnabled` set to true.
+For the best experience of using `medium` and `large` header types it is recommended to have Material 3 bundled into the application.
+
 #### `headerLeft`
 
 Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
@@ -191,6 +202,15 @@ Tint color for the header. Changes the color of the back button and title.
 #### `headerTitle`
 
 String to be used by the header as title string. Defaults to scene `title`.
+
+#### `headerTitleAlign` (Android only)
+
+Alignment of the header title. Possible values are:
+
+- `left` - aligns title to the left side of the header.
+- `center` - aligns title to the center on the header.
+
+Defaults to `left`. On iOS it's always `center` and cannot be changed.
 
 #### `headerTitleStyle`
 

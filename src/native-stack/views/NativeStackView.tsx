@@ -176,6 +176,7 @@ const RouteView = ({
   const {
     fullScreenSwipeShadowEnabled = false,
     gestureEnabled,
+    headerType,
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
@@ -315,6 +316,7 @@ const RouteView = ({
       statusBarTranslucent={statusBarTranslucent}
       swipeDirection={swipeDirection}
       transitionDuration={transitionDuration}
+      headerType={headerType}
       onHeaderBackButtonClicked={() => {
         navigation.dispatch({
           ...StackActions.pop(),

@@ -186,6 +186,7 @@ export type NativeStackNavigationOptions = {
   headerBackTitleVisible?: boolean;
   /**
    * Function which returns a React Element to display in the center of the header.
+   * Currently, this type is not supported on header set to 'medium' / 'large' type.
    */
   headerCenter?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
@@ -235,6 +236,20 @@ export type NativeStackNavigationOptions = {
     color?: ColorValue;
   };
   /**
+   * Customize the type of the header. Only supported on Android.
+   * Defaults to `small`.
+   *
+   * Available values:
+   * - `small` - sets small size of header.
+   * - `medium` - sets medium size of header.
+   * - `large` - sets large size of header.
+   *
+   * For medium and large headers to collapse on scroll, the content of the screen should be wrapped in a `ScrollView` with the property `nestedScrollEnabled` set to true.
+   * For the best experience of using `medium` and `large` header types it is recommended to have Material 3 bundled into the application.
+   * @platform android
+   */
+  headerType?: 'small' | 'medium' | 'large';
+  /**
    * Function which returns a React Element to display on the left side of the header.
    */
   headerLeft?: (props: { tintColor?: ColorValue }) => React.ReactNode;
@@ -263,6 +278,15 @@ export type NativeStackNavigationOptions = {
    * String to display in the header as title. Defaults to scene `title`.
    */
   headerTitle?: string;
+  /**
+   * Alignment of the header title. Possible values are:
+   * - `left` - aligns title to the left side of the header.
+   * - `center` - aligns title to the center on the header.
+   *
+   * Defaults to `left`. On iOS it's always `center` and cannot be changed.
+   * @platform android
+   */
+  headerTitleAlign?: 'left' | 'center';
   /**
    * Style object for header title. Supported properties:
    * - fontFamily

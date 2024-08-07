@@ -75,16 +75,15 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            val headerHeight = calculateHeaderHeight()
-            val totalHeight =
-                headerHeight.first + headerHeight.second // action bar height + status bar height
+            // value returned as top will be total height of the header
+            val topToDp = PixelUtil.toDIPFromPixel(t.toFloat()).toDouble()
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height, totalHeight)
+                updateScreenSizeFabric(width, height, topToDp)
             } else {
                 updateScreenSizePaper(width, height)
             }
 
-            notifyHeaderHeightChange(totalHeight)
+            notifyHeaderHeightChange(topToDp)
         }
     }
 
@@ -240,6 +239,23 @@ class Screen(
             }
         }
 
+    val statusBarInset: Double
+        get() {
+            return context.resources
+                    .getIdentifier("status_bar_height", "dimen", "android")
+                    // Count only status bar when it's not hidden
+                    .takeIf { it > 0 && isStatusBarHidden != true }
+                    ?.let { (context.resources::getDimensionPixelSize)(it) }
+                    ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
+                    ?: 0.0
+        }
+
+    var headerType = HeaderType.Small
+        set(headerType) {
+            field = headerType
+            headerConfig?.onUpdate()
+        }
+
     var navigationBarColor: Int? = null
         set(navigationBarColor) {
             if (navigationBarColor != null) {
@@ -318,31 +334,6 @@ class Screen(
         }
     }
 
-    private fun calculateHeaderHeight(): Pair<Double, Double> {
-        val actionBarTv = TypedValue()
-        val resolvedActionBarSize =
-            context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
-
-        // Check if it's possible to get an attribute from theme context and assign a value from it.
-        // Otherwise, the default value will be returned.
-        val actionBarHeight =
-            TypedValue
-                .complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
-                .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true && headerConfig?.isHeaderTranslucent != true }
-                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
-
-        val statusBarHeight =
-            context.resources
-                .getIdentifier("status_bar_height", "dimen", "android")
-                // Count only status bar when action bar is visible and status bar is not hidden
-                .takeIf { it > 0 && isStatusBarHidden != true && actionBarHeight > 0 }
-                ?.let { (context.resources::getDimensionPixelSize)(it) }
-                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
-                ?: 0.0
-
-        return actionBarHeight to statusBarHeight
-    }
-
     private fun notifyHeaderHeightChange(headerHeight: Double) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
@@ -389,5 +380,13 @@ class Screen(
         NAVIGATION_BAR_COLOR,
         NAVIGATION_BAR_TRANSLUCENT,
         NAVIGATION_BAR_HIDDEN,
+    }
+
+    enum class HeaderType(
+        val isCollapsing: Boolean,
+    ) {
+        Small(false),
+        Medium(true),
+        Large(true),
     }
 }

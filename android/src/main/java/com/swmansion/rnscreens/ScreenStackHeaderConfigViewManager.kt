@@ -81,6 +81,16 @@ class ScreenStackHeaderConfigViewManager :
         config.setTitle(title)
     }
 
+    @ReactProp(name = "titleAlign")
+    override fun setTitleAlign(
+        config: ScreenStackHeaderConfig,
+        titleAlign: String?,
+    ) {
+        // For now we only support 'left' and 'center' values, so it's sufficient to just check
+        // if `titleAlign` equals `center`.
+        config.setTitleCentered(titleAlign.equals("center"))
+    }
+
     @ReactProp(name = "titleFontFamily")
     override fun setTitleFontFamily(
         config: ScreenStackHeaderConfig,

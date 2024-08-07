@@ -92,6 +92,7 @@ export { default as Test1802 } from './Test1802';
 export { default as Test1829 } from './Test1829';
 export { default as Test1844 } from './Test1844';
 export { default as Test1864 } from './Test1864';
+export { default as Test1874 } from './Test1874';
 export { default as Test1970 } from './Test1970';
 export { default as Test1981 } from './Test1981';
 export { default as Test2002 } from './Test2002';

@@ -43,4 +43,5 @@ public interface RNSScreenManagerInterface<T extends View> {
   void setNavigationBarTranslucent(T view, boolean value);
   void setNavigationBarHidden(T view, boolean value);
   void setNativeBackButtonDismissalEnabled(T view, boolean value);
+  void setHeaderType(T view, @Nullable String value);
 }

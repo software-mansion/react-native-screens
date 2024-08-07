@@ -108,6 +108,19 @@ open class ScreenViewManager :
             }
     }
 
+    @ReactProp(name = "headerType")
+    override fun setHeaderType(
+        view: Screen,
+        type: String?,
+    ) {
+        view.headerType =
+            when (type) {
+                "medium" -> Screen.HeaderType.Medium
+                "large" -> Screen.HeaderType.Large
+                else -> Screen.HeaderType.Small
+            }
+    }
+
     @ReactProp(name = "gestureEnabled", defaultBoolean = true)
     override fun setGestureEnabled(
         view: Screen,
