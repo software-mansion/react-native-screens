@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -10,16 +10,20 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ statusBarTranslucent: false }}>
         <Stack.Screen
           name="Screen"
           component={Screen}
           options={{
             headerRight: () => (
-              <Button
+              <Pressable
                 onPress={() => setCount(prev => prev + 1)}
-                title="Press (+)"
-              />
+                style={({ pressed }) => [
+                  styles.pressable,
+                  pressed && { backgroundColor: 'goldenrod' },
+                ]}>
+                <Text>Press (+)</Text>
+              </Pressable>
             ),
             title: count.toString(),
             headerTitleAlign: 'center',
@@ -35,7 +39,14 @@ function Screen() {
   return (
     <View style={styles.container}>
       <Text style={styles.count}>{count}</Text>
-      <Button onPress={() => setCount(prev => prev + 1)} title="Press (+)" />
+      <Pressable
+        onPress={() => setCount(prev => prev + 1)}
+        style={({ pressed }) => [
+          styles.pressable,
+          pressed && { backgroundColor: 'goldenrod' },
+        ]}>
+        <Text>Press (+)</Text>
+      </Pressable>
     </View>
   );
 }
@@ -44,6 +55,7 @@ const styles = StyleSheet.create({
   pressable: {
     paddingVertical: 5,
     paddingHorizontal: 10,
+    backgroundColor: 'red',
   },
   count: {
     fontSize: 48,
