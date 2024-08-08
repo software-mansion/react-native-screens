@@ -8,7 +8,7 @@ export default function getDefaultHeaderHeight(
   layout: Layout,
   statusBarHeight: number,
   stackPresentation: StackPresentationTypes,
-  isLargeHeader = false
+  isLargeHeader = false,
 ): number {
   // default header heights
   let headerHeight = Platform.OS === 'android' ? 56 : 64;

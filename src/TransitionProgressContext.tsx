@@ -8,5 +8,5 @@ type TransitionProgressContextBody = {
 };
 
 export default React.createContext<TransitionProgressContextBody | undefined>(
-  undefined
+  undefined,
 );

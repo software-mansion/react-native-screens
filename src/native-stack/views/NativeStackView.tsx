@@ -46,7 +46,7 @@ let Container = ScreenContentWrapper;
 
 if (__DEV__) {
   const DebugContainer = (
-    props: ViewProps & { stackPresentation: StackPresentationTypes }
+    props: ViewProps & { stackPresentation: StackPresentationTypes },
   ) => {
     const { stackPresentation, ...rest } = props;
     if (
@@ -93,7 +93,7 @@ const MaybeNestedStack = ({
       !isAndroid &&
         stackPresentation !== 'push' &&
         headerShownPreviousRef.current !== headerShown,
-      `Dynamically changing 'headerShown' in modals will result in remounting the screen and losing all local state. See options for the screen '${route.name}'.`
+      `Dynamically changing 'headerShown' in modals will result in remounting the screen and losing all local state. See options for the screen '${route.name}'.`,
     );
 
     headerShownPreviousRef.current = headerShown;
@@ -129,7 +129,7 @@ const MaybeNestedStack = ({
   const statusBarHeight = getStatusBarHeight(
     topInset,
     dimensions,
-    isStatusBarTranslucent
+    isStatusBarTranslucent,
   );
 
   const hasLargeHeader = options.headerLargeTitle ?? false;
@@ -138,7 +138,7 @@ const MaybeNestedStack = ({
     dimensions,
     statusBarHeight,
     stackPresentation,
-    hasLargeHeader
+    hasLargeHeader,
   );
 
   if (isHeaderInModal) {
@@ -162,7 +162,7 @@ const MaybeNestedStack = ({
 
 type NavigationRoute<
   ParamList extends ParamListBase,
-  RouteName extends keyof ParamList
+  RouteName extends keyof ParamList,
 > = Route<Extract<RouteName, string>, ParamList[RouteName]> & {
   state?: NavigationState | PartialState<NavigationState>;
 };
@@ -185,6 +185,7 @@ const RouteView = ({
   const { options, render: renderScene } = descriptors[route.key];
 
   const {
+    fullScreenSwipeShadowEnabled = false,
     gestureEnabled,
     headerShown,
     hideKeyboardOnSwipe,
@@ -260,7 +261,7 @@ const RouteView = ({
   const statusBarHeight = getStatusBarHeight(
     topInset,
     dimensions,
-    isStatusBarTranslucent
+    isStatusBarTranslucent,
   );
 
   const hasLargeHeader = options.headerLargeTitle ?? false;
@@ -269,7 +270,7 @@ const RouteView = ({
     dimensions,
     statusBarHeight,
     stackPresentation,
-    hasLargeHeader
+    hasLargeHeader,
   );
 
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
@@ -287,7 +288,7 @@ const RouteView = ({
   const animatedHeaderHeight = React.useRef(
     new Animated.Value(staticHeaderHeight, {
       useNativeDriver: true,
-    })
+    }),
   ).current;
 
   const Screen = React.useContext(ScreenContext);
@@ -320,6 +321,7 @@ const RouteView = ({
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
+      fullScreenSwipeShadowEnabled={fullScreenSwipeShadowEnabled}
       hideKeyboardOnSwipe={hideKeyboardOnSwipe}
       homeIndicatorHidden={homeIndicatorHidden}
       gestureEnabled={isAndroid ? false : gestureEnabled}
@@ -486,7 +488,7 @@ function NativeStackViewInner({
       goBackGesture !== undefined
     ) {
       console.warn(
-        'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.'
+        'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.',
       );
     }
   }, [ScreenGestureDetector.name, goBackGesture]);

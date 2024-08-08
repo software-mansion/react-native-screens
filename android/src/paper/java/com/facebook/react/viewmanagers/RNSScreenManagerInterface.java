@@ -24,6 +24,7 @@ public interface RNSScreenManagerInterface<T extends View> {
   void setSheetElevation(T view, int value);
   void setCustomAnimationOnSwipe(T view, boolean value);
   void setFullScreenSwipeEnabled(T view, boolean value);
+  void setFullScreenSwipeShadowEnabled(T view, boolean value);
   void setHomeIndicatorHidden(T view, boolean value);
   void setPreventNativeDismiss(T view, boolean value);
   void setGestureEnabled(T view, boolean value);

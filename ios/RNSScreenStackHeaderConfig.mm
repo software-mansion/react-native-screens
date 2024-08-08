@@ -383,13 +383,9 @@ namespace react = facebook::react;
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  // TODO: implement blurEffect on Fabric
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
   }
-#endif
 
   if (config.hideShadow) {
     appearance.shadowColor = nil;
@@ -589,6 +585,12 @@ namespace react = facebook::react;
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
 
+// appearance does not apply to the tvOS so we need to use lagacy customization
+#if TARGET_OS_TV
+    navctr.navigationBar.titleTextAttributes = appearance.titleTextAttributes;
+    navctr.navigationBar.backgroundColor = appearance.backgroundColor;
+#endif
+
     UINavigationBarAppearance *scrollEdgeAppearance =
         [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     if (config.largeTitleBackgroundColor != nil) {
@@ -622,6 +624,8 @@ namespace react = facebook::react;
   navitem.titleView = nil;
 
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
+    // This code should be kept in sync on Fabric with analogous switch statement in
+    // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
 #if !TARGET_OS_TV
@@ -749,8 +753,38 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  // For explanation of why we can make a snapshot here despite the fact that our children are already
+  // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
+  [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+  [self updateViewControllerIfNeeded];
+}
+
+- (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
+{
+  UINavigationItem *navitem = _screenView.controller.navigationItem;
+  UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
+
+  // This code should be kept in sync with analogous switch statement in
+  // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
+  switch (childComponentView.type) {
+    case RNSScreenStackHeaderSubviewTypeLeft:
+      navitem.leftBarButtonItem.customView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeCenter:
+    case RNSScreenStackHeaderSubviewTypeTitle:
+      navitem.titleView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeRight:
+      navitem.rightBarButtonItem.customView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeSearchBar:
+    case RNSScreenStackHeaderSubviewTypeBackButton:
+      break;
+    default:
+      RCTLogError(@"[RNScreens] Unhandled subview type: %ld", childComponentView.type);
+  }
 }
 
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
@@ -865,6 +899,10 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
   _color = RCTUIColorFromSharedColor(newScreenProps.color);
   _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
+
+  if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
+    _blurEffect = [RNSConvert UIBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
+  }
 
   [self updateViewControllerIfNeeded];
 

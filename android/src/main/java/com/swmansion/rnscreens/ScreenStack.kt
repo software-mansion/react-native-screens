@@ -136,14 +136,14 @@ class ScreenStack(
         Log.d(TAG, "-----")
 
         for (i in screenWrappers.indices.reversed()) {
-            val screen = getScreenFragmentWrapperAt(i)
-            if (!dismissedWrappers.contains(screen)) {
+            val screenWrapper = getScreenFragmentWrapperAt(i)
+            if (!dismissedWrappers.contains(screenWrapper)) {
                 if (newTop == null) {
-                    newTop = screen
+                    newTop = screenWrapper
                 } else {
-                    visibleBottom = screen
+                    visibleBottom = screenWrapper
                 }
-                if (!isTransparent(screen)) {
+                if (!screenWrapper.screen.isTransparent()) {
                     break
                 }
             }
@@ -334,7 +334,7 @@ class ScreenStack(
     private fun turnOffA11yUnderTransparentScreen(visibleBottom: ScreenFragmentWrapper?) {
         if (screenWrappers.size > 1 && visibleBottom != null) {
             topScreenWrapper?.let {
-                if (isTransparent(it)) {
+                if (it.screen.isTransparent()) {
                     val screenFragmentsBeneathTop = screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {
@@ -423,7 +423,9 @@ class ScreenStack(
         super.drawChild(op.canvas!!, op.child, op.drawingTime)
     }
 
-    private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeLast()
+    // Can't use `drawingOpPool.removeLast` here due to issues with static name resolution in Android SDK 35+.
+    // See: https://developer.android.com/about/versions/15/behavior-changes-15?hl=en#openjdk-api-changes
+    private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
 
     private inner class DrawingOp {
         var canvas: Canvas? = null
@@ -440,11 +442,6 @@ class ScreenStack(
 
     companion object {
         const val TAG = "ScreenStack"
-
-        private fun isTransparent(fragmentWrapper: ScreenFragmentWrapper): Boolean =
-            fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL ||
-                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL ||
-                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             // On Android sdk 33 and above the animation is different and requires draw reordering.

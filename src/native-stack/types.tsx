@@ -64,7 +64,7 @@ export type NativeStackNavigationEventMap = {
 
 export type NativeStackNavigationProp<
   ParamList extends ParamListBase,
-  RouteName extends keyof ParamList = string
+  RouteName extends keyof ParamList = string,
 > = NavigationProp<
   ParamList,
   RouteName,
@@ -76,7 +76,7 @@ export type NativeStackNavigationProp<
 
 export type NativeStackScreenProps<
   ParamList extends ParamListBase,
-  RouteName extends keyof ParamList = string
+  RouteName extends keyof ParamList = string,
 > = {
   navigation: NativeStackNavigationProp<ParamList, RouteName>;
   route: RouteProp<ParamList, RouteName>;
@@ -146,6 +146,16 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   fullScreenSwipeEnabled?: boolean;
+  /**
+   * Whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
+   * doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
+   * default iOS shadow. Defaults to `false`.
+   *
+   * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
+   *
+   * @platform ios
+   */
+  fullScreenSwipeShadowEnabled?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
@@ -548,11 +558,11 @@ export interface MeasuredDimensions {
 export type AnimatedScreenTransition = {
   topScreenStyle: (
     event: PanGestureHandlerEventPayload,
-    screenSize: MeasuredDimensions
+    screenSize: MeasuredDimensions,
   ) => Record<string, unknown>;
   belowTopScreenStyle: (
     event: PanGestureHandlerEventPayload,
-    screenSize: MeasuredDimensions
+    screenSize: MeasuredDimensions,
   ) => Record<string, unknown>;
 };
 

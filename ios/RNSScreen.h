@@ -40,7 +40,7 @@ namespace react = facebook::react;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)setViewToSnapshot:(UIView *)snapshot;
+- (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
 
@@ -56,6 +56,7 @@ namespace react = facebook::react;
 #endif
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
+@property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;
 @property (nonatomic) BOOL hasStatusBarStyleSet;

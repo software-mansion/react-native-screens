@@ -42,6 +42,8 @@ namespace react = facebook::react;
 
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
 
++ (UIBlurEffectStyle)UIBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
+
 @end
 
 #endif // RCT_NEW_ARCH_ENABLED

@@ -42,7 +42,7 @@ const MainScreen = ({
           }`,
           backgroundColor: 'orange',
         });
-      }
+      },
     );
 
     return unsubscribe;
@@ -129,7 +129,7 @@ const ChatsScreen = ({
           }`,
           backgroundColor: 'orange',
         });
-      }
+      },
     );
 
     return unsubscribe;
@@ -196,7 +196,7 @@ const PrivacyScreen = ({
           }`,
           backgroundColor: 'orange',
         });
-      }
+      },
     );
 
     return unsubscribe;
@@ -256,7 +256,7 @@ const OptionsScreen = ({
           }`,
           backgroundColor: 'orange',
         });
-      }
+      },
     );
 
     return unsubscribe;

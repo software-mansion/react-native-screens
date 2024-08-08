@@ -88,7 +88,7 @@ open class ScreenViewManager :
     ): Any? {
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             // fabricViewStateManager should never be null in Fabric. The null check is only for Paper's empty impl.
-            view.fabricViewStateManager?.setStateWrapper(stateWrapper)
+            view.setStateWrapper(stateWrapper)
         }
         return super.updateState(view, props, stateWrapper)
     }
@@ -260,6 +260,11 @@ open class ScreenViewManager :
 
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
+
+    override fun setFullScreenSwipeShadowEnabled(
         view: Screen?,
         value: Boolean,
     ) = Unit

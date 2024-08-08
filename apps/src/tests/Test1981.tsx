@@ -1,6 +1,13 @@
 import React from 'react';
-import { NavigationContainer, NavigationContext, ParamListBase } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  NavigationContainer,
+  NavigationContext,
+  ParamListBase,
+} from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import { View, StyleSheet, Button, Pressable, Text } from 'react-native';
 
 type NavProp = {

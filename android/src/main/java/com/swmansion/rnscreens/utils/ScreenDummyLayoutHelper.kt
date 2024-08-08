@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
@@ -19,7 +20,7 @@ import java.lang.ref.WeakReference
  */
 internal class ScreenDummyLayoutHelper(
     reactContext: ReactApplicationContext,
-) {
+) : LifecycleEventListener {
     // The state required to compute header dimensions. We want this on instance rather than on class
     // for context access & being tied to instance lifetime.
     private lateinit var coordinatorLayout: CoordinatorLayout
@@ -39,7 +40,6 @@ internal class ScreenDummyLayoutHelper(
         WeakReference(reactContext)
 
     init {
-
         // We load the library so that we are able to communicate with our C++ code (descriptor & shadow nodes).
         // Basically we leak this object to C++, as its lifecycle should span throughout whole application
         // lifecycle anyway.
@@ -50,16 +50,25 @@ internal class ScreenDummyLayoutHelper(
         }
 
         weakInstance = WeakReference(this)
-        ensureDummyLayoutWithHeader(reactContext)
+
+        if (!(reactContext.hasCurrentActivity() && maybeInitDummyLayoutWithHeader(reactContext))) {
+            reactContext.addLifecycleEventListener(this)
+        }
     }
 
     /**
      * Initializes dummy view hierarchy with CoordinatorLayout, AppBarLayout and dummy View.
      * We utilize this to compute header height (app bar layout height) from C++ layer when its needed.
+     *
+     * @return boolean whether the layout was initialised or not
      */
-    private fun ensureDummyLayoutWithHeader(reactContext: ReactApplicationContext) {
-        if (::coordinatorLayout.isInitialized) {
-            return
+    private fun maybeInitDummyLayoutWithHeader(reactContext: ReactApplicationContext): Boolean {
+        if (isLayoutInitialized) {
+            return true
+        }
+
+        if (!reactContext.hasCurrentActivity()) {
+            return false
         }
 
         // We need to use activity here, as react context does not have theme attributes required by
@@ -108,6 +117,9 @@ internal class ScreenDummyLayoutHelper(
             addView(appBarLayout)
             addView(dummyContentView)
         }
+
+        isLayoutInitialized = true
+        return true
     }
 
     /**
@@ -121,12 +133,18 @@ internal class ScreenDummyLayoutHelper(
         fontSize: Int,
         isTitleEmpty: Boolean,
     ): Float {
-        if (!::coordinatorLayout.isInitialized) {
-            Log.e(
-                TAG,
-                "[RNScreens] Attempt to access dummy view hierarchy before it is initialized",
-            )
-            return 0.0f
+        if (!isLayoutInitialized) {
+            val reactContext =
+                requireReactContext { "[RNScreens] Context was null-ed before dummy layout was initialized" }
+            if (!maybeInitDummyLayoutWithHeader(reactContext)) {
+                // This theoretically might happen at Fabric + "bridgefull" combination, due to race condition where `reactContext.currentActivity`
+                // is still null at this execution point. We don't wanna crash in such case, thus returning zeroed height.
+                Log.e(
+                    TAG,
+                    "[RNScreens] Failed to late-init layout while computing header height. This is a race-condition-bug in react-native-screens, please file an issue at https://github.com/software-mansion/react-native-screens/issues"
+                )
+                return 0.0f
+            }
         }
 
         if (cache.hasKey(CacheKey(fontSize, isTitleEmpty))) {
@@ -168,10 +186,10 @@ internal class ScreenDummyLayoutHelper(
         return headerHeight
     }
 
-    private fun requireReactContext(): ReactApplicationContext =
-        requireNotNull(reactContextRef.get()) {
-            "[RNScreens] Attempt to require missing react context"
-        }
+    private fun requireReactContext(lazyMessage: (() -> Any)? = null): ReactApplicationContext =
+        requireNotNull(
+            reactContextRef.get(),
+            lazyMessage ?: { "[RNScreens] Attempt to require missing react context" })
 
     private fun requireActivity(): Activity =
         requireNotNull(requireReactContext().currentActivity) {
@@ -195,6 +213,19 @@ internal class ScreenDummyLayoutHelper(
         @JvmStatic
         fun getInstance(): ScreenDummyLayoutHelper? = weakInstance.get()
     }
+
+    private var isLayoutInitialized = false
+
+    override fun onHostResume() {
+        // This is the earliest we have guarantee that the context has a reference to an activity.
+        val reactContext = requireReactContext { "[RNScreens] ReactContext missing in onHostResume! This should not happen." }
+        check(maybeInitDummyLayoutWithHeader(reactContext)) { "[RNScreens] Failed to initialise dummy layout in onHostResume. This is not expected."}
+        reactContext.removeLifecycleEventListener(this)
+    }
+
+    override fun onHostPause() = Unit
+
+    override fun onHostDestroy() = Unit
 }
 
 private data class CacheKey(

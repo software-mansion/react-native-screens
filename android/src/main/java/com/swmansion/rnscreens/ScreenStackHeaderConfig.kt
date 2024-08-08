@@ -304,7 +304,7 @@ class ScreenStackHeaderConfig(
     }
 
     private fun maybeUpdate() {
-        if (parent != null && !isDestroyed) {
+        if (parent != null && !isDestroyed && screen?.isBeingRemoved == false) {
             onUpdate()
         }
     }
