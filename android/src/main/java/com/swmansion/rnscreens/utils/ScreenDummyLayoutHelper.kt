@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.facebook.jni.annotations.DoNotStrip
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.PixelUtil
@@ -129,6 +130,7 @@ internal class ScreenDummyLayoutHelper(
      * @param fontSize font size value as passed from JS
      * @return header height in dp as consumed by Yoga
      */
+    @DoNotStrip
     private fun computeDummyLayout(
         fontSize: Int,
         isTitleEmpty: Boolean,
@@ -210,6 +212,7 @@ internal class ScreenDummyLayoutHelper(
         // dummy view hierarchy.
         private var weakInstance = WeakReference<ScreenDummyLayoutHelper>(null)
 
+        @DoNotStrip
         @JvmStatic
         fun getInstance(): ScreenDummyLayoutHelper? = weakInstance.get()
     }
