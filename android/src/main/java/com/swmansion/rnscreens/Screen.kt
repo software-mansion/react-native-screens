@@ -193,7 +193,15 @@ class Screen(
         )
     }
 
-    fun isTransparent(): Boolean = stackPresentation === StackPresentation.TRANSPARENT_MODAL
+    fun isTransparent(): Boolean =
+        when (stackPresentation) {
+            StackPresentation.TRANSPARENT_MODAL,
+            StackPresentation.FORM_SHEET,
+            StackPresentation.MODAL,
+            -> true
+
+            else -> false
+        }
 
     private fun hasWebView(viewGroup: ViewGroup): Boolean {
         for (i in 0 until viewGroup.childCount) {
@@ -422,7 +430,14 @@ class Screen(
         isStable: Boolean,
     ) {
         val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
-        reactEventDispatcher?.dispatchEvent(SheetDetentChangedEvent(surfaceId, id, detentIndex, isStable))
+        reactEventDispatcher?.dispatchEvent(
+            SheetDetentChangedEvent(
+                surfaceId,
+                id,
+                detentIndex,
+                isStable,
+            ),
+        )
     }
 
     enum class StackPresentation {
