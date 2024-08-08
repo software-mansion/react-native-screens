@@ -19,6 +19,7 @@ import java.lang.ref.WeakReference
  * See https://github.com/software-mansion/react-native-screens/pull/2169
  * for more detailed description of the issue this code solves.
  */
+@DoNotStrip
 internal class ScreenDummyLayoutHelper(
     reactContext: ReactApplicationContext,
 ) : LifecycleEventListener {
