@@ -52,7 +52,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
             hasBeenRegistered = true
         } else if (getObservedView() != view) {
             throw IllegalStateException(
-                "Attempt to register InsetsObserverProxy on $view while it has been already registered on ${getObservedView()}",
+                "[RNScreens] Attempt to register InsetsObserverProxy on $view while it has been already registered on ${getObservedView()}",
             )
         }
     }

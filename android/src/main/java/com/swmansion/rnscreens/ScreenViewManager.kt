@@ -328,7 +328,7 @@ open class ScreenViewManager :
         view: Screen,
         value: Int,
     ) {
-        check(value in -1..2) { "sheetLargestUndimmedDetent on Android supports values between -1 and 2" }
+        check(value in -1..2) { "[RNScreens] sheetLargestUndimmedDetent on Android supports values between -1 and 2" }
         view.sheetLargestUndimmedDetentIndex = value
     }
 

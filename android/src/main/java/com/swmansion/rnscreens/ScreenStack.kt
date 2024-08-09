@@ -46,11 +46,10 @@ class ScreenStack(
     val rootScreen: Screen
         get() =
             screenWrappers.firstOrNull { !dismissedWrappers.contains(it) }?.screen
-                ?: throw IllegalStateException("Stack has no root screen set")
+                ?: throw IllegalStateException("[RNScreens] Stack has no root screen set")
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
-            Screen.StackPresentation.MODAL -> ScreenModalFragment(screen)
             Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
             else -> ScreenStackFragment(screen)
         }
@@ -100,7 +99,7 @@ class ScreenStack(
         // handle the case of newTop being NULL, which happens in several places below
         var newTop: ScreenFragmentWrapper? = null // newTop is nullable, see the above comment ^
         var visibleBottom: ScreenFragmentWrapper? =
-            null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+            null // this is only set if newTop has one of transparent presentation modes
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
 
         for (i in screenWrappers.indices.reversed()) {

@@ -196,7 +196,6 @@ class Screen(
         when (stackPresentation) {
             StackPresentation.TRANSPARENT_MODAL,
             StackPresentation.FORM_SHEET,
-            StackPresentation.MODAL,
             -> true
 
             else -> false
