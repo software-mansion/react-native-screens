@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.utils
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -48,7 +49,7 @@ internal class ScreenDummyLayoutHelper(
         try {
             System.loadLibrary(LIBRARY_NAME)
         } catch (e: UnsatisfiedLinkError) {
-            Log.w(TAG, "Failed to load $LIBRARY_NAME")
+            Log.w(TAG, "[RNScreens] Failed to load $LIBRARY_NAME library.")
         }
 
         weakInstance = WeakReference(this)
@@ -59,8 +60,12 @@ internal class ScreenDummyLayoutHelper(
     }
 
     /**
-     * Initializes dummy view hierarchy with CoordinatorLayout, AppBarLayout and dummy View.
+     * Tries to initialize dummy view hierarchy with CoordinatorLayout, AppBarLayout and dummy View.
      * We utilize this to compute header height (app bar layout height) from C++ layer when its needed.
+     *
+     * This method might fail in case there is activity attached to the react context.
+     *
+     * This method is called from various threads!
      *
      * @return boolean whether the layout was initialised or not
      */
@@ -69,6 +74,7 @@ internal class ScreenDummyLayoutHelper(
             return true
         }
 
+        // Possible data race here - activity is injected into context on UI thread.
         if (!reactContext.hasCurrentActivity()) {
             return false
         }
@@ -76,8 +82,25 @@ internal class ScreenDummyLayoutHelper(
         // We need to use activity here, as react context does not have theme attributes required by
         // AppBarLayout attached leading to crash.
         val contextWithTheme =
-            requireNotNull(reactContext.currentActivity) { "[RNScreens] Attempt to use context detached from activity" }
+            requireNotNull(reactContext.currentActivity) { "[RNScreens] Attempt to use context detached from activity. This could happen only due to race-condition." }
 
+        synchronized(this) {
+            // The layout could have been initialised when this thread waited for access to critical section.
+            if (isLayoutInitialized) {
+                return true
+            }
+            initDummyLayoutWithHeader(contextWithTheme)
+        }
+        return true
+    }
+
+    /**
+     * Initialises the dummy layout. This method is **not** thread-safe.
+     *
+     * @param contextWithTheme this function expects the context to have theme attributes required
+     * to initialize the AppBarLayout.
+     */
+    private fun initDummyLayoutWithHeader(contextWithTheme: Context) {
         coordinatorLayout = CoordinatorLayout(contextWithTheme)
 
         appBarLayout =
@@ -121,7 +144,6 @@ internal class ScreenDummyLayoutHelper(
         }
 
         isLayoutInitialized = true
-        return true
     }
 
     /**
@@ -144,7 +166,7 @@ internal class ScreenDummyLayoutHelper(
                 // is still null at this execution point. We don't wanna crash in such case, thus returning zeroed height.
                 Log.e(
                     TAG,
-                    "[RNScreens] Failed to late-init layout while computing header height. This is a race-condition-bug in react-native-screens, please file an issue at https://github.com/software-mansion/react-native-screens/issues"
+                    "[RNScreens] Failed to late-init layout while computing header height. This is most likely a race-condition-bug in react-native-screens, please file an issue at https://github.com/software-mansion/react-native-screens/issues"
                 )
                 return 0.0f
             }
@@ -218,18 +240,29 @@ internal class ScreenDummyLayoutHelper(
         fun getInstance(): ScreenDummyLayoutHelper? = weakInstance.get()
     }
 
+    // This value is fetched / stored from UI and background thread. Volatile here ensures
+    // that updates are visible to the other thread.
+    @Volatile
     private var isLayoutInitialized = false
 
     override fun onHostResume() {
         // This is the earliest we have guarantee that the context has a reference to an activity.
         val reactContext = requireReactContext { "[RNScreens] ReactContext missing in onHostResume! This should not happen." }
-        check(maybeInitDummyLayoutWithHeader(reactContext)) { "[RNScreens] Failed to initialise dummy layout in onHostResume. This is not expected."}
-        reactContext.removeLifecycleEventListener(this)
+
+        // There are some exotic edge cases where activity might not be present in context
+        // at this point, e.g. when reloading RN in development after an error was reported with redbox.
+        if (maybeInitDummyLayoutWithHeader(reactContext)) {
+            reactContext.removeLifecycleEventListener(this)
+        } else {
+            Log.w(TAG, "[RNScreens] Failed to initialise dummy layout in onHostResume.")
+        }
     }
 
     override fun onHostPause() = Unit
 
-    override fun onHostDestroy() = Unit
+    override fun onHostDestroy() {
+        reactContextRef.get()?.removeLifecycleEventListener(this)
+    }
 }
 
 private data class CacheKey(
