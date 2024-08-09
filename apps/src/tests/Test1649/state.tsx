@@ -14,11 +14,6 @@ export const sheetInitialOptions: SheetOptions = {
 }
 
 export const allowedDetentsAtom = jotai.atom<AllowedDetentsType>(sheetInitialOptions.sheetAllowedDetents);
-// const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([0.6]);
-// const allowedDetentsAtom =
-//   jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
-//     'fitToContents',
-//   );
 export const largestUndimmedDetentAtom = jotai.atom<number>(sheetInitialOptions.sheetLargestUndimmedDetent);
 export const grabberVisibleAtom = jotai.atom(sheetInitialOptions.sheetGrabberVisible);
 export const cornerRadiusAtom = jotai.atom(sheetInitialOptions.sheetCornerRadius);

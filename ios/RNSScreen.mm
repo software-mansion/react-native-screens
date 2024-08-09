@@ -351,11 +351,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   return _reactSuperview;
 }
 
-- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex
-{
-  [super insertReactSubview:subview atIndex:atIndex];
-}
-
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
 - (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr
 {
@@ -861,7 +856,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
  * guarantee that values of all related props had been updated earlier. It should be invoked from `didSetProps`.
- * On Fabric we have controll over prop-setting process but it might be reasonable to run it from `finalizeUpdates`.
+ * On Fabric we have control over prop-setting process but it might be reasonable to run it from `finalizeUpdates`.
  */
 - (void)updateFormSheetPresentationStyle
 {
@@ -924,12 +919,12 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
                                        ]
                                   animate:YES];
         } else {
-          RCTLogError(@"The values in sheetAllowedDetents array must be sorted");
+          RCTLogError(@"[RNScreens] The values in sheetAllowedDetents array must be sorted");
         }
       } else {
         float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
         if (firstDetentFraction == SHEET_FIT_TO_CONTENTS) {
-          RCTLogError(@"Unsupported on iOS versions below 16");
+          RCTLogError(@"[RNScreens] Unsupported on iOS versions below 16");
         } else if (firstDetentFraction < 1.0) {
           [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
           [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
@@ -1225,7 +1220,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super reactSetFrame:frame];
   }
-  //  [super reactSetFrame:frame];
   // when screen is mounted under RNSNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
   // the controller. In that case we ignore react layout system from managing
