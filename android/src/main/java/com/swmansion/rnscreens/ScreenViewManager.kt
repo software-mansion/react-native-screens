@@ -210,6 +210,14 @@ open class ScreenViewManager :
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
+    @ReactProp(name = "hiddenFromStack")
+    override fun setHiddenFromStack(
+        view: Screen,
+        hiddenFromStack: Boolean,
+    ) {
+        view.hiddenFromStack = hiddenFromStack
+    }
+
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(
         view: Screen?,

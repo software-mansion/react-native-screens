@@ -70,6 +70,7 @@ namespace react = facebook::react;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
+@property (nonatomic) BOOL hiddenFromStack;
 @property (nonatomic) BOOL hideKeyboardOnSwipe;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic) BOOL preventNativeDismiss;

@@ -92,6 +92,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "swipeDirection":
         mViewManager.setSwipeDirection(view, (String) value);
         break;
+      case "hiddenFromStack":
+        mViewManager.setHiddenFromStack(view, value == null ? false : (boolean) value);
+        break;
       case "hideKeyboardOnSwipe":
         mViewManager.setHideKeyboardOnSwipe(view, value == null ? false : (boolean) value);
         break;
