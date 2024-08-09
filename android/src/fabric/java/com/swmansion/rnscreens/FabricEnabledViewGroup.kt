@@ -24,7 +24,7 @@ abstract class FabricEnabledViewGroup(
     protected fun updateScreenSizeFabric(
         width: Int,
         height: Int,
-        headerHeight: Double,
+        headerHeight: Int,
     ) {
         updateState(width, height, headerHeight)
     }
@@ -33,10 +33,11 @@ abstract class FabricEnabledViewGroup(
     fun updateState(
         width: Int,
         height: Int,
-        headerHeight: Double,
+        headerHeight: Int,
     ) {
         val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
         val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
+        val realHeaderHeight: Float = PixelUtil.toDIPFromPixel(headerHeight.toFloat())
 
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
@@ -54,7 +55,7 @@ abstract class FabricEnabledViewGroup(
                 putDouble("frameWidth", realWidth.toDouble())
                 putDouble("frameHeight", realHeight.toDouble())
                 putDouble("contentOffsetX", 0.0)
-                putDouble("contentOffsetY", headerHeight)
+                putDouble("contentOffsetY", realHeaderHeight.toDouble())
             }
         mStateWrapper?.updateState(map)
     }
