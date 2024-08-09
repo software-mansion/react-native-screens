@@ -10,7 +10,7 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ statusBarTranslucent: false }}>
         <Stack.Screen
           name="Screen"
           component={Screen}
