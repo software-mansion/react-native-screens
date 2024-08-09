@@ -46,7 +46,9 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 @interface RNSScreenView () <
     UIAdaptivePresentationControllerDelegate,
     RNSScreenContentWrapperDelegate,
+#if !TARGET_OS_TV
     UISheetPresentationControllerDelegate,
+#endif
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTRNSScreenViewProtocol,
     CAAnimationDelegate>
@@ -360,7 +362,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
   _didSetSheetAllowedDetentsOnController = YES;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+#if !TARGET_OS_TV && !TARGET_OS_VISION && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
   if (@available(iOS 16.0, *)) {
     UISheetPresentationController *sheetController = _controller.sheetPresentationController;
@@ -374,7 +376,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
     }
   }
-#endif // Check for iOS >= 16
+#endif // Check for iOS >= 16 && !TARGET_OS_TV
 }
 
 - (void)addSubview:(UIView *)view
@@ -736,6 +738,8 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+
 - (void)setPropertyForSheet:(UISheetPresentationController *)sheet
                   withBlock:(void (^)(void))block
                     animate:(BOOL)animate API_AVAILABLE(ios(15.0))
@@ -810,8 +814,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
                       animate:animate];
   }
 }
-
-#if !TARGET_OS_TV && !TARGET_OS_VISION
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
@@ -1025,7 +1027,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
 #endif // Check for iOS >= 16
 
-#endif // !TARGET_OS_TV
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
