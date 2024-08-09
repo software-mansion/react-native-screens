@@ -1,20 +1,33 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-// import { createStackNavigator } from '@react-navigation/stack';
 import { View, Text, Button, StyleSheet, Pressable } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// const Stack = createStackNavigator();
 const Stack = createNativeStackNavigator();
 
 function App() {
+  const [count, setCount] = React.useState(0);
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator>
         <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: 'Home' }}
+          name="Screen"
+          component={Screen}
+          options={{
+            headerRight: () => (
+              <Pressable
+                onPress={() => setCount(prev => prev + 1)}
+                style={({ pressed }) => [
+                  styles.pressable,
+                  pressed && { backgroundColor: 'goldenrod' },
+                ]}>
+                <Text>Press (+)</Text>
+              </Pressable>
+            ),
+            title: count.toString(),
+            headerTitleAlign: 'center',
+          }}
         />
         <Stack.Screen
           name="Details"
@@ -23,21 +36,20 @@ function App() {
             title: 'Details',
             headerLeft: () => (
               <Button
-                onPress={() => navigation.goBack()}
+                onPress={navigation.goBack}
                 title="Back"
                 color="#00cc00"
               />
             ),
             headerRight: () => (
-              <Pressable onPress={() => { console.log("doesnt work"); navigation.goBack() }}>
+              <Pressable
+                onPress={() => {
+                  console.log('doesnt work');
+                  navigation.goBack();
+                }}>
                 <Text>Doesnt work</Text>
               </Pressable>
             ),
-            //headerMode: "screen",
-            headerBackVisible: false,
-            // headerLeft: () => (
-            //   <Pressable onPressIn={() => { console.log("works"); navigation.goBack() }}><Text>works</Text></Pressable>
-            // )
           })}
         />
       </Stack.Navigator>
@@ -45,69 +57,64 @@ function App() {
   );
 }
 
-function HomeScreen({ navigation }) {
+function Screen({ navigation }: any) {
   return (
     <View style={styles.container}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Details"
+      <Pressable
         onPress={() => navigation.navigate('Details')}
-        // onPress={() => {}}
-      />
+        style={({ pressed }) => [
+          styles.pressable,
+          pressed && { backgroundColor: 'goldenrod' },
+        ]}>
+        <Text>Go to Details</Text>
+      </Pressable>
     </View>
   );
 }
 
-function useCounter(initialValue: number) {
-  const [value, setValue] = React.useState(initialValue);
-
-  const incrementer = React.useCallback(() => {
-    setValue(old => old + 1);
-  }, [setValue]);
-
-  return [value, incrementer];
-}
-
-function DetailsScreen({ navigation }) {
+function DetailsScreen() {
   let counter = React.useRef(0);
-  const [color, setColor] = React.useState('lightblue');
 
   return (
-    <View style={{ ...styles.container, backgroundColor: 'goldenrod' }}>
-      <View>
-        <Pressable
-          onPressIn={() => {
-            counter.current += 1;
-            setColor('lightgreen');
-            console.log(`[${counter.current}] Details: onPressIn`);
-          }}
-          onPress={() => {
-            console.log(`[${counter.current}] Details: onPress`);
-            // navigation.goBack();
-          }}
-          onPressOut={() => {
-            setColor('lightblue');
-            console.log(`[${counter.current}] Details: onPressOut`);
-          }}
-        >
-          <View style={{ backgroundColor: color, width: 100, height: 30 }}>
-            <Text>Go back</Text>
-          </View>
-        </Pressable>
-      </View>
+    <View style={{ ...styles.container, backgroundColor: 'beige' }}>
+      <Pressable
+        onPressIn={() => {
+          counter.current += 1;
+          console.log(`[${counter.current}] Details: onPressIn`);
+        }}
+        onPress={() => {
+          console.log(`[${counter.current}] Details: onPress`);
+          // navigation.goBack();
+        }}
+        onPressOut={() => {
+          console.log(`[${counter.current}] Details: onPressOut`);
+        }}
+        style={({ pressed }) => [
+          styles.pressable,
+          pressed && { backgroundColor: 'goldenrod' },
+        ]}>
+        <Text>Go back</Text>
+      </Pressable>
     </View>
-  )
-};
-
-
+  );
+}
 
 const styles = StyleSheet.create({
+  pressable: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: 'red',
+  },
+  count: {
+    fontSize: 48,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 24,
   },
 });
 
 export default App;
-
