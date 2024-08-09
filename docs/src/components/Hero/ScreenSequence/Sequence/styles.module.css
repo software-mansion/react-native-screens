@@ -1,0 +1,22 @@
+.screenGroup {
+  transition: transform 0.3s ease;
+}
+.hovered {
+  transform: translateY(-2rem);
+  z-index: 1;
+}
+.neighbourHovered {
+  transform: translateY(-1rem);
+}
+.svg {
+  overflow: visible;
+}
+
+@media (max-width: 996px) {
+  .hovered {
+    transform: none;
+  }
+  .neighbourHovered {
+    transform: none;
+  }
+}

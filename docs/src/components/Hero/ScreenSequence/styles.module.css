@@ -1,0 +1,38 @@
+.screens {
+  position: absolute;
+  top: 2rem;
+  right: 0;
+  overflow: hidden;
+  min-height: 55%;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 2000px) {
+  .screens {
+    top: 4rem;
+    min-height: 70%;
+  }
+}
+
+@media (max-width: 1350px) {
+  .screens {
+    top: 9rem;
+    min-height: 60%;
+  }
+}
+
+@media (max-width: 996px) {
+  .screens {
+    top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .screens {
+    position: relative;
+    top: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+}

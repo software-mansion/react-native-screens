@@ -1,0 +1,137 @@
+.homepageButton {
+  height: 60px;
+  padding: 1em 1.5em 1em 1em;
+
+  font-weight: 500;
+  font-size: 20px;
+  text-wrap: nowrap;
+
+  color: var(--swm-off-white);
+  background-color: var(--swm-landing-button);
+
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+[data-theme='dark'] .homepageButton {
+  color: var(--swm-navy-dark-100);
+}
+
+a.homepageButtonLink:hover {
+  text-decoration: none !important;
+}
+
+.homepageButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .homepageButton,
+  .homepageButtonLink {
+    width: 100%;
+  }
+  .homepageButton {
+    font-size: 18px;
+  }
+}
+
+.homepageButton p {
+  margin: 0 0 2px 0;
+}
+
+.homepageButton svg {
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.arrow {
+  transition: left 0.3s;
+}
+
+.arrow {
+  left: 8px;
+}
+
+.homepageButton svg {
+  transition: stroke 0.3s;
+}
+
+.homepageButton:hover .arrow {
+  left: 16px;
+}
+
+/* Button - transparent styling */
+
+.buttonTransparentStyling {
+  background-color: transparent;
+  color: var(--swm-landing-button);
+}
+
+[data-theme='dark'] .buttonTransparentStyling {
+  color: var(--swm-off-white);
+}
+
+.buttonTransparentStyling svg {
+  stroke: var(--swm-landing-button);
+}
+
+[data-theme='dark'] .buttonTransparentStyling svg {
+  stroke: var(--swm-off-white);
+}
+
+.buttonTransparentStyling:hover {
+  background-color: var(--swm-landing-button);
+  color: var(--swm-off-white);
+}
+
+.buttonTransparentStyling:hover svg {
+  stroke: var(--swm-off-white);
+}
+
+/* Button - navy styling */
+
+.buttonNavyStyling {
+  background-color: var(--swm-landing-button);
+  color: var(--swm-off-white);
+}
+
+.buttonNavyStyling svg {
+  stroke: var(--swm-off-white);
+}
+[data-theme='dark'] .buttonNavyStyling svg {
+  stroke: var(--swm-navy-dark-100);
+}
+
+.buttonNavyStyling:hover {
+  background-color: transparent;
+  color: var(--swm-landing-button);
+}
+
+.buttonNavyStyling:hover svg {
+  stroke: var(--swm-landing-button);
+}
+
+.buttonNavyBorderStyling {
+  border: 1px solid var(--swm-landing-button);
+}
+
+.buttonTransparentBorderStyling {
+  border: 1px solid var(--swm-landing-button);
+}
+
+[data-theme='dark'] .buttonTransparentBorderStyling {
+  border: 1px solid var(--swm-off-white) !important;
+}
+
+.arrow {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 24px;
+  height: 24px;
+}
