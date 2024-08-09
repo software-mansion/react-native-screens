@@ -15,5 +15,8 @@ interface ScreenStackFragmentWrapper : ScreenFragmentWrapper {
     // Navigation
     fun canNavigateBack(): Boolean
 
-    fun dismiss()
+    /**
+     * Removes this fragment from the container it/it's screen belongs to.
+     */
+    fun dismissFromContainer()
 }

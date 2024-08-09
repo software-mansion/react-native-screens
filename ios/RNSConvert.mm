@@ -113,28 +113,13 @@
   }
 }
 
-+ (RNSScreenDetentType)RNSScreenDetentTypeFromAllowedDetents:(react::RNSScreenSheetAllowedDetents)allowedDetents
++ (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents
 {
-  switch (allowedDetents) {
-    case react::RNSScreenSheetAllowedDetents::All:
-      return RNSScreenDetentTypeAll;
-    case react::RNSScreenSheetAllowedDetents::Large:
-      return RNSScreenDetentTypeLarge;
-    case react::RNSScreenSheetAllowedDetents::Medium:
-      return RNSScreenDetentTypeMedium;
+  auto array = [NSMutableArray<NSNumber *> arrayWithCapacity:detents.size()];
+  for (const react::Float value : detents) {
+    [array addObject:[NSNumber numberWithFloat:value]];
   }
-}
-
-+ (RNSScreenDetentType)RNSScreenDetentTypeFromLargestUndimmedDetent:(react::RNSScreenSheetLargestUndimmedDetent)detent
-{
-  switch (detent) {
-    case react::RNSScreenSheetLargestUndimmedDetent::All:
-      return RNSScreenDetentTypeAll;
-    case react::RNSScreenSheetLargestUndimmedDetent::Large:
-      return RNSScreenDetentTypeLarge;
-    case react::RNSScreenSheetLargestUndimmedDetent::Medium:
-      return RNSScreenDetentTypeMedium;
-  }
+  return array;
 }
 
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
@@ -175,6 +160,15 @@
     case react::RNSSearchBarPlacement::Inline:
       return RNSSearchBarPlacementInline;
   }
+}
+
++ (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
+{
+  NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
+  for (CGFloat val : vector) {
+    [array addObject:[NSNumber numberWithFloat:val]];
+  }
+  return array;
 }
 
 + (UIBlurEffectStyle)UIBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect

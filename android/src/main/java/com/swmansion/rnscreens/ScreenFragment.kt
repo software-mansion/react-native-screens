@@ -15,6 +15,7 @@ import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.EventDispatcher
+import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
@@ -22,6 +23,7 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
+import com.swmansion.rnscreens.ext.recycle
 import kotlin.math.max
 import kotlin.math.min
 
@@ -92,7 +94,7 @@ open class ScreenFragment :
             )
         val wrapper =
             context?.let { ScreensFrameLayout(it) }?.apply {
-                addView(recycleView(screen))
+                addView(screen.recycle())
             }
         return wrapper
     }
@@ -288,7 +290,12 @@ open class ScreenFragment :
         // since we subscribe to parent's animation start/end and dispatch events in child from there
         // check for `isTransitioning` should be enough since the child's animation should take only
         // 20ms due to always being `StackAnimation.NONE` when nested stack being pushed
-        val parent = parentFragment
+        val parent =
+            if (parentFragment is DimmingFragment) {
+                parentFragment?.parentFragment
+            } else {
+                parentFragment
+            }
         if (parent == null || (parent is ScreenFragment && !parent.isTransitioning)) {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
@@ -312,7 +319,7 @@ open class ScreenFragment :
     override fun onDestroy() {
         super.onDestroy()
         val container = screen.container
-        if (container == null || !container.hasScreen(this)) {
+        if (container == null || !container.hasScreen(this.screen.fragmentWrapper)) {
             // we only send dismissed even when the screen has been removed from its container
             val screenContext = screen.context
             if (screenContext is ReactContext) {
@@ -326,22 +333,7 @@ open class ScreenFragment :
     }
 
     companion object {
-        @JvmStatic
-        protected fun recycleView(view: View): View {
-            // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
-            // view it needs to be detached from the view hierarchy to allow the fragment to attach it back.
-            val parent = view.parent
-            if (parent != null) {
-                (parent as ViewGroup).endViewTransition(view)
-                parent.removeView(view)
-            }
-
-            // view detached from fragment manager get their visibility changed to GONE after their state is
-            // dumped. Since we don't restore the state but want to reuse the view we need to change
-            // visibility back to VISIBLE in order for the fragment manager to animate in the view.
-            view.visibility = View.VISIBLE
-            return view
-        }
+        const val TAG = "ScreenFragment"
 
         fun getCoalescingKey(progress: Float): Short {
             /* We want value of 0 and 1 to be always dispatched so we base coalescing key on the progress:

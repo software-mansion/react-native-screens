@@ -15,6 +15,10 @@ interface ScreenFragmentWrapper :
 
     fun removeChildScreenContainer(container: ScreenContainer)
 
+    /**
+     * Container that this fragment belongs to calls it to notify the fragment,
+     * that the container has updated.
+     */
     fun onContainerUpdate()
 
     // Animation phase callbacks
