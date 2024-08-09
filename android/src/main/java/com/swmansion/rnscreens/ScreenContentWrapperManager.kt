@@ -21,5 +21,5 @@ class ScreenContentWrapperManager :
 
     override fun createViewInstance(reactContext: ThemedReactContext): ScreenContentWrapper = ScreenContentWrapper(reactContext)
 
-    override fun getDelegate(): ViewManagerDelegate<ScreenContentWrapper>? = delegate
+    override fun getDelegate(): ViewManagerDelegate<ScreenContentWrapper> = delegate
 }

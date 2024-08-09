@@ -153,9 +153,9 @@ class ScreenStackFragment :
             ) {
                 if (SheetUtils.isStateStable(newState)) {
                     lastStableState = newState
-                    screen.emitOnSheetDetentChanged(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), true)
+                    screen.notifySheetDetentChange(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), true)
                 } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    screen.emitOnSheetDetentChanged(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
+                    screen.notifySheetDetentChange(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
                 }
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     // If we are wrapped in DimmingFragment we want it to be removed alongside

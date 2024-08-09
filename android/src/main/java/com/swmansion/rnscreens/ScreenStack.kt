@@ -38,21 +38,6 @@ class ScreenStack(
         performUpdatesNow()
     }
 
-    /**
-     * Notify stack that a fragment it manages has been removed externally w/o the stack knowledge,
-     * and stack should simply forget about this wrapper.
-     *
-     * This happens e.g. on dialog fragment dismissal.
-     *
-     * TODO: Who should be responsible for firing events to JS?
-     *
-     * @param fragmentWrapper The dismissed fragment wrapper
-     */
-    fun onExternalFragmentRemoval(fragmentWrapper: ScreenStackFragmentWrapper) {
-        stack.remove(fragmentWrapper)
-        screenWrappers.remove(fragmentWrapper)
-    }
-
     override val topScreen: Screen?
         get() = topScreenWrapper?.screen
 
@@ -90,11 +75,6 @@ class ScreenStack(
         }
     }
 
-//    override fun onAttachedToWindow() {
-//        super.onAttachedToWindow()
-//        InsetsObserverProxy.registerOnView()
-//    }
-
     private fun dispatchOnFinishTransitioning() {
         val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper
@@ -123,17 +103,6 @@ class ScreenStack(
         var visibleBottom: ScreenFragmentWrapper? =
             null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
-
-        Log.d(TAG, "screenWrappers [${this.id}] -----")
-        screenWrappers.asSequence().withIndex().forEach {
-            Log.d(TAG, "${it.index} -> ${it.value} [${it.value.screen.id}]")
-        }
-        Log.d(TAG, "-----")
-        Log.d(TAG, "dismissedWrappers [${this.id}]")
-        dismissedWrappers.asSequence().withIndex().forEach {
-            Log.d(TAG, "${it.index} -> ${it.value} [${it.value.screen.id}]")
-        }
-        Log.d(TAG, "-----")
 
         for (i in screenWrappers.indices.reversed()) {
             val screenWrapper = getScreenFragmentWrapperAt(i)

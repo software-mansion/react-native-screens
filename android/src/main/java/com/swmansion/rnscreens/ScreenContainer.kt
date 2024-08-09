@@ -114,12 +114,6 @@ open class ScreenContainer(
         onScreenChanged()
     }
 
-    open fun removeScreen(wrapper: ScreenFragmentWrapper) {
-        wrapper.screen.container = null
-        screenWrappers.remove(wrapper)
-        onScreenChanged()
-    }
-
     open fun removeAllScreens() {
         for (screenFragment in screenWrappers) {
             screenFragment.screen.container = null

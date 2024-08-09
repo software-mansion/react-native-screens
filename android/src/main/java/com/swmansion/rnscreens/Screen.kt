@@ -62,7 +62,7 @@ class Screen(
 
     // We want to make sure here that at least one value is present in this array all the time.
     // TODO: Model this with custom data structure to guarantee that this invariant is not violated.
-    var sheetDetents = ArrayList<Double>().apply { add(1.0) }
+    var sheetDetents = mutableListOf(1.0)
     var sheetLargestUndimmedDetentIndex: Int = -1
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesOnTouchOutside = true
@@ -104,7 +104,6 @@ class Screen(
         right: Int,
         bottom: Int,
     ) {
-        val width = right - left
         val height = bottom - top
 
         if (sheetDetents.count() == 1 && sheetDetents.first() == SHEET_FIT_TO_CONTENTS) {
@@ -425,7 +424,7 @@ class Screen(
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
-    internal fun emitOnSheetDetentChanged(
+    internal fun notifySheetDetentChange(
         detentIndex: Int,
         isStable: Boolean,
     ) {

@@ -127,10 +127,8 @@ class ScreenModalFragment :
 
         var parent: ViewParent? = screen.container
         while (parent != null) {
-            if (parent is Screen) {
-                if (parent.context is ReactContext) {
-                    return parent.context as ReactContext
-                }
+            if (parent is Screen && parent.context is ReactContext) {
+                return parent.context as ReactContext
             }
             parent = parent.parent
         }
