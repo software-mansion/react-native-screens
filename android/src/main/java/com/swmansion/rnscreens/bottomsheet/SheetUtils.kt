@@ -43,7 +43,7 @@ object SheetUtils {
                 when (index) {
                     -1 -> STATE_HIDDEN
                     0 -> STATE_EXPANDED
-                    else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+                    else -> throw IllegalArgumentException("[RNScreens] Invalid detentCount/index combination $detentCount / $index")
                 }
 
             2 ->
@@ -51,7 +51,7 @@ object SheetUtils {
                     -1 -> STATE_HIDDEN
                     0 -> STATE_COLLAPSED
                     1 -> STATE_EXPANDED
-                    else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+                    else -> throw IllegalArgumentException("[RNScreens] Invalid detentCount/index combination $detentCount / $index")
                 }
 
             3 ->
@@ -60,10 +60,10 @@ object SheetUtils {
                     0 -> STATE_COLLAPSED
                     1 -> STATE_HALF_EXPANDED
                     2 -> STATE_EXPANDED
-                    else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+                    else -> throw IllegalArgumentException("[RNScreens] Invalid detentCount/index combination $detentCount / $index")
                 }
 
-            else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+            else -> throw IllegalArgumentException("[RNScreens] Invalid detentCount/index combination $detentCount / $index")
         }
 
     /**
@@ -83,7 +83,7 @@ object SheetUtils {
                 when (state) {
                     STATE_HIDDEN -> -1
                     STATE_EXPANDED -> 0
-                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                    else -> throw IllegalArgumentException("[RNScreens] Invalid state $state for detentCount $detentCount")
                 }
 
             2 ->
@@ -91,7 +91,7 @@ object SheetUtils {
                     STATE_HIDDEN -> -1
                     STATE_COLLAPSED -> 0
                     STATE_EXPANDED -> 1
-                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                    else -> throw IllegalArgumentException("[RNScreens] Invalid state $state for detentCount $detentCount")
                 }
 
             3 ->
@@ -100,10 +100,10 @@ object SheetUtils {
                     STATE_COLLAPSED -> 0
                     STATE_HALF_EXPANDED -> 1
                     STATE_EXPANDED -> 2
-                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                    else -> throw IllegalArgumentException("[RNScreens] Invalid state $state for detentCount $detentCount")
                 }
 
-            else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+            else -> throw IllegalArgumentException("[RNScreens] Invalid state $state for detentCount $detentCount")
         }
 
     fun isStateLessEqualThan(

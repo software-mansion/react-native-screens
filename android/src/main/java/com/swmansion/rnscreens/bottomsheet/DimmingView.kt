@@ -10,6 +10,12 @@ import com.facebook.react.uimanager.ReactCompoundViewGroup
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.swmansion.rnscreens.ext.equalWithRespectToEps
 
+/**
+ * Serves as dimming view that can be used as background for some view that not fully fills
+ * the viewport.
+ *
+ * This dimming view has one more additional feature: it blocks gestures if its alpha > 0.
+ */
 @SuppressLint("ViewConstructor") // Only we instantiate this view
 class DimmingView(
     context: Context,
@@ -44,14 +50,15 @@ class DimmingView(
     override fun reactTagForTouch(
         x: Float,
         y: Float,
-    ): Int = throw IllegalStateException("$TAG should never be asked for the view tag")
+    ): Int = throw IllegalStateException("[RNScreens] $TAG should never be asked for the view tag!")
 
     override fun interceptsTouchEvent(
         x: Float,
         y: Float,
     ) = blockGestures
 
-    override fun getPointerEvents(): PointerEvents = if (blockGestures) PointerEvents.AUTO else PointerEvents.NONE
+    override fun getPointerEvents(): PointerEvents =
+        if (blockGestures) PointerEvents.AUTO else PointerEvents.NONE
 
     companion object {
         const val TAG = "DimmingView"

@@ -53,11 +53,9 @@ class DimmingFragment(
     private lateinit var containerView: GestureTransparentViewGroup
 
     private val maxAlpha: Float = 0.15F
-    private val reactContext: ReactContext = screen.reactContext
 
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
-    private var keyboardTopOffset: Float = 0F
 
     private var dimmingViewCallback: BottomSheetCallback? = null
 
@@ -80,7 +78,8 @@ class DimmingFragment(
         val maxAlpha: Float,
     ) : BottomSheetCallback() {
         // largest *slide offset* that is yet undimmed
-        private var largestUndimmedOffset: Float = computeOffsetFromDetentIndex(screen.sheetLargestUndimmedDetentIndex)
+        private var largestUndimmedOffset: Float =
+            computeOffsetFromDetentIndex(screen.sheetLargestUndimmedDetentIndex)
 
         // first *slide offset* that should be fully dimmed
         private var firstDimmedOffset: Float =
@@ -106,11 +105,17 @@ class DimmingFragment(
             newState: Int,
         ) {
             if (newState == BottomSheetBehavior.STATE_DRAGGING || newState == BottomSheetBehavior.STATE_SETTLING) {
-                largestUndimmedOffset = computeOffsetFromDetentIndex(screen.sheetLargestUndimmedDetentIndex)
+                largestUndimmedOffset =
+                    computeOffsetFromDetentIndex(screen.sheetLargestUndimmedDetentIndex)
                 firstDimmedOffset =
-                    computeOffsetFromDetentIndex((screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(0, screen.sheetDetents.count() - 1))
+                    computeOffsetFromDetentIndex(
+                        (screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(
+                            0,
+                            screen.sheetDetents.count() - 1
+                        )
+                    )
                 assert(firstDimmedOffset >= largestUndimmedOffset) {
-                    "[RNScreens] firstDimmedOffset ($firstDimmedOffset) < largestDimmedOffset ($largestUndimmedOffset)"
+                    "[RNScreens] Invariant violation: firstDimmedOffset ($firstDimmedOffset) < largestDimmedOffset ($largestUndimmedOffset)"
                 }
                 intervalLength = firstDimmedOffset - largestUndimmedOffset
             }
@@ -132,27 +137,30 @@ class DimmingFragment(
          */
         private fun computeOffsetFromDetentIndex(index: Int): Float =
             when (screen.sheetDetents.size) {
-                1 ->
+                1 -> // Only 1 detent present in detents array
                     when (index) {
-                        -1 -> -1F
-                        0 -> 1F
-                        else -> -1F
+                        -1 -> -1F // hidden
+                        0 -> 1F // fully expanded
+                        else -> -1F // unexpected, default
                     }
+
                 2 ->
                     when (index) {
-                        -1 -> -1F
-                        0 -> 0F
-                        1 -> 1F
+                        -1 -> -1F // hidden
+                        0 -> 0F // collapsed
+                        1 -> 1F // expanded
                         else -> -1F
                     }
+
                 3 ->
                     when (index) {
-                        -1 -> -1F
-                        0 -> 0F
-                        1 -> screen.sheetBehavior!!.halfExpandedRatio
-                        2 -> 1F
+                        -1 -> -1F // hidden
+                        0 -> 0F // collapsed
+                        1 -> screen.sheetBehavior!!.halfExpandedRatio // half
+                        2 -> 1F // expanded
                         else -> -1F
                     }
+
                 else -> -1F
             }
     }
@@ -163,7 +171,10 @@ class DimmingFragment(
         nextAnim: Int,
     ): Animation? =
         // We want dimming view to have always fade animation in current usages.
-        AnimationUtils.loadAnimation(context, if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out)
+        AnimationUtils.loadAnimation(
+            context,
+            if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out
+        )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -202,14 +213,6 @@ class DimmingFragment(
         insetsProxy.removeOnApplyWindowInsetsListener(this)
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onStateChanged(
         source: LifecycleOwner,
         event: Lifecycle.Event,
@@ -217,13 +220,16 @@ class DimmingFragment(
         when (event) {
             Lifecycle.Event.ON_START -> {
                 nestedFragment.screen.sheetBehavior?.let {
-                    dimmingViewCallback = AnimateDimmingViewCallback(nestedFragment.screen, dimmingView, maxAlpha)
+                    dimmingViewCallback =
+                        AnimateDimmingViewCallback(nestedFragment.screen, dimmingView, maxAlpha)
                     it.addBottomSheetCallback(dimmingViewCallback!!)
                 }
             }
+
             Lifecycle.Event.ON_STOP -> {
                 dismissSelf(emitDismissedEvent = true)
             }
+
             else -> {}
         }
     }
@@ -232,13 +238,6 @@ class DimmingFragment(
         childFragmentManager.commit(allowStateLoss = true) {
             setReorderingAllowed(true)
             add(requireView().id, nestedFragment.fragment, null)
-        }
-    }
-
-    private fun removeNestedFragment() {
-        childFragmentManager.commit(allowStateLoss = true) {
-            setReorderingAllowed(true)
-            remove(nestedFragment.fragment)
         }
     }
 
@@ -353,12 +352,10 @@ class DimmingFragment(
 
     override fun tryGetActivity(): Activity? {
         return activity
-//        TODO("Not yet implemented")
     }
 
     override fun tryGetContext(): ReactContext? {
         return context as? ReactContext?
-//        TODO("Not yet implemented")
     }
 
     override val fragment: Fragment
@@ -412,13 +409,16 @@ class DimmingFragment(
         insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-        val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+        val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
 
         if (isImeVisible) {
             isKeyboardVisible = true
-            keyboardState = KeyboardVisible(imeBottomInset.bottom)
+            keyboardState = KeyboardVisible(imeInset.bottom)
             screen.sheetBehavior?.let {
-                (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardVisible(imeBottomInset.bottom))
+                (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(
+                    it,
+                    KeyboardVisible(imeInset.bottom)
+                )
             }
 
             if (this.isRemoving) {
@@ -455,9 +455,15 @@ class DimmingFragment(
 
             screen.sheetBehavior?.let {
                 if (isKeyboardVisible) {
-                    (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardDidHide)
+                    (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(
+                        it,
+                        KeyboardDidHide
+                    )
                 } else if (keyboardState != KeyboardNotVisible) {
-                    (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardNotVisible)
+                    (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(
+                        it,
+                        KeyboardNotVisible
+                    )
                 } else {
                 }
             }

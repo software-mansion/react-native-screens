@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -60,8 +59,6 @@ class ScreenStackFragment :
     private var isToolbarTranslucent = false
 
     private var lastFocusedChild: View? = null
-
-    private val insetProxy = InsetsObserverProxy
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -157,6 +154,7 @@ class ScreenStackFragment :
                 } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                     screen.notifySheetDetentChange(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
                 }
+
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     // If we are wrapped in DimmingFragment we want it to be removed alongside
                     // => we use its fragment manager. Otherwise we just remove this fragment.
@@ -197,8 +195,8 @@ class ScreenStackFragment :
             ShapeAppearanceModel
                 .Builder()
                 .apply {
-                    setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
-                    setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+                    setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius)
+                    setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius)
                 }.build()
     }
 
@@ -284,10 +282,6 @@ class ScreenStackFragment :
                 ?.height()
                 ?.let { return it }
         }
-        Log.d(
-            TAG,
-            "[${this.screen.id}] tryResolveContainerHeight return null, isAdded: ${this.isAdded}, isRemoving: ${this.isRemoving}, isDetached: ${this.isDetached}",
-        )
         return null
     }
 
@@ -329,7 +323,6 @@ class ScreenStackFragment :
         keyboardState: KeyboardState = KeyboardNotVisible,
     ): BottomSheetBehavior<Screen> {
         val containerHeight = tryResolveContainerHeight()
-        Log.d(TAG, "Resolved containerHeight $containerHeight")
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -391,11 +384,8 @@ class ScreenStackFragment :
             }
 
             is KeyboardVisible -> {
-//                val newMaxHeight = max(1, behavior.maxHeight - keyboardState.height)
                 val newMaxHeight =
-                    if (behavior.maxHeight - keyboardState.height >
-                        1
-                    ) {
+                    if (behavior.maxHeight - keyboardState.height > 1) {
                         behavior.maxHeight - keyboardState.height
                     } else {
                         behavior.maxHeight
@@ -480,7 +470,7 @@ class ScreenStackFragment :
         configureBottomSheetBehaviour(BottomSheetBehavior<Screen>())
 
     private fun attachShapeToScreen(screen: Screen) {
-        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F)
+        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius)
         val shapeAppearanceModel =
             ShapeAppearanceModel
                 .Builder()

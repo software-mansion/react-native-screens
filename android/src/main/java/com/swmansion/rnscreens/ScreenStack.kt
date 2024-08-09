@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -248,7 +247,6 @@ class ScreenStack(
             // remove all screens previously on stack
             for (fragmentWrapper in stack) {
                 if (!screenWrappers.contains(fragmentWrapper) || dismissedWrappers.contains(fragmentWrapper)) {
-                    Log.d(TAG, "[${this.id}] Removing ${fragmentWrapper.fragment} [${fragmentWrapper.screen.id}]")
                     it.remove(fragmentWrapper.fragment)
                 }
             }
@@ -260,7 +258,6 @@ class ScreenStack(
                 }
                 // detach all screens that should not be visible
                 if (fragmentWrapper !== newTop && !dismissedWrappers.contains(fragmentWrapper)) {
-                    Log.d(TAG, "[${this.id}] Removing ${fragmentWrapper.fragment} [${fragmentWrapper.screen.id}]")
                     it.remove(fragmentWrapper.fragment)
                 }
             }
@@ -280,13 +277,11 @@ class ScreenStack(
                             }
                     }
                     // when first visible screen found, make all screens after that visible
-                    Log.d(TAG, "[${this.id}] Attaching ${fragmentWrapper.fragment} [${fragmentWrapper.screen.id}]")
                     it.add(id, fragmentWrapper.fragment).runOnCommit {
                         top?.screen?.bringToFront()
                     }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
-                Log.d(TAG, "[${this.id}] Attaching ${newTop.fragment} [${newTop.screen.id}]")
                 it.add(id, newTop.fragment)
             }
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
