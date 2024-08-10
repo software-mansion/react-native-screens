@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens
 
+import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -20,6 +22,7 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
+import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 open class ScreenViewManager :
@@ -40,6 +43,42 @@ open class ScreenViewManager :
         activityState: Float,
     ) {
         setActivityState(view, activityState.toInt())
+    }
+
+    override fun addView(
+        parent: Screen,
+        child: View,
+        index: Int,
+    ) {
+        if (child is ScreenContentWrapper) {
+            parent.registerLayoutCallbackForWrapper(child)
+        } else if (child is ScreenFooter) {
+            parent.footer = child
+        }
+        super.addView(parent, child, index)
+    }
+
+    // Overriding all three remove methods despite the fact, that they all do use removeViewAt in parent
+    // class implementation to make it safe in case this changes. Relying on implementation details in this
+    // case in unnecessary.
+    override fun removeViewAt(
+        parent: Screen,
+        index: Int,
+    ) {
+        if (parent.getChildAt(index) is ScreenFooter) {
+            parent.footer = null
+        }
+        super.removeViewAt(parent, index)
+    }
+
+    override fun removeView(
+        parent: Screen,
+        view: View,
+    ) {
+        super.removeView(parent, view)
+        if (view is ScreenFooter) {
+            parent.footer = null
+        }
     }
 
     override fun updateState(
@@ -81,7 +120,8 @@ open class ScreenViewManager :
         view.stackPresentation =
             when (presentation) {
                 "push" -> Screen.StackPresentation.PUSH
-                "modal", "containedModal", "fullScreenModal", "formSheet" ->
+                "formSheet" -> Screen.StackPresentation.FORM_SHEET
+                "modal", "containedModal", "fullScreenModal" ->
                     Screen.StackPresentation.MODAL
                 "transparentModal", "containedTransparentModal" ->
                     Screen.StackPresentation.TRANSPARENT_MODAL
@@ -210,6 +250,14 @@ open class ScreenViewManager :
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
+    @ReactProp(name = "sheetElevation")
+    override fun setSheetElevation(
+        view: Screen?,
+        value: Int,
+    ) {
+        view?.sheetElevation = value.toFloat()
+    }
+
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(
         view: Screen?,
@@ -256,30 +304,65 @@ open class ScreenViewManager :
         value: String?,
     ) = Unit
 
+    @ReactProp(name = "sheetAllowedDetents")
     override fun setSheetAllowedDetents(
         view: Screen,
-        value: String?,
-    ) = Unit
+        value: ReadableArray?,
+    ) {
+        view.sheetDetents.clear()
 
+        if (value == null || value.size() == 0) {
+            view.sheetDetents.add(1.0)
+            return
+        }
+
+        IntProgression
+            .fromClosedRange(0, value.size() - 1, 1)
+            .asSequence()
+            .map { idx -> value.getDouble(idx) }
+            .toCollection(view.sheetDetents)
+    }
+
+    @ReactProp(name = "sheetLargestUndimmedDetent")
     override fun setSheetLargestUndimmedDetent(
         view: Screen,
-        value: String?,
-    ) = Unit
+        value: Int,
+    ) {
+        check(value in -1..2) { "[RNScreens] sheetLargestUndimmedDetent on Android supports values between -1 and 2" }
+        view.sheetLargestUndimmedDetentIndex = value
+    }
 
+    @ReactProp(name = "sheetGrabberVisible")
     override fun setSheetGrabberVisible(
-        view: Screen?,
+        view: Screen,
         value: Boolean,
-    ) = Unit
+    ) {
+        view.isSheetGrabberVisible = value
+    }
 
+    @ReactProp(name = "sheetCornerRadius")
     override fun setSheetCornerRadius(
-        view: Screen?,
+        view: Screen,
         value: Float,
-    ) = Unit
+    ) {
+        view.sheetCornerRadius = value
+    }
 
+    @ReactProp(name = "sheetExpandsWhenScrolledToEdge")
     override fun setSheetExpandsWhenScrolledToEdge(
-        view: Screen?,
+        view: Screen,
         value: Boolean,
-    ) = Unit
+    ) {
+        view.sheetExpandsWhenScrolledToEdge = value
+    }
+
+    @ReactProp(name = "sheetInitialDetent")
+    override fun setSheetInitialDetent(
+        view: Screen,
+        value: Int,
+    ) {
+        view.sheetInitialDetentIndex = value
+    }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
@@ -291,6 +374,7 @@ open class ScreenViewManager :
             HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
             HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
             ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress"),
+            SheetDetentChangedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onSheetDetentChanged"),
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate

@@ -7,6 +7,7 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
+  ViewStyle,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 
@@ -95,13 +96,13 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
-export type SheetDetentTypes = 'medium' | 'large' | 'all';
 export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
   children?: React.ReactNode;
+  unstable_footer?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
    *
@@ -232,6 +233,12 @@ export interface ScreenProps extends ViewProps {
     e: NativeSyntheticEvent<{ dismissCount: number }>,
   ) => void;
   /**
+   * A callback that gets called when the current screen is in `formSheet` presentation and its detent has changed.
+   */
+  onSheetDetentChanged?: (
+    e: NativeSyntheticEvent<{ index: number; isStable: boolean }>,
+  ) => void;
+  /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
   onTransitionProgress?: (
@@ -274,19 +281,35 @@ export interface ScreenProps extends ViewProps {
    */
   screenOrientation?: ScreenOrientationTypes;
   /**
+   * Allows to set background color for the `Screen` component itself.
+   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
+   *
+   * We plan to get rid of this prop once the workaround is no longer needed.
+   */
+  unstable_screenStyle?: Pick<ViewStyle, 'backgroundColor'>;
+  /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
-   * Defaults to `large`.
    *
-   * Available values:
+   * Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
+   * There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
+   * to the height of its contents.
    *
-   * - `large` - only large detent level will be allowed
-   * - `medium` - only medium detent level will be allowed
-   * - `all` - all detent levels will be allowed
+   * Please note that the array **must** be sorted in ascending order.
    *
-   * @platform ios
+   * Defaults to `[1.0]` literal.
    */
-  sheetAllowedDetents?: SheetDetentTypes;
+  sheetAllowedDetents?: number[];
+  /**
+   * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
+   *
+   * Not dynamic - changing it after the component is rendered won't have an effect.
+   *
+   * Defaults to `24`.
+   *
+   * @platform Android
+   */
+  sheetElevation?: number;
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -318,17 +341,19 @@ export interface ScreenProps extends ViewProps {
    * The largest sheet detent for which a view underneath won't be dimmed.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * If this prop is set to:
+   * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
+   * there won't be a dimming view beneath the sheet.
    *
-   * - `large` - the view underneath won't be dimmed at any detent level
-   * - `medium` - the view underneath will be dimmed only when detent level is `large`
-   * - `all` - the view underneath will be dimmed for any detent level
-   *
-   * Defaults to `all`.
-   *
-   * @platform ios
+   * Defaults to `-1`, indicating that the dimming view should be always present.
    */
-  sheetLargestUndimmedDetent?: SheetDetentTypes;
+  sheetLargestUndimmedDetent?: number;
+  /**
+   * Index of the detent the sheet should expand to after being opened.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Defaults to `0` - which represents first detent in the detents array.
+   */
+  sheetInitialDetent?: number;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

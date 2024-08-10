@@ -64,11 +64,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
     // To maintain default behavior of formSheet stack presentation style and to have reasonable
     // defaults for new medium-detent iOS API we need to set defaults here
     const {
-      sheetAllowedDetents = 'large',
-      sheetLargestUndimmedDetent = 'all',
+      sheetAllowedDetents = [1.0],
+      sheetLargestUndimmedDetent = -1,
       sheetGrabberVisible = false,
       sheetCornerRadius = -1.0,
       sheetExpandsWhenScrolledToEdge = true,
+      sheetElevation = 24,
+      sheetInitialDetent = 0,
       stackPresentation,
     } = rest;
 
@@ -126,9 +128,11 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             activityState={activityState}
             sheetAllowedDetents={sheetAllowedDetents}
             sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+            sheetElevation={sheetElevation}
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
+            sheetInitialDetent={sheetInitialDetent}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,
