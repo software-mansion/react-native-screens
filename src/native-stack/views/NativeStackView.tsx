@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import * as React from 'react';
 import { Animated, Platform, StyleSheet, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
@@ -78,7 +79,11 @@ const MaybeNestedStack = ({
   children: React.ReactNode;
 }) => {
   const { colors } = useTheme();
-  const { headerShown = true, contentStyle, unstable_screenStyle = null } = options;
+  const {
+    headerShown = true,
+    contentStyle,
+    unstable_screenStyle = null,
+  } = options;
 
   const Screen = React.useContext(ScreenContext);
 
