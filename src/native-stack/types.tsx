@@ -93,10 +93,6 @@ export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
-   * TODO: Place this in right spot & describe
-   */
-  footerComponent?: React.ReactNode;
-  /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
    */
@@ -362,8 +358,10 @@ export type NativeStackNavigationOptions = {
   /**
    * Allows to set background color for the `Screen` component itself.
    * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
+   *
+   * We plan to get rid of this prop once the workaround is no longer needed.
    */
-  screenStyle?: ScreenProps['screenStyle'];
+  unstable_screenStyle?: ScreenProps['unstable_screenStyle'];
   /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */
@@ -506,6 +504,18 @@ export type NativeStackNavigationOptions = {
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
   screenEdgeGesture?: boolean;
+  /**
+   * Footer component that can be used alongside form sheet stack presentation style.
+   *
+   * This option is provided, because due to implementation details it might be problematic
+   * to implement such layout with JS-only code.
+   *
+   * Please note that this prop is marked as unstable and might be subject of breaking changes,
+   * even removal.
+   *
+   * @platform android
+   */
+  unstable_footerComponent?: React.ReactNode;
 };
 
 export type NativeStackNavigatorProps =

@@ -78,7 +78,7 @@ const MaybeNestedStack = ({
   children: React.ReactNode;
 }) => {
   const { colors } = useTheme();
-  const { headerShown = true, contentStyle, screenStyle = null } = options;
+  const { headerShown = true, contentStyle, unstable_screenStyle = null } = options;
 
   const Screen = React.useContext(ScreenContext);
 
@@ -148,7 +148,7 @@ const MaybeNestedStack = ({
           enabled
           isNativeStack
           hasLargeHeader={hasLargeHeader}
-          style={[StyleSheet.absoluteFill, screenStyle]}>
+          style={[StyleSheet.absoluteFill, unstable_screenStyle]}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -210,7 +210,7 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
-    footerComponent,
+    unstable_footerComponent = null,
   } = options;
 
   let {
@@ -220,12 +220,12 @@ const RouteView = ({
     gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
-    screenStyle = null,
+    unstable_screenStyle = null,
   } = options;
 
   // We only want to allow backgroundColor for now
-  screenStyle = screenStyle
-    ? { backgroundColor: screenStyle.backgroundColor }
+  unstable_screenStyle = unstable_screenStyle
+    ? { backgroundColor: unstable_screenStyle.backgroundColor }
     : null;
 
   if (sheetAllowedDetents === 'fitToContents') {
@@ -310,7 +310,7 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={[StyleSheet.absoluteFill, screenStyle]}
+      style={[StyleSheet.absoluteFill, unstable_screenStyle]}
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
       sheetGrabberVisible={sheetGrabberVisible}
@@ -445,8 +445,8 @@ const RouteView = ({
             route={route}
             headerShown={isHeaderInPush}
           />
-          {footerComponent && (
-            <FooterComponent>{footerComponent}</FooterComponent>
+          {unstable_footerComponent && (
+            <FooterComponent>{unstable_footerComponent}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>

@@ -102,7 +102,7 @@ export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
   children?: React.ReactNode;
-  footer?: React.ReactNode;
+  unstable_footer?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
    *
@@ -283,8 +283,10 @@ export interface ScreenProps extends ViewProps {
   /**
    * Allows to set background color for the `Screen` component itself.
    * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
+   *
+   * We plan to get rid of this prop once the workaround is no longer needed.
    */
-  screenStyle?: Pick<ViewStyle, 'backgroundColor'>;
+  unstable_screenStyle?: Pick<ViewStyle, 'backgroundColor'>;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
