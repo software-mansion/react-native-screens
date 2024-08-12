@@ -1,0 +1,35 @@
+name: Publish Screens landing page
+env:
+  YARN_ENABLE_HARDENED_MODE: 0
+on:
+  push:
+    branches:
+      - main
+    paths: docs/**
+  workflow_dispatch:
+
+jobs:
+  publish:
+    if: github.repository == 'software-mansion/react-native-screens'
+    runs-on: ubuntu-latest
+    concurrency:
+        group: docs-check-${{ github.ref }}
+        cancel-in-progress: true
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Generate landing page content
+        run: >-
+          git config --local user.email "action@github.com"
+          && git config --local user.name "GitHub Action"
+          && cd docs
+          && yarn
+          && yarn build
+
+      - name: Publish generated content to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          FOLDER: docs/build
+          BRANCH: gh-pages
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
