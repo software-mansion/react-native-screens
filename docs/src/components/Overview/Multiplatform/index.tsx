@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.module.css';
 import VR from '@site/static/img/vr.svg';
-import TV from '@site/static/img/TV.svg';
+import TV from '@site/static/img/tv.svg';
 import Phone from '@site/static/img/phone.svg';
 import Laptop from '@site/static/img/laptop.svg';
 
