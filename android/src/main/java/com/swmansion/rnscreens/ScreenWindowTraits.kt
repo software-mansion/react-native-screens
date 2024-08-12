@@ -225,7 +225,11 @@ object ScreenWindowTraits {
         val window = activity.window
 
         val screenForNavBarTranslucent = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_TRANSLUCENT)
-        val translucent = screenForNavBarTranslucent?.isNavigationBarTranslucent ?: false
+        val translucent = screenForNavBarTranslucent?.isNavigationBarTranslucent
+
+        if (translucent == null) {
+            return
+        }
 
         // Following method controls whether to display edge-to-edge content that draws behind the navigation bar
         WindowCompat.setDecorFitsSystemWindows(window, !translucent)
