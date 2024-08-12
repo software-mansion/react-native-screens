@@ -19,6 +19,10 @@
   grid-column: 1;
 }
 
+.contentContainer h3 {
+  margin-bottom: 1rem;
+}
+
 .imageContainer {
   grid-column: 2;
 
