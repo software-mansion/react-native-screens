@@ -12,6 +12,9 @@ jobs:
   publish:
     if: github.repository == 'software-mansion/react-native-screens'
     runs-on: ubuntu-latest
+    concurrency:
+        group: docs-check-${{ github.ref }}
+        cancel-in-progress: true
     steps:
       - name: Check out
         uses: actions/checkout@v4
