@@ -39,6 +39,7 @@ class RNScreensPackage : TurboReactPackage() {
             SearchBarManager(),
             ScreenFooterManager(),
             ScreenContentWrapperManager(),
+            FullWindowOverlayViewManager()
         )
     }
 
