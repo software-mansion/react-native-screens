@@ -43,8 +43,8 @@
     transform: translateX(0);
   }
   100% {
-    transform: translateX(calc(-100% - 3rem));
     /* we need to do full full translate minus gap */
+    transform: translateX(calc(-100% - 3rem));
   }
 }
 

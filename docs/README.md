@@ -15,5 +15,5 @@ All feedback in all forms ranging from general to tiny fixes is highly appreciat
 
 ## Meet the docs team
 
-- [Balbina Falba](https://dribbble.com/balbina): design
+- [Balbina Fabia](https://dribbble.com/balbina): design
 - [Patrycja Kalińska](https://x.com/patkalinska): site development
