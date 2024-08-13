@@ -14,7 +14,9 @@ import styles from './styles.module.css';
 export default function Home() {
   return (
     <Layout description="Native Navigation primitives for your React Native app.">
-      <LandingBackground />
+      <div>
+        <LandingBackground />
+      </div>
       <div className={styles.container}>
         <HomepageStartScreen />
       </div>
