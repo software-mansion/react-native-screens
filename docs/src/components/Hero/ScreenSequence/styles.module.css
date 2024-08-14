@@ -8,6 +8,13 @@
   align-items: center;
 }
 
+@media (min-width: 2920px) {
+  .screens {
+    top: 3rem;
+    min-height: 70%;
+  }
+}
+
 @media (max-width: 2000px) {
   .screens {
     top: 4rem;
