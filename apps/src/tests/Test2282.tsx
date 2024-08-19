@@ -13,7 +13,7 @@ const Second = ({ navigation }: any) => (
   <>
     <FlatList
       renderItem={({ item }) => <Text>{item}</Text>}
-      data={[1]}
+      data={[1,2,3,4,5,6]}
       keyExtractor={item => item.toString()}
     />
     <Button onPress={navigation.goBack} title="Go back" />
