@@ -1,0 +1,61 @@
+.multiplatformContainer {
+  background-color: var(--swm-navy-dark-40);
+  border-radius: 16px;
+  /* height and width of other media */
+  padding: 3.5rem 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.marquee {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  gap: 3rem;
+}
+
+.content {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  gap: 3rem;
+  min-width: 100%;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.content svg {
+  width: 100%;
+  object-fit: contain;
+}
+
+.marqueeItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* we need to do full full translate minus gap */
+    transform: translateX(calc(-100% - 3rem));
+  }
+}
+
+.animation .content {
+  animation: marquee 15s linear infinite;
+}
+
+@media (max-width: 500px) {
+  .multiplatformContainer {
+    width: 100%;
+    height: 350px;
+    padding: 1rem 0;
+  }
+}

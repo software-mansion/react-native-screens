@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
@@ -17,14 +18,24 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.uimanager.events.EventDispatcher
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
+import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
-    context: ReactContext?,
-) : FabricEnabledViewGroup(context) {
+    val reactContext: ReactContext,
+) : FabricEnabledViewGroup(reactContext),
+    ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
+
+    val sheetBehavior: BottomSheetBehavior<Screen>?
+        get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
+
+    val reactEventDispatcher: EventDispatcher?
+        get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -40,6 +51,33 @@ class Screen(
     var isStatusBarAnimated: Boolean? = null
     var isBeingRemoved = false
 
+    // Props for controlling modal presentation
+    var isSheetGrabberVisible: Boolean = false
+    var sheetCornerRadius: Float = 0F
+        set(value) {
+            field = value
+            (fragment as? ScreenStackFragment)?.onSheetCornerRadiusChange()
+        }
+    var sheetExpandsWhenScrolledToEdge: Boolean = true
+
+    // We want to make sure here that at least one value is present in this array all the time.
+    // TODO: Model this with custom data structure to guarantee that this invariant is not violated.
+    var sheetDetents = mutableListOf(1.0)
+    var sheetLargestUndimmedDetentIndex: Int = -1
+    var sheetInitialDetentIndex: Int = 0
+    var sheetClosesOnTouchOutside = true
+    var sheetElevation: Float = 24F
+
+    var footer: ScreenFooter? = null
+        set(value) {
+            if (value == null && field != null) {
+                sheetBehavior?.let { field!!.unregisterWithSheetBehavior(it) }
+            } else if (value != null) {
+                sheetBehavior?.let { value.registerWithSheetBehavior(it) }
+            }
+            field = value
+        }
+
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
@@ -52,6 +90,33 @@ class Screen(
         // Setting params this way is not the most elegant way to solve this problem but workarounds it
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
+    }
+
+    /**
+     * ScreenContentWrapper notifies us here on it's layout. It is essential for implementing
+     * `fitToContents` for formSheets, as this is first entry point where we can acquire
+     * height of our content.
+     */
+    override fun onLayoutCallback(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        val height = bottom - top
+
+        if (sheetDetents.count() == 1 && sheetDetents.first() == SHEET_FIT_TO_CONTENTS) {
+            sheetBehavior?.let {
+                if (it.maxHeight != height) {
+                    it.maxHeight = height
+                }
+            }
+        }
+    }
+
+    fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
+        wrapper.delegate = this
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -84,6 +149,7 @@ class Screen(
                 updateScreenSizePaper(width, height)
             }
 
+            footer?.onParentLayout(changed, l, t, r, b, container!!.height)
             notifyHeaderHeightChange(totalHeight)
         }
     }
@@ -92,7 +158,6 @@ class Screen(
         width: Int,
         height: Int,
     ) {
-        val reactContext = context as ReactContext
         reactContext.runOnNativeModulesQueueThread(
             object : GuardedRunnable(reactContext.exceptionHandler) {
                 override fun runGuarded() {
@@ -127,7 +192,14 @@ class Screen(
         )
     }
 
-    fun isTransparent(): Boolean = stackPresentation === StackPresentation.TRANSPARENT_MODAL
+    fun isTransparent(): Boolean =
+        when (stackPresentation) {
+            StackPresentation.TRANSPARENT_MODAL,
+            StackPresentation.FORM_SHEET,
+            -> true
+
+            else -> false
+        }
 
     private fun hasWebView(viewGroup: ViewGroup): Boolean {
         for (i in 0 until viewGroup.childCount) {
@@ -351,10 +423,26 @@ class Screen(
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
+    internal fun notifySheetDetentChange(
+        detentIndex: Int,
+        isStable: Boolean,
+    ) {
+        val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
+        reactEventDispatcher?.dispatchEvent(
+            SheetDetentChangedEvent(
+                surfaceId,
+                id,
+                detentIndex,
+                isStable,
+            ),
+        )
+    }
+
     enum class StackPresentation {
         PUSH,
         MODAL,
         TRANSPARENT_MODAL,
+        FORM_SHEET,
     }
 
     enum class StackAnimation {
@@ -389,5 +477,14 @@ class Screen(
         NAVIGATION_BAR_COLOR,
         NAVIGATION_BAR_TRANSLUCENT,
         NAVIGATION_BAR_HIDDEN,
+    }
+
+    companion object {
+        const val TAG = "Screen"
+
+        /**
+         * This value describes value in sheet detents array that will be treated as `fitToContents` option.
+         */
+        const val SHEET_FIT_TO_CONTENTS = -1.0
     }
 }
