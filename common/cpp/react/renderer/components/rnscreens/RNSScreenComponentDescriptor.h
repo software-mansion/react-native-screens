@@ -39,8 +39,7 @@ class RNSScreenComponentDescriptor final
 #ifdef ANDROID
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       // When we receive dimensions from JVM side we can remove padding used for
-      // correction, and we can stop applying height correction for the frame.
-      // We want to leave top offset correction though intact.
+      // correction, and we can stop applying height and offset corrections for the frame.
       // TODO: In future, when we have dynamic header height we might want to
       // update Y offset correction here.
 
@@ -67,6 +66,8 @@ class RNSScreenComponentDescriptor final
       screenShadowNode.setPadding({0, 0, 0, 0});
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameHeightCorrection);
+      screenShadowNode.getFrameCorrectionModes().unset(
+              FrameCorrectionModes::Mode::FrameOriginCorrection);
 
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
