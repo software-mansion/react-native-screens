@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, Text, Button, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
@@ -34,20 +34,14 @@ function App() {
           component={DetailsScreen}
           options={({ navigation }) => ({
             title: 'Details',
-            headerLeft: () => (
-              <Button
-                onPress={navigation.goBack}
-                title="Back"
-                color="#00cc00"
-              />
-            ),
             headerRight: () => (
               <Pressable
-                onPress={() => {
-                  console.log('doesnt work');
-                  navigation.goBack();
-                }}>
-                <Text>Doesnt work</Text>
+                onPress={navigation.goBack}
+                style={({ pressed }) => [
+                  styles.pressable,
+                  pressed && { backgroundColor: 'goldenrod' },
+                ]}>
+                <Text>Go Back</Text>
               </Pressable>
             ),
           })}
@@ -84,7 +78,6 @@ function DetailsScreen() {
         }}
         onPress={() => {
           console.log(`[${counter.current}] Details: onPress`);
-          // navigation.goBack();
         }}
         onPressOut={() => {
           console.log(`[${counter.current}] Details: onPressOut`);
@@ -93,7 +86,7 @@ function DetailsScreen() {
           styles.pressable,
           pressed && { backgroundColor: 'goldenrod' },
         ]}>
-        <Text>Go back</Text>
+        <Text>Press me</Text>
       </Pressable>
     </View>
   );
@@ -104,10 +97,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     backgroundColor: 'red',
-  },
-  count: {
-    fontSize: 48,
-    fontWeight: 'bold',
   },
   container: {
     flex: 1,
