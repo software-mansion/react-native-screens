@@ -86,8 +86,8 @@ namespace react = facebook::react;
 @property (nonatomic) BOOL homeIndicatorHidden;
 
 // Props controlling UISheetPresentationController
-@property (nonatomic) RNSScreenDetentType sheetAllowedDetents;
-@property (nonatomic) RNSScreenDetentType sheetLargestUndimmedDetent;
+@property (nonatomic) NSArray<NSNumber *> *sheetAllowedDetents;
+@property (nonatomic) NSNumber *sheetLargestUndimmedDetent;
 @property (nonatomic) BOOL sheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
@@ -109,6 +109,7 @@ namespace react = facebook::react;
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 @property (nonatomic, copy) RCTDirectEventBlock onGestureCancel;
+@property (nonatomic, copy) RCTDirectEventBlock onSheetDetentChanged;
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;

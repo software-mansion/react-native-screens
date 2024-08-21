@@ -1,0 +1,22 @@
+.title {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 56px;
+}
+
+.overviewContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6.5rem;
+}
+
+@media (max-width: 996px) {
+  .overviewContainer {
+    display: flex !important;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+  .title {
+    font-size: 40px;
+  }
+}

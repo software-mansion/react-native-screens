@@ -22,7 +22,6 @@ import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-  SheetDetentTypes,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -52,6 +51,15 @@ export type NativeStackNavigationEventMap = {
    * Event which fires when a header height gets changed.
    */
   headerHeightChange: { data: { headerHeight: number } };
+  /**
+   * Event which fires when screen is in sheet presentation & it's detent changes.
+   *
+   * In payload it caries two fields:
+   *
+   * * index - current detent index in the `sheetAllowedDetents` array,
+   * * isStable - on Android `false` value means that the user is dragging the sheet or it is settling; on iOS it is always `true`.
+   */
+  sheetDetentChange: { data: { index: number; isStable: boolean } };
 };
 
 export type NativeStackNavigationProp<
@@ -348,23 +356,37 @@ export type NativeStackNavigationOptions = {
    */
   screenOrientation?: ScreenProps['screenOrientation'];
   /**
+   * Allows to set background color for the `Screen` component itself.
+   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
+   *
+   * We plan to get rid of this prop once the workaround is no longer needed.
+   */
+  unstable_screenStyle?: ScreenProps['unstable_screenStyle'];
+  /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */
   searchBar?: SearchBarProps;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
-   * Defaults to `large`.
    *
-   * Available values:
+   * Heights should be described as fraction (a number from [0, 1] interval) of screen height / maximum detent height.
    *
-   * - `large` - only large detent level will be allowed
-   * - `medium` - only medium detent level will be allowed
-   * - `all` - all detent levels will be allowed
+   * Please note that the array **must** be sorted in ascending order.
    *
-   * @platform ios
+   * Defaults to `[1.0]` literal.
    */
-  sheetAllowedDetents?: SheetDetentTypes;
+  sheetAllowedDetents?: ScreenProps['sheetAllowedDetents'] | 'fitToContents';
+  /**
+   * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
+   *
+   * Not dynamic.
+   *
+   * Defaults to `24`.
+   *
+   * @platform Android
+   */
+  sheetElevation?: ScreenProps['sheetElevation'];
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -372,7 +394,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform ios
    */
-  sheetExpandsWhenScrolledToEdge?: boolean;
+  sheetExpandsWhenScrolledToEdge?: ScreenProps['sheetExpandsWhenScrolledToEdge'];
   /**
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -380,10 +402,8 @@ export type NativeStackNavigationOptions = {
    * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
    *
    * If left unset system default is used.
-   *
-   * @platform ios
    */
-  sheetCornerRadius?: number;
+  sheetCornerRadius?: ScreenProps['sheetCornerRadius'];
   /**
    * Boolean indicating whether the sheet shows a grabber at the top.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -391,22 +411,24 @@ export type NativeStackNavigationOptions = {
    *
    * @platform ios
    */
-  sheetGrabberVisible?: boolean;
+  sheetGrabberVisible?: ScreenProps['sheetGrabberVisible'];
+  /**
+   * Index of the detent the sheet should expand to after being opened.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Defaults to `0` - which represents first detent in the detents array.
+   */
+  sheetInitialDetent?: ScreenProps['sheetInitialDetent'];
   /**
    * The largest sheet detent for which a view underneath won't be dimmed.
-   * Works only when `stackPresentation` is se tto `formSheet`.
+   * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * If this prop is set to:
+   * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
+   * there won't be a dimming view beneath the sheet.
    *
-   * - `large` - the view underneath won't be dimmed at any detent level
-   * - `medium` - the view underneath will be dimmed only when detent level is `large`
-   * - `all` - the view underneath will be dimmed for any detent level
-   *
-   * Defaults to `all`.
-   *
-   * @platform ios
+   * Defaults to `-1`, indicating that the dimming view should be always present.
    */
-  sheetLargestUndimmedDetent?: SheetDetentTypes;
+  sheetLargestUndimmedDetent?: ScreenProps['sheetLargestUndimmedDetent'];
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
@@ -482,6 +504,18 @@ export type NativeStackNavigationOptions = {
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
   screenEdgeGesture?: boolean;
+  /**
+   * Footer component that can be used alongside form sheet stack presentation style.
+   *
+   * This option is provided, because due to implementation details it might be problematic
+   * to implement such layout with JS-only code.
+   *
+   * Please note that this prop is marked as unstable and might be subject of breaking changes,
+   * even removal.
+   *
+   * @platform android
+   */
+  unstable_footerComponent?: React.ReactNode;
 };
 
 export type NativeStackNavigatorProps =

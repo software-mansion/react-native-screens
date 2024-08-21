@@ -155,13 +155,13 @@ Defaults to `default` on iOS.
 Describes heights where a sheet can rest.
 Works only when `stackPresentation` is set to `formSheet`.
 
-Available values:
+Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
+There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
+to the height of its contents.
 
-- `large` - only large detent level will be allowed
-- `medium` - only medium detent level will be allowed
-- `all` - all detent levels will be allowed
+Please note that the array **must** be sorted in ascending order.
 
-Defaults to `large`.
+Defaults to `[1.0]` literal.
 
 ### `sheetExpandsWhenScrolledToEdge` (iOS only)
 
@@ -362,6 +362,17 @@ function Home() {
   return <Animated.View style={reaStyle} />;
 }
 ```
+
+### unstable_footerComponent
+
+Footer component that can be used alongside form sheet stack presentation style.
+
+This option is provided, because due to implementation details it might be problematic
+to implement such layout with JS-only code.
+
+Please note that this prop is marked as unstable and might be subject of breaking changes,
+even removal.
+
 
 ## `<ScreenStackHeaderConfig>`
 

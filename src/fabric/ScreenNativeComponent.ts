@@ -25,6 +25,11 @@ type HeaderHeightChangeEvent = Readonly<{
   headerHeight: Double;
 }>;
 
+type SheetDetentChangedEvent = Readonly<{
+  index: Int32;
+  isStable: boolean;
+}>;
+
 type GestureResponseDistanceType = Readonly<{
   start: Float;
   end: Float;
@@ -57,8 +62,6 @@ type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
 
-type SheetDetentTypes = 'large' | 'medium' | 'all';
-
 export interface NativeProps extends ViewProps {
   onAppear?: DirectEventHandler<ScreenEvent>;
   onDisappear?: DirectEventHandler<ScreenEvent>;
@@ -70,11 +73,14 @@ export interface NativeProps extends ViewProps {
   onTransitionProgress?: DirectEventHandler<TransitionProgressEvent>;
   onGestureCancel?: DirectEventHandler<ScreenEvent>;
   onHeaderBackButtonClicked?: DirectEventHandler<ScreenEvent>;
-  sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>;
-  sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>;
+  onSheetDetentChanged?: DirectEventHandler<SheetDetentChangedEvent>;
+  sheetAllowedDetents?: number[];
+  sheetLargestUndimmedDetent?: WithDefault<Int32, -1>;
   sheetGrabberVisible?: WithDefault<boolean, false>;
   sheetCornerRadius?: WithDefault<Float, -1.0>;
   sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>;
+  sheetInitialDetent?: WithDefault<Int32, 0>;
+  sheetElevation?: WithDefault<Int32, 24>;
   customAnimationOnSwipe?: boolean;
   fullScreenSwipeEnabled?: boolean;
   fullScreenSwipeShadowEnabled?: boolean;
