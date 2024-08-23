@@ -13,18 +13,34 @@ type RootStackParamList = {
 };
 type RootStackScreenProps<T extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, T>;
+
 const HomeScreen = ({ navigation }: RootStackScreenProps<'Home'>) => {
-  const showSettings = useCallback(() => {
-    navigation.navigate('Settings');
-  }, [navigation]);
+  const [x, setX] = React.useState(false);
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerBackVisible: !x,
+      headerRight: x
+        ? () => (
+            <View style={{ backgroundColor: 'green', width: 20, height: 20 }} />
+          )
+        : () => (
+            <View style={{ backgroundColor: 'green', width: 10, height: 10 }} />
+          ),
+    });
+  }, [navigation, x]);
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button onPress={showSettings} title={'Show settings'} />
+      <Button title="Tap me for header update" onPress={() => setX(!x)} />
+      <Button
+        title={'Show settings'}
+        onPress={() => navigation.navigate('Settings')}
+      />
     </View>
   );
 };
 
-const SettingsScreen = ({ navigation }: RootStackScreenProps<'Settings'>) => {
+const SettingsScreen = () => {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Settings</Text>
@@ -47,7 +63,7 @@ const RootNavigator = () => {
     [navigation],
   );
   return (
-    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+    <RootStack.Navigator>
       <RootStack.Screen name="Home" component={HomeScreen} />
       <RootStack.Screen
         name="Settings"
