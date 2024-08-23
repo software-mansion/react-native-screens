@@ -64,6 +64,8 @@ class RNSScreenComponentDescriptor final
       screenShadowNode.setPadding({0, 0, 0, 0});
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameHeightCorrection);
+      screenShadowNode.getFrameCorrectionModes().unset(
+          FrameCorrectionModes::Mode::FrameOriginCorrection);
 
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
