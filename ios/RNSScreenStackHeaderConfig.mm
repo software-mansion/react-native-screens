@@ -674,6 +674,7 @@ namespace react = facebook::react;
         break;
       }
     }
+    [navctr.view layoutIfNeeded];
   }
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
