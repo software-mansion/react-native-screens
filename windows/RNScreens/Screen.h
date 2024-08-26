@@ -2,7 +2,7 @@
 
 namespace winrt::RNScreens::implementation {
 
-enum class StackPresentation { PUSH, MODAL, TRANSPARENT_MODAL };
+enum class StackPresentation { PUSH, MODAL, TRANSPARENT_MODAL, FORM_SHEET };
 
 enum class StackAnimation {
   DEFAULT,

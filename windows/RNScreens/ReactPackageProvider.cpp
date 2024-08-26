@@ -8,6 +8,8 @@
 #include "ScreenStackHeaderConfigViewManager.h"
 #include "ScreenStackViewManager.h"
 #include "ScreenViewManager.h"
+#include "ScreenStackHeaderSubviewViewManager.h"
+#include "ModalScreenViewManager.h"
 
 using namespace winrt::Microsoft::ReactNative;
 
@@ -17,14 +19,25 @@ void ReactPackageProvider::CreatePackage(
   packageBuilder.AddViewManager(L"RNScreensViewManager", []() {
     return winrt::make<ScreenViewManager>();
   });
+
   packageBuilder.AddViewManager(L"RNScreensStackHeaderConfigViewManager", []() {
     return winrt::make<ScreenStackHeaderConfigViewManager>();
   });
+
   packageBuilder.AddViewManager(L"RNSScreenStackViewManager", []() {
     return winrt::make<ScreenStackViewManager>();
   });
+
   packageBuilder.AddViewManager(L"RNSScreenContainerViewManager", []() {
     return winrt::make<ScreenContainerViewManager>();
+  });
+
+  packageBuilder.AddViewManager(L"RNSScreenStackHeaderSubviewViewManager", [] () {
+    return winrt::make<ScreenStackHeaderSubviewViewManager>();
+  });
+
+  packageBuilder.AddViewManager(L"RNSModalScreenViewManager", [] () {
+    return winrt::make<ModalScreenViewManager>();
   });
 }
 } // namespace winrt::RNScreens::implementation
