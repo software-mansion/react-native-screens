@@ -36,6 +36,12 @@ namespace react = facebook::react;
   }
 }
 
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
++ (void)load
+{
+  [super load];
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenContentWrapperComponentDescriptor>();
