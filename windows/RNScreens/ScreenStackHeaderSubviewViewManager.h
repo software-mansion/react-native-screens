@@ -1,44 +1,28 @@
 #pragma once
-
 #include "NativeModules.h"
 #include "winrt/Microsoft.ReactNative.h"
 
 namespace winrt::RNScreens::implementation {
 
-class ScreenViewManager
+class ScreenStackHeaderSubviewViewManager
     : public winrt::implements<
-          ScreenViewManager,
+          ScreenStackHeaderSubviewViewManager,
           winrt::Microsoft::ReactNative::IViewManager,
           winrt::Microsoft::ReactNative::IViewManagerRequiresNativeLayout,
-          winrt::Microsoft::ReactNative::IViewManagerWithChildren,
           winrt::Microsoft::ReactNative::IViewManagerWithReactContext,
           winrt::Microsoft::ReactNative::IViewManagerWithNativeProperties,
           winrt::Microsoft::ReactNative::
               IViewManagerWithExportedEventTypeConstants,
           winrt::Microsoft::ReactNative::IViewManagerWithCommands> {
  public:
-  ScreenViewManager() = default;
+  ScreenStackHeaderSubviewViewManager() = default;
 
   // IViewManager
-  virtual winrt::hstring Name() noexcept;
+  winrt::hstring Name() noexcept;
   winrt::Windows::UI::Xaml::FrameworkElement CreateView() noexcept;
 
   // IViewManagerRequiresNativeLayout
   bool RequiresNativeLayout();
-
-  // IViewManagerWithChildren
-  void AddView(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      winrt::Windows::UI::Xaml::UIElement child,
-      int64_t index);
-  void RemoveAllChildren(winrt::Windows::UI::Xaml::FrameworkElement parent);
-  void RemoveChildAt(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      int64_t index);
-  void ReplaceChild(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      winrt::Windows::UI::Xaml::UIElement oldChild,
-      winrt::Windows::UI::Xaml::UIElement newChild);
 
   // IViewManagerWithReactContext
   winrt::Microsoft::ReactNative::IReactContext ReactContext() noexcept;
