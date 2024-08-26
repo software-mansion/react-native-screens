@@ -3806,6 +3806,7 @@ __metadata:
     eslint: "npm:^8.19.0"
     glob-to-regexp: "npm:^0.4.1"
     jest: "npm:^29.6.3"
+    jotai: "npm:^2.9.0"
     metro-react-native-babel-preset: "npm:^0.76.8"
     nanoid: "npm:^4.0.2"
     patch-package: "npm:^8.0.0"
@@ -8160,6 +8161,21 @@ __metadata:
     "@sideway/formula": "npm:^3.0.1"
     "@sideway/pinpoint": "npm:^2.0.0"
   checksum: 10c0/1e838808412691de662d64785bf819993e13181e4ae610deef741a4f9a9f5a443ec3c60a7f2bb67972dd27aa75b46da83e3e1e6f8b814a01bd2de4022f6131a7
+  languageName: node
+  linkType: hard
+
+"jotai@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "jotai@npm:2.9.0"
+  peerDependencies:
+    "@types/react": ">=17.0.0"
+    react: ">=17.0.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 10c0/c5551fb90933bcbc28b11cdb4af681398a12f8eb39a4a49568ec6ce5062c2257dd84a85cbfd7ec7d970d56dfa5023d16a0ec7056bc2697fdf9b3ec94da67c9d1
   languageName: node
   linkType: hard
 

@@ -57,8 +57,6 @@ type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
 
-type SheetDetentTypes = 'large' | 'medium' | 'all';
-
 export interface NativeProps extends ViewProps {
   onAppear?: DirectEventHandler<ScreenEvent>;
   onDisappear?: DirectEventHandler<ScreenEvent>;
@@ -70,8 +68,8 @@ export interface NativeProps extends ViewProps {
   onTransitionProgress?: DirectEventHandler<TransitionProgressEvent>;
   onGestureCancel?: DirectEventHandler<ScreenEvent>;
   onHeaderBackButtonClicked?: DirectEventHandler<ScreenEvent>;
-  sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>;
-  sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>;
+  sheetAllowedDetents?: number[];
+  sheetLargestUndimmedDetent?: WithDefault<Int32, -1>;
   sheetGrabberVisible?: WithDefault<boolean, false>;
   sheetCornerRadius?: WithDefault<Float, -1.0>;
   sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>;

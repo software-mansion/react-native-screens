@@ -7,6 +7,7 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
+import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
 import kotlin.collections.ArrayList
@@ -26,6 +27,11 @@ class ScreenStack(
     private var previousChildrenCount = 0
     var goingForward = false
 
+    /**
+     * Marks given fragment as to-be-dismissed and performs updates on container
+     *
+     * @param fragmentWrapper to-be-dismissed wrapper
+     */
     fun dismiss(screenFragment: ScreenStackFragmentWrapper) {
         dismissedWrappers.add(screenFragment)
         performUpdatesNow()
@@ -38,17 +44,15 @@ class ScreenStack(
         get() = stack
 
     val rootScreen: Screen
-        get() {
-            for (i in 0 until screenCount) {
-                val screenWrapper = getScreenFragmentWrapperAt(i)
-                if (!dismissedWrappers.contains(screenWrapper)) {
-                    return screenWrapper.screen
-                }
-            }
-            throw IllegalStateException("Stack has no root screen set")
-        }
+        get() =
+            screenWrappers.firstOrNull { !dismissedWrappers.contains(it) }?.screen
+                ?: throw IllegalStateException("[RNScreens] Stack has no root screen set")
 
-    override fun adapt(screen: Screen) = ScreenStackFragment(screen)
+    override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
+        when (screen.stackPresentation) {
+            Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
+            else -> ScreenStackFragment(screen)
+        }
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
@@ -94,8 +98,10 @@ class ScreenStack(
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
         // handle the case of newTop being NULL, which happens in several places below
         var newTop: ScreenFragmentWrapper? = null // newTop is nullable, see the above comment ^
-        var visibleBottom: ScreenFragmentWrapper? = null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+        var visibleBottom: ScreenFragmentWrapper? =
+            null // this is only set if newTop has one of transparent presentation modes
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
+
         for (i in screenWrappers.indices.reversed()) {
             val screenWrapper = getScreenFragmentWrapperAt(i)
             if (!dismissedWrappers.contains(screenWrapper)) {
@@ -109,6 +115,7 @@ class ScreenStack(
                 }
             }
         }
+
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
         if (!stack.contains(newTop)) {
@@ -141,9 +148,24 @@ class ScreenStack(
             if (stackAnimation != null) {
                 if (shouldUseOpenAnimation) {
                     when (stackAnimation) {
-                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
-                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
-                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
+                        StackAnimation.DEFAULT ->
+                            it.setCustomAnimations(
+                                R.anim.rns_default_enter_in,
+                                R.anim.rns_default_enter_out,
+                            )
+
+                        StackAnimation.NONE ->
+                            it.setCustomAnimations(
+                                R.anim.rns_no_animation_20,
+                                R.anim.rns_no_animation_20,
+                            )
+
+                        StackAnimation.FADE ->
+                            it.setCustomAnimations(
+                                R.anim.rns_fade_in,
+                                R.anim.rns_fade_out,
+                            )
+
                         StackAnimation.SLIDE_FROM_RIGHT ->
                             it.setCustomAnimations(
                                 R.anim.rns_slide_in_from_right,
@@ -164,9 +186,24 @@ class ScreenStack(
                     }
                 } else {
                     when (stackAnimation) {
-                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
-                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
-                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
+                        StackAnimation.DEFAULT ->
+                            it.setCustomAnimations(
+                                R.anim.rns_default_exit_in,
+                                R.anim.rns_default_exit_out,
+                            )
+
+                        StackAnimation.NONE ->
+                            it.setCustomAnimations(
+                                R.anim.rns_no_animation_20,
+                                R.anim.rns_no_animation_20,
+                            )
+
+                        StackAnimation.FADE ->
+                            it.setCustomAnimations(
+                                R.anim.rns_fade_in,
+                                R.anim.rns_fade_out,
+                            )
+
                         StackAnimation.SLIDE_FROM_RIGHT ->
                             it.setCustomAnimations(
                                 R.anim.rns_slide_in_from_left,
@@ -239,7 +276,9 @@ class ScreenStack(
                             }
                     }
                     // when first visible screen found, make all screens after that visible
-                    it.add(id, fragmentWrapper.fragment).runOnCommit { top?.screen?.bringToFront() }
+                    it.add(id, fragmentWrapper.fragment).runOnCommit {
+                        top?.screen?.bringToFront()
+                    }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 it.add(id, newTop.fragment)
@@ -262,7 +301,9 @@ class ScreenStack(
                     val screenFragmentsBeneathTop = screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {
-                        fragmentWrapper.screen.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
+                        fragmentWrapper.screen.changeAccessibilityMode(
+                            IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS,
+                        )
 
                         // don't change a11y below non-transparent screens
                         if (fragmentWrapper == visibleBottom) {
@@ -363,6 +404,8 @@ class ScreenStack(
     }
 
     companion object {
+        const val TAG = "ScreenStack"
+
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             // On Android sdk 33 and above the animation is different and requires draw reordering.
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
