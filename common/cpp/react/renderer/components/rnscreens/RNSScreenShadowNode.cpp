@@ -84,8 +84,8 @@ std::optional<float> findHeaderHeight(
 
 void RNSScreenShadowNode::appendChild(const ShadowNode::Shared &child) {
   YogaLayoutableShadowNode::appendChild(child);
-  const auto &stateData = getStateData();
 #ifdef ANDROID
+  const auto &stateData = getStateData();
   if (stateData.frameSize.width == 0 || stateData.frameSize.height == 0) {
     // This code path should be executed only on the very first (few)
     // layout(s), when we haven't received state update from JVM side yet.
