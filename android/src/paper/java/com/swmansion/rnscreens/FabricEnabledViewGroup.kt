@@ -12,7 +12,7 @@ abstract class FabricEnabledViewGroup(
     protected fun updateScreenSizeFabric(
         width: Int,
         height: Int,
-        headerHeight: Double,
+        headerHeight: Int,
     ) {
         // do nothing
     }
