@@ -36,7 +36,8 @@ class RNSScreenComponentDescriptor final
 #ifdef ANDROID
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       // When we receive dimensions from JVM side we can remove padding used for
-      // correction, and we can stop applying height and offset corrections for the frame.
+      // correction, and we can stop applying height and offset corrections for
+      // the frame.
       // TODO: In future, when we have dynamic header height we might want to
       // update Y offset correction here.
 
