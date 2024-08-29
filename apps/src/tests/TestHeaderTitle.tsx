@@ -2,6 +2,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Button } from '@react-navigation/elements';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,23 +18,23 @@ function App() {
           options={{
             headerLeft: () => {
               return (
-                <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', flexShrink: 1 }}>
+                <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod' }}>
                 </View>
               )
             },
-            // headerRight: () => (
-            //   <View style={{ width: 80, height: 20, minWidth: 80, backgroundColor: 'goldenrod', flexShrink: 0, opacity: 0.4 }}>
-            //   </View>
-            // ),
-            headerTitle: baseTitle.repeat(20),
+            headerRight: () => (
+              <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', opacity: 0.4 }}>
+              </View>
+            ),
+            // headerTitle: baseTitle.repeat(20),
             // headerTitle: () => (
             //   <Text>{baseTitle.repeat(20)}</Text>
             // ),
-            // headerTitle: () => (
-            //   <View style={{ borderColor: 'red', borderWidth: 2, height: 20, flexShrink: 1 }}>
-            //     <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(25)}</Text>
-            //   </View>
-            // ),
+            headerTitle: () => (
+              <View style={{ height: 20 }}>
+                <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(25)}</Text>
+              </View>
+            ),
             // title: baseTitle.repeat(15),
             // headerTitleAlign: 'center'
           }}
@@ -43,16 +44,27 @@ function App() {
           component={DetailsScreen}
           options={({ navigation }) => ({
             title: 'Details',
+            headerLeft: () => {
+              return (
+                <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod' }}>
+                </View>
+              )
+            },
             headerRight: () => (
-              <Pressable
-                onPress={navigation.goBack}
-                style={({ pressed }) => [
-                  styles.pressable,
-                  pressed && { backgroundColor: 'goldenrod' },
-                ]}>
-                <Text>Go Back</Text>
-              </Pressable>
+              <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', opacity: 0.4 }}>
+              </View>
             ),
+            // headerTitle: baseTitle.repeat(20),
+            // headerTitle: () => (
+            //   <Text>{baseTitle.repeat(20)}</Text>
+            // ),
+            headerTitle: () => (
+              <View style={{ height: 20 }}>
+                <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(25)}</Text>
+              </View>
+            ),
+            // title: baseTitle.repeat(15),
+            // headerTitleAlign: 'center'
           })}
         />
       </Stack.Navigator>
@@ -65,17 +77,24 @@ function Screen({ navigation }: any) {
     <View style={styles.container}>
       <View style={{ justifyContent: 'center', alignItems: 'flex-start' }}>
         <View style={{ backgroundColor: 'goldenrod', flexDirection: 'row', width: 200 }}>
-          <View collapsable={false} style={{ flexShrink: 1 }}>
-            <Text numberOfLines={1} style={{ flexShrink: 0 }}>{baseTitle.repeat(20)}</Text>
+          <View collapsable={false} style={{ flex: 1}}>
+            <Text numberOfLines={1} style={{}}>{baseTitle.repeat(20)}</Text>
           </View>
-          <View collapsable={false} style={{ flexShrink: 1, width: 80 }}>
-            <View style={{ backgroundColor: 'lightgreen', width: 80, height: 20, opacity: 0.6 }} />
+          <View collapsable={false} style={{}}>
+            <View style={{ backgroundColor: 'lightgreen', width: 50, height: 20, opacity: 0.6 }} />
+          </View>
+          <View collapsable={false} style={{}}>
+            <View style={{ backgroundColor: 'pink', width: 30, height: 20, opacity: 0.6 }} />
           </View>
         </View>
       </View>
+
+      <Button onPress={() => navigation.navigate("Details")} title="GoDetails"/>
     </View>
   );
 }
+
+// function AppScreensOnly
 
 function DetailsScreen() {
   let counter = React.useRef(0);

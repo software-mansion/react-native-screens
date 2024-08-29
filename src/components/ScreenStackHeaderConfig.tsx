@@ -50,7 +50,7 @@ export const ScreenStackHeaderCenterView = (
   <ScreenStackHeaderSubview
     {...props}
     type="center"
-    style={styles.headerSubview}
+    style={[styles.headerSubview, { borderWidth: 2, borderColor: 'blue' }]}
   />
 );
 
@@ -66,7 +66,7 @@ export const ScreenStackHeaderSearchBarView = (
 
 const styles = StyleSheet.create({
   headerSubview: {
-    position: 'absolute',
+    flex: 1,
     top: 0,
     right: 0,
     flexDirection: 'row',
