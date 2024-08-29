@@ -8,6 +8,26 @@
   align-items: center;
 }
 
+@media (min-width: 2920px) {
+  .screens {
+    top: 3rem;
+    min-height: 70%;
+  }
+}
+@media (min-width: 3000px) and (min-height: 1500px) {
+  .screens {
+    top: -3vh;
+    min-height: 50%;
+  }
+}
+
+@media (min-width: 3000px) and (min-height: 2000px) {
+  .screens {
+    top: -3vh;
+    min-height: 50%;
+  }
+}
+
 @media (max-width: 2000px) {
   .screens {
     top: 4rem;
