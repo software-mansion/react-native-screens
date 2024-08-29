@@ -3,10 +3,37 @@ import { NavigationContainer } from '@react-navigation/native';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button } from '@react-navigation/elements';
+import { NativeStackNavigationOptions } from 'react-native-screens/native-stack';
 
 const Stack = createNativeStackNavigator();
 
 const baseTitle = 'Ab';
+
+const headerOptions = {
+  // headerLeft: () => {
+  //   return (
+  //     <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod' }}>
+  //     </View>
+  //   )
+  // },
+  headerRight: () => (
+    <View style={{ }}>
+      <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', opacity: 0.4 }}>
+      </View>
+    </View>
+  ),
+  // headerTitle: baseTitle.repeat(20),
+  // headerTitle: () => (
+  //   <Text>{baseTitle.repeat(20)}</Text>
+  // ),
+  // headerTitle: () => (
+  //   <View style={{ height: 20, flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+  //     <Text numberOfLines={1} style={{}}>{baseTitle.repeat(10)}</Text>
+  //   </View>
+  // ),
+  title: baseTitle.repeat(10),
+  headerTitleAlign: 'center',
+}
 
 function App() {
   return (
@@ -15,57 +42,12 @@ function App() {
         <Stack.Screen
           name="Screen"
           component={Screen}
-          options={{
-            headerLeft: () => {
-              return (
-                <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod' }}>
-                </View>
-              )
-            },
-            headerRight: () => (
-              <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', opacity: 0.4 }}>
-              </View>
-            ),
-            // headerTitle: baseTitle.repeat(20),
-            // headerTitle: () => (
-            //   <Text>{baseTitle.repeat(20)}</Text>
-            // ),
-            headerTitle: () => (
-              <View style={{ height: 20 }}>
-                <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(25)}</Text>
-              </View>
-            ),
-            // title: baseTitle.repeat(15),
-            // headerTitleAlign: 'center'
-          }}
+          options={headerOptions}
         />
         <Stack.Screen
           name="Details"
           component={DetailsScreen}
-          options={({ navigation }) => ({
-            title: 'Details',
-            headerLeft: () => {
-              return (
-                <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod' }}>
-                </View>
-              )
-            },
-            headerRight: () => (
-              <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', opacity: 0.4 }}>
-              </View>
-            ),
-            // headerTitle: baseTitle.repeat(20),
-            // headerTitle: () => (
-            //   <Text>{baseTitle.repeat(20)}</Text>
-            // ),
-            headerTitle: () => (
-              <View style={{ height: 20 }}>
-                <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(25)}</Text>
-              </View>
-            ),
-            // title: baseTitle.repeat(15),
-            // headerTitleAlign: 'center'
-          })}
+          options={headerOptions}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -77,7 +59,7 @@ function Screen({ navigation }: any) {
     <View style={styles.container}>
       <View style={{ justifyContent: 'center', alignItems: 'flex-start' }}>
         <View style={{ backgroundColor: 'goldenrod', flexDirection: 'row', width: 200 }}>
-          <View collapsable={false} style={{ flex: 1}}>
+          <View collapsable={false} style={{ flex: 1 }}>
             <Text numberOfLines={1} style={{}}>{baseTitle.repeat(20)}</Text>
           </View>
           <View collapsable={false} style={{}}>
@@ -89,7 +71,7 @@ function Screen({ navigation }: any) {
         </View>
       </View>
 
-      <Button onPress={() => navigation.navigate("Details")} title="GoDetails"/>
+      <Button onPress={() => navigation.navigate("Details")} title="GoDetails" />
     </View>
   );
 }

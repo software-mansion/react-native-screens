@@ -5,6 +5,8 @@ import android.view.View
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -40,6 +42,17 @@ class ScreenStackHeaderConfigViewManager :
             )
         }
         parent.addConfigSubview(child, index)
+    }
+
+    override fun updateState(
+        view: ScreenStackHeaderConfig,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?
+    ): Any? {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            view.setStateWrapper(stateWrapper)
+        }
+        return super.updateState(view, props, stateWrapper)
     }
 
     override fun onDropViewInstance(

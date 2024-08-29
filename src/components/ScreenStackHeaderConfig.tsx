@@ -26,33 +26,45 @@ export const ScreenStackHeaderBackButtonImage = (
 
 export const ScreenStackHeaderRightView = (
   props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => (
-  <ScreenStackHeaderSubview
-    {...props}
-    type="right"
-    style={styles.headerSubview}
-  />
-);
+): JSX.Element => {
+  const { style, ...rest } = props;
+
+  return (
+    <ScreenStackHeaderSubview
+      {...rest}
+      type="right"
+      style={[styles.headerSubview, style, { flex: undefined }]}
+    />
+  );
+};
 
 export const ScreenStackHeaderLeftView = (
   props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => (
-  <ScreenStackHeaderSubview
-    {...props}
-    type="left"
-    style={styles.headerSubview}
-  />
-);
+): JSX.Element => {
+  const { style, ...rest } = props;
+
+  return (
+    <ScreenStackHeaderSubview
+      {...rest}
+      type="left"
+      style={[styles.headerSubview, style]}
+    />
+  );
+};
 
 export const ScreenStackHeaderCenterView = (
   props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => (
-  <ScreenStackHeaderSubview
-    {...props}
-    type="center"
-    style={[styles.headerSubview, { borderWidth: 2, borderColor: 'blue' }]}
-  />
-);
+): JSX.Element => {
+  const { style, ...rest } = props;
+
+  return (
+    <ScreenStackHeaderSubview
+      {...rest}
+      type="center"
+      style={[styles.headerSubview, style]}
+    />
+  );
+};
 
 export const ScreenStackHeaderSearchBarView = (
   props: React.PropsWithChildren<SearchBarProps>,
@@ -67,8 +79,6 @@ export const ScreenStackHeaderSearchBarView = (
 const styles = StyleSheet.create({
   headerSubview: {
     flex: 1,
-    top: 0,
-    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

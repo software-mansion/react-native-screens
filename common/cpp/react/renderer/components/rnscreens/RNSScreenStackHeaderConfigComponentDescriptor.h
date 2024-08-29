@@ -19,6 +19,25 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
+#ifdef ANDROID
+    react_native_assert(
+        dynamic_cast<RNSScreenStackHeaderConfigShadowNode *>(&shadowNode));
+    auto &configShadowNode =
+        static_cast<RNSScreenStackHeaderConfigShadowNode &>(shadowNode);
+
+    react_native_assert(
+        dynamic_cast<YogaLayoutableShadowNode *>(&configShadowNode));
+    auto &layoutableShadowNode =
+        dynamic_cast<YogaLayoutableShadowNode &>(configShadowNode);
+
+    auto state = std::static_pointer_cast<
+        const RNSScreenStackHeaderConfigShadowNode::ConcreteState>(
+        shadowNode.getState());
+    auto stateData = state->getData();
+
+    layoutableShadowNode.setPadding(
+        {stateData.getPaddingStart(), 0, stateData.getPaddingEnd(), 0});
+#endif
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 };

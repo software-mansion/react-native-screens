@@ -17,10 +17,15 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   RNSScreenStackHeaderConfigState() = default;
 
+  RNSScreenStackHeaderConfigState(Float paddingStart, Float paddingEnd)
+      : paddingStart_{paddingStart}, paddingEnd_{paddingEnd} {}
+
 #ifdef ANDROID
   RNSScreenStackHeaderConfigState(
       RNSScreenStackHeaderConfigState const &previousState,
-      folly::dynamic data) {}
+      folly::dynamic data)
+      : paddingStart_{static_cast<Float>(data["paddingStart"].getDouble())},
+        paddingEnd_{static_cast<Float>(data["paddingEnd"].getDouble())} {}
 #endif
 
 #ifdef ANDROID
@@ -28,9 +33,19 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
   };
+
+  [[nodiscard]] Float getPaddingStart() const noexcept;
+
+  [[nodiscard]] Float getPaddingEnd() const noexcept;
 #endif
 
 #pragma mark - Getters
+
+#ifdef ANDROID
+ private:
+  Float paddingStart_{0.f};
+  Float paddingEnd_{0.f};
+#endif
 };
 
 } // namespace facebook::react
