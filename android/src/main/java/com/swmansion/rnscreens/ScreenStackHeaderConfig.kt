@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import FabricEnabledConfigViewGroup
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
