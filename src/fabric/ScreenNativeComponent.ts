@@ -51,6 +51,7 @@ type StackAnimation =
   | 'slide_from_left'
   | 'slide_from_bottom'
   | 'fade_from_bottom'
+  | 'ios'
   | 'ios_from_right'
   | 'ios_from_left';
 

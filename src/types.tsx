@@ -38,6 +38,7 @@ export type StackAnimationTypes =
   | 'slide_from_bottom'
   | 'slide_from_right'
   | 'slide_from_left'
+  | 'ios'
   | 'ios_from_right'
   | 'ios_from_left';
 export type BlurEffectTypes =
@@ -341,6 +342,7 @@ export interface ScreenProps extends ViewProps {
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right
+   * - "ios" - iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS) (will be deprecated in favor of `ios_from_right` in v4.0.0)
    * - "ios_from_right" - iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "ios_from_left" - iOS like slide in animation. pushes in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
