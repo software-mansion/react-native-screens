@@ -363,6 +363,7 @@ class Screen(
         SLIDE_FROM_RIGHT,
         SLIDE_FROM_LEFT,
         FADE_FROM_BOTTOM,
+        IOS,
         IOS_FROM_RIGHT,
         IOS_FROM_LEFT,
     }
