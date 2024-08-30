@@ -53,10 +53,12 @@
   switch (stackAnimation) {
     // these three are intentionally grouped
     case react::RNSScreenStackAnimation::Slide_from_right:
-    case react::RNSScreenStackAnimation::Ios:
+    case react::RNSScreenStackAnimation::Ios_from_right:
     case react::RNSScreenStackAnimation::Default:
       return RNSScreenStackAnimationDefault;
+    // these two are intentionally grouped
     case react::RNSScreenStackAnimation::Slide_from_left:
+    case react::RNSScreenStackAnimation::Ios_from_right:
       return RNSScreenStackAnimationSlideFromLeft;
     case react::RNSScreenStackAnimation::Flip:
       return RNSScreenStackAnimationFlip;
