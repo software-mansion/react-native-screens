@@ -1,11 +1,8 @@
+package com.swmansion.rnscreens
+
 import android.content.Context
 import android.view.ViewGroup
-import androidx.annotation.UiThread
-import com.facebook.react.bridge.WritableMap
-import com.facebook.react.bridge.WritableNativeMap
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
-import kotlin.math.abs
 
 abstract class FabricEnabledConfigViewGroup(
     context: Context?,
