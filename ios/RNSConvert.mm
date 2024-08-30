@@ -58,7 +58,7 @@
       return RNSScreenStackAnimationDefault;
     // these two are intentionally grouped
     case react::RNSScreenStackAnimation::Slide_from_left:
-    case react::RNSScreenStackAnimation::Ios_from_right:
+    case react::RNSScreenStackAnimation::Ios_from_left:
       return RNSScreenStackAnimationSlideFromLeft;
     case react::RNSScreenStackAnimation::Flip:
       return RNSScreenStackAnimationFlip;
