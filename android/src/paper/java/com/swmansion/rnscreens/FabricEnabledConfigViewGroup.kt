@@ -5,9 +5,7 @@ import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
-import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
-import com.facebook.react.uimanager.common.UIManagerType
 import com.swmansion.rnscreens.utils.PaddingBundle
 
 abstract class FabricEnabledConfigViewGroup(
@@ -26,6 +24,6 @@ abstract class FabricEnabledConfigViewGroup(
 
         val reactContext = context as ReactContext
         val uiManagerModule = reactContext.getNativeModule(UIManagerModule::class.java)
-        uiManagerModule!!.setViewLocalData(this.id, PaddingBundle(paddingStartInDip, paddingEndInDip))
+        uiManagerModule!!.setViewLocalData(this.id, PaddingBundle(paddingStart.toFloat(), paddingEnd.toFloat()))
     }
 }
