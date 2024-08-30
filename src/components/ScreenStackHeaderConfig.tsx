@@ -33,7 +33,7 @@ export const ScreenStackHeaderRightView = (
     <ScreenStackHeaderSubview
       {...rest}
       type="right"
-      style={[styles.headerSubview, style, { flex: undefined }]}
+      style={[styles.headerSubview, style]}
     />
   );
 };
@@ -78,7 +78,6 @@ export const ScreenStackHeaderSearchBarView = (
 
 const styles = StyleSheet.create({
   headerSubview: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

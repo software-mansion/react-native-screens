@@ -1,23 +1,21 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button } from '@react-navigation/elements';
-import { NativeStackNavigationOptions } from 'react-native-screens/native-stack';
 
 const Stack = createNativeStackNavigator();
 
 const baseTitle = 'Ab';
 
 const headerOptions = {
-  // headerLeft: () => {
-  //   return (
-  //     <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod' }}>
-  //     </View>
-  //   )
-  // },
+  headerLeft: () => {
+    return (
+      <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod' }}>
+      </View>
+    )
+  },
   headerRight: () => (
-    <View style={{ }}>
+    <View style={{}}>
       <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', opacity: 0.4 }}>
       </View>
     </View>
@@ -26,13 +24,13 @@ const headerOptions = {
   // headerTitle: () => (
   //   <Text>{baseTitle.repeat(20)}</Text>
   // ),
-  // headerTitle: () => (
-  //   <View style={{ height: 20, flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-  //     <Text numberOfLines={1} style={{}}>{baseTitle.repeat(10)}</Text>
-  //   </View>
-  // ),
-  title: baseTitle.repeat(10),
-  headerTitleAlign: 'center',
+  headerTitle: () => (
+    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+      <Text numberOfLines={1} style={{}}>{baseTitle.repeat(20)}</Text>
+    </View>
+  ),
+  // title: baseTitle.repeat(20),
+  headerTitleAlign: 'left',
 }
 
 function App() {
@@ -70,7 +68,6 @@ function Screen({ navigation }: any) {
           </View>
         </View>
       </View>
-
       <Button onPress={() => navigation.navigate("Details")} title="GoDetails" />
     </View>
   );
