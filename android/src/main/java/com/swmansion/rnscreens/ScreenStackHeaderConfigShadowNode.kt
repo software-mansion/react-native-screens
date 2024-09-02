@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.Spacing
@@ -14,7 +13,6 @@ internal class ScreenStackHeaderConfigShadowNode(
 
     override fun setLocalData(data: Any?) {
         if (data is PaddingBundle) {
-            Log.i("ShadowNode", "$data")
             paddingStart = data.paddingStart
             paddingEnd = data.paddingEnd
 
