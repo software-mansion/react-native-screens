@@ -9,9 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
+import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -363,7 +365,7 @@ class Screen(
         parent?.let {
             for (i in 0 until it.childCount) {
                 val child = it.getChildAt(i)
-                if (child.javaClass.simpleName.equals("CircleImageView")) {
+                if (parent is SwipeRefreshLayout && child is ImageView) {
                     // SwipeRefreshLayout class which has CircleImageView as a child,
                     // does not handle `startViewTransition` properly.
                     // It has a custom `getChildDrawingOrder` method which returns
