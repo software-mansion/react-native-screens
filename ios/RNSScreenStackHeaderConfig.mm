@@ -966,6 +966,14 @@ RCT_EXPORT_MODULE()
   return [RNSScreenStackHeaderConfig new];
 }
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
+- (RCTShadowView *)shadowView
+{
+  return [RNSScreenStackHeaderConfigShadowView new];
+}
+#endif // RCT_NEW_ARCH_ENABLED
+
 RCT_EXPORT_VIEW_PROPERTY(title, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
@@ -995,6 +1003,46 @@ RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, w
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @end
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
+
+@implementation RNSHeaderConfigInsetsPayload
+
+- (instancetype)init
+{
+  return [self initWithInsets:NSDirectionalEdgeInsets{}];
+}
+
+- (instancetype)initWithInsets:(NSDirectionalEdgeInsets)insets
+{
+  if (self = [super init]) {
+    self.insets = insets;
+  }
+  return self;
+}
+
+@end
+
+@implementation RNSScreenStackHeaderConfigShadowView {
+}
+
+- (void)setLocalData:(NSObject *)localData
+{
+  if ([localData isKindOfClass:RNSHeaderConfigInsetsPayload.class]) {
+    RNSHeaderConfigInsetsPayload *payload = (RNSHeaderConfigInsetsPayload *)localData;
+    [self setPaddingStart:YGValue{.value = (float)payload.insets.leading, .unit = YGUnitPoint}];
+    [self setPaddingEnd:YGValue{.value = (float)payload.insets.trailing, .unit = YGUnitPoint}];
+
+    // Trigger layout prop recomputation
+    [self didSetProps:@[]];
+  } else {
+    [super setLocalData:localData];
+  }
+}
+
+@end
+#endif
 
 @implementation RCTConvert (RNSScreenStackHeader)
 

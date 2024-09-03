@@ -135,6 +135,8 @@ namespace react = facebook::react;
 /// Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;
 
+- (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets;
+
 @end
 
 @interface UIView (RNSScreen)

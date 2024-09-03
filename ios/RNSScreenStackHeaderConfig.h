@@ -1,6 +1,7 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #else
+#import <React/RCTShadowView.h>
 #import <React/RCTViewManager.h>
 #endif
 
@@ -66,6 +67,22 @@
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
 
 @end
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
+
+@interface RNSHeaderConfigInsetsPayload : NSObject
+
+@property (nonatomic) NSDirectionalEdgeInsets insets;
+
+- (instancetype)initWithInsets:(NSDirectionalEdgeInsets)insets NS_DESIGNATED_INITIALIZER;
+
+@end
+
+@interface RNSScreenStackHeaderConfigShadowView : RCTShadowView
+
+@end
+#endif
 
 @interface RCTConvert (RNSScreenStackHeader)
 

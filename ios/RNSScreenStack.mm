@@ -82,6 +82,20 @@ namespace react = facebook::react;
     if (![screenController hasNestedStack] && isNotDismissingModal) {
       [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
+
+    NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
+    NSDirectionalEdgeInsets navBarContentMargins = [self.navigationBar.subviews[1] directionalLayoutMargins];
+    NSDirectionalEdgeInsets titleViewMargins = self.navigationBar.topItem.titleView.directionalLayoutMargins;
+
+    // I think there could be bug if we have one push screen and one modal!
+    BOOL isDisplayingBackButton = self.viewControllers.count > 1;
+
+    [screenController.screenView
+        updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
+                                             .leading = navBarMargins.leading + navBarContentMargins.leading +
+                                                 (isDisplayingBackButton ? 44 : 0),
+                                             .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+                                         }];
   }
 }
 
