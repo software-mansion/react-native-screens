@@ -377,6 +377,7 @@ class ScreenStack(
             Build.VERSION.SDK_INT >= 33 ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
+                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.IOS_FROM_RIGHT ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.IOS_FROM_LEFT
     }
