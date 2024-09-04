@@ -55,6 +55,7 @@ const items = [
   },
   {
     author: 'Brent Vatne',
+    company: 'Expo',
     body: "react-native-screens is one of the most essential libraries in the ecosystem. it's a crucial building block for react-navigation and expo-router, and therefore nearly all react-native apps! native stack in particular does tons of heavy lifting to make your apps feel fantastic.",
     link: 'https://x.com/notbrent/status/1826699409738137796',
     image: {
