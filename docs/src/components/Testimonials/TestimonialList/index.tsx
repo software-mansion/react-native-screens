@@ -6,7 +6,7 @@ import TestimonialItem from '@site/src/components/Testimonials/TestimonialItem';
 const items = [
   {
     author: 'Satyajit Sahoo',
-    company: 'React Navigation',
+    company: 'Callstack',
     body: "React Navigation wouldn't be the same today without React Native Screens. Gotta give kudos to the Screens team for bringing native navigation with a nice API. And they are always hard at work to bring more native features as well!",
     link: 'https://x.com/satya164/status/1826694902660694028',
     image: {
@@ -15,7 +15,7 @@ const items = [
     },
   },
   {
-    author: 'Ferran',
+    author: 'Ferran Negre Pizzaro',
     company: 'FitHero',
     body: 'I would never build a serious React Native app without it.',
     link: 'https://x.com/ferrannp/status/1826734343571796317',
@@ -25,7 +25,7 @@ const items = [
     },
   },
   {
-    author: 'Seb ⚛️',
+    author: 'Sébastien Lorber',
     company: 'This Week In React',
     body: 'React Native Screens is what makes React Native navigation truly competitive against native apps',
     link: 'https://x.com/sebastienlorber/status/1828760445106466959',
@@ -35,7 +35,7 @@ const items = [
     },
   },
   {
-    author: 'Jamon',
+    author: 'Jamon Holmgren',
     company: 'Infinite Red',
     body: 'React Native Screens is one of the most underrated React Native libraries!',
     link: 'https://x.com/jamonholmgren/status/1826713786797228166',
@@ -54,7 +54,7 @@ const items = [
     },
   },
   {
-    author: 'brent 🇺🇦',
+    author: 'Brent Vatne',
     body: "react-native-screens is one of the most essential libraries in the ecosystem. it's a crucial building block for react-navigation and expo-router, and therefore nearly all react-native apps! native stack in particular does tons of heavy lifting to make your apps feel fantastic.",
     link: 'https://x.com/notbrent/status/1826699409738137796',
     image: {
