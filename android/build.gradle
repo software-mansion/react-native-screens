@@ -148,10 +148,18 @@ android {
 repositories {
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-        // Matches the RN Hello World template
-        // https://github.com/facebook/react-native/blob/1e8f3b11027fe0a7514b4fc97d0798d3c64bc895/local-cli/templates/HelloWorld/android/build.gradle#L21
-        url "$projectDir/../node_modules/react-native/android"
+
+        // Use node resolver to locate react-native package
+        def reactNativePackage = file(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, projectDir).text.trim())
+        if (reactNativePackage.exists()) {
+            url "$reactNativePackage.parentFile/android"
+        }
+        // Fallback to react-native package colocated in node_modules
+        else {
+            url "$projectDir/../node_modules/react-native/android"
+        }
     }
+
     mavenCentral()
     mavenLocal()
     google()
