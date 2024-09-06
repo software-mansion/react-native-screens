@@ -470,6 +470,9 @@ namespace react = facebook::react;
 {
   UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
+  if (navctr == nil) {
+    return;
+  }
 
   NSUInteger currentIndex = [navctr.viewControllers indexOfObject:vc];
   UINavigationItem *prevItem =
