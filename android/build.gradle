@@ -150,13 +150,13 @@ repositories {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
 
         // Use node resolver to locate react-native package
-        def reactNativePackage = file(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, projectDir).text.trim())
+        def reactNativePackage = file(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim())
         if (reactNativePackage.exists()) {
             url "$reactNativePackage.parentFile/android"
         }
         // Fallback to react-native package colocated in node_modules
         else {
-            url "$projectDir/../node_modules/react-native/android"
+            url "$rootDir/../node_modules/react-native/android"
         }
     }
 
