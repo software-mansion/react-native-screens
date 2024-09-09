@@ -452,6 +452,10 @@ export interface ScreenStackProps extends ViewProps {
   ref?: React.MutableRefObject<React.Ref<View>>;
 }
 
+export interface ScreenSplitProps extends ViewProps {
+  children?: React.ReactNode;
+}
+
 export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Whether to show the back button with custom left side of the header.
