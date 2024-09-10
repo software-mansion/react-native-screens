@@ -390,9 +390,7 @@ namespace react = facebook::react;
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  if (config.blurEffect) {
-    appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
-  }
+  appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
 
   if (config.hideShadow) {
     appearance.shadowColor = nil;
