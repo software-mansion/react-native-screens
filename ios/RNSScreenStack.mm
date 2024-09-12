@@ -84,6 +84,11 @@ namespace react = facebook::react;
     }
 
     NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
+
+    if (self.navigationBar.subviews.count < 2) {
+      return;
+    }
+
     NSDirectionalEdgeInsets navBarContentMargins = [self.navigationBar.subviews[1] directionalLayoutMargins];
     NSDirectionalEdgeInsets titleViewMargins = self.navigationBar.topItem.titleView.directionalLayoutMargins;
 
