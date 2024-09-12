@@ -513,13 +513,6 @@ namespace react = facebook::react;
       [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
       return;
     }
-
-    UIViewController *lastModalVc = [self lastFromPresentedViewControllerChainStartingFrom:firstModalToBeDismissed];
-
-    if (lastModalVc != firstModalToBeDismissed) {
-      [lastModalVc dismissViewControllerAnimated:shouldAnimate completion:finish];
-      return;
-    }
   }
 
   // changeRootController does not have presentedViewController but it does not mean that no modals are in presentation;
