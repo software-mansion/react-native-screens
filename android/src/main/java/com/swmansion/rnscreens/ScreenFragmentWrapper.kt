@@ -8,7 +8,7 @@ interface ScreenFragmentWrapper :
     ScreenEventDispatcher {
     var screen: Screen
 
-    val hiddenFromStack: Boolean
+    val hiddenFromStack get() = screen.hiddenFromStack
 
     // Communication with container
     val childScreenContainers: List<ScreenContainer>
@@ -17,6 +17,10 @@ interface ScreenFragmentWrapper :
 
     fun removeChildScreenContainer(container: ScreenContainer)
 
+    /**
+     * Container that this fragment belongs to calls it to notify the fragment,
+     * that the container has updated.
+     */
     fun onContainerUpdate()
 
     // Animation phase callbacks

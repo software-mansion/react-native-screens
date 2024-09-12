@@ -1,0 +1,35 @@
+.learnMoreContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.learnMoreContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 75%;
+  text-wrap: balance;
+}
+
+.learnMoreContent > h4 {
+  font-weight: 500;
+  font-size: 24px;
+}
+
+.learnMoreContent > p {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+@media (max-width: 996px) {
+  .learnMoreContainer {
+    flex-direction: column;
+  }
+
+  .learnMoreContent {
+    width: 100%;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+}
