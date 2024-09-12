@@ -470,6 +470,11 @@ namespace react = facebook::react;
 {
   UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
+
+  // When modal is shown the underlying RNSScreen isn't attached to any navigation controller.
+  // During the modal dismissal transition this update method is called on this RNSScreen resulting in nil navctr.
+  // After the transition is completed it will be called again and will configure the navigation controller correctly.
+  // Also see: https://github.com/software-mansion/react-native-screens/pull/2336
   if (navctr == nil) {
     return;
   }
