@@ -18,12 +18,8 @@ internal class ScreenStackHeaderConfigShadowNode(
 
             setPadding(Spacing.START, paddingStart)
             setPadding(Spacing.END, paddingEnd)
-//            markUpdated()
         } else {
             super.setLocalData(data)
         }
-
-//        dirty()
-//        markUpdated()
     }
 }

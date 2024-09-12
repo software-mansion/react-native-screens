@@ -22,8 +22,8 @@ abstract class FabricEnabledConfigViewGroup(
         val paddingStartInDip = PixelUtil.toDIPFromPixel(paddingStart.toFloat())
         val paddingEndInDip = PixelUtil.toDIPFromPixel(paddingEnd.toFloat())
 
-        val reactContext = context as ReactContext
-        val uiManagerModule = reactContext.getNativeModule(UIManagerModule::class.java)
-        uiManagerModule!!.setViewLocalData(this.id, PaddingBundle(paddingStart.toFloat(), paddingEnd.toFloat()))
+        val reactContext = context as? ReactContext
+        val uiManagerModule = reactContext?.getNativeModule(UIManagerModule::class.java)
+        uiManagerModule?.setViewLocalData(this.id, PaddingBundle(paddingStart.toFloat(), paddingEnd.toFloat()))
     }
 }
