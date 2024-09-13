@@ -119,7 +119,7 @@ namespace react = facebook::react;
       !headerConfig.backButtonInCustomView && !headerConfig.hideBackButton;
 
   // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
-  UIView *barButtonView = self.navigationBar.rnscreens_findBackButtonWrapperView;
+  UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;
   CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
 
   [headerConfig updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
