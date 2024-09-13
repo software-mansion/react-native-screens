@@ -3,33 +3,63 @@ import { NavigationContainer } from '@react-navigation/native';
 import { View, Text, StyleSheet, Pressable, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+
 const Stack = createNativeStackNavigator();
 
 const baseTitle = 'Ab';
+const baseTitle2 = 'Ac';
+
+// Toggle these two for short / long string on first screen
+// const homeScreenTitle = "Screen";
+const homeScreenTitle = baseTitle.repeat(24);
+
+// Toggle these two for short / long string on second screen
+// const secondScreenTitle = "Details";
+const secondScreenTitle = baseTitle2.repeat(24);
 
 const headerOptions = {
   headerLeft: () => {
     return (
-      <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod' }}>
+      <View style={{ width: 40, height: 20, backgroundColor: 'goldenrod' }}>
       </View>
     )
   },
   headerRight: () => (
-    <View style={{}}>
-      <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', opacity: 0.4 }}>
-      </View>
+    <View style={{ width: 120, height: 20, backgroundColor: 'goldenrod', opacity: 0.4, flexDirection: 'row' }}>
     </View>
   ),
+  // headerRight: () => {
+  //   return (
+  //     <View style={{ flexDirection: 'row' }}>
+  //       <View style={{ width: 60, height: 20, backgroundColor: 'lightblue', opacity: 0.4 }} />
+  //       <View style={{ width: 60, height: 20, backgroundColor: 'lightgreen', opacity: 0.4 }} />
+  //     </View>
+  //   );
+  // },
+  // headerRight: () => (
+  //   <View style={{}}>
+  //     <View style={{ width: 80, height: 20, backgroundColor: 'goldenrod', opacity: 0.4 }}>
+  //     </View>
+  //   </View>
+  // ),
   // headerTitle: baseTitle.repeat(20),
   // headerTitle: () => (
-  //   <Text>{baseTitle.repeat(20)}</Text>
+  //   <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(5)}</Text>
   // ),
+  // headerRight: () => {
+  //   return (
+  //     <View style={{ flexDirection: 'row' }}>
+  //       <View style={{ width: 20, height: 20, backgroundColor: 'lightgreen', opacity: 0.8 }} />
+  //       <View style={{ width: 40, height: 20, backgroundColor: 'lightblue', opacity: 0.8 }} />
+  //     </View>
+  //   );
+  // },
   headerTitle: () => (
-    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-      <Text numberOfLines={1} style={{}}>{baseTitle.repeat(20)}</Text>
+    <View style={{}}>
+      <Text numberOfLines={1} style={{}}>{baseTitle.repeat(24)}</Text>
     </View>
   ),
-  // title: baseTitle.repeat(20),
+  // title: baseTitle.repeat(4),
   headerTitleAlign: 'left',
 }
 
@@ -38,14 +68,19 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ statusBarTranslucent: false }}>
         <Stack.Screen
-          name="Screen"
+          name={homeScreenTitle}
           component={Screen}
           options={headerOptions}
         />
         <Stack.Screen
-          name="Details"
+          name={secondScreenTitle}
           component={DetailsScreen}
-          options={headerOptions}
+          options={{
+            ...headerOptions,
+            headerSearchBarOptions: {
+              placeholder: 'hello',
+            }
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -53,29 +88,35 @@ function App() {
 }
 
 function Screen({ navigation }: any) {
+  let headerSubviewStyle = {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  // Just a reference contents, mimicking the setup with header config & subviews
+
   return (
-    <View style={styles.container}>
-      <View style={{ justifyContent: 'center', alignItems: 'flex-start' }}>
-        <View style={{ backgroundColor: 'goldenrod', flexDirection: 'row', width: 200 }}>
-          <View collapsable={false} style={{ flex: 1 }}>
-            <Text numberOfLines={1} style={{}}>{baseTitle.repeat(20)}</Text>
-          </View>
-          <View collapsable={false} style={{}}>
-            <View style={{ backgroundColor: 'lightgreen', width: 50, height: 20, opacity: 0.6 }} />
-          </View>
-          <View collapsable={false} style={{}}>
-            <View style={{ backgroundColor: 'pink', width: 30, height: 20, opacity: 0.6 }} />
-          </View>
+    <View>
+      <View style={[{ backgroundColor: 'pink', flexDirection: 'row', width: '100%', justifyContent: 'space-between', marginVertical: 10 }]}>
+        <View collapsable={false} style={[headerSubviewStyle]}>
+          <View style={{ backgroundColor: 'lightgreen', width: 50, height: 20, opacity: 0.6 }} />
+        </View>
+        <View style={[{ backgroundColor: 'goldenrod', flexShrink: 1 }, headerSubviewStyle]}>
+          <Text numberOfLines={1} style={{}}>{baseTitle.repeat(5)}</Text>
+        </View>
+        <View collapsable={false} style={{}}>
+          <View style={[{ backgroundColor: 'lightblue', width: 80, height: 20, opacity: 0.6 }, headerSubviewStyle]} />
         </View>
       </View>
-      <Button onPress={() => navigation.navigate("Details")} title="GoDetails" />
+      <Button onPress={() => navigation.navigate(secondScreenTitle)} title='Nav Forward' />
     </View>
   );
 }
 
 // function AppScreensOnly
 
-function DetailsScreen() {
+function DetailsScreen({ navigation }: any) {
   let counter = React.useRef(0);
 
   return (
@@ -97,6 +138,7 @@ function DetailsScreen() {
         ]}>
         <Text>Press me</Text>
       </Pressable>
+      <Button title='GoBack' onPress={() => navigation.goBack()} />
     </View>
   );
 }
@@ -110,8 +152,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 24,
+    paddingVertical: 24,
+    gap: 16,
   },
 });
 
