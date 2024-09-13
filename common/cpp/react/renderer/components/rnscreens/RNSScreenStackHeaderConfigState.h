@@ -34,18 +34,17 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
     return MapBufferBuilder::EMPTY();
   };
 
-  [[nodiscard]] Float getPaddingStart() const noexcept;
-
-  [[nodiscard]] Float getPaddingEnd() const noexcept;
 #endif
 
 #pragma mark - Getters
 
-#ifdef ANDROID
+  [[nodiscard]] Float getPaddingStart() const noexcept;
+
+  [[nodiscard]] Float getPaddingEnd() const noexcept;
+
  private:
   Float paddingStart_{0.f};
   Float paddingEnd_{0.f};
-#endif
 };
 
 } // namespace facebook::react

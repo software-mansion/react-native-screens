@@ -9,6 +9,8 @@ folly::dynamic RNSScreenStackHeaderConfigState::getDynamic() const {
       "paddingEnd_", paddingEnd_);
 }
 
+#endif
+
 Float RNSScreenStackHeaderConfigState::getPaddingStart() const noexcept {
   return paddingStart_;
 }
@@ -16,7 +18,6 @@ Float RNSScreenStackHeaderConfigState::getPaddingStart() const noexcept {
 Float RNSScreenStackHeaderConfigState::getPaddingEnd() const noexcept {
   return paddingEnd_;
 }
-#endif
 
 } // namespace react
 } // namespace facebook
