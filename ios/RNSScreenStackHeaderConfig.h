@@ -115,6 +115,10 @@
 
 @end
 
+/**
+ * Custom shadow view for header config. This is used on Paper to provide Yoga
+ * with knowledge of native header insets (horizontal padding).
+ */
 @interface RNSScreenStackHeaderConfigShadowView : RCTShadowView
 
 @end
