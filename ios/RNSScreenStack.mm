@@ -83,24 +83,7 @@ namespace react = facebook::react;
       [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
 
-    NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
-
-    if (self.navigationBar.subviews.count < 2) {
-      return;
-    }
-
-    NSDirectionalEdgeInsets navBarContentMargins = [self.navigationBar.subviews[1] directionalLayoutMargins];
-    NSDirectionalEdgeInsets titleViewMargins = self.navigationBar.topItem.titleView.directionalLayoutMargins;
-
-    // I think there could be bug if we have one push screen and one modal!
-    BOOL isDisplayingBackButton = self.viewControllers.count > 1;
-
-    [screenController.screenView
-        updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
-                                             .leading = navBarMargins.leading + navBarContentMargins.leading +
-                                                 (isDisplayingBackButton ? 44 : 0),
-                                             .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
-                                         }];
+    [self maybeUpdateHeaderInsetsInShadowTreeForScreen:screenController];
   }
 }
 
@@ -112,6 +95,32 @@ namespace react = facebook::react;
 - (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
 {
   return [self topViewController];
+}
+
+- (void)maybeUpdateHeaderInsetsInShadowTreeForScreen:(RNSScreen *)screenController
+{
+  // This might happen e.g. if there is only native title present in navigation bar.
+  if (self.navigationBar.subviews.count < 2) {
+    return;
+  }
+
+  auto headerConfig = screenController.screenView.findHeaderConfig;
+  if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible) {
+    return;
+  }
+
+  NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
+  NSDirectionalEdgeInsets navBarContentMargins = [self.navigationBar.subviews[1] directionalLayoutMargins];
+  NSDirectionalEdgeInsets titleViewMargins = self.navigationBar.topItem.titleView.directionalLayoutMargins;
+
+  // I think there could be bug e.g. if we have one push screen and one modal!
+  BOOL isDisplayingBackButton = self.viewControllers.count > 1 && !headerConfig.hasSubviewLeft;
+
+  [headerConfig updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
+                                                     .leading = navBarMargins.leading + navBarContentMargins.leading +
+                                                         (isDisplayingBackButton ? 44 : 0),
+                                                     .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+                                                 }];
 }
 #endif
 

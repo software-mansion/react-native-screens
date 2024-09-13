@@ -61,6 +61,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 @implementation RNSScreenView {
   __weak ReactScrollViewBase *_sheetsScrollView;
   BOOL _didSetSheetAllowedDetentsOnController;
+  NSDirectionalEdgeInsets _lastHeaderInsets;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -71,7 +72,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   __weak RCTBridge *_bridge;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
-  NSDirectionalEdgeInsets _lastHeaderInsets;
 #endif
 }
 
@@ -137,18 +137,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   return _reactSubviews;
 }
 #endif
-
-- (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets
-{
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
-    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets]
-                            forView:self.findHeaderConfig];
-    _lastHeaderInsets = insets;
-  }
-#endif // RCT_NEW_ARCH_ENABLED
-}
 
 - (void)updateBounds
 {
