@@ -41,6 +41,7 @@ export type StackAnimationTypes =
   | 'slide_from_left'
   | 'ios';
 export type BlurEffectTypes =
+  | 'undefined'
   | 'extraLight'
   | 'light'
   | 'dark'

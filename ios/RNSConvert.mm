@@ -177,6 +177,8 @@
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     switch (blurEffect) {
+      case react::RNSScreenStackHeaderConfigBlurEffect::Undefined:
+        return (UIBlurEffectStyle)-1;
       case react::RNSScreenStackHeaderConfigBlurEffect::ExtraLight:
         return UIBlurEffectStyleExtraLight;
       case react::RNSScreenStackHeaderConfigBlurEffect::Light:
@@ -222,6 +224,8 @@
 #endif
 
   switch (blurEffect) {
+    case react::RNSScreenStackHeaderConfigBlurEffect::Undefined:
+      return (UIBlurEffectStyle)-1;
     case react::RNSScreenStackHeaderConfigBlurEffect::Light:
       return UIBlurEffectStyleLight;
     case react::RNSScreenStackHeaderConfigBlurEffect::Dark:

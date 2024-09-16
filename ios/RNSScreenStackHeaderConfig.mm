@@ -53,6 +53,8 @@ namespace react = facebook::react;
 
 @end
 
+static UIBlurEffectStyle UIBlurEffectStyleUndefined = (UIBlurEffectStyle)-1;
+
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -96,6 +98,7 @@ namespace react = facebook::react;
   self.hidden = YES;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
+  _blurEffect = UIBlurEffectStyleUndefined;
 }
 
 - (UIView *)reactSuperview
@@ -390,7 +393,11 @@ namespace react = facebook::react;
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
+  if (config.blurEffect != UIBlurEffectStyleUndefined) {
+    appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
+  } else {
+    appearance.backgroundEffect = nil;
+  }
 
   if (config.hideShadow) {
     appearance.shadowColor = nil;
@@ -1000,6 +1007,7 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 {
   NSMutableDictionary *blurEffects = [NSMutableDictionary new];
   [blurEffects addEntriesFromDictionary:@{
+    @"undefined" : @(UIBlurEffectStyleUndefined),
     @"extraLight" : @(UIBlurEffectStyleExtraLight),
     @"light" : @(UIBlurEffectStyleLight),
     @"dark" : @(UIBlurEffectStyleDark),
@@ -1055,6 +1063,6 @@ RCT_ENUM_CONVERTER(
     UINavigationItemBackButtonDisplayModeDefault,
     integerValue)
 
-RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
+RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleUndefined, integerValue)
 
 @end
