@@ -36,6 +36,7 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
 
     layoutableShadowNode.setPadding(
         {stateData.getPaddingStart(), 0, stateData.getPaddingEnd(), 0});
+
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 };

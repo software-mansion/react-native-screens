@@ -882,6 +882,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
+  _lastHeaderInsets = NSDirectionalEdgeInsets{};
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value
