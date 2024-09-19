@@ -9,7 +9,11 @@ buildscript {
         rnsDefaultKotlinVersion = '1.8.0'
     }
     ext.safeExtGet = {prop, fallback ->
-        rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+        def props = (prop instanceof String) ? [prop] : prop
+        def result = props.find { key ->
+            return rootProject.ext.has(key)
+        }
+        return result ? rootProject.ext.get(result) : fallback
     }
     repositories {
         google()
@@ -77,8 +81,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', rnsDefaultMinSdkVersion)
-        targetSdkVersion safeExtGet('targetSdkVersion', rnsDefaultTargetSdkVersion)
+        minSdkVersion safeExtGet(['minSdkVersion', 'minSdk'], rnsDefaultMinSdkVersion)
+        targetSdkVersion safeExtGet(['targetSdkVersion', 'targetSdk'], rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
@@ -136,7 +140,7 @@ android {
             }
         }
         res {
-            if (safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion) >= 33) {
+            if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
                 srcDirs = ["${androidResDir}/base", "${androidResDir}/v33"]
             } else {
                 srcDirs = ["${androidResDir}/base"]
