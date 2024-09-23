@@ -4,18 +4,17 @@
 #include "winrt/Microsoft.ReactNative.h"
 
 namespace winrt::RNScreens::implementation {
-class ScreenStackHeaderSubviewViewManager
+class SearchBarViewManager
     : public winrt::implements<
-        ScreenStackHeaderSubviewViewManager,
+        SearchBarViewManager,
         winrt::Microsoft::ReactNative::IViewManager,
         winrt::Microsoft::ReactNative::IViewManagerWithNativeProperties,
         winrt::Microsoft::ReactNative::IViewManagerWithCommands,
-        winrt::Microsoft::ReactNative::IViewManagerWithChildren,
         winrt::Microsoft::ReactNative::IViewManagerWithExportedEventTypeConstants,
         winrt::Microsoft::ReactNative::IViewManagerRequiresNativeLayout,
         winrt::Microsoft::ReactNative::IViewManagerWithReactContext> {
  public:
-  ScreenStackHeaderSubviewViewManager() = default;
+  SearchBarViewManager() = default;
 
   // IViewManager
   winrt::hstring Name() noexcept;
@@ -23,20 +22,6 @@ class ScreenStackHeaderSubviewViewManager
 
   // IViewManagerRequiresNativeLayout
   bool RequiresNativeLayout();
-
-  // IViewManagerWithChildren
-  void AddView(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      winrt::Windows::UI::Xaml::UIElement child,
-      int64_t index);
-  void RemoveAllChildren(winrt::Windows::UI::Xaml::FrameworkElement parent);
-  void RemoveChildAt(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      int64_t index);
-  void ReplaceChild(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      winrt::Windows::UI::Xaml::UIElement oldChild,
-      winrt::Windows::UI::Xaml::UIElement newChild);
 
   // IViewManagerWithNativeProperties
   winrt::Windows::Foundation::Collections::IMapView<

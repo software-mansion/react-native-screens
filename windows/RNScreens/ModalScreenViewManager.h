@@ -8,6 +8,6 @@ namespace winrt::RNScreens::implementation {
 class ModalScreenViewManager : public ScreenViewManager {
  public:
   ModalScreenViewManager() = default;
-  virtual winrt::hstring Name() noexcept;
+  winrt::hstring Name() noexcept;
 };
 } // namespace winrt::RNScreens::implementation

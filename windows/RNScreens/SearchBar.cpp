@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ModalScreenViewManager.h"
+#include "SearchBar.h"
 #include "JSValueXaml.h"
 #include "NativeModules.h"
 
@@ -13,10 +13,7 @@ using namespace Windows::UI::Xaml::Controls;
 } // namespace winrt
 
 namespace winrt::RNScreens::implementation {
-// IViewManager
-winrt::hstring ModalScreenViewManager::Name() noexcept {
-  return L"RNSModalScreen";
-}
-
-
+SearchBar::SearchBar(
+    winrt::Microsoft::ReactNative::IReactContext reactContext)
+    : m_reactContext(reactContext) {}
 } // namespace winrt::RNScreens::implementation
