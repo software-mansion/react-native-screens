@@ -26,7 +26,48 @@ ScreenStackHeaderConfigViewManager::CreateView() noexcept {
 
 // IViewManagerRequiresNativeLayout
 bool ScreenStackHeaderConfigViewManager::RequiresNativeLayout() {
-  return true;
+  return false;
+}
+
+// IViewManagerWithChildren
+void ScreenStackHeaderConfigViewManager::AddView(
+    FrameworkElement parent,
+    UIElement child,
+    int64_t index) {
+  auto screenStackHeaderConfig = parent.as<ScreenStackHeaderConfig>();
+  if (!screenStackHeaderConfig)
+    return;
+
+  screenStackHeaderConfig->addView(child);
+}
+
+void ScreenStackHeaderConfigViewManager::RemoveAllChildren(FrameworkElement parent) {
+  auto screenStackHeaderConfig = parent.as<ScreenStackHeaderConfig>();
+  if (!screenStackHeaderConfig)
+    return;
+
+  screenStackHeaderConfig->removeAllChildren();
+}
+
+void ScreenStackHeaderConfigViewManager::RemoveChildAt(
+    FrameworkElement parent,
+    int64_t index) {
+  auto screenStackHeaderConfig = parent.as<ScreenStackHeaderConfig>();
+  if (!screenStackHeaderConfig)
+    return;
+
+  screenStackHeaderConfig->removeChildAt(index);
+}
+
+void ScreenStackHeaderConfigViewManager::ReplaceChild(
+    FrameworkElement parent,
+    UIElement oldChild,
+    UIElement newChild) {
+  auto screenStackHeaderConfig = parent.as<ScreenStackHeaderConfig>();
+  if (!screenStackHeaderConfig)
+    return;
+
+  screenStackHeaderConfig->replaceChild(oldChild, newChild);
 }
 
 // IViewManagerWithReactContext

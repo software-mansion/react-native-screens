@@ -119,4 +119,10 @@ void Screen::dispatchOnDisappear() {
         eventDataWriter.WriteObjectEnd();
       });
 }
+StackAnimation Screen::GetStackAnimation() const {
+  return stackAnimation;
+}
+void Screen::SetStackAnimation(StackAnimation const& animation) {
+  stackAnimation = animation;
+}
 } // namespace winrt::RNScreens::implementation

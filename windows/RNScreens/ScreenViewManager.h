@@ -20,7 +20,7 @@ class ScreenViewManager
   ScreenViewManager() = default;
 
   // IViewManager
-  winrt::hstring Name() noexcept;
+  virtual winrt::hstring Name() noexcept;
   winrt::Windows::UI::Xaml::FrameworkElement CreateView() noexcept;
 
   // IViewManagerRequiresNativeLayout
