@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "ScreenStackHeaderSubviewViewManager.h"
+#include "ScreenStackHeaderSubview.h"
 #include "JSValueXaml.h"
 #include "NativeModules.h"
-#include "ScreenStackHeaderSubview.h"
 
 namespace winrt {
 using namespace Microsoft::ReactNative;
@@ -19,25 +19,54 @@ winrt::hstring ScreenStackHeaderSubviewViewManager::Name() noexcept {
   return L"RNSScreenStackHeaderSubview";
 }
 
-winrt::FrameworkElement
-ScreenStackHeaderSubviewViewManager::CreateView() noexcept {
-  return winrt::make<ScreenStackHeaderSubview>(m_reactContext);
+winrt::FrameworkElement ScreenStackHeaderSubviewViewManager::CreateView() noexcept {
+  return winrt::make<winrt::RNScreens::implementation::ScreenStackHeaderSubview>(m_reactContext);
 }
 
 // IViewManagerRequiresNativeLayout
 bool ScreenStackHeaderSubviewViewManager::RequiresNativeLayout() {
-  return true;
+  return false;
 }
 
-// IViewManagerWithReactContext
-winrt::IReactContext
-ScreenStackHeaderSubviewViewManager::ReactContext() noexcept {
-  return m_reactContext;
+// IViewManagerWithChildren
+void ScreenStackHeaderSubviewViewManager::AddView(
+    FrameworkElement parent,
+    UIElement child,
+    int64_t index) {
+  auto screenStackHeaderSubview = parent.as<ScreenStackHeaderSubview>();
+  if (!screenStackHeaderSubview)
+    return;
+
+  screenStackHeaderSubview->addView(child);
 }
 
-void ScreenStackHeaderSubviewViewManager::ReactContext(
-    IReactContext reactContext) noexcept {
-  m_reactContext = reactContext;
+void ScreenStackHeaderSubviewViewManager::RemoveAllChildren(FrameworkElement parent) {
+  auto screenStackHeaderSubview = parent.as<ScreenStackHeaderSubview>();
+  if (!screenStackHeaderSubview)
+    return;
+
+  screenStackHeaderSubview->removeAllChildren();
+}
+
+void ScreenStackHeaderSubviewViewManager::RemoveChildAt(
+    FrameworkElement parent,
+    int64_t index) {
+  auto screenStackHeaderSubview = parent.as<ScreenStackHeaderSubview>();
+  if (!screenStackHeaderSubview)
+    return;
+
+  screenStackHeaderSubview->removeChildAt(index);
+}
+
+void ScreenStackHeaderSubviewViewManager::ReplaceChild(
+    FrameworkElement parent,
+    UIElement oldChild,
+    UIElement newChild) {
+  auto screenStackHeaderSubview = parent.as<ScreenStackHeaderSubview>();
+  if (!screenStackHeaderSubview)
+    return;
+
+  screenStackHeaderSubview->replaceChild(oldChild, newChild);
 }
 
 // IViewManagerWithNativeProperties
@@ -61,17 +90,6 @@ void ScreenStackHeaderSubviewViewManager::UpdateProperties(
   }
 }
 
-// IViewManagerWithExportedEventTypeConstants
-ConstantProviderDelegate ScreenStackHeaderSubviewViewManager::
-    ExportedCustomBubblingEventTypeConstants() noexcept {
-  return nullptr;
-}
-
-ConstantProviderDelegate ScreenStackHeaderSubviewViewManager::
-    ExportedCustomDirectEventTypeConstants() noexcept {
-  return nullptr;
-}
-
 // IViewManagerWithCommands
 IVectorView<hstring> ScreenStackHeaderSubviewViewManager::Commands() noexcept {
   auto commands = winrt::single_threaded_vector<hstring>();
@@ -86,4 +104,26 @@ void ScreenStackHeaderSubviewViewManager::DispatchCommand(
   (void)commandId;
   (void)commandArgsReader;
 }
+
+
+// IViewManagerWithExportedEventTypeConstants
+ConstantProviderDelegate ScreenStackHeaderSubviewViewManager::
+    ExportedCustomBubblingEventTypeConstants() noexcept {
+  return nullptr;
+}
+
+ConstantProviderDelegate ScreenStackHeaderSubviewViewManager::
+    ExportedCustomDirectEventTypeConstants() noexcept {
+  return nullptr;
+}
+
+// IViewManagerWithReactContext
+winrt::IReactContext ScreenStackHeaderSubviewViewManager::ReactContext() noexcept {
+  return m_reactContext;
+}
+
+void ScreenStackHeaderSubviewViewManager::ReactContext(IReactContext reactContext) noexcept {
+  m_reactContext = reactContext;
+}
+
 } // namespace winrt::RNScreens::implementation

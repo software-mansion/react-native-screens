@@ -10,6 +10,7 @@
 #include "ScreenViewManager.h"
 #include "ScreenStackHeaderSubviewViewManager.h"
 #include "ModalScreenViewManager.h"
+#include "SearchBarViewManager.h"
 
 using namespace winrt::Microsoft::ReactNative;
 
@@ -38,6 +39,10 @@ void ReactPackageProvider::CreatePackage(
 
   packageBuilder.AddViewManager(L"RNSModalScreenViewManager", [] () {
     return winrt::make<ModalScreenViewManager>();
+  });
+
+  packageBuilder.AddViewManager(L"RNSSearchBar", [] () {
+    return winrt::make<SearchBarViewManager>();
   });
 }
 } // namespace winrt::RNScreens::implementation

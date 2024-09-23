@@ -3,6 +3,7 @@ import { BackHandler, Platform } from 'react-native';
 export const isSearchBarAvailableForCurrentPlatform = [
   'ios',
   'android',
+  'windows'
 ].includes(Platform.OS);
 
 export function executeNativeBackPress() {
