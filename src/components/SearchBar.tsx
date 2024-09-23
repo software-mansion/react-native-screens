@@ -79,7 +79,7 @@ function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
     console.warn(
       'Importing SearchBar is only valid on iOS and Android devices.',
     );
-    return View as unknown as React.ReactNode;
+    return null;
   }
 
   return (
