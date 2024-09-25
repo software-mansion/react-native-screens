@@ -95,6 +95,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         isNativeStack,
         gestureResponseDistance,
         onGestureCancel,
+        style,
         ...props
       } = rest;
 
@@ -125,6 +126,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen
             {...props}
+            style={[style, { zIndex: undefined }]}
             activityState={activityState}
             sheetAllowedDetents={sheetAllowedDetents}
             sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
