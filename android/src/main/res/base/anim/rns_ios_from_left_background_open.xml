@@ -2,4 +2,4 @@
 <translate xmlns:android="http://schemas.android.com/apk/res/android"
     android:duration="@android:integer/config_shortAnimTime"
     android:fromXDelta="0%"
-    android:toXDelta="-30%"/>
+    android:toXDelta="30%" />
