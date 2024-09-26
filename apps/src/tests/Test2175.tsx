@@ -20,11 +20,10 @@ function TabScreens({ navigation }): React.JSX.Element {
 
 function TabHomeScreen({ navigation }): React.JSX.Element {
   return (
-    <View style={{ flex: 1, backgroundColor: 'lightseagreen', justifyContent: 'center', }}>
+    <View style={{ flex: 1, backgroundColor: 'lightcoral', justifyContent: 'center', }}>
       <Text>Where do you where do you go, my lovely, oh oh oh oh</Text>
-      <Button title='Show owned transparentModal' onPress={() => { navigation.navigate('TransparentModal') }} />
-      <Button title='Show owned modal' onPress={() => { navigation.navigate('Modal') }} />
-      <Button title='Show tabs' onPress={() => { navigation.navigate('Tabs') }} />
+      <Button title='Show owned transparentModal (outer navigator)' onPress={() => { navigation.navigate('TransparentModal') }} />
+      <Button title='Show owned modal (outer navigator)' onPress={() => { navigation.navigate('Modal') }} />
     </View>
   )
 }
