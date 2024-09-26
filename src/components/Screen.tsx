@@ -97,6 +97,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         isNativeStack,
         gestureResponseDistance,
         onGestureCancel,
+        style,
         ...props
       } = rest;
 
@@ -127,6 +128,11 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen
             {...props}
+            // Hierarchy of screens is handled on the native side and setting zIndex value causes this issue:
+            // https://github.com/software-mansion/react-native-screens/issues/2345
+            // With below change of zIndex, we force RN diffing mechanism to NOT include detaching and attaching mutation in one transaction.
+            // Detailed information can be found here https://github.com/software-mansion/react-native-screens/pull/2351
+            style={[style, { zIndex: undefined }]}
             activityState={activityState}
             sheetAllowedDetents={sheetAllowedDetents}
             sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
