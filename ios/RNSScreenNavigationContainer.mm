@@ -43,6 +43,13 @@ namespace react = facebook::react;
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenNavigationContainerComponentDescriptor>();
 }
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
++ (void)load
+{
+  [super load];
+}
+
 #endif
 
 @end

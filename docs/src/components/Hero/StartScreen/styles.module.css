@@ -25,7 +25,7 @@
   color: var(--swm-blue-light-80);
 }
 
-[data-theme='dark'] .headingLabel :nth-child(2) {
+[data-theme="dark"] .headingLabel :nth-child(2) {
   color: var(--swm-blue-dark-80);
 }
 
@@ -53,20 +53,6 @@
 .buttonContainer {
   display: flex;
   justify-content: flex-start;
-}
-
-@media (min-width: 2920px) {
-  .hero {
-    flex-direction: row-reverse;
-    margin-bottom: 0;
-    align-items: center;
-  }
-  .subheadingLabel {
-    width: 100%;
-  }
-  .heading {
-    margin: 0;
-  }
 }
 
 @media (max-width: 996px) {

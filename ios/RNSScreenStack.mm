@@ -123,6 +123,13 @@ namespace react = facebook::react;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
++ (void)load
+{
+  [super load];
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -504,13 +511,6 @@ namespace react = facebook::react;
       // For now, to mitigate the issue, we also decide to trigger its dismissal before
       // starting the presentation chain down below in finish() callback.
       [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
-      return;
-    }
-
-    UIViewController *lastModalVc = [self lastFromPresentedViewControllerChainStartingFrom:firstModalToBeDismissed];
-
-    if (lastModalVc != firstModalToBeDismissed) {
-      [lastModalVc dismissViewControllerAnimated:shouldAnimate completion:finish];
       return;
     }
   }
