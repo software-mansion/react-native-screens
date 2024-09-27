@@ -54,7 +54,7 @@ function HomeScreen({ navigation }): React.JSX.Element {
 }
 
 function ModalScreen({ navigation }): React.JSX.Element {
-  const [toggle, setToggle] = React.useState(false);
+  const [toggle2, setToggle2] = React.useState(false);
 
   return (
     <View style={{ flex: 1, backgroundColor: 'lightcoral', opacity: 0.4 }}>
@@ -62,19 +62,38 @@ function ModalScreen({ navigation }): React.JSX.Element {
       <Button title='Go back' onPress={() => { navigation.goBack() }} />
       <View style={{ width: '100%', height: 50, backgroundColor: 'red' }} />
       <Button title='Push another Modal' onPress={() => { navigation.push('Modal') }} />
-      <Modal
-        visible={toggle}
-        onRequestClose={() => setToggle(false)}
-        presentationStyle='formSheet'
-        animationType='slide'
-      >
-        <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
-          <Text>Hello I'm a foreign modal</Text>
-          <Button title='Close foreign modal' onPress={() => { setToggle(false) }} />
-        </View>
-      </Modal>
+      <Button title='Push foreign modal(inside Screen Component)' onPress={() => { navigation.push('ForeignModal')}} />
+      <Button title='Push foreign modal' onPress={() => { setToggle2(old => !old )}} />
+        <Modal
+            visible={toggle2}
+            onRequestClose={() => setToggle2(false)}
+            presentationStyle='formSheet'
+            animationType='slide'
+        >
+            <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
+                <Text>Hello I'm a foreign modal</Text>
+                <Button title='Close foreign modal' onPress={() => { setToggle2(false) }} />
+            </View>
+        </Modal>
     </View>
   )
+}
+
+function ForeignModal({ navigation }): React.JSX.Element | null {
+    const [toggle, setToggle] = React.useState(false);
+    return (
+        <Modal
+            visible={toggle}
+            onRequestClose={() => setToggle(false)}
+            presentationStyle='formSheet'
+            animationType='slide'
+        >
+            <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
+                <Text>Hello I'm a foreign modal</Text>
+                <Button title='Close foreign modal' onPress={() => { setToggle(false) }} />
+            </View>
+        </Modal>
+    )
 }
 
 
@@ -122,6 +141,7 @@ function App(): React.JSX.Element {
             presentation: 'modal',
           }}
         />
+        <Stack.Screen name={"ForeignModal"} component={ForeignModal} />
       </Stack.Navigator>
     </NavigationContainer>
   );
