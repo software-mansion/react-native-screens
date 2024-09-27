@@ -61,7 +61,7 @@ function ModalScreen({ navigation }): React.JSX.Element {
       <Text>Where do you where do you go, my lovely, oh oh oh oh</Text>
       <Button title='Go back' onPress={() => { navigation.goBack() }} />
       <View style={{ width: '100%', height: 50, backgroundColor: 'red' }} />
-      <Button title='Show foreign modal' onPress={() => { setToggle(old => !old) }} />
+      <Button title='Push another Modal' onPress={() => { navigation.push('Modal') }} />
       <Modal
         visible={toggle}
         onRequestClose={() => setToggle(false)}
