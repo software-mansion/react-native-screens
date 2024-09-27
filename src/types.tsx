@@ -299,9 +299,15 @@ export interface ScreenProps extends ViewProps {
    *
    * Please note that the array **must** be sorted in ascending order.
    *
+   * There are also legacy & **deprecated** options available:
+   *
+   * * 'medium' - corresponds to `[0.5]` detent value, around half of the screen height,
+   * * 'large' - corresponds to `[1.0]` detent value, maximum height,
+   * * 'all' - corresponds to `[0.5, 1.0]` value, the name is deceiving due to compatibility reasons.
+   *
    * Defaults to `[1.0]` literal.
    */
-  sheetAllowedDetents?: number[];
+  sheetAllowedDetents?: number[] | 'fitToContents' | 'medium' | 'large' | 'all';
   /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *
@@ -346,9 +352,12 @@ export interface ScreenProps extends ViewProps {
    * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
    * there won't be a dimming view beneath the sheet.
    *
+   * There also legacy & **deprecated** prop values available, which work in tandem with
+   * corresponding legacy proop values for `sheetAllowedDetents` prop.
+   *
    * Defaults to `-1`, indicating that the dimming view should be always present.
    */
-  sheetLargestUndimmedDetent?: number;
+  sheetLargestUndimmedDetent?: number | 'medium' | 'large' | 'all';
   /**
    * Index of the detent the sheet should expand to after being opened.
    * Works only when `stackPresentation` is set to `formSheet`.
