@@ -229,9 +229,10 @@ const RouteView = ({
   } = options;
 
   // We only want to allow backgroundColor for now
-  unstable_screenStyle = unstable_screenStyle
-    ? { backgroundColor: unstable_screenStyle.backgroundColor }
-    : null;
+  unstable_screenStyle =
+    stackPresentation === 'formSheet' && unstable_screenStyle
+      ? { backgroundColor: unstable_screenStyle.backgroundColor }
+      : null;
 
   if (sheetAllowedDetents === 'fitToContents') {
     sheetAllowedDetents = [-1];
