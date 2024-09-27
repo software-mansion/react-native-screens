@@ -450,7 +450,7 @@ const RouteView = ({
             route={route}
             headerShown={isHeaderInPush}
           />
-          {unstable_sheetFooter && (
+          {stackPresentation === 'formSheet' && unstable_sheetFooter && (
             <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
