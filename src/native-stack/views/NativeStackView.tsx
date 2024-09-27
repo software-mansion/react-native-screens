@@ -215,7 +215,7 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
-    unstable_footerComponent = null,
+    unstable_sheetFooter = null,
   } = options;
 
   let {
@@ -450,8 +450,8 @@ const RouteView = ({
             route={route}
             headerShown={isHeaderInPush}
           />
-          {unstable_footerComponent && (
-            <FooterComponent>{unstable_footerComponent}</FooterComponent>
+          {unstable_sheetFooter && (
+            <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>

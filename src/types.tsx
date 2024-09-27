@@ -104,7 +104,6 @@ export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
   children?: React.ReactNode;
-  unstable_footer?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
    *
@@ -435,6 +434,17 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   transitionDuration?: number;
+  /**
+   * Footer component that can be used alongside formSheet stack presentation style.
+   *
+   * This option is provided, because due to implementation details it might be problematic
+   * to implement such layout with JS-only code.
+   *
+   * Please note that this prop is marked as unstable and might be subject of breaking changes,
+   * including removal, in particular when we find solution that will make implementing it with JS
+   * straightforward.
+   */
+  unstable_sheetFooter?: () => React.ReactNode;
 }
 
 export interface ScreenContainerProps extends ViewProps {
