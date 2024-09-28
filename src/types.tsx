@@ -443,6 +443,8 @@ export interface ScreenProps extends ViewProps {
    * Please note that this prop is marked as unstable and might be subject of breaking changes,
    * including removal, in particular when we find solution that will make implementing it with JS
    * straightforward.
+   *
+   * @platform android
    */
   unstable_sheetFooter?: () => React.ReactNode;
 }

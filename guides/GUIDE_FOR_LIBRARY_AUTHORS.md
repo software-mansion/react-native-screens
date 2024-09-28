@@ -365,7 +365,7 @@ function Home() {
 }
 ```
 
-### unstable_footerComponent
+### unstable_sheetFooter (Android only)
 
 Footer component that can be used alongside form sheet stack presentation style.
 
@@ -374,6 +374,8 @@ to implement such layout with JS-only code.
 
 Please note that this prop is marked as unstable and might be subject of breaking changes,
 even removal.
+
+Currently supported on Android only.
 
 
 ## `<ScreenStackHeaderConfig>`
