@@ -53,7 +53,6 @@
   switch (stackAnimation) {
     // these four are intentionally grouped
     case react::RNSScreenStackAnimation::Slide_from_right:
-    case react::RNSScreenStackAnimation::Ios:
     case react::RNSScreenStackAnimation::Ios_from_right:
     case react::RNSScreenStackAnimation::Default:
       return RNSScreenStackAnimationDefault;
