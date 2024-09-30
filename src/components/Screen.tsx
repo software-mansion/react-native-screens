@@ -49,6 +49,9 @@ const SHEET_COMPAT_LARGE = [1.0];
 const SHEET_COMPAT_MEDIUM = [0.5];
 const SHEET_COMPAT_ALL = [0.5, 1.0];
 
+export const SHEET_DIMMED_ALWAYS = -1;
+// const SHEET_DIMMED_NEVER = 9999;
+
 // These exist to transform old 'legacy' values used by the formsheet API to the new API shape.
 // We can get rid of it, once we get rid of support for legacy values: 'large', 'medium', 'all'.
 function resolveSheetAllowedDetents(
@@ -80,10 +83,10 @@ function resolveSheetLargestUndimmedDetent(
   } else if (lud === 'medium') {
     return 0;
   } else if (lud === 'all') {
-    return -1;
+    return SHEET_DIMMED_ALWAYS;
   } else {
     // Safe default, every detent is dimmed
-    return -1;
+    return SHEET_DIMMED_ALWAYS;
   }
 }
 
@@ -112,7 +115,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
     const {
       // formSheet presentation related props
       sheetAllowedDetents = [1.0],
-      sheetLargestUndimmedDetent = -1,
+      sheetLargestUndimmedDetent = SHEET_DIMMED_ALWAYS,
       sheetGrabberVisible = false,
       sheetCornerRadius = -1.0,
       sheetExpandsWhenScrolledToEdge = true,

@@ -426,7 +426,7 @@ export type NativeStackNavigationOptions = {
    * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
    * there won't be a dimming view beneath the sheet.
    *
-   * Defaults to `-1`, indicating that the dimming view should be always present.
+   * Defaults to `SHEET_DIMMED_ALWAYS`, indicating that the dimming view should be always present.
    */
   sheetLargestUndimmedDetent?: ScreenProps['sheetLargestUndimmedDetent'];
   /**

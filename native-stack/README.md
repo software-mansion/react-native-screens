@@ -307,7 +307,7 @@ there won't be a dimming view beneath the sheet.
 There also legacy & **deprecated** prop values available, which work in tandem with
 corresponding legacy prop values for `sheetAllowedDetents` prop.
 
-Defaults to `-1`, indicating that the dimming view should be always present.
+Defaults to `SHEET_DIMMED_ALWAYS`, indicating that the dimming view should be always present.
 
 #### `stackAnimation`
 
