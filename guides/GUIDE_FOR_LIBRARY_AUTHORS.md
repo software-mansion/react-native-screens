@@ -191,18 +191,23 @@ Boolean indicating whether the sheet shows a grabber at the top.
 Works only when `stackPresentation` is set to `formSheet`.
 Defaults to `false`.
 
-### `sheetLargestUndimmedDetent` (iOS only)
+### `sheetLargestUndimmedDetent`
 
 The largest sheet detent for which a view underneath won't be dimmed.
-Works only when `presentation` is set to `formSheet`.
+Works only when `stackPresentation` is set to `formSheet`.
 
 This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
 there won't be a dimming view beneath the sheet.
 
-There also legacy & **deprecated** prop values available, which work in tandem with
-corresponding legacy proop values for `sheetAllowedDetents` prop.
+Additionaly there are following options available:
 
-Defaults to `-1`, indicating that the dimming view should be always present.
+* `none` - there will be dimming view for all detents levels,
+* `largest` - there won't be a dimming view for any detent level.
+
+There also legacy & **deprecated** prop values available: `medium`, `large` (don't confuse with `largest`), `all`, which work in tandem with
+corresponding legacy prop values for `sheetAllowedDetents` prop.
+
+Defaults to `none`, indicating that the dimming view should be always present.
 
 ### `stackAnimation`
 

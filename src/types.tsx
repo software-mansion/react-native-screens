@@ -351,12 +351,23 @@ export interface ScreenProps extends ViewProps {
    * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
    * there won't be a dimming view beneath the sheet.
    *
-   * There also legacy & **deprecated** prop values available, which work in tandem with
+   * Additionaly there are following options available:
+   *
+   * * `none` - there will be dimming view for all detents levels,
+   * * `largest` - there won't be a dimming view for any detent level.
+   *
+   * There also legacy & **deprecated** prop values available: `medium`, `large` (don't confuse with `largest`), `all`, which work in tandem with
    * corresponding legacy prop values for `sheetAllowedDetents` prop.
    *
-   * Defaults to `-1`, indicating that the dimming view should be always present.
+   * Defaults to `none`, indicating that the dimming view should be always present.
    */
-  sheetLargestUndimmedDetent?: number | 'medium' | 'large' | 'all';
+  sheetLargestUndimmedDetent?:
+    | number
+    | 'none'
+    | 'largest'
+    | 'medium'
+    | 'large'
+    | 'all';
   /**
    * Index of the detent the sheet should expand to after being opened.
    * Works only when `stackPresentation` is set to `formSheet`.

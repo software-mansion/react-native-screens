@@ -1,6 +1,6 @@
 export * from './types';
 
-/*
+/**
  * Core
  */
 export {
@@ -11,7 +11,7 @@ export {
   shouldUseActivityState,
 } from './core';
 
-/*
+/**
  * RNS Components
  */
 export {
@@ -57,17 +57,17 @@ export {
   NativeScreenContentWrapper,
 } from './components/ScreenContentWrapper';
 
-/*
+/**
  * Modules
  */
 export { default as NativeScreensModule } from './fabric/NativeScreensModule';
 
-/*
+/**
  * Contexts
  */
 export { GHContext } from './native-stack/contexts/GHContext';
 
-/*
+/**
  * Utils
  */
 export {
@@ -76,7 +76,7 @@ export {
   executeNativeBackPress,
 } from './utils';
 
-/*
+/**
  * Hooks
  */
 export { default as useTransitionProgress } from './useTransitionProgress';
