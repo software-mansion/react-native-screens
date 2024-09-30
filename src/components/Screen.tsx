@@ -49,7 +49,7 @@ const SHEET_COMPAT_LARGE = [1.0];
 const SHEET_COMPAT_MEDIUM = [0.5];
 const SHEET_COMPAT_ALL = [0.5, 1.0];
 
-export const SHEET_DIMMED_ALWAYS = -1;
+const SHEET_DIMMED_ALWAYS = -1;
 // const SHEET_DIMMED_NEVER = 9999;
 
 // These exist to transform old 'legacy' values used by the formsheet API to the new API shape.
@@ -75,15 +75,18 @@ function resolveSheetAllowedDetents(
 
 function resolveSheetLargestUndimmedDetent(
   lud: ScreenProps['sheetLargestUndimmedDetent'],
+  largestDetentIndex: number,
 ): number {
   if (typeof lud === 'number') {
     return lud;
+  } else if (lud === 'largest') {
+    return largestDetentIndex;
+  } else if (lud === 'none' || lud === 'all') {
+    return SHEET_DIMMED_ALWAYS;
   } else if (lud === 'large') {
     return 1;
   } else if (lud === 'medium') {
     return 0;
-  } else if (lud === 'all') {
-    return SHEET_DIMMED_ALWAYS;
   } else {
     // Safe default, every detent is dimmed
     return SHEET_DIMMED_ALWAYS;
@@ -130,7 +133,10 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       const resolvedSheetAllowedDetents =
         resolveSheetAllowedDetents(sheetAllowedDetents);
       const resolvedSheetLargestUndimmedDetent =
-        resolveSheetLargestUndimmedDetent(sheetLargestUndimmedDetent);
+        resolveSheetLargestUndimmedDetent(
+          sheetLargestUndimmedDetent,
+          resolvedSheetAllowedDetents.length - 1,
+        );
       // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens
       const AnimatedScreen =
         Platform.OS === 'android' ||

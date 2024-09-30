@@ -195,7 +195,7 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetLargestUndimmedDetent = -1,
+    sheetLargestUndimmedDetent = 'none',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     sheetElevation = 24,

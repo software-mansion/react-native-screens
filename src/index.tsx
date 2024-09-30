@@ -77,11 +77,6 @@ export {
 } from './utils';
 
 /**
- * Constants
- */
-export { SHEET_DIMMED_ALWAYS } from './components/Screen';
-
-/**
  * Hooks
  */
 export { default as useTransitionProgress } from './useTransitionProgress';
