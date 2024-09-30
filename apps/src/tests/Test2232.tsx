@@ -35,7 +35,7 @@ const App = () => (
         component={SettingsScreen}
         options={{
           headerTintColor: 'hotpink',
-          headerBackTitleVisible: false,
+          headerBackButtonDisplayMode: 'minimal',
           headerTitle: () => (
             <View style={{ gap: 16, flexDirection: 'row' }}>
               <Square color="green" size={20} />

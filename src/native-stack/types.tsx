@@ -437,7 +437,15 @@ export type NativeStackNavigationOptions = {
    * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
    * there won't be a dimming view beneath the sheet.
    *
-   * Defaults to `-1`, indicating that the dimming view should be always present.
+   * Additionaly there are following options available:
+   *
+   * * `none` - there will be dimming view for all detents levels,
+   * * `largest` - there won't be a dimming view for any detent level.
+   *
+   * There also legacy & **deprecated** prop values available: `medium`, `large` (don't confuse with `largest`), `all`, which work in tandem with
+   * corresponding legacy prop values for `sheetAllowedDetents` prop.
+   *
+   * Defaults to `none`, indicating that the dimming view should be always present.
    */
   sheetLargestUndimmedDetent?: ScreenProps['sheetLargestUndimmedDetent'];
   /**
@@ -451,7 +459,9 @@ export type NativeStackNavigationOptions = {
    * - "slide_from_bottom" – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right
-   * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
+   * - "ios" - @deprecated iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS) (will be removed in v4.0.0 in favor of `ios_from_right`)
+   * - "ios_from_right" - iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS)
+   * - "ios_from_left" - iOS like slide in animation. pushes in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: ScreenProps['stackAnimation'];
@@ -526,7 +536,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  unstable_footerComponent?: React.ReactNode;
+  unstable_sheetFooter?: () => React.ReactNode;
 };
 
 export type NativeStackNavigatorProps =

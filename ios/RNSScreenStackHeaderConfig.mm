@@ -681,6 +681,9 @@ namespace react = facebook::react;
         break;
       }
     }
+    // We're forcing a re-layout when the subviews change,
+    // see: https://github.com/software-mansion/react-native-screens/pull/2316
+    [navctr.view layoutIfNeeded];
   }
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).

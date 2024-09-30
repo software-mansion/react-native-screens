@@ -182,7 +182,9 @@ class ScreenStack(
                                 R.anim.rns_no_animation_medium,
                             )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
-                        StackAnimation.IOS -> it.setCustomAnimations(R.anim.rns_slide_in_from_right_ios, R.anim.rns_slide_out_to_left_ios)
+                        StackAnimation.IOS -> it.setCustomAnimations(R.anim.rns_ios_from_right_foreground_open, R.anim.rns_ios_from_right_background_open)
+                        StackAnimation.IOS_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_ios_from_right_foreground_open, R.anim.rns_ios_from_right_background_open)
+                        StackAnimation.IOS_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_ios_from_left_foreground_open, R.anim.rns_ios_from_left_background_open)
                     }
                 } else {
                     when (stackAnimation) {
@@ -220,7 +222,9 @@ class ScreenStack(
                                 R.anim.rns_slide_out_to_bottom,
                             )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
-                        StackAnimation.IOS -> it.setCustomAnimations(R.anim.rns_slide_in_from_left_ios, R.anim.rns_slide_out_to_right_ios)
+                        StackAnimation.IOS -> it.setCustomAnimations(R.anim.rns_ios_from_right_foreground_close, R.anim.rns_ios_from_right_background_close)
+                        StackAnimation.IOS_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_ios_from_right_background_close, R.anim.rns_ios_from_right_foreground_close)
+                        StackAnimation.IOS_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_ios_from_left_background_close, R.anim.rns_ios_from_left_foreground_close)
                     }
                 }
             }
@@ -413,6 +417,8 @@ class ScreenStack(
             Build.VERSION.SDK_INT >= 33 ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
-                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS
+                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS ||
+                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS_FROM_RIGHT ||
+                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS_FROM_LEFT
     }
 }
