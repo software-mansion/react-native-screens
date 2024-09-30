@@ -43,6 +43,50 @@ interface ViewConfig extends View {
   };
 }
 
+// This value must be kept in sync with native side.
+const SHEET_FIT_TO_CONTENTS = [-1];
+const SHEET_COMPAT_LARGE = [1.0];
+const SHEET_COMPAT_MEDIUM = [0.5];
+const SHEET_COMPAT_ALL = [0.5, 1.0];
+
+// These exist to transform old 'legacy' values used by the formsheet API to the new API shape.
+// We can get rid of it, once we get rid of support for legacy values: 'large', 'medium', 'all'.
+function resolveSheetAllowedDetents(
+  allowedDetentsCompat: ScreenProps['sheetAllowedDetents'],
+): number[] {
+  if (Array.isArray(allowedDetentsCompat)) {
+    return allowedDetentsCompat;
+  } else if (allowedDetentsCompat === 'fitToContents') {
+    return SHEET_FIT_TO_CONTENTS;
+  } else if (allowedDetentsCompat === 'large') {
+    return SHEET_COMPAT_LARGE;
+  } else if (allowedDetentsCompat === 'medium') {
+    return SHEET_COMPAT_MEDIUM;
+  } else if (allowedDetentsCompat === 'all') {
+    return SHEET_COMPAT_ALL;
+  } else {
+    // Safe default, only large detent is allowed.
+    return [1.0];
+  }
+}
+
+function resolveSheetLargestUndimmedDetent(
+  lud: ScreenProps['sheetLargestUndimmedDetent'],
+): number {
+  if (typeof lud === 'number') {
+    return lud;
+  } else if (lud === 'large') {
+    return 1;
+  } else if (lud === 'medium') {
+    return 0;
+  } else if (lud === 'all') {
+    return -1;
+  } else {
+    // Safe default, every detent is dimmed
+    return -1;
+  }
+}
+
 export const InnerScreen = React.forwardRef<View, ScreenProps>(
   function InnerScreen(props, ref) {
     const innerRef = React.useRef<ViewConfig | null>(null);
@@ -66,6 +110,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
     // To maintain default behavior of formSheet stack presentation style and to have reasonable
     // defaults for new medium-detent iOS API we need to set defaults here
     const {
+      // formSheet presentation related props
       sheetAllowedDetents = [1.0],
       sheetLargestUndimmedDetent = -1,
       sheetGrabberVisible = false,
@@ -73,10 +118,16 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetExpandsWhenScrolledToEdge = true,
       sheetElevation = 24,
       sheetInitialDetent = 0,
+
+      // Other
       stackPresentation,
     } = rest;
 
     if (enabled && isNativePlatformSupported) {
+      const resolvedSheetAllowedDetents =
+        resolveSheetAllowedDetents(sheetAllowedDetents);
+      const resolvedSheetLargestUndimmedDetent =
+        resolveSheetLargestUndimmedDetent(sheetLargestUndimmedDetent);
       // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens
       const AnimatedScreen =
         Platform.OS === 'android' ||
@@ -134,8 +185,8 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             // Detailed information can be found here https://github.com/software-mansion/react-native-screens/pull/2351
             style={[style, { zIndex: undefined }]}
             activityState={activityState}
-            sheetAllowedDetents={sheetAllowedDetents}
-            sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+            sheetAllowedDetents={resolvedSheetAllowedDetents}
+            sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
             sheetElevation={sheetElevation}
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}

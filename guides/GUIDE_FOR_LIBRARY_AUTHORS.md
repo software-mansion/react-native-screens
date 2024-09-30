@@ -150,16 +150,22 @@ Sets the current screen's available orientations and forces rotation if current 
 
 Defaults to `default` on iOS.
 
-### `sheetAllowedDetents` (iOS only)
+### `sheetAllowedDetents` 
 
 Describes heights where a sheet can rest.
-Works only when `stackPresentation` is set to `formSheet`.
+Works only when `presentation` is set to `formSheet`.
 
 Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
-There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
+There is also possibility to specify `fitToContents` literal, which intents to set the sheet height
 to the height of its contents.
 
 Please note that the array **must** be sorted in ascending order.
+
+There are also legacy & **deprecated** options available:
+
+* `medium` - corresponds to `[0.5]` detent value, around half of the screen height,
+* `large` - corresponds to `[1.0]` detent value, maximum height,
+* `all` - corresponds to `[0.5, 1.0]` value, the name is deceiving due to compatibility reasons.
 
 Defaults to `[1.0]` literal.
 
@@ -170,7 +176,7 @@ Works only when `stackPresentation` is set to `formSheet`.
 
 Defaults to `true`.
 
-### `sheetCornerRadius (iOS only)
+### `sheetCornerRadius`
 
 The corner radius that the sheet will try to render with.
 Works only when `stackPresentation` is set to `formSheet`.
@@ -188,15 +194,15 @@ Defaults to `false`.
 ### `sheetLargestUndimmedDetent` (iOS only)
 
 The largest sheet detent for which a view underneath won't be dimmed.
-Works only when `stackPresentation` is set to `formSheet`.
+Works only when `presentation` is set to `formSheet`.
 
-If this prop is set to:
+This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
+there won't be a dimming view beneath the sheet.
 
-- `large` - the view underneath won't be dimmed at any detent level
-- `medium` - the view underneath will be dimmed only when detent level is `large`
-- `all` - the view underneath will be dimmed for any detent level
+There also legacy & **deprecated** prop values available, which work in tandem with
+corresponding legacy proop values for `sheetAllowedDetents` prop.
 
-Defaults to `all`.
+Defaults to `-1`, indicating that the dimming view should be always present.
 
 ### `stackAnimation`
 
@@ -365,7 +371,7 @@ function Home() {
 }
 ```
 
-### unstable_footerComponent
+### unstable_sheetFooter (Android only)
 
 Footer component that can be used alongside form sheet stack presentation style.
 
@@ -374,6 +380,8 @@ to implement such layout with JS-only code.
 
 Please note that this prop is marked as unstable and might be subject of breaking changes,
 even removal.
+
+Currently supported on Android only.
 
 
 ## `<ScreenStackHeaderConfig>`

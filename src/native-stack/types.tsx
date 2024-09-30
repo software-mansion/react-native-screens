@@ -517,7 +517,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  unstable_footerComponent?: React.ReactNode;
+  unstable_sheetFooter?: () => React.ReactNode;
 };
 
 export type NativeStackNavigatorProps =

@@ -215,7 +215,7 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
-    unstable_footerComponent = null,
+    unstable_sheetFooter = null,
   } = options;
 
   let {
@@ -229,9 +229,10 @@ const RouteView = ({
   } = options;
 
   // We only want to allow backgroundColor for now
-  unstable_screenStyle = unstable_screenStyle
-    ? { backgroundColor: unstable_screenStyle.backgroundColor }
-    : null;
+  unstable_screenStyle =
+    stackPresentation === 'formSheet' && unstable_screenStyle
+      ? { backgroundColor: unstable_screenStyle.backgroundColor }
+      : null;
 
   if (sheetAllowedDetents === 'fitToContents') {
     sheetAllowedDetents = [-1];
@@ -450,8 +451,8 @@ const RouteView = ({
             route={route}
             headerShown={isHeaderInPush}
           />
-          {unstable_footerComponent && (
-            <FooterComponent>{unstable_footerComponent}</FooterComponent>
+          {stackPresentation === 'formSheet' && unstable_sheetFooter && (
+            <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>
