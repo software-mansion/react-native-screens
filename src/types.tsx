@@ -352,7 +352,7 @@ export interface ScreenProps extends ViewProps {
    * there won't be a dimming view beneath the sheet.
    *
    * There also legacy & **deprecated** prop values available, which work in tandem with
-   * corresponding legacy proop values for `sheetAllowedDetents` prop.
+   * corresponding legacy prop values for `sheetAllowedDetents` prop.
    *
    * Defaults to `-1`, indicating that the dimming view should be always present.
    */

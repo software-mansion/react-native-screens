@@ -247,13 +247,27 @@ Defaults to `pop`.
 Describes heights where a sheet can rest.
 Works only when `stackPresentation` is set to `formSheet`.
 
-Heights should be described as fraction (a number from [0, 1] interval) of screen height / maximum detent height.
-There is also possibility to specify `fitToContents` literal, which intents to set the sheet height
+Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
+There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
 to the height of its contents.
 
 Please note that the array **must** be sorted in ascending order.
 
+There are also legacy & **deprecated** options available:
+
+* 'medium' - corresponds to `[0.5]` detent value, around half of the screen height,
+* 'large' - corresponds to `[1.0]` detent value, maximum height,
+* 'all' - corresponds to `[0.5, 1.0]` value, the name is deceiving due to compatibility reasons.
+
 Defaults to `[1.0]` literal.
+
+#### `sheetElevation` (Android only)
+
+Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
+
+Not dynamic - changing it after the component is rendered won't have an effect.
+
+Defaults to `24`.
 
 #### `sheetExpandsWhenScrolledToEdge` (iOS only)
 
@@ -289,6 +303,9 @@ Works only when `stackPresentation` is set to `formSheet`.
 
 This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
 there won't be a dimming view beneath the sheet.
+
+There also legacy & **deprecated** prop values available, which work in tandem with
+corresponding legacy prop values for `sheetAllowedDetents` prop.
 
 Defaults to `-1`, indicating that the dimming view should be always present.
 
