@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as jotai from 'jotai';
 import { AllowedDetentsType, SheetOptions } from './types';
+import { SHEET_DIMMED_ALWAYS } from 'react-native-screens';
 
 export const sheetInitialOptions: SheetOptions = {
   sheetAllowedDetents: [0.4, 0.6, 0.9],
   // sheetAllowedDetents: [0.6],
   // sheetAllowedDetents: 'fitToContents',
-  sheetLargestUndimmedDetent: 2,
+  sheetLargestUndimmedDetent: SHEET_DIMMED_ALWAYS,
   sheetGrabberVisible: false,
   sheetCornerRadius: 24,
   sheetExpandsWhenScrolledToEdge: true,
