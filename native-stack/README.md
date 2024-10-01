@@ -287,8 +287,10 @@ Defaults to system default.
 
 #### `sheetInitialDetent`
 
-Initial detent for the sheet.
+Index of the initial detent for the sheet.
 Works only when `presentation` is set to `formSheet`.
+
+The detents must be defined in `sheetAllowedDetents` array.
 
 #### `sheetGrabberVisible` (iOS only)
 
