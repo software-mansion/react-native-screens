@@ -906,7 +906,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
           if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
             UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
             [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
-          } else {
+          } else if (_sheetInitialDetent != 0) {
             RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
           }
         }
