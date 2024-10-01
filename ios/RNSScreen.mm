@@ -1158,6 +1158,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
     [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];
   }
 
+  if (newScreenProps.sheetInitialDetent != oldScreenProps.sheetInitialDetent) {
+    [self setSheetInitialDetent:newScreenProps.sheetInitialDetent];
+  }
+
   if (newScreenProps.sheetLargestUndimmedDetent != oldScreenProps.sheetLargestUndimmedDetent) {
     [self setSheetLargestUndimmedDetent:[NSNumber numberWithInt:newScreenProps.sheetLargestUndimmedDetent]];
   }
