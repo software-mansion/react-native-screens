@@ -5,9 +5,22 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 
-function HomeScreen({ navigation }: any) {
+type StackParamList = {
+  Home: undefined;
+  formSheet: undefined;
+  fullScreenModal: undefined;
+};
+
+function HomeScreen({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<StackParamList>;
+}) {
   return (
     <View style={styles.container}>
       <Button
@@ -22,7 +35,11 @@ function HomeScreen({ navigation }: any) {
   );
 }
 
-function ModalScreen({ navigation }: any) {
+function ModalScreen({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<StackParamList>;
+}) {
   return (
     <View style={styles.container}>
       <Button onPress={() => navigation.goBack()} title="Dismiss" />
@@ -30,7 +47,7 @@ function ModalScreen({ navigation }: any) {
   );
 }
 
-const RootStack = createNativeStackNavigator();
+const RootStack = createNativeStackNavigator<StackParamList>();
 
 export default function App() {
   const scheme = useColorScheme();
@@ -45,6 +62,7 @@ export default function App() {
           options={{
             presentation: 'formSheet',
             sheetAllowedDetents: [0.3, 0.5, 0.8],
+            sheetInitialDetent: 1,
           }}
         />
         <RootStack.Screen
