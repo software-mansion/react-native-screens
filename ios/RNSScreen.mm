@@ -902,6 +902,13 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
           [self setAllowedDetentsForSheet:sheet
                                        to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents]
                                   animate:NO];
+
+          if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+            UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+            [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+          } else {
+            RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
+          }
         }
       }
     } else
@@ -1864,6 +1871,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, NSArray<NSNumber *> *);
 RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, NSNumber *);
 RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
+RCT_EXPORT_VIEW_PROPERTY(sheetInitialDetent, NSInteger);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #endif
 

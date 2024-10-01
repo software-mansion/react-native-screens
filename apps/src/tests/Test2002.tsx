@@ -7,7 +7,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-function HomeScreen({ navigation }) {
+function HomeScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Button
@@ -22,7 +22,7 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function ModalScreen({ navigation }) {
+function ModalScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Button onPress={() => navigation.goBack()} title="Dismiss" />
@@ -42,7 +42,10 @@ export default function App() {
         <RootStack.Screen
           name="formSheet"
           component={ModalScreen}
-          options={{ presentation: 'formSheet' }}
+          options={{
+            presentation: 'formSheet',
+            sheetAllowedDetents: [0.3, 0.5, 0.8],
+          }}
         />
         <RootStack.Screen
           name="fullScreenModal"
