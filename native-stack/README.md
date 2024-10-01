@@ -287,10 +287,10 @@ Defaults to system default.
 
 #### `sheetInitialDetent`
 
-Index of the initial detent for the sheet.
+Index of the detent the sheet should expand to after being opened.
 Works only when `presentation` is set to `formSheet`.
 
-The detents must be defined in `sheetAllowedDetents` array.
+Defaults to `0` - which represents first detent in the detents array.
 
 #### `sheetGrabberVisible` (iOS only)
 
