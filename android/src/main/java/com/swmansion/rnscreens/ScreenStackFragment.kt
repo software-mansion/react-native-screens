@@ -142,7 +142,11 @@ class ScreenStackFragment :
     // once it is hidden by user gesture.
     private val bottomSheetStateCallback =
         object : BottomSheetCallback() {
-            private var lastStableState: Int = SheetUtils.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+            private var lastStableState: Int =
+                SheetUtils.sheetStateFromDetentIndex(
+                    screen.sheetInitialDetentIndex,
+                    screen.sheetDetents.count(),
+                )
 
             override fun onStateChanged(
                 bottomSheet: View,
@@ -152,7 +156,10 @@ class ScreenStackFragment :
                     lastStableState = newState
                     screen.notifySheetDetentChange(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), true)
                 } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    screen.notifySheetDetentChange(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
+                    screen.notifySheetDetentChange(
+                        SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()),
+                        false,
+                    )
                 }
 
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
@@ -232,9 +239,7 @@ class ScreenStackFragment :
 
         coordinatorLayout.addView(screen.recycle())
 
-        if (screen.stackPresentation != Screen.StackPresentation.MODAL &&
-            screen.stackPresentation != Screen.StackPresentation.FORM_SHEET
-        ) {
+        if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
             appBarLayout =
                 context?.let { AppBarLayout(it) }?.apply {
                     // By default AppBarLayout will have a background color set but since we cover the whole layout
