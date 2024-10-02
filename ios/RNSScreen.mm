@@ -889,8 +889,8 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
     sheet.delegate = self;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-    if (_sheetAllowedDetents.count > 0) {
-      if (@available(iOS 16.0, *)) {
+    if (@available(iOS 16.0, *)) {
+      if (_sheetAllowedDetents.count > 0) {
         if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
           // This is `fitToContents` case, where sheet should be just high to display its contents.
           // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
