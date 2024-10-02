@@ -93,6 +93,15 @@ function resolveSheetLargestUndimmedDetent(
   }
 }
 
+function clamp(value: number, lowerBound: number, upperBound: number): number {
+  if (value > upperBound) {
+    return upperBound;
+  } else if (value < lowerBound) {
+    return lowerBound;
+  }
+  return value;
+}
+
 export const InnerScreen = React.forwardRef<View, ScreenProps>(
   function InnerScreen(props, ref) {
     const innerRef = React.useRef<ViewConfig | null>(null);
@@ -200,7 +209,11 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-            sheetInitialDetent={sheetInitialDetent}
+            sheetInitialDetent={clamp(
+              sheetInitialDetent,
+              0,
+              resolvedSheetAllowedDetents.length - 1,
+            )}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,
