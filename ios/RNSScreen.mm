@@ -889,8 +889,8 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
     sheet.delegate = self;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-    if (_sheetAllowedDetents.count > 0) {
-      if (@available(iOS 16.0, *)) {
+    if (@available(iOS 16.0, *)) {
+      if (_sheetAllowedDetents.count > 0) {
         if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
           // This is `fitToContents` case, where sheet should be just high to display its contents.
           // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
@@ -942,6 +942,26 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
           [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
         }
       }
+    }
+
+    if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+      if (@available(iOS 16.0, *)) {
+        UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+        [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+      } else
+#endif // Check for iOS >= 16
+      {
+        if (_sheetInitialDetent < 2) {
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        } else {
+          RCTLogError(
+              @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
+        }
+      }
+    } else if (_sheetInitialDetent != 0) {
+      RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
     }
 
     sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
@@ -1149,6 +1169,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
     [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];
+  }
+
+  if (newScreenProps.sheetInitialDetent != oldScreenProps.sheetInitialDetent) {
+    [self setSheetInitialDetent:newScreenProps.sheetInitialDetent];
   }
 
   if (newScreenProps.sheetLargestUndimmedDetent != oldScreenProps.sheetLargestUndimmedDetent) {
@@ -1864,6 +1888,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, NSArray<NSNumber *> *);
 RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, NSNumber *);
 RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
+RCT_EXPORT_VIEW_PROPERTY(sheetInitialDetent, NSInteger);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #endif
 
