@@ -21,6 +21,9 @@ import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.scroll.ReactScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
@@ -56,9 +59,9 @@ class Screen(
     var isSheetGrabberVisible: Boolean = false
     var sheetCornerRadius: Float = 0F
         set(value) {
-            field = value
-            if (container is ScreenStack || (container == null && fragment is ScreenStackFragment)) {
-                (fragment as ScreenStackFragment).onSheetCornerRadiusChange()
+            if (field != value && isNativeStackScreen()) {
+                field = value
+                onSheetCornerRadiusChange()
             }
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
@@ -421,6 +424,21 @@ class Screen(
             ),
         )
     }
+
+    internal fun onSheetCornerRadiusChange() {
+        if (stackPresentation !== StackPresentation.FORM_SHEET || background == null) {
+            return
+        }
+        (background as MaterialShapeDrawable?)?.shapeAppearanceModel =
+            ShapeAppearanceModel
+                .Builder()
+                .apply {
+                    setTopLeftCorner(CornerFamily.ROUNDED, sheetCornerRadius)
+                    setTopRightCorner(CornerFamily.ROUNDED, sheetCornerRadius)
+                }.build()
+    }
+
+    private fun isNativeStackScreen(): Boolean = container is ScreenStack || fragmentWrapper is ScreenStackFragmentWrapper
 
     enum class StackPresentation {
         PUSH,

@@ -191,16 +191,7 @@ class ScreenStackFragment :
     }
 
     internal fun onSheetCornerRadiusChange() {
-        if (screen.stackPresentation !== Screen.StackPresentation.FORM_SHEET || screen.background == null) {
-            return
-        }
-        (screen.background as MaterialShapeDrawable?)?.shapeAppearanceModel =
-            ShapeAppearanceModel
-                .Builder()
-                .apply {
-                    setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius)
-                    setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius)
-                }.build()
+        screen.onSheetCornerRadiusChange()
     }
 
     override fun onCreateView(
