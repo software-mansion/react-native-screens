@@ -57,11 +57,15 @@ class Screen(
 
     // Props for controlling modal presentation
     var isSheetGrabberVisible: Boolean = false
+
+    // corner radius must be updated after all props prop updates from a single transaction
+    // have been applied, because it depends of the presentation type.
+    private var shouldUpdateSheetCornerRadius = false
     var sheetCornerRadius: Float = 0F
         set(value) {
-            if (field != value && isNativeStackScreen()) {
+            if (field != value) {
                 field = value
-                onSheetCornerRadiusChange()
+                shouldUpdateSheetCornerRadius = true
             }
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
@@ -425,17 +429,26 @@ class Screen(
         )
     }
 
+    internal fun onFinalizePropsUpdate() {
+        if (shouldUpdateSheetCornerRadius) {
+            shouldUpdateSheetCornerRadius = false
+            onSheetCornerRadiusChange()
+        }
+    }
+
     internal fun onSheetCornerRadiusChange() {
         if (stackPresentation !== StackPresentation.FORM_SHEET || background == null) {
             return
         }
-        (background as MaterialShapeDrawable?)?.shapeAppearanceModel =
-            ShapeAppearanceModel
-                .Builder()
-                .apply {
-                    setTopLeftCorner(CornerFamily.ROUNDED, sheetCornerRadius)
-                    setTopRightCorner(CornerFamily.ROUNDED, sheetCornerRadius)
-                }.build()
+        (background as? MaterialShapeDrawable?)?.let {
+            it.shapeAppearanceModel =
+                ShapeAppearanceModel
+                    .Builder()
+                    .apply {
+                        setTopLeftCorner(CornerFamily.ROUNDED, sheetCornerRadius)
+                        setTopRightCorner(CornerFamily.ROUNDED, sheetCornerRadius)
+                    }.build()
+        }
     }
 
     private fun isNativeStackScreen(): Boolean = container is ScreenStack || fragmentWrapper is ScreenStackFragmentWrapper

@@ -92,6 +92,12 @@ open class ScreenViewManager :
         return super.updateState(view, props, stateWrapper)
     }
 
+    // Called after all props are updated for given view
+    override fun onAfterUpdateTransaction(view: Screen) {
+        super.onAfterUpdateTransaction(view)
+        view.onFinalizePropsUpdate()
+    }
+
     @ReactProp(name = "activityState")
     fun setActivityState(
         view: Screen,
