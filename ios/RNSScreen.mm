@@ -902,13 +902,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
           [self setAllowedDetentsForSheet:sheet
                                        to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents]
                                   animate:NO];
-
-          if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
-            UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
-            [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
-          } else if (_sheetInitialDetent != 0) {
-            RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
-          }
         }
       }
     } else
@@ -934,12 +927,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
                                          UISheetPresentationControllerDetent.largeDetent
                                        ]
                                   animate:YES];
-          if (_sheetInitialDetent == 1) {
-            [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-          } else if (_sheetInitialDetent != 0) {
-            RCTLogError(
-                @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents array defaults to two items");
-          }
         } else {
           RCTLogError(@"[RNScreens] The values in sheetAllowedDetents array must be sorted");
         }
@@ -955,6 +942,26 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
           [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
         }
       }
+    }
+
+    if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+      if (@available(iOS 16.0, *)) {
+        UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+        [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+      } else
+#endif // Check for iOS >= 16
+      {
+        if (_sheetInitialDetent < 2) {
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        } else {
+          RCTLogError(
+              @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
+        }
+      }
+    } else if (_sheetInitialDetent != 0) {
+      RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
     }
 
     sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
