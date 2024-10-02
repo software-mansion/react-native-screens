@@ -57,7 +57,9 @@ class Screen(
     var sheetCornerRadius: Float = 0F
         set(value) {
             field = value
-            (fragment as? ScreenStackFragment)?.onSheetCornerRadiusChange()
+            if (container is ScreenStack || (container == null && fragment is ScreenStackFragment)) {
+                (fragment as ScreenStackFragment).onSheetCornerRadiusChange()
+            }
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
 

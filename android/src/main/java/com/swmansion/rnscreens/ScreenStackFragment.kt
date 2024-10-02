@@ -191,7 +191,10 @@ class ScreenStackFragment :
     }
 
     internal fun onSheetCornerRadiusChange() {
-        (screen.background as MaterialShapeDrawable).shapeAppearanceModel =
+        if (screen.stackPresentation !== Screen.StackPresentation.FORM_SHEET || screen.background == null) {
+            return
+        }
+        (screen.background as MaterialShapeDrawable?)?.shapeAppearanceModel =
             ShapeAppearanceModel
                 .Builder()
                 .apply {
