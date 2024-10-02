@@ -451,8 +451,6 @@ class Screen(
         }
     }
 
-    private fun isNativeStackScreen(): Boolean = container is ScreenStack || fragmentWrapper is ScreenStackFragmentWrapper
-
     enum class StackPresentation {
         PUSH,
         MODAL,
