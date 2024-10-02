@@ -934,6 +934,12 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
                                          UISheetPresentationControllerDetent.largeDetent
                                        ]
                                   animate:YES];
+          if (_sheetInitialDetent == 1) {
+            [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+          } else if (_sheetInitialDetent != 0) {
+            RCTLogError(
+                @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents array defaults to two items");
+          }
         } else {
           RCTLogError(@"[RNScreens] The values in sheetAllowedDetents array must be sorted");
         }
