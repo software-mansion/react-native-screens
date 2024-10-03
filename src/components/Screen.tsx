@@ -117,6 +117,7 @@ function resolveSheetInitialDetentIndex(
   if (index === 'last') {
     index = lastDetentIndex;
   } else if (index == null) {
+    // Intentional check for undefined & null ^
     index = 0;
   }
   if (!isIndexInClosedRange(index, 0, lastDetentIndex)) {
