@@ -59,7 +59,7 @@ class Screen(
     var isSheetGrabberVisible: Boolean = false
 
     // corner radius must be updated after all props prop updates from a single transaction
-    // have been applied, because it depends of the presentation type.
+    // have been applied, because it depends on the presentation type.
     private var shouldUpdateSheetCornerRadius = false
     var sheetCornerRadius: Float = 0F
         set(value) {
