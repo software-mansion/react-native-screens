@@ -418,7 +418,7 @@ export type NativeStackNavigationOptions = {
    *
    * Defaults to `0` - which represents first detent in the detents array.
    */
-  sheetInitialDetent?: ScreenProps['sheetInitialDetent'];
+  sheetInitialDetentIndex?: ScreenProps['sheetInitialDetentIndex'];
   /**
    * The largest sheet detent for which a view underneath won't be dimmed.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -436,7 +436,7 @@ export type NativeStackNavigationOptions = {
    *
    * Defaults to `none`, indicating that the dimming view should be always present.
    */
-  sheetLargestUndimmedDetent?: ScreenProps['sheetLargestUndimmedDetent'];
+  sheetLargestUndimmedDetentIndex?: ScreenProps['sheetLargestUndimmedDetentIndex'];
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

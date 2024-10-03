@@ -289,13 +289,17 @@ export interface ScreenProps extends ViewProps {
   unstable_screenStyle?: Pick<ViewStyle, 'backgroundColor'>;
   /**
    * Describes heights where a sheet can rest.
-   * Works only when `stackPresentation` is set to `formSheet`.
+   * Works only when `presentation` is set to `formSheet`.
    *
    * Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
-   * There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
+   * You can pass an array of ascending values each defining allowed sheet detent. iOS accepts any number of detents,
+   * while **Android is limited to three**.
+   *
+   * There is also possibility to specify `fitToContents` literal, which intents to set the sheet height
    * to the height of its contents.
    *
    * Please note that the array **must** be sorted in ascending order.
+   * **Android is limited to up 3 values in the array** -- any surplus values, beside first three are ignored.
    *
    * There are also legacy & **deprecated** options available:
    *
@@ -303,7 +307,9 @@ export interface ScreenProps extends ViewProps {
    * * 'large' - corresponds to `[1.0]` detent value, maximum height,
    * * 'all' - corresponds to `[0.5, 1.0]` value, the name is deceiving due to compatibility reasons.
    *
-   * Defaults to `[1.0]` literal.
+   * These are provided solely for **temporary** backward compatibility and are destined for removal in future versions.
+   *
+   * Defaults to `[1.0]`.
    */
   sheetAllowedDetents?: number[] | 'fitToContents' | 'medium' | 'large' | 'all';
   /**
@@ -350,30 +356,35 @@ export interface ScreenProps extends ViewProps {
    * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
    * there won't be a dimming view beneath the sheet.
    *
+   * If the specified index is out of bounds of `sheetAllowedDetents` array in dev mode error will be thrown,
+   * in production the value will be clamped.
+   *
    * Additionaly there are following options available:
    *
    * * `none` - there will be dimming view for all detents levels,
-   * * `largest` - there won't be a dimming view for any detent level.
+   * * `last` - there won't be a dimming view for any detent level.
    *
    * There also legacy & **deprecated** prop values available: `medium`, `large` (don't confuse with `largest`), `all`, which work in tandem with
    * corresponding legacy prop values for `sheetAllowedDetents` prop.
    *
+   * These are provided solely for **temporary** backward compatibility and are destined for removal in future versions.
+   *
    * Defaults to `none`, indicating that the dimming view should be always present.
    */
-  sheetLargestUndimmedDetent?:
+  sheetLargestUndimmedDetentIndex?:
     | number
     | 'none'
-    | 'largest'
-    | 'medium'
-    | 'large'
-    | 'all';
+    | 'last'
+    | 'medium' // deprecated
+    | 'large' // deprecated
+    | 'all'; // deprecated
   /**
    * Index of the detent the sheet should expand to after being opened.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
    * Defaults to `0` - which represents first detent in the detents array.
    */
-  sheetInitialDetent?: number;
+  sheetInitialDetentIndex?: number | 'last';
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
