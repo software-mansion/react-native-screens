@@ -70,6 +70,12 @@ function resolveSheetAllowedDetents(
   if (Array.isArray(allowedDetentsCompat)) {
     if (__DEV__) {
       assertDetentsArrayIsSorted(allowedDetentsCompat);
+      if (Platform.OS === 'android' && allowedDetentsCompat.length > 3) {
+        console.warn(
+          '[RNScreens] Sheets API on Android do accept only up to 3 values. Any surplus value are ignored.',
+        );
+        allowedDetentsCompat = allowedDetentsCompat.slice(0, 3);
+      }
     }
     return allowedDetentsCompat;
   } else if (allowedDetentsCompat === 'fitToContents') {
