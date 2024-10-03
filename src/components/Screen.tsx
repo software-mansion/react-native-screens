@@ -52,12 +52,31 @@ const SHEET_COMPAT_ALL = [0.5, 1.0];
 const SHEET_DIMMED_ALWAYS = -1;
 // const SHEET_DIMMED_NEVER = 9999;
 
+function assertDetentsArrayIsSorted(array: number[]) {
+  for (let i = 1; i < array.length; i++) {
+    if (array[i - 1] > array[i]) {
+      throw new Error(
+        '[RNScreens] The detent array is not sorted in ascending order!',
+      );
+    }
+  }
+}
+
 // These exist to transform old 'legacy' values used by the formsheet API to the new API shape.
 // We can get rid of it, once we get rid of support for legacy values: 'large', 'medium', 'all'.
 function resolveSheetAllowedDetents(
   allowedDetentsCompat: ScreenProps['sheetAllowedDetents'],
 ): number[] {
   if (Array.isArray(allowedDetentsCompat)) {
+    if (__DEV__) {
+      assertDetentsArrayIsSorted(allowedDetentsCompat);
+      if (Platform.OS === 'android' && allowedDetentsCompat.length > 3) {
+        console.warn(
+          '[RNScreens] Sheets API on Android do accept only up to 3 values. Any surplus value are ignored.',
+        );
+        allowedDetentsCompat = allowedDetentsCompat.slice(0, 3);
+      }
+    }
     return allowedDetentsCompat;
   } else if (allowedDetentsCompat === 'fitToContents') {
     return SHEET_FIT_TO_CONTENTS;
