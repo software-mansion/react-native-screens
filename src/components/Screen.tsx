@@ -86,7 +86,7 @@ function resolveSheetLargestUndimmedDetent(
   lastDetentIndex: number,
 ): number {
   if (typeof lud === 'number') {
-    if (!isNumberInClosedRange(lud, SHEET_DIMMED_ALWAYS, lastDetentIndex)) {
+    if (!isIndexInClosedRange(lud, SHEET_DIMMED_ALWAYS, lastDetentIndex)) {
       if (__DEV__) {
         throw new Error(
           "[RNScreens] Provided value of 'sheetLargestUndimmedDetentIndex' prop is out of bounds of 'sheetAllowedDetents' array.",
@@ -119,7 +119,7 @@ function resolveSheetInitialDetentIndex(
   } else if (index == null) {
     index = 0;
   }
-  if (!isNumberInClosedRange(index, 0, lastDetentIndex)) {
+  if (!isIndexInClosedRange(index, 0, lastDetentIndex)) {
     if (__DEV__) {
       throw new Error(
         "[RNScreens] Provided value of 'sheetInitialDetentIndex' prop is out of bounds of 'sheetAllowedDetents' array.",
@@ -131,12 +131,12 @@ function resolveSheetInitialDetentIndex(
   return index;
 }
 
-function isNumberInClosedRange(
+function isIndexInClosedRange(
   value: number,
   lowerBound: number,
   upperBound: number,
 ): boolean {
-  return value >= lowerBound && value <= upperBound;
+  return Number.isInteger(value) && value >= lowerBound && value <= upperBound;
 }
 
 export const InnerScreen = React.forwardRef<View, ScreenProps>(
