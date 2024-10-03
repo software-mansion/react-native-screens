@@ -357,8 +357,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
 - (void)setHiddenFromStack:(BOOL)hiddenFromStack
 {
-  _hiddenFromStack = hiddenFromStack;
-  [_reactSuperview updateContainer];
+  if (_hiddenFromStack != hiddenFromStack) {
+    _hiddenFromStack = hiddenFromStack;
+    [_reactSuperview updateContainer];
+  }
 }
 
 #endif
