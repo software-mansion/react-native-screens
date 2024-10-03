@@ -86,6 +86,15 @@ function resolveSheetLargestUndimmedDetent(
   lastDetentIndex: number,
 ): number {
   if (typeof lud === 'number') {
+    if (!isNumberInClosedRange(lud, SHEET_DIMMED_ALWAYS, lastDetentIndex)) {
+      if (__DEV__) {
+        throw new Error(
+          "[RNScreens] Provided value of 'sheetLargestUndimmedDetentIndex' prop is out of bounds of 'sheetAllowedDetents' array.",
+        );
+      }
+      // Return default in production
+      return SHEET_DIMMED_ALWAYS;
+    }
     return lud;
   } else if (lud === 'last') {
     return lastDetentIndex;
