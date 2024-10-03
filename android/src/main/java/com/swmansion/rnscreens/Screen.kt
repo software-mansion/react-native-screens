@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
@@ -441,12 +442,13 @@ class Screen(
             return
         }
         (background as MaterialShapeDrawable?)?.let {
+            val resolvedCornerRadius = PixelUtil.toDIPFromPixel(sheetCornerRadius)
             it.shapeAppearanceModel =
                 ShapeAppearanceModel
                     .Builder()
                     .apply {
-                        setTopLeftCorner(CornerFamily.ROUNDED, sheetCornerRadius)
-                        setTopRightCorner(CornerFamily.ROUNDED, sheetCornerRadius)
+                        setTopLeftCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
+                        setTopRightCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
                     }.build()
         }
     }
