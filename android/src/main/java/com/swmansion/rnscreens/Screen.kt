@@ -16,11 +16,15 @@ import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.scroll.ReactScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
@@ -54,10 +58,16 @@ class Screen(
 
     // Props for controlling modal presentation
     var isSheetGrabberVisible: Boolean = false
+
+    // corner radius must be updated after all props prop updates from a single transaction
+    // have been applied, because it depends on the presentation type.
+    private var shouldUpdateSheetCornerRadius = false
     var sheetCornerRadius: Float = 0F
         set(value) {
-            field = value
-            (fragment as? ScreenStackFragment)?.onSheetCornerRadiusChange()
+            if (field != value) {
+                field = value
+                shouldUpdateSheetCornerRadius = true
+            }
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
 
@@ -420,6 +430,29 @@ class Screen(
         )
     }
 
+    internal fun onFinalizePropsUpdate() {
+        if (shouldUpdateSheetCornerRadius) {
+            shouldUpdateSheetCornerRadius = false
+            onSheetCornerRadiusChange()
+        }
+    }
+
+    internal fun onSheetCornerRadiusChange() {
+        if (stackPresentation !== StackPresentation.FORM_SHEET || background == null) {
+            return
+        }
+        (background as MaterialShapeDrawable?)?.let {
+            val resolvedCornerRadius = PixelUtil.toDIPFromPixel(sheetCornerRadius)
+            it.shapeAppearanceModel =
+                ShapeAppearanceModel
+                    .Builder()
+                    .apply {
+                        setTopLeftCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
+                        setTopRightCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
+                    }.build()
+        }
+    }
+
     enum class StackPresentation {
         PUSH,
         MODAL,
@@ -435,7 +468,6 @@ class Screen(
         SLIDE_FROM_RIGHT,
         SLIDE_FROM_LEFT,
         FADE_FROM_BOTTOM,
-        IOS,
         IOS_FROM_RIGHT,
         IOS_FROM_LEFT,
     }
