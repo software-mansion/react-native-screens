@@ -195,12 +195,12 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetLargestUndimmedDetent = 'none',
+    sheetLargestUndimmedDetentIndex = 'none',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     sheetElevation = 24,
     sheetExpandsWhenScrolledToEdge = true,
-    sheetInitialDetent = 0,
+    sheetInitialDetentIndex = 0,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarTranslucent,
@@ -318,9 +318,9 @@ const RouteView = ({
       hasLargeHeader={hasLargeHeader}
       style={[StyleSheet.absoluteFill, unstable_screenStyle]}
       sheetAllowedDetents={sheetAllowedDetents}
-      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      sheetLargestUndimmedDetentIndex={sheetLargestUndimmedDetentIndex}
       sheetGrabberVisible={sheetGrabberVisible}
-      sheetInitialDetent={sheetInitialDetent}
+      sheetInitialDetentIndex={sheetInitialDetentIndex}
       sheetCornerRadius={sheetCornerRadius}
       sheetElevation={sheetElevation}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
