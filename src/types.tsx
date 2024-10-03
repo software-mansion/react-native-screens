@@ -356,8 +356,8 @@ export interface ScreenProps extends ViewProps {
    * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
    * there won't be a dimming view beneath the sheet.
    *
-   * If the specified index is out of bounds of `sheetAllowedDetents` array in dev mode error will be thrown,
-   * in production the value will be clamped.
+   * If the specified index is out of bounds of `sheetAllowedDetents` array, in dev environment mode error will be thrown,
+   * in production the value will be reset to default value.
    *
    * Additionaly there are following options available:
    *
@@ -381,6 +381,11 @@ export interface ScreenProps extends ViewProps {
   /**
    * Index of the detent the sheet should expand to after being opened.
    * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * If the specified index is out of bounds of `sheetAllowedDetents` array, in dev environment more error will be thrown,
+   * in production the value will be reset to default value.
+   *
+   * Additionaly there is `last` value available, when set the sheet will expand initially to last (largest) detent.
    *
    * Defaults to `0` - which represents first detent in the detents array.
    */
