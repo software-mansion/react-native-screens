@@ -295,7 +295,10 @@ export interface ScreenProps extends ViewProps {
    * There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
    * to the height of its contents.
    *
-   * Please note that the array **must** be sorted in ascending order.
+   * Please note that the array **must** be sorted in ascending order. This invariant is verified only in developement mode,
+   * where violation results in error.
+   *
+   * **Android is limited to up 3 values in the array** -- any surplus values, beside first three are ignored.
    *
    * There are also legacy & **deprecated** options available:
    *
