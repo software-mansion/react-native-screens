@@ -4,7 +4,7 @@ import {
   NativeStackScreenProps,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Square } from '../shared';
 
@@ -41,7 +41,7 @@ const HomeScreen = ({ navigation }: StackScreenProps<'Home'>) => {
 
 const DetailsScreen = ({ navigation }: StackScreenProps<'Details'>) => {
   const [x, setX] = useState(false);
-  React.useEffect(() => {
+  useEffect(() => {
     navigation.setOptions({
       headerBackVisible: !x,
       headerRight: () =>

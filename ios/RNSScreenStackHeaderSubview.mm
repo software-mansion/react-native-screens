@@ -78,6 +78,10 @@ namespace react = facebook::react;
         self);
   } else {
     self.bounds = CGRect{CGPointZero, frame.size};
+    // We're forcing the superview to obtain correct frame and layout this subview with correct frame size
+    // see: https://github.com/software-mansion/react-native-screens/pull/2385
+    self.superview.frame = frame;
+    [self.superview layoutIfNeeded];
   }
 }
 
