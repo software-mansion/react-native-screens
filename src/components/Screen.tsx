@@ -76,14 +76,16 @@ function resolveSheetAllowedDetents(
   allowedDetentsCompat: ScreenProps['sheetAllowedDetents'],
 ): number[] {
   if (Array.isArray(allowedDetentsCompat)) {
-    if (__DEV__) {
-      assertDetentsArrayIsSorted(allowedDetentsCompat);
-      if (Platform.OS === 'android' && allowedDetentsCompat.length > 3) {
+    if (Platform.OS === 'android' && allowedDetentsCompat.length > 3) {
+      if (__DEV__) {
         console.warn(
           '[RNScreens] Sheets API on Android do accept only up to 3 values. Any surplus value are ignored.',
         );
-        allowedDetentsCompat = allowedDetentsCompat.slice(0, 3);
       }
+      allowedDetentsCompat = allowedDetentsCompat.slice(0, 3);
+    }
+    if (__DEV__) {
+      assertDetentsArrayIsSorted(allowedDetentsCompat);
     }
     return allowedDetentsCompat;
   } else if (allowedDetentsCompat === 'fitToContents') {
