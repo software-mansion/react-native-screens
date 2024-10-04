@@ -92,6 +92,12 @@ open class ScreenViewManager :
         return super.updateState(view, props, stateWrapper)
     }
 
+    // Called after all props are updated for given view
+    override fun onAfterUpdateTransaction(view: Screen) {
+        super.onAfterUpdateTransaction(view)
+        view.onFinalizePropsUpdate()
+    }
+
     @ReactProp(name = "activityState")
     fun setActivityState(
         view: Screen,
@@ -142,7 +148,8 @@ open class ScreenViewManager :
                 "slide_from_left" -> Screen.StackAnimation.SLIDE_FROM_LEFT
                 "slide_from_bottom" -> Screen.StackAnimation.SLIDE_FROM_BOTTOM
                 "fade_from_bottom" -> Screen.StackAnimation.FADE_FROM_BOTTOM
-                "ios" -> Screen.StackAnimation.IOS
+                "ios_from_right" -> Screen.StackAnimation.IOS_FROM_RIGHT
+                "ios_from_left" -> Screen.StackAnimation.IOS_FROM_LEFT
                 else -> throw JSApplicationIllegalArgumentException("Unknown animation type $animation")
             }
     }

@@ -6,7 +6,7 @@ export const sheetInitialOptions: SheetOptions = {
   sheetAllowedDetents: [0.4, 0.6, 0.9],
   // sheetAllowedDetents: [0.6],
   // sheetAllowedDetents: 'fitToContents',
-  sheetLargestUndimmedDetent: 2,
+  sheetLargestUndimmedDetent: 'none',
   sheetGrabberVisible: false,
   sheetCornerRadius: 24,
   sheetExpandsWhenScrolledToEdge: true,

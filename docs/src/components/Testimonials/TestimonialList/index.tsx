@@ -5,33 +5,62 @@ import TestimonialItem from '@site/src/components/Testimonials/TestimonialItem';
 
 const items = [
   {
-    author: 'Test author',
-    company: 'Test',
-    body: 'Screens are the best ever and ever - I love using it!',
-    link: 'https://test.com/',
+    author: 'Satyajit Sahoo',
+    company: 'Callstack',
+    body: "React Navigation wouldn't be the same today without React Native Screens. Gotta give kudos to the Screens team for bringing native navigation with a nice API. And they are always hard at work to bring more native features as well!",
+    link: 'https://x.com/satya164/status/1826694902660694028',
     image: {
-      alt: 'test',
-      src: '/img/logo.svg',
+      alt: 'satya',
+      src: 'https://pbs.twimg.com/profile_images/1426585051379159040/RG8CUmff_400x400.jpg',
     },
   },
   {
-    author: 'Test author',
-    company: 'Test',
-    body: 'Screens are the best ever and ever - I love using it!',
-    link: 'https://test.com/',
+    author: 'Ferran Negre Pizzaro',
+    company: 'FitHero',
+    body: 'I would never build a serious React Native app without it.',
+    link: 'https://x.com/ferrannp/status/1826734343571796317',
     image: {
-      alt: 'test',
-      src: '/img/logo.svg',
+      alt: 'ferran',
+      src: 'https://pbs.twimg.com/profile_images/1225546442917515264/OBZyRYWO_400x400.jpg',
     },
   },
   {
-    author: 'Test author',
-    company: 'Test',
-    body: 'Screens are the best ever and ever - I love using it!',
-    link: 'https://test.com/',
+    author: 'Sébastien Lorber',
+    company: 'This Week In React',
+    body: 'React Native Screens is what makes React Native navigation truly competitive against native apps',
+    link: 'https://x.com/sebastienlorber/status/1828760445106466959',
     image: {
-      alt: 'test',
-      src: '/img/logo.svg',
+      alt: 'seb',
+      src: 'https://pbs.twimg.com/profile_images/573206276819140608/gKAusMeX_400x400.jpeg',
+    },
+  },
+  {
+    author: 'Jamon Holmgren',
+    company: 'Infinite Red',
+    body: 'React Native Screens is one of the most underrated React Native libraries!',
+    link: 'https://x.com/jamonholmgren/status/1826713786797228166',
+    image: {
+      alt: 'jamon',
+      src: 'https://pbs.twimg.com/profile_images/1712505856905170944/LDFMYGSQ_400x400.jpg',
+    },
+  },
+  {
+    author: 'Kwesi Kay',
+    body: "React Native Screens has been a game-changer for me! It optimizes performance by reducing memory usage and makes navigation smoother, especially in large apps. Couldn't imagine building without it now! 😍",
+    link: 'https://x.com/EiiKwesiKay/status/1826282042965000267',
+    image: {
+      alt: 'kwesikay',
+      src: 'https://pbs.twimg.com/profile_images/1823345356794449920/UVMh-ABt_400x400.jpg',
+    },
+  },
+  {
+    author: 'Brent Vatne',
+    company: 'Expo',
+    body: "react-native-screens is one of the most essential libraries in the ecosystem. it's a crucial building block for react-navigation and expo-router, and therefore nearly all react-native apps! native stack in particular does tons of heavy lifting to make your apps feel fantastic.",
+    link: 'https://x.com/notbrent/status/1826699409738137796',
+    image: {
+      alt: 'brent',
+      src: 'https://pbs.twimg.com/profile_images/1509282922498428929/gV2uTCff_400x400.jpg',
     },
   },
 ];
@@ -42,7 +71,7 @@ const TestimonialList = () => {
   useEffect(() => {
     const updateHeight = () => {
       const testimonialContainer = document.querySelector<HTMLElement>(
-        `.testimonialContainer-${activeIndex}`
+        `.testimonialContainer-${activeIndex}`,
       );
       const testimonialSlides =
         document.querySelector<HTMLElement>('.testimonialSlides');
@@ -73,7 +102,7 @@ const TestimonialList = () => {
       <div
         className={clsx(
           `testimonialContainer-${i / 2}`,
-          styles.testimonialPair
+          styles.testimonialPair,
         )}
         key={i}>
         <TestimonialItem
@@ -92,7 +121,7 @@ const TestimonialList = () => {
             {items[i + 1].body}
           </TestimonialItem>
         )}
-      </div>
+      </div>,
     );
   }
 
@@ -104,7 +133,7 @@ const TestimonialList = () => {
             key={idx}
             className={clsx(
               styles.testimonialSlide,
-              activeIndex === idx ? styles.activeTestimonialSlide : ''
+              activeIndex === idx ? styles.activeTestimonialSlide : '',
             )}>
             {item}
           </div>
@@ -116,7 +145,7 @@ const TestimonialList = () => {
             key={idx}
             className={clsx(
               styles.dot,
-              idx === activeIndex && styles.activeDot
+              idx === activeIndex && styles.activeDot,
             )}
             onClick={() => handleDotClick(idx)}
           />

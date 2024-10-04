@@ -11,7 +11,8 @@ enum class StackAnimation {
   SIMPLE_FROM_BOTTOM,
   SLIDE_FROM_RIGHT,
   SLIDE_FROM_LEFT,
-  IOS
+  IOS_FROM_RIGHT,
+  IOS_FROM_LEFT
 };
 
 enum class ReplaceAnimation { PUSH, POP };

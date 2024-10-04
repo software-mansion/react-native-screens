@@ -90,6 +90,7 @@ namespace react = facebook::react;
 @property (nonatomic) NSNumber *sheetLargestUndimmedDetent;
 @property (nonatomic) BOOL sheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
+@property (nonatomic) NSInteger sheetInitialDetent;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif // !TARGET_OS_TV
 
