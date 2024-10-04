@@ -441,7 +441,7 @@ class Screen(
         if (stackPresentation !== StackPresentation.FORM_SHEET || background == null) {
             return
         }
-        (background as MaterialShapeDrawable?)?.let {
+        (background as? MaterialShapeDrawable?)?.let {
             val resolvedCornerRadius = PixelUtil.toDIPFromPixel(sheetCornerRadius)
             it.shapeAppearanceModel =
                 ShapeAppearanceModel
