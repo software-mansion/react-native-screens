@@ -20,12 +20,12 @@ const secondScreenTitle = baseTitle2.repeat(24);
 const searchBarScreenTitle = "SearchBarScreen";
 
 const headerOptions = {
-  // headerLeft: () => {
-  //   return (
-  //     <View style={{ width: 40, height: 20, backgroundColor: 'goldenrod' }}>
-  //     </View>
-  //   )
-  // },
+  headerLeft: () => {
+    return (
+      <View style={{ width: 40, height: 20, backgroundColor: 'goldenrod' }}>
+      </View>
+    )
+  },
   // headerRight: () => (
   //   <View style={{ width: 120, height: 20, backgroundColor: 'goldenrod', opacity: 0.4, flexDirection: 'row' }}>
   //   </View>
@@ -48,14 +48,14 @@ const headerOptions = {
   // headerTitle: () => (
   //   <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(5)}</Text>
   // ),
-  // headerRight: () => {
-  //   return (
-  //     <View style={{ flexDirection: 'row' }}>
-  //       <View style={{ width: 20, height: 20, backgroundColor: 'lightgreen', opacity: 0.8 }} />
-  //       <View style={{ width: 40, height: 20, backgroundColor: 'lightblue', opacity: 0.8 }} />
-  //     </View>
-  //   );
-  // },
+  headerRight: () => {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        <View style={{ width: 20, height: 20, backgroundColor: 'lightgreen', opacity: 0.8 }} />
+        <View style={{ width: 60, height: 20, backgroundColor: 'lightblue', opacity: 0.8 }} />
+      </View>
+    );
+  },
   headerTitle: () => (
     <View style={{}}>
       <Text numberOfLines={1} style={{}}>{baseTitle.repeat(24)}</Text>
@@ -77,7 +77,10 @@ function App() {
         <Stack.Screen
           name={secondScreenTitle}
           component={DetailsScreen}
-          options={headerOptions}
+          options={{
+            ...headerOptions,
+            headerBackVisible: false,
+          }}
         />
         <Stack.Screen
           name={searchBarScreenTitle}
