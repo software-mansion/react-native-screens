@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Animated, View, Platform } from 'react-native';
 
@@ -15,11 +17,19 @@ import {
 import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
 import ModalScreenNativeComponent from '../fabric/ModalScreenNativeComponent';
 
-export const NativeScreen: React.ComponentType<ScreenProps> =
-  ScreenNativeComponent as React.ComponentType<ScreenProps>;
+type NativeScreenProps = Omit<
+  ScreenProps,
+  'sheetInitialDetentIndex' | 'sheetLargestUndimmedDetentIndex'
+> & {
+  sheetInitialDetent: number;
+  sheetLargestUndimmedDetent: number;
+};
+
+export const NativeScreen: React.ComponentType<NativeScreenProps> =
+  ScreenNativeComponent as React.ComponentType<NativeScreenProps>;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
 const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
-  ModalScreenNativeComponent as React.ComponentType<ScreenProps>,
+  ModalScreenNativeComponent as React.ComponentType<NativeScreenProps>,
 );
 
 // Incomplete type, all accessible properties available at:
@@ -39,6 +49,114 @@ interface ViewConfig extends View {
       };
     };
   };
+}
+
+// This value must be kept in sync with native side.
+const SHEET_FIT_TO_CONTENTS = [-1];
+const SHEET_COMPAT_LARGE = [1.0];
+const SHEET_COMPAT_MEDIUM = [0.5];
+const SHEET_COMPAT_ALL = [0.5, 1.0];
+
+const SHEET_DIMMED_ALWAYS = -1;
+// const SHEET_DIMMED_NEVER = 9999;
+
+function assertDetentsArrayIsSorted(array: number[]) {
+  for (let i = 1; i < array.length; i++) {
+    if (array[i - 1] > array[i]) {
+      throw new Error(
+        '[RNScreens] The detent array is not sorted in ascending order!',
+      );
+    }
+  }
+}
+
+// These exist to transform old 'legacy' values used by the formsheet API to the new API shape.
+// We can get rid of it, once we get rid of support for legacy values: 'large', 'medium', 'all'.
+function resolveSheetAllowedDetents(
+  allowedDetentsCompat: ScreenProps['sheetAllowedDetents'],
+): number[] {
+  if (Array.isArray(allowedDetentsCompat)) {
+    if (__DEV__) {
+      assertDetentsArrayIsSorted(allowedDetentsCompat);
+      if (Platform.OS === 'android' && allowedDetentsCompat.length > 3) {
+        console.warn(
+          '[RNScreens] Sheets API on Android do accept only up to 3 values. Any surplus value are ignored.',
+        );
+        allowedDetentsCompat = allowedDetentsCompat.slice(0, 3);
+      }
+    }
+    return allowedDetentsCompat;
+  } else if (allowedDetentsCompat === 'fitToContents') {
+    return SHEET_FIT_TO_CONTENTS;
+  } else if (allowedDetentsCompat === 'large') {
+    return SHEET_COMPAT_LARGE;
+  } else if (allowedDetentsCompat === 'medium') {
+    return SHEET_COMPAT_MEDIUM;
+  } else if (allowedDetentsCompat === 'all') {
+    return SHEET_COMPAT_ALL;
+  } else {
+    // Safe default, only large detent is allowed.
+    return [1.0];
+  }
+}
+
+function resolveSheetLargestUndimmedDetent(
+  lud: ScreenProps['sheetLargestUndimmedDetentIndex'],
+  lastDetentIndex: number,
+): number {
+  if (typeof lud === 'number') {
+    if (!isIndexInClosedRange(lud, SHEET_DIMMED_ALWAYS, lastDetentIndex)) {
+      if (__DEV__) {
+        throw new Error(
+          "[RNScreens] Provided value of 'sheetLargestUndimmedDetentIndex' prop is out of bounds of 'sheetAllowedDetents' array.",
+        );
+      }
+      // Return default in production
+      return SHEET_DIMMED_ALWAYS;
+    }
+    return lud;
+  } else if (lud === 'last') {
+    return lastDetentIndex;
+  } else if (lud === 'none' || lud === 'all') {
+    return SHEET_DIMMED_ALWAYS;
+  } else if (lud === 'large') {
+    return 1;
+  } else if (lud === 'medium') {
+    return 0;
+  } else {
+    // Safe default, every detent is dimmed
+    return SHEET_DIMMED_ALWAYS;
+  }
+}
+
+function resolveSheetInitialDetentIndex(
+  index: ScreenProps['sheetInitialDetentIndex'],
+  lastDetentIndex: number,
+): number {
+  if (index === 'last') {
+    index = lastDetentIndex;
+  } else if (index == null) {
+    // Intentional check for undefined & null ^
+    index = 0;
+  }
+  if (!isIndexInClosedRange(index, 0, lastDetentIndex)) {
+    if (__DEV__) {
+      throw new Error(
+        "[RNScreens] Provided value of 'sheetInitialDetentIndex' prop is out of bounds of 'sheetAllowedDetents' array.",
+      );
+    }
+    // Return default in production
+    return 0;
+  }
+  return index;
+}
+
+function isIndexInClosedRange(
+  value: number,
+  lowerBound: number,
+  upperBound: number,
+): boolean {
+  return Number.isInteger(value) && value >= lowerBound && value <= upperBound;
 }
 
 export const InnerScreen = React.forwardRef<View, ScreenProps>(
@@ -64,17 +182,30 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
     // To maintain default behavior of formSheet stack presentation style and to have reasonable
     // defaults for new medium-detent iOS API we need to set defaults here
     const {
+      // formSheet presentation related props
       sheetAllowedDetents = [1.0],
-      sheetLargestUndimmedDetent = -1,
+      sheetLargestUndimmedDetentIndex = SHEET_DIMMED_ALWAYS,
       sheetGrabberVisible = false,
       sheetCornerRadius = -1.0,
       sheetExpandsWhenScrolledToEdge = true,
       sheetElevation = 24,
-      sheetInitialDetent = 0,
+      sheetInitialDetentIndex = 0,
+      // Other
       stackPresentation,
     } = rest;
 
     if (enabled && isNativePlatformSupported) {
+      const resolvedSheetAllowedDetents =
+        resolveSheetAllowedDetents(sheetAllowedDetents);
+      const resolvedSheetLargestUndimmedDetent =
+        resolveSheetLargestUndimmedDetent(
+          sheetLargestUndimmedDetentIndex,
+          resolvedSheetAllowedDetents.length - 1,
+        );
+      const resolvedSheetInitialDetentIndex = resolveSheetInitialDetentIndex(
+        sheetInitialDetentIndex,
+        resolvedSheetAllowedDetents.length - 1,
+      );
       // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens
       const AnimatedScreen =
         Platform.OS === 'android' ||
@@ -95,6 +226,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         isNativeStack,
         gestureResponseDistance,
         onGestureCancel,
+        style,
         ...props
       } = rest;
 
@@ -125,14 +257,19 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen
             {...props}
+            // Hierarchy of screens is handled on the native side and setting zIndex value causes this issue:
+            // https://github.com/software-mansion/react-native-screens/issues/2345
+            // With below change of zIndex, we force RN diffing mechanism to NOT include detaching and attaching mutation in one transaction.
+            // Detailed information can be found here https://github.com/software-mansion/react-native-screens/pull/2351
+            style={[style, { zIndex: undefined }]}
             activityState={activityState}
-            sheetAllowedDetents={sheetAllowedDetents}
-            sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+            sheetAllowedDetents={resolvedSheetAllowedDetents}
+            sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
             sheetElevation={sheetElevation}
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-            sheetInitialDetent={sheetInitialDetent}
+            sheetInitialDetent={resolvedSheetInitialDetentIndex}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,

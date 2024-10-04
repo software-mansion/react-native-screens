@@ -195,12 +195,12 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetLargestUndimmedDetent = -1,
+    sheetLargestUndimmedDetentIndex = 'none',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     sheetElevation = 24,
     sheetExpandsWhenScrolledToEdge = true,
-    sheetInitialDetent = 0,
+    sheetInitialDetentIndex = 0,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarTranslucent,
@@ -215,7 +215,7 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
-    unstable_footerComponent = null,
+    unstable_sheetFooter = null,
   } = options;
 
   let {
@@ -229,9 +229,10 @@ const RouteView = ({
   } = options;
 
   // We only want to allow backgroundColor for now
-  unstable_screenStyle = unstable_screenStyle
-    ? { backgroundColor: unstable_screenStyle.backgroundColor }
-    : null;
+  unstable_screenStyle =
+    stackPresentation === 'formSheet' && unstable_screenStyle
+      ? { backgroundColor: unstable_screenStyle.backgroundColor }
+      : null;
 
   if (sheetAllowedDetents === 'fitToContents') {
     sheetAllowedDetents = [-1];
@@ -317,9 +318,9 @@ const RouteView = ({
       hasLargeHeader={hasLargeHeader}
       style={[StyleSheet.absoluteFill, unstable_screenStyle]}
       sheetAllowedDetents={sheetAllowedDetents}
-      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      sheetLargestUndimmedDetentIndex={sheetLargestUndimmedDetentIndex}
       sheetGrabberVisible={sheetGrabberVisible}
-      sheetInitialDetent={sheetInitialDetent}
+      sheetInitialDetentIndex={sheetInitialDetentIndex}
       sheetCornerRadius={sheetCornerRadius}
       sheetElevation={sheetElevation}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
@@ -354,7 +355,6 @@ const RouteView = ({
         });
       }}
       onWillAppear={() => {
-        console.log(`onWillAppear/transitionStart route: ${route.key}`);
         navigation.emit({
           type: 'transitionStart',
           data: { closing: false },
@@ -362,7 +362,6 @@ const RouteView = ({
         });
       }}
       onWillDisappear={() => {
-        console.log(`onWillDisappear/transitionStart route: ${route.key}`);
         navigation.emit({
           type: 'transitionStart',
           data: { closing: true },
@@ -370,12 +369,10 @@ const RouteView = ({
         });
       }}
       onAppear={() => {
-        console.log(`onAppear/appear route: ${route.key}`);
         navigation.emit({
           type: 'appear',
           target: route.key,
         });
-        console.log(`onAppear/transitionEnd route: ${route.key}`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: false },
@@ -383,7 +380,6 @@ const RouteView = ({
         });
       }}
       onDisappear={() => {
-        console.log(`onDisappear/transitionEnd route: ${route.key}`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: true },
@@ -403,7 +399,6 @@ const RouteView = ({
         }
       }}
       onDismissed={e => {
-        console.log(`onDismissed/dismiss route: ${route.key}`);
         navigation.emit({
           type: 'dismiss',
           target: route.key,
@@ -450,8 +445,8 @@ const RouteView = ({
             route={route}
             headerShown={isHeaderInPush}
           />
-          {unstable_footerComponent && (
-            <FooterComponent>{unstable_footerComponent}</FooterComponent>
+          {stackPresentation === 'formSheet' && unstable_sheetFooter && (
+            <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>

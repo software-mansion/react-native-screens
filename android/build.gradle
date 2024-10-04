@@ -9,7 +9,11 @@ buildscript {
         rnsDefaultKotlinVersion = '1.8.0'
     }
     ext.safeExtGet = {prop, fallback ->
-        rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+        def props = (prop instanceof String) ? [prop] : prop
+        def result = props.find { key ->
+            return rootProject.ext.has(key)
+        }
+        return result ? rootProject.ext.get(result) : fallback
     }
     repositories {
         google()
@@ -77,8 +81,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', rnsDefaultMinSdkVersion)
-        targetSdkVersion safeExtGet('targetSdkVersion', rnsDefaultTargetSdkVersion)
+        minSdkVersion safeExtGet(['minSdkVersion', 'minSdk'], rnsDefaultMinSdkVersion)
+        targetSdkVersion safeExtGet(['targetSdkVersion', 'targetSdk'], rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
@@ -136,7 +140,7 @@ android {
             }
         }
         res {
-            if (safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion) >= 33) {
+            if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
                 srcDirs = ["${androidResDir}/base", "${androidResDir}/v33"]
             } else {
                 srcDirs = ["${androidResDir}/base"]
@@ -148,10 +152,26 @@ android {
 repositories {
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-        // Matches the RN Hello World template
+
+        // First look for the standard location of react-native, as in RN Hello World template
         // https://github.com/facebook/react-native/blob/1e8f3b11027fe0a7514b4fc97d0798d3c64bc895/local-cli/templates/HelloWorld/android/build.gradle#L21
-        url "$projectDir/../node_modules/react-native/android"
+        // TODO(kkafar): Note, that in latest template app https://github.com/react-native-community/template/blob/0f4745b7a9d84232aeedec2def8d75ab9b050d11/template/android/build.gradle
+        // this is not specified at all.
+        File standardRnAndroidDirLocation = file("$rootDir/../node_modules/react-native/android")
+        if (standardRnAndroidDirLocation.exists()) {
+            url standardRnAndroidDirLocation
+        } else {
+            // We're in non standard setup - try to use node resolver to locate the react-native package.
+            File reactNativePackage = file(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim())
+            def rnAndroidDirLocation = "$reactNativePackage.parentFile/android"
+            if (reactNativePackage.exists()) {
+                url rnAndroidDirLocation
+            } else {
+                println "[RNScreens] Failed to resolve react-native directory. Attempted locations: ${standardRnAndroidDirLocation}, ${rnAndroidDirLocation}"
+            }
+        }
     }
+
     mavenCentral()
     mavenLocal()
     google()
