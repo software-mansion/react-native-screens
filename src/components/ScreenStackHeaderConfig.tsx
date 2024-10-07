@@ -14,9 +14,17 @@ import ScreenStackHeaderSubviewNativeComponent from '../fabric/ScreenStackHeader
 
 export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
   ScreenStackHeaderConfigNativeComponent as any;
+
 export const ScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 > = ScreenStackHeaderSubviewNativeComponent as any;
+
+// export function ScreenStackHeaderConfig(props: ScreenStackHeaderConfigProps): React.JSX.Element
+// {
+//   return (
+//     <ScreenStackHeaderConfigNativeComponent {...props} />
+//   )
+// }
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,
