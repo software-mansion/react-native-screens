@@ -1,5 +1,6 @@
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSConvert.h"
+#import "RNSScreenStackHeaderConfig.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -22,12 +23,18 @@ namespace react = facebook::react;
 
 #pragma mark - Common
 
+- (RNSScreenStackHeaderConfig *)getHeaderConfig
+{
+  RNSScreenStackHeaderConfig *headerConfig = (RNSScreenStackHeaderConfig *)self.reactSuperview;
+  return headerConfig;
+}
+
 // We're forcing the navigation controller's view to re-layout
 // see: https://github.com/software-mansion/react-native-screens/pull/2385
 - (void)layoutNavigationBarIfNeeded
 {
-  UIViewController *vc = self.reactSuperview.reactSuperview.reactViewController;
-  UINavigationController *navctr = vc.navigationController;
+  RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
+  UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
   [navctr.navigationBar layoutIfNeeded];
 }
 
