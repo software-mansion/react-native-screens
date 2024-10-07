@@ -9,7 +9,7 @@ import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
 import kotlin.math.abs
 
-abstract class FabricEnabledConfigViewGroup(
+abstract class FabricEnabledHeaderConfigViewGroup(
     context: Context?,
 ) : ViewGroup(context) {
     private var mStateWrapper: StateWrapper? = null
@@ -33,26 +33,29 @@ abstract class FabricEnabledConfigViewGroup(
         paddingStart: Int,
         paddingEnd: Int,
     ) {
-        val paddingLeftInDIP: Float = PixelUtil.toDIPFromPixel(paddingStart.toFloat())
-        val paddingRightInDIP: Float = PixelUtil.toDIPFromPixel(paddingEnd.toFloat())
+        val paddingStartDip: Float = PixelUtil.toDIPFromPixel(paddingStart.toFloat())
+        val paddingEndDip: Float = PixelUtil.toDIPFromPixel(paddingEnd.toFloat())
+
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
-
-        val delta = 0.9f
-        if (abs(lastPaddingStart - paddingStart) < delta &&
-            abs(lastPaddingEnd - paddingEnd) < delta
+        if (abs(lastPaddingStart - paddingStart) < DELTA &&
+            abs(lastPaddingEnd - paddingEnd) < DELTA
         ) {
             return
         }
 
-        lastPaddingStart = paddingLeftInDIP
-        lastPaddingEnd = paddingRightInDIP
+        lastPaddingStart = paddingStartDip
+        lastPaddingEnd = paddingEndDip
 
         val map: WritableMap =
             WritableNativeMap().apply {
-                putDouble("paddingStart", paddingLeftInDIP.toDouble())
-                putDouble("paddingEnd", paddingRightInDIP.toDouble())
+                putDouble("paddingStart", paddingStartDip.toDouble())
+                putDouble("paddingEnd", paddingEndDip.toDouble())
             }
         mStateWrapper?.updateState(map)
+    }
+
+    companion object {
+        private const val DELTA = 0.9f
     }
 }

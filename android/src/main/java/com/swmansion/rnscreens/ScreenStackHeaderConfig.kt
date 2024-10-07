@@ -24,7 +24,7 @@ import com.swmansion.rnscreens.events.HeaderDetachedEvent
 
 class ScreenStackHeaderConfig(
     context: Context,
-) : FabricEnabledConfigViewGroup(context) {
+) : FabricEnabledHeaderConfigViewGroup(context) {
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
