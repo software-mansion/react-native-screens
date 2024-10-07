@@ -79,7 +79,7 @@ function App() {
           component={DetailsScreen}
           options={{
             ...headerOptions,
-            headerBackVisible: false,
+            headerBackVisible: true,
           }}
         />
         <Stack.Screen
