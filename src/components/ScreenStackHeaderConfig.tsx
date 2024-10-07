@@ -12,9 +12,6 @@ import { Image, ImageProps, StyleSheet, ViewProps } from 'react-native';
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
 import ScreenStackHeaderSubviewNativeComponent from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 
-// const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
-//   ScreenStackHeaderConfigNativeComponent as any;
-
 export const ScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 > = ScreenStackHeaderSubviewNativeComponent as any;
@@ -75,7 +72,7 @@ export const ScreenStackHeaderCenterView = (
     <ScreenStackHeaderSubview
       {...rest}
       type="center"
-      style={[styles.headerSubview, style]}
+      style={[styles.headerSubviewCenter, style]}
     />
   );
 };
@@ -95,6 +92,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerSubviewCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 1,
   },
   headerConfig: {
     flexDirection: 'row',
