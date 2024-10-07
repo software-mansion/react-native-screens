@@ -23,9 +23,15 @@ namespace react = facebook::react;
 
 #pragma mark - Common
 
-- (RNSScreenStackHeaderConfig *)getHeaderConfig
+- (nullable RNSScreenStackHeaderConfig *)getHeaderConfig
 {
-  RNSScreenStackHeaderConfig *headerConfig = (RNSScreenStackHeaderConfig *)self.reactSuperview;
+  RNSScreenStackHeaderConfig *headerConfig = (RNSScreenStackHeaderConfig *_Nullable)self.reactSuperview;
+#ifdef DEBUG
+  if (headerConfig != nil && ![headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+    RCTLogError(@"[RNScreens] Invalid view type, expecting RNSScreenStackHeaderConfig, got: %@", headerConfig);
+    return nil;
+  }
+#endif
   return headerConfig;
 }
 
