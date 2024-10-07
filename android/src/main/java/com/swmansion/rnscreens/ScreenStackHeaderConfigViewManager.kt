@@ -33,6 +33,7 @@ class ScreenStackHeaderConfigViewManager :
 
     override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStackHeaderConfig(reactContext)
 
+    // This works only on Paper. On Fabric the shadow node is implemented in C++ layer.
     override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreenStackHeaderConfigShadowNode(context)
 
     override fun addView(
@@ -51,7 +52,7 @@ class ScreenStackHeaderConfigViewManager :
     override fun updateState(
         view: ScreenStackHeaderConfig,
         props: ReactStylesDiffMap?,
-        stateWrapper: StateWrapper?
+        stateWrapper: StateWrapper?,
     ): Any? {
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             view.setStateWrapper(stateWrapper)
