@@ -6,6 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Aims to find main content view of the `UINavigationBar`.
+ *
  * This method relies on internal iOS implementation details (see the implementation)
  * and might need patches specific to future iOS versions, in case the view hierarchy inside
  * the navigation bar changes.
