@@ -1,5 +1,6 @@
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSConvert.h"
+#import "RNSScreenStackHeaderConfig.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -21,6 +22,27 @@ namespace react = facebook::react;
 @implementation RNSScreenStackHeaderSubview
 
 #pragma mark - Common
+
+- (nullable RNSScreenStackHeaderConfig *)getHeaderConfig
+{
+  RNSScreenStackHeaderConfig *headerConfig = (RNSScreenStackHeaderConfig *_Nullable)self.reactSuperview;
+#ifndef NDEBUG
+  if (headerConfig != nil && ![headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+    RCTLogError(@"[RNScreens] Invalid view type, expecting RNSScreenStackHeaderConfig, got: %@", headerConfig);
+    return nil;
+  }
+#endif
+  return headerConfig;
+}
+
+// We're forcing the navigation controller's view to re-layout
+// see: https://github.com/software-mansion/react-native-screens/pull/2385
+- (void)layoutNavigationBarIfNeeded
+{
+  RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
+  UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
+  [navctr.navigationBar layoutIfNeeded];
+}
 
 #ifdef RCT_NEW_ARCH_ENABLED
 
@@ -78,6 +100,7 @@ namespace react = facebook::react;
         self);
   } else {
     self.bounds = CGRect{CGPointZero, frame.size};
+    [self layoutNavigationBarIfNeeded];
   }
 }
 
@@ -102,6 +125,7 @@ namespace react = facebook::react;
   // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
   // makes UINavigationBar the only one to control the position of header content.
   [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+  [self layoutNavigationBarIfNeeded];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
