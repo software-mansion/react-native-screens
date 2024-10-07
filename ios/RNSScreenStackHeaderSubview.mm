@@ -22,6 +22,15 @@ namespace react = facebook::react;
 
 #pragma mark - Common
 
+// We're forcing the navigation controller's view to re-layout
+// see: https://github.com/software-mansion/react-native-screens/pull/2385
+- (void)ensureNavigationLayout
+{
+  UIViewController *vc = self.reactSuperview.reactSuperview.reactViewController;
+  UINavigationController *navctr = vc.navigationController;
+  [navctr.view layoutIfNeeded];
+}
+
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma mark - Fabric specific
@@ -78,10 +87,7 @@ namespace react = facebook::react;
         self);
   } else {
     self.bounds = CGRect{CGPointZero, frame.size};
-    // We're forcing the superview to obtain correct frame and layout this subview with correct frame size
-    // see: https://github.com/software-mansion/react-native-screens/pull/2385
-    self.superview.frame = frame;
-    [self.superview layoutIfNeeded];
+    [self ensureNavigationLayout];
   }
 }
 
@@ -106,6 +112,7 @@ namespace react = facebook::react;
   // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
   // makes UINavigationBar the only one to control the position of header content.
   [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+  [self ensureNavigationLayout];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
