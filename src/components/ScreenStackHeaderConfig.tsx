@@ -12,19 +12,23 @@ import { Image, ImageProps, StyleSheet, ViewProps } from 'react-native';
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
 import ScreenStackHeaderSubviewNativeComponent from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 
-export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
-  ScreenStackHeaderConfigNativeComponent as any;
+// const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
+//   ScreenStackHeaderConfigNativeComponent as any;
 
 export const ScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 > = ScreenStackHeaderSubviewNativeComponent as any;
 
-// export function ScreenStackHeaderConfig(props: ScreenStackHeaderConfigProps): React.JSX.Element
-// {
-//   return (
-//     <ScreenStackHeaderConfigNativeComponent {...props} />
-//   )
-// }
+export function ScreenStackHeaderConfig(
+  props: ScreenStackHeaderConfigProps,
+): React.JSX.Element {
+  return (
+    <ScreenStackHeaderConfigNativeComponent
+      {...props}
+      style={styles.headerConfig}
+    />
+  );
+}
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,
@@ -91,5 +95,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerConfig: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
   },
 });
