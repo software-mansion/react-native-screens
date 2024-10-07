@@ -114,8 +114,7 @@ namespace react = facebook::react;
   NSDirectionalEdgeInsets navBarContentMargins =
       [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
 
-  // I think there could be bug e.g. if we have one push screen and one modal!
-  BOOL isDisplayingBackButton = self.navigationBar.backItem != nil && !headerConfig.hideBackButton;
+  BOOL isDisplayingBackButton = [headerConfig shouldBackButtonBeVisibleInNavigationBar:self.navigationBar];
 
   // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
   UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;

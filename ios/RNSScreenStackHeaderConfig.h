@@ -77,7 +77,7 @@
 - (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type;
 
 /**
- * Returns true iff subview of type `left` is present.
+ * Returns `true` iff subview of type `left` is present.
  *
  *  **Please note that the subviews are not mounted under the header config in HostTree**
  * This method should serve only to check whether given subview type has been rendered.
@@ -93,6 +93,12 @@
  * Convenience method, so that we do not need ifdefs in every callsite.
  */
 - (BOOL)shouldHeaderBeVisible;
+
+/**
+ * @returns`true` iff the applying this header config instance to a view controller will
+ * result in visible back button if feasible.
+ */
+- (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar;
 
 @end
 

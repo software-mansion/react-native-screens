@@ -224,6 +224,12 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
+- (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar
+{
+  return navBar.backItem != nil && !self.hideBackButton &&
+      !(self.backButtonInCustomView == false && self.hasSubviewLeft);
+}
+
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
