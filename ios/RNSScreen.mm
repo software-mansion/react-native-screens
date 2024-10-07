@@ -61,7 +61,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 @implementation RNSScreenView {
   __weak ReactScrollViewBase *_sheetsScrollView;
   BOOL _didSetSheetAllowedDetentsOnController;
-  NSDirectionalEdgeInsets _lastHeaderInsets;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
