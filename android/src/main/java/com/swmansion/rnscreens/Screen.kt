@@ -371,6 +371,17 @@ class Screen(
         }
     }
 
+    private fun isInsideScrollViewWithRemoveClippedSubviews(view: ViewGroup): Boolean {
+        var parentView = view.parent
+        while (parentView is ViewGroup && parentView !is ScreenContentWrapper) {
+            if (parentView is ReactScrollView && parentView.removeClippedSubviews) {
+                return true
+            }
+            parentView = parentView.parent
+        }
+        return false
+    }
+
     private fun startTransitionRecursive(parent: ViewGroup?) {
         parent?.let {
             for (i in 0 until it.childCount) {
@@ -396,7 +407,7 @@ class Screen(
                     // removeCLippedSubviews set to true (default).
                     // We add a simple view for each item in the list to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/issues/2282
-                    if (it is ReactScrollView && it.removeClippedSubviews) {
+                    if (isInsideScrollViewWithRemoveClippedSubviews(child)) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }
