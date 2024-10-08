@@ -20,6 +20,7 @@ import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
+import com.facebook.react.views.scroll.ReactHorizontalScrollView
 import com.facebook.react.views.scroll.ReactScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
@@ -371,9 +372,12 @@ class Screen(
         }
     }
 
-    private fun isInsideScrollViewWithRemoveClippedSubviews(view: ViewGroup): Boolean {
-        var parentView = view.parent
-        while (parentView is ViewGroup && parentView !is ScreenContentWrapper) {
+    private fun isInsideScrollViewWithRemoveClippedSubviews(child: ViewGroup): Boolean {
+        if (child is ReactHorizontalScrollView || child is ReactScrollView) {
+            return false
+        }
+        var parentView = child.parent
+        while (parentView is ViewGroup && parentView !is ScreenStack) {
             if (parentView is ReactScrollView) {
                 return parentView.removeClippedSubviews
             }

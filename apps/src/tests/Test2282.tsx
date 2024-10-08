@@ -35,18 +35,16 @@ function Home({ navigation }: any) {
 function ListScreen() {
   return (
     <FlatList
-      data={Array.from({ length: 50 }).fill(0)}
+      data={Array.from({ length: 30 }).fill(0)}
       renderItem={({ index }) => {
         if (index === 15) {
-          return (
-            <View key={index}>
-              <NestedFlatlist />
-            </View>
-          );
-        } else if (index === 18) {
           return <NestedFlatlist key={index} />;
-        } else if (index === 23) {
-          return <NestedFlatlist key={index} removeClippedSubviews />;
+        } else if (index === 18) {
+          return <ExtraNestedFlatlist key={index} />;
+        } else if (index === 26) {
+          return <NestedFlatlist key={index} horizontal />;
+        } else if (index === 28) {
+          return <ExtraNestedFlatlist key={index} horizontal />;
         } else {
           return <Item key={index}>List item {index + 1}</Item>;
         }
@@ -58,11 +56,28 @@ function ListScreen() {
 function NestedFlatlist(props: Partial<FlatListProps<number>>) {
   return (
     <FlatList
-      style={styles.nestedList}
+      style={[styles.nestedList, props.style]}
       data={Array.from({ length: 10 }).fill(0) as number[]}
       renderItem={({ index }) => (
         <Item key={'nested' + index}>Nested list item {index + 1}</Item>
       )}
+      {...props}
+    />
+  );
+}
+
+function ExtraNestedFlatlist(props: Partial<FlatListProps<number>>) {
+  return (
+    <FlatList
+      style={styles.nestedList}
+      data={Array.from({ length: 10 }).fill(0) as number[]}
+      renderItem={({ index }) =>
+        index === 4 ? (
+          <NestedFlatlist key={index} style={{ backgroundColor: '#d24729' }} />
+        ) : (
+          <Item key={'nested' + index}>Nested list item {index + 1}</Item>
+        )
+      }
       {...props}
     />
   );
