@@ -408,7 +408,7 @@ class Screen(
                 }
                 if (child is ViewGroup) {
                     // The children are miscounted when there's a FlatList with
-                    // removeCLippedSubviews set to true (default).
+                    // removeClippedSubviews set to true (default).
                     // We add a simple view for each item in the list to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/issues/2282
                     if (isInsideScrollViewWithRemoveClippedSubviews(child)) {
