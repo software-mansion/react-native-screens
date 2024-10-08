@@ -9,6 +9,8 @@
 
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
+
+#import <rnscreens/RNSScreenStackHeaderSubviewComponentDescriptor.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
 #ifdef RCT_NEW_ARCH_ENABLED

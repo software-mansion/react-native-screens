@@ -8,7 +8,6 @@ import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
-import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,7 +24,7 @@ import com.swmansion.rnscreens.events.HeaderDetachedEvent
 
 class ScreenStackHeaderConfig(
     context: Context,
-) : ViewGroup(context) {
+) : FabricEnabledHeaderConfigViewGroup(context) {
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden

@@ -8,6 +8,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #else
 #import <React/RCTImageView.h>
@@ -55,9 +56,12 @@ namespace react = facebook::react;
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
+  NSDirectionalEdgeInsets _lastHeaderInsets;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
+  react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
 #else
+  __weak RCTBridge *_bridge;
 #endif
 }
 
@@ -84,6 +88,16 @@ namespace react = facebook::react;
 - (instancetype)init
 {
   if (self = [super init]) {
+    _translucent = YES;
+    [self initProps];
+  }
+  return self;
+}
+
+- (instancetype)initWithBridge:(RCTBridge *)bridge
+{
+  if (self = [super init]) {
+    _bridge = bridge;
     _translucent = YES;
     [self initProps];
   }
@@ -169,6 +183,51 @@ namespace react = facebook::react;
   UIViewController *vc = _screenView.controller;
   UINavigationController *navctr = vc.navigationController;
   [navctr.view setNeedsLayout];
+}
+
+- (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets
+{
+  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
+#ifdef RCT_NEW_ARCH_ENABLED
+    auto newState = react::RNSScreenStackHeaderConfigState{insets.leading, insets.trailing};
+    _state->updateState(std::move(newState));
+    _lastHeaderInsets = std::move(insets);
+#else
+    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
+    _lastHeaderInsets = std::move(insets);
+#endif // RCT_NEW_ARCH_ENABLED
+  }
+}
+
+- (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type
+{
+  for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
+    if (subview.type == type) {
+      return YES;
+    }
+  }
+
+  return NO;
+}
+
+- (BOOL)hasSubviewLeft
+{
+  return [self hasSubviewOfType:RNSScreenStackHeaderSubviewTypeLeft];
+}
+
+- (BOOL)shouldHeaderBeVisible
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  return self.show;
+#else
+  return !self.hide;
+#endif // RCT_NEW_ARCH_ENABLED
+}
+
+- (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar
+{
+  return navBar.backItem != nil && !self.hideBackButton &&
+      !(self.backButtonInCustomView == false && self.hasSubviewLeft);
 }
 
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
@@ -484,11 +543,7 @@ namespace react = facebook::react;
       currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
 
   BOOL wasHidden = navctr.navigationBarHidden;
-#ifdef RCT_NEW_ARCH_ENABLED
-  BOOL shouldHide = config == nil || !config.show;
-#else
-  BOOL shouldHide = config == nil || config.hide;
-#endif
+  BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
@@ -841,6 +896,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
+  _lastHeaderInsets = NSDirectionalEdgeInsets{};
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value
@@ -931,6 +987,12 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   [super updateProps:props oldProps:oldProps];
 }
 
+- (void)updateState:(const facebook::react::State::Shared &)state
+           oldState:(const facebook::react::State::Shared &)oldState
+{
+  _state = std::static_pointer_cast<const react::RNSScreenStackHeaderConfigShadowNode::ConcreteState>(state);
+}
+
 #else
 #pragma mark - Paper specific
 
@@ -969,10 +1031,20 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 
 RCT_EXPORT_MODULE()
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
+
 - (UIView *)view
 {
-  return [RNSScreenStackHeaderConfig new];
+  return [[RNSScreenStackHeaderConfig alloc] initWithBridge:self.bridge];
 }
+
+- (RCTShadowView *)shadowView
+{
+  return [RNSScreenStackHeaderConfigShadowView new];
+}
+
+#endif // RCT_NEW_ARCH_ENABLED
 
 RCT_EXPORT_VIEW_PROPERTY(title, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontFamily, NSString)
@@ -1003,6 +1075,46 @@ RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, w
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @end
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
+
+@implementation RNSHeaderConfigInsetsPayload
+
+- (instancetype)init
+{
+  return [self initWithInsets:NSDirectionalEdgeInsets{}];
+}
+
+- (instancetype)initWithInsets:(NSDirectionalEdgeInsets)insets
+{
+  if (self = [super init]) {
+    self.insets = insets;
+  }
+  return self;
+}
+
+@end
+
+@implementation RNSScreenStackHeaderConfigShadowView {
+}
+
+- (void)setLocalData:(NSObject *)localData
+{
+  if ([localData isKindOfClass:RNSHeaderConfigInsetsPayload.class]) {
+    RNSHeaderConfigInsetsPayload *payload = (RNSHeaderConfigInsetsPayload *)localData;
+    [self setPaddingStart:YGValue{.value = (float)payload.insets.leading, .unit = YGUnitPoint}];
+    [self setPaddingEnd:YGValue{.value = (float)payload.insets.trailing, .unit = YGUnitPoint}];
+
+    // Trigger layout prop recomputation
+    [self didSetProps:@[]];
+  } else {
+    [super setLocalData:localData];
+  }
+}
+
+@end
+#endif
 
 @implementation RCTConvert (RNSScreenStackHeader)
 
