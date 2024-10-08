@@ -374,8 +374,8 @@ class Screen(
     private fun isInsideScrollViewWithRemoveClippedSubviews(view: ViewGroup): Boolean {
         var parentView = view.parent
         while (parentView is ViewGroup && parentView !is ScreenContentWrapper) {
-            if (parentView is ReactScrollView && parentView.removeClippedSubviews) {
-                return true
+            if (parentView is ReactScrollView) {
+                return parentView.removeClippedSubviews
             }
             parentView = parentView.parent
         }
