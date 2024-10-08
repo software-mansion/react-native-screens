@@ -395,7 +395,7 @@ class Screen(
                     // The children are miscounted when there's a FlatList with
                     // removeClippedSubviews set to true (default).
                     // We add a simple view for each item in the list to make it work as expected.
-                    // See https://github.com/software-mansion/react-native-screens/issues/2282
+                    // See https://github.com/software-mansion/react-native-screens/pull/2383
                     if (child.isInsideScrollViewWithRemoveClippedSubviews()) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
