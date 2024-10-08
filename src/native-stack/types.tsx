@@ -418,7 +418,7 @@ export type NativeStackNavigationOptions = {
    *
    * Defaults to `0` - which represents first detent in the detents array.
    */
-  sheetInitialDetent?: ScreenProps['sheetInitialDetent'];
+  sheetInitialDetentIndex?: ScreenProps['sheetInitialDetentIndex'];
   /**
    * The largest sheet detent for which a view underneath won't be dimmed.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -436,7 +436,7 @@ export type NativeStackNavigationOptions = {
    *
    * Defaults to `none`, indicating that the dimming view should be always present.
    */
-  sheetLargestUndimmedDetent?: ScreenProps['sheetLargestUndimmedDetent'];
+  sheetLargestUndimmedDetentIndex?: ScreenProps['sheetLargestUndimmedDetentIndex'];
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
@@ -448,7 +448,6 @@ export type NativeStackNavigationOptions = {
    * - "slide_from_bottom" – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right
-   * - "ios" - @deprecated iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS) (will be removed in v4.0.0 in favor of `ios_from_right`)
    * - "ios_from_right" - iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "ios_from_left" - iOS like slide in animation. pushes in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation

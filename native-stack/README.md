@@ -287,8 +287,10 @@ Defaults to system default.
 
 #### `sheetInitialDetent`
 
-Initial detent for the sheet.
+Index of the detent the sheet should expand to after being opened.
 Works only when `presentation` is set to `formSheet`.
+
+Defaults to `0` - which represents first detent in the detents array.
 
 #### `sheetGrabberVisible` (iOS only)
 
@@ -326,7 +328,6 @@ How the given screen should appear/disappear when pushed or popped at the top of
 - `slide_from_bottom` – performs a slide from bottom animation
 - `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `slide_from_left` - slide in the new screen from left to right
-- `"ios"` - @deprecated iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS)  (will be removed in v4.0.0 in favor of `ios_from_right`)
 - `"ios_from_right"` - iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `"ios_from_left"` - iOS like slide in animation. pushes in the new screen from left to right (Android only, resolves to default transition on iOS)
 - `none` - the screen appears/disappears without an animation.
