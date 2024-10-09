@@ -100,8 +100,11 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   headerConfig: {
-    flexDirection: 'row',
+    position: 'absolute',
+    top: '-100%',
     width: '100%',
+    flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
