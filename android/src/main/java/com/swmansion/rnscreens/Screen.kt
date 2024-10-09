@@ -234,7 +234,7 @@ class Screen(
         if (activityState == this.activityState) {
             return
         }
-        if (container is ScreenStack && this.activityState != null && activityState.toInt() < this.activityState!!.toInt()) {
+        if (container is ScreenStack && this.activityState != null && activityState < this.activityState!!) {
             throw IllegalStateException("[RNScreens] activityState can only progress in NativeStack")
         }
         this.activityState = activityState
@@ -481,17 +481,9 @@ class Screen(
     }
 
     enum class ActivityState {
-        INACTIVE {
-            override fun toInt() = 0
-        },
-        TRANSITIONING_OR_BELOW_TOP {
-            override fun toInt() = 1
-        },
-        ON_TOP {
-            override fun toInt() = 2
-        }, ;
-
-        abstract fun toInt(): Int
+        INACTIVE,
+        TRANSITIONING_OR_BELOW_TOP,
+        ON_TOP,
     }
 
     enum class WindowTraits {
