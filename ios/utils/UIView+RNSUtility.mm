@@ -35,7 +35,6 @@
   }
 
 #else
-
   // On Paper we can access touchHandler hosted by `RCTRootContentView` which should be above ScreenStack
   // in view hierarchy.
   while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) {
