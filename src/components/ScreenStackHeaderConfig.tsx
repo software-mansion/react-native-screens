@@ -23,6 +23,7 @@ export function ScreenStackHeaderConfig(
     <ScreenStackHeaderConfigNativeComponent
       {...props}
       style={styles.headerConfig}
+      pointerEvents="box-none"
     />
   );
 }
