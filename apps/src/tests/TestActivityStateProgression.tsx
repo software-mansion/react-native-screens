@@ -61,3 +61,4 @@ function ProfileScreen({setActivityState}: {setActivityState: (state: 0 | 1 | 2)
   );
  }
  export default App;
+ 
