@@ -115,4 +115,5 @@ export { default as Test2332 } from './Test2332';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestHeader } from './TestHeader';
 export { default as TestPreload } from './TestPreload';
+export { default as TestActivityStateProgression } from './TestActivityStateProgression';
 export { default as TestModalNavigation } from './TestModalNavigation';

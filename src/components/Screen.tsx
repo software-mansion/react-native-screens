@@ -16,6 +16,7 @@ import {
 // Native components
 import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
 import ModalScreenNativeComponent from '../fabric/ModalScreenNativeComponent';
+import { usePrevious } from './helpers/usePrevious';
 
 type NativeScreenProps = Omit<
   ScreenProps,
@@ -163,6 +164,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
   function InnerScreen(props, ref) {
     const innerRef = React.useRef<ViewConfig | null>(null);
     React.useImperativeHandle(ref, () => innerRef.current!, []);
+    const prevActivityState = usePrevious(props.activityState);
 
     const setRef = (ref: ViewConfig) => {
       innerRef.current = ref;
@@ -235,6 +237,18 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens',
         );
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
+      }
+
+      if (
+        isNativeStack &&
+        prevActivityState !== undefined &&
+        activityState !== undefined
+      ) {
+        if (prevActivityState > activityState) {
+          throw new Error(
+            '[RNScreens] activityState cannot be decreased in NativeStack',
+          );
+        }
       }
 
       const handleRef = (ref: ViewConfig) => {
