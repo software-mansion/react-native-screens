@@ -12,11 +12,20 @@ import { Image, ImageProps, StyleSheet, ViewProps } from 'react-native';
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
 import ScreenStackHeaderSubviewNativeComponent from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 
-export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
-  ScreenStackHeaderConfigNativeComponent as any;
 export const ScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 > = ScreenStackHeaderSubviewNativeComponent as any;
+
+export function ScreenStackHeaderConfig(
+  props: ScreenStackHeaderConfigProps,
+): React.JSX.Element {
+  return (
+    <ScreenStackHeaderConfigNativeComponent
+      {...props}
+      style={styles.headerConfig}
+    />
+  );
+}
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,
@@ -28,33 +37,45 @@ export const ScreenStackHeaderBackButtonImage = (
 
 export const ScreenStackHeaderRightView = (
   props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => (
-  <ScreenStackHeaderSubview
-    {...props}
-    type="right"
-    style={styles.headerSubview}
-  />
-);
+): JSX.Element => {
+  const { style, ...rest } = props;
+
+  return (
+    <ScreenStackHeaderSubview
+      {...rest}
+      type="right"
+      style={[styles.headerSubview, style]}
+    />
+  );
+};
 
 export const ScreenStackHeaderLeftView = (
   props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => (
-  <ScreenStackHeaderSubview
-    {...props}
-    type="left"
-    style={styles.headerSubview}
-  />
-);
+): JSX.Element => {
+  const { style, ...rest } = props;
+
+  return (
+    <ScreenStackHeaderSubview
+      {...rest}
+      type="left"
+      style={[styles.headerSubview, style]}
+    />
+  );
+};
 
 export const ScreenStackHeaderCenterView = (
   props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => (
-  <ScreenStackHeaderSubview
-    {...props}
-    type="center"
-    style={styles.headerSubview}
-  />
-);
+): JSX.Element => {
+  const { style, ...rest } = props;
+
+  return (
+    <ScreenStackHeaderSubview
+      {...rest}
+      type="center"
+      style={[styles.headerSubviewCenter, style]}
+    />
+  );
+};
 
 export const ScreenStackHeaderSearchBarView = (
   props: React.PropsWithChildren<SearchBarProps>,
@@ -68,11 +89,19 @@ export const ScreenStackHeaderSearchBarView = (
 
 const styles = StyleSheet.create({
   headerSubview: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerSubviewCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 1,
+  },
+  headerConfig: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
   },
 });

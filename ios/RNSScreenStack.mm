@@ -25,6 +25,7 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
+#import "utils/UINavigationBar+RNSUtility.h"
 
 #import "UIView+RNSUtility.h"
 
@@ -82,6 +83,8 @@ namespace react = facebook::react;
     if (![screenController hasNestedStack] && isNotDismissingModal) {
       [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
+
+    [self maybeUpdateHeaderInsetsInShadowTreeForScreen:screenController];
   }
 }
 
@@ -93,6 +96,35 @@ namespace react = facebook::react;
 - (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
 {
   return [self topViewController];
+}
+
+- (void)maybeUpdateHeaderInsetsInShadowTreeForScreen:(RNSScreen *)screenController
+{
+  // This might happen e.g. if there is only native title present in navigation bar.
+  if (self.navigationBar.subviews.count < 2) {
+    return;
+  }
+
+  auto headerConfig = screenController.screenView.findHeaderConfig;
+  if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible) {
+    return;
+  }
+
+  NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
+  NSDirectionalEdgeInsets navBarContentMargins =
+      [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
+
+  BOOL isDisplayingBackButton = [headerConfig shouldBackButtonBeVisibleInNavigationBar:self.navigationBar];
+
+  // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
+  UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;
+  CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
+
+  [headerConfig updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
+                                                     .leading = navBarMargins.leading + navBarContentMargins.leading +
+                                                         (isDisplayingBackButton ? platformBackButtonWidth : 0),
+                                                     .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+                                                 }];
 }
 #endif
 

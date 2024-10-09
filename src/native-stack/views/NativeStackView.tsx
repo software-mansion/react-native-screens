@@ -195,12 +195,12 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetLargestUndimmedDetent = 'none',
+    sheetLargestUndimmedDetentIndex = 'none',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     sheetElevation = 24,
     sheetExpandsWhenScrolledToEdge = true,
-    sheetInitialDetent = 0,
+    sheetInitialDetentIndex = 0,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarTranslucent,
@@ -318,9 +318,9 @@ const RouteView = ({
       hasLargeHeader={hasLargeHeader}
       style={[StyleSheet.absoluteFill, unstable_screenStyle]}
       sheetAllowedDetents={sheetAllowedDetents}
-      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      sheetLargestUndimmedDetentIndex={sheetLargestUndimmedDetentIndex}
       sheetGrabberVisible={sheetGrabberVisible}
-      sheetInitialDetent={sheetInitialDetent}
+      sheetInitialDetentIndex={sheetInitialDetentIndex}
       sheetCornerRadius={sheetCornerRadius}
       sheetElevation={sheetElevation}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
@@ -355,7 +355,6 @@ const RouteView = ({
         });
       }}
       onWillAppear={() => {
-        console.log(`onWillAppear/transitionStart route: ${route.key}`);
         navigation.emit({
           type: 'transitionStart',
           data: { closing: false },
@@ -363,7 +362,6 @@ const RouteView = ({
         });
       }}
       onWillDisappear={() => {
-        console.log(`onWillDisappear/transitionStart route: ${route.key}`);
         navigation.emit({
           type: 'transitionStart',
           data: { closing: true },
@@ -371,12 +369,10 @@ const RouteView = ({
         });
       }}
       onAppear={() => {
-        console.log(`onAppear/appear route: ${route.key}`);
         navigation.emit({
           type: 'appear',
           target: route.key,
         });
-        console.log(`onAppear/transitionEnd route: ${route.key}`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: false },
@@ -384,7 +380,6 @@ const RouteView = ({
         });
       }}
       onDisappear={() => {
-        console.log(`onDisappear/transitionEnd route: ${route.key}`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: true },
@@ -404,7 +399,6 @@ const RouteView = ({
         }
       }}
       onDismissed={e => {
-        console.log(`onDismissed/dismiss route: ${route.key}`);
         navigation.emit({
           type: 'dismiss',
           target: route.key,
