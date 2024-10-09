@@ -1,13 +1,5 @@
 import * as React from 'react';
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  ViewProps,
-} from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -21,13 +13,12 @@ export default function App() {
           name="Title"
           component={Screen}
           options={{
-            headerLargeTitle: true,
             headerRight: () => (
               <View
                 style={{
                   backgroundColor: 'lightblue',
                   padding: 3,
-                  height: 100,
+                  height: 200,
                 }}>
                 <Text>Right</Text>
               </View>
@@ -48,15 +39,6 @@ export default function App() {
   );
 }
 
-function Item({ children, ...props }: ViewProps) {
-  return (
-    <View style={styles.item} {...props}>
-      <Image source={require('../assets/trees.jpg')} style={styles.image} />
-      <Text style={styles.text}>{children}</Text>
-    </View>
-  );
-}
-
 function Screen() {
   return (
     <FlatList
@@ -66,7 +48,7 @@ function Screen() {
         <Pressable
           key={index}
           style={({ pressed }) => (pressed ? styles.pressed : undefined)}>
-          <Item>List item {index + 1}</Item>
+          <Text style={styles.text}>List item {index + 1}</Text>
         </Pressable>
       )}
     />
@@ -78,19 +60,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'mediumseagreen',
   },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    gap: 10,
-  },
   text: {
     fontSize: 24,
     color: 'black',
-  },
-  image: {
-    width: 50,
-    height: 50,
+    padding: 10,
   },
   pressed: {
     backgroundColor: 'seagreen',
