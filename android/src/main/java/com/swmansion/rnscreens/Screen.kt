@@ -17,8 +17,8 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
-import com.facebook.react.views.scroll.ReactScrollView
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
+import com.swmansion.rnscreens.ext.isInsideScrollViewWithRemoveClippedSubviews
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
@@ -311,10 +311,10 @@ class Screen(
                 }
                 if (child is ViewGroup) {
                     // The children are miscounted when there's a FlatList with
-                    // removeCLippedSubviews set to true (default).
+                    // removeClippedSubviews set to true (default).
                     // We add a simple view for each item in the list to make it work as expected.
-                    // See https://github.com/software-mansion/react-native-screens/issues/2282
-                    if (it is ReactScrollView && it.removeClippedSubviews) {
+                    // See https://github.com/software-mansion/react-native-screens/pull/2383
+                    if (child.isInsideScrollViewWithRemoveClippedSubviews()) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }
