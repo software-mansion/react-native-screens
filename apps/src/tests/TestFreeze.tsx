@@ -48,7 +48,9 @@ function useValue() {
       setValue(value);
     };
     store.add(dispatch);
-    return () => store.delete(dispatch);
+    return () => {
+      store.delete(dispatch);
+    };
   }, [setValue]);
 
   return value;
@@ -112,6 +114,15 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', color: 'black' },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'black',
+  },
 });
