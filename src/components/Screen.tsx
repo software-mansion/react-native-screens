@@ -243,13 +243,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         if (ref?.viewConfig?.validAttributes?.style) {
           ref.viewConfig.validAttributes.style = {
             ...ref.viewConfig.validAttributes.style,
-            display: false,
+            display: !isNativeStack,
           };
           setRef(ref);
         } else if (ref?._viewConfig?.validAttributes?.style) {
           ref._viewConfig.validAttributes.style = {
             ...ref._viewConfig.validAttributes.style,
-            display: false,
+            display: !isNativeStack,
           };
           setRef(ref);
         }
