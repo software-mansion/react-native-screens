@@ -5,9 +5,19 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 
-function FirstTabScreen() {
+function FirstTabScreen({
+  navigation,
+}: {
+  navigation: BottomTabNavigationProp<ParamListBase>;
+}) {
+  const [state, setState] = useState(false);
+
+  console.log('[FIRST TAB] render');
   return (
     <View
       style={styles.container}
@@ -16,22 +26,70 @@ function FirstTabScreen() {
           '[FIRST TAB] screen onLayout layout:',
           e.nativeEvent.layout,
         );
+        setState(!state);
       }}>
       <Text style={styles.title}>First Tab</Text>
-      <Text>Rotate device - only [FIRST TAB] logs should appear</Text>
+      <Text style={styles.text}>
+        Rotate device - only [FIRST TAB] logs should appear
+      </Text>
+      <Button
+        title="Go to second tab"
+        onPress={() => navigation.navigate('Second Tab')}
+      />
     </View>
   );
 }
 
-function SecondTabScreen() {
+function SecondTabScreen({
+  navigation,
+}: {
+  navigation: BottomTabNavigationProp<ParamListBase>;
+}) {
+  const [state, setState] = useState(false);
+
+  console.log('[SECOND TAB] render');
+
   return (
     <View
       style={styles.container}
       onLayout={e => {
         console.log('[SECOND TAB] screen onLayout', e.nativeEvent.layout);
+        setState(!state);
       }}>
       <Text style={styles.title}>Second Tab</Text>
-      <Text>Rotate device - only [SECOND TAB] logs should appear</Text>
+      <Text style={styles.text}>
+        Rotate device - only [SECOND TAB] logs should appear
+      </Text>
+      <Button
+        title="Go to third tab"
+        onPress={() => navigation.navigate('Third Tab')}
+      />
+      <Button title="Go back" onPress={navigation.goBack} />
+    </View>
+  );
+}
+
+function ThirdTabScreen({
+  navigation,
+}: {
+  navigation: BottomTabNavigationProp<ParamListBase>;
+}) {
+  const [state, setState] = useState(false);
+
+  console.log('[THIRD TAB] render');
+
+  return (
+    <View
+      style={styles.container}
+      onLayout={e => {
+        console.log('[THIRD TAB] screen onLayout', e.nativeEvent.layout);
+        setState(!state);
+      }}>
+      <Text style={styles.title}>Third Tab</Text>
+      <Text style={styles.text}>
+        Rotate device - only [THIRD TAB] logs should appear
+      </Text>
+      <Button title="Go back" onPress={navigation.goBack} />
     </View>
   );
 }
@@ -67,7 +125,10 @@ function StackScreen({
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Stack Screen</Text>
-      <Text>Push more screens - only one 'render' should log at a time</Text>
+      <Text style={styles.text}>
+        Push more screens - only one 'render' should log at a time (max. 2 on
+        fabric)
+      </Text>
       <Button
         title="Push more screens"
         onPress={() => navigation.push('Screen')}
@@ -103,6 +164,7 @@ export default function App() {
       <Tab.Navigator screenOptions={{ freezeOnBlur: true }}>
         <Tab.Screen name="First Tab" component={FirstTabScreen} />
         <Tab.Screen name="Second Tab" component={SecondTabScreen} />
+        <Tab.Screen name="Third Tab" component={ThirdTabScreen} />
         <Tab.Screen
           name="Native Stack"
           component={StackNavigator}
@@ -123,6 +185,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'black',
+  },
+  text: {
+    textAlign: 'center',
     color: 'black',
   },
 });
