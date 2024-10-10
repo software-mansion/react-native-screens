@@ -1,11 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, ScrollView } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
-// import {createStackNavigator} from '@react-navigation/stack';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+function FirstTabScreen() {
+  return (
+    <View
+      style={styles.container}
+      onLayout={e => {
+        console.log(
+          '[FIRST TAB] screen onLayout layout:',
+          e.nativeEvent.layout,
+        );
+      }}>
+      <Text style={styles.title}>First Tab</Text>
+      <Text>Rotate device - only [FIRST TAB] logs should appear</Text>
+    </View>
+  );
+}
+
+function SecondTabScreen() {
+  return (
+    <View
+      style={styles.container}
+      onLayout={e => {
+        console.log('[SECOND TAB] screen onLayout', e.nativeEvent.layout);
+      }}>
+      <Text style={styles.title}>Second Tab</Text>
+      <Text>Rotate device - only [SECOND TAB] logs should appear</Text>
+    </View>
+  );
+}
 
 const store = new Set<Dispatch>();
 
@@ -25,24 +54,7 @@ function useValue() {
   return value;
 }
 
-function HomeScreen({
-  navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
-  const value = useValue();
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen {value}</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
-      />
-    </View>
-  );
-}
-
-function DetailsScreen({
+function StackScreen({
   navigation,
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -51,21 +63,20 @@ function DetailsScreen({
   // only 1 'render' should appear at the time
   console.log('render', value);
   return (
-    <ScrollView>
-      <View style={{ height: 400 }} />
-      <Text style={{ alignSelf: 'center' }}>Details Screen {value}</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Stack Screen</Text>
+      <Text>Push more screens - only one 'render' should log at a time</Text>
       <Button
-        title="Go to Details"
-        onPress={() => navigation.push('Details')}
+        title="Push more screens"
+        onPress={() => navigation.push('Screen')}
       />
-      <View style={{ height: 800 }} />
-    </ScrollView>
+    </View>
   );
 }
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+function StackNavigator() {
   useEffect(() => {
     let timer = 0;
     const interval = setInterval(() => {
@@ -76,17 +87,31 @@ function App() {
   }, []);
 
   return (
+    <Stack.Navigator screenOptions={{ freezeOnBlur: true }}>
+      <Stack.Screen name="Screen" component={StackScreen} />
+    </Stack.Navigator>
+  );
+}
+
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+  return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          freezeOnBlur: true,
-        }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
-      </Stack.Navigator>
+      <Tab.Navigator screenOptions={{ freezeOnBlur: true }}>
+        <Tab.Screen name="First Tab" component={FirstTabScreen} />
+        <Tab.Screen name="Second Tab" component={SecondTabScreen} />
+        <Tab.Screen
+          name="Native Stack"
+          component={StackNavigator}
+          options={{ headerShown: false }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
 
-export default App;
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 20 },
+  title: { fontSize: 24, fontWeight: 'bold', color: 'black' },
+});
