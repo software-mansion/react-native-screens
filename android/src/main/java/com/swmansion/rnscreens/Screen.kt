@@ -147,7 +147,7 @@ class Screen(
         r: Int,
         b: Int,
     ) {
-        if (changed) {
+        if (container is ScreenStack && changed) {
             val width = r - l
             val height = b - t
 
