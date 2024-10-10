@@ -304,6 +304,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 {
   int activityState = [activityStateOrNil intValue];
   if (activityStateOrNil != nil && activityState != -1 && activityState != _activityState) {
+    if ([_controller.navigationController isKindOfClass:RNSNavigationController.class] &&
+        _activityState < activityState) {
+      RCTLogError(@"[RNScreens] activityState can only progress in NativeStack");
+    }
     _activityState = activityState;
     [_reactSuperview markChildUpdated];
   }

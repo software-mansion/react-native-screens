@@ -234,6 +234,9 @@ class Screen(
         if (activityState == this.activityState) {
             return
         }
+        if (container is ScreenStack && this.activityState != null && activityState < this.activityState!!) {
+            throw IllegalStateException("[RNScreens] activityState can only progress in NativeStack")
+        }
         this.activityState = activityState
         container?.notifyChildUpdate()
     }
