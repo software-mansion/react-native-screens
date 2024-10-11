@@ -165,9 +165,14 @@ namespace react = facebook::react;
   // we want updates sent to the VC directly below modal too since it is also visible
   BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC && vc == nav.topViewController;
 
+  // If the corresponding screenView's screenContentWrapper does not have any children we can assume
+  // it's being unmounted. Updating this viewController is then unnecessary and disrupts snapshots.
+  // See https://github.com/software-mansion/react-native-screens/pull/2393
+  BOOL isUnmountingScreen = self.screenView.subviews[0].subviews.count == 0;
+
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
-  if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC)) {
+  if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC) && !isUnmountingScreen) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:YES];
     // As the header might have change in `updateViewController` we need to ensure that header height
     // returned by the `onHeaderHeightChange` event is correct.
@@ -828,6 +833,7 @@ namespace react = facebook::react;
   [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+  [self updateViewControllerIfNeeded];
 }
 
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
