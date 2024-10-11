@@ -169,8 +169,14 @@ namespace react = facebook::react;
   // If the corresponding screen's content wrapper does not have any children we can assume
   // it's being unmounted. Updating this viewController is then unnecessary and disrupts snapshots.
   // See https://github.com/software-mansion/react-native-screens/pull/2393
-  RNSScreenContentWrapper *contentWrapper = _screenView.subviews[0];
-  BOOL isUnmountingScreen = !contentWrapper.subviews.count;
+  BOOL isUnmountingScreen = NO;
+  for (UIView *subview in _screenView.subviews) {
+    if ([subview isKindOfClass:[RNSScreenContentWrapper class]]) {
+      RNSScreenContentWrapper *contentWrapper = (RNSScreenContentWrapper *)subview;
+      isUnmountingScreen = contentWrapper.subviews.count == 0;
+      break;
+    }
+  }
 
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
