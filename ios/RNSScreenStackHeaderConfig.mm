@@ -22,6 +22,7 @@
 #import <React/RCTImageSource.h>
 #import "RNSConvert.h"
 #import "RNSScreen.h"
+#import "RNSScreenContentWrapper.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
@@ -165,10 +166,11 @@ namespace react = facebook::react;
   // we want updates sent to the VC directly below modal too since it is also visible
   BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC && vc == nav.topViewController;
 
-  // If the corresponding screenView's screenContentWrapper does not have any children we can assume
+  // If the corresponding screen's content wrapper does not have any children we can assume
   // it's being unmounted. Updating this viewController is then unnecessary and disrupts snapshots.
   // See https://github.com/software-mansion/react-native-screens/pull/2393
-  BOOL isUnmountingScreen = self.screenView.subviews[0].subviews.count == 0;
+  RNSScreenContentWrapper *contentWrapper = _screenView.subviews[0];
+  BOOL isUnmountingScreen = !contentWrapper.subviews.count;
 
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
