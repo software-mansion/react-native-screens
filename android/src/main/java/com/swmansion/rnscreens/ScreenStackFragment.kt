@@ -154,10 +154,18 @@ class ScreenStackFragment :
             ) {
                 if (SheetUtils.isStateStable(newState)) {
                     lastStableState = newState
-                    screen.notifySheetDetentChange(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), true)
+                    screen.notifySheetDetentChange(
+                        SheetUtils.detentIndexFromSheetState(
+                            lastStableState,
+                            screen.sheetDetents.count()
+                        ), true
+                    )
                 } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                     screen.notifySheetDetentChange(
-                        SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()),
+                        SheetUtils.detentIndexFromSheetState(
+                            lastStableState,
+                            screen.sheetDetents.count()
+                        ),
                         false,
                     )
                 }
@@ -340,13 +348,23 @@ class ScreenStackFragment :
         return when (keyboardState) {
             is KeyboardNotVisible -> {
                 when (screen.sheetDetents.count()) {
-                    1 ->
+                    1 -> if (screen.sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS) {
+                        behavior.apply {
+                            state = BottomSheetBehavior.STATE_EXPANDED
+                            screen.contentWrapper.get()?.let {
+                                maxHeight = it.height
+                            }
+                            skipCollapsed = true
+                            isFitToContents = true
+                        }
+                    } else {
                         behavior.apply {
                             state = BottomSheetBehavior.STATE_EXPANDED
                             skipCollapsed = true
                             isFitToContents = true
                             maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
                         }
+                    }
 
                     2 ->
                         behavior.apply {
@@ -371,7 +389,8 @@ class ScreenStackFragment :
                             skipCollapsed = false
                             isFitToContents = false
                             peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                            expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+                            expandedOffset =
+                                ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
                             halfExpandedRatio =
                                 (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
                         }
@@ -450,7 +469,8 @@ class ScreenStackFragment :
                             skipCollapsed = false
                             isFitToContents = false
                             peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                            expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+                            expandedOffset =
+                                ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
                             halfExpandedRatio =
                                 (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
                         }
@@ -575,7 +595,8 @@ class ScreenStackFragment :
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context),
         ReactPointerEventsView {
-        override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
+        override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets =
+            super.onApplyWindowInsets(insets)
 
         private val animationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {

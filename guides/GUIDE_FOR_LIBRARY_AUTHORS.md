@@ -16,7 +16,7 @@ While transitioning between views we may want to activate a second screen for th
 ## `<Screen/>`
 
 This component is a container for views we want to display on a navigation screen.
-It is designed to only be rendered as a direct child of `ScreenContainer`.
+It is designed to only be rendered as a direct child of `ScreenContainer` or `ScreenStack`.
 In addition to plain React Native [View props](http://facebook.github.io/react-native/docs/view#props) this component only accepts a single additional property called `activityState`.
 When `activityState` is set to `0`, the parent container will detach its views from the native view hierarchy. When `activityState` is set to `1`, the `Screen` will stay attached, but on iOS it will not respond to touches. We only want to set `activityState` to `1` for during the transition or e.g. for modal presentation, where the previous screen should be visible, but not interactive. When `activityState` is set to `2`, the views will be attached and will respond to touches as long as the parent container is attached too. When one of the `Screen` components get the `activityState` value set to `2`, we interpret it as the end of the transition.
 
@@ -29,6 +29,9 @@ When `activityState` is set to `0`, the parent container will detach its views f
   <Screen>{tab3}</Screen>
 </ScreenContainer>
 ```
+
+When used in `<ScreenStack />` `activityState` can only be increased. The checks are added (in both native sides and JS part) to prevent situation when it's being removed, but still exists in in React Tree or if someones tries to preload already displayed screen. 
+
 
 ## `<ScreenStack>`
 
