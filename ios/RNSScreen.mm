@@ -749,6 +749,12 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
+- (void)invalidate
+{
+  _controller = nil;
+  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+}
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
 - (void)setPropertyForSheet:(UISheetPresentationController *)sheet
@@ -1265,11 +1271,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   // subviews
 }
 
-- (void)invalidate
-{
-  _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
-}
 #endif
 
 @end

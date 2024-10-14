@@ -152,6 +152,13 @@ namespace react = facebook::react;
   UIPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
+#ifdef RCT_NEW_ARCH_ENABLED
+  /// Screens that are subject of `ShadowViewMutation::Type::Delete` mutation
+  /// in current transaction. This vector should be populated when we receive notification via
+  /// `RCTMountingObserving` protocol, that a transaction will be performed, and should
+  /// be cleaned up when we're notified that the transaction has been completed.
+  std::vector<__strong RNSScreenView *> _toBeDeletedScreens;
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1151,6 +1158,16 @@ namespace react = facebook::react;
   // `- [RNSScreenStackView mountingTransactionDidMount: withSurfaceTelemetry:]`
 }
 
+- (nullable RNSScreenView *)childScreenForTag:(react::Tag)tag
+{
+  for (RNSScreenView *child in _reactSubviews) {
+    if (child.tag == tag) {
+      return child;
+    }
+  }
+  return nil;
+}
+
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
@@ -1184,6 +1201,19 @@ namespace react = facebook::react;
   [screenChildComponent removeFromSuperview];
 }
 
+- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
+                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  for (const auto &mutation : transaction.getMutations()) {
+    if (mutation.type == react::ShadowViewMutation::Delete) {
+      RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
+      if (toBeRemovedChild != nil) {
+        _toBeDeletedScreens.push_back(toBeRemovedChild);
+      }
+    }
+  }
+}
+
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
@@ -1199,6 +1229,21 @@ namespace react = facebook::react;
       });
       break;
     }
+  }
+
+  if (!self->_toBeDeletedScreens.empty()) {
+    __weak RNSScreenStackView *weakSelf = self;
+    // We want to run after container updates are performed (transitions etc.)
+    dispatch_async(dispatch_get_main_queue(), ^{
+      RNSScreenStackView *_Nullable strongSelf = weakSelf;
+      if (strongSelf == nil) {
+        return;
+      }
+      for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
+        [screenRef invalidate];
+      }
+      strongSelf->_toBeDeletedScreens.clear();
+    });
   }
 }
 
