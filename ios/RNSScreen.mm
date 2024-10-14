@@ -614,6 +614,12 @@ namespace react = facebook::react;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
+- (void)invalidate
+{
+  _controller = nil;
+  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+}
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 /**
  * Updates settings for sheet presentation controller.
@@ -859,10 +865,6 @@ namespace react = facebook::react;
   // subviews
 }
 
-- (void)invalidate
-{
-  _controller = nil;
-}
 #endif
 
 @end
