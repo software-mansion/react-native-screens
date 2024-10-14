@@ -166,21 +166,9 @@ namespace react = facebook::react;
   // we want updates sent to the VC directly below modal too since it is also visible
   BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC && vc == nav.topViewController;
 
-  // If the corresponding screen's content wrapper does not have any children we can assume
-  // it's being unmounted. Updating this viewController is then unnecessary and disrupts snapshots.
-  // See https://github.com/software-mansion/react-native-screens/pull/2393
-  BOOL isUnmountingScreen = NO;
-  for (UIView *subview in _screenView.subviews) {
-    if ([subview isKindOfClass:[RNSScreenContentWrapper class]]) {
-      RNSScreenContentWrapper *contentWrapper = (RNSScreenContentWrapper *)subview;
-      isUnmountingScreen = contentWrapper.subviews.count == 0;
-      break;
-    }
-  }
-
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
-  if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC) && !isUnmountingScreen) {
+  if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC)) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:YES];
     // As the header might have change in `updateViewController` we need to ensure that header height
     // returned by the `onHeaderHeightChange` event is correct.
@@ -836,12 +824,27 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  // For explanation of why we can make a snapshot here despite the fact that our children are already
-  // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
-  [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
+  // If the corresponding screen's content wrapper does not have any children we can assume
+  // it's being unmounted. Updating this viewController is then unnecessary and disrupts snapshots.
+  // See https://github.com/software-mansion/react-native-screens/pull/2393
+  BOOL isUnmountingScreen = NO;
+  for (UIView *subview in _screenView.subviews) {
+    if ([subview isKindOfClass:[RNSScreenContentWrapper class]]) {
+      RNSScreenContentWrapper *contentWrapper = (RNSScreenContentWrapper *)subview;
+      isUnmountingScreen = contentWrapper.subviews.count == 0;
+      break;
+    }
+  }
+  if (isUnmountingScreen) {
+    // For explanation of why we can make a snapshot here despite the fact that our children are already
+    // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
+    [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
+  }
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
-  [self updateViewControllerIfNeeded];
+  if (!isUnmountingScreen) {
+    [self updateViewControllerIfNeeded];
+  }
 }
 
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
