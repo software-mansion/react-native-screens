@@ -40,11 +40,13 @@ internal fun View.isInsideScrollViewWithRemoveClippedSubviews(): Boolean {
     }
     var parentView = this.parent
     while (parentView is ViewGroup && parentView !is ScreenStack) {
-        if (parentView is ReactHorizontalScrollView) {
-            return parentView.removeClippedSubviews
-        }
-        if (parentView is ReactScrollView) {
-            return parentView.removeClippedSubviews
+        when (parentView) {
+            is ReactHorizontalScrollView -> {
+                return parentView.removeClippedSubviews
+            }
+            is ReactScrollView -> {
+                return parentView.removeClippedSubviews
+            }
         }
         parentView = parentView.parent
     }
