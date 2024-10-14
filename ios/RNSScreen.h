@@ -133,6 +133,14 @@ namespace react = facebook::react;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
 
+/**
+ * Tell `Screen` component that it has been removed from react state and can safely cleanup
+ * any retained resources.
+ *
+ * Note, that on old architecture this method might be called by RN via `RCTInvalidating` protocol.
+ */
+- (void)invalidate;
+
 /// Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;
 
