@@ -12,6 +12,11 @@ namespace react = facebook::react;
 
 @implementation RNSContainerNavigationController
 
+- (BOOL)isNativeStackViewController
+{
+  return NO;
+}
+
 @end
 
 @implementation RNSScreenNavigationContainerView
