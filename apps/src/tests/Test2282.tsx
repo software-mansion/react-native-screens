@@ -34,21 +34,31 @@ function Home({ navigation }: any) {
 
 function ListScreen() {
   return (
+    <>
+      <ParentFlatlist />
+      <ParentFlatlist horizontal />
+    </>
+  );
+}
+
+function ParentFlatlist(props: Partial<FlatListProps<number>>) {
+  return (
     <FlatList
-      data={Array.from({ length: 30 }).fill(0)}
+      data={Array.from({ length: 30 }).fill(0) as number[]}
       renderItem={({ index }) => {
-        if (index === 15) {
+        if (index === 10) {
           return <NestedFlatlist key={index} />;
-        } else if (index === 18) {
+        } else if (index === 15) {
           return <ExtraNestedFlatlist key={index} />;
-        } else if (index === 26) {
+        } else if (index === 20) {
           return <NestedFlatlist key={index} horizontal />;
-        } else if (index === 28) {
+        } else if (index === 25) {
           return <ExtraNestedFlatlist key={index} horizontal />;
         } else {
           return <Item key={index}>List item {index + 1}</Item>;
         }
       }}
+      {...props}
     />
   );
 }
