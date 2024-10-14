@@ -22,7 +22,6 @@
 #import <React/RCTImageSource.h>
 #import "RNSConvert.h"
 #import "RNSScreen.h"
-#import "RNSScreenContentWrapper.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
@@ -824,25 +823,15 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  // If the corresponding screen's content wrapper does not have any children we can assume
-  // it's being unmounted. Updating this viewController is then unnecessary and disrupts snapshots.
-  // See https://github.com/software-mansion/react-native-screens/pull/2393
-  BOOL isUnmountingScreen = NO;
-  for (UIView *subview in _screenView.subviews) {
-    if ([subview isKindOfClass:[RNSScreenContentWrapper class]]) {
-      RNSScreenContentWrapper *contentWrapper = (RNSScreenContentWrapper *)subview;
-      isUnmountingScreen = contentWrapper.subviews.count == 0;
-      break;
-    }
-  }
-  if (isUnmountingScreen) {
+  BOOL isGoingToBeRemoved = _screenView.isGoingToBeRemoved;
+  if (isGoingToBeRemoved) {
     // For explanation of why we can make a snapshot here despite the fact that our children are already
     // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
     [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
   }
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
-  if (!isUnmountingScreen) {
+  if (!isGoingToBeRemoved) {
     [self updateViewControllerIfNeeded];
   }
 }

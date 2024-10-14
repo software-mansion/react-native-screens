@@ -100,6 +100,7 @@ namespace react = facebook::react;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
+@property (nonatomic) BOOL isGoingToBeRemoved;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
@@ -124,6 +125,7 @@ namespace react = facebook::react;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 - (instancetype)initWithFrame:(CGRect)frame;
+- (void)onWillReceiveRemoveMutation;
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 #endif // RCT_NEW_ARCH_ENABLED

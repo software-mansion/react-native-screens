@@ -123,6 +123,9 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
   _didSetSheetAllowedDetentsOnController = NO;
+#ifdef RCT_NEW_ARCH_ENABLED
+  _isGoingToBeRemoved = NO;
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (UIViewController *)reactViewController
@@ -1080,6 +1083,11 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 - (BOOL)hasHeaderConfig
 {
   return _config != nil;
+}
+
+- (void)onWillReceiveRemoveMutation
+{
+  _isGoingToBeRemoved = YES;
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
