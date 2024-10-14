@@ -47,8 +47,10 @@ internal fun View.isInsideScrollViewWithRemoveClippedSubviews(): Boolean {
             is ReactScrollView -> {
                 return parentView.removeClippedSubviews
             }
+            else -> {
+                parentView = parentView.parent
+            }
         }
-        parentView = parentView.parent
     }
     return false
 }
