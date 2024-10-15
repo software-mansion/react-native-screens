@@ -124,7 +124,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   _sheetsScrollView = nil;
   _didSetSheetAllowedDetentsOnController = NO;
 #ifdef RCT_NEW_ARCH_ENABLED
-  _isGoingToBeRemoved = NO;
+  _markedForUnmountInCurrentTransaction = NO;
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
@@ -1085,9 +1085,9 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   return _config != nil;
 }
 
-- (void)onWillReceiveRemoveMutation
+- (void)willBeUnmountedInUpcomingTransaction
 {
-  _isGoingToBeRemoved = YES;
+  _markedForUnmountInCurrentTransaction = YES;
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

@@ -100,7 +100,7 @@ namespace react = facebook::react;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
-@property (nonatomic) BOOL isGoingToBeRemoved;
+@property (nonatomic) BOOL markedForUnmountInCurrentTransaction;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
@@ -126,9 +126,9 @@ namespace react = facebook::react;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 - (instancetype)initWithFrame:(CGRect)frame;
 /// Tell `Screen` that it will be unmounted in next transaction.
-/// The component needs this so that we can later decide whether to 
-/// replace it with snapshot or not. 
-- (void)willBeUnmountedInUpcomingTransaction
+/// The component needs this so that we can later decide whether to
+/// replace it with snapshot or not.
+- (void)willBeUnmountedInUpcomingTransaction;
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 #endif // RCT_NEW_ARCH_ENABLED
