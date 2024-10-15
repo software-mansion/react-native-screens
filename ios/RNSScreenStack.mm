@@ -953,7 +953,7 @@ namespace react = facebook::react;
 
 - (void)markChildUpdated
 {
-  // do nothing
+  // In native stack this should be called only for `preload` purposes.
   [self updateContainer];
 }
 
