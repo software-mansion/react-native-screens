@@ -44,22 +44,7 @@ if(${RNS_NEW_ARCH_ENABLED})
     target_link_libraries(
         rnscreens
             ReactAndroid::jsi
-            ReactAndroid::react_nativemodule_core
-            ReactAndroid::react_utils
-            ReactAndroid::reactnativejni
-            ReactAndroid::fabricjni
-            ReactAndroid::react_debug
-            ReactAndroid::react_render_core
-            ReactAndroid::runtimeexecutor
-            ReactAndroid::react_render_graphics
-            ReactAndroid::rrc_view
-            ReactAndroid::yoga
-            ReactAndroid::rrc_text
-            ReactAndroid::glog
-            ReactAndroid::react_render_componentregistry
-            ReactAndroid::react_render_consistency
-            ReactAndroid::react_performance_timeline
-            ReactAndroid::react_render_observers_events
+            ReactAndroid::reactnative
             fbjni::fbjni
             android
     )

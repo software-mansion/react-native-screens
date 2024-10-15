@@ -40,22 +40,9 @@ target_include_directories(
 
 target_link_libraries(
   ${LIB_TARGET_NAME}
-  fbjni
-  folly_runtime
-  glog
-  jsi
-  react_codegen_rncore
-  react_debug
-  react_nativemodule_core
-  react_render_core
-  react_render_debug
-  react_render_graphics
-  react_render_mapbuffer
-  react_render_componentregistry
-  react_utils
-  rrc_view
-  turbomodulejsijni
-  yoga
+  fbjni::fbjni
+  ReactAndroid::jsi
+  ReactAndroid::reactnative
 )
 
 target_compile_options(
