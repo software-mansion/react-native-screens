@@ -1175,6 +1175,7 @@ namespace react = facebook::react;
     if (mutation.type == react::ShadowViewMutation::Delete) {
       RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
       if (toBeRemovedChild != nil) {
+        [toBeRemovedChild willBeUnmountedInUpcomingTransaction];
         _toBeDeletedScreens.push_back(toBeRemovedChild);
       }
     }

@@ -98,6 +98,9 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
+#ifdef RCT_NEW_ARCH_ENABLED
+  _markedForUnmountInCurrentTransaction = NO;
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (UIViewController *)reactViewController
@@ -688,6 +691,11 @@ namespace react = facebook::react;
 - (BOOL)hasHeaderConfig
 {
   return _config != nil;
+}
+
+- (void)willBeUnmountedInUpcomingTransaction
+{
+  _markedForUnmountInCurrentTransaction = YES;
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
