@@ -11,13 +11,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate>
 
-/// @returns `YES`  when this view controller was created as a part of native stack view.
-/// Subclasses such as `RNSContainerNavigationController` should override this method.
-///
-/// Note that this is a temporary workaround needed to perform some assertions. When it becomes
-/// obselete it should be removed.
-- (BOOL)isNativeStackViewController;
-
 @end
 
 @interface RNSScreenStackView :

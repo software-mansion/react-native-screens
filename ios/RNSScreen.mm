@@ -317,11 +317,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   }
 }
 
+/// Note that this method works only after the screen is actually mounted under a screen stack view.
 - (BOOL)isNativeStackScreen
 {
-  UINavigationController *navCtrl = _controller.navigationController;
-  return [navCtrl isKindOfClass:RNSNavigationController.class] &&
-      ((RNSNavigationController *)navCtrl).isNativeStackViewController;
+  return [_reactSuperview isKindOfClass:RNSScreenStackView.class];
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
