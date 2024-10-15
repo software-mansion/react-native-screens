@@ -823,12 +823,17 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  // For explanation of why we can make a snapshot here despite the fact that our children are already
-  // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
-  [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
+  BOOL isGoingToBeRemoved = _screenView.isMarkedForUnmountInCurrentTransaction;
+  if (isGoingToBeRemoved) {
+    // For explanation of why we can make a snapshot here despite the fact that our children are already
+    // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
+    [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
+  }
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
-  [self updateViewControllerIfNeeded];
+  if (!isGoingToBeRemoved) {
+    [self updateViewControllerIfNeeded];
+  }
 }
 
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
