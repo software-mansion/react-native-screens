@@ -125,7 +125,10 @@ namespace react = facebook::react;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 - (instancetype)initWithFrame:(CGRect)frame;
-- (void)onWillReceiveRemoveMutation;
+/// Tell `Screen` that it will be unmounted in next transaction.
+/// The component needs this so that we can later decide whether to 
+/// replace it with snapshot or not. 
+- (void)willBeUnmountedInUpcomingTransaction
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 #endif // RCT_NEW_ARCH_ENABLED
