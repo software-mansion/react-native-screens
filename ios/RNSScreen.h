@@ -100,7 +100,8 @@ namespace react = facebook::react;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
-@property (nonatomic) BOOL markedForUnmountInCurrentTransaction;
+@property (nonatomic, readonly, getter=isMarkedForUnmountInCurrentTransaction)
+    BOOL markedForUnmountInCurrentTransaction;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;

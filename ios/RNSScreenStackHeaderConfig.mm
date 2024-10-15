@@ -823,7 +823,7 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  BOOL isGoingToBeRemoved = _screenView.markedForUnmountInCurrentTransaction;
+  BOOL isGoingToBeRemoved = _screenView.isMarkedForUnmountInCurrentTransaction;
   if (isGoingToBeRemoved) {
     // For explanation of why we can make a snapshot here despite the fact that our children are already
     // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
