@@ -119,3 +119,4 @@ export { default as TestPreload } from './TestPreload';
 export { default as TestActivityStateProgression } from './TestActivityStateProgression';
 export { default as TestHeaderTitle } from './TestHeaderTitle';
 export { default as TestModalNavigation } from './TestModalNavigation';
+export { default as TestMemoryLeak } from './TestMemoryLeak';

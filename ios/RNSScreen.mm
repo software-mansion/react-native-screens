@@ -118,11 +118,15 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   _hasStatusBarHiddenSet = NO;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
+  _activityState = RNSActivityStateUndefined;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
   _didSetSheetAllowedDetentsOnController = NO;
+#ifdef RCT_NEW_ARCH_ENABLED
+  _markedForUnmountInCurrentTransaction = NO;
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (UIViewController *)reactViewController
@@ -304,13 +308,23 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 {
   int activityState = [activityStateOrNil intValue];
   if (activityStateOrNil != nil && activityState != -1 && activityState != _activityState) {
-    if ([_controller.navigationController isKindOfClass:RNSNavigationController.class] &&
-        _activityState < activityState) {
-      RCTLogError(@"[RNScreens] activityState can only progress in NativeStack");
-    }
+    [self maybeAssertActivityStateProgressionOldValue:_activityState newValue:activityState];
     _activityState = activityState;
     [_reactSuperview markChildUpdated];
   }
+}
+
+- (void)maybeAssertActivityStateProgressionOldValue:(int)oldValue newValue:(int)newValue
+{
+  if (self.isNativeStackScreen && newValue < oldValue) {
+    RCTLogError(@"[RNScreens] activityState can only progress in NativeStack");
+  }
+}
+
+/// Note that this method works only after the screen is actually mounted under a screen stack view.
+- (BOOL)isNativeStackScreen
+{
+  return [_reactSuperview isKindOfClass:RNSScreenStackView.class];
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -749,6 +763,12 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
+- (void)invalidate
+{
+  _controller = nil;
+  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+}
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
 - (void)setPropertyForSheet:(UISheetPresentationController *)sheet
@@ -1076,6 +1096,11 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   return _config != nil;
 }
 
+- (void)willBeUnmountedInUpcomingTransaction
+{
+  _markedForUnmountInCurrentTransaction = YES;
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
@@ -1265,11 +1290,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   // subviews
 }
 
-- (void)invalidate
-{
-  _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
-}
 #endif
 
 @end

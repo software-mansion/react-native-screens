@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, RNSScreenSwipeDirection) {
 };
 
 typedef NS_ENUM(NSInteger, RNSActivityState) {
+  RNSActivityStateUndefined = -1,
   RNSActivityStateInactive = 0,
   RNSActivityStateTransitioningOrBelowTop = 1,
   RNSActivityStateOnTop = 2
