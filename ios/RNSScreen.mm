@@ -118,6 +118,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   _hasStatusBarHiddenSet = NO;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
+  _activityState = RNSActivityStateUndefined;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
