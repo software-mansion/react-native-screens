@@ -5,10 +5,10 @@
 
 // proportions to default transition duration
 static const float RNSSlideOpenTransitionDurationProportion = 1;
-static const float RNSFadeOpenTransitionDurationProportion = 0.2 / 0.35;
-static const float RNSSlideCloseTransitionDurationProportion = 0.25 / 0.35;
-static const float RNSFadeCloseTransitionDurationProportion = 0.15 / 0.35;
-static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
+static const float RNSFadeOpenTransitionDurationProportion = 0.2 / 0.5;
+static const float RNSSlideCloseTransitionDurationProportion = 0.25 / 0.5;
+static const float RNSFadeCloseTransitionDurationProportion = 0.15 / 0.5;
+static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.5;
 // same value is used in other projects using similar approach for transistions
 // and it looks the most similar to the value used by Apple
 static constexpr float RNSShadowViewMaxAlpha = 0.1;
@@ -23,7 +23,7 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
 {
   if (self = [super init]) {
     _operation = operation;
-    _transitionDuration = 0.500; // default duration in seconds
+    _transitionDuration = 0.5; // default duration in seconds
   }
   return self;
 }
@@ -130,8 +130,8 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     }
 
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        delay: 0
-        options: UIViewAnimationOptionCurveDefaultTransition
+        delay:0
+        options:UIViewAnimationOptionCurveDefaultTransition
         animations:^{
           fromViewController.view.transform = leftTransform;
           toViewController.view.transform = CGAffineTransformIdentity;
@@ -173,8 +173,8 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
 
     if (!transitionContext.isInteractive) {
       [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                       delay:0
-                       options: UIViewAnimationOptionCurveDefaultTransition
+                            delay:0
+                          options:UIViewAnimationOptionCurveDefaultTransition
                        animations:animationBlock
                        completion:completionBlock];
     } else {
@@ -208,8 +208,8 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     toViewController.view.transform = rightTransform;
     [[transitionContext containerView] addSubview:toViewController.view];
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        delay: 0
-        options: UIViewAnimationOptionCurveDefaultTransition
+        delay:0
+        options:UIViewAnimationOptionCurveDefaultTransition
         animations:^{
           fromViewController.view.transform = leftTransform;
           toViewController.view.transform = CGAffineTransformIdentity;
@@ -235,8 +235,8 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
 
     if (!transitionContext.isInteractive) {
       [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                       delay: 0
-                       options: UIViewAnimationOptionCurveDefaultTransition
+                            delay:0
+                          options:UIViewAnimationOptionCurveDefaultTransition
                        animations:animationBlock
                        completion:completionBlock];
     } else {
@@ -260,8 +260,8 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     [[transitionContext containerView] addSubview:toViewController.view];
     toViewController.view.alpha = 0.0;
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        delay: 0
-        options: UIViewAnimationOptionCurveDefaultTransition
+        delay:0
+        options:UIViewAnimationOptionCurveDefaultTransition
         animations:^{
           toViewController.view.alpha = 1.0;
         }
@@ -273,8 +273,8 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
 
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        delay: 0
-        options: UIViewAnimationOptionCurveDefaultTransition
+        delay:0
+        options:UIViewAnimationOptionCurveDefaultTransition
         animations:^{
           fromViewController.view.alpha = 0.0;
         }
@@ -297,8 +297,8 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     toViewController.view.transform = topBottomTransform;
     [[transitionContext containerView] addSubview:toViewController.view];
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        delay: 0
-        options: UIViewAnimationOptionCurveDefaultTransition
+        delay:0
+        options:UIViewAnimationOptionCurveDefaultTransition
         animations:^{
           fromViewController.view.transform = CGAffineTransformIdentity;
           toViewController.view.transform = CGAffineTransformIdentity;
@@ -324,8 +324,8 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
 
     if (!transitionContext.isInteractive) {
       [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                       delay: 0
-                       options: UIViewAnimationOptionCurveDefaultTransition
+                            delay:0
+                          options:UIViewAnimationOptionCurveDefaultTransition
                        animations:animationBlock
                        completion:completionBlock];
     } else {
