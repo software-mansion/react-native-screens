@@ -72,7 +72,7 @@ export { GHContext } from './native-stack/contexts/GHContext';
  */
 export {
   isSearchBarAvailableForCurrentPlatform,
-  isNewBackTitleImplementation,
+  compatibilityFlags,
   executeNativeBackPress,
 } from './utils';
 
