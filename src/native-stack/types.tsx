@@ -23,7 +23,7 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
   SheetDetentTypes,
-} from 'react-native-screens';
+} from '../types';
 
 export type NativeStackNavigationEventMap = {
   /**
