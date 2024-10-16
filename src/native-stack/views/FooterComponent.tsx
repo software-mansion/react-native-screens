@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScreenFooter } from 'react-native-screens';
+import ScreenFooter from '../../components/ScreenFooter';
 
 type FooterProps = {
   children?: React.ReactNode;

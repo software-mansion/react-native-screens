@@ -5,7 +5,7 @@ import {
   HeaderSubviewTypes,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-} from 'react-native-screens';
+} from '../types';
 import { Image, ImageProps, StyleSheet, ViewProps } from 'react-native';
 
 // Native components

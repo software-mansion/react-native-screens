@@ -22,7 +22,7 @@ import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-} from 'react-native-screens';
+} from '../types';
 
 export type NativeStackNavigationEventMap = {
   /**
