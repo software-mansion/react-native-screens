@@ -1,6 +1,7 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #else
+#import <React/RCTShadowView.h>
 #import <React/RCTViewManager.h>
 #endif
 
@@ -61,11 +62,73 @@
                       animated:(BOOL)animated
                     withConfig:(RNSScreenStackHeaderConfig *)config;
 
+/**
+ * Allows to send information with insets to the corresponding node in shadow tree.
+ * Currently only horizontal insets are send through. Vertical ones are filtered out.
+ */
+- (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets;
+
+/**
+ * Returns true iff subview of given `type` is present.
+ *
+ *  **Please note that the subviews are not mounted under the header config in HostTree**
+ * This method should serve only to check whether given subview type has been rendered.
+ */
+- (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type;
+
+/**
+ * Returns `true` iff subview of type `left` is present.
+ *
+ *  **Please note that the subviews are not mounted under the header config in HostTree**
+ * This method should serve only to check whether given subview type has been rendered.
+ */
+- (BOOL)hasSubviewLeft;
+
+/**
+ * Returns
+ * - `YES` on Paper, when `self.hide == NO`
+ * - `YES` on Fabric, when `self.show == YES`
+ * - `NO` otherwise.
+ *
+ * Convenience method, so that we do not need ifdefs in every callsite.
+ */
+- (BOOL)shouldHeaderBeVisible;
+
+/**
+ * @returns`true` iff the applying this header config instance to a view controller will
+ * result in visible back button if feasible.
+ */
+- (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar;
+
 @end
 
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
 
 @end
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
+
+/**
+ * Used as local data send to shadow view on Paper. This helps us to provide Yoga
+ * with knowledge of native insets in the navigation bar.
+ */
+@interface RNSHeaderConfigInsetsPayload : NSObject
+
+@property (nonatomic) NSDirectionalEdgeInsets insets;
+
+- (instancetype)initWithInsets:(NSDirectionalEdgeInsets)insets NS_DESIGNATED_INITIALIZER;
+
+@end
+
+/**
+ * Custom shadow view for header config. This is used on Paper to provide Yoga
+ * with knowledge of native header insets (horizontal padding).
+ */
+@interface RNSScreenStackHeaderConfigShadowView : RCTShadowView
+
+@end
+#endif
 
 @interface RCTConvert (RNSScreenStackHeader)
 

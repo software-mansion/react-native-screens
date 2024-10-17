@@ -16,13 +16,18 @@ import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
-import com.facebook.react.views.scroll.ReactScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.isInsideScrollViewWithRemoveClippedSubviews
+import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
@@ -31,6 +36,8 @@ class Screen(
     ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
+
+    var contentWrapper = WeakReference<ScreenContentWrapper>(null)
 
     val sheetBehavior: BottomSheetBehavior<Screen>?
         get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
@@ -54,10 +61,16 @@ class Screen(
 
     // Props for controlling modal presentation
     var isSheetGrabberVisible: Boolean = false
+
+    // corner radius must be updated after all props prop updates from a single transaction
+    // have been applied, because it depends on the presentation type.
+    private var shouldUpdateSheetCornerRadius = false
     var sheetCornerRadius: Float = 0F
         set(value) {
-            field = value
-            (fragment as? ScreenStackFragment)?.onSheetCornerRadiusChange()
+            if (field != value) {
+                field = value
+                shouldUpdateSheetCornerRadius = true
+            }
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
 
@@ -118,6 +131,7 @@ class Screen(
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
         wrapper.delegate = this
+        this.contentWrapper = WeakReference(wrapper)
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -223,6 +237,9 @@ class Screen(
     fun setActivityState(activityState: ActivityState) {
         if (activityState == this.activityState) {
             return
+        }
+        if (container is ScreenStack && this.activityState != null && activityState < this.activityState!!) {
+            throw IllegalStateException("[RNScreens] activityState can only progress in NativeStack")
         }
         this.activityState = activityState
         container?.notifyChildUpdate()
@@ -383,10 +400,10 @@ class Screen(
                 }
                 if (child is ViewGroup) {
                     // The children are miscounted when there's a FlatList with
-                    // removeCLippedSubviews set to true (default).
+                    // removeClippedSubviews set to true (default).
                     // We add a simple view for each item in the list to make it work as expected.
-                    // See https://github.com/software-mansion/react-native-screens/issues/2282
-                    if (it is ReactScrollView && it.removeClippedSubviews) {
+                    // See https://github.com/software-mansion/react-native-screens/pull/2383
+                    if (child.isInsideScrollViewWithRemoveClippedSubviews()) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }
@@ -420,6 +437,29 @@ class Screen(
         )
     }
 
+    internal fun onFinalizePropsUpdate() {
+        if (shouldUpdateSheetCornerRadius) {
+            shouldUpdateSheetCornerRadius = false
+            onSheetCornerRadiusChange()
+        }
+    }
+
+    internal fun onSheetCornerRadiusChange() {
+        if (stackPresentation !== StackPresentation.FORM_SHEET || background == null) {
+            return
+        }
+        (background as? MaterialShapeDrawable?)?.let {
+            val resolvedCornerRadius = PixelUtil.toDIPFromPixel(sheetCornerRadius)
+            it.shapeAppearanceModel =
+                ShapeAppearanceModel
+                    .Builder()
+                    .apply {
+                        setTopLeftCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
+                        setTopRightCorner(CornerFamily.ROUNDED, resolvedCornerRadius)
+                    }.build()
+        }
+    }
+
     enum class StackPresentation {
         PUSH,
         MODAL,
@@ -435,7 +475,8 @@ class Screen(
         SLIDE_FROM_RIGHT,
         SLIDE_FROM_LEFT,
         FADE_FROM_BOTTOM,
-        IOS,
+        IOS_FROM_RIGHT,
+        IOS_FROM_LEFT,
     }
 
     enum class ReplaceAnimation {

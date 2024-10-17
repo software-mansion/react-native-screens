@@ -1,4 +1,6 @@
-import { ScreenProps } from 'react-native-screens';
+'use client';
+
+import { ScreenProps } from '../types';
 import { Animated, View } from 'react-native';
 import React from 'react';
 
@@ -8,6 +10,7 @@ export const InnerScreen = View;
 
 // We're using class component here because of the error from reanimated:
 // createAnimatedComponent` does not support stateless functional components; use a class component instead.
+// NOTE: React Server Components do not support class components.
 export class NativeScreen extends React.Component<ScreenProps> {
   render(): JSX.Element {
     let {

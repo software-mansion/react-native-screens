@@ -1,3 +1,5 @@
+'use client';
+
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { ViewProps, ColorValue } from 'react-native';
 import type {
@@ -74,5 +76,7 @@ export interface NativeProps extends ViewProps {
 
 export default codegenNativeComponent<NativeProps>(
   'RNSScreenStackHeaderConfig',
-  {},
+  {
+    interfaceOnly: true,
+  },
 );

@@ -118,11 +118,15 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   _hasStatusBarHiddenSet = NO;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
+  _activityState = RNSActivityStateUndefined;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
   _didSetSheetAllowedDetentsOnController = NO;
+#ifdef RCT_NEW_ARCH_ENABLED
+  _markedForUnmountInCurrentTransaction = NO;
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (UIViewController *)reactViewController
@@ -304,9 +308,23 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 {
   int activityState = [activityStateOrNil intValue];
   if (activityStateOrNil != nil && activityState != -1 && activityState != _activityState) {
+    [self maybeAssertActivityStateProgressionOldValue:_activityState newValue:activityState];
     _activityState = activityState;
     [_reactSuperview markChildUpdated];
   }
+}
+
+- (void)maybeAssertActivityStateProgressionOldValue:(int)oldValue newValue:(int)newValue
+{
+  if (self.isNativeStackScreen && newValue < oldValue) {
+    RCTLogError(@"[RNScreens] activityState can only progress in NativeStack");
+  }
+}
+
+/// Note that this method works only after the screen is actually mounted under a screen stack view.
+- (BOOL)isNativeStackScreen
+{
+  return [_reactSuperview isKindOfClass:RNSScreenStackView.class];
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -745,6 +763,12 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
+- (void)invalidate
+{
+  _controller = nil;
+  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+}
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
 - (void)setPropertyForSheet:(UISheetPresentationController *)sheet
@@ -889,8 +913,8 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
     sheet.delegate = self;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-    if (_sheetAllowedDetents.count > 0) {
-      if (@available(iOS 16.0, *)) {
+    if (@available(iOS 16.0, *)) {
+      if (_sheetAllowedDetents.count > 0) {
         if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
           // This is `fitToContents` case, where sheet should be just high to display its contents.
           // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
@@ -942,6 +966,26 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
           [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
         }
       }
+    }
+
+    if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+      if (@available(iOS 16.0, *)) {
+        UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+        [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+      } else
+#endif // Check for iOS >= 16
+      {
+        if (_sheetInitialDetent < 2) {
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        } else {
+          RCTLogError(
+              @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
+        }
+      }
+    } else if (_sheetInitialDetent != 0) {
+      RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
     }
 
     sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
@@ -1052,6 +1096,11 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   return _config != nil;
 }
 
+- (void)willBeUnmountedInUpcomingTransaction
+{
+  _markedForUnmountInCurrentTransaction = YES;
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
@@ -1151,6 +1200,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
     [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];
   }
 
+  if (newScreenProps.sheetInitialDetent != oldScreenProps.sheetInitialDetent) {
+    [self setSheetInitialDetent:newScreenProps.sheetInitialDetent];
+  }
+
   if (newScreenProps.sheetLargestUndimmedDetent != oldScreenProps.sheetLargestUndimmedDetent) {
     [self setSheetLargestUndimmedDetent:[NSNumber numberWithInt:newScreenProps.sheetLargestUndimmedDetent]];
   }
@@ -1237,11 +1290,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   // subviews
 }
 
-- (void)invalidate
-{
-  _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
-}
 #endif
 
 @end
@@ -1864,6 +1912,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, NSArray<NSNumber *> *);
 RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, NSNumber *);
 RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
+RCT_EXPORT_VIEW_PROPERTY(sheetInitialDetent, NSInteger);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #endif
 
@@ -1936,7 +1985,8 @@ RCT_ENUM_CONVERTER(
       @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
       @"slide_from_right" : @(RNSScreenStackAnimationDefault),
       @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
-      @"ios" : @(RNSScreenStackAnimationDefault),
+      @"ios_from_right" : @(RNSScreenStackAnimationDefault),
+      @"ios_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
     }),
     RNSScreenStackAnimationDefault,
     integerValue)

@@ -1,3 +1,5 @@
+'use client';
+
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { ViewProps } from 'react-native';
 import type { WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
@@ -16,5 +18,7 @@ export interface NativeProps extends ViewProps {
 
 export default codegenNativeComponent<NativeProps>(
   'RNSScreenStackHeaderSubview',
-  {},
+  {
+    interfaceOnly: true,
+  },
 );

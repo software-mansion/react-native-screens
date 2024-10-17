@@ -90,6 +90,7 @@ namespace react = facebook::react;
 @property (nonatomic) NSNumber *sheetLargestUndimmedDetent;
 @property (nonatomic) BOOL sheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
+@property (nonatomic) NSInteger sheetInitialDetent;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif // !TARGET_OS_TV
 
@@ -99,6 +100,8 @@ namespace react = facebook::react;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
+@property (nonatomic, readonly, getter=isMarkedForUnmountInCurrentTransaction)
+    BOOL markedForUnmountInCurrentTransaction;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
@@ -123,6 +126,10 @@ namespace react = facebook::react;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 - (instancetype)initWithFrame:(CGRect)frame;
+/// Tell `Screen` that it will be unmounted in next transaction.
+/// The component needs this so that we can later decide whether to
+/// replace it with snapshot or not.
+- (void)willBeUnmountedInUpcomingTransaction;
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -131,6 +138,14 @@ namespace react = facebook::react;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
+
+/**
+ * Tell `Screen` component that it has been removed from react state and can safely cleanup
+ * any retained resources.
+ *
+ * Note, that on old architecture this method might be called by RN via `RCTInvalidating` protocol.
+ */
+- (void)invalidate;
 
 /// Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;

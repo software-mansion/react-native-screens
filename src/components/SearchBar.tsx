@@ -1,9 +1,8 @@
+'use client';
+
 import React from 'react';
-import {
-  isSearchBarAvailableForCurrentPlatform,
-  SearchBarCommands,
-  SearchBarProps,
-} from 'react-native-screens';
+import { SearchBarCommands, SearchBarProps } from '../types';
+import { isSearchBarAvailableForCurrentPlatform } from '../utils';
 import { View } from 'react-native';
 
 // Native components

@@ -142,7 +142,11 @@ class ScreenStackFragment :
     // once it is hidden by user gesture.
     private val bottomSheetStateCallback =
         object : BottomSheetCallback() {
-            private var lastStableState: Int = SheetUtils.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+            private var lastStableState: Int =
+                SheetUtils.sheetStateFromDetentIndex(
+                    screen.sheetInitialDetentIndex,
+                    screen.sheetDetents.count(),
+                )
 
             override fun onStateChanged(
                 bottomSheet: View,
@@ -150,9 +154,20 @@ class ScreenStackFragment :
             ) {
                 if (SheetUtils.isStateStable(newState)) {
                     lastStableState = newState
-                    screen.notifySheetDetentChange(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), true)
+                    screen.notifySheetDetentChange(
+                        SheetUtils.detentIndexFromSheetState(
+                            lastStableState,
+                            screen.sheetDetents.count()
+                        ), true
+                    )
                 } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    screen.notifySheetDetentChange(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
+                    screen.notifySheetDetentChange(
+                        SheetUtils.detentIndexFromSheetState(
+                            lastStableState,
+                            screen.sheetDetents.count()
+                        ),
+                        false,
+                    )
                 }
 
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
@@ -191,13 +206,7 @@ class ScreenStackFragment :
     }
 
     internal fun onSheetCornerRadiusChange() {
-        (screen.background as MaterialShapeDrawable).shapeAppearanceModel =
-            ShapeAppearanceModel
-                .Builder()
-                .apply {
-                    setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius)
-                    setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius)
-                }.build()
+        screen.onSheetCornerRadiusChange()
     }
 
     override fun onCreateView(
@@ -232,9 +241,7 @@ class ScreenStackFragment :
 
         coordinatorLayout.addView(screen.recycle())
 
-        if (screen.stackPresentation != Screen.StackPresentation.MODAL &&
-            screen.stackPresentation != Screen.StackPresentation.FORM_SHEET
-        ) {
+        if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
             appBarLayout =
                 context?.let { AppBarLayout(it) }?.apply {
                     // By default AppBarLayout will have a background color set but since we cover the whole layout
@@ -341,13 +348,23 @@ class ScreenStackFragment :
         return when (keyboardState) {
             is KeyboardNotVisible -> {
                 when (screen.sheetDetents.count()) {
-                    1 ->
+                    1 -> if (screen.sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS) {
+                        behavior.apply {
+                            state = BottomSheetBehavior.STATE_EXPANDED
+                            screen.contentWrapper.get()?.let {
+                                maxHeight = it.height
+                            }
+                            skipCollapsed = true
+                            isFitToContents = true
+                        }
+                    } else {
                         behavior.apply {
                             state = BottomSheetBehavior.STATE_EXPANDED
                             skipCollapsed = true
                             isFitToContents = true
                             maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
                         }
+                    }
 
                     2 ->
                         behavior.apply {
@@ -372,7 +389,8 @@ class ScreenStackFragment :
                             skipCollapsed = false
                             isFitToContents = false
                             peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                            expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+                            expandedOffset =
+                                ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
                             halfExpandedRatio =
                                 (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
                         }
@@ -451,7 +469,8 @@ class ScreenStackFragment :
                             skipCollapsed = false
                             isFitToContents = false
                             peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                            expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+                            expandedOffset =
+                                ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
                             halfExpandedRatio =
                                 (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
                         }
@@ -576,7 +595,8 @@ class ScreenStackFragment :
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context),
         ReactPointerEventsView {
-        override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
+        override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets =
+            super.onApplyWindowInsets(insets)
 
         private val animationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {

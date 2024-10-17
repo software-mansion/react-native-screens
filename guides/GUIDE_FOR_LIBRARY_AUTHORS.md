@@ -16,7 +16,7 @@ While transitioning between views we may want to activate a second screen for th
 ## `<Screen/>`
 
 This component is a container for views we want to display on a navigation screen.
-It is designed to only be rendered as a direct child of `ScreenContainer`.
+It is designed to only be rendered as a direct child of `ScreenContainer` or `ScreenStack`.
 In addition to plain React Native [View props](http://facebook.github.io/react-native/docs/view#props) this component only accepts a single additional property called `activityState`.
 When `activityState` is set to `0`, the parent container will detach its views from the native view hierarchy. When `activityState` is set to `1`, the `Screen` will stay attached, but on iOS it will not respond to touches. We only want to set `activityState` to `1` for during the transition or e.g. for modal presentation, where the previous screen should be visible, but not interactive. When `activityState` is set to `2`, the views will be attached and will respond to touches as long as the parent container is attached too. When one of the `Screen` components get the `activityState` value set to `2`, we interpret it as the end of the transition.
 
@@ -29,6 +29,9 @@ When `activityState` is set to `0`, the parent container will detach its views f
   <Screen>{tab3}</Screen>
 </ScreenContainer>
 ```
+
+When used in `<ScreenStack />` `activityState` can only be increased. The checks are added (in both native sides and JS part) to prevent situation when it's being removed, but still exists in in React Tree or if someones tries to preload already displayed screen. 
+
 
 ## `<ScreenStack>`
 
@@ -150,16 +153,22 @@ Sets the current screen's available orientations and forces rotation if current 
 
 Defaults to `default` on iOS.
 
-### `sheetAllowedDetents` (iOS only)
+### `sheetAllowedDetents` 
 
 Describes heights where a sheet can rest.
-Works only when `stackPresentation` is set to `formSheet`.
+Works only when `presentation` is set to `formSheet`.
 
 Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
-There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
+There is also possibility to specify `fitToContents` literal, which intents to set the sheet height
 to the height of its contents.
 
 Please note that the array **must** be sorted in ascending order.
+
+There are also legacy & **deprecated** options available:
+
+* `medium` - corresponds to `[0.5]` detent value, around half of the screen height,
+* `large` - corresponds to `[1.0]` detent value, maximum height,
+* `all` - corresponds to `[0.5, 1.0]` value, the name is deceiving due to compatibility reasons.
 
 Defaults to `[1.0]` literal.
 
@@ -170,7 +179,7 @@ Works only when `stackPresentation` is set to `formSheet`.
 
 Defaults to `true`.
 
-### `sheetCornerRadius (iOS only)
+### `sheetCornerRadius`
 
 The corner radius that the sheet will try to render with.
 Works only when `stackPresentation` is set to `formSheet`.
@@ -185,18 +194,23 @@ Boolean indicating whether the sheet shows a grabber at the top.
 Works only when `stackPresentation` is set to `formSheet`.
 Defaults to `false`.
 
-### `sheetLargestUndimmedDetent` (iOS only)
+### `sheetLargestUndimmedDetent`
 
 The largest sheet detent for which a view underneath won't be dimmed.
 Works only when `stackPresentation` is set to `formSheet`.
 
-If this prop is set to:
+This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
+there won't be a dimming view beneath the sheet.
 
-- `large` - the view underneath won't be dimmed at any detent level
-- `medium` - the view underneath will be dimmed only when detent level is `large`
-- `all` - the view underneath will be dimmed for any detent level
+Additionaly there are following options available:
 
-Defaults to `all`.
+* `none` - there will be dimming view for all detents levels,
+* `largest` - there won't be a dimming view for any detent level.
+
+There also legacy & **deprecated** prop values available: `medium`, `large` (don't confuse with `largest`), `all`, which work in tandem with
+corresponding legacy prop values for `sheetAllowedDetents` prop.
+
+Defaults to `none`, indicating that the dimming view should be always present.
 
 ### `stackAnimation`
 
@@ -210,7 +224,8 @@ Allows for the customization of how the given screen should appear/disappear whe
 - `"slide_from_bottom"` - slide in the new screen from bottom to top
 - `"slide_from_right"` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `"slide_from_left"` - slide in the new screen from left to right
-- `"ios"` - iOS like slide in animation (Android only, resolves to default transition on iOS)
+- `"ios_from_right"` - iOS like slide in animation. pushes in the new screen from right to left (Android only, resolves to default transition on iOS)
+- `"ios_from_left"` - iOS like slide in animation. pushes in the new screen from left to right (Android only, resolves to default transition on iOS)
 - `"none"` – the screen appears/disappears without an animation
 
 ### `stackPresentation`
@@ -363,7 +378,7 @@ function Home() {
 }
 ```
 
-### unstable_footerComponent
+### unstable_sheetFooter (Android only)
 
 Footer component that can be used alongside form sheet stack presentation style.
 
@@ -372,6 +387,8 @@ to implement such layout with JS-only code.
 
 Please note that this prop is marked as unstable and might be subject of breaking changes,
 even removal.
+
+Currently supported on Android only.
 
 
 ## `<ScreenStackHeaderConfig>`
