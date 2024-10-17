@@ -24,6 +24,9 @@ import {
   SearchBarProps,
 } from 'react-native-screens';
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type NativeStackNavigationEventMap = {
   /**
    * Event which fires when the screen appears.
@@ -62,6 +65,9 @@ export type NativeStackNavigationEventMap = {
   sheetDetentChange: { data: { index: number; isStable: boolean } };
 };
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type NativeStackNavigationProp<
   ParamList extends ParamListBase,
   RouteName extends keyof ParamList = string,
@@ -74,6 +80,9 @@ export type NativeStackNavigationProp<
 > &
   StackActionHelpers<ParamList>;
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type NativeStackScreenProps<
   ParamList extends ParamListBase,
   RouteName extends keyof ParamList = string,
@@ -82,15 +91,23 @@ export type NativeStackScreenProps<
   route: RouteProp<ParamList, RouteName>;
 };
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type NativeStackNavigationHelpers = NavigationHelpers<
   ParamListBase,
   NativeStackNavigationEventMap
 >;
 
-// We want it to be an empty object beacuse navigator does not have any additional config
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type NativeStackNavigationConfig = {};
+/**
+ * We want it to be an empty object beacuse navigator does not have any additional config
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
+export type NativeStackNavigationConfig = {}; // eslint-disable-line @typescript-eslint/ban-types
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type NativeStackNavigationOptions = {
   /**
    * Image to display in the header as the back button.
@@ -527,11 +544,17 @@ export type NativeStackNavigationOptions = {
   unstable_sheetFooter?: () => React.ReactNode;
 };
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type NativeStackNavigatorProps =
   DefaultNavigatorOptions<NativeStackNavigationOptions> &
     StackRouterOptions &
     NativeStackNavigationConfig;
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type NativeStackDescriptor = Descriptor<
   ParamListBase,
   string,
@@ -539,11 +562,17 @@ export type NativeStackDescriptor = Descriptor<
   NativeStackNavigationOptions
 >;
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type NativeStackDescriptorMap = {
   [key: string]: NativeStackDescriptor;
 };
 
-// copy from GestureHandler to avoid strong dependency
+/**
+ * copy from GestureHandler to avoid strong dependency
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type PanGestureHandlerEventPayload = {
   x: number;
   y: number;
@@ -555,7 +584,10 @@ export type PanGestureHandlerEventPayload = {
   velocityY: number;
 };
 
-// copy from Reanimated to avoid strong dependency
+/**
+ * copy from Reanimated to avoid strong dependency
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type GoBackGesture =
   | 'swipeRight'
   | 'swipeLeft'
@@ -565,6 +597,9 @@ export type GoBackGesture =
   | 'horizontalSwipe'
   | 'twoDimensionalSwipe';
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export interface MeasuredDimensions {
   x: number;
   y: number;
@@ -574,6 +609,9 @@ export interface MeasuredDimensions {
   pageY: number;
 }
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type AnimatedScreenTransition = {
   topScreenStyle: (
     event: PanGestureHandlerEventPayload,
@@ -585,10 +623,16 @@ export type AnimatedScreenTransition = {
   ) => Record<string, unknown>;
 };
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type ScreensRefsHolder = React.MutableRefObject<
   Record<string, React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>>
 >;
 
+/**
+ * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+ */
 export type GestureProviderProps = PropsWithChildren<{
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
   screensRefs: ScreensRefsHolder;

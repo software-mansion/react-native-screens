@@ -133,6 +133,9 @@ Here's a table with summary of supported `react-native` versions when Fabric is 
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
+> [!CAUTION]
+> NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens will support only @react-navigation/native-stack v7.
+
 Screens support is built into [react-navigation](https://github.com/react-navigation/react-navigation) starting from version [2.14.0](https://github.com/react-navigation/react-navigation/releases/tag/2.14.0) for all the different navigator types (stack, tab, drawer, etc).
 
 To configure react-navigation to use screens instead of plain RN Views for rendering screen views, simply add this library as a dependency to your project:
