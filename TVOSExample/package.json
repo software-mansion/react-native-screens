@@ -9,7 +9,7 @@
     "start": "expo start",
     "postinstall": "patch-package",
     "clean-ios": "rm -rf ios/build ios/Pods ios/Podfile.lock",
-    "setup-ios": "npx pod-install",
+    "setup-ios": "RCT_NEW_ARCH_ENABLED=1 npx pod-install",
     "tvos": "expo run:ios --scheme TVOSExample-tvOS --device \"Apple TV\"",
     "lint": "eslint .",
     "test": "jest"
