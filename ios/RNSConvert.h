@@ -42,7 +42,10 @@ namespace react = facebook::react;
 
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
 
-+ (UIBlurEffectStyle)UIBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
++ (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
+
+/// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` which has no counter part in the UIKit type.
++ (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect;
 
 @end
 
