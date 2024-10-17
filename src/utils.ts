@@ -11,6 +11,13 @@ export function executeNativeBackPress() {
   return true;
 }
 
+/**
+ * Exposes information useful for downstream navigation library implementers,
+ * so they can keep reasonable backward compatibility, if desired.
+ *
+ * We don't mean for this object to only grow in number of fields, however at the same time
+ * we won't be very hasty to reduce it. Expect gradual changes.
+ */
 export const compatibilityFlags = {
   /**
    * Because of a bug introduced in https://github.com/software-mansion/react-native-screens/pull/1646
