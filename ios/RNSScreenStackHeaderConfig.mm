@@ -451,7 +451,8 @@ namespace react = facebook::react;
   }
 
   if (config.blurEffect != RNSBlurEffectStyleNone) {
-    appearance.backgroundEffect = [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
+    appearance.backgroundEffect =
+        [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
   } else {
     appearance.backgroundEffect = nil;
   }
