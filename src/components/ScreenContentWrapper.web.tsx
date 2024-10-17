@@ -1,3 +1,5 @@
 import { View } from 'react-native';
 
-export default View;
+const ScreenContentWrapper = View;
+
+export default ScreenContentWrapper;

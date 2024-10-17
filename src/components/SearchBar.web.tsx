@@ -1,3 +1,5 @@
 import { View } from 'react-native';
 
-export default View;
+const SearchBar = View;
+
+export default SearchBar;
