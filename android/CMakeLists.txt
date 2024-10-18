@@ -41,28 +41,37 @@ find_package(ReactAndroid REQUIRED CONFIG)
 if(${RNS_NEW_ARCH_ENABLED})
     find_package(fbjni REQUIRED CONFIG)
     
-    target_link_libraries(
-        rnscreens
+    if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
+        target_link_libraries(rnscreens
+            ReactAndroid::reactnative
             ReactAndroid::jsi
-            ReactAndroid::react_nativemodule_core
-            ReactAndroid::react_utils
-            ReactAndroid::reactnativejni
-            ReactAndroid::fabricjni
-            ReactAndroid::react_debug
-            ReactAndroid::react_render_core
-            ReactAndroid::runtimeexecutor
-            ReactAndroid::react_render_graphics
-            ReactAndroid::rrc_view
-            ReactAndroid::yoga
-            ReactAndroid::rrc_text
-            ReactAndroid::glog
-            ReactAndroid::react_render_componentregistry
-            ReactAndroid::react_render_consistency
-            ReactAndroid::react_performance_timeline
-            ReactAndroid::react_render_observers_events
             fbjni::fbjni
             android
-    )
+        )
+    else()
+        target_link_libraries(
+            rnscreens
+                ReactAndroid::jsi
+                ReactAndroid::react_nativemodule_core
+                ReactAndroid::react_utils
+                ReactAndroid::reactnativejni
+                ReactAndroid::fabricjni
+                ReactAndroid::react_debug
+                ReactAndroid::react_render_core
+                ReactAndroid::runtimeexecutor
+                ReactAndroid::react_render_graphics
+                ReactAndroid::rrc_view
+                ReactAndroid::yoga
+                ReactAndroid::rrc_text
+                ReactAndroid::glog
+                ReactAndroid::react_render_componentregistry
+                ReactAndroid::react_render_consistency
+                ReactAndroid::react_performance_timeline
+                ReactAndroid::react_render_observers_events
+                fbjni::fbjni
+                android
+        )
+    endif()
 else()
     target_link_libraries(rnscreens
         ReactAndroid::jsi

@@ -7,6 +7,8 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
+# From 0.76 new arch is enabled by default, we just want to have it explicitly set and for consistency with Example app 
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 
 linkage = ENV['USE_FRAMEWORKS']
