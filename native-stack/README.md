@@ -1,6 +1,7 @@
 # Native Stack Navigator
 
-> **_NOTE:_** This README is dedicated for using `native-stack` with React Navigation **v5**. For using `native-stack` in React Navigation **v6** please refer to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator).
+> [!CAUTION]
+> NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens v4 will support only @react-navigation/native-stack v7.
 
 Provides a way for your app to transition between screens where each new screen is placed on top of a stack.
 
