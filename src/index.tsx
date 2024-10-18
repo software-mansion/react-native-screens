@@ -8,7 +8,6 @@ export {
   enableFreeze,
   screensEnabled,
   freezeEnabled,
-  shouldUseActivityState,
 } from './core';
 
 /**
@@ -72,7 +71,7 @@ export { GHContext } from './native-stack/contexts/GHContext';
  */
 export {
   isSearchBarAvailableForCurrentPlatform,
-  isNewBackTitleImplementation,
+  compatibilityFlags,
   executeNativeBackPress,
 } from './utils';
 
