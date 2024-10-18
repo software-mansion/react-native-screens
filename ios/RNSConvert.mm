@@ -1,8 +1,12 @@
 #import "RNSConvert.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifndef RCT_NEW_ARCH_ENABLED
+#import <react/RCTAssert.h>
+#endif // !RCT_NEW_ARCH_ENABLED
+
 @implementation RNSConvert
 
+#ifdef RCT_NEW_ARCH_ENABLED
 + (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigDirection)direction
 {
@@ -180,71 +184,89 @@
   }
 }
 
-+ (UIBlurEffectStyle)UIBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect
++ (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect
 {
 #if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     switch (blurEffect) {
+      case react::RNSScreenStackHeaderConfigBlurEffect::None:
+        return RNSBlurEffectStyleNone;
       case react::RNSScreenStackHeaderConfigBlurEffect::ExtraLight:
-        return UIBlurEffectStyleExtraLight;
+        return RNSBlurEffectStyleExtraLight;
       case react::RNSScreenStackHeaderConfigBlurEffect::Light:
-        return UIBlurEffectStyleLight;
+        return RNSBlurEffectStyleLight;
       case react::RNSScreenStackHeaderConfigBlurEffect::Dark:
-        return UIBlurEffectStyleDark;
+        return RNSBlurEffectStyleDark;
       case react::RNSScreenStackHeaderConfigBlurEffect::Regular:
-        return UIBlurEffectStyleRegular;
+        return RNSBlurEffectStyleRegular;
       case react::RNSScreenStackHeaderConfigBlurEffect::Prominent:
-        return UIBlurEffectStyleProminent;
+        return RNSBlurEffectStyleProminent;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterial:
-        return UIBlurEffectStyleSystemUltraThinMaterial;
+        return RNSBlurEffectStyleSystemUltraThinMaterial;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterial:
-        return UIBlurEffectStyleSystemThinMaterial;
+        return RNSBlurEffectStyleSystemThinMaterial;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterial:
-        return UIBlurEffectStyleSystemMaterial;
+        return RNSBlurEffectStyleSystemMaterial;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterial:
-        return UIBlurEffectStyleSystemThickMaterial;
+        return RNSBlurEffectStyleSystemThickMaterial;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterial:
-        return UIBlurEffectStyleSystemChromeMaterial;
+        return RNSBlurEffectStyleSystemChromeMaterial;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterialLight:
-        return UIBlurEffectStyleSystemUltraThinMaterialLight;
+        return RNSBlurEffectStyleSystemUltraThinMaterialLight;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterialLight:
-        return UIBlurEffectStyleSystemThinMaterialLight;
+        return RNSBlurEffectStyleSystemThinMaterialLight;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterialLight:
-        return UIBlurEffectStyleSystemMaterialLight;
+        return RNSBlurEffectStyleSystemMaterialLight;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterialLight:
-        return UIBlurEffectStyleSystemThickMaterialLight;
+        return RNSBlurEffectStyleSystemThickMaterialLight;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterialLight:
-        return UIBlurEffectStyleSystemChromeMaterialLight;
+        return RNSBlurEffectStyleSystemChromeMaterialLight;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterialDark:
-        return UIBlurEffectStyleSystemUltraThinMaterialDark;
+        return RNSBlurEffectStyleSystemUltraThinMaterialDark;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterialDark:
-        return UIBlurEffectStyleSystemThinMaterialDark;
+        return RNSBlurEffectStyleSystemThinMaterialDark;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterialDark:
-        return UIBlurEffectStyleSystemMaterialDark;
+        return RNSBlurEffectStyleSystemMaterialDark;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterialDark:
-        return UIBlurEffectStyleSystemThickMaterialDark;
+        return RNSBlurEffectStyleSystemThickMaterialDark;
       case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterialDark:
-        return UIBlurEffectStyleSystemChromeMaterialDark;
+        return RNSBlurEffectStyleSystemChromeMaterialDark;
     }
   }
 #endif
 
   switch (blurEffect) {
+    case react::RNSScreenStackHeaderConfigBlurEffect::None:
+      return RNSBlurEffectStyleNone;
     case react::RNSScreenStackHeaderConfigBlurEffect::Light:
-      return UIBlurEffectStyleLight;
+      return RNSBlurEffectStyleLight;
     case react::RNSScreenStackHeaderConfigBlurEffect::Dark:
-      return UIBlurEffectStyleDark;
+      return RNSBlurEffectStyleDark;
     case react::RNSScreenStackHeaderConfigBlurEffect::Regular:
-      return UIBlurEffectStyleRegular;
+      return RNSBlurEffectStyleRegular;
     case react::RNSScreenStackHeaderConfigBlurEffect::Prominent:
-      return UIBlurEffectStyleProminent;
+      return RNSBlurEffectStyleProminent;
     case react::RNSScreenStackHeaderConfigBlurEffect::ExtraLight:
     default:
-      return UIBlurEffectStyleExtraLight;
+      return RNSBlurEffectStyleNone;
   }
 }
 
-@end
-
 #endif // RCT_NEW_ARCH_ENABLED
+
++ (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  react_native_assert(blurEffect != RNSBlurEffectStyleNone);
+#else
+  RCTAssert(
+      blurEffect != RNSBlurEffectStyleNone, @"RNSBlurEffectStyleNone variant is not convertible to UIBlurEffectStyle");
+#endif // RCT_NEW_ARCH_ENABLED
+
+  // Cast safety: RNSBlurEffectStyle is defined in such way that its values map 1:1 with
+  // UIBlurEffectStyle, except RNSBlurEffectStyleNone which is excluded above.
+  return (UIBlurEffectStyle)blurEffect;
+}
+
+@end

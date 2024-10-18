@@ -55,7 +55,7 @@
 @property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) UISemanticContentAttribute direction;
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
-@property (nonatomic) UIBlurEffectStyle blurEffect;
+@property (nonatomic) RNSBlurEffectStyle blurEffect;
 
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated

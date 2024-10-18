@@ -42,6 +42,7 @@ export type StackAnimationTypes =
   | 'ios_from_right'
   | 'ios_from_left';
 export type BlurEffectTypes =
+  | 'none'
   | 'extraLight'
   | 'light'
   | 'dark'
