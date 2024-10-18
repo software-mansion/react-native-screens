@@ -38,7 +38,16 @@ target_compile_definitions(
 
 find_package(ReactAndroid REQUIRED CONFIG)
 
-if(${RNS_NEW_ARCH_ENABLED})
+if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
+   find_package(fbjni REQUIRED CONFIG)
+   
+   target_link_libraries(rnscreens
+     ReactAndroid::reactnative
+     ReactAndroid::jsi
+     fbjni::fbjni
+     android
+   )
+elseif(${RNS_NEW_ARCH_ENABLED})
     find_package(fbjni REQUIRED CONFIG)
     
     target_link_libraries(
