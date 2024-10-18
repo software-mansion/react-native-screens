@@ -53,6 +53,7 @@ class KeyboardVisible(
 class ScreenStackFragment :
     ScreenFragment,
     ScreenStackFragmentWrapper {
+    public var nativeDismissObserver: NativeDismissObserver? = null
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
@@ -173,14 +174,15 @@ class ScreenStackFragment :
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     // If we are wrapped in DimmingFragment we want it to be removed alongside
                     // => we use its fragment manager. Otherwise we just remove this fragment.
-                    if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
-                        parentFragmentManager.commit {
-                            setReorderingAllowed(true)
-                            remove(this@ScreenStackFragment)
-                        }
-                    } else {
-                        this@ScreenStackFragment.dismissFromContainer()
-                    }
+                    nativeDismissObserver?.onNativeDismiss(this@ScreenStackFragment)
+//                    if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
+//                        parentFragmentManager.commit {
+//                            setReorderingAllowed(true)
+//                            remove(this@ScreenStackFragment)
+//                        }
+//                    } else {
+//                        this@ScreenStackFragment.dismissFromContainer()
+//                    }
                 }
             }
 

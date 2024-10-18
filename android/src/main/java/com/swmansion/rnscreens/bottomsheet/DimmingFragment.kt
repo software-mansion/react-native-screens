@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import com.swmansion.rnscreens.KeyboardDidHide
 import com.swmansion.rnscreens.KeyboardNotVisible
 import com.swmansion.rnscreens.KeyboardState
 import com.swmansion.rnscreens.KeyboardVisible
+import com.swmansion.rnscreens.NativeDismissObserver
 import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenContainer
@@ -48,7 +50,8 @@ class DimmingFragment(
     LifecycleEventObserver,
     ScreenStackFragmentWrapper,
     Animation.AnimationListener,
-    OnApplyWindowInsetsListener {
+    OnApplyWindowInsetsListener,
+    NativeDismissObserver {
     private lateinit var dimmingView: DimmingView
     private lateinit var containerView: GestureTransparentViewGroup
 
@@ -67,6 +70,10 @@ class DimmingFragment(
     init {
         // We register for our child lifecycle as we want to know when it's dismissed via native gesture
         nestedFragment.fragment.lifecycle.addObserver(this)
+        if (nestedFragment.fragment is ScreenStackFragment) {
+            Log.i(TAG, "Observer added")
+            (nestedFragment.fragment as ScreenStackFragment).nativeDismissObserver = this
+        }
     }
 
     /**
@@ -217,6 +224,7 @@ class DimmingFragment(
         source: LifecycleOwner,
         event: Lifecycle.Event,
     ) {
+        this.lifecycle.currentState
         when (event) {
             Lifecycle.Event.ON_START -> {
                 nestedFragment.screen.sheetBehavior?.let {
@@ -227,8 +235,8 @@ class DimmingFragment(
             }
 
             Lifecycle.Event.ON_STOP -> {
-                dismissSelf(emitDismissedEvent = true)
-            }
+//                dismissSelf(emitDismissedEvent = true)
+        }
 
             else -> {}
         }
@@ -251,6 +259,7 @@ class DimmingFragment(
     }
 
     private fun dismissSelf(emitDismissedEvent: Boolean = false) {
+        Log.i(TAG, "dismissSelf isRemoving ${this.isRemoving}")
         if (!this.isRemoving) {
             if (emitDismissedEvent) {
                 val reactContext = nestedFragment.screen.reactContext
@@ -484,5 +493,9 @@ class DimmingFragment(
                     ),
                 ).build()
         }
+    }
+
+    override fun onNativeDismiss(dismissed: ScreenStackFragmentWrapper) {
+        dismissSelf(emitDismissedEvent = true)
     }
 }
