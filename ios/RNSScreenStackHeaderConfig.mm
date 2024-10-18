@@ -110,6 +110,7 @@ namespace react = facebook::react;
   self.hidden = YES;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
+  _blurEffect = RNSBlurEffectStyleNone;
 }
 
 - (UIView *)reactSuperview
@@ -449,8 +450,11 @@ namespace react = facebook::react;
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  if (config.blurEffect) {
-    appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
+  if (config.blurEffect != RNSBlurEffectStyleNone) {
+    appearance.backgroundEffect =
+        [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
+  } else {
+    appearance.backgroundEffect = nil;
   }
 
   if (config.hideShadow) {
@@ -977,7 +981,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
 
   if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
-    _blurEffect = [RNSConvert UIBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
+    _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
 
   [self updateViewControllerIfNeeded];
@@ -1061,7 +1065,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(backTitleVisible, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(blurEffect, UIBlurEffectStyle)
+RCT_EXPORT_VIEW_PROPERTY(blurEffect, RNSBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
@@ -1127,36 +1131,37 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 {
   NSMutableDictionary *blurEffects = [NSMutableDictionary new];
   [blurEffects addEntriesFromDictionary:@{
-    @"extraLight" : @(UIBlurEffectStyleExtraLight),
-    @"light" : @(UIBlurEffectStyleLight),
-    @"dark" : @(UIBlurEffectStyleDark),
+    @"none" : @(RNSBlurEffectStyleNone),
+    @"extraLight" : @(RNSBlurEffectStyleExtraLight),
+    @"light" : @(RNSBlurEffectStyleLight),
+    @"dark" : @(RNSBlurEffectStyleDark),
   }];
 
   if (@available(iOS 10.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
-      @"regular" : @(UIBlurEffectStyleRegular),
-      @"prominent" : @(UIBlurEffectStyleProminent),
+      @"regular" : @(RNSBlurEffectStyleRegular),
+      @"prominent" : @(RNSBlurEffectStyleProminent),
     }];
   }
 #if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
-      @"systemUltraThinMaterial" : @(UIBlurEffectStyleSystemUltraThinMaterial),
-      @"systemThinMaterial" : @(UIBlurEffectStyleSystemThinMaterial),
-      @"systemMaterial" : @(UIBlurEffectStyleSystemMaterial),
-      @"systemThickMaterial" : @(UIBlurEffectStyleSystemThickMaterial),
-      @"systemChromeMaterial" : @(UIBlurEffectStyleSystemChromeMaterial),
-      @"systemUltraThinMaterialLight" : @(UIBlurEffectStyleSystemUltraThinMaterialLight),
-      @"systemThinMaterialLight" : @(UIBlurEffectStyleSystemThinMaterialLight),
-      @"systemMaterialLight" : @(UIBlurEffectStyleSystemMaterialLight),
-      @"systemThickMaterialLight" : @(UIBlurEffectStyleSystemThickMaterialLight),
-      @"systemChromeMaterialLight" : @(UIBlurEffectStyleSystemChromeMaterialLight),
-      @"systemUltraThinMaterialDark" : @(UIBlurEffectStyleSystemUltraThinMaterialDark),
-      @"systemThinMaterialDark" : @(UIBlurEffectStyleSystemThinMaterialDark),
-      @"systemMaterialDark" : @(UIBlurEffectStyleSystemMaterialDark),
-      @"systemThickMaterialDark" : @(UIBlurEffectStyleSystemThickMaterialDark),
-      @"systemChromeMaterialDark" : @(UIBlurEffectStyleSystemChromeMaterialDark),
+      @"systemUltraThinMaterial" : @(RNSBlurEffectStyleSystemUltraThinMaterial),
+      @"systemThinMaterial" : @(RNSBlurEffectStyleSystemThinMaterial),
+      @"systemMaterial" : @(RNSBlurEffectStyleSystemMaterial),
+      @"systemThickMaterial" : @(RNSBlurEffectStyleSystemThickMaterial),
+      @"systemChromeMaterial" : @(RNSBlurEffectStyleSystemChromeMaterial),
+      @"systemUltraThinMaterialLight" : @(RNSBlurEffectStyleSystemUltraThinMaterialLight),
+      @"systemThinMaterialLight" : @(RNSBlurEffectStyleSystemThinMaterialLight),
+      @"systemMaterialLight" : @(RNSBlurEffectStyleSystemMaterialLight),
+      @"systemThickMaterialLight" : @(RNSBlurEffectStyleSystemThickMaterialLight),
+      @"systemChromeMaterialLight" : @(RNSBlurEffectStyleSystemChromeMaterialLight),
+      @"systemUltraThinMaterialDark" : @(RNSBlurEffectStyleSystemUltraThinMaterialDark),
+      @"systemThinMaterialDark" : @(RNSBlurEffectStyleSystemThinMaterialDark),
+      @"systemMaterialDark" : @(RNSBlurEffectStyleSystemMaterialDark),
+      @"systemThickMaterialDark" : @(RNSBlurEffectStyleSystemThickMaterialDark),
+      @"systemChromeMaterialDark" : @(RNSBlurEffectStyleSystemChromeMaterialDark),
     }];
   }
 #endif
@@ -1182,6 +1187,6 @@ RCT_ENUM_CONVERTER(
     UINavigationItemBackButtonDisplayModeDefault,
     integerValue)
 
-RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
+RCT_ENUM_CONVERTER(RNSBlurEffectStyle, ([self blurEffectsForIOSVersion]), RNSBlurEffectStyleNone, integerValue)
 
 @end
