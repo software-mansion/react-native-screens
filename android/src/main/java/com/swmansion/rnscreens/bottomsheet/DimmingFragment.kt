@@ -27,6 +27,7 @@ import com.swmansion.rnscreens.KeyboardDidHide
 import com.swmansion.rnscreens.KeyboardNotVisible
 import com.swmansion.rnscreens.KeyboardState
 import com.swmansion.rnscreens.KeyboardVisible
+import com.swmansion.rnscreens.NativeDismissalObserver
 import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenContainer
@@ -48,7 +49,8 @@ class DimmingFragment(
     LifecycleEventObserver,
     ScreenStackFragmentWrapper,
     Animation.AnimationListener,
-    OnApplyWindowInsetsListener {
+    OnApplyWindowInsetsListener,
+    NativeDismissalObserver {
     private lateinit var dimmingView: DimmingView
     private lateinit var containerView: GestureTransparentViewGroup
 
@@ -65,8 +67,12 @@ class DimmingFragment(
     private val insetsProxy = InsetsObserverProxy
 
     init {
+        val fragment = nestedFragment.fragment
         // We register for our child lifecycle as we want to know when it's dismissed via native gesture
-        nestedFragment.fragment.lifecycle.addObserver(this)
+        fragment.lifecycle.addObserver(this)
+        if (fragment is ScreenStackFragment) {
+            fragment.nativeDismissalObserver = this
+        }
     }
 
     /**
@@ -224,10 +230,6 @@ class DimmingFragment(
                         AnimateDimmingViewCallback(nestedFragment.screen, dimmingView, maxAlpha)
                     it.addBottomSheetCallback(dimmingViewCallback!!)
                 }
-            }
-
-            Lifecycle.Event.ON_STOP -> {
-                dismissSelf(emitDismissedEvent = true)
             }
 
             else -> {}
@@ -484,5 +486,9 @@ class DimmingFragment(
                     ),
                 ).build()
         }
+    }
+
+    override fun onNativeDismiss(dismissed: ScreenStackFragmentWrapper) {
+        dismissSelf(emitDismissedEvent = true)
     }
 }
