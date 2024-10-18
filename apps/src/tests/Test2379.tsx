@@ -2,48 +2,41 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 
 function HomeScreen({ navigation }: { navigation: any }) {
   return (
     <View style={styles.container}>
+      <Button title="Open sheet" onPress={() => navigation.navigate('Sheet')} />
       <Button
-        title="Go to details"
-        onPress={() => navigation.navigate('Details')}
-      />
-      <Button
-        title="Go to SecondInner"
-        onPress={() => navigation.navigate('SecondInner')}
+        title="Open another screen"
+        onPress={() => navigation.navigate('Screen')}
       />
     </View>
   );
 }
 
-function SecondScreen({ navigation }: { navigation: any }) {
+function OtherScreen({ navigation }: { navigation: any }) {
   return (
     <View style={[styles.container, { backgroundColor: 'lightsalmon' }]}>
-      <Button
-        title="Go to details"
-        onPress={() => navigation.navigate('Details')}
-      />
+      <Button title="Open sheet" onPress={() => navigation.navigate('Sheet')} />
     </View>
   );
 }
 
-function DetailsScreen({ navigation }: { navigation: any }) {
+function SheetScreen({ navigation }: { navigation: any }) {
   const handleChangeTab = () => {
     const history = navigation.getParent().getState().history;
     const isFirstTab = history[history.length - 1].key.includes('First');
     navigation.navigate(isFirstTab ? 'Second' : 'First');
   };
   return (
-    <View style={styles.container}>
-      <Text>Details</Text>
+    <View style={styles.sheet}>
       <Button title="Dismiss" onPress={navigation.goBack} />
       <Button title="Change Tab" onPress={handleChangeTab} />
       <Button
-        title="Go to SecondInner"
-        onPress={() => navigation.navigate('SecondInner')}
+        title="Open another screen"
+        onPress={() => navigation.navigate('Screen')}
       />
     </View>
   );
@@ -56,14 +49,15 @@ function InnerStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="SecondInner" component={SecondScreen} />
+      <Stack.Screen name="Screen" component={OtherScreen} />
       <Stack.Screen
-        name="Details"
-        component={DetailsScreen}
+        name="Sheet"
+        component={SheetScreen}
         options={{
           presentation: 'formSheet',
           sheetAllowedDetents: [0.5, 1],
-          unstable_screenStyle: { backgroundColor: 'white' },
+          sheetCornerRadius: 20,
+          unstable_screenStyle: { backgroundColor: 'lavender' },
         }}
       />
     </Stack.Navigator>
@@ -82,5 +76,18 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: { justifyContent: 'center', alignItems: 'center' },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: 'mediumaquamarine',
+  },
+  sheet: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    gap: 10,
+    backgroundColor: 'lavender',
+  },
 });
