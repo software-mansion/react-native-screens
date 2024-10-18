@@ -26,7 +26,7 @@ type NativeScreenProps = Omit<
   sheetLargestUndimmedDetent: number;
 };
 
-export const NativeScreen: React.ComponentType<NativeScreenProps> =
+const NativeScreen: React.ComponentType<NativeScreenProps> =
   ScreenNativeComponent as React.ComponentType<NativeScreenProps>;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
 const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
