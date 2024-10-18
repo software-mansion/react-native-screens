@@ -232,11 +232,14 @@ const RouteView = ({
   // We take backgroundColor from contentStyle and apply it on Screen.
   // This allows to workaround one issue with truncated
   // content with formSheet presentation.
-  const flattenContentStyles = StyleSheet.flatten(contentStyle);
-  const internalScreenStyle =
-    flattenContentStyles && stackPresentation === 'formSheet'
-      ? { backgroundColor: flattenContentStyles.backgroundColor }
-      : undefined;
+  let internalScreenStyle;
+
+  if (stackPresentation === 'formSheet' && contentStyle) {
+    const flattenContentStyles = StyleSheet.flatten(contentStyle);
+    internalScreenStyle = {
+      backgroundColor: flattenContentStyles?.backgroundColor,
+    };
+  }
 
   if (sheetAllowedDetents === 'fitToContents') {
     sheetAllowedDetents = [-1];
