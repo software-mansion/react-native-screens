@@ -41,6 +41,7 @@ import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.useThreeDetents
 import com.swmansion.rnscreens.bottomsheet.useTwoDetents
+import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 
@@ -228,7 +229,7 @@ class ScreenStackFragment :
                     LinearLayout.LayoutParams.MATCH_PARENT,
                 ).apply {
                     behavior =
-                        if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
+                        if (screen.usesFormSheetPresentation()) {
                             createAndConfigureBottomSheetBehaviour()
                         } else if (isToolbarTranslucent) {
                             null
@@ -237,7 +238,7 @@ class ScreenStackFragment :
                         }
                 }
 
-        if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
+        if (screen.usesFormSheetPresentation()) {
             screen.clipToOutline = true
             // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
             attachShapeToScreen(screen)
@@ -246,7 +247,7 @@ class ScreenStackFragment :
 
         coordinatorLayout.addView(screen.recycle())
 
-        if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
+        if (!screen.usesFormSheetPresentation()) {
             appBarLayout =
                 context?.let { AppBarLayout(it) }?.apply {
                     // By default AppBarLayout will have a background color set but since we cover the whole layout
