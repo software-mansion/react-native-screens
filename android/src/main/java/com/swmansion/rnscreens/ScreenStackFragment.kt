@@ -24,7 +24,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.commit
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
@@ -35,7 +34,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCa
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -53,7 +51,7 @@ class KeyboardVisible(
 class ScreenStackFragment :
     ScreenFragment,
     ScreenStackFragmentWrapper {
-    public var nativeDismissObserver: NativeDismissObserver? = null
+    public var nativeDismissalObserver: NativeDismissalObserver? = null
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
@@ -172,17 +170,7 @@ class ScreenStackFragment :
                 }
 
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    // If we are wrapped in DimmingFragment we want it to be removed alongside
-                    // => we use its fragment manager. Otherwise we just remove this fragment.
-                    nativeDismissObserver?.onNativeDismiss(this@ScreenStackFragment)
-//                    if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
-//                        parentFragmentManager.commit {
-//                            setReorderingAllowed(true)
-//                            remove(this@ScreenStackFragment)
-//                        }
-//                    } else {
-//                        this@ScreenStackFragment.dismissFromContainer()
-//                    }
+                    nativeDismissalObserver?.onNativeDismiss(this@ScreenStackFragment)
                 }
             }
 

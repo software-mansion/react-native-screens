@@ -1,5 +1,5 @@
 package com.swmansion.rnscreens
 
-interface NativeDismissObserver {
+interface NativeDismissalObserver {
     fun onNativeDismiss(dismissed: ScreenStackFragmentWrapper)
 }
