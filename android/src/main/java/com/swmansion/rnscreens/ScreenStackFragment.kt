@@ -156,14 +156,15 @@ class ScreenStackFragment :
                     screen.notifySheetDetentChange(
                         SheetUtils.detentIndexFromSheetState(
                             lastStableState,
-                            screen.sheetDetents.count()
-                        ), true
+                            screen.sheetDetents.count(),
+                        ),
+                        true,
                     )
                 } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                     screen.notifySheetDetentChange(
                         SheetUtils.detentIndexFromSheetState(
                             lastStableState,
-                            screen.sheetDetents.count()
+                            screen.sheetDetents.count(),
                         ),
                         false,
                     )
@@ -338,23 +339,24 @@ class ScreenStackFragment :
         return when (keyboardState) {
             is KeyboardNotVisible -> {
                 when (screen.sheetDetents.count()) {
-                    1 -> if (screen.sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS) {
-                        behavior.apply {
-                            state = BottomSheetBehavior.STATE_EXPANDED
-                            screen.contentWrapper.get()?.let {
-                                maxHeight = it.height
+                    1 ->
+                        if (screen.sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS) {
+                            behavior.apply {
+                                state = BottomSheetBehavior.STATE_EXPANDED
+                                screen.contentWrapper.get()?.let {
+                                    maxHeight = it.height
+                                }
+                                skipCollapsed = true
+                                isFitToContents = true
                             }
-                            skipCollapsed = true
-                            isFitToContents = true
+                        } else {
+                            behavior.apply {
+                                state = BottomSheetBehavior.STATE_EXPANDED
+                                skipCollapsed = true
+                                isFitToContents = true
+                                maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
+                            }
                         }
-                    } else {
-                        behavior.apply {
-                            state = BottomSheetBehavior.STATE_EXPANDED
-                            skipCollapsed = true
-                            isFitToContents = true
-                            maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
-                        }
-                    }
 
                     2 ->
                         behavior.apply {
@@ -488,7 +490,10 @@ class ScreenStackFragment :
                     setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
                 }.build()
         val shape = MaterialShapeDrawable(shapeAppearanceModel)
-        shape.setTint((screen.background as? ColorDrawable?)?.color ?: Color.TRANSPARENT)
+        val currentColor =
+            (screen.background as? ColorDrawable?)?.color
+                ?: (screen.background as? MaterialShapeDrawable?)?.tintList?.defaultColor
+        shape.setTint(currentColor ?: Color.TRANSPARENT)
         screen.background = shape
     }
 
@@ -585,8 +590,7 @@ class ScreenStackFragment :
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context),
         ReactPointerEventsView {
-        override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets =
-            super.onApplyWindowInsets(insets)
+        override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
 
         private val animationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {
