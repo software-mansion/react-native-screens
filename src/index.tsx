@@ -15,7 +15,6 @@ export {
  */
 export {
   default as Screen,
-  NativeScreen,
   InnerScreen,
   ScreenContext,
 } from './components/Screen';

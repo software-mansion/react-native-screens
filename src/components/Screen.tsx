@@ -14,24 +14,43 @@ import {
 } from '../core';
 
 // Native components
-import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
-import ModalScreenNativeComponent from '../fabric/ModalScreenNativeComponent';
+import NativeScreen, {
+  NativeProps as ScreenNativeProps,
+} from '../fabric/ScreenNativeComponent';
+import ModalScreenNative, {
+  NativeProps as ModalScreenNativeProps,
+} from '../fabric/ModalScreenNativeComponent';
 import { usePrevious } from './helpers/usePrevious';
 
-type NativeScreenProps = Omit<
-  ScreenProps,
-  'sheetInitialDetentIndex' | 'sheetLargestUndimmedDetentIndex'
-> & {
-  sheetInitialDetent: number;
-  sheetLargestUndimmedDetent: number;
-};
-
-export const NativeScreen: React.ComponentType<NativeScreenProps> =
-  ScreenNativeComponent as React.ComponentType<NativeScreenProps>;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
-const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
-  ModalScreenNativeComponent as React.ComponentType<NativeScreenProps>,
-);
+const AnimatedNativeModalScreen =
+  Animated.createAnimatedComponent(ModalScreenNative);
+
+const AnimatedNativeModalScreenNormalized = React.forwardRef<
+  View,
+  ScreenNativeProps | ModalScreenNativeProps
+>(function AnimatedNativeModalScreenNormalized(props, ref) {
+  const { stackAnimation } = props;
+
+  let resolvedStackAnimation: ModalScreenNativeProps['stackAnimation'];
+
+  if (
+    stackAnimation === 'ios_from_right' ||
+    stackAnimation === 'ios_from_left'
+  ) {
+    resolvedStackAnimation = 'default';
+  } else {
+    resolvedStackAnimation = stackAnimation;
+  }
+
+  return (
+    <AnimatedNativeModalScreen
+      {...props}
+      ref={ref}
+      stackAnimation={resolvedStackAnimation}
+    />
+  );
+});
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
@@ -218,7 +237,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         stackPresentation === 'containedModal' ||
         stackPresentation === 'containedTransparentModal'
           ? AnimatedNativeScreen
-          : AnimatedNativeModalScreen;
+          : AnimatedNativeModalScreenNormalized;
 
       let {
         // Filter out active prop in this case because it is unused and

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Animated,
   NativeSyntheticEvent,
   ViewProps,
   View,
@@ -101,8 +100,8 @@ export type GestureResponseDistanceType = {
 export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 export interface ScreenProps extends ViewProps {
-  active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
-  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
+  active?: 0 | 1;
+  activityState?: 0 | 1 | 2;
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
@@ -218,7 +217,9 @@ export interface ScreenProps extends ViewProps {
   /**
    * A callback that gets called after swipe back is canceled.
    */
-  onGestureCancel?: (e: NativeSyntheticEvent<null>) => void;
+  onGestureCancel?: (
+    e: NativeSyntheticEvent<Readonly<Record<string, never>>>,
+  ) => void;
   /**
    * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
