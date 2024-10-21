@@ -67,12 +67,15 @@ class DimmingFragment(
     private val insetsProxy = InsetsObserverProxy
 
     init {
-        val fragment = nestedFragment.fragment
-        // We register for our child lifecycle as we want to know when it's dismissed via native gesture
+        assert(
+            nestedFragment.fragment is ScreenStackFragment,
+        ) { "[RNScreens] Dimming fragment is intended for use only with ScreenStackFragment" }
+        val fragment = nestedFragment.fragment as ScreenStackFragment
+
+        // We register for our child lifecycle as we want to know when it starts, because bottom sheet
+        // behavior is attached only then & we want to attach our own callbacks to it.
         fragment.lifecycle.addObserver(this)
-        if (fragment is ScreenStackFragment) {
-            fragment.nativeDismissalObserver = this
-        }
+        fragment.nativeDismissalObserver = this
     }
 
     /**
@@ -117,8 +120,8 @@ class DimmingFragment(
                     computeOffsetFromDetentIndex(
                         (screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(
                             0,
-                            screen.sheetDetents.count() - 1
-                        )
+                            screen.sheetDetents.count() - 1,
+                        ),
                     )
                 assert(firstDimmedOffset >= largestUndimmedOffset) {
                     "[RNScreens] Invariant violation: firstDimmedOffset ($firstDimmedOffset) < largestDimmedOffset ($largestUndimmedOffset)"
@@ -179,7 +182,7 @@ class DimmingFragment(
         // We want dimming view to have always fade animation in current usages.
         AnimationUtils.loadAnimation(
             context,
-            if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out
+            if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out,
         )
 
     override fun onCreateView(
@@ -352,13 +355,9 @@ class DimmingFragment(
         nestedFragment.onViewAnimationEnd()
     }
 
-    override fun tryGetActivity(): Activity? {
-        return activity
-    }
+    override fun tryGetActivity(): Activity? = activity
 
-    override fun tryGetContext(): ReactContext? {
-        return context as? ReactContext?
-    }
+    override fun tryGetContext(): ReactContext? = context as? ReactContext?
 
     override val fragment: Fragment
         get() = this
@@ -419,7 +418,7 @@ class DimmingFragment(
             screen.sheetBehavior?.let {
                 (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(
                     it,
-                    KeyboardVisible(imeInset.bottom)
+                    KeyboardVisible(imeInset.bottom),
                 )
             }
 
@@ -459,12 +458,12 @@ class DimmingFragment(
                 if (isKeyboardVisible) {
                     (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(
                         it,
-                        KeyboardDidHide
+                        KeyboardDidHide,
                     )
                 } else if (keyboardState != KeyboardNotVisible) {
                     (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(
                         it,
-                        KeyboardNotVisible
+                        KeyboardNotVisible,
                     )
                 } else {
                 }
