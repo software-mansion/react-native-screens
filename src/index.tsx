@@ -8,7 +8,6 @@ export {
   enableFreeze,
   screensEnabled,
   freezeEnabled,
-  shouldUseActivityState,
 } from './core';
 
 /**

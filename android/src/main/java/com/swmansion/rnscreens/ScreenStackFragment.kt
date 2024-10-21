@@ -35,6 +35,11 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
+import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.useSingleDetent
+import com.swmansion.rnscreens.bottomsheet.useThreeDetents
+import com.swmansion.rnscreens.bottomsheet.useTwoDetents
+import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 
@@ -214,7 +219,7 @@ class ScreenStackFragment :
                     LinearLayout.LayoutParams.MATCH_PARENT,
                 ).apply {
                     behavior =
-                        if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
+                        if (screen.usesFormSheetPresentation()) {
                             createAndConfigureBottomSheetBehaviour()
                         } else if (isToolbarTranslucent) {
                             null
@@ -223,7 +228,7 @@ class ScreenStackFragment :
                         }
                 }
 
-        if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
+        if (screen.usesFormSheetPresentation()) {
             screen.clipToOutline = true
             // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
             attachShapeToScreen(screen)
@@ -232,7 +237,7 @@ class ScreenStackFragment :
 
         coordinatorLayout.addView(screen.recycle())
 
-        if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
+        if (!screen.usesFormSheetPresentation()) {
             appBarLayout =
                 context?.let { AppBarLayout(it) }?.apply {
                     // By default AppBarLayout will have a background color set but since we cover the whole layout
@@ -340,52 +345,38 @@ class ScreenStackFragment :
             is KeyboardNotVisible -> {
                 when (screen.sheetDetents.count()) {
                     1 ->
-                        if (screen.sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS) {
-                            behavior.apply {
-                                state = BottomSheetBehavior.STATE_EXPANDED
-                                screen.contentWrapper.get()?.let {
-                                    maxHeight = it.height
+                        behavior.apply {
+                            val height =
+                                if (screen.isSheetFitToContents()) {
+                                    screen.contentWrapper.get()?.height
+                                } else {
+                                    (screen.sheetDetents.first() * containerHeight).toInt()
                                 }
-                                skipCollapsed = true
-                                isFitToContents = true
-                            }
-                        } else {
-                            behavior.apply {
-                                state = BottomSheetBehavior.STATE_EXPANDED
-                                skipCollapsed = true
-                                isFitToContents = true
-                                maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
-                            }
+                            useSingleDetent(height = height)
                         }
 
                     2 ->
-                        behavior.apply {
+                        behavior.useTwoDetents(
                             state =
                                 SheetUtils.sheetStateFromDetentIndex(
                                     screen.sheetInitialDetentIndex,
                                     screen.sheetDetents.count(),
-                                )
-                            skipCollapsed = false
-                            isFitToContents = true
-                            peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                            maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
-                        }
+                                ),
+                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
+                            secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
+                        )
 
                     3 ->
-                        behavior.apply {
+                        behavior.useThreeDetents(
                             state =
                                 SheetUtils.sheetStateFromDetentIndex(
                                     screen.sheetInitialDetentIndex,
                                     screen.sheetDetents.count(),
-                                )
-                            skipCollapsed = false
-                            isFitToContents = false
-                            peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                            expandedOffset =
-                                ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
-                            halfExpandedRatio =
-                                (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
-                        }
+                                ),
+                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
+                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
+                        )
 
                     else -> throw IllegalStateException(
                         "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
@@ -403,27 +394,24 @@ class ScreenStackFragment :
                 when (screen.sheetDetents.count()) {
                     1 ->
                         behavior.apply {
-                            state = BottomSheetBehavior.STATE_EXPANDED
-                            skipCollapsed = true
-                            isFitToContents = true
-                            maxHeight = newMaxHeight
+                            useSingleDetent(height = newMaxHeight)
                             addBottomSheetCallback(keyboardSheetCallback)
                         }
 
                     2 ->
                         behavior.apply {
-                            state = BottomSheetBehavior.STATE_EXPANDED
-                            skipCollapsed = false
-                            isFitToContents = true
-                            maxHeight = newMaxHeight
+                            useTwoDetents(
+                                state = BottomSheetBehavior.STATE_EXPANDED,
+                                secondHeight = newMaxHeight,
+                            )
                             addBottomSheetCallback(keyboardSheetCallback)
                         }
 
                     3 ->
                         behavior.apply {
-                            state = BottomSheetBehavior.STATE_EXPANDED
-                            skipCollapsed = false
-                            isFitToContents = false
+                            useThreeDetents(
+                                state = BottomSheetBehavior.STATE_EXPANDED,
+                            )
                             maxHeight = newMaxHeight
                             addBottomSheetCallback(keyboardSheetCallback)
                         }
@@ -442,30 +430,23 @@ class ScreenStackFragment :
                 behavior.removeBottomSheetCallback(keyboardSheetCallback)
                 when (screen.sheetDetents.count()) {
                     1 ->
-                        behavior.apply {
-                            skipCollapsed = true
-                            isFitToContents = true
-                            maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
-                        }
+                        behavior.useSingleDetent(
+                            height = (screen.sheetDetents.first() * containerHeight).toInt(),
+                            forceExpandedState = false,
+                        )
 
                     2 ->
-                        behavior.apply {
-                            skipCollapsed = false
-                            isFitToContents = true
-                            peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                            maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
-                        }
+                        behavior.useTwoDetents(
+                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
+                            secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
+                        )
 
                     3 ->
-                        behavior.apply {
-                            skipCollapsed = false
-                            isFitToContents = false
-                            peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                            expandedOffset =
-                                ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
-                            halfExpandedRatio =
-                                (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
-                        }
+                        behavior.useThreeDetents(
+                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
+                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
+                        )
 
                     else -> throw IllegalStateException(
                         "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",

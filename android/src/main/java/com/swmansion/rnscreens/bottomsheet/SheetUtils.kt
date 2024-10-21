@@ -5,6 +5,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPS
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+import com.swmansion.rnscreens.Screen
 
 object SheetUtils {
     /**
@@ -125,3 +126,10 @@ object SheetUtils {
         return false
     }
 }
+
+fun Screen.isSheetFitToContents(): Boolean =
+    stackPresentation === Screen.StackPresentation.FORM_SHEET &&
+            sheetDetents.count() == 1 &&
+            sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS
+
+fun Screen.usesFormSheetPresentation(): Boolean = stackPresentation === Screen.StackPresentation.FORM_SHEET
