@@ -1,3 +1,5 @@
+package com.swmansion.rnscreens.fullwindowoverlay
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.MotionEvent
@@ -13,7 +15,6 @@ import com.facebook.react.config.ReactFeatureFlags
 import com.facebook.react.uimanager.JSPointerDispatcher
 import com.facebook.react.uimanager.JSTouchDispatcher
 import com.facebook.react.uimanager.PixelUtil
-import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.RootView
 import com.facebook.react.uimanager.StateWrapper
@@ -22,26 +23,8 @@ import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.modal.ReactModalHostView
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.BuildConfig
-import com.swmansion.rnscreens.FullWindowOverlay
 import kotlin.math.abs
 
-/**
- * DialogRootViewGroup is the ViewGroup which contains all the children of a Modal. It gets all
- * child information forwarded from [ReactModalHostView] and uses that to create children. It is
- * also responsible for acting as a RootView and handling touch events. It does this the same way
- * as ReactRootView.
- *
- * To get layout to work properly, we need to layout all the elements within the Modal as if they
- * can fill the entire window. To do that, we need to explicitly set the styleWidth and
- * styleHeight on the LayoutShadowNode to be the window size. This is done through the
- * UIManagerModule, and will then cause the children to layout as if they can fill the window.
- */
-
-// TODO: Zobaczyć post od hirbota
-// TODO: Przesunięcie z offestem, popatrzyć do standardu webowego kim jest containing box dla dziecka z postiion absolute i czy tym rodzicem możę być inny absolute
-// TODO: tool do inspectowania shadow node
-// TODO: zobaczyć co robi facebook z width i height
 class FullWindowOverlayRootViewGroup(
     context: Context?,
     private val parentViewGroup: FullWindowOverlay,
@@ -53,7 +36,7 @@ class FullWindowOverlayRootViewGroup(
     private var hasAdjustedSize = false
     private var viewWidth = 0
     private var viewHeight = 0
-    private val jSTouchDispatcher: JSTouchDispatcher = JSTouchDispatcher(this)
+    private val jsTouchDispatcher: JSTouchDispatcher = JSTouchDispatcher(this)
     internal var eventDispatcher: EventDispatcher? = null
     private var jSPointerDispatcher: JSPointerDispatcher? = null
 
@@ -65,13 +48,9 @@ class FullWindowOverlayRootViewGroup(
             jSPointerDispatcher = JSPointerDispatcher(parentViewGroup)
         }
         @SuppressLint("ResourceType")
-        id = 42 // TODO: Dodać ładny komentarz czemu - żeby wybrał się dobry UIManager Type, dać link do tego miejsca gdzie view.getId() < 0
-        // TODO: Test na paperze i ewentualnie używamy flagi: BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+        id = 42
     }
 
-    override fun getPointerEvents(): PointerEvents {
-        return PointerEvents.BOX_NONE
-    }
     override fun onSizeChanged(
         w: Int,
         h: Int,
@@ -179,12 +158,11 @@ class FullWindowOverlayRootViewGroup(
 
 
         eventDispatcher?.let { eventDispatcher ->
-            jSTouchDispatcher.handleTouchEvent(event, eventDispatcher)
+            jsTouchDispatcher.handleTouchEvent(event, eventDispatcher)
             jSPointerDispatcher?.handleMotionEvent(event, eventDispatcher, true)
         }
 
-        val returnValue = super.onInterceptTouchEvent(event)
-        return false
+        return  super.onInterceptTouchEvent(event)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -197,14 +175,13 @@ class FullWindowOverlayRootViewGroup(
 
 
 //        eventDispatcher?.let { eventDispatcher ->
-//            jSTouchDispatcher.handleTouchEvent(event, eventDispatcher)
+//            jsTouchDispatcher.handleTouchEvent(event, eventDispatcher)
 //            jSPointerDispatcher?.handleMotionEvent(event, eventDispatcher, false)
 //        }
-//
-//        var result = super.onTouchEvent(event)
+
         // In case when there is no children interested in handling touch event, we return true from
         // the root view in order to receive subsequent events related to that gesture
-        return true
+        return super.onTouchEvent(event)
     }
 
     // TODO: Zapytaćw GH czy i jeśli tak to jak to robić
@@ -223,7 +200,7 @@ class FullWindowOverlayRootViewGroup(
         ev: MotionEvent,
     ) {
         eventDispatcher?.let { eventDispatcher ->
-            jSTouchDispatcher.onChildStartedNativeGesture(ev, eventDispatcher)
+            jsTouchDispatcher.onChildStartedNativeGesture(ev, eventDispatcher)
             jSPointerDispatcher?.onChildStartedNativeGesture(childView, ev, eventDispatcher)
         }
     }
@@ -232,7 +209,7 @@ class FullWindowOverlayRootViewGroup(
         childView: View,
         ev: MotionEvent,
     ) {
-        eventDispatcher?.let { jSTouchDispatcher.onChildEndedNativeGesture(ev, it) }
+        eventDispatcher?.let { jsTouchDispatcher.onChildEndedNativeGesture(ev, it) }
         jSPointerDispatcher?.onChildEndedNativeGesture()
     }
 

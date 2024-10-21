@@ -3,4 +3,6 @@ import type { ViewProps } from 'react-native';
 
 interface NativeProps extends ViewProps {}
 
-export default codegenNativeComponent<NativeProps>('RNSFullWindowOverlay', {});
+export default codegenNativeComponent<NativeProps>('RNSFullWindowOverlay', {
+  interfaceOnly: true,
+});

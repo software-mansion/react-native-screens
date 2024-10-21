@@ -1,36 +1,17 @@
-package com.swmansion.rnscreens
+package com.swmansion.rnscreens.fullwindowoverlay
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.view.MotionEvent
-import android.view.View
-import androidx.annotation.UiThread
-import com.facebook.react.bridge.GuardedRunnable
-import com.facebook.react.bridge.ReactContext
-import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.WritableMap
-import com.facebook.react.bridge.WritableNativeMap
-import com.facebook.react.config.ReactFeatureFlags
+import ModalHostHelper.getModalHostSize
 import com.facebook.react.module.annotations.ReactModule
-import com.facebook.react.uimanager.JSPointerDispatcher
-import com.facebook.react.uimanager.JSTouchDispatcher
 import com.facebook.react.uimanager.LayoutShadowNode
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ReactStylesDiffMap
-import com.facebook.react.uimanager.RootView
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.viewmanagers.RNSFullWindowOverlayManagerDelegate
 import com.facebook.react.viewmanagers.RNSFullWindowOverlayManagerInterface
-import com.facebook.react.views.modal.ModalHostShadowNode
 import com.facebook.react.views.modal.ReactModalHostView
-import com.facebook.react.views.view.ReactViewGroup
-import kotlin.math.abs
 
 @ReactModule(name = FullWindowOverlayViewManager.REACT_CLASS)
 class FullWindowOverlayViewManager :
@@ -69,4 +50,18 @@ class FullWindowOverlayViewManager :
         }
     }
 
+    public override fun updateState(
+        view: FullWindowOverlay,
+        props: ReactStylesDiffMap,
+        stateWrapper: StateWrapper
+    ): Any? {
+        view.stateWrapper = stateWrapper
+        val modalSize = getModalHostSize(view.context)
+        view.updateState(modalSize.x, modalSize.y)
+        return null
+    }
+
+    override fun invalidate() {
+        super.invalidate()
+    }
 }

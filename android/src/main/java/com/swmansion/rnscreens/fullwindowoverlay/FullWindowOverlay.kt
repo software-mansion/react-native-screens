@@ -1,12 +1,12 @@
-package com.swmansion.rnscreens
+package com.swmansion.rnscreens.fullwindowoverlay
 
-import FullWindowOverlayRootViewGroup
 import android.content.Context
 import android.graphics.PixelFormat
 import android.view.View
 import android.view.ViewStructure
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
+import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.PointerEvents
@@ -17,11 +17,13 @@ import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.utils.WindowOverlayCompat
 
-// TODO Podebugować ewenty - co gdzie trafia
 class FullWindowOverlay(
     context: ReactContext?,
 ) : ReactViewGroup(context),
-    ReactPointerEventsView {
+    ReactPointerEventsView,
+    LifecycleEventListener {
+    private var isCreated = false
+
     private val mWindowManager: WindowManager =
         context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
@@ -29,17 +31,21 @@ class FullWindowOverlay(
 
     private var hostView: FullWindowOverlayRootViewGroup = FullWindowOverlayRootViewGroup(context, this)
 
-    public var stateWrapper: StateWrapper?
+    var stateWrapper: StateWrapper?
         get() = hostView.stateWrapper
-        public set(stateWrapper) {
+        set(stateWrapper) {
             hostView.stateWrapper = stateWrapper
         }
 
-    public var eventDispatcher: EventDispatcher?
+    var eventDispatcher: EventDispatcher?
         get() = hostView.eventDispatcher
-        public set(eventDispatcher) {
+        set(eventDispatcher) {
             hostView.eventDispatcher = eventDispatcher
         }
+
+    fun updateState(width: Int, height: Int) {
+        hostView.updateState(width, height)
+    }
 
     override fun getPointerEvents(): PointerEvents = PointerEvents.NONE
 
@@ -58,15 +64,24 @@ class FullWindowOverlay(
     }
 
     init {
-        val params =
-            WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowOverlayCompat.TYPE_SYSTEM_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT,
-            )
-        mWindowManager.addView(hostView, params)
+        setupView()
+        context?.addLifecycleEventListener(this)
+    }
+
+    fun setupView() {
+        if (!isCreated) {
+            val params =
+                WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT,
+//                    WindowManager.LayoutParams.LAST_APPLICATION_WINDOW,
+                    WindowOverlayCompat.TYPE_SYSTEM_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT,
+                )
+            mWindowManager.addView(hostView, params)
+            isCreated = true
+        }
     }
 
     fun getCurrentRootView(): View? = mainRootView
@@ -109,12 +124,28 @@ class FullWindowOverlay(
 
     public override fun dispatchPopulateAccessibilityEvent(event: AccessibilityEvent): Boolean = false
 
+
     public fun onDropInstance() {
-        super.invalidate()
         mWindowManager.removeView(hostView)
+        isCreated = false
     }
 
     public override fun dispatchProvideStructure(structure: ViewStructure) {
         hostView.dispatchProvideStructure(structure)
+    }
+
+    override fun onHostResume() {
+        println("onHostResume")
+        setupView()
+    }
+
+    override fun onHostPause() {
+        println("onHostPause")
+        onDropInstance()
+    }
+
+    override fun onHostDestroy() {
+        onDropInstance()
+        println("onHostDestroy")
     }
 }

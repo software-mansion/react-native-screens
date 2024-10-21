@@ -7,6 +7,7 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.swmansion.rnscreens.fullwindowoverlay.FullWindowOverlayViewManager
 import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
 
 @ReactModuleList(
@@ -39,7 +40,7 @@ class RNScreensPackage : TurboReactPackage() {
             SearchBarManager(),
             ScreenFooterManager(),
             ScreenContentWrapperManager(),
-            FullWindowOverlayViewManager()
+            FullWindowOverlayViewManager(),
         )
     }
 

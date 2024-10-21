@@ -18,6 +18,7 @@
  */
 #include <react/renderer/components/rnscreens/RNSScreenComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSModalScreenComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/RNSFullWindowOverlayComponentDescriptor.h>
 
 namespace facebook {
 namespace react {
