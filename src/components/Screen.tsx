@@ -14,39 +14,20 @@ import {
 } from '../core';
 
 // Native components
-import NativeScreen from '../fabric/ScreenNativeComponent';
-import ModalScreenNative from '../fabric/ModalScreenNativeComponent';
+import ScreenNativeComponent, {
+  NativeProps as ScreenNativeComponentProps,
+} from '../fabric/ScreenNativeComponent';
+import ModalScreenNativeComponent, {
+  NativeProps as ModalScreenNativeComponentProps,
+} from '../fabric/ModalScreenNativeComponent';
 import { usePrevious } from './helpers/usePrevious';
 
-/**
- * This messy override is to conform NativeProps used by codegen and
- * out Public API. To see reasoning go to this PR:
- * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
- */
-type SharedOverride = {
-  onAppear?: ScreenProps['onAppear'];
-  onDisappear?: ScreenProps['onDisappear'];
-  onWillAppear?: ScreenProps['onWillAppear'];
-  onWillDisappear?: ScreenProps['onWillDisappear'];
-};
-
-type NativeScreenOverrideProps = Omit<
-  React.ComponentPropsWithRef<typeof NativeScreen>,
-  'onAppear' | 'onDisappear' | 'onWillAppear' | 'onWillDisappear'
-> &
-  SharedOverride;
-
-type NativeModalScreenOverrideProps = Omit<
-  React.ComponentPropsWithRef<typeof ModalScreenNative>,
-  'onAppear' | 'onDisappear' | 'onWillAppear' | 'onWillDisappear'
-> &
-  SharedOverride;
-
+type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(
-  NativeScreen as React.ComponentType<NativeScreenOverrideProps>,
+  ScreenNativeComponent,
 );
 const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
-  ModalScreenNative as React.ComponentType<NativeModalScreenOverrideProps>,
+  ModalScreenNativeComponent,
 );
 
 // Incomplete type, all accessible properties available at:
@@ -289,6 +270,16 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen
             {...props}
+            /**
+             * This messy override is to conform NativeProps used by codegen and
+             * our Public API. To see reasoning go to this PR:
+             * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
+             */
+            onAppear={props.onAppear as NativeProps['onAppear']}
+            onDisappear={props.onDisappear as NativeProps['onAppear']}
+            onWillAppear={props.onWillAppear as NativeProps['onAppear']}
+            onWillDisappear={props.onWillDisappear as NativeProps['onAppear']}
+            //
             // Hierarchy of screens is handled on the native side and setting zIndex value causes this issue:
             // https://github.com/software-mansion/react-native-screens/issues/2345
             // With below change of zIndex, we force RN diffing mechanism to NOT include detaching and attaching mutation in one transaction.
