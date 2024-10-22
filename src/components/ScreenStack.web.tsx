@@ -1,3 +1,5 @@
 import { View } from 'react-native';
 
-export default View;
+const ScreenStack = View;
+
+export default ScreenStack;
