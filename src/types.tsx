@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Animated,
   NativeSyntheticEvent,
   ViewProps,
   View,
@@ -7,7 +8,6 @@ import {
   TextInputFocusEventData,
   ColorValue,
   ViewStyle,
-  Animated,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 
