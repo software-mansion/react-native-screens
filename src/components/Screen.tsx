@@ -14,43 +14,13 @@ import {
 } from '../core';
 
 // Native components
-import NativeScreen, {
-  NativeProps as ScreenNativeProps,
-} from '../fabric/ScreenNativeComponent';
-import ModalScreenNative, {
-  NativeProps as ModalScreenNativeProps,
-} from '../fabric/ModalScreenNativeComponent';
+import NativeScreen from '../fabric/ScreenNativeComponent';
+import ModalScreenNative from '../fabric/ModalScreenNativeComponent';
 import { usePrevious } from './helpers/usePrevious';
 
 const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
 const AnimatedNativeModalScreen =
   Animated.createAnimatedComponent(ModalScreenNative);
-
-const AnimatedNativeModalScreenNormalized = React.forwardRef<
-  View,
-  ScreenNativeProps | ModalScreenNativeProps
->(function AnimatedNativeModalScreenNormalized(props, ref) {
-  const { stackAnimation } = props;
-
-  let resolvedStackAnimation: ModalScreenNativeProps['stackAnimation'];
-
-  if (
-    stackAnimation === 'ios_from_right' ||
-    stackAnimation === 'ios_from_left'
-  ) {
-    resolvedStackAnimation = 'default';
-  } else {
-    resolvedStackAnimation = stackAnimation;
-  }
-
-  return (
-    <AnimatedNativeModalScreen
-      {...props}
-      ref={ref}
-      stackAnimation={resolvedStackAnimation}
-    />
-  );
-});
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
@@ -237,7 +207,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         stackPresentation === 'containedModal' ||
         stackPresentation === 'containedTransparentModal'
           ? AnimatedNativeScreen
-          : AnimatedNativeModalScreenNormalized;
+          : AnimatedNativeModalScreen;
 
       let {
         // Filter out active prop in this case because it is unused and

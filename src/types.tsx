@@ -7,6 +7,7 @@ import {
   TextInputFocusEventData,
   ColorValue,
   ViewStyle,
+  Animated,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 
@@ -100,8 +101,8 @@ export type GestureResponseDistanceType = {
 export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 export interface ScreenProps extends ViewProps {
-  active?: 0 | 1;
-  activityState?: 0 | 1 | 2;
+  active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
+  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
