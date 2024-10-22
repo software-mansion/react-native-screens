@@ -281,9 +281,15 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
              * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
              */
             onAppear={onAppear as NativeProps['onAppear']}
-            onDisappear={onDisappear as NativeProps['onAppear']}
-            onWillAppear={onWillAppear as NativeProps['onAppear']}
-            onWillDisappear={onWillDisappear as NativeProps['onAppear']}
+            onDisappear={onDisappear as NativeProps['onDisappear']}
+            onWillAppear={onWillAppear as NativeProps['onWillAppear']}
+            onWillDisappear={onWillDisappear as NativeProps['onWillDisappear']}
+            onGestureCancel={
+              (onGestureCancel as NativeProps['onGestureCancel']) ??
+              (() => {
+                // for internal use
+              })
+            }
             //
             // Hierarchy of screens is handled on the native side and setting zIndex value causes this issue:
             // https://github.com/software-mansion/react-native-screens/issues/2345
@@ -322,12 +328,6 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
                     ],
                     { useNativeDriver: true },
                   )
-            }
-            onGestureCancel={
-              onGestureCancel ??
-              (() => {
-                // for internal use
-              })
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
