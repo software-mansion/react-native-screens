@@ -18,9 +18,36 @@ import NativeScreen from '../fabric/ScreenNativeComponent';
 import ModalScreenNative from '../fabric/ModalScreenNativeComponent';
 import { usePrevious } from './helpers/usePrevious';
 
-const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
-const AnimatedNativeModalScreen =
-  Animated.createAnimatedComponent(ModalScreenNative);
+/**
+ * This messy override is to conform NativeProps used by codegen and
+ * out Public API. To see reasoning go to this PR:
+ * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
+ */
+type SharedOverride = {
+  onAppear?: ScreenProps['onAppear'];
+  onDisappear?: ScreenProps['onDisappear'];
+  onWillAppear?: ScreenProps['onWillAppear'];
+  onWillDisappear?: ScreenProps['onWillDisappear'];
+};
+
+type NativeScreenOverrideProps = Omit<
+  React.ComponentPropsWithRef<typeof NativeScreen>,
+  'onAppear' | 'onDisappear' | 'onWillAppear' | 'onWillDisappear'
+> &
+  SharedOverride;
+
+type NativeModalScreenOverrideProps = Omit<
+  React.ComponentPropsWithRef<typeof ModalScreenNative>,
+  'onAppear' | 'onDisappear' | 'onWillAppear' | 'onWillDisappear'
+> &
+  SharedOverride;
+
+const AnimatedNativeScreen = Animated.createAnimatedComponent(
+  NativeScreen as React.ComponentType<NativeScreenOverrideProps>,
+);
+const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
+  ModalScreenNative as React.ComponentType<NativeModalScreenOverrideProps>,
+);
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js

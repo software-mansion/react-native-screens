@@ -13,10 +13,6 @@ import type {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type ScreenEvent = Readonly<{}>;
 
-type ScreenTargetEvent = Readonly<{
-  target: Int32;
-}>;
-
 type ScreenDismissedEvent = Readonly<{
   dismissCount: Int32;
 }>;
@@ -70,12 +66,12 @@ type SwipeDirection = 'vertical' | 'horizontal';
 type ReplaceAnimation = 'pop' | 'push';
 
 export interface NativeProps extends ViewProps {
-  onAppear?: DirectEventHandler<ScreenTargetEvent>;
-  onDisappear?: DirectEventHandler<ScreenTargetEvent>;
+  onAppear?: DirectEventHandler<ScreenEvent>;
+  onDisappear?: DirectEventHandler<ScreenEvent>;
   onDismissed?: DirectEventHandler<ScreenDismissedEvent>;
   onNativeDismissCancelled?: DirectEventHandler<ScreenDismissedEvent>;
-  onWillAppear?: DirectEventHandler<ScreenTargetEvent>;
-  onWillDisappear?: DirectEventHandler<ScreenTargetEvent>;
+  onWillAppear?: DirectEventHandler<ScreenEvent>;
+  onWillDisappear?: DirectEventHandler<ScreenEvent>;
   onHeaderHeightChange?: DirectEventHandler<HeaderHeightChangeEvent>;
   onTransitionProgress?: DirectEventHandler<TransitionProgressEvent>;
   onGestureCancel?: DirectEventHandler<ScreenEvent>;
