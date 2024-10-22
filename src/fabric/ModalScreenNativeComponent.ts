@@ -31,6 +31,11 @@ type HeaderHeightChangeEvent = Readonly<{
   headerHeight: Double;
 }>;
 
+type SheetDetentChangedEvent = Readonly<{
+  index: Int32;
+  isStable: boolean;
+}>;
+
 type GestureResponseDistanceType = Readonly<{
   start: Float;
   end: Float;
@@ -57,7 +62,8 @@ type StackAnimation =
   | 'slide_from_left'
   | 'slide_from_bottom'
   | 'fade_from_bottom'
-  | 'ios';
+  | 'ios_from_right'
+  | 'ios_from_left';
 
 type SwipeDirection = 'vertical' | 'horizontal';
 
@@ -74,12 +80,14 @@ export interface NativeProps extends ViewProps {
   onTransitionProgress?: DirectEventHandler<TransitionProgressEvent>;
   onGestureCancel?: DirectEventHandler<ScreenEvent>;
   onHeaderBackButtonClicked?: DirectEventHandler<ScreenEvent>;
+  onSheetDetentChanged?: DirectEventHandler<SheetDetentChangedEvent>;
   sheetAllowedDetents?: number[];
   sheetLargestUndimmedDetent?: WithDefault<Int32, -1>;
   sheetGrabberVisible?: WithDefault<boolean, false>;
   sheetCornerRadius?: WithDefault<Float, -1.0>;
   sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>;
   sheetInitialDetent?: WithDefault<Int32, 0>;
+  sheetElevation?: WithDefault<Int32, 24>;
   customAnimationOnSwipe?: boolean;
   fullScreenSwipeEnabled?: boolean;
   fullScreenSwipeShadowEnabled?: boolean;
