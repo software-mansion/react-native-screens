@@ -34,9 +34,7 @@ function Home({
         </View>
       </Modal>
       <FullWindowOverlay>
-        <View
-          style={{ flex: 1, justifyContent: 'center' }}
-          pointerEvents="box-none">
+        <View style={styles.overlay} pointerEvents="box-none">
           <View style={styles.box} />
           <Button title="click me" onPress={() => console.warn('clicked')} />
         </View>
@@ -80,7 +78,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: `rgba(0,0,0,0.5)`,
+  },
   box: {
     width: 40,
     height: 40,
