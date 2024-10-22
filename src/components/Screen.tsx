@@ -193,6 +193,11 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetInitialDetentIndex = 0,
       // Other
       stackPresentation,
+      // Events for override
+      onAppear,
+      onDisappear,
+      onWillAppear,
+      onWillDisappear,
     } = rest;
 
     if (enabled && isNativePlatformSupported) {
@@ -275,10 +280,10 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
              * our Public API. To see reasoning go to this PR:
              * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
              */
-            onAppear={props.onAppear as NativeProps['onAppear']}
-            onDisappear={props.onDisappear as NativeProps['onAppear']}
-            onWillAppear={props.onWillAppear as NativeProps['onAppear']}
-            onWillDisappear={props.onWillDisappear as NativeProps['onAppear']}
+            onAppear={onAppear as NativeProps['onAppear']}
+            onDisappear={onDisappear as NativeProps['onAppear']}
+            onWillAppear={onWillAppear as NativeProps['onAppear']}
+            onWillDisappear={onWillDisappear as NativeProps['onAppear']}
             //
             // Hierarchy of screens is handled on the native side and setting zIndex value causes this issue:
             // https://github.com/software-mansion/react-native-screens/issues/2345
