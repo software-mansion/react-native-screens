@@ -6,7 +6,7 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from '../types';
-import { Image, ImageProps, StyleSheet, ViewProps } from 'react-native';
+import { Image, ImageProps, StyleSheet, View, ViewProps } from 'react-native';
 
 // Native components
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
@@ -16,17 +16,19 @@ export const ScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 > = ScreenStackHeaderSubviewNativeComponent as any;
 
-export function ScreenStackHeaderConfig(
-  props: ScreenStackHeaderConfigProps,
-): React.JSX.Element {
-  return (
-    <ScreenStackHeaderConfigNativeComponent
-      {...props}
-      style={styles.headerConfig}
-      pointerEvents="box-none"
-    />
-  );
-}
+export const ScreenStackHeaderConfig = React.forwardRef<
+  View,
+  ScreenStackHeaderConfigProps
+>((props, ref) => (
+  <ScreenStackHeaderConfigNativeComponent
+    {...props}
+    ref={ref}
+    style={styles.headerConfig}
+    pointerEvents="box-none"
+  />
+));
+
+ScreenStackHeaderConfig.displayName = 'ScreenStackHeaderConfig';
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,

@@ -15,13 +15,13 @@ import SearchBarNativeComponent, {
 } from '../fabric/SearchBarNativeComponent';
 import { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
 
-export const NativeSearchBar: React.ComponentType<
+const NativeSearchBar: React.ComponentType<
   SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands> }
 > &
   typeof NativeSearchBarCommands =
   SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
     SearchBarCommandsType;
-export const NativeSearchBarCommands: SearchBarCommandsType =
+const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
 
 type NativeSearchBarRef = React.ElementRef<typeof NativeSearchBar>;
