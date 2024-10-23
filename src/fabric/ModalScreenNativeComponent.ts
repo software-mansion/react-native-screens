@@ -99,7 +99,7 @@ export interface NativeProps extends ViewProps {
   gestureResponseDistance?: GestureResponseDistanceType;
   stackPresentation?: WithDefault<StackPresentation, 'push'>;
   stackAnimation?: WithDefault<StackAnimation, 'default'>;
-  transitionDuration?: WithDefault<Int32, 350>;
+  transitionDuration?: WithDefault<Int32, 500>;
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>;
   swipeDirection?: WithDefault<SwipeDirection, 'horizontal'>;
   hideKeyboardOnSwipe?: boolean;
