@@ -56,7 +56,7 @@ export default function App() {
         <Stack.Screen name='Sheet' component={Sheet} options={{
           presentation: 'formSheet',
           headerShown: true,
-          sheetAllowedDetents: [0.9],
+          sheetAllowedDetents: [0.5, 0.9],
           unstable_screenStyle: {
             backgroundColor: 'crimson'
           }
