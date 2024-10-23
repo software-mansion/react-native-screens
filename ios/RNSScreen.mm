@@ -59,7 +59,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 @end
 
 @implementation RNSScreenView {
-  __weak ReactScrollViewBase *_sheetsScrollView;
+  /// First ScrollView found from screen with formSheet presentation together with nearest screen above in view
+  /// hierarchy
+  std::pair<__weak ReactScrollViewBase *, __weak RNSScreenView *> _sheetScrollViewBundle;
+  //  __weak ReactScrollViewBase *_sheetsScrollView;
   BOOL _didSetSheetAllowedDetentsOnController;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
@@ -119,10 +122,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
   _activityState = RNSActivityStateUndefined;
+  _sheetScrollViewBundle = std::make_pair(nil, nil);
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
-  _sheetsScrollView = nil;
   _didSetSheetAllowedDetentsOnController = NO;
 #ifdef RCT_NEW_ARCH_ENABLED
   _markedForUnmountInCurrentTransaction = NO;
@@ -140,6 +143,12 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   return _reactSubviews;
 }
 #endif
+
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"Screen at %p updates frame from %@ to %@", self, NSStringFromCGRect(self.frame), NSStringFromCGRect(frame));
+  [super setFrame:frame];
+}
 
 - (void)updateBounds
 {
@@ -159,10 +168,13 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 #endif // RCT_NEW_ARCH_ENABLED
 
-  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
-    return;
+  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
+    [self updateFrameOfNestedScrollView];
   }
+}
 
+- (void)updateFrameOfNestedScrollView
+{
   // In case of formSheet stack presentation, to mitigate view flickering
   // (see PR with description of this problem: https://github.com/software-mansion/react-native-screens/pull/1870)
   // we do not set `bottom: 0` in JS for wrapper of the screen content, causing React to not set
@@ -177,17 +189,35 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
   // It might be necessary in case someone doesn't want its scroll view to span over whole
   // height of the sheet.
-  ReactScrollViewBase *scrollView = [self findDirectLineDescendantReactScrollView];
-  if (_sheetsScrollView != scrollView) {
-    [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
-    _sheetsScrollView = scrollView;
+  const auto [scrollView, screenViewAncestor] = [self findDirectLineDescendandReactScrollView];
+
+  if (_sheetScrollViewBundle.first != scrollView) {
+    [_sheetScrollViewBundle.first removeObserver:self forKeyPath:@"bounds" context:nil];
+    _sheetScrollViewBundle.first = scrollView;
 
     // We pass 0 as options, as we are not interested in receiving updated bounds value,
     // we are going to overwrite it anyway.
     [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
   }
+
+  if (_sheetScrollViewBundle.second != screenViewAncestor) {
+    [_sheetScrollViewBundle.second removeObserver:self forKeyPath:@"frame" context:nil];
+    _sheetScrollViewBundle.second = nil;
+  }
+
   if (scrollView != nil) {
-    [scrollView setFrame:self.frame];
+    if (CGRectEqualToRect(screenViewAncestor.frame, CGRectZero)) {
+      [screenViewAncestor addObserver:self forKeyPath:@"frame" options:0 context:nil];
+      _sheetScrollViewBundle.second = screenViewAncestor;
+    } else {
+      CGRect newFrame = CGRectMake(
+          scrollView.frame.origin.x,
+          scrollView.frame.origin.y,
+          screenViewAncestor.frame.size.width,
+          screenViewAncestor.frame.size.height);
+      NSLog(@"[1] Set scrollview frame to %@", NSStringFromCGRect(screenViewAncestor.frame));
+      [scrollView setFrame:newFrame];
+    }
   }
 }
 
@@ -196,9 +226,28 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context
 {
-  UIView *scrollview = (UIView *)object;
-  if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
-    [scrollview setFrame:self.frame];
+  if ([object isKindOfClass:ReactScrollViewBase.class]) {
+    UIView *scrollview = (UIView *)object;
+    NSLog(@"[2] Set scrollview frame to %@", NSStringFromCGRect(self.frame));
+    if (_sheetScrollViewBundle.second != nil) {
+      [scrollview setFrame:_sheetScrollViewBundle.second.frame];
+    } else {
+      [scrollview setFrame:self.frame];
+    }
+    //    if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
+    //    }
+  } else if ([object isKindOfClass:RNSScreenView.class]) {
+    RNSScreenView *screenViewScrollViewAncestor = (RNSScreenView *)object;
+    if (!CGRectEqualToRect(_sheetScrollViewBundle.first.frame, screenViewScrollViewAncestor.frame)) {
+      ReactScrollViewBase *scrollView = _sheetScrollViewBundle.first;
+      CGRect newFrame = CGRectMake(
+          scrollView.frame.origin.x,
+          scrollView.frame.origin.y,
+          screenViewScrollViewAncestor.frame.size.width,
+          screenViewScrollViewAncestor.frame.size.height);
+      NSLog(@"[3] Set scrollview frame to %@", NSStringFromCGRect(newFrame));
+      [_sheetScrollViewBundle.first setFrame:newFrame];
+    }
   }
 }
 
@@ -723,16 +772,35 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 }
 
 /// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
-- (nullable ReactScrollViewBase *)findDirectLineDescendantReactScrollView
+- (std::pair<ReactScrollViewBase *_Nullable, RNSScreenView *_Nonnull>)findDirectLineDescendandReactScrollView
 {
   UIView *firstSubview = self;
+  RNSScreenView *screenViewAncestor = self;
+
+#ifdef RCT_NEW_ARCH_ENABLED
   while (firstSubview.subviews.count > 0) {
     firstSubview = firstSubview.subviews[0];
     if ([firstSubview isKindOfClass:ReactScrollViewBase.class]) {
       return (ReactScrollViewBase *)firstSubview;
     }
   }
-  return nil;
+#else
+  while (firstSubview.reactSubviews.count > 0) {
+    firstSubview = firstSubview.reactSubviews[0];
+    NSLog(@"Looking at subview %@", firstSubview);
+
+    if ([firstSubview isKindOfClass:ReactScrollViewBase.class]) {
+      return std::make_pair(firstSubview, screenViewAncestor);
+    } else if ([firstSubview isKindOfClass:RNSScreenView.class]) {
+      screenViewAncestor = (RNSScreenView *)firstSubview;
+      NSLog(
+          @"Update screenViewAncestor to view with tag: %ld and frame %@",
+          screenViewAncestor.tag,
+          NSStringFromCGRect(screenViewAncestor.frame));
+    }
+  }
+#endif
+  return std::make_pair(nil, screenViewAncestor);
 }
 
 - (BOOL)isModal
@@ -766,7 +834,15 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 - (void)invalidate
 {
   _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+  [self cleanupSheetScrollViewObservers];
+}
+
+- (void)cleanupSheetScrollViewObservers
+{
+  [_sheetScrollViewBundle.first removeObserver:self forKeyPath:@"bounds" context:nil];
+  [_sheetScrollViewBundle.second removeObserver:self forKeyPath:@"frame" context:nil];
+  _sheetScrollViewBundle.first = nil;
+  _sheetScrollViewBundle.second = nil;
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
