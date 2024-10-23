@@ -66,9 +66,6 @@ export default function App(): JSX.Element {
               contentStyle: {
                 backgroundColor: 'firebrick',
               },
-              unstable_screenStyle: {
-                backgroundColor: 'firebrick',
-              },
               // unstable_footerComponent: Footer(),
               ...sheetOptions,
             }}
@@ -107,9 +104,6 @@ export default function App(): JSX.Element {
               headerShown: false,
               presentation: 'formSheet',
               sheetElevation: 24,
-              unstable_screenStyle: {
-                backgroundColor: 'firebrick',
-              },
               ...sheetOptions,
               sheetAllowedDetents: [0.7],
             }}

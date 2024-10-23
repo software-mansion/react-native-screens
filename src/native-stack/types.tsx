@@ -120,6 +120,8 @@ export type NativeStackNavigationOptions = {
   backButtonInCustomView?: boolean;
   /**
    * Style object for the scene content.
+   *
+   * As a workaround to truncated sheet content, formSheet uses backgroundColor from contentStyle and applies it on Screen.
    */
   contentStyle?: StyleProp<ViewStyle>;
   /**
@@ -372,13 +374,6 @@ export type NativeStackNavigationOptions = {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenProps['screenOrientation'];
-  /**
-   * Allows to set background color for the `Screen` component itself.
-   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
-   *
-   * We plan to get rid of this prop once the workaround is no longer needed.
-   */
-  unstable_screenStyle?: ScreenProps['unstable_screenStyle'];
   /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */
