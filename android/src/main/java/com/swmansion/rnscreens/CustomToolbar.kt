@@ -21,8 +21,8 @@ open class CustomToolbar(
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
                 measure(
-                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST),
                 )
                 layout(left, top, right, bottom)
             }
