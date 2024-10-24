@@ -3,9 +3,11 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.uimanager.ThemedReactContext
 
 // This class is used to store config closer to search bar
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -28,7 +30,13 @@ open class CustomToolbar(
 
     override fun requestLayout() {
         super.requestLayout()
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+        val softInputMode =
+            (context as ThemedReactContext)
+                .currentActivity
+                ?.window
+                ?.attributes
+                ?.softInputMode
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q && softInputMode == WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN) {
             // Below Android API 29, layout is not being requested when subviews are being added to the layout,
             // leading to having their subviews in position 0,0 of the toolbar (as Android don't calculate
             // the position of each subview, even if Yoga has correctly set their width and height).
