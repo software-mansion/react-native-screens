@@ -620,7 +620,6 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
