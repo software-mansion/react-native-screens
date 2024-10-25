@@ -26,6 +26,7 @@ function ScreenStack(props: ScreenStackProps) {
     ...rest
   } = props;
 
+  console.log('<------------------- ScreenStack ------------------->');
   const ref = React.useRef(null);
   const size = React.Children.count(children);
   const ScreenGestureDetector = React.useContext(GHContext);
@@ -61,6 +62,7 @@ function ScreenStack(props: ScreenStackProps) {
       gestureDetectorBridge.current.stackUseEffectCallback(ref);
     }
   });
+
   return (
     <ScreenGestureDetector
       gestureDetectorBridge={gestureDetectorBridge}

@@ -1,7 +1,6 @@
 import React from 'react';
-import { GHContext } from '../native-stack/contexts/GHContext';
+import { GHContext, GestureProviderProps } from '../types';
 import ScreenGestureDetector from './ScreenGestureDetector';
-import type { GestureProviderProps } from '../native-stack/types';
 
 function GHWrapper(props: GestureProviderProps) {
   return <ScreenGestureDetector {...props} />;

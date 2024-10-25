@@ -14,7 +14,6 @@ import {
   makeMutable,
   runOnUI,
 } from 'react-native-reanimated';
-import type { GestureProviderProps } from 'src/native-stack/types';
 import { getShadowNodeWrapperAndTagFromRef, isFabric } from './fabricUtils';
 import { RNScreensTurboModule } from './RNScreensTurboModule';
 import { DefaultEvent, DefaultScreenDimensions } from './defaults';
@@ -23,6 +22,7 @@ import {
   checkIfTransitionCancelled,
   getAnimationForTransition,
 } from './constraints';
+import { GestureProviderProps } from '../types';
 
 const EmptyGestureHandler = Gesture.Fling();
 
