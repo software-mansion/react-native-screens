@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { ScreenStackProps } from '../types';
+import { GestureDetectorBridge, GHContext, ScreenStackProps } from '../types';
 import { freezeEnabled } from '../core';
 import DelayedFreeze from './helpers/DelayedFreeze';
 
 // Native components
 import ScreenStackNativeComponent from '../fabric/ScreenStackNativeComponent';
+
 const NativeScreenStack: React.ComponentType<ScreenStackProps> =
   ScreenStackNativeComponent as any;
 
@@ -15,9 +16,25 @@ function isFabric() {
 }
 
 function ScreenStack(props: ScreenStackProps) {
-  const { children, gestureDetectorBridge, ...rest } = props;
+  const {
+    goBackGesture,
+    screensRefs,
+    currentRouteKey,
+    transitionAnimation,
+    screenEdgeGesture,
+    children,
+    ...rest
+  } = props;
+
   const ref = React.useRef(null);
   const size = React.Children.count(children);
+  const ScreenGestureDetector = React.useContext(GHContext);
+  const gestureDetectorBridge = React.useRef<GestureDetectorBridge>({
+    stackUseEffectCallback: _stackRef => {
+      // this method will be overriden in GestureDetector
+    },
+  });
+
   // freezes all screens except the top one
   const childrenWithFreeze = React.Children.map(children, (child, index) => {
     // @ts-expect-error it's either SceneView in v6 or RouteView in v5
@@ -45,9 +62,18 @@ function ScreenStack(props: ScreenStackProps) {
     }
   });
   return (
-    <NativeScreenStack {...rest} ref={ref}>
-      {childrenWithFreeze}
-    </NativeScreenStack>
+    <ScreenGestureDetector
+      gestureDetectorBridge={gestureDetectorBridge}
+      goBackGesture={goBackGesture}
+      transitionAnimation={transitionAnimation}
+      screenEdgeGesture={screenEdgeGesture ?? false}
+      screensRefs={screensRefs}
+      currentRouteKey={currentRouteKey}>
+      {/* TODO: fix types */}
+      <NativeScreenStack {...rest} ref={ref}>
+        {childrenWithFreeze}
+      </NativeScreenStack>
+    </ScreenGestureDetector>
   );
 }
 

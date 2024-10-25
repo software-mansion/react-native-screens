@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import {
   Animated,
   NativeSyntheticEvent,
@@ -501,8 +501,15 @@ export interface ScreenStackProps extends ViewProps {
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  gestureDetectorBridge?: React.MutableRefObject<GestureDetectorBridge>;
   ref?: React.MutableRefObject<React.Ref<View>>;
+  /**
+   * Props for custom screen transition (ScreenGestureDetector)
+   */
+  screensRefs: GestureProviderProps['screensRefs'];
+  currentRouteKey: GestureProviderProps['currentRouteKey'];
+  goBackGesture: GestureProviderProps['goBackGesture'];
+  screenEdgeGesture: GestureProviderProps['screenEdgeGesture'];
+  transitionAnimation: GestureProviderProps['transitionAnimation'];
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -807,3 +814,72 @@ export interface SearchBarProps {
    */
   shouldShowHintSearchIcon?: boolean;
 }
+
+/**
+ * Custom Screen Transition
+ */
+
+/**
+ * copy from GestureHandler to avoid strong dependency
+ */
+export type PanGestureHandlerEventPayload = {
+  x: number;
+  y: number;
+  absoluteX: number;
+  absoluteY: number;
+  translationX: number;
+  translationY: number;
+  velocityX: number;
+  velocityY: number;
+};
+
+/**
+ * copy from Reanimated to avoid strong dependency
+ */
+export type GoBackGesture =
+  | 'swipeRight'
+  | 'swipeLeft'
+  | 'swipeUp'
+  | 'swipeDown'
+  | 'verticalSwipe'
+  | 'horizontalSwipe'
+  | 'twoDimensionalSwipe';
+
+export interface MeasuredDimensions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  pageX: number;
+  pageY: number;
+}
+
+export type AnimatedScreenTransition = {
+  topScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>;
+  belowTopScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>;
+};
+
+export type ScreensRefsHolder = React.MutableRefObject<
+  Record<string, React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>>
+>;
+
+export type GestureProviderProps = PropsWithChildren<{
+  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
+  screensRefs: ScreensRefsHolder;
+  currentRouteKey: string;
+  goBackGesture?: GoBackGesture;
+  transitionAnimation?: AnimatedScreenTransition;
+  screenEdgeGesture?: boolean;
+}>;
+
+/** Contexts */
+
+export const GHContext = React.createContext(
+  (props: PropsWithChildren<GestureProviderProps>) => <>{props.children}</>,
+);
