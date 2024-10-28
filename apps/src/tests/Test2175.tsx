@@ -139,6 +139,7 @@ function App(): React.JSX.Element {
           component={ModalScreen}
           options={{
             presentation: 'modal',
+            headerShown: true,
           }}
         />
         <Stack.Screen name={"ForeignModal"} component={ForeignModal} />
