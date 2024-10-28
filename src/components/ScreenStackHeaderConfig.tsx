@@ -115,6 +115,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    // We only want to center align the subviews on iOS.
+    // See https://github.com/software-mansion/react-native-screens/pull/2456
     alignItems: Platform.OS === 'ios' ? 'center' : undefined,
   },
 });
