@@ -20,6 +20,8 @@ open class CustomToolbar(
         object : ChoreographerCompat.FrameCallback() {
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
+                // The following measure specs are selected to work only with Android APIs <= 29.
+                // See https://github.com/software-mansion/react-native-screens/pull/2439
                 measure(
                     MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST),
                     MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST),
