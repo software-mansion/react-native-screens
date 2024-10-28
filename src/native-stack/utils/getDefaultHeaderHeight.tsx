@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { StackPresentationTypes } from 'react-native-screens';
+import { StackPresentationTypes } from '../../types';
 type Layout = { width: number; height: number };
 
 const formSheetModalHeight = 56;

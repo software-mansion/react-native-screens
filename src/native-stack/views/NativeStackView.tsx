@@ -5,14 +5,11 @@ import { Animated, Platform, StyleSheet, ViewProps } from 'react-native';
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
-import {
-  ScreenStack,
-  StackPresentationTypes,
-  ScreenContext,
-  GHContext,
-  GestureDetectorBridge,
-  ScreenContentWrapper,
-} from 'react-native-screens';
+import { StackPresentationTypes, GestureDetectorBridge } from '../../types';
+import ScreenStack from '../../components/ScreenStack';
+import ScreenContentWrapper from '../../components/ScreenContentWrapper';
+import { GHContext } from '../contexts/GHContext';
+import { ScreenContext } from '../../components/Screen';
 import {
   ParamListBase,
   StackActions,

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Platform } from 'react-native';
+import { InnerScreen } from '../components/Screen';
 import {
   HeaderHeightChangeEventType,
-  InnerScreen,
   ScreenProps,
   TransitionProgressEventType,
-} from 'react-native-screens';
+} from '../types';
 
 // @ts-ignore file to be used only if `react-native-reanimated` available in the project
 import Animated, { useEvent, useSharedValue } from 'react-native-reanimated';

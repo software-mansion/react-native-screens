@@ -5,8 +5,15 @@ import {
   HeaderSubviewTypes,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-} from 'react-native-screens';
-import { Image, ImageProps, StyleSheet, ViewProps } from 'react-native';
+} from '../types';
+import {
+  Image,
+  ImageProps,
+  Platform,
+  StyleSheet,
+  View,
+  ViewProps,
+} from 'react-native';
 
 // Native components
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
@@ -16,17 +23,19 @@ export const ScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 > = ScreenStackHeaderSubviewNativeComponent as any;
 
-export function ScreenStackHeaderConfig(
-  props: ScreenStackHeaderConfigProps,
-): React.JSX.Element {
-  return (
-    <ScreenStackHeaderConfigNativeComponent
-      {...props}
-      style={styles.headerConfig}
-      pointerEvents="box-none"
-    />
-  );
-}
+export const ScreenStackHeaderConfig = React.forwardRef<
+  View,
+  ScreenStackHeaderConfigProps
+>((props, ref) => (
+  <ScreenStackHeaderConfigNativeComponent
+    {...props}
+    ref={ref}
+    style={styles.headerConfig}
+    pointerEvents="box-none"
+  />
+));
+
+ScreenStackHeaderConfig.displayName = 'ScreenStackHeaderConfig';
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,
@@ -106,6 +115,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    // We only want to center align the subviews on iOS.
+    // See https://github.com/software-mansion/react-native-screens/pull/2456
+    alignItems: Platform.OS === 'ios' ? 'center' : undefined,
   },
 });
