@@ -25,6 +25,7 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
+#import "utils/UINavigationBar+RNSUtility.h"
 
 #import "UIView+RNSUtility.h"
 
@@ -82,6 +83,8 @@ namespace react = facebook::react;
     if (![screenController hasNestedStack] && isNotDismissingModal) {
       [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
+
+    [self maybeUpdateHeaderInsetsInShadowTreeForScreen:screenController];
   }
 }
 
@@ -93,6 +96,35 @@ namespace react = facebook::react;
 - (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
 {
   return [self topViewController];
+}
+
+- (void)maybeUpdateHeaderInsetsInShadowTreeForScreen:(RNSScreen *)screenController
+{
+  // This might happen e.g. if there is only native title present in navigation bar.
+  if (self.navigationBar.subviews.count < 2) {
+    return;
+  }
+
+  auto headerConfig = screenController.screenView.findHeaderConfig;
+  if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible) {
+    return;
+  }
+
+  NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
+  NSDirectionalEdgeInsets navBarContentMargins =
+      [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
+
+  BOOL isDisplayingBackButton = [headerConfig shouldBackButtonBeVisibleInNavigationBar:self.navigationBar];
+
+  // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
+  UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;
+  CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
+
+  [headerConfig updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
+                                                     .leading = navBarMargins.leading + navBarContentMargins.leading +
+                                                         (isDisplayingBackButton ? platformBackButtonWidth : 0),
+                                                     .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+                                                 }];
 }
 #endif
 
@@ -120,6 +152,13 @@ namespace react = facebook::react;
   UIPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
+#ifdef RCT_NEW_ARCH_ENABLED
+  /// Screens that are subject of `ShadowViewMutation::Type::Delete` mutation
+  /// in current transaction. This vector should be populated when we receive notification via
+  /// `RCTMountingObserving` protocol, that a transaction will be performed, and should
+  /// be cleaned up when we're notified that the transaction has been completed.
+  std::vector<__strong RNSScreenView *> _toBeDeletedScreens;
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -641,7 +680,7 @@ namespace react = facebook::react;
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
-    if (!screen.dismissed && screen.controller != nil) {
+    if (!screen.dismissed && screen.controller != nil && screen.activityState != RNSActivityStateInactive) {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
@@ -914,7 +953,8 @@ namespace react = facebook::react;
 
 - (void)markChildUpdated
 {
-  // do nothing
+  // In native stack this should be called only for `preload` purposes.
+  [self updateContainer];
 }
 
 - (void)didUpdateChildren
@@ -1118,6 +1158,16 @@ namespace react = facebook::react;
   // `- [RNSScreenStackView mountingTransactionDidMount: withSurfaceTelemetry:]`
 }
 
+- (nullable RNSScreenView *)childScreenForTag:(react::Tag)tag
+{
+  for (RNSScreenView *child in _reactSubviews) {
+    if (child.tag == tag) {
+      return child;
+    }
+  }
+  return nil;
+}
+
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
@@ -1151,6 +1201,20 @@ namespace react = facebook::react;
   [screenChildComponent removeFromSuperview];
 }
 
+- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
+                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  for (const auto &mutation : transaction.getMutations()) {
+    if (mutation.type == react::ShadowViewMutation::Delete) {
+      RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
+      if (toBeRemovedChild != nil) {
+        [toBeRemovedChild willBeUnmountedInUpcomingTransaction];
+        _toBeDeletedScreens.push_back(toBeRemovedChild);
+      }
+    }
+  }
+}
+
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
@@ -1166,6 +1230,21 @@ namespace react = facebook::react;
       });
       break;
     }
+  }
+
+  if (!self->_toBeDeletedScreens.empty()) {
+    __weak RNSScreenStackView *weakSelf = self;
+    // We want to run after container updates are performed (transitions etc.)
+    dispatch_async(dispatch_get_main_queue(), ^{
+      RNSScreenStackView *_Nullable strongSelf = weakSelf;
+      if (strongSelf == nil) {
+        return;
+      }
+      for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
+        [screenRef invalidate];
+      }
+      strongSelf->_toBeDeletedScreens.clear();
+    });
   }
 }
 

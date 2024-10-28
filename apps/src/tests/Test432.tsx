@@ -1,72 +1,133 @@
-import { Pressable, View, Button, Text } from 'react-native';
-
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { View, Button, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   NativeStackScreenProps,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import React, { useCallback } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Square } from '../shared';
 
-type RootStackParamList = {
+type StackParamList = {
   Home: undefined;
+  Details: undefined;
   Settings: undefined;
+  Info: undefined;
 };
-type RootStackScreenProps<T extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, T>;
-const HomeScreen = ({ navigation }: RootStackScreenProps<'Home'>) => {
-  const showSettings = useCallback(() => {
-    navigation.navigate('Settings');
-  }, [navigation]);
+
+type StackScreenProps<T extends keyof StackParamList> = NativeStackScreenProps<
+  StackParamList,
+  T
+>;
+
+const HomeScreen = ({ navigation }: StackScreenProps<'Home'>) => {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button onPress={showSettings} title={'Show settings'} />
+      <Button
+        title={'Go to details'}
+        onPress={() => navigation.navigate('Details')}
+      />
+      <Button
+        title={'Go to info'}
+        onPress={() => navigation.navigate('Info')}
+      />
+      <Button
+        title={'Show settings'}
+        onPress={() => navigation.navigate('Settings')}
+      />
     </View>
   );
 };
 
-const SettingsScreen = ({ navigation }: RootStackScreenProps<'Settings'>) => {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Settings</Text>
+const DetailsScreen = ({ navigation }: StackScreenProps<'Details'>) => {
+  const [x, setX] = useState(false);
+  useEffect(() => {
+    navigation.setOptions({
+      headerBackVisible: !x,
+      headerRight: () =>
+        x ? <Square size={20} color="green" /> : <Square size={10} />,
+    });
+  }, [navigation, x]);
+
+  return <Button title="Toggle subviews" onPress={() => setX(prev => !prev)} />;
+};
+
+const SettingsScreen = () => {
+  return <Text>Settings</Text>;
+};
+
+const InfoScreen = ({ navigation }: StackScreenProps<'Info'>) => {
+  const [hasLeftItem, setHasLeftItem] = useState(false);
+
+  const square1 = (props: { tintColor?: string }) => (
+    <View style={{ gap: 8, flexDirection: 'row' }}>
+      {hasLeftItem && <Square {...props} color="green" size={20} />}
+      <Square {...props} color="green" size={20} />
     </View>
+  );
+
+  const square2 = (props: { tintColor?: string }) => (
+    <Square {...props} color="red" size={20} />
+  );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: square1,
+      headerTitle: undefined,
+      headerLeft: hasLeftItem ? square2 : undefined,
+    });
+  }, [navigation, hasLeftItem]);
+
+  return (
+    <Button
+      title="Toggle subviews"
+      onPress={() => setHasLeftItem(prev => !prev)}
+    />
   );
 };
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
-const RootNavigator = () => {
-  const navigation = useNavigation();
-  const headerRight = useCallback(
-    () => (
-      <Pressable
-        onPress={() => {
-          navigation.goBack();
-        }}>
-        <Text>Close</Text>
-      </Pressable>
-    ),
-    [navigation],
-  );
+const Stack = createNativeStackNavigator<StackParamList>();
+
+const StackNavigator = () => {
   return (
-    <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      <RootStack.Screen name="Home" component={HomeScreen} />
-      <RootStack.Screen
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerRight: () => <Square size={20} color="black" />,
+        }}
+      />
+      <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Screen
+        name="Info"
+        component={InfoScreen}
+        options={{
+          headerTintColor: 'hotpink',
+        }}
+      />
+      <Stack.Screen
         name="Settings"
         component={SettingsScreen}
         options={{
           presentation: 'modal',
           animation: 'slide_from_bottom',
-          headerShown: true,
-          headerRight: headerRight,
+          headerRight: () => <Square size={30} />,
         }}
       />
-    </RootStack.Navigator>
+    </Stack.Navigator>
   );
 };
+
+const Tabs = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <RootNavigator />
+      <Tabs.Navigator screenOptions={{ headerShown: false }}>
+        <Tabs.Screen name="First" component={StackNavigator} />
+        <Tabs.Screen name="Second" component={StackNavigator} />
+      </Tabs.Navigator>
     </NavigationContainer>
   );
 }

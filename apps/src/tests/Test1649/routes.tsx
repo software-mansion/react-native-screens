@@ -10,8 +10,7 @@ import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import ModalScreen from './screens/ModalScreen';
 import PushWithScrollView from './screens/PushWithScrollView';
 import SheetScreenWithTextInput from './screens/SheetScreenWithTextInput';
-import { NativeStackNavigationOptions } from 'react-native-screens/native-stack';
-import { NativeSyntheticEvent } from 'react-native';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 export type RouteDescriptor = {
   name: string,
@@ -28,7 +27,7 @@ const routes: Record<string, RouteDescriptor> = {
     name: "Second",
     component: Second,
     options: {
-      fullScreenSwipeEnabled: true,
+      fullScreenGestureEnabled: true,
     },
   },
   Third: {
@@ -36,7 +35,7 @@ const routes: Record<string, RouteDescriptor> = {
     component: Third,
     options: {
       headerShown: true,
-      fullScreenSwipeEnabled: true,
+      fullScreenGestureEnabled: true,
     },
   },
   Sheet: {
@@ -44,7 +43,7 @@ const routes: Record<string, RouteDescriptor> = {
     component: SheetScreen,
     options: {
       headerShown: false,
-      stackPresentation: 'formSheet',
+      presentation: 'formSheet',
       sheetElevation: 24,
       unstable_screenStyle: {
         backgroundColor: 'firebrick',
@@ -57,7 +56,7 @@ const routes: Record<string, RouteDescriptor> = {
     component: ModalScreen,
     options: {
       headerShown: false,
-      stackPresentation: 'modal',
+      presentation: 'modal',
       ...sheetInitialOptions,
     },
   },
@@ -66,7 +65,7 @@ const routes: Record<string, RouteDescriptor> = {
     component: SheetScreenWithScrollView,
     options: {
       headerShown: false,
-      stackPresentation: 'formSheet',
+      presentation: 'formSheet',
       ...sheetInitialOptions,
     },
   },
@@ -75,7 +74,7 @@ const routes: Record<string, RouteDescriptor> = {
     component: SheetScreenWithTextInput,
     options: {
       headerShown: false,
-      stackPresentation: 'formSheet',
+      presentation: 'formSheet',
       ...sheetInitialOptions,
     },
   },
