@@ -6,7 +6,14 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from '../types';
-import { Image, ImageProps, StyleSheet, View, ViewProps } from 'react-native';
+import {
+  Image,
+  ImageProps,
+  Platform,
+  StyleSheet,
+  View,
+  ViewProps,
+} from 'react-native';
 
 // Native components
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
@@ -108,7 +115,6 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    minHeight: '100%',
+    alignItems: Platform.OS === 'ios' ? 'center' : undefined,
   },
 });
