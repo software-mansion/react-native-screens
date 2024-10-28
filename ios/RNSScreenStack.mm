@@ -1273,43 +1273,25 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _invalidated = YES;
-  [self oldInvalidateImpl];
-  //  [self newInvalidateImpl];
-}
-
-- (void)dismissAllPresentedViewControllersFrom:(UIViewController *)viewController completion:(void (^)(void))completion
-{
-  if (viewController.presentedViewController) {
-    [viewController.presentedViewController
-        dismissViewControllerAnimated:YES
-                           completion:^{
-                             [self dismissAllPresentedViewControllersFrom:viewController completion:completion];
-                           }];
-  } else {
-    completion();
-  }
-}
-
-- (void)oldInvalidateImpl
-{
-  for (UIViewController *controller in _presentedModals) {
-    [controller dismissViewControllerAnimated:NO completion:nil];
-  }
-  [_presentedModals removeAllObjects];
+  [self dismissAllRelatedModals];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
 }
 
-- (void)newInvalidateImpl
+// This method aims to dismiss all modals for which presentation process
+// has been initiated in this navigation controller, i. e. either a Screen
+// with modal presentation or foreign modal presented from inside a Screen.
+- (void)dismissAllRelatedModals
 {
-  [self dismissAllPresentedViewControllersFrom:_controller
-                                    completion:^{
-                                      // Ensure presented modals are removed and the controller is detached from its
-                                      // parent
-                                      [self->_presentedModals removeAllObjects];
-                                      [self->_controller willMoveToParentViewController:nil];
-                                      [self->_controller removeFromParentViewController];
-                                    }];
+  [_controller dismissViewControllerAnimated:NO completion:nil];
+
+  // This loop seems to be excessive. Above message send to `_controller` should
+  // be enough, because system dismisses the controllers recursively,
+  // however better safe than sorry & introduce a regression, thus it is left here.
+  for (UIViewController *controller in [_presentedModals reverseObjectEnumerator]) {
+    [controller dismissViewControllerAnimated:NO completion:nil];
+  }
+  [_presentedModals removeAllObjects];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
