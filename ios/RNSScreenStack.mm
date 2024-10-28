@@ -1273,12 +1273,25 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _invalidated = YES;
-  for (UIViewController *controller in _presentedModals) {
+  [self dismissAllRelatedModals];
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
+}
+
+// This method aims to dismiss all modals for which presentation process
+// has been initiated in this navigation controller, i. e. either a Screen
+// with modal presentation or foreign modal presented from inside a Screen.
+- (void)dismissAllRelatedModals
+{
+  [_controller dismissViewControllerAnimated:NO completion:nil];
+
+  // This loop seems to be excessive. Above message send to `_controller` should
+  // be enough, because system dismisses the controllers recursively,
+  // however better safe than sorry & introduce a regression, thus it is left here.
+  for (UIViewController *controller in [_presentedModals reverseObjectEnumerator]) {
     [controller dismissViewControllerAnimated:NO completion:nil];
   }
   [_presentedModals removeAllObjects];
-  [_controller willMoveToParentViewController:nil];
-  [_controller removeFromParentViewController];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
