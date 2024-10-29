@@ -6,7 +6,14 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from '../types';
-import { Image, ImageProps, StyleSheet, View, ViewProps } from 'react-native';
+import {
+  Image,
+  ImageProps,
+  Platform,
+  StyleSheet,
+  View,
+  ViewProps,
+} from 'react-native';
 
 // Native components
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
@@ -108,6 +115,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    // We only want to center align the subviews on iOS.
+    // See https://github.com/software-mansion/react-native-screens/pull/2456
+    alignItems: Platform.OS === 'ios' ? 'center' : undefined,
   },
 });

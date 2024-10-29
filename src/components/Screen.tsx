@@ -373,15 +373,12 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
 // e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
 export const ScreenContext = React.createContext(InnerScreen);
 
-const Screen =  React.forwardRef<View, ScreenProps>(
-  (props, ref) => {
-    const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
+const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
+  const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
-    return <ScreenWrapper {...props} ref={ref} />;
-  }
-);
+  return <ScreenWrapper {...props} ref={ref} />;
+});
 
 Screen.displayName = 'Screen';
-
 
 export default Screen;

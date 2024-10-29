@@ -7,10 +7,9 @@ import DelayedFreeze from './helpers/DelayedFreeze';
 import warnOnce from 'warn-once';
 
 // Native components
-import ScreenStackNativeComponent from '../fabric/ScreenStackNativeComponent';
-
-const NativeScreenStack: React.ComponentType<ScreenStackProps> =
-  ScreenStackNativeComponent as any;
+import ScreenStackNativeComponent, {
+  NativeProps,
+} from '../fabric/ScreenStackNativeComponent';
 
 function isFabric() {
   return 'nativeFabricUIManager' in global;
@@ -76,9 +75,19 @@ function ScreenStack(props: ScreenStackProps) {
         screensRefs={screensRefs}
         currentScreenId={currentScreenId}>
         {/* TODO: fix types */}
-        <NativeScreenStack {...rest} ref={ref}>
+        <ScreenStackNativeComponent
+          /**
+           * This messy override is to conform NativeProps used by codegen and
+           * our Public API. To see reasoning go to this PR:
+           * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
+           */
+          {...rest}
+          onFinishTransitioning={
+            props.onFinishTransitioning as NativeProps['onFinishTransitioning']
+          }
+          ref={ref}>
           {childrenWithFreeze}
-        </NativeScreenStack>
+        </ScreenStackNativeComponent>
       </ScreenGestureDetector>
     );
   }
@@ -100,9 +109,19 @@ function ScreenStack(props: ScreenStackProps) {
   );
 
   return (
-    <NativeScreenStack {...rest} ref={ref}>
+    <ScreenStackNativeComponent
+      {...rest}
+      /**
+       * This messy override is to conform NativeProps used by codegen and
+       * our Public API. To see reasoning go to this PR:
+       * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
+       */
+      onFinishTransitioning={
+        props.onFinishTransitioning as NativeProps['onFinishTransitioning']
+      }
+      ref={ref}>
       {childrenWithFreeze}
-    </NativeScreenStack>
+    </ScreenStackNativeComponent>
   );
 }
 
