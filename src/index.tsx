@@ -38,6 +38,11 @@ export { default as ScreenFooter } from './components/ScreenFooter';
 export { default as ScreenContentWrapper } from './components/ScreenContentWrapper';
 
 /**
+ * Modules
+ */
+export { default as NativeScreensModule } from './fabric/NativeScreensModule';
+
+/**
  * Contexts
  */
 export { GHContext } from './native-stack/contexts/GHContext';
