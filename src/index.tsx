@@ -34,6 +34,7 @@ export { default as NativeModules } from './fabric/NativeScreensModule';
 export { default as SearchBar } from './components/SearchBar';
 export { default as ScreenContainer } from './components/ScreenContainer';
 export { default as ScreenStack } from './components/ScreenStack';
+export { default as ScreenStackItem } from './components/ScreenStackItem';
 export { default as FullWindowOverlay } from './components/FullWindowOverlay';
 export { default as ScreenFooter } from './components/ScreenFooter';
 export { default as ScreenContentWrapper } from './components/ScreenContentWrapper';
