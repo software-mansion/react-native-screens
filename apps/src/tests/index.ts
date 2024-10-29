@@ -116,6 +116,7 @@ export { default as Test2320 } from './Test2320';
 export { default as Test2332 } from './Test2332';
 export { default as Test2379 } from './Test2379';
 export { default as Test2395 } from './Test2395';
+export { default as Test2462 } from './Test2462';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestHeader } from './TestHeader';
 export { default as TestPreload } from './TestPreload';
