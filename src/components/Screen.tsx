@@ -2,6 +2,10 @@
 
 import React from 'react';
 import { Animated, View, Platform } from 'react-native';
+import {
+  controlEdgeToEdgeValues,
+  isEdgeToEdge,
+} from 'react-native-is-edge-to-edge';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -48,6 +52,8 @@ interface ViewConfig extends View {
     };
   };
 }
+
+const EDGE_TO_EDGE = isEdgeToEdge();
 
 // This value must be kept in sync with native side.
 const SHEET_FIT_TO_CONTENTS = [-1];
@@ -178,8 +184,24 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       enabled = screensEnabled(),
       freezeOnBlur = freezeEnabled(),
       shouldFreeze,
+
+      // edge-to-edge related props
+      navigationBarColor,
+      navigationBarTranslucent,
+      statusBarColor,
+      statusBarTranslucent,
+
       ...rest
     } = props;
+
+    if (__DEV__) {
+      controlEdgeToEdgeValues({
+        navigationBarColor,
+        navigationBarTranslucent,
+        statusBarColor,
+        statusBarTranslucent,
+      });
+    }
 
     // To maintain default behavior of formSheet stack presentation style and to have reasonable
     // defaults for new medium-detent iOS API we need to set defaults here
@@ -290,6 +312,10 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         <DelayedFreeze freeze={freeze}>
           <AnimatedScreen
             {...props}
+            navigationBarColor={EDGE_TO_EDGE ? undefined : navigationBarColor}
+            navigationBarTranslucent={EDGE_TO_EDGE || navigationBarTranslucent}
+            statusBarColor={EDGE_TO_EDGE ? undefined : statusBarColor}
+            statusBarTranslucent={EDGE_TO_EDGE || statusBarTranslucent}
             /**
              * This messy override is to conform NativeProps used by codegen and
              * our Public API. To see reasoning go to this PR:
