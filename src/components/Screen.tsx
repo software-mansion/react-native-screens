@@ -14,23 +14,20 @@ import {
 } from '../core';
 
 // Native components
-import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
-import ModalScreenNativeComponent from '../fabric/ModalScreenNativeComponent';
+import ScreenNativeComponent, {
+  NativeProps as ScreenNativeComponentProps,
+} from '../fabric/ScreenNativeComponent';
+import ModalScreenNativeComponent, {
+  NativeProps as ModalScreenNativeComponentProps,
+} from '../fabric/ModalScreenNativeComponent';
 import { usePrevious } from './helpers/usePrevious';
 
-type NativeScreenProps = Omit<
-  ScreenProps,
-  'sheetInitialDetentIndex' | 'sheetLargestUndimmedDetentIndex'
-> & {
-  sheetInitialDetent: number;
-  sheetLargestUndimmedDetent: number;
-};
-
-export const NativeScreen: React.ComponentType<NativeScreenProps> =
-  ScreenNativeComponent as React.ComponentType<NativeScreenProps>;
-const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
+type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
+const AnimatedNativeScreen = Animated.createAnimatedComponent(
+  ScreenNativeComponent,
+);
 const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
-  ModalScreenNativeComponent as React.ComponentType<NativeScreenProps>,
+  ModalScreenNativeComponent,
 );
 
 // Incomplete type, all accessible properties available at:
@@ -196,6 +193,11 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetInitialDetentIndex = 0,
       // Other
       stackPresentation,
+      // Events for override
+      onAppear,
+      onDisappear,
+      onWillAppear,
+      onWillDisappear,
     } = rest;
 
     if (enabled && isNativePlatformSupported) {
@@ -273,6 +275,22 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen
             {...props}
+            /**
+             * This messy override is to conform NativeProps used by codegen and
+             * our Public API. To see reasoning go to this PR:
+             * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
+             */
+            onAppear={onAppear as NativeProps['onAppear']}
+            onDisappear={onDisappear as NativeProps['onDisappear']}
+            onWillAppear={onWillAppear as NativeProps['onWillAppear']}
+            onWillDisappear={onWillDisappear as NativeProps['onWillDisappear']}
+            onGestureCancel={
+              (onGestureCancel as NativeProps['onGestureCancel']) ??
+              (() => {
+                // for internal use
+              })
+            }
+            //
             // Hierarchy of screens is handled on the native side and setting zIndex value causes this issue:
             // https://github.com/software-mansion/react-native-screens/issues/2345
             // With below change of zIndex, we force RN diffing mechanism to NOT include detaching and attaching mutation in one transaction.
@@ -310,12 +328,6 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
                     ],
                     { useNativeDriver: true },
                   )
-            }
-            onGestureCancel={
-              onGestureCancel ??
-              (() => {
-                // for internal use
-              })
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
@@ -361,10 +373,12 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
 // e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
 export const ScreenContext = React.createContext(InnerScreen);
 
-const Screen: React.FC<ScreenProps> = props => {
+const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
-  return <ScreenWrapper {...props} />;
-};
+  return <ScreenWrapper {...props} ref={ref} />;
+});
+
+Screen.displayName = 'Screen';
 
 export default Screen;

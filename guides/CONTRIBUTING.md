@@ -142,7 +142,7 @@ When your code changes are ready, it is time to open your Pull Request. GitHub a
 Currently, native stack is both in `react-native-screens` and `react-navigation`. `react-native-screens` contains native-stack v5 (`src/native-stack`), newer versions (v6, v7) are moved to `react-navigation` (available on branches `main`, `6.x`), hence in some cases it is necessary to prepare a pull request for `react-navigation` alongside the `react-native-screens` changes.
 
 > [!CAUTION]
-> Currently, in this setup we have some code duplications that we're aware of. We're planning to deprecate native-stack v5 soon and remove it from react-native-screens.
+> Currently, in this setup we have some code duplications that we're aware of. NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens v4 will support only @react-navigation/native-stack v7.
 
 #### Changes in native code
 
