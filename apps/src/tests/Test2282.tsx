@@ -34,10 +34,10 @@ function Home({ navigation }: any) {
 
 function ListScreen() {
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: 'slateblue' }}>
       <ParentFlatlist />
       <ParentFlatlist horizontal />
-    </>
+    </View>
   );
 }
 
@@ -98,7 +98,7 @@ const Stack = createNativeStackNavigator();
 export default function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ animation: 'slide_from_right' }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="List" component={ListScreen} />
       </Stack.Navigator>
