@@ -1,8 +1,6 @@
 'use strict';
 /* eslint-disable */
 
-import { NativeStackNavigatorProps } from '../native-stack/types';
-
 type LocalGlobal = typeof global & Record<string, unknown>;
 
 export function isFabric() {
@@ -21,7 +19,7 @@ let getInternalInstanceHandleFromPublicInstance: (ref: unknown) => {
 
 // Taken and modifies from reanimated
 export function getShadowNodeWrapperAndTagFromRef(
-  ref: React.Ref<NativeStackNavigatorProps> | React.Component,
+  ref: React.Ref<React.Component>,
 ): { shadowNodeWrapper: ShadowNodeWrapper; tag: number } {
   // load findHostInstance_DEPRECATED lazily because it may not be available before render
   if (findHostInstance_DEPRECATED === undefined) {
