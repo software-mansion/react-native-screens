@@ -13,6 +13,9 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.5;
 // and it looks the most similar to the value used by Apple
 static constexpr float RNSShadowViewMaxAlpha = 0.1;
 static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
+// static constexpr UIViewAnimationOptions RNSUIViewAnimationOptionsCommon = UIViewAnimationOptionCurveEaseInOut;
+static constexpr UIViewAnimationOptions RNSUIViewAnimationOptionsCommon = 7 << 16;
+// static constexpr UIViewAnimationOptions RNSUIViewAnimationOptionsCommon = UIViewAnimationOptionCurveLinear;
 
 @implementation RNSScreenStackAnimator {
   UINavigationControllerOperation _operation;
@@ -129,24 +132,33 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
       shadowView.alpha = 0.0;
     }
 
-    [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        delay:0
-        options:UIViewAnimationOptionCurveDefaultTransition
-        animations:^{
-          fromViewController.view.transform = leftTransform;
-          toViewController.view.transform = CGAffineTransformIdentity;
-          if (shadowView) {
-            shadowView.alpha = RNSShadowViewMaxAlpha;
-          }
-        }
-        completion:^(BOOL finished) {
-          if (shadowView) {
-            [shadowView removeFromSuperview];
-          }
-          fromViewController.view.transform = CGAffineTransformIdentity;
-          toViewController.view.transform = CGAffineTransformIdentity;
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
+    // Default curve provider is as defined below, however defined this way it ignores the `animationDuration` prop.
+    // Damping of 1.0 seems close enough.
+    // id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] init];
+
+    id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
+
+    UIViewPropertyAnimator *animator =
+        [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                        timingParameters:timingCurveProvider];
+
+    [animator addAnimations:^{
+      fromViewController.view.transform = leftTransform;
+      toViewController.view.transform = CGAffineTransformIdentity;
+      if (shadowView) {
+        shadowView.alpha = RNSShadowViewMaxAlpha;
+      }
+    }];
+
+    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+      if (shadowView) {
+        [shadowView removeFromSuperview];
+      }
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      toViewController.view.transform = CGAffineTransformIdentity;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+    [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
@@ -162,7 +174,7 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
         shadowView.alpha = 0.0;
       }
     };
-    void (^completionBlock)(BOOL) = ^(BOOL finished) {
+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
       if (shadowView) {
         [shadowView removeFromSuperview];
       }
@@ -172,18 +184,24 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     };
 
     if (!transitionContext.isInteractive) {
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                            delay:0
-                          options:UIViewAnimationOptionCurveDefaultTransition
-                       animations:animationBlock
-                       completion:completionBlock];
+      id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
+
+      UIViewPropertyAnimator *animator =
+          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                          timingParameters:timingCurveProvider];
+
+      [animator addAnimations:animationBlock];
+      [animator addCompletion:completionBlock];
+      [animator startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                            delay:0.0
-                          options:UIViewAnimationOptionCurveLinear
-                       animations:animationBlock
-                       completion:completionBlock];
+      UIViewPropertyAnimator *animator =
+          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                     curve:UIViewAnimationCurveLinear
+                                                animations:animationBlock];
+
+      [animator addCompletion:completionBlock];
+      [animator startAnimation];
     }
   }
 }
@@ -209,7 +227,7 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     [[transitionContext containerView] addSubview:toViewController.view];
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
         delay:0
-        options:UIViewAnimationOptionCurveDefaultTransition
+        options:RNSUIViewAnimationOptionsCommon
         animations:^{
           fromViewController.view.transform = leftTransform;
           toViewController.view.transform = CGAffineTransformIdentity;
@@ -236,7 +254,7 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     if (!transitionContext.isInteractive) {
       [UIView animateWithDuration:[self transitionDuration:transitionContext]
                             delay:0
-                          options:UIViewAnimationOptionCurveDefaultTransition
+                          options:RNSUIViewAnimationOptionsCommon
                        animations:animationBlock
                        completion:completionBlock];
     } else {
@@ -261,7 +279,7 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     toViewController.view.alpha = 0.0;
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
         delay:0
-        options:UIViewAnimationOptionCurveDefaultTransition
+        options:RNSUIViewAnimationOptionsCommon
         animations:^{
           toViewController.view.alpha = 1.0;
         }
@@ -274,7 +292,7 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
 
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
         delay:0
-        options:UIViewAnimationOptionCurveDefaultTransition
+        options:RNSUIViewAnimationOptionsCommon
         animations:^{
           fromViewController.view.alpha = 0.0;
         }
@@ -298,7 +316,7 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     [[transitionContext containerView] addSubview:toViewController.view];
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
         delay:0
-        options:UIViewAnimationOptionCurveDefaultTransition
+        options:RNSUIViewAnimationOptionsCommon
         animations:^{
           fromViewController.view.transform = CGAffineTransformIdentity;
           toViewController.view.transform = CGAffineTransformIdentity;
@@ -325,7 +343,7 @@ static const int UIViewAnimationOptionCurveDefaultTransition = 7 << 16;
     if (!transitionContext.isInteractive) {
       [UIView animateWithDuration:[self transitionDuration:transitionContext]
                             delay:0
-                          options:UIViewAnimationOptionCurveDefaultTransition
+                          options:RNSUIViewAnimationOptionsCommon
                        animations:animationBlock
                        completion:completionBlock];
     } else {
