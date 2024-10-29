@@ -866,7 +866,7 @@ export type AnimatedScreenTransition = {
 };
 
 export type ScreensRefsHolder = React.MutableRefObject<
-  Record<string, React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>>
+  Record<string, React.MutableRefObject<React.Ref<React.Component>>>
 >;
 
 export type GestureProviderProps = PropsWithChildren<{
