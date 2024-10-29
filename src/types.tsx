@@ -505,11 +505,11 @@ export interface ScreenStackProps extends ViewProps {
   /**
    * Props for custom screen transition (ScreenGestureDetector)
    */
-  screensRefs: GestureProviderProps['screensRefs'];
-  currentRouteKey: GestureProviderProps['currentRouteKey'];
-  goBackGesture: GestureProviderProps['goBackGesture'];
-  screenEdgeGesture: GestureProviderProps['screenEdgeGesture'];
-  transitionAnimation: GestureProviderProps['transitionAnimation'];
+  screensRefs?: GestureProviderProps['screensRefs'];
+  currentScreenId?: GestureProviderProps['currentScreenId'];
+  goBackGesture?: GestureProviderProps['goBackGesture'];
+  screenEdgeGesture?: GestureProviderProps['screenEdgeGesture'];
+  transitionAnimation?: GestureProviderProps['transitionAnimation'];
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -872,7 +872,7 @@ export type ScreensRefsHolder = React.MutableRefObject<
 export type GestureProviderProps = PropsWithChildren<{
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
   screensRefs: ScreensRefsHolder;
-  currentRouteKey: string;
+  currentScreenId: string;
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
   screenEdgeGesture?: boolean;

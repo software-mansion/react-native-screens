@@ -33,7 +33,7 @@ const ScreenGestureDetector = ({
   screenEdgeGesture,
   transitionAnimation: customTransitionAnimation,
   screensRefs,
-  currentRouteKey,
+  currentScreenId,
 }: GestureProviderProps) => {
   const sharedEvent = useSharedValue(DefaultEvent);
   const startingGesturePosition = useSharedValue(DefaultEvent);
@@ -87,7 +87,7 @@ const ScreenGestureDetector = ({
       }
     }
     screenTagToNodeWrapperUI.value = screenTagToNodeWrapper;
-  }, [currentRouteKey, goBackGesture]);
+  }, [currentScreenId, goBackGesture, screenTagToNodeWrapperUI]);
 
   function computeProgress(
     event: GestureUpdateEvent<PanGestureHandlerEventPayload>,

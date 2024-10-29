@@ -4,6 +4,7 @@ import React from 'react';
 import { GestureDetectorBridge, GHContext, ScreenStackProps } from '../types';
 import { freezeEnabled } from '../core';
 import DelayedFreeze from './helpers/DelayedFreeze';
+import warnOnce from 'warn-once';
 
 // Native components
 import ScreenStackNativeComponent from '../fabric/ScreenStackNativeComponent';
@@ -19,7 +20,7 @@ function ScreenStack(props: ScreenStackProps) {
   const {
     goBackGesture,
     screensRefs,
-    currentRouteKey,
+    currentScreenId,
     transitionAnimation,
     screenEdgeGesture,
     children,
@@ -58,24 +59,50 @@ function ScreenStack(props: ScreenStackProps) {
   });
 
   React.useEffect(() => {
-    if (gestureDetectorBridge) {
-      gestureDetectorBridge.current.stackUseEffectCallback(ref);
-    }
+    gestureDetectorBridge.current.stackUseEffectCallback(ref);
   });
 
+  if (
+    goBackGesture !== undefined &&
+    screensRefs !== undefined &&
+    currentScreenId !== undefined
+  ) {
+    return (
+      <ScreenGestureDetector
+        gestureDetectorBridge={gestureDetectorBridge}
+        goBackGesture={goBackGesture}
+        transitionAnimation={transitionAnimation}
+        screenEdgeGesture={screenEdgeGesture ?? false}
+        screensRefs={screensRefs}
+        currentScreenId={currentScreenId}>
+        {/* TODO: fix types */}
+        <NativeScreenStack {...rest} ref={ref}>
+          {childrenWithFreeze}
+        </NativeScreenStack>
+      </ScreenGestureDetector>
+    );
+  }
+
+  const isGestureDetectorProviderNotDetected =
+    ScreenGestureDetector.name !== 'GHWrapper' && goBackGesture !== undefined;
+  const isGestureDetectorNotConfiguredProperly =
+    goBackGesture !== undefined &&
+    screensRefs === undefined &&
+    currentScreenId === undefined;
+
+  warnOnce(
+    isGestureDetectorProviderNotDetected,
+    'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.',
+  );
+  warnOnce(
+    isGestureDetectorNotConfiguredProperly,
+    'Custom Screen Transition require screensRefs and currentScreenId to be provided.',
+  );
+
   return (
-    <ScreenGestureDetector
-      gestureDetectorBridge={gestureDetectorBridge}
-      goBackGesture={goBackGesture}
-      transitionAnimation={transitionAnimation}
-      screenEdgeGesture={screenEdgeGesture ?? false}
-      screensRefs={screensRefs}
-      currentRouteKey={currentRouteKey}>
-      {/* TODO: fix types */}
-      <NativeScreenStack {...rest} ref={ref}>
-        {childrenWithFreeze}
-      </NativeScreenStack>
-    </ScreenGestureDetector>
+    <NativeScreenStack {...rest} ref={ref}>
+      {childrenWithFreeze}
+    </NativeScreenStack>
   );
 }
 
