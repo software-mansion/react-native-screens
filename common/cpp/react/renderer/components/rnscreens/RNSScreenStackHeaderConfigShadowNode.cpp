@@ -11,8 +11,8 @@ namespace facebook {
         Point RNSScreenStackHeaderConfigShadowNode::getContentOriginOffset(
                 bool /*includeTransform*/) const {
             auto stateData = getStateData();
-            auto topInsetOffset = stateData.getPaddingTop();
-            return {0, topInsetOffset};
+            auto paddingTop = stateData.getPaddingTop();
+            return {0, paddingTop};
         }
     }
 }
