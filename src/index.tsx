@@ -1,3 +1,5 @@
+require('./fabric/NativeScreensModule');
+
 export * from './types';
 
 /**
@@ -30,7 +32,6 @@ export {
 } from './components/ScreenStackHeaderConfig';
 
 // NativeModules are not imported anywhere, but need to stay here so the TurboModule is registered
-export { default as NativeModules } from './fabric/NativeScreensModule';
 export { default as SearchBar } from './components/SearchBar';
 export { default as ScreenContainer } from './components/ScreenContainer';
 export { default as ScreenStack } from './components/ScreenStack';
