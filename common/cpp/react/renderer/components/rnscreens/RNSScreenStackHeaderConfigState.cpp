@@ -1,3 +1,4 @@
+
 #include "RNSScreenStackHeaderConfigState.h"
 
 namespace facebook {
@@ -17,6 +18,10 @@ Float RNSScreenStackHeaderConfigState::getPaddingStart() const noexcept {
 
 Float RNSScreenStackHeaderConfigState::getPaddingEnd() const noexcept {
   return paddingEnd_;
+}
+
+Float RNSScreenStackHeaderConfigState::getPaddingTop() const noexcept {
+  return paddingTop_;
 }
 
 } // namespace react

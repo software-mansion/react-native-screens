@@ -187,9 +187,9 @@ namespace react = facebook::react;
 
 - (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets
 {
-  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
+    if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing || _lastHeaderInsets.top != insets.top) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    auto newState = react::RNSScreenStackHeaderConfigState{insets.leading, insets.trailing};
+    auto newState = react::RNSScreenStackHeaderConfigState{insets.leading, insets.trailing, insets.top};
     _state->updateState(std::move(newState));
     _lastHeaderInsets = std::move(insets);
 #else

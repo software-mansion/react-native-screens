@@ -124,6 +124,7 @@ namespace react = facebook::react;
                                                      .leading = navBarMargins.leading + navBarContentMargins.leading +
                                                          (isDisplayingBackButton ? platformBackButtonWidth : 0),
                                                      .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+                                                     .top = self.navigationBar.frame.origin.y
                                                  }];
 }
 #endif

@@ -1,4 +1,5 @@
 #include "RNSScreenShadowNode.h"
+#include "RNSScreenStackHeaderConfigShadowNode.h"
 
 namespace facebook {
 namespace react {
@@ -118,7 +119,16 @@ void RNSScreenShadowNode::appendChild(const ShadowNode::Shared &child) {
 
 void RNSScreenShadowNode::layout(facebook::react::LayoutContext layoutContext) {
   YogaLayoutableShadowNode::layout(layoutContext);
-
+    
+    auto headerConfigChildOpt = findHeaderConfigChild(*this);
+    if (headerConfigChildOpt) {
+      auto headerConfigChildConst = std::dynamic_pointer_cast<const RNSScreenStackHeaderConfigShadowNode>(headerConfigChildOpt->get());
+      auto headerConfigChild = std::const_pointer_cast<RNSScreenStackHeaderConfigShadowNode>(headerConfigChildConst);
+      auto stateData = getStateData();
+      auto contentOffset = stateData.contentOffset;
+      headerConfigChild->layoutMetrics_.frame.origin.y = -contentOffset.y;
+    }
+    
 #ifdef ANDROID
   applyFrameCorrections();
 #endif // ANDROID

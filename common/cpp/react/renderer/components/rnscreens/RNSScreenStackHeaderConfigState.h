@@ -17,8 +17,8 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   RNSScreenStackHeaderConfigState() = default;
 
-  RNSScreenStackHeaderConfigState(Float paddingStart, Float paddingEnd)
-      : paddingStart_{paddingStart}, paddingEnd_{paddingEnd} {}
+  RNSScreenStackHeaderConfigState(Float paddingStart, Float paddingEnd, Float paddingTop)
+    : paddingStart_{paddingStart}, paddingEnd_{paddingEnd}, paddingTop_{paddingTop} {}
 
 #ifdef ANDROID
   RNSScreenStackHeaderConfigState(
@@ -41,10 +41,13 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
   [[nodiscard]] Float getPaddingStart() const noexcept;
 
   [[nodiscard]] Float getPaddingEnd() const noexcept;
+    
+  [[nodiscard]] Float getPaddingTop() const noexcept;
 
  private:
   Float paddingStart_{0.f};
   Float paddingEnd_{0.f};
+  Float paddingTop_{0.f};
 };
 
 } // namespace facebook::react
