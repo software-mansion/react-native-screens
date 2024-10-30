@@ -1,3 +1,7 @@
+// Side effects import declaration to ensure our TurboModule
+// is loaded.
+import './fabric/NativeScreensModule';
+
 export * from './types';
 
 /**
