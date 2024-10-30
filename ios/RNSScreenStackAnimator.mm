@@ -135,23 +135,33 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       [[transitionContext containerView] insertSubview:shadowView belowSubview:toViewController.view];
       shadowView.alpha = 0.0;
     }
-
-    [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        animations:^{
-          fromViewController.view.transform = leftTransform;
-          toViewController.view.transform = CGAffineTransformIdentity;
-          if (shadowView) {
-            shadowView.alpha = RNSShadowViewMaxAlpha;
-          }
-        }
-        completion:^(BOOL finished) {
-          if (shadowView) {
-            [shadowView removeFromSuperview];
-          }
-          fromViewController.view.transform = CGAffineTransformIdentity;
-          toViewController.view.transform = CGAffineTransformIdentity;
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
+    
+    // Default curve provider is as defined below, however spring timing defined this way
+    // ignores the requested duration of the animation, effectively impairing our `animationDuration` prop.
+    // Damping of 1.0 seems close enough and we keep `animationDuration` functional.
+    // id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] init];
+    
+    id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
+    UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext] timingParameters:timingCurveProvider];
+    
+    [animator addAnimations:^{
+      fromViewController.view.transform = leftTransform;
+      toViewController.view.transform = CGAffineTransformIdentity;
+      if (shadowView) {
+        shadowView.alpha = RNSShadowViewMaxAlpha;
+      }
+    }];
+    
+    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+      if (shadowView) {
+        [shadowView removeFromSuperview];
+      }
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      toViewController.view.transform = CGAffineTransformIdentity;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+    
+    [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
