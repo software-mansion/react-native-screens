@@ -40,7 +40,7 @@ export { default as ScreenContentWrapper } from './components/ScreenContentWrapp
 /**
  * Modules
  */
-export { default as NativeScreensModule } from './fabric/NativeScreensModule';
+export { default as NativeScreensModule_INTERNAL_DO_NOT_USE } from './fabric/NativeScreensModule';
 
 /**
  * Contexts
