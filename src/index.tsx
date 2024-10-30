@@ -40,6 +40,7 @@ export { default as ScreenContentWrapper } from './components/ScreenContentWrapp
 /**
  * Modules
  */
+/* eslint-disable camelcase */
 export { default as NativeScreensModule_INTERNAL_DO_NOT_USE } from './fabric/NativeScreensModule';
 
 /**
