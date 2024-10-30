@@ -135,15 +135,17 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       [[transitionContext containerView] insertSubview:shadowView belowSubview:toViewController.view];
       shadowView.alpha = 0.0;
     }
-    
+
     // Default curve provider is as defined below, however spring timing defined this way
     // ignores the requested duration of the animation, effectively impairing our `animationDuration` prop.
     // Damping of 1.0 seems close enough and we keep `animationDuration` functional.
     // id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] init];
-    
+
     id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
-    UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext] timingParameters:timingCurveProvider];
-    
+    UIViewPropertyAnimator *animator =
+        [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                        timingParameters:timingCurveProvider];
+
     [animator addAnimations:^{
       fromViewController.view.transform = leftTransform;
       toViewController.view.transform = CGAffineTransformIdentity;
@@ -151,7 +153,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
         shadowView.alpha = RNSShadowViewMaxAlpha;
       }
     }];
-    
+
     [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
       if (shadowView) {
         [shadowView removeFromSuperview];
@@ -160,7 +162,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
-    
+
     [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
