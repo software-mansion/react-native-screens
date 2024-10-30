@@ -1,4 +1,4 @@
-require('./fabric/NativeScreensModule'); // It needs to stay here so the TurboModule is registered
+import './fabric/NativeScreensModule'; // It needs to stay here so the TurboModule is registered
 
 export * from './types';
 

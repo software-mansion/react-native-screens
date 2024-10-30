@@ -570,7 +570,7 @@ export type NativeStackDescriptorMap = {
 };
 
 /**
- * Those blow copied to src/types.ts to be removed with next minor and native-stack v5 removal
+ * Those below copied to src/types.ts should be removed with next minor and native-stack v5 removal
  */
 
 /**

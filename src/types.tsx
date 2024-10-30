@@ -871,15 +871,9 @@ export type ScreensRefsHolder = React.MutableRefObject<
 
 export type GestureProviderProps = PropsWithChildren<{
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
-  screensRefs: ScreensRefsHolder;
-  currentScreenId: string;
+  screensRefs?: ScreensRefsHolder;
+  currentScreenId?: string;
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
   screenEdgeGesture?: boolean;
 }>;
-
-/** Contexts */
-
-export const GHContext = React.createContext(
-  (props: PropsWithChildren<GestureProviderProps>) => <>{props.children}</>,
-);

@@ -73,7 +73,7 @@ const ScreenGestureDetector = ({
   };
 
   useEffect(() => {
-    if (!IS_FABRIC || !goBackGesture) {
+    if (!IS_FABRIC || !goBackGesture || screensRefs === undefined) {
       return;
     }
     const screenTagToNodeWrapper: Record<string, Record<string, unknown>> = {};
@@ -87,7 +87,7 @@ const ScreenGestureDetector = ({
       }
     }
     screenTagToNodeWrapperUI.value = screenTagToNodeWrapper;
-  }, [currentScreenId, goBackGesture, screenTagToNodeWrapperUI]);
+  }, [currentScreenId, goBackGesture]);
 
   function computeProgress(
     event: GestureUpdateEvent<PanGestureHandlerEventPayload>,
