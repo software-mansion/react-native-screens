@@ -179,7 +179,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
         shadowView.alpha = 0.0;
       }
     };
-    void (^completionBlock)(BOOL) = ^(BOOL finished) {
+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
       if (shadowView) {
         [shadowView removeFromSuperview];
       }
@@ -189,16 +189,24 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     };
 
     if (!transitionContext.isInteractive) {
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                       animations:animationBlock
-                       completion:completionBlock];
+      id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
+
+      UIViewPropertyAnimator *animator =
+          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                          timingParameters:timingCurveProvider];
+
+      [animator addAnimations:animationBlock];
+      [animator addCompletion:completionBlock];
+      [animator startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                            delay:0.0
-                          options:UIViewAnimationOptionCurveLinear
-                       animations:animationBlock
-                       completion:completionBlock];
+      UIViewPropertyAnimator *animator =
+          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                     curve:UIViewAnimationCurveLinear
+                                                animations:animationBlock];
+
+      [animator addCompletion:completionBlock];
+      [animator startAnimation];
     }
   }
 }
