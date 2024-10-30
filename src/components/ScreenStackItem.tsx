@@ -22,14 +22,17 @@ type Props = Omit<
   contentStyle?: StyleProp<ViewStyle>;
 };
 
-function ScreenStackItem({
-  children,
-  headerConfig,
-  activityState,
-  stackPresentation,
-  contentStyle,
-  ...rest
-}: Props, ref: React.ForwardedRef<View>) {
+function ScreenStackItem(
+  {
+    children,
+    headerConfig,
+    activityState,
+    stackPresentation,
+    contentStyle,
+    ...rest
+  }: Props,
+  ref: React.ForwardedRef<View>,
+) {
   const isHeaderInModal =
     Platform.OS === 'android'
       ? false
@@ -42,7 +45,7 @@ function ScreenStackItem({
       Platform.OS !== 'android' &&
         stackPresentation !== 'push' &&
         headerHiddenPreviousRef.current !== headerConfig?.hidden,
-      `Dynamically changing header's visibility in modals will result in remounting the screen and losing all local state.`
+      `Dynamically changing header's visibility in modals will result in remounting the screen and losing all local state.`,
     );
 
     headerHiddenPreviousRef.current = headerConfig?.hidden;
@@ -59,8 +62,7 @@ function ScreenStackItem({
             : styles.container,
           contentStyle,
         ]}
-        stackPresentation={stackPresentation ?? 'push'}
-      >
+        stackPresentation={stackPresentation ?? 'push'}>
         {children}
       </DebugContainer>
       {/**
@@ -86,8 +88,7 @@ function ScreenStackItem({
       activityState={activityState}
       stackPresentation={stackPresentation}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
-      {...rest}
-    >
+      {...rest}>
       {isHeaderInModal ? (
         <ScreenStack style={styles.container}>
           <Screen
@@ -95,8 +96,7 @@ function ScreenStackItem({
             isNativeStack
             activityState={activityState}
             hasLargeHeader={headerConfig?.largeTitle ?? false}
-            style={StyleSheet.absoluteFill}
-          >
+            style={StyleSheet.absoluteFill}>
             {content}
           </Screen>
         </ScreenStack>
