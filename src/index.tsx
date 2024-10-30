@@ -1,4 +1,7 @@
-import './fabric/NativeScreensModule'; // It needs to stay here so the TurboModule is registered
+// Side effects import declaration to ensure our TurboModule
+// is loaded.
+import './fabric/NativeScreensModule';
+
 
 export * from './types';
 
