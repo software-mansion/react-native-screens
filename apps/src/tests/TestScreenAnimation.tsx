@@ -67,8 +67,7 @@ const App = (): JSX.Element => (
             name="ScreenB"
             component={ScreenB}
             options={{
-              // @ts-ignore: goBackGesture is not implemented yet in react-navigation
-              goBackGesture: 'twoDimensionalSwipe',
+              gestureType: 'twoDimensionalSwipe',
             }}
           />
           <Stack.Screen name="ScreenC" component={ScreenC} />

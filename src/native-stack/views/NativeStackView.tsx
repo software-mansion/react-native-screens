@@ -27,7 +27,6 @@ import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
-  NativeStackNavigatorProps,
   ScreensRefsHolder,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
@@ -474,7 +473,7 @@ function NativeStackViewInner({
   });
   type RefHolder = Record<
     string,
-    React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>
+    React.MutableRefObject<React.Ref<React.Component>>
   >;
   const screensRefs = React.useRef<RefHolder>({});
   const ScreenGestureDetector = React.useContext(GHContext);
