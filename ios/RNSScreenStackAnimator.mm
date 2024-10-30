@@ -4,11 +4,19 @@
 #import "RNSScreen.h"
 
 // proportions to default transition duration
-static const float RNSSlideOpenTransitionDurationProportion = 1;
-static const float RNSFadeOpenTransitionDurationProportion = 0.2 / 0.35;
-static const float RNSSlideCloseTransitionDurationProportion = 0.25 / 0.35;
-static const float RNSFadeCloseTransitionDurationProportion = 0.15 / 0.35;
-static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
+static constexpr NSTimeInterval RNSReferenceTransitionDurationForProportionInSeconds = 0.35;
+static constexpr NSTimeInterval RNSDefaultTransitionDuration = 0.5;
+
+static constexpr float RNSSlideOpenTransitionDurationProportion = 1;
+static constexpr float RNSFadeOpenTransitionDurationProportion =
+    0.2 / RNSReferenceTransitionDurationForProportionInSeconds;
+static constexpr float RNSSlideCloseTransitionDurationProportion =
+    0.25 / RNSReferenceTransitionDurationForProportionInSeconds;
+static constexpr float RNSFadeCloseTransitionDurationProportion =
+    0.15 / RNSReferenceTransitionDurationForProportionInSeconds;
+static constexpr float RNSFadeCloseDelayTransitionDurationProportion =
+    0.1 / RNSReferenceTransitionDurationForProportionInSeconds;
+
 // same value is used in other projects using similar approach for transistions
 // and it looks the most similar to the value used by Apple
 static constexpr float RNSShadowViewMaxAlpha = 0.1;
@@ -22,7 +30,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 {
   if (self = [super init]) {
     _operation = operation;
-    _transitionDuration = 0.35; // default duration in seconds
+    _transitionDuration = RNSDefaultTransitionDuration; // default duration in seconds
   }
   return self;
 }
