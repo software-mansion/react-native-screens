@@ -110,7 +110,7 @@ function ScreenStackItem(
             isNativeStack
             activityState={activityState}
             hasLargeHeader={headerConfig?.largeTitle ?? false}
-            style={[StyleSheet.absoluteFill, internalScreenStyle]}>
+            style={StyleSheet.absoluteFill}>
             {content}
           </Screen>
         </ScreenStack>
