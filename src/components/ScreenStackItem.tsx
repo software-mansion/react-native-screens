@@ -79,6 +79,9 @@ function ScreenStackItem(
        */}
       <ScreenStackHeaderConfig
         {...headerConfig}
+        // We want to ensure the header is hidden for the `formSheet` presentation on Android as it doesn't have one.
+        // Otherwise it's height may influence sheet contents layout in an unwanted way.
+        // See https://github.com/software-mansion/react-native-screens/pull/2462
         hidden={
           headerConfig?.hidden ||
           (stackPresentation === 'formSheet' && Platform.OS === 'android')
