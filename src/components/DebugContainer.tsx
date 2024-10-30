@@ -16,9 +16,9 @@ type ContainerProps = ViewProps & {
  * See https://github.com/software-mansion/react-native-screens/pull/1825
  * for detailed explanation.
  */
-let DebugContainer: React.ComponentType<ContainerProps> = (props) => {
+let DebugContainer: React.ComponentType<ContainerProps> = props => {
   return <ScreenContentWrapper {...props} />;
-}
+};
 
 if (process.env.NODE_ENV !== 'production') {
   // eslint-disable-next-line react/display-name
