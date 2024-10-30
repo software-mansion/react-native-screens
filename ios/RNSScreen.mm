@@ -1619,7 +1619,7 @@ RCT_ENUM_CONVERTER(
       @"medium" : @(RNSScreenDetentTypeMedium),
       @"all" : @(RNSScreenDetentTypeAll),
     }),
-    RNSScreenDetentTypeAll,
+    RNSScreenDetentTypeLarge,
     integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
