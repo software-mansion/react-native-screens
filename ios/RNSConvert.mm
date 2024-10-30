@@ -1,7 +1,7 @@
 #import "RNSConvert.h"
 
 #ifndef RCT_NEW_ARCH_ENABLED
-#import <react/RCTAssert.h>
+#import <React/RCTAssert.h>
 #endif // !RCT_NEW_ARCH_ENABLED
 
 @implementation RNSConvert
