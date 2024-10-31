@@ -865,13 +865,14 @@ export type AnimatedScreenTransition = {
   ) => Record<string, unknown>;
 };
 
-export type ScreensRefsHolder = React.MutableRefObject<
-  Record<string, React.MutableRefObject<React.Ref<React.Component>>>
+export type ScreensRefsHolder = Record<
+  string,
+  React.MutableRefObject<React.Ref<React.Component>>
 >;
 
 export type GestureProviderProps = PropsWithChildren<{
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
-  screensRefs?: ScreensRefsHolder;
+  screensRefs?: React.MutableRefObject<ScreensRefsHolder>;
   currentScreenId?: string;
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
