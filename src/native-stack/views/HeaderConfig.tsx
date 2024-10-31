@@ -1,6 +1,11 @@
 import { Route, useTheme } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform } from 'react-native';
+import { SearchBarProps } from '../../types';
+import {
+  isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
+} from '../../utils';
 import {
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
@@ -8,11 +13,8 @@ import {
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
   ScreenStackHeaderSearchBarView,
-  SearchBar,
-  SearchBarProps,
-  isSearchBarAvailableForCurrentPlatform,
-  executeNativeBackPress,
-} from 'react-native-screens';
+} from '../../components/ScreenStackHeaderConfig';
+import SearchBar from '../../components/SearchBar';
 import { NativeStackNavigationOptions } from '../types';
 import { useBackPressSubscription } from '../utils/useBackPressSubscription';
 import { processFonts } from './FontProcessor';
