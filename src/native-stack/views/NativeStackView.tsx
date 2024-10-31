@@ -1,6 +1,12 @@
 /* eslint-disable camelcase */
 import * as React from 'react';
-import { Animated, Platform, StyleSheet, ViewProps } from 'react-native';
+import {
+  Animated,
+  Platform,
+  StyleSheet,
+  ViewProps,
+  ViewStyle,
+} from 'react-native';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
@@ -68,18 +74,16 @@ const MaybeNestedStack = ({
   route,
   stackPresentation,
   children,
+  internalScreenStyle,
 }: {
   options: NativeStackNavigationOptions;
   route: Route<string>;
   stackPresentation: StackPresentationTypes;
   children: React.ReactNode;
+  internalScreenStyle?: Pick<ViewStyle, 'backgroundColor'>;
 }) => {
   const { colors } = useTheme();
-  const {
-    headerShown = true,
-    contentStyle,
-    unstable_screenStyle = null,
-  } = options;
+  const { headerShown = true, contentStyle } = options;
 
   const Screen = React.useContext(ScreenContext);
 
@@ -149,7 +153,7 @@ const MaybeNestedStack = ({
           enabled
           isNativeStack
           hasLargeHeader={hasLargeHeader}
-          style={[StyleSheet.absoluteFill, unstable_screenStyle]}>
+          style={[StyleSheet.absoluteFill, internalScreenStyle]}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -212,6 +216,7 @@ const RouteView = ({
     transitionDuration,
     freezeOnBlur,
     unstable_sheetFooter = null,
+    contentStyle,
   } = options;
 
   let {
@@ -221,14 +226,19 @@ const RouteView = ({
     gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
-    unstable_screenStyle = null,
   } = options;
 
-  // We only want to allow backgroundColor for now
-  unstable_screenStyle =
-    stackPresentation === 'formSheet' && unstable_screenStyle
-      ? { backgroundColor: unstable_screenStyle.backgroundColor }
-      : null;
+  // We take backgroundColor from contentStyle and apply it on Screen.
+  // This allows to workaround one issue with truncated
+  // content with formSheet presentation.
+  let internalScreenStyle;
+
+  if (stackPresentation === 'formSheet' && contentStyle) {
+    const flattenContentStyles = StyleSheet.flatten(contentStyle);
+    internalScreenStyle = {
+      backgroundColor: flattenContentStyles?.backgroundColor,
+    };
+  }
 
   if (sheetAllowedDetents === 'fitToContents') {
     sheetAllowedDetents = [-1];
@@ -312,7 +322,7 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={[StyleSheet.absoluteFill, unstable_screenStyle]}
+      style={[StyleSheet.absoluteFill, internalScreenStyle]}
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetentIndex={sheetLargestUndimmedDetentIndex}
       sheetGrabberVisible={sheetGrabberVisible}
@@ -430,7 +440,8 @@ const RouteView = ({
           <MaybeNestedStack
             options={options}
             route={route}
-            stackPresentation={stackPresentation}>
+            stackPresentation={stackPresentation}
+            internalScreenStyle={internalScreenStyle}>
             {renderScene()}
           </MaybeNestedStack>
           {/* HeaderConfig must not be first child of a Screen.

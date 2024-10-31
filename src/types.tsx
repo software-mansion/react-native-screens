@@ -7,7 +7,6 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
-  ViewStyle,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 
@@ -281,13 +280,6 @@ export interface ScreenProps extends ViewProps {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenOrientationTypes;
-  /**
-   * Allows to set background color for the `Screen` component itself.
-   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
-   *
-   * We plan to get rid of this prop once the workaround is no longer needed.
-   */
-  unstable_screenStyle?: Pick<ViewStyle, 'backgroundColor'>;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `presentation` is set to `formSheet`.
