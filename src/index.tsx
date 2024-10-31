@@ -2,7 +2,6 @@
 // is loaded.
 import './fabric/NativeScreensModule';
 
-
 export * from './types';
 
 /**
