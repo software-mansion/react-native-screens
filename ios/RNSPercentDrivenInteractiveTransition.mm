@@ -56,7 +56,7 @@
 
   BOOL shouldReverseAnimation = cancelled;
 
-  id<UITimingCurveProvider> timingParams = [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
+  id<UITimingCurveProvider> timingParams = [_animationController timingParamsForAnimationCompletion];
 
   [animator pauseAnimation];
   [animator setReversed:shouldReverseAnimation];

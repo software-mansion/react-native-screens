@@ -164,10 +164,9 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     // Damping of 1.0 seems close enough and we keep `animationDuration` functional.
     // id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] init];
 
-    id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
     UIViewPropertyAnimator *animator =
         [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                        timingParameters:timingCurveProvider];
+                                        timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
 
     [animator addAnimations:^{
       fromViewController.view.transform = leftTransform;
@@ -213,11 +212,9 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     };
 
     if (!transitionContext.isInteractive) {
-      id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
-
-      UIViewPropertyAnimator *animator =
-          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                          timingParameters:timingCurveProvider];
+      UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc]
+          initWithDuration:[self transitionDuration:transitionContext]
+          timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
 
       [animator addAnimations:animationBlock];
       [animator addCompletion:completionBlock];
@@ -464,6 +461,18 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 }
 
+#pragma mark - Public API
+
+- (nullable id<UITimingCurveProvider>)timingParamsForAnimationCompletion
+{
+  return [RNSScreenStackAnimator defaultSpringTimingParametersApprox];
+}
+
++ (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
+{
+  return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
+}
+
 #pragma mark - Helpers
 
 - (void)animateTransitionWithStackAnimation:(RNSScreenStackAnimation)animation
@@ -492,9 +501,9 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   [self animateSimplePushWithShadowEnabled:shadowEnabled transitionContext:transitionContext toVC:toVC fromVC:fromVC];
 }
 
-+ (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
++ (UISpringTimingParameters *)defaultSpringTimingParametersApprox
 {
-  return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
+  return [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
 }
 
 @end
