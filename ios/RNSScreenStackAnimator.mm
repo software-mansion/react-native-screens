@@ -3,27 +3,34 @@
 
 #import "RNSScreen.h"
 
-// proportions to default transition duration
-static constexpr NSTimeInterval RNSReferenceTransitionDurationForProportionInSeconds = 0.35;
+#pragma mark - Constants
+
+// Default duration for transitions in seconds. Note, that this enforces the default
+// only on Paper. On Fabric the transition duration coming from JS layer
+// is never null, thus it defaults to the value set in component codegen spec.
 static constexpr NSTimeInterval RNSDefaultTransitionDuration = 0.5;
 
-static constexpr float RNSSlideOpenTransitionDurationProportion = 1;
-static constexpr float RNSFadeOpenTransitionDurationProportion =
-    0.2 / RNSReferenceTransitionDurationForProportionInSeconds;
-static constexpr float RNSSlideCloseTransitionDurationProportion =
-    0.25 / RNSReferenceTransitionDurationForProportionInSeconds;
-static constexpr float RNSFadeCloseTransitionDurationProportion =
-    0.15 / RNSReferenceTransitionDurationForProportionInSeconds;
-static constexpr float RNSFadeCloseDelayTransitionDurationProportion =
-    0.1 / RNSReferenceTransitionDurationForProportionInSeconds;
+// Proportions for diffrent phases of more complex animations.
+// The reference duration differs from default transition duration,
+// because we've changed the default duration & we want to keep proportions
+// in tact. Unit = seconds.
+static constexpr NSTimeInterval RNSTransitionDurationForProportion = 0.35;
 
-// same value is used in other projects using similar approach for transistions
+static constexpr float RNSSlideOpenTransitionDurationProportion = 1;
+static constexpr float RNSFadeOpenTransitionDurationProportion = 0.2 / RNSTransitionDurationForProportion;
+static constexpr float RNSSlideCloseTransitionDurationProportion = 0.25 / RNSTransitionDurationForProportion;
+static constexpr float RNSFadeCloseTransitionDurationProportion = 0.15 / RNSTransitionDurationForProportion;
+static constexpr float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / RNSTransitionDurationForProportion;
+
+// Value used for dimming view attached for tranistion time.
+// Same value is used in other projects using similar approach for transistions
 // and it looks the most similar to the value used by Apple
 static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 @implementation RNSScreenStackAnimator {
   UINavigationControllerOperation _operation;
   NSTimeInterval _transitionDuration;
+  UIViewPropertyAnimator *_Nullable _inFlightAnimator;
 }
 
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation
@@ -31,9 +38,12 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   if (self = [super init]) {
     _operation = operation;
     _transitionDuration = RNSDefaultTransitionDuration; // default duration in seconds
+    _inFlightAnimator = nil;
   }
   return self;
 }
+
+#pragma mark - UIViewControllerAnimatedTransitioning
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext
 {
@@ -104,6 +114,19 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     }
   }
 }
+
+- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
+    (id<UIViewControllerContextTransitioning>)transitionContext
+{
+  return _inFlightAnimator;
+}
+
+- (void)animationEnded:(BOOL)transitionCompleted
+{
+  _inFlightAnimator = nil;
+}
+
+#pragma mark - Animation implementations
 
 - (void)animateSimplePushWithShadowEnabled:(BOOL)shadowEnabled
                          transitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -180,21 +203,13 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       }
     };
 
-    void (^completionBlockImpl)(void) = ^{
+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
       if (shadowView) {
         [shadowView removeFromSuperview];
       }
       fromViewController.view.transform = CGAffineTransformIdentity;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-    };
-
-    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
-      completionBlockImpl();
-    };
-
-    void (^completionBlock2)(BOOL) = ^(BOOL finalPosition) {
-      completionBlockImpl();
     };
 
     if (!transitionContext.isInteractive) {
@@ -209,11 +224,14 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       [animator startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                            delay:0.0
-                          options:UIViewAnimationOptionCurveLinear
-                       animations:animationBlock
-                       completion:completionBlock2];
+      UIViewPropertyAnimator *animator =
+          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                     curve:UIViewAnimationCurveLinear
+                                                animations:animationBlock];
+
+      [animator addCompletion:completionBlock];
+      [animator setUserInteractionEnabled:YES];
+      _inFlightAnimator = animator;
     }
   }
 }
@@ -446,10 +464,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 }
 
-+ (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
-{
-  return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
-}
+#pragma mark - Helpers
 
 - (void)animateTransitionWithStackAnimation:(RNSScreenStackAnimation)animation
                               shadowEnabled:(BOOL)shadowEnabled
@@ -475,6 +490,11 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
   // simple_push is the default custom animation
   [self animateSimplePushWithShadowEnabled:shadowEnabled transitionContext:transitionContext toVC:toVC fromVC:fromVC];
+}
+
++ (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
+{
+  return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
 }
 
 @end
