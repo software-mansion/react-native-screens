@@ -2,7 +2,7 @@
 
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 
-- (instancetype)initWithOperation:(UINavigationControllerOperation)operation;
+- (nonnull instancetype)initWithOperation:(UINavigationControllerOperation)operation;
 + (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation;
 
 @end
