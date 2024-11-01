@@ -252,16 +252,22 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = rightTransform;
     [[transitionContext containerView] addSubview:toViewController.view];
-    [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        animations:^{
-          fromViewController.view.transform = leftTransform;
-          toViewController.view.transform = CGAffineTransformIdentity;
-        }
-        completion:^(BOOL finished) {
-          fromViewController.view.transform = CGAffineTransformIdentity;
-          toViewController.view.transform = CGAffineTransformIdentity;
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
+
+    UIViewPropertyAnimator *animator =
+        [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                        timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
+
+    [animator addAnimations:^{
+      fromViewController.view.transform = leftTransform;
+      toViewController.view.transform = CGAffineTransformIdentity;
+    }];
+    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      toViewController.view.transform = CGAffineTransformIdentity;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+
+    [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
@@ -270,23 +276,29 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.transform = CGAffineTransformIdentity;
       fromViewController.view.transform = rightTransform;
     };
-    void (^completionBlock)(BOOL) = ^(BOOL finished) {
+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
       fromViewController.view.transform = CGAffineTransformIdentity;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     };
 
     if (!transitionContext.isInteractive) {
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                       animations:animationBlock
-                       completion:completionBlock];
+      UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc]
+          initWithDuration:[self transitionDuration:transitionContext]
+          timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
+
+      [animator addAnimations:animationBlock];
+      [animator addCompletion:completionBlock];
+      [animator startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                            delay:0.0
-                          options:UIViewAnimationOptionCurveLinear
-                       animations:animationBlock
-                       completion:completionBlock];
+      UIViewPropertyAnimator *animator =
+          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                     curve:UIViewAnimationCurveLinear
+                                                animations:animationBlock];
+      [animator addCompletion:completionBlock];
+      [animator setUserInteractionEnabled:YES];
+      _inFlightAnimator = animator;
     }
   }
 }
