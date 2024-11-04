@@ -159,11 +159,6 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       shadowView.alpha = 0.0;
     }
 
-    // Default curve provider is as defined below, however spring timing defined this way
-    // ignores the requested duration of the animation, effectively impairing our `animationDuration` prop.
-    // Damping of 1.0 seems close enough and we keep `animationDuration` functional.
-    // id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] init];
-
     UIViewPropertyAnimator *animator =
         [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
                                         timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
@@ -515,6 +510,11 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 + (UISpringTimingParameters *)defaultSpringTimingParametersApprox
 {
+  // Default curve provider is as defined below, however spring timing defined this way
+  // ignores the requested duration of the animation, effectively impairing our `animationDuration` prop.
+  // Damping of 1.0 seems close enough and we keep `animationDuration` functional.
+  // id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] init];
+
   return [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
 }
 
