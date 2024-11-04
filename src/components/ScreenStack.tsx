@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import {
   GestureDetectorBridge,
   ScreensRefsHolder,
+  GestureProviderProps,
+  GoBackGesture,
   ScreenStackProps,
 } from '../types';
 import { GHContext, RNSScreensRefContext } from '../contexts';
@@ -19,6 +21,37 @@ import ScreenStackNativeComponent, {
 function isFabric() {
   return 'nativeFabricUIManager' in global;
 }
+
+const assertGHProvider = (
+  ScreenGestureDetector: (
+    props: PropsWithChildren<GestureProviderProps>,
+  ) => React.JSX.Element,
+  goBackGesture: GoBackGesture | undefined,
+) => {
+  const isGestureDetectorProviderNotDetected =
+    ScreenGestureDetector.name !== 'GHWrapper' && goBackGesture !== undefined;
+
+  warnOnce(
+    isGestureDetectorProviderNotDetected,
+    'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.',
+  );
+};
+
+const assertCustomScreenTransitionsProps = (
+  screensRefs: ScreenStackProps['screensRefs'],
+  currentScreenId: ScreenStackProps['currentScreenId'],
+  goBackGesture: ScreenStackProps['goBackGesture'],
+) => {
+  const isGestureDetectorNotConfiguredProperly =
+    goBackGesture !== undefined &&
+    screensRefs === null &&
+    currentScreenId === undefined;
+
+  warnOnce(
+    isGestureDetectorNotConfiguredProperly,
+    'Custom Screen Transition require screensRefs and currentScreenId to be provided.',
+  );
+};
 
 function ScreenStack(props: ScreenStackProps) {
   const {
@@ -66,20 +99,12 @@ function ScreenStack(props: ScreenStackProps) {
     gestureDetectorBridge.current.stackUseEffectCallback(ref);
   });
 
-  const isGestureDetectorProviderNotDetected =
-    ScreenGestureDetector.name !== 'GHWrapper' && goBackGesture !== undefined;
-  const isGestureDetectorNotConfiguredProperly =
-    goBackGesture !== undefined &&
-    screensRefs === undefined &&
-    currentScreenId === undefined;
+  assertGHProvider(ScreenGestureDetector, goBackGesture);
 
-  warnOnce(
-    isGestureDetectorProviderNotDetected,
-    'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.',
-  );
-  warnOnce(
-    isGestureDetectorNotConfiguredProperly,
-    'Custom Screen Transition require screensRefs and currentScreenId to be provided.',
+  assertCustomScreenTransitionsProps(
+    screensRefs,
+    currentScreenId,
+    goBackGesture,
   );
 
   return (

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import {
   Animated,
   NativeSyntheticEvent,
@@ -487,21 +487,13 @@ export interface GestureDetectorBridge {
   ) => void;
 }
 
-export interface ScreenStackProps extends ViewProps {
+export interface ScreenStackProps extends ViewProps, GestureProps {
   children?: React.ReactNode;
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   ref?: React.MutableRefObject<React.Ref<View>>;
-  /**
-   * Props for custom screen transition (ScreenGestureDetector)
-   */
-  screensRefs?: GestureProviderProps['screensRefs'];
-  currentScreenId?: GestureProviderProps['currentScreenId'];
-  goBackGesture?: GestureProviderProps['goBackGesture'];
-  screenEdgeGesture?: GestureProviderProps['screenEdgeGesture'];
-  transitionAnimation?: GestureProviderProps['transitionAnimation'];
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -859,11 +851,15 @@ export type AnimatedScreenTransition = {
 
 export type ScreensRefsHolder = Record<string, React.RefObject<View>>;
 
-export type GestureProviderProps = PropsWithChildren<{
-  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
+export interface GestureProps {
   screensRefs?: React.MutableRefObject<ScreensRefsHolder>;
   currentScreenId?: string;
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
   screenEdgeGesture?: boolean;
-}>;
+}
+
+export interface GestureProviderProps extends GestureProps {
+  children?: React.ReactNode;
+  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
+}
