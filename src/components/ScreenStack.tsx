@@ -56,6 +56,7 @@ const assertCustomScreenTransitionsProps = (
 function ScreenStack(props: ScreenStackProps) {
   const {
     goBackGesture,
+    screensRefs: passedScreenRefs, // TODO: For compatibility with v5, remove once v5 is removed
     currentScreenId,
     transitionAnimation,
     screenEdgeGesture,
@@ -64,7 +65,9 @@ function ScreenStack(props: ScreenStackProps) {
     ...rest
   } = props;
 
-  const screensRefs = React.useRef<ScreensRefsHolder>({});
+  const screensRefs = React.useRef<ScreensRefsHolder>(
+    passedScreenRefs?.current ?? {},
+  );
   const ref = React.useRef(null);
   const size = React.Children.count(children);
   const ScreenGestureDetector = React.useContext(GHContext);
