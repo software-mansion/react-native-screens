@@ -18,42 +18,30 @@ function TestModal({
   navigation: StackNavigationProp<ParamListBase>;
 }) {
   const [pendingAction, setPendingAction] = useState<NavigationAction>();
-  const handlePressCancel = useCallback(() => {
-    setPendingAction(undefined);
-  }, []);
+
   const isFocused = useIsFocused();
-  const handlePressConfirm = useCallback(
-    (action: NavigationAction) => {
-      setPendingAction(undefined);
-      navigation.dispatch(action);
-    },
-    [navigation],
-  );
+
   usePreventRemove(isFocused && !pendingAction, event => {
     setPendingAction(event.data.action);
   });
 
-  if (!pendingAction) {
-    return null;
-  }
+  const handlePressCancel = useCallback(() => {
+    setPendingAction(undefined);
+  }, []);
+
+  const handlePressConfirm = useCallback(() => {
+    if (pendingAction) {
+      navigation.dispatch(pendingAction);
+      setPendingAction(undefined);
+    }
+  }, [navigation, pendingAction]);
 
   return (
-    <Modal
-      animationType="none"
-      hardwareAccelerated
-      transparent
-      visible
-      onRequestClose={handlePressCancel}>
-      <View style={styles.screen}>
-        <View>
-          <View style={styles.dialog}>
-            <View>
-              <Button
-                title={'Go back'}
-                onPress={() => handlePressConfirm(pendingAction)}></Button>
-              <Button title={'Cancel'} onPress={handlePressCancel}></Button>
-            </View>
-          </View>
+    <Modal visible={!!pendingAction} transparent>
+      <View style={[styles.container, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+        <View style={styles.content}>
+          <Button title={'Go back'} onPress={handlePressConfirm}></Button>
+          <Button title={'Cancel'} onPress={handlePressCancel}></Button>
         </View>
       </View>
     </Modal>
@@ -66,10 +54,10 @@ const SecondScreen = ({
   navigation: StackNavigationProp<ParamListBase>;
 }): React.JSX.Element => {
   return (
-    <>
+    <View style={styles.container}>
       <TestModal navigation={navigation} />
       <Text>This is second</Text>
-    </>
+    </View>
   );
 };
 
@@ -79,17 +67,10 @@ function HomeScreen({
   navigation: StackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: 'lightred',
-        justifyContent: 'center',
-      }}>
+    <View style={styles.container}>
       <Button
         title={'Go To Second Screen'}
-        onPress={() => {
-          navigation.navigate('SecondScreen');
-        }}
+        onPress={() => navigation.navigate('SecondScreen')}
       />
     </View>
   );
@@ -100,25 +81,21 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name={'SecondScreen'} component={SecondScreen} />
+        <Stack.Screen name="SecondScreen" component={SecondScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
+  container: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
-  dialog: {
+  content: {
     backgroundColor: 'white',
     padding: 25,
-    elevation: 2,
-    width: '100%',
-    maxHeight: '100%',
+    borderRadius: 25,
   },
 });
