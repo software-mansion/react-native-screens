@@ -42,11 +42,6 @@ export { default as ScreenFooter } from './components/ScreenFooter';
 export { default as ScreenContentWrapper } from './components/ScreenContentWrapper';
 
 /**
- * Contexts
- */
-export { GHContext } from './native-stack/contexts/GHContext';
-
-/**
  * Utils
  */
 export {

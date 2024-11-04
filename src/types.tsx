@@ -487,13 +487,12 @@ export interface GestureDetectorBridge {
   ) => void;
 }
 
-export interface ScreenStackProps extends ViewProps {
+export interface ScreenStackProps extends ViewProps, GestureProps {
   children?: React.ReactNode;
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  gestureDetectorBridge?: React.MutableRefObject<GestureDetectorBridge>;
   ref?: React.MutableRefObject<React.Ref<View>>;
 }
 
@@ -798,4 +797,72 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean;
+}
+
+/**
+ * Custom Screen Transition
+ */
+
+/**
+ * copy from GestureHandler to avoid strong dependency
+ */
+export type PanGestureHandlerEventPayload = {
+  x: number;
+  y: number;
+  absoluteX: number;
+  absoluteY: number;
+  translationX: number;
+  translationY: number;
+  velocityX: number;
+  velocityY: number;
+};
+
+/**
+ * copy from Reanimated to avoid strong dependency
+ */
+export type GoBackGesture =
+  | 'swipeRight'
+  | 'swipeLeft'
+  | 'swipeUp'
+  | 'swipeDown'
+  | 'verticalSwipe'
+  | 'horizontalSwipe'
+  | 'twoDimensionalSwipe';
+
+export interface MeasuredDimensions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  pageX: number;
+  pageY: number;
+}
+
+export type AnimatedScreenTransition = {
+  topScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>;
+  belowTopScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>;
+};
+
+export type ScreensRefsHolder = Record<
+  string,
+  React.MutableRefObject<React.Ref<React.Component>>
+>;
+
+export interface GestureProps {
+  screensRefs?: React.MutableRefObject<ScreensRefsHolder>;
+  currentScreenId?: string;
+  goBackGesture?: GoBackGesture;
+  transitionAnimation?: AnimatedScreenTransition;
+  screenEdgeGesture?: boolean;
+}
+
+export interface GestureProviderProps extends GestureProps {
+  children?: React.ReactNode;
+  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }
