@@ -2,9 +2,6 @@
 
 import { Platform, UIManager } from 'react-native';
 
-// const that tells if the library should use new implementation, will be undefined for older versions
-export const shouldUseActivityState = true;
-
 export const isNativePlatformSupported =
   Platform.OS === 'ios' ||
   Platform.OS === 'android' ||

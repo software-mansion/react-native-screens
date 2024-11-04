@@ -1,18 +1,21 @@
 /* eslint-disable camelcase */
 import * as React from 'react';
-import { Animated, Platform, StyleSheet, ViewProps } from 'react-native';
+import {
+  Animated,
+  Platform,
+  StyleSheet,
+  ViewProps,
+  ViewStyle,
+} from 'react-native';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
-import {
-  ScreenStack,
-  StackPresentationTypes,
-  ScreenContext,
-  GHContext,
-  GestureDetectorBridge,
-  ScreenContentWrapper,
-} from 'react-native-screens';
+import { StackPresentationTypes, GestureDetectorBridge } from '../../types';
+import ScreenStack from '../../components/ScreenStack';
+import ScreenContentWrapper from '../../components/ScreenContentWrapper';
+import { GHContext } from '../contexts/GHContext';
+import { ScreenContext } from '../../components/Screen';
 import {
   ParamListBase,
   StackActions,
@@ -30,7 +33,6 @@ import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
-  NativeStackNavigatorProps,
   ScreensRefsHolder,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
@@ -72,18 +74,16 @@ const MaybeNestedStack = ({
   route,
   stackPresentation,
   children,
+  internalScreenStyle,
 }: {
   options: NativeStackNavigationOptions;
   route: Route<string>;
   stackPresentation: StackPresentationTypes;
   children: React.ReactNode;
+  internalScreenStyle?: Pick<ViewStyle, 'backgroundColor'>;
 }) => {
   const { colors } = useTheme();
-  const {
-    headerShown = true,
-    contentStyle,
-    unstable_screenStyle = null,
-  } = options;
+  const { headerShown = true, contentStyle } = options;
 
   const Screen = React.useContext(ScreenContext);
 
@@ -153,7 +153,7 @@ const MaybeNestedStack = ({
           enabled
           isNativeStack
           hasLargeHeader={hasLargeHeader}
-          style={[StyleSheet.absoluteFill, unstable_screenStyle]}>
+          style={[StyleSheet.absoluteFill, internalScreenStyle]}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -195,12 +195,12 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetLargestUndimmedDetent = -1,
+    sheetLargestUndimmedDetentIndex = 'none',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     sheetElevation = 24,
     sheetExpandsWhenScrolledToEdge = true,
-    sheetInitialDetent = 0,
+    sheetInitialDetentIndex = 0,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarTranslucent,
@@ -215,7 +215,8 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
-    unstable_footerComponent = null,
+    unstable_sheetFooter = null,
+    contentStyle,
   } = options;
 
   let {
@@ -225,13 +226,19 @@ const RouteView = ({
     gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
-    unstable_screenStyle = null,
   } = options;
 
-  // We only want to allow backgroundColor for now
-  unstable_screenStyle = unstable_screenStyle
-    ? { backgroundColor: unstable_screenStyle.backgroundColor }
-    : null;
+  // We take backgroundColor from contentStyle and apply it on Screen.
+  // This allows to workaround one issue with truncated
+  // content with formSheet presentation.
+  let internalScreenStyle;
+
+  if (stackPresentation === 'formSheet' && contentStyle) {
+    const flattenContentStyles = StyleSheet.flatten(contentStyle);
+    internalScreenStyle = {
+      backgroundColor: flattenContentStyles?.backgroundColor,
+    };
+  }
 
   if (sheetAllowedDetents === 'fitToContents') {
     sheetAllowedDetents = [-1];
@@ -315,11 +322,11 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={[StyleSheet.absoluteFill, unstable_screenStyle]}
+      style={[StyleSheet.absoluteFill, internalScreenStyle]}
       sheetAllowedDetents={sheetAllowedDetents}
-      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      sheetLargestUndimmedDetentIndex={sheetLargestUndimmedDetentIndex}
       sheetGrabberVisible={sheetGrabberVisible}
-      sheetInitialDetent={sheetInitialDetent}
+      sheetInitialDetentIndex={sheetInitialDetentIndex}
       sheetCornerRadius={sheetCornerRadius}
       sheetElevation={sheetElevation}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
@@ -354,7 +361,6 @@ const RouteView = ({
         });
       }}
       onWillAppear={() => {
-        console.log(`onWillAppear/transitionStart route: ${route.key}`);
         navigation.emit({
           type: 'transitionStart',
           data: { closing: false },
@@ -362,7 +368,6 @@ const RouteView = ({
         });
       }}
       onWillDisappear={() => {
-        console.log(`onWillDisappear/transitionStart route: ${route.key}`);
         navigation.emit({
           type: 'transitionStart',
           data: { closing: true },
@@ -370,12 +375,10 @@ const RouteView = ({
         });
       }}
       onAppear={() => {
-        console.log(`onAppear/appear route: ${route.key}`);
         navigation.emit({
           type: 'appear',
           target: route.key,
         });
-        console.log(`onAppear/transitionEnd route: ${route.key}`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: false },
@@ -383,7 +386,6 @@ const RouteView = ({
         });
       }}
       onDisappear={() => {
-        console.log(`onDisappear/transitionEnd route: ${route.key}`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: true },
@@ -403,7 +405,6 @@ const RouteView = ({
         }
       }}
       onDismissed={e => {
-        console.log(`onDismissed/dismiss route: ${route.key}`);
         navigation.emit({
           type: 'dismiss',
           target: route.key,
@@ -439,7 +440,8 @@ const RouteView = ({
           <MaybeNestedStack
             options={options}
             route={route}
-            stackPresentation={stackPresentation}>
+            stackPresentation={stackPresentation}
+            internalScreenStyle={internalScreenStyle}>
             {renderScene()}
           </MaybeNestedStack>
           {/* HeaderConfig must not be first child of a Screen.
@@ -450,8 +452,8 @@ const RouteView = ({
             route={route}
             headerShown={isHeaderInPush}
           />
-          {unstable_footerComponent && (
-            <FooterComponent>{unstable_footerComponent}</FooterComponent>
+          {stackPresentation === 'formSheet' && unstable_sheetFooter && (
+            <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>
@@ -482,7 +484,7 @@ function NativeStackViewInner({
   });
   type RefHolder = Record<
     string,
-    React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>
+    React.MutableRefObject<React.Ref<React.Component>>
   >;
   const screensRefs = React.useRef<RefHolder>({});
   const ScreenGestureDetector = React.useContext(GHContext);

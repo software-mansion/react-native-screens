@@ -3,9 +3,11 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.uimanager.ThemedReactContext
 
 // This class is used to store config closer to search bar
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -18,9 +20,11 @@ open class CustomToolbar(
         object : ChoreographerCompat.FrameCallback() {
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
+                // The following measure specs are selected to work only with Android APIs <= 29.
+                // See https://github.com/software-mansion/react-native-screens/pull/2439
                 measure(
-                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST),
                 )
                 layout(left, top, right, bottom)
             }
@@ -28,7 +32,13 @@ open class CustomToolbar(
 
     override fun requestLayout() {
         super.requestLayout()
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+        val softInputMode =
+            (context as ThemedReactContext)
+                .currentActivity
+                ?.window
+                ?.attributes
+                ?.softInputMode
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q && softInputMode == WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN) {
             // Below Android API 29, layout is not being requested when subviews are being added to the layout,
             // leading to having their subviews in position 0,0 of the toolbar (as Android don't calculate
             // the position of each subview, even if Yoga has correctly set their width and height).
@@ -47,5 +57,19 @@ open class CustomToolbar(
                     )
             }
         }
+    }
+
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
+        super.onLayout(changed, l, t, r, b)
+
+        // our children are already laid out
+        val contentInsetStart = if (navigationIcon != null) contentInsetStartWithNavigation else contentInsetStart
+        config.updatePaddingsFabric(contentInsetStart, contentInsetEnd)
     }
 }

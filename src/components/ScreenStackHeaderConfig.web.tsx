@@ -4,7 +4,7 @@ import {
   HeaderSubviewTypes,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-} from 'react-native-screens';
+} from '../types';
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,

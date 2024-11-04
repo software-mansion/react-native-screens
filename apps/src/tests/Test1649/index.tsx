@@ -6,9 +6,6 @@ import {
   NativeSyntheticEvent,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-// import {
-//   createNativeStackNavigator,
-// } from 'react-native-screens/native-stack';
 import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
@@ -69,9 +66,6 @@ export default function App(): JSX.Element {
               contentStyle: {
                 backgroundColor: 'firebrick',
               },
-              unstable_screenStyle: {
-                backgroundColor: 'firebrick',
-              },
               // unstable_footerComponent: Footer(),
               ...sheetOptions,
             }}
@@ -110,9 +104,6 @@ export default function App(): JSX.Element {
               headerShown: false,
               presentation: 'formSheet',
               sheetElevation: 24,
-              unstable_screenStyle: {
-                backgroundColor: 'firebrick',
-              },
               ...sheetOptions,
               sheetAllowedDetents: [0.7],
             }}

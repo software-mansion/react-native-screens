@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { ScreenStackProps, freezeEnabled } from 'react-native-screens';
+import { ScreenStackProps } from '../types';
+import { freezeEnabled } from '../core';
 import DelayedFreeze from './helpers/DelayedFreeze';
 
 // Native components
-import ScreenStackNativeComponent from '../fabric/ScreenStackNativeComponent';
-const NativeScreenStack: React.ComponentType<ScreenStackProps> =
-  ScreenStackNativeComponent as any;
+import ScreenStackNativeComponent, {
+  NativeProps,
+} from '../fabric/ScreenStackNativeComponent';
 
 function isFabric() {
   return 'nativeFabricUIManager' in global;
@@ -44,9 +45,19 @@ function ScreenStack(props: ScreenStackProps) {
     }
   });
   return (
-    <NativeScreenStack {...rest} ref={ref}>
+    <ScreenStackNativeComponent
+      {...rest}
+      /**
+       * This messy override is to conform NativeProps used by codegen and
+       * our Public API. To see reasoning go to this PR:
+       * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
+       */
+      onFinishTransitioning={
+        props.onFinishTransitioning as NativeProps['onFinishTransitioning']
+      }
+      ref={ref}>
       {childrenWithFreeze}
-    </NativeScreenStack>
+    </ScreenStackNativeComponent>
   );
 }
 

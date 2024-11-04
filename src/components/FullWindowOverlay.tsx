@@ -1,5 +1,12 @@
 import React, { PropsWithChildren, ReactNode } from 'react';
-import { Platform, StyleProp, View, ViewStyle } from 'react-native';
+import {
+  Platform,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+  useWindowDimensions,
+} from 'react-native';
 
 // Native components
 import FullWindowOverlayNativeComponent from '../fabric/FullWindowOverlayNativeComponent';
@@ -10,13 +17,14 @@ const NativeFullWindowOverlay: React.ComponentType<
 > = FullWindowOverlayNativeComponent as any;
 
 function FullWindowOverlay(props: { children: ReactNode }) {
+  const { width, height } = useWindowDimensions();
   if (Platform.OS !== 'ios') {
     console.warn('Using FullWindowOverlay is only valid on iOS devices.');
     return <View {...props} />;
   }
   return (
     <NativeFullWindowOverlay
-      style={{ position: 'absolute', width: '100%', height: '100%' }}>
+      style={[StyleSheet.absoluteFill, { width, height }]}>
       {props.children}
     </NativeFullWindowOverlay>
   );

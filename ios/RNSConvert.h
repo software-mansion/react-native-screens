@@ -1,11 +1,16 @@
-#ifdef RCT_NEW_ARCH_ENABLED
 #import <UIKit/UIKit.h>
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/Props.h>
+#endif // RCT_NEW_ARCH_ENABLED
 #import "RNSEnums.h"
 
+#ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
 
 @interface RNSConvert : NSObject
+
+#ifdef RCT_NEW_ARCH_ENABLED
 
 + (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigDirection)direction;
@@ -42,8 +47,12 @@ namespace react = facebook::react;
 
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
 
-+ (UIBlurEffectStyle)UIBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
-
-@end
++ (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+/// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` which has no counter part in the UIKit
+/// type.
++ (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect;
+
+@end

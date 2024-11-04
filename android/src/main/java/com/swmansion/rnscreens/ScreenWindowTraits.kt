@@ -163,6 +163,7 @@ object ScreenWindowTraits {
                         InsetsObserverProxy.registerOnView(decorView)
                         InsetsObserverProxy.addOnApplyWindowInsetsListener(windowInsetsListener)
                     } else {
+                        InsetsObserverProxy.unregisterOnView(decorView)
                         InsetsObserverProxy.removeOnApplyWindowInsetsListener(windowInsetsListener)
                     }
                     ViewCompat.requestApplyInsets(decorView)
