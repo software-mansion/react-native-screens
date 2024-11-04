@@ -87,7 +87,7 @@ const ScreenGestureDetector = ({
       }
     }
     screenTagToNodeWrapperUI.value = screenTagToNodeWrapper;
-  }, [currentRouteKey]);
+  }, [currentRouteKey, goBackGesture]);
 
   function computeProgress(
     event: GestureUpdateEvent<PanGestureHandlerEventPayload>,

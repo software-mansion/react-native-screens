@@ -120,6 +120,8 @@ export type NativeStackNavigationOptions = {
   backButtonInCustomView?: boolean;
   /**
    * Style object for the scene content.
+   *
+   * As a workaround to truncated sheet content, formSheet uses backgroundColor from contentStyle and applies it on Screen.
    */
   contentStyle?: StyleProp<ViewStyle>;
   /**
@@ -373,13 +375,6 @@ export type NativeStackNavigationOptions = {
    */
   screenOrientation?: ScreenProps['screenOrientation'];
   /**
-   * Allows to set background color for the `Screen` component itself.
-   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
-   *
-   * We plan to get rid of this prop once the workaround is no longer needed.
-   */
-  unstable_screenStyle?: ScreenProps['unstable_screenStyle'];
-  /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */
   searchBar?: SearchBarProps;
@@ -627,7 +622,7 @@ export type AnimatedScreenTransition = {
  * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens v4 will support only @react-navigation/native-stack v7.
  */
 export type ScreensRefsHolder = React.MutableRefObject<
-  Record<string, React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>>
+  Record<string, React.MutableRefObject<React.Ref<React.Component>>>
 >;
 
 /**

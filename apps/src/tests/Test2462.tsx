@@ -98,7 +98,7 @@ const RootStack = createNativeStackNavigator<StackParamList>();
 const commonSheetOptions = {
   presentation: 'formSheet',
   sheetAllowedDetents: [0.5, 1],
-  unstable_screenStyle: { backgroundColor: 'linen' },
+  contentStyle: { backgroundColor: 'palegoldenrod' },
   sheetCornerRadius: 25,
 } as NativeStackNavigationOptions;
 

@@ -2,9 +2,10 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import {
   createNativeStackNavigator,
+  NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import { Button } from '../shared';
+import { Button, SettingsPicker } from '../shared';
 
 type StackParamList = {
   ScreenA: undefined;
@@ -27,12 +28,36 @@ interface ScreenBProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ScreenB'>;
 }
 
-const ScreenB = ({ navigation }: ScreenBProps): React.JSX.Element => (
-  <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
-    <Button title="Go ScreenC" onPress={() => navigation.navigate('ScreenC')} />
-    <Button title="Go back" onPress={() => navigation.goBack()} />
-  </View>
-);
+const ScreenB = ({ navigation }: ScreenBProps): React.JSX.Element => {
+  const [gestureType, setGestureType] = React.useState<NonNullable<NativeStackNavigationOptions['gestureType']>>('twoDimensionalSwipe');
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      gestureType,
+    });
+  }, [gestureType]);
+
+  return (
+    <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
+        <SettingsPicker<NonNullable<NativeStackNavigationOptions['gestureType']>>
+          label="Stack animation"
+          value={gestureType}
+          onValueChange={setGestureType}
+          items={[
+            "swipeRight",
+            "swipeLeft",
+            "swipeUp",
+            "swipeDown",
+            "verticalSwipe",
+            "horizontalSwipe",
+            "twoDimensionalSwipe",
+          ]}
+        />
+      <Button title="Go ScreenC" onPress={() => navigation.navigate('ScreenC')} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
 
 interface ScreenCProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ScreenC'>;
@@ -56,10 +81,6 @@ const App = (): React.JSX.Element => (
     <Stack.Screen
       name="ScreenB"
       component={ScreenB}
-      options={{
-        // @ts-ignore: goBackGesture is not implemented yet in react-navigation
-        goBackGesture: 'twoDimensionalSwipe',
-      }}
     />
     <Stack.Screen name="ScreenC" component={ScreenC} />
   </Stack.Navigator>

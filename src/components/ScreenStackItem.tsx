@@ -29,6 +29,7 @@ function ScreenStackItem(
     activityState,
     stackPresentation,
     contentStyle,
+    style,
     ...rest
   }: Props,
   ref: React.ForwardedRef<View>,
@@ -90,6 +91,18 @@ function ScreenStackItem(
     </>
   );
 
+  // We take backgroundColor from contentStyle and apply it on Screen.
+  // This allows to workaround one issue with truncated
+  // content with formSheet presentation.
+  let internalScreenStyle;
+
+  if (stackPresentation === 'formSheet' && contentStyle) {
+    const flattenContentStyles = StyleSheet.flatten(contentStyle);
+    internalScreenStyle = {
+      backgroundColor: flattenContentStyles?.backgroundColor,
+    };
+  }
+
   return (
     <Screen
       ref={ref}
@@ -98,6 +111,7 @@ function ScreenStackItem(
       activityState={activityState}
       stackPresentation={stackPresentation}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
+      style={[style, internalScreenStyle]}
       {...rest}>
       {isHeaderInModal ? (
         <ScreenStack style={styles.container}>
