@@ -37,27 +37,10 @@ function ScreenStackItem(
   }: Props,
   ref: React.ForwardedRef<View>,
 ) {
-  const screenRef = React.useRef<View>(null);
+  const screenRef = React.useRef<View | null>(null);
   const screenRefs = React.useContext(RNSScreensRefContext);
 
   React.useImperativeHandle(ref, () => screenRef.current!);
-
-  React.useLayoutEffect(() => {
-    if (screenRefs === null) {
-      console.warn(
-        'screenRefs is null seems like RNSScreensRefContext is not in the tree',
-      );
-      return;
-    }
-
-    const currentRefs = screenRefs.current;
-    currentRefs[screenId] = screenRef;
-
-    return () => {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete currentRefs[screenId];
-    };
-  });
 
   const isHeaderInModal =
     Platform.OS === 'android'
@@ -120,7 +103,25 @@ function ScreenStackItem(
 
   return (
     <Screen
-      ref={screenRef}
+      ref={node => {
+        screenRef.current = node;
+
+        if (screenRefs === null) {
+          console.warn(
+            'screenRefs is null seems like RNSScreensRefContext is not in the tree',
+          );
+          return;
+        }
+
+        const currentRefs = screenRefs.current;
+
+        if (node === null) {
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+          delete currentRefs[screenId];
+        } else {
+          currentRefs[screenId] = { current: node };
+        }
+      }}
       enabled
       isNativeStack
       activityState={activityState}
