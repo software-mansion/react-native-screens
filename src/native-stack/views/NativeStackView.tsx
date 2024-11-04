@@ -11,7 +11,7 @@ import {
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
-import { StackPresentationTypes } from '../../types';
+import { StackPresentationTypes, ScreensRefsHolder } from '../../types';
 import ScreenStack from '../../components/ScreenStack';
 import ScreenContentWrapper from '../../components/ScreenContentWrapper';
 import { ScreenContext } from '../../components/Screen';
@@ -32,7 +32,6 @@ import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
-  ScreensRefsHolder,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
@@ -184,7 +183,7 @@ const RouteView = ({
   index: number;
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
-  screensRefs: ScreensRefsHolder;
+  screensRefs: React.MutableRefObject<ScreensRefsHolder>;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
 
@@ -476,11 +475,8 @@ function NativeStackViewInner({
   const currentRouteKey = routes[state.index].key;
   const { goBackGesture, transitionAnimation, screenEdgeGesture } =
     descriptors[currentRouteKey].options;
-  type RefHolder = Record<
-    string,
-    React.MutableRefObject<React.Ref<React.Component>>
-  >;
-  const screensRefs = React.useRef<RefHolder>({});
+
+  const screensRefs = React.useRef<ScreensRefsHolder>({});
 
   return (
     <ScreenStack

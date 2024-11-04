@@ -13,11 +13,13 @@ import { ScreenProps, ScreenStackHeaderConfigProps } from '../types';
 import { ScreenStackHeaderConfig } from './ScreenStackHeaderConfig';
 import Screen from './Screen';
 import ScreenStack from './ScreenStack';
+import { RNSScreensRefContext } from '../contexts';
 
 type Props = Omit<
   ScreenProps,
   'enabled' | 'isNativeStack' | 'hasLargeHeader'
 > & {
+  screenId: string;
   headerConfig?: ScreenStackHeaderConfigProps;
   contentStyle?: StyleProp<ViewStyle>;
 };
@@ -30,10 +32,33 @@ function ScreenStackItem(
     stackPresentation,
     contentStyle,
     style,
+    screenId,
     ...rest
   }: Props,
   ref: React.ForwardedRef<View>,
 ) {
+  const screenRef = React.useRef<View>(null);
+  const screenRefs = React.useContext(RNSScreensRefContext);
+
+  React.useImperativeHandle(ref, () => screenRef.current!);
+
+  React.useLayoutEffect(() => {
+    if (screenRefs === null) {
+      console.warn(
+        'screenRefs is null seems like RNSScreensRefContext is not in the tree',
+      );
+      return;
+    }
+
+    const currentRefs = screenRefs.current;
+    currentRefs[screenId] = screenRef;
+
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete currentRefs[screenId];
+    };
+  });
+
   const isHeaderInModal =
     Platform.OS === 'android'
       ? false
@@ -95,7 +120,7 @@ function ScreenStackItem(
 
   return (
     <Screen
-      ref={ref}
+      ref={screenRef}
       enabled
       isNativeStack
       activityState={activityState}
