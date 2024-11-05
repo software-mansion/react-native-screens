@@ -849,10 +849,7 @@ export type AnimatedScreenTransition = {
   ) => Record<string, unknown>;
 };
 
-export type ScreensRefsHolder = Record<
-  string,
-  React.MutableRefObject<React.Ref<React.Component>>
->;
+export type ScreensRefsHolder = Record<string, React.RefObject<View>>;
 
 export interface GestureProps {
   screensRefs?: React.MutableRefObject<ScreensRefsHolder>;

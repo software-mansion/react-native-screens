@@ -3,11 +3,12 @@
 import React, { PropsWithChildren } from 'react';
 import {
   GestureDetectorBridge,
+  ScreensRefsHolder,
   GestureProviderProps,
   GoBackGesture,
   ScreenStackProps,
 } from '../types';
-import { GHContext } from '../contexts';
+import { GHContext, RNSScreensRefContext } from '../contexts';
 import { freezeEnabled } from '../core';
 import DelayedFreeze from './helpers/DelayedFreeze';
 import warnOnce from 'warn-once';
@@ -43,7 +44,7 @@ const assertCustomScreenTransitionsProps = (
 ) => {
   const isGestureDetectorNotConfiguredProperly =
     goBackGesture !== undefined &&
-    screensRefs === undefined &&
+    screensRefs === null &&
     currentScreenId === undefined;
 
   warnOnce(
@@ -55,7 +56,7 @@ const assertCustomScreenTransitionsProps = (
 function ScreenStack(props: ScreenStackProps) {
   const {
     goBackGesture,
-    screensRefs,
+    screensRefs: passedScreenRefs, // TODO: For compatibility with v5, remove once v5 is removed
     currentScreenId,
     transitionAnimation,
     screenEdgeGesture,
@@ -64,6 +65,9 @@ function ScreenStack(props: ScreenStackProps) {
     ...rest
   } = props;
 
+  const screensRefs = React.useRef<ScreensRefsHolder>(
+    passedScreenRefs?.current ?? {},
+  );
   const ref = React.useRef(null);
   const size = React.Children.count(children);
   const ScreenGestureDetector = React.useContext(GHContext);
@@ -107,27 +111,29 @@ function ScreenStack(props: ScreenStackProps) {
   );
 
   return (
-    <ScreenGestureDetector
-      gestureDetectorBridge={gestureDetectorBridge}
-      goBackGesture={goBackGesture}
-      transitionAnimation={transitionAnimation}
-      screenEdgeGesture={screenEdgeGesture ?? false}
-      screensRefs={screensRefs}
-      currentScreenId={currentScreenId}>
-      <ScreenStackNativeComponent
-        {...rest}
-        /**
-         * This messy override is to conform NativeProps used by codegen and
-         * our Public API. To see reasoning go to this PR:
-         * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
-         */
-        onFinishTransitioning={
-          onFinishTransitioning as NativeProps['onFinishTransitioning']
-        }
-        ref={ref}>
-        {childrenWithFreeze}
-      </ScreenStackNativeComponent>
-    </ScreenGestureDetector>
+    <RNSScreensRefContext.Provider value={screensRefs}>
+      <ScreenGestureDetector
+        gestureDetectorBridge={gestureDetectorBridge}
+        goBackGesture={goBackGesture}
+        transitionAnimation={transitionAnimation}
+        screenEdgeGesture={screenEdgeGesture ?? false}
+        screensRefs={screensRefs}
+        currentScreenId={currentScreenId}>
+        <ScreenStackNativeComponent
+          {...rest}
+          /**
+           * This messy override is to conform NativeProps used by codegen and
+           * our Public API. To see reasoning go to this PR:
+           * https://github.com/software-mansion/react-native-screens/pull/2423#discussion_r1810616995
+           */
+          onFinishTransitioning={
+            onFinishTransitioning as NativeProps['onFinishTransitioning']
+          }
+          ref={ref}>
+          {childrenWithFreeze}
+        </ScreenStackNativeComponent>
+      </ScreenGestureDetector>
+    </RNSScreensRefContext.Provider>
   );
 }
 
