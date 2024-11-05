@@ -37,10 +37,10 @@ function ScreenStackItem(
   }: Props,
   ref: React.ForwardedRef<View>,
 ) {
-  const screenRef = React.useRef<View | null>(null);
+  const currentScreenRef = React.useRef<View | null>(null);
   const screenRefs = React.useContext(RNSScreensRefContext);
 
-  React.useImperativeHandle(ref, () => screenRef.current!);
+  React.useImperativeHandle(ref, () => currentScreenRef.current!);
 
   const isHeaderInModal =
     Platform.OS === 'android'
@@ -104,11 +104,11 @@ function ScreenStackItem(
   return (
     <Screen
       ref={node => {
-        screenRef.current = node;
+        currentScreenRef.current = node;
 
         if (screenRefs === null) {
           console.warn(
-            'screenRefs is null seems like RNSScreensRefContext is not in the tree',
+            'Looks like RNSScreensRefContext is missing. Make sure the ScreenStack component is wrapped in it',
           );
           return;
         }
