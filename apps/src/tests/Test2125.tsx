@@ -12,7 +12,7 @@ import { Button, Modal, StyleSheet, Text, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
-function TestModal({
+function SecondScreen({
   navigation,
 }: {
   navigation: StackNavigationProp<ParamListBase>;
@@ -37,29 +37,20 @@ function TestModal({
   }, [navigation, pendingAction]);
 
   return (
-    <Modal visible={!!pendingAction} transparent>
-      <View style={[styles.container, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
-        <View style={styles.content}>
-          <Button title={'Go back'} onPress={handlePressConfirm}></Button>
-          <Button title={'Cancel'} onPress={handlePressCancel}></Button>
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
-const SecondScreen = ({
-  navigation,
-}: {
-  navigation: StackNavigationProp<ParamListBase>;
-}): React.JSX.Element => {
-  return (
     <View style={styles.container}>
-      <TestModal navigation={navigation} />
       <Text>This is second</Text>
+      <Modal visible={!!pendingAction} transparent>
+        <View
+          style={[styles.container, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+          <View style={styles.content}>
+            <Button title={'Go back'} onPress={handlePressConfirm}></Button>
+            <Button title={'Cancel'} onPress={handlePressCancel}></Button>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
-};
+}
 
 function HomeScreen({
   navigation,
@@ -79,7 +70,7 @@ function HomeScreen({
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="SecondScreen" component={SecondScreen} />
       </Stack.Navigator>
