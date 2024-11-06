@@ -70,6 +70,12 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   return _transitionDuration;
 }
 
+- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
+    (id<UIViewControllerContextTransitioning>)transitionContext
+{
+  return _inFlightAnimator;
+}
+
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
   UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
@@ -113,12 +119,6 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
                                          fromVC:fromViewController];
     }
   }
-}
-
-- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
-    (id<UIViewControllerContextTransitioning>)transitionContext
-{
-  return _inFlightAnimator;
 }
 
 - (void)animationEnded:(BOOL)transitionCompleted
@@ -179,7 +179,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
-
+    _inFlightAnimator = animator;
     [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
@@ -213,6 +213,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
       [animator addAnimations:animationBlock];
       [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
       [animator startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
@@ -261,7 +262,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
-
+    _inFlightAnimator = animator;
     [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
@@ -284,6 +285,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
       [animator addAnimations:animationBlock];
       [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
       [animator startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
@@ -307,26 +309,30 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   if (_operation == UINavigationControllerOperationPush) {
     [[transitionContext containerView] addSubview:toViewController.view];
     toViewController.view.alpha = 0.0;
-    [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        animations:^{
-          toViewController.view.alpha = 1.0;
-        }
-        completion:^(BOOL finished) {
-          toViewController.view.alpha = 1.0;
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
+    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                               curve:UIViewAnimationCurveEaseInOut
+                                                          animations:^{
+                                                            toViewController.view.alpha = 1.0;
+                                                          }];
+    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+      toViewController.view.alpha = 1.0;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+    _inFlightAnimator = animator;
+    [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
-
-    [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        animations:^{
-          fromViewController.view.alpha = 0.0;
-        }
-        completion:^(BOOL finished) {
-          fromViewController.view.alpha = 1.0;
-
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
+    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                               curve:UIViewAnimationCurveEaseInOut
+                                                          animations:^{
+                                                            fromViewController.view.alpha = 0.0;
+                                                          }];
+    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+      fromViewController.view.alpha = 1.0;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+    _inFlightAnimator = animator;
+    [animator startAnimation];
   }
 }
 
@@ -340,16 +346,21 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = topBottomTransform;
     [[transitionContext containerView] addSubview:toViewController.view];
-    [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        animations:^{
-          fromViewController.view.transform = CGAffineTransformIdentity;
-          toViewController.view.transform = CGAffineTransformIdentity;
-        }
-        completion:^(BOOL finished) {
-          fromViewController.view.transform = CGAffineTransformIdentity;
-          toViewController.view.transform = CGAffineTransformIdentity;
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
+
+    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                               curve:UIViewAnimationCurveEaseInOut
+                                                          animations:^{
+                                                            fromViewController.view.transform =
+                                                                CGAffineTransformIdentity;
+                                                            toViewController.view.transform = CGAffineTransformIdentity;
+                                                          }];
+    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      toViewController.view.transform = CGAffineTransformIdentity;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+    _inFlightAnimator = animator;
+    [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
@@ -358,23 +369,26 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.transform = CGAffineTransformIdentity;
       fromViewController.view.transform = topBottomTransform;
     };
-    void (^completionBlock)(BOOL) = ^(BOOL finished) {
+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
       fromViewController.view.transform = CGAffineTransformIdentity;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     };
 
     if (!transitionContext.isInteractive) {
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                       animations:animationBlock
-                       completion:completionBlock];
+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                                 curve:UIViewAnimationCurveEaseInOut
+                                                            animations:animationBlock];
+      [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
+      [animator startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                            delay:0.0
-                          options:UIViewAnimationOptionCurveLinear
-                       animations:animationBlock
-                       completion:completionBlock];
+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                                 curve:UIViewAnimationCurveLinear
+                                                            animations:animationBlock];
+      [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
     }
   }
 }
@@ -386,7 +400,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   CGAffineTransform topBottomTransform =
       CGAffineTransformMakeTranslation(0, 0.08 * transitionContext.containerView.bounds.size.height);
 
-  const float transitionDuration = [self transitionDuration:transitionContext];
+  const float baseTransitionDuration = [self transitionDuration:transitionContext];
 
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = topBottomTransform;
@@ -395,52 +409,59 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
     // Android Nougat open animation
     // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_open_enter.xml
-    [UIView animateWithDuration:transitionDuration * RNSSlideOpenTransitionDurationProportion // defaults to 0.35 s
-        delay:0
-        options:UIViewAnimationOptionCurveEaseOut
-        animations:^{
-          fromViewController.view.transform = CGAffineTransformIdentity;
-          toViewController.view.transform = CGAffineTransformIdentity;
-        }
-        completion:^(BOOL finished) {
-          fromViewController.view.transform = CGAffineTransformIdentity;
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
-    [UIView animateWithDuration:transitionDuration * RNSFadeOpenTransitionDurationProportion // defaults to 0.2 s
-                          delay:0
-                        options:UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                       toViewController.view.alpha = 1.0;
-                     }
-                     completion:nil];
+    auto slideAnimator = [[UIViewPropertyAnimator alloc]
+        initWithDuration:baseTransitionDuration * RNSSlideOpenTransitionDurationProportion
+                   curve:UIViewAnimationCurveEaseOut
+              animations:^{
+                fromViewController.view.transform = CGAffineTransformIdentity;
+                toViewController.view.transform = CGAffineTransformIdentity;
+              }];
+    [slideAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
 
+    auto fadeAnimator = [[UIViewPropertyAnimator alloc]
+        initWithDuration:baseTransitionDuration * RNSFadeOpenTransitionDurationProportion
+                   curve:UIViewAnimationCurveEaseOut
+              animations:^{
+                toViewController.view.alpha = 1.0;
+              }];
+
+    _inFlightAnimator = slideAnimator;
+    [slideAnimator startAnimation];
+    [fadeAnimator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
 
     // Android Nougat exit animation
     // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
-    [UIView animateWithDuration:transitionDuration * RNSSlideCloseTransitionDurationProportion // defaults to 0.25 s
-        delay:0
-        options:UIViewAnimationOptionCurveEaseIn
-        animations:^{
-          toViewController.view.transform = CGAffineTransformIdentity;
-          fromViewController.view.transform = topBottomTransform;
-        }
-        completion:^(BOOL finished) {
-          fromViewController.view.transform = CGAffineTransformIdentity;
-          toViewController.view.transform = CGAffineTransformIdentity;
-          fromViewController.view.alpha = 1.0;
-          toViewController.view.alpha = 1.0;
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
-    [UIView animateWithDuration:transitionDuration * RNSFadeCloseTransitionDurationProportion // defaults to 0.15 s
-                          delay:transitionDuration * RNSFadeCloseDelayTransitionDurationProportion // defaults to 0.1 s
-                        options:UIViewAnimationOptionCurveLinear
-                     animations:^{
-                       fromViewController.view.alpha = 0.0;
-                     }
-                     completion:nil];
+    auto slideAnimator = [[UIViewPropertyAnimator alloc]
+        initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
+                   curve:UIViewAnimationCurveEaseIn
+              animations:^{
+                toViewController.view.transform = CGAffineTransformIdentity;
+                fromViewController.view.transform = topBottomTransform;
+              }];
+    [slideAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      toViewController.view.transform = CGAffineTransformIdentity;
+      fromViewController.view.alpha = 1.0;
+      toViewController.view.alpha = 1.0;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+
+    auto fadeAnimator = [[UIViewPropertyAnimator alloc]
+        initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
+                   curve:UIViewAnimationCurveLinear
+              animations:^{
+                fromViewController.view.alpha = 0.0;
+              }];
+
+    _inFlightAnimator = slideAnimator;
+    [slideAnimator startAnimation];
+    [fadeAnimator startAnimationAfterDelay:baseTransitionDuration * RNSFadeCloseDelayTransitionDurationProportion];
   }
 }
 
