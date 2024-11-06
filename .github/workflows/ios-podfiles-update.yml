@@ -1,0 +1,63 @@
+name: Update Podfile
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'Example/package.json'
+      - 'FabricExample/package.json'
+jobs:
+  update_podfile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+    - name: Install CocoaPods
+      run: sudo gem install cocoapods
+    - name: Identify changed package.json files
+      id: changes
+      run: |
+        ROOT_CHANGED=false
+        EXAMPLE_CHANGED=false
+        FABRIC_CHANGED=false
+
+        if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -q '^package.json'; then
+          ROOT_CHANGED=true
+        fi
+
+        if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -q '^Example/package.json'; then
+          EXAMPLE_CHANGED=true
+        fi
+
+        if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -q '^FabricExample/package.json'; then
+          FABRIC_CHANGED=true
+        fi
+
+        echo "ROOT_CHANGED=${ROOT_CHANGED}" >> $GITHUB_ENV
+        echo "EXAMPLE_CHANGED=${EXAMPLE_CHANGED}" >> $GITHUB_ENV
+        echo "FABRIC_CHANGED=${FABRIC_CHANGED}" >> $GITHUB_ENV
+
+    - name: Update Podfile in Example
+      if: env.ROOT_CHANGED == 'true' || env.EXAMPLE_CHANGED == 'true'
+      run: |
+        cd Example
+        yarn install
+        cd ios
+        pod install
+    - name: Update Podfile in FabricExample
+      if: env.ROOT_CHANGED == 'true' || env.FABRIC_CHANGED == 'true'
+      run: |
+        cd FabricExample
+        yarn install
+        cd ios
+        pod install
