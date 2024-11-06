@@ -2,8 +2,7 @@
 
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 
-/// This property is filled only when there is an property aniamator associated with an ongoing interactive transition.
-/// In our case this is when we're handling full screen swipe or edge back gesture.
+/// This property is filled whenever there is an ongoing animation and cleared on animation end.
 @property (nonatomic, strong, nullable, readonly) UIViewPropertyAnimator *inFlightAnimator;
 
 - (nonnull instancetype)initWithOperation:(UINavigationControllerOperation)operation;
