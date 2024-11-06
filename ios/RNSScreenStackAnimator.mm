@@ -525,7 +525,13 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   // Damping of 1.0 seems close enough and we keep `animationDuration` functional.
   // id<UITimingCurveProvider> timingCurveProvider = [[UISpringTimingParameters alloc] init];
 
-  return [[UISpringTimingParameters alloc] initWithDampingRatio:1.0];
+  // According to "Programming iOS 14" by Matt Neuburg, the params for the default spring are as follows:
+  // mass = 3, stiffness = 1000, damping = 500. Damping ratio is computed using formula
+  // ratio = damping / (2 * sqrt(stiffness * mass)) ==> default damping should be ~= 4,56.
+  // I've found afterwards that this is even indeicated here:
+  // https://developer.apple.com/documentation/uikit/uispringtimingparameters/1649802-init?language=objc
+
+  return [[UISpringTimingParameters alloc] initWithDampingRatio:4.56];
 }
 
 @end
