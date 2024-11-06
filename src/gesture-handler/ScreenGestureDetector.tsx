@@ -14,7 +14,6 @@ import {
   makeMutable,
   runOnUI,
 } from 'react-native-reanimated';
-import type { GestureProviderProps } from 'src/native-stack/types';
 import { getShadowNodeWrapperAndTagFromRef, isFabric } from './fabricUtils';
 import { RNScreensTurboModule } from './RNScreensTurboModule';
 import { DefaultEvent, DefaultScreenDimensions } from './defaults';
@@ -23,6 +22,7 @@ import {
   checkIfTransitionCancelled,
   getAnimationForTransition,
 } from './constraints';
+import { GestureProviderProps } from '../types';
 
 const EmptyGestureHandler = Gesture.Fling();
 
@@ -33,7 +33,7 @@ const ScreenGestureDetector = ({
   screenEdgeGesture,
   transitionAnimation: customTransitionAnimation,
   screensRefs,
-  currentRouteKey,
+  currentScreenId,
 }: GestureProviderProps) => {
   const sharedEvent = useSharedValue(DefaultEvent);
   const startingGesturePosition = useSharedValue(DefaultEvent);
@@ -73,7 +73,7 @@ const ScreenGestureDetector = ({
   };
 
   useEffect(() => {
-    if (!IS_FABRIC || !goBackGesture) {
+    if (!IS_FABRIC || !goBackGesture || screensRefs === undefined) {
       return;
     }
     const screenTagToNodeWrapper: Record<string, Record<string, unknown>> = {};
@@ -87,7 +87,7 @@ const ScreenGestureDetector = ({
       }
     }
     screenTagToNodeWrapperUI.value = screenTagToNodeWrapper;
-  }, [currentRouteKey]);
+  }, [currentScreenId, goBackGesture]);
 
   function computeProgress(
     event: GestureUpdateEvent<PanGestureHandlerEventPayload>,

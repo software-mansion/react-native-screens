@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
-} from '@react-navigation/native-stack'
+} from 'react-native-screens/native-stack'
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 
 type StackParamList = {
@@ -67,7 +67,7 @@ const App = (): JSX.Element => (
             name="ScreenB"
             component={ScreenB}
             options={{
-              gestureType: 'twoDimensionalSwipe',
+              goBackGesture: 'twoDimensionalSwipe',
             }}
           />
           <Stack.Screen name="ScreenC" component={ScreenC} />

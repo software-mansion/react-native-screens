@@ -120,6 +120,8 @@ export type NativeStackNavigationOptions = {
   backButtonInCustomView?: boolean;
   /**
    * Style object for the scene content.
+   *
+   * As a workaround to truncated sheet content, formSheet uses backgroundColor from contentStyle and applies it on Screen.
    */
   contentStyle?: StyleProp<ViewStyle>;
   /**
@@ -162,7 +164,7 @@ export type NativeStackNavigationOptions = {
   /**
    * Whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
    * doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
-   * default iOS shadow. Defaults to `false`.
+   * default iOS shadow. Defaults to `true`.
    *
    * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
    *
@@ -373,13 +375,6 @@ export type NativeStackNavigationOptions = {
    */
   screenOrientation?: ScreenProps['screenOrientation'];
   /**
-   * Allows to set background color for the `Screen` component itself.
-   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
-   *
-   * We plan to get rid of this prop once the workaround is no longer needed.
-   */
-  unstable_screenStyle?: ScreenProps['unstable_screenStyle'];
-  /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */
   searchBar?: SearchBarProps;
@@ -461,7 +456,7 @@ export type NativeStackNavigationOptions = {
    * - "fade" – fades screen in or out
    * - "fade_from_bottom" – performs a fade from bottom animation
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
-   * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
+   * - "simple_push" – performs a default animation, but without native header transition (iOS only)
    * - "slide_from_bottom" – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right
@@ -570,6 +565,10 @@ export type NativeStackDescriptorMap = {
 };
 
 /**
+ * Those below copied to src/types.ts should be removed with next minor and native-stack v5 removal
+ */
+
+/**
  * copy from GestureHandler to avoid strong dependency
  * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens v4 will support only @react-navigation/native-stack v7.
  */
@@ -627,7 +626,7 @@ export type AnimatedScreenTransition = {
  * @deprecated NativeStack has been moved from react-native-screens/native-stack to @react-navigation/native since version v6. With react-native-screens v4 native stack v5 (react-native-screens/native-stack) is deprecated and marked for removal in the upcoming minor release, react-native-screens v4 will support only @react-navigation/native-stack v7.
  */
 export type ScreensRefsHolder = React.MutableRefObject<
-  Record<string, React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>>
+  Record<string, React.MutableRefObject<React.Ref<React.Component>>>
 >;
 
 /**

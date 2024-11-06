@@ -7,7 +7,6 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
-  ViewStyle,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 
@@ -136,9 +135,9 @@ export interface ScreenProps extends ViewProps {
    */
   fullScreenSwipeEnabled?: boolean;
   /**
-   * Whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
-   * doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
-   * default iOS shadow. Defaults to `false`.
+   * Whether the full screen dismiss gesture has shadow under view during transition.
+   * When enabled, a custom shadow view is added during the transition which tries to mimic the
+   * default iOS shadow. Defaults to `true`.
    *
    * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
    *
@@ -282,13 +281,6 @@ export interface ScreenProps extends ViewProps {
    */
   screenOrientation?: ScreenOrientationTypes;
   /**
-   * Allows to set background color for the `Screen` component itself.
-   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
-   *
-   * We plan to get rid of this prop once the workaround is no longer needed.
-   */
-  unstable_screenStyle?: Pick<ViewStyle, 'backgroundColor'>;
-  /**
    * Describes heights where a sheet can rest.
    * Works only when `presentation` is set to `formSheet`.
    *
@@ -400,7 +392,7 @@ export interface ScreenProps extends ViewProps {
    * - "fade" – fades screen in or out
    * - "fade_from_bottom" – performs a fade from bottom animation
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
-   * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
+   * - "simple_push" – performs a default animation, but without native header transition (iOS only)
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right
@@ -495,13 +487,12 @@ export interface GestureDetectorBridge {
   ) => void;
 }
 
-export interface ScreenStackProps extends ViewProps {
+export interface ScreenStackProps extends ViewProps, GestureProps {
   children?: React.ReactNode;
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  gestureDetectorBridge?: React.MutableRefObject<GestureDetectorBridge>;
   ref?: React.MutableRefObject<React.Ref<View>>;
 }
 
@@ -806,4 +797,69 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean;
+}
+
+/**
+ * Custom Screen Transition
+ */
+
+/**
+ * copy from GestureHandler to avoid strong dependency
+ */
+export type PanGestureHandlerEventPayload = {
+  x: number;
+  y: number;
+  absoluteX: number;
+  absoluteY: number;
+  translationX: number;
+  translationY: number;
+  velocityX: number;
+  velocityY: number;
+};
+
+/**
+ * copy from Reanimated to avoid strong dependency
+ */
+export type GoBackGesture =
+  | 'swipeRight'
+  | 'swipeLeft'
+  | 'swipeUp'
+  | 'swipeDown'
+  | 'verticalSwipe'
+  | 'horizontalSwipe'
+  | 'twoDimensionalSwipe';
+
+export interface MeasuredDimensions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  pageX: number;
+  pageY: number;
+}
+
+export type AnimatedScreenTransition = {
+  topScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>;
+  belowTopScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>;
+};
+
+export type ScreensRefsHolder = Record<string, React.RefObject<View>>;
+
+export interface GestureProps {
+  screensRefs?: React.MutableRefObject<ScreensRefsHolder>;
+  currentScreenId?: string;
+  goBackGesture?: GoBackGesture;
+  transitionAnimation?: AnimatedScreenTransition;
+  screenEdgeGesture?: boolean;
+}
+
+export interface GestureProviderProps extends GestureProps {
+  children?: React.ReactNode;
+  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }

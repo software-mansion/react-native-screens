@@ -13,23 +13,35 @@ import { ScreenProps, ScreenStackHeaderConfigProps } from '../types';
 import { ScreenStackHeaderConfig } from './ScreenStackHeaderConfig';
 import Screen from './Screen';
 import ScreenStack from './ScreenStack';
+import { RNSScreensRefContext } from '../contexts';
 
 type Props = Omit<
   ScreenProps,
   'enabled' | 'isNativeStack' | 'hasLargeHeader'
 > & {
+  screenId: string;
   headerConfig?: ScreenStackHeaderConfigProps;
   contentStyle?: StyleProp<ViewStyle>;
 };
 
-function ScreenStackItem({
-  children,
-  headerConfig,
-  activityState,
-  stackPresentation,
-  contentStyle,
-  ...rest
-}: Props, ref: React.ForwardedRef<View>) {
+function ScreenStackItem(
+  {
+    children,
+    headerConfig,
+    activityState,
+    stackPresentation,
+    contentStyle,
+    style,
+    screenId,
+    ...rest
+  }: Props,
+  ref: React.ForwardedRef<View>,
+) {
+  const currentScreenRef = React.useRef<View | null>(null);
+  const screenRefs = React.useContext(RNSScreensRefContext);
+
+  React.useImperativeHandle(ref, () => currentScreenRef.current!);
+
   const isHeaderInModal =
     Platform.OS === 'android'
       ? false
@@ -42,7 +54,7 @@ function ScreenStackItem({
       Platform.OS !== 'android' &&
         stackPresentation !== 'push' &&
         headerHiddenPreviousRef.current !== headerConfig?.hidden,
-      `Dynamically changing header's visibility in modals will result in remounting the screen and losing all local state.`
+      `Dynamically changing header's visibility in modals will result in remounting the screen and losing all local state.`,
     );
 
     headerHiddenPreviousRef.current = headerConfig?.hidden;
@@ -59,8 +71,7 @@ function ScreenStackItem({
             : styles.container,
           contentStyle,
         ]}
-        stackPresentation={stackPresentation ?? 'push'}
-      >
+        stackPresentation={stackPresentation ?? 'push'}>
         {children}
       </DebugContainer>
       {/**
@@ -78,16 +89,46 @@ function ScreenStackItem({
     </>
   );
 
+  // We take backgroundColor from contentStyle and apply it on Screen.
+  // This allows to workaround one issue with truncated
+  // content with formSheet presentation.
+  let internalScreenStyle;
+
+  if (stackPresentation === 'formSheet' && contentStyle) {
+    const flattenContentStyles = StyleSheet.flatten(contentStyle);
+    internalScreenStyle = {
+      backgroundColor: flattenContentStyles?.backgroundColor,
+    };
+  }
+
   return (
     <Screen
-      ref={ref}
+      ref={node => {
+        currentScreenRef.current = node;
+
+        if (screenRefs === null) {
+          console.warn(
+            'Looks like RNSScreensRefContext is missing. Make sure the ScreenStack component is wrapped in it',
+          );
+          return;
+        }
+
+        const currentRefs = screenRefs.current;
+
+        if (node === null) {
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+          delete currentRefs[screenId];
+        } else {
+          currentRefs[screenId] = { current: node };
+        }
+      }}
       enabled
       isNativeStack
       activityState={activityState}
       stackPresentation={stackPresentation}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
-      {...rest}
-    >
+      style={[style, internalScreenStyle]}
+      {...rest}>
       {isHeaderInModal ? (
         <ScreenStack style={styles.container}>
           <Screen
@@ -95,8 +136,7 @@ function ScreenStackItem({
             isNativeStack
             activityState={activityState}
             hasLargeHeader={headerConfig?.largeTitle ?? false}
-            style={StyleSheet.absoluteFill}
-          >
+            style={StyleSheet.absoluteFill}>
             {content}
           </Screen>
         </ScreenStack>

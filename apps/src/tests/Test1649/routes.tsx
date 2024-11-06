@@ -45,9 +45,6 @@ const routes: Record<string, RouteDescriptor> = {
       headerShown: false,
       presentation: 'formSheet',
       sheetElevation: 24,
-      unstable_screenStyle: {
-        backgroundColor: 'firebrick',
-      },
       ...sheetInitialOptions,
     },
   },

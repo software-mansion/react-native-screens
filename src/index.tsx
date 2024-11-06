@@ -1,3 +1,7 @@
+// Side effects import declaration to ensure our TurboModule
+// is loaded.
+import './fabric/NativeScreensModule';
+
 export * from './types';
 
 /**
@@ -36,17 +40,6 @@ export { default as ScreenStackItem } from './components/ScreenStackItem';
 export { default as FullWindowOverlay } from './components/FullWindowOverlay';
 export { default as ScreenFooter } from './components/ScreenFooter';
 export { default as ScreenContentWrapper } from './components/ScreenContentWrapper';
-
-/**
- * Modules
- */
-/* eslint-disable camelcase */
-export { default as NativeScreensModule_INTERNAL_DO_NOT_USE } from './fabric/NativeScreensModule';
-
-/**
- * Contexts
- */
-export { GHContext } from './native-stack/contexts/GHContext';
 
 /**
  * Utils
