@@ -16,7 +16,7 @@
 // `updateInteractiveTransition`, `finishInteractiveTransition`,
 // `cancelInteractiveTransition` are forwared by superclass to
 // corresponding methods in transition context. In case
-// of "classical CA driven animaitons", such as UIView animation blocks
+// of "classical CA driven animations", such as UIView animation blocks
 // or direct utilization of CoreAnimation API, context drives the animation,
 // however in case of UIViewPropertyAnimator it does not. We need
 // to drive animation manually and this is exactly what happens below.
@@ -24,7 +24,7 @@
 - (void)updateInteractiveTransition:(CGFloat)percentComplete
 {
   if (_animationController != nil) {
-    [self.animationController.inFlightAnimator setFractionComplete:percentComplete];
+    [_animationController.inFlightAnimator setFractionComplete:percentComplete];
   }
   [super updateInteractiveTransition:percentComplete];
 }
@@ -49,7 +49,7 @@
     return;
   }
 
-  UIViewPropertyAnimator *_Nullable animator = self.animationController.inFlightAnimator;
+  UIViewPropertyAnimator *_Nullable animator = _animationController.inFlightAnimator;
   if (animator == nil) {
     return;
   }
