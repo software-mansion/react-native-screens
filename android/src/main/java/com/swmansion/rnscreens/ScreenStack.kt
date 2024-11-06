@@ -3,12 +3,23 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
+import android.util.Log
 import android.view.View
+import androidx.core.view.children
+import androidx.transition.Fade
+import androidx.transition.Slide
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
+import androidx.transition.Visibility
+import com.facebook.fresco.ui.common.DimensionsInfo
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
+import com.swmansion.rnscreens.ext.addChildrenToTransition
+import com.swmansion.rnscreens.ext.parentAsViewGroup
 import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
@@ -143,9 +154,9 @@ class ScreenStack(
             stackAnimation = topScreenWrapper?.screen?.stackAnimation
         }
 
-        createTransaction().let {
+        createTransaction().let { it ->
             // animation logic start
-            if (stackAnimation != null) {
+            if (stackAnimation != null && false) {
                 if (shouldUseOpenAnimation) {
                     when (stackAnimation) {
                         StackAnimation.DEFAULT ->
@@ -264,7 +275,78 @@ class ScreenStack(
             // remove all screens previously on stack
             for (fragmentWrapper in stack) {
                 if (!screenWrappers.contains(fragmentWrapper) || dismissedWrappers.contains(fragmentWrapper)) {
-                    it.remove(fragmentWrapper.fragment)
+                    if (fragmentWrapper.fragment is DimmingFragment) {
+                        val dimmingFragment = fragmentWrapper.fragment as DimmingFragment
+
+                        val fadeOutTransition = Fade(Fade.MODE_OUT).apply {
+                            addTarget(dimmingFragment.containerView)
+                            dimmingFragment.containerView.addChildrenToTransition(this)
+                            excludeChildren(dimmingFragment.dimmingView, true)
+                            duration = 500
+                        }
+
+                        val slideDownTransition = Slide().apply {
+                            addTarget(dimmingFragment.screen)
+                            dimmingFragment.screen.addChildrenToTransition(this)
+                            duration = 500
+                        }
+
+                        dimmingFragment.exitTransition = TransitionSet().apply {
+                            ordering = TransitionSet.ORDERING_TOGETHER
+                            addTransition(fadeOutTransition)
+                            addTransition(slideDownTransition)
+                        }
+                    } else {
+                        val stackFragment = fragmentWrapper.fragment as ScreenStackFragment
+                        val fadeOutTransition = Fade(Fade.OUT).apply {
+                            addTarget(stackFragment.coordinatorLayout)
+                            stackFragment.coordinatorLayout.addChildrenToTransition(this)
+                            duration = 1000
+                        }
+                        val slideDownTransition = Slide().apply {
+                            addTarget(stackFragment.coordinatorLayout)
+                            stackFragment.coordinatorLayout.addChildrenToTransition(this)
+                            duration = 1000
+                        }
+                        fragmentWrapper.fragment.exitTransition = TransitionSet().apply {
+                            ordering = TransitionSet.ORDERING_TOGETHER
+                            duration = 1000
+                            addTransition(fadeOutTransition)
+                            addTransition(slideDownTransition)
+                            addListener(object : Transition.TransitionListener {
+                                var ended = false
+
+                                override fun onTransitionStart(transition: Transition) {
+                                    Log.i(TAG, "onTransitionStart")
+                                }
+
+                                override fun onTransitionEnd(transition: Transition) {
+                                    Log.i(TAG, "onTransitionEnd")
+                                    if (ended) {
+                                       return
+                                    }
+                                    ended = true
+                                    transition.removeListener(this)
+                                    createTransaction().remove(fragmentWrapper.fragment)
+                                        .commit()
+                                }
+
+                                override fun onTransitionCancel(transition: Transition) {
+                                }
+
+                                override fun onTransitionPause(transition: Transition) {
+                                }
+
+                                override fun onTransitionResume(transition: Transition) = Unit
+
+                            })
+                        }
+                        TransitionManager.beginDelayedTransition(stackFragment.coordinatorLayout.parentAsViewGroup()!!,
+                            stackFragment.exitTransition as TransitionSet?
+                        )
+                    }
+//                    it.remove(fragmentWrapper.fragment)
+                    return
                 }
             }
             for (fragmentWrapper in screenWrappers) {

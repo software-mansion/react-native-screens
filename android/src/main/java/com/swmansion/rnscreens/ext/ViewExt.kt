@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.ext
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.children
+import androidx.transition.Transition
 import com.facebook.react.views.scroll.ReactHorizontalScrollView
 import com.facebook.react.views.scroll.ReactScrollView
 import com.swmansion.rnscreens.ScreenStack
@@ -53,4 +55,13 @@ internal fun View.isInsideScrollViewWithRemoveClippedSubviews(): Boolean {
         }
     }
     return false
+}
+
+internal fun ViewGroup.addChildrenToTransition(transition: Transition) {
+    this.children.forEach {
+        transition.addTarget(it)
+        if (it is ViewGroup) {
+            it.addChildrenToTransition(transition)
+        }
+    }
 }
