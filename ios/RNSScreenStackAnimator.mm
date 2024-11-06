@@ -370,21 +370,11 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
                        completion:completionBlock];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      UIViewPropertyAnimator *animator =
-          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                     curve:UIViewAnimationCurveLinear
-                                                animations:animationBlock];
-      [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-        completionBlock(finalPosition == UIViewAnimatingPositionEnd);
-      }];
-      [animator setUserInteractionEnabled:YES];
-      _inFlightAnimator = animator;
-      //
-      //      [UIView animateWithDuration:[self transitionDuration:transitionContext]
-      //                            delay:0.0
-      //                          options:UIViewAnimationOptionCurveLinear
-      //                       animations:animationBlock
-      //                       completion:completionBlock];
+      [UIView animateWithDuration:[self transitionDuration:transitionContext]
+                            delay:0.0
+                          options:UIViewAnimationOptionCurveLinear
+                       animations:animationBlock
+                       completion:completionBlock];
     }
   }
 }
