@@ -188,7 +188,7 @@ const RouteView = ({
   const { options, render: renderScene } = descriptors[route.key];
 
   const {
-    fullScreenSwipeShadowEnabled = false,
+    fullScreenSwipeShadowEnabled = true,
     gestureEnabled,
     headerShown,
     hideKeyboardOnSwipe,
