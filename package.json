@@ -20,7 +20,8 @@
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install",
     "architectures-consistency-check": "node ./scripts/codegen-check-consistency.js",
-    "sync-architectures": "node ./scripts/codegen-sync-archs.js"
+    "sync-architectures": "node ./scripts/codegen-sync-archs.js",
+    "pod-update": "cd $APP_DIR/ios && pod install && cd ../.."
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

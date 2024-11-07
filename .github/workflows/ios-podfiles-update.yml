@@ -49,15 +49,7 @@ jobs:
 
       - name: Update Podfile in Example
         if: env.ROOT_CHANGED == 'true' || env.EXAMPLE_CHANGED == 'true'
-        run: |
-          cd Example
-          yarn install
-          cd ios
-          pod install
+        run: APP_DIR=Example yarn pod-update
       - name: Update Podfile in FabricExample
         if: env.ROOT_CHANGED == 'true' || env.FABRIC_CHANGED == 'true'
-        run: |
-          cd FabricExample
-          yarn install
-          cd ios
-          pod install
+        run: APP_DIR=FabricExample yarn pod-update
