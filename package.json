@@ -23,6 +23,11 @@
     "sync-architectures": "node ./scripts/codegen-sync-archs.js",
     "pod-update": "cd $APP_DIR/ios && pod install && cd ../.."
   },
+  "release-it": {
+    "hooks": {
+      "after:bump": "APP_DIR=Example yarn pod-update && APP_DIR=FabricExample yarn pod-update"
+    }
+  },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "react-native": "src/index",
