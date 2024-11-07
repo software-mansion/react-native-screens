@@ -20,6 +20,7 @@
 #import "RCTTouchHandler+RNSUtility.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSPercentDrivenInteractiveTransition.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
@@ -149,7 +150,7 @@ namespace react = facebook::react;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
   BOOL _invalidated;
   BOOL _isFullWidthSwiping;
-  UIPercentDrivenInteractiveTransition *_interactionController;
+  RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -869,7 +870,7 @@ namespace react = facebook::react;
 
   switch (gestureRecognizer.state) {
     case UIGestureRecognizerStateBegan: {
-      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      _interactionController = [RNSPercentDrivenInteractiveTransition new];
       [_controller popViewControllerAnimated:YES];
       break;
     }
@@ -916,7 +917,7 @@ namespace react = facebook::react;
   if (_interactionController == nil && fromView.reactSuperview) {
     BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:fromView toView:toView];
     if (shouldCancelDismiss) {
-      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      _interactionController = [RNSPercentDrivenInteractiveTransition new];
       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self->_interactionController cancelInteractiveTransition];
         self->_interactionController = nil;
@@ -928,6 +929,10 @@ namespace react = facebook::react;
         [fromView notifyDismissCancelledWithDismissCount:dismissCount];
       });
     }
+  }
+
+  if (_interactionController != nil) {
+    [_interactionController setAnimationController:animationController];
   }
   return _interactionController;
 }
@@ -1111,7 +1116,7 @@ namespace react = facebook::react;
 {
   if (_interactionController == nil) {
     _customAnimation = YES;
-    _interactionController = [UIPercentDrivenInteractiveTransition new];
+    _interactionController = [RNSPercentDrivenInteractiveTransition new];
     [_controller popViewControllerAnimated:YES];
   }
 }
