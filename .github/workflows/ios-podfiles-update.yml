@@ -1,4 +1,4 @@
-name: Update Podfile
+name: Update Podfiles
 
 on:
   push:
@@ -6,8 +6,6 @@ on:
       - main
     paths:
       - 'package.json'
-      - 'Example/package.json'
-      - 'FabricExample/package.json'
 jobs:
   update_podfile:
     runs-on: ubuntu-latest
@@ -18,38 +16,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Check for version change
+        run: |
+          VERSION_CHANGE=$(git diff ${{ github.event.before }} ${{ github.sha }} -- package.json | grep -E "^\+.*\"version\":")
+          echo "Version change detected: $VERSION_CHANGE"
+          if [ -z "$VERSION_CHANGE" ]; then
+            echo "No version change detected, exiting."
+            exit 0
+          fi
       - name: Use Node.js 18
         uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: Install CocoaPods
         run: sudo gem install cocoapods
-      - name: Identify changed package.json files
-        id: changes
-        run: |
-          ROOT_CHANGED=false
-          EXAMPLE_CHANGED=false
-          FABRIC_CHANGED=false
-
-          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -q '^package.json'; then
-            ROOT_CHANGED=true
-          fi
-
-          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -q '^Example/package.json'; then
-            EXAMPLE_CHANGED=true
-          fi
-
-          if git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -q '^FabricExample/package.json'; then
-            FABRIC_CHANGED=true
-          fi
-
-          echo "ROOT_CHANGED=${ROOT_CHANGED}" >> $GITHUB_ENV
-          echo "EXAMPLE_CHANGED=${EXAMPLE_CHANGED}" >> $GITHUB_ENV
-          echo "FABRIC_CHANGED=${FABRIC_CHANGED}" >> $GITHUB_ENV
-
-      - name: Update Podfile in Example
-        if: env.ROOT_CHANGED == 'true' || env.EXAMPLE_CHANGED == 'true'
-        run: APP_DIR=Example yarn pod-update
-      - name: Update Podfile in FabricExample
-        if: env.ROOT_CHANGED == 'true' || env.FABRIC_CHANGED == 'true'
-        run: APP_DIR=FabricExample yarn pod-update
+      - name: Update Podfiles
+        run: APP_DIR=Example yarn pod-update && APP_DIR=FabricExample yarn pod-update
