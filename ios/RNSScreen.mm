@@ -2184,6 +2184,33 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [superView addSubview:snapshot];
   }
 }
+
+#else
+#pragma mark - Paper specific
+
+- (void)traverseForScrollView:(UIView *)view
+{
+  if (![[self.view valueForKey:@"_bridge"] valueForKey:@"_jsThread"]) {
+    // we don't want to send `scrollViewDidEndDecelerating` event to JS before the JS thread is ready
+    return;
+  }
+
+  if ([NSStringFromClass([view class]) isEqualToString:@"AVPlayerView"]) {
+    // Traversing through AVPlayerView is an uncommon edge case that causes the disappearing screen
+    // to an excessive traversal through all video player elements
+    // (e.g., for react-native-video, this includes all controls and additional video views).
+    // Thus, we want to avoid unnecessary traversals through these views.
+    return;
+  }
+
+  if ([view isKindOfClass:[UIScrollView class]] &&
+      ([[(UIScrollView *)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)])) {
+    [[(UIScrollView *)view delegate] scrollViewDidEndDecelerating:(id)view];
+  }
+  [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+    [self traverseForScrollView:obj];
+  }];
+}
 #endif
 
 @end
