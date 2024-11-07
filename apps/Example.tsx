@@ -123,6 +123,22 @@ const SCREENS: Record<
   },
 };
 
+const linking = {
+  prefixes: ['screensexample://', 'screensfabricexample://'],
+  config: {
+    screens: {
+      Main: 'main',
+      ...Object.entries(SCREENS).reduce<Record<string, string>>(
+        (acc, [key, value]) => {
+          acc[key] = value.title.toLowerCase().replace(/\s+/g, '-');
+          return acc;
+        },
+        {},
+      ),
+    },
+  },
+};
+
 const isPlatformReady = (name: keyof typeof SCREENS) => {
   if (Platform.isTV) {
     return !!SCREENS[name].isTVOSReady;
@@ -138,8 +154,8 @@ const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
 type RootStackParamList = {
   Main: undefined;
 } & {
-    [P in keyof typeof SCREENS]: undefined;
-  };
+  [P in keyof typeof SCREENS]: undefined;
+};
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -208,14 +224,17 @@ const ExampleApp = (): React.JSX.Element => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetectorProvider>
         <ThemeToggle.Provider value={{ toggleTheme }}>
-          <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
+          <NavigationContainer
+            theme={isDark ? DarkTheme : DefaultTheme}
+            linking={linking}>
             <Stack.Navigator
               screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
               <Stack.Screen
                 name="Main"
                 options={{
-                  title: `${Platform.isTV ? '📺' : '📱'
-                    } React Native Screens Examples`,
+                  title: `${
+                    Platform.isTV ? '📺' : '📱'
+                  } React Native Screens Examples`,
                 }}
                 component={MainScreen}
               />
