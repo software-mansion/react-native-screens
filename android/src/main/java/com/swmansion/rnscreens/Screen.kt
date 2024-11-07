@@ -12,6 +12,8 @@ import android.webkit.WebView
 import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
+import androidx.core.view.drawToBitmap
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
@@ -27,6 +29,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.isInsideScrollViewWithRemoveClippedSubviews
+import com.swmansion.rnscreens.ext.parentAsViewGroup
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -372,9 +375,13 @@ class Screen(
     var nativeBackButtonDismissalEnabled: Boolean = true
 
     fun startRemovalTransition() {
+        reactContext.assertOnJSQueueThread()
         if (!isBeingRemoved) {
             isBeingRemoved = true
-            startTransitionRecursive(this)
+            reactContext.runOnUiQueueThread {
+                swapContentsForSnapshot()
+            }
+//            startTransitionRecursive(this)
         }
     }
 
@@ -412,6 +419,15 @@ class Screen(
                 }
             }
         }
+    }
+
+    internal fun swapContentsForSnapshot() {
+        val contentWrapper = parentAsViewGroup()!!
+        val bitmap = contentWrapper.drawToBitmap()
+        val contentsSnapshot = ImageView(reactContext)
+        contentsSnapshot.setImageBitmap(bitmap)
+        this.removeView(this.contentWrapper.get()!!)
+        this.addView(contentsSnapshot, 0)
     }
 
     private fun notifyHeaderHeightChange(headerHeight: Int) {

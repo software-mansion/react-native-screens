@@ -22,4 +22,12 @@ class ScreenContentWrapperManager :
     override fun createViewInstance(reactContext: ThemedReactContext): ScreenContentWrapper = ScreenContentWrapper(reactContext)
 
     override fun getDelegate(): ViewManagerDelegate<ScreenContentWrapper> = delegate
+
+    override fun removeViewAt(parent: ScreenContentWrapper, index: Int) {
+        super.removeViewAt(parent, index)
+    }
+
+    override fun removeAllViews(parent: ScreenContentWrapper?) {
+        super.removeAllViews(parent)
+    }
 }

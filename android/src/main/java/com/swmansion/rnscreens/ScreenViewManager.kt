@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.view.View
+import android.widget.ImageView
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
@@ -65,8 +66,11 @@ open class ScreenViewManager :
         parent: Screen,
         index: Int,
     ) {
-        if (parent.getChildAt(index) is ScreenFooter) {
-            parent.footer = null
+        val child = parent.getChildAt(index)
+        when (child) {
+            is ScreenFooter -> parent.footer = null
+            is ScreenContentWrapper -> child.delegate = null
+            is ImageView -> return
         }
         super.removeViewAt(parent, index)
     }
@@ -75,10 +79,11 @@ open class ScreenViewManager :
         parent: Screen,
         view: View,
     ) {
-        super.removeView(parent, view)
-        if (view is ScreenFooter) {
-            parent.footer = null
+        when (view) {
+            is ScreenFooter -> parent.footer = null
+            is ScreenContentWrapper -> view.delegate = null
         }
+        super.removeView(parent, view)
     }
 
     override fun updateState(

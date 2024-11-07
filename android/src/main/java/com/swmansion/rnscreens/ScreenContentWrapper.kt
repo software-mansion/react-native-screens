@@ -15,6 +15,7 @@ class ScreenContentWrapper(
     reactContext: ReactContext,
 ) : ReactViewGroup(reactContext) {
     internal var delegate: OnLayoutCallback? = null
+    var receivedInitialLayoutFromReact = false
 
     interface OnLayoutCallback {
         fun onLayoutCallback(
@@ -33,6 +34,11 @@ class ScreenContentWrapper(
         right: Int,
         bottom: Int,
     ) {
+        receivedInitialLayoutFromReact = true
         delegate?.onLayoutCallback(changed, left, top, right, bottom)
+    }
+
+    override fun isLaidOut(): Boolean {
+        return receivedInitialLayoutFromReact
     }
 }
