@@ -4,6 +4,7 @@
 #endif
 
 #import <React/RCTConvert.h>
+#import <React/RCTImageLoader.h>
 #import <React/RCTViewManager.h>
 #import "RNSEnums.h"
 
@@ -20,10 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) UIView *reactSuperview;
 
-@property (nonatomic, weak) RCTBridge *bridge;
-
 #ifdef RCT_NEW_ARCH_ENABLED
+- (RCTImageLoader *)imageLoader;
 #else
+@property (nonatomic, weak) RCTBridge *bridge;
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 #endif // RCT_NEW_ARCH_ENABLED
 

@@ -378,8 +378,12 @@ namespace react = facebook::react;
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-        RCTImageLoader *imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
-
+        RCTImageLoader *imageLoader =
+#ifdef RCT_NEW_ARCH_ENABLED
+            [subview imageLoader];
+#else
+            [subview.bridge moduleForClass:[RCTImageLoader class]];
+#endif
         image = [imageLoader.imageCache
             imageForUrl:imageSource.request.URL.absoluteString
                    size:imageSource.size

@@ -23,7 +23,20 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewShadowNode final
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
+#ifdef ANDROID
+#else // ANDROID
+#ifndef NDEBUG
+  void setImageLoader(std::weak_ptr<void> imageLoader);
+#endif // NDEBUG
+#endif // ANDROID
 
+ private:
+#ifdef ANDROID
+#else // ANDROID
+#ifndef NDEBUG
+  StateData &getStateDataMutable();
+#endif // NDEBUG
+#endif // ANDROID
 #pragma mark - ShadowNode overrides
 
 #pragma mark - Custom interface

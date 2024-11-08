@@ -6,6 +6,7 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <react/utils/ManagedObjectWrapper.h>
 
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
@@ -17,11 +18,13 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-@interface RCTBridge (Private)
-+ (RCTBridge *)currentBridge;
-@end
-
 @implementation RNSScreenStackHeaderSubview
+#ifdef RCT_NEW_ARCH_ENABLED
+{
+  react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
+  RCTImageLoader *imgLoader;
+}
+#endif // RCT_NEW_ARCH_ENABLED
 
 #pragma mark - Common
 
@@ -68,9 +71,9 @@ namespace react = facebook::react;
 
 #pragma mark - RCTComponentViewProtocol
 
-- (void)prepareForRecycle
+- (RCTImageLoader *)imageLoader
 {
-  [super prepareForRecycle];
+  return imgLoader;
 }
 
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
@@ -79,6 +82,15 @@ namespace react = facebook::react;
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)updateState:(const facebook::react::State::Shared &)state
+           oldState:(const facebook::react::State::Shared &)oldState
+{
+  _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
+  if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
+    imgLoader = react::unwrapManagedObject(imgLoaderPtr);
+  }
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -111,7 +123,7 @@ namespace react = facebook::react;
   return NO;
 }
 
-#else
+#else // RCT_NEW_ARCH_ENABLED
 #pragma mark - Paper specific
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
@@ -129,17 +141,11 @@ namespace react = facebook::react;
   [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
   [self layoutNavigationBarIfNeeded];
 }
-
-#endif // RCT_NEW_ARCH_ENABLED
-
 - (RCTBridge *)bridge
 {
-#ifdef RCT_NEW_ARCH_ENABLED
-  return [RCTBridge currentBridge];
-#else
   return _bridge;
-#endif // RCT_NEW_ARCH_ENABLED
 }
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
