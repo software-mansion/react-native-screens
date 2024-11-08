@@ -88,9 +88,11 @@ namespace react = facebook::react;
            oldState:(const facebook::react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
+#ifndef NDEBUG
   if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
     imgLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
+#endif // NDEBUG
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
