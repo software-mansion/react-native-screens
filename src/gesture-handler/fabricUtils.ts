@@ -1,4 +1,7 @@
 'use strict';
+
+import { View } from 'react-native';
+
 /* eslint-disable */
 
 type LocalGlobal = typeof global & Record<string, unknown>;
@@ -18,9 +21,10 @@ let getInternalInstanceHandleFromPublicInstance: (ref: unknown) => {
 };
 
 // Taken and modifies from reanimated
-export function getShadowNodeWrapperAndTagFromRef(
-  ref: React.Ref<React.Component>,
-): { shadowNodeWrapper: ShadowNodeWrapper; tag: number } {
+export function getShadowNodeWrapperAndTagFromRef(ref: View | null): {
+  shadowNodeWrapper: ShadowNodeWrapper;
+  tag: number;
+} {
   // load findHostInstance_DEPRECATED lazily because it may not be available before render
   if (findHostInstance_DEPRECATED === undefined) {
     try {

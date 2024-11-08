@@ -60,7 +60,7 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 
 Boolean indicating whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
 doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
-default iOS shadow. Defaults to `false`.
+default iOS shadow. Defaults to `true`.
 
 ### `gestureEnabled` (iOS only)
 
@@ -223,7 +223,7 @@ Allows for the customization of how the given screen should appear/disappear whe
 - `"fade"` – fades screen in or out
 - `fade_from_bottom` – performs a fade from bottom animation
 - `"flip"` – flips the screen, requires `stackPresentation: "modal"` (iOS only)
-- `"simple_push"` – performs a default animation, but without shadow and native header transition (iOS only)
+- `"simple_push"` – performs a default animation, but without native header transition (iOS only)
 - `"slide_from_bottom"` - slide in the new screen from bottom to top
 - `"slide_from_right"` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `"slide_from_left"` - slide in the new screen from left to right
@@ -297,7 +297,7 @@ When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAni
 
 ### `transitionDuration` (iOS only)
 
-Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
 
 The duration of `default` and `flip` transitions isn't customizable.
 

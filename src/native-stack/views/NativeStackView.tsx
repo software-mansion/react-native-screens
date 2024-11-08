@@ -11,10 +11,9 @@ import {
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
-import { StackPresentationTypes, GestureDetectorBridge } from '../../types';
+import { StackPresentationTypes, ScreensRefsHolder } from '../../types';
 import ScreenStack from '../../components/ScreenStack';
 import ScreenContentWrapper from '../../components/ScreenContentWrapper';
-import { GHContext } from '../contexts/GHContext';
 import { ScreenContext } from '../../components/Screen';
 import {
   ParamListBase,
@@ -33,7 +32,6 @@ import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
-  ScreensRefsHolder,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
@@ -185,12 +183,12 @@ const RouteView = ({
   index: number;
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
-  screensRefs: ScreensRefsHolder;
+  screensRefs: React.MutableRefObject<ScreensRefsHolder>;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
 
   const {
-    fullScreenSwipeShadowEnabled = false,
+    fullScreenSwipeShadowEnabled = true,
     gestureEnabled,
     headerShown,
     hideKeyboardOnSwipe,
@@ -477,53 +475,29 @@ function NativeStackViewInner({
   const currentRouteKey = routes[state.index].key;
   const { goBackGesture, transitionAnimation, screenEdgeGesture } =
     descriptors[currentRouteKey].options;
-  const gestureDetectorBridge = React.useRef<GestureDetectorBridge>({
-    stackUseEffectCallback: _stackRef => {
-      // this method will be override in GestureDetector
-    },
-  });
-  type RefHolder = Record<
-    string,
-    React.MutableRefObject<React.Ref<React.Component>>
-  >;
-  const screensRefs = React.useRef<RefHolder>({});
-  const ScreenGestureDetector = React.useContext(GHContext);
 
-  React.useEffect(() => {
-    if (
-      ScreenGestureDetector.name !== 'GHWrapper' &&
-      goBackGesture !== undefined
-    ) {
-      console.warn(
-        'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.',
-      );
-    }
-  }, [ScreenGestureDetector.name, goBackGesture]);
+  const screensRefs = React.useRef<ScreensRefsHolder>({});
 
   return (
-    <ScreenGestureDetector
-      gestureDetectorBridge={gestureDetectorBridge}
+    <ScreenStack
+      style={styles.container}
       goBackGesture={goBackGesture}
       transitionAnimation={transitionAnimation}
       screenEdgeGesture={screenEdgeGesture ?? false}
       screensRefs={screensRefs}
-      currentRouteKey={currentRouteKey}>
-      <ScreenStack
-        style={styles.container}
-        gestureDetectorBridge={gestureDetectorBridge}>
-        {routes.map((route, index) => (
-          <RouteView
-            key={route.key}
-            descriptors={descriptors}
-            route={route}
-            index={index}
-            navigation={navigation}
-            stateKey={key}
-            screensRefs={screensRefs}
-          />
-        ))}
-      </ScreenStack>
-    </ScreenGestureDetector>
+      currentScreenId={currentRouteKey}>
+      {routes.map((route, index) => (
+        <RouteView
+          key={route.key}
+          descriptors={descriptors}
+          route={route}
+          index={index}
+          navigation={navigation}
+          stateKey={key}
+          screensRefs={screensRefs}
+        />
+      ))}
+    </ScreenStack>
   );
 }
 
