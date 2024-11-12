@@ -49,14 +49,15 @@
     return;
   }
 
-  UIViewPropertyAnimator *_Nullable animator = _animationController.inFlightAnimator;
+  id<UIViewImplicitlyAnimating> _Nullable animator = _animationController.inFlightAnimator;
   if (animator == nil) {
     return;
   }
 
   BOOL shouldReverseAnimation = cancelled;
 
-  id<UITimingCurveProvider> timingParams = [_animationController timingParamsForAnimationCompletion];
+  // Nil params mean that the transition should be completed using originally set timing params.
+  id<UITimingCurveProvider> _Nullable timingParams = [_animationController timingParamsForAnimationCompletion];
 
   [animator pauseAnimation];
   [animator setReversed:shouldReverseAnimation];

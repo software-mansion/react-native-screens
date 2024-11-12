@@ -3,7 +3,7 @@
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 
 /// This property is filled whenever there is an ongoing animation and cleared on animation end.
-@property (nonatomic, strong, nullable, readonly) UIViewPropertyAnimator *inFlightAnimator;
+@property (nonatomic, strong, nullable, readonly) id<UIViewImplicitlyAnimating> inFlightAnimator;
 
 - (nonnull instancetype)initWithOperation:(UINavigationControllerOperation)operation;
 
