@@ -26,7 +26,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
-import com.swmansion.rnscreens.ext.isInsideScrollViewWithRemoveClippedSubviews
+import com.swmansion.rnscreens.ext.isPossiblyRemovedClippedSubview
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -403,7 +403,7 @@ class Screen(
                     // removeClippedSubviews set to true (default).
                     // We add a simple view for each item in the list to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/pull/2383
-                    if (child.isInsideScrollViewWithRemoveClippedSubviews()) {
+                    if (child.isPossiblyRemovedClippedSubview()) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }

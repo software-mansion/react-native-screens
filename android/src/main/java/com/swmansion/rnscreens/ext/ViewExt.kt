@@ -35,7 +35,7 @@ internal fun View.maybeBgColor(): Int? {
     return null
 }
 
-internal fun View.isInsideScrollViewWithRemoveClippedSubviews(): Boolean {
+internal fun View.isPossiblyRemovedClippedSubview(): Boolean {
     if (this is ReactViewGroup && this.removeClippedSubviews)
         {
             return true
