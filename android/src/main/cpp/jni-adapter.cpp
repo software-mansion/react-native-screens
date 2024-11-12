@@ -18,6 +18,9 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(
     return;
   }
   jsi::Runtime &rt = *runtime;
+  if (globalThis) {
+    env->DeleteGlobalRef(globalThis);
+  }
   globalThis = env->NewGlobalRef(thiz);
   JavaVM *jvm;
   env->GetJavaVM(&jvm);
