@@ -32,19 +32,6 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
   };
-#else // ANDROID
-#ifndef NDEBUG
-  void setImageLoader(std::weak_ptr<void> imageLoader);
-  std::weak_ptr<void> getImageLoader() const noexcept;
-#endif // NDEBUG
-#endif // ANDROID
-
- private:
-#ifdef ANDROID
-#else // ANDROID
-#ifndef NDEBUG
-  std::weak_ptr<void> imageLoader_;
-#endif // NDEBUG
 #endif // ANDROID
 #pragma mark - Getters
 };

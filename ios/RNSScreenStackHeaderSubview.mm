@@ -6,7 +6,6 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <react/utils/ManagedObjectWrapper.h>
 
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
@@ -19,12 +18,6 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenStackHeaderSubview
-#ifdef RCT_NEW_ARCH_ENABLED
-{
-  react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
-  RCTImageLoader *imgLoader;
-}
-#endif // RCT_NEW_ARCH_ENABLED
 
 #pragma mark - Common
 
@@ -71,28 +64,12 @@ namespace react = facebook::react;
 
 #pragma mark - RCTComponentViewProtocol
 
-- (RCTImageLoader *)imageLoader
-{
-  return imgLoader;
-}
-
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
   const auto &newHeaderSubviewProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewProps>(props);
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
   [super updateProps:props oldProps:oldProps];
-}
-
-- (void)updateState:(const facebook::react::State::Shared &)state
-           oldState:(const facebook::react::State::Shared &)oldState
-{
-  _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
-#ifndef NDEBUG
-  if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
-    imgLoader = react::unwrapManagedObject(imgLoaderPtr);
-  }
-#endif // NDEBUG
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -128,24 +105,12 @@ namespace react = facebook::react;
 #else // RCT_NEW_ARCH_ENABLED
 #pragma mark - Paper specific
 
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super init]) {
-    _bridge = bridge;
-  }
-  return self;
-}
-
 - (void)reactSetFrame:(CGRect)frame
 {
   // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
   // makes UINavigationBar the only one to control the position of header content.
   [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
   [self layoutNavigationBarIfNeeded];
-}
-- (RCTBridge *)bridge
-{
-  return _bridge;
 }
 #endif // RCT_NEW_ARCH_ENABLED
 
@@ -161,7 +126,7 @@ RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 #else
 - (UIView *)view
 {
-  return [[RNSScreenStackHeaderSubview alloc] initWithBridge:self.bridge];
+  return [RNSScreenStackHeaderSubview new];
 }
 #endif
 

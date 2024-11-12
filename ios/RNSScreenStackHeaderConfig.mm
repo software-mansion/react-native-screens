@@ -10,6 +10,9 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
+#ifndef NDEBUG
+#import <react/utils/ManagedObjectWrapper.h>
+#endif // NDEBUG
 #else
 #import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
@@ -60,6 +63,9 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
+#ifndef NDEBUG
+  RCTImageLoader *imageLoader;
+#endif // NDEBUG
 #else
   __weak RCTBridge *_bridge;
 #endif
@@ -335,10 +341,10 @@ namespace react = facebook::react;
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
-+ (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
+- (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc
 {
   BOOL hasBackButtonImage = NO;
-  for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
+  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
       hasBackButtonImage = YES;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -364,6 +370,7 @@ namespace react = facebook::react;
 
       UIImage *image = imageView.image;
 
+#ifndef NDEBUG
       // IMPORTANT!!!
       // image can be nil in DEV MODE ONLY
       //
@@ -378,11 +385,9 @@ namespace react = facebook::react;
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-        RCTImageLoader *imageLoader =
 #ifdef RCT_NEW_ARCH_ENABLED
-            [subview imageLoader];
 #else
-            [subview.bridge moduleForClass:[RCTImageLoader class]];
+        RCTImageLoader *imageLoader = [_bridge moduleForClass:[RCTImageLoader class]];
 #endif
         image = [imageLoader.imageCache
             imageForUrl:imageSource.request.URL.absoluteString
@@ -395,6 +400,7 @@ namespace react = facebook::react;
              resizeMode:imageView.resizeMode];
 #endif // RCT_NEW_ARCH_ENABLED
       }
+#endif // NDEBUG
       if (image == nil) {
         // This will be triggered if the image is not in the cache yet. What we do is we wait until
         // the end of transition and run header config updates again. We could potentially wait for
@@ -411,7 +417,7 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
                 vc.navigationItem.hidesBackButton = YES;
 #endif
-                [config updateViewControllerIfNeeded];
+                [self updateViewControllerIfNeeded];
               }];
         }
         return [UIImage new];
@@ -521,7 +527,7 @@ namespace react = facebook::react;
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
-  UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
+  UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
@@ -684,7 +690,7 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
     // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
     // to update it before the navigation starts.
-    UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
+    UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
     if (backButtonImage) {
       navctr.navigationBar.backIndicatorImage = backButtonImage;
       navctr.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
@@ -1004,6 +1010,11 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
            oldState:(const facebook::react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderConfigShadowNode::ConcreteState>(state);
+#ifndef NDEBUG
+  if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
+    imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+  }
+#endif // NDEBUG
 }
 
 #else
