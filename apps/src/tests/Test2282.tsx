@@ -34,7 +34,9 @@ function Home({ navigation }: any) {
 
 function ListScreen() {
   return (
-    <View style={{ flex: 1, backgroundColor: 'slateblue' }} removeClippedSubviews>
+    <View
+      style={{ flex: 1, backgroundColor: 'slateblue' }}
+      removeClippedSubviews>
       <ParentFlatlist />
       <View removeClippedSubviews>
         <View style={{ backgroundColor: 'pink', width: '100%', height: 50 }} />
