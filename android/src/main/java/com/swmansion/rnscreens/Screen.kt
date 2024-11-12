@@ -399,9 +399,9 @@ class Screen(
                     startTransitionRecursive(child.toolbar)
                 }
                 if (child is ViewGroup) {
-                    // The children are miscounted when there's a FlatList with
-                    // removeClippedSubviews set to true (default).
-                    // We add a simple view for each item in the list to make it work as expected.
+                    // The children are miscounted when there's removeClippedSubviews prop
+                    // set to true (which is the default for FlatLists).
+                    // We add a simple view for each possibly clipped item to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/pull/2383
                     if (child.isPossiblyRemovedClippedSubview()) {
                         for (j in 0 until child.childCount) {
