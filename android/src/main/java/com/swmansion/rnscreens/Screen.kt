@@ -28,7 +28,6 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
-import com.swmansion.rnscreens.ext.removeClippedSubviews
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -380,10 +379,7 @@ class Screen(
         }
     }
 
-    private fun startTransitionRecursive(
-        parent: ViewGroup?,
-        isPossiblyRemovedClippedSubview: Boolean = true,
-    ) {
+    private fun startTransitionRecursive(parent: ViewGroup?) {
         parent?.let {
             for (i in 0 until it.childCount) {
                 val child = it.getChildAt(i)
@@ -401,19 +397,20 @@ class Screen(
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig
-                    startTransitionRecursive(child, isPossiblyRemovedClippedSubview || it.removeClippedSubviews)
+                    startTransitionRecursive(child.toolbar)
                 }
                 if (child is ViewGroup) {
                     // The children are miscounted when there's removeClippedSubviews prop
                     // set to true (which is the default for FlatLists).
-                    // We add a simple view for each possibly clipped item to make it work as expected.
+                    // Unless the child is a ScrollView it's safe to assume that it's true
+                    // and add a simple view for each possibly clipped item to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/pull/2495
-                    if (isPossiblyRemovedClippedSubview && child !is ReactScrollView && child !is ReactHorizontalScrollView) {
+                    if (child !is ReactScrollView && child !is ReactHorizontalScrollView) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }
                     }
-                    startTransitionRecursive(child, isPossiblyRemovedClippedSubview || it.removeClippedSubviews)
+                    startTransitionRecursive(child)
                 }
             }
         }
