@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RNSDefines.h"
 #import "RNSFullWindowOverlay.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -198,6 +199,8 @@
   [childComponentView removeFromSuperview];
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
+// We do not set frame for ouselves, but rather for the container.
 - (void)updateLayoutMetrics:(react::LayoutMetrics const &)layoutMetrics
            oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
 {
@@ -205,6 +208,7 @@
   _reactFrame = frame;
   [_container setFrame:frame];
 }
+RNS_IGNORE_SUPER_CALL_END
 
 #else
 #pragma mark - Paper specific
