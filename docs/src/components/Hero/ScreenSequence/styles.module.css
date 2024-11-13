@@ -23,8 +23,8 @@
 
 @media (min-width: 3000px) and (min-height: 2000px) {
   .screens {
-    top: -3vh;
-    min-height: 50%;
+    top: 3vh;
+    min-height: 35%;
   }
 }
 
