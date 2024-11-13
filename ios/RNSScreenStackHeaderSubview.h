@@ -4,7 +4,6 @@
 #endif
 
 #import <React/RCTConvert.h>
-#import <React/RCTImageLoader.h>
 #import <React/RCTViewManager.h>
 #import "RNSEnums.h"
 

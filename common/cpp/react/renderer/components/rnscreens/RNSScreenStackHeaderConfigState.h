@@ -37,7 +37,7 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 #ifndef NDEBUG
   void setImageLoader(std::weak_ptr<void> imageLoader);
   std::weak_ptr<void> getImageLoader() const noexcept;
-#endif // NDEBUG
+#endif // !NDEBUG
 #endif // ANDROID
 
 #pragma mark - Getters
@@ -49,12 +49,9 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
  private:
   Float paddingStart_{0.f};
   Float paddingEnd_{0.f};
-#ifdef ANDROID
-#else // ANDROID
-#ifndef NDEBUG
+#if !defined(ANDROID) && !defined(NDEBUG)
   std::weak_ptr<void> imageLoader_;
-#endif // NDEBUG
-#endif
+#endif // !NDEBUG
 };
 
 } // namespace facebook::react

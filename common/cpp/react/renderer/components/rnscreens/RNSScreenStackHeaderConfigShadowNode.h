@@ -27,20 +27,14 @@ class JSI_EXPORT RNSScreenStackHeaderConfigShadowNode final
 #pragma mark - ShadowNode overrides
 
 #pragma mark - Custom interface
-#ifdef ANDROID
-#else // ANDROID
-#ifndef NDEBUG
+#if !defined(ANDROID) && !defined(NDEBUG)
   void setImageLoader(std::weak_ptr<void> imageLoader);
-#endif // NDEBUG
-#endif // ANDROID
+#endif // !ANDROID && !NDEBUG
 
  private:
-#ifdef ANDROID
-#else // ANDROID
-#ifndef NDEBUG
+#if !defined(ANDROID) && !defined(NDEBUG)
   StateData &getStateDataMutable();
-#endif // NDEBUG
-#endif // ANDROID
+#endif // !ANDROID && !NDEBUG
 };
 
 } // namespace facebook::react

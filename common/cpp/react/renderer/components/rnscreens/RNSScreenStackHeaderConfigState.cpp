@@ -19,8 +19,8 @@ std::weak_ptr<void> RNSScreenStackHeaderConfigState::getImageLoader()
     const noexcept {
   return imageLoader_;
 }
-#endif // NDEBUG
-#endif
+#endif // !NDEBUG
+#endif // ANDROID
 
 Float RNSScreenStackHeaderConfigState::getPaddingStart() const noexcept {
   return paddingStart_;

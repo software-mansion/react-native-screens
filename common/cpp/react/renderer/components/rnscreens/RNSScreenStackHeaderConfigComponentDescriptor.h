@@ -42,7 +42,7 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
     std::weak_ptr<void> imageLoader =
         contextContainer_->at<std::shared_ptr<void>>("RCTImageLoader");
     configShadowNode.setImageLoader(imageLoader);
-#endif // NDEBUG
+#endif // !NDEBUG
   }
 };
 

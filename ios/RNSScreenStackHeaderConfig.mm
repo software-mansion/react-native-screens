@@ -12,7 +12,7 @@
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #ifndef NDEBUG
 #import <react/utils/ManagedObjectWrapper.h>
-#endif // NDEBUG
+#endif // !NDEBUG
 #else
 #import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
@@ -65,7 +65,7 @@ namespace react = facebook::react;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
 #ifndef NDEBUG
   RCTImageLoader *imageLoader;
-#endif // NDEBUG
+#endif // !NDEBUG
 #else
   __weak RCTBridge *_bridge;
 #endif
@@ -385,10 +385,9 @@ namespace react = facebook::react;
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
+#ifndef RCT_NEW_ARCH_ENABLED
         RCTImageLoader *imageLoader = [_bridge moduleForClass:[RCTImageLoader class]];
-#endif
+#endif // !RCT_NEW_ARCH_ENABLED
         image = [imageLoader.imageCache
             imageForUrl:imageSource.request.URL.absoluteString
                    size:imageSource.size
@@ -400,7 +399,7 @@ namespace react = facebook::react;
              resizeMode:imageView.resizeMode];
 #endif // RCT_NEW_ARCH_ENABLED
       }
-#endif // NDEBUG
+#endif // !NDEBUG
       if (image == nil) {
         // This will be triggered if the image is not in the cache yet. What we do is we wait until
         // the end of transition and run header config updates again. We could potentially wait for
@@ -1014,7 +1013,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
     imageLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
-#endif // NDEBUG
+#endif // !NDEBUG
 }
 
 #else

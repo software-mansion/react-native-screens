@@ -5,9 +5,7 @@ namespace facebook::react {
 extern const char RNSScreenStackHeaderConfigComponentName[] =
     "RNSScreenStackHeaderConfig";
 
-#ifdef ANDROID
-#else // ANDROID
-#ifndef NDEBUG
+#if !defined(ANDROID) && !defined(NDEBUG)
 void RNSScreenStackHeaderConfigShadowNode::setImageLoader(
     std::weak_ptr<void> imageLoader) {
   getStateDataMutable().setImageLoader(imageLoader);
@@ -20,6 +18,5 @@ RNSScreenStackHeaderConfigShadowNode::getStateDataMutable() {
   return const_cast<RNSScreenStackHeaderConfigShadowNode::StateData &>(
       getStateData());
 }
-#endif // NDEBUG
-#endif // ANDROID
+#endif // !ANDROID && !NDEBUG
 } // namespace facebook::react
