@@ -20,6 +20,7 @@
 #import "RCTTouchHandler+RNSUtility.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSDefines.h"
 #import "RNSPercentDrivenInteractiveTransition.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
@@ -290,10 +291,12 @@ namespace react = facebook::react;
   }
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)didMoveToWindow
 {
@@ -1086,6 +1089,9 @@ namespace react = facebook::react;
 
 #endif // !TARGET_OS_TV
 
+RNS_IGNORE_SUPER_CALL_BEGIN
+// We hijack the udpates as we don't want to update UIKit model yet.
+// This is done after all mutations are processed.
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
 {
   if (![subview isKindOfClass:[RNSScreenView class]]) {
@@ -1101,6 +1107,7 @@ namespace react = facebook::react;
   subview.reactSuperview = nil;
   [_reactSubviews removeObject:subview];
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)didUpdateReactSubviews
 {
@@ -1288,7 +1295,7 @@ namespace react = facebook::react;
 // with modal presentation or foreign modal presented from inside a Screen.
 - (void)dismissAllRelatedModals
 {
-  [_controller dismissViewControllerAnimated:NO completion:nil];
+  [_controller dismissViewControllerAnimated:YES completion:nil];
 
   // This loop seems to be excessive. Above message send to `_controller` should
   // be enough, because system dismisses the controllers recursively,

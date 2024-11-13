@@ -31,6 +31,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
+#import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -136,10 +137,12 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
 }
+RNS_IGNORE_SUPER_CALL_END
 #endif
 
 - (void)updateBounds
@@ -374,10 +377,12 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 }
 #endif
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (UIView *)reactSuperview
 {
   return _reactSuperview;
 }
+RNS_IGNORE_SUPER_CALL_END
 
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
 - (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr
