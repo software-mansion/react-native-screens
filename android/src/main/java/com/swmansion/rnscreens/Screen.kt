@@ -382,7 +382,7 @@ class Screen(
 
     private fun startTransitionRecursive(
         parent: ViewGroup?,
-        isRemovedClippedSubview: Boolean = true,
+        isPossiblyRemovedClippedSubview: Boolean = true,
     ) {
         parent?.let {
             for (i in 0 until it.childCount) {
@@ -401,19 +401,19 @@ class Screen(
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig
-                    startTransitionRecursive(child, isRemovedClippedSubview || it.isRemovingClippedSubviews)
+                    startTransitionRecursive(child, isPossiblyRemovedClippedSubview || it.isRemovingClippedSubviews)
                 }
                 if (child is ViewGroup) {
                     // The children are miscounted when there's removeClippedSubviews prop
                     // set to true (which is the default for FlatLists).
                     // We add a simple view for each possibly clipped item to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/pull/2495
-                    if (isRemovedClippedSubview && child !is ReactScrollView && child !is ReactHorizontalScrollView) {
+                    if (isPossiblyRemovedClippedSubview && child !is ReactScrollView && child !is ReactHorizontalScrollView) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }
                     }
-                    startTransitionRecursive(child, isRemovedClippedSubview || it.isRemovingClippedSubviews)
+                    startTransitionRecursive(child, isPossiblyRemovedClippedSubview || it.isRemovingClippedSubviews)
                 }
             }
         }
