@@ -26,10 +26,10 @@ findHeaderConfigChild(const YogaLayoutableShadowNode &screenShadowNode) {
   return {};
 }
 
+#ifdef ANDROID
 static constexpr const char *kScreenDummyLayoutHelperClass =
     "com/swmansion/rnscreens/utils/ScreenDummyLayoutHelper";
 
-#ifdef ANDROID
 std::optional<float> findHeaderHeight(
     const int fontSize,
     const bool isTitleEmpty) {
