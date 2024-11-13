@@ -5,8 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.views.scroll.ReactHorizontalScrollView
 import com.facebook.react.views.scroll.ReactScrollView
-import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.ScreenStack
 
 internal fun View.parentAsView() = this.parent as? View
 
@@ -36,8 +34,9 @@ internal fun View.maybeBgColor(): Int? {
 }
 
 internal val View.isRemovingClippedSubviews: Boolean
-    get() = when (this) {
-        is ReactHorizontalScrollView -> removeClippedSubviews
-        is ReactScrollView -> removeClippedSubviews
-        else -> false
-    }
+    get() =
+        when (this) {
+            is ReactHorizontalScrollView -> removeClippedSubviews
+            is ReactScrollView -> removeClippedSubviews
+            else -> false
+        }
