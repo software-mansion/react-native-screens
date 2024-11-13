@@ -67,9 +67,11 @@ open class CustomToolbar(
         b: Int,
     ) {
         super.onLayout(changed, l, t, r, b)
+        val width = r - l;
+        val height = b - t;
 
         // our children are already laid out
         val contentInsetStart = if (navigationIcon != null) contentInsetStartWithNavigation else contentInsetStart
-        config.updatePaddingsFabric(contentInsetStart, contentInsetEnd)
+        config.updateHeaderConfigState(contentInsetStart, contentInsetEnd, width, height)
     }
 }
