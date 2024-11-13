@@ -24,7 +24,10 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
 #ifdef ANDROID
   RNSScreenStackHeaderSubviewState(
       RNSScreenStackHeaderSubviewState const &previousState,
-      folly::dynamic data) {}
+      folly::dynamic data)
+      : frameSize(Size{
+          (Float)data["frameWidth"].getDouble(),
+          (Float)data["frameHeight"].getDouble()}) {}
 #endif
 
 #ifdef ANDROID
@@ -33,6 +36,8 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
     return MapBufferBuilder::EMPTY();
   };
 #endif
+
+  const Size frameSize{};
 
 #pragma mark - Getters
 };
