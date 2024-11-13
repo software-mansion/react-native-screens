@@ -24,8 +24,11 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
   RNSScreenStackHeaderConfigState(
       RNSScreenStackHeaderConfigState const &previousState,
       folly::dynamic data)
-      : paddingStart_{static_cast<Float>(data["paddingStart"].getDouble())},
-        paddingEnd_{static_cast<Float>(data["paddingEnd"].getDouble())} {}
+      : frameSize(Size{
+          (Float)data["frameWidth"].getDouble(),
+          (Float)data["frameHeight"].getDouble()}),
+      paddingStart_{static_cast<Float>(data["paddingStart"].getDouble())},
+      paddingEnd_{static_cast<Float>(data["paddingEnd"].getDouble())} {}
 #endif
 
 #ifdef ANDROID
@@ -35,6 +38,8 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
   };
 
 #endif
+
+  const Size frameSize{};
 
 #pragma mark - Getters
 
