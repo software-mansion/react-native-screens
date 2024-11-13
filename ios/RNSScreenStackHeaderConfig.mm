@@ -879,6 +879,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
       return RCTResizeModeCenter;
     case react::ImageResizeMode::Repeat:
       return RCTResizeModeRepeat;
+    default:
+      // Both RCTConvert and ImageProps use this as a default as of RN 0.76
+      return RCTResizeModeStretch;
   }
 }
 
