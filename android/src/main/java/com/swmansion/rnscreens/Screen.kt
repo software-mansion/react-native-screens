@@ -28,7 +28,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
-import com.swmansion.rnscreens.ext.isRemovingClippedSubviews
+import com.swmansion.rnscreens.ext.removeClippedSubviews
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -401,7 +401,7 @@ class Screen(
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig
-                    startTransitionRecursive(child, isPossiblyRemovedClippedSubview || it.isRemovingClippedSubviews)
+                    startTransitionRecursive(child, isPossiblyRemovedClippedSubview || it.removeClippedSubviews)
                 }
                 if (child is ViewGroup) {
                     // The children are miscounted when there's removeClippedSubviews prop
@@ -413,7 +413,7 @@ class Screen(
                             child.addView(View(context))
                         }
                     }
-                    startTransitionRecursive(child, isPossiblyRemovedClippedSubview || it.isRemovingClippedSubviews)
+                    startTransitionRecursive(child, isPossiblyRemovedClippedSubview || it.removeClippedSubviews)
                 }
             }
         }
