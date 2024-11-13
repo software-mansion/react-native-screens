@@ -86,7 +86,7 @@ export interface NativeProps extends ViewProps {
   sheetElevation?: WithDefault<Int32, 24>;
   customAnimationOnSwipe?: boolean;
   fullScreenSwipeEnabled?: boolean;
-  fullScreenSwipeShadowEnabled?: boolean;
+  fullScreenSwipeShadowEnabled?: WithDefault<boolean, true>;
   homeIndicatorHidden?: boolean;
   preventNativeDismiss?: boolean;
   gestureEnabled?: WithDefault<boolean, true>;
@@ -99,7 +99,7 @@ export interface NativeProps extends ViewProps {
   gestureResponseDistance?: GestureResponseDistanceType;
   stackPresentation?: WithDefault<StackPresentation, 'push'>;
   stackAnimation?: WithDefault<StackAnimation, 'default'>;
-  transitionDuration?: WithDefault<Int32, 350>;
+  transitionDuration?: WithDefault<Int32, 500>;
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>;
   swipeDirection?: WithDefault<SwipeDirection, 'horizontal'>;
   hideKeyboardOnSwipe?: boolean;

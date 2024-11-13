@@ -30,20 +30,23 @@ When `activityState` is set to `0`, the parent container will detach its views f
 </ScreenContainer>
 ```
 
-When used in `<ScreenStack />` `activityState` can only be increased. The checks are added (in both native sides and JS part) to prevent situation when it's being removed, but still exists in in React Tree or if someones tries to preload already displayed screen. 
-
+When used in `<ScreenStack />` `activityState` can only be increased. The checks are added (in both native sides and JS part) to prevent situation when it's being removed, but still exists in in React Tree or if someones tries to preload already displayed screen.
 
 ## `<ScreenStack>`
 
-Screen stack component expects one or more `Screen` components as direct children and renders them in a platform-native stack container (for iOS it is `UINavigationController` and for Android inside `Fragment` container). For `Screen` components placed as children of `ScreenStack` the `activityState` property is ignored and instead the screen that corresponds to the last child is rendered as active. All types of updates done to the list of children are acceptable when the top element is exchanged the container will use platform default (unless customized) animation to transition between screens.
+Screen stack component expects one or more `ScreenStackItem` components as direct children and renders them in a platform-native stack container (for iOS it is `UINavigationController` and for Android inside `Fragment` container). For `ScreenStackItem` components placed as children of `ScreenStack` the `activityState` property is ignored and instead the screen that corresponds to the last child is rendered as active. All types of updates done to the list of children are acceptable when the top element is exchanged the container will use platform default (unless customized) animation to transition between screens.
 
-Below is the list of additional properties that can be used for `Screen` component:
+## `<ScreenStackItem>`
+
+The `ScreenStackItem` component is a convenience wrapper around `Screen` that's meant to be used as a direct child of `ScreenStack`. It takes care of setting the appropriate props necessary to work with `ScreenStack`, adds functionality such as displaying header in modals, as well as workarounds such as proper handling of `LogBox`. It is recommended to use `ScreenStackItem` instead of `Screen` when working with `ScreenStack`.
+
+Below is the list of additional properties that can be used for `ScreenStackItem` component:
 
 ### `customAnimationOnSwipe` (iOS only)
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
 
-### freezeOnBlur
+### `freezeOnBlur`
 
 Whether inactive screens should be suspended from re-rendering.
 
@@ -57,7 +60,7 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 
 Boolean indicating whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
 doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
-default iOS shadow. Defaults to `false`.
+default iOS shadow. Defaults to `true`.
 
 ### `gestureEnabled` (iOS only)
 
@@ -153,7 +156,7 @@ Sets the current screen's available orientations and forces rotation if current 
 
 Defaults to `default` on iOS.
 
-### `sheetAllowedDetents` 
+### `sheetAllowedDetents`
 
 Describes heights where a sheet can rest.
 Works only when `presentation` is set to `formSheet`.
@@ -166,9 +169,9 @@ Please note that the array **must** be sorted in ascending order.
 
 There are also legacy & **deprecated** options available:
 
-* `medium` - corresponds to `[0.5]` detent value, around half of the screen height,
-* `large` - corresponds to `[1.0]` detent value, maximum height,
-* `all` - corresponds to `[0.5, 1.0]` value, the name is deceiving due to compatibility reasons.
+- `medium` - corresponds to `[0.5]` detent value, around half of the screen height,
+- `large` - corresponds to `[1.0]` detent value, maximum height,
+- `all` - corresponds to `[0.5, 1.0]` value, the name is deceiving due to compatibility reasons.
 
 Defaults to `[1.0]` literal.
 
@@ -204,8 +207,8 @@ there won't be a dimming view beneath the sheet.
 
 Additionaly there are following options available:
 
-* `none` - there will be dimming view for all detents levels,
-* `largest` - there won't be a dimming view for any detent level.
+- `none` - there will be dimming view for all detents levels,
+- `largest` - there won't be a dimming view for any detent level.
 
 There also legacy & **deprecated** prop values available: `medium`, `large` (don't confuse with `largest`), `all`, which work in tandem with
 corresponding legacy prop values for `sheetAllowedDetents` prop.
@@ -220,7 +223,7 @@ Allows for the customization of how the given screen should appear/disappear whe
 - `"fade"` – fades screen in or out
 - `fade_from_bottom` – performs a fade from bottom animation
 - `"flip"` – flips the screen, requires `stackPresentation: "modal"` (iOS only)
-- `"simple_push"` – performs a default animation, but without shadow and native header transition (iOS only)
+- `"simple_push"` – performs a default animation, but without native header transition (iOS only)
 - `"slide_from_bottom"` - slide in the new screen from bottom to top
 - `"slide_from_right"` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `"slide_from_left"` - slide in the new screen from left to right
@@ -259,7 +262,7 @@ For Android:
 
 ### `statusBarAnimation`
 
-Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Possible values: `fade`, `none`, `slide`. On Android, this prop considers the transition of changing status bar color (see https://reactnative.dev/docs/statusbar#animated). There will be no animation if `none` provided.
+Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Possible values: `fade`, `none`, `slide`. On Android, this prop considers the transition of changing status bar color (see <https://reactnative.dev/docs/statusbar#animated>). There will be no animation if `none` provided.
 
 Defaults to `fade` on iOS and `none` on Android.
 
@@ -294,7 +297,7 @@ When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAni
 
 ### `transitionDuration` (iOS only)
 
-Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
 
 The duration of `default` and `flip` transitions isn't customizable.
 
@@ -378,7 +381,7 @@ function Home() {
 }
 ```
 
-### unstable_sheetFooter (Android only)
+### `unstable_sheetFooter` (Android only)
 
 Footer component that can be used alongside form sheet stack presentation style.
 
@@ -390,6 +393,38 @@ even removal.
 
 Currently supported on Android only.
 
+### `contentStyle`
+
+Style object that will be applied to the view that wraps the content of the screen.
+
+### `headerConfig`
+
+The `headerConfig` prop is an alternative to `ScreenStackHeaderConfig` component. It is recommended to use `headerConfig` prop instead of `ScreenStackHeaderConfig` so that `ScreenStackItem` can configure the screen appropriately.
+
+It takes an object that can contain the props accepted by `ScreenStackHeaderConfig` component:
+
+```jsx
+<ScreenStack>
+  <ScreenStackItem
+    headerConfig={{
+      title: 'First screen',
+      headerLargeTitle: true,
+      children: <>
+        <ScreenStackHeaderRightView>
+          <Button title="Save" />
+        </ScreenStackHeaderRightView>,
+      </>,
+    }}>
+    {/* content of the first screen */}
+  </ScreenStackItem>
+  <ScreenStackItem
+    headerConfig={{
+      title: 'Second screen',
+    }}>
+    {/* content of the second screen */}
+  </ScreenStackItem>
+</ScreenStackIte>
+```
 
 ## `<ScreenStackHeaderConfig>`
 
@@ -598,4 +633,4 @@ Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/softwa
 
 ## Android hardware back button
 
-In order to properly handle the hardware back button on Android, you should implement the navigation logic concerning it. You can see an example of how it is done in `react-navigation` here: https://github.com/react-navigation/react-navigation/blob/6cba517b74f5fd092db21d5574b558ef2d80897b/packages/native/src/useBackButton.tsx.
+In order to properly handle the hardware back button on Android, you should implement the navigation logic concerning it. You can see an example of how it is done in `react-navigation` here: <https://github.com/react-navigation/react-navigation/blob/6cba517b74f5fd092db21d5574b558ef2d80897b/packages/native/src/useBackButton.tsx>.

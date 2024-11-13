@@ -106,9 +106,13 @@ Screens are already integrated with the React Native's most popular navigation l
 
 ## Supported react-native version
 
+### Support for Paper
+
+Paper is the default rendering system for React Native versions prior to 0.76.
+
 | library version | react-native version |
 | --------------- | -------------------- |
-| 3.33.0+         | 0.72.0+
+| 3.33.0+         | 0.72.0+              |
 | 3.32.0+         | 0.71.0+              |
 | 3.30.0+         | 0.68.0+              |
 | 3.14.0+         | 0.64.0+              |
@@ -123,6 +127,7 @@ Here's a table with summary of supported `react-native` versions when Fabric is 
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 3.35.0+         | 0.76.0+              |
 | 3.33.0+         | 0.75.0+              |
 | 3.32.0+         | 0.74.0+              |
 | 3.28.0+         | 0.73.0+              |
@@ -132,6 +137,9 @@ Here's a table with summary of supported `react-native` versions when Fabric is 
 | 3.14.0+         | 0.69.0+              |
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
+
+> [!CAUTION]
+> JS API of the native stack has been moved from `react-native-screens/native-stack` to `@react-navigation/native-stack` since version v6. Currently, native stack v5 (imported from `react-native-screens/native-stack`) is deprecated and will be removed in the upcoming **minor** release. `react-native-screens` v4 will support only `@react-navigation/native-stack` v7.
 
 Screens support is built into [react-navigation](https://github.com/react-navigation/react-navigation) starting from version [2.14.0](https://github.com/react-navigation/react-navigation/releases/tag/2.14.0) for all the different navigator types (stack, tab, drawer, etc).
 
@@ -184,7 +192,6 @@ You can also disable the usage of native screens per navigator with [`detachInac
 To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer:
 
 - for React Navigation >= v6 to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator)
-- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/main/native-stack)
 
 ## `FullWindowOverlay`
 

@@ -20,6 +20,7 @@
 #import "RCTTouchHandler+RNSUtility.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSPercentDrivenInteractiveTransition.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
@@ -150,7 +151,7 @@ namespace react = facebook::react;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
   BOOL _invalidated;
   BOOL _isFullWidthSwiping;
-  UIPercentDrivenInteractiveTransition *_interactionController;
+  RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -870,7 +871,7 @@ namespace react = facebook::react;
 
   switch (gestureRecognizer.state) {
     case UIGestureRecognizerStateBegan: {
-      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      _interactionController = [RNSPercentDrivenInteractiveTransition new];
       [_controller popViewControllerAnimated:YES];
       break;
     }
@@ -917,7 +918,7 @@ namespace react = facebook::react;
   if (_interactionController == nil && fromView.reactSuperview) {
     BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:fromView toView:toView];
     if (shouldCancelDismiss) {
-      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      _interactionController = [RNSPercentDrivenInteractiveTransition new];
       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self->_interactionController cancelInteractiveTransition];
         self->_interactionController = nil;
@@ -929,6 +930,10 @@ namespace react = facebook::react;
         [fromView notifyDismissCancelledWithDismissCount:dismissCount];
       });
     }
+  }
+
+  if (_interactionController != nil) {
+    [_interactionController setAnimationController:animationController];
   }
   return _interactionController;
 }
@@ -954,7 +959,7 @@ namespace react = facebook::react;
 
 - (void)markChildUpdated
 {
-  // do nothing
+  // In native stack this should be called only for `preload` purposes.
   [self updateContainer];
 }
 
@@ -1112,7 +1117,7 @@ namespace react = facebook::react;
 {
   if (_interactionController == nil) {
     _customAnimation = YES;
-    _interactionController = [UIPercentDrivenInteractiveTransition new];
+    _interactionController = [RNSPercentDrivenInteractiveTransition new];
     [_controller popViewControllerAnimated:YES];
   }
 }
@@ -1209,6 +1214,7 @@ namespace react = facebook::react;
     if (mutation.type == react::ShadowViewMutation::Delete) {
       RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
       if (toBeRemovedChild != nil) {
+        [toBeRemovedChild willBeUnmountedInUpcomingTransaction];
         _toBeDeletedScreens.push_back(toBeRemovedChild);
       }
     }
@@ -1273,12 +1279,25 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _invalidated = YES;
-  for (UIViewController *controller in _presentedModals) {
+  [self dismissAllRelatedModals];
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
+}
+
+// This method aims to dismiss all modals for which presentation process
+// has been initiated in this navigation controller, i. e. either a Screen
+// with modal presentation or foreign modal presented from inside a Screen.
+- (void)dismissAllRelatedModals
+{
+  [_controller dismissViewControllerAnimated:YES completion:nil];
+
+  // This loop seems to be excessive. Above message send to `_controller` should
+  // be enough, because system dismisses the controllers recursively,
+  // however better safe than sorry & introduce a regression, thus it is left here.
+  for (UIViewController *controller in [_presentedModals reverseObjectEnumerator]) {
     [controller dismissViewControllerAnimated:NO completion:nil];
   }
   [_presentedModals removeAllObjects];
-  [_controller willMoveToParentViewController:nil];
-  [_controller removeFromParentViewController];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
