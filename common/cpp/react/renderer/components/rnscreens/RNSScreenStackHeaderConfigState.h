@@ -51,7 +51,7 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
   Float paddingEnd_{0.f};
 #if !defined(ANDROID) && !defined(NDEBUG)
   std::weak_ptr<void> imageLoader_;
-#endif // !NDEBUG
+#endif // !ANDROID && !NDEBUG
 };
 
 } // namespace facebook::react
