@@ -1288,7 +1288,7 @@ namespace react = facebook::react;
 // with modal presentation or foreign modal presented from inside a Screen.
 - (void)dismissAllRelatedModals
 {
-  [_controller dismissViewControllerAnimated:NO completion:nil];
+  [_controller dismissViewControllerAnimated:YES completion:nil];
 
   // This loop seems to be excessive. Above message send to `_controller` should
   // be enough, because system dismisses the controllers recursively,

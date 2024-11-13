@@ -22,14 +22,22 @@ function HomeScreen({
         title="Navigate to Screen 1"
         onPress={() => navigation.navigate('NestedStack')}
       />
+      <Button
+        title="Navigate to Screen (same stack)"
+        onPress={() => navigation.navigate('MainStackScreen')}
+      />
     </View>
   );
 }
 
-function MainStackScreen() {
+function MainStackScreen({ navigation }: NativeStackScreenProps<StackParamList, 'MainStackScreen'>) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Main stack screen</Text>
+      <Button
+        title="goBack"
+        onPress={() => navigation.goBack()}
+      />
     </View>
   );
 }
