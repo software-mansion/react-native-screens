@@ -21,6 +21,7 @@
 #else
 #import <React/RCTScrollView.h>
 #import <React/RCTTouchHandler.h>
+#import <React/RCTVersion.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import <React/RCTShadowView.h>
@@ -1443,7 +1444,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   _shouldNotify = YES;
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
-  [self traverseForScrollView:self.screenView];
+  double rnMinorVersion = [RCTGetReactNativeVersion()[RCTVersionMinor] doubleValue];
+  if (rnMinorVersion < 76.f) {
+    [self traverseForScrollView:self.screenView];
+  }
 #endif
 }
 
