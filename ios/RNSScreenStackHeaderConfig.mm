@@ -442,8 +442,16 @@ RNS_IGNORE_SUPER_CALL_END
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
   if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
+    // Preserve the shadow properties in case the user wants to show the shadow on scroll.
+    UIColor *shadowColor = appearance.shadowColor;
+    UIImage *shadowImage = appearance.shadowImage;
     // transparent background color
     [appearance configureWithTransparentBackground];
+      
+    if (!config.hideShadow) {
+      appearance.shadowColor = shadowColor;
+      appearance.shadowImage = shadowImage;
+    }
   } else {
     [appearance configureWithOpaqueBackground];
   }
