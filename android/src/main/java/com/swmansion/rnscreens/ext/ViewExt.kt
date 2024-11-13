@@ -35,26 +35,16 @@ internal fun View.maybeBgColor(): Int? {
     return null
 }
 
-internal fun View.isPossiblyRemovedClippedSubview(): Boolean {
-    if (this is ReactViewGroup && this.removeClippedSubviews) {
-        return true
-    }
-    if (this is ReactHorizontalScrollView || this is ReactScrollView) {
-        return false
-    }
-    var parentView = this.parent
-    while (parentView is ViewGroup && parentView !is ScreenStack) {
-        when (parentView) {
-            is ReactHorizontalScrollView -> {
-                return parentView.removeClippedSubviews
-            }
-            is ReactScrollView -> {
-                return parentView.removeClippedSubviews
-            }
-            else -> {
-                parentView = parentView.parent
-            }
+internal fun View.isRemovingClippedSubviews(): Boolean {
+    return when (this) {
+        is ReactHorizontalScrollView -> {
+            this.removeClippedSubviews
+        }
+        is ReactScrollView -> {
+            this.removeClippedSubviews
+        }
+        else -> {
+            false
         }
     }
-    return false
 }
