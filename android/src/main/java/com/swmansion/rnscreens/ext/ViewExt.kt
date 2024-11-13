@@ -35,16 +35,9 @@ internal fun View.maybeBgColor(): Int? {
     return null
 }
 
-internal fun View.isRemovingClippedSubviews(): Boolean {
-    return when (this) {
-        is ReactHorizontalScrollView -> {
-            this.removeClippedSubviews
-        }
-        is ReactScrollView -> {
-            this.removeClippedSubviews
-        }
-        else -> {
-            false
-        }
+internal val View.isRemovingClippedSubviews: Boolean
+    get() = when (this) {
+        is ReactHorizontalScrollView -> removeClippedSubviews
+        is ReactScrollView -> removeClippedSubviews
+        else -> false
     }
-}

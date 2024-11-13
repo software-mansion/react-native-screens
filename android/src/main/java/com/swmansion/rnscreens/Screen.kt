@@ -401,7 +401,7 @@ class Screen(
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig
-                    startTransitionRecursive(child, isRemovedClippedSubview || it.isRemovingClippedSubviews())
+                    startTransitionRecursive(child, isRemovedClippedSubview || it.isRemovingClippedSubviews)
                 }
                 if (child is ViewGroup) {
                     // The children are miscounted when there's removeClippedSubviews prop
@@ -413,7 +413,7 @@ class Screen(
                             child.addView(View(context))
                         }
                     }
-                    startTransitionRecursive(child, isRemovedClippedSubview || it.isRemovingClippedSubviews())
+                    startTransitionRecursive(child, isRemovedClippedSubview || it.isRemovingClippedSubviews)
                 }
             }
         }
