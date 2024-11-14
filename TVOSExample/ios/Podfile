@@ -1,6 +1,3 @@
-source 'https://github.com/react-native-tvos/react-native-tvos-podspecs.git'
-source 'https://cdn.cocoapods.org/'
-
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -8,6 +5,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+platform :tvos, min_ios_version_supported
 prepare_react_native_project!
 
 linkage = ENV['USE_FRAMEWORKS']
@@ -16,26 +14,8 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-# target 'TVOSExample' do
-#   config = use_native_modules!
-#   platform :ios, min_ios_version_supported
-# 
-#   use_react_native!(
-#     :path => config[:reactNativePath],
-#     # An absolute path to your application root.
-#     :app_path => "#{Pod::Config.instance.installation_root}/.."
-#   )
-# 
-#   target 'TVOSExampleTests' do
-#     inherit! :complete
-#     # Pods for testing
-#   end
-# 
-# end
-
-target 'TVOSExample-tvOS' do
+target 'TVOSExample' do
   config = use_native_modules!
-  platform :tvos, min_ios_version_supported
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -43,19 +23,18 @@ target 'TVOSExample-tvOS' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'TVOSExample-tvOSTests' do
+  target 'TVOSExampleTests' do
     inherit! :complete
     # Pods for testing
   end
 
-end
-
-post_install do |installer|
-  # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
-  config = use_native_modules!
-  react_native_post_install(
-    installer,
-    config[:reactNativePath],
-    :mac_catalyst_enabled => false
-  )
+  post_install do |installer|
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+  end
 end
