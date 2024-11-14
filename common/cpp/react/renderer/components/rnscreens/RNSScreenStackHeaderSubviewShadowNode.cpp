@@ -1,5 +1,4 @@
 #include "RNSScreenStackHeaderSubviewShadowNode.h"
-#include <android/log.h>
 
 namespace facebook::react {
 
