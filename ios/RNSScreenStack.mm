@@ -1183,16 +1183,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-
-  // We should only do a snapshot of a screen that is on the top.
-  // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
-  // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
-  // snapshot.
-  if (screenChildComponent.window != nil &&
-      ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
-       screenChildComponent == [_presentedModals.lastObject view])) {
-    [screenChildComponent.controller setViewToSnapshot];
-  }
+  [screenChildComponent.controller setViewToSnapshot];
 
   RCTAssert(
       screenChildComponent.reactSuperview == self,
