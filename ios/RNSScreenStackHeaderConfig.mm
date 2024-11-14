@@ -451,8 +451,16 @@ RNS_IGNORE_SUPER_CALL_END
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
   if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
+    // Preserve the shadow properties in case the user wants to show the shadow on scroll.
+    UIColor *shadowColor = appearance.shadowColor;
+    UIImage *shadowImage = appearance.shadowImage;
     // transparent background color
     [appearance configureWithTransparentBackground];
+      
+    if (!config.hideShadow) {
+      appearance.shadowColor = shadowColor;
+      appearance.shadowImage = shadowImage;
+    }
   } else {
     [appearance configureWithOpaqueBackground];
   }
@@ -680,7 +688,15 @@ RNS_IGNORE_SUPER_CALL_END
     UINavigationBarAppearance *scrollEdgeAppearance =
         [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     if (config.largeTitleBackgroundColor != nil) {
-      scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
+      // Add support for using a fully transparent bar when the backgroundColor is set to transparent. 
+      if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
+      // This will also remove the background blur effect in the large title which is otherwise inherited from the standard appearance.
+        [scrollEdgeAppearance configureWithTransparentBackground];
+        // This must be set to nil otherwise a default view will be added to the navigation bar background with an opaque background.
+        scrollEdgeAppearance.backgroundColor = nil;
+      } else {
+        scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
+      }
     }
     if (config.largeTitleHideShadow) {
       scrollEdgeAppearance.shadowColor = nil;
