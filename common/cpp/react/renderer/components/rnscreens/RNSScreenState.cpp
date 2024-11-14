@@ -29,7 +29,7 @@ const FrameCorrectionModes &RNSScreenState::getHeaderCorrectionModes()
   return headerCorrectionModes_;
 }
 
-#endif
+#endif // ANDROID
 
 } // namespace react
 } // namespace facebook

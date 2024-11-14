@@ -1,4 +1,3 @@
-#import <React/RCTBridge+Private.h>
 #import <React/RCTEventDispatcherProtocol.h>
 
 @interface RNSScreenViewEvent : NSObject <RCTEvent>

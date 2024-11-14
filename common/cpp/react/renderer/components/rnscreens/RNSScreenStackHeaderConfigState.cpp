@@ -8,8 +8,19 @@ folly::dynamic RNSScreenStackHeaderConfigState::getDynamic() const {
   return folly::dynamic::object("paddingStart", paddingStart_)(
       "paddingEnd_", paddingEnd_);
 }
+#else // ANDROID
+#ifndef NDEBUG
+void RNSScreenStackHeaderConfigState::setImageLoader(
+    std::weak_ptr<void> imageLoader) {
+  imageLoader_ = imageLoader;
+}
 
-#endif
+std::weak_ptr<void> RNSScreenStackHeaderConfigState::getImageLoader()
+    const noexcept {
+  return imageLoader_;
+}
+#endif // !NDEBUG
+#endif // ANDROID
 
 Float RNSScreenStackHeaderConfigState::getPaddingStart() const noexcept {
   return paddingStart_;

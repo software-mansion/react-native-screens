@@ -18,10 +18,6 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-@interface RCTBridge (Private)
-+ (RCTBridge *)currentBridge;
-@end
-
 @implementation RNSScreenStackHeaderSubview
 
 #pragma mark - Common
@@ -115,16 +111,8 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   return NO;
 }
 
-#else
+#else // RCT_NEW_ARCH_ENABLED
 #pragma mark - Paper specific
-
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super init]) {
-    _bridge = bridge;
-  }
-  return self;
-}
 
 - (void)reactSetFrame:(CGRect)frame
 {
@@ -133,17 +121,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
   [self layoutNavigationBarIfNeeded];
 }
-
 #endif // RCT_NEW_ARCH_ENABLED
-
-- (RCTBridge *)bridge
-{
-#ifdef RCT_NEW_ARCH_ENABLED
-  return [RCTBridge currentBridge];
-#else
-  return _bridge;
-#endif // RCT_NEW_ARCH_ENABLED
-}
 
 @end
 
@@ -157,7 +135,7 @@ RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 #else
 - (UIView *)view
 {
-  return [[RNSScreenStackHeaderSubview alloc] initWithBridge:self.bridge];
+  return [RNSScreenStackHeaderSubview new];
 }
 #endif
 

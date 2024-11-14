@@ -9,7 +9,7 @@ using namespace rnscreens;
 folly::dynamic RNSScreenStackHeaderSubviewState::getDynamic() const {
   return folly::dynamic::object();
 }
-#endif
+#endif // ANDROID
 
 } // namespace react
 } // namespace facebook
