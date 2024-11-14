@@ -5,10 +5,7 @@ import { Button, Text, TextInput, View } from "react-native";
 
 type RouteParamList = {
   Home: undefined;
-  FormSheet: {
-    footerEnabled?: boolean,
-    destinations?: Array<keyof RouteParamList>,
-  };
+  FormSheet: undefined;
 }
 
 type RouteProps<RouteName extends keyof RouteParamList> = {
@@ -21,23 +18,12 @@ const Stack = createNativeStackNavigator<RouteParamList>();
 function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
-      <Button title="Open FormSheet" onPress={() => navigation.navigate('FormSheet', { footerEnabled: true })} />
+      <Button title="Open FormSheet" onPress={() => navigation.navigate('FormSheet')} />
     </View>
   );
 }
 
-function FormSheet({ navigation, route }: RouteProps<'FormSheet'>) {
-  // const { footerEnabled = false } = route.params;
-  //
-  // useLayoutEffect(() => {
-  //   console.log('Running useLayoutEffect in FormSheet');
-  //   if (footerEnabled) {
-  //     navigation.setOptions({
-  //     })
-  //   }
-  // }, [footerEnabled])
-
-
+function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   return (
     <View style={{ backgroundColor: 'lightgreen' }}>
       <View style={{ paddingTop: 20 }}>
@@ -65,8 +51,9 @@ export default function App() {
           },
           unstable_sheetFooter: () => {
             return (
-              <View style={{ height: 48, backgroundColor: 'red' }}>
+              <View style={{ height: 64, backgroundColor: 'red' }}>
                 <Text>Footer</Text>
+                <Button title="Just click me" onPress={() => console.log('Footer button clicked')} />
               </View>
             );
           }
