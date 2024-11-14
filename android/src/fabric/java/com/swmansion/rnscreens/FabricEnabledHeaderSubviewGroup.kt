@@ -17,21 +17,30 @@ abstract class FabricEnabledHeaderSubviewGroup(context: Context?): ViewGroup(con
 
     fun updateSubviewFrameState(
         width: Int,
-        height: Int
+        height: Int,
+        offsetX: Int,
+        offsetY: Int
     ) {
-        updateState(width, height)
+        updateState(width, height, offsetX, offsetY)
     }
 
     @UiThread
     fun updateState(
         width: Int,
-        height: Int
+        height: Int,
+        offsetX: Int,
+        offsetY: Int
     ) {
         val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
         val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
+        val offsetXDip: Float = PixelUtil.toDIPFromPixel(offsetX.toFloat())
+        val offsetYDip: Float = PixelUtil.toDIPFromPixel(offsetY.toFloat())
+
         val map: WritableMap = WritableNativeMap().apply {
             putDouble("frameWidth", realWidth.toDouble())
             putDouble("frameHeight", realHeight.toDouble())
+            putDouble("contentOffsetX", offsetXDip.toDouble())
+            putDouble("contentOffsetY", offsetYDip.toDouble())
         }
 
         mStateWrapper?.updateState(map)

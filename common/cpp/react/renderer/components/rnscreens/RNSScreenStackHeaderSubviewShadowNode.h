@@ -24,9 +24,14 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewShadowNode final
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
+  void layout(LayoutContext layoutContext) override;
+
 #pragma mark - ShadowNode overrides
 
 #pragma mark - Custom interface
+#ifdef ANDROID
+    void applyFrameCorrections();
+#endif
 };
 
 } // namespace facebook::react

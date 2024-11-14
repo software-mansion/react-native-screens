@@ -45,7 +45,7 @@ class ScreenStackHeaderSubview(
        if (changed && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
            val width = r - l;
            val height = b - t;
-           updateSubviewFrameState(width, height)
+           updateSubviewFrameState(width, height, l, t)
        }
     }
 

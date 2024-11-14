@@ -27,7 +27,10 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
       folly::dynamic data)
       : frameSize(Size{
           (Float)data["frameWidth"].getDouble(),
-          (Float)data["frameHeight"].getDouble()}) {}
+          (Float)data["frameHeight"].getDouble()}),
+          contentOffset(Point{
+              (Float)data["contentOffsetX"].getDouble(),
+              (Float)data["contentOffsetY"].getDouble()}) {}
 #endif
 
 #ifdef ANDROID
@@ -38,6 +41,7 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
 #endif
 
   const Size frameSize{};
+  Point contentOffset;
 
 #pragma mark - Getters
 };
