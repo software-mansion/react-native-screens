@@ -35,6 +35,7 @@ class ScreenFooter(
     private val sheetBehavior
         get() = requireScreenParent().sheetBehavior
 
+    private val hasReceivedInitialLayoutFromParent get() = lastContainerHeight > 0
 
     // Due to Android restrictions on layout flow, particularly
     // the fact that onMeasure must set `measuredHeight` & `measuredWidth` React calls `measure` on every
@@ -92,9 +93,10 @@ class ScreenFooter(
         }
 
     init {
-        val rootView = checkNotNull(reactContext.currentActivity) {
-            "[RNScreens] Context detached from activity while creating ScreenFooter"
-        }.window.decorView
+        val rootView =
+            checkNotNull(reactContext.currentActivity) {
+                "[RNScreens] Context detached from activity while creating ScreenFooter"
+            }.window.decorView
 
         // Note that we do override insets animation on given view. I can see it interfering e.g.
         // with reanimated keyboard or even other places in our code. Need to test this.
@@ -115,6 +117,9 @@ class ScreenFooter(
         bottom: Int,
     ) {
         super.onLayout(changed, left, top, right, bottom)
+        if (!hasReceivedInitialLayoutFromParent) {
+            return
+        }
         layoutFooterOnYAxis(
             lastContainerHeight,
             bottom - top,
@@ -219,11 +224,18 @@ class ScreenFooter(
      *
      * This method should not be used for sheet in stable state.
      *
+     * Currently the implementation assumes that the Screen's (sheet's) container starts at y: 0
+     * in global coordinates. Then we can use simply sheet's top. If that is for some reason
+     * unavailable, then we fallback to interpolation basing on values provided by sheet behaviour.
+     *
+     * We don't want to primarily rely on interpolation, because due to division rounding errors the footer
+     * will "flicker" (jump up / down a single pixel).
+     *
      * @param slideOffset sheet offset as reported by [BottomSheetCallback.onSlide]
      * @return position of sheet's top **relative to container**
      */
     private fun sheetTopWhileDragging(slideOffset: Float): Int =
-        MathUtils
+        screenParent?.top ?: MathUtils
             .lerp(
                 sheetTopInStableState(STATE_COLLAPSED).toFloat(),
                 sheetTopInStableState(
