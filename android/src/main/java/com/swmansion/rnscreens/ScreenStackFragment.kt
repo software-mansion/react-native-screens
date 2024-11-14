@@ -67,7 +67,7 @@ class ScreenStackFragment :
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
-    private lateinit var coordinatorLayout: ScreensCoordinatorLayout
+    public lateinit var coordinatorLayout: ScreensCoordinatorLayout
 
     private val screenStack: ScreenStack
         get() {
@@ -194,6 +194,7 @@ class ScreenStackFragment :
         if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
             return null
         }
+        return null
         return if (enter) {
             AnimationUtils.loadAnimation(context, R.anim.rns_slide_in_from_bottom)
         } else {
@@ -565,7 +566,7 @@ class ScreenStackFragment :
         screenStack.dismiss(this)
     }
 
-    private class ScreensCoordinatorLayout(
+    class ScreensCoordinatorLayout(
         context: Context,
         private val fragment: ScreenStackFragment,
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {

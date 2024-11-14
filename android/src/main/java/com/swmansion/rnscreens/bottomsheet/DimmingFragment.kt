@@ -51,8 +51,8 @@ class DimmingFragment(
     Animation.AnimationListener,
     OnApplyWindowInsetsListener,
     NativeDismissalObserver {
-    private lateinit var dimmingView: DimmingView
-    private lateinit var containerView: GestureTransparentViewGroup
+    public lateinit var dimmingView: DimmingView
+    public lateinit var containerView: GestureTransparentViewGroup
 
     private val maxAlpha: Float = 0.15F
 
@@ -180,10 +180,14 @@ class DimmingFragment(
         nextAnim: Int,
     ): Animation? =
         // We want dimming view to have always fade animation in current usages.
-        AnimationUtils.loadAnimation(
-            context,
-            if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out,
-        )
+        if (enter) {
+            AnimationUtils.loadAnimation(
+                context,
+                if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out,
+            )
+        } else {
+            null
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
