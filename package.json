@@ -1,6 +1,6 @@
 {
   "name": "react-native-screens",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn)",

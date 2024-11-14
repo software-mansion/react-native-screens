@@ -11,9 +11,11 @@
     (react::RNSScreenStackHeaderConfigDirection)direction
 {
   switch (direction) {
-    case react::RNSScreenStackHeaderConfigDirection::Rtl:
+    using enum react::RNSScreenStackHeaderConfigDirection;
+
+    case Rtl:
       return UISemanticContentAttributeForceRightToLeft;
-    case react::RNSScreenStackHeaderConfigDirection::Ltr:
+    case Ltr:
       return UISemanticContentAttributeForceLeftToRight;
   }
 }
@@ -22,11 +24,13 @@
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode
 {
   switch (backButtonDisplayMode) {
-    case react::RNSScreenStackHeaderConfigBackButtonDisplayMode::Default:
+    using enum react::RNSScreenStackHeaderConfigBackButtonDisplayMode;
+
+    case Default:
       return UINavigationItemBackButtonDisplayModeDefault;
-    case react::RNSScreenStackHeaderConfigBackButtonDisplayMode::Generic:
+    case Generic:
       return UINavigationItemBackButtonDisplayModeGeneric;
-    case react::RNSScreenStackHeaderConfigBackButtonDisplayMode::Minimal:
+    case Minimal:
       return UINavigationItemBackButtonDisplayModeMinimal;
   }
 }
@@ -35,19 +39,21 @@
     (react::RNSScreenStackPresentation)stackPresentation
 {
   switch (stackPresentation) {
-    case react::RNSScreenStackPresentation::Push:
+    using enum react::RNSScreenStackPresentation;
+
+    case Push:
       return RNSScreenStackPresentationPush;
-    case react::RNSScreenStackPresentation::Modal:
+    case Modal:
       return RNSScreenStackPresentationModal;
-    case react::RNSScreenStackPresentation::FullScreenModal:
+    case FullScreenModal:
       return RNSScreenStackPresentationFullScreenModal;
-    case react::RNSScreenStackPresentation::FormSheet:
+    case FormSheet:
       return RNSScreenStackPresentationFormSheet;
-    case react::RNSScreenStackPresentation::ContainedModal:
+    case ContainedModal:
       return RNSScreenStackPresentationContainedModal;
-    case react::RNSScreenStackPresentation::TransparentModal:
+    case TransparentModal:
       return RNSScreenStackPresentationTransparentModal;
-    case react::RNSScreenStackPresentation::ContainedTransparentModal:
+    case ContainedTransparentModal:
       return RNSScreenStackPresentationContainedTransparentModal;
   }
 }
@@ -55,26 +61,27 @@
 + (RNSScreenStackAnimation)RNSScreenStackAnimationFromCppEquivalent:(react::RNSScreenStackAnimation)stackAnimation
 {
   switch (stackAnimation) {
-    // these four are intentionally grouped
-    case react::RNSScreenStackAnimation::Slide_from_right:
-    case react::RNSScreenStackAnimation::Ios_from_right:
-    case react::RNSScreenStackAnimation::Default:
+    using enum react::RNSScreenStackAnimation;
+    // these three are intentionally grouped
+    case Slide_from_right:
+    case Ios_from_right:
+    case Default:
       return RNSScreenStackAnimationDefault;
     // these two are intentionally grouped
-    case react::RNSScreenStackAnimation::Slide_from_left:
-    case react::RNSScreenStackAnimation::Ios_from_left:
+    case Slide_from_left:
+    case Ios_from_left:
       return RNSScreenStackAnimationSlideFromLeft;
-    case react::RNSScreenStackAnimation::Flip:
+    case Flip:
       return RNSScreenStackAnimationFlip;
-    case react::RNSScreenStackAnimation::Simple_push:
+    case Simple_push:
       return RNSScreenStackAnimationSimplePush;
-    case react::RNSScreenStackAnimation::None:
+    case None:
       return RNSScreenStackAnimationNone;
-    case react::RNSScreenStackAnimation::Fade:
+    case Fade:
       return RNSScreenStackAnimationFade;
-    case react::RNSScreenStackAnimation::Slide_from_bottom:
+    case Slide_from_bottom:
       return RNSScreenStackAnimationSlideFromBottom;
-    case react::RNSScreenStackAnimation::Fade_from_bottom:
+    case Fade_from_bottom:
       return RNSScreenStackAnimationFadeFromBottom;
   }
 }
@@ -83,17 +90,19 @@
     (react::RNSScreenStackHeaderSubviewType)subviewType
 {
   switch (subviewType) {
-    case react::RNSScreenStackHeaderSubviewType::Left:
+    using enum react::RNSScreenStackHeaderSubviewType;
+
+    case Left:
       return RNSScreenStackHeaderSubviewTypeLeft;
-    case react::RNSScreenStackHeaderSubviewType::Right:
+    case Right:
       return RNSScreenStackHeaderSubviewTypeRight;
-    case react::RNSScreenStackHeaderSubviewType::Title:
+    case Title:
       return RNSScreenStackHeaderSubviewTypeTitle;
-    case react::RNSScreenStackHeaderSubviewType::Center:
+    case Center:
       return RNSScreenStackHeaderSubviewTypeCenter;
-    case react::RNSScreenStackHeaderSubviewType::SearchBar:
+    case SearchBar:
       return RNSScreenStackHeaderSubviewTypeSearchBar;
-    case react::RNSScreenStackHeaderSubviewType::Back:
+    case Back:
       return RNSScreenStackHeaderSubviewTypeBackButton;
   }
 }
@@ -102,9 +111,10 @@
     (react::RNSScreenReplaceAnimation)replaceAnimation
 {
   switch (replaceAnimation) {
-    case react::RNSScreenReplaceAnimation::Pop:
+    using enum react::RNSScreenReplaceAnimation;
+    case Pop:
       return RNSScreenReplaceAnimationPop;
-    case react::RNSScreenReplaceAnimation::Push:
+    case Push:
       return RNSScreenReplaceAnimationPush;
   }
 }
@@ -112,9 +122,10 @@
 + (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:(react::RNSScreenSwipeDirection)swipeDirection
 {
   switch (swipeDirection) {
-    case react::RNSScreenSwipeDirection::Horizontal:
+    using enum react::RNSScreenSwipeDirection;
+    case Horizontal:
       return RNSScreenSwipeDirectionHorizontal;
-    case react::RNSScreenSwipeDirection::Vertical:
+    case Vertical:
       return RNSScreenSwipeDirectionVertical;
   }
 }
@@ -144,13 +155,14 @@
     (react::RNSSearchBarAutoCapitalize)autoCapitalize
 {
   switch (autoCapitalize) {
-    case react::RNSSearchBarAutoCapitalize::Words:
+    using enum react::RNSSearchBarAutoCapitalize;
+    case Words:
       return UITextAutocapitalizationTypeWords;
-    case react::RNSSearchBarAutoCapitalize::Sentences:
+    case Sentences:
       return UITextAutocapitalizationTypeSentences;
-    case react::RNSSearchBarAutoCapitalize::Characters:
+    case Characters:
       return UITextAutocapitalizationTypeAllCharacters;
-    case react::RNSSearchBarAutoCapitalize::None:
+    case None:
       return UITextAutocapitalizationTypeNone;
   }
 }
@@ -159,11 +171,12 @@
 + (RNSSearchBarPlacement)RNSScreenSearchBarPlacementFromCppEquivalent:(react::RNSSearchBarPlacement)placement
 {
   switch (placement) {
-    case react::RNSSearchBarPlacement::Stacked:
+    using enum react::RNSSearchBarPlacement;
+    case Stacked:
       return RNSSearchBarPlacementStacked;
-    case react::RNSSearchBarPlacement::Automatic:
+    case Automatic:
       return RNSSearchBarPlacementAutomatic;
-    case react::RNSSearchBarPlacement::Inline:
+    case Inline:
       return RNSSearchBarPlacementInline;
   }
 }
@@ -179,68 +192,69 @@
 
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect
 {
+  using enum react::RNSScreenStackHeaderConfigBlurEffect;
 #if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     switch (blurEffect) {
-      case react::RNSScreenStackHeaderConfigBlurEffect::None:
+      case None:
         return RNSBlurEffectStyleNone;
-      case react::RNSScreenStackHeaderConfigBlurEffect::ExtraLight:
+      case ExtraLight:
         return RNSBlurEffectStyleExtraLight;
-      case react::RNSScreenStackHeaderConfigBlurEffect::Light:
+      case Light:
         return RNSBlurEffectStyleLight;
-      case react::RNSScreenStackHeaderConfigBlurEffect::Dark:
+      case Dark:
         return RNSBlurEffectStyleDark;
-      case react::RNSScreenStackHeaderConfigBlurEffect::Regular:
+      case Regular:
         return RNSBlurEffectStyleRegular;
-      case react::RNSScreenStackHeaderConfigBlurEffect::Prominent:
+      case Prominent:
         return RNSBlurEffectStyleProminent;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterial:
+      case SystemUltraThinMaterial:
         return RNSBlurEffectStyleSystemUltraThinMaterial;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterial:
+      case SystemThinMaterial:
         return RNSBlurEffectStyleSystemThinMaterial;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterial:
+      case SystemMaterial:
         return RNSBlurEffectStyleSystemMaterial;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterial:
+      case SystemThickMaterial:
         return RNSBlurEffectStyleSystemThickMaterial;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterial:
+      case SystemChromeMaterial:
         return RNSBlurEffectStyleSystemChromeMaterial;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterialLight:
+      case SystemUltraThinMaterialLight:
         return RNSBlurEffectStyleSystemUltraThinMaterialLight;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterialLight:
+      case SystemThinMaterialLight:
         return RNSBlurEffectStyleSystemThinMaterialLight;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterialLight:
+      case SystemMaterialLight:
         return RNSBlurEffectStyleSystemMaterialLight;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterialLight:
+      case SystemThickMaterialLight:
         return RNSBlurEffectStyleSystemThickMaterialLight;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterialLight:
+      case SystemChromeMaterialLight:
         return RNSBlurEffectStyleSystemChromeMaterialLight;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterialDark:
+      case SystemUltraThinMaterialDark:
         return RNSBlurEffectStyleSystemUltraThinMaterialDark;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterialDark:
+      case SystemThinMaterialDark:
         return RNSBlurEffectStyleSystemThinMaterialDark;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterialDark:
+      case SystemMaterialDark:
         return RNSBlurEffectStyleSystemMaterialDark;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterialDark:
+      case SystemThickMaterialDark:
         return RNSBlurEffectStyleSystemThickMaterialDark;
-      case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterialDark:
+      case SystemChromeMaterialDark:
         return RNSBlurEffectStyleSystemChromeMaterialDark;
     }
   }
 #endif
 
   switch (blurEffect) {
-    case react::RNSScreenStackHeaderConfigBlurEffect::None:
+    case None:
       return RNSBlurEffectStyleNone;
-    case react::RNSScreenStackHeaderConfigBlurEffect::Light:
+    case Light:
       return RNSBlurEffectStyleLight;
-    case react::RNSScreenStackHeaderConfigBlurEffect::Dark:
+    case Dark:
       return RNSBlurEffectStyleDark;
-    case react::RNSScreenStackHeaderConfigBlurEffect::Regular:
+    case Regular:
       return RNSBlurEffectStyleRegular;
-    case react::RNSScreenStackHeaderConfigBlurEffect::Prominent:
+    case Prominent:
       return RNSBlurEffectStyleProminent;
-    case react::RNSScreenStackHeaderConfigBlurEffect::ExtraLight:
+    case ExtraLight:
     default:
       return RNSBlurEffectStyleNone;
   }

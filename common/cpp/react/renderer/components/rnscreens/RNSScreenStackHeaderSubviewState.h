@@ -32,8 +32,7 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
   };
-#endif
-
+#endif // ANDROID
 #pragma mark - Getters
 };
 

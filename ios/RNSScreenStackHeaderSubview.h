@@ -20,13 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) UIView *reactSuperview;
 
-@property (nonatomic, weak) RCTBridge *bridge;
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-- (instancetype)initWithBridge:(RCTBridge *)bridge;
-#endif // RCT_NEW_ARCH_ENABLED
-
 @end
 
 @interface RNSScreenStackHeaderSubviewManager : RCTViewManager

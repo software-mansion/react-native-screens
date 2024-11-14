@@ -7,7 +7,7 @@
 #include <folly/dynamic.h>
 #include <react/renderer/mapbuffer/MapBuffer.h>
 #include <react/renderer/mapbuffer/MapBufferBuilder.h>
-#endif
+#endif // ANDROID
 
 #include "FrameCorrectionModes.h"
 
@@ -53,7 +53,7 @@ class JSI_EXPORT RNSScreenState final {
 
   const FrameCorrectionModes &getHeaderCorrectionModes() const noexcept;
 
-#endif
+#endif // ANDROID
 
  private:
 #ifdef ANDROID
