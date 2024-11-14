@@ -65,9 +65,10 @@ function ScreenStackItem(
       <DebugContainer
         style={[
           stackPresentation === 'formSheet'
-            ? Platform.OS === 'ios'
-              ? styles.absolute
-              : null
+            ? {
+                ...styles.sheet,
+                maxHeight: Platform.OS === 'android' ? '100%' : undefined,
+              }
             : styles.container,
           contentStyle,
         ]}
@@ -85,7 +86,16 @@ function ScreenStackItem(
        * See https://github.com/software-mansion/react-native-screens/pull/1825
        * for detailed explanation.
        */}
-      <ScreenStackHeaderConfig {...headerConfig} />
+      <ScreenStackHeaderConfig
+        {...headerConfig}
+        // We want to ensure the header is hidden for the `formSheet` presentation on Android as it doesn't have one.
+        // Otherwise it's height may influence sheet contents layout in an unwanted way.
+        // See https://github.com/software-mansion/react-native-screens/pull/2462
+        hidden={
+          headerConfig?.hidden ||
+          (stackPresentation === 'formSheet' && Platform.OS === 'android')
+        }
+      />
     </>
   );
 
@@ -153,7 +163,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  absolute: {
+  sheet: {
     position: 'absolute',
     top: 0,
     start: 0,
