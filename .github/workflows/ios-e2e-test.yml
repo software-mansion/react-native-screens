@@ -37,7 +37,7 @@ jobs:
       - name: Get Xcode version
         run: xcodebuild -version
       - name: Install AppleSimulatorUtils
-        run: brew tap wix/brew && brew install applesimutils
+        run: brew tap wix/brew && brew install applesimutils && applesimutils --list
       - name: Install root node dependencies
         run: yarn install && yarn submodules
       - name: Install node dependencies
