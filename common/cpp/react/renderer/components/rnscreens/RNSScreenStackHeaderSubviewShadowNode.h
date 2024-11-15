@@ -23,7 +23,6 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewShadowNode final
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
-
 #pragma mark - ShadowNode overrides
 
 #pragma mark - Custom interface

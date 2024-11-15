@@ -12,7 +12,7 @@
 
 @interface NSString (RNSStringUtil)
 
-+ (BOOL)RNSisBlank:(NSString *)string;
++ (BOOL)RNSisBlank:(nullable NSString *)string;
 
 @end
 
@@ -30,6 +30,8 @@
 #else
 @property (nonatomic) BOOL hide;
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *titleFontFamily;
@@ -58,9 +60,11 @@
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
 
-+ (void)willShowViewController:(UIViewController *)vc
+NS_ASSUME_NONNULL_END
+
++ (void)willShowViewController:(nonnull UIViewController *)vc
                       animated:(BOOL)animated
-                    withConfig:(RNSScreenStackHeaderConfig *)config;
+                    withConfig:(nonnull RNSScreenStackHeaderConfig *)config;
 
 /**
  * Allows to send information with insets to the corresponding node in shadow tree.
@@ -132,8 +136,7 @@
 
 @interface RCTConvert (RNSScreenStackHeader)
 
-+ (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
-+ (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
-+ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayMode:(id)json;
++ (UISemanticContentAttribute)UISemanticContentAttribute:(nonnull id)json;
++ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayMode:(nonnull id)json;
 
 @end

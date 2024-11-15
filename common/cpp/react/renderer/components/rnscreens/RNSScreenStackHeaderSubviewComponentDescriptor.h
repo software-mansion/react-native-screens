@@ -2,7 +2,7 @@
 
 #ifdef ANDROID
 #include <fbjni/fbjni.h>
-#endif
+#endif // ANDROID
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/rnscreens/utils/RectUtil.h>

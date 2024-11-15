@@ -14,6 +14,7 @@ import { ScreenStackHeaderConfig } from './ScreenStackHeaderConfig';
 import Screen from './Screen';
 import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
+import { FooterComponent } from './ScreenFooter';
 
 type Props = Omit<
   ScreenProps,
@@ -33,6 +34,8 @@ function ScreenStackItem(
     contentStyle,
     style,
     screenId,
+    // eslint-disable-next-line camelcase
+    unstable_sheetFooter,
     ...rest
   }: Props,
   ref: React.ForwardedRef<View>,
@@ -86,6 +89,10 @@ function ScreenStackItem(
        * for detailed explanation.
        */}
       <ScreenStackHeaderConfig {...headerConfig} />
+      {/* eslint-disable-next-line camelcase */}
+      {stackPresentation === 'formSheet' && unstable_sheetFooter && (
+        <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
+      )}
     </>
   );
 

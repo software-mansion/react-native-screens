@@ -10,6 +10,9 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
+#ifndef NDEBUG
+#import <react/utils/ManagedObjectWrapper.h>
+#endif // !NDEBUG
 #else
 #import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
@@ -21,6 +24,7 @@
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 #import "RNSConvert.h"
+#import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
@@ -60,6 +64,9 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
+#ifndef NDEBUG
+  RCTImageLoader *imageLoader;
+#endif // !NDEBUG
 #else
   __weak RCTBridge *_bridge;
 #endif
@@ -113,6 +120,7 @@ namespace react = facebook::react;
   _blurEffect = RNSBlurEffectStyleNone;
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (UIView *)reactSuperview
 {
   return _screenView;
@@ -122,6 +130,7 @@ namespace react = facebook::react;
 {
   return _reactSubviews;
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)removeFromSuperview
 {
@@ -335,10 +344,10 @@ namespace react = facebook::react;
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
-+ (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
+- (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc
 {
   BOOL hasBackButtonImage = NO;
-  for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
+  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
       hasBackButtonImage = YES;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -364,6 +373,7 @@ namespace react = facebook::react;
 
       UIImage *image = imageView.image;
 
+#ifndef NDEBUG
       // IMPORTANT!!!
       // image can be nil in DEV MODE ONLY
       //
@@ -378,8 +388,9 @@ namespace react = facebook::react;
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-        RCTImageLoader *imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
-
+#ifndef RCT_NEW_ARCH_ENABLED
+        RCTImageLoader *imageLoader = [_bridge moduleForClass:[RCTImageLoader class]];
+#endif // !RCT_NEW_ARCH_ENABLED
         image = [imageLoader.imageCache
             imageForUrl:imageSource.request.URL.absoluteString
                    size:imageSource.size
@@ -391,6 +402,7 @@ namespace react = facebook::react;
              resizeMode:imageView.resizeMode];
 #endif // RCT_NEW_ARCH_ENABLED
       }
+#endif // !NDEBUG
       if (image == nil) {
         // This will be triggered if the image is not in the cache yet. What we do is we wait until
         // the end of transition and run header config updates again. We could potentially wait for
@@ -407,7 +419,7 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
                 vc.navigationItem.hidesBackButton = YES;
 #endif
-                [config updateViewControllerIfNeeded];
+                [self updateViewControllerIfNeeded];
               }];
         }
         return [UIImage new];
@@ -439,8 +451,16 @@ namespace react = facebook::react;
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
   if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
+    // Preserve the shadow properties in case the user wants to show the shadow on scroll.
+    UIColor *shadowColor = appearance.shadowColor;
+    UIImage *shadowImage = appearance.shadowImage;
     // transparent background color
     [appearance configureWithTransparentBackground];
+      
+    if (!config.hideShadow) {
+      appearance.shadowColor = shadowColor;
+      appearance.shadowImage = shadowImage;
+    }
   } else {
     [appearance configureWithOpaqueBackground];
   }
@@ -517,7 +537,7 @@ namespace react = facebook::react;
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
-  UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
+  UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
@@ -668,7 +688,15 @@ namespace react = facebook::react;
     UINavigationBarAppearance *scrollEdgeAppearance =
         [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     if (config.largeTitleBackgroundColor != nil) {
-      scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
+      // Add support for using a fully transparent bar when the backgroundColor is set to transparent. 
+      if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
+      // This will also remove the background blur effect in the large title which is otherwise inherited from the standard appearance.
+        [scrollEdgeAppearance configureWithTransparentBackground];
+        // This must be set to nil otherwise a default view will be added to the navigation bar background with an opaque background.
+        scrollEdgeAppearance.backgroundColor = nil;
+      } else {
+        scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
+      }
     }
     if (config.largeTitleHideShadow) {
       scrollEdgeAppearance.shadowColor = nil;
@@ -680,7 +708,7 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
     // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
     // to update it before the navigation starts.
-    UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
+    UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
     if (backButtonImage) {
       navctr.navigationBar.backIndicatorImage = backButtonImage;
       navctr.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
@@ -785,6 +813,7 @@ namespace react = facebook::react;
   }
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
 {
   [_reactSubviews insertObject:subview atIndex:atIndex];
@@ -795,6 +824,7 @@ namespace react = facebook::react;
 {
   [_reactSubviews removeObject:subview];
 }
+RNS_IGNORE_SUPER_CALL_BEGIN
 
 - (void)didUpdateReactSubviews
 {
@@ -842,27 +872,29 @@ namespace react = facebook::react;
 
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
 {
-  UINavigationItem *navitem = _screenView.controller.navigationItem;
-  UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
+  if (childComponentView.window != nil) {
+    UINavigationItem *navitem = _screenView.controller.navigationItem;
+    UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
 
-  // This code should be kept in sync with analogous switch statement in
-  // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
-  switch (childComponentView.type) {
-    case RNSScreenStackHeaderSubviewTypeLeft:
-      navitem.leftBarButtonItem.customView = snapshot;
-      break;
-    case RNSScreenStackHeaderSubviewTypeCenter:
-    case RNSScreenStackHeaderSubviewTypeTitle:
-      navitem.titleView = snapshot;
-      break;
-    case RNSScreenStackHeaderSubviewTypeRight:
-      navitem.rightBarButtonItem.customView = snapshot;
-      break;
-    case RNSScreenStackHeaderSubviewTypeSearchBar:
-    case RNSScreenStackHeaderSubviewTypeBackButton:
-      break;
-    default:
-      RCTLogError(@"[RNScreens] Unhandled subview type: %ld", childComponentView.type);
+    // This code should be kept in sync with analogous switch statement in
+    // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
+    switch (childComponentView.type) {
+      case RNSScreenStackHeaderSubviewTypeLeft:
+        navitem.leftBarButtonItem.customView = snapshot;
+        break;
+      case RNSScreenStackHeaderSubviewTypeCenter:
+      case RNSScreenStackHeaderSubviewTypeTitle:
+        navitem.titleView = snapshot;
+        break;
+      case RNSScreenStackHeaderSubviewTypeRight:
+        navitem.rightBarButtonItem.customView = snapshot;
+        break;
+      case RNSScreenStackHeaderSubviewTypeSearchBar:
+      case RNSScreenStackHeaderSubviewTypeBackButton:
+        break;
+      default:
+        RCTLogError(@"[RNScreens] Unhandled subview type: %ld", childComponentView.type);
+    }
   }
 }
 
@@ -879,6 +911,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
       return RCTResizeModeCenter;
     case react::ImageResizeMode::Repeat:
       return RCTResizeModeRepeat;
+    default:
+      // Both RCTConvert and ImageProps use this as a default as of RN 0.76
+      return RCTResizeModeStretch;
   }
 }
 
@@ -956,6 +991,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _largeTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontWeight);
   _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
+  _largeTitleBackgroundColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleBackgroundColor);
 
   _backTitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitle);
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
@@ -1000,6 +1036,11 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
            oldState:(const facebook::react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderConfigShadowNode::ConcreteState>(state);
+#ifndef NDEBUG
+  if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
+    imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+  }
+#endif // !NDEBUG
 }
 
 #else

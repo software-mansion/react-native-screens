@@ -38,6 +38,11 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
         {stateData.getPaddingStart(), 0, stateData.getPaddingEnd(), 0});
 
     ConcreteComponentDescriptor::adopt(shadowNode);
+#if !defined(ANDROID) && !defined(NDEBUG)
+    std::weak_ptr<void> imageLoader =
+        contextContainer_->at<std::shared_ptr<void>>("RCTImageLoader");
+    configShadowNode.setImageLoader(imageLoader);
+#endif // !ANDROID && !NDEBUG
   }
 };
 

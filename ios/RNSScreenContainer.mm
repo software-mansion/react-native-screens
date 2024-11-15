@@ -1,4 +1,5 @@
 #import "RNSScreenContainer.h"
+#import "RNSDefines.h"
 #import "RNSScreen.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -89,6 +90,9 @@ namespace react = facebook::react;
   [self updateContainer];
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
+// We do not call super as we do not want to update UIKit model. It will
+// be updated after we receive all mutations.
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
 {
   subview.reactSuperview = self;
@@ -106,6 +110,7 @@ namespace react = facebook::react;
 {
   return _reactSubviews;
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (UIViewController *)reactViewController
 {
