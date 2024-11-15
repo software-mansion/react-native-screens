@@ -3,9 +3,6 @@ package com.swmansion.rnscreens.ext
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
-import com.facebook.react.views.scroll.ReactHorizontalScrollView
-import com.facebook.react.views.scroll.ReactScrollView
-import com.swmansion.rnscreens.ScreenStack
 
 internal fun View.parentAsView() = this.parent as? View
 
@@ -32,25 +29,4 @@ internal fun View.maybeBgColor(): Int? {
         return bgDrawable.color
     }
     return null
-}
-
-internal fun View.isInsideScrollViewWithRemoveClippedSubviews(): Boolean {
-    if (this is ReactHorizontalScrollView || this is ReactScrollView) {
-        return false
-    }
-    var parentView = this.parent
-    while (parentView is ViewGroup && parentView !is ScreenStack) {
-        when (parentView) {
-            is ReactHorizontalScrollView -> {
-                return parentView.removeClippedSubviews
-            }
-            is ReactScrollView -> {
-                return parentView.removeClippedSubviews
-            }
-            else -> {
-                parentView = parentView.parent
-            }
-        }
-    }
-    return false
 }

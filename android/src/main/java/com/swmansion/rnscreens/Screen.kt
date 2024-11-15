@@ -20,13 +20,14 @@ import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
+import com.facebook.react.views.scroll.ReactHorizontalScrollView
+import com.facebook.react.views.scroll.ReactScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
-import com.swmansion.rnscreens.ext.isInsideScrollViewWithRemoveClippedSubviews
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -399,11 +400,12 @@ class Screen(
                     startTransitionRecursive(child.toolbar)
                 }
                 if (child is ViewGroup) {
-                    // The children are miscounted when there's a FlatList with
-                    // removeClippedSubviews set to true (default).
-                    // We add a simple view for each item in the list to make it work as expected.
-                    // See https://github.com/software-mansion/react-native-screens/pull/2383
-                    if (child.isInsideScrollViewWithRemoveClippedSubviews()) {
+                    // The children are miscounted when there's removeClippedSubviews prop
+                    // set to true (which is the default for FlatLists).
+                    // Unless the child is a ScrollView it's safe to assume that it's true
+                    // and add a simple view for each possibly clipped item to make it work as expected.
+                    // See https://github.com/software-mansion/react-native-screens/pull/2495
+                    if (child !is ReactScrollView && child !is ReactHorizontalScrollView) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }
