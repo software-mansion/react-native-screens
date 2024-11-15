@@ -111,22 +111,7 @@ namespace react = facebook::react;
     return;
   }
 
-  NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
-  NSDirectionalEdgeInsets navBarContentMargins =
-      [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
-
-  BOOL isDisplayingBackButton = [headerConfig shouldBackButtonBeVisibleInNavigationBar:self.navigationBar];
-
-  // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
-  UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;
-  CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
-
-  [headerConfig updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
-                                                     .leading = navBarMargins.leading + navBarContentMargins.leading +
-                                                         (isDisplayingBackButton ? platformBackButtonWidth : 0),
-                                                     .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
-                                                     .top = self.navigationBar.frame.origin.y
-                                                 }];
+  [headerConfig updateHeaderConfigState:self.navigationBar.frame.size :self.navigationBar.frame.origin];
 }
 #endif
 

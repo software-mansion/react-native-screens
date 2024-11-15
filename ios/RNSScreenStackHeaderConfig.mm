@@ -191,19 +191,22 @@ namespace react = facebook::react;
   [navctr.view setNeedsLayout];
 }
 
-- (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (void)updateHeaderConfigState:(CGSize)size :(CGPoint)origin
+{
+    auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size), RCTPointFromCGPoint(origin));
+    _state->updateState(std::move(newState));
+}
+#else
+- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
 {
     if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing || _lastHeaderInsets.top != insets.top) {
-#ifdef RCT_NEW_ARCH_ENABLED
-    auto newState = react::RNSScreenStackHeaderConfigState{insets.leading, insets.trailing, insets.top};
-    _state->updateState(std::move(newState));
-    _lastHeaderInsets = std::move(insets);
-#else
-    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
-    _lastHeaderInsets = std::move(insets);
-#endif // RCT_NEW_ARCH_ENABLED
-  }
+        [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
+        _lastHeaderInsets = std::move(insets);
+    }
 }
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type
 {

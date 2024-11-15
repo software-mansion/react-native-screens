@@ -64,9 +64,8 @@
 
 /**
  * Allows to send information with insets to the corresponding node in shadow tree.
- * Currently only horizontal insets are send through. Vertical ones are filtered out.
  */
-- (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets;
+- (void)updateHeaderConfigState:(CGSize)size :(CGPoint)origin;
 
 /**
  * Returns true iff subview of given `type` is present.

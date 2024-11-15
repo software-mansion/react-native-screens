@@ -21,7 +21,11 @@ namespace react = facebook::react;
 + (RCTBridge *)currentBridge;
 @end
 
-@implementation RNSScreenStackHeaderSubview
+@implementation RNSScreenStackHeaderSubview {
+#ifdef RCT_NEW_ARCH_ENABLED
+    react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
+#endif
+}
 
 #pragma mark - Common
 
@@ -109,6 +113,31 @@ namespace react = facebook::react;
 + (BOOL)shouldBeRecycled
 {
   return NO;
+}
+
+- (void)layoutSubviews 
+{
+    [super layoutSubviews];
+    RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
+    
+    if (headerConfig) {
+        CGRect frameInHeaderConfig = [self convertRect:self.frame toView:headerConfig];
+        [self updateHeaderSubviewFrame:frameInHeaderConfig.size :frameInHeaderConfig.origin];
+    }
+}
+
+- (void)updateState:(const facebook::react::State::Shared &)state
+        oldState:(const facebook::react::State::Shared &)oldState
+{
+    _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
+}
+
+- (void)updateHeaderSubviewFrame:(CGSize)size :(CGPoint)origin
+{
+    if (_state != nullptr) {
+        auto newState = react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(size), RCTPointFromCGPoint(origin));
+        _state->updateState(std::move(newState));
+    }
 }
 
 #else

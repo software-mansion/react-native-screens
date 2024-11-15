@@ -25,10 +25,10 @@ class JSI_EXPORT RNSScreenStackHeaderConfigShadowNode final
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
 #pragma mark - ShadowNode overrides
-
-  Point getContentOriginOffset(bool includeTransform) const override;
+  void layout(LayoutContext layoutContext) override;
 
 #pragma mark - Custom interface
+  void applyFrameCorrections();
 };
 
 } // namespace facebook::react

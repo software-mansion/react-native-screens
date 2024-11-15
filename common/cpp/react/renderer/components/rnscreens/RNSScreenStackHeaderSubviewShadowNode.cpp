@@ -7,13 +7,9 @@ extern const char RNSScreenStackHeaderSubviewComponentName[] =
 
 void RNSScreenStackHeaderSubviewShadowNode::layout(LayoutContext layoutContext) {
     YogaLayoutableShadowNode::layout(layoutContext);
-
-#ifdef ANDROID
     applyFrameCorrections();
-#endif // ANDROID
 }
 
-#ifdef ANDROID
 void RNSScreenStackHeaderSubviewShadowNode::applyFrameCorrections() {
     ensureUnsealed();
 
@@ -21,6 +17,5 @@ void RNSScreenStackHeaderSubviewShadowNode::applyFrameCorrections() {
     layoutMetrics_.frame.origin.x = stateData.contentOffset.x;
     layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
 }
-#endif // ANDROID
 
 }

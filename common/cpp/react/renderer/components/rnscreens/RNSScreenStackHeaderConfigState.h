@@ -17,8 +17,8 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   RNSScreenStackHeaderConfigState() = default;
 
-  RNSScreenStackHeaderConfigState(Float paddingStart, Float paddingEnd, Float paddingTop)
-    : paddingStart_{paddingStart}, paddingEnd_{paddingEnd}, paddingTop_{paddingTop} {}
+  RNSScreenStackHeaderConfigState(Size frameSize_, Point contentOffset_)
+    : frameSize(frameSize_), contentOffset(contentOffset_) {}
 
 #ifdef ANDROID
   RNSScreenStackHeaderConfigState(
@@ -27,8 +27,9 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
       : frameSize(Size{
           (Float)data["frameWidth"].getDouble(),
           (Float)data["frameHeight"].getDouble()}),
-      paddingStart_{static_cast<Float>(data["paddingStart"].getDouble())},
-      paddingEnd_{static_cast<Float>(data["paddingEnd"].getDouble())} {}
+        contentOffset(Point{
+          (Float)data["contentOffsetX"].getDouble(),
+          (Float)data["contentOffsetY"].getDouble()}){}
 #endif
 
 #ifdef ANDROID
@@ -40,19 +41,9 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 #endif
 
   const Size frameSize{};
+  Point contentOffset;
 
 #pragma mark - Getters
-
-  [[nodiscard]] Float getPaddingStart() const noexcept;
-
-  [[nodiscard]] Float getPaddingEnd() const noexcept;
-    
-  [[nodiscard]] Float getPaddingTop() const noexcept;
-
- private:
-  Float paddingStart_{0.f};
-  Float paddingEnd_{0.f};
-  Float paddingTop_{0.f};
 };
 
 } // namespace facebook::react
