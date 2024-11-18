@@ -57,8 +57,10 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
         }
     }
 
-    fun unregisterOnView(view: View) {
-        ViewCompat.setOnApplyWindowInsetsListener(view, null)
+    fun unregister() {
+        eventSourceView.get()?.takeIf { hasBeenRegistered }?.let {
+            ViewCompat.setOnApplyWindowInsetsListener(it, null)
+        }
     }
 
     private fun getObservedView(): View? = eventSourceView.get()
