@@ -39,10 +39,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 enableFreeze();
 
-if (Platform.OS === 'android') {
-  StatusBar.setTranslucent(true);
-}
-
 const SCREENS: Record<
   string,
   {
