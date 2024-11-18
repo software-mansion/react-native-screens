@@ -23,10 +23,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
     ): WindowInsetsCompat {
         var rollingInsets =
             if (shouldForwardInsetsToView) {
-                WindowInsetsCompat.toWindowInsetsCompat(
-                    v.onApplyWindowInsets(insets.toWindowInsets()),
-                    v,
-                )
+                ViewCompat.onApplyWindowInsets(v, insets)
             } else {
                 insets
             }
@@ -58,7 +55,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
     }
 
     fun unregister() {
-        eventSourceView.get()?.takeIf { hasBeenRegistered }?.let {
+        getObservedView()?.takeIf { hasBeenRegistered }?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it, null)
         }
     }
