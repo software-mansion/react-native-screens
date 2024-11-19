@@ -121,7 +121,8 @@ namespace react = facebook::react;
     RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
     
     if (headerConfig) {
-        CGRect frameInHeaderConfig = [self convertRect:self.frame toView:headerConfig];
+        UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
+        CGRect frameInHeaderConfig = [self convertRect:self.frame toView:navctr.view];
         [self updateHeaderSubviewFrame:frameInHeaderConfig.size :frameInHeaderConfig.origin];
     }
 }
