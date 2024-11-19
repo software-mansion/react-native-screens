@@ -139,9 +139,7 @@ namespace react = facebook::react;
         
       // we wrap the headerLeft/Right component in a UIBarButtonItem
       // so we need to use the only subview of it to retrieve the correct view
-      UIView *headerComponent = subview.subviews.count > 1 ?
-        headerComponent = subview.subviews[subview.subviews.count - 1] :
-        subview.subviews.firstObject;
+      UIView *headerComponent = subview.subviews.firstObject;
     
       // we convert the point to RNSScreenStackView since it always contains the header inside it
       CGPoint convertedPoint = [_screenView.reactSuperview convertPoint:point toView:headerComponent];
