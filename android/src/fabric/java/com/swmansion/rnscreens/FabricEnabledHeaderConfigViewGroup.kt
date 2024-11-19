@@ -14,57 +14,57 @@ abstract class FabricEnabledHeaderConfigViewGroup(
 ) : ViewGroup(context) {
     private var mStateWrapper: StateWrapper? = null
 
-    private var lastPaddingStart = 0f
-    private var lastPaddingEnd = 0f
     private var lastWidth = 0f
     private var lastHeight = 0f
+    private var lastOffsetX = 0f
+    private var lastOffsetY = 0f
 
     fun setStateWrapper(wrapper: StateWrapper?) {
         mStateWrapper = wrapper
     }
 
     fun updateHeaderConfigState(
-        paddingStart: Int,
-        paddingEnd: Int,
         width: Int,
         height: Int,
+        offsetX: Int,
+        offsetY: Int
     ) {
-        updateState(paddingStart, paddingEnd, width, height)
+        updateState(width, height, offsetX, offsetY)
     }
 
     @UiThread
     fun updateState(
-        paddingStart: Int,
-        paddingEnd: Int,
         width: Int,
         height: Int,
+        offsetX: Int,
+        offsetY: Int
     ) {
-        val paddingStartDip: Float = PixelUtil.toDIPFromPixel(paddingStart.toFloat())
-        val paddingEndDip: Float = PixelUtil.toDIPFromPixel(paddingEnd.toFloat())
         val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
         val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
+        val offsetXDip: Float = PixelUtil.toDIPFromPixel(offsetX.toFloat())
+        val offsetYDip: Float = PixelUtil.toDIPFromPixel(offsetY.toFloat())
 
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
-        if (abs(lastPaddingStart - paddingStartDip) < DELTA &&
-            abs(lastPaddingEnd - paddingEndDip) < DELTA &&
-            abs(lastWidth - realWidth) < DELTA &&
-            abs(lastHeight - realHeight) < DELTA
+        if (abs(lastWidth - realWidth) < DELTA &&
+            abs(lastHeight - realHeight) < DELTA &&
+            abs(lastOffsetX - offsetXDip) < DELTA &&
+            abs(lastOffsetY - offsetY) < DELTA
         ) {
             return
         }
 
-        lastPaddingStart = paddingStartDip
-        lastPaddingEnd = paddingEndDip
         lastWidth = realWidth
         lastHeight = realHeight
+        lastOffsetX = offsetXDip
+        lastOffsetY = offsetYDip
 
         val map: WritableMap =
             WritableNativeMap().apply {
-                putDouble("paddingStart", paddingStartDip.toDouble())
-                putDouble("paddingEnd", paddingEndDip.toDouble())
                 putDouble("frameWidth", realWidth.toDouble())
                 putDouble("frameHeight", realHeight.toDouble())
+                putDouble("contentOffsetX", offsetXDip.toDouble())
+                putDouble("contentOffsetY", offsetYDip.toDouble())
             }
         mStateWrapper?.updateState(map)
     }

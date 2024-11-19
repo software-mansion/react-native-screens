@@ -55,11 +55,7 @@ export const ScreenStackHeaderRightView = (
       {...rest}
       type="right"
       style={[styles.headerSubview, style]}
-    >
-      <View collapsable={false}>
-        {props.children}
-      </View>
-    </ScreenStackHeaderSubview>
+    />
   );
 };
 
@@ -73,11 +69,7 @@ export const ScreenStackHeaderLeftView = (
       {...rest}
       type="left"
       style={[styles.headerSubview, style]}
-    >
-      <View collapsable={false}>
-        {props.children}
-      </View>
-    </ScreenStackHeaderSubview>
+    />
   );
 };
 
