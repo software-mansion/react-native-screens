@@ -29,6 +29,10 @@ class RNScreensPackage : TurboReactPackage() {
             screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
         }
 
+        // Proxy needs to register for lifecycle events in order to unregister itself
+        // on activity restarts.
+        InsetsObserverProxy.registerWithContext(reactContext)
+
         return listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
             ScreenViewManager(),

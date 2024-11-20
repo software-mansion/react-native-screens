@@ -4,9 +4,11 @@ import android.view.View
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.facebook.react.bridge.LifecycleEventListener
+import com.facebook.react.bridge.ReactApplicationContext
 import java.lang.ref.WeakReference
 
-object InsetsObserverProxy : OnApplyWindowInsetsListener {
+object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener {
     private val listeners: ArrayList<OnApplyWindowInsetsListener> = arrayListOf()
     private var eventSourceView: WeakReference<View> = WeakReference(null)
 
@@ -32,6 +34,25 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
             rollingInsets = it.onApplyWindowInsets(v, insets)
         }
         return rollingInsets
+    }
+
+    // Call this method to ensure that the observer proxy is
+    // unregistered when apps is destroyed or we change activity.
+    fun registerWithContext(context: ReactApplicationContext) {
+        context.addLifecycleEventListener(this)
+    }
+
+    override fun onHostResume() = Unit
+
+    override fun onHostPause() = Unit
+
+    override fun onHostDestroy() {
+        val observedView = getObservedView()
+        if (hasBeenRegistered && observedView != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(observedView, null)
+            hasBeenRegistered = false
+            eventSourceView.clear()
+        }
     }
 
     fun addOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
