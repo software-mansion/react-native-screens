@@ -23,6 +23,7 @@ import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.scroll.ReactHorizontalScrollView
 import com.facebook.react.views.scroll.ReactScrollView
+import android.widget.HorizontalScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -406,7 +407,7 @@ class Screen(
                     // Unless the child is a ScrollView it's safe to assume that it's true
                     // and add a simple view for each possibly clipped item to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/pull/2495
-                    if (child !is ReactScrollView && child !is ReactHorizontalScrollView && child !is ViewPager2) {
+                    if (child !is ReactScrollView && child !is ReactHorizontalScrollView && child !is ViewPager2 && child !is HorizontalScrollView) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }
