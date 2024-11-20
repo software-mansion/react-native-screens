@@ -405,7 +405,7 @@ class Screen(
                     // Unless the child is a ScrollView it's safe to assume that it's true
                     // and add a simple view for each possibly clipped item to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/pull/2495
-                    if (child !is ReactScrollView && child !is ReactHorizontalScrollView) {
+                    if (child !is ReactScrollView && child !is ReactHorizontalScrollView && child !is ViewPager2) {
                         for (j in 0 until child.childCount) {
                             child.addView(View(context))
                         }
