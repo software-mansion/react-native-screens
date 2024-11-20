@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, ImageBackground } from 'react-native';
-import { ParamListBase } from '@react-navigation/native';
+import { ParamListBase, RouteProp } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -15,7 +15,7 @@ type StackParamList = {
   ContainedModal: undefined;
   ContainedTransparentModal: undefined;
   FullScreenModal: undefined;
-  FormSheet: undefined;
+  FormSheet: { usesFormSheetPresentation?: boolean };
 };
 
 interface MainScreenProps {
@@ -71,20 +71,42 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   );
 };
 
-interface FormScreenProps {
-  navigation: NativeStackNavigationProp<ParamListBase>;
+interface PushScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Push'>;
 }
 
-const FormScreen = ({ navigation }: FormScreenProps): React.JSX.Element => (
+const PushScreen = ({ navigation }: PushScreenProps) => (
   <View style={styles.container}>
+    <FormScreenContent navigation={navigation} />
+  </View>
+)
+
+interface FormScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'FormSheet'>;
+  route: RouteProp<StackParamList, 'FormSheet'>;
+}
+
+const FormScreenContent = ({ navigation }: { navigation: NativeStackNavigationProp<StackParamList, 'Push' | 'FormSheet'> }) => (
+  <>
     <Form />
     <Button
       testID="stack-presentation-form-screen-go-back-button"
       title="Go back"
       onPress={() => navigation.goBack()}
     />
-  </View>
+  </>
 );
+
+
+const FormScreen = ({ navigation, route }: FormScreenProps): React.JSX.Element => {
+  const isFormSheet = route.params?.usesFormSheetPresentation ?? false;
+
+  return (
+    <View style={!isFormSheet ? styles.container : null}>
+      <FormScreenContent navigation={navigation} />
+    </View>
+  );
+}
 
 interface ModalScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -135,7 +157,7 @@ const App = (): React.JSX.Element => (
     />
     <Stack.Screen
       name="Push"
-      component={FormScreen}
+      component={PushScreen}
       options={{ presentation: 'card' }}
     />
     <Stack.Screen
@@ -177,7 +199,10 @@ const App = (): React.JSX.Element => (
     <Stack.Screen
       name="FormSheet"
       component={FormScreen}
-      options={{ presentation: 'formSheet' }}
+      options={{ presentation: 'formSheet', sheetAllowedDetents: [0.5, 0.85] }}
+      initialParams={{
+        usesFormSheetPresentation: true
+      }}
     />
   </Stack.Navigator>
 );
