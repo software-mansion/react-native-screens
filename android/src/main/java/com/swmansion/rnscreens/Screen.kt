@@ -404,7 +404,6 @@ class Screen(
                 }
 
                 if (child is ViewGroup) {
-                    // We mark the children as transitioning, but some of them might be clipped
                     // The children are miscounted when there's removeClippedSubviews prop
                     // set to true (which is the default for FlatLists).
                     // Unless the child is a ScrollView it's safe to assume that it's true
