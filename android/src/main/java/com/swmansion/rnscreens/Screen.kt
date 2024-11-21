@@ -59,6 +59,8 @@ class Screen(
     var screenOrientation: Int? = null
         private set
     var isStatusBarAnimated: Boolean? = null
+
+    @Volatile
     var isBeingRemoved = false
 
     // Props for controlling modal presentation
@@ -374,9 +376,27 @@ class Screen(
     var nativeBackButtonDismissalEnabled: Boolean = true
 
     fun startRemovalTransition() {
+        // isBeingRemoved is marked as volatile to ensure memory ordering.
+        // Synchronization is not required, because this method is called either from commit hook
+        // running on JS thread (before mounting) or from mounting code running on UI thread.
+        //
+        // We need to run this on UI thread due to assertions in RN code (otherwise we could crash
+        // the app in production env).
+        //
+        // Important thing is timing here: when we start transition from commit hook we rely on the fact
+        // that the mount items are not scheduled on UI yet, thus we rely on the fact that the task scheduled
+        // here will be executed before the mount items as the queues are serial.
+        //
+        // TODO: Verify whether this method should be called from view manager at all (or maybe only on Paper)
         if (!isBeingRemoved) {
             isBeingRemoved = true
-            startTransitionRecursive(this)
+            if (!reactContext.isOnUiQueueThread) {
+                reactContext.runOnUiQueueThread {
+                    startTransitionRecursive(this)
+                }
+            } else {
+                startTransitionRecursive(this)
+            }
         }
     }
 
