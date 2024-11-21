@@ -19,6 +19,10 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
 
     private var shouldForwardInsetsToView = true
 
+    // Allow only when we have not been registered yet or the view we're observing has been
+    // invalidated due to some lifecycle we have not observed.
+    private val allowRegistration get() = !hasBeenRegistered || eventSourceView.get() == null
+
     override fun onApplyWindowInsets(
         v: View,
         insets: WindowInsetsCompat,
@@ -63,16 +67,17 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
         listeners.remove(listener)
     }
 
-    fun registerOnView(view: View) {
-        if (!hasBeenRegistered) {
+    /**
+     * @return boolean whether the proxy registered as a listener on a view
+     */
+    fun registerOnView(view: View): Boolean {
+        if (allowRegistration) {
             ViewCompat.setOnApplyWindowInsetsListener(view, this)
             eventSourceView = WeakReference(view)
             hasBeenRegistered = true
-        } else if (getObservedView() != view) {
-            throw IllegalStateException(
-                "[RNScreens] Attempt to register InsetsObserverProxy on $view while it has been already registered on ${getObservedView()}",
-            )
+            return true
         }
+        return false
     }
 
     fun unregister() {
