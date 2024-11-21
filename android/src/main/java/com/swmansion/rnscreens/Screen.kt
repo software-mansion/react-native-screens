@@ -17,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
+import com.facebook.react.uimanager.ReactClippingViewGroup
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
@@ -383,6 +384,7 @@ class Screen(
         parent?.let {
             for (i in 0 until it.childCount) {
                 val child = it.getChildAt(i)
+
                 if (parent is SwipeRefreshLayout && child is ImageView) {
                     // SwipeRefreshLayout class which has CircleImageView as a child,
                     // does not handle `startViewTransition` properly.
@@ -394,20 +396,35 @@ class Screen(
                 } else {
                     child?.let { view -> it.startViewTransition(view) }
                 }
+
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig
                     startTransitionRecursive(child.toolbar)
                 }
+
                 if (child is ViewGroup) {
                     // The children are miscounted when there's removeClippedSubviews prop
                     // set to true (which is the default for FlatLists).
                     // Unless the child is a ScrollView it's safe to assume that it's true
                     // and add a simple view for each possibly clipped item to make it work as expected.
                     // See https://github.com/software-mansion/react-native-screens/pull/2495
-                    if (child !is ReactScrollView && child !is ReactHorizontalScrollView) {
-                        for (j in 0 until child.childCount) {
-                            child.addView(View(context))
+
+                    if (child is ReactClippingViewGroup &&
+                        child.removeClippedSubviews &&
+                        child !is ReactScrollView &&
+                        child !is ReactHorizontalScrollView
+                    ) {
+                        // We need to workaround the issue until our changes land in core.
+                        // Some views do not accept any children or have set amount and they throw
+                        // when we want to brute-forcefully manipulate that.
+                        // Is this ugly? Very. Do we have better option before changes land in core?
+                        // I'm not aware of any.
+                        try {
+                            for (j in 0 until child.childCount) {
+                                child.addView(View(context))
+                            }
+                        } catch (_: Exception) {
                         }
                     }
                     startTransitionRecursive(child)
