@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.View
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
@@ -16,6 +17,10 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
     // us, without our knowledge, e.g. reanimated or different 3rd party library. This holds only information
     // whether this observer has been initially registered.
     private var hasBeenRegistered: Boolean = false
+
+    // Mainly debug variable to log warnings in case we missed some code path regarding
+    // context lifetime handling.
+    private var isObservingContextLifetime: Boolean = false
 
     private var shouldForwardInsetsToView = true
 
@@ -43,6 +48,14 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
     // Call this method to ensure that the observer proxy is
     // unregistered when apps is destroyed or we change activity.
     fun registerWithContext(context: ReactApplicationContext) {
+        if (isObservingContextLifetime) {
+            Log.w(
+                "[RNScreens]",
+                "InsetObserverProxy registers on new context while it has not been invalidated on the old one. Please report this as issue at https://github.com/software-mansion/react-native-screens/issues",
+            )
+        }
+
+        isObservingContextLifetime = true
         context.addLifecycleEventListener(this)
     }
 
@@ -57,6 +70,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
             hasBeenRegistered = false
             eventSourceView.clear()
         }
+        isObservingContextLifetime = false
     }
 
     fun addOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
