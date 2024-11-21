@@ -208,7 +208,7 @@ class DimmingFragment(
     override fun onStart() {
         // This is the earliest we can access child fragment manager & present another fragment
         super.onStart()
-        insetsProxy.registerOnView(requireRootView())
+        insetsProxy.registerOnView(requireDecorView())
         presentNestedFragment()
     }
 
@@ -307,7 +307,7 @@ class DimmingFragment(
             }
     }
 
-    private fun requireRootView(): View =
+    private fun requireDecorView(): View =
         checkNotNull(screen.reactContext.currentActivity) { "[RNScreens] Attempt to access activity on detached context" }
             .window.decorView
 
