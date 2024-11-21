@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
@@ -46,6 +47,7 @@ class ScreenStackViewManager :
     }
 
     private fun prepareOutTransition(screen: Screen?) {
+        Log.w("StackViewManager", "$screen startRemovalTransition")
         screen?.startRemovalTransition()
     }
 

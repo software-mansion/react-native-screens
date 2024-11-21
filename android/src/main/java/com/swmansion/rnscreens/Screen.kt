@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
@@ -376,6 +377,7 @@ class Screen(
     var nativeBackButtonDismissalEnabled: Boolean = true
 
     fun startRemovalTransition() {
+        Log.w(TAG, "$this startRemovalTransition")
         // isBeingRemoved is marked as volatile to ensure memory ordering.
         // Synchronization is not required, because this method is called either from commit hook
         // running on JS thread (before mounting) or from mounting code running on UI thread.
@@ -391,12 +393,16 @@ class Screen(
         if (!isBeingRemoved) {
             isBeingRemoved = true
             if (!reactContext.isOnUiQueueThread) {
+                Log.w(TAG, "$this startRemovalTransition schedule")
                 reactContext.runOnUiQueueThread {
+                    Log.w(TAG, "$this startRemovalTransition exec")
                     startTransitionRecursive(this)
                 }
             } else {
+                Log.w(TAG, "$this startRemovalTransition sync")
                 startTransitionRecursive(this)
             }
+//            startTransitionRecursive(this)
         }
     }
 

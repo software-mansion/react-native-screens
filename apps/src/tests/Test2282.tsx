@@ -33,7 +33,7 @@ function Home({ navigation }: any) {
   );
 }
 
-function ListScreen() {
+function ListScreen({ navigation }: any) {
   return (
     <View
       style={{ flex: 1, backgroundColor: 'slateblue' }}
@@ -41,6 +41,7 @@ function ListScreen() {
       <ParentFlatlist />
       <View removeClippedSubviews>
         <View style={{ backgroundColor: 'pink', width: '100%', height: 50 }} />
+        <Button title='Go back' onPress={() => navigation.goBack()} />
       </View>
       <ParentFlatlist horizontal />
     </View>
@@ -140,7 +141,7 @@ export default function App(): React.JSX.Element {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ animation: 'slide_from_right' }}>
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="List" component={ListScreenSimplified}/>
+        <Stack.Screen name="List" component={ListScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
