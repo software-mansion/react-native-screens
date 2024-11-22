@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ReactClippingViewGroup
 import com.facebook.react.uimanager.UIManagerHelper
@@ -394,7 +395,7 @@ class Screen(
             isBeingRemoved = true
             if (!reactContext.isOnUiQueueThread) {
                 Log.w(TAG, "$this startRemovalTransition schedule")
-                reactContext.runOnUiQueueThread {
+                ReactChoreographer.getInstance().postFrameCallback(ReactChoreographer.CallbackType.DISPATCH_UI) {
                     Log.w(TAG, "$this startRemovalTransition exec")
                     startTransitionRecursive(this)
                 }
