@@ -63,8 +63,8 @@ def resolveReactNativeDirectory() {
     // file() constructor fails in case string is null or blank
     if (maybeRnPackagePath != null && !maybeRnPackagePath.isBlank()) {
         File maybeRnPackageFile = file(maybeRnPackagePath)
-        nodeResolverRnDirFile = maybeRnPackageFile.parentFile
-        if (nodeResolverRnDirFile.exists()) {
+        if (maybeRnPackageFile.exists()) {
+            nodeResolverRnDirFile = maybeRnPackageFile.parentFile
             return nodeResolverRnDirFile
         }
     }
