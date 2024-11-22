@@ -160,16 +160,34 @@ repositories {
         File standardRnAndroidDirLocation = file("$rootDir/../node_modules/react-native/android")
         if (standardRnAndroidDirLocation.exists()) {
             url standardRnAndroidDirLocation
-        } else {
-            // We're in non standard setup - try to use node resolver to locate the react-native package.
-            File reactNativePackage = file(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim())
-            def rnAndroidDirLocation = "$reactNativePackage.parentFile/android"
-            if (reactNativePackage.exists()) {
-                url rnAndroidDirLocation
-            } else {
-                println "[RNScreens] Failed to resolve react-native directory. Attempted locations: ${standardRnAndroidDirLocation}, ${rnAndroidDirLocation}"
-            }
+            return
         }
+
+        // This is legacy code, I'm not sure why it works in certain scenarios but it was reported that one of our
+        // projects needs this.
+        File secondStandardRnAndroidDirLocation = file("$projectDir/../node_modules/react-native/android")
+        if (secondStandardRnAndroidDirLocation.exists()) {
+            url secondStandardRnAndroidDirLocation
+            return
+        }
+
+        // We're in non standard setup - try to use node resolver to locate the react-native package.
+        String searchResult = ["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()
+
+        // file() constructor fails in case string is null or blank
+        if (searchResult == null || searchResult.isBlank()) {
+            println "[RNScreens] Failed to resolve react-native directory. Attempted locations: ${standardRnAndroidDirLocation}, ${secondStandardRnAndroidDirLocation} and search with node resolution algorithm failed."
+            return
+        }
+
+        File reactNativePackage = file(searchResult)
+        def rnAndroidDirLocation = "$reactNativePackage.parentFile/android"
+        if (reactNativePackage.exists()) {
+            url rnAndroidDirLocation
+            return
+        }
+
+        println "[RNScreens] Failed to resolve react-native directory. Attempted locations: ${standardRnAndroidDirLocation}, ${secondStandardRnAndroidDirLocation}, ${rnAndroidDirLocation}"
     }
 
     mavenCentral()
