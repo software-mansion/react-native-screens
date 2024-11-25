@@ -87,7 +87,7 @@ export default function App() {
         }} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.5, 0.7],
+          sheetAllowedDetents: [0.5, 0.7, 0.9],
           contentStyle: {
             backgroundColor: 'lightgreen'
           },

@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
@@ -37,6 +36,7 @@ import com.swmansion.rnscreens.ScreenStack
 import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.ScreenStackFragmentWrapper
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.ext.parentAsView
 
 /**
  * This fragment aims to provide dimming view functionality behind the nested fragment.
@@ -192,6 +192,15 @@ class DimmingFragment(
         } else {
             dimmingView.alpha = maxAlpha
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = androidx.transition.Slide().apply {
+            excludeTarget(nestedFragment.screen.parentAsView()!!, true)
+        }
+        exitTransition = androidx.transition.Slide()
     }
 
     override fun onStart() {

@@ -50,7 +50,7 @@ class ScreenStack(
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
-            Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
+            Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen)
             else -> ScreenStackFragment(screen)
         }
 

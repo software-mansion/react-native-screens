@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
+import androidx.transition.Slide
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
@@ -33,6 +34,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCa
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.DimmingDelegate
+import com.swmansion.rnscreens.bottomsheet.DimmingView
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
@@ -45,9 +48,7 @@ import com.swmansion.rnscreens.utils.DeviceUtils
 sealed class KeyboardState
 
 object KeyboardNotVisible : KeyboardState()
-
 object KeyboardDidHide : KeyboardState()
-
 class KeyboardVisible(
     val height: Int,
 ) : KeyboardState()
@@ -55,6 +56,7 @@ class KeyboardVisible(
 class ScreenStackFragment :
     ScreenFragment,
     ScreenStackFragmentWrapper {
+
     public var nativeDismissalObserver: NativeDismissalObserver? = null
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
@@ -74,6 +76,8 @@ class ScreenStackFragment :
             check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
             return container
         }
+
+    private val dimmingDelegate = DimmingDelegate(screen.reactContext)
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -189,6 +193,11 @@ class ScreenStackFragment :
         screen.onSheetCornerRadiusChange()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -244,6 +253,23 @@ class ScreenStackFragment :
             setHasOptionsMenu(true)
         }
         return coordinatorLayout
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (screen.stackPresentation !== Screen.StackPresentation.FORM_SHEET) {
+            return;
+        }
+
+        assert(view == coordinatorLayout)
+        dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
+        dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
+
+        enterTransition = Slide().apply {
+//            excludeTarget(dimmingDelegate.dimmingView, true)
+        }
+        exitTransition = Slide()
     }
 
     /**
@@ -440,10 +466,15 @@ class ScreenStackFragment :
         }
     }
 
+    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
+        val behavior = BottomSheetBehavior<Screen>()
+        return behavior
+    }
+
     // In general it would be great to create BottomSheetBehaviour only via this method as it runs some
     // side effects.
-    internal fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> =
-        configureBottomSheetBehaviour(BottomSheetBehavior<Screen>())
+    private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> =
+        configureBottomSheetBehaviour(createBottomSheetBehaviour())
 
     private fun attachShapeToScreen(screen: Screen) {
         val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius)
