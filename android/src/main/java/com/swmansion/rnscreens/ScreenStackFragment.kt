@@ -16,7 +16,6 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
-import android.view.animation.AnimationUtils
 import android.view.animation.Transformation
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
@@ -185,21 +184,6 @@ class ScreenStackFragment :
                 slideOffset: Float,
             ) = Unit
         }
-
-    override fun onCreateAnimation(
-        transit: Int,
-        enter: Boolean,
-        nextAnim: Int,
-    ): Animation? {
-        if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
-            return null
-        }
-        return if (enter) {
-            AnimationUtils.loadAnimation(context, R.anim.rns_slide_in_from_bottom)
-        } else {
-            AnimationUtils.loadAnimation(context, R.anim.rns_slide_out_to_bottom)
-        }
-    }
 
     internal fun onSheetCornerRadiusChange() {
         screen.onSheetCornerRadiusChange()

@@ -174,17 +174,6 @@ class DimmingFragment(
             }
     }
 
-    override fun onCreateAnimation(
-        transit: Int,
-        enter: Boolean,
-        nextAnim: Int,
-    ): Animation? =
-        // We want dimming view to have always fade animation in current usages.
-        AnimationUtils.loadAnimation(
-            context,
-            if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out,
-        )
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
