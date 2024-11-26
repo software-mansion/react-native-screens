@@ -43,6 +43,7 @@ import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.useThreeDetents
 import com.swmansion.rnscreens.bottomsheet.useTwoDetents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
+import com.swmansion.rnscreens.events.ScreenEventDelegate
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 
@@ -262,8 +263,26 @@ class ScreenStackFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        enterTransition = Fade(Fade.IN)
-        exitTransition = Fade(Fade.OUT)
+        enterTransition =
+            Fade(Fade.IN).apply {
+                addListener(
+                    ScreenEventDelegate(
+                        this@ScreenStackFragment,
+                        this@ScreenStackFragment,
+                        ScreenEventDelegate.TransitionDirection.FORWARD,
+                    ),
+                )
+            }
+        exitTransition =
+            Fade(Fade.OUT).apply {
+                addListener(
+                    ScreenEventDelegate(
+                        this@ScreenStackFragment,
+                        this@ScreenStackFragment,
+                        ScreenEventDelegate.TransitionDirection.BACKWARD,
+                    ),
+                )
+            }
 
         if (screen.stackPresentation !== Screen.StackPresentation.FORM_SHEET) {
             return
@@ -285,6 +304,13 @@ class ScreenStackFragment :
                         addTarget(dimmingDelegate.dimmingView)
                     },
                 )
+                addListener(
+                    ScreenEventDelegate(
+                        this@ScreenStackFragment,
+                        this@ScreenStackFragment,
+                        ScreenEventDelegate.TransitionDirection.FORWARD,
+                    ),
+                )
             }
         exitTransition =
             TransitionSet().apply {
@@ -297,6 +323,13 @@ class ScreenStackFragment :
                     Fade(Fade.OUT).apply {
                         addTarget(dimmingDelegate.dimmingView)
                     },
+                )
+                addListener(
+                    ScreenEventDelegate(
+                        this@ScreenStackFragment,
+                        this@ScreenStackFragment,
+                        ScreenEventDelegate.TransitionDirection.BACKWARD,
+                    ),
                 )
             }
     }
