@@ -115,28 +115,16 @@ namespace react = facebook::react;
   return NO;
 }
 
-- (void)layoutSubviews 
-{
-    [super layoutSubviews];
-    RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
-    
-    if (headerConfig) {
-        UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
-        CGRect frameInHeaderConfig = [self convertRect:self.frame toView:navctr.navigationBar];
-        [self updateHeaderSubviewFrame:frameInHeaderConfig.size :frameInHeaderConfig.origin];
-    }
-}
-
 - (void)updateState:(const facebook::react::State::Shared &)state
         oldState:(const facebook::react::State::Shared &)oldState
 {
     _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
 }
 
-- (void)updateHeaderSubviewFrame:(CGSize)size :(CGPoint)origin
+- (void)updateHeaderSubviewFrame:(CGRect)frame
 {
     if (_state != nullptr) {
-        auto newState = react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(size), RCTPointFromCGPoint(origin));
+        auto newState = react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
         _state->updateState(std::move(newState));
     }
 }

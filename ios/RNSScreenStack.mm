@@ -112,6 +112,11 @@ namespace react = facebook::react;
   }
 
   [headerConfig updateHeaderConfigState:self.navigationBar.frame.size :self.navigationBar.frame.origin];
+    
+  for (RNSScreenStackHeaderSubview *subview in headerConfig.reactSubviews) {
+      CGRect frameToNavigationBar = [subview convertRect:subview.frame toView:self.navigationBar];
+      [subview updateHeaderSubviewFrame:frameToNavigationBar];
+  }
 }
 #endif
 
