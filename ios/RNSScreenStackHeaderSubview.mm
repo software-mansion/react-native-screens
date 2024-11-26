@@ -122,7 +122,7 @@ namespace react = facebook::react;
     
     if (headerConfig) {
         UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
-        CGRect frameInHeaderConfig = [self convertRect:self.frame toView:navctr.view];
+        CGRect frameInHeaderConfig = [self convertRect:self.frame toView:navctr.navigationBar];
         [self updateHeaderSubviewFrame:frameInHeaderConfig.size :frameInHeaderConfig.origin];
     }
 }

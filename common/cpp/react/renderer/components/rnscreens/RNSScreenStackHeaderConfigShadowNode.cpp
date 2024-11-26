@@ -14,8 +14,7 @@ void RNSScreenStackHeaderConfigShadowNode::applyFrameCorrections() {
     ensureUnsealed();
 
     const auto &stateData = getStateData();
-    layoutMetrics_.frame.origin.x = stateData.contentOffset.x;
-    layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
+    layoutMetrics_.frame.origin.y = -stateData.frameSize.height;
 }
 
 }
