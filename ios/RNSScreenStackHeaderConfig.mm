@@ -138,18 +138,18 @@ namespace react = facebook::react;
     if (subview.type == RNSScreenStackHeaderSubviewTypeLeft || subview.type == RNSScreenStackHeaderSubviewTypeRight) {
         
       // we wrap the headerLeft/Right component in a UIBarButtonItem
-      // so we need to use the only subview of it to retrieve the correct view
-      UIView *headerComponent = subview.subviews.count > 1 ?
-        headerComponent = subview.subviews[subview.subviews.count - 1] :
-        subview.subviews.firstObject;
-    
-      // we convert the point to RNSScreenStackView since it always contains the header inside it
-      CGPoint convertedPoint = [self convertPoint:point toView:headerComponent];
-
-      UIView *hitTestResult = [headerComponent hitTest:convertedPoint withEvent:event];
-      if (hitTestResult != nil) {
-        return hitTestResult;
+      // so we need to hit test subviews from left to right, because of the view flattening
+      UIView *headerComponent = nil;
+      for (UIView *headerComponentSubview in subview.subviews) {
+        CGPoint convertedPoint = [self convertPoint:point toView:headerComponentSubview];
+        UIView *hitTestResult = [headerComponentSubview hitTest:convertedPoint withEvent:event];
+            
+        if (hitTestResult != nil) {
+          headerComponent = hitTestResult;
+        }
       }
+        
+      return headerComponent;
     }
   }
   return nil;
