@@ -144,7 +144,7 @@ namespace react = facebook::react;
         subview.subviews.firstObject;
     
       // we convert the point to RNSScreenStackView since it always contains the header inside it
-      CGPoint convertedPoint = [_screenView.reactSuperview convertPoint:point toView:headerComponent];
+      CGPoint convertedPoint = [self convertPoint:point toView:headerComponent];
 
       UIView *hitTestResult = [headerComponent hitTest:convertedPoint withEvent:event];
       if (hitTestResult != nil) {
