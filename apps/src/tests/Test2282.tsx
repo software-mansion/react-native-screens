@@ -11,6 +11,7 @@ import {
   ViewProps,
   Image,
   FlatListProps,
+  findNodeHandle,
 } from 'react-native';
 
 enableScreens(true);
@@ -34,9 +35,48 @@ function Home({ navigation }: any) {
 
 function ListScreen() {
   return (
-    <View style={{ flex: 1, backgroundColor: 'slateblue' }}>
+    <View
+      style={{ flex: 1, backgroundColor: 'slateblue' }}
+      removeClippedSubviews>
       <ParentFlatlist />
+      <View removeClippedSubviews>
+        <View style={{ backgroundColor: 'pink', width: '100%', height: 50 }} />
+      </View>
       <ParentFlatlist horizontal />
+    </View>
+  );
+}
+
+function ListScreenSimplified({secondVisible}: {secondVisible?: (visible: boolean) => void}) {
+  const containerRef = React.useRef<View>(null);
+  const innerViewRef = React.useRef<View>(null);
+  const childViewRef = React.useRef<View>(null);
+
+  React.useEffect(() => {
+    if (containerRef.current != null) {
+      const tag = findNodeHandle(containerRef.current);
+      console.log(`Container has tag [${tag}]`);
+    }
+    if (innerViewRef.current != null) {
+      const tag = findNodeHandle(innerViewRef.current);
+      console.log(`InnerView has tag [${tag}]`);
+    }
+    if (childViewRef.current != null) {
+      const tag = findNodeHandle(childViewRef.current);
+      console.log(`ChildView has tag [${tag}]`);
+    }
+  }, [containerRef.current, innerViewRef.current, childViewRef.current]);
+
+  return (
+    <View
+      ref={containerRef}
+      style={{ flex: 1, backgroundColor: 'slateblue', overflow: 'hidden' }}
+      removeClippedSubviews={false}>
+      <View ref={innerViewRef} removeClippedSubviews style={{ height: '100%' }}>
+        <View ref={childViewRef} style={{ backgroundColor: 'pink', width: '100%', height: 50 }} removeClippedSubviews={false}>
+          {secondVisible && (<Button title='Hide second' onPress={() => secondVisible(false)} />)}
+        </View>
+      </View>
     </View>
   );
 }
@@ -100,9 +140,26 @@ export default function App(): React.JSX.Element {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ animation: 'slide_from_right' }}>
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="List" component={ListScreen} />
+        <Stack.Screen name="List" component={ListScreenSimplified}/>
       </Stack.Navigator>
     </NavigationContainer>
+  );
+}
+
+export function AppSimple(): React.JSX.Element {
+  const [secondVisible, setSecondVisible] = React.useState(false);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
+      {!secondVisible && (
+        <View style={{ flex: 1, backgroundColor: 'lightblue' }} >
+          <Button title='Show second' onPress={() => setSecondVisible(true)} />
+        </View>
+      )}
+      {secondVisible && (
+        <ListScreenSimplified secondVisible={setSecondVisible} />
+      )}
+    </View>
   );
 }
 

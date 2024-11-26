@@ -49,7 +49,7 @@ react {
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
-     
+
     /* Autolinking */
     autolinkLibrariesWithApp()
 }
@@ -109,13 +109,10 @@ android {
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
-    // For the TV repo,
-    // we use the io.github.react-native-tvos group for the react-android and hermes-android dependencies
-
-    implementation("io.github.react-native-tvos:react-android")
+    implementation("com.facebook.react:react-android")
 
     if (hermesEnabled.toBoolean()) {
-        implementation("io.github.react-native-tvos:hermes-android")
+        implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
     }

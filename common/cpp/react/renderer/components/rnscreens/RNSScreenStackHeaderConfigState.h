@@ -37,13 +37,22 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
   };
-
-#endif
+#else // ANDROID
+#ifndef NDEBUG
+  void setImageLoader(std::weak_ptr<void> imageLoader);
+  std::weak_ptr<void> getImageLoader() const noexcept;
+#endif // !NDEBUG
+#endif // ANDROID
 
   const Size frameSize{};
   Point contentOffset;
 
 #pragma mark - Getters
+
+ private:
+#if !defined(ANDROID) && !defined(NDEBUG)
+  std::weak_ptr<void> imageLoader_;
+#endif // !ANDROID && !NDEBUG
 };
 
 } // namespace facebook::react

@@ -20,6 +20,7 @@
 #import "RCTTouchHandler+RNSUtility.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSDefines.h"
 #import "RNSPercentDrivenInteractiveTransition.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
@@ -283,10 +284,12 @@ namespace react = facebook::react;
   }
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)didMoveToWindow
 {
@@ -1079,6 +1082,9 @@ namespace react = facebook::react;
 
 #endif // !TARGET_OS_TV
 
+RNS_IGNORE_SUPER_CALL_BEGIN
+// We hijack the udpates as we don't want to update UIKit model yet.
+// This is done after all mutations are processed.
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
 {
   if (![subview isKindOfClass:[RNSScreenView class]]) {
@@ -1094,6 +1100,7 @@ namespace react = facebook::react;
   subview.reactSuperview = nil;
   [_reactSubviews removeObject:subview];
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)didUpdateReactSubviews
 {
@@ -1169,16 +1176,7 @@ namespace react = facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-
-  // We should only do a snapshot of a screen that is on the top.
-  // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
-  // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
-  // snapshot.
-  if (screenChildComponent.window != nil &&
-      ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
-       screenChildComponent == [_presentedModals.lastObject view])) {
-    [screenChildComponent.controller setViewToSnapshot];
-  }
+  [screenChildComponent.controller setViewToSnapshot];
 
   RCTAssert(
       screenChildComponent.reactSuperview == self,

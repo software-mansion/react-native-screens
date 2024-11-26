@@ -11,7 +11,7 @@ folly::dynamic RNSScreenStackHeaderSubviewState::getDynamic() const {
             "frameHeight", frameSize.height)("contentOffsetX", contentOffset.x)(
             "contentOffsetY", contentOffset.y);
 }
-#endif
+#endif // ANDROID
 
 } // namespace react
 } // namespace facebook

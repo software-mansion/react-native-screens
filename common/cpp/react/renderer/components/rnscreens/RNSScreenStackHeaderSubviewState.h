@@ -34,17 +34,19 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
         contentOffset(Point{
           (Float)data["contentOffsetX"].getDouble(),
           (Float)data["contentOffsetY"].getDouble()}) {}
-#endif
+#endif // ANDROID
 
 #ifdef ANDROID
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
   };
-#endif
+
+#endif // ANDROID
 
   const Size frameSize{};
   Point contentOffset;
+
 
 #pragma mark - Getters
 };
