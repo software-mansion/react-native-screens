@@ -83,7 +83,7 @@ export default function App() {
       }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Second" component={Second} options={{
-          headerShown: false,
+          headerShown: true,
         }} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',

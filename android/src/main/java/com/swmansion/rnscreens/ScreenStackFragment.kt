@@ -23,7 +23,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
+import androidx.transition.Fade
 import androidx.transition.Slide
+import androidx.transition.TransitionSet
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
@@ -35,7 +37,6 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingDelegate
-import com.swmansion.rnscreens.bottomsheet.DimmingView
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
@@ -48,7 +49,9 @@ import com.swmansion.rnscreens.utils.DeviceUtils
 sealed class KeyboardState
 
 object KeyboardNotVisible : KeyboardState()
+
 object KeyboardDidHide : KeyboardState()
+
 class KeyboardVisible(
     val height: Int,
 ) : KeyboardState()
@@ -56,7 +59,6 @@ class KeyboardVisible(
 class ScreenStackFragment :
     ScreenFragment,
     ScreenStackFragmentWrapper {
-
     public var nativeDismissalObserver: NativeDismissalObserver? = null
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
@@ -195,7 +197,6 @@ class ScreenStackFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -255,21 +256,49 @@ class ScreenStackFragment :
         return coordinatorLayout
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
+        enterTransition = Fade(Fade.IN)
+        exitTransition = Fade(Fade.OUT)
+
         if (screen.stackPresentation !== Screen.StackPresentation.FORM_SHEET) {
-            return;
+            return
         }
 
         assert(view == coordinatorLayout)
         dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
         dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
-        enterTransition = Slide().apply {
-//            excludeTarget(dimmingDelegate.dimmingView, true)
-        }
-        exitTransition = Slide()
+        enterTransition =
+            TransitionSet().apply {
+                addTransition(
+                    Slide().apply {
+                        excludeTarget(dimmingDelegate.dimmingView, true)
+                    },
+                )
+                addTransition(
+                    Fade(Fade.IN).apply {
+                        addTarget(dimmingDelegate.dimmingView)
+                    },
+                )
+            }
+        exitTransition =
+            TransitionSet().apply {
+                addTransition(
+                    Slide().apply {
+                        excludeTarget(dimmingDelegate.dimmingView, true)
+                    },
+                )
+                addTransition(
+                    Fade(Fade.OUT).apply {
+                        addTarget(dimmingDelegate.dimmingView)
+                    },
+                )
+            }
     }
 
     /**

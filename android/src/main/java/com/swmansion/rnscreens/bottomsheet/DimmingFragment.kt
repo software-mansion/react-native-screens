@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,7 +67,12 @@ class DimmingFragment(
 
     private val insetsProxy = InsetsObserverProxy
 
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        return super.onCreateAnimation(transit, enter, nextAnim)
+    }
+
     init {
+        Log.w(TAG, "INIT DIMMING FRAGMENT")
         assert(
             nestedFragment.fragment is ScreenStackFragment,
         ) { "[RNScreens] Dimming fragment is intended for use only with ScreenStackFragment" }
