@@ -194,15 +194,6 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       ...rest
     } = props;
 
-    if (__DEV__) {
-      controlEdgeToEdgeValues({
-        navigationBarColor,
-        navigationBarTranslucent,
-        statusBarColor,
-        statusBarTranslucent,
-      });
-    }
-
     // To maintain default behavior of formSheet stack presentation style and to have reasonable
     // defaults for new medium-detent iOS API we need to set defaults here
     const {
@@ -267,6 +258,24 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         ...props
       } = rest;
 
+      const {
+        // Filter out edge-to-edge related props
+        navigationBarColor,
+        navigationBarTranslucent,
+        statusBarColor,
+        statusBarTranslucent,
+        ...edgeToEdgeProps
+      } = props;
+
+      if (__DEV__) {
+        controlEdgeToEdgeValues({
+          navigationBarColor,
+          navigationBarTranslucent,
+          statusBarColor,
+          statusBarTranslucent,
+        });
+      }
+
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens',
@@ -311,11 +320,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       return (
         <DelayedFreeze freeze={freeze}>
           <AnimatedScreen
-            {...props}
-            navigationBarColor={EDGE_TO_EDGE ? undefined : navigationBarColor}
-            navigationBarTranslucent={EDGE_TO_EDGE || navigationBarTranslucent}
-            statusBarColor={EDGE_TO_EDGE ? undefined : statusBarColor}
-            statusBarTranslucent={EDGE_TO_EDGE || statusBarTranslucent}
+            {...(EDGE_TO_EDGE ? edgeToEdgeProps : props)}
             /**
              * This messy override is to conform NativeProps used by codegen and
              * our Public API. To see reasoning go to this PR:
