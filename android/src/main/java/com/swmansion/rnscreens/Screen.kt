@@ -378,7 +378,6 @@ class Screen(
     fun startRemovalTransition() {
         if (!isBeingRemoved) {
             isBeingRemoved = true
-            setTransitioning(true)
             val coordinatorLayout = this.parentAsViewGroup()!!
             val containerView = coordinatorLayout.parentAsViewGroup()!!
             assert(containerView == container)
@@ -394,14 +393,14 @@ class Screen(
             return
         }
 
-        isBeingRemoved = false
-
         val coordinatorLayout = this.parentAsViewGroup()!!
         val containerView = coordinatorLayout.parentAsViewGroup()
         assert(containerView != null && (containerView == container || container == null))
         containerView?.endViewTransition(coordinatorLayout)
         coordinatorLayout.let { parentView -> parentView.children.forEach { parentView.endViewTransition(it) } }
         endViewTransition(this)
+
+        isBeingRemoved = false
     }
 
     private fun endTransitionRecursive(parent: ViewGroup) {
