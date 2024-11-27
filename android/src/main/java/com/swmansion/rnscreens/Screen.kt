@@ -378,11 +378,13 @@ class Screen(
     fun startRemovalTransition() {
         if (!isBeingRemoved) {
             isBeingRemoved = true
-            val maybeContainer = this.parentAsViewGroup()!!.parentAsViewGroup()
-            assert(maybeContainer == container)
-            container!!.startViewTransition(this.parentAsViewGroup()!!)
+            setTransitioning(true)
+            val coordinatorLayout = this.parentAsViewGroup()!!
+            val containerView = coordinatorLayout.parentAsViewGroup()!!
+            assert(containerView == container)
+            containerView.startViewTransition(coordinatorLayout)
             // Following call seems to be optional, because no one tries to detach these:
-            this.parentAsViewGroup()?.let { parentView -> parentView.children.forEach { parentView.startViewTransition(it) } }
+            containerView.children.forEach { containerView.startViewTransition(it) }
             startTransitionRecursive(this)
         }
     }
@@ -391,6 +393,8 @@ class Screen(
         if (!isBeingRemoved) {
             return
         }
+
+        isBeingRemoved = false
 
         val coordinatorLayout = this.parentAsViewGroup()!!
         val containerView = coordinatorLayout.parentAsViewGroup()
