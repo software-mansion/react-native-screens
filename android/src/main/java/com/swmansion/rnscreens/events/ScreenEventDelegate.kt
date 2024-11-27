@@ -33,6 +33,7 @@ class ScreenEventDelegate(private val eventDispatcher: ScreenEventDispatcher, pr
             eventDispatcher.dispatchLifecycleEvent(eventType, wrapper)
             transition.removeListener(this)
             progressState()
+            wrapper.screen.endRemovalTransition()
         }
     }
 

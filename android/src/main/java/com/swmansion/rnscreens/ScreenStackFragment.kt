@@ -29,6 +29,7 @@ import androidx.transition.TransitionSet
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -43,6 +44,7 @@ import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.useThreeDetents
 import com.swmansion.rnscreens.bottomsheet.useTwoDetents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenEventDelegate
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -182,7 +184,7 @@ class ScreenStackFragment :
                 }
 
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    nativeDismissalObserver?.onNativeDismiss(this@ScreenStackFragment)
+                    dismissSelf()
                 }
             }
 
@@ -191,6 +193,22 @@ class ScreenStackFragment :
                 slideOffset: Float,
             ) = Unit
         }
+
+    private fun cleanRegisteredSheetCallbacks() {
+
+    }
+
+    private fun dismissSelf() {
+        if (!this.isRemoving || !this.isDetached) {
+            val reactContext = screen.reactContext
+            val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
+            UIManagerHelper
+                .getEventDispatcherForReactTag(reactContext, screen.id)
+                ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
+        }
+        cleanRegisteredSheetCallbacks()
+//        dismissFromContainer()
+    }
 
     internal fun onSheetCornerRadiusChange() {
         screen.onSheetCornerRadiusChange()

@@ -30,6 +30,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.parentAsViewGroup
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -377,7 +378,39 @@ class Screen(
     fun startRemovalTransition() {
         if (!isBeingRemoved) {
             isBeingRemoved = true
+            val maybeContainer = this.parentAsViewGroup()!!.parentAsViewGroup()
+            assert(maybeContainer == container)
+            container!!.startViewTransition(this.parentAsViewGroup()!!)
+            // Following call seems to be optional, because no one tries to detach these:
+            this.parentAsViewGroup()?.let { parentView -> parentView.children.forEach { parentView.startViewTransition(it) } }
             startTransitionRecursive(this)
+        }
+    }
+
+    fun endRemovalTransition() {
+        if (!isBeingRemoved) {
+            return
+        }
+
+        val coordinatorLayout = this.parentAsViewGroup()!!
+        val containerView = coordinatorLayout.parentAsViewGroup()
+        assert(containerView != null && (containerView == container || container == null))
+        containerView?.endViewTransition(coordinatorLayout)
+        coordinatorLayout.let { parentView -> parentView.children.forEach { parentView.endViewTransition(it) } }
+        endViewTransition(this)
+    }
+
+    private fun endTransitionRecursive(parent: ViewGroup) {
+        parent.children.forEach { childView ->
+            parent.endViewTransition(childView)
+
+            if (childView is ScreenStackHeaderConfig) {
+                endTransitionRecursive(childView.toolbar)
+            }
+
+            if (childView is ViewGroup) {
+                endTransitionRecursive(childView)
+            }
         }
     }
 
