@@ -63,6 +63,7 @@ namespace react = facebook::react;
   NSDirectionalEdgeInsets _lastHeaderInsets;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
+  CGSize _lastSize;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
 #ifndef NDEBUG
   RCTImageLoader *imageLoader;
@@ -204,8 +205,11 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)updateHeaderConfigState:(CGSize)size
 {
-    auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size));
-    _state->updateState(std::move(newState));
+    if (_lastSize.width != size.width || _lastSize.height != size.height) {
+        auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size));
+        _state->updateState(std::move(newState));
+        _lastSize = size;
+    }
 }
 #else
 - (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
