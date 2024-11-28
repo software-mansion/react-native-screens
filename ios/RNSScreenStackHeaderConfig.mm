@@ -214,7 +214,7 @@ RNS_IGNORE_SUPER_CALL_END
 #else
 - (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
 {
-    if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing || _lastHeaderInsets.top != insets.top) {
+    if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
         [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
         _lastHeaderInsets = std::move(insets);
     }
