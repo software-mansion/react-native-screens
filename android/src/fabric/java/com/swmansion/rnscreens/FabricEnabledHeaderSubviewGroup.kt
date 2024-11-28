@@ -15,7 +15,7 @@ abstract class FabricEnabledHeaderSubviewGroup(context: Context?): ViewGroup(con
         mStateWrapper = wrapper
     }
 
-    fun updateSubviewFrameState(
+    protected fun updateSubviewFrameState(
         width: Int,
         height: Int,
         offsetX: Int,

@@ -22,6 +22,13 @@ abstract class FabricEnabledHeaderConfigViewGroup(
     fun setStateWrapper(wrapper: StateWrapper?) {
         mStateWrapper = wrapper
     }
+    
+    fun updatePaddings(
+        paddingStart: Int,
+        paddingEnd: Int
+    ) {
+        // do nothing
+    }
 
     fun updateHeaderConfigState(
         width: Int,
@@ -49,7 +56,7 @@ abstract class FabricEnabledHeaderConfigViewGroup(
         if (abs(lastWidth - realWidth) < DELTA &&
             abs(lastHeight - realHeight) < DELTA &&
             abs(lastOffsetX - offsetXDip) < DELTA &&
-            abs(lastOffsetY - offsetY) < DELTA
+            abs(lastOffsetY - offsetYDip) < DELTA
         ) {
             return
         }

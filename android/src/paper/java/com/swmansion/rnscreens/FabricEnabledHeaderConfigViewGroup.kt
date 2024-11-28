@@ -16,7 +16,16 @@ abstract class FabricEnabledHeaderConfigViewGroup(
 
     fun setStateWrapper(wrapper: StateWrapper?) = Unit
 
-    fun updatePaddingsFabric(
+    fun updateHeaderConfigState(
+        width: Int,
+        height: Int,
+        offsetX: Int,
+        offsetY: Int
+    ) {
+        // do nothing
+    }
+
+    fun updatePaddings(
         paddingStart: Int,
         paddingEnd: Int,
     ) {
