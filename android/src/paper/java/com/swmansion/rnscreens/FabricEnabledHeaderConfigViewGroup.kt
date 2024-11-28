@@ -19,8 +19,6 @@ abstract class FabricEnabledHeaderConfigViewGroup(
     fun updateHeaderConfigState(
         width: Int,
         height: Int,
-        offsetX: Int,
-        offsetY: Int
     ) {
         // do nothing
     }
