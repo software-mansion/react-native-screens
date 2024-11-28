@@ -202,9 +202,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)updateHeaderConfigState:(CGSize)size :(CGPoint)origin
+- (void)updateHeaderConfigState:(CGSize)size
 {
-    auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size), RCTPointFromCGPoint(origin));
+    auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size));
     _state->updateState(std::move(newState));
 }
 #else

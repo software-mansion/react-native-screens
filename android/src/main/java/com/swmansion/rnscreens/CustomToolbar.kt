@@ -71,7 +71,7 @@ open class CustomToolbar(
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             val width = r - l;
             val height = b - t;
-            config.updateHeaderConfigState(width, height, l, t)
+            config.updateHeaderConfigState(width, height)
         } else {
             // our children are already laid out
             val contentInsetStart = if (navigationIcon != null) contentInsetStartWithNavigation else contentInsetStart

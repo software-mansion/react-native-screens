@@ -67,11 +67,6 @@ NS_ASSUME_NONNULL_END
                     withConfig:(nonnull RNSScreenStackHeaderConfig *)config;
 
 /**
- * Allows to send information with insets to the corresponding node in shadow tree.
- */
-- (void)updateHeaderConfigState:(CGSize)size :(CGPoint)origin;
-
-/**
  * Returns true iff subview of given `type` is present.
  *
  *  **Please note that the subviews are not mounted under the header config in HostTree**
@@ -102,6 +97,18 @@ NS_ASSUME_NONNULL_END
  * result in visible back button if feasible.
  */
 - (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar;
+
+#ifdef RCT_NEW_ARCH_ENABLED
+/**
+ * Allows to send information with size to the corresponding node in shadow tree.
+ */
+- (void)updateHeaderConfigState:(CGSize)size;
+#else
+/**
+ * Allows to send information with insets to the corresponding node in shadow tree.
+ */
+- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets;
+#endif
 
 @end
 

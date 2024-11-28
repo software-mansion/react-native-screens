@@ -17,8 +17,8 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   RNSScreenStackHeaderConfigState() = default;
 
-  RNSScreenStackHeaderConfigState(Size frameSize_, Point contentOffset_)
-    : frameSize(frameSize_), contentOffset(contentOffset_) {}
+  RNSScreenStackHeaderConfigState(Size frameSize_)
+    : frameSize(frameSize_) {}
 
 #ifdef ANDROID
   RNSScreenStackHeaderConfigState(
@@ -26,10 +26,7 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
       folly::dynamic data)
       : frameSize(Size{
           (Float)data["frameWidth"].getDouble(),
-          (Float)data["frameHeight"].getDouble()}),
-        contentOffset(Point{
-          (Float)data["contentOffsetX"].getDouble(),
-          (Float)data["contentOffsetY"].getDouble()}){}
+          (Float)data["frameHeight"].getDouble()}){}
 #endif
 
 #ifdef ANDROID

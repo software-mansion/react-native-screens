@@ -16,8 +16,6 @@ abstract class FabricEnabledHeaderConfigViewGroup(
 
     private var lastWidth = 0f
     private var lastHeight = 0f
-    private var lastOffsetX = 0f
-    private var lastOffsetY = 0f
 
     fun setStateWrapper(wrapper: StateWrapper?) {
         mStateWrapper = wrapper
@@ -33,45 +31,33 @@ abstract class FabricEnabledHeaderConfigViewGroup(
     fun updateHeaderConfigState(
         width: Int,
         height: Int,
-        offsetX: Int,
-        offsetY: Int
     ) {
-        updateState(width, height, offsetX, offsetY)
+        updateState(width, height)
     }
 
     @UiThread
     fun updateState(
         width: Int,
         height: Int,
-        offsetX: Int,
-        offsetY: Int
     ) {
         val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
         val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
-        val offsetXDip: Float = PixelUtil.toDIPFromPixel(offsetX.toFloat())
-        val offsetYDip: Float = PixelUtil.toDIPFromPixel(offsetY.toFloat())
 
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
         if (abs(lastWidth - realWidth) < DELTA &&
-            abs(lastHeight - realHeight) < DELTA &&
-            abs(lastOffsetX - offsetXDip) < DELTA &&
-            abs(lastOffsetY - offsetYDip) < DELTA
+            abs(lastHeight - realHeight) < DELTA
         ) {
             return
         }
 
         lastWidth = realWidth
         lastHeight = realHeight
-        lastOffsetX = offsetXDip
-        lastOffsetY = offsetYDip
 
         val map: WritableMap =
             WritableNativeMap().apply {
                 putDouble("frameWidth", realWidth.toDouble())
                 putDouble("frameHeight", realHeight.toDouble())
-                putDouble("contentOffsetX", offsetXDip.toDouble())
-                putDouble("contentOffsetY", offsetYDip.toDouble())
             }
         mStateWrapper?.updateState(map)
     }
