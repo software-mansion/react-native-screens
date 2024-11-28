@@ -1,5 +1,4 @@
 #include "RNSScreenShadowNode.h"
-#include "RNSScreenStackHeaderConfigShadowNode.h"
 
 namespace facebook {
 namespace react {
