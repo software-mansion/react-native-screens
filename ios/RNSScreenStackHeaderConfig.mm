@@ -60,7 +60,6 @@ namespace react = facebook::react;
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
-  NSDirectionalEdgeInsets _lastHeaderInsets;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
   CGSize _lastSize;
@@ -69,6 +68,7 @@ namespace react = facebook::react;
   RCTImageLoader *imageLoader;
 #endif // !NDEBUG
 #else
+  NSDirectionalEdgeInsets _lastHeaderInsets;
   __weak RCTBridge *_bridge;
 #endif
 }
@@ -952,7 +952,12 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
+  
+#ifdef RCT_NEW_ARCH_ENABLED
+  _lastSize = CGSize();
+#else
   _lastHeaderInsets = NSDirectionalEdgeInsets{};
+#endif
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value
