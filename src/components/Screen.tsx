@@ -248,7 +248,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         navigationBarTranslucent,
         statusBarColor,
         statusBarTranslucent,
-        ...edgeToEdgeProps
+        ...edgeToEdgeFriendlyProps
       } = props;
 
       if (__DEV__) {
@@ -298,7 +298,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       return (
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen
-            {...(EDGE_TO_EDGE ? edgeToEdgeProps : props)}
+            {...(EDGE_TO_EDGE
+              ? {
+                  ...edgeToEdgeFriendlyProps,
+                  navigationBarTranslucent: true,
+                  statusBarTranslucent: true,
+                }
+              : props)}
             /**
              * This messy override is to conform NativeProps used by codegen and
              * our Public API. To see reasoning go to this PR:
