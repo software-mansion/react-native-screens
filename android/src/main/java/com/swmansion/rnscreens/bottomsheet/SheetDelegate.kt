@@ -16,7 +16,10 @@ import com.swmansion.rnscreens.KeyboardVisible
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
 
-class SheetDelegate(val screen: Screen) : LifecycleEventObserver, OnApplyWindowInsetsListener {
+class SheetDelegate(
+    val screen: Screen,
+) : LifecycleEventObserver,
+    OnApplyWindowInsetsListener {
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
 
@@ -31,13 +34,14 @@ class SheetDelegate(val screen: Screen) : LifecycleEventObserver, OnApplyWindowI
             .window.decorView
 
     init {
-        assert(screen.fragment is ScreenStackFragment)
+        assert(screen.fragment is ScreenStackFragment) { "[RNScreens] Sheets are supported only in native stack" }
         screen.fragment!!.lifecycle.addObserver(this)
     }
 
+    // LifecycleEventObserver
     override fun onStateChanged(
         source: LifecycleOwner,
-        event: Lifecycle.Event
+        event: Lifecycle.Event,
     ) {
         when (event) {
             Lifecycle.Event.ON_START -> handleHostFragmentOnStart()
@@ -46,7 +50,6 @@ class SheetDelegate(val screen: Screen) : LifecycleEventObserver, OnApplyWindowI
             else -> Unit
         }
     }
-
 
     private fun handleHostFragmentOnStart() {
         InsetsObserverProxy.registerOnView(requireDecorView())
@@ -60,9 +63,10 @@ class SheetDelegate(val screen: Screen) : LifecycleEventObserver, OnApplyWindowI
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
     }
 
+    // This is listener function, not the view's.
     override fun onApplyWindowInsets(
         v: View,
-        insets: WindowInsetsCompat
+        insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -74,31 +78,26 @@ class SheetDelegate(val screen: Screen) : LifecycleEventObserver, OnApplyWindowI
                 stackFragment.configureBottomSheetBehaviour(it, keyboardState)
             }
 
-//            if (dimmingFragment.isRemoving) {
-//                return insets
-//            }
-
             val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            return WindowInsetsCompat.Builder(insets)
+            return WindowInsetsCompat
+                .Builder(insets)
                 .setInsets(
                     WindowInsetsCompat.Type.navigationBars(),
                     Insets.of(
                         prevInsets.left,
                         prevInsets.top,
                         prevInsets.right,
-                        0
-                    )
+                        0,
+                    ),
                 ).build()
         } else {
-            // There was some code in case the dimming fragment was being removed here
-            // ...
-
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     stackFragment.configureBottomSheetBehaviour(it, KeyboardDidHide)
                 } else if (keyboardState != KeyboardNotVisible) {
                     stackFragment.configureBottomSheetBehaviour(it, KeyboardNotVisible)
-                } else {}
+                } else {
+                }
             }
 
             keyboardState = KeyboardNotVisible
@@ -106,10 +105,11 @@ class SheetDelegate(val screen: Screen) : LifecycleEventObserver, OnApplyWindowI
         }
 
         val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-        return WindowInsetsCompat.Builder(insets)
+        return WindowInsetsCompat
+            .Builder(insets)
             .setInsets(
                 WindowInsetsCompat.Type.navigationBars(),
-                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, 0)
+                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, 0),
             ).build()
     }
 
