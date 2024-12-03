@@ -41,6 +41,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingDelegate
 import com.swmansion.rnscreens.bottomsheet.DimmingView
+import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
@@ -86,10 +87,12 @@ class ScreenStackFragment :
             return container
         }
 
-    private val dimmingDelegate = lazy {
-        DimmingDelegate(screen.reactContext, screen)
-    }
+    private val dimmingDelegate =
+        lazy(LazyThreadSafetyMode.NONE) {
+            DimmingDelegate(screen.reactContext, screen)
+        }
 
+    private var sheetDelegate: SheetDelegate? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -202,7 +205,6 @@ class ScreenStackFragment :
         }
 
     private fun cleanRegisteredSheetCallbacks() {
-
     }
 
     internal fun dismissSelf() {
@@ -309,9 +311,11 @@ class ScreenStackFragment :
                 )
             }
 
-        if (screen.stackPresentation !== Screen.StackPresentation.FORM_SHEET) {
+        if (!screen.usesFormSheetPresentation()) {
             return
         }
+
+        sheetDelegate = SheetDelegate(screen)
 
         assert(view == coordinatorLayout)
         dimmingDelegate.value.onViewHierarchyCreated(screen, coordinatorLayout)
@@ -669,7 +673,7 @@ class ScreenStackFragment :
 
     override fun onApplyWindowInsets(
         v: View,
-        insets: WindowInsetsCompat
+        insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
         TODO("Not yet implemented")
     }
@@ -737,12 +741,12 @@ class ScreenStackFragment :
         }
 
         override fun onViewRemoved(child: View?) {
-            Log.i(TAG, "[Coordinator] onViewRemoved: ${child}")
+            Log.i(TAG, "[Coordinator] onViewRemoved: $child")
             super.onViewRemoved(child)
         }
 
         override fun onViewAdded(child: View?) {
-            Log.i(TAG, "[Coordinator] onViewAdded: ${child}")
+            Log.i(TAG, "[Coordinator] onViewAdded: $child")
             super.onViewAdded(child)
         }
 
