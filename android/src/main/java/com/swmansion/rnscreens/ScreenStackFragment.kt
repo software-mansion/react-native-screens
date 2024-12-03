@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -22,6 +23,7 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.transition.Fade
 import androidx.transition.Slide
@@ -38,6 +40,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingDelegate
+import com.swmansion.rnscreens.bottomsheet.DimmingView
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
@@ -61,7 +64,8 @@ class KeyboardVisible(
 
 class ScreenStackFragment :
     ScreenFragment,
-    ScreenStackFragmentWrapper {
+    ScreenStackFragmentWrapper,
+    OnApplyWindowInsetsListener {
     public var nativeDismissalObserver: NativeDismissalObserver? = null
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
@@ -82,7 +86,10 @@ class ScreenStackFragment :
             return container
         }
 
-    private val dimmingDelegate = DimmingDelegate(screen.reactContext)
+    private val dimmingDelegate = lazy {
+        DimmingDelegate(screen.reactContext, screen)
+    }
+
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -198,7 +205,7 @@ class ScreenStackFragment :
 
     }
 
-    private fun dismissSelf() {
+    internal fun dismissSelf() {
         if (!this.isRemoving || !this.isDetached) {
             val reactContext = screen.reactContext
             val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
@@ -307,19 +314,19 @@ class ScreenStackFragment :
         }
 
         assert(view == coordinatorLayout)
-        dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
-        dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
+        dimmingDelegate.value.onViewHierarchyCreated(screen, coordinatorLayout)
+        dimmingDelegate.value.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
         enterTransition =
             TransitionSet().apply {
                 addTransition(
                     Slide().apply {
-                        excludeTarget(dimmingDelegate.dimmingView, true)
+                        excludeTarget(dimmingDelegate.value.dimmingView, true)
                     },
                 )
                 addTransition(
                     Fade(Fade.IN).apply {
-                        addTarget(dimmingDelegate.dimmingView)
+                        addTarget(dimmingDelegate.value.dimmingView)
                     },
                 )
                 addListener(
@@ -334,12 +341,12 @@ class ScreenStackFragment :
             TransitionSet().apply {
                 addTransition(
                     Slide().apply {
-                        excludeTarget(dimmingDelegate.dimmingView, true)
+                        excludeTarget(dimmingDelegate.value.dimmingView, true)
                     },
                 )
                 addTransition(
                     Fade(Fade.OUT).apply {
-                        addTarget(dimmingDelegate.dimmingView)
+                        addTarget(dimmingDelegate.value.dimmingView)
                     },
                 )
                 addListener(
@@ -660,6 +667,13 @@ class ScreenStackFragment :
         screenStack.dismiss(this)
     }
 
+    override fun onApplyWindowInsets(
+        v: View,
+        insets: WindowInsetsCompat
+    ): WindowInsetsCompat {
+        TODO("Not yet implemented")
+    }
+
     private class ScreensCoordinatorLayout(
         context: Context,
         private val fragment: ScreenStackFragment,
@@ -711,6 +725,25 @@ class ScreenStackFragment :
                         super.startAnimation(it)
                     }
             }
+        }
+
+        override fun startViewTransition(view: View) {
+            super.startViewTransition(view)
+            if (view is DimmingView) {
+                Log.i(TAG, "Start transition on dimming view")
+//                view.transitionAlpha = view.alpha
+//                view.setTransitionVisibility(View.INVISIBLE)
+            }
+        }
+
+        override fun onViewRemoved(child: View?) {
+            Log.i(TAG, "[Coordinator] onViewRemoved: ${child}")
+            super.onViewRemoved(child)
+        }
+
+        override fun onViewAdded(child: View?) {
+            Log.i(TAG, "[Coordinator] onViewAdded: ${child}")
+            super.onViewAdded(child)
         }
 
         /**

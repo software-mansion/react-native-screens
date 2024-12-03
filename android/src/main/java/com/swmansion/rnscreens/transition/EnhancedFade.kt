@@ -1,4 +1,6 @@
 package com.swmansion.rnscreens.transition
 
-class EnhancedFade {
+import androidx.transition.Fade
+
+class EnhancedFade : Fade()  {
 }

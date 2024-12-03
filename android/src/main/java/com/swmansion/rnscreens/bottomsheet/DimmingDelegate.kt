@@ -8,11 +8,12 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.swmansion.rnscreens.Screen
+import com.swmansion.rnscreens.ScreenStackFragment
 
-class DimmingDelegate(val reactContext: ThemedReactContext) {
+class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
 
-    internal val dimmingView: DimmingView = initDimmingView()
-    private val maxAlpha: Float = 0.15f
+    internal val dimmingView: DimmingView = initDimmingView(screen)
+    private val maxAlpha: Float = 0.3f
     private var dimmingViewCallback: BottomSheetCallback? = null
 
 
@@ -133,7 +134,7 @@ class DimmingDelegate(val reactContext: ThemedReactContext) {
             }
     }
 
-    private fun initDimmingView(): DimmingView {
+    private fun initDimmingView(screen: Screen): DimmingView {
             return DimmingView(reactContext, maxAlpha).apply {
                 // These do not guarantee fullscreen width & height, TODO: find a way to guarantee that
                 layoutParams =
@@ -141,11 +142,11 @@ class DimmingDelegate(val reactContext: ThemedReactContext) {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT,
                     )
-//                setOnClickListener {
-//                    if (screen.sheetClosesOnTouchOutside) {
-//                        dismissSelf(true)
-//                    }
-//                }
+                setOnClickListener {
+                    if (screen.sheetClosesOnTouchOutside) {
+                        (screen.fragment as ScreenStackFragment).dismissSelf()
+                    }
+                }
             }
     }
 

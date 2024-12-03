@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -65,6 +66,16 @@ class ScreenStack(
             removalTransitionStarted = false
             dispatchOnFinishTransitioning()
         }
+    }
+
+    override fun onViewRemoved(child: View?) {
+        Log.i(TAG, "[Stack] onViewRemoved: ${child}")
+        super.onViewRemoved(child)
+    }
+
+    override fun onViewAdded(child: View?) {
+        Log.i(TAG, "[Stack] onViewAdded: ${child}")
+        super.onViewAdded(child)
     }
 
     fun onViewAppearTransitionEnd() {

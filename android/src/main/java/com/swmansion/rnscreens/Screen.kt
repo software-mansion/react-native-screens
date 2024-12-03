@@ -380,12 +380,18 @@ class Screen(
     fun startRemovalTransition() {
         if (!isBeingRemoved) {
             isBeingRemoved = true
+
             val coordinatorLayout = this.parentAsViewGroup()!!
             val containerView = coordinatorLayout.parentAsViewGroup()!!
             assert(containerView == container)
+
             containerView.startViewTransition(coordinatorLayout)
+
             // Following call seems to be optional, because no one tries to detach these:
-            containerView.children.forEach { containerView.startViewTransition(it) }
+            coordinatorLayout.children.forEach {
+                coordinatorLayout.startViewTransition(it)
+            }
+
             startTransitionRecursive(this)
         }
     }
@@ -395,14 +401,19 @@ class Screen(
             return
         }
 
-        val coordinatorLayout = this.parentAsViewGroup()!!
-        val containerView = coordinatorLayout.parentAsViewGroup()
-        assert(containerView != null && (containerView == container || container == null))
-        containerView?.endViewTransition(coordinatorLayout)
-        coordinatorLayout.let { parentView -> parentView.children.forEach { parentView.endViewTransition(it) } }
-        endViewTransition(this)
-
         isBeingRemoved = false
+
+        val coordinatorLayout = this.parentAsViewGroup()!!
+        assert(coordinatorLayout is CoordinatorLayout)
+//
+        val containerView = coordinatorLayout.parentAsViewGroup()!!
+//        assert(containerView is ScreenStack)
+//        assert(containerView == container || container == null)
+
+//        TransitionManager.controlDelayedTransition()
+        containerView.endViewTransition(coordinatorLayout)
+        coordinatorLayout.children.forEach { coordinatorLayout.endViewTransition(it) }
+        endTransitionRecursive(this)
     }
 
     private fun endTransitionRecursive(parent: ViewGroup) {
@@ -460,7 +471,7 @@ class Screen(
                         // Is this ugly? Very. Do we have better option before changes land in core?
                         // I'm not aware of any.
                         try {
-                            for (j in 0 until child.childCount) {
+                            repeat(child.childCount) {
                                 child.addView(View(context))
                             }
                         } catch (_: Exception) {
