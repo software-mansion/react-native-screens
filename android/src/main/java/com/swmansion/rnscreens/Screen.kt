@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -467,6 +469,22 @@ class Screen(
                     startTransitionRecursive(child)
                 }
             }
+        }
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        Log.i(TAG, "[Screen] onInterceptTouchEvent")
+        return super.onInterceptTouchEvent(ev)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        Log.i(TAG, "[Screen] onTouchEvent")
+        // If we're a form sheet we want to consume the gestures to prevent
+        // DimmingView's callback from triggering when clicking on the sheet itself.
+        return if (stackPresentation === StackPresentation.FORM_SHEET) {
+            true
+        } else {
+            super.onTouchEvent(event)
         }
     }
 
