@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens
 
-import com.facebook.react.TurboReactPackage
+import com.facebook.react.BaseReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModuleList
@@ -14,7 +14,7 @@ import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
         ScreensModule::class,
     ],
 )
-class RNScreensPackage : TurboReactPackage() {
+class RNScreensPackage : BaseReactPackage() {
     // We just retain it here. This object helps us tackle jumping content when using native header.
     // See: https://github.com/software-mansion/react-native-screens/pull/2169
     private var screenDummyLayoutHelper: ScreenDummyLayoutHelper? = null
