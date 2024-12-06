@@ -828,12 +828,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_BEGIN
 
-- (void)didUpdateReactSubviews
-{
-  [super didUpdateReactSubviews];
-  [self updateViewControllerIfNeeded];
-}
-
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
@@ -1049,6 +1043,11 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 
 #else
 #pragma mark - Paper specific
+
+- (void)didUpdateReactSubviews
+{
+  [self updateViewControllerIfNeeded];
+}
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
