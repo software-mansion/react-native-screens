@@ -456,7 +456,7 @@ RNS_IGNORE_SUPER_CALL_END
     UIImage *shadowImage = appearance.shadowImage;
     // transparent background color
     [appearance configureWithTransparentBackground];
-      
+
     if (!config.hideShadow) {
       appearance.shadowColor = shadowColor;
       appearance.shadowImage = shadowImage;
@@ -688,11 +688,13 @@ RNS_IGNORE_SUPER_CALL_END
     UINavigationBarAppearance *scrollEdgeAppearance =
         [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     if (config.largeTitleBackgroundColor != nil) {
-      // Add support for using a fully transparent bar when the backgroundColor is set to transparent. 
+      // Add support for using a fully transparent bar when the backgroundColor is set to transparent.
       if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
-      // This will also remove the background blur effect in the large title which is otherwise inherited from the standard appearance.
+        // This will also remove the background blur effect in the large title which is otherwise inherited from the
+        // standard appearance.
         [scrollEdgeAppearance configureWithTransparentBackground];
-        // This must be set to nil otherwise a default view will be added to the navigation bar background with an opaque background.
+        // This must be set to nil otherwise a default view will be added to the navigation bar background with an
+        // opaque background.
         scrollEdgeAppearance.backgroundColor = nil;
       } else {
         scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
@@ -825,12 +827,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   [_reactSubviews removeObject:subview];
 }
 RNS_IGNORE_SUPER_CALL_BEGIN
-
-- (void)didUpdateReactSubviews
-{
-  [super didUpdateReactSubviews];
-  [self updateViewControllerIfNeeded];
-}
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
@@ -1045,6 +1041,11 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 
 #else
 #pragma mark - Paper specific
+
+- (void)didUpdateReactSubviews
+{
+  [self updateViewControllerIfNeeded];
+}
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
