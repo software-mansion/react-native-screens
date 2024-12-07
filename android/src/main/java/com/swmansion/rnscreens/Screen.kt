@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -18,6 +20,7 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ReactClippingViewGroup
+import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
@@ -29,11 +32,12 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.parentAsViewGroup
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
-    val reactContext: ReactContext,
+    val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
     ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
@@ -376,7 +380,53 @@ class Screen(
     fun startRemovalTransition() {
         if (!isBeingRemoved) {
             isBeingRemoved = true
+
+            val coordinatorLayout = this.parentAsViewGroup()!!
+            val containerView = coordinatorLayout.parentAsViewGroup()!!
+            assert(containerView == container)
+
+            containerView.startViewTransition(coordinatorLayout)
+
+            // Following call seems to be optional, because no one tries to detach these:
+            coordinatorLayout.children.forEach {
+                coordinatorLayout.startViewTransition(it)
+            }
+
             startTransitionRecursive(this)
+        }
+    }
+
+    fun endRemovalTransition() {
+        if (!isBeingRemoved) {
+            return
+        }
+
+        isBeingRemoved = false
+
+        val coordinatorLayout = this.parentAsViewGroup()!!
+        assert(coordinatorLayout is CoordinatorLayout)
+//
+        val containerView = coordinatorLayout.parentAsViewGroup()!!
+//        assert(containerView is ScreenStack)
+//        assert(containerView == container || container == null)
+
+//        TransitionManager.controlDelayedTransition()
+        containerView.endViewTransition(coordinatorLayout)
+        coordinatorLayout.children.forEach { coordinatorLayout.endViewTransition(it) }
+        endTransitionRecursive(this)
+    }
+
+    private fun endTransitionRecursive(parent: ViewGroup) {
+        parent.children.forEach { childView ->
+            parent.endViewTransition(childView)
+
+            if (childView is ScreenStackHeaderConfig) {
+                endTransitionRecursive(childView.toolbar)
+            }
+
+            if (childView is ViewGroup) {
+                endTransitionRecursive(childView)
+            }
         }
     }
 
@@ -421,7 +471,7 @@ class Screen(
                         // Is this ugly? Very. Do we have better option before changes land in core?
                         // I'm not aware of any.
                         try {
-                            for (j in 0 until child.childCount) {
+                            repeat(child.childCount) {
                                 child.addView(View(context))
                             }
                         } catch (_: Exception) {
@@ -430,6 +480,22 @@ class Screen(
                     startTransitionRecursive(child)
                 }
             }
+        }
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        Log.i(TAG, "[Screen] onInterceptTouchEvent")
+        return super.onInterceptTouchEvent(ev)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        Log.i(TAG, "[Screen] onTouchEvent")
+        // If we're a form sheet we want to consume the gestures to prevent
+        // DimmingView's callback from triggering when clicking on the sheet itself.
+        return if (stackPresentation === StackPresentation.FORM_SHEET) {
+            true
+        } else {
+            super.onTouchEvent(event)
         }
     }
 
