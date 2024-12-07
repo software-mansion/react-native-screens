@@ -1,5 +1,6 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStack.h"
+#import "RNSViewPropertyAnimatorCompositor.h"
 
 #import "RNSScreen.h"
 
@@ -28,9 +29,10 @@ static constexpr float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / RNS
 static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 @implementation RNSScreenStackAnimator {
+ @private
   UINavigationControllerOperation _operation;
   NSTimeInterval _transitionDuration;
-  UIViewPropertyAnimator *_Nullable _inFlightAnimator;
+  RNSViewPropertyAnimatorCompositor *_Nullable _animatorCompositor;
 }
 
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation
@@ -38,7 +40,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   if (self = [super init]) {
     _operation = operation;
     _transitionDuration = RNSDefaultTransitionDuration; // default duration in seconds
-    _inFlightAnimator = nil;
+    _animatorCompositor = nil;
   }
   return self;
 }
@@ -68,12 +70,6 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 
   return _transitionDuration;
-}
-
-- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
-    (id<UIViewControllerContextTransitioning>)transitionContext
-{
-  return _inFlightAnimator;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -121,9 +117,15 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 }
 
+- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
+    (id<UIViewControllerContextTransitioning>)transitionContext
+{
+  return [_animatorCompositor animatorForImplicitAnimations];
+}
+
 - (void)animationEnded:(BOOL)transitionCompleted
 {
-  _inFlightAnimator = nil;
+  _animatorCompositor = nil;
 }
 
 #pragma mark - Animation implementations
@@ -179,8 +181,9 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
-    _inFlightAnimator = animator;
-    [animator startAnimation];
+
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ animator ]];
+    [_animatorCompositor startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
@@ -206,25 +209,20 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     };
 
-    if (!transitionContext.isInteractive) {
-      UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc]
-          initWithDuration:[self transitionDuration:transitionContext]
-          timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
+    UIViewPropertyAnimator *animator =
+        [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                        timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
 
-      [animator addAnimations:animationBlock];
-      [animator addCompletion:completionBlock];
-      _inFlightAnimator = animator;
-      [animator startAnimation];
+    [animator addAnimations:animationBlock];
+    [animator addCompletion:completionBlock];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ animator ]];
+
+    if (!transitionContext.isInteractive) {
+      [_animatorCompositor startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      UIViewPropertyAnimator *animator =
-          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                     curve:UIViewAnimationCurveLinear
-                                                animations:animationBlock];
-
-      [animator addCompletion:completionBlock];
+      [animator setScrubsLinearly:YES];
       [animator setUserInteractionEnabled:YES];
-      _inFlightAnimator = animator;
     }
   }
 }
@@ -262,8 +260,8 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
-    _inFlightAnimator = animator;
-    [animator startAnimation];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ animator ]];
+    [_animatorCompositor startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
@@ -278,24 +276,20 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     };
 
-    if (!transitionContext.isInteractive) {
-      UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc]
-          initWithDuration:[self transitionDuration:transitionContext]
-          timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
+    UIViewPropertyAnimator *animator =
+        [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                        timingParameters:[RNSScreenStackAnimator defaultSpringTimingParametersApprox]];
 
-      [animator addAnimations:animationBlock];
-      [animator addCompletion:completionBlock];
-      _inFlightAnimator = animator;
-      [animator startAnimation];
+    [animator addAnimations:animationBlock];
+    [animator addCompletion:completionBlock];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ animator ]];
+
+    if (!transitionContext.isInteractive) {
+      [_animatorCompositor startAnimation];
     } else {
       // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      UIViewPropertyAnimator *animator =
-          [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                     curve:UIViewAnimationCurveLinear
-                                                animations:animationBlock];
-      [animator addCompletion:completionBlock];
       [animator setUserInteractionEnabled:YES];
-      _inFlightAnimator = animator;
+      [animator setScrubsLinearly:YES];
     }
   }
 }
@@ -318,8 +312,8 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.alpha = 1.0;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
-    _inFlightAnimator = animator;
-    [animator startAnimation];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ animator ]];
+    [_animatorCompositor startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
     auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
@@ -331,8 +325,13 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       fromViewController.view.alpha = 1.0;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
-    _inFlightAnimator = animator;
-    [animator startAnimation];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ animator ]];
+
+    if (!transitionContext.isInteractive) {
+      [_animatorCompositor startAnimation];
+    } else {
+      [animator setScrubsLinearly:YES];
+    }
   }
 }
 
@@ -359,8 +358,8 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
-    _inFlightAnimator = animator;
-    [animator startAnimation];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ animator ]];
+    [_animatorCompositor startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
@@ -375,20 +374,16 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     };
 
+    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                               curve:UIViewAnimationCurveEaseInOut
+                                                          animations:animationBlock];
+    [animator addCompletion:completionBlock];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ animator ]];
+
     if (!transitionContext.isInteractive) {
-      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                                 curve:UIViewAnimationCurveEaseInOut
-                                                            animations:animationBlock];
-      [animator addCompletion:completionBlock];
-      _inFlightAnimator = animator;
-      [animator startAnimation];
+      [_animatorCompositor startAnimation];
     } else {
-      // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
-      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                                 curve:UIViewAnimationCurveLinear
-                                                            animations:animationBlock];
-      [animator addCompletion:completionBlock];
-      _inFlightAnimator = animator;
+      [animator setScrubsLinearly:YES];
     }
   }
 }
@@ -428,9 +423,8 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
                 toViewController.view.alpha = 1.0;
               }];
 
-    _inFlightAnimator = slideAnimator;
-    [slideAnimator startAnimation];
-    [fadeAnimator startAnimation];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ slideAnimator, fadeAnimator ]];
+    [_animatorCompositor startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
@@ -459,9 +453,16 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
                 fromViewController.view.alpha = 0.0;
               }];
 
-    _inFlightAnimator = slideAnimator;
-    [slideAnimator startAnimation];
-    [fadeAnimator startAnimationAfterDelay:baseTransitionDuration * RNSFadeCloseDelayTransitionDurationProportion];
+    _animatorCompositor = [self animatorCompositorWithAnimators:@[ slideAnimator, fadeAnimator ]];
+
+    if (!transitionContext.isInteractive) {
+      [slideAnimator startAnimation];
+      [fadeAnimator startAnimationAfterDelay:baseTransitionDuration * RNSFadeCloseDelayTransitionDurationProportion];
+      [[_animatorCompositor animatorForImplicitAnimations] startAnimation];
+    } else {
+      slideAnimator.scrubsLinearly = YES;
+      fadeAnimator.scrubsLinearly = YES;
+    }
   }
 }
 
@@ -491,9 +492,17 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 #pragma mark - Public API
 
+- (nullable id<UIViewImplicitlyAnimating>)inFlightAnimator
+{
+  return _animatorCompositor;
+}
+
 - (nullable id<UITimingCurveProvider>)timingParamsForAnimationCompletion
 {
-  return [RNSScreenStackAnimator defaultSpringTimingParametersApprox];
+  // Returning null causes animation to complete with initial timing params.
+  // TODO: maybe use this to expose possibility of customizing completion curve.
+  //  return [RNSScreenStackAnimator defaultSpringTimingParametersApprox];
+  return nil;
 }
 
 + (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
@@ -529,6 +538,28 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   [self animateSimplePushWithShadowEnabled:shadowEnabled transitionContext:transitionContext toVC:toVC fromVC:fromVC];
 }
 
+- (nonnull UIViewPropertyAnimator *)defaultHeaderAnimatorWithDuration:(NSTimeInterval)duration
+{
+  return [[UIViewPropertyAnimator alloc] initWithDuration:duration
+                                         timingParameters:[RNSScreenStackAnimator defaultTimingCurveProviderForHeader]];
+}
+
+- (RNSViewPropertyAnimatorCompositor *)animatorCompositorWithAnimators:(NSArray<UIViewPropertyAnimator *> *)animators
+{
+  assert(animators.count > 0);
+
+  NSTimeInterval maxDuration = 0;
+  for (UIViewPropertyAnimator *animator in animators) {
+    if (animator.duration > maxDuration) {
+      maxDuration = animator.duration;
+    }
+  }
+
+  return [[RNSViewPropertyAnimatorCompositor alloc]
+      initWithAnimators:animators
+       implicitAnimator:[self defaultHeaderAnimatorWithDuration:maxDuration]];
+}
+
 + (UISpringTimingParameters *)defaultSpringTimingParametersApprox
 {
   // Default curve provider is as defined below, however spring timing defined this way
@@ -543,6 +574,11 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   // https://developer.apple.com/documentation/uikit/uispringtimingparameters/1649802-init?language=objc
 
   return [[UISpringTimingParameters alloc] initWithDampingRatio:4.56];
+}
+
++ (id<UITimingCurveProvider>)defaultTimingCurveProviderForHeader
+{
+  return [[UICubicTimingParameters alloc] initWithAnimationCurve:UIViewAnimationCurveEaseInOut];
 }
 
 @end
