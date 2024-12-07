@@ -60,14 +60,15 @@ namespace react = facebook::react;
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
-  NSDirectionalEdgeInsets _lastHeaderInsets;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
+  CGSize _lastSize;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
 #ifndef NDEBUG
   RCTImageLoader *imageLoader;
 #endif // !NDEBUG
 #else
+  NSDirectionalEdgeInsets _lastHeaderInsets;
   __weak RCTBridge *_bridge;
 #endif
 }
@@ -143,17 +144,22 @@ RNS_IGNORE_SUPER_CALL_END
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
+      
     if (subview.type == RNSScreenStackHeaderSubviewTypeLeft || subview.type == RNSScreenStackHeaderSubviewTypeRight) {
+        
       // we wrap the headerLeft/Right component in a UIBarButtonItem
-      // so we need to use the only subview of it to retrieve the correct view
-      UIView *headerComponent = subview.subviews.firstObject;
-      // we convert the point to RNSScreenStackView since it always contains the header inside it
-      CGPoint convertedPoint = [_screenView.reactSuperview convertPoint:point toView:headerComponent];
-
-      UIView *hitTestResult = [headerComponent hitTest:convertedPoint withEvent:event];
-      if (hitTestResult != nil) {
-        return hitTestResult;
+      // so we need to hit test subviews from left to right, because of the view flattening
+      UIView *headerComponent = nil;
+      for (UIView *headerComponentSubview in subview.subviews) {
+        CGPoint convertedPoint = [self convertPoint:point toView:headerComponentSubview];
+        UIView *hitTestResult = [headerComponentSubview hitTest:convertedPoint withEvent:event];
+            
+        if (hitTestResult != nil) {
+          headerComponent = hitTestResult;
+        }
       }
+        
+      return headerComponent;
     }
   }
   return nil;
@@ -195,19 +201,25 @@ RNS_IGNORE_SUPER_CALL_END
   [navctr.view setNeedsLayout];
 }
 
-- (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets
-{
-  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
+
 #ifdef RCT_NEW_ARCH_ENABLED
-    auto newState = react::RNSScreenStackHeaderConfigState{insets.leading, insets.trailing};
-    _state->updateState(std::move(newState));
-    _lastHeaderInsets = std::move(insets);
-#else
-    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
-    _lastHeaderInsets = std::move(insets);
-#endif // RCT_NEW_ARCH_ENABLED
-  }
+- (void)updateHeaderConfigState:(CGSize)size
+{
+    if (_lastSize.width != size.width || _lastSize.height != size.height) {
+        auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size));
+        _state->updateState(std::move(newState));
+        _lastSize = size;
+    }
 }
+#else
+- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
+{
+    if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
+        [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
+        _lastHeaderInsets = std::move(insets);
+    }
+}
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type
 {
@@ -938,7 +950,12 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
+  
+#ifdef RCT_NEW_ARCH_ENABLED
+  _lastSize = CGSize();
+#else
   _lastHeaderInsets = NSDirectionalEdgeInsets{};
+#endif
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value

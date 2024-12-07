@@ -111,10 +111,17 @@ namespace react = facebook::react;
   if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible) {
     return;
   }
-
+    
+#ifdef RCT_NEW_ARCH_ENABLED
+  [headerConfig updateHeaderConfigState:self.navigationBar.frame.size];
+  for (RNSScreenStackHeaderSubview *subview in headerConfig.reactSubviews) {
+      CGRect frameToNavigationBar = [subview convertRect:subview.frame toView:self.navigationBar];
+      [subview updateHeaderSubviewFrame:frameToNavigationBar];
+  }
+#else
   NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
   NSDirectionalEdgeInsets navBarContentMargins =
-      [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
+    [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
 
   BOOL isDisplayingBackButton = [headerConfig shouldBackButtonBeVisibleInNavigationBar:self.navigationBar];
 
@@ -122,11 +129,12 @@ namespace react = facebook::react;
   UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;
   CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
 
-  [headerConfig updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
+  [headerConfig updateHeaderConfigState:NSDirectionalEdgeInsets{
                                                      .leading = navBarMargins.leading + navBarContentMargins.leading +
                                                          (isDisplayingBackButton ? platformBackButtonWidth : 0),
                                                      .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
                                                  }];
+#endif // RCT_NEW_ARCH_ENABLED
 }
 #endif
 
