@@ -763,6 +763,9 @@ RNS_IGNORE_SUPER_CALL_END
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+            if (searchBar.controller.searchBar && searchBar.defaultValue) {
+              searchBar.controller.searchBar.text = searchBar.defaultValue;
+            }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
             if (@available(iOS 16.0, *)) {

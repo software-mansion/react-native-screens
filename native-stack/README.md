@@ -676,6 +676,22 @@ A React ref to imperatively modify search bar. Supported actions:
 - `cancelSearch` - cancel search in search bar.
 - `toggleCancelButton` (iOS only) - toggle cancel button display near search bar.
 
+#### `defaultValue`
+
+The initial text value of the search bar. Unlike using `ref.current.setText()`, this prop only affects the initial value when the search bar is mounted.
+
+Example:
+
+```js
+React.useLayoutEffect(() => {
+  navigation.setOptions({
+    searchBar: {
+      defaultValue: 'Initial search text',
+    },
+  });
+}, [navigation]);
+```
+
 ### Events
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:
