@@ -138,6 +138,11 @@ class SearchBarManager :
         view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
     }
 
+    @ReactProp(name = "defaultValue")
+    override fun setDefaultValue(view: SearchBarView, defaultValue: String?) {
+        view.setDefaultValue(defaultValue)
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? =
         MapBuilder.of(
             SearchBarBlurEvent.EVENT_NAME,
