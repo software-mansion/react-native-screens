@@ -8,6 +8,10 @@
 
 - (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
+  NSLog(
+      @"UIKit asks UIViewControllerInteractiveTransitioning %@ to startInteractiveTransition with context %@",
+      self,
+      transitionContext);
   [super startInteractiveTransition:transitionContext];
 }
 

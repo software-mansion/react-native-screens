@@ -74,6 +74,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
+  NSLog(@"UIKit asks %@ for animateTransition with context %@", self, transitionContext);
   UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
   UIViewController *fromViewController =
       [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
@@ -120,7 +121,10 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 - (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
     (id<UIViewControllerContextTransitioning>)transitionContext
 {
-  return [_animatorCompositor animatorForImplicitAnimations];
+  NSLog(@"UIKit asking %@ for interruptible animator with transitionContext %@", self, transitionContext);
+  //  return [_animatorCompositor animatorForImplicitAnimations];
+  //  return _animatorCompositor
+  return nil;
 }
 
 - (void)animationEnded:(BOOL)transitionCompleted

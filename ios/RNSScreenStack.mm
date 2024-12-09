@@ -244,6 +244,7 @@ namespace react = facebook::react;
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
+  NSLog(@"%@ willShowViewController: %@, animated: %d", navigationController, viewController, animated);
   UIView *view = viewController.view;
 #ifdef RCT_NEW_ARCH_ENABLED
   if (![view isKindOfClass:[RNSScreenView class]]) {
@@ -741,6 +742,7 @@ RNS_IGNORE_SUPER_CALL_END
                                                fromViewController:(UIViewController *)fromVC
                                                  toViewController:(UIViewController *)toVC
 {
+  NSLog(@"UIKit asks %@ for UIViewControllerAnimatedTransitioning", navigationController);
   RNSScreenView *screen;
   if (operation == UINavigationControllerOperationPush) {
     screen = ((RNSScreen *)toVC).screenView;
@@ -755,8 +757,10 @@ RNS_IGNORE_SUPER_CALL_END
       // otherwise the screen will be just popped immediately due to no animation
       ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
        [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation] || _customAnimation)) {
+    NSLog(@"Returning RNSScreenStackAnimator");
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
+  NSLog(@"Returning nil");
   return nil;
 }
 
@@ -913,6 +917,10 @@ RNS_IGNORE_SUPER_CALL_END
                          interactionControllerForAnimationController:
                              (id<UIViewControllerAnimatedTransitioning>)animationController
 {
+  NSLog(
+      @"UIKit asking %@ for UIViewControllerInteractiveTransitioning for animationController %@",
+      navigationController,
+      animationController);
   RNSScreenView *fromView = [_controller.transitionCoordinator viewForKey:UITransitionContextFromViewKey];
   RNSScreenView *toView = [_controller.transitionCoordinator viewForKey:UITransitionContextToViewKey];
   // we can intercept clicking back button here, we check reactSuperview since this method also fires when
@@ -937,6 +945,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (_interactionController != nil) {
     [_interactionController setAnimationController:animationController];
   }
+  NSLog(@"Returning %@", _interactionController);
   return _interactionController;
 }
 
