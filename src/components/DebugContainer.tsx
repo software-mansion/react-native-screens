@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Platform, type ViewProps } from 'react-native';
 // @ts-expect-error importing private component
-// eslint-disable-next-line import/namespace, import/default, import/no-named-as-default, import/no-named-as-default-member
+
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import ScreenContentWrapper from './ScreenContentWrapper';
 import { StackPresentationTypes } from '../types';
@@ -21,7 +21,6 @@ let DebugContainer: React.ComponentType<ContainerProps> = props => {
 };
 
 if (process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line react/display-name
   DebugContainer = (props: ContainerProps) => {
     const { stackPresentation, ...rest } = props;
 
