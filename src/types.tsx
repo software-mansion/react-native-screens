@@ -797,6 +797,12 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean;
+  /**
+   * The initial text value of the search bar. Unlike `setText` which can be called
+   * via ref to update the value, this prop only affects the initial value when
+   * the search bar is mounted.
+   */
+  defaultValue?: string;
 }
 
 /**
