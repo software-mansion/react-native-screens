@@ -20,6 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) UIView *reactSuperview;
 
+#ifdef RCT_NEW_ARCH_ENABLED
+- (void)updateHeaderSubviewFrame:(CGRect)frame;
+#endif
+
 @end
 
 @interface RNSScreenStackHeaderSubviewManager : RCTViewManager
