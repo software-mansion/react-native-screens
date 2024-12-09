@@ -28,6 +28,7 @@ function Contents(): React.ReactNode {
 function Home({ navigation }: RoutePropBase<'Home'>): React.ReactNode {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightgreen', justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ width: '100%', height: 20, backgroundColor: 'red' }} />
       <Button title="Go Second" onPress={() => navigation.navigate('Second')} />
       <Contents />
     </View>
@@ -59,6 +60,8 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
         fullScreenGestureEnabled: true,
+        animation: 'simple_push',
+        //animationMatchesGesture: true,
       }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Second" component={Second} options={{
