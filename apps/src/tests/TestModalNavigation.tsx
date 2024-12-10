@@ -7,10 +7,12 @@ type StackParamList = {
   Home: undefined;
   NestedStack: undefined;
   MainStackScreen: undefined;
+  MainStackScreen2: undefined;
   Screen1: undefined;
   Screen2: undefined;
   Screen3: undefined;
 };
+
 
 function HomeScreen({
   navigation,
@@ -35,6 +37,22 @@ function MainStackScreen({ navigation }: NativeStackScreenProps<StackParamList, 
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Main stack screen</Text>
       <Button
+        title="Go to second modal"
+        onPress={() => navigation.navigate('MainStackScreen2')}
+      />
+      <Button
+        title="goBack"
+        onPress={() => navigation.goBack()}
+      />
+    </View>
+  );
+}
+
+function MainStackScreen2({ navigation }: NativeStackScreenProps<StackParamList, 'MainStackScreen2'>) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Main stack screen 2</Text>
+      <Button
         title="goBack"
         onPress={() => navigation.goBack()}
       />
@@ -54,7 +72,7 @@ function Screen1({
       />
     </View>
   );
-};
+}
 
 function Screen2({
   navigation,
@@ -72,7 +90,7 @@ function Screen2({
       />
     </View>
   );
-};
+}
 
 function Screen3({
   navigation,
@@ -90,7 +108,7 @@ function Screen3({
       />
     </View>
   );
-};
+}
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const NestedStack = createNativeStackNavigator<StackParamList>();
@@ -101,6 +119,7 @@ function RootStack() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="NestedStack" component={NestedStackScreen} options={{ headerShown: true, presentation: 'modal' }} />
       <Stack.Screen name="MainStackScreen" component={MainStackScreen} options={{ headerShown: true, presentation: 'modal' }} />
+      <Stack.Screen name="MainStackScreen2" component={MainStackScreen2} options={{ headerShown: true, presentation: 'modal' }} />
     </Stack.Navigator>
   );
 }
