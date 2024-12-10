@@ -77,6 +77,12 @@ function ScreenStack(props: ScreenStackProps) {
     },
   });
 
+  const preloadedScreensCount = React.Children.toArray(children).filter(
+    // @ts-expect-error it's either SceneView in v6 or RouteView in v5
+    child => child.props.isPreloaded,
+  ).length;
+
+  const renderedScreensSize = size - preloadedScreensCount;
   // freezes all screens except the top one
   const childrenWithFreeze = React.Children.map(children, (child, index) => {
     // @ts-expect-error it's either SceneView in v6 or RouteView in v5
@@ -88,8 +94,8 @@ function ScreenStack(props: ScreenStackProps) {
     // On Fabric, when screen is frozen, animated and reanimated values are not updated
     // due to component being unmounted. To avoid this, we don't freeze the previous screen there
     const freezePreviousScreen = isFabric()
-      ? size - index > 2
-      : size - index > 1;
+      ? renderedScreensSize - index > 2
+      : renderedScreensSize - index > 1;
 
     return (
       <DelayedFreeze freeze={isFreezeEnabled && freezePreviousScreen}>
