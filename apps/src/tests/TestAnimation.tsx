@@ -8,6 +8,8 @@ type ParamList = {
   Home: undefined;
   Second: undefined;
   Third: undefined;
+  Fourth: undefined;
+  Fifth: undefined;
 }
 
 type RoutePropBase<RouteName extends keyof ParamList> = {
@@ -38,7 +40,7 @@ function Home({ navigation }: RoutePropBase<'Home'>): React.ReactNode {
 
 function Second({ navigation }: RoutePropBase<'Second'>): React.ReactNode {
   return (
-    <View style={{ flex: 1, backgroundColor: 'lightblue', justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, backgroundColor: 'lightseagreen', justifyContent: 'center', alignItems: 'center' }}>
       <Button title="Go Third" onPress={() => navigation.navigate('Third')} />
       <Button title="Go back" onPress={() => navigation.popTo('Home')} />
       <Contents />
@@ -49,7 +51,27 @@ function Second({ navigation }: RoutePropBase<'Second'>): React.ReactNode {
 function Third({ navigation }: RoutePropBase<'Third'>): React.ReactNode {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightcoral', justifyContent: 'center', alignItems: 'center' }}>
+      <Button title="Go Fourth" onPress={() => navigation.navigate('Fourth')} />
       <Button title="Go back" onPress={() => navigation.popTo('Second')} />
+      <Contents />
+    </View>
+  );
+}
+
+function Fourth({ navigation }: RoutePropBase<'Fourth'>): React.ReactNode {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'orange', justifyContent: 'center', alignItems: 'center' }}>
+      <Button title="Go Fifth" onPress={() => navigation.navigate('Fifth')} />
+      <Button title="Go back" onPress={() => navigation.popTo('Second')} />
+      <Contents />
+    </View>
+  );
+}
+
+function Fifth({ navigation }: RoutePropBase<'Fifth'>): React.ReactNode {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'pink', justifyContent: 'center', alignItems: 'center' }}>
+      <Button title="Go back" onPress={() => navigation.popTo('Fourth')} />
       <Contents />
     </View>
   );
@@ -65,9 +87,15 @@ export default function App() {
       }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Second" component={Second} options={{
-          headerShown: false,
+          headerShown: true,
         }}/>
         <Stack.Screen name="Third" component={Third} options={{
+          headerShown: true,
+        }} />
+        <Stack.Screen name="Fourth" component={Fourth} options={{
+          headerShown: false,
+        }} />
+        <Stack.Screen name="Fifth" component={Fifth} options={{
           headerShown: true,
         }} />
       </Stack.Navigator>
