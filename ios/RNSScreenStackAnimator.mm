@@ -70,11 +70,11 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   return _transitionDuration;
 }
 
-- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
-    (id<UIViewControllerContextTransitioning>)transitionContext
-{
-  return _inFlightAnimator;
-}
+//- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
+//    (id<UIViewControllerContextTransitioning>)transitionContext
+//{
+//  return _inFlightAnimator;
+//}
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
