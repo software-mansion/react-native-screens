@@ -118,14 +118,14 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 }
 
-- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
-    (id<UIViewControllerContextTransitioning>)transitionContext
-{
-  NSLog(@"UIKit asking %@ for interruptible animator with transitionContext %@", self, transitionContext);
-  //  return [_animatorCompositor animatorForImplicitAnimations];
-  //  return _animatorCompositor
-  return nil;
-}
+//- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
+//    (id<UIViewControllerContextTransitioning>)transitionContext
+//{
+//  NSLog(@"UIKit asking %@ for interruptible animator with transitionContext %@", self, transitionContext);
+//  //  return [_animatorCompositor animatorForImplicitAnimations];
+//  //  return _animatorCompositor
+//  return nil;
+//}
 
 - (void)animationEnded:(BOOL)transitionCompleted
 {
