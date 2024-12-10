@@ -3,7 +3,7 @@
   "version": "4.4.0-rc.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
-    "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn)",
+    "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn && yarn build && cd ../)",
     "check-types": "tsc --noEmit",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
