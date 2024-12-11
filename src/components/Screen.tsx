@@ -274,7 +274,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
 
       const freeze =
         freezeOnBlur &&
-        (isNativeStack ? Boolean(shouldFreeze) : activityState === 0);
+        (shouldFreeze !== undefined ? shouldFreeze : activityState === 0);
 
       return (
         <DelayedFreeze freeze={freeze}>
