@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
@@ -27,8 +28,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.parentAsView
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -122,10 +126,17 @@ class Screen(
     ) {
         val height = bottom - top
 
-        if (sheetDetents.count() == 1 && sheetDetents.first() == SHEET_FIT_TO_CONTENTS) {
+        Log.i(TAG, "contentWrapper height: $height")
+
+        if (isSheetFitToContents()) {
             sheetBehavior?.let {
                 if (it.maxHeight != height) {
-                    it.maxHeight = height
+                    Log.i(TAG, "configuring sheet behaviour")
+                    it.useSingleDetent(height, forceExpandedState = true)
+                    if (!isInLayout) {
+                        Log.i(TAG, "requesting layout")
+                        parentAsView()?.requestLayout()
+                    }
                 }
             }
         }

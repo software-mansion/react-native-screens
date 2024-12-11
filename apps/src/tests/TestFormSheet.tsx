@@ -1,7 +1,7 @@
-import { NavigationContainer, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp, createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useLayoutEffect } from "react";
-import { Button, Text, TextInput, View } from "react-native";
+import { NavigationContainer, RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useLayoutEffect } from 'react';
+import { Button, Text, TextInput, View } from 'react-native';
 
 type RouteParamList = {
   Home: undefined;
@@ -24,40 +24,53 @@ function Home({ navigation }: RouteProps<'Home'>) {
 }
 
 function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
+  const [showContent, setShowContent] = React.useState(false);
+
   return (
     <View style={{ backgroundColor: 'lightgreen' }}>
       <View style={{ paddingTop: 20 }}>
         <Button title="Go back" onPress={() => navigation.goBack()} />
       </View>
-      <View style={{ alignItems: 'center' }}>
-        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..."></TextInput>
+      <View style={{ paddingTop: 20 }}>
+        <Button title="Toggle content" onPress={() => setShowContent(old => !old)} />
       </View>
+      <View style={{ alignItems: 'center' }}>
+        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
+      </View>
+      {showContent && (
+        <View style={{ width: '100%', height: 400, backgroundColor: 'pink' }} />
+      )}
     </View>
-  )
+  );
 }
+
+//function Footer() {
+//  return (
+//    <View style={{ height: 64, backgroundColor: 'red' }}>
+//      <Text>Footer</Text>
+//      <Button title="Just click me" onPress={() => console.log('Footer button clicked')} />
+//    </View>
+//  );
+//}
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{
+        statusBarTranslucent: false,
+      }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.5, 1.0],
+          sheetAllowedDetents: 'fitToContents',
+          //sheetAllowedDetents: [1.0],
           sheetCornerRadius: 8,
           sheetLargestUndimmedDetentIndex: 'last',
           contentStyle: {
             backgroundColor: 'lightblue',
           },
-          unstable_sheetFooter: () => {
-            return (
-              <View style={{ height: 64, backgroundColor: 'red' }}>
-                <Text>Footer</Text>
-                <Button title="Just click me" onPress={() => console.log('Footer button clicked')} />
-              </View>
-            );
-          }
-        }}/>
+          //unstable_sheetFooter: Footer,
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
