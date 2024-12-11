@@ -9,18 +9,12 @@ import {
   ScreenStackProps,
 } from '../types';
 import { GHContext, RNSScreensRefContext } from '../contexts';
-import { freezeEnabled } from '../core';
-import DelayedFreeze from './helpers/DelayedFreeze';
 import warnOnce from 'warn-once';
 
 // Native components
 import ScreenStackNativeComponent, {
   NativeProps,
 } from '../fabric/ScreenStackNativeComponent';
-
-function isFabric() {
-  return 'nativeFabricUIManager' in global;
-}
 
 const assertGHProvider = (
   ScreenGestureDetector: (
@@ -69,33 +63,11 @@ function ScreenStack(props: ScreenStackProps) {
     passedScreenRefs?.current ?? {},
   );
   const ref = React.useRef(null);
-  const size = React.Children.count(children);
   const ScreenGestureDetector = React.useContext(GHContext);
   const gestureDetectorBridge = React.useRef<GestureDetectorBridge>({
     stackUseEffectCallback: _stackRef => {
       // this method will be overriden in GestureDetector
     },
-  });
-
-  // freezes all screens except the top one
-  const childrenWithFreeze = React.Children.map(children, (child, index) => {
-    // @ts-expect-error it's either SceneView in v6 or RouteView in v5
-    const { props, key } = child;
-    const descriptor = props?.descriptor ?? props?.descriptors?.[key];
-    const isFreezeEnabled =
-      descriptor?.options?.freezeOnBlur ?? freezeEnabled();
-
-    // On Fabric, when screen is frozen, animated and reanimated values are not updated
-    // due to component being unmounted. To avoid this, we don't freeze the previous screen there
-    const freezePreviousScreen = isFabric()
-      ? size - index > 2
-      : size - index > 1;
-
-    return (
-      <DelayedFreeze freeze={isFreezeEnabled && freezePreviousScreen}>
-        {child}
-      </DelayedFreeze>
-    );
   });
 
   React.useEffect(() => {
@@ -130,7 +102,7 @@ function ScreenStack(props: ScreenStackProps) {
             onFinishTransitioning as NativeProps['onFinishTransitioning']
           }
           ref={ref}>
-          {childrenWithFreeze}
+          {children}
         </ScreenStackNativeComponent>
       </ScreenGestureDetector>
     </RNSScreensRefContext.Provider>

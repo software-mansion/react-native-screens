@@ -38,6 +38,14 @@ function HomeScreen({
         title="Go to Details"
         onPress={() => navigation.navigate('Details')}
       />
+      <Button
+        title="Preload Details"
+        onPress={() => navigation.preload('Details')}
+      />
+      <Button
+        title="Preload Details2"
+        onPress={() => navigation.preload('Details2')}
+      />
     </View>
   );
 }
@@ -84,6 +92,7 @@ function App() {
         }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Details2" component={DetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

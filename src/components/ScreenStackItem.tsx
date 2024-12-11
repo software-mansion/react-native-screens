@@ -30,6 +30,7 @@ function ScreenStackItem(
     children,
     headerConfig,
     activityState,
+    shouldFreeze,
     stackPresentation,
     contentStyle,
     style,
@@ -132,6 +133,7 @@ function ScreenStackItem(
       enabled
       isNativeStack
       activityState={activityState}
+      shouldFreeze={shouldFreeze}
       stackPresentation={stackPresentation}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       style={[style, internalScreenStyle]}
@@ -142,6 +144,7 @@ function ScreenStackItem(
             enabled
             isNativeStack
             activityState={activityState}
+            shouldFreeze={shouldFreeze}
             hasLargeHeader={headerConfig?.largeTitle ?? false}
             style={StyleSheet.absoluteFill}>
             {content}
