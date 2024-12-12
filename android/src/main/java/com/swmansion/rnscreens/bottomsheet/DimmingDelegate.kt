@@ -13,7 +13,7 @@ import com.swmansion.rnscreens.ScreenStackFragment
 class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
 
     internal val dimmingView: DimmingView = initDimmingView(screen)
-    private val maxAlpha: Float = 0.3f
+    internal val maxAlpha: Float = 0.3f
     private var dimmingViewCallback: BottomSheetCallback? = null
 
 
