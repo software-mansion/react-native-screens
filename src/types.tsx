@@ -102,6 +102,10 @@ export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
+  /**
+   * Boolean indicating that the screen should be frozen with `react-freeze`.
+   */
+  shouldFreeze?: boolean;
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.

@@ -177,6 +177,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
     const {
       enabled = screensEnabled(),
       freezeOnBlur = freezeEnabled(),
+      shouldFreeze,
       ...rest
     } = props;
 
@@ -271,8 +272,12 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         }
       };
 
+      const freeze =
+        freezeOnBlur &&
+        (shouldFreeze !== undefined ? shouldFreeze : activityState === 0);
+
       return (
-        <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
+        <DelayedFreeze freeze={freeze}>
           <AnimatedScreen
             {...props}
             /**
