@@ -596,7 +596,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 {
   if (self = [super init]) {
     _operation = operation;
-    _transitionDuration = 0.35; // default duration in seconds
+    _transitionDuration = RNSDefaultTransitionDuration; // default duration in seconds
   }
   return self;
 }

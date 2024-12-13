@@ -27,9 +27,6 @@ constexpr bool kUsesNewAnimatorImpl = false;
 
 @interface RNSScreenStackAnimatorLegacy : NSObject <UIViewControllerAnimatedTransitioning>
 
-/// This property is filled whenever there is an ongoing animation and cleared on animation end.
-@property (nonatomic, strong, nullable, readonly) UIViewPropertyAnimator *inFlightAnimator;
-
 - (nonnull instancetype)initWithOperation:(UINavigationControllerOperation)operation;
 
 /// In case of interactive / interruptible transition (e.g. swipe back gesture) this method should return
