@@ -750,7 +750,11 @@ RNS_IGNORE_SUPER_CALL_END
       // otherwise the screen will be just popped immediately due to no animation
       ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
        [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation] || _customAnimation)) {
-    return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+    if (rns::kUsesNewAnimatorImpl) {
+      return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+    } else {
+      return [[RNSScreenStackAnimatorLegacy alloc] initWithOperation:operation];
+    }
   }
   return nil;
 }
