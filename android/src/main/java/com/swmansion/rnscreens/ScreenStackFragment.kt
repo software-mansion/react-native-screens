@@ -325,6 +325,9 @@ class ScreenStackFragment :
         assert(view == coordinatorLayout)
         dimmingDelegate.value.onViewHierarchyCreated(screen, coordinatorLayout)
         dimmingDelegate.value.onBehaviourAttached(screen, screen.sheetBehavior!!)
+
+        val container = screen.container!!
+        coordinatorLayout.layout(0, 0, container.width, container.height)
 //
 //        enterTransition =
 //            TransitionSet().apply {

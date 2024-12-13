@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 
@@ -33,6 +34,7 @@ class ScreenContentWrapper(
         right: Int,
         bottom: Int,
     ) {
+        Log.i("ScreenContentWrapper", "received layout: ${bottom - top}, ${right - left}")
         delegate?.onLayoutCallback(changed, left, top, right, bottom)
     }
 }
