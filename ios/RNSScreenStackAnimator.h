@@ -2,10 +2,6 @@
 
 #import "RNSScreen.h"
 
-namespace rns {
-constexpr bool kUsesNewAnimatorImpl = false;
-}
-
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 
 /// This property is filled whenever there is an ongoing animation and cleared on animation end.
