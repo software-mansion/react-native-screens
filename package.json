@@ -156,6 +156,21 @@
     "jsSrcsDir": "./src/fabric",
     "android": {
       "javaPackageName": "com.swmansion.rnscreens"
+    },
+    "ios": {
+      "componentProvider": {
+        "RNSFullWindowOverlay": "RNSFullWindowOverlay",
+        "RNSModalScreen": "RNSModalScreen",
+        "RNSScreenContainer": "RNSScreenContainer",
+        "RNSScreenContentWrapper": "RNSScreenContentWrapper",
+        "RNSScreenFooter": "RNSScreenFooter",
+        "RNSScreen": "RNSScreen",
+        "RNSScreenNavigationContainer": "RNSScreenNavigationContainer",
+        "RNSScreenStackHeaderConfig": "RNSScreenStackHeaderConfig",
+        "RNSScreenStackHeaderSubview": "RNSScreenStackHeaderSubview",
+        "RNSScreenStack": "RNSScreenStack",
+        "RNSSearchBar": "RNSSearchBar"
+      }
     }
   },
   "packageManager": "yarn@4.1.1"
