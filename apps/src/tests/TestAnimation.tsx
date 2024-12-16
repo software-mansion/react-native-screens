@@ -77,13 +77,18 @@ function Fifth({ navigation }: RoutePropBase<'Fifth'>): React.ReactNode {
   );
 }
 
+function HeaderRight() {
+  return (
+    <Square size={20} color="blue" />
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
         fullScreenGestureEnabled: true,
-        animation: 'simple_push',
-        //animationMatchesGesture: true,
+        headerRight: HeaderRight,
       }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Second" component={Second} options={{
