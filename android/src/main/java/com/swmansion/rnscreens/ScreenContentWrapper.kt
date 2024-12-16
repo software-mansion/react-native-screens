@@ -18,7 +18,7 @@ class ScreenContentWrapper(
     internal var delegate: OnLayoutCallback? = null
 
     interface OnLayoutCallback {
-        fun onLayoutCallback(
+        fun onContentWrapperLayout(
             changed: Boolean,
             left: Int,
             top: Int,
@@ -35,6 +35,6 @@ class ScreenContentWrapper(
         bottom: Int,
     ) {
         Log.i("ScreenContentWrapper", "received layout: ${bottom - top}, ${right - left}")
-        delegate?.onLayoutCallback(changed, left, top, right, bottom)
+        delegate?.onContentWrapperLayout(changed, left, top, right, bottom)
     }
 }

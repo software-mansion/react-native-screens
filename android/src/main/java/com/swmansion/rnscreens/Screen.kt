@@ -117,7 +117,7 @@ class Screen(
      * `fitToContents` for formSheets, as this is first entry point where we can acquire
      * height of our content.
      */
-    override fun onLayoutCallback(
+    override fun onContentWrapperLayout(
         changed: Boolean,
         left: Int,
         top: Int,

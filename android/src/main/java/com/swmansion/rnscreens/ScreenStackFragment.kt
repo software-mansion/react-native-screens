@@ -327,6 +327,7 @@ class ScreenStackFragment :
         dimmingDelegate.value.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
         val container = screen.container!!
+        coordinatorLayout.measure(View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY))
         coordinatorLayout.layout(0, 0, container.width, container.height)
 //
 //        enterTransition =
@@ -391,7 +392,16 @@ class ScreenStackFragment :
                     animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
                 }
             }
-            val customEvaluator = CustomEvaluator({ if (screen.height != 0) screen.height.toFloat() else 0f }, { 0f })
+            val startValueCallback = {
+                if (screen.height != 0) {
+                    Log.i("CB", "[StartValue] ${screen.height.toFloat()}")
+                    screen.height.toFloat()
+                } else {
+                    Log.i("CB", "[StartValue] 0f")
+                    0f
+                }
+            }
+            val customEvaluator = CustomEvaluator(startValueCallback, { 0f })
             val slideAnimator = ValueAnimator.ofObject(customEvaluator, screen.height.toFloat(), 0f).apply {
                 addUpdateListener { anim ->
                     val animatedValue = anim.animatedValue as? Float
@@ -809,7 +819,7 @@ class ScreenStackFragment :
         }
 
         override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-            Log.i(TAG, "[Coordinator] onLayout")
+            Log.i(TAG, "[Coordinator] onLayout ${b - t}, ${r - l}")
             super.onLayout(changed, l, t, r, b)
         }
 
