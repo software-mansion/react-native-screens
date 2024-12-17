@@ -517,7 +517,7 @@ class ScreenStackFragment :
                         behavior.apply {
                             val height =
                                 if (screen.isSheetFitToContents()) {
-                                    screen.contentWrapper.get()?.height
+                                    screen.contentWrapper.get()?.height.takeIf { screen.contentWrapper.get()?.isLaidOut == true }
                                 } else {
                                     (screen.sheetDetents.first() * containerHeight).toInt()
                                 }
@@ -818,8 +818,15 @@ class ScreenStackFragment :
             super.onViewAdded(child)
         }
 
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            val width = MeasureSpec.getSize(widthMeasureSpec)
+            val height = MeasureSpec.getSize(heightMeasureSpec)
+            Log.i(TAG, "[Coordinator] Measured with ${width} ${height}")
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        }
+
         override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-            Log.i(TAG, "[Coordinator] onLayout ${b - t}, ${r - l}")
+            Log.i(TAG, "[Coordinator] onLayout ${r - l}, ${b - t}")
             super.onLayout(changed, l, t, r, b)
         }
 

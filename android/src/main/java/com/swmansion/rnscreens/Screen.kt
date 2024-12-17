@@ -129,6 +129,7 @@ class Screen(
         if (sheetDetents.count() == 1 && sheetDetents.first() == SHEET_FIT_TO_CONTENTS) {
             sheetBehavior?.let {
                 if (it.maxHeight != height) {
+                    Log.i(TAG, "[Screen] Received maxHeight from content wrapper: $height")
                     it.maxHeight = height
                 }
             }
@@ -148,6 +149,16 @@ class Screen(
 
     override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
         // ignore restoring instance state too as we are not saving anything anyways.
+    }
+
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = MeasureSpec.getSize(heightMeasureSpec)
+        Log.i(TAG, "[Screen] Measured with $width $height")
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onLayout(
