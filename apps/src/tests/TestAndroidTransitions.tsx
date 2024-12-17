@@ -58,6 +58,7 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'> | RouteProps<'Modal'>
       <View style={{ alignItems: 'center' }}>
         <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..."></TextInput>
       </View>
+      <View style={{ backgroundColor: 'lightcoral', height: 500, width: '100%' }} />
     </View>
   );
 }
@@ -87,8 +88,8 @@ export default function App() {
         }} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.5, 0.7, 0.9],
-          //sheetAllowedDetents: 'fitToContents',
+          //sheetAllowedDetents: [0.5, 0.7, 0.9],
+          sheetAllowedDetents: 'fitToContents',
           sheetLargestUndimmedDetentIndex: 'none',
           contentStyle: {
             backgroundColor: 'lightgreen',
