@@ -79,7 +79,15 @@ const Navigation = createStaticNavigation(RootStack);
 
 export default function App() {
   return (
-    <Navigation />
+    <Navigation
+      linking={{
+        enabled: 'auto',
+        prefixes: [
+          // Change the scheme to match your app's scheme defined in app.json
+          'helloworld://',
+        ],
+      }}
+    />
   );
 }
 
@@ -87,6 +95,6 @@ type RootStackParamList = StaticParamList<typeof RootStack>;
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    interface RootParamList extends RootStackParamList { }
   }
 }
