@@ -44,6 +44,9 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
       case "cancelButtonText":
         mViewManager.setCancelButtonText(view, value == null ? null : (String) value);
         break;
+      case "defaultValue":
+        mViewManager.setDefaultValue(view, value == null ? null : (String) value);
+        break;
       case "barTintColor":
         mViewManager.setBarTintColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;

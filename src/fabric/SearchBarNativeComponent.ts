@@ -36,6 +36,7 @@ export interface NativeProps extends ViewProps {
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;
   cancelButtonText?: string;
+  defaultValue?: string;
   // TODO: implement these on iOS
   barTintColor?: ColorValue;
   tintColor?: ColorValue;
