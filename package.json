@@ -161,14 +161,14 @@
       "componentProvider": {
         "RNSFullWindowOverlay": "RNSFullWindowOverlay",
         "RNSModalScreen": "RNSModalScreen",
-        "RNSScreenContainer": "RNSScreenContainer",
+        "RNSScreenContainer": "RNSScreenContainerView",
         "RNSScreenContentWrapper": "RNSScreenContentWrapper",
         "RNSScreenFooter": "RNSScreenFooter",
-        "RNSScreen": "RNSScreen",
-        "RNSScreenNavigationContainer": "RNSScreenNavigationContainer",
+        "RNSScreen": "RNSScreenView",
+        "RNSScreenNavigationContainer": "RNSScreenNavigationContainerView",
         "RNSScreenStackHeaderConfig": "RNSScreenStackHeaderConfig",
         "RNSScreenStackHeaderSubview": "RNSScreenStackHeaderSubview",
-        "RNSScreenStack": "RNSScreenStack",
+        "RNSScreenStack": "RNSScreenStackView",
         "RNSSearchBar": "RNSSearchBar"
       }
     }
