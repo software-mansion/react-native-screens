@@ -9,7 +9,9 @@ internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(height: Int? = nu
     if (forceExpandedState) {
         this.state = BottomSheetBehavior.STATE_EXPANDED
     }
-    height?.let { maxHeight = height }
+    height?.let {
+        maxHeight = height
+    }
     return this
 }
 
