@@ -2,6 +2,10 @@
 
 import React from 'react';
 import { Animated, View, Platform } from 'react-native';
+import {
+  controlEdgeToEdgeValues,
+  isEdgeToEdge,
+} from 'react-native-is-edge-to-edge';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -48,6 +52,8 @@ interface ViewConfig extends View {
     };
   };
 }
+
+const EDGE_TO_EDGE = isEdgeToEdge();
 
 // This value must be kept in sync with native side.
 const SHEET_FIT_TO_CONTENTS = [-1];
@@ -237,6 +243,24 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         ...props
       } = rest;
 
+      const {
+        // Filter out edge-to-edge related props
+        navigationBarColor,
+        navigationBarTranslucent,
+        statusBarColor,
+        statusBarTranslucent,
+        ...edgeToEdgeFriendlyProps
+      } = props;
+
+      if (__DEV__) {
+        controlEdgeToEdgeValues({
+          navigationBarColor,
+          navigationBarTranslucent,
+          statusBarColor,
+          statusBarTranslucent,
+        });
+      }
+
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens',
@@ -279,7 +303,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       return (
         <DelayedFreeze freeze={freeze}>
           <AnimatedScreen
-            {...props}
+            {...(EDGE_TO_EDGE
+              ? {
+                  ...edgeToEdgeFriendlyProps,
+                  navigationBarTranslucent: true,
+                  statusBarTranslucent: true,
+                }
+              : props)}
             /**
              * This messy override is to conform NativeProps used by codegen and
              * our Public API. To see reasoning go to this PR:
