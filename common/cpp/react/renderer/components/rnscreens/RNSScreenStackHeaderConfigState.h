@@ -17,15 +17,16 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   RNSScreenStackHeaderConfigState() = default;
 
-  RNSScreenStackHeaderConfigState(Float paddingStart, Float paddingEnd)
-      : paddingStart_{paddingStart}, paddingEnd_{paddingEnd} {}
+  RNSScreenStackHeaderConfigState(Size frameSize_)
+    : frameSize(frameSize_) {}
 
 #ifdef ANDROID
   RNSScreenStackHeaderConfigState(
       RNSScreenStackHeaderConfigState const &previousState,
       folly::dynamic data)
-      : paddingStart_{static_cast<Float>(data["paddingStart"].getDouble())},
-        paddingEnd_{static_cast<Float>(data["paddingEnd"].getDouble())} {}
+      : frameSize(Size{
+          (Float)data["frameWidth"].getDouble(),
+          (Float)data["frameHeight"].getDouble()}){}
 #endif
 
 #ifdef ANDROID
@@ -40,15 +41,12 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 #endif // !NDEBUG
 #endif // ANDROID
 
+  const Size frameSize{};
+  Point contentOffset;
+
 #pragma mark - Getters
 
-  [[nodiscard]] Float getPaddingStart() const noexcept;
-
-  [[nodiscard]] Float getPaddingEnd() const noexcept;
-
  private:
-  Float paddingStart_{0.f};
-  Float paddingEnd_{0.f};
 #if !defined(ANDROID) && !defined(NDEBUG)
   std::weak_ptr<void> imageLoader_;
 #endif // !ANDROID && !NDEBUG
