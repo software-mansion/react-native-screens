@@ -18,7 +18,12 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-@implementation RNSScreenStackHeaderSubview
+
+@implementation RNSScreenStackHeaderSubview {
+#ifdef RCT_NEW_ARCH_ENABLED
+  react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
+#endif
+}
 
 #pragma mark - Common
 
@@ -127,6 +132,19 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   return NO;
 }
 
+- (void)updateState:(const facebook::react::State::Shared &)state
+        oldState:(const facebook::react::State::Shared &)oldState
+{
+    _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
+}
+
+- (void)updateHeaderSubviewFrame:(CGRect)frame
+{
+    if (_state != nullptr) {
+        auto newState = react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
+        _state->updateState(std::move(newState));
+    }
+}
 #else // RCT_NEW_ARCH_ENABLED
 #pragma mark - Paper specific
 
