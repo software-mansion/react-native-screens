@@ -3,11 +3,14 @@ package com.swmansion.rnscreens.bottomsheet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactCompoundViewGroup
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ext.equalWithRespectToEps
 
 /**
@@ -40,7 +43,13 @@ class DimmingView(
         b: Int,
     ) = Unit
 
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        Log.i(TAG, "[DimmingView] onInterceptTouchEvent")
+        return super.onInterceptTouchEvent(ev)
+    }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        Log.i(TAG, "[DimmingView] onTouchEvent")
         if (blockGestures) {
             callOnClick()
         }

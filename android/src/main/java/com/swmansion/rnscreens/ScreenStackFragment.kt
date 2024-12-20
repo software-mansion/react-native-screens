@@ -1,11 +1,15 @@
 package com.swmansion.rnscreens
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -16,17 +20,22 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
-import android.view.animation.AnimationUtils
 import android.view.animation.Transformation
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.animation.addListener
+import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
+import androidx.transition.Fade
+import androidx.transition.Slide
+import androidx.transition.TransitionSet
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -34,13 +43,19 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCa
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.DimmingDelegate
+import com.swmansion.rnscreens.bottomsheet.DimmingView
+import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.useThreeDetents
 import com.swmansion.rnscreens.bottomsheet.useTwoDetents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.events.ScreenEventDelegate
 import com.swmansion.rnscreens.ext.recycle
+import com.swmansion.rnscreens.transition.CustomEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
 
 sealed class KeyboardState
@@ -55,7 +70,8 @@ class KeyboardVisible(
 
 class ScreenStackFragment :
     ScreenFragment,
-    ScreenStackFragmentWrapper {
+    ScreenStackFragmentWrapper,
+    OnApplyWindowInsetsListener {
     public var nativeDismissalObserver: NativeDismissalObserver? = null
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
@@ -75,6 +91,13 @@ class ScreenStackFragment :
             check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
             return container
         }
+
+    private val dimmingDelegate =
+        lazy(LazyThreadSafetyMode.NONE) {
+            DimmingDelegate(screen.reactContext, screen)
+        }
+
+    private var sheetDelegate: SheetDelegate? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -176,7 +199,7 @@ class ScreenStackFragment :
                 }
 
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    nativeDismissalObserver?.onNativeDismiss(this@ScreenStackFragment)
+                    dismissSelf()
                 }
             }
 
@@ -186,23 +209,27 @@ class ScreenStackFragment :
             ) = Unit
         }
 
-    override fun onCreateAnimation(
-        transit: Int,
-        enter: Boolean,
-        nextAnim: Int,
-    ): Animation? {
-        if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
-            return null
+    private fun cleanRegisteredSheetCallbacks() {
+    }
+
+    internal fun dismissSelf() {
+        if (!this.isRemoving || !this.isDetached) {
+            val reactContext = screen.reactContext
+            val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
+            UIManagerHelper
+                .getEventDispatcherForReactTag(reactContext, screen.id)
+                ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
         }
-        return if (enter) {
-            AnimationUtils.loadAnimation(context, R.anim.rns_slide_in_from_bottom)
-        } else {
-            AnimationUtils.loadAnimation(context, R.anim.rns_slide_out_to_bottom)
-        }
+        cleanRegisteredSheetCallbacks()
+//        dismissFromContainer()
     }
 
     internal fun onSheetCornerRadiusChange() {
         screen.onSheetCornerRadiusChange()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -260,6 +287,148 @@ class ScreenStackFragment :
             setHasOptionsMenu(true)
         }
         return coordinatorLayout
+    }
+
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        enterTransition =
+//            Fade(Fade.IN).apply {
+//                addListener(
+//                    ScreenEventDelegate(
+//                        this@ScreenStackFragment,
+//                        this@ScreenStackFragment,
+//                        ScreenEventDelegate.TransitionDirection.FORWARD,
+//                    ),
+//                )
+//            }
+//        exitTransition =
+//            Fade(Fade.OUT).apply {
+//                addListener(
+//                    ScreenEventDelegate(
+//                        this@ScreenStackFragment,
+//                        this@ScreenStackFragment,
+//                        ScreenEventDelegate.TransitionDirection.BACKWARD,
+//                    ),
+//                )
+//            }
+//
+        if (!screen.usesFormSheetPresentation()) {
+            return
+        }
+
+        sheetDelegate = SheetDelegate(screen)
+
+        assert(view == coordinatorLayout)
+        dimmingDelegate.value.onViewHierarchyCreated(screen, coordinatorLayout)
+        dimmingDelegate.value.onBehaviourAttached(screen, screen.sheetBehavior!!)
+
+        val container = screen.container!!
+        coordinatorLayout.measure(View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY))
+        coordinatorLayout.layout(0, 0, container.width, container.height)
+//
+//        enterTransition =
+//            TransitionSet().apply {
+//                addTransition(
+//                    Slide().apply {
+//                        excludeTarget(dimmingDelegate.value.dimmingView, true)
+//                    },
+//                )
+//                addTransition(
+//                    Fade(Fade.IN).apply {
+//                        addTarget(dimmingDelegate.value.dimmingView)
+//                    },
+//                )
+//                addListener(
+//                    ScreenEventDelegate(
+//                        this@ScreenStackFragment,
+//                        this@ScreenStackFragment,
+//                        ScreenEventDelegate.TransitionDirection.FORWARD,
+//                    ),
+//                )
+//            }
+//        exitTransition =
+//            TransitionSet().apply {
+//                addTransition(
+//                    Slide().apply {
+//                        excludeTarget(dimmingDelegate.value.dimmingView, true)
+//                    },
+//                )
+//                addTransition(
+//                    Fade(Fade.OUT).apply {
+//                        addTarget(dimmingDelegate.value.dimmingView)
+//                    },
+//                )
+//                addListener(
+//                    ScreenEventDelegate(
+//                        this@ScreenStackFragment,
+//                        this@ScreenStackFragment,
+//                        ScreenEventDelegate.TransitionDirection.BACKWARD,
+//                    ),
+//                )
+//            }
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        // Ensure onCreateAnimator is called
+        return null
+    }
+
+    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
+        if (!screen.usesFormSheetPresentation()) {
+            // Use animation defined while defining transaction in screen stack
+            return null
+        }
+
+        val animatorSet = AnimatorSet()
+
+        if (enter) {
+            val alphaAnimator = ValueAnimator.ofFloat(0f, dimmingDelegate.value.maxAlpha).apply {
+                addUpdateListener { anim ->
+                    val animatedValue = anim.animatedValue as? Float
+                    animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+                }
+            }
+            val startValueCallback = {
+                if (screen.height != 0) {
+                    Log.i("CB", "[StartValue] ${screen.height.toFloat()}")
+                    screen.height.toFloat()
+                } else {
+                    Log.i("CB", "[StartValue] 0f")
+                    0f
+                }
+            }
+            val customEvaluator = CustomEvaluator(startValueCallback, { 0f })
+            val slideAnimator = ValueAnimator.ofObject(customEvaluator, screen.height.toFloat(), 0f).apply {
+                addUpdateListener { anim ->
+                    val animatedValue = anim.animatedValue as? Float
+                    Log.i(TAG, "slide: $animatedValue")
+                    animatedValue?.let { screen.translationY = it }
+                }
+                addListener(onStart = { animator ->
+                    Log.i(TAG, "starting slideAnimator")
+                })
+            }
+            animatorSet.play(alphaAnimator).with(slideAnimator)
+        } else {
+            val alphaAnimator = ValueAnimator.ofFloat(dimmingDelegate.value.dimmingView.alpha, 0f).apply {
+                addUpdateListener { anim ->
+                    val animatedValue = anim.animatedValue as? Float
+                    animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+                }
+            }
+            val slideAnimator = ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
+                addUpdateListener { anim ->
+                    val animatedValue = anim.animatedValue as? Float
+                    animatedValue?.let { screen.translationY = it }
+                }
+            }
+            animatorSet.play(alphaAnimator).with(slideAnimator)
+        }
+        return animatorSet
     }
 
     /**
@@ -348,7 +517,7 @@ class ScreenStackFragment :
                         behavior.apply {
                             val height =
                                 if (screen.isSheetFitToContents()) {
-                                    screen.contentWrapper.get()?.height
+                                    screen.contentWrapper.get()?.height.takeIf { screen.contentWrapper.get()?.isLaidOut == true }
                                 } else {
                                     (screen.sheetDetents.first() * containerHeight).toInt()
                                 }
@@ -456,10 +625,15 @@ class ScreenStackFragment :
         }
     }
 
+    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
+        val behavior = BottomSheetBehavior<Screen>()
+        return behavior
+    }
+
     // In general it would be great to create BottomSheetBehaviour only via this method as it runs some
     // side effects.
-    internal fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> =
-        configureBottomSheetBehaviour(BottomSheetBehavior<Screen>())
+    private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> =
+        configureBottomSheetBehaviour(createBottomSheetBehaviour())
 
     private fun attachShapeToScreen(screen: Screen) {
         val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius)
@@ -565,6 +739,13 @@ class ScreenStackFragment :
         screenStack.dismiss(this)
     }
 
+    override fun onApplyWindowInsets(
+        v: View,
+        insets: WindowInsetsCompat,
+    ): WindowInsetsCompat {
+        TODO("Not yet implemented")
+    }
+
     private class ScreensCoordinatorLayout(
         context: Context,
         private val fragment: ScreenStackFragment,
@@ -616,6 +797,37 @@ class ScreenStackFragment :
                         super.startAnimation(it)
                     }
             }
+        }
+
+        override fun startViewTransition(view: View) {
+            super.startViewTransition(view)
+            if (view is DimmingView) {
+                Log.i(TAG, "Start transition on dimming view")
+//                view.transitionAlpha = view.alpha
+//                view.setTransitionVisibility(View.INVISIBLE)
+            }
+        }
+
+        override fun onViewRemoved(child: View?) {
+            Log.i(TAG, "[Coordinator] onViewRemoved: $child")
+            super.onViewRemoved(child)
+        }
+
+        override fun onViewAdded(child: View?) {
+            Log.i(TAG, "[Coordinator] onViewAdded: $child")
+            super.onViewAdded(child)
+        }
+
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            val width = MeasureSpec.getSize(widthMeasureSpec)
+            val height = MeasureSpec.getSize(heightMeasureSpec)
+            Log.i(TAG, "[Coordinator] Measured with ${width} ${height}")
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        }
+
+        override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+            Log.i(TAG, "[Coordinator] onLayout ${r - l}, ${b - t}")
+            super.onLayout(changed, l, t, r, b)
         }
 
         /**
