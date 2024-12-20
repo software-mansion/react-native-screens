@@ -9,6 +9,8 @@ import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
 import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
 
+// Fool autolinking for older versions that do not support BaseReactPackage.
+// public class RNScreensPackage implements TurboReactPackage {
 @ReactModuleList(
     nativeModules = [
         ScreensModule::class,
