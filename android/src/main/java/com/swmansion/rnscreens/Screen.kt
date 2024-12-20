@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ReactClippingViewGroup
 import com.facebook.react.uimanager.UIManagerHelper
@@ -59,6 +61,8 @@ class Screen(
     var screenOrientation: Int? = null
         private set
     var isStatusBarAnimated: Boolean? = null
+
+    @Volatile
     var isBeingRemoved = false
 
     // Props for controlling modal presentation
@@ -374,9 +378,32 @@ class Screen(
     var nativeBackButtonDismissalEnabled: Boolean = true
 
     fun startRemovalTransition() {
+        Log.w(TAG, "$this startRemovalTransition")
+        // isBeingRemoved is marked as volatile to ensure memory ordering.
+        // Synchronization is not required, because this method is called either from commit hook
+        // running on JS thread (before mounting) or from mounting code running on UI thread.
+        //
+        // We need to run this on UI thread due to assertions in RN code (otherwise we could crash
+        // the app in production env).
+        //
+        // Important thing is timing here: when we start transition from commit hook we rely on the fact
+        // that the mount items are not scheduled on UI yet, thus we rely on the fact that the task scheduled
+        // here will be executed before the mount items as the queues are serial.
+        //
+        // TODO: Verify whether this method should be called from view manager at all (or maybe only on Paper)
         if (!isBeingRemoved) {
             isBeingRemoved = true
-            startTransitionRecursive(this)
+            if (!reactContext.isOnUiQueueThread) {
+                Log.w(TAG, "$this startRemovalTransition schedule")
+                ReactChoreographer.getInstance().postFrameCallback(ReactChoreographer.CallbackType.DISPATCH_UI) {
+                    Log.w(TAG, "$this startRemovalTransition exec")
+                    startTransitionRecursive(this)
+                }
+            } else {
+                Log.w(TAG, "$this startRemovalTransition sync")
+                startTransitionRecursive(this)
+            }
+//            startTransitionRecursive(this)
         }
     }
 
