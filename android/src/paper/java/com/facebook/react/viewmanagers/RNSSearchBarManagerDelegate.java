@@ -13,10 +13,11 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ColorPropConverter;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
-import com.facebook.react.uimanager.BaseViewManagerInterface;
+import com.facebook.react.uimanager.LayoutShadowNode;
 
-public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManagerInterface<T> & RNSSearchBarManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
+public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSSearchBarManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSSearchBarManagerDelegate(U viewManager) {
     super(viewManager);
   }
