@@ -252,21 +252,16 @@ namespace react = facebook::react;
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
-  UIView *view = viewController.view;
 #ifdef RCT_NEW_ARCH_ENABLED
-  if (![view isKindOfClass:[RNSScreenView class]]) {
+  if (![viewController.view isKindOfClass:[RNSScreenView class]]) {
     // if the current view is a snapshot, config was already removed so we don't trigger the method
     return;
   }
 #endif
-  RNSScreenStackHeaderConfig *config = nil;
-  for (UIView *subview in view.reactSubviews) {
-    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      config = (RNSScreenStackHeaderConfig *)subview;
-      break;
-    }
-  }
-  [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
+  auto *screenView = static_cast<RNSScreenView *>(viewController.view);
+  [RNSScreenStackHeaderConfig willShowViewController:viewController
+                                            animated:animated
+                                          withConfig:screenView.findHeaderConfig];
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
@@ -1294,7 +1289,7 @@ RNS_IGNORE_SUPER_CALL_END
 // with modal presentation or foreign modal presented from inside a Screen.
 - (void)dismissAllRelatedModals
 {
-  [_controller dismissViewControllerAnimated:YES completion:nil];
+  [_controller.presentedViewController dismissViewControllerAnimated:YES completion:nil];
 
   // This loop seems to be excessive. Above message send to `_controller` should
   // be enough, because system dismisses the controllers recursively,

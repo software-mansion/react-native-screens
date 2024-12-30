@@ -41,11 +41,27 @@ namespace react = facebook::react;
 
 // We're forcing the navigation controller's view to re-layout
 // see: https://github.com/software-mansion/react-native-screens/pull/2385
-- (void)layoutNavigationBarIfNeeded
+- (void)layoutNavigationBar
 {
+  // If we're not attached yet, we should not layout the navigation bar,
+  // because the layout flow won't reach us & we will clear "isLayoutDirty" flags
+  // on view above us, causing subsequent layout request to not reach us.
+  if (self.window == nil) {
+    return;
+  }
+
   RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
   UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
-  [navctr.navigationBar layoutIfNeeded];
+
+  UIView *toLayoutView = navctr.navigationBar;
+
+  // TODO: It is possible, that this needs to be called only on old architecture.
+  // Make sure that Test432 keeps working.
+  [toLayoutView setNeedsLayout];
+
+  // TODO: Determine why this must be called & deferring layout to next "update cycle"
+  // is not sufficient. See Test2552 and Test432. (Talking Paper here).
+  [toLayoutView layoutIfNeeded];
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -106,7 +122,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         self);
   } else {
     self.bounds = CGRect{CGPointZero, frame.size};
-    [self layoutNavigationBarIfNeeded];
+    [self layoutNavigationBar];
   }
 }
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -136,8 +152,10 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 {
   // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
   // makes UINavigationBar the only one to control the position of header content.
-  [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-  [self layoutNavigationBarIfNeeded];
+  if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
+    [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    [self layoutNavigationBar];
+  }
 }
 #endif // RCT_NEW_ARCH_ENABLED
 

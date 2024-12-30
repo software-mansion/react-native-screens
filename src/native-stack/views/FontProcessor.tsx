@@ -1,5 +1,5 @@
 // @ts-ignore: No declaration available
-// eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
+
 import ReactNativeStyleAttributes from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 export function processFonts(
