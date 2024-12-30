@@ -135,12 +135,17 @@ function ExtraNestedFlatlist(props: Partial<FlatListProps<number>>) {
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * You can use either the App component with `ListScreen` or `ListScreenSimplified`,
+ * of `AppSimple` component which has little to no navigation and attempts to reproduce the issue
+ */
+
 export default function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ animation: 'slide_from_right' }}>
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="List" component={ListScreenSimplified}/>
+        <Stack.Screen name="List" component={ListScreenSimplified}/> {/* <- Exchange here for ListScreen for more complex case */}
       </Stack.Navigator>
     </NavigationContainer>
   );
