@@ -94,6 +94,9 @@ function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
       onCancelButtonPress={
         props.onCancelButtonPress as DirectEventHandler<SearchBarEvent>
       }
+      onBookmarkButtonPress={
+        props.onBookmarkButtonPress as DirectEventHandler<SearchBarEvent>
+      }
       onChangeText={props.onChangeText as DirectEventHandler<ChangeTextEvent>}
     />
   );

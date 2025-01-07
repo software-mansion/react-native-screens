@@ -127,6 +127,20 @@ namespace react = facebook::react;
   }
 #endif
 }
+- (void)emitOnBookmarkButtonPressEvent
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onBookmarkButtonPress(react::RNSSearchBarEventEmitter::onBookmarkButtonPress{});
+  }
+#else
+  if (self.onBookmarkButtonPress) {
+    self.onBookmarkButtonPress(@{});
+  }
+#endif
+}
+
 
 - (void)emitOnChangeTextEventWithText:(NSString *)text
 {
@@ -150,6 +164,12 @@ namespace react = facebook::react;
     [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
   }
 }
+
+- (void)setShowBookmarkButton:(BOOL)showBookmarkButton
+{
+  [_controller.searchBar setShowsBookmarkButton:showBookmarkButton];
+}
+
 
 - (void)setHideNavigationBar:(BOOL)hideNavigationBar
 {
@@ -290,6 +310,13 @@ namespace react = facebook::react;
 }
 #endif // !TARGET_OS_TV
 
+#if !TARGET_OS_TV
+- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar
+{
+  [self emitOnBookmarkButtonPressEvent];
+}
+#endif // !TARGET_OS_TV
+
 - (void)blur
 {
   [_controller.searchBar resignFirstResponder];
@@ -334,6 +361,8 @@ namespace react = facebook::react;
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(props);
 
   [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  
+  [self setShowBookmarkButton:newScreenProps.showBookmarkButton];
 
   if (oldScreenProps.cancelButtonText != newScreenProps.cancelButtonText) {
     [self setCancelButtonText:RCTNSStringFromStringNilIfEmpty(newScreenProps.cancelButtonText)];
@@ -411,6 +440,7 @@ RCT_EXPORT_MODULE()
 #endif
 
 RCT_EXPORT_VIEW_PROPERTY(obscureBackground, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showBookmarkButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideWhenScrolling, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
@@ -423,6 +453,7 @@ RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onBookmarkButtonPress, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSearchFocus, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSearchBlur, RCTDirectEventBlock)
