@@ -119,7 +119,13 @@ android {
                 "**/libc++_shared.so",
                 "**/libreact_render*.so",
                 "**/libreactnativejni.so",
-                "**/libreact_performance_timeline.so"
+                "**/libreact_performance_timeline.so",
+                // In 0.76 multiple react-native's libraries were merged and these are the main new artifacts we're using.
+                // Some of above lib* names could be removed after we remove support for 0.76.
+                // https://github.com/facebook/react-native/pull/43909
+                // https://github.com/facebook/react-native/pull/46059
+                "**/libfbjni.so", 
+                "**/libreactnative.so"
         ]
     }
     sourceSets.main {
