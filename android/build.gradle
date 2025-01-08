@@ -59,9 +59,10 @@ def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
+    namespace "com.swmansion.rnscreens"
+
     def agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION
     if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
-        namespace "com.swmansion.rnscreens"
         buildFeatures {
             buildConfig true
         }
