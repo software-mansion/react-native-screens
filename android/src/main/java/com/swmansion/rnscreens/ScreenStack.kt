@@ -3,11 +3,11 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
-import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
 import kotlin.collections.ArrayList
@@ -50,7 +50,7 @@ class ScreenStack(
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
-            Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
+            Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen)
             else -> ScreenStackFragment(screen)
         }
 
@@ -65,6 +65,16 @@ class ScreenStack(
             removalTransitionStarted = false
             dispatchOnFinishTransitioning()
         }
+    }
+
+    override fun onViewRemoved(child: View?) {
+        Log.i(TAG, "[Stack] onViewRemoved: $child")
+        super.onViewRemoved(child)
+    }
+
+    override fun onViewAdded(child: View?) {
+        Log.i(TAG, "[Stack] onViewAdded: $child")
+        super.onViewAdded(child)
     }
 
     fun onViewAppearTransitionEnd() {
@@ -242,7 +252,6 @@ class ScreenStack(
                     }
                 }
             }
-
             // animation logic end
             goingForward = shouldUseOpenAnimation
 

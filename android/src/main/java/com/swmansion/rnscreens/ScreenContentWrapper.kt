@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
+import android.icu.util.Measure
+import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 
@@ -17,13 +19,20 @@ class ScreenContentWrapper(
     internal var delegate: OnLayoutCallback? = null
 
     interface OnLayoutCallback {
-        fun onLayoutCallback(
+        fun onContentWrapperLayout(
             changed: Boolean,
             left: Int,
             top: Int,
             right: Int,
             bottom: Int,
         )
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = MeasureSpec.getSize(heightMeasureSpec)
+        Log.i("ScreenContentWrapper", "[ContentWrapper] measured $width $height")
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onLayout(
@@ -33,6 +42,7 @@ class ScreenContentWrapper(
         right: Int,
         bottom: Int,
     ) {
-        delegate?.onLayoutCallback(changed, left, top, right, bottom)
+        Log.i("ScreenContentWrapper", "[ContentWrapper] received layout: ${right - left}, ${bottom - top}")
+        delegate?.onContentWrapperLayout(changed, left, top, right, bottom)
     }
 }
