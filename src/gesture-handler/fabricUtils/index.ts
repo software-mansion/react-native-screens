@@ -1,40 +1,27 @@
 'use strict';
 
 import { View } from 'react-native';
+import { HostInstance, findHostInstance } from './findHostInstance';
+export { isFabric } from './arch-check';
 
 /* eslint-disable */
-
-type LocalGlobal = typeof global & Record<string, unknown>;
-
-export function isFabric() {
-  return !!(global as LocalGlobal)._IS_FABRIC;
-}
 
 export type ShadowNodeWrapper = {
   __hostObjectShadowNodeWrapper: never;
 };
-
-let findHostInstance_DEPRECATED: (ref: unknown) => void;
 
 let getInternalInstanceHandleFromPublicInstance: (ref: unknown) => {
   stateNode: { node: unknown };
 };
 
 // Taken and modifies from reanimated
-export function getShadowNodeWrapperAndTagFromRef(ref: View | null): {
+export function getShadowNodeWrapperAndTagFromRef(
+  ref: View | null,
+  hostInstance?: HostInstance,
+): {
   shadowNodeWrapper: ShadowNodeWrapper;
   tag: number;
 } {
-  // load findHostInstance_DEPRECATED lazily because it may not be available before render
-  if (findHostInstance_DEPRECATED === undefined) {
-    try {
-      findHostInstance_DEPRECATED =
-        require('react-native/Libraries/Renderer/shims/ReactFabric').findHostInstance_DEPRECATED;
-    } catch (e) {
-      findHostInstance_DEPRECATED = (_ref: unknown) => null;
-    }
-  }
-
   if (getInternalInstanceHandleFromPublicInstance === undefined) {
     try {
       getInternalInstanceHandleFromPublicInstance =
@@ -73,13 +60,19 @@ export function getShadowNodeWrapperAndTagFromRef(ref: View | null): {
       tag: (ref as any)?.__nativeTag,
     };
   } else {
-    const hostInstance = findHostInstance_DEPRECATED(ref);
+    const instance = hostInstance ?? findHostInstance(ref as any);
     resolvedRef = {
       shadowNodeWrapper:
-        getInternalInstanceHandleFromPublicInstance(hostInstance).stateNode
-          .node,
-      tag: (hostInstance as any)?._nativeTag,
+        getInternalInstanceHandleFromPublicInstance(instance).stateNode.node,
+      tag: (instance as any)?._nativeTag ?? (instance as any)?.__nativeTag,
     };
+    //const hostInstance = findHostInstance_DEPRECATED(ref);
+    //resolvedRef = {
+    //  shadowNodeWrapper:
+    //    getInternalInstanceHandleFromPublicInstance(hostInstance).stateNode
+    //      .node,
+    //  tag: (hostInstance as any)?._nativeTag,
+    //};
   }
 
   return resolvedRef;
