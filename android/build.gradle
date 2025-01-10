@@ -130,9 +130,11 @@ android {
         prefab true
         buildConfig true
     }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
+    if (isNewArchitectureEnabled()) {
+        externalNativeBuild {
+            cmake {
+                path "CMakeLists.txt"
+            }
         }
     }
     lintOptions {
@@ -159,7 +161,7 @@ android {
                 // Some of above lib* names could be removed after we remove support for 0.76.
                 // https://github.com/facebook/react-native/pull/43909
                 // https://github.com/facebook/react-native/pull/46059
-                "**/libfbjni.so", 
+                "**/libfbjni.so",
                 "**/libreactnative.so"
         ]
     }
