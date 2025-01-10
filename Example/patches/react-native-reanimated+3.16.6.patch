@@ -147,24 +147,33 @@ index a1ace4f..ed5637f 100644
  
    auto nativeReanimatedModule = std::make_shared<NativeReanimatedModule>(
 diff --git a/node_modules/react-native-reanimated/src/platform-specific/findHostInstance.ts b/node_modules/react-native-reanimated/src/platform-specific/findHostInstance.ts
-index 00d5615..9038b63 100644
+index 00d5615..b61cb93 100644
 --- a/node_modules/react-native-reanimated/src/platform-specific/findHostInstance.ts
 +++ b/node_modules/react-native-reanimated/src/platform-specific/findHostInstance.ts
-@@ -43,7 +43,7 @@ function resolveFindHostInstance_DEPRECATED() {
+@@ -42,16 +42,24 @@ function resolveFindHostInstance_DEPRECATED() {
+   }
    if (isFabric()) {
      try {
++      const ReactFabric = require('react-native/Libraries/Renderer/shims/ReactFabric');
++      // Since RN 0.77 ReactFabric exports findHostInstance_DEPRECATED in default object so we're trying to
++      // access it first, then fallback on named export
        findHostInstance_DEPRECATED =
 -        require('react-native/Libraries/Renderer/shims/ReactFabric').findHostInstance_DEPRECATED;
-+        require('react-native/Libraries/Renderer/shims/ReactFabric').default.findHostInstance_DEPRECATED;
++        ReactFabric?.default?.findHostInstance_DEPRECATED ??
++        ReactFabric?.findHostInstance_DEPRECATED;
      } catch (e) {
        throw new ReanimatedError(
          'Failed to resolve findHostInstance_DEPRECATED'
-@@ -51,7 +51,7 @@ function resolveFindHostInstance_DEPRECATED() {
+       );
      }
    } else {
++    const ReactNative = require('react-native/Libraries/Renderer/shims/ReactNative');
++    // Since RN 0.77 ReactFabric exports findHostInstance_DEPRECATED in default object so we're trying to
++    // access it first, then fallback on named export
      findHostInstance_DEPRECATED =
 -      require('react-native/Libraries/Renderer/shims/ReactNative').findHostInstance_DEPRECATED;
-+      require('react-native/Libraries/Renderer/shims/ReactNative').default.findHostInstance_DEPRECATED;
++      ReactNative?.default?.findHostInstance_DEPRECATED ??
++      ReactNative?.findHostInstance_DEPRECATED;
    }
  }
  
