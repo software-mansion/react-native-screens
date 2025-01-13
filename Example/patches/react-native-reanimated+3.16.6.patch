@@ -1,0 +1,179 @@
+diff --git a/node_modules/react-native-reanimated/Common/cpp/reanimated/NativeModules/NativeReanimatedModule.cpp b/node_modules/react-native-reanimated/Common/cpp/reanimated/NativeModules/NativeReanimatedModule.cpp
+index 673ebd1..249b9ed 100644
+--- a/node_modules/react-native-reanimated/Common/cpp/reanimated/NativeModules/NativeReanimatedModule.cpp
++++ b/node_modules/react-native-reanimated/Common/cpp/reanimated/NativeModules/NativeReanimatedModule.cpp
+@@ -22,9 +22,6 @@
+ #include <react/renderer/scheduler/Scheduler.h>
+ #include <react/renderer/uimanager/UIManagerBinding.h>
+ #include <react/renderer/uimanager/primitives.h>
+-#if REACT_NATIVE_MINOR_VERSION >= 73
+-#include <react/utils/CoreFeatures.h>
+-#endif // REACT_NATIVE_MINOR_VERSION
+ #endif // RCT_NEW_ARCH_ENABLED
+ 
+ #include <functional>
+@@ -50,11 +47,6 @@
+ 
+ using namespace facebook;
+ 
+-#if REACT_NATIVE_MINOR_VERSION == 73 && defined(RCT_NEW_ARCH_ENABLED)
+-// Android can't find the definition of this static field
+-bool CoreFeatures::useNativeState;
+-#endif
+-
+ namespace reanimated {
+ 
+ NativeReanimatedModule::NativeReanimatedModule(
+@@ -368,7 +360,7 @@ jsi::Value NativeReanimatedModule::getViewProp(
+   const auto funPtr = std::make_shared<jsi::Function>(
+       callback.getObject(rnRuntime).asFunction(rnRuntime));
+   const auto shadowNode = shadowNodeFromValue(rnRuntime, shadowNodeWrapper);
+-  uiScheduler_->scheduleOnUI([=]() {
++  uiScheduler_->scheduleOnUI(COPY_CAPTURE_WITH_THIS {
+     jsi::Runtime &uiRuntime = uiWorkletRuntime_->getJSIRuntime();
+     const auto resultStr =
+         obtainPropFromShadowNode(uiRuntime, propNameStr, shadowNode);
+@@ -770,10 +762,7 @@ void NativeReanimatedModule::performOperations() {
+         },
+         {/* .enableStateReconciliation = */
+          false,
+-         /* .mountSynchronously = */ true,
+-         /* .shouldYield = */ [this]() {
+-           return propsRegistry_->shouldReanimatedSkipCommit();
+-         }});
++         /* .mountSynchronously = */ true});
+   });
+ }
+ 
+diff --git a/node_modules/react-native-reanimated/apple/reanimated/apple/REAModule.h b/node_modules/react-native-reanimated/apple/reanimated/apple/REAModule.h
+index c796f7d..b6b34cf 100644
+--- a/node_modules/react-native-reanimated/apple/reanimated/apple/REAModule.h
++++ b/node_modules/react-native-reanimated/apple/reanimated/apple/REAModule.h
+@@ -1,9 +1,5 @@
+ #ifdef RCT_NEW_ARCH_ENABLED
+-#import <React/RCTInitializing.h>
+-#if REACT_NATIVE_MINOR_VERSION >= 74
+-#import <React/RCTRuntimeExecutorModule.h>
+-#import <ReactCommon/RCTRuntimeExecutor.h>
+-#endif // REACT_NATIVE_MINOR_VERSION >= 74
++#import <React/RCTCallInvokerModule.h>
+ #import <rnreanimated/rnreanimated.h>
+ #else // RCT_NEW_ARCH_ENABLED
+ #import <React/RCTBridgeModule.h>
+@@ -20,10 +16,7 @@
+ @interface REAModule : RCTEventEmitter
+ #ifdef RCT_NEW_ARCH_ENABLED
+                        <NativeReanimatedModuleSpec,
+-                        RCTInitializing,
+-#if REACT_NATIVE_MINOR_VERSION >= 74
+-                        RCTRuntimeExecutorModule,
+-#endif // REACT_NATIVE_MINOR_VERSION >= 74
++                        RCTCallInvokerModule,
+ #else
+                        <RCTBridgeModule,
+ #endif // RCT_NEW_ARCH_ENABLED
+diff --git a/node_modules/react-native-reanimated/apple/reanimated/apple/REAModule.mm b/node_modules/react-native-reanimated/apple/reanimated/apple/REAModule.mm
+index 8c8ec42..2169c51 100644
+--- a/node_modules/react-native-reanimated/apple/reanimated/apple/REAModule.mm
++++ b/node_modules/react-native-reanimated/apple/reanimated/apple/REAModule.mm
+@@ -1,6 +1,7 @@
+ #import <React/RCTBridge+Private.h>
+ 
+ #ifdef RCT_NEW_ARCH_ENABLED
++#import <React/RCTCallInvoker.h>
+ #import <React/RCTFabricSurface.h>
+ #import <React/RCTScheduler.h>
+ #import <React/RCTSurface.h>
+@@ -65,7 +66,7 @@ typedef void (^AnimatedOperation)(REANodesManager *nodesManager);
+ 
+ @synthesize moduleRegistry = _moduleRegistry;
+ #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+-@synthesize runtimeExecutor = _runtimeExecutor;
++@synthesize callInvoker = _callInvoker;
+ #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+ 
+ RCT_EXPORT_MODULE(ReanimatedModule);
+@@ -285,16 +286,8 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)
+ #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+     RCTCxxBridge *cxxBridge = (RCTCxxBridge *)self.bridge;
+     auto &rnRuntime = *(jsi::Runtime *)cxxBridge.runtime;
+-    auto executorFunction = ([executor = _runtimeExecutor](std::function<void(jsi::Runtime & runtime)> &&callback) {
+-      // Convert to Objective-C block so it can be captured properly.
+-      __block auto callbackBlock = callback;
+-
+-      [executor execute:^(jsi::Runtime &runtime) {
+-        callbackBlock(runtime);
+-      }];
+-    });
+     auto nativeReanimatedModule = reanimated::createReanimatedModuleBridgeless(
+-        _moduleRegistry, rnRuntime, std::string([valueUnpackerCode UTF8String]), executorFunction);
++        _moduleRegistry, rnRuntime, std::string([valueUnpackerCode UTF8String]), _callInvoker.callInvoker);
+     [self attachReactEventListener];
+     [self commonInit:nativeReanimatedModule withRnRuntime:rnRuntime];
+ #else // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+diff --git a/node_modules/react-native-reanimated/apple/reanimated/apple/native/NativeProxy.h b/node_modules/react-native-reanimated/apple/reanimated/apple/native/NativeProxy.h
+index 7ee381f..2b67e6c 100644
+--- a/node_modules/react-native-reanimated/apple/reanimated/apple/native/NativeProxy.h
++++ b/node_modules/react-native-reanimated/apple/reanimated/apple/native/NativeProxy.h
+@@ -25,7 +25,7 @@ createReanimatedModuleBridgeless(
+     RCTModuleRegistry *moduleRegistry,
+     jsi::Runtime &runtime,
+     const std::string &valueUnpackerCode,
+-    RuntimeExecutor runtimeExecutor);
++    const std::shared_ptr<facebook::react::CallInvoker> &callInvoker);
+ #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+ 
+ void commonInit(
+diff --git a/node_modules/react-native-reanimated/apple/reanimated/apple/native/NativeProxy.mm b/node_modules/react-native-reanimated/apple/reanimated/apple/native/NativeProxy.mm
+index a1ace4f..ed5637f 100644
+--- a/node_modules/react-native-reanimated/apple/reanimated/apple/native/NativeProxy.mm
++++ b/node_modules/react-native-reanimated/apple/reanimated/apple/native/NativeProxy.mm
+@@ -103,7 +103,7 @@ std::shared_ptr<NativeReanimatedModule> createReanimatedModuleBridgeless(
+     RCTModuleRegistry *moduleRegistry,
+     jsi::Runtime &runtime,
+     const std::string &valueUnpackerCode,
+-    RuntimeExecutor runtimeExecutor)
++    const std::shared_ptr<facebook::react::CallInvoker> &callInvoker)
+ {
+   REAModule *reaModule = [moduleRegistry moduleForName:"ReanimatedModule"];
+ 
+@@ -117,7 +117,7 @@ std::shared_ptr<NativeReanimatedModule> createReanimatedModuleBridgeless(
+       makePlatformDepMethodsHolderBridgeless(moduleRegistry, nodesManager, reaModule);
+ 
+   auto uiScheduler = std::make_shared<REAIOSUIScheduler>();
+-  auto jsScheduler = std::make_shared<JSScheduler>(runtime, runtimeExecutor);
++  auto jsScheduler = std::make_shared<JSScheduler>(runtime, callInvoker);
+   constexpr auto isBridgeless = true;
+ 
+   auto nativeReanimatedModule = std::make_shared<NativeReanimatedModule>(
+diff --git a/node_modules/react-native-reanimated/src/platform-specific/findHostInstance.ts b/node_modules/react-native-reanimated/src/platform-specific/findHostInstance.ts
+index 00d5615..b61cb93 100644
+--- a/node_modules/react-native-reanimated/src/platform-specific/findHostInstance.ts
++++ b/node_modules/react-native-reanimated/src/platform-specific/findHostInstance.ts
+@@ -42,16 +42,24 @@ function resolveFindHostInstance_DEPRECATED() {
+   }
+   if (isFabric()) {
+     try {
++      const ReactFabric = require('react-native/Libraries/Renderer/shims/ReactFabric');
++      // Since RN 0.77 ReactFabric exports findHostInstance_DEPRECATED in default object so we're trying to
++      // access it first, then fallback on named export
+       findHostInstance_DEPRECATED =
+-        require('react-native/Libraries/Renderer/shims/ReactFabric').findHostInstance_DEPRECATED;
++        ReactFabric?.default?.findHostInstance_DEPRECATED ??
++        ReactFabric?.findHostInstance_DEPRECATED;
+     } catch (e) {
+       throw new ReanimatedError(
+         'Failed to resolve findHostInstance_DEPRECATED'
+       );
+     }
+   } else {
++    const ReactNative = require('react-native/Libraries/Renderer/shims/ReactNative');
++    // Since RN 0.77 ReactFabric exports findHostInstance_DEPRECATED in default object so we're trying to
++    // access it first, then fallback on named export
+     findHostInstance_DEPRECATED =
+-      require('react-native/Libraries/Renderer/shims/ReactNative').findHostInstance_DEPRECATED;
++      ReactNative?.default?.findHostInstance_DEPRECATED ??
++      ReactNative?.findHostInstance_DEPRECATED;
+   }
+ }
+ 
