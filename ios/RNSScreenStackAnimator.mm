@@ -59,7 +59,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
-    return 0;
+    return 0.0;
   }
 
   if (screen != nil && screen.transitionDuration != nil && [screen.transitionDuration floatValue] >= 0) {
@@ -68,12 +68,6 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 
   return _transitionDuration;
-}
-
-- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
-    (id<UIViewControllerContextTransitioning>)transitionContext
-{
-  return _inFlightAnimator;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -489,6 +483,38 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 }
 
+- (void)animateNoneWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                    toVC:(UIViewController *)toViewController
+                                  fromVC:(UIViewController *)fromViewController
+{
+  toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
+
+  if (_operation == UINavigationControllerOperationPush) {
+    [[transitionContext containerView] addSubview:toViewController.view];
+    toViewController.view.alpha = 0.0;
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+          toViewController.view.alpha = 1.0;
+        }
+        completion:^(BOOL finished) {
+          toViewController.view.alpha = 1.0;
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  } else if (_operation == UINavigationControllerOperationPop) {
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+          fromViewController.view.alpha = 0.0;
+        }
+        completion:^(BOOL finished) {
+          fromViewController.view.alpha = 1.0;
+
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  }
+}
+
 #pragma mark - Public API
 
 - (nullable id<UITimingCurveProvider>)timingParamsForAnimationCompletion
@@ -509,24 +535,35 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
                                        toVC:(UIViewController *)toVC
                                      fromVC:(UIViewController *)fromVC
 {
-  if (animation == RNSScreenStackAnimationSimplePush) {
-    [self animateSimplePushWithShadowEnabled:shadowEnabled transitionContext:transitionContext toVC:toVC fromVC:fromVC];
-    return;
-  } else if (animation == RNSScreenStackAnimationSlideFromLeft) {
-    [self animateSlideFromLeftWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
-    return;
-  } else if (animation == RNSScreenStackAnimationFade || animation == RNSScreenStackAnimationNone) {
-    [self animateFadeWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
-    return;
-  } else if (animation == RNSScreenStackAnimationSlideFromBottom) {
-    [self animateSlideFromBottomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
-    return;
-  } else if (animation == RNSScreenStackAnimationFadeFromBottom) {
-    [self animateFadeFromBottomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
-    return;
+  switch (animation) {
+    case RNSScreenStackAnimationSimplePush:
+      [self animateSimplePushWithShadowEnabled:shadowEnabled
+                             transitionContext:transitionContext
+                                          toVC:toVC
+                                        fromVC:fromVC];
+      return;
+    case RNSScreenStackAnimationSlideFromLeft:
+      [self animateSlideFromLeftWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+      return;
+    case RNSScreenStackAnimationFade:
+      [self animateFadeWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+      return;
+    case RNSScreenStackAnimationSlideFromBottom:
+      [self animateSlideFromBottomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+      return;
+    case RNSScreenStackAnimationFadeFromBottom:
+      [self animateFadeFromBottomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+      return;
+    case RNSScreenStackAnimationNone:
+      [self animateNoneWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+      return;
+    default:
+      // simple_push is the default custom animation
+      [self animateSimplePushWithShadowEnabled:shadowEnabled
+                             transitionContext:transitionContext
+                                          toVC:toVC
+                                        fromVC:fromVC];
   }
-  // simple_push is the default custom animation
-  [self animateSimplePushWithShadowEnabled:shadowEnabled transitionContext:transitionContext toVC:toVC fromVC:fromVC];
 }
 
 + (UISpringTimingParameters *)defaultSpringTimingParametersApprox

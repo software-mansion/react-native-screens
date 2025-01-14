@@ -111,17 +111,17 @@ namespace react = facebook::react;
   if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible) {
     return;
   }
-    
+
 #ifdef RCT_NEW_ARCH_ENABLED
   [headerConfig updateHeaderConfigState:self.navigationBar.frame.size];
   for (RNSScreenStackHeaderSubview *subview in headerConfig.reactSubviews) {
-      CGRect frameToNavigationBar = [subview convertRect:subview.frame toView:self.navigationBar];
-      [subview updateHeaderSubviewFrame:frameToNavigationBar];
+    CGRect frameToNavigationBar = [subview convertRect:subview.frame toView:self.navigationBar];
+    [subview updateHeaderSubviewFrame:frameToNavigationBar];
   }
 #else
   NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
   NSDirectionalEdgeInsets navBarContentMargins =
-    [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
+      [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
 
   BOOL isDisplayingBackButton = [headerConfig shouldBackButtonBeVisibleInNavigationBar:self.navigationBar];
 
@@ -130,10 +130,10 @@ namespace react = facebook::react;
   CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
 
   [headerConfig updateHeaderConfigState:NSDirectionalEdgeInsets{
-                                                     .leading = navBarMargins.leading + navBarContentMargins.leading +
-                                                         (isDisplayingBackButton ? platformBackButtonWidth : 0),
-                                                     .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
-                                                 }];
+                                            .leading = navBarMargins.leading + navBarContentMargins.leading +
+                                                (isDisplayingBackButton ? platformBackButtonWidth : 0),
+                                            .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+                                        }];
 #endif // RCT_NEW_ARCH_ENABLED
 }
 #endif
@@ -252,21 +252,16 @@ namespace react = facebook::react;
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
-  UIView *view = viewController.view;
 #ifdef RCT_NEW_ARCH_ENABLED
-  if (![view isKindOfClass:[RNSScreenView class]]) {
+  if (![viewController.view isKindOfClass:[RNSScreenView class]]) {
     // if the current view is a snapshot, config was already removed so we don't trigger the method
     return;
   }
 #endif
-  RNSScreenStackHeaderConfig *config = nil;
-  for (UIView *subview in view.reactSubviews) {
-    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      config = (RNSScreenStackHeaderConfig *)subview;
-      break;
-    }
-  }
-  [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
+  auto *screenView = static_cast<RNSScreenView *>(viewController.view);
+  [RNSScreenStackHeaderConfig willShowViewController:viewController
+                                            animated:animated
+                                          withConfig:screenView.findHeaderConfig];
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
@@ -1294,7 +1289,7 @@ RNS_IGNORE_SUPER_CALL_END
 // with modal presentation or foreign modal presented from inside a Screen.
 - (void)dismissAllRelatedModals
 {
-  [_controller dismissViewControllerAnimated:YES completion:nil];
+  [_controller.presentedViewController dismissViewControllerAnimated:YES completion:nil];
 
   // This loop seems to be excessive. Above message send to `_controller` should
   // be enough, because system dismisses the controllers recursively,
