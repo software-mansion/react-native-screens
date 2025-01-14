@@ -23,7 +23,6 @@ export const DefaultEvent: GestureUpdateEvent<PanGestureHandlerEventPayload> = {
   // compatible unless they strictly parse the objects, which seems
   // not likely. PointerType is present since 2.16.0, StylusData since 2.20.0
   pointerType: PointerType.TOUCH,
-  stylusData: undefined,
 };
 
 export const DefaultScreenDimensions = {
