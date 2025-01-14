@@ -3,7 +3,6 @@
 import React from 'react';
 import { SearchBarCommands, SearchBarProps } from '../types';
 import { isSearchBarAvailableForCurrentPlatform } from '../utils';
-import { View } from 'react-native';
 
 // Native components
 import SearchBarNativeComponent, {
