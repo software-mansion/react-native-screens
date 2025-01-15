@@ -29,13 +29,13 @@ class JSI_EXPORT RNSScreenStackHeaderConfigShadowNode final
 
 #pragma mark - Custom interface
 
-  void applyFrameCorrections();
-
 #if !defined(ANDROID) && !defined(NDEBUG)
   void setImageLoader(std::weak_ptr<void> imageLoader);
 #endif // !ANDROID && !NDEBUG
 
  private:
+  void applyFrameCorrections();
+
 #if !defined(ANDROID) && !defined(NDEBUG)
   StateData &getStateDataMutable();
 #endif // !ANDROID && !NDEBUG
