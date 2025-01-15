@@ -6,20 +6,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const shortTitleLength = 4;
-const longTitleLength = 24;
+const titleLength = 24;
 
 const baseTitle = 'Ab';
 const baseTitle2 = 'Ac';
 
 // Toggle these two for short / long string on first screen
 // const homeScreenTitle = "Screen";
-const homeScreenTitle = baseTitle.repeat(longTitleLength);
+const homeScreenTitle = baseTitle.repeat(titleLength);
 
 // Toggle these two for short / long string on second screen
 // const secondScreenTitle = "Details";
-const secondScreenTitle = baseTitle2.repeat(longTitleLength);
+const secondScreenTitle = baseTitle2.repeat(titleLength);
 
 const searchBarScreenTitle = 'SearchBarScreen';
 
@@ -44,7 +42,7 @@ function HeaderRightTwoRects(): React.JSX.Element {
 function TitleTextComponent({ length }: { length?: number }): React.JSX.Element {
   return (
     <View style={{}}>
-      <Text numberOfLines={1} style={{}}>{baseTitle.repeat(length ?? longTitleLength)}</Text>
+      <Text numberOfLines={1} style={{}}>{baseTitle.repeat(length ?? titleLength)}</Text>
     </View>
   );
 }
@@ -74,8 +72,8 @@ const headerOptions = {
   //   <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(5)}</Text>
   // ),
   headerRight: () => <HeaderRightTwoRects />,
-  headerTitle: () => <TitleTextComponent length={24} />,
-  // title: baseTitle.repeat(4),
+  headerTitle: () => <TitleTextComponent />,
+  //title: baseTitle.repeat(titleLength),
   headerTitleAlign: 'left',
 };
 
