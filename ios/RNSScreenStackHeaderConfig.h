@@ -93,7 +93,7 @@ NS_ASSUME_NONNULL_END
 - (BOOL)shouldHeaderBeVisible;
 
 /**
- * @returns`true` iff the applying this header config instance to a view controller will
+ * Returns `true` iff the applying this header config instance to a view controller will
  * result in visible back button if feasible.
  */
 - (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar;
@@ -106,6 +106,7 @@ NS_ASSUME_NONNULL_END
 #else
 /**
  * Allows to send information with insets to the corresponding node in shadow tree.
+ * Currently only horizontal insets are send through. Vertical ones are filtered out.
  */
 - (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets;
 #endif

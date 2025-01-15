@@ -115,8 +115,8 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
   [headerConfig updateHeaderConfigState:self.navigationBar.frame.size];
   for (RNSScreenStackHeaderSubview *subview in headerConfig.reactSubviews) {
-    CGRect frameToNavigationBar = [subview convertRect:subview.frame toView:self.navigationBar];
-    [subview updateHeaderSubviewFrame:frameToNavigationBar];
+    CGRect frameInNavBarCoordinates = [subview convertRect:subview.frame toView:self.navigationBar];
+    [subview updateHeaderSubviewFrame:frameInNavBarCoordinates];
   }
 #else
   NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
