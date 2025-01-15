@@ -949,7 +949,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 
 #ifdef RCT_NEW_ARCH_ENABLED
-  _lastSize = CGSize();
+  _lastSize = CGSizeZero;
 #else
   _lastHeaderInsets = NSDirectionalEdgeInsets{};
 #endif

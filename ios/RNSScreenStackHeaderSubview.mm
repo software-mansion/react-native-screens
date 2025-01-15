@@ -137,7 +137,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
 }
 
-- (void)updateHeaderSubviewFrame:(CGRect)frame
+- (void)updateHeaderSubviewFrameInShadowTree:(CGRect)frame
 {
   if (_state != nullptr) {
     auto newState =
