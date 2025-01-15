@@ -20,7 +20,7 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
   using Shared = std::shared_ptr<const RNSScreenStackHeaderSubviewState>;
 
   RNSScreenStackHeaderSubviewState() = default;
-    
+
   RNSScreenStackHeaderSubviewState(Size frameSize_, Point contentOffset_)
       : frameSize(frameSize_), contentOffset(contentOffset_){};
 
@@ -29,11 +29,11 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
       RNSScreenStackHeaderSubviewState const &previousState,
       folly::dynamic data)
       : frameSize(Size{
-          (Float)data["frameWidth"].getDouble(),
-          (Float)data["frameHeight"].getDouble()}),
+            (Float)data["frameWidth"].getDouble(),
+            (Float)data["frameHeight"].getDouble()}),
         contentOffset(Point{
-          (Float)data["contentOffsetX"].getDouble(),
-          (Float)data["contentOffsetY"].getDouble()}) {}
+            (Float)data["contentOffsetX"].getDouble(),
+            (Float)data["contentOffsetY"].getDouble()}) {}
 #endif // ANDROID
 
 #ifdef ANDROID
@@ -46,7 +46,6 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
 
   const Size frameSize{};
   Point contentOffset;
-
 
 #pragma mark - Getters
 };

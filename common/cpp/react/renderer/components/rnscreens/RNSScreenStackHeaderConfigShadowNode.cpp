@@ -6,15 +6,15 @@ extern const char RNSScreenStackHeaderConfigComponentName[] =
     "RNSScreenStackHeaderConfig";
 
 void RNSScreenStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
-    YogaLayoutableShadowNode::layout(layoutContext);
-    applyFrameCorrections();
+  YogaLayoutableShadowNode::layout(layoutContext);
+  applyFrameCorrections();
 }
 
 void RNSScreenStackHeaderConfigShadowNode::applyFrameCorrections() {
-    ensureUnsealed();
+  ensureUnsealed();
 
-    const auto &stateData = getStateData();
-    layoutMetrics_.frame.origin.y = -stateData.frameSize.height;
+  const auto &stateData = getStateData();
+  layoutMetrics_.frame.origin.y = -stateData.frameSize.height;
 }
 
 #if !defined(ANDROID) && !defined(NDEBUG)
