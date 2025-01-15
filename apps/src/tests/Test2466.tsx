@@ -30,19 +30,22 @@ const PressableWithFeedback = React.forwardRef((props: PressableProps, ref: Forw
     props.onPressIn?.(e);
   }, [props]);
 
-  const onPressCallback = React.useCallback(() => {
+  const onPressCallback = React.useCallback((e: GestureResponderEvent) => {
     console.log('Pressable onPress');
     setPressedState('pressed');
-  }, []);
+    props.onPress?.(e);
+  }, [props]);
 
-  const onPressOutCallback = React.useCallback(() => {
+  const onPressOutCallback = React.useCallback((e: GestureResponderEvent) => {
     console.log('Pressable onPressOut');
     setPressedState('pressed-out');
-  }, []);
+    props.onPressOut?.(e);
+  }, [props]);
 
-  const onResponderMoveCallback = React.useCallback(() => {
+  const onResponderMoveCallback = React.useCallback((e: GestureResponderEvent) => {
     console.log('Pressable onResponderMove');
-  }, []);
+    props.onResponderMove?.(e);
+  }, [props]);
 
   const contentsStyle = pressedState === 'pressed-out'
     ? styles.pressablePressedOut
@@ -51,7 +54,7 @@ const PressableWithFeedback = React.forwardRef((props: PressableProps, ref: Forw
       : styles.pressablePressedIn);
 
   return (
-    <View ref={ref} style={[contentsStyle, { width: '100%'}]}>
+    <View ref={ref} style={[contentsStyle]}>
       <Pressable
         onPressIn={onPressInCallback}
         onPress={onPressCallback}
@@ -68,6 +71,10 @@ const PressableWithFeedback = React.forwardRef((props: PressableProps, ref: Forw
 function HeaderTitle(): React.JSX.Element {
   return (
     <PressableWithFeedback
+      onLayout={event => {
+        const { x, y, width, height } = event.nativeEvent.layout;
+        console.log('Title onLayout', { x, y, width, height });
+      }}
       onPressIn={() => {
         console.log('Pressable onPressIn');
       }}
@@ -85,6 +92,13 @@ function HeaderTitle(): React.JSX.Element {
         <Text style={{ alignItems: 'center' }}>Regular Pressable</Text>
       </View>
     </PressableWithFeedback>
+  );
+}
+
+function HeaderLeft(): React.JSX.Element {
+  return (
+    <View>
+    </View>
   );
 }
 

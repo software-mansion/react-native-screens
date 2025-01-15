@@ -6,26 +6,51 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const shortTitleLength = 4;
+const longTitleLength = 24;
+
 const baseTitle = 'Ab';
 const baseTitle2 = 'Ac';
 
 // Toggle these two for short / long string on first screen
 // const homeScreenTitle = "Screen";
-const homeScreenTitle = baseTitle.repeat(24);
+const homeScreenTitle = baseTitle.repeat(longTitleLength);
 
 // Toggle these two for short / long string on second screen
 // const secondScreenTitle = "Details";
-const secondScreenTitle = baseTitle2.repeat(24);
+const secondScreenTitle = baseTitle2.repeat(longTitleLength);
 
-const searchBarScreenTitle = "SearchBarScreen";
+const searchBarScreenTitle = 'SearchBarScreen';
+
+/**
+  * Small left element
+  */
+function HeaderLeftSmall(): React.JSX.Element {
+  return (
+    <View style={{ width: 40, height: 20, backgroundColor: 'goldenrod' }} />
+  );
+}
+
+function HeaderRightTwoRects(): React.JSX.Element {
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      <View style={{ width: 20, height: 20, backgroundColor: 'lightgreen', opacity: 0.8 }} />
+      <View style={{ width: 60, height: 20, backgroundColor: 'lightblue', opacity: 0.8 }} />
+    </View>
+  );
+}
+
+function TitleTextComponent({ length }: { length?: number }): React.JSX.Element {
+  return (
+    <View style={{}}>
+      <Text numberOfLines={1} style={{}}>{baseTitle.repeat(length ?? longTitleLength)}</Text>
+    </View>
+  );
+}
 
 const headerOptions = {
-  headerLeft: () => {
-    return (
-      <View style={{ width: 40, height: 20, backgroundColor: 'goldenrod' }}>
-      </View>
-    )
-  },
+  headerLeft: () => <HeaderLeftSmall />,
   // headerRight: () => (
   //   <View style={{ width: 120, height: 20, backgroundColor: 'goldenrod', opacity: 0.4, flexDirection: 'row' }}>
   //   </View>
@@ -48,22 +73,11 @@ const headerOptions = {
   // headerTitle: () => (
   //   <Text numberOfLines={1} style={{ flexShrink: 1 }}>{baseTitle.repeat(5)}</Text>
   // ),
-  headerRight: () => {
-    return (
-      <View style={{ flexDirection: 'row' }}>
-        <View style={{ width: 20, height: 20, backgroundColor: 'lightgreen', opacity: 0.8 }} />
-        <View style={{ width: 60, height: 20, backgroundColor: 'lightblue', opacity: 0.8 }} />
-      </View>
-    );
-  },
-  headerTitle: () => (
-    <View style={{}}>
-      <Text numberOfLines={1} style={{}}>{baseTitle.repeat(24)}</Text>
-    </View>
-  ),
+  headerRight: () => <HeaderRightTwoRects />,
+  headerTitle: () => <TitleTextComponent length={24} />,
   // title: baseTitle.repeat(4),
   headerTitleAlign: 'left',
-}
+};
 
 function App() {
   return (
@@ -89,7 +103,7 @@ function App() {
             ...headerOptions,
             headerSearchBarOptions: {
               placeholder: 'placeholder',
-            }
+            },
           }}
         />
       </Stack.Navigator>
@@ -114,7 +128,7 @@ function Screen({ navigation }: any) {
           <View style={[{ backgroundColor: 'lightblue', width: 80, height: 20, opacity: 0.6 }, styles.headerSubviewStyle]} />
         </View>
       </View>
-      <Button onPress={() => navigation.navigate(secondScreenTitle)} title='Nav Forward' />
+      <Button onPress={() => navigation.navigate(secondScreenTitle)} title="Nav Forward" />
       <Button onPress={() => navigation.navigate(searchBarScreenTitle)} title={searchBarScreenTitle} />
     </View>
   );
@@ -142,7 +156,7 @@ function DetailsScreen({ navigation }: any) {
         ]}>
         <Text>Press me</Text>
       </Pressable>
-      <Button title='GoBack' onPress={() => navigation.goBack()} />
+      <Button title="GoBack" onPress={() => navigation.goBack()} />
     </View>
   );
 }
@@ -163,7 +177,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
 });
 
 export default App;
