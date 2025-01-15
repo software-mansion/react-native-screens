@@ -1,3 +1,4 @@
+import { Header } from '@react-navigation/elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { ForwardedRef } from 'react';
@@ -97,8 +98,7 @@ function HeaderTitle(): React.JSX.Element {
 
 function HeaderLeft(): React.JSX.Element {
   return (
-    <View>
-    </View>
+    <HeaderTitle />
   );
 }
 
@@ -130,6 +130,8 @@ function App(): React.JSX.Element {
           component={Home}
           options={{
             headerTitle: HeaderTitle,
+            headerLeft: HeaderLeft,
+            headerRight: HeaderLeft,
           }}
         />
       </Stack.Navigator>
