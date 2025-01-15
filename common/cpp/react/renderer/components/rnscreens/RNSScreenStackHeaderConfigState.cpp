@@ -8,7 +8,8 @@ namespace react {
 folly::dynamic RNSScreenStackHeaderConfigState::getDynamic() const {
   return folly::dynamic::object("frameWidth", frameSize.width)(
       "frameHeight", frameSize.height)("contentOffsetX", contentOffset.x)(
-      "contentOffsetY", contentOffset.y);
+      "contentOffsetY", contentOffset.y)("paddingStart", paddingStart)(
+      "paddingEnd", paddingEnd);
 }
 #else // ANDROID
 #ifndef NDEBUG
@@ -23,7 +24,6 @@ std::weak_ptr<void> RNSScreenStackHeaderConfigState::getImageLoader()
 }
 #endif // !NDEBUG
 #endif // ANDROID
-
 
 } // namespace react
 } // namespace facebook

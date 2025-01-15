@@ -17,16 +17,28 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   RNSScreenStackHeaderConfigState() = default;
 
-  RNSScreenStackHeaderConfigState(Size frameSize_)
-    : frameSize(frameSize_) {}
+  RNSScreenStackHeaderConfigState(
+      Size frameSize_,
+      Point contentOffset_,
+      Float paddingStart_,
+      Float paddingEnd_)
+      : frameSize{frameSize_},
+        contentOffset{contentOffset_},
+        paddingStart{paddingStart_},
+        paddingEnd{paddingEnd_} {}
 
 #ifdef ANDROID
   RNSScreenStackHeaderConfigState(
       RNSScreenStackHeaderConfigState const &previousState,
       folly::dynamic data)
-      : frameSize(Size{
-          (Float)data["frameWidth"].getDouble(),
-          (Float)data["frameHeight"].getDouble()}){}
+      : frameSize{
+          static_cast<Float>(data["frameWidth"].getDouble()),
+          static_cast<Float>(data["frameHeight"].getDouble())
+        },
+        contentOffset{previousState.contentOffset},
+        paddingStart{static_cast<Float>(data["paddingStart"].getDouble())},
+        paddingEnd{static_cast<Float>(data["paddingEnd"].getDouble())}
+        {}
 #endif
 
 #ifdef ANDROID
@@ -42,7 +54,9 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 #endif // ANDROID
 
   const Size frameSize{};
-  Point contentOffset;
+  Point contentOffset{};
+  Float paddingStart{0.f};
+  Float paddingEnd{0.f};
 
 #pragma mark - Getters
 
