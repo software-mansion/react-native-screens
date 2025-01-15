@@ -47,7 +47,6 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 #endif // ANDROID
 
   const Size frameSize{};
-  Point contentOffset{};
 
 #ifdef ANDROID
   Float paddingStart{0.f};

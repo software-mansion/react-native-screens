@@ -7,8 +7,7 @@ namespace react {
 #ifdef ANDROID
 folly::dynamic RNSScreenStackHeaderConfigState::getDynamic() const {
   return folly::dynamic::object("frameWidth", frameSize.width)(
-      "frameHeight", frameSize.height)("contentOffsetX", contentOffset.x)(
-      "contentOffsetY", contentOffset.y)("paddingStart", paddingStart)(
+      "frameHeight", frameSize.height)("paddingStart", paddingStart)(
       "paddingEnd", paddingEnd);
 }
 #else // ANDROID
