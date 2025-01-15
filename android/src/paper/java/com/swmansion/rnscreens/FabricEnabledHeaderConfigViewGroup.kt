@@ -19,8 +19,10 @@ abstract class FabricEnabledHeaderConfigViewGroup(
     fun updateHeaderConfigState(
         width: Int,
         height: Int,
+        paddingStart: Int,
+        paddingEnd: Int,
     ) {
-        // do nothing
+        // Do nothing on Paper. This method is used only on Fabric.
     }
 
     fun updatePaddings(
