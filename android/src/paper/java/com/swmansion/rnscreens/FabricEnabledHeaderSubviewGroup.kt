@@ -8,14 +8,11 @@ abstract class FabricEnabledHeaderSubviewGroup(context: Context?): ViewGroup(con
 
     fun setStateWrapper(wrapper: StateWrapper?) = Unit
 
+    // Fabric only
     protected fun updateSubviewFrameState(
         width: Int,
         height: Int,
         offsetX: Int,
         offsetY: Int
-    ) {
-        // do nothing
-    }
-
-
+    ) = Unit
 }

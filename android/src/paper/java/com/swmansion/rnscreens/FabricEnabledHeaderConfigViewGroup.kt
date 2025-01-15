@@ -16,14 +16,13 @@ abstract class FabricEnabledHeaderConfigViewGroup(
 
     fun setStateWrapper(wrapper: StateWrapper?) = Unit
 
+    // Do nothing on Paper. This method is used only on Fabric.
     fun updateHeaderConfigState(
         width: Int,
         height: Int,
         paddingStart: Int,
         paddingEnd: Int,
-    ) {
-        // Do nothing on Paper. This method is used only on Fabric.
-    }
+    ) = Unit
 
     fun updatePaddings(
         paddingStart: Int,
