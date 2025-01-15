@@ -17,15 +17,8 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   RNSScreenStackHeaderConfigState() = default;
 
-  RNSScreenStackHeaderConfigState(
-      Size frameSize_,
-      Point contentOffset_,
-      Float paddingStart_,
-      Float paddingEnd_)
-      : frameSize{frameSize_},
-        contentOffset{contentOffset_},
-        paddingStart{paddingStart_},
-        paddingEnd{paddingEnd_} {}
+  // Used in iOS code
+  RNSScreenStackHeaderConfigState(Size frameSize_) : frameSize{frameSize_} {}
 
 #ifdef ANDROID
   RNSScreenStackHeaderConfigState(
@@ -55,8 +48,11 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   const Size frameSize{};
   Point contentOffset{};
+
+#ifdef ANDROID
   Float paddingStart{0.f};
   Float paddingEnd{0.f};
+#endif // ANDROID
 
 #pragma mark - Getters
 
