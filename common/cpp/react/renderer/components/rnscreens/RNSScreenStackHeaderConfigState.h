@@ -28,7 +28,6 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
           static_cast<Float>(data["frameWidth"].getDouble()),
           static_cast<Float>(data["frameHeight"].getDouble())
         },
-        contentOffset{previousState.contentOffset},
         paddingStart{static_cast<Float>(data["paddingStart"].getDouble())},
         paddingEnd{static_cast<Float>(data["paddingEnd"].getDouble())}
         {}
