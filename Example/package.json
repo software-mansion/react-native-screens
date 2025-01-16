@@ -32,8 +32,7 @@
     "react-native-reanimated": "3.16.7",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "5.1.0",
-    "react-native-screens": "link:../",
-    "react-native-vector-icons": "^8.0.0"
+    "react-native-screens": "link:../"
   },
   "resolutions": {
     "@react-navigation/core": "link:../react-navigation/packages/core/"
