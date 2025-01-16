@@ -86,7 +86,7 @@ namespace react = facebook::react;
       [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
 
-    [self maybeUpdateHeaderInsetsInShadowTreeForScreen:screenController];
+    [self maybeUpdateHeaderLayoutInfoInShadowTree:screenController];
   }
 }
 
@@ -100,7 +100,7 @@ namespace react = facebook::react;
   return [self topViewController];
 }
 
-- (void)maybeUpdateHeaderInsetsInShadowTreeForScreen:(RNSScreen *)screenController
+- (void)maybeUpdateHeaderLayoutInfoInShadowTree:(RNSScreen *)screenController
 {
   // This might happen e.g. if there is only native title present in navigation bar.
   if (self.navigationBar.subviews.count < 2) {
@@ -112,6 +112,9 @@ namespace react = facebook::react;
     return;
   }
 
+#ifdef RCT_NEW_ARCH_ENABLED
+  [headerConfig updateHeaderStateInShadowTreeInContextOfNavigationBar:self.navigationBar];
+#else
   NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
   NSDirectionalEdgeInsets navBarContentMargins =
       [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
@@ -122,11 +125,12 @@ namespace react = facebook::react;
   UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;
   CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
 
-  [headerConfig updateHeaderInsetsInShadowTreeTo:NSDirectionalEdgeInsets{
-                                                     .leading = navBarMargins.leading + navBarContentMargins.leading +
-                                                         (isDisplayingBackButton ? platformBackButtonWidth : 0),
-                                                     .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
-                                                 }];
+  [headerConfig updateHeaderConfigState:NSDirectionalEdgeInsets{
+                                            .leading = navBarMargins.leading + navBarContentMargins.leading +
+                                                (isDisplayingBackButton ? platformBackButtonWidth : 0),
+                                            .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+                                        }];
+#endif // RCT_NEW_ARCH_ENABLED
 }
 #endif
 

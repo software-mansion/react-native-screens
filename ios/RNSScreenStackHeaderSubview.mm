@@ -18,7 +18,12 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-@implementation RNSScreenStackHeaderSubview
+@implementation RNSScreenStackHeaderSubview {
+#ifdef RCT_NEW_ARCH_ENABLED
+  react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
+  CGRect _lastScheduledFrame;
+#endif
+}
 
 #pragma mark - Common
 
@@ -74,6 +79,7 @@ namespace react = facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderSubviewProps>();
     _props = defaultProps;
+    _lastScheduledFrame = CGRectZero;
   }
 
   return self;
@@ -127,6 +133,25 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   return NO;
 }
 
+- (void)updateState:(const facebook::react::State::Shared &)state
+           oldState:(const facebook::react::State::Shared &)oldState
+{
+  _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
+}
+
+- (void)updateHeaderSubviewFrameInShadowTree:(CGRect)frame
+{
+  if (_state == nullptr) {
+    return;
+  }
+
+  if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
+    auto newState =
+        react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
+    _state->updateState(std::move(newState));
+    _lastScheduledFrame = frame;
+  }
+}
 #else // RCT_NEW_ARCH_ENABLED
 #pragma mark - Paper specific
 
