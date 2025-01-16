@@ -449,9 +449,11 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`. (iOS only)
 - `inputType` - Specifies type of input and keyboard for search bar. Can be one of `'text'`, `'phone'`, `'number'`, `'email'`. Defaults to `'text'`. (Android only)
 - `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`. (iOS only)
+- `showBookmarkButton` - Boolean indicating whether the search bar should display a bookmark button. Defaults to `false`. (iOS only)
 - `onBlur` - A callback that gets called when search bar has lost focus.
 - `onChangeText` - A callback that gets called when the text changes. It receives the current text value of the search bar.
 - `onCancelButtonPress` - A callback that gets called when the cancel button is pressed.
+- `onBookmarkButtonPress` - A callback that gets called when the bookmark button is pressed.
 - `onClose` - A callback that gets called when search bar is closing. (Android only)
 - `onFocus` - A callback that gets called when search bar has received focus.
 - `onOpen` - A callback that gets called when search bar is expanding. (Android only)
