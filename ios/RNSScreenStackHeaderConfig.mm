@@ -883,9 +883,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   [self insertReactSubview:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
 
   _addedReactSubviewsInCurrentTransaction = true;
-
-  // TODO: This could be called only once per transaction.
-  [self updateViewControllerIfNeeded];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -909,7 +906,9 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  if (_addedReactSubviewsInCurrentTransaction && self.shouldHeaderBeVisible) {
+  if (_addedReactSubviewsInCurrentTransaction) {
+    [self updateViewControllerIfNeeded];
+
     // This call is made for the sake of https://github.com/software-mansion/react-native-screens/pull/2466.
     // In case header subview is added **after initial screen render** the system positions it correctly,
     // however `viewDidLayoutSubviews` is not called on `RNSNavigationController` and updated frame sizes of the
@@ -917,7 +916,9 @@ RNS_IGNORE_SUPER_CALL_BEGIN
     // Sending state update to ShadowTree from here is not enough, because native layout has not yet
     // happened after the child had been added. Requesting layout on navigation bar does not trigger layout callbacks
     // either, however doing so on main view of navigation controller does the trick.
-    [self layoutNavigationControllerView];
+    if (self.shouldHeaderBeVisible) {
+      [self layoutNavigationControllerView];
+    }
   }
   _addedReactSubviewsInCurrentTransaction = false;
 }
