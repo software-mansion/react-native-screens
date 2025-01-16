@@ -2,6 +2,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTImageComponentView.h>
+#import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -58,12 +59,19 @@ namespace react = facebook::react;
 
 @end
 
+@interface RNSScreenStackHeaderConfig () <RCTMountingTransactionObserving>
+@end
+
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
   CGSize _lastSize;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
+
+  /// Whether a react subview has been added / removed in current transaction. This flag is reset after each react
+  /// transaction via RCTMountingTransactionObserving protocol.
+  bool _addedReactSubviewsInCurrentTransaction;
 #ifndef NDEBUG
   RCTImageLoader *imageLoader;
 #endif // !NDEBUG
@@ -88,6 +96,7 @@ namespace react = facebook::react;
     _props = defaultProps;
     _show = YES;
     _translucent = NO;
+    _addedReactSubviewsInCurrentTransaction = false;
     [self initProps];
   }
   return self;
@@ -202,10 +211,23 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)updateHeaderConfigState:(CGSize)size
 {
-  if (_lastSize.width != size.width || _lastSize.height != size.height) {
+  if (!CGSizeEqualToSize(size, _lastSize)) {
     auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size));
     _state->updateState(std::move(newState));
     _lastSize = size;
+  }
+}
+
+- (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navigationBar
+{
+  if (!navigationBar) {
+    return;
+  }
+
+  [self updateHeaderConfigState:navigationBar.frame.size];
+  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
+    CGRect frameInNavBarCoordinates = [subview convertRect:subview.frame toView:navigationBar];
+    [subview updateHeaderSubviewFrameInShadowTree:frameInNavBarCoordinates];
   }
 }
 #else
@@ -858,6 +880,8 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   //  [_reactSubviews insertObject:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
   [self insertReactSubview:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
 
+  _addedReactSubviewsInCurrentTransaction = true;
+
   // TODO: This could be called only once per transaction.
   [self updateViewControllerIfNeeded];
 }
@@ -865,16 +889,35 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   BOOL isGoingToBeRemoved = _screenView.isMarkedForUnmountInCurrentTransaction;
+
   if (isGoingToBeRemoved) {
     // For explanation of why we can make a snapshot here despite the fact that our children are already
     // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
     [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
   }
+
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+
   if (!isGoingToBeRemoved) {
     [self updateViewControllerIfNeeded];
   }
+}
+
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  if (_addedReactSubviewsInCurrentTransaction && self.shouldHeaderBeVisible) {
+    // This call is made for the sake of https://github.com/software-mansion/react-native-screens/pull/2466.
+    // In case header subview is added **after initial screen render** the system positions it correctly,
+    // however `viewDidLayoutSubviews` is not called on `RNSNavigationController` and updated frame sizes of the
+    // subviews are not sent to ShadowTree leading to issues with pressables.
+    // Sending state update to ShadowTree from here is not enough, because native layout has not yet
+    // happened after the child had been added. Requesting layout on navigation bar does not trigger layout callbacks
+    // either, however doing so on main view of navigation controller does the trick.
+    [self layoutNavigationControllerView];
+  }
+  _addedReactSubviewsInCurrentTransaction = false;
 }
 
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView

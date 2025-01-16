@@ -21,6 +21,7 @@ namespace react = facebook::react;
 @implementation RNSScreenStackHeaderSubview {
 #ifdef RCT_NEW_ARCH_ENABLED
   react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
+  CGRect _lastScheduledFrame;
 #endif
 }
 
@@ -78,6 +79,7 @@ namespace react = facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderSubviewProps>();
     _props = defaultProps;
+    _lastScheduledFrame = CGRectZero;
   }
 
   return self;
@@ -139,10 +141,15 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 
 - (void)updateHeaderSubviewFrameInShadowTree:(CGRect)frame
 {
-  if (_state != nullptr) {
+  if (_state == nullptr) {
+    return;
+  }
+
+  if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState =
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
     _state->updateState(std::move(newState));
+    _lastScheduledFrame = frame;
   }
 }
 #else // RCT_NEW_ARCH_ENABLED

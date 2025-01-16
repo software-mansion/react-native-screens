@@ -101,8 +101,15 @@ NS_ASSUME_NONNULL_END
 #ifdef RCT_NEW_ARCH_ENABLED
 /**
  * Allows to send information with size to the corresponding node in shadow tree.
+ * This method updates state of header config shadow node only.
  */
 - (void)updateHeaderConfigState:(CGSize)size;
+
+/**
+ * Updates state of header config shadow node and all subview shadow nodes in context of given UINavigationBar.
+ * When `navBar == nil` this method does nothing.
+ */
+- (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
 #else
 /**
  * Allows to send information with insets to the corresponding node in shadow tree.

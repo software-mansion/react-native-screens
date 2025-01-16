@@ -86,7 +86,7 @@ namespace react = facebook::react;
       [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
 
-    [self maybeUpdateHeaderInsetsInShadowTreeForScreen:screenController];
+    [self maybeUpdateHeaderLayoutInfoInShadowTree:screenController];
   }
 }
 
@@ -100,7 +100,7 @@ namespace react = facebook::react;
   return [self topViewController];
 }
 
-- (void)maybeUpdateHeaderInsetsInShadowTreeForScreen:(RNSScreen *)screenController
+- (void)maybeUpdateHeaderLayoutInfoInShadowTree:(RNSScreen *)screenController
 {
   // This might happen e.g. if there is only native title present in navigation bar.
   if (self.navigationBar.subviews.count < 2) {
@@ -113,11 +113,7 @@ namespace react = facebook::react;
   }
 
 #ifdef RCT_NEW_ARCH_ENABLED
-  [headerConfig updateHeaderConfigState:self.navigationBar.frame.size];
-  for (RNSScreenStackHeaderSubview *subview in headerConfig.reactSubviews) {
-    CGRect frameInNavBarCoordinates = [subview convertRect:subview.frame toView:self.navigationBar];
-    [subview updateHeaderSubviewFrameInShadowTree:frameInNavBarCoordinates];
-  }
+  [headerConfig updateHeaderStateInShadowTreeInContextOfNavigationBar:self.navigationBar];
 #else
   NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
   NSDirectionalEdgeInsets navBarContentMargins =
