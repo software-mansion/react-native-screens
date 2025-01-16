@@ -59,8 +59,10 @@ namespace react = facebook::react;
 
 @end
 
+#ifdef RCT_NEW_ARCH_ENABLED
 @interface RNSScreenStackHeaderConfig () <RCTMountingTransactionObserving>
 @end
+#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
