@@ -8,7 +8,7 @@ import com.facebook.react.bridge.WritableNativeMap
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
 
-abstract class FabricEnabledHeaderSubviewGroup(
+abstract class FabricEnabledHeaderSubviewViewGroup(
     context: Context?,
 ) : ViewGroup(context) {
     private var mStateWrapper: StateWrapper? = null

@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import com.facebook.react.uimanager.StateWrapper
 
-abstract class FabricEnabledHeaderSubviewGroup(context: Context?): ViewGroup(context) {
+abstract class FabricEnabledHeaderSubviewViewGroup(context: Context?): ViewGroup(context) {
 
     fun setStateWrapper(wrapper: StateWrapper?) = Unit
 
