@@ -28,6 +28,7 @@ const BLACKLISTED_FILES = new Set([
   'FabricEnabledViewGroup.kt',
   'NativeProxy.kt',
   'FabricEnabledHeaderConfigViewGroup.kt',
+  'FabricEnabledHeaderSubviewViewGroup.kt',
 ]);
 
 
