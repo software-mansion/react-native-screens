@@ -37,7 +37,7 @@ class BottomSheetDialogRootView(
         if (changed) {
             // This view is used right now only in ScreenModalFragment, where it is injected
             // to view hierarchy as a parent of a Screen.
-            assert(childCount == 1) { "[RNScreens] Expected only a single child view under ${TAG}, received: ${childCount}"}
+            assert(childCount == 1) { "[RNScreens] Expected only a single child view under $TAG, received: $childCount" }
             getChildAt(0).layout(l, t, r, b)
         }
     }
