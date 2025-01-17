@@ -57,8 +57,7 @@ class DimmingView(
         y: Float,
     ) = blockGestures
 
-    override fun getPointerEvents(): PointerEvents =
-        if (blockGestures) PointerEvents.AUTO else PointerEvents.NONE
+    override fun getPointerEvents(): PointerEvents = if (blockGestures) PointerEvents.AUTO else PointerEvents.NONE
 
     companion object {
         const val TAG = "DimmingView"
