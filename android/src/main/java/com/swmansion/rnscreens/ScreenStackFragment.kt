@@ -478,6 +478,11 @@ class ScreenStackFragment :
         screen.background = shape
     }
 
+    override fun onStart() {
+        lastFocusedChild?.requestFocus()
+        super.onStart()
+    }
+
     override fun onStop() {
         if (DeviceUtils.isPlatformAndroidTV(context)) {
             lastFocusedChild = findLastFocusedChild()
