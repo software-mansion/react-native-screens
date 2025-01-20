@@ -212,6 +212,7 @@ open class ScreenViewManager :
         view.statusBarStyle = statusBarStyle
     }
 
+    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default and will be enforced in the future.")
     @ReactProp(name = "statusBarTranslucent")
     override fun setStatusBarTranslucent(
         view: Screen,

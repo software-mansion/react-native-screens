@@ -451,6 +451,9 @@ export interface ScreenProps extends ViewProps {
    * Sets the translucency of the status bar. Defaults to `false`.
    *
    * @platform android
+   *
+   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this point loses relevance.
+   * It is expected that the edge-to-edge will be enforced in future SDKs: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
    */
   statusBarTranslucent?: boolean;
   /**
