@@ -192,6 +192,10 @@ open class ScreenViewManager :
         view.isStatusBarAnimated = animated
     }
 
+    @Deprecated(
+        "For apps targeting SDK 35 or above this prop has no effect. " +
+            "Since the edge-to-edge is enabled by default the color is always translucent.",
+    )
     @ReactProp(name = "statusBarColor", customType = "Color")
     override fun setStatusBarColor(
         view: Screen,
