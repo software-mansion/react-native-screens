@@ -157,6 +157,32 @@ function resolveSheetInitialDetentIndex(
   return index;
 }
 
+function transformEdgeToEdgeProps(props: ScreenProps): ScreenProps {
+  const {
+    // Filter out edge-to-edge related props
+    statusBarColor,
+    statusBarTranslucent,
+    navigationBarColor,
+    navigationBarTranslucent,
+    ...rest
+  } = props;
+
+  if (__DEV__) {
+    controlEdgeToEdgeValues({
+      statusBarColor,
+      statusBarTranslucent,
+      navigationBarColor,
+      navigationBarTranslucent,
+    });
+  }
+
+  return {
+    ...rest,
+    statusBarTranslucent: true,
+    navigationBarTranslucent: true,
+  };
+}
+
 function isIndexInClosedRange(
   value: number,
   lowerBound: number,
@@ -184,13 +210,6 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       enabled = screensEnabled(),
       freezeOnBlur = freezeEnabled(),
       shouldFreeze,
-
-      // edge-to-edge related props
-      navigationBarColor,
-      navigationBarTranslucent,
-      statusBarColor,
-      statusBarTranslucent,
-
       ...rest
     } = props;
 
@@ -258,24 +277,6 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         ...props
       } = rest;
 
-      const {
-        // Filter out edge-to-edge related props
-        navigationBarColor,
-        navigationBarTranslucent,
-        statusBarColor,
-        statusBarTranslucent,
-        ...edgeToEdgeFriendlyProps
-      } = props;
-
-      if (__DEV__) {
-        controlEdgeToEdgeValues({
-          navigationBarColor,
-          navigationBarTranslucent,
-          statusBarColor,
-          statusBarTranslucent,
-        });
-      }
-
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens',
@@ -320,13 +321,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       return (
         <DelayedFreeze freeze={freeze}>
           <AnimatedScreen
-            {...(EDGE_TO_EDGE
-              ? {
-                  ...edgeToEdgeFriendlyProps,
-                  navigationBarTranslucent: true,
-                  statusBarTranslucent: true,
-                }
-              : props)}
+            {...props}
             /**
              * This messy override is to conform NativeProps used by codegen and
              * our Public API. To see reasoning go to this PR:
@@ -428,7 +423,12 @@ export const ScreenContext = React.createContext(InnerScreen);
 const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
-  return <ScreenWrapper {...props} ref={ref} />;
+  return (
+    <ScreenWrapper
+      {...(EDGE_TO_EDGE ? transformEdgeToEdgeProps(props) : props)}
+      ref={ref}
+    />
+  );
 });
 
 Screen.displayName = 'Screen';
