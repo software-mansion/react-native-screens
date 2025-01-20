@@ -184,6 +184,10 @@ export interface ScreenProps extends ViewProps {
    * Sets the navigation bar color. Defaults to initial status bar color.
    *
    * @platform android
+   *
+   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect.
+   *  For SDK below 35 this works only with specific app setup.
+   *  See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
    */
   navigationBarColor?: ColorValue;
   /**

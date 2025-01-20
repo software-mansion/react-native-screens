@@ -224,6 +224,7 @@ open class ScreenViewManager :
         view.isStatusBarHidden = statusBarHidden
     }
 
+    @Deprecated("For apps targeting SDK 35 or above this prop has no effect")
     @ReactProp(name = "navigationBarColor", customType = "Color")
     override fun setNavigationBarColor(
         view: Screen,
