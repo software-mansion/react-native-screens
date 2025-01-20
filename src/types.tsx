@@ -194,6 +194,10 @@ export interface ScreenProps extends ViewProps {
    * Boolean indicating whether the content should be visible behind the navigation bar. Defaults to `false`.
    *
    * @platform android
+   *
+   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
+   *  We expect that in future SDKs this option will be enforced.
+   *  See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
    */
   navigationBarTranslucent?: boolean;
   /**

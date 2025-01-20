@@ -233,6 +233,7 @@ open class ScreenViewManager :
         view.navigationBarColor = navigationBarColor
     }
 
+    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default")
     @ReactProp(name = "navigationBarTranslucent")
     override fun setNavigationBarTranslucent(
         view: Screen,
