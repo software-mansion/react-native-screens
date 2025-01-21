@@ -418,13 +418,13 @@ export interface ScreenProps extends ViewProps {
   /**
    * How should the screen be presented.
    * The following values are currently supported:
-   * - "push" – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
-   * - "modal" – the new screen will be presented modally. In addition this allow for a nested stack to be rendered inside such screens.
+   * - "push" – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme. Supports nested stack rendering.
+   * - "modal" – the new screen will be presented modally. On iOS it'll use `UIModalPresentationStyleAutomatic`. On Android this is equivalent to `push` presentation type. Supports nested stack rendering.
    * - "transparentModal" – the new screen will be presented modally but in addition the second to last screen will remain attached to the stack container such that if the top screen is non opaque the content below can still be seen. If "modal" is used instead the below screen will get unmounted as soon as the transition ends.
    * - "containedModal" – will use "UIModalPresentationCurrentContext" modal style on iOS and will fallback to "modal" on Android.
    * - "containedTransparentModal" – will use "UIModalPresentationOverCurrentContext" modal style on iOS and will fallback to "transparentModal" on Android.
    * - "fullScreenModal" – will use "UIModalPresentationFullScreen" modal style on iOS and will fallback to "modal" on Android.
-   * - "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS and will fallback to "modal" on Android.
+   * - "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS, on Android this will use Material BottomSheetBehaviour. On Android neested stack rendering is not yet supported.
    */
   stackPresentation?: StackPresentationTypes;
   /**
@@ -456,7 +456,7 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    *
    * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this point loses relevance.
-   * It is expected that the edge-to-edge will be enforced in future SDKs: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
+   *  It is expected that the edge-to-edge will be enforced in future SDKs: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
    */
   statusBarTranslucent?: boolean;
   /**
