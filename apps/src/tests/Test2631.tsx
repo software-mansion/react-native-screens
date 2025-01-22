@@ -21,6 +21,7 @@ function HomeScreen() {
               }}
               onPress={() => setOverlayShown(false)}>
               <Text>Overlay</Text>
+              <View style={{ width: '100%', height: 32, backgroundColor: 'darksalmon' }} />
             </Pressable>
           </View>
         </FullWindowOverlay>
