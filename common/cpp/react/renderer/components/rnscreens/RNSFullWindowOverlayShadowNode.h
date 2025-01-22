@@ -20,6 +20,10 @@ class JSI_EXPORT RNSFullWindowOverlayShadowNode final
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
+
+  void layout(LayoutContext layoutContext) override;
+
+  void applyFrameCorrections();
 };
 
 } // namespace facebook::react
