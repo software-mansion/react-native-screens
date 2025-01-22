@@ -10,6 +10,7 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSFullWindowOverlayComponentDescriptor.h>
 #else
 #import <React/RCTTouchHandler.h>
 #endif // RCT_NEW_ARCH_ENABLED
