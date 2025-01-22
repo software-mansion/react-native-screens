@@ -4,12 +4,11 @@ namespace facebook::react {
 
 extern const char RNSFullWindowOverlayComponentName[] = "RNSFullWindowOverlay";
 
+#if !defined(ANDROID)
 void RNSFullWindowOverlayShadowNode::layout(LayoutContext layoutContext) {
   YogaLayoutableShadowNode::layout(layoutContext);
 
-#if !defined(ANDROID)
   applyFrameCorrections();
-#endif
 }
 
 void RNSFullWindowOverlayShadowNode::applyFrameCorrections() {
@@ -24,5 +23,6 @@ void RNSFullWindowOverlayShadowNode::applyFrameCorrections() {
   // https://github.com/software-mansion/react-native-screens/pull/2641
   layoutMetrics_.frame.origin -= stateData.contentOffset;
 }
+#endif // !ANDROID
 
 } // namespace facebook::react
