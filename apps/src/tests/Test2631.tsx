@@ -2,6 +2,17 @@ import * as React from 'react';
 
 import {Button, Pressable, StyleSheet, Text, View} from 'react-native';
 import {FullWindowOverlay} from 'react-native-screens';
+import PressableWithFeedback from '../shared/PressableWithFeedback';
+
+function SharedPressable() {
+  return (
+    <PressableWithFeedback>
+      <View style={{ width: '100%', height: 32 }}>
+        <Text>Pressable</Text>
+      </View>
+    </PressableWithFeedback>
+  );
+}
 
 function HomeScreen() {
   const [overlayShown, setOverlayShown] = React.useState(false);
@@ -9,6 +20,7 @@ function HomeScreen() {
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} collapsable={true}>
       <Text>Home Screen</Text>
       <Button title="Show Overlay" onPress={() => setOverlayShown(true)} />
+      <SharedPressable />
       {overlayShown && (
         <FullWindowOverlay>
           <View style={{flex: 1}}>
@@ -21,7 +33,7 @@ function HomeScreen() {
               }}
               onPress={() => setOverlayShown(false)}>
               <Text>Overlay</Text>
-              <View style={{ width: '100%', height: 32, backgroundColor: 'darksalmon' }} />
+              <SharedPressable />
             </Pressable>
           </View>
         </FullWindowOverlay>
