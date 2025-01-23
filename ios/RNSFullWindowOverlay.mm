@@ -10,6 +10,7 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSFullWindowOverlayComponentDescriptor.h>
 #else
 #import <React/RCTTouchHandler.h>
 #endif // RCT_NEW_ARCH_ENABLED
@@ -205,9 +206,18 @@ RNS_IGNORE_SUPER_CALL_BEGIN
            oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
 {
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
+
+  // Due to view flattening on new architecture there are situations
+  // when we receive frames with origin different from (0, 0).
+  // We account for this frame manipulation in shadow node by setting
+  // RootNodeKind trait for the shadow node making state consistent
+  // between Host & Shadow Tree
+  frame.origin = CGPointZero;
+
   _reactFrame = frame;
   [_container setFrame:frame];
 }
+
 RNS_IGNORE_SUPER_CALL_END
 
 #else
