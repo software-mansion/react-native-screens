@@ -11,20 +11,24 @@ namespace facebook::react {
 
 JSI_EXPORT extern const char RNSFullWindowOverlayComponentName[];
 
+using ConcreteViewShadowNodeSuperType = ConcreteViewShadowNode<
+    RNSFullWindowOverlayComponentName,
+    RNSFullWindowOverlayProps,
+    RNSFullWindowOverlayEventEmitter,
+    RNSFullWindowOverlayState>;
+
 class JSI_EXPORT RNSFullWindowOverlayShadowNode final
-    : public ConcreteViewShadowNode<
-          RNSFullWindowOverlayComponentName,
-          RNSFullWindowOverlayProps,
-          RNSFullWindowOverlayEventEmitter,
-          RNSFullWindowOverlayState> {
+    : public ConcreteViewShadowNodeSuperType {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
 #if !defined(ANDROID)
-  void layout(LayoutContext layoutContext) override;
-
-  void applyFrameCorrections();
+  static ShadowNodeTraits BaseTraits() {
+    auto traits = ConcreteViewShadowNodeSuperType::BaseTraits();
+    traits.set(ShadowNodeTraits::Trait::RootNodeKind);
+    return traits;
+  }
 #endif
 };
 

@@ -81,8 +81,6 @@
   CGRect _reactFrame;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
-  react::Point _lastContentOffset;
-  react::RNSFullWindowOverlayShadowNode::ConcreteState::Shared _state;
 #else
   RCTTouchHandler *_touchHandler;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -94,7 +92,6 @@
   if (self = [super init]) {
     static const auto defaultProps = std::make_shared<const react::RNSFullWindowOverlayProps>();
     _props = defaultProps;
-    _lastContentOffset = {0.f, 0.f};
     [self _initCommon];
   }
   return self;
@@ -212,22 +209,15 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 
   // Due to view flattening on new architecture there are situations
   // when we receive frames with origin different from (0, 0).
+  // We account for this frame manipulation in shadow node by setting
+  // RootNodeKind trait for the shadow node making state consistent
+  // between Host & Shadow Tree
   frame.origin = CGPointZero;
 
   _reactFrame = frame;
   [_container setFrame:frame];
-
-  if (_lastContentOffset != layoutMetrics.frame.origin && _state) {
-    _lastContentOffset = layoutMetrics.frame.origin;
-    _state->updateState(react::RNSFullWindowOverlayState(_lastContentOffset));
-  }
 }
 
-- (void)updateState:(const facebook::react::State::Shared &)state
-           oldState:(const facebook::react::State::Shared &)oldState
-{
-  _state = std::static_pointer_cast<const react::RNSFullWindowOverlayShadowNode::ConcreteState>(state);
-}
 RNS_IGNORE_SUPER_CALL_END
 
 #else

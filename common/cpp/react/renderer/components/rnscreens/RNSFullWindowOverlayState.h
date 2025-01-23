@@ -25,16 +25,6 @@ class JSI_EXPORT RNSFullWindowOverlayState final {
     return {};
   }
 #endif
-
-#if !defined(ANDROID)
-  RNSFullWindowOverlayState(Point contentOffset_)
-      : contentOffset{contentOffset_} {}
-#endif
-
-#if !defined(ANDROID)
-  /// Content offset caused by view flattening. iOS only.
-  Point contentOffset{};
-#endif
 };
 
 } // namespace facebook::react
