@@ -13,7 +13,7 @@ internal class ScreensShadowNode(
         super.onBeforeLayout(nativeViewHierarchyOptimizer)
         (context.getNativeModule(UIManagerModule::class.java))?.addUIBlock { nativeViewHierarchyManager: NativeViewHierarchyManager? ->
             if (nativeViewHierarchyManager == null) {
-                throw Error("NativeViewHierarchyManager is null!")
+                return@addUIBlock
             }
             val view = nativeViewHierarchyManager.resolveView(reactTag)
             if (view is ScreenContainer) {
