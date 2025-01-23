@@ -3,7 +3,10 @@ package com.swmansion.rnscreens.bottomsheet
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
-internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(height: Int? = null, forceExpandedState: Boolean = true): BottomSheetBehavior<T> {
+internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(
+    height: Int? = null,
+    forceExpandedState: Boolean = true,
+): BottomSheetBehavior<T> {
     this.skipCollapsed = true
     this.isFitToContents = true
     if (forceExpandedState) {
@@ -16,7 +19,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(height: Int? = nu
 internal fun <T : View> BottomSheetBehavior<T>.useTwoDetents(
     @BottomSheetBehavior.StableState state: Int? = null,
     firstHeight: Int? = null,
-    secondHeight: Int? = null
+    secondHeight: Int? = null,
 ): BottomSheetBehavior<T> {
     skipCollapsed = false
     isFitToContents = true
@@ -30,7 +33,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     @BottomSheetBehavior.StableState state: Int? = null,
     firstHeight: Int? = null,
     halfExpandedRatio: Float? = null,
-    expandedOffsetFromTop: Int? = null
+    expandedOffsetFromTop: Int? = null,
 ): BottomSheetBehavior<T> {
     skipCollapsed = false
     isFitToContents = false

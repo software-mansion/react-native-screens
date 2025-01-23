@@ -192,6 +192,10 @@ open class ScreenViewManager :
         view.isStatusBarAnimated = animated
     }
 
+    @Deprecated(
+        "For apps targeting SDK 35 or above this prop has no effect. " +
+            "Since the edge-to-edge is enabled by default the color is always translucent.",
+    )
     @ReactProp(name = "statusBarColor", customType = "Color")
     override fun setStatusBarColor(
         view: Screen,
@@ -208,6 +212,7 @@ open class ScreenViewManager :
         view.statusBarStyle = statusBarStyle
     }
 
+    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default and will be enforced in the future.")
     @ReactProp(name = "statusBarTranslucent")
     override fun setStatusBarTranslucent(
         view: Screen,
@@ -224,6 +229,7 @@ open class ScreenViewManager :
         view.isStatusBarHidden = statusBarHidden
     }
 
+    @Deprecated("For apps targeting SDK 35 or above this prop has no effect")
     @ReactProp(name = "navigationBarColor", customType = "Color")
     override fun setNavigationBarColor(
         view: Screen,
@@ -232,6 +238,7 @@ open class ScreenViewManager :
         view.navigationBarColor = navigationBarColor
     }
 
+    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default")
     @ReactProp(name = "navigationBarTranslucent")
     override fun setNavigationBarTranslucent(
         view: Screen,

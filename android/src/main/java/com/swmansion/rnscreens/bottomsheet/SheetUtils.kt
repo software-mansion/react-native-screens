@@ -129,7 +129,7 @@ object SheetUtils {
 
 fun Screen.isSheetFitToContents(): Boolean =
     stackPresentation === Screen.StackPresentation.FORM_SHEET &&
-            sheetDetents.count() == 1 &&
-            sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS
+        sheetDetents.count() == 1 &&
+        sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS
 
 fun Screen.usesFormSheetPresentation(): Boolean = stackPresentation === Screen.StackPresentation.FORM_SHEET

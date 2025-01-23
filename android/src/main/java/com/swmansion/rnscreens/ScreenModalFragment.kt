@@ -72,7 +72,10 @@ class ScreenModalFragment :
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         configureDialogAndBehaviour()
 
-        val reactEventDispatcher = checkNotNull(screen.reactEventDispatcher) { "[RNScreens] No ReactEventDispatcher attached to screen while creating modal fragment" }
+        val reactEventDispatcher =
+            checkNotNull(
+                screen.reactEventDispatcher,
+            ) { "[RNScreens] No ReactEventDispatcher attached to screen while creating modal fragment" }
         val rootView = BottomSheetDialogRootView(screen.reactContext, reactEventDispatcher)
 
         rootView.addView(screen.recycle())
