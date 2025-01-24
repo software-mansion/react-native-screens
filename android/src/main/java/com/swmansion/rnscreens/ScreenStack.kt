@@ -258,6 +258,7 @@ class ScreenStack(
                 // appears on top of the previous one. You can read more about in the comment
                 // for the code we use to change that behavior:
                 // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
+                // Note: This should not be set in case there is only a single screen in stack or animation `none` is used. Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
                 isDetachingCurrentScreen = true
             }
 
