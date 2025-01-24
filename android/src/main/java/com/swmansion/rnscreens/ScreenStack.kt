@@ -248,7 +248,7 @@ class ScreenStack(
 
             if (shouldUseOpenAnimation &&
                 newTop != null &&
-                needsDrawReordering(newTop) &&
+                needsDrawReordering(newTop, stackAnimation) &&
                 visibleBottom == null
             ) {
                 // When using an open animation in which two screens overlap (eg. fade_from_bottom or
@@ -426,14 +426,22 @@ class ScreenStack(
     companion object {
         const val TAG = "ScreenStack"
 
-        private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
+        private fun needsDrawReordering(
+            fragmentWrapper: ScreenFragmentWrapper,
+            resolvedStackAnimation: StackAnimation?,
+        ): Boolean {
+            val stackAnimation = if (resolvedStackAnimation != null) resolvedStackAnimation else fragmentWrapper.screen.stackAnimation
             // On Android sdk 33 and above the animation is different and requires draw reordering.
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
             // Hence, we're comparing numerical version here.
-            Build.VERSION.SDK_INT >= 33 ||
-                fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
-                fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
-                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS_FROM_RIGHT ||
-                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS_FROM_LEFT
+            return (
+                Build.VERSION.SDK_INT >= 33 ||
+                    stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+                    stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
+                    stackAnimation === StackAnimation.IOS_FROM_RIGHT ||
+                    stackAnimation === StackAnimation.IOS_FROM_LEFT
+            ) &&
+                stackAnimation !== StackAnimation.NONE
+        }
     }
 }
