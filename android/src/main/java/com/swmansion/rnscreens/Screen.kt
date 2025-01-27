@@ -19,7 +19,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
-import com.facebook.react.uimanager.ReactClippingViewGroup
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
@@ -28,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.parentAsViewGroup
@@ -124,12 +124,18 @@ class Screen(
     ) {
         val height = bottom - top
 
-        if (sheetDetents.count() == 1 && sheetDetents.first() == SHEET_FIT_TO_CONTENTS) {
+        if (isSheetFitToContents()) {
             sheetBehavior?.let {
                 if (it.maxHeight != height) {
                     Log.i(TAG, "[Screen] Received maxHeight from content wrapper: $height")
                     it.maxHeight = height
                 }
+            }
+
+            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                // On old architecture we delay enter transition in order to wait for initial frame.
+                // This does nothing in case there is no postponed transition.
+                this@Screen.fragment?.startPostponedEnterTransition()
             }
         }
     }

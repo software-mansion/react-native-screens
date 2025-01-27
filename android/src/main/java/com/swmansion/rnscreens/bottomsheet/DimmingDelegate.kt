@@ -63,7 +63,7 @@ class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
             ValueAnimator.ofFloat(0F, maxAlpha).apply {
                 duration = 1 // Driven manually
                 addUpdateListener {
-                    Log.w("DIMMINGDELEGATE", "ANIMATION UPDATE")
+//                    Log.w("DIMMINGDELEGATE", "ANIMATION UPDATE")
                     viewToAnimate.alpha = it.animatedValue as Float
                 }
             }
@@ -93,7 +93,7 @@ class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
             bottomSheet: View,
             slideOffset: Float,
         ) {
-            Log.w("DIMMINGDELEGATE", "ON SLIDE")
+//            Log.w("DIMMINGDELEGATE", "ON SLIDE")
             if (largestUndimmedOffset < slideOffset && slideOffset < firstDimmedOffset) {
                 val fraction = (slideOffset - largestUndimmedOffset) / intervalLength
                 animator.setCurrentFraction(fraction)

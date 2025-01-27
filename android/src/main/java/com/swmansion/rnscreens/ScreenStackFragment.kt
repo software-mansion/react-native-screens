@@ -66,8 +66,7 @@ class KeyboardVisible(
 
 class ScreenStackFragment :
     ScreenFragment,
-    ScreenStackFragmentWrapper,
-    OnApplyWindowInsetsListener {
+    ScreenStackFragmentWrapper {
     public var nativeDismissalObserver: NativeDismissalObserver? = null
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
@@ -694,13 +693,6 @@ class ScreenStackFragment :
 
     override fun dismissFromContainer() {
         screenStack.dismiss(this)
-    }
-
-    override fun onApplyWindowInsets(
-        v: View,
-        insets: WindowInsetsCompat,
-    ): WindowInsetsCompat {
-        TODO("Not yet implemented")
     }
 
     private class ScreensCoordinatorLayout(

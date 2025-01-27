@@ -8,6 +8,8 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
+import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
 import kotlin.collections.ArrayList
@@ -311,6 +313,9 @@ class ScreenStack(
                     }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
+                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.usesFormSheetPresentation() && newTop.screen.isSheetFitToContents()) {
+                    newTop.fragment.postponeEnterTransition()
+                }
                 it.add(id, newTop.fragment)
             }
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
