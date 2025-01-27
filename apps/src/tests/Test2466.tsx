@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { findNodeHandle, Text, View } from 'react-native';
-import PressableWithFeedback from '../shared/PressableWithFeedback';
+import { PressableWithFeedback } from '../shared/PressableWithFeedback';
 
 type StackParamList = {
   Home: undefined,

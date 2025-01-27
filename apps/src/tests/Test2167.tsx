@@ -12,10 +12,12 @@ const NestedStack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 
 function ModalScreen({ navigation }: NavigationProps) {
-  return <SafeAreaView style={{ backgroundColor: 'green', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    <Text>Hello from modal screen</Text>
-    <Pressable onPress={navigation.goBack}><Text>Go Back</Text></Pressable>
-  </SafeAreaView>;
+  return (
+    <SafeAreaView style={{ backgroundColor: 'green', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Hello from modal screen</Text>
+      <Pressable onPress={navigation.goBack}><Text>Go Back</Text></Pressable>
+    </SafeAreaView>
+  );
 }
 
 function Content({ navigation }: NavigationProps) {
