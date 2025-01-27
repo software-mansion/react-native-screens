@@ -29,9 +29,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.addListener
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
-import androidx.transition.Fade
-import androidx.transition.Slide
-import androidx.transition.TransitionSet
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
@@ -53,7 +50,6 @@ import com.swmansion.rnscreens.bottomsheet.useThreeDetents
 import com.swmansion.rnscreens.bottomsheet.useTwoDetents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.events.ScreenEventDelegate
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.transition.CustomEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -295,27 +291,6 @@ class ScreenStackFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-//        enterTransition =
-//            Fade(Fade.IN).apply {
-//                addListener(
-//                    ScreenEventDelegate(
-//                        this@ScreenStackFragment,
-//                        this@ScreenStackFragment,
-//                        ScreenEventDelegate.TransitionDirection.FORWARD,
-//                    ),
-//                )
-//            }
-//        exitTransition =
-//            Fade(Fade.OUT).apply {
-//                addListener(
-//                    ScreenEventDelegate(
-//                        this@ScreenStackFragment,
-//                        this@ScreenStackFragment,
-//                        ScreenEventDelegate.TransitionDirection.BACKWARD,
-//                    ),
-//                )
-//            }
-//
         if (!screen.usesFormSheetPresentation()) {
             return
         }
@@ -327,57 +302,27 @@ class ScreenStackFragment :
         dimmingDelegate.value.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
         val container = screen.container!!
-        coordinatorLayout.measure(View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY))
+        coordinatorLayout.measure(
+            View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY),
+        )
         coordinatorLayout.layout(0, 0, container.width, container.height)
-//
-//        enterTransition =
-//            TransitionSet().apply {
-//                addTransition(
-//                    Slide().apply {
-//                        excludeTarget(dimmingDelegate.value.dimmingView, true)
-//                    },
-//                )
-//                addTransition(
-//                    Fade(Fade.IN).apply {
-//                        addTarget(dimmingDelegate.value.dimmingView)
-//                    },
-//                )
-//                addListener(
-//                    ScreenEventDelegate(
-//                        this@ScreenStackFragment,
-//                        this@ScreenStackFragment,
-//                        ScreenEventDelegate.TransitionDirection.FORWARD,
-//                    ),
-//                )
-//            }
-//        exitTransition =
-//            TransitionSet().apply {
-//                addTransition(
-//                    Slide().apply {
-//                        excludeTarget(dimmingDelegate.value.dimmingView, true)
-//                    },
-//                )
-//                addTransition(
-//                    Fade(Fade.OUT).apply {
-//                        addTarget(dimmingDelegate.value.dimmingView)
-//                    },
-//                )
-//                addListener(
-//                    ScreenEventDelegate(
-//                        this@ScreenStackFragment,
-//                        this@ScreenStackFragment,
-//                        ScreenEventDelegate.TransitionDirection.BACKWARD,
-//                    ),
-//                )
-//            }
     }
 
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+    override fun onCreateAnimation(
+        transit: Int,
+        enter: Boolean,
+        nextAnim: Int,
+    ): Animation? {
         // Ensure onCreateAnimator is called
         return null
     }
 
-    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
+    override fun onCreateAnimator(
+        transit: Int,
+        enter: Boolean,
+        nextAnim: Int,
+    ): Animator? {
         if (!screen.usesFormSheetPresentation()) {
             // Use animation defined while defining transaction in screen stack
             return null
@@ -386,12 +331,13 @@ class ScreenStackFragment :
         val animatorSet = AnimatorSet()
 
         if (enter) {
-            val alphaAnimator = ValueAnimator.ofFloat(0f, dimmingDelegate.value.maxAlpha).apply {
-                addUpdateListener { anim ->
-                    val animatedValue = anim.animatedValue as? Float
-                    animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+            val alphaAnimator =
+                ValueAnimator.ofFloat(0f, dimmingDelegate.value.maxAlpha).apply {
+                    addUpdateListener { anim ->
+                        val animatedValue = anim.animatedValue as? Float
+                        animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+                    }
                 }
-            }
             val startValueCallback = {
                 if (screen.height != 0) {
                     Log.i("CB", "[StartValue] ${screen.height.toFloat()}")
@@ -402,30 +348,33 @@ class ScreenStackFragment :
                 }
             }
             val customEvaluator = CustomEvaluator(startValueCallback, { 0f })
-            val slideAnimator = ValueAnimator.ofObject(customEvaluator, screen.height.toFloat(), 0f).apply {
-                addUpdateListener { anim ->
-                    val animatedValue = anim.animatedValue as? Float
-                    Log.i(TAG, "slide: $animatedValue")
-                    animatedValue?.let { screen.translationY = it }
+            val slideAnimator =
+                ValueAnimator.ofObject(customEvaluator, screen.height.toFloat(), 0f).apply {
+                    addUpdateListener { anim ->
+                        val animatedValue = anim.animatedValue as? Float
+                        Log.i(TAG, "slide: $animatedValue")
+                        animatedValue?.let { screen.translationY = it }
+                    }
+                    addListener(onStart = { animator ->
+                        Log.i(TAG, "starting slideAnimator")
+                    })
                 }
-                addListener(onStart = { animator ->
-                    Log.i(TAG, "starting slideAnimator")
-                })
-            }
             animatorSet.play(alphaAnimator).with(slideAnimator)
         } else {
-            val alphaAnimator = ValueAnimator.ofFloat(dimmingDelegate.value.dimmingView.alpha, 0f).apply {
-                addUpdateListener { anim ->
-                    val animatedValue = anim.animatedValue as? Float
-                    animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+            val alphaAnimator =
+                ValueAnimator.ofFloat(dimmingDelegate.value.dimmingView.alpha, 0f).apply {
+                    addUpdateListener { anim ->
+                        val animatedValue = anim.animatedValue as? Float
+                        animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+                    }
                 }
-            }
-            val slideAnimator = ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
-                addUpdateListener { anim ->
-                    val animatedValue = anim.animatedValue as? Float
-                    animatedValue?.let { screen.translationY = it }
+            val slideAnimator =
+                ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
+                    addUpdateListener { anim ->
+                        val animatedValue = anim.animatedValue as? Float
+                        animatedValue?.let { screen.translationY = it }
+                    }
                 }
-            }
             animatorSet.play(alphaAnimator).with(slideAnimator)
         }
         return animatorSet
@@ -517,7 +466,10 @@ class ScreenStackFragment :
                         behavior.apply {
                             val height =
                                 if (screen.isSheetFitToContents()) {
-                                    screen.contentWrapper.get()?.height.takeIf { screen.contentWrapper.get()?.isLaidOut == true }
+                                    screen.contentWrapper
+                                        .get()
+                                        ?.height
+                                        .takeIf { screen.contentWrapper.get()?.isLaidOut == true }
                                 } else {
                                     (screen.sheetDetents.first() * containerHeight).toInt()
                                 }
@@ -823,14 +775,23 @@ class ScreenStackFragment :
             super.onViewAdded(child)
         }
 
-        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        override fun onMeasure(
+            widthMeasureSpec: Int,
+            heightMeasureSpec: Int,
+        ) {
             val width = MeasureSpec.getSize(widthMeasureSpec)
             val height = MeasureSpec.getSize(heightMeasureSpec)
-            Log.i(TAG, "[Coordinator] Measured with ${width} ${height}")
+            Log.i(TAG, "[Coordinator] Measured with $width $height")
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
 
-        override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        override fun onLayout(
+            changed: Boolean,
+            l: Int,
+            t: Int,
+            r: Int,
+            b: Int,
+        ) {
             Log.i(TAG, "[Coordinator] onLayout ${r - l}, ${b - t}")
             super.onLayout(changed, l, t, r, b)
         }
