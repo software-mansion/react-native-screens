@@ -1,6 +1,6 @@
 import React from 'react';
 import { ForwardedRef } from 'react';
-import { GestureResponderEvent, Pressable, PressableProps, StyleSheet, TouchableWithoutFeedback, TouchableWithoutFeedbackProps, View } from 'react-native';
+import { GestureResponderEvent, Pressable, PressableProps, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, TouchableWithoutFeedbackProps, View } from 'react-native';
 
 export type PressableState = 'pressed-in' | 'pressed' | 'pressed-out'
 
@@ -57,7 +57,7 @@ export const PressableWithFeedback = React.forwardRef((props: PressableProps, re
 });
 
 export const TouchableWithFeedback = React.forwardRef((props: TouchableWithoutFeedbackProps, ref: ForwardedRef<View>) => {
-  const [pressedState, setPressedState] = React.useState<PressableState>('pressed-out');
+  const [pressedState, setPressedState] = React.useState<PressableState>('pressed');
 
   const onPressInCallback = React.useCallback((e: GestureResponderEvent) => {
     console.log('Touchable onPressIn', {
@@ -119,5 +119,5 @@ const styles = StyleSheet.create({
   },
   touchablePressedOut: {
     backgroundColor: 'crimson',
-  }
+  },
 });

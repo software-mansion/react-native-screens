@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Button, Pressable, StyleSheet, Text, Touchable, TouchableWithoutFeedback, View} from 'react-native';
+import {Button, Pressable, StyleSheet, Text, View} from 'react-native';
 import {FullWindowOverlay} from 'react-native-screens';
 import { PressableWithFeedback, TouchableWithFeedback } from '../shared/PressableWithFeedback';
 

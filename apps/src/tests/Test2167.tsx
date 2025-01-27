@@ -30,6 +30,7 @@ function Content({ navigation }: NavigationProps) {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
       <Pressable onPress={showTransparentModal}><Text>Open Modal Screen</Text></Pressable>
+      <View style={{ height: 96}} />
     </View>
   );
 }
