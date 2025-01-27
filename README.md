@@ -106,18 +106,17 @@ Screens are already integrated with the React Native's most popular navigation l
 
 ## Supported react-native version
 
+Below we present tables with mapping of the library version to the last supported react-native version. These tables are for the `4.x` line of the library. For compat tables 
+of `3.x` line please see consult [readme on the `3.x` branch](https://github.com/software-mansion/react-native-screens/tree/3.x?tab=readme-ov-file#supported-react-native-version).
+
 ### Support for Paper
 
 Paper is the default rendering system for React Native versions prior to 0.76.
 
 | library version | react-native version |
 | --------------- | -------------------- |
-| 3.33.0+         | 0.72.0+              |
-| 3.32.0+         | 0.71.0+              |
-| 3.30.0+         | 0.68.0+              |
-| 3.14.0+         | 0.64.0+              |
-| 3.0.0+          | 0.62.0+              |
-| 2.0.0+          | 0.60.0+              |
+| 4.5.0+          | 0.74.0+              |
+| 4.0.0+          | 0.72.0+              |
 
 ### Support for Fabric
 
@@ -127,14 +126,8 @@ Here's a table with summary of supported `react-native` versions when Fabric is 
 
 | library version | react-native version |
 | --------------- | -------------------- |
-| 3.35.0+         | 0.76.0+              |
-| 3.33.0+         | 0.75.0+              |
-| 3.32.0+         | 0.74.0+              |
-| 3.28.0+         | 0.73.0+              |
-| 3.21.0+         | 0.72.0+              |
-| 3.19.0+         | 0.71.0+              |
-| 3.18.0+         | 0.70.0+              |
-| 3.14.0+         | 0.69.0+              |
+| 4.5.0+          | 0.77.0+              |
+| 4.0.0+          | 0.76.0+              |
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 

@@ -20,7 +20,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:4.2.2')
+        classpath('com.android.tools.build:gradle:8.2.1')
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
     }
@@ -99,13 +99,7 @@ def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
-    def agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION
-    if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
-        namespace "com.swmansion.rnscreens"
-        buildFeatures {
-            buildConfig true
-        }
-    }
+    namespace "com.swmansion.rnscreens"
 
     // Used to override the NDK path/version on internal CI or by allowing
     // users to customize the NDK path/version from their root project (e.g. for M1 support)
@@ -134,6 +128,7 @@ android {
     }
     buildFeatures {
         prefab true
+        buildConfig true
     }
     externalNativeBuild {
         cmake {
@@ -159,7 +154,13 @@ android {
                 "**/libc++_shared.so",
                 "**/libreact_render*.so",
                 "**/libreactnativejni.so",
-                "**/libreact_performance_timeline.so"
+                "**/libreact_performance_timeline.so",
+                // In 0.76 multiple react-native's libraries were merged and these are the main new artifacts we're using.
+                // Some of above lib* names could be removed after we remove support for 0.76.
+                // https://github.com/facebook/react-native/pull/43909
+                // https://github.com/facebook/react-native/pull/46059
+                "**/libfbjni.so", 
+                "**/libreactnative.so"
         ]
     }
     sourceSets.main {

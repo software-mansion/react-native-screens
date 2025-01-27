@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSScreen.h"
 
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>

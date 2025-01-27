@@ -25,13 +25,17 @@ class JSI_EXPORT RNSScreenStackHeaderConfigShadowNode final
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
 #pragma mark - ShadowNode overrides
+  void layout(LayoutContext layoutContext) override;
 
 #pragma mark - Custom interface
+
 #if !defined(ANDROID) && !defined(NDEBUG)
   void setImageLoader(std::weak_ptr<void> imageLoader);
 #endif // !ANDROID && !NDEBUG
 
  private:
+  void applyFrameCorrections();
+
 #if !defined(ANDROID) && !defined(NDEBUG)
   StateData &getStateDataMutable();
 #endif // !ANDROID && !NDEBUG

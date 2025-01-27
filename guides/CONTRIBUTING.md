@@ -91,8 +91,7 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-3. `(cd react-navigation && yarn prepare)`
-4. `cd Example`
+4. `cd Example` or `cd FabricExample` (depending on architecture you want to work on)
 5. `yarn`
 6. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
 
@@ -108,10 +107,9 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-3. `(cd react-navigation && yarn prepare)`
-4. `cd Example`
+4. `cd Example` or `cd FabricExample`
 5. `yarn`
-6. `(cd ios && pod install)`
+6. `(cd ios && pod install && cd ../)`
 7. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
 
 and open `react-native-screens/Example/ios/ScreensExample.xcworkspace` with XCode.

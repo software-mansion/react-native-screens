@@ -20,6 +20,26 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
+    react_native_assert(
+        dynamic_cast<RNSScreenStackHeaderSubviewShadowNode *>(&shadowNode));
+    auto &subviewShadowNode =
+        static_cast<RNSScreenStackHeaderSubviewShadowNode &>(shadowNode);
+
+    react_native_assert(
+        dynamic_cast<YogaLayoutableShadowNode *>(&subviewShadowNode));
+    auto &layoutableShadowNode =
+        dynamic_cast<YogaLayoutableShadowNode &>(subviewShadowNode);
+
+    auto state = std::static_pointer_cast<
+        const RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(
+        shadowNode.getState());
+    auto stateData = state->getData();
+
+    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+      layoutableShadowNode.setSize(
+          Size{stateData.frameSize.width, stateData.frameSize.height});
+    }
+
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 };

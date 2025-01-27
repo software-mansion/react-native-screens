@@ -3,12 +3,11 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.view.View
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.views.view.ReactViewGroup
 
 @SuppressLint("ViewConstructor")
 class ScreenStackHeaderSubview(
     context: ReactContext?,
-) : ReactViewGroup(context) {
+) : FabricEnabledHeaderSubviewViewGroup(context) {
     private var reactWidth = 0
     private var reactHeight = 0
     var type = Type.RIGHT
@@ -37,11 +36,17 @@ class ScreenStackHeaderSubview(
 
     override fun onLayout(
         changed: Boolean,
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int,
-    ) = Unit
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
+        if (changed && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            val width = r - l
+            val height = b - t
+            updateSubviewFrameState(width, height, l, t)
+        }
+    }
 
     enum class Type {
         LEFT,

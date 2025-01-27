@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
   },
   headerConfig: {
     position: 'absolute',
-    top: '-100%',
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',

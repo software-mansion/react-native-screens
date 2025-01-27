@@ -24,8 +24,6 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
-import com.facebook.react.views.scroll.ReactHorizontalScrollView
-import com.facebook.react.views.scroll.ReactScrollView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -465,29 +463,6 @@ class Screen(
                 }
 
                 if (child is ViewGroup) {
-                    // The children are miscounted when there's removeClippedSubviews prop
-                    // set to true (which is the default for FlatLists).
-                    // Unless the child is a ScrollView it's safe to assume that it's true
-                    // and add a simple view for each possibly clipped item to make it work as expected.
-                    // See https://github.com/software-mansion/react-native-screens/pull/2495
-
-                    if (child is ReactClippingViewGroup &&
-                        child.removeClippedSubviews &&
-                        child !is ReactScrollView &&
-                        child !is ReactHorizontalScrollView
-                    ) {
-                        // We need to workaround the issue until our changes land in core.
-                        // Some views do not accept any children or have set amount and they throw
-                        // when we want to brute-forcefully manipulate that.
-                        // Is this ugly? Very. Do we have better option before changes land in core?
-                        // I'm not aware of any.
-                        try {
-                            repeat(child.childCount) {
-                                child.addView(View(context))
-                            }
-                        } catch (_: Exception) {
-                        }
-                    }
                     startTransitionRecursive(child)
                 }
             }

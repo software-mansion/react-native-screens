@@ -19,10 +19,11 @@ const fileArgument = `-PspotlessIdeHook=${fileName}`;
 const command =
   fileName !== undefined ? `${spotlessApply} ${fileArgument}` : spotlessApply;
 
-exec(command, (error, stdout) => {
+exec(command, (error, stdout, stderr) => {
   if (error) {
     console.log(error);
     console.log(stdout);
+    console.log(stderr)
     return exit(1);
   }
 });

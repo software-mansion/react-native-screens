@@ -67,12 +67,6 @@ NS_ASSUME_NONNULL_END
                     withConfig:(nonnull RNSScreenStackHeaderConfig *)config;
 
 /**
- * Allows to send information with insets to the corresponding node in shadow tree.
- * Currently only horizontal insets are send through. Vertical ones are filtered out.
- */
-- (void)updateHeaderInsetsInShadowTreeTo:(NSDirectionalEdgeInsets)insets;
-
-/**
  * Returns true iff subview of given `type` is present.
  *
  *  **Please note that the subviews are not mounted under the header config in HostTree**
@@ -99,10 +93,30 @@ NS_ASSUME_NONNULL_END
 - (BOOL)shouldHeaderBeVisible;
 
 /**
- * @returns`true` iff the applying this header config instance to a view controller will
+ * Returns `true` iff the applying this header config instance to a view controller will
  * result in visible back button if feasible.
  */
 - (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar;
+
+#ifdef RCT_NEW_ARCH_ENABLED
+/**
+ * Allows to send information with size to the corresponding node in shadow tree.
+ * This method updates state of header config shadow node only.
+ */
+- (void)updateHeaderConfigState:(CGSize)size;
+
+/**
+ * Updates state of header config shadow node and all subview shadow nodes in context of given UINavigationBar.
+ * When `navBar == nil` this method does nothing.
+ */
+- (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
+#else
+/**
+ * Allows to send information with insets to the corresponding node in shadow tree.
+ * Currently only horizontal insets are send through. Vertical ones are filtered out.
+ */
+- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets;
+#endif
 
 @end
 

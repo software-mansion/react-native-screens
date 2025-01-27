@@ -2,6 +2,8 @@ package com.swmansion.rnscreens
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -37,6 +39,17 @@ class ScreenStackHeaderSubviewManager :
                 "searchBar" -> ScreenStackHeaderSubview.Type.SEARCH_BAR
                 else -> throw JSApplicationIllegalArgumentException("Unknown type $type")
             }
+    }
+
+    override fun updateState(
+        view: ScreenStackHeaderSubview,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?,
+    ): Any? {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            view.setStateWrapper(stateWrapper)
+        }
+        return super.updateState(view, props, stateWrapper)
     }
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderSubview> = delegate
