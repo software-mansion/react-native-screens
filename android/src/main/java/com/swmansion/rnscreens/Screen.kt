@@ -186,7 +186,10 @@ class Screen(
 
             footer?.onParentLayout(changed, l, t, r, b, container!!.height)
             notifyHeaderHeightChange(t)
-            maybeTriggerPostponedTransition()
+
+            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                maybeTriggerPostponedTransition()
+            }
         }
     }
 
