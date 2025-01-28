@@ -204,7 +204,7 @@ open class ScreenContainer(
     }
 
     protected fun createTransaction(): FragmentTransaction {
-        Log.w("${TAG} [${id}]", "Create transaction")
+        Log.w(TAG, "$id Create transaction")
         return requireNotNull(fragmentManager) { "fragment manager is null when creating transaction" }
             .beginTransaction()
             .setReorderingAllowed(true)
