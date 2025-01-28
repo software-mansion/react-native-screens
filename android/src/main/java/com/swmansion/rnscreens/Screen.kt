@@ -85,6 +85,7 @@ class Screen(
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
+    var shouldTriggerPostponedTransitionAfterLayout = false
 
     var footer: ScreenFooter? = null
         set(value) {
@@ -134,8 +135,7 @@ class Screen(
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 // On old architecture we delay enter transition in order to wait for initial frame.
-                // This does nothing in case there is no postponed transition.
-                this@Screen.fragment?.startPostponedEnterTransition()
+                shouldTriggerPostponedTransitionAfterLayout = true
             }
         }
     }
@@ -176,6 +176,8 @@ class Screen(
             val width = r - l
             val height = b - t
 
+            Log.i(TAG, "[Screen] Laid out with $width $height")
+
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 updateScreenSizeFabric(width, height, t)
             } else {
@@ -184,6 +186,14 @@ class Screen(
 
             footer?.onParentLayout(changed, l, t, r, b, container!!.height)
             notifyHeaderHeightChange(t)
+            maybeTriggerPostponedTransition()
+        }
+    }
+
+    private fun maybeTriggerPostponedTransition() {
+        if (shouldTriggerPostponedTransitionAfterLayout) {
+            shouldTriggerPostponedTransitionAfterLayout = false
+            fragment?.startPostponedEnterTransition()
         }
     }
 
