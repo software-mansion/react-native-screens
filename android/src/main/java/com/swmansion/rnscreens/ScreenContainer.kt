@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
@@ -17,6 +18,7 @@ import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.ActivityState
+import com.swmansion.rnscreens.ScreenStack.Companion.TAG
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 
 open class ScreenContainer(
@@ -201,10 +203,12 @@ open class ScreenContainer(
         }
     }
 
-    protected fun createTransaction(): FragmentTransaction =
-        requireNotNull(fragmentManager) { "fragment manager is null when creating transaction" }
+    protected fun createTransaction(): FragmentTransaction {
+        Log.w("${TAG} [${id}]", "Create transaction")
+        return requireNotNull(fragmentManager) { "fragment manager is null when creating transaction" }
             .beginTransaction()
             .setReorderingAllowed(true)
+    }
 
     private fun attachScreen(
         transaction: FragmentTransaction,

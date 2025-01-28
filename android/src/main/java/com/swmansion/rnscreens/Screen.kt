@@ -196,6 +196,7 @@ class Screen(
     private fun maybeTriggerPostponedTransition() {
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
+            Log.i(TAG, "Triggering postponed transaction")
             fragment?.startPostponedEnterTransition()
         }
     }
@@ -410,10 +411,15 @@ class Screen(
             isBeingRemoved = true
 
             val coordinatorLayout = this.parentAsViewGroup()!!
-            val containerView = coordinatorLayout.parentAsViewGroup()!!
+            val containerView = coordinatorLayout.parentAsViewGroup()
+
+            if (containerView == null) {
+                Log.e(TAG, "Nullish container while starting removal!!!")
+            }
+
             assert(containerView == container)
 
-            containerView.startViewTransition(coordinatorLayout)
+            containerView!!.startViewTransition(coordinatorLayout)
 
             // Following call seems to be optional, because no one tries to detach these:
             coordinatorLayout.children.forEach {

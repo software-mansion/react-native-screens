@@ -314,6 +314,7 @@ class ScreenStack(
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.usesFormSheetPresentation() && newTop.screen.isSheetFitToContents()) {
+                    Log.w("${TAG} [${id}]", "Request postpone transaction")
                     newTop.fragment.postponeEnterTransition()
                 }
                 it.add(id, newTop.fragment)
@@ -324,6 +325,7 @@ class ScreenStack(
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
 
+            Log.w("${TAG} [${id}]", "Commit transaction")
             it.commitNowAllowingStateLoss()
         }
     }
