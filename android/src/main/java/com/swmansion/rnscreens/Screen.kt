@@ -141,13 +141,7 @@ class Screen(
                     Log.d(TAG, "request layout on coordinator")
                     // There are reported cases (irreproducible) when Screen is not laid out after
                     // maxHeight is set on behaviour.
-                    // We layout the coordinator manually, as calling requestLayout would trigger
-                    // layout calculations on whole ancestor chain.
-                    parent.measure(
-                        MeasureSpec.makeMeasureSpec(parent.measuredWidth, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(parent.measuredHeight, MeasureSpec.EXACTLY),
-                    )
-                    parent.layout(0, 0, parent.measuredWidth, parent.measuredHeight)
+                    parent.requestLayout()
                 }
             }
         }
