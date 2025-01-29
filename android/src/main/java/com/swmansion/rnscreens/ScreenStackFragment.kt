@@ -27,6 +27,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.addListener
 import androidx.core.view.WindowInsetsCompat
+import com.facebook.react.uimanager.BackgroundStyleApplicator
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
@@ -574,6 +575,24 @@ class ScreenStackFragment :
     private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> =
         configureBottomSheetBehaviour(createBottomSheetBehaviour())
 
+    private fun resolveBackgroundColor(screen: Screen): Int? {
+        val screenColor =
+            (screen.background as? ColorDrawable?)?.color
+                ?: (screen.background as? MaterialShapeDrawable?)?.tintList?.defaultColor
+
+        if (screenColor != null) {
+            return screenColor
+        }
+
+        val contentWrapper = screen.contentWrapper.get()
+        if (contentWrapper == null) {
+            return null
+        }
+
+        val contentWrapperColor = BackgroundStyleApplicator.getBackgroundColor(contentWrapper)
+        return contentWrapperColor
+    }
+
     private fun attachShapeToScreen(screen: Screen) {
         val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius)
         val shapeAppearanceModel =
@@ -584,10 +603,8 @@ class ScreenStackFragment :
                     setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
                 }.build()
         val shape = MaterialShapeDrawable(shapeAppearanceModel)
-        val currentColor =
-            (screen.background as? ColorDrawable?)?.color
-                ?: (screen.background as? MaterialShapeDrawable?)?.tintList?.defaultColor
-        shape.setTint(currentColor ?: Color.TRANSPARENT)
+        val backgroundColor = resolveBackgroundColor(screen)
+        shape.setTint(backgroundColor ?: Color.TRANSPARENT)
         screen.background = shape
     }
 
