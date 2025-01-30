@@ -12,17 +12,21 @@ import com.swmansion.rnscreens.ScreenStackFragment
 /**
  * Provides bulk of necessary logic for the dimming view accompanying the formSheet.
  */
-class DimmingViewManager(val reactContext: ThemedReactContext, screen: Screen) {
-
+class DimmingViewManager(
+    val reactContext: ThemedReactContext,
+    screen: Screen,
+) {
     internal val dimmingView: DimmingView = createDimmingView(screen)
     internal val maxAlpha: Float = 0.3f
     private var dimmingViewCallback: BottomSheetCallback? = null
 
-
     /**
      * Should be called when hosting fragment has its view hierarchy created.
      */
-    fun onViewHierarchyCreated(screen: Screen, root: ViewGroup) {
+    fun onViewHierarchyCreated(
+        screen: Screen,
+        root: ViewGroup,
+    ) {
         root.addView(dimmingView, 0)
         if (screen.sheetInitialDetentIndex <= screen.sheetLargestUndimmedDetentIndex) {
             dimmingView.alpha = 0.0f
@@ -34,7 +38,10 @@ class DimmingViewManager(val reactContext: ThemedReactContext, screen: Screen) {
     /**
      * Should be called after screen of hosting fragment has its behaviour attached.
      */
-    fun onBehaviourAttached(screen: Screen, behavior: BottomSheetBehavior<Screen>) {
+    fun onBehaviourAttached(
+        screen: Screen,
+        behavior: BottomSheetBehavior<Screen>,
+    ) {
         behavior.addBottomSheetCallback(requireBottomSheetCallback(screen))
     }
 
@@ -134,21 +141,20 @@ class DimmingViewManager(val reactContext: ThemedReactContext, screen: Screen) {
             }
     }
 
-    private fun createDimmingView(screen: Screen): DimmingView {
-            return DimmingView(reactContext, maxAlpha).apply {
-                // These do not guarantee fullscreen width & height, TODO: find a way to guarantee that
-                layoutParams =
-                    ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                    )
-                setOnClickListener {
-                    if (screen.sheetClosesOnTouchOutside) {
-                        (screen.fragment as ScreenStackFragment).dismissSelf()
-                    }
+    private fun createDimmingView(screen: Screen): DimmingView =
+        DimmingView(reactContext, maxAlpha).apply {
+            // These do not guarantee fullscreen width & height, TODO: find a way to guarantee that
+            layoutParams =
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                )
+            setOnClickListener {
+                if (screen.sheetClosesOnTouchOutside) {
+                    (screen.fragment as ScreenStackFragment).dismissSelf()
                 }
             }
-    }
+        }
 
     private fun requireBottomSheetCallback(screen: Screen): BottomSheetCallback {
         if (dimmingViewCallback == null) {
