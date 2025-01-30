@@ -200,9 +200,10 @@ class ScreenStackFragment :
             ) = Unit
         }
 
-    private fun cleanRegisteredSheetCallbacks() {
-    }
-
+    /**
+     * Currently this method dispatches event to JS where state is recomputed and fragment
+     * gets removed in the result of incoming state update.
+     */
     internal fun dismissSelf() {
         if (!this.isRemoving || !this.isDetached) {
             val reactContext = screen.reactContext
@@ -211,8 +212,6 @@ class ScreenStackFragment :
                 .getEventDispatcherForReactTag(reactContext, screen.id)
                 ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
         }
-        cleanRegisteredSheetCallbacks()
-//        dismissFromContainer()
     }
 
     internal fun onSheetCornerRadiusChange() {
@@ -560,10 +559,7 @@ class ScreenStackFragment :
         }
     }
 
-    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
-        val behavior = BottomSheetBehavior<Screen>()
-        return behavior
-    }
+    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
 
     // In general it would be great to create BottomSheetBehaviour only via this method as it runs some
     // side effects.
