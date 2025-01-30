@@ -15,7 +15,6 @@ import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.EventDispatcher
-import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
@@ -290,12 +289,7 @@ open class ScreenFragment :
         // since we subscribe to parent's animation start/end and dispatch events in child from there
         // check for `isTransitioning` should be enough since the child's animation should take only
         // 20ms due to always being `StackAnimation.NONE` when nested stack being pushed
-        val parent =
-            if (parentFragment is DimmingFragment) {
-                parentFragment?.parentFragment
-            } else {
-                parentFragment
-            }
+        val parent = parentFragment
         if (parent == null || (parent is ScreenFragment && !parent.isTransitioning)) {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
