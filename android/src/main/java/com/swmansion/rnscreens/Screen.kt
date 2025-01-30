@@ -406,23 +406,6 @@ class Screen(
     fun startRemovalTransition() {
         if (!isBeingRemoved) {
             isBeingRemoved = true
-
-//            val coordinatorLayout = this.parentAsViewGroup()!!
-//            val containerView = coordinatorLayout.parentAsViewGroup()
-//
-//            if (containerView == null) {
-//                Log.e(TAG, "Nullish container while starting removal!!!")
-//            }
-//
-//            assert(containerView == container)
-//
-//            containerView!!.startViewTransition(coordinatorLayout)
-//
-//            // Following call seems to be optional, because no one tries to detach these:
-//            coordinatorLayout.children.forEach {
-//                coordinatorLayout.startViewTransition(it)
-//            }
-
             startTransitionRecursive(this)
         }
     }
@@ -431,19 +414,7 @@ class Screen(
         if (!isBeingRemoved) {
             return
         }
-
         isBeingRemoved = false
-
-        val coordinatorLayout = this.parentAsViewGroup()!!
-        assert(coordinatorLayout is CoordinatorLayout)
-//
-        val containerView = coordinatorLayout.parentAsViewGroup()!!
-//        assert(containerView is ScreenStack)
-//        assert(containerView == container || container == null)
-
-//        TransitionManager.controlDelayedTransition()
-        containerView.endViewTransition(coordinatorLayout)
-        coordinatorLayout.children.forEach { coordinatorLayout.endViewTransition(it) }
         endTransitionRecursive(this)
     }
 
