@@ -27,6 +27,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.parentAsViewGroup
@@ -464,15 +465,14 @@ class Screen(
 
     // We do not want to perform any action, therefore do not need to override the associated method.
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        // If we're a form sheet we want to consume the gestures to prevent
-        // DimmingView's callback from triggering when clicking on the sheet itself.
-        return if (stackPresentation === StackPresentation.FORM_SHEET) {
+    override fun onTouchEvent(event: MotionEvent?): Boolean =
+        if (usesFormSheetPresentation()) {
+            // If we're a form sheet we want to consume the gestures to prevent
+            // DimmingView's callback from triggering when clicking on the sheet itself.
             true
         } else {
             super.onTouchEvent(event)
         }
-    }
 
     private fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
