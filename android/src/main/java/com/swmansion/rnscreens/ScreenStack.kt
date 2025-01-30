@@ -301,6 +301,9 @@ class ScreenStack(
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.isSheetFitToContents()) {
+                    // On old architecture the content wrapper might not have received its frame yet,
+                    // which is required to determine height of the sheet after animation. Therefore
+                    // we delay the transition and trigger it after views receive the layout.
                     newTop.fragment.postponeEnterTransition()
                 }
                 it.add(id, newTop.fragment)
