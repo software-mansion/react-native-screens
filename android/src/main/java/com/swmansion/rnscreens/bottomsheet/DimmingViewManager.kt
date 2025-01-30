@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.bottomsheet
 
 import android.animation.ValueAnimator
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.uimanager.ThemedReactContext
@@ -10,15 +9,18 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCa
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
 
-class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
+/**
+ * Provides bulk of necessary logic for the dimming view accompanying the formSheet.
+ */
+class DimmingViewManager(val reactContext: ThemedReactContext, screen: Screen) {
 
-    internal val dimmingView: DimmingView = initDimmingView(screen)
+    internal val dimmingView: DimmingView = createDimmingView(screen)
     internal val maxAlpha: Float = 0.3f
     private var dimmingViewCallback: BottomSheetCallback? = null
 
 
     /**
-     * DELEGATE METHOD
+     * Should be called when hosting fragment has its view hierarchy created.
      */
     fun onViewHierarchyCreated(screen: Screen, root: ViewGroup) {
         root.addView(dimmingView, 0)
@@ -30,10 +32,10 @@ class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
     }
 
     /**
-     * DELEGATE METHOD
+     * Should be called after screen of hosting fragment has its behaviour attached.
      */
     fun onBehaviourAttached(screen: Screen, behavior: BottomSheetBehavior<Screen>) {
-        behavior.addBottomSheetCallback(initBottomSheetCallback(screen))
+        behavior.addBottomSheetCallback(requireBottomSheetCallback(screen))
     }
 
     /**
@@ -63,7 +65,6 @@ class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
             ValueAnimator.ofFloat(0F, maxAlpha).apply {
                 duration = 1 // Driven manually
                 addUpdateListener {
-//                    Log.w("DIMMINGDELEGATE", "ANIMATION UPDATE")
                     viewToAnimate.alpha = it.animatedValue as Float
                 }
             }
@@ -93,7 +94,6 @@ class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
             bottomSheet: View,
             slideOffset: Float,
         ) {
-//            Log.w("DIMMINGDELEGATE", "ON SLIDE")
             if (largestUndimmedOffset < slideOffset && slideOffset < firstDimmedOffset) {
                 val fraction = (slideOffset - largestUndimmedOffset) / intervalLength
                 animator.setCurrentFraction(fraction)
@@ -134,7 +134,7 @@ class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
             }
     }
 
-    private fun initDimmingView(screen: Screen): DimmingView {
+    private fun createDimmingView(screen: Screen): DimmingView {
             return DimmingView(reactContext, maxAlpha).apply {
                 // These do not guarantee fullscreen width & height, TODO: find a way to guarantee that
                 layoutParams =
@@ -150,12 +150,10 @@ class DimmingDelegate(val reactContext: ThemedReactContext, screen: Screen) {
             }
     }
 
-    private fun initBottomSheetCallback(screen: Screen): BottomSheetCallback {
-        dimmingViewCallback = AnimateDimmingViewCallback(screen, dimmingView, maxAlpha)
+    private fun requireBottomSheetCallback(screen: Screen): BottomSheetCallback {
+        if (dimmingViewCallback == null) {
+            dimmingViewCallback = AnimateDimmingViewCallback(screen, dimmingView, maxAlpha)
+        }
         return dimmingViewCallback!!
     }
-
-//    private fun requireDecorView(): View =
-//        checkNotNull(screen.reactContext.currentActivity) { "[RNScreens] Attempt to access activity on detached context" }
-//            .window.decorView
 }

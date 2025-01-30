@@ -37,7 +37,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCa
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.bottomsheet.DimmingDelegate
+import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
@@ -85,7 +85,7 @@ class ScreenStackFragment :
 
     private val dimmingDelegate =
         lazy(LazyThreadSafetyMode.NONE) {
-            DimmingDelegate(screen.reactContext, screen)
+            DimmingViewManager(screen.reactContext, screen)
         }
 
     private var sheetDelegate: SheetDelegate? = null
