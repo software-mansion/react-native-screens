@@ -85,6 +85,12 @@ class Screen(
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
+
+    /**
+     * When using form sheet presentation we want to delay enter transition **on Paper** in order
+     * to wait for initial layout from React, otherwise the animator-based animation will look
+     * glitchy. *This is not needed on Fabric*.
+     */
     var shouldTriggerPostponedTransitionAfterLayout = false
 
     var footer: ScreenFooter? = null
