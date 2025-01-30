@@ -3,17 +3,14 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
-import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
 import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 class ScreenStack(
     context: Context?,
@@ -67,16 +64,6 @@ class ScreenStack(
             removalTransitionStarted = false
             dispatchOnFinishTransitioning()
         }
-    }
-
-    override fun onViewRemoved(child: View?) {
-        Log.i(TAG, "[Stack] onViewRemoved: $child")
-        super.onViewRemoved(child)
-    }
-
-    override fun onViewAdded(child: View?) {
-        Log.i(TAG, "[Stack] onViewAdded: $child")
-        super.onViewAdded(child)
     }
 
     fun onViewAppearTransitionEnd() {
@@ -313,8 +300,7 @@ class ScreenStack(
                     }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
-                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.usesFormSheetPresentation() && newTop.screen.isSheetFitToContents()) {
-                    Log.w(TAG, "$id Request postpone transaction")
+                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.isSheetFitToContents()) {
                     newTop.fragment.postponeEnterTransition()
                 }
                 it.add(id, newTop.fragment)
@@ -325,7 +311,6 @@ class ScreenStack(
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
 
-            Log.w(TAG, "$id Commit transaction")
             it.commitNowAllowingStateLoss()
         }
     }
