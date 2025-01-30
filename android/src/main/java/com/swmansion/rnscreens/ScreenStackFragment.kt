@@ -9,7 +9,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -39,7 +38,6 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingDelegate
-import com.swmansion.rnscreens.bottomsheet.DimmingView
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
@@ -732,46 +730,6 @@ class ScreenStackFragment :
                         super.startAnimation(it)
                     }
             }
-        }
-
-        override fun startViewTransition(view: View) {
-            super.startViewTransition(view)
-            if (view is DimmingView) {
-                Log.i(TAG, "Start transition on dimming view")
-//                view.transitionAlpha = view.alpha
-//                view.setTransitionVisibility(View.INVISIBLE)
-            }
-        }
-
-        override fun onViewRemoved(child: View?) {
-            Log.i(TAG, "[Coordinator] onViewRemoved: $child")
-            super.onViewRemoved(child)
-        }
-
-        override fun onViewAdded(child: View?) {
-            Log.i(TAG, "[Coordinator] onViewAdded: $child")
-            super.onViewAdded(child)
-        }
-
-        override fun onMeasure(
-            widthMeasureSpec: Int,
-            heightMeasureSpec: Int,
-        ) {
-            val width = MeasureSpec.getSize(widthMeasureSpec)
-            val height = MeasureSpec.getSize(heightMeasureSpec)
-            Log.i(TAG, "[Coordinator] Measured with $width $height")
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        }
-
-        override fun onLayout(
-            changed: Boolean,
-            l: Int,
-            t: Int,
-            r: Int,
-            b: Int,
-        ) {
-            Log.i(TAG, "[Coordinator] onLayout ${r - l}, ${b - t}")
-            super.onLayout(changed, l, t, r, b)
         }
 
         /**
