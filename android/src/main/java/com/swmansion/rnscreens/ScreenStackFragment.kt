@@ -26,8 +26,6 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.animation.addListener
-import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
@@ -51,7 +49,7 @@ import com.swmansion.rnscreens.bottomsheet.useTwoDetents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.recycle
-import com.swmansion.rnscreens.transition.CustomEvaluator
+import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
 
 sealed class KeyboardState
@@ -337,26 +335,14 @@ class ScreenStackFragment :
                         animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
                     }
                 }
-            val startValueCallback = {
-                if (screen.height != 0) {
-                    Log.i("CB", "[StartValue] ${screen.height.toFloat()}")
-                    screen.height.toFloat()
-                } else {
-                    Log.i("CB", "[StartValue] 0f")
-                    0f
-                }
-            }
-            val customEvaluator = CustomEvaluator(startValueCallback, { 0f })
+            val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
+            val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
             val slideAnimator =
-                ValueAnimator.ofObject(customEvaluator, screen.height.toFloat(), 0f).apply {
+                ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        Log.i(TAG, "slide: $animatedValue")
                         animatedValue?.let { screen.translationY = it }
                     }
-                    addListener(onStart = { animator ->
-                        Log.i(TAG, "starting slideAnimator")
-                    })
                 }
             animatorSet.play(alphaAnimator).with(slideAnimator)
         } else {
