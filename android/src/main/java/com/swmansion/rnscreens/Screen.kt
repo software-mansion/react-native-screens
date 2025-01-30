@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
-import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
@@ -134,7 +133,6 @@ class Screen(
         if (isSheetFitToContents()) {
             sheetBehavior?.let {
                 if (it.maxHeight != height) {
-                    Log.i(TAG, "[Screen] Received maxHeight from content wrapper: $height")
                     it.maxHeight = height
                 }
             }
@@ -144,7 +142,6 @@ class Screen(
                 shouldTriggerPostponedTransitionAfterLayout = true
                 val parent = parentAsViewGroup()
                 if (parent != null && !parent.isInLayout) {
-                    Log.d(TAG, "request layout on coordinator")
                     // There are reported cases (irreproducible) when Screen is not laid out after
                     // maxHeight is set on behaviour.
                     parent.requestLayout()
@@ -174,7 +171,6 @@ class Screen(
     ) {
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val height = MeasureSpec.getSize(heightMeasureSpec)
-        Log.i(TAG, "[Screen] Measured with $width $height")
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
@@ -188,8 +184,6 @@ class Screen(
         if (container is ScreenStack && changed) {
             val width = r - l
             val height = b - t
-
-            Log.i(TAG, "[Screen] Laid out with $width $height")
 
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 updateScreenSizeFabric(width, height, t)
@@ -209,7 +203,6 @@ class Screen(
     private fun maybeTriggerPostponedTransition() {
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
-            Log.i(TAG, "Triggering postponed transaction")
             fragment?.startPostponedEnterTransition()
         }
     }
@@ -507,13 +500,9 @@ class Screen(
         }
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        Log.i(TAG, "[Screen] onInterceptTouchEvent")
-        return super.onInterceptTouchEvent(ev)
-    }
-
+    // We do not want to perform any action, therefore do not need to override the associated method.
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.i(TAG, "[Screen] onTouchEvent")
         // If we're a form sheet we want to consume the gestures to prevent
         // DimmingView's callback from triggering when clicking on the sheet itself.
         return if (stackPresentation === StackPresentation.FORM_SHEET) {
