@@ -95,6 +95,14 @@ def safeAppExtGet(prop, fallback) {
     appProject?.ext?.has(prop) ? appProject.ext.get(prop) : fallback
 }
 
+def reactNativeRootDir = resolveReactNativeDirectory()
+
+def reactProperties = new Properties()
+file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
+
+def REACT_NATIVE_VERSION = reactProperties.getProperty("VERSION_NAME")
+def REACT_NATIVE_MINOR_VERSION = REACT_NATIVE_VERSION.startsWith("0.0.0-") ? 1000 : REACT_NATIVE_VERSION.split("\\.")[1].toInteger()
+
 def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
 
 android {
@@ -166,6 +174,7 @@ android {
     sourceSets.main {
         ext.androidResDir = "src/main/res"
         java {
+            // Architecture specific
             if (IS_NEW_ARCHITECTURE_ENABLED) {
                 srcDirs += [
                     "src/fabric/java",
@@ -174,6 +183,15 @@ android {
                 srcDirs += [
                     "src/paper/java",
                 ]
+            }
+
+            // Background color resolving
+            if (REACT_NATIVE_MINOR_VERSION <= 74) {
+                srcDirs += "src/versioned/backgroundcolor/74"
+            } else if (REACT_NATIVE_MINOR_VERSION <= 76) {
+                srcDirs += "src/versioned/backgroundcolor/76"
+            } else {
+                srcDirs += "src/versioned/backgroundcolor/latest"
             }
         }
         res {
@@ -188,7 +206,7 @@ android {
 
 repositories {
     maven {
-        url "${resolveReactNativeDirectory()}/android"
+        url "${reactNativeRootDir}/android"
     }
 
     mavenCentral()
