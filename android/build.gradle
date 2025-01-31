@@ -187,11 +187,11 @@ android {
 
             // Background color resolving
             if (REACT_NATIVE_MINOR_VERSION <= 74) {
-                srcDirs += "src/versioned/backgroundresolver/74"
+                srcDirs += "src/versioned/backgroundcolor/74"
             } else if (REACT_NATIVE_MINOR_VERSION <= 76) {
-                srcDirs += "src/versioned/backgroundresolver/76"
+                srcDirs += "src/versioned/backgroundcolor/76"
             } else {
-                srcDirs += "src/versioned/backgroundresolver/latest"
+                srcDirs += "src/versioned/backgroundcolor/latest"
             }
         }
         res {
