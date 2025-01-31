@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -17,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
+import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
@@ -24,13 +26,16 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.parentAsViewGroup
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
-    val reactContext: ReactContext,
+    val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
     ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
@@ -81,6 +86,13 @@ class Screen(
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
 
+    /**
+     * When using form sheet presentation we want to delay enter transition **on Paper** in order
+     * to wait for initial layout from React, otherwise the animator-based animation will look
+     * glitchy. *This is not needed on Fabric*.
+     */
+    var shouldTriggerPostponedTransitionAfterLayout = false
+
     var footer: ScreenFooter? = null
         set(value) {
             if (value == null && field != null) {
@@ -110,7 +122,7 @@ class Screen(
      * `fitToContents` for formSheets, as this is first entry point where we can acquire
      * height of our content.
      */
-    override fun onLayoutCallback(
+    override fun onContentWrapperLayout(
         changed: Boolean,
         left: Int,
         top: Int,
@@ -119,10 +131,21 @@ class Screen(
     ) {
         val height = bottom - top
 
-        if (sheetDetents.count() == 1 && sheetDetents.first() == SHEET_FIT_TO_CONTENTS) {
+        if (isSheetFitToContents()) {
             sheetBehavior?.let {
                 if (it.maxHeight != height) {
                     it.maxHeight = height
+                }
+            }
+
+            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                // On old architecture we delay enter transition in order to wait for initial frame.
+                shouldTriggerPostponedTransitionAfterLayout = true
+                val parent = parentAsViewGroup()
+                if (parent != null && !parent.isInLayout) {
+                    // There are reported cases (irreproducible) when Screen is not laid out after
+                    // maxHeight is set on behaviour.
+                    parent.requestLayout()
                 }
             }
         }
@@ -162,6 +185,17 @@ class Screen(
 
             footer?.onParentLayout(changed, l, t, r, b, container!!.height)
             notifyHeaderHeightChange(t)
+
+            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                maybeTriggerPostponedTransition()
+            }
+        }
+    }
+
+    private fun maybeTriggerPostponedTransition() {
+        if (shouldTriggerPostponedTransitionAfterLayout) {
+            shouldTriggerPostponedTransitionAfterLayout = false
+            fragment?.startPostponedEnterTransition()
         }
     }
 
@@ -377,6 +411,28 @@ class Screen(
         }
     }
 
+    fun endRemovalTransition() {
+        if (!isBeingRemoved) {
+            return
+        }
+        isBeingRemoved = false
+        endTransitionRecursive(this)
+    }
+
+    private fun endTransitionRecursive(parent: ViewGroup) {
+        parent.children.forEach { childView ->
+            parent.endViewTransition(childView)
+
+            if (childView is ScreenStackHeaderConfig) {
+                endTransitionRecursive(childView.toolbar)
+            }
+
+            if (childView is ViewGroup) {
+                endTransitionRecursive(childView)
+            }
+        }
+    }
+
     private fun startTransitionRecursive(parent: ViewGroup?) {
         parent?.let {
             for (i in 0 until it.childCount) {
@@ -406,6 +462,17 @@ class Screen(
             }
         }
     }
+
+    // We do not want to perform any action, therefore do not need to override the associated method.
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean =
+        if (usesFormSheetPresentation()) {
+            // If we're a form sheet we want to consume the gestures to prevent
+            // DimmingView's callback from triggering when clicking on the sheet itself.
+            true
+        } else {
+            super.onTouchEvent(event)
+        }
 
     private fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext

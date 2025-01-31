@@ -7,11 +7,10 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
-import com.swmansion.rnscreens.bottomsheet.DimmingFragment
+import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
 import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 class ScreenStack(
     context: Context?,
@@ -50,7 +49,7 @@ class ScreenStack(
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
-            Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
+            Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen)
             else -> ScreenStackFragment(screen)
         }
 
@@ -242,7 +241,6 @@ class ScreenStack(
                     }
                 }
             }
-
             // animation logic end
             goingForward = shouldUseOpenAnimation
 
@@ -302,6 +300,12 @@ class ScreenStack(
                     }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
+                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.isSheetFitToContents()) {
+                    // On old architecture the content wrapper might not have received its frame yet,
+                    // which is required to determine height of the sheet after animation. Therefore
+                    // we delay the transition and trigger it after views receive the layout.
+                    newTop.fragment.postponeEnterTransition()
+                }
                 it.add(id, newTop.fragment)
             }
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper

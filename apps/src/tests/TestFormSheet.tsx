@@ -45,7 +45,6 @@ export default function App() {
           presentation: 'formSheet',
           sheetAllowedDetents: [0.5, 1.0],
           sheetCornerRadius: 8,
-          sheetLargestUndimmedDetentIndex: 'last',
           contentStyle: {
             backgroundColor: 'lightblue',
           },

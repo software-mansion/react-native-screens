@@ -58,6 +58,7 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'> | RouteProps<'Modal'>
       <View style={{ alignItems: 'center' }}>
         <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..."></TextInput>
       </View>
+      <View style={{ backgroundColor: 'lightcoral', height: 500, width: '100%' }} />
     </View>
   );
 }
@@ -69,7 +70,7 @@ function Modal({ navigation }: RouteProps<'Modal'>): React.JSX.Element {
         <Button title="Go back" onPress={() => navigation.goBack()} />
       </View>
       <View style={{ alignItems: 'center' }}>
-        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..."></TextInput>
+        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
       </View>
     </View>
   );
@@ -79,17 +80,19 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
-        statusBarTranslucent: false
+        statusBarTranslucent: false,
       }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Second" component={Second} options={{
-          headerShown: false,
+          headerShown: true,
         }} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.5, 0.7],
+          //sheetAllowedDetents: [0.5, 0.7, 0.9],
+          sheetAllowedDetents: 'fitToContents',
+          sheetLargestUndimmedDetentIndex: 'none',
           contentStyle: {
-            backgroundColor: 'lightgreen'
+            backgroundColor: 'lightgreen',
           },
         }} />
         <Stack.Screen name="Modal" component={Modal} options={{

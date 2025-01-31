@@ -11,7 +11,7 @@ import com.facebook.react.uimanager.ReactPointerEventsView
 import com.swmansion.rnscreens.ext.equalWithRespectToEps
 
 /**
- * Serves as dimming view that can be used as background for some view that not fully fills
+ * Serves as dimming view that can be used as background for some view that does not fully fill
  * the viewport.
  *
  * This dimming view has one more additional feature: it blocks gestures if its alpha > 0.
@@ -40,6 +40,8 @@ class DimmingView(
         b: Int,
     ) = Unit
 
+    // We do not want to have any action defined here. We just want listeners notified that the click happened.
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (blockGestures) {
             callOnClick()
