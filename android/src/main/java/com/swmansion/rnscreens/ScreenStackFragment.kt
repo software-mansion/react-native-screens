@@ -25,6 +25,7 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.animation.addListener
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
@@ -46,6 +47,7 @@ import com.swmansion.rnscreens.bottomsheet.useThreeDetents
 import com.swmansion.rnscreens.bottomsheet.useTwoDetents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.events.ScreenEventDelegate
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -145,7 +147,12 @@ class ScreenStackFragment :
 
     override fun onViewAnimationEnd() {
         super.onViewAnimationEnd()
+
+        // Rely on guards inside the callee to detect whether this was indeed appear transition.
         notifyViewAppearTransitionEnd()
+
+        // Rely on guards inside the callee to detect whether this was indeed removal transition.
+        screen.endRemovalTransition()
     }
 
     private fun notifyViewAppearTransitionEnd() {
@@ -359,6 +366,7 @@ class ScreenStackFragment :
                 }
             animatorSet.play(alphaAnimator).with(slideAnimator)
         }
+        animatorSet.addListener(ScreenEventDelegate(this))
         return animatorSet
     }
 

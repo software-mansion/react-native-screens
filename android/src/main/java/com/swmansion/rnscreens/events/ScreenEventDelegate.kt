@@ -1,47 +1,10 @@
 package com.swmansion.rnscreens.events
 
-import android.util.Log
-import androidx.transition.Transition
-import com.swmansion.rnscreens.ScreenEventDispatcher
-import com.swmansion.rnscreens.ScreenFragment
+import android.animation.Animator
 import com.swmansion.rnscreens.ScreenFragmentWrapper
 
-class ScreenEventDelegate(private val eventDispatcher: ScreenEventDispatcher, private val wrapper: ScreenFragmentWrapper, private val direction: TransitionDirection): Transition.TransitionListener {
+class ScreenEventDelegate(private val wrapper: ScreenFragmentWrapper) : Animator.AnimatorListener {
     private var currentState: LifecycleState = LifecycleState.INITIALIZED
-
-    override fun onTransitionStart(transition: Transition) {
-        if (currentState < LifecycleState.START_DISPATCHED) {
-            Log.i(TAG, "onTransitionStart")
-            val eventType = if (direction === TransitionDirection.FORWARD) {
-                ScreenFragment.ScreenLifecycleEvent.WILL_APPEAR
-            } else {
-                ScreenFragment.ScreenLifecycleEvent.WILL_DISAPPEAR
-            }
-            eventDispatcher.dispatchLifecycleEvent(eventType, wrapper)
-            progressState()
-        }
-    }
-
-    override fun onTransitionEnd(transition: Transition) {
-        if (currentState < LifecycleState.END_DISPATCHED) {
-            Log.i(TAG, "onTransitionEnd")
-            val eventType = if (direction === TransitionDirection.FORWARD) {
-                ScreenFragment.ScreenLifecycleEvent.DID_APPEAR
-            } else {
-                ScreenFragment.ScreenLifecycleEvent.DID_DISAPPEAR
-            }
-            eventDispatcher.dispatchLifecycleEvent(eventType, wrapper)
-            transition.removeListener(this)
-            progressState()
-            wrapper.screen.endRemovalTransition()
-        }
-    }
-
-    override fun onTransitionCancel(transition: Transition) = Unit
-
-    override fun onTransitionPause(transition: Transition) = Unit
-
-    override fun onTransitionResume(transition: Transition) = Unit
 
     private fun progressState() {
        currentState = when (currentState) {
@@ -51,19 +14,29 @@ class ScreenEventDelegate(private val eventDispatcher: ScreenEventDispatcher, pr
        }
     }
 
-    private fun resetState() {
-       currentState = LifecycleState.INITIALIZED
+    override fun onAnimationStart(animation: Animator) {
+        if (currentState === LifecycleState.INITIALIZED) {
+            progressState()
+            wrapper.onViewAnimationStart()
+        }
     }
+
+    override fun onAnimationEnd(animation: Animator) {
+        if (currentState === LifecycleState.START_DISPATCHED) {
+            progressState()
+            animation.removeListener(this)
+            wrapper.onViewAnimationEnd()
+        }
+    }
+
+    override fun onAnimationCancel(animation: Animator) = Unit
+
+    override fun onAnimationRepeat(animation: Animator) = Unit
 
     private enum class LifecycleState {
         INITIALIZED,
         START_DISPATCHED,
         END_DISPATCHED,
-    }
-
-    enum class TransitionDirection {
-        FORWARD,
-        BACKWARD,
     }
 
     companion object {
