@@ -3,15 +3,18 @@ package com.swmansion.rnscreens.events
 import android.animation.Animator
 import com.swmansion.rnscreens.ScreenFragmentWrapper
 
-class ScreenEventDelegate(private val wrapper: ScreenFragmentWrapper) : Animator.AnimatorListener {
+class ScreenEventDelegate(
+    private val wrapper: ScreenFragmentWrapper,
+) : Animator.AnimatorListener {
     private var currentState: LifecycleState = LifecycleState.INITIALIZED
 
     private fun progressState() {
-       currentState = when (currentState) {
-           LifecycleState.INITIALIZED -> LifecycleState.START_DISPATCHED
-           LifecycleState.START_DISPATCHED -> LifecycleState.END_DISPATCHED
-           LifecycleState.END_DISPATCHED -> LifecycleState.END_DISPATCHED
-       }
+        currentState =
+            when (currentState) {
+                LifecycleState.INITIALIZED -> LifecycleState.START_DISPATCHED
+                LifecycleState.START_DISPATCHED -> LifecycleState.END_DISPATCHED
+                LifecycleState.END_DISPATCHED -> LifecycleState.END_DISPATCHED
+            }
     }
 
     override fun onAnimationStart(animation: Animator) {

@@ -7,7 +7,7 @@ typealias BoundaryValueProviderFn = (Number?) -> Float?
 /**
  * Float type evaluator that uses boundary values provided by callbacks passed as arguments and does
  * not use boundary values used during value animator construction. This allows to defer computation
- * of animator boundary values to the moment when animation has started.
+ * of animator boundary values to the moment when animation starts.
  */
 class ExternalBoundaryValuesEvaluator(val startValueProvider: BoundaryValueProviderFn, val endValueProvider: BoundaryValueProviderFn) : FloatEvaluator() {
     var startValueCache: Number? = null
