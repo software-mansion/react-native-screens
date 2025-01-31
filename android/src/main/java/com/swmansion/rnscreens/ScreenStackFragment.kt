@@ -25,9 +25,7 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.animation.addListener
 import androidx.core.view.WindowInsetsCompat
-import com.facebook.react.uimanager.BackgroundStyleApplicator
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
@@ -52,6 +50,7 @@ import com.swmansion.rnscreens.events.ScreenEventDelegate
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
+import com.swmansion.rnscreens.utils.resolveBackgroundColor
 
 sealed class KeyboardState
 
@@ -589,7 +588,7 @@ class ScreenStackFragment :
             return null
         }
 
-        val contentWrapperColor = BackgroundStyleApplicator.getBackgroundColor(contentWrapper)
+        val contentWrapperColor = contentWrapper.resolveBackgroundColor()
         return contentWrapperColor
     }
 
