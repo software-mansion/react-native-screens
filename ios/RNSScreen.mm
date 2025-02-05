@@ -388,6 +388,17 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
+- (BOOL)registerContentWrapper:(RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
+{
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet) {
+    return NO;
+  }
+  _contentWrapperBox = {.contentWrapper = contentWrapper, .contentHeightErrata = errata};
+  contentWrapper.delegate = self;
+  [contentWrapper triggerDelegateUpdate];
+  return YES;
+}
+
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
 - (void)contentWrapper:(RNSScreenContentWrapper *)contentWrapper receivedReactFrame:(CGRect)reactFrame
 {
@@ -1097,17 +1108,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
-
-- (BOOL)registerContentWrapper:(RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
-{
-  if (self.stackPresentation != RNSScreenStackPresentationFormSheet) {
-    return NO;
-  }
-  _contentWrapperBox = {.contentWrapper = contentWrapper, .contentHeightErrata = errata};
-  contentWrapper.delegate = self;
-  [contentWrapper triggerDelegateUpdate];
-  return YES;
-}
 
 - (void)postNotificationForEventDispatcherObserversWithEvent:(NSObject<RCTEvent> *)event
 {

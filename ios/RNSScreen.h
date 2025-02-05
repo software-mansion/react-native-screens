@@ -157,13 +157,11 @@ namespace react = facebook::react;
  */
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;
 
-#ifdef RCT_NEW_ARCH_ENABLED
 /**
  * Returns `YES` if the wrapper has been registered and it should not attempt to register on screen views higher in the
  * tree.
  */
 - (BOOL)registerContentWrapper:(nonnull RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
-#endif
 
 @end
 

@@ -1,5 +1,6 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSScreen.h"
+#import "RNSScreenStack.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -8,7 +9,6 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import "RNSScreenStack.h"
 
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -36,8 +36,6 @@ namespace react = facebook::react;
 {
   [self notifyDelegateWithFrame:self.frame];
 }
-
-#ifdef RCT_NEW_ARCH_ENABLED
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
@@ -83,6 +81,8 @@ namespace react = facebook::react;
   RNSScreen *screen = (RNSScreen *)[self.reactSuperview reactViewController];
   [self attachToAncestorScreenViewStartingFrom:screen];
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTComponentViewProtocol
 
