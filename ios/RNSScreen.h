@@ -3,10 +3,10 @@
 
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenContentWrapper.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
-#import "RNSScreenContentWrapper.h"
 #else
 #import <React/RCTView.h>
 #endif // RCT_NEW_ARCH_ENABLED
@@ -51,10 +51,11 @@ namespace react = facebook::react;
 
 @interface RNSScreenView :
 #ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView <RNSScreenContentWrapperDelegate>
+    RCTViewComponentView
 #else
     RCTView
 #endif
+    <RNSScreenContentWrapperDelegate>
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;

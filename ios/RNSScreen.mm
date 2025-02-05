@@ -66,12 +66,12 @@ struct ContentWrapperBox {
 @implementation RNSScreenView {
   __weak ReactScrollViewBase *_sheetsScrollView;
   BOOL _didSetSheetAllowedDetentsOnController;
+  ContentWrapperBox _contentWrapperBox;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
-  ContentWrapperBox _contentWrapperBox;
 #else
   __weak RCTBridge *_bridge;
   RCTTouchHandler *_touchHandler;
@@ -421,6 +421,7 @@ RNS_IGNORE_SUPER_CALL_END
   if ([view isKindOfClass:RNSScreenContentWrapper.class] &&
       self.stackPresentation == RNSScreenStackPresentationFormSheet) {
     auto contentWrapper = (RNSScreenContentWrapper *)view;
+    _contentWrapperBox.contentWrapper = contentWrapper;
     contentWrapper.delegate = self;
   }
 
