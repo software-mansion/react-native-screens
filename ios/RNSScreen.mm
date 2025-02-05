@@ -388,17 +388,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-- (BOOL)registerContentWrapper:(RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
-{
-  if (self.stackPresentation != RNSScreenStackPresentationFormSheet) {
-    return NO;
-  }
-  _contentWrapperBox = {.contentWrapper = contentWrapper, .contentHeightErrata = errata};
-  contentWrapper.delegate = self;
-  [contentWrapper triggerDelegateUpdate];
-  return YES;
-}
-
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
 - (void)contentWrapper:(RNSScreenContentWrapper *)contentWrapper receivedReactFrame:(CGRect)reactFrame
 {
@@ -943,8 +932,10 @@ RNS_IGNORE_SUPER_CALL_END
           // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
           // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
           // actual content. The update will be triggered once our child is mounted and laid out by React.
-          // Fabric: in this very moment our children are already mounted & laid out. In the very end of this method,
-          // after all other configuration is applied we trigger content wrapper to send us update on its frame.
+          // Fabric: no nested stack: in this very moment our children are already mounted & laid out. In the very end
+          // of this method, after all other configuration is applied we trigger content wrapper to send us update on
+          // its frame. Fabric: nested stack: we wait until nested content wrapper registers itself with this view and
+          // then update the dimensions.
         } else {
           [self setAllowedDetentsForSheet:sheet
                                        to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents]
@@ -1105,6 +1096,17 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
+
+- (BOOL)registerContentWrapper:(RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
+{
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet) {
+    return NO;
+  }
+  _contentWrapperBox = {.contentWrapper = contentWrapper, .contentHeightErrata = errata};
+  contentWrapper.delegate = self;
+  [contentWrapper triggerDelegateUpdate];
+  return YES;
+}
 
 - (void)postNotificationForEventDispatcherObserversWithEvent:(NSObject<RCTEvent> *)event
 {
