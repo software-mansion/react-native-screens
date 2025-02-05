@@ -52,13 +52,14 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
+          //sheetAllowedDetents: [0.4, 0.75, 1.0],
           sheetAllowedDetents: 'fitToContents',
           sheetCornerRadius: 8,
-          headerShown: true,
+          headerShown: false,
           contentStyle: {
             backgroundColor: 'lightblue',
           },
-          unstable_sheetFooter: FormSheetFooter,
+          //unstable_sheetFooter: FormSheetFooter,
         }} />
       </Stack.Navigator>
     </NavigationContainer>
