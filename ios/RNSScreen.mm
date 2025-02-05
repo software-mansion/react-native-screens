@@ -17,6 +17,7 @@
 #import <rnscreens/RNSScreenComponentDescriptor.h>
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
+#import "RNSReactLayoutDelegate.h"
 #import "RNSScreenViewEvent.h"
 #else
 #import <React/RCTScrollView.h>
@@ -44,9 +45,14 @@ namespace react = facebook::react;
 constexpr NSInteger SHEET_FIT_TO_CONTENTS = -1;
 constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
+struct ContentWrapperBox {
+  __weak RNSScreenContentWrapper *contentWrapper{nil};
+  float contentHeightErrata{0.f};
+};
+
 @interface RNSScreenView () <
     UIAdaptivePresentationControllerDelegate,
-    RNSScreenContentWrapperDelegate,
+    RNSReactLayoutDelegate,
 #if !TARGET_OS_TV
     UISheetPresentationControllerDelegate,
 #endif
@@ -67,7 +73,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
-  __weak RNSScreenContentWrapper *_contentWrapper;
+  ContentWrapperBox _contentWrapperBox;
 #else
   __weak RCTBridge *_bridge;
   RCTTouchHandler *_touchHandler;
@@ -89,7 +95,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
     static const auto defaultProps = std::make_shared<const react::RNSScreenProps>();
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
-    _contentWrapper = nil;
+    _contentWrapperBox = {};
     [self initCommonProps];
   }
   return self;
@@ -384,10 +390,22 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
+- (BOOL)registerContentWrapper:(RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
+{
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet) {
+    return NO;
+  }
+  _contentWrapperBox = {.contentWrapper = contentWrapper, .contentHeightErrata = errata};
+  contentWrapper.delegate = self;
+  [contentWrapper triggerDelegateUpdate];
+  return YES;
+}
+
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
-- (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr
+- (void)view:(UIView *)view receivedReactFrame:(CGRect)reactFrame
 {
   if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _didSetSheetAllowedDetentsOnController == YES) {
+    NSLog(@"%@ skips detent update", self);
     return;
   }
 
@@ -403,7 +421,9 @@ RNS_IGNORE_SUPER_CALL_END
     }
 
     if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == SHEET_FIT_TO_CONTENTS) {
-      auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height] ]];
+      NSLog(@"%@ updates detents", self);
+      auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height +
+                                                              _contentWrapperBox.contentHeightErrata] ]];
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
     }
   }
@@ -902,6 +922,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
     return;
   }
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   int firstDimmedDetentIndex = _sheetAllowedDetents.count;
@@ -1030,7 +1051,7 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
   // We trigger update from content wrapper, because on Fabric we update props after the children are mounted & laid
   // out.
-  [self->_contentWrapper triggerDelegateUpdate];
+  [self->_contentWrapperBox.contentWrapper triggerDelegateUpdate];
 #endif // RCT_NEW_ARCH_ENABLED
 #endif // Check for iOS >= 15
 }
@@ -1122,9 +1143,8 @@ RNS_IGNORE_SUPER_CALL_END
   if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
     auto contentWrapper = (RNSScreenContentWrapper *)childComponentView;
     contentWrapper.delegate = self;
-    _contentWrapper = contentWrapper;
-  }
-  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+    _contentWrapperBox.contentWrapper = contentWrapper;
+  } else if ([childComponentView isKindOfClass:RNSScreenStackHeaderConfig.class]) {
     _config = (RNSScreenStackHeaderConfig *)childComponentView;
     _config.screenView = self;
   }
@@ -1138,8 +1158,8 @@ RNS_IGNORE_SUPER_CALL_END
     _config = nil;
   }
   if ([childComponentView isKindOfClass:[RNSScreenContentWrapper class]]) {
-    _contentWrapper.delegate = nil;
-    _contentWrapper = nil;
+    _contentWrapperBox.contentWrapper.delegate = nil;
+    _contentWrapperBox.contentWrapper = nil;
   }
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];

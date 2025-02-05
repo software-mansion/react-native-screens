@@ -1,5 +1,6 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
+#import "RNSReactLayoutDelegate.h"
 #else
 #import <React/RCTUIManagerObserverCoordinator.h>
 #import <React/RCTViewManager.h>
@@ -30,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL disableSwipeBack;
 
 #ifdef RCT_NEW_ARCH_ENABLED
+@property (nonatomic, nullable, weak) id<RNSReactLayoutDelegate> reactLayoutDelegate;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
 #endif // RCT_NEW_ARCH_ENABLED

@@ -4,6 +4,7 @@
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTViewComponentView.h>
+#import "RNSReactLayoutDelegate.h"
 #else
 #import <React/RCTView.h>
 #endif // RCT_NEW_ARCH_ENABLED
@@ -11,15 +12,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenContentWrapper;
-
-@protocol RNSScreenContentWrapperDelegate <NSObject>
-
-/**
- * This method is called by the content wrapper on a delegate when React Native updates the layout.
- */
-- (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr;
-
-@end
 
 @interface RNSScreenContentWrapper :
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -33,7 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)triggerDelegateUpdate;
 
-@property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
+@property (nonatomic, nullable, weak) id<RNSReactLayoutDelegate> delegate;
+@property (nonatomic, readonly) float headerHeightErrata;
 
 @end
 

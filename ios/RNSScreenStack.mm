@@ -1,4 +1,5 @@
 #ifdef RCT_NEW_ARCH_ENABLED
+#import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTFabricSurface.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -72,6 +73,7 @@ namespace react = facebook::react;
 
 - (void)viewDidLayoutSubviews
 {
+  NSLog(@"Stack viewDidLayoutSubviews, header %lf", self.navigationBar.frame.size.height);
   [super viewDidLayoutSubviews];
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
@@ -1201,6 +1203,20 @@ RNS_IGNORE_SUPER_CALL_END
   screenChildComponent.reactSuperview = nil;
   [_reactSubviews removeObject:screenChildComponent];
   [screenChildComponent removeFromSuperview];
+}
+
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+
+  NSLog(
+      @"Stack receives frame %@, header: %lf, origin: %lf",
+      NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)),
+      _controller.navigationBar.frame.size.height,
+      self.frame.origin.y);
+
+  [self->_reactLayoutDelegate view:self receivedReactFrame:RCTCGRectFromRect(layoutMetrics.frame)];
 }
 
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
