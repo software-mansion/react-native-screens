@@ -51,7 +51,7 @@ namespace react = facebook::react;
 
 @interface RNSScreenView :
 #ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView <RNSReactLayoutDelegate>
+    RCTViewComponentView <RNSScreenContentWrapperDelegate>
 #else
     RCTView
 #endif

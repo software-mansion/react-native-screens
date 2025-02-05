@@ -17,7 +17,6 @@
 #import <rnscreens/RNSScreenComponentDescriptor.h>
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
-#import "RNSReactLayoutDelegate.h"
 #import "RNSScreenViewEvent.h"
 #else
 #import <React/RCTScrollView.h>
@@ -52,7 +51,6 @@ struct ContentWrapperBox {
 
 @interface RNSScreenView () <
     UIAdaptivePresentationControllerDelegate,
-    RNSReactLayoutDelegate,
 #if !TARGET_OS_TV
     UISheetPresentationControllerDelegate,
 #endif
@@ -402,10 +400,9 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
-- (void)view:(UIView *)view receivedReactFrame:(CGRect)reactFrame
+- (void)contentWrapper:(RNSScreenContentWrapper *)contentWrapper receivedReactFrame:(CGRect)reactFrame
 {
   if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _didSetSheetAllowedDetentsOnController == YES) {
-    NSLog(@"%@ skips detent update", self);
     return;
   }
 

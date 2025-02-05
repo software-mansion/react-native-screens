@@ -21,16 +21,20 @@ namespace react = facebook::react;
 {
   [super reactSetFrame:frame];
   if (self.delegate != nil) {
-    [self.delegate view:self receivedReactFrame:frame];
+    [self.delegate contentWrapper:self receivedReactFrame:frame];
   }
 }
 
 #endif // !RCT_NEW_ARCH_ENABLED
 
+- (void)notifyDelegateWithFrame:(CGRect)frame
+{
+  [self.delegate contentWrapper:self receivedReactFrame:frame];
+}
+
 - (void)triggerDelegateUpdate
 {
-  NSLog(@"triggerDelegateUpdate from CW %@ to %@", self, self.delegate);
-  [self.delegate view:self receivedReactFrame:self.frame];
+  [self notifyDelegateWithFrame:self.frame];
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -86,7 +90,7 @@ namespace react = facebook::react;
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
-  [self.delegate view:self receivedReactFrame:RCTCGRectFromRect(layoutMetrics.frame)];
+  [self notifyDelegateWithFrame:RCTCGRectFromRect(layoutMetrics.frame)];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
