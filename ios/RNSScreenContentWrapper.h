@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RNSScreenContentWrapperDelegate <NSObject>
 
 /**
- * This method is called by the content wrapper on a delegate when React Native updates the layout.
+ * Called by the content wrapper on a delegate when React Native updates the layout.
  */
-- (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr;
+- (void)contentWrapper:(RNSScreenContentWrapper *)contentWrapper receivedReactFrame:(CGRect)reactFrame;
 
 @end
 

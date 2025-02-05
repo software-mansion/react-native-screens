@@ -3,6 +3,7 @@
 
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenContentWrapper.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
@@ -54,6 +55,7 @@ namespace react = facebook::react;
 #else
     RCTView
 #endif
+    <RNSScreenContentWrapperDelegate>
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
@@ -126,9 +128,12 @@ namespace react = facebook::react;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 - (instancetype)initWithFrame:(CGRect)frame;
-/// Tell `Screen` that it will be unmounted in next transaction.
-/// The component needs this so that we can later decide whether to
-/// replace it with snapshot or not.
+
+/**
+ * Tell `Screen` that it will be unmounted in next transaction.
+ * The component needs this so that we can later decide whether to
+ * replace it with snapshot or not.
+ */
 - (void)willBeUnmountedInUpcomingTransaction;
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
@@ -147,8 +152,16 @@ namespace react = facebook::react;
  */
 - (void)invalidate;
 
-/// Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
+/**
+ * Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
+ */
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;
+
+/**
+ * Returns `YES` if the wrapper has been registered and it should not attempt to register on screen views higher in the
+ * tree.
+ */
+- (BOOL)registerContentWrapper:(nonnull RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
 
 @end
 
