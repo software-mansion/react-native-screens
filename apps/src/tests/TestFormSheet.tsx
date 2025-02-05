@@ -1,7 +1,7 @@
-import { NavigationContainer, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp, createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useLayoutEffect } from "react";
-import { Button, Text, TextInput, View } from "react-native";
+import { NavigationContainer, RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useLayoutEffect } from 'react';
+import { Button, Text, TextInput, View } from 'react-native';
 
 type RouteParamList = {
   Home: undefined;
@@ -30,10 +30,19 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
         <Button title="Go back" onPress={() => navigation.goBack()} />
       </View>
       <View style={{ alignItems: 'center' }}>
-        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..."></TextInput>
+        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
       </View>
     </View>
-  )
+  );
+}
+
+function FormSheetFooter() {
+  return (
+    <View style={{ height: 64, backgroundColor: 'red' }}>
+      <Text>Footer</Text>
+      <Button title="Just click me" onPress={() => console.log('Footer button clicked')} />
+    </View>
+  );
 }
 
 export default function App() {
@@ -43,20 +52,14 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.5, 1.0],
+          sheetAllowedDetents: 'fitToContents',
           sheetCornerRadius: 8,
+          headerShown: true,
           contentStyle: {
             backgroundColor: 'lightblue',
           },
-          unstable_sheetFooter: () => {
-            return (
-              <View style={{ height: 64, backgroundColor: 'red' }}>
-                <Text>Footer</Text>
-                <Button title="Just click me" onPress={() => console.log('Footer button clicked')} />
-              </View>
-            );
-          }
-        }}/>
+          unstable_sheetFooter: FormSheetFooter,
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
