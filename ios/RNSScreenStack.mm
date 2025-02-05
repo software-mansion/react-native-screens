@@ -1205,20 +1205,6 @@ RNS_IGNORE_SUPER_CALL_END
   [screenChildComponent removeFromSuperview];
 }
 
-- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
-           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
-{
-  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
-
-  NSLog(
-      @"Stack receives frame %@, header: %lf, origin: %lf",
-      NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)),
-      _controller.navigationBar.frame.size.height,
-      self.frame.origin.y);
-
-  [self->_reactLayoutDelegate view:self receivedReactFrame:RCTCGRectFromRect(layoutMetrics.frame)];
-}
-
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
