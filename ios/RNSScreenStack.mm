@@ -1,5 +1,4 @@
 #ifdef RCT_NEW_ARCH_ENABLED
-#import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTFabricSurface.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -73,7 +72,6 @@ namespace react = facebook::react;
 
 - (void)viewDidLayoutSubviews
 {
-  NSLog(@"Stack viewDidLayoutSubviews, header %lf", self.navigationBar.frame.size.height);
   [super viewDidLayoutSubviews];
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;

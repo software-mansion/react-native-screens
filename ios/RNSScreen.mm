@@ -418,7 +418,6 @@ RNS_IGNORE_SUPER_CALL_END
     }
 
     if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == SHEET_FIT_TO_CONTENTS) {
-      NSLog(@"%@ updates detents", self);
       auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height +
                                                               _contentWrapperBox.contentHeightErrata] ]];
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
