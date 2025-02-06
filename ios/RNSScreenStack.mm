@@ -552,7 +552,18 @@ RNS_IGNORE_SUPER_CALL_END
       // See: https://github.com/software-mansion/react-native-screens/issues/2048
       // For now, to mitigate the issue, we also decide to trigger its dismissal before
       // starting the presentation chain down below in finish() callback.
-      [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
+      if (!firstModalToBeDismissed.isBeingDismissed) {
+        [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
+      } else {
+        // We need to wait for its dismissal and then run our presentation code.
+        // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
+        // immediately present another owned one. Dismissal of the foreign one will be triggered by foreign controller.
+        [[firstModalToBeDismissed transitionCoordinator]
+            animateAlongsideTransition:nil
+                            completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
+                              finish();
+                            }];
+      }
       return;
     }
   }
