@@ -553,7 +553,7 @@ RNS_IGNORE_SUPER_CALL_END
       // For now, to mitigate the issue, we also decide to trigger its dismissal before
       // starting the presentation chain down below in finish() callback.
       if (!firstModalToBeDismissed.isBeingDismissed) {
-        [firstModalToBeDismissed dismissViewControllerAnimated:shouldAnimate completion:finish];
+        [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
       } else {
         // We need to wait for its dismissal and then run our presentation code.
         // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
