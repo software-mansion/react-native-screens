@@ -41,6 +41,7 @@
     "android/src/main/res",
     "android/src/fabric/",
     "android/src/paper/",
+    "android/src/versioned/",
     "android/build.gradle",
     "android/CMakeLists.txt",
     "ios/",
