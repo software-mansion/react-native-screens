@@ -751,6 +751,9 @@ RNS_IGNORE_SUPER_CALL_END
                                                fromViewController:(UIViewController *)fromVC
                                                  toViewController:(UIViewController *)toVC
 {
+  if (![toVC.view isKindOfClass:[RNSScreenView class]]) {
+    return nil;
+  }
   RNSScreenView *screen;
   if (operation == UINavigationControllerOperationPush) {
     screen = ((RNSScreen *)toVC).screenView;
