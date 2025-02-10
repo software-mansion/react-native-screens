@@ -1,24 +1,55 @@
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useLayoutEffect } from 'react';
-import { Button, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Button, FlatList, Text, TextInput, View } from 'react-native';
 
 type RouteParamList = {
   Home: undefined;
   FormSheet: undefined;
-}
+  NestedStackHost: undefined;
+};
+
+type NestedStackRouteParamList = {
+  NestedHome: undefined;
+  NestedFormSheet: undefined;
+};
 
 type RouteProps<RouteName extends keyof RouteParamList> = {
   navigation: NativeStackNavigationProp<RouteParamList, RouteName>;
   route: RouteProp<RouteParamList, RouteName>;
 }
 
+type NestedRouteProps<RouteName extends keyof NestedStackRouteParamList> = {
+  navigation: NativeStackNavigationProp<NestedStackRouteParamList, RouteName>;
+  route: RouteProp<NestedStackRouteParamList, RouteName>;
+}
+
 const Stack = createNativeStackNavigator<RouteParamList>();
+const NestedStack = createNativeStackNavigator<NestedStackRouteParamList>();
+
+type ItemData = {
+  id: number,
+  text: string;
+}
+
+const DATA: ItemData[] = Array.from({ length: 1000 }).map((_, index) => ({ id: index, text: `Item no. ${index}` }));
+
+function RenderItem({ item }: { item: ItemData }) {
+  return (
+    <View>
+      <Text>
+        {item.text}
+      </Text>
+    </View>
+  );
+}
+
 
 function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
       <Button title="Open FormSheet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open NestedStack" onPress={() => navigation.navigate('NestedStackHost')} />
     </View>
   );
 }
@@ -33,6 +64,34 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
         <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
       </View>
     </View>
+  );
+}
+
+function NestedFormSheet({ navigation }: NestedRouteProps<'NestedFormSheet'>) {
+  return (
+    <FlatList
+      data={DATA}
+      renderItem={RenderItem}
+      keyExtractor={item => item.id.toString()}
+    />
+  );
+}
+
+function NestedHome({ navigation }: NestedRouteProps<'NestedHome'>) {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'goldenrod' }}>
+      <Text>NestedHome</Text>
+      <Button title="Open FormSheet" onPress={() => navigation.navigate('NestedFormSheet')} />
+    </View>
+  );
+}
+
+function NestedStackHost({ navigation }: RouteProps<'NestedStackHost'>) {
+  return (
+    <NestedStack.Navigator>
+      <NestedStack.Screen name="NestedHome" component={NestedHome} />
+      <NestedStack.Screen name="NestedFormSheet" component={NestedFormSheet} options={{ presentation: 'formSheet', headerShown: false }} />
+    </NestedStack.Navigator>
   );
 }
 
@@ -61,6 +120,7 @@ export default function App() {
           },
           //unstable_sheetFooter: FormSheetFooter,
         }} />
+        <Stack.Screen name="NestedStackHost" component={NestedStackHost} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
