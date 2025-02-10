@@ -9,11 +9,6 @@ type RouteParamList = {
   FormSheetWithFlatList: undefined;
 };
 
-type NestedStackRouteParamList = {
-  NestedHome: undefined;
-  NestedFormSheet: undefined;
-};
-
 type RouteProps<RouteName extends keyof RouteParamList> = {
   navigation: NativeStackNavigationProp<RouteParamList, RouteName>;
   route: RouteProp<RouteParamList, RouteName>;
@@ -71,6 +66,7 @@ function FormSheetWithFlatList({ }: RouteProps<'FormSheetWithFlatList'>) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FormSheetFooter() {
   return (
     <View style={{ height: 64, backgroundColor: 'red' }}>
