@@ -6,7 +6,7 @@ import { Button, FlatList, Text, TextInput, View } from 'react-native';
 type RouteParamList = {
   Home: undefined;
   FormSheet: undefined;
-  NestedStackHost: undefined;
+  FormSheetWithFlatList: undefined;
 };
 
 type NestedStackRouteParamList = {
@@ -19,13 +19,7 @@ type RouteProps<RouteName extends keyof RouteParamList> = {
   route: RouteProp<RouteParamList, RouteName>;
 }
 
-type NestedRouteProps<RouteName extends keyof NestedStackRouteParamList> = {
-  navigation: NativeStackNavigationProp<NestedStackRouteParamList, RouteName>;
-  route: RouteProp<NestedStackRouteParamList, RouteName>;
-}
-
 const Stack = createNativeStackNavigator<RouteParamList>();
-const NestedStack = createNativeStackNavigator<NestedStackRouteParamList>();
 
 type ItemData = {
   id: number,
@@ -44,12 +38,11 @@ function RenderItem({ item }: { item: ItemData }) {
   );
 }
 
-
 function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
-      <Button title="Open FormSheet" onPress={() => navigation.navigate('FormSheet')} />
-      <Button title="Open NestedStack" onPress={() => navigation.navigate('NestedStackHost')} />
+      <Button title="Open sheeet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open sheet with FlatList" onPress={() => navigation.navigate('FormSheetWithFlatList')} />
     </View>
   );
 }
@@ -67,31 +60,14 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   );
 }
 
-function NestedFormSheet({ navigation }: NestedRouteProps<'NestedFormSheet'>) {
+
+function FormSheetWithFlatList({ }: RouteProps<'FormSheetWithFlatList'>) {
   return (
     <FlatList
       data={DATA}
       renderItem={RenderItem}
       keyExtractor={item => item.id.toString()}
     />
-  );
-}
-
-function NestedHome({ navigation }: NestedRouteProps<'NestedHome'>) {
-  return (
-    <View style={{ flex: 1, backgroundColor: 'goldenrod' }}>
-      <Text>NestedHome</Text>
-      <Button title="Open FormSheet" onPress={() => navigation.navigate('NestedFormSheet')} />
-    </View>
-  );
-}
-
-function NestedStackHost({ navigation }: RouteProps<'NestedStackHost'>) {
-  return (
-    <NestedStack.Navigator>
-      <NestedStack.Screen name="NestedHome" component={NestedHome} />
-      <NestedStack.Screen name="NestedFormSheet" component={NestedFormSheet} options={{ presentation: 'formSheet', headerShown: false }} />
-    </NestedStack.Navigator>
   );
 }
 
@@ -120,7 +96,15 @@ export default function App() {
           },
           //unstable_sheetFooter: FormSheetFooter,
         }} />
-        <Stack.Screen name="NestedStackHost" component={NestedStackHost} options={{ headerShown: false }} />
+        <Stack.Screen name="FormSheetWithFlatList" component={FormSheetWithFlatList} options={{
+          presentation: 'formSheet',
+          sheetAllowedDetents: [1.0],
+          sheetCornerRadius: 8,
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: 'lightblue',
+          },
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
