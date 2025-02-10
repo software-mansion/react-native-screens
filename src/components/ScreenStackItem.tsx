@@ -73,6 +73,7 @@ function ScreenStackItem(
               ? styles.absolute
               : null
             : styles.container,
+          // styles.container,
           contentStyle,
         ]}
         stackPresentation={stackPresentation ?? 'push'}>
