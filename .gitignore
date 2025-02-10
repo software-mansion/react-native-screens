@@ -40,6 +40,9 @@ jsconfig.json
 .project
 .vscode
 
+# Kotlin (since 2.0 compiler)
+.kotlin/
+
 # BUCK
 buck-out/
 bin/
