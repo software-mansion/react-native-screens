@@ -73,13 +73,26 @@ namespace react = facebook::react;
 
 - (void)attachToAncestorScreenView
 {
-  if (![self.reactSuperview isKindOfClass:RNSScreenView.class]) {
-    RCTLogError(@"Expected reactSuperview to be a RNSScreenView. Found %@", self.reactSuperview);
+  RNSScreen *_Nullable screen =
+      static_cast<RNSScreen *_Nullable>([[self findFirstScreenViewAncestor] reactViewController]);
+  if (screen == nil) {
+    RCTLogError(@"Failed to find parent screen controller from %@.", self);
     return;
   }
-
-  RNSScreen *screen = (RNSScreen *)[self.reactSuperview reactViewController];
   [self attachToAncestorScreenViewStartingFrom:screen];
+}
+
+- (nullable RNSScreenView *)findFirstScreenViewAncestor
+{
+  UIView *currentView = self;
+
+  // In standard scenario this should do only a single iteration.
+  // Haven't got repro, but we got
+  do {
+    currentView = currentView.reactSuperview;
+  } while (currentView != nil && ![currentView isKindOfClass:RNSScreenView.class]);
+
+  return static_cast<RNSScreenView *_Nullable>(currentView);
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
