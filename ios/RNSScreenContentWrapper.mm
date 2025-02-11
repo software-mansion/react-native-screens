@@ -87,7 +87,9 @@ namespace react = facebook::react;
   UIView *currentView = self;
 
   // In standard scenario this should do only a single iteration.
-  // Haven't got repro, but we got
+  // Haven't got repro, but we got reports that there are scenarios
+  // when there are intermediate views between screen view & the content wrapper.
+  // https://github.com/software-mansion/react-native-screens/pull/2683
   do {
     currentView = currentView.reactSuperview;
   } while (currentView != nil && ![currentView isKindOfClass:RNSScreenView.class]);
