@@ -45,8 +45,9 @@ import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.useThreeDetents
 import com.swmansion.rnscreens.bottomsheet.useTwoDetents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
+import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.events.ScreenEventDelegate
+import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -366,7 +367,14 @@ class ScreenStackFragment :
                 }
             animatorSet.play(alphaAnimator).with(slideAnimator)
         }
-        animatorSet.addListener(ScreenEventDelegate(this))
+        animatorSet.addListener(
+            ScreenAnimationDelegate(
+                this,
+                ScreenEventEmitter(this.screen),
+                if (enter) ScreenAnimationDelegate.AnimationType.ENTER
+                else ScreenAnimationDelegate.AnimationType.EXIT
+            )
+        )
         return animatorSet
     }
 
