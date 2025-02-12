@@ -14,8 +14,8 @@ abstract class FabricEnabledHeaderSubviewViewGroup(
 ) : ViewGroup(context) {
     private var mStateWrapper: StateWrapper? = null
 
-    private var lastWidth = -1f
-    private var lastHeight = -1f
+    private var lastWidth = 0f
+    private var lastHeight = 0f
 
     fun setStateWrapper(wrapper: StateWrapper?) {
         mStateWrapper = wrapper
