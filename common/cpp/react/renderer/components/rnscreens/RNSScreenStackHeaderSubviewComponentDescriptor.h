@@ -35,7 +35,7 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
         shadowNode.getState());
     auto stateData = state->getData();
 
-    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+    if (stateData.frameSize.width != -1 && stateData.frameSize.height != -1) {
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
