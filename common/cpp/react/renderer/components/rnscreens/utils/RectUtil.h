@@ -33,4 +33,11 @@ inline constexpr bool checkFrameSizesEqualWithEps(
       equalWithRespectToEps(first.height, second.height, eps);
 }
 
+/**
+ * @return false if any component value is equal to -1.f
+ */
+inline constexpr bool isSizeEmpty(const react::Size &size) {
+  return size.width == -1.f || size.height == -1.f;
+}
+
 } // namespace rnscreens

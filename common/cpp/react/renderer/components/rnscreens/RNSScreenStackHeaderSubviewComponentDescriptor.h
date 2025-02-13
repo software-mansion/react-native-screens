@@ -8,6 +8,7 @@
 #include <react/renderer/components/rnscreens/utils/RectUtil.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSScreenStackHeaderSubviewShadowNode.h"
+#include "utils/RectUtil.h"
 
 namespace facebook::react {
 
@@ -35,7 +36,7 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
         shadowNode.getState());
     auto stateData = state->getData();
 
-    if (stateData.frameSize.width != -1 && stateData.frameSize.height != -1) {
+    if (!isSizeEmpty(stateData.frameSize)) {
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
