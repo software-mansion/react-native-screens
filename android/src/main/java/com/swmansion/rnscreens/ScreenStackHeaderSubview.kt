@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 
@@ -45,7 +44,6 @@ class ScreenStackHeaderSubview(
         if (changed && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             val width = r - l
             val height = b - t
-            Log.i("SSHS", "onLayout $width x $height")
             updateSubviewFrameState(width, height, l, t)
         }
     }
