@@ -13,6 +13,22 @@ function HomeScreen() {
   );
 }
 
+function HeaderTitle() {
+  return (
+    <View>
+      <Text>Title</Text>
+    </View>
+  );
+}
+
+function HeaderRight() {
+  return (
+    <View>
+      <Text>Right</Text>
+    </View>
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -21,6 +37,10 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           options={{
+            statusBarTranslucent: true,
+            statusBarStyle: 'dark',
+            //headerTitle: HeaderTitle,
+            //headerRight: HeaderRight,
             headerSearchBarOptions: {
               placeholder: 'Search...',
               onChangeText: (event) => {
