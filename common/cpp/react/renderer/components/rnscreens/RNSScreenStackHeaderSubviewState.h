@@ -45,7 +45,6 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
 #endif // ANDROID
 
   const Size frameSize{-1.f, -1.f};
-  //  const Size frameSize{};
   Point contentOffset{};
 
 #pragma mark - Getters
