@@ -303,7 +303,7 @@ export interface ScreenProps extends ViewProps {
    * while **Android is limited to three**.
    *
    * There is also possibility to specify `fitToContents` literal, which intents to set the sheet height
-   * to the height of its contents.
+   * to the height of its contents. On iOS `fitToContents` currently also includes small padding accounting for bottom inset.
    *
    * Please note that the array **must** be sorted in ascending order. This invariant is verified only in developement mode,
    * where violation results in error.
