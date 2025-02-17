@@ -16,6 +16,8 @@ abstract class FabricEnabledHeaderSubviewViewGroup(
 
     private var lastWidth = 0f
     private var lastHeight = 0f
+    private var lastOffsetX = 0f
+    private var lastOffsetY = 0f
 
     fun setStateWrapper(wrapper: StateWrapper?) {
         mStateWrapper = wrapper
@@ -45,13 +47,17 @@ abstract class FabricEnabledHeaderSubviewViewGroup(
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
         if (abs(lastWidth - realWidth) < DELTA &&
-            abs(lastHeight - realHeight) < DELTA
+            abs(lastHeight - realHeight) < DELTA &&
+            abs(lastOffsetX - offsetXDip) < DELTA &&
+            abs(lastOffsetY - offsetYDip) < DELTA
         ) {
             return
         }
 
         lastWidth = realWidth
         lastHeight = realHeight
+        lastOffsetX = offsetXDip
+        lastOffsetY = offsetYDip
 
         val map: WritableMap =
             WritableNativeMap().apply {

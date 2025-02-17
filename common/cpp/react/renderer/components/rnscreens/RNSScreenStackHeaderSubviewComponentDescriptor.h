@@ -8,6 +8,7 @@
 #include <react/renderer/components/rnscreens/utils/RectUtil.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSScreenStackHeaderSubviewShadowNode.h"
+#include "utils/RectUtil.h"
 
 namespace facebook::react {
 
@@ -32,12 +33,11 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
 
     auto state = std::static_pointer_cast<
         const RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(
-        shadowNode.getState());
+        shadowNode.getMostRecentState());
     auto stateData = state->getData();
 
-    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(
-          Size{stateData.frameSize.width, stateData.frameSize.height});
+    if (!isSizeEmpty(stateData.frameSize)) {
+      layoutableShadowNode.setSize(stateData.frameSize);
     }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
