@@ -1,11 +1,22 @@
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
 function HomeScreen() {
+  const navigation = useNavigation();
+
+  return (
+    <View style={styles.container}>
+      <Text>Home Screen</Text>
+      <Button title="Navigate DynamicHeaderScreen" onPress={() => navigation.navigate('DynamicHeader')} />
+    </View>
+  );
+}
+
+function DynamicHeaderScreen() {
   const navigation = useNavigation();
 
   React.useLayoutEffect(() => {
@@ -29,7 +40,8 @@ function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>Home Screen</Text>
+      <Text>DynamicHeaderScreen</Text>
+      <Button title="Go back" onPress={() => navigation.popTo('Home')} />
     </View>
   );
 }
@@ -68,15 +80,27 @@ export default function App() {
           options={{
             statusBarTranslucent: true,
             statusBarStyle: 'dark',
-            headerTitle: HeaderTitle,
-            //headerSearchBarOptions: {
-            //  placeholder: 'Search...',
-            //  onChangeText: (event) => {
-            //    console.log('Search text:', event.nativeEvent.text);
-            //  },
-            //},
+            //headerTitle: HeaderTitle,
+            //headerRight: HeaderRight,
+            headerSearchBarOptions: {
+              placeholder: 'Search...',
+              onChangeText: (event) => {
+                console.log('Search text:', event.nativeEvent.text);
+              },
+            },
           }}
         />
+        <Stack.Screen name="DynamicHeader" component={DynamicHeaderScreen} options={{
+          statusBarTranslucent: true,
+          statusBarStyle: 'dark',
+          headerTitle: HeaderTitle,
+          headerSearchBarOptions: {
+            placeholder: 'Search...',
+            onChangeText: (event) => {
+              console.log('Search text:', event.nativeEvent.text);
+            },
+          },
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
