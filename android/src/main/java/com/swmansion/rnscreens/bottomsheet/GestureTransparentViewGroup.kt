@@ -15,7 +15,7 @@ class GestureTransparentViewGroup(
     context: Context,
 ) : FrameLayout(context),
     ReactPointerEventsView {
-    override fun getPointerEvents(): PointerEvents = PointerEvents.BOX_NONE
+    override val pointerEvents: PointerEvents = PointerEvents.BOX_NONE
 
     companion object {
         const val TAG = "GestureTransparentFrameLayout"
