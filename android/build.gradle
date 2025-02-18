@@ -130,7 +130,8 @@ android {
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared",
-                        "-DRNS_NEW_ARCH_ENABLED=${IS_NEW_ARCHITECTURE_ENABLED}"
+                        "-DRNS_NEW_ARCH_ENABLED=${IS_NEW_ARCHITECTURE_ENABLED}",
+                         "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
             }
         }
     }
