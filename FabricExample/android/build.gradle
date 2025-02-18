@@ -20,6 +20,9 @@ buildscript {
 
 apply plugin: "com.facebook.react.rootproject"
 
+// Custom configuration. This is done in order to simplify process
+// of upgrading the wrapper, eliminating necessity to manually specify CLI options
+// to ensure that we use distribution of type `ALL`.
 tasks.named("wrapper") {
     it.distributionType = Wrapper.DistributionType.ALL
 }
