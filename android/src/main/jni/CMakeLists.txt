@@ -17,6 +17,7 @@ add_compile_options(
   -Wall
   -Wpedantic
   -Wno-gnu-zero-variadic-macro-arguments
+  -Wno-dollar-in-identifier-extension
 )
 
 file(GLOB LIB_CUSTOM_SRCS CONFIGURE_DEPENDS *.cpp ${LIB_COMMON_COMPONENTS_DIR}/*.cpp ${LIB_COMMON_COMPONENTS_DIR}/utils/*.cpp)
