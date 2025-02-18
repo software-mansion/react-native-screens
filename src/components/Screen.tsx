@@ -2,6 +2,10 @@
 
 import React from 'react';
 import { Animated, View, Platform } from 'react-native';
+import {
+  controlEdgeToEdgeValues,
+  isEdgeToEdge,
+} from 'react-native-is-edge-to-edge';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -48,6 +52,8 @@ interface ViewConfig extends View {
     };
   };
 }
+
+const EDGE_TO_EDGE = isEdgeToEdge();
 
 // This value must be kept in sync with native side.
 const SHEET_FIT_TO_CONTENTS = [-1];
@@ -149,6 +155,32 @@ function resolveSheetInitialDetentIndex(
     return 0;
   }
   return index;
+}
+
+function transformEdgeToEdgeProps(props: ScreenProps): ScreenProps {
+  const {
+    // Filter out edge-to-edge related props
+    statusBarColor,
+    statusBarTranslucent,
+    navigationBarColor,
+    navigationBarTranslucent,
+    ...rest
+  } = props;
+
+  if (__DEV__) {
+    controlEdgeToEdgeValues({
+      statusBarColor,
+      statusBarTranslucent,
+      navigationBarColor,
+      navigationBarTranslucent,
+    });
+  }
+
+  return {
+    ...rest,
+    statusBarTranslucent: true,
+    navigationBarTranslucent: true,
+  };
 }
 
 function isIndexInClosedRange(
@@ -381,7 +413,12 @@ export const ScreenContext = React.createContext(InnerScreen);
 const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
-  return <ScreenWrapper {...props} ref={ref} />;
+  return (
+    <ScreenWrapper
+      {...(EDGE_TO_EDGE ? transformEdgeToEdgeProps(props) : props)}
+      ref={ref}
+    />
+  );
 });
 
 Screen.displayName = 'Screen';
