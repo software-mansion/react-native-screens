@@ -4888,9 +4888,9 @@ __metadata:
   linkType: hard
 
 "flow-parser@npm:0.*":
-  version: 0.261.1
-  resolution: "flow-parser@npm:0.261.1"
-  checksum: 10c0/69ff1e243fd919f64ca616e5a727f60c031472101636bcd246329a9978cf2d336126bce5c78bd20dbdcd5dc59278df5b4ba51bc941af49e367b9d7bc105a831d
+  version: 0.261.2
+  resolution: "flow-parser@npm:0.261.2"
+  checksum: 10c0/4c71290dc246c481fa82940b8ae9b4a87aa0d2a8fecd866765084e4ccaeedbb489b841140dca5619696594ab99f8f83a6f74c2116bf24af0ea89cc61fc9ed314
   languageName: node
   linkType: hard
 
