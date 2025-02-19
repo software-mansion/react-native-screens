@@ -29,8 +29,6 @@ function reactNavigationOptionalModuleFilter(module) {
  * @param {string} nodeModulesParentDir
  */
 function blockListProvider(modules, nodeModulesDir) {
-  console.log(modules);
-  console.log(nodeModulesDir);
   return modules.map(
     m =>
       new RegExp(`^${escape(path.join(nodeModulesDir, m))}\\/.*$`),
