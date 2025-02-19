@@ -68,7 +68,7 @@ class BottomSheetDialogRootView(
     }
 
     override fun onChildStartedNativeGesture(
-        view: View,
+        view: View?,
         event: MotionEvent,
     ) {
         jsTouchDispatcher.onChildStartedNativeGesture(event, eventDispatcher)
@@ -92,7 +92,7 @@ class BottomSheetDialogRootView(
         // need to keep receiving events.
     }
 
-    override fun handleException(throwable: Throwable?) {
+    override fun handleException(throwable: Throwable) {
         // TODO: I need ThemedReactContext here.
         // TODO: Determine where it is initially created & verify its lifecycle
         //        reactContext?.reactApplicationContext?.handleException(RuntimeException(throwable))
