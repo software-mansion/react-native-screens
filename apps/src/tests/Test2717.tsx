@@ -1,12 +1,31 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
-const Stack = createNativeStackNavigator();
-const NestedStack = createNativeStackNavigator();
+type StackRouteParamList = {
+  Home: undefined;
+  NestedStackHost: undefined;
+}
 
-function Home({ navigation }) {
+type NestedStackRouteParamList = {
+  NestedHome: undefined;
+  NestedSecond: undefined;
+  NestedThird: undefined;
+}
+
+type NavigationProp<ParamList extends ParamListBase> = {
+  navigation: NativeStackNavigationProp<ParamList>,
+}
+
+type StackNavigationProp = NavigationProp<StackRouteParamList>;
+type NestedStackNavigationProp = NavigationProp<NestedStackRouteParamList>;
+
+
+const Stack = createNativeStackNavigator<StackRouteParamList>();
+const NestedStack = createNativeStackNavigator<NestedStackRouteParamList>();
+
+function Home({ navigation }: StackNavigationProp) {
   return (
     <View style={[{ backgroundColor: 'goldenrod', flex: 1 }, styles.container]}>
       <Button title="Go NestedStack" onPress={() => navigation.navigate('NestedStackHost')} />
@@ -14,7 +33,7 @@ function Home({ navigation }) {
   );
 }
 
-function NestedHome({ navigation }) {
+function NestedHome({ navigation }: NestedStackNavigationProp) {
   return (
     <View style={[{ backgroundColor: 'goldenrod', flex: 1 }, styles.container]}>
       <Text>NestedHome</Text>
@@ -23,7 +42,7 @@ function NestedHome({ navigation }) {
   );
 }
 
-function NestedSecond({ navigation }) {
+function NestedSecond({ navigation }: NestedStackNavigationProp) {
   return (
     <View style={[{ backgroundColor: 'lightsalmon' }, styles.container]}>
       <Text>NestedSecond</Text>
@@ -33,7 +52,7 @@ function NestedSecond({ navigation }) {
   );
 }
 
-function NestedThird({ navigation }) {
+function NestedThird({ navigation }: NestedStackNavigationProp) {
   return (
     <View style={[{ backgroundColor: 'lightblue', flex: 1 }, styles.container]}>
       <Text>NestedSecond</Text>
