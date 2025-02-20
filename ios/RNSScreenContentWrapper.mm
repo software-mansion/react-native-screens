@@ -75,8 +75,13 @@ namespace react = facebook::react;
 {
   RNSScreen *_Nullable screen =
       static_cast<RNSScreen *_Nullable>([[self findFirstScreenViewAncestor] reactViewController]);
+
   if (screen == nil) {
-    RCTLogError(@"Failed to find parent screen controller from %@.", self);
+    // On old architecture, especially when executing `replace` action it can happen that **replaced** (old one) screen
+    // receives willMoveToWindow: with not nil argument. On new architecture it seems to work as expected.
+#ifdef RCT_NEW_ARCH_ENABLED
+    RCTLogWarn(@"Failed to find parent screen controller from %@.", self);
+#endif
     return;
   }
   [self attachToAncestorScreenViewStartingFrom:screen];
