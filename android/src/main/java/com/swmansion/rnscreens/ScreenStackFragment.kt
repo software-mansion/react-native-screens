@@ -331,13 +331,14 @@ class ScreenStackFragment :
         }
 
         val animatorSet = AnimatorSet()
+        val dimmingDelegate = dimmingDelegate.value
 
         if (enter) {
             val alphaAnimator =
-                ValueAnimator.ofFloat(0f, dimmingDelegate.value.maxAlpha).apply {
+                ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+                        animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
                     }
                 }
             val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
@@ -349,13 +350,21 @@ class ScreenStackFragment :
                         animatedValue?.let { screen.translationY = it }
                     }
                 }
-            animatorSet.play(alphaAnimator).with(slideAnimator)
+
+            animatorSet
+                .play(slideAnimator)
+                .takeIf {
+                    dimmingDelegate.willDimForDetentIndex(
+                        screen,
+                        screen.sheetInitialDetentIndex,
+                    )
+                }?.with(alphaAnimator)
         } else {
             val alphaAnimator =
-                ValueAnimator.ofFloat(dimmingDelegate.value.dimmingView.alpha, 0f).apply {
+                ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+                        animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
                     }
                 }
             val slideAnimator =
