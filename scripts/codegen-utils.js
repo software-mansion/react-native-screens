@@ -17,11 +17,11 @@ const RN_CODEGEN_DIR = path.resolve(
 );
 
 const SOURCE_FOLDER = 'java/com/facebook/react/viewmanagers';
-const SCREENS_SOURCE_FOLDER = 'java/com/swmansion/rnscreens'
+const SCREENS_SOURCE_FOLDER = 'java/com/swmansion/rnscreens';
 
 const SOURCE_FOLDERS = [
-  {codegenPath: `${GENERATED_DIR}/source/codegen/${SOURCE_FOLDER}`, oldArchPath: `${OLD_ARCH_DIR}/${SOURCE_FOLDER}`},
-  {codegenPath: `${GENERATED_DIR}/source/codegen/${SCREENS_SOURCE_FOLDER}`, oldArchPath: `${OLD_ARCH_DIR}/${SCREENS_SOURCE_FOLDER}`},
+  { codegenPath: `${GENERATED_DIR}/source/codegen/${SOURCE_FOLDER}`, oldArchPath: `${OLD_ARCH_DIR}/${SOURCE_FOLDER}` },
+  { codegenPath: `${GENERATED_DIR}/source/codegen/${SCREENS_SOURCE_FOLDER}`, oldArchPath: `${OLD_ARCH_DIR}/${SCREENS_SOURCE_FOLDER}` },
 ]
 
 const BLACKLISTED_FILES = new Set([
@@ -62,7 +62,7 @@ function fixOldArchJavaForRN72Compat(dir) {
     const filePath = path.join(dir, file);
     const fileExtension = path.extname(file);
     if (fileExtension === '.java') {
-      let fileContent = fs.readFileSync(filePath, 'utf-8');
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
       let newFileContent = fileContent.replace(
         /extends ReactContextBaseJavaModule implements TurboModule/g,
         'extends ReactContextBaseJavaModule implements ReactModuleWithSpec, TurboModule',
@@ -74,11 +74,45 @@ function fixOldArchJavaForRN72Compat(dir) {
           'import com.facebook.react.bridge.ReactMethod;\nimport com.facebook.react.bridge.ReactModuleWithSpec;',
         );
 
-        console.log(' => fixOldArchJava applied to:', filePath);
+        console.log(' => fixOldArchJava72 applied to:', filePath);
         fs.writeFileSync(filePath, newFileContent, 'utf-8');
       }
     } else if (fs.lstatSync(filePath).isDirectory()) {
       fixOldArchJavaForRN72Compat(filePath);
+    }
+  });
+}
+
+/**
+  * Adapts files codegend for the new architecture for paticular needs of old architecure.
+  * This usually comes down to keeping backward compat on old architecture.
+  *
+  * @param {string} dir - directory with codegened files
+  */
+function fixOldArchJavaForRN77Compat(dir) {
+  console.log(`${TAG} fixOldArchJavaForRN77Compat:  ${dir}`);
+  const files = readdirSync(dir);
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    const fileExtension = path.extname(file);
+    if (fileExtension === '.java') {
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      let newFileContent = fileContent.replace(
+        /extends ViewManagerWithGeneratedInterface/g,
+        '',
+      );
+      if (fileContent !== newFileContent) {
+        // Also remove redundant import
+        newFileContent = newFileContent.replace(
+          /import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;/,
+          '',
+        );
+
+        console.log(' => fixOldArchJava77 applied to:', filePath);
+        fs.writeFileSync(filePath, newFileContent, 'utf-8');
+      }
+    } else if (fs.lstatSync(filePath).isDirectory()) {
+      fixOldArchJavaForRN77Compat(filePath);
     }
   });
 }
@@ -95,13 +129,15 @@ async function generateCodegen() {
     `node ${RN_DIR}/scripts/generate-specs-cli.js --platform android --schemaPath ${GENERATED_DIR}/source/codegen/schema.json --outputDir ${GENERATED_DIR}/source/codegen --javaPackageName ${PACKAGE_NAME}`,
   );
 
-  fixOldArchJavaForRN72Compat(`${GENERATED_DIR}/source/codegen/java/`);
+  const generatedJavaFilesDir = `${GENERATED_DIR}/source/codegen/java/`;
+  fixOldArchJavaForRN72Compat(generatedJavaFilesDir);
+  fixOldArchJavaForRN77Compat(generatedJavaFilesDir);
 }
 
 async function generateCodegenJavaOldArch() {
   await generateCodegen();
 
-  SOURCE_FOLDERS.forEach(({codegenPath, oldArchPath}) => {
+  SOURCE_FOLDERS.forEach(({ codegenPath, oldArchPath }) => {
     const generatedFiles = readdirSync(codegenPath);
     const oldArchFiles = readdirSync(oldArchPath);
     const existingFilesSet = new Set(oldArchFiles.map(fileName => fileName));
@@ -155,7 +191,7 @@ async function checkCodegenIntegrity() {
 
   await generateCodegen();
 
-  SOURCE_FOLDERS.forEach(({codegenPath, oldArchPath}) => {
+  SOURCE_FOLDERS.forEach(({ codegenPath, oldArchPath }) => {
     const oldArchFiles = readdirSync(oldArchPath);
     oldArchFiles.forEach(file => {
       compareFileAtTwoPaths(file, codegenPath, oldArchPath);

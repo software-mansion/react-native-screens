@@ -1232,7 +1232,7 @@ RNS_IGNORE_SUPER_CALL_END
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   for (const auto &mutation : transaction.getMutations()) {
-    if (mutation.parentTag == self.tag &&
+    if (MUTATION_PARENT_TAG(mutation) == self.tag &&
         (mutation.type == react::ShadowViewMutation::Type::Insert ||
          mutation.type == react::ShadowViewMutation::Type::Remove)) {
       // we need to wait until children have their layout set. At this point they don't have the layout
