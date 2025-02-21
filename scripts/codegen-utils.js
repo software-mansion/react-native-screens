@@ -54,35 +54,6 @@ function throwIfFileMissing(filepath) {
   }
 }
 
-function fixOldArchJavaForRN72Compat(dir) {
-  console.log(`${TAG} fixOldArchJavaForRN72Compat:  ${dir}`);
-  // see https://github.com/rnmapbox/maps/issues/3193
-  const files = readdirSync(dir);
-  files.forEach(file => {
-    const filePath = path.join(dir, file);
-    const fileExtension = path.extname(file);
-    if (fileExtension === '.java') {
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      let newFileContent = fileContent.replace(
-        /extends ReactContextBaseJavaModule implements TurboModule/g,
-        'extends ReactContextBaseJavaModule implements ReactModuleWithSpec, TurboModule',
-      );
-      if (fileContent !== newFileContent) {
-        // also insert an import line with `import com.facebook.react.bridge.ReactModuleWithSpec;`
-        newFileContent = newFileContent.replace(
-          /import com.facebook.react.bridge.ReactMethod;/,
-          'import com.facebook.react.bridge.ReactMethod;\nimport com.facebook.react.bridge.ReactModuleWithSpec;',
-        );
-
-        console.log(' => fixOldArchJava72 applied to:', filePath);
-        fs.writeFileSync(filePath, newFileContent, 'utf-8');
-      }
-    } else if (fs.lstatSync(filePath).isDirectory()) {
-      fixOldArchJavaForRN72Compat(filePath);
-    }
-  });
-}
-
 /**
   * Adapts files codegend for the new architecture for paticular needs of old architecure.
   * This usually comes down to keeping backward compat on old architecture.
@@ -130,7 +101,6 @@ async function generateCodegen() {
   );
 
   const generatedJavaFilesDir = `${GENERATED_DIR}/source/codegen/java/`;
-  fixOldArchJavaForRN72Compat(generatedJavaFilesDir);
   fixOldArchJavaForRN77Compat(generatedJavaFilesDir);
 }
 
