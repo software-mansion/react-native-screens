@@ -127,7 +127,6 @@ Here's a table with summary of supported `react-native` versions when Fabric is 
 
 | library version | react-native version |
 | --------------- | -------------------- |
-| 4.9.0+          | 0.78.0+              |
 | 4.5.0+          | 0.77.0+              |
 | 4.0.0+          | 0.76.0+              |
 
