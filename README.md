@@ -115,6 +115,7 @@ Paper is the default rendering system for React Native versions prior to 0.76.
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.9.0+          | 0.76.0+              |
 | 4.5.0+          | 0.74.0+              |
 | 4.0.0+          | 0.72.0+              |
 
@@ -126,6 +127,7 @@ Here's a table with summary of supported `react-native` versions when Fabric is 
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.9.0+          | 0.78.0+              |
 | 4.5.0+          | 0.77.0+              |
 | 4.0.0+          | 0.76.0+              |
 
