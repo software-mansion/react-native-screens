@@ -1,12 +1,13 @@
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useLayoutEffect } from 'react';
-import { Button, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Button, FlatList, Text, TextInput, View } from 'react-native';
 
 type RouteParamList = {
   Home: undefined;
   FormSheet: undefined;
-}
+  FormSheetWithFlatList: undefined;
+};
 
 type RouteProps<RouteName extends keyof RouteParamList> = {
   navigation: NativeStackNavigationProp<RouteParamList, RouteName>;
@@ -15,10 +16,28 @@ type RouteProps<RouteName extends keyof RouteParamList> = {
 
 const Stack = createNativeStackNavigator<RouteParamList>();
 
+type ItemData = {
+  id: number,
+  text: string;
+}
+
+const DATA: ItemData[] = Array.from({ length: 1000 }).map((_, index) => ({ id: index, text: `Item no. ${index}` }));
+
+function RenderItem({ item }: { item: ItemData }) {
+  return (
+    <View>
+      <Text>
+        {item.text}
+      </Text>
+    </View>
+  );
+}
+
 function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
-      <Button title="Open FormSheet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open sheeet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open sheet with FlatList" onPress={() => navigation.navigate('FormSheetWithFlatList')} />
     </View>
   );
 }
@@ -36,6 +55,18 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   );
 }
 
+
+function FormSheetWithFlatList({ }: RouteProps<'FormSheetWithFlatList'>) {
+  return (
+    <FlatList
+      data={DATA}
+      renderItem={RenderItem}
+      keyExtractor={item => item.id.toString()}
+    />
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FormSheetFooter() {
   return (
     <View style={{ height: 64, backgroundColor: 'red' }}>
@@ -61,6 +92,15 @@ export default function App() {
             backgroundColor: 'lightblue',
           },
           //unstable_sheetFooter: FormSheetFooter,
+        }} />
+        <Stack.Screen name="FormSheetWithFlatList" component={FormSheetWithFlatList} options={{
+          presentation: 'formSheet',
+          sheetAllowedDetents: [1.0],
+          sheetCornerRadius: 8,
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: 'lightblue',
+          },
         }} />
       </Stack.Navigator>
     </NavigationContainer>

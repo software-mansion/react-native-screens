@@ -35,6 +35,7 @@ function ScreenStackItem(
     contentStyle,
     style,
     screenId,
+    sheetAllowedDetents,
     // eslint-disable-next-line camelcase
     unstable_sheetFooter,
     ...rest
@@ -64,15 +65,19 @@ function ScreenStackItem(
     headerHiddenPreviousRef.current = headerConfig?.hidden;
   }, [headerConfig?.hidden, stackPresentation]);
 
+  console.log(`ScreenStackItem ${sheetAllowedDetents}`);
+
   const content = (
     <>
       <DebugContainer
         style={[
-          stackPresentation === 'formSheet'
+          stackPresentation === 'formSheet' &&
+          sheetAllowedDetents === 'fitToContents'
             ? Platform.OS === 'ios'
               ? styles.absolute
               : null
             : styles.container,
+          // styles.container,
           contentStyle,
         ]}
         stackPresentation={stackPresentation ?? 'push'}>
@@ -135,6 +140,7 @@ function ScreenStackItem(
       activityState={activityState}
       shouldFreeze={shouldFreeze}
       stackPresentation={stackPresentation}
+      sheetAllowedDetents={sheetAllowedDetents}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       style={[style, internalScreenStyle]}
       {...rest}>
