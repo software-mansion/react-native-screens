@@ -6,8 +6,6 @@
 
 #define RNS_IGNORE_SUPER_CALL_END _Pragma("clang diagnostic pop")
 
-#import <React-RCTAppDelegate/RCTReactNativeFactory.h>
-
 #if defined __has_include
 #if __has_include( \
     <React-RCTAppDelegate/RCTReactNativeFactory.h>) // added in 78

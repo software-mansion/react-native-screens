@@ -4,7 +4,6 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <React/RCTSurfaceView.h>
-#import <React/RCTVersion.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
