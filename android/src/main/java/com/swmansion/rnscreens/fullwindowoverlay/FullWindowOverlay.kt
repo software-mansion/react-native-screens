@@ -9,6 +9,10 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
 
+/**
+ * Layout of this component is managed by React & the implementation assumes width & height we receive
+ * are the width & height of the window.
+ */
 class FullWindowOverlay(
     val context: ThemedReactContext,
 ) : ReactViewGroup(context) {
@@ -51,6 +55,7 @@ class FullWindowOverlay(
         val width = right - left
         val height = bottom - top
         Log.i(TAG, "onLayout ($left, $top) ($width, $height)")
+
         if (changed) {
             resolveWindowManager().updateViewLayout(hostView, createLayoutParams(right - left, bottom - top))
         }
@@ -91,6 +96,9 @@ class FullWindowOverlay(
         width: Int,
         height: Int,
     ): WindowManager.LayoutParams =
+        // We don't use LayoutParams.MATCH_PARENT here for width & height, because ViewRootImpl
+        // applies top & bottom inset and we don't want this right now.
+
         WindowManager.LayoutParams(
             width,
             height,
