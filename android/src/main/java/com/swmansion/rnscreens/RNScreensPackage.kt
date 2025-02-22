@@ -7,6 +7,7 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.swmansion.rnscreens.fullwindowoverlay.FullWindowOverlayViewManager
 import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
 
 // Fool autolinking for older versions that do not support BaseReactPackage.
@@ -45,6 +46,7 @@ class RNScreensPackage : BaseReactPackage() {
             SearchBarManager(),
             ScreenFooterManager(),
             ScreenContentWrapperManager(),
+            FullWindowOverlayViewManager(),
         )
     }
 
