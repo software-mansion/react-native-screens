@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.fullwindowoverlay
 import android.content.Context
 import android.graphics.PixelFormat
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.views.view.ReactViewGroup
@@ -11,6 +12,17 @@ class FullWindowOverlay(
     val context: ThemedReactContext,
 ) : ReactViewGroup(context) {
     internal val hostView = FullWindowOverlayHostView(context)
+
+    fun onAddView(
+        child: View,
+        index: Int,
+    ) {
+        hostView.addView(child, index)
+    }
+
+    fun onRemoveViewAt(index: Int) {
+        hostView.removeViewAt(index)
+    }
 
     override fun onMeasure(
         widthMeasureSpec: Int,
