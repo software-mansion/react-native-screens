@@ -29,6 +29,18 @@ class FullWindowOverlayHostView(
             null
         }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = MeasureSpec.getSize(heightMeasureSpec)
+        if (isReactOriginatedMeasure(widthMeasureSpec, heightMeasureSpec)) {
+//            hostView.measure(widthMeasureSpec, heightMeasureSpec)
+            Log.i(TAG, "onMeasure - React $width, $height")
+//            hostView.measure(widthMeasureSpec, heightMeasureSpec)
+        } else {
+            Log.i(TAG, "onMeasure - SYSTEM $width, $height")
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
     override fun onLayout(
         changed: Boolean,
         l: Int,
@@ -36,19 +48,15 @@ class FullWindowOverlayHostView(
         r: Int,
         b: Int,
     ) {
-        Log.i(TAG, "onLayout")
+        val width = r - l
+        val height = b - t
+        Log.i(TAG, "onLayout (${l}, ${t}) (${width}, ${height})")
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         jsTouchDispatcher.handleTouchEvent(ev, eventDispatcher, context)
         jsPointerDispatcher?.handleMotionEvent(ev, eventDispatcher, true)
         return super.onInterceptTouchEvent(ev)
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        jsTouchDispatcher.handleTouchEvent(event, eventDispatcher, context)
-        super.onTouchEvent(event)
-        return true
     }
 
     override fun onInterceptHoverEvent(event: MotionEvent): Boolean {
@@ -78,6 +86,12 @@ class FullWindowOverlayHostView(
     override fun handleException(t: Throwable) {
         context.reactApplicationContext?.handleException(RuntimeException(t))
     }
+
+    private fun isReactOriginatedMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY &&
+            MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
 
     companion object {
         const val TAG = "FullWindowOverlayHostView"

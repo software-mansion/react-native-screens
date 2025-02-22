@@ -29,46 +29,53 @@ class FullWindowOverlay(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int,
     ) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = MeasureSpec.getSize(heightMeasureSpec)
         if (isReactOriginatedMeasure(widthMeasureSpec, heightMeasureSpec)) {
-            val width = MeasureSpec.getSize(widthMeasureSpec)
-            val height = MeasureSpec.getSize(heightMeasureSpec)
 //            hostView.measure(widthMeasureSpec, heightMeasureSpec)
             Log.i(TAG, "onMeasure - React $width, $height")
+//            hostView.measure(widthMeasureSpec, heightMeasureSpec)
+        } else {
+            Log.i(TAG, "onMeasure - SYSTEM $width, $height")
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
+    override fun onLayout(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        val width = right - left
+        val height = bottom - top
+        Log.i(TAG, "onLayout ($left, $top) ($width, $height)")
+        if (changed) {
+            resolveWindowManager().updateViewLayout(hostView, createLayoutParams(right - left, bottom - top))
+        }
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        val windowManager = resolveWindowManager()
-
-        Log.i(TAG, "onAttachedToWindow")
-
-        if (isLaidOut) {
-            Log.i(TAG, "already laid out")
-        } else {
-            Log.e(TAG, "not laid out")
-        }
-
-        val hostLayoutParams =
-            WindowManager.LayoutParams(
-                1080,
-                2220,
-                0,
-                0,
-                WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                PixelFormat.RGBA_8888,
-            )
-        windowManager.addView(hostView, hostLayoutParams)
+        presentHostViewIfNeeded()
     }
 
     override fun onDetachedFromWindow() {
-        val windowManager = resolveWindowManager()
-        windowManager.removeView(hostView)
-
+        dismissHostViewIfNeeded()
         super.onDetachedFromWindow()
+    }
+
+    internal fun presentHostViewIfNeeded() {
+        if (!hostView.isAttachedToWindow) {
+            resolveWindowManager().addView(hostView, createLayoutParams(1080, 2220))
+        }
+    }
+
+    internal fun dismissHostViewIfNeeded() {
+        if (hostView.isAttachedToWindow) {
+            resolveWindowManager().removeView(hostView)
+        }
     }
 
     private fun resolveWindowManager(): WindowManager {
@@ -79,6 +86,21 @@ class FullWindowOverlay(
             throw IllegalStateException("Failed to resolve window manager from context")
         }
     }
+
+    private fun createLayoutParams(
+        width: Int,
+        height: Int,
+    ): WindowManager.LayoutParams =
+        WindowManager.LayoutParams(
+            width,
+            height,
+            0,
+            0,
+            WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            PixelFormat.RGBA_8888,
+        )
 
     private fun isReactOriginatedMeasure(
         widthMeasureSpec: Int,
