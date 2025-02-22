@@ -29,7 +29,10 @@ class FullWindowOverlayHostView(
             null
         }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val height = MeasureSpec.getSize(heightMeasureSpec)
         if (isReactOriginatedMeasure(widthMeasureSpec, heightMeasureSpec)) {
@@ -41,6 +44,7 @@ class FullWindowOverlayHostView(
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
@@ -50,7 +54,7 @@ class FullWindowOverlayHostView(
     ) {
         val width = r - l
         val height = b - t
-        Log.i(TAG, "onLayout (${l}, ${t}) (${width}, ${height})")
+        Log.i(TAG, "onLayout ($l, $t) ($width, $height)")
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
@@ -74,6 +78,7 @@ class FullWindowOverlayHostView(
         ev: MotionEvent,
     ) {
         jsTouchDispatcher.onChildStartedNativeGesture(ev, eventDispatcher)
+        jsPointerDispatcher?.onChildStartedNativeGesture(ev, eventDispatcher)
     }
 
     override fun onChildEndedNativeGesture(
@@ -91,7 +96,7 @@ class FullWindowOverlayHostView(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int,
     ) = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY &&
-            MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
+        MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
 
     companion object {
         const val TAG = "FullWindowOverlayHostView"
