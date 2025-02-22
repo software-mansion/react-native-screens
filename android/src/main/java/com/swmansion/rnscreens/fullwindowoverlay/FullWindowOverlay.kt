@@ -6,12 +6,13 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
 
 class FullWindowOverlay(
     val context: ThemedReactContext,
 ) : ReactViewGroup(context) {
-    internal val hostView = FullWindowOverlayHostView(context)
+    internal val hostView = FullWindowOverlayHostView(context, UIManagerHelper.getEventDispatcherForReactTag(context, id)!!, id)
 
     fun onAddView(
         child: View,
@@ -31,6 +32,7 @@ class FullWindowOverlay(
         if (isReactOriginatedMeasure(widthMeasureSpec, heightMeasureSpec)) {
             val width = MeasureSpec.getSize(widthMeasureSpec)
             val height = MeasureSpec.getSize(heightMeasureSpec)
+//            hostView.measure(widthMeasureSpec, heightMeasureSpec)
             Log.i(TAG, "onMeasure - React $width, $height")
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -60,6 +62,13 @@ class FullWindowOverlay(
                 PixelFormat.RGBA_8888,
             )
         windowManager.addView(hostView, hostLayoutParams)
+    }
+
+    override fun onDetachedFromWindow() {
+        val windowManager = resolveWindowManager()
+        windowManager.removeView(hostView)
+
+        super.onDetachedFromWindow()
     }
 
     private fun resolveWindowManager(): WindowManager {
