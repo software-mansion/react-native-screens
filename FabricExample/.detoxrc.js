@@ -50,12 +50,12 @@ module.exports = {
       device: {
         adbName: 'e2e_emulator',
       },
-      utilBinaryPaths: ['e2e/apps/test-butler-app-2.2.1.apk'],
+      utilBinaryPaths: ['../Example/e2e/apps/test-butler-app-2.2.1.apk'],
     },
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: 'e2e_emulator',
+        avdName: 'Pixel_3a_API_34',
       },
       utilBinaryPaths: ['../Example/e2e/apps/test-butler-app-2.2.1.apk'],
     },
