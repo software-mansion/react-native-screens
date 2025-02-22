@@ -23,13 +23,11 @@ class JSI_EXPORT RNSFullWindowOverlayShadowNode final
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
-#if !defined(ANDROID)
   static ShadowNodeTraits BaseTraits() {
     auto traits = ConcreteViewShadowNodeSuperType::BaseTraits();
     traits.set(ShadowNodeTraits::Trait::RootNodeKind);
     return traits;
   }
-#endif
 };
 
 } // namespace facebook::react
