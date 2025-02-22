@@ -589,6 +589,12 @@ Boolean indicating whether to obscure the underlying content with semi-transpare
 
 Defaults to `true`.
 
+#### `showBookmarkButton` (iOS only)
+
+Boolean indicates whether the search bar should display a bookmark button.
+
+Defaults to `false`.
+
 #### `onBlur`
 
 A callback that gets called when search bar has lost focus.
@@ -596,6 +602,10 @@ A callback that gets called when search bar has lost focus.
 #### `onCancelButtonPress`
 
 A callback that gets called when the cancel button is pressed.
+
+#### `onBookmarkButtonPress`
+
+A callback that gets called when the bookmark button is pressed.
 
 #### `onChangeText`
 
