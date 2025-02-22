@@ -56,9 +56,7 @@ class FullWindowOverlay(
                 0,
                 WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.RGBA_8888,
             )
         windowManager.addView(hostView, hostLayoutParams)
