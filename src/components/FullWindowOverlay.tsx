@@ -24,6 +24,11 @@ function FullWindowOverlay(props: { children: ReactNode }) {
     );
     return <View {...props} />;
   }
+
+  if (Platform.OS === 'android') {
+    console.warn('Support for FullWindowOverlay on Android is experimental');
+  }
+
   return (
     <NativeFullWindowOverlay
       style={[StyleSheet.absoluteFill, { width, height }]}>
