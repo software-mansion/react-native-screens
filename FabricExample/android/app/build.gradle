@@ -84,6 +84,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        testBuildType System.getProperty('testBuildType', 'release') // Detox
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox
     }
     signingConfigs {
         debug {
@@ -103,11 +105,22 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+
+            // Detox-specific additions to pro-guard
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
         }
     }
 }
 
 dependencies {
+    // Detox
+    androidTestImplementation('com.wix:detox:+') {
+        // Both rn-screens and detox are using this class
+        // https://github.com/wix/Detox/issues/2848
+        exclude group: 'com.google.android.material'
+    }
+    implementation "androidx.appcompat:appcompat:1.6.1" // Detox
+
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
