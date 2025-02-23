@@ -1,5 +1,7 @@
 const ChildProcess = require('node:child_process');
 
+const CI_AVD_NAME = 'e2e_emulator';
+
 const isRunningCI = process.env.CI != null;
 
 // Assumes that local developement is done on arm64-v8a.
@@ -41,11 +43,7 @@ function detectLocalAndroidEmulator() {
 }
 
 function detectAndroidEmulatorName() {
-  if (isRunningCI === true) {
-    return 'e2e_emulator';
-  } else {
-    return detectLocalAndroidEmulator();
-  }
+  return isRunningCI ? CI_AVD_NAME : detectLocalAndroidEmulator();
 }
 
 /**
