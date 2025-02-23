@@ -1,10 +1,52 @@
+const ChildProcess = require('node:child_process');
+
 const isRunningCI = process.env.CI != null;
 
 // Assumes that local developement is done on arm64-v8a.
-const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a'
+const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 // test-butler requires AOSP emulator image, which is not available to download for arm64-v8a in Android Studio SDK Manager, therefore
 // it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
+
+function detectLocalAndroidEmulator() {
+  // "DETOX_AVD_NAME" can be set for local developement
+  const detoxAvdName = process.env.DETOX_AVD_NAME ?? null;
+  if (detoxAvdName !== null) {
+    return detoxAvdName
+  }
+
+  // Fallback: try to use Android SDK
+  try {
+    let stdout = ChildProcess.execSync("emulator -list-avds")
+
+    // Possibly convert Buffer to string
+    if (typeof stdout !== 'string') {
+      stdout = stdout.toString();
+    }
+
+    const avdList = stdout.trim().split('\n');
+
+    if (avdList.length === 0) {
+      throw new Error('No installed AVDs detected on the device');
+    }
+
+    // Just select first one in the list. 
+    // TODO: consider giving user a choice here.
+    return avdList[0];
+  } catch (error) {
+    const errorMessage = `Failed to find Android emulator. Set "DETOX_AVD_NAME" env variable pointing to one. Cause: ${error}`
+    console.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+}
+
+function detectAndroidEmulatorName() {
+  if (isRunningCI === true) {
+    return 'e2e_emulator';
+  } else {
+    return detectLocalAndroidEmulator();
+  }
+}
 
 /**
  * @type {Detox.DetoxConfig}
@@ -68,7 +110,7 @@ function commonDetoxConfigFactory(applicationName) {
       emulator: {
         type: 'android.emulator',
         device: {
-          avdName: 'Pixel_3a_API_35_4KB',
+          avdName: detectAndroidEmulatorName(),
         },
         utilBinaryPaths: testButlerApkPath,
       },
