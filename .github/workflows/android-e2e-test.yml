@@ -109,7 +109,7 @@ jobs:
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
-          forcce-avd-creation: false
+          force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           avd-name: e2e_emulator
           arch: x86_64
