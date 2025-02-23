@@ -1,12 +1,12 @@
-name: Test Android e2e - old architecture
+name: Test Android e2e - new architecture
 on:
   pull_request:
     paths:
-      - '.github/workflows/android-e2e-test.yml'
+      - '.github/workflows/android-e2e-test-fabric.yml'
       - 'package.json'
       - 'android/**'
       - 'common/**'
-      - 'Example/**'
+      - 'FabricExample/**'
       - 'src/**'
   push:
     branches:
@@ -17,10 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: Example
+      WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
     concurrency:
-      group: android-e2e-${{ github.ref }}
+      group: android-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -44,8 +44,8 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
-
       - name: Install root node dependencies
+
         run: yarn install && yarn submodules
 
       - name: Install node dependencies
@@ -60,9 +60,11 @@ jobs:
         run: yarn
 
       - name: Install AVD dependencies
+        # libxkbfile1 is removed by "Free Disk Space (Ubuntu)" step first. Here we install it again
+        # as it seems to be needed by the emulator.
         run: |
           sudo apt update
-          sudo apt-get install -y libpulse0 libgl1
+          sudo apt-get install -y libpulse0 libgl1 libxkbfile1
 
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
