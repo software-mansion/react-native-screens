@@ -55,7 +55,7 @@ jobs:
       - name: Install AVD dependencies
         run: |
           sudo apt update
-          sudo apt-get install -y libpulse0 libgl1
+          sudo apt-get install -y libpulse0 libgl1 libxkbfile
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
