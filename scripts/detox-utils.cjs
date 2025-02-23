@@ -26,7 +26,7 @@ function detectLocalAndroidEmulator() {
       stdout = stdout.toString();
     }
 
-    const avdList = stdout.trim().split('\n');
+    const avdList = stdout.trim().split('\n').map(name => name.trim());
 
     if (avdList.length === 0) {
       throw new Error('No installed AVDs detected on the device');
