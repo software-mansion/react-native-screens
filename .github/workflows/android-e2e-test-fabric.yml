@@ -72,6 +72,21 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-${{ env.API_LEVEL }}
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: default
+          profile: pixel_2
+          ram-size: '4096M'
+          disk-size: '10G'
+          disable-animations: false
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          avd-name: e2e_emulator
+          arch: x86_64
+          script: echo "Generated AVD snapshot for caching."
       - name: Run emulator and tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -82,6 +97,8 @@ jobs:
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           avd-name: e2e_emulator
           arch: x86_64
           script: yarn test-e2e-android
