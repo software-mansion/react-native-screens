@@ -1,3 +1,11 @@
+const isRunningCI = process.env.CI != null;
+
+// Assumes that local developement is done on arm64-v8a.
+const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a'
+// test-butler requires AOSP emulator image, which is not available to download for arm64-v8a in Android Studio SDK Manager, therefore
+// it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
+const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
+
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
@@ -28,14 +36,14 @@ module.exports = {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
       build:
-        'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=x86_64 && cd ..',
+        `cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${apkBulidArchitecture} && cd ..`,
       reversePorts: [8081],
     },
     'android.release': {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
       build:
-        'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=x86_64 && cd ..',
+        `cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${apkBulidArchitecture} && cd ..`,
     },
   },
   devices: {
@@ -50,14 +58,14 @@ module.exports = {
       device: {
         adbName: 'e2e_emulator',
       },
-      utilBinaryPaths: ['../Example/e2e/apps/test-butler-app-2.2.1.apk'],
+      utilBinaryPaths: testButlerApkPath,
     },
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: 'e2e_emulator',
+        avdName: 'Pixel_3a_API_35_4KB',
       },
-      utilBinaryPaths: ['../Example/e2e/apps/test-butler-app-2.2.1.apk'],
+      utilBinaryPaths: testButlerApkPath,
     },
   },
   configurations: {
