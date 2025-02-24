@@ -78,7 +78,7 @@ class FullWindowOverlayHostView(
         ev: MotionEvent,
     ) {
         jsTouchDispatcher.onChildStartedNativeGesture(ev, eventDispatcher)
-        jsPointerDispatcher?.onChildStartedNativeGesture(ev, eventDispatcher)
+        jsPointerDispatcher?.onChildStartedNativeGesture(childView, ev, eventDispatcher)
     }
 
     override fun onChildEndedNativeGesture(
