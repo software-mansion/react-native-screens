@@ -206,9 +206,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   UIView *scrollview = (UIView *)object;
   if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
-        NSStringFromCGRect(scrollview.frame),
-        NSStringFromCGRect(self.frame));
-        [scrollview setFrame:self.frame];
+    [scrollview setFrame:self.frame];
   }
 }
 
