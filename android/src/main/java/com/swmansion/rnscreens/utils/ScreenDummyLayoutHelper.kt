@@ -82,7 +82,9 @@ internal class ScreenDummyLayoutHelper(
         // We need to use activity here, as react context does not have theme attributes required by
         // AppBarLayout attached leading to crash.
         val contextWithTheme =
-            requireNotNull(reactContext.currentActivity) { "[RNScreens] Attempt to use context detached from activity. This could happen only due to race-condition." }
+            requireNotNull(reactContext.currentActivity) {
+                "[RNScreens] Attempt to use context detached from activity. This could happen only due to race-condition."
+            }
 
         synchronized(this) {
             // The layout could have been initialised when this thread waited for access to critical section.
@@ -166,7 +168,7 @@ internal class ScreenDummyLayoutHelper(
                 // is still null at this execution point. We don't wanna crash in such case, thus returning zeroed height.
                 Log.e(
                     TAG,
-                    "[RNScreens] Failed to late-init layout while computing header height. This is most likely a race-condition-bug in react-native-screens, please file an issue at https://github.com/software-mansion/react-native-screens/issues"
+                    "[RNScreens] Failed to late-init layout while computing header height. This is most likely a race-condition-bug in react-native-screens, please file an issue at https://github.com/software-mansion/react-native-screens/issues",
                 )
                 return 0.0f
             }
@@ -214,7 +216,8 @@ internal class ScreenDummyLayoutHelper(
     private fun requireReactContext(lazyMessage: (() -> Any)? = null): ReactApplicationContext =
         requireNotNull(
             reactContextRef.get(),
-            lazyMessage ?: { "[RNScreens] Attempt to require missing react context" })
+            lazyMessage ?: { "[RNScreens] Attempt to require missing react context" },
+        )
 
     private fun requireActivity(): Activity =
         requireNotNull(requireReactContext().currentActivity) {
