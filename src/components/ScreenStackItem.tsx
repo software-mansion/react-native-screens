@@ -65,8 +65,6 @@ function ScreenStackItem(
     headerHiddenPreviousRef.current = headerConfig?.hidden;
   }, [headerConfig?.hidden, stackPresentation]);
 
-  console.log(`ScreenStackItem ${sheetAllowedDetents}`);
-
   const content = (
     <>
       <DebugContainer

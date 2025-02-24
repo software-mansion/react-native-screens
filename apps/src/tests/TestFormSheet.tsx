@@ -16,23 +16,6 @@ type RouteProps<RouteName extends keyof RouteParamList> = {
 
 const Stack = createNativeStackNavigator<RouteParamList>();
 
-type ItemData = {
-  id: number,
-  text: string;
-}
-
-const DATA: ItemData[] = Array.from({ length: 1000 }).map((_, index) => ({ id: index, text: `Item no. ${index}` }));
-
-function RenderItem({ item }: { item: ItemData }) {
-  return (
-    <View>
-      <Text>
-        {item.text}
-      </Text>
-    </View>
-  );
-}
-
 function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
@@ -57,10 +40,24 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
 
 
 function FormSheetWithFlatList({ }: RouteProps<'FormSheetWithFlatList'>) {
+  type ItemData = {
+    id: number,
+    text: string;
+  }
+
+  const renderItem = React.useCallback(({ item }: { item: ItemData }) => (
+    <View>
+      <Text>
+        {item.text}
+      </Text>
+    </View>
+  ), []);
+
+  const DATA: ItemData[] = React.useMemo(() => Array.from({ length: 1000 }).map((_, index) => ({ id: index, text: `Item no. ${index}` })), []);
   return (
     <FlatList
       data={DATA}
-      renderItem={RenderItem}
+      renderItem={renderItem}
       keyExtractor={item => item.id.toString()}
     />
   );

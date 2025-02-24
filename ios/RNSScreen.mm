@@ -195,7 +195,6 @@ RNS_IGNORE_SUPER_CALL_END
     [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
   }
   if (scrollView != nil) {
-    NSLog(@"[updateBoudns] Forcing SV frame to %@", NSStringFromCGRect(self.frame));
     [scrollView setFrame:self.frame];
   }
 }
@@ -207,11 +206,9 @@ RNS_IGNORE_SUPER_CALL_END
 {
   UIView *scrollview = (UIView *)object;
   if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
-    NSLog(
-        @"[observer] Forcing SV frame from %@ to %@",
         NSStringFromCGRect(scrollview.frame),
         NSStringFromCGRect(self.frame));
-    [scrollview setFrame:self.frame];
+        [scrollview setFrame:self.frame];
   }
 }
 
