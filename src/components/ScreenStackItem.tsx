@@ -72,10 +72,9 @@ function ScreenStackItem(
           stackPresentation === 'formSheet' &&
           sheetAllowedDetents === 'fitToContents'
             ? Platform.OS === 'ios'
-              ? styles.absolute
+              ? styles.absoluteWithNoBottomInset
               : null
             : styles.container,
-          // styles.container,
           contentStyle,
         ]}
         stackPresentation={stackPresentation ?? 'push'}>
@@ -167,7 +166,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  absolute: {
+  absoluteWithNoBottomInset: {
     position: 'absolute',
     top: 0,
     start: 0,
