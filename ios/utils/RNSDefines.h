@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 
 #define RNS_IGNORE_SUPER_CALL_BEGIN \
   _Pragma("clang diagnostic push")  \
@@ -7,24 +8,24 @@
 #define RNS_IGNORE_SUPER_CALL_END _Pragma("clang diagnostic pop")
 
 // Check if the mutation has parentTag
+template <typename T, typename = void>
+struct has_parentTag : std::false_type {};
 template <typename T>
-using has_parentTag_t = decltype(std::declval<T>().parentTag);
-template <typename T>
-inline constexpr bool has_parentTag = !std::is_void_v<has_parentTag_t<T>>;
+struct has_parentTag<T, std::void_t<decltype(std::declval<T>().parentTag)>> : std::true_type {};
 
 // Check if the mutation has parentShadowView
+template <typename T, typename = void>
+struct has_parentShadowView : std::false_type {};
 template <typename T>
-using has_parentShadowView_t = decltype(std::declval<T>().parentShadowView);
-template <typename T>
-inline constexpr bool has_parentShadowView = !std::is_void_v<has_parentShadowView_t<T>>;
+struct has_parentShadowView<T, std::void_t<decltype(std::declval<T>().parentShadowView)>> : std::true_type {};
 
 // Function to get the parent tag, choosing based on what's available
 template <typename T>
 auto get_parent_tag(T& mutation) {
-    if constexpr (has_parentTag<T>) {
-        return mutation.parentTag;
-    } else if constexpr (has_parentShadowView<T>) {
+    if constexpr (has_parentShadowView<T>::value) {
         return mutation.parentShadowView.tag;
+    } else if constexpr (has_parentTag<T>::value) {
+        return mutation.parentTag;
     } else {
         static_assert(sizeof(T) == 0, "Unknown mutation type");
     }
