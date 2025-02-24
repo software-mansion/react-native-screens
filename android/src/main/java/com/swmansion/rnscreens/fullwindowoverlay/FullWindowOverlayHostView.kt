@@ -86,6 +86,7 @@ class FullWindowOverlayHostView(
         ev: MotionEvent,
     ) {
         jsTouchDispatcher.onChildEndedNativeGesture(ev, eventDispatcher)
+        jsPointerDispatcher?.onChildEndedNativeGesture()
     }
 
     override fun handleException(t: Throwable) {
