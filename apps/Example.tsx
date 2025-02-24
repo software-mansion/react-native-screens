@@ -4,7 +4,6 @@ import {
   StyleSheet,
   I18nManager,
   Platform,
-  StatusBar,
   useColorScheme,
   View,
 } from 'react-native';
@@ -39,9 +38,21 @@ import { enableFreeze } from 'react-native-screens';
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import * as Tests from './src/tests/';
+import * as Tests from './src/tests';
 
 enableFreeze();
+
+function isPlatformReady(name: keyof typeof SCREENS) {
+  if (Platform.isTV) {
+    return !!SCREENS[name].isTVOSReady;
+  }
+
+  return true;
+}
+
+function isTestSectionEnabled() {
+  return true;
+}
 
 const SCREENS: Record<
   string,
@@ -123,32 +134,23 @@ const SCREENS: Record<
   },
 };
 
-function isPlatformReady(name: keyof typeof SCREENS) {
-  if (Platform.isTV) {
-    return !!SCREENS[name].isTVOSReady;
-  }
-
-  return true;
+if (isTestSectionEnabled()) {
+  Object.keys(Tests).forEach(testName => {
+    SCREENS[testName] = {
+      title: testName,
+      component: () => {
+        const TestComponent = Tests[testName as keyof typeof Tests];
+        return (
+          <NavigationIndependentTree>
+            <TestComponent />
+          </NavigationIndependentTree>
+        );
+      },
+      type: 'test',
+    };
+  });
 }
 
-function isTestSectionEnabled() {
-  return true;
-}
-
-Object.keys(Tests).forEach(testName => {
-  SCREENS[testName] = {
-    title: testName,
-    component: () => {
-      const TestComponent = Tests[testName] as unknown as () => React.JSX.Element;
-      return (
-        <NavigationIndependentTree>
-          <TestComponent />
-        </NavigationIndependentTree>
-      );
-    },
-    type: 'test',
-  };
-});
 
 const screens = Object.keys(SCREENS);
 const examples = screens.filter(name => SCREENS[name].type === 'example');
@@ -226,14 +228,6 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   );
 };
 
-function TestsIntegrationScreen() {
-  return (
-    <NavigationIndependentTree>
-      <View style={{ flex: 1, backgroundColor: 'lightsalmon' }} />
-    </NavigationIndependentTree>
-  );
-}
-
 const ThemeToggle = createContext<{ toggleTheme: () => void }>(null!);
 
 const ExampleApp = (): React.JSX.Element => {
@@ -258,14 +252,6 @@ const ExampleApp = (): React.JSX.Element => {
                     } React Native Screens Examples`,
                 }}
                 component={MainScreen}
-              />
-              <Stack.Screen
-                name="Tests"
-                options={{
-                  title: 'Tests integration',
-                  headerShown: false,
-                }}
-                component={TestsIntegrationScreen}
               />
               {Object.keys(SCREENS).map(name => (
                 <Stack.Screen
