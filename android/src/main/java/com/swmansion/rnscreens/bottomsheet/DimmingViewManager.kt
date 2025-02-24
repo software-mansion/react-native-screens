@@ -28,7 +28,7 @@ class DimmingViewManager(
         root: ViewGroup,
     ) {
         root.addView(dimmingView, 0)
-        if (screen.sheetInitialDetentIndex <= screen.sheetLargestUndimmedDetentIndex) {
+        if (!willDimForDetentIndex(screen, screen.sheetInitialDetentIndex)) {
             dimmingView.alpha = 0.0f
         } else {
             dimmingView.alpha = maxAlpha
@@ -44,6 +44,11 @@ class DimmingViewManager(
     ) {
         behavior.addBottomSheetCallback(requireBottomSheetCallback(screen))
     }
+
+    /**
+     * Ask the manager whether it will apply non-zero alpha for sheet at given detent index.
+     */
+    fun willDimForDetentIndex(screen: Screen, index: Int) = index > screen.sheetLargestUndimmedDetentIndex
 
     /**
      * This bottom sheet callback is responsible for animating alpha of the dimming view.

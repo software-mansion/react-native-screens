@@ -14,7 +14,8 @@ import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
-public interface RNSScreenManagerInterface<T extends View> {
+
+public interface RNSScreenManagerInterface<T extends View>  {
   void setSheetAllowedDetents(T view, @Nullable ReadableArray value);
   void setSheetLargestUndimmedDetent(T view, int value);
   void setSheetGrabberVisible(T view, boolean value);

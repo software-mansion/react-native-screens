@@ -73,13 +73,33 @@ namespace react = facebook::react;
 
 - (void)attachToAncestorScreenView
 {
-  if (![self.reactSuperview isKindOfClass:RNSScreenView.class]) {
-    RCTLogError(@"Expected reactSuperview to be a RNSScreenView. Found %@", self.reactSuperview);
+  RNSScreen *_Nullable screen =
+      static_cast<RNSScreen *_Nullable>([[self findFirstScreenViewAncestor] reactViewController]);
+
+  if (screen == nil) {
+    // On old architecture, especially when executing `replace` action it can happen that **replaced** (old one) screen
+    // receives willMoveToWindow: with not nil argument. On new architecture it seems to work as expected.
+#ifdef RCT_NEW_ARCH_ENABLED
+    RCTLogWarn(@"Failed to find parent screen controller from %@.", self);
+#endif
     return;
   }
-
-  RNSScreen *screen = (RNSScreen *)[self.reactSuperview reactViewController];
   [self attachToAncestorScreenViewStartingFrom:screen];
+}
+
+- (nullable RNSScreenView *)findFirstScreenViewAncestor
+{
+  UIView *currentView = self;
+
+  // In standard scenario this should do only a single iteration.
+  // Haven't got repro, but we got reports that there are scenarios
+  // when there are intermediate views between screen view & the content wrapper.
+  // https://github.com/software-mansion/react-native-screens/pull/2683
+  do {
+    currentView = currentView.reactSuperview;
+  } while (currentView != nil && ![currentView isKindOfClass:RNSScreenView.class]);
+
+  return static_cast<RNSScreenView *_Nullable>(currentView);
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED

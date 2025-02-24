@@ -80,8 +80,9 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
-          //sheetAllowedDetents: [0.4, 0.75, 1.0],
-          sheetAllowedDetents: 'fitToContents',
+          sheetAllowedDetents: [0.4, 0.75, 0.9],
+          //sheetAllowedDetents: 'fitToContents',
+          sheetLargestUndimmedDetentIndex: 1,
           sheetCornerRadius: 8,
           headerShown: false,
           contentStyle: {

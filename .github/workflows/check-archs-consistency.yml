@@ -7,6 +7,8 @@ on:
       - 'src/fabric/**'
       - 'android/src/paper/java/com/facebook/react/viewmanagers/**'
       - '.github/workflows/check-archs-consistency.yml'
+      - 'scripts/codegen-check-consistency.js'
+      - 'scripts/codegen-utils.js'
   push:
     branches:
       - main

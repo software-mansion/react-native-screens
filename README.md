@@ -107,7 +107,7 @@ Screens are already integrated with the React Native's most popular navigation l
 ## Supported react-native version
 
 Below we present tables with mapping of the library version to the last supported react-native version. These tables are for the `4.x` line of the library. For compat tables 
-of `3.x` line please see consult [readme on the `3.x` branch](https://github.com/software-mansion/react-native-screens/tree/3.x?tab=readme-ov-file#supported-react-native-version).
+of `3.x` line please see [readme on the `3.x` branch](https://github.com/software-mansion/react-native-screens/tree/3.x?tab=readme-ov-file#supported-react-native-version).
 
 ### Support for Paper
 
@@ -115,6 +115,7 @@ Paper is the default rendering system for React Native versions prior to 0.76.
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.9.0+          | 0.76.0+              |
 | 4.5.0+          | 0.74.0+              |
 | 4.0.0+          | 0.72.0+              |
 

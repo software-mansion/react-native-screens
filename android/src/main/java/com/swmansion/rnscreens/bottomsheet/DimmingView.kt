@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.view.MotionEvent
 import android.view.ViewGroup
-import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactCompoundViewGroup
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.swmansion.rnscreens.ext.equalWithRespectToEps
@@ -17,13 +16,24 @@ import com.swmansion.rnscreens.ext.equalWithRespectToEps
  * This dimming view has one more additional feature: it blocks gestures if its alpha > 0.
  */
 @SuppressLint("ViewConstructor") // Only we instantiate this view
-class DimmingView(
+internal class DimmingView(
     context: Context,
     initialAlpha: Float = 0.6F,
+    private val pointerEventsProxy: DimmingViewPointerEventsProxy
 ) : ViewGroup(context),
     ReactCompoundViewGroup,
-    ReactPointerEventsView {
-    private val blockGestures
+    ReactPointerEventsView by pointerEventsProxy {
+
+    constructor(context: Context, initialAlpha: Float = 0.6F) : this(
+        context, initialAlpha,
+        DimmingViewPointerEventsProxy(null)
+    )
+
+    init {
+        pointerEventsProxy.pointerEventsImpl = DimmingViewPointerEventsImpl(this)
+    }
+
+    internal val blockGestures
         get() = !alpha.equalWithRespectToEps(0F)
 
     init {
@@ -59,7 +69,12 @@ class DimmingView(
         y: Float,
     ) = blockGestures
 
-    override fun getPointerEvents(): PointerEvents = if (blockGestures) PointerEvents.AUTO else PointerEvents.NONE
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+
+        // Break reference cycle, since the pointerEventsImpl strongly retains this.
+        pointerEventsProxy.pointerEventsImpl = null
+    }
 
     companion object {
         const val TAG = "DimmingView"

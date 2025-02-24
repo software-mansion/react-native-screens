@@ -27,7 +27,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.uimanager.PixelUtil
-import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.appbar.AppBarLayout
@@ -331,13 +330,14 @@ class ScreenStackFragment :
         }
 
         val animatorSet = AnimatorSet()
+        val dimmingDelegate = dimmingDelegate.value
 
         if (enter) {
             val alphaAnimator =
-                ValueAnimator.ofFloat(0f, dimmingDelegate.value.maxAlpha).apply {
+                ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+                        animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
                     }
                 }
             val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
@@ -349,13 +349,21 @@ class ScreenStackFragment :
                         animatedValue?.let { screen.translationY = it }
                     }
                 }
-            animatorSet.play(alphaAnimator).with(slideAnimator)
+
+            animatorSet
+                .play(slideAnimator)
+                .takeIf {
+                    dimmingDelegate.willDimForDetentIndex(
+                        screen,
+                        screen.sheetInitialDetentIndex,
+                    )
+                }?.with(alphaAnimator)
         } else {
             val alphaAnimator =
-                ValueAnimator.ofFloat(dimmingDelegate.value.dimmingView.alpha, 0f).apply {
+                ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { dimmingDelegate.value.dimmingView.alpha = it }
+                        animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
                     }
                 }
             val slideAnimator =
@@ -371,9 +379,12 @@ class ScreenStackFragment :
             ScreenAnimationDelegate(
                 this,
                 ScreenEventEmitter(this.screen),
-                if (enter) ScreenAnimationDelegate.AnimationType.ENTER
-                else ScreenAnimationDelegate.AnimationType.EXIT
-            )
+                if (enter) {
+                    ScreenAnimationDelegate.AnimationType.ENTER
+                } else {
+                    ScreenAnimationDelegate.AnimationType.EXIT
+                },
+            ),
         )
         return animatorSet
     }
@@ -710,9 +721,16 @@ class ScreenStackFragment :
     private class ScreensCoordinatorLayout(
         context: Context,
         private val fragment: ScreenStackFragment,
+        private val pointerEventsImpl: ReactPointerEventsView,
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context),
-        ReactPointerEventsView {
+        ReactPointerEventsView by pointerEventsImpl {
+        constructor(context: Context, fragment: ScreenStackFragment) : this(
+            context,
+            fragment,
+            ScreensCoordinatorLayoutPointerEventsImpl(),
+        )
+
         override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
 
         private val animationListener: Animation.AnimationListener =
@@ -789,11 +807,6 @@ class ScreenStackFragment :
 // //            bottom – The Y coordinate of the bottom of the rectangle
 //            return Rect(screen.x.toInt(), -screen.y.toInt(), screen.x.toInt() + screen.width, screen.y.toInt() + screen.height)
 //        }
-
-        // We set pointer events to BOX_NONE, because we don't want the ScreensCoordinatorLayout
-        // to be target of react gestures and effectively prevent interaction with screens
-        // underneath the current screen (useful in `modal` & `formSheet` presentation).
-        override fun getPointerEvents(): PointerEvents = PointerEvents.BOX_NONE
     }
 
     private class ScreensAnimation(
