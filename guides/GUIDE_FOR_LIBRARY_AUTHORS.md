@@ -641,7 +641,7 @@ In order to properly handle the hardware back button on Android, you should impl
 > Support of this component on Android is currently **experimental** and **limited to new architecture**.
 
 In addition to navigation primitives described above :point_up:, the library exposes `FullWindowOverlay` component. Its purpose is to enable displaying overlay above all other application contents.
-Example usage can be found in [`TestFullWindowOverlay` example in our test app](TODO ADD LINK HERE).
+Example usage can be found in [`TestFullWindowOverlay` example in our test app](https://github.com/software-mansion/react-native-screens/blob/main/apps/src/tests/TestFullWindowOverlay.tsx).
 
 Below we shortly describe current characteristics of the component. 
 
