@@ -1,8 +1,9 @@
 import * as React from 'react';
 
-import { Button, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Button, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
+import { Spacer } from '../shared';
 
 function SharedPressable() {
   return (
@@ -14,12 +15,15 @@ function SharedPressable() {
   );
 }
 
+
 function HomeScreen() {
   const [overlayShown, setOverlayShown] = React.useState(false);
+  const [isModalVisible, setModalVisible] = React.useState(false);
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} collapsable={true}>
       <Text>Home Screen</Text>
       <Button title="Show Overlay" onPress={() => setOverlayShown(true)} />
+      <Button title="Show modal" onPress={() => setModalVisible(true)} />
       <SharedPressable />
       {overlayShown && (
         <FullWindowOverlay>
@@ -31,13 +35,38 @@ function HomeScreen() {
                 justifyContent: 'center',
                 backgroundColor: 'rgba(130, 200, 120, 0.8)',
               }}
-              onPress={() => setOverlayShown(false)}>
+              onPress={() => { }}>
               <Text>Overlay</Text>
               <SharedPressable />
+              <Spacer />
+              <PressableWithFeedback onPress={() => setOverlayShown(false)}>
+                <Text>Close FWO</Text>
+              </PressableWithFeedback>
+              <Button title="Show modal" onPress={() => setModalVisible(true)} />
             </Pressable>
           </View>
         </FullWindowOverlay>
       )}
+      <Modal visible={isModalVisible} transparent>
+        <View style={{ flex: 1 }}>
+          <Pressable
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(130, 200, 120, 0.8)',
+            }}
+            onPress={() => { }}>
+            <Text>Modal</Text>
+            <SharedPressable />
+            <Spacer />
+            <PressableWithFeedback onPress={() => setModalVisible(false)}>
+              <Text>Close modal</Text>
+            </PressableWithFeedback>
+            <Button title="Show FWO" onPress={() => setOverlayShown(true)} />
+          </Pressable>
+        </View>
+      </Modal>
     </View>
   );
 }

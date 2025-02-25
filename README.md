@@ -189,7 +189,15 @@ To take advantage of the native stack navigator primitive for React Navigation t
 
 ## `FullWindowOverlay`
 
-Native `iOS` component for rendering views straight under the `Window`. Based on `RCTPerfMonitor`. You should treat it as a wrapper, providing full-screen, transparent view which receives no props and should ideally render one child `View`, being the root of its view hierarchy. For the example usage, see https://github.com/software-mansion/react-native-screens/blob/main/apps/src/tests/Test1096.tsx
+Native `iOS` component for rendering views straight under the `Window`. Based on `RCTPerfMonitor`. You should treat it as a wrapper, providing full-screen, 
+transparent view which receives no props and should ideally render one child `View`, being the root of its view hierarchy. For the example usage, 
+see [`Test1096`](https://github.com/software-mansion/react-native-screens/blob/main/apps/src/tests/Test1096.tsx)
+
+> [!note]
+> The `FullWindowOverlay` has now **experimental** support on Android! The support is **limited to new architecture**.
+> We're awaiting your feedback!
+
+You can also find more comprehensive description of the component [here](https://github.com/software-mansion/react-native-screens/tree/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md#fullwindowoverlay).
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
