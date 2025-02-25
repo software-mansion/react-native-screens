@@ -35,6 +35,7 @@ function ScreenStackItem(
     contentStyle,
     style,
     screenId,
+    sheetAllowedDetents,
     // eslint-disable-next-line camelcase
     unstable_sheetFooter,
     ...rest
@@ -68,9 +69,10 @@ function ScreenStackItem(
     <>
       <DebugContainer
         style={[
-          stackPresentation === 'formSheet'
+          stackPresentation === 'formSheet' &&
+          sheetAllowedDetents === 'fitToContents'
             ? Platform.OS === 'ios'
-              ? styles.absolute
+              ? styles.absoluteWithNoBottomInset
               : null
             : styles.container,
           contentStyle,
@@ -135,6 +137,7 @@ function ScreenStackItem(
       activityState={activityState}
       shouldFreeze={shouldFreeze}
       stackPresentation={stackPresentation}
+      sheetAllowedDetents={sheetAllowedDetents}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       style={[style, internalScreenStyle]}
       {...rest}>
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  absolute: {
+  absoluteWithNoBottomInset: {
     position: 'absolute',
     top: 0,
     start: 0,
