@@ -635,7 +635,7 @@ Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/softwa
 
 In order to properly handle the hardware back button on Android, you should implement the navigation logic concerning it. You can see an example of how it is done in `react-navigation` here: <https://github.com/react-navigation/react-navigation/blob/6cba517b74f5fd092db21d5574b558ef2d80897b/packages/native/src/useBackButton.tsx>.
 
-## FullWindowOverlay
+# FullWindowOverlay
 
 > [!caution]
 > Support of this component on Android is currently **experimental** and **limited to new architecture**.
@@ -648,41 +648,41 @@ Below we shortly describe current characteristics of the component.
 > [!note]
 > Description below should be treated as implementation details and not as stable behavior description, unless explicitly stated otherwise.
 
-### View hierarchy placement
+## View hierarchy placement
 
 On both platforms - iOS & Android the `FullWindowOverlay` component gives you opportunity to mount your views directly under `UIWindow` & `Window` respectively. 
 This allows for presenting the content above all main application content.
 
 When using `FullWindowOverlay` the views are mounted in a subtree separate from main `react-native` subtree. This has some diverging behavior implications for each platform. Please see below the behavior description.
 
-### Behavior aspects
+## Behavior aspects
 
 > [!note]
 > Description below should be treated as implementation details and not as stable behavior description, unless explicitly stated otherwise.
 
-#### Dimensions
+### Dimensions
 
 `FullWindowOverlay` should have dimensions of full window. It does not take safe area insets into account - it is left to the user to handle.
 
 In Android applications that do not have edge-to-edge enabled (vast majority of applications targeting SDK 34 or lower) the status & navigation bars are expected. 
 
-#### Gestures
+### Gestures
 
 By design, the `FullWindowOverlay` component blocks gesture interaction with content underneath.
 
 The gestures for views in `FullWindowOverlay`'s subtree are fully supported.
 
-#### Interaction with modal components
+### Interaction with modal components
 
 In this section we describe briefly how the `FullWindowOverlay` component behaves when used simultaneously with different modal components.
 Due to platform differences the behavior is slightly different depending whether it is used on iOS or Android devices.
 
-##### iOS
+#### iOS
 
 On iOS the `FullWindowOverlay` stays above navigation screens with modal presentation. The same applies for e.g. `Modal` from `react-native`. We do not guarantee that 
 this will be the case for any third-party modal component, since it depends on its internal implementation.
 
-##### Android
+#### Android
 
 On Android we use [`TYPE_APPLICATION_ATTACHED_DIALOG`](https://developer.android.com/reference/android/view/WindowManager.LayoutParams#TYPE_APPLICATION_ATTACHED_DIALOG) to mount
 the component directly under the window. Together with `react-native`'s `Modal` implementation details this implies that  `Modal` will be displayed **above** the `FullWindowOverlay` 
