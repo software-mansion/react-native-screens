@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.fullwindowoverlay
 
 import android.content.Context
 import android.graphics.PixelFormat
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import com.facebook.react.uimanager.ThemedReactContext
@@ -29,22 +28,6 @@ class FullWindowOverlay(
         hostView.removeViewAt(index)
     }
 
-    override fun onMeasure(
-        widthMeasureSpec: Int,
-        heightMeasureSpec: Int,
-    ) {
-        val width = MeasureSpec.getSize(widthMeasureSpec)
-        val height = MeasureSpec.getSize(heightMeasureSpec)
-        if (isReactOriginatedMeasure(widthMeasureSpec, heightMeasureSpec)) {
-//            hostView.measure(widthMeasureSpec, heightMeasureSpec)
-            Log.i(TAG, "onMeasure - React $width, $height")
-//            hostView.measure(widthMeasureSpec, heightMeasureSpec)
-        } else {
-            Log.i(TAG, "onMeasure - SYSTEM $width, $height")
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
-
     override fun onLayout(
         changed: Boolean,
         left: Int,
@@ -52,10 +35,6 @@ class FullWindowOverlay(
         right: Int,
         bottom: Int,
     ) {
-        val width = right - left
-        val height = bottom - top
-        Log.i(TAG, "onLayout ($left, $top) ($width, $height)")
-
         if (changed) {
             resolveWindowManager().updateViewLayout(hostView, createLayoutParams(right - left, bottom - top))
         }
