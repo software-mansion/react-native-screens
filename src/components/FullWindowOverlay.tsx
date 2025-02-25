@@ -10,6 +10,7 @@ import {
 
 // Native components
 import FullWindowOverlayNativeComponent from '../fabric/FullWindowOverlayNativeComponent';
+import warnOnce from 'warn-once';
 const NativeFullWindowOverlay: React.ComponentType<
   PropsWithChildren<{
     style: StyleProp<ViewStyle>;
@@ -25,9 +26,10 @@ function FullWindowOverlay(props: { children: ReactNode }) {
     return <View {...props} />;
   }
 
-  if (Platform.OS === 'android') {
-    console.warn('Support for FullWindowOverlay on Android is experimental');
-  }
+  warnOnce(
+    Platform.OS === 'android',
+    'Support for FullWindowOverlay on Android is experimental',
+  );
 
   return (
     <NativeFullWindowOverlay
