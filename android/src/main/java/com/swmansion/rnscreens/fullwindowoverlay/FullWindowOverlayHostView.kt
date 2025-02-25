@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.fullwindowoverlay
 
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import com.facebook.react.uimanager.events.EventDispatcher
 class FullWindowOverlayHostView(
     val context: ThemedReactContext,
     val eventDispatcher: EventDispatcher,
-    val fakeReactTag: Int,
+    fakeReactTag: Int,
 ) : ViewGroup(context),
     RootView {
     init {
@@ -29,33 +28,14 @@ class FullWindowOverlayHostView(
             null
         }
 
-    override fun onMeasure(
-        widthMeasureSpec: Int,
-        heightMeasureSpec: Int,
-    ) {
-        val width = MeasureSpec.getSize(widthMeasureSpec)
-        val height = MeasureSpec.getSize(heightMeasureSpec)
-        if (isReactOriginatedMeasure(widthMeasureSpec, heightMeasureSpec)) {
-//            hostView.measure(widthMeasureSpec, heightMeasureSpec)
-            Log.i(TAG, "onMeasure - React $width, $height")
-//            hostView.measure(widthMeasureSpec, heightMeasureSpec)
-        } else {
-            Log.i(TAG, "onMeasure - SYSTEM $width, $height")
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
-
+    // Do nothing
     override fun onLayout(
         changed: Boolean,
         l: Int,
         t: Int,
         r: Int,
         b: Int,
-    ) {
-        val width = r - l
-        val height = b - t
-        Log.i(TAG, "onLayout ($l, $t) ($width, $height)")
-    }
+    ) = Unit
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         jsTouchDispatcher.handleTouchEvent(ev, eventDispatcher, context)
