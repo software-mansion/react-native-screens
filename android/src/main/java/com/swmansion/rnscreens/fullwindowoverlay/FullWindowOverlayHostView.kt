@@ -13,11 +13,14 @@ import com.facebook.react.uimanager.events.EventDispatcher
 class FullWindowOverlayHostView(
     val context: ThemedReactContext,
     val eventDispatcher: EventDispatcher,
-    fakeReactTag: Int,
+    fwoComponentTag: Int,
 ) : ViewGroup(context),
     RootView {
     init {
-        id = fakeReactTag
+        // Needed for the safe of react-native's gesture handling. It looks through parent view chain looking
+        // for "parent" during multiple operations. It recognizes the parent as "react owned" one,
+        // by verifying that its `id > 0`. We take the tag from the FWO component from the main subtree.
+        id = fwoComponentTag
     }
 
     private val jsTouchDispatcher: JSTouchDispatcher = JSTouchDispatcher(this)
