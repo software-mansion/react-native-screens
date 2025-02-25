@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { View } from 'react-native';
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export const Spacer = ({ children }: Props): React.JSX.Element => (
