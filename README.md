@@ -195,6 +195,8 @@ Native `iOS` component for rendering views straight under the `Window`. Based on
 > The `FullWindowOverlay` has now **experimental** support on Android! The support is **limited to new architecture**.
 > We're awaiting your feedback!
 
+You can also find more comprehensive description of the component [here](https://github.com/software-mansion/react-native-screens/tree/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md#fullwindowoverlay).
+
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
 React-native-navigation library already uses native containers for rendering navigation scenes so wrapping these scenes with `<ScreenContainer>` or `<Screen>` component does not provide any benefits. Yet if you would like to build a component that uses screens primitives under the hood (for example a view pager component) it is safe to use `<ScreenContainer>` and `<Screen>` components for that as these work out of the box when rendered on react-native-navigation scenes.
