@@ -162,8 +162,6 @@
         "RNSFullWindowOverlay": "RNSFullWindowOverlay",
         "RNSModalScreen": "RNSModalScreen",
         "RNSScreenContainer": "RNSScreenContainerView",
-        "RNSScreenContentWrapper": "RNSScreenContentWrapper",
-        "RNSScreenFooter": "RNSScreenFooter",
         "RNSScreen": "RNSScreenView",
         "RNSScreenNavigationContainer": "RNSScreenNavigationContainerView",
         "RNSScreenStackHeaderConfig": "RNSScreenStackHeaderConfig",
