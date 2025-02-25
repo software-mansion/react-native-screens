@@ -664,7 +664,11 @@ When using `FullWindowOverlay` the views are mounted in a subtree separate from 
 
 `FullWindowOverlay` should have dimensions of full window. It does not take safe area insets into account - it is left to the user to handle.
 
-In Android applications that do not have edge-to-edge enabled (vast majority of applications targeting SDK 34 or lower) the status & navigation bars are expected. 
+This behavior also applies to Android applications that do not have edge-to-edge enabled (vast majority of applications targeting SDK 34 or lower) the status & navigation bars 
+are displayed underneath the full window overlay. 
+
+> [!caution]
+> The behavior w/o edge-to-edge on Android is not stable. We might change it, before making the component stable, after receiving your feedback.
 
 ### Gestures
 
