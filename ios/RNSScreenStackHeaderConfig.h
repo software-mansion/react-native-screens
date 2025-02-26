@@ -6,7 +6,7 @@
 #endif
 
 #import <React/RCTConvert.h>
-#import "RNSScreen.h"
+#import "RNSScreenView.h"
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSSearchBar.h"
 

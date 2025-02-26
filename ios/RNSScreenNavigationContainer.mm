@@ -1,5 +1,6 @@
 #import "RNSScreenNavigationContainer.h"
 #import "RNSScreen.h"
+#import "RNSScreenView.h"
 #import "RNSScreenContainer.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED

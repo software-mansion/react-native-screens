@@ -1,7 +1,7 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStack.h"
 
-#import "RNSScreen.h"
+#import "RNSScreenView.h"
 
 #pragma mark - Constants
 

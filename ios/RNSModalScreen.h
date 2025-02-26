@@ -1,4 +1,4 @@
-#import "RNSScreen.h"
+#import "RNSScreenView.h"
 
 @interface RNSModalScreen : RNSScreenView
 @end

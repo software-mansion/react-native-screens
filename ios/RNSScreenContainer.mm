@@ -1,6 +1,7 @@
 #import "RNSScreenContainer.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
+#import "RNSScreenView.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
