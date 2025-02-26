@@ -402,7 +402,7 @@ RNS_IGNORE_SUPER_CALL_END
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
 - (void)contentWrapper:(RNSScreenContentWrapper *)contentWrapper receivedReactFrame:(CGRect)reactFrame
 {
-  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _didSetSheetAllowedDetentsOnController == YES) {
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet) {
     return;
   }
 
