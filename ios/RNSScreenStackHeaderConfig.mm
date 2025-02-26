@@ -20,6 +20,7 @@
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 #import "RNSConvert.h"
+#import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
@@ -99,6 +100,7 @@ namespace react = facebook::react;
   _blurEffect = RNSBlurEffectStyleNone;
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (UIView *)reactSuperview
 {
   return _screenView;
@@ -108,6 +110,7 @@ namespace react = facebook::react;
 {
   return _reactSubviews;
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)removeFromSuperview
 {
@@ -730,6 +733,7 @@ namespace react = facebook::react;
   }
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
 {
   [_reactSubviews insertObject:subview atIndex:atIndex];
@@ -740,6 +744,7 @@ namespace react = facebook::react;
 {
   [_reactSubviews removeObject:subview];
 }
+RNS_IGNORE_SUPER_CALL_BEGIN
 
 - (void)didUpdateReactSubviews
 {
@@ -824,6 +829,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
       return RCTResizeModeCenter;
     case react::ImageResizeMode::Repeat:
       return RCTResizeModeRepeat;
+    default:
+      // Both RCTConvert and ImageProps use this as a default as of RN 0.76
+      return RCTResizeModeStretch;
   }
 }
 

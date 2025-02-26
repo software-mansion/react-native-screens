@@ -1,5 +1,6 @@
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSConvert.h"
+#import "RNSDefines.h"
 #import "RNSScreenStackHeaderConfig.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -84,6 +85,8 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderSubviewComponentDescriptor>();
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
+// System layouts the subviews.
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
@@ -103,6 +106,7 @@ namespace react = facebook::react;
     [self layoutNavigationBarIfNeeded];
   }
 }
+RNS_IGNORE_SUPER_CALL_BEGIN
 
 + (BOOL)shouldBeRecycled
 {

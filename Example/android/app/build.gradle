@@ -139,11 +139,11 @@ dependencies {
 
 apply plugin: 'com.github.node-gradle.node'
 
-task syncArchs(type: NodeTask) {
-    group = 'Build'
-    description = 'Run sync beetwen Paper and Fabric arch'
-    yarn_install
-    script = file('../../../scripts/codegen-sync-archs.js')
-}
-
-tasks['preBuild'].dependsOn(syncArchs)
+//task syncArchs(type: NodeTask) {
+//    group = 'Build'
+//    description = 'Run sync beetwen Paper and Fabric arch'
+//    yarn_install
+//    script = file('../../../scripts/codegen-sync-archs.js')
+//}
+//
+//tasks['preBuild'].dependsOn(syncArchs)

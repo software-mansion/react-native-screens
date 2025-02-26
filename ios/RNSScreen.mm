@@ -25,6 +25,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
+#import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -109,10 +110,12 @@ namespace react = facebook::react;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
 }
+RNS_IGNORE_SUPER_CALL_END
 #endif
 
 - (void)updateBounds
@@ -291,10 +294,12 @@ namespace react = facebook::react;
 }
 #endif
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (UIView *)reactSuperview
 {
   return _reactSuperview;
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)addSubview:(UIView *)view
 {
