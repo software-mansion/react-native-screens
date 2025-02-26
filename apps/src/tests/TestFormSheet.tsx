@@ -1,7 +1,9 @@
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import { Button, Text, TextInput, View } from 'react-native';
+import PressableWithFeedback from '../shared/PressableWithFeedback';
+import { Spacer } from '../shared';
 
 type RouteParamList = {
   Home: undefined;
@@ -19,6 +21,10 @@ function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
       <Button title="Open FormSheet" onPress={() => navigation.navigate('FormSheet')} />
+      <Spacer space={12} />
+      <PressableWithFeedback>
+        <View style={{ width: '100%', height: 50 }} />
+      </PressableWithFeedback>
     </View>
   );
 }
@@ -52,9 +58,9 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.4, 0.75, 0.9],
+          sheetAllowedDetents: [0.4, 0.6, 0.9],
           //sheetAllowedDetents: 'fitToContents',
-          sheetLargestUndimmedDetentIndex: 1,
+          sheetLargestUndimmedDetentIndex: 0,
           sheetCornerRadius: 8,
           headerShown: false,
           contentStyle: {
