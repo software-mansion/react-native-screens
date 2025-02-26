@@ -36,9 +36,6 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#define ReactScrollViewBase RCTScrollViewComponentView
-#else
-#define ReactScrollViewBase RCTScrollView
 #endif // RCT_NEW_ARCH_ENABLED
 
 constexpr NSInteger SHEET_FIT_TO_CONTENTS = -1;
@@ -64,7 +61,7 @@ struct ContentWrapperBox {
 @end
 
 @implementation RNSScreenView {
-  __weak ReactScrollViewBase *_sheetsScrollView;
+  __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
   BOOL _didSetSheetAllowedDetentsOnController;
   ContentWrapperBox _contentWrapperBox;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -185,7 +182,12 @@ RNS_IGNORE_SUPER_CALL_END
   // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
   // It might be necessary in case someone doesn't want its scroll view to span over whole
   // height of the sheet.
-  ReactScrollViewBase *scrollView = [self findDirectLineDescendantReactScrollView];
+  [self applyFrameCorrectionForDescendantScrollView];
+}
+
+- (void)applyFrameCorrectionForDescendantScrollView
+{
+  RNS_REACT_SCROLL_VIEW_COMPONENT *scrollView = [self findDirectLineDescendantReactScrollView];
   if (_sheetsScrollView != scrollView) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = scrollView;
@@ -195,7 +197,12 @@ RNS_IGNORE_SUPER_CALL_END
     [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
   }
   if (scrollView != nil) {
-    [scrollView setFrame:self.frame];
+    CGRect scrollViewFrameRelativeToScreen = [scrollView convertRect:scrollView.frame toView:self];
+    CGRect newScrollViewFrame = self.frame;
+    if (scrollViewFrameRelativeToScreen.origin.y > 0) {
+      newScrollViewFrame.size.height -= scrollViewFrameRelativeToScreen.origin.y;
+    }
+    [scrollView setFrame:newScrollViewFrame];
   }
 }
 
@@ -204,10 +211,17 @@ RNS_IGNORE_SUPER_CALL_END
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context
 {
-  UIView *scrollview = (UIView *)object;
-  if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
-    [scrollview setFrame:self.frame];
+  UIView *scrollView = (UIView *)object;
+  CGRect scrollViewFrameRelativeToScreen = [scrollView convertRect:scrollView.frame toView:self];
+  CGRect newScrollViewFrame = self.frame;
+  if (scrollViewFrameRelativeToScreen.origin.y > 0) {
+    newScrollViewFrame.size.height -= scrollViewFrameRelativeToScreen.origin.y;
   }
+  [scrollView setFrame:newScrollViewFrame];
+
+  //  if (!CGRectEqualToRect(scrollView.frame, self.frame)) {
+  //    [scrollView setFrame:self.frame];
+  //  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
@@ -746,15 +760,25 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 /// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
-- (nullable ReactScrollViewBase *)findDirectLineDescendantReactScrollView
+- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)findDirectLineDescendantReactScrollView
 {
+  // Step 1: Query registered content wrapper for the scrollview.
+  RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
+
+  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [contentWrapper childRCTScrollViewComponent];
+      scrollViewComponent != nil) {
+    return scrollViewComponent;
+  }
+
+  // Fallback 1: Search through first-subview-path
   UIView *firstSubview = self;
   while (firstSubview.subviews.count > 0) {
     firstSubview = firstSubview.subviews[0];
-    if ([firstSubview isKindOfClass:ReactScrollViewBase.class]) {
-      return (ReactScrollViewBase *)firstSubview;
+    if ([firstSubview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
     }
   }
+
   return nil;
 }
 
@@ -2091,7 +2115,3 @@ RCT_ENUM_CONVERTER(
 #endif
 
 @end
-
-// So that the define-macro is not leaked out of this file.
-// This one is defined in very top of the file depending on RN architecture.
-#undef ReactScrollViewBase

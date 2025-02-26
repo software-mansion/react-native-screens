@@ -1,16 +1,20 @@
 #import "RNSScreenContentWrapper.h"
+#import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
+#import <React/RCTScrollViewComponentView.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 namespace react = facebook::react;
+#else
+#import <React/RCTScrollView.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenContentWrapper
@@ -100,6 +104,16 @@ namespace react = facebook::react;
   } while (currentView != nil && ![currentView isKindOfClass:RNSScreenView.class]);
 
   return static_cast<RNSScreenView *_Nullable>(currentView);
+}
+
+- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)childRCTScrollViewComponent
+{
+  for (UIView *subview in self.subviews) {
+    if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+    }
+  }
+  return nil;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
