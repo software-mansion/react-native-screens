@@ -108,7 +108,8 @@ Screens are already integrated with the React Native's most popular navigation l
 
 | library version | react-native version |
 | --------------- | -------------------- |
-| 3.33.0+         | 0.72.0+
+| 3.36.0+         | 0.73.0+              |
+| 3.33.0+         | 0.72.0+              |
 | 3.32.0+         | 0.71.0+              |
 | 3.30.0+         | 0.68.0+              |
 | 3.14.0+         | 0.64.0+              |
@@ -123,6 +124,7 @@ Here's a table with summary of supported `react-native` versions when Fabric is 
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 3.36.0+         | 0.77.0+              |
 | 3.33.0+         | 0.75.0+              |
 | 3.32.0+         | 0.74.0+              |
 | 3.28.0+         | 0.73.0+              |
