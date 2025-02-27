@@ -19,9 +19,11 @@ const appPackage = require('./package.json');
  * @param {string} module
  */
 function reactNavigationOptionalModuleFilter(module) {
-  return module in appPackage.dependencies === false &&
+  return (
+    module in appPackage.dependencies === false &&
     module in libPackage.devDependencies === false &&
-    module in libPackage.dependencies === false;
+    module in libPackage.dependencies === false
+  );
 }
 
 /**
@@ -30,8 +32,7 @@ function reactNavigationOptionalModuleFilter(module) {
  */
 function blockListProvider(modules, nodeModulesDir) {
   return modules.map(
-    m =>
-      new RegExp(`^${escape(path.join(nodeModulesDir, m))}\\/.*$`),
+    m => new RegExp(`^${escape(path.join(nodeModulesDir, m))}\\/.*$`),
   );
 }
 
@@ -58,16 +59,20 @@ const reactNavigationDuplicatedModules = [
   'react-native',
   'react-native-screens',
   'react-dom', // TODO: Consider whether this won't conflict, especially that RN 78 uses React 19 & react-navigation still uses React 18.
-].concat([
-  'react-native-safe-area-context',
-  'react-native-gesture-handler',
-].filter(reactNavigationOptionalModuleFilter));
+].concat(
+  ['react-native-safe-area-context', 'react-native-gesture-handler'].filter(
+    reactNavigationOptionalModuleFilter,
+  ),
+);
 
 const resolvedExts = ['.ts', '.tsx', '.js', '.jsx'];
 
 const appNodeModules = path.join(appDir, 'node_modules');
 const libNodeModules = path.join(libRootDir, 'node_modules');
-const reactNavigationNodeModules = path.join(reactNavigationDir, 'node_modules');
+const reactNavigationNodeModules = path.join(
+  reactNavigationDir,
+  'node_modules',
+);
 
 const config = {
   projectRoot: appDir,
@@ -76,7 +81,14 @@ const config = {
   // We need to make sure that only one version is loaded for peerDependencies
   // So we exclude them at the root, and alias them to the versions in example's node_modules
   resolver: {
-    blockList: exclusionList(blockListProvider(modules, libNodeModules).concat(blockListProvider(reactNavigationDuplicatedModules, reactNavigationNodeModules))),
+    blockList: exclusionList(
+      blockListProvider(modules, libNodeModules).concat(
+        blockListProvider(
+          reactNavigationDuplicatedModules,
+          reactNavigationNodeModules,
+        ),
+      ),
+    ),
 
     extraNodeModules: modules.reduce((acc, name) => {
       acc[name] = path.join(__dirname, 'node_modules', name);
@@ -97,9 +109,12 @@ const config = {
     // Project node modules + directory where `react-native-screens` repo lives in + react navigation node modules.
     // These are consulted in order of definition.
     // TODO: make it so this does not depend on whether the user renamed the repo or not...
-    nodeModulesPaths: [appNodeModules, path.join(appDir, '../../'), libNodeModules, reactNavigationNodeModules],
-
-
+    nodeModulesPaths: [
+      appNodeModules,
+      path.join(appDir, '../../'),
+      libNodeModules,
+      reactNavigationNodeModules,
+    ],
   },
 
   transformer: {
