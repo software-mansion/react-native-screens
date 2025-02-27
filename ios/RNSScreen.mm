@@ -36,9 +36,6 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#define ReactScrollViewBase RCTScrollViewComponentView
-#else
-#define ReactScrollViewBase RCTScrollView
 #endif // RCT_NEW_ARCH_ENABLED
 
 constexpr NSInteger SHEET_FIT_TO_CONTENTS = -1;
@@ -64,7 +61,7 @@ struct ContentWrapperBox {
 @end
 
 @implementation RNSScreenView {
-  __weak ReactScrollViewBase *_sheetsScrollView;
+  __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
   BOOL _didSetSheetAllowedDetentsOnController;
   ContentWrapperBox _contentWrapperBox;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -167,25 +164,28 @@ RNS_IGNORE_SUPER_CALL_END
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 #endif // RCT_NEW_ARCH_ENABLED
 
-  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
-    return;
+  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
+    // In case of formSheet stack presentation, to mitigate view flickering
+    // (see PR with description of this problem: https://github.com/software-mansion/react-native-screens/pull/1870)
+    // we do not set `bottom: 0` in JS for wrapper of the screen content, causing React to not set
+    // strict frame every time the sheet size is updated by the code above. This approach leads however to
+    // situation where (if present) scrollview does not know its view port size resulting in buggy behaviour.
+    // That's exactly the issue we are handling below. We look for a scroll view down the view hierarchy (only going
+    // through first subviews, as the OS does something similar e.g. when looking for scrollview for large header
+    // interaction) and we set its frame to the sheet size. **This is not perfect**, as the content might jump when
+    // items are added/removed to/from the scroll view, but it's the best we got rn. See
+    // https://github.com/software-mansion/react-native-screens/pull/1852
+
+    // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
+    // It might be necessary in case someone doesn't want its scroll view to span over whole
+    // height of the sheet.
+    [self applyFrameCorrectionForDescendantScrollView];
   }
+}
 
-  // In case of formSheet stack presentation, to mitigate view flickering
-  // (see PR with description of this problem: https://github.com/software-mansion/react-native-screens/pull/1870)
-  // we do not set `bottom: 0` in JS for wrapper of the screen content, causing React to not set
-  // strict frame every time the sheet size is updated by the code above. This approach leads however to
-  // situation where (if present) scrollview does not know its view port size resulting in buggy behaviour.
-  // That's exactly the issue we are handling below. We look for a scroll view down the view hierarchy (only going
-  // through first subviews, as the OS does something similar e.g. when looking for scrollview for large header
-  // interaction) and we set its frame to the sheet size. **This is not perfect**, as the content might jump when items
-  // are added/removed to/from the scroll view, but it's the best we got rn. See
-  // https://github.com/software-mansion/react-native-screens/pull/1852
-
-  // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
-  // It might be necessary in case someone doesn't want its scroll view to span over whole
-  // height of the sheet.
-  ReactScrollViewBase *scrollView = [self findDirectLineDescendantReactScrollView];
+- (void)applyFrameCorrectionForDescendantScrollView
+{
+  RNS_REACT_SCROLL_VIEW_COMPONENT *scrollView = [self tryFindDescendantScrollView];
   if (_sheetsScrollView != scrollView) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = scrollView;
@@ -195,8 +195,20 @@ RNS_IGNORE_SUPER_CALL_END
     [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
   }
   if (scrollView != nil) {
-    [scrollView setFrame:self.frame];
+    [self correctScrollViewFrame:scrollView withHeader:nil];
   }
+}
+
+- (void)correctScrollViewFrame:(nonnull RNS_REACT_SCROLL_VIEW_COMPONENT *)scrollViewComponent
+                    withHeader:(nullable UIView *)headerView
+{
+  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
+    return;
+  }
+
+  // Fallback: legacy behavior
+  [scrollViewComponent setFrame:self.frame];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -204,9 +216,20 @@ RNS_IGNORE_SUPER_CALL_END
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context
 {
-  UIView *scrollview = (UIView *)object;
-  if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
-    [scrollview setFrame:self.frame];
+  UIView *scrollView = (UIView *)object;
+
+  if (![scrollView isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+    return;
+  }
+
+  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
+    return;
+  }
+
+  // Fallback: legacy behavior
+  if (!CGRectEqualToRect(scrollView.frame, self.frame)) {
+    [scrollView setFrame:self.frame];
   }
 }
 
@@ -746,15 +769,25 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 /// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
-- (nullable ReactScrollViewBase *)findDirectLineDescendantReactScrollView
+- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)tryFindDescendantScrollView
 {
+  // Step 1: Query registered content wrapper for the scrollview.
+  RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
+
+  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [contentWrapper childRCTScrollViewComponent];
+      scrollViewComponent != nil) {
+    return scrollViewComponent;
+  }
+
+  // Fallback 1: Search through first-subview-path
   UIView *firstSubview = self;
   while (firstSubview.subviews.count > 0) {
     firstSubview = firstSubview.subviews[0];
-    if ([firstSubview isKindOfClass:ReactScrollViewBase.class]) {
-      return (ReactScrollViewBase *)firstSubview;
+    if ([firstSubview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
     }
   }
+
   return nil;
 }
 
@@ -2091,7 +2124,3 @@ RCT_ENUM_CONVERTER(
 #endif
 
 @end
-
-// So that the define-macro is not leaked out of this file.
-// This one is defined in very top of the file depending on RN architecture.
-#undef ReactScrollViewBase
