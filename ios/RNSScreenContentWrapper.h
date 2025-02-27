@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)childRCTScrollViewComponent;
 
+- (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size;
+
 @end
 
 @interface RNSScreenContentWrapperManager : RCTViewManager

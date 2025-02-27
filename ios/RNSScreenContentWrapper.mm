@@ -116,6 +116,42 @@ namespace react = facebook::react;
   return nil;
 }
 
+- (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size
+{
+  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [self childRCTScrollViewComponent];
+
+  if (scrollViewComponent == nil) {
+    return NO;
+  }
+
+  if (self.subviews.count > 2) {
+    // TODO: Log some warning here
+    RCTLogWarn(
+        @"[RNScreens] FormSheet with ScrollView expects at most 2 subviews. Got %ld. This might result in incorrect layout.",
+        self.subviews.count);
+  }
+
+  NSUInteger scrollViewComponentIndex = [[self subviews] indexOfObject:scrollViewComponent];
+
+  // Case 1: ScrollView first child - takes whole size.
+  if (scrollViewComponentIndex == 0) {
+    CGRect newFrame = scrollViewComponent.frame;
+    newFrame.size = size;
+    scrollViewComponent.frame = newFrame;
+    return YES;
+  } else if (scrollViewComponentIndex == 1) {
+    UIView *headerView = self.subviews[0];
+
+    CGRect newFrame = scrollViewComponent.frame;
+    newFrame.size = size;
+    newFrame.size.height -= headerView.frame.size.height;
+    scrollViewComponent.frame = newFrame;
+    return YES;
+  }
+
+  return NO;
+}
+
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTComponentViewProtocol
