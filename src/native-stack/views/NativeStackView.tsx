@@ -71,12 +71,14 @@ const MaybeNestedStack = ({
   options,
   route,
   stackPresentation,
+  sheetAllowedDetents,
   children,
   internalScreenStyle,
 }: {
   options: NativeStackNavigationOptions;
   route: Route<string>;
   stackPresentation: StackPresentationTypes;
+  sheetAllowedDetents: NativeStackNavigationOptions['sheetAllowedDetents'];
   children: React.ReactNode;
   internalScreenStyle?: Pick<ViewStyle, 'backgroundColor'>;
 }) => {
@@ -108,7 +110,7 @@ const MaybeNestedStack = ({
         stackPresentation === 'formSheet'
           ? Platform.OS === 'ios'
             ? styles.absoluteFillNoBottom
-            : options.sheetAllowedDetents === 'fitToContents'
+            : sheetAllowedDetents === 'fitToContents'
             ? null
             : styles.container
           : styles.container,
@@ -152,6 +154,7 @@ const MaybeNestedStack = ({
         <Screen
           enabled
           isNativeStack
+          sheetAllowedDetents={sheetAllowedDetents}
           hasLargeHeader={hasLargeHeader}
           style={[StyleSheet.absoluteFill, internalScreenStyle]}>
           <HeaderHeightContext.Provider value={headerHeight}>
@@ -440,6 +443,7 @@ const RouteView = ({
           <MaybeNestedStack
             options={options}
             route={route}
+            sheetAllowedDetents={sheetAllowedDetents}
             stackPresentation={stackPresentation}
             internalScreenStyle={internalScreenStyle}>
             {renderScene()}
