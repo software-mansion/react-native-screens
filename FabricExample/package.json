@@ -22,7 +22,7 @@
     "nanoid": "^4.0.2",
     "react": "19.0.0",
     "react-native": "0.78.0",
-    "react-native-gesture-handler": "^2.22.0",
+    "react-native-gesture-handler": "^2.24.0",
     "react-native-reanimated": "^3.17.0",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "5.2.0",

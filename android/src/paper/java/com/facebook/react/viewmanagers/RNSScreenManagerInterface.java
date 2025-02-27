@@ -12,8 +12,9 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 
-public interface RNSScreenManagerInterface<T extends View> {
+public interface RNSScreenManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setSheetAllowedDetents(T view, @Nullable String value);
   void setSheetLargestUndimmedDetent(T view, @Nullable String value);
   void setSheetGrabberVisible(T view, boolean value);

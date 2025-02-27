@@ -3664,7 +3664,7 @@ __metadata:
     prettier: "npm:2.8.8"
     react: "npm:19.0.0"
     react-native: "npm:0.78.0"
-    react-native-gesture-handler: "npm:^2.22.0"
+    react-native-gesture-handler: "npm:^2.24.0"
     react-native-reanimated: "npm:^3.17.0"
     react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:5.2.0"
@@ -8845,7 +8845,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:^2.22.0":
+"react-native-gesture-handler@npm:^2.24.0":
   version: 2.24.0
   resolution: "react-native-gesture-handler@npm:2.24.0"
   dependencies:
