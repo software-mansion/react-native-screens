@@ -108,7 +108,9 @@ const MaybeNestedStack = ({
         stackPresentation === 'formSheet'
           ? Platform.OS === 'ios'
             ? styles.absoluteFillNoBottom
-            : null
+            : options.sheetAllowedDetents === 'fitToContents'
+            ? null
+            : styles.container
           : styles.container,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
