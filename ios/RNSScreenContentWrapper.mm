@@ -1,16 +1,20 @@
 #import "RNSScreenContentWrapper.h"
+#import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
+#import <React/RCTScrollViewComponentView.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 namespace react = facebook::react;
+#else
+#import <React/RCTScrollView.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenContentWrapper
@@ -100,6 +104,63 @@ namespace react = facebook::react;
   } while (currentView != nil && ![currentView isKindOfClass:RNSScreenView.class]);
 
   return static_cast<RNSScreenView *_Nullable>(currentView);
+}
+
+- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)childRCTScrollViewComponent
+{
+  for (UIView *subview in self.subviews) {
+    if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+    }
+  }
+  return nil;
+}
+
+- (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size
+{
+  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [self childRCTScrollViewComponent];
+
+  if (scrollViewComponent == nil) {
+    return NO;
+  }
+
+  if (self.subviews.count > 2) {
+    RCTLogWarn(
+        @"[RNScreens] FormSheet with ScrollView expects at most 2 subviews. Got %ld. This might result in incorrect layout. \
+          If you want to display header alongside the scrollView, make sure to apply `collapsable: false` on your header component view.",
+        self.subviews.count);
+  }
+
+  NSUInteger scrollViewComponentIndex = [[self subviews] indexOfObject:scrollViewComponent];
+
+  // Case 1: ScrollView first child - takes whole size.
+  if (scrollViewComponentIndex == 0) {
+    CGRect newFrame = scrollViewComponent.frame;
+    newFrame.size = size;
+    scrollViewComponent.frame = newFrame;
+    return YES;
+  }
+
+  // Case 2: There is a header - we adjust scrollview size by the header height.
+  if (scrollViewComponentIndex == 1) {
+    UIView *headerView = self.subviews[0];
+    CGRect newFrame = scrollViewComponent.frame;
+    newFrame.size = size;
+    newFrame.size.height -= headerView.frame.size.height;
+#ifdef RCT_NEW_ARCH_ENABLED
+    // For some unknown yet reason on new architecture the scroll view
+    // is placed at (0, 0), which makes no sense given there
+    // is another child at lower index in flex layout.
+    // TODO: Research why this happens and solve this properly.
+    if (newFrame.origin.y == 0) {
+      newFrame.origin.y = headerView.frame.size.height;
+    }
+#endif // RCT_NEW_ARCH_ENABLED
+    scrollViewComponent.frame = newFrame;
+    return YES;
+  }
+
+  return NO;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED

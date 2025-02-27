@@ -1,5 +1,6 @@
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
+#import "RNSDefines.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>
@@ -11,6 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenContentWrapper;
+@class RNS_REACT_SCROLL_VIEW_COMPONENT;
 
 @protocol RNSScreenContentWrapperDelegate <NSObject>
 
@@ -28,12 +30,16 @@ NS_ASSUME_NONNULL_BEGIN
     RCTView
 #endif
 
+@property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
+
 /**
  * Call this method to notify delegate with most recent frame set by React.
  */
 - (void)triggerDelegateUpdate;
 
-@property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
+- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)childRCTScrollViewComponent;
+
+- (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size;
 
 @end
 
