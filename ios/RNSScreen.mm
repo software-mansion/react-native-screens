@@ -202,8 +202,6 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)correctScrollViewFrame:(nonnull RNS_REACT_SCROLL_VIEW_COMPONENT *)scrollViewComponent
                     withHeader:(nullable UIView *)headerView
 {
-  //  NSLog(@"[2] Setting SV %@ frame from %@ to %@", scrollView, NSStringFromCGRect(scrollView.frame),
-  //  NSStringFromCGRect(newScrollViewFrame));
   RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
     return;
