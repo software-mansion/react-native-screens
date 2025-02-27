@@ -71,9 +71,9 @@ function FormSheetWithFlatList({ }: RouteProps<'FormSheetWithFlatList'>) {
   );
 }
 
-const StickyHeader = React.forwardRef<View, { children?: React.ReactNode }>((props, ref: React.LegacyRef<View>) => {
+const StickyHeader = React.forwardRef<View, { children?: React.ReactNode, collapsable?: boolean }>((props, ref: React.LegacyRef<View>) => {
   return (
-    <View ref={ref} style={{ width: '100%', height: 150, backgroundColor: 'red' }}>
+    <View ref={ref} style={{ width: '100%', height: 150, backgroundColor: 'red' }} collapsable={props.collapsable ?? true}>
       {props.children}
     </View>
   );
@@ -94,10 +94,10 @@ function FormSheetWithScrollView() {
 
   return (
     <>
-      <StickyHeader ref={headerRef}>
+      <StickyHeader ref={headerRef} collapsable={false} >
         <Button title="Toggle extra content" onPress={() => setExtraContentVisible(old => !old)} />
       </StickyHeader>
-      <ScrollView nestedScrollEnabled contentInsetAdjustmentBehavior="automatic" style={{}}>
+      <ScrollView nestedScrollEnabled contentInsetAdjustmentBehavior="automatic">
         {data.map(renderItem)}
         {isExtraContentVisible && (
           data.slice(0, 40).map(renderItem)
