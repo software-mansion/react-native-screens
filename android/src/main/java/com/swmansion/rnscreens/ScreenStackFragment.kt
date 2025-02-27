@@ -85,10 +85,7 @@ class ScreenStackFragment :
             return container
         }
 
-    private val dimmingDelegate =
-        lazy(LazyThreadSafetyMode.NONE) {
-            DimmingViewManager(screen.reactContext, screen)
-        }
+    private var dimmingDelegate: DimmingViewManager? = null
 
     private var sheetDelegate: SheetDelegate? = null
 
@@ -299,8 +296,9 @@ class ScreenStackFragment :
         sheetDelegate = SheetDelegate(screen)
 
         assert(view == coordinatorLayout)
-        dimmingDelegate.value.onViewHierarchyCreated(screen, coordinatorLayout)
-        dimmingDelegate.value.onBehaviourAttached(screen, screen.sheetBehavior!!)
+        val dimmingDelegate = requireDimmingDelegate(forceCreation = true)
+        dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
+        dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
         val container = screen.container!!
         coordinatorLayout.measure(
@@ -330,7 +328,7 @@ class ScreenStackFragment :
         }
 
         val animatorSet = AnimatorSet()
-        val dimmingDelegate = dimmingDelegate.value
+        val dimmingDelegate = requireDimmingDelegate()
 
         if (enter) {
             val alphaAnimator =
@@ -716,6 +714,14 @@ class ScreenStackFragment :
 
     override fun dismissFromContainer() {
         screenStack.dismiss(this)
+    }
+
+    private fun requireDimmingDelegate(forceCreation: Boolean = false): DimmingViewManager {
+        if (dimmingDelegate == null || forceCreation) {
+            dimmingDelegate?.invalidate(screen.sheetBehavior)
+            dimmingDelegate = DimmingViewManager(screen.reactContext, screen)
+        }
+        return dimmingDelegate!!
     }
 
     private class ScreensCoordinatorLayout(
