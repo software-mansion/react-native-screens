@@ -4,13 +4,14 @@ import {
   StyleSheet,
   I18nManager,
   Platform,
-  StatusBar,
   useColorScheme,
+  View,
 } from 'react-native';
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
+  NavigationIndependentTree,
   useTheme,
 } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -37,14 +38,28 @@ import { enableFreeze } from 'react-native-screens';
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import * as Tests from './src/tests';
+
 enableFreeze();
+
+function isPlatformReady(name: keyof typeof SCREENS) {
+  if (Platform.isTV) {
+    return !!SCREENS[name].isTVOSReady;
+  }
+
+  return true;
+}
+
+function isTestSectionEnabled() {
+  return true;
+}
 
 const SCREENS: Record<
   string,
   {
     title: string;
     component: () => React.JSX.Element;
-    type: 'example' | 'playground';
+    type: 'example' | 'playground' | 'test';
     isTVOSReady?: boolean;
   }
 > = {
@@ -119,20 +134,32 @@ const SCREENS: Record<
   },
 };
 
-const isPlatformReady = (name: keyof typeof SCREENS) => {
-  if (Platform.isTV) {
-    return !!SCREENS[name].isTVOSReady;
-  }
+if (isTestSectionEnabled()) {
+  Object.keys(Tests).forEach(testName => {
+    SCREENS[testName] = {
+      title: testName,
+      component: () => {
+        const TestComponent = Tests[testName as keyof typeof Tests];
+        return (
+          <NavigationIndependentTree>
+            <TestComponent />
+          </NavigationIndependentTree>
+        );
+      },
+      type: 'test',
+    };
+  });
+}
 
-  return true;
-};
 
 const screens = Object.keys(SCREENS);
 const examples = screens.filter(name => SCREENS[name].type === 'example');
 const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
+const tests = isTestSectionEnabled() ? screens.filter(name => SCREENS[name].type === 'test') : [];
 
 type RootStackParamList = {
   Main: undefined;
+  Tests: undefined;
 } & {
     [P in keyof typeof SCREENS]: undefined;
   };
@@ -184,6 +211,17 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           title={SCREENS[name].title}
           onPress={() => navigation.navigate(name)}
           disabled={!isPlatformReady(name)}
+        />
+      ))}
+      {isTestSectionEnabled() &&
+        <ThemedText style={styles.label}>Tests</ThemedText>}
+      {isTestSectionEnabled() && tests.map(name => (
+        <ListItem
+          key={name}
+          testID={`root-screen-tests-${name}`}
+          title={SCREENS[name].title}
+          onPress={() => navigation.navigate(name)}
+          disabled={false}
         />
       ))}
     </ScrollView>
