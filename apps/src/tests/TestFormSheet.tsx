@@ -1,7 +1,7 @@
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, ScrollView, Text, TextInput, View, Platform } from 'react-native';
 
 type ItemData = {
   id: number,
@@ -38,6 +38,8 @@ function Home({ navigation }: RouteProps<'Home'>) {
 
 function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   return (
+    // When using `fitToContents` you can't use flex: 1. It is you who must provide
+    // the content size - you can't rely on parent size here.
     <View style={{ backgroundColor: 'lightgreen', flex: 1 }}>
       <View style={{ paddingTop: 20 }}>
         <Button title="Go back" onPress={() => navigation.goBack()} />
@@ -69,9 +71,9 @@ function FormSheetWithFlatList({ }: RouteProps<'FormSheetWithFlatList'>) {
   );
 }
 
-const StickyHeader = React.forwardRef((props, ref: React.LegacyRef<View>) => {
+const StickyHeader = React.forwardRef<View, { children?: React.ReactNode }>((props, ref: React.LegacyRef<View>) => {
   return (
-    <View ref={ref} style={{ width: '100%', height: 100, backgroundColor: 'red', zIndex: 1 }}>
+    <View ref={ref} style={{ width: '100%', height: 150, backgroundColor: 'red' }}>
       {props.children}
     </View>
   );
@@ -79,7 +81,6 @@ const StickyHeader = React.forwardRef((props, ref: React.LegacyRef<View>) => {
 
 function FormSheetWithScrollView() {
   const headerRef = React.useRef<View>(null);
-  const [stickyHeaderHeight, setStickyHeaderHeight] = React.useState(0);
   const [isExtraContentVisible, setExtraContentVisible] = React.useState(false);
 
   const data: ItemData[] = React.useMemo(() => generateData(150), []);
@@ -90,25 +91,6 @@ function FormSheetWithScrollView() {
       </Text>
     </View>
   ), []);
-
-  const headerMeasureCallback = React.useCallback((
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-  ) => {
-    setStickyHeaderHeight(height);
-    console.log(`Setting headerheight to ${height}`);
-  }, []);
-
-  React.useLayoutEffect(() => {
-    if (headerRef.current == null) {
-      console.log('NO REF PRESENT');
-      return;
-    }
-
-    headerRef.current.measure(headerMeasureCallback);
-  }, [headerMeasureCallback]);
 
   return (
     <>
@@ -142,9 +124,9 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.4, 0.75, 0.9],
+          sheetAllowedDetents: [0.4, 0.75],
           //sheetAllowedDetents: 'fitToContents',
-          sheetLargestUndimmedDetentIndex: 1,
+          sheetLargestUndimmedDetentIndex: 'none',
           sheetCornerRadius: 8,
           headerShown: false,
           contentStyle: {
@@ -163,7 +145,7 @@ export default function App() {
         }} />
         <Stack.Screen name="FormSheetWithScrollView" component={FormSheetWithScrollView} options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.6, 0.9],
+          sheetAllowedDetents: [0.6],
           sheetExpandsWhenScrolledToEdge: false,
           sheetGrabberVisible: true,
           sheetCornerRadius: 8,
