@@ -60,3 +60,7 @@ android/.settings
 
 # yarn
 **/.yarn/install-state.gz
+
+# Local environment (direnv)
+.envrc
+
