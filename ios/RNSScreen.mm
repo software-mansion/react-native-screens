@@ -1,9 +1,9 @@
 #import <UIKit/UIKit.h>
 
 #import "RNSScreen.h"
-#import "RNSScreenView.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
+#import "RNSScreenView.h"
 #import "RNSScreenWindowTraits.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED

@@ -1,7 +1,7 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSScreen.h"
-#import "RNSScreenView.h"
 #import "RNSScreenStack.h"
+#import "RNSScreenView.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
