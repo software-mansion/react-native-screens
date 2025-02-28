@@ -32,12 +32,4 @@ namespace react = facebook::react;
 
 @end
 
-@interface UIView (RNSScreen)
-- (UIViewController *)parentViewController;
-@end
-
-@interface RNSScreenManager : RCTViewManager
-
-@end
-
 NS_ASSUME_NONNULL_END

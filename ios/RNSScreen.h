@@ -1,6 +1,8 @@
 #pragma once
 
-#import "RNSScreenUtils.h"
+#import "RCTConvert+RNSScreen.h"
+#import "RNSScreenManager.h"
+#import "UIView+RNSScreen.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
