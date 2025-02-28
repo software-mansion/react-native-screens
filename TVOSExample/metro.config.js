@@ -1,3 +1,10 @@
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ * @type {import('@react-native/metro-config').MetroConfig}
+ */
+
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const fs = require('fs');
@@ -5,99 +12,94 @@ const path = require('path');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
 const escape = require('escape-string-regexp');
 
-const pack = require('../package.json');
-const projectPack = require('./package.json');
+const libPackage = require('../package.json');
+const appPackage = require('./package.json');
+
+/**
+ * @param {string} module
+ */
+function reactNavigationOptionalModuleFilter(module) {
+  return module in appPackage.dependencies === false &&
+    module in libPackage.devDependencies === false &&
+    module in libPackage.dependencies === false;
+}
+
+/**
+ * @param {Array<string>} modules
+ * @param {string} nodeModulesParentDir
+ */
+function blockListProvider(modules, nodeModulesDir) {
+  return modules.map(
+    m =>
+      new RegExp(`^${escape(path.join(nodeModulesDir, m))}\\/.*$`),
+  );
+}
 
 // react-native-screens root directory
-const rnsRoot = path.resolve(__dirname, '..');
+const libRootDir = path.resolve(__dirname, '..');
+const reactNavigationDir = path.join(libRootDir, 'react-navigation');
+
+// Application main directory
+const appDir = __dirname;
 
 const modules = [
   '@react-navigation/native',
+  '@react-navigation/stack',
   'react-native-reanimated',
   'react-native-safe-area-context',
   'react-native-gesture-handler',
-  ...Object.keys(pack.peerDependencies),
+  ...Object.keys(libPackage.peerDependencies),
 ];
+
+// We want to enforce that these modules are **not** imported from node modules
+// of the react navigation git submodule.
+const reactNavigationDuplicatedModules = [
+  'react',
+  'react-native',
+  'react-native-screens',
+  'react-dom', // TODO: Consider whether this won't conflict, especially that RN 78 uses React 19 & react-navigation still uses React 18.
+].concat([
+  'react-native-safe-area-context',
+  'react-native-gesture-handler',
+].filter(reactNavigationOptionalModuleFilter));
 
 const resolvedExts = ['.ts', '.tsx', '.js', '.jsx'];
 
-const projectNodeModules = path.join(__dirname, 'node_modules');
+const appNodeModules = path.join(appDir, 'node_modules');
+const libNodeModules = path.join(libRootDir, 'node_modules');
+const reactNavigationNodeModules = path.join(reactNavigationDir, 'node_modules');
 
 const config = {
-  projectRoot: __dirname,
-  watchFolders: [rnsRoot],
+  projectRoot: appDir,
+  watchFolders: [libRootDir],
 
   // We need to make sure that only one version is loaded for peerDependencies
   // So we exclude them at the root, and alias them to the versions in example's node_modules
   resolver: {
-    sourceExts: ['ts', 'tsx', 'js', 'jsx', 'json'],
-    blockList: exclusionList(
-      modules.map(
-        m =>
-          new RegExp(`^${escape(path.join(rnsRoot, 'node_modules', m))}\\/.*$`),
-      ),
-    ),
+    blockList: exclusionList(blockListProvider(modules, libNodeModules).concat(blockListProvider(reactNavigationDuplicatedModules, reactNavigationNodeModules))),
 
     extraNodeModules: modules.reduce((acc, name) => {
       acc[name] = path.join(__dirname, 'node_modules', name);
       return acc;
     }, {}),
 
-    nodeModulesPaths: [projectNodeModules, path.join(__dirname, '../../')],
-
     // Since we use react-navigation as submodule it comes with it's own node_modules. While loading
     // react-navigation code, due to how module resolution algorithms works it seems that its node_modules
     // are consulted first, resulting in double-loaded packages (so doubled react, react-native and other package instances) leading
-    // to various errors. To mitigate this we define below custom request resolver, hijacking requests to conflicting modules and manually
-    // resolving appropriate files. **Most likely** this can be achieved by proper usage of blockList but I found this method working ¯\_(ツ)_/¯
-    resolveRequest: (context, moduleName, platform) => {
-      if (moduleName.startsWith('@react-navigation')) {
-        // For some reason, react-navigation packages don't want to resolve from
-        // the project's node_modules, so we need to use standard Metro resolver.
-        return context.resolveRequest(context, moduleName, platform);
-      }
+    // to various errors. To mitigate this we define this custom request resolver. It does following:
+    //
+    // 1. blocks all conflicting modules by using `blockList` (this includes both our lib & react navigation)
+    // 2. disables module resolution algorithm - we do not look for node_modules besides those specified explicitely,
+    // 3. looks only inside these node modules directories which are explicitly specified in `nodeModulesPaths`.
 
-      if (moduleName === 'react-native-screens') {
-        return {
-          filePath: path.join(rnsRoot, 'src', 'index.tsx'),
-          type: 'sourceFile',
-        };
-      }
+    disableHierarchicalLookup: true,
 
-      if (moduleName in projectPack.dependencies) {
-        for (const ext of resolvedExts) {
-          const possiblePath = path.join(
-            __dirname,
-            'node_modules',
-            moduleName,
-            `index${ext}`,
-          );
+    // Project node modules + directory where `react-native-screens` repo lives in + react navigation node modules.
+    // These are consulted in order of definition.
+    // TODO: make it so this does not depend on whether the user renamed the repo or not...
+    nodeModulesPaths: [appNodeModules, path.join(appDir, '../../'), libNodeModules, reactNavigationNodeModules],
 
-          const possibleSrcPath = path.join(
-            __dirname,
-            'node_modules',
-            moduleName,
-            'src',
-            `index${ext}`,
-          );
 
-          if (fs.existsSync(possiblePath)) {
-            return {
-              filePath: possiblePath,
-              type: 'sourceFile',
-            };
-          } else if (fs.existsSync(possibleSrcPath)) {
-            return {
-              filePath: possibleSrcPath,
-              type: 'sourceFile',
-            };
-          }
-        }
-      }
-
-      // Optionally, chain to the standard Metro resolver.
-      return context.resolveRequest(context, moduleName, platform);
-    },
   },
 
   transformer: {

@@ -41,13 +41,26 @@ class NativeProxy {
         }
     }
 
+    // Called from native
     @DoNotStrip
     public fun notifyScreenRemoved(screenTag: Int) {
-        val screen = viewsMap[screenTag]?.get()
+        // Since RN 0.78 the screenTag we receive as argument here might not belong to a screen
+        // owned by native stack, but e.g. to one parented by plain ScreenContainer, for which we
+        // currently do not want to start exiting transitions. Therefore is it left to caller to
+        // ensure that NativeProxy.viewsMap is filled only with screens belonging to screen stacks.
+
+        val weakScreeRef = viewsMap[screenTag]
+
+        // `screenTag` belongs to not observed screen or screen with such tag no longer exists.
+        if (weakScreeRef == null) {
+            return
+        }
+
+        val screen = weakScreeRef.get()
         if (screen is Screen) {
             screen.startRemovalTransition()
         } else {
-            Log.w("[RNScreens]", "Did not find view with tag $screenTag.")
+            Log.w("[RNScreens]", "Reference stored in NativeProxy for tag $screenTag no longer points to valid object.")
         }
     }
 }

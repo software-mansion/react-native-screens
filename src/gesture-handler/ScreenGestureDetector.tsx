@@ -159,7 +159,13 @@ const ScreenGestureDetector = ({
       return;
     }
     transitionConfig.screenDimensions = screenSize;
-    startScreenTransition(transitionConfig);
+    // Gesture Handler added `pointerType` to event payload back in 2.16.0,
+    // see: https://github.com/software-mansion/react-native-gesture-handler/pull/2760
+    // and this causes type errors here. Proper solution would be to patch parameter types
+    // of this function in reanimated. This should not cause runtime errors as the payload
+    // has correct shape, only the types are incorrect.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    startScreenTransition(transitionConfig as any);
     canPerformUpdates.value = true;
   }
 
@@ -201,7 +207,13 @@ const ScreenGestureDetector = ({
       RNScreensTurboModule.finishTransition(stackTag, isTransitionCanceled);
     };
     screenTransitionConfig.value.isTransitionCanceled = isTransitionCanceled;
-    finishScreenTransition(screenTransitionConfig.value);
+    // Gesture Handler added `pointerType` to event payload back in 2.16.0,
+    // see: https://github.com/software-mansion/react-native-gesture-handler/pull/2760
+    // and this causes type errors here. Proper solution would be to patch parameter types
+    // of this function in reanimated. This should not cause runtime errors as the payload
+    // has correct shape, only the types are incorrect.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    finishScreenTransition(screenTransitionConfig.value as any);
   }
 
   let panGesture = Gesture.Pan()

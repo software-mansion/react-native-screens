@@ -10,8 +10,10 @@ std::optional<MountingTransaction> RNSScreenRemovalListener::pullTransaction(
   for (const ShadowViewMutation &mutation : mutations) {
     if (mutation.type == ShadowViewMutation::Type::Remove &&
         mutation.oldChildShadowView.componentName != nullptr &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") ==
-            0) {
+        strcmp(mutation.oldChildShadowView.componentName, "RNSScreen") == 0) {
+      // We call the listener function even if this screen has not been owned
+      // by RNSScreenStack as since RN 0.78 we do not have enough information
+      // here. This final filter is applied later in NativeProxy.
       listenerFunction_(mutation.oldChildShadowView.tag);
     }
   }
