@@ -36,9 +36,6 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#define ReactScrollViewBase RCTScrollViewComponentView
-#else
-#define ReactScrollViewBase RCTScrollView
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenManager
@@ -236,7 +233,3 @@ RCT_ENUM_CONVERTER(
 #endif
 
 @end
-
-// So that the define-macro is not leaked out of this file.
-// This one is defined in very top of the file depending on RN architecture.
-#undef ReactScrollViewBase
