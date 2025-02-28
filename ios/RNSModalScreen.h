@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSScreenView.h"
 
 @interface RNSModalScreen : RNSScreenView

@@ -1,3 +1,5 @@
+#pragma once
+
 #import <UIKit/UIKit.h>
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/Props.h>
