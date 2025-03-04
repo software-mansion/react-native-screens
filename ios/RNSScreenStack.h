@@ -7,13 +7,13 @@
 #import <React/RCTViewManager.h>
 #endif
 
+#import "RNSNavigationController.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenStackManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate>
-
-@end
+@class RNSScrenStackManager;
 
 @interface RNSScreenStackView :
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)startScreenTransition;
 - (void)updateScreenTransition:(double)progress;
 - (void)finishScreenTransition:(BOOL)canceled;
+- (void)dismissOnReload;
 
 @property (nonatomic) BOOL customAnimation;
 @property (nonatomic) BOOL disableSwipeBack;
@@ -35,10 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
 #endif // RCT_NEW_ARCH_ENABLED
-
-@end
-
-@interface RNSScreenStackManager : RCTViewManager <RCTInvalidating>
 
 @end
 
