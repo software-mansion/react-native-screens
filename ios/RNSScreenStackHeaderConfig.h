@@ -8,15 +8,14 @@
 #endif
 
 #import <React/RCTConvert.h>
+#import "NSString+RNSStringUtil.h"
+#import "RCTConvert+RNSScreenStackHeader.h"
+#import "RNSHeaderConfigInsetsPayload.h"
+#import "RNSScreenStackHeaderConfigManager.h"
+#import "RNSScreenStackHeaderConfigShadowView.h"
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSScreenView.h"
 #import "RNSSearchBar.h"
-
-@interface NSString (RNSStringUtil)
-
-+ (BOOL)RNSisBlank:(nullable NSString *)string;
-
-@end
 
 @interface RNSScreenStackHeaderConfig :
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -119,40 +118,5 @@ NS_ASSUME_NONNULL_END
  */
 - (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets;
 #endif
-
-@end
-
-@interface RNSScreenStackHeaderConfigManager : RCTViewManager
-
-@end
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-
-/**
- * Used as local data send to shadow view on Paper. This helps us to provide Yoga
- * with knowledge of native insets in the navigation bar.
- */
-@interface RNSHeaderConfigInsetsPayload : NSObject
-
-@property (nonatomic) NSDirectionalEdgeInsets insets;
-
-- (instancetype)initWithInsets:(NSDirectionalEdgeInsets)insets NS_DESIGNATED_INITIALIZER;
-
-@end
-
-/**
- * Custom shadow view for header config. This is used on Paper to provide Yoga
- * with knowledge of native header insets (horizontal padding).
- */
-@interface RNSScreenStackHeaderConfigShadowView : RCTShadowView
-
-@end
-#endif
-
-@interface RCTConvert (RNSScreenStackHeader)
-
-+ (UISemanticContentAttribute)UISemanticContentAttribute:(nonnull id)json;
-+ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayMode:(nonnull id)json;
 
 @end
