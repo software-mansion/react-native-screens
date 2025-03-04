@@ -13,48 +13,6 @@ namespace react = facebook::react;
 
 #endif // RCT_NEW_ARCH_ENABLED
 
-@implementation RNSViewController
-
-#if !TARGET_OS_TV
-- (UIViewController *)childViewControllerForStatusBarStyle
-{
-  return [self findActiveChildVC];
-}
-
-- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
-{
-  return [self findActiveChildVC].preferredStatusBarUpdateAnimation;
-}
-
-- (UIViewController *)childViewControllerForStatusBarHidden
-{
-  return [self findActiveChildVC];
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-  return [self findActiveChildVC].supportedInterfaceOrientations;
-}
-
-- (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
-{
-  return [self findActiveChildVC];
-}
-#endif
-
-- (UIViewController *)findActiveChildVC
-{
-  for (UIViewController *childVC in self.childViewControllers) {
-    if ([childVC isKindOfClass:[RNSScreen class]] &&
-        ((RNSScreen *)childVC).screenView.activityState == RNSActivityStateOnTop) {
-      return childVC;
-    }
-  }
-  return [[self childViewControllers] lastObject];
-}
-
-@end
-
 @implementation RNSScreenContainerView {
   BOOL _invalidated;
   NSMutableSet *_activeScreens;
@@ -342,14 +300,3 @@ Class<RCTComponentViewProtocol> RNSScreenContainerCls(void)
   return RNSScreenContainerView.class;
 }
 #endif
-
-@implementation RNSScreenContainerManager
-
-RCT_EXPORT_MODULE()
-
-- (UIView *)view
-{
-  return [[RNSScreenContainerView alloc] init];
-}
-
-@end

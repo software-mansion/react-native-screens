@@ -6,6 +6,8 @@
 #endif
 
 #import <React/RCTViewManager.h>
+#import "RNSScreenContainerManager.h"
+#import "RNSViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,20 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)markChildUpdated;
 - (void)updateContainer;
-
-@end
-
-@protocol RNSViewControllerDelegate
-
-@end
-
-@interface RNSViewController : UIViewController <RNSViewControllerDelegate>
-
-- (UIViewController *)findActiveChildVC;
-
-@end
-
-@interface RNSScreenContainerManager : RCTViewManager
 
 @end
 
