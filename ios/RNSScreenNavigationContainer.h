@@ -3,7 +3,7 @@
 #import <React/RCTViewManager.h>
 
 #import "RNSScreenContainer.h"
-#import "RNSScreenStack.h"
+#import "RNSScreenStackView.h"
 
 @interface RNSContainerNavigationController : RNSNavigationController
 

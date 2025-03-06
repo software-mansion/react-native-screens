@@ -5,7 +5,7 @@
 #import <React/RCTUIManagerUtils.h>
 #import <React/RCTUtils.h>
 #include <jsi/jsi.h>
-#import "RNSScreenStack.h"
+#import "RNSScreenStackView.h"
 #import "RNScreensTurboModule.h"
 
 NS_ASSUME_NONNULL_BEGIN

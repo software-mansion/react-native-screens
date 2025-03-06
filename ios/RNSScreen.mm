@@ -29,8 +29,8 @@
 #import <React/RCTUIManagerUtils.h>
 
 #import "RNSScreenFooter.h"
-#import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenStackView.h"
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"

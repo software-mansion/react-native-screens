@@ -1,6 +1,6 @@
 #import "RNSScreenWindowTraits.h"
 #import "RNSScreenContainer.h"
-#import "RNSScreenStack.h"
+#import "RNSScreenStackView.h"
 
 @implementation RNSScreenWindowTraits
 

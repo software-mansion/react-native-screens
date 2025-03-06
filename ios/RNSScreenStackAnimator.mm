@@ -1,5 +1,5 @@
 #import "RNSScreenStackAnimator.h"
-#import "RNSScreenStack.h"
+#import "RNSScreenStackView.h"
 
 #import "RNSScreenView.h"
 

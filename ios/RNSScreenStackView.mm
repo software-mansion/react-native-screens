@@ -23,9 +23,9 @@
 #import "RNSDefines.h"
 #import "RNSPercentDrivenInteractiveTransition.h"
 #import "RNSScreen.h"
-#import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenStackView.h"
 #import "RNSScreenWindowTraits.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
