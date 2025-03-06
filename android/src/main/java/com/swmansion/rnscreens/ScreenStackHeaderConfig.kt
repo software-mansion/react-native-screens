@@ -1,16 +1,20 @@
 package com.swmansion.rnscreens
 
 import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Insets
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Build
 import android.text.TextUtils
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
 import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -22,13 +26,28 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 
+data class InsetsCompat(
+    val left: Int,
+    val top: Int,
+    val right: Int,
+    val bottom: Int,
+) {
+    companion object {
+        @RequiresApi(Build.VERSION_CODES.Q)
+        fun from(insets: Insets) = InsetsCompat(insets.left, insets.top, insets.right, insets.bottom)
+
+        val ZERO = InsetsCompat(0, 0, 0, 0)
+    }
+}
+
 class ScreenStackHeaderConfig(
     context: Context,
 ) : FabricEnabledHeaderConfigViewGroup(context) {
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
-    var isHeaderTranslucent = false // named this way to avoid conflict with platform's isTranslucent
+    var isHeaderTranslucent =
+        false // named this way to avoid conflict with platform's isTranslucent
     private var headerTopInset: Int? = null
     private var title: String? = null
     private var titleColor = 0
@@ -44,6 +63,7 @@ class ScreenStackHeaderConfig(
     private var isTopInsetEnabled = true
     private var tintColor = 0
     private var isAttachedToWindow = false
+    private var lastCutoutInsets = InsetsCompat(0, 0, 0, 0)
     private val defaultStartInset: Int
     private val defaultStartInsetWithNavigation: Int
     private val backClickListener =
@@ -103,8 +123,18 @@ class ScreenStackHeaderConfig(
                     (25 * resources.displayMetrics.density).toInt()
                 }
         }
+        if (lastCutoutInsets == InsetsCompat.ZERO) {
+            lastCutoutInsets = resolveCutoutInsets()
+        }
         onUpdate()
     }
+
+    private fun resolveCutoutInsets(windowInsets: WindowInsets? = null) =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            InsetsCompat.from((windowInsets ?: rootWindowInsets).getInsets(WindowInsets.Type.displayCutout()))
+        } else {
+            InsetsCompat(0, 0, 0, 0)
+        }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -132,6 +162,45 @@ class ScreenStackHeaderConfig(
             }
             return null
         }
+
+    override fun onSizeChanged(
+        w: Int,
+        h: Int,
+        oldw: Int,
+        oldh: Int,
+    ) {
+        super.onSizeChanged(w, h, oldw, oldh)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+
+        if (newConfig == null) {
+            return
+        }
+
+        when (newConfig.orientation) {
+            Configuration.ORIENTATION_PORTRAIT, Configuration.ORIENTATION_LANDSCAPE -> {
+//                lastCutoutInsets = resolveCutoutInsets()
+                Log.i("HC", "onConfigurationChange: cutoutInsets: $lastCutoutInsets & headerTopInset: $headerTopInset")
+//                onUpdate()
+            }
+            else -> Unit
+        }
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets? {
+        val unhandledInsets = super.onApplyWindowInsets(insets)
+        val cutoutInsets = resolveCutoutInsets(unhandledInsets)
+        Log.i("HC", "onApplyWindowInsets: cutoutInsets: $cutoutInsets & headerTopInset: $headerTopInset")
+
+        // Prevent infinite layout loop
+        if (cutoutInsets != lastCutoutInsets) {
+            lastCutoutInsets = cutoutInsets
+            onUpdate()
+        }
+        return unhandledInsets
+    }
 
     fun onUpdate() {
         val stack = screenStack
@@ -177,8 +246,9 @@ class ScreenStackHeaderConfig(
         }
 
         if (isTopInsetEnabled) {
-            headerTopInset.let {
-                toolbar.setPadding(0, it ?: 0, 0, 0)
+            Log.i("HC", "cutoutInsets: $lastCutoutInsets & headerTopInset: $headerTopInset")
+            headerTopInset?.let {
+                toolbar.setPadding(lastCutoutInsets.left, it ?: 0, lastCutoutInsets.right, 0)
             }
         } else {
             if (toolbar.paddingTop > 0) {
@@ -250,7 +320,8 @@ class ScreenStackHeaderConfig(
 
         // color
         if (tintColor != 0) {
-            toolbar.navigationIcon?.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
+            toolbar.navigationIcon?.colorFilter =
+                PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
         }
 
         // subviews
@@ -288,12 +359,14 @@ class ScreenStackHeaderConfig(
                     toolbar.title = null
                     params.gravity = Gravity.START
                 }
+
                 ScreenStackHeaderSubview.Type.RIGHT -> params.gravity = Gravity.END
                 ScreenStackHeaderSubview.Type.CENTER -> {
                     params.width = LayoutParams.MATCH_PARENT
                     params.gravity = Gravity.CENTER_HORIZONTAL
                     toolbar.title = null
                 }
+
                 else -> {}
             }
             view.layoutParams = params
@@ -402,7 +475,8 @@ class ScreenStackHeaderConfig(
 
     init {
         visibility = GONE
-        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
+        toolbar =
+            if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
         defaultStartInset = toolbar.contentInsetStart
         defaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 
