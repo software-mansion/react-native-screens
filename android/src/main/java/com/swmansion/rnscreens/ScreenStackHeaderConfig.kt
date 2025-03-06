@@ -154,15 +154,6 @@ class ScreenStackHeaderConfig(
             return null
         }
 
-    override fun onSizeChanged(
-        w: Int,
-        h: Int,
-        oldw: Int,
-        oldh: Int,
-    ) {
-        super.onSizeChanged(w, h, oldw, oldh)
-    }
-
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets? {
         val unhandledInsets = super.onApplyWindowInsets(insets)
         val cutoutInsets = resolveCutoutInsets(unhandledInsets)
