@@ -53,9 +53,11 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
       - name: Install AVD dependencies
+        # libxkbfile1 is removed by "Free Disk Space (Ubuntu)" step first. Here we install it again
+        # as it seems to be needed by the emulator.
         run: |
           sudo apt update
-          sudo apt-get install -y libpulse0 libgl1
+          sudo apt-get install -y libpulse0 libgl1 libxkbfile1
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
