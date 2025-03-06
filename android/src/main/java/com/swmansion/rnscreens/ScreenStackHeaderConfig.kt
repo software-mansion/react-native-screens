@@ -419,7 +419,7 @@ class ScreenStackHeaderConfig(
             for (i in 0 until toolbar.childCount) {
                 val view = toolbar.getChildAt(i)
                 if (view is TextView) {
-                    if (view.text == toolbar.title) {
+                    if (TextUtils.equals(view.text, toolbar.title)) {
                         return view
                     }
                 }
