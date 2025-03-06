@@ -61,7 +61,7 @@ class ScreenStackHeaderConfig(
     private var isTopInsetEnabled = true
     private var tintColor = 0
     private var isAttachedToWindow = false
-    private var lastCutoutInsets = InsetsCompat(0, 0, 0, 0)
+    private var lastCutoutInsets = InsetsCompat.ZERO
     private val defaultStartInset: Int
     private val defaultStartInsetWithNavigation: Int
     private val backClickListener =
@@ -350,7 +350,7 @@ class ScreenStackHeaderConfig(
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             InsetsCompat.from(insets.getInsets(WindowInsets.Type.displayCutout()))
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val displayCutout = insets.displayCutout ?: return InsetsCompat(0, 0, 0, 0)
+            val displayCutout = insets.displayCutout ?: return InsetsCompat.ZERO
             InsetsCompat(
                 displayCutout.safeInsetLeft,
                 displayCutout.safeInsetTop,
@@ -358,7 +358,7 @@ class ScreenStackHeaderConfig(
                 displayCutout.safeInsetBottom,
             )
         } else {
-            InsetsCompat(0, 0, 0, 0)
+            InsetsCompat.ZERO
         }
     }
 
