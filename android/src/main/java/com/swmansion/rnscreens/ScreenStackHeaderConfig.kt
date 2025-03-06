@@ -6,7 +6,6 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Build
 import android.text.TextUtils
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
@@ -167,7 +166,6 @@ class ScreenStackHeaderConfig(
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets? {
         val unhandledInsets = super.onApplyWindowInsets(insets)
         val cutoutInsets = resolveCutoutInsets(unhandledInsets)
-        Log.i("HC", "onApplyWindowInsets: cutoutInsets: $cutoutInsets & headerTopInset: $headerTopInset")
 
         // Prevent infinite layout loop
         if (cutoutInsets != lastCutoutInsets) {
@@ -366,7 +364,6 @@ class ScreenStackHeaderConfig(
 
     private fun adjustToolbarInsets() {
         if (isTopInsetEnabled) {
-            Log.i("HC", "cutoutInsets: $lastCutoutInsets & headerTopInset: $headerTopInset")
             headerTopInset?.let {
                 toolbar.setPadding(lastCutoutInsets.left, it ?: 0, lastCutoutInsets.right, 0)
             }
