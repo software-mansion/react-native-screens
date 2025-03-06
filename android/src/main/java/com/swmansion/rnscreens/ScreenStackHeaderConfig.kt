@@ -25,7 +25,7 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 
-data class InsetsCompat(
+private data class InsetsCompat(
     val left: Int,
     val top: Int,
     val right: Int,
@@ -128,13 +128,6 @@ class ScreenStackHeaderConfig(
         onUpdate()
     }
 
-    private fun resolveCutoutInsets(windowInsets: WindowInsets? = null) =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            InsetsCompat.from((windowInsets ?: rootWindowInsets).getInsets(WindowInsets.Type.displayCutout()))
-        } else {
-            InsetsCompat(0, 0, 0, 0)
-        }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         isAttachedToWindow = false
@@ -179,7 +172,7 @@ class ScreenStackHeaderConfig(
         // Prevent infinite layout loop
         if (cutoutInsets != lastCutoutInsets) {
             lastCutoutInsets = cutoutInsets
-            onUpdate()
+            adjustToolbarInsets()
         }
         return unhandledInsets
     }
@@ -227,16 +220,7 @@ class ScreenStackHeaderConfig(
             screenFragment?.setToolbar(toolbar)
         }
 
-        if (isTopInsetEnabled) {
-            Log.i("HC", "cutoutInsets: $lastCutoutInsets & headerTopInset: $headerTopInset")
-            headerTopInset?.let {
-                toolbar.setPadding(lastCutoutInsets.left, it ?: 0, lastCutoutInsets.right, 0)
-            }
-        } else {
-            if (toolbar.paddingTop > 0) {
-                toolbar.setPadding(0, 0, 0, 0)
-            }
-        }
+        adjustToolbarInsets()
 
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
@@ -360,6 +344,36 @@ class ScreenStackHeaderConfig(
     private fun maybeUpdate() {
         if (parent != null && !isDestroyed && screen?.isBeingRemoved == false) {
             onUpdate()
+        }
+    }
+
+    private fun resolveCutoutInsets(windowInsets: WindowInsets? = null): InsetsCompat {
+        val insets = windowInsets ?: rootWindowInsets
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            InsetsCompat.from(insets.getInsets(WindowInsets.Type.displayCutout()))
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val displayCutout = insets.displayCutout ?: return InsetsCompat(0, 0, 0, 0)
+            InsetsCompat(
+                displayCutout.safeInsetLeft,
+                displayCutout.safeInsetTop,
+                displayCutout.safeInsetRight,
+                displayCutout.safeInsetBottom,
+            )
+        } else {
+            InsetsCompat(0, 0, 0, 0)
+        }
+    }
+
+    private fun adjustToolbarInsets() {
+        if (isTopInsetEnabled) {
+            Log.i("HC", "cutoutInsets: $lastCutoutInsets & headerTopInset: $headerTopInset")
+            headerTopInset?.let {
+                toolbar.setPadding(lastCutoutInsets.left, it ?: 0, lastCutoutInsets.right, 0)
+            }
+        } else {
+            if (toolbar.paddingTop > 0) {
+                toolbar.setPadding(0, 0, 0, 0)
+            }
         }
     }
 
