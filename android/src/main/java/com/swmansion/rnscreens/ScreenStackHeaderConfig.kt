@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Insets
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -170,23 +169,6 @@ class ScreenStackHeaderConfig(
         oldh: Int,
     ) {
         super.onSizeChanged(w, h, oldw, oldh)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration?) {
-        super.onConfigurationChanged(newConfig)
-
-        if (newConfig == null) {
-            return
-        }
-
-        when (newConfig.orientation) {
-            Configuration.ORIENTATION_PORTRAIT, Configuration.ORIENTATION_LANDSCAPE -> {
-//                lastCutoutInsets = resolveCutoutInsets()
-                Log.i("HC", "onConfigurationChange: cutoutInsets: $lastCutoutInsets & headerTopInset: $headerTopInset")
-//                onUpdate()
-            }
-            else -> Unit
-        }
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets? {
