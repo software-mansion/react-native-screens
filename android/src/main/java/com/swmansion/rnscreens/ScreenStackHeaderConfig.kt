@@ -73,6 +73,28 @@ class ScreenStackHeaderConfig(
             }
         }
 
+    fun destroy() {
+        isDestroyed = true
+    }
+
+    /**
+     * Native toolbar should notify the header config component that it has completed its layout.
+     */
+    fun onNativeToolbarLayout(toolbar: Toolbar, shouldUpdateShadowStateHint: Boolean) {
+        if (!shouldUpdateShadowStateHint) {
+            return
+        }
+
+        val contentInsetStart = toolbar.currentContentInsetStart + toolbar.paddingStart
+        val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
+
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateHeaderConfigState(toolbar.width, toolbar.height, contentInsetStart, contentInsetEnd)
+        } else {
+            updatePaddings(contentInsetStart, contentInsetEnd)
+        }
+    }
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
@@ -80,10 +102,6 @@ class ScreenStackHeaderConfig(
         r: Int,
         b: Int,
     ) = Unit
-
-    fun destroy() {
-        isDestroyed = true
-    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -193,7 +211,12 @@ class ScreenStackHeaderConfig(
         // reset startWithNavigation inset which corresponds to the distance between navigation icon and
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
-        toolbar.updateContentInsets(headerTopInset ?: 0, defaultStartInset, defaultStartInset, defaultStartInsetWithNavigation)
+        toolbar.updateContentInsets(
+            headerTopInset ?: 0,
+            defaultStartInset,
+            defaultStartInset,
+            defaultStartInsetWithNavigation
+        )
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
         // navigation click listener. The default behavior set in the wrapper is to call into

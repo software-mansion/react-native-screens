@@ -116,23 +116,16 @@ open class CustomToolbar(
     }
 
     override fun onLayout(
-        changed: Boolean,
+        hasSizeChanged: Boolean,
         l: Int,
         t: Int,
         r: Int,
         b: Int,
     ) {
-        super.onLayout(changed, l, t, r, b)
+        super.onLayout(hasSizeChanged, l, t, r, b)
 
-        Log.w("CustomToolbar", "onLayout: padding: $paddingStart, $paddingTop, $paddingRight")
-
-        if (!(changed || isForceShadowStateUpdateOnLayoutRequested)) {
-            Log.w("CustomToolbar", "onLayout: NOT CHANGED")
-            return
-        }
-
+        config.onNativeToolbarLayout(this, hasSizeChanged || isForceShadowStateUpdateOnLayoutRequested)
         isForceShadowStateUpdateOnLayoutRequested = false
-        updateHeaderConfigShadowState(l, t, r, b)
     }
 
     fun updateContentInsets(
@@ -182,28 +175,6 @@ open class CustomToolbar(
     ) {
         requestForceShadowStateUpdateOnLayout()
         setPadding(left, top, right, bottom)
-    }
-
-    private fun updateHeaderConfigShadowState(
-        l: Int,
-        t: Int,
-        r: Int,
-        b: Int,
-    ) {
-        val contentInsetStart = currentContentInsetStart + paddingStart
-        val contentInsetEnd = currentContentInsetEnd + paddingEnd
-
-        Log.i(
-            "CustomToolbar",
-            "onLayout: x: $l, start: ${this.contentInsetStart}, startWN: $contentInsetStartWithNavigation, current: $currentContentInsetStart, resolved: $contentInsetStart, paddingStart: $paddingStart",
-        )
-
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            config.updateHeaderConfigState(r - l, b - t, contentInsetStart, contentInsetEnd)
-        } else {
-            // our children are already laid out
-            config.updatePaddings(contentInsetStart, contentInsetEnd)
-        }
     }
 
     private fun requestForceShadowStateUpdateOnLayout() {
