@@ -6,13 +6,13 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Build
 import android.text.TextUtils
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
 import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -23,20 +23,8 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
-
-private data class InsetsCompat(
-    val left: Int,
-    val top: Int,
-    val right: Int,
-    val bottom: Int,
-) {
-    companion object {
-        @RequiresApi(Build.VERSION_CODES.Q)
-        fun from(insets: Insets) = InsetsCompat(insets.left, insets.top, insets.right, insets.bottom)
-
-        val ZERO = InsetsCompat(0, 0, 0, 0)
-    }
-}
+import com.swmansion.rnscreens.utils.InsetsCompat
+import com.swmansion.rnscreens.utils.resolveDisplayCutoutInsets
 
 class ScreenStackHeaderConfig(
     context: Context,
@@ -58,7 +46,9 @@ class ScreenStackHeaderConfig(
     private var isShadowHidden = false
     private var isDestroyed = false
     private var backButtonInCustomView = false
-    private var isTopInsetEnabled = true
+    var isTopInsetEnabled = true
+        private set
+
     private var tintColor = 0
     private var isAttachedToWindow = false
     private var lastCutoutInsets = InsetsCompat.ZERO
@@ -93,9 +83,7 @@ class ScreenStackHeaderConfig(
         t: Int,
         r: Int,
         b: Int,
-    ) {
-        // no-op
-    }
+    ) = Unit
 
     fun destroy() {
         isDestroyed = true
@@ -122,7 +110,7 @@ class ScreenStackHeaderConfig(
                 }
         }
         if (lastCutoutInsets == InsetsCompat.ZERO) {
-            lastCutoutInsets = resolveCutoutInsets()
+            lastCutoutInsets = resolveDisplayCutoutInsets()
         }
         onUpdate()
     }
@@ -156,12 +144,18 @@ class ScreenStackHeaderConfig(
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets? {
         val unhandledInsets = super.onApplyWindowInsets(insets)
-        val cutoutInsets = resolveCutoutInsets(unhandledInsets)
+
+        // We use rootWindowInsets in lieu of insets or unhandledInsets here,
+        // because cutout sometimes (only in certain scenarios, e.g. with headerLeft view present)
+        // happen to be Insets.ZERO and is not reliable.
+        val cutoutInsets = resolveDisplayCutoutInsets(rootWindowInsets)
+
+        Log.i("HeaderConfig", "onApplyWindowInsets: $cutoutInsets")
 
         // Prevent infinite layout loop
         if (cutoutInsets != lastCutoutInsets) {
             lastCutoutInsets = cutoutInsets
-            adjustToolbarInsets()
+//            adjustToolbarInsets()
         }
         return unhandledInsets
     }
@@ -336,31 +330,14 @@ class ScreenStackHeaderConfig(
         }
     }
 
-    private fun resolveCutoutInsets(windowInsets: WindowInsets? = null): InsetsCompat {
-        val insets = windowInsets ?: rootWindowInsets
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            InsetsCompat.from(insets.getInsets(WindowInsets.Type.displayCutout()))
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val displayCutout = insets.displayCutout ?: return InsetsCompat.ZERO
-            InsetsCompat(
-                displayCutout.safeInsetLeft,
-                displayCutout.safeInsetTop,
-                displayCutout.safeInsetRight,
-                displayCutout.safeInsetBottom,
-            )
-        } else {
-            InsetsCompat.ZERO
-        }
-    }
-
     private fun adjustToolbarInsets() {
         if (isTopInsetEnabled) {
-            headerTopInset?.let {
-                toolbar.setPadding(lastCutoutInsets.left, it ?: 0, lastCutoutInsets.right, 0)
+            headerTopInset?.let { topInset ->
+                toolbar.adjustInsets(lastCutoutInsets.left, topInset, lastCutoutInsets.right, 0)
             }
         } else {
             if (toolbar.paddingTop > 0) {
-                toolbar.setPadding(0, 0, 0, 0)
+                toolbar.adjustInsets(0, 0, 0, 0)
             }
         }
     }

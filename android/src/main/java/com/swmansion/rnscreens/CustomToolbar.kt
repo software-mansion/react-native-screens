@@ -3,18 +3,31 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
+import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
+import com.swmansion.rnscreens.utils.InsetsCompat
+import com.swmansion.rnscreens.utils.resolveDisplayCutoutInsets
 
 // This class is used to store config closer to search bar
+// It also handles avoidance of display cutout in horizontal mode.
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 open class CustomToolbar(
     context: Context,
     val config: ScreenStackHeaderConfig,
 ) : Toolbar(context) {
+    // Switch this flag to enable/disable display cutout avoidance.
+    // Currently this is controlled by isTopInsetEnabled prop.
+    val shouldAvoidDisplayCutout
+        get() = config.isTopInsetEnabled
+
+    private var lastCutoutInsets = InsetsCompat.ZERO
+    private var forceShadowStateUpdateOnLayout = false
+
     private var isLayoutEnqueued = false
     private val layoutCallback: ChoreographerCompat.FrameCallback =
         object : ChoreographerCompat.FrameCallback() {
@@ -59,6 +72,24 @@ open class CustomToolbar(
         }
     }
 
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        val unhandledInsets = super.onApplyWindowInsets(insets)
+
+        // We use rootWindowInsets in lieu of insets or unhandledInsets here,
+        // because cutout sometimes (only in certain scenarios, e.g. with headerLeft view present)
+        // happen to be Insets.ZERO and is not reliable.
+        val cutoutInsets = resolveDisplayCutoutInsets(rootWindowInsets)
+        if (lastCutoutInsets != cutoutInsets) {
+            lastCutoutInsets = cutoutInsets
+            adjustInsets(lastCutoutInsets.left, paddingTop, lastCutoutInsets.right, paddingBottom)
+        }
+
+        val unhandledCutoutInsets = resolveDisplayCutoutInsets(unhandledInsets)
+
+        Log.i("CustomToolbar", "onApplyWindowInsets: $cutoutInsets, $unhandledCutoutInsets")
+        return unhandledInsets
+    }
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
@@ -68,15 +99,43 @@ open class CustomToolbar(
     ) {
         super.onLayout(changed, l, t, r, b)
 
-        if (!changed) {
+        Log.w("CustomToolbar", "onLayout: padding: $paddingStart, $paddingTop, $paddingRight")
+
+        if (!(changed || forceShadowStateUpdateOnLayout)) {
+            Log.w("CustomToolbar", "onLayout: NOT CHANGED")
             return
         }
 
-        val contentInsetStart = if (navigationIcon != null) contentInsetStartWithNavigation else contentInsetStart
+        forceShadowStateUpdateOnLayout = false
+        updateHeaderConfigShadowState(l, t, r, b)
+    }
+
+    fun adjustInsets(
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        forceShadowStateUpdateOnLayout = shouldAvoidDisplayCutout
+        setPadding(left, top, right, bottom)
+    }
+
+    private fun updateHeaderConfigShadowState(
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
+        val contentInsetStart = currentContentInsetStart + paddingStart
+        val contentInsetEnd = currentContentInsetEnd + paddingEnd
+
+        Log.i(
+            "CustomToolbar",
+            "onLayout: x: $l, start: ${this.contentInsetStart}, startWN: $contentInsetStartWithNavigation, current: $currentContentInsetStart, resolved: $contentInsetStart, paddingStart: $paddingStart",
+        )
+
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            val width = r - l
-            val height = b - t
-            config.updateHeaderConfigState(width, height, contentInsetStart, contentInsetEnd)
+            config.updateHeaderConfigState(r - l, b - t, contentInsetStart, contentInsetEnd)
         } else {
             // our children are already laid out
             config.updatePaddings(contentInsetStart, contentInsetEnd)
