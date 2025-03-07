@@ -792,27 +792,29 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
 {
-  UINavigationItem *navitem = _screenView.controller.navigationItem;
-  UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
+  if (childComponentView.window != nil) {
+    UINavigationItem *navitem = _screenView.controller.navigationItem;
+    UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
 
-  // This code should be kept in sync with analogous switch statement in
-  // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
-  switch (childComponentView.type) {
-    case RNSScreenStackHeaderSubviewTypeLeft:
-      navitem.leftBarButtonItem.customView = snapshot;
-      break;
-    case RNSScreenStackHeaderSubviewTypeCenter:
-    case RNSScreenStackHeaderSubviewTypeTitle:
-      navitem.titleView = snapshot;
-      break;
-    case RNSScreenStackHeaderSubviewTypeRight:
-      navitem.rightBarButtonItem.customView = snapshot;
-      break;
-    case RNSScreenStackHeaderSubviewTypeSearchBar:
-    case RNSScreenStackHeaderSubviewTypeBackButton:
-      break;
-    default:
-      RCTLogError(@"[RNScreens] Unhandled subview type: %ld", childComponentView.type);
+    // This code should be kept in sync with analogous switch statement in
+    // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
+    switch (childComponentView.type) {
+      case RNSScreenStackHeaderSubviewTypeLeft:
+        navitem.leftBarButtonItem.customView = snapshot;
+        break;
+      case RNSScreenStackHeaderSubviewTypeCenter:
+      case RNSScreenStackHeaderSubviewTypeTitle:
+        navitem.titleView = snapshot;
+        break;
+      case RNSScreenStackHeaderSubviewTypeRight:
+        navitem.rightBarButtonItem.customView = snapshot;
+        break;
+      case RNSScreenStackHeaderSubviewTypeSearchBar:
+      case RNSScreenStackHeaderSubviewTypeBackButton:
+        break;
+      default:
+        RCTLogError(@"[RNScreens] Unhandled subview type: %ld", childComponentView.type);
+    }
   }
 }
 

@@ -12,7 +12,8 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 
-public interface RNSSearchBarManagerInterface<T extends View> {
+
+public interface RNSSearchBarManagerInterface<T extends View>  {
   void setHideWhenScrolling(T view, boolean value);
   void setAutoCapitalize(T view, @Nullable String value);
   void setPlaceholder(T view, @Nullable String value);
