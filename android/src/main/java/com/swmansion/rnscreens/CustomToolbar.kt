@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
@@ -112,7 +111,6 @@ open class CustomToolbar(
             applyExactPadding(lastHorizontalInsets.left, paddingTop, lastHorizontalInsets.right, paddingBottom)
         }
 
-        Log.i("CustomToolbar", "onApplyWindowInsets: horizontal: $horizontalInsets, cutout: $cutoutInsets, systemBar: $systemBarInsets")
         return unhandledInsets
     }
 
