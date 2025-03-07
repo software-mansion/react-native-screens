@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens
 
 import android.content.Context
-import android.graphics.Insets
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Build
@@ -23,8 +22,6 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
-import com.swmansion.rnscreens.utils.InsetsCompat
-import com.swmansion.rnscreens.utils.resolveDisplayCutoutInsets
 
 class ScreenStackHeaderConfig(
     context: Context,
@@ -51,7 +48,6 @@ class ScreenStackHeaderConfig(
 
     private var tintColor = 0
     private var isAttachedToWindow = false
-    private var lastCutoutInsets = InsetsCompat.ZERO
     private val defaultStartInset: Int
     private val defaultStartInsetWithNavigation: Int
     private val backClickListener =
@@ -109,9 +105,6 @@ class ScreenStackHeaderConfig(
                     (25 * resources.displayMetrics.density).toInt()
                 }
         }
-        if (lastCutoutInsets == InsetsCompat.ZERO) {
-            lastCutoutInsets = resolveDisplayCutoutInsets()
-        }
         onUpdate()
     }
 
@@ -141,24 +134,6 @@ class ScreenStackHeaderConfig(
             }
             return null
         }
-
-    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets? {
-        val unhandledInsets = super.onApplyWindowInsets(insets)
-
-        // We use rootWindowInsets in lieu of insets or unhandledInsets here,
-        // because cutout sometimes (only in certain scenarios, e.g. with headerLeft view present)
-        // happen to be Insets.ZERO and is not reliable.
-        val cutoutInsets = resolveDisplayCutoutInsets(rootWindowInsets)
-
-        Log.i("HeaderConfig", "onApplyWindowInsets: $cutoutInsets")
-
-        // Prevent infinite layout loop
-        if (cutoutInsets != lastCutoutInsets) {
-            lastCutoutInsets = cutoutInsets
-//            adjustToolbarInsets()
-        }
-        return unhandledInsets
-    }
 
     fun onUpdate() {
         val stack = screenStack
@@ -203,24 +178,22 @@ class ScreenStackHeaderConfig(
             screenFragment?.setToolbar(toolbar)
         }
 
-        adjustToolbarInsets()
-
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
         val actionBar = requireNotNull(activity.supportActionBar)
+
+
+        // hide back button
+        actionBar.setDisplayHomeAsUpEnabled(
+            screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
+        )
 
         // Reset toolbar insets. By default we set symmetric inset for start and end to match iOS
         // implementation where both right and left icons are offset from the edge by default. We also
         // reset startWithNavigation inset which corresponds to the distance between navigation icon and
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
-        toolbar.contentInsetStartWithNavigation = defaultStartInsetWithNavigation
-        toolbar.setContentInsetsRelative(defaultStartInset, defaultStartInset)
-
-        // hide back button
-        actionBar.setDisplayHomeAsUpEnabled(
-            screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
-        )
+        toolbar.updateContentInsets(headerTopInset ?: 0, defaultStartInset, defaultStartInset, defaultStartInsetWithNavigation)
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
         // navigation click listener. The default behavior set in the wrapper is to call into
@@ -327,18 +300,6 @@ class ScreenStackHeaderConfig(
     private fun maybeUpdate() {
         if (parent != null && !isDestroyed && screen?.isBeingRemoved == false) {
             onUpdate()
-        }
-    }
-
-    private fun adjustToolbarInsets() {
-        if (isTopInsetEnabled) {
-            headerTopInset?.let { topInset ->
-                toolbar.adjustInsets(lastCutoutInsets.left, topInset, lastCutoutInsets.right, 0)
-            }
-        } else {
-            if (toolbar.paddingTop > 0) {
-                toolbar.adjustInsets(0, 0, 0, 0)
-            }
         }
     }
 
