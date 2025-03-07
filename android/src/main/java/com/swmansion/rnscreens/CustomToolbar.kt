@@ -99,8 +99,9 @@ open class CustomToolbar(
         val cutoutInsets = resolveDisplayCutoutInsets(rootWindowInsets)
         val systemBarInsets = resolveSystemBarInsets(rootWindowInsets)
 
-        // TODO: CAREFUL WITH NOT APPLYING THE INSET TWICE - CUTOUT INSET MIGHT BE INCLUDED IN SYSTEM BAR INSETS!!
-
+        // This seems to work fine in all tested configurations, because cutout & system bars overlap
+        // only in portrait mode & top inset is controlled separately, therefore we don't count
+        // any insets twice.
         val horizontalInsets =
             with(InsetsCompat.add(cutoutInsets, systemBarInsets)) {
                 InsetsCompat.of(this.left, 0, this.right, 0)
