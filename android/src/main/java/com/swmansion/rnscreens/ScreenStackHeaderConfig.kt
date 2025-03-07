@@ -28,7 +28,8 @@ class ScreenStackHeaderConfig(
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
-    var isHeaderTranslucent = false // named this way to avoid conflict with platform's isTranslucent
+    var isHeaderTranslucent =
+        false // named this way to avoid conflict with platform's isTranslucent
     private var headerTopInset: Int? = null
     private var title: String? = null
     private var titleColor = 0
@@ -41,7 +42,9 @@ class ScreenStackHeaderConfig(
     private var isShadowHidden = false
     private var isDestroyed = false
     private var backButtonInCustomView = false
-    private var isTopInsetEnabled = true
+    var isTopInsetEnabled = true
+        private set
+
     private var tintColor = 0
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
@@ -69,19 +72,35 @@ class ScreenStackHeaderConfig(
             }
         }
 
+    fun destroy() {
+        isDestroyed = true
+    }
+
+    /**
+     * Native toolbar should notify the header config component that it has completed its layout.
+     */
+    fun onNativeToolbarLayout(toolbar: Toolbar, shouldUpdateShadowStateHint: Boolean) {
+        if (!shouldUpdateShadowStateHint) {
+            return
+        }
+
+        val contentInsetStart = toolbar.currentContentInsetStart + toolbar.paddingStart
+        val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
+
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateHeaderConfigState(toolbar.width, toolbar.height, contentInsetStart, contentInsetEnd)
+        } else {
+            updatePaddings(contentInsetStart, contentInsetEnd)
+        }
+    }
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
         t: Int,
         r: Int,
         b: Int,
-    ) {
-        // no-op
-    }
-
-    fun destroy() {
-        isDestroyed = true
-    }
+    ) = Unit
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -176,31 +195,26 @@ class ScreenStackHeaderConfig(
             screenFragment?.setToolbar(toolbar)
         }
 
-        if (isTopInsetEnabled) {
-            headerTopInset.let {
-                toolbar.setPadding(0, it ?: 0, 0, 0)
-            }
-        } else {
-            if (toolbar.paddingTop > 0) {
-                toolbar.setPadding(0, 0, 0, 0)
-            }
-        }
-
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
         val actionBar = requireNotNull(activity.supportActionBar)
+
+
+        // hide back button
+        actionBar.setDisplayHomeAsUpEnabled(
+            screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
+        )
 
         // Reset toolbar insets. By default we set symmetric inset for start and end to match iOS
         // implementation where both right and left icons are offset from the edge by default. We also
         // reset startWithNavigation inset which corresponds to the distance between navigation icon and
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
-        toolbar.contentInsetStartWithNavigation = defaultStartInsetWithNavigation
-        toolbar.setContentInsetsRelative(defaultStartInset, defaultStartInset)
-
-        // hide back button
-        actionBar.setDisplayHomeAsUpEnabled(
-            screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
+        toolbar.updateContentInsets(
+            headerTopInset ?: 0,
+            defaultStartInset,
+            defaultStartInset,
+            defaultStartInsetWithNavigation
         )
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
@@ -250,7 +264,8 @@ class ScreenStackHeaderConfig(
 
         // color
         if (tintColor != 0) {
-            toolbar.navigationIcon?.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
+            toolbar.navigationIcon?.colorFilter =
+                PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
         }
 
         // subviews
@@ -288,12 +303,14 @@ class ScreenStackHeaderConfig(
                     toolbar.title = null
                     params.gravity = Gravity.START
                 }
+
                 ScreenStackHeaderSubview.Type.RIGHT -> params.gravity = Gravity.END
                 ScreenStackHeaderSubview.Type.CENTER -> {
                     params.width = LayoutParams.MATCH_PARENT
                     params.gravity = Gravity.CENTER_HORIZONTAL
                     toolbar.title = null
                 }
+
                 else -> {}
             }
             view.layoutParams = params
@@ -402,7 +419,8 @@ class ScreenStackHeaderConfig(
 
     init {
         visibility = GONE
-        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
+        toolbar =
+            if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
         defaultStartInset = toolbar.contentInsetStart
         defaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 

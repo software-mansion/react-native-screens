@@ -3,18 +3,39 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
+import com.swmansion.rnscreens.utils.InsetsCompat
+import com.swmansion.rnscreens.utils.resolveDisplayCutoutInsets
+import com.swmansion.rnscreens.utils.resolveSystemBarInsets
+import kotlin.math.max
 
-// This class is used to store config closer to search bar
+/**
+ * Main toolbar class representing the native header.
+ *
+ * This class is used to store config closer to search bar.
+ * It also handles inset/padding related logic in coordination with header config.
+ */
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 open class CustomToolbar(
     context: Context,
     val config: ScreenStackHeaderConfig,
 ) : Toolbar(context) {
+    // Switch this flag to enable/disable display cutout avoidance.
+    // Currently this is controlled by isTopInsetEnabled prop.
+    private val shouldAvoidDisplayCutout
+        get() = config.isTopInsetEnabled
+
+    private val shouldApplyTopInset
+        get() = config.isTopInsetEnabled
+
+    private var lastHorizontalInsets = InsetsCompat.NONE
+    private var isForceShadowStateUpdateOnLayoutRequested = false
+
     private var isLayoutEnqueued = false
     private val layoutCallback: ChoreographerCompat.FrameCallback =
         object : ChoreographerCompat.FrameCallback() {
@@ -59,27 +80,103 @@ open class CustomToolbar(
         }
     }
 
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        val unhandledInsets = super.onApplyWindowInsets(insets)
+
+        // There are few UI modes we could be running in
+        //
+        // 1. legacy non edge-to-edge mode,
+        // 2. edge-to-edge with gesture navigation,
+        // 3. edge-to-edge with translucent navigation buttons bar.
+        //
+        // Additionally we need to gracefully handle possible display cutouts.
+
+        // We use rootWindowInsets in lieu of insets or unhandledInsets here,
+        // because cutout sometimes (only in certain scenarios, e.g. with headerLeft view present)
+        // happen to be Insets.ZERO and is not reliable.
+        val rootWindowInsets = rootWindowInsets
+        val cutoutInsets = resolveDisplayCutoutInsets(rootWindowInsets)
+        val systemBarInsets = resolveSystemBarInsets(rootWindowInsets)
+
+        // This seems to work fine in all tested configurations, because cutout & system bars overlap
+        // only in portrait mode & top inset is controlled separately, therefore we don't count
+        // any insets twice.
+        val horizontalInsets =
+            with(InsetsCompat.add(cutoutInsets, systemBarInsets)) {
+                InsetsCompat.of(this.left, 0, this.right, 0)
+            }
+
+        if (lastHorizontalInsets != horizontalInsets) {
+            lastHorizontalInsets = horizontalInsets
+            applyExactPadding(lastHorizontalInsets.left, paddingTop, lastHorizontalInsets.right, paddingBottom)
+        }
+
+        return unhandledInsets
+    }
+
     override fun onLayout(
-        changed: Boolean,
+        hasSizeChanged: Boolean,
         l: Int,
         t: Int,
         r: Int,
         b: Int,
     ) {
-        super.onLayout(changed, l, t, r, b)
+        super.onLayout(hasSizeChanged, l, t, r, b)
 
-        if (!changed) {
-            return
+        config.onNativeToolbarLayout(this, hasSizeChanged || isForceShadowStateUpdateOnLayoutRequested)
+        isForceShadowStateUpdateOnLayoutRequested = false
+    }
+
+    fun updateContentInsets(
+        topInset: Int,
+        startInset: Int,
+        endInset: Int,
+        startInsetWithNavigation: Int,
+    ) {
+        if (shouldApplyTopInset) {
+            applyMinimumTopInset(topInset)
+        } else if (paddingTop > 0) {
+            applyExactTopInset(0)
         }
 
-        val contentInsetStart = if (navigationIcon != null) contentInsetStartWithNavigation else contentInsetStart
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            val width = r - l
-            val height = b - t
-            config.updateHeaderConfigState(width, height, contentInsetStart, contentInsetEnd)
-        } else {
-            // our children are already laid out
-            config.updatePaddings(contentInsetStart, contentInsetEnd)
-        }
+        contentInsetStartWithNavigation = startInsetWithNavigation
+        setContentInsetsRelative(startInset, endInset)
+    }
+
+    private fun applyMinimumTopInset(inset: Int) {
+        applyMinimumPadding(0, inset, 0, 0)
+    }
+
+    private fun applyExactTopInset(inset: Int) {
+        applyExactPadding(paddingLeft, inset, paddingRight, paddingBottom)
+    }
+
+    private fun applyMinimumPadding(
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        requestForceShadowStateUpdateOnLayout()
+        setPadding(
+            max(paddingLeft, left),
+            max(paddingTop, top),
+            max(paddingRight, right),
+            max(paddingBottom, bottom),
+        )
+    }
+
+    private fun applyExactPadding(
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        requestForceShadowStateUpdateOnLayout()
+        setPadding(left, top, right, bottom)
+    }
+
+    private fun requestForceShadowStateUpdateOnLayout() {
+        isForceShadowStateUpdateOnLayoutRequested = shouldAvoidDisplayCutout
     }
 }
