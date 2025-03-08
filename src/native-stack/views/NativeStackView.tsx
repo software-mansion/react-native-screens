@@ -104,16 +104,19 @@ const MaybeNestedStack = ({
     headerShownPreviousRef.current = headerShown;
   }, [headerShown, stackPresentation, route.name]);
 
+  const formSheetAdjustedContentStyle =
+    stackPresentation === 'formSheet'
+      ? Platform.OS === 'ios'
+        ? styles.absoluteFillNoBottom
+        : sheetAllowedDetents === 'fitToContents'
+        ? null
+        : styles.container
+      : styles.container;
+
   const content = (
     <Container
       style={[
-        stackPresentation === 'formSheet'
-          ? Platform.OS === 'ios'
-            ? styles.absoluteFillNoBottom
-            : sheetAllowedDetents === 'fitToContents'
-            ? null
-            : styles.container
-          : styles.container,
+        formSheetAdjustedContentStyle,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,
@@ -198,6 +201,7 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
+    sheetAllowedDetents = [1.0],
     sheetLargestUndimmedDetentIndex = 'none',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
@@ -223,7 +227,6 @@ const RouteView = ({
   } = options;
 
   let {
-    sheetAllowedDetents = [1.0],
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureResponseDistance,
@@ -241,10 +244,6 @@ const RouteView = ({
     internalScreenStyle = {
       backgroundColor: flattenContentStyles?.backgroundColor,
     };
-  }
-
-  if (sheetAllowedDetents === 'fitToContents') {
-    sheetAllowedDetents = [-1];
   }
 
   if (swipeDirection === 'vertical') {

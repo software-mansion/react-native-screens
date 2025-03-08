@@ -96,7 +96,7 @@ function resolveSheetAllowedDetents(
     return SHEET_COMPAT_ALL;
   } else {
     // Safe default, only large detent is allowed.
-    return [1.0];
+    return SHEET_COMPAT_LARGE;
   }
 }
 
