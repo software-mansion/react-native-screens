@@ -144,11 +144,9 @@ class ScreenStack(
         }
 
         createTransaction().let {
-            // animation logic start
             if (stackAnimation != null) {
                 it.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
-            // animation logic end
             goingForward = shouldUseOpenAnimation
 
             if (shouldUseOpenAnimation &&
