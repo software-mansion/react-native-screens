@@ -147,6 +147,7 @@ class ScreenStack(
             if (stackAnimation != null) {
                 transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
+
             goingForward = shouldUseOpenAnimation
 
             if (shouldUseOpenAnimation &&
@@ -165,7 +166,8 @@ class ScreenStack(
                 isDetachingCurrentScreen = true
             }
 
-            // Remove all screens that are currently on stack, but should dismissed.
+            // Remove all screens that are currently on stack, but should be dismissed, because they're
+            // no longer rendered or were dismissed natively.
             stack
                 .asSequence()
                 .filter { wrapper -> !screenWrappers.contains(wrapper) || dismissedWrappers.contains(wrapper) }
