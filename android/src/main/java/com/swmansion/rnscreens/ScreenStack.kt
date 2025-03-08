@@ -146,27 +146,27 @@ class ScreenStack(
             stackAnimation = topScreenWrapper?.screen?.stackAnimation
         }
 
+        goingForward = shouldUseOpenAnimation
+
+        if (shouldUseOpenAnimation &&
+            newTop != null &&
+            needsDrawReordering(newTop, stackAnimation) &&
+            visibleBottom == null
+        ) {
+            // When using an open animation in which two screens overlap (eg. fade_from_bottom or
+            // slide_from_bottom), we want to draw the previous screen under the new one,
+            // which is apparently not the default option. Android always draws the disappearing view
+            // on top of the appearing one. We then reverse the order of the views so the new screen
+            // appears on top of the previous one. You can read more about in the comment
+            // for the code we use to change that behavior:
+            // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
+            // Note: This should not be set in case there is only a single screen in stack or animation `none` is used. Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
+            isDetachingCurrentScreen = true
+        }
+
         createTransaction().let { transaction ->
             if (stackAnimation != null) {
                 transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
-            }
-
-            goingForward = shouldUseOpenAnimation
-
-            if (shouldUseOpenAnimation &&
-                newTop != null &&
-                needsDrawReordering(newTop, stackAnimation) &&
-                visibleBottom == null
-            ) {
-                // When using an open animation in which two screens overlap (eg. fade_from_bottom or
-                // slide_from_bottom), we want to draw the previous screen under the new one,
-                // which is apparently not the default option. Android always draws the disappearing view
-                // on top of the appearing one. We then reverse the order of the views so the new screen
-                // appears on top of the previous one. You can read more about in the comment
-                // for the code we use to change that behavior:
-                // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
-                // Note: This should not be set in case there is only a single screen in stack or animation `none` is used. Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
-                isDetachingCurrentScreen = true
             }
 
             // Remove all screens that are currently on stack, but should be dismissed, because they're
