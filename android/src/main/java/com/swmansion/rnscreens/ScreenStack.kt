@@ -102,18 +102,21 @@ class ScreenStack(
             null // this is only set if newTop has one of transparent presentation modes
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
 
-        for (i in screenWrappers.indices.reversed()) {
-            val screenWrapper = getScreenFragmentWrapperAt(i)
-            if (!dismissedWrappers.contains(screenWrapper) && screenWrapper.screen.activityState !== Screen.ActivityState.INACTIVE) {
-                if (newTop == null) {
-                    newTop = screenWrapper
-                } else {
-                    visibleBottom = screenWrapper
-                }
-                if (!screenWrapper.screen.isTransparent()) {
-                    break
-                }
-            }
+        // Determine new first & last visible screens.
+        // Scope function to limit the scope of locals.
+        run {
+            val notDismissedWrappers =
+                screenWrappers
+                    .asReversed()
+                    .asSequence()
+                    .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
+
+            newTop = notDismissedWrappers.firstOrNull()
+            visibleBottom =
+                notDismissedWrappers
+                    .dropWhile { it.screen.isTransparent() }
+                    .firstOrNull()
+                    ?.takeUnless { it === newTop }
         }
 
         var shouldUseOpenAnimation = true
