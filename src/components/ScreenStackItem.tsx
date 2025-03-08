@@ -57,8 +57,8 @@ function ScreenStackItem(
   React.useEffect(() => {
     warnOnce(
       Platform.OS !== 'android' &&
-        stackPresentation !== 'push' &&
-        headerHiddenPreviousRef.current !== headerConfig?.hidden,
+      stackPresentation !== 'push' &&
+      headerHiddenPreviousRef.current !== headerConfig?.hidden,
       `Dynamically changing header's visibility in modals will result in remounting the screen and losing all local state.`,
     );
 
@@ -73,8 +73,8 @@ function ScreenStackItem(
             ? Platform.OS === 'ios'
               ? styles.absolute
               : sheetAllowedDetents === 'fitToContents'
-              ? null
-              : styles.container
+                ? null
+                : styles.container
             : styles.container,
           contentStyle,
         ]}
