@@ -143,9 +143,9 @@ class ScreenStack(
             stackAnimation = topScreenWrapper?.screen?.stackAnimation
         }
 
-        createTransaction().let {
+        createTransaction().let { transaction ->
             if (stackAnimation != null) {
-                it.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
+                transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
             goingForward = shouldUseOpenAnimation
 
@@ -169,14 +169,14 @@ class ScreenStack(
             stack
                 .asSequence()
                 .filter { wrapper -> !screenWrappers.contains(wrapper) || dismissedWrappers.contains(wrapper) }
-                .forEach { wrapper -> it.remove(wrapper.fragment) }
+                .forEach { wrapper -> transaction.remove(wrapper.fragment) }
 
             // Remove all screens underneath visibleBottom && these marked for preload, but keep newTop.
             screenWrappers
                 .asSequence()
                 .takeWhile { it !== visibleBottom }
                 .filter { (it !== newTop && !dismissedWrappers.contains(it)) || it.screen.activityState === Screen.ActivityState.INACTIVE }
-                .forEach { wrapper -> it.remove(wrapper.fragment) }
+                .forEach { wrapper -> transaction.remove(wrapper.fragment) }
 
             // attach screens that just became visible
             if (visibleBottom != null && !visibleBottom.fragment.isAdded) {
@@ -193,7 +193,7 @@ class ScreenStack(
                             }
                     }
                     // when first visible screen found, make all screens after that visible
-                    it.add(id, fragmentWrapper.fragment).runOnCommit {
+                    transaction.add(id, fragmentWrapper.fragment).runOnCommit {
                         top?.screen?.bringToFront()
                     }
                 }
@@ -204,15 +204,14 @@ class ScreenStack(
                     // we delay the transition and trigger it after views receive the layout.
                     newTop.fragment.postponeEnterTransition()
                 }
-                it.add(id, newTop.fragment)
+                transaction.add(id, newTop.fragment)
             }
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.map { it as ScreenStackFragmentWrapper })
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
-
-            it.commitNowAllowingStateLoss()
+            transaction.commitNowAllowingStateLoss()
         }
     }
 
