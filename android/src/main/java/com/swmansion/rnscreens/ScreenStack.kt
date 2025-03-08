@@ -165,25 +165,18 @@ class ScreenStack(
                 isDetachingCurrentScreen = true
             }
 
-            // remove all screens previously on stack
-            for (fragmentWrapper in stack) {
-                if (!screenWrappers.contains(fragmentWrapper) || dismissedWrappers.contains(fragmentWrapper)) {
-                    it.remove(fragmentWrapper.fragment)
-                }
-            }
-            for (fragmentWrapper in screenWrappers) {
-                // Stop detaching screens when reaching visible bottom. All screens above bottom should be
-                // visible.
-                if (fragmentWrapper === visibleBottom) {
-                    break
-                }
-                // detach all screens that should not be visible
-                if ((fragmentWrapper !== newTop && !dismissedWrappers.contains(fragmentWrapper)) ||
-                    fragmentWrapper.screen.activityState === Screen.ActivityState.INACTIVE
-                ) {
-                    it.remove(fragmentWrapper.fragment)
-                }
-            }
+            // Remove all screens that are currently on stack, but should dismissed.
+            stack
+                .asSequence()
+                .filter { wrapper -> !screenWrappers.contains(wrapper) || dismissedWrappers.contains(wrapper) }
+                .forEach { wrapper -> it.remove(wrapper.fragment) }
+
+            // Remove all screens underneath visibleBottom && these marked for preload, but keep newTop.
+            screenWrappers
+                .asSequence()
+                .takeWhile { it !== visibleBottom }
+                .filter { (it !== newTop && !dismissedWrappers.contains(it)) || it.screen.activityState === Screen.ActivityState.INACTIVE }
+                .forEach { wrapper -> it.remove(wrapper.fragment) }
 
             // attach screens that just became visible
             if (visibleBottom != null && !visibleBottom.fragment.isAdded) {
