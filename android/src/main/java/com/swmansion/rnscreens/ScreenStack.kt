@@ -181,22 +181,15 @@ class ScreenStack(
             // attach screens that just became visible
             if (visibleBottom != null && !visibleBottom.fragment.isAdded) {
                 val top = newTop
-                var beneathVisibleBottom = true
-                for (fragmentWrapper in screenWrappers) {
-                    // ignore all screens beneath the visible bottom
-                    if (beneathVisibleBottom) {
-                        beneathVisibleBottom =
-                            if (fragmentWrapper === visibleBottom) {
-                                false
-                            } else {
-                                continue
-                            }
+                screenWrappers
+                    .asSequence()
+                    .dropWhile { it !== visibleBottom } // ignore all screens beneath the visible bottom
+                    .forEach { wrapper ->
+                        // TODO: It should be enough to dispatch this on commit action once.
+                        transaction.add(id, wrapper.fragment).runOnCommit {
+                            top?.screen?.bringToFront()
+                        }
                     }
-                    // when first visible screen found, make all screens after that visible
-                    transaction.add(id, fragmentWrapper.fragment).runOnCommit {
-                        top?.screen?.bringToFront()
-                    }
-                }
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.isSheetFitToContents()) {
                     // On old architecture the content wrapper might not have received its frame yet,
