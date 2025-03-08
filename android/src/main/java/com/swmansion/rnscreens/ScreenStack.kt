@@ -121,10 +121,10 @@ class ScreenStack(
 
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
-        if (!stack.contains(newTop)) {
+        if (newTop != null && !stack.contains(newTop)) {
             // if new top screen wasn't on stack we do "open animation" so long it is not the very first
             // screen on stack
-            if (topScreenWrapper != null && newTop != null) {
+            if (topScreenWrapper != null) {
                 // there was some other screen attached before
                 // if the previous top screen does not exist anymore and the new top was not on the stack
                 // before, probably replace or reset was called, so we play the "close animation".
@@ -134,13 +134,13 @@ class ScreenStack(
                 shouldUseOpenAnimation = containsTopScreen || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
                 stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
-            } else if (topScreenWrapper == null && newTop != null) {
+            } else {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering
                 stackAnimation = StackAnimation.NONE
                 goingForward = true
             }
-        } else if (topScreenWrapper != null && topScreenWrapper != newTop) {
+        } else if (newTop != null && topScreenWrapper != null && topScreenWrapper !== newTop) {
             // otherwise if we are performing top screen change we do "close animation"
             shouldUseOpenAnimation = false
             stackAnimation = topScreenWrapper?.screen?.stackAnimation
