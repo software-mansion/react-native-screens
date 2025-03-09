@@ -677,7 +677,16 @@ RNS_IGNORE_SUPER_CALL_END
       [newControllers removeLastObject];
 
       [_controller setViewControllers:newControllers animated:NO];
-      [_controller pushViewController:top animated:YES];
+
+      // If entered waiting transition complete logic
+      // the `updateContainer` is async calling
+      // top controller may not a new one
+      // but old one between disappeared and unmounted
+      // which not in _controllers, but _reactSubviews not remove it yet
+      // should not push it
+      if(!((RNSScreen *)top).disappeared) {
+        [_controller pushViewController:top animated:YES];
+      }
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
