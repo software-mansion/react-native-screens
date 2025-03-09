@@ -17,11 +17,13 @@ const appPackage = require('./package.json');
 
 /**
  * @param {string} module
+ * @returns {boolean} `true` **should** be returned for any module that is duplicated
+ * in `react-navigation` submodule & causes runtime issues.
  */
 function reactNavigationOptionalModuleFilter(module) {
-  return module in appPackage.dependencies === false &&
-    module in libPackage.devDependencies === false &&
-    module in libPackage.dependencies === false;
+  return module in appPackage.dependencies === true ||
+    module in libPackage.devDependencies === true ||
+    module in libPackage.dependencies === true;
 }
 
 /**
@@ -42,6 +44,7 @@ const reactNavigationDir = path.join(libRootDir, 'react-navigation');
 // Application main directory
 const appDir = __dirname;
 
+// These should be imported from application node_modules rather than lib.
 const modules = [
   '@react-navigation/native',
   '@react-navigation/stack',
@@ -62,8 +65,6 @@ const reactNavigationDuplicatedModules = [
   'react-native-safe-area-context',
   'react-native-gesture-handler',
 ].filter(reactNavigationOptionalModuleFilter));
-
-const resolvedExts = ['.ts', '.tsx', '.js', '.jsx'];
 
 const appNodeModules = path.join(appDir, 'node_modules');
 const libNodeModules = path.join(libRootDir, 'node_modules');
@@ -89,17 +90,18 @@ const config = {
     // to various errors. To mitigate this we define this custom request resolver. It does following:
     //
     // 1. blocks all conflicting modules by using `blockList` (this includes both our lib & react navigation)
-    // 2. disables module resolution algorithm - we do not look for node_modules besides those specified explicitely,
+    // 2. keeps module resolution algorithm - while it would be handy for the implementation simplicity to use this option,
+    //    it causes some surprising quality-of-life issues described below,
     // 3. looks only inside these node modules directories which are explicitly specified in `nodeModulesPaths`.
 
-    disableHierarchicalLookup: true,
+    // Setting this to `true` leads to situtaion where code from `lib` directory (transformed) of `@react-navigation/xxx` is imported,
+    // making it inconvenient to modify & test `react-navigation` code. We want the `src` to be imported.
+    disableHierarchicalLookup: false,
 
     // Project node modules + directory where `react-native-screens` repo lives in + react navigation node modules.
     // These are consulted in order of definition.
     // TODO: make it so this does not depend on whether the user renamed the repo or not...
     nodeModulesPaths: [appNodeModules, path.join(appDir, '../../'), libNodeModules, reactNavigationNodeModules],
-
-
   },
 
   transformer: {
