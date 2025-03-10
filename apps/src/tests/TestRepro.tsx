@@ -14,7 +14,8 @@ type StackRouteParamList = {
   NestedStackHost: undefined;
 }
 
-type NestedStackRouteParamList = {
+// Inherit routes from parent navigator
+type NestedStackRouteParamList = StackRouteParamList & {
   NestedHome: undefined;
   NestedSheet: undefined;
   NestedSecond: undefined;
@@ -57,7 +58,8 @@ function StackSecond({ navigation }: StackRouteNavProps) {
 function NestedHome({ navigation }: NestedStackRouteNavProps) {
   return (
     <View style={{ flex: 1, backgroundColor: 'crimson' }}>
-      <Button title="Open sheet" onPress={() => navigation.navigate('NestedSheet')} />
+      <Button title="Open NestedSheet" onPress={() => navigation.navigate('NestedSheet')} />
+      <Button title="Open StackSheet" onPress={() => navigation.navigate('StackSheet')} />
     </View>
   );
 }
@@ -66,6 +68,7 @@ function NestedSheet({ navigation }: NestedStackRouteNavProps) {
   return (
     <View style={{ flex: 1, backgroundColor: 'goldenrod' }}>
       <Text>Hello world from nested sheet</Text>
+      <Button title="Open StackSecond" onPress={() => navigation.navigate('StackSecond')} />
     </View>
   );
 }
@@ -85,7 +88,7 @@ function NestedStackHost({ navigation }: StackRouteNavProps) {
       <NestedStack.Screen name="NestedHome" component={NestedHome} />
       <NestedStack.Screen name="NestedSheet" component={NestedSheet} options={{
         presentation: 'formSheet',
-        sheetAllowedDetents: [0.5, 0.9],
+        sheetAllowedDetents: [0.4, 0.8],
         sheetLargestUndimmedDetentIndex: 'none',
       }} />
     </NestedStack.Navigator>
