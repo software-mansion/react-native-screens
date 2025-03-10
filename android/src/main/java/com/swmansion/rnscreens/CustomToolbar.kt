@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
@@ -112,6 +113,27 @@ open class CustomToolbar(
         }
 
         return unhandledInsets
+    }
+
+    override fun setPadding(
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        super.setPadding(left, top, right, bottom)
+        Log.i(
+            "CustomToolbar",
+            "[CustomToolbar] setPadding: $left, $top, $right, $bottom, insetStart: $contentInsetStart, insetEnd: $contentInsetEnd",
+        )
+    }
+
+    override fun setContentInsetsRelative(
+        contentInsetStart: Int,
+        contentInsetEnd: Int,
+    ) {
+        super.setContentInsetsRelative(contentInsetStart, contentInsetEnd)
+        Log.i("CustomToolbar", "[CustomToolbar] setContentInsetsRelative: $contentInsetStart, $contentInsetEnd")
     }
 
     override fun onLayout(
