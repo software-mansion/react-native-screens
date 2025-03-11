@@ -65,7 +65,6 @@ class KeyboardVisible(
 class ScreenStackFragment :
     ScreenFragment,
     ScreenStackFragmentWrapper {
-    public var nativeDismissalObserver: NativeDismissalObserver? = null
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
