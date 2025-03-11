@@ -16,6 +16,15 @@ import kotlin.collections.ArrayList
 class ScreenStack(
     context: Context?,
 ) : ScreenContainer(context) {
+    init {
+//        isChildrenDrawingOrderEnabled = true
+    }
+
+    private val disappearingFragmentChildren: MutableList<View> = mutableListOf()
+    private val transitioningFragmentViews: MutableList<View> = mutableListOf()
+
+    private var drawDisappearingViewsFirst = true
+
     private val stack = ArrayList<ScreenStackFragmentWrapper>()
     private val dismissedWrappers: MutableSet<ScreenStackFragmentWrapper> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
@@ -55,11 +64,18 @@ class ScreenStack(
         }
 
     override fun startViewTransition(view: View) {
+        if (view.parent === this) {
+            transitioningFragmentViews.add(view)
+        }
         super.startViewTransition(view)
         removalTransitionStarted = true
     }
 
     override fun endViewTransition(view: View) {
+        transitioningFragmentViews.remove(view)
+        if (disappearingFragmentChildren.remove(view)) {
+            drawDisappearingViewsFirst = true
+        }
         super.endViewTransition(view)
         if (removalTransitionStarted) {
             removalTransitionStarted = false
@@ -271,6 +287,7 @@ class ScreenStack(
         }
     }
 
+    // Old impl
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
@@ -285,6 +302,7 @@ class ScreenStack(
         drawAndRelease()
     }
 
+    // Old impl
     override fun drawChild(
         canvas: Canvas,
         child: View,
@@ -300,10 +318,84 @@ class ScreenStack(
         return true
     }
 
+//    override fun removeView(view: View) {
+//        addDisappearingFragmentView(view)
+//        super.removeView(view)
+//    }
+//
+//    override fun removeViewAt(index: Int) {
+//        val view = getChildAt(index)
+//        addDisappearingFragmentView(view)
+//        super.removeViewAt(index)
+//    }
+//
+//    override fun removeViewInLayout(view: View) {
+//        addDisappearingFragmentView(view)
+//        super.removeViewInLayout(view)
+//    }
+//
+//    override fun removeViews(start: Int, count: Int) {
+//        for (i in start until start + count) {
+//            val view = getChildAt(i)
+//            addDisappearingFragmentView(view)
+//        }
+//        super.removeViews(start, count)
+//    }
+//
+//    override fun removeViewsInLayout(start: Int, count: Int) {
+//        for (i in start until start + count) {
+//            val view = getChildAt(i)
+//            addDisappearingFragmentView(view)
+//        }
+//        super.removeViewsInLayout(start, count)
+//    }
+//
+//    override fun removeAllViewsInLayout() {
+//        for (i in childCount - 1 downTo 0) {
+//            val view = getChildAt(i)
+//            addDisappearingFragmentView(view)
+//        }
+//        super.removeAllViewsInLayout()
+//    }
+//
+//
+//    override fun dispatchDraw(canvas: Canvas) {
+//        if (drawDisappearingViewsFirst) {
+//            disappearingFragmentChildren.forEach { child ->
+//                super.drawChild(canvas, child, drawingTime)
+//            }
+//        }
+//        super.dispatchDraw(canvas)
+//    }
+//
+//    override fun drawChild(
+//        canvas: Canvas,
+//        child: View,
+//        drawingTime: Long,
+//    ): Boolean {
+//        if (drawDisappearingViewsFirst && disappearingFragmentChildren.isNotEmpty()) {
+//            // If the child is disappearing, we have already drawn it in `dispatchDraw`.
+//            if (disappearingFragmentChildren.contains(child)) {
+//                return false
+//            }
+//        }
+//        return super.drawChild(canvas, child, drawingTime)
+//    }
+//
+//    override fun getChildDrawingOrder(childCount: Int, drawingPosition: Int): Int {
+//        return super.getChildDrawingOrder(childCount, drawingPosition)
+//    }
+
     private fun performDraw(op: DrawingOp) {
         // Canvas parameter can not be null here https://developer.android.com/reference/android/view/ViewGroup#drawChild(android.graphics.Canvas,%20android.view.View,%20long)
         // So if we are passing null here, we would crash anyway
         super.drawChild(op.canvas!!, op.child, op.drawingTime)
+    }
+
+    private fun addDisappearingFragmentView(view: View) {
+        if (transitioningFragmentViews.contains(view)) {
+            disappearingFragmentChildren.add(view)
+        }
     }
 
     // Can't use `drawingOpPool.removeLast` here due to issues with static name resolution in Android SDK 35+.
