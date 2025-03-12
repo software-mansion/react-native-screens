@@ -35,36 +35,38 @@ internal interface ChildDrawingOrderStrategy {
     fun isEnabled(): Boolean
 }
 
-internal abstract class ChildDrawingOrderStrategyBase(var enabled: Boolean = false) : ChildDrawingOrderStrategy {
+internal abstract class ChildDrawingOrderStrategyBase(
+    var enabled: Boolean = false,
+) : ChildDrawingOrderStrategy {
     override fun enable() {
         enabled = true
     }
+
     override fun disable() {
         enabled = false
     }
+
     override fun isEnabled() = enabled
 }
 
 internal class SwapLastTwo : ChildDrawingOrderStrategyBase() {
     override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
         if (!isEnabled()) {
-            Log.i(ScreenStack.TAG, "SwapLastTwo CANCELED")
             return
         }
-        Log.i(ScreenStack.TAG, "SwapLastTwo")
         if (drawingOperations.size >= 2) {
             Collections.swap(drawingOperations, drawingOperations.lastIndex, drawingOperations.lastIndex - 1)
         }
     }
 }
 
-internal class ReverseOrderInRange(val range: IntRange) : ChildDrawingOrderStrategyBase() {
+internal class ReverseOrderInRange(
+    val range: IntRange,
+) : ChildDrawingOrderStrategyBase() {
     override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
         if (!isEnabled()) {
-            Log.i(ScreenStack.TAG, "ReverseOrderInRange $range CANCELED")
             return
         }
-        Log.i(ScreenStack.TAG, "ReverseOrderInRange $range")
 
         var startRange = range.start
         var endRange = range.endInclusive
@@ -237,13 +239,25 @@ class ScreenStack(
             // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
             // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
             childDrawingOrderStrategy = SwapLastTwo()
-        } else if (newTop != null && newTopAlreadyInStack && topScreenWrapper?.screen?.isTransparent() == true && newTop.screen.isTransparent() == false) {
+        } else if (newTop != null &&
+            newTopAlreadyInStack &&
+            topScreenWrapper?.screen?.isTransparent() == true &&
+            newTop.screen.isTransparent() == false
+        ) {
             // In case where we dismiss multiple transparent views we want to ensure
             // that they are drawn in correct order - Android swaps them by default,
             // so we need to swap the swap to unswap :D
-            val dismissedTransparentScreenApproxCount = stack.asReversed().asSequence().takeWhile { it !== newTop && it.screen.isTransparent() }.count()
+            val dismissedTransparentScreenApproxCount =
+                stack
+                    .asReversed()
+                    .asSequence()
+                    .takeWhile {
+                        it !== newTop &&
+                            it.screen.isTransparent()
+                    }.count()
             if (dismissedTransparentScreenApproxCount > 1) {
-                childDrawingOrderStrategy = ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0) .. stack.lastIndex)
+                childDrawingOrderStrategy =
+                    ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
             }
         }
 
