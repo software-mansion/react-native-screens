@@ -71,12 +71,14 @@ const MaybeNestedStack = ({
   options,
   route,
   stackPresentation,
+  sheetAllowedDetents,
   children,
   internalScreenStyle,
 }: {
   options: NativeStackNavigationOptions;
   route: Route<string>;
   stackPresentation: StackPresentationTypes;
+  sheetAllowedDetents: NativeStackNavigationOptions['sheetAllowedDetents'];
   children: React.ReactNode;
   internalScreenStyle?: Pick<ViewStyle, 'backgroundColor'>;
 }) => {
@@ -102,14 +104,19 @@ const MaybeNestedStack = ({
     headerShownPreviousRef.current = headerShown;
   }, [headerShown, stackPresentation, route.name]);
 
+  const formSheetAdjustedContentStyle =
+    stackPresentation === 'formSheet'
+      ? Platform.OS === 'ios'
+        ? styles.absoluteFillNoBottom
+        : sheetAllowedDetents === 'fitToContents'
+        ? null
+        : styles.container
+      : styles.container;
+
   const content = (
     <Container
       style={[
-        stackPresentation === 'formSheet'
-          ? Platform.OS === 'ios'
-            ? styles.absoluteFillNoBottom
-            : null
-          : styles.container,
+        formSheetAdjustedContentStyle,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,
@@ -150,6 +157,7 @@ const MaybeNestedStack = ({
         <Screen
           enabled
           isNativeStack
+          sheetAllowedDetents={sheetAllowedDetents}
           hasLargeHeader={hasLargeHeader}
           style={[StyleSheet.absoluteFill, internalScreenStyle]}>
           <HeaderHeightContext.Provider value={headerHeight}>
@@ -193,6 +201,7 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
+    sheetAllowedDetents = [1.0],
     sheetLargestUndimmedDetentIndex = 'none',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
@@ -218,7 +227,6 @@ const RouteView = ({
   } = options;
 
   let {
-    sheetAllowedDetents = [1.0],
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureResponseDistance,
@@ -236,10 +244,6 @@ const RouteView = ({
     internalScreenStyle = {
       backgroundColor: flattenContentStyles?.backgroundColor,
     };
-  }
-
-  if (sheetAllowedDetents === 'fitToContents') {
-    sheetAllowedDetents = [-1];
   }
 
   if (swipeDirection === 'vertical') {
@@ -438,6 +442,7 @@ const RouteView = ({
           <MaybeNestedStack
             options={options}
             route={route}
+            sheetAllowedDetents={sheetAllowedDetents}
             stackPresentation={stackPresentation}
             internalScreenStyle={internalScreenStyle}>
             {renderScene()}

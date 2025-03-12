@@ -32,6 +32,7 @@ function ScreenStackItem(
     activityState,
     shouldFreeze,
     stackPresentation,
+    sheetAllowedDetents,
     contentStyle,
     style,
     screenId,
@@ -71,7 +72,9 @@ function ScreenStackItem(
           stackPresentation === 'formSheet'
             ? Platform.OS === 'ios'
               ? styles.absolute
-              : null
+              : sheetAllowedDetents === 'fitToContents'
+              ? null
+              : styles.container
             : styles.container,
           contentStyle,
         ]}
@@ -136,6 +139,7 @@ function ScreenStackItem(
       shouldFreeze={shouldFreeze}
       stackPresentation={stackPresentation}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
+      sheetAllowedDetents={sheetAllowedDetents}
       style={[style, internalScreenStyle]}
       {...rest}>
       {isHeaderInModal ? (

@@ -10,6 +10,7 @@ type ItemData = {
 
 type RouteParamList = {
   Home: undefined;
+  Second: undefined;
   FormSheet: undefined;
   FormSheetWithFlatList: undefined;
   FormSheetWithScrollView: undefined;
@@ -29,9 +30,18 @@ function generateData(count: number): ItemData[] {
 function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
-      <Button title="Open sheeet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open sheet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
       <Button title="Open sheet with FlatList" onPress={() => navigation.navigate('FormSheetWithFlatList')} />
       <Button title="Open sheet with ScrollView" onPress={() => navigation.navigate('FormSheetWithScrollView')} />
+    </View>
+  );
+}
+
+function Second({ navigation }: RouteProps<'Second'>) {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
 }
@@ -43,6 +53,7 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
     <View style={{ backgroundColor: 'lightgreen', flex: 1 }}>
       <View style={{ paddingTop: 20 }}>
         <Button title="Go back" onPress={() => navigation.goBack()} />
+        <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
       </View>
       <View style={{ alignItems: 'center' }}>
         <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
@@ -122,6 +133,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Second" component={Second} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
           sheetAllowedDetents: [0.4, 0.75],
