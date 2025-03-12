@@ -571,3 +571,5 @@ class Screen(
         const val SHEET_FIT_TO_CONTENTS = -1.0
     }
 }
+
+internal fun View.asScreen() = this as Screen
