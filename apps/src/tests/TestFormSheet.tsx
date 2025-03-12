@@ -2,10 +2,6 @@ import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
-import { enableFreeze } from 'react-native-screens';
-
-enableFreeze(false);
-enableFreeze(false);
 
 type ItemData = {
   id: number,
