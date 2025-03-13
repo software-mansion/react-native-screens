@@ -257,16 +257,20 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       }
 
       const handleRef = (ref: ViewConfig) => {
+        // Workaround is necessary to prevent React Native from hiding frozen screens.
+        // See this PR: https://github.com/grahammendick/navigation/pull/860
         if (ref?.viewConfig?.validAttributes?.style) {
           ref.viewConfig.validAttributes.style = {
             ...ref.viewConfig.validAttributes.style,
-            display: false,
+            // @ts-ignore: Please see the comment above.
+            display: null,
           };
           setRef(ref);
         } else if (ref?._viewConfig?.validAttributes?.style) {
           ref._viewConfig.validAttributes.style = {
             ...ref._viewConfig.validAttributes.style,
-            display: false,
+            // @ts-ignore: Please see the comment above.
+            display: null,
           };
           setRef(ref);
         }
