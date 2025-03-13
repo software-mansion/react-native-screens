@@ -30,7 +30,7 @@ class ScreenStackViewManager :
         child: View,
         index: Int,
     ) {
-        require(child is Screen) { "Attempt attach child that is not of type RNScreen" }
+        require(child is Screen) { "Attempt attach child that is not of type Screen" }
         NativeProxy.addScreenToMap(child.id, child)
         parent.addScreen(child, index)
     }

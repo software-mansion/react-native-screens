@@ -35,3 +35,5 @@ internal fun View.maybeBgColor(): Int? {
     }
     return null
 }
+
+internal fun View.asViewGroupOrNull(): ViewGroup? = this as? ViewGroup

@@ -12,6 +12,72 @@ import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import java.util.Collections
 import kotlin.collections.ArrayList
+import kotlin.math.max
+
+internal interface ChildDrawingOrderStrategy {
+    /**
+     * Mutates the list of draw operations **in-place**.
+     */
+    fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>)
+
+    /**
+     * Enables the given strategy. When enabled - the strategy **might** mutate the operations
+     * list passed to `apply` method.
+     */
+    fun enable()
+
+    /**
+     * Disables the given strategy - even when `apply` is called it **must not** produce
+     * any side effect (it must not manipulate the drawing operations list passed to `apply` method).
+     */
+    fun disable()
+
+    fun isEnabled(): Boolean
+}
+
+internal abstract class ChildDrawingOrderStrategyBase(
+    var enabled: Boolean = false,
+) : ChildDrawingOrderStrategy {
+    override fun enable() {
+        enabled = true
+    }
+
+    override fun disable() {
+        enabled = false
+    }
+
+    override fun isEnabled() = enabled
+}
+
+internal class SwapLastTwo : ChildDrawingOrderStrategyBase() {
+    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
+        if (!isEnabled()) {
+            return
+        }
+        if (drawingOperations.size >= 2) {
+            Collections.swap(drawingOperations, drawingOperations.lastIndex, drawingOperations.lastIndex - 1)
+        }
+    }
+}
+
+internal class ReverseOrderInRange(
+    val range: IntRange,
+) : ChildDrawingOrderStrategyBase() {
+    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
+        if (!isEnabled()) {
+            return
+        }
+
+        var startRange = range.start
+        var endRange = range.endInclusive
+
+        while (startRange < endRange) {
+            Collections.swap(drawingOperations, startRange, endRange)
+            startRange += 1
+            endRange -= 1
+        }
+    }
+}
 
 class ScreenStack(
     context: Context?,
@@ -22,9 +88,10 @@ class ScreenStack(
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
-    private var isDetachingCurrentScreen = false
-    private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
+
+    private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
+
     var goingForward = false
 
     /**
@@ -56,11 +123,13 @@ class ScreenStack(
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
+        childDrawingOrderStrategy?.enable()
         removalTransitionStarted = true
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
+        childDrawingOrderStrategy?.disable()
         if (removalTransitionStarted) {
             removalTransitionStarted = false
             dispatchOnFinishTransitioning()
@@ -98,9 +167,12 @@ class ScreenStack(
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
         // handle the case of newTop being NULL, which happens in several places below
         var newTop: ScreenFragmentWrapper? = null // newTop is nullable, see the above comment ^
-        var visibleBottom: ScreenFragmentWrapper? =
-            null // this is only set if newTop has one of transparent presentation modes
-        isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
+
+        // this is only set if newTop has one of transparent presentation modes
+        var visibleBottom: ScreenFragmentWrapper? = null
+
+        // reset, to not use previously set strategy by mistake
+        childDrawingOrderStrategy = null
 
         // Determine new first & last visible screens.
         // Scope function to limit the scope of locals.
@@ -121,7 +193,11 @@ class ScreenStack(
 
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
-        if (newTop != null && !stack.contains(newTop)) {
+
+        val newTopAlreadyInStack = stack.contains(newTop)
+        val topScreenWillChange = newTop !== topScreenWrapper
+
+        if (newTop != null && !newTopAlreadyInStack) {
             // if new top screen wasn't on stack we do "open animation" so long it is not the very first
             // screen on stack
             if (topScreenWrapper != null) {
@@ -129,9 +205,9 @@ class ScreenStack(
                 // if the previous top screen does not exist anymore and the new top was not on the stack
                 // before, probably replace or reset was called, so we play the "close animation".
                 // Otherwise it's open animation
-                val containsTopScreen = topScreenWrapper?.let { screenWrappers.contains(it) } == true
+                val previousTopScreenRemainsInStack = topScreenWrapper?.let { screenWrappers.contains(it) } == true
                 val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
-                shouldUseOpenAnimation = containsTopScreen || isPushReplace
+                shouldUseOpenAnimation = previousTopScreenRemainsInStack || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
                 stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
             } else {
@@ -140,7 +216,7 @@ class ScreenStack(
                 stackAnimation = StackAnimation.NONE
                 goingForward = true
             }
-        } else if (newTop != null && topScreenWrapper != null && topScreenWrapper !== newTop) {
+        } else if (newTop != null && topScreenWrapper != null && topScreenWillChange) {
             // otherwise if we are performing top screen change we do "close animation"
             shouldUseOpenAnimation = false
             stackAnimation = topScreenWrapper?.screen?.stackAnimation
@@ -160,8 +236,29 @@ class ScreenStack(
             // appears on top of the previous one. You can read more about in the comment
             // for the code we use to change that behavior:
             // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
-            // Note: This should not be set in case there is only a single screen in stack or animation `none` is used. Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
-            isDetachingCurrentScreen = true
+            // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
+            // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
+            childDrawingOrderStrategy = SwapLastTwo()
+        } else if (newTop != null &&
+            newTopAlreadyInStack &&
+            topScreenWrapper?.screen?.isTransparent() == true &&
+            newTop.screen.isTransparent() == false
+        ) {
+            // In case where we dismiss multiple transparent views we want to ensure
+            // that they are drawn in correct order - Android swaps them by default,
+            // so we need to swap the swap to unswap :D
+            val dismissedTransparentScreenApproxCount =
+                stack
+                    .asReversed()
+                    .asSequence()
+                    .takeWhile {
+                        it !== newTop &&
+                            it.screen.isTransparent()
+                    }.count()
+            if (dismissedTransparentScreenApproxCount > 1) {
+                childDrawingOrderStrategy =
+                    ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
+            }
         }
 
         createTransaction().let { transaction ->
@@ -241,23 +338,6 @@ class ScreenStack(
         stack.forEach { it.onContainerUpdate() }
     }
 
-    // below methods are taken from
-    // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L43
-    // and are used to swap the order of drawing views when navigating forward with the transitions
-    // that are making transitioning fragments appear one on another. See more info in the comment to
-    // the linked class.
-    override fun removeView(view: View) {
-        // we set this property to reverse the order of drawing views
-        // when we want to push new fragment on top of the previous one and their animations collide.
-        // More information in:
-        // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L17
-        if (isDetachingCurrentScreen) {
-            isDetachingCurrentScreen = false
-            reverseLastTwoChildren = true
-        }
-        super.removeView(view)
-    }
-
     private fun drawAndRelease() {
         // We make a copy of the drawingOps and use it to dispatch draws in order to be sure
         // that we do not modify the original list. There are cases when `op.draw` can call
@@ -276,12 +356,12 @@ class ScreenStack(
 
         // check the view removal is completed (by comparing the previous children count)
         if (drawingOps.size < previousChildrenCount) {
-            reverseLastTwoChildren = false
+            childDrawingOrderStrategy = null
         }
         previousChildrenCount = drawingOps.size
-        if (reverseLastTwoChildren && drawingOps.size >= 2) {
-            Collections.swap(drawingOps, drawingOps.size - 1, drawingOps.size - 2)
-        }
+
+        childDrawingOrderStrategy?.apply(drawingOps)
+
         drawAndRelease()
     }
 
@@ -310,7 +390,7 @@ class ScreenStack(
     // See: https://developer.android.com/about/versions/15/behavior-changes-15?hl=en#openjdk-api-changes
     private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
 
-    private inner class DrawingOp {
+    internal inner class DrawingOp {
         var canvas: Canvas? = null
         var child: View? = null
         var drawingTime: Long = 0
