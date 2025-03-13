@@ -3,12 +3,10 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.os.Build
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
-import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +29,6 @@ class ScreenStackHeaderConfig(
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
     var isHeaderTranslucent =
         false // named this way to avoid conflict with platform's isTranslucent
-    private var headerTopInset: Int? = null
     private var title: String? = null
     private var titleColor = 0
     private var titleFontFamily: String? = null
@@ -154,18 +151,6 @@ class ScreenStackHeaderConfig(
         UIManagerHelper
             .getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderAttachedEvent(surfaceId, id))
-        // we want to save the top inset before the status bar can be hidden, which would resolve in
-        if (headerTopInset == null) {
-            headerTopInset =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    rootWindowInsets.getInsets(WindowInsets.Type.systemBars()).top
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    rootWindowInsets.systemWindowInsetTop
-                } else {
-                    // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
-                    (25 * resources.displayMetrics.density).toInt()
-                }
-        }
         onUpdate()
     }
 
