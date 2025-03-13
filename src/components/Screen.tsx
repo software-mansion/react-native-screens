@@ -36,14 +36,14 @@ interface ViewConfig extends View {
   viewConfig: {
     validAttributes: {
       style: {
-        display: boolean;
+        display: boolean | null;
       };
     };
   };
   _viewConfig: {
     validAttributes: {
       style: {
-        display: boolean;
+        display: boolean | null;
       };
     };
   };
@@ -262,14 +262,12 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         if (ref?.viewConfig?.validAttributes?.style) {
           ref.viewConfig.validAttributes.style = {
             ...ref.viewConfig.validAttributes.style,
-            // @ts-ignore: Please see the comment above.
             display: null,
           };
           setRef(ref);
         } else if (ref?._viewConfig?.validAttributes?.style) {
           ref._viewConfig.validAttributes.style = {
             ...ref._viewConfig.validAttributes.style,
-            // @ts-ignore: Please see the comment above.
             display: null,
           };
           setRef(ref);
