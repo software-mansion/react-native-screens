@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
@@ -145,30 +144,6 @@ open class CustomToolbar(
         return unhandledInsets
     }
 
-    override fun setPadding(
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int,
-    ) {
-        super.setPadding(left, top, right, bottom)
-        Log.i(
-            "CustomToolbar",
-            "[CustomToolbar] setPadding: $left, $top, $right, $bottom, insetStart: $contentInsetStart, insetEnd: $contentInsetEnd",
-        )
-    }
-
-    override fun setContentInsetsRelative(
-        contentInsetStart: Int,
-        contentInsetEnd: Int,
-    ) {
-        super.setContentInsetsRelative(contentInsetStart, contentInsetEnd)
-        Log.i(
-            "CustomToolbar",
-            "[CustomToolbar] setContentInsetsRelative: $contentInsetStart, $contentInsetEnd",
-        )
-    }
-
     override fun onLayout(
         hasSizeChanged: Boolean,
         l: Int,
@@ -186,36 +161,8 @@ open class CustomToolbar(
     }
 
     fun updateContentInsets() {
-//        if (shouldApplyTopInset) {
-//            applyMinimumTopInset(topInset)
-//        } else if (paddingTop > 0) {
-//            applyExactTopInset(0)
-//        }
         contentInsetStartWithNavigation = config.preferredContentInsetStartWithNavigation
         setContentInsetsRelative(config.preferredContentInsetStart, config.preferredContentInsetEnd)
-    }
-
-    private fun applyMinimumTopInset(inset: Int) {
-        applyMinimumPadding(0, inset, 0, 0)
-    }
-
-    private fun applyExactTopInset(inset: Int) {
-        applyExactPadding(paddingLeft, inset, paddingRight, paddingBottom)
-    }
-
-    private fun applyMinimumPadding(
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int,
-    ) {
-        requestForceShadowStateUpdateOnLayout()
-        setPadding(
-            max(paddingLeft, left),
-            max(paddingTop, top),
-            max(paddingRight, right),
-            max(paddingBottom, bottom),
-        )
     }
 
     private fun applyExactPadding(
