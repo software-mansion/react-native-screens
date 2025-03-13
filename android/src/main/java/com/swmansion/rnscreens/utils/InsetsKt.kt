@@ -16,7 +16,7 @@ typealias InsetsPlatform = android.graphics.Insets // Available since SDK 29
 internal fun View.resolveInsetsOrZero(
     @WindowInsetsCompat.Type.InsetsType insetType: Int,
     sourceWindowInsets: WindowInsets? = rootWindowInsets,
-    ignoreVisibility: Boolean = false
+    ignoreVisibility: Boolean = false,
 ): InsetsCompat {
     if (sourceWindowInsets == null) {
         return InsetsCompat.NONE
