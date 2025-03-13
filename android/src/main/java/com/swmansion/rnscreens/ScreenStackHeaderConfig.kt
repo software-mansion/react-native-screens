@@ -21,6 +21,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
+import kotlin.math.max
 
 class ScreenStackHeaderConfig(
     context: Context,
@@ -93,7 +94,6 @@ class ScreenStackHeaderConfig(
                 defaultStartInsetWithNavigation
             }
 
-
     fun destroy() {
         isDestroyed = true
     }
@@ -101,12 +101,30 @@ class ScreenStackHeaderConfig(
     /**
      * Native toolbar should notify the header config component that it has completed its layout.
      */
-    fun onNativeToolbarLayout(toolbar: Toolbar, shouldUpdateShadowStateHint: Boolean) {
+    fun onNativeToolbarLayout(
+        toolbar: Toolbar,
+        shouldUpdateShadowStateHint: Boolean,
+    ) {
         if (!shouldUpdateShadowStateHint) {
             return
         }
 
-        val contentInsetStart = toolbar.currentContentInsetStart + toolbar.paddingStart
+        val isBackButtonDisplayed = toolbar.navigationIcon != null
+
+        val contentInsetStartEstimation =
+            if (isBackButtonDisplayed) {
+                toolbar.currentContentInsetStart + toolbar.paddingStart
+            } else {
+                max(toolbar.currentContentInsetStart, toolbar.paddingStart)
+            }
+
+        // Assuming that there is nothing to the left of back button here, the content
+        // offset we're interested in in ShadowTree is the `left` of the subview left.
+        // In case it is not available we fallback to approximation.
+        val contentInsetStart =
+            configSubviews.firstOrNull { it.type === ScreenStackHeaderSubview.Type.LEFT }?.left
+                ?: contentInsetStartEstimation
+
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
 
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -114,7 +132,7 @@ class ScreenStackHeaderConfig(
                 toolbar.width,
                 toolbar.height,
                 contentInsetStart,
-                contentInsetEnd
+                contentInsetEnd,
             )
         } else {
             updatePaddings(contentInsetStart, contentInsetEnd)
@@ -137,7 +155,6 @@ class ScreenStackHeaderConfig(
             .getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderAttachedEvent(surfaceId, id))
         // we want to save the top inset before the status bar can be hidden, which would resolve in
-        // inset being 0
         if (headerTopInset == null) {
             headerTopInset =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -225,7 +242,6 @@ class ScreenStackHeaderConfig(
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
         val actionBar = requireNotNull(activity.supportActionBar)
-
 
         // hide back button
         actionBar.setDisplayHomeAsUpEnabled(
