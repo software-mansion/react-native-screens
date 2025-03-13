@@ -72,6 +72,28 @@ class ScreenStackHeaderConfig(
             }
         }
 
+    var isTitleEmpty: Boolean = false
+
+    val preferredContentInsetStart
+        get() = defaultStartInset
+
+    val preferredContentInsetEnd
+        get() = defaultStartInset
+
+    val preferredContentInsetStartWithNavigation
+        get() =
+            // Reset toolbar insets. By default we set symmetric inset for start and end to match iOS
+            // implementation where both right and left icons are offset from the edge by default. We also
+            // reset startWithNavigation inset which corresponds to the distance between navigation icon and
+            // title. If title isn't set we clear that value few lines below to give more space to custom
+            // center-mounted views.
+            if (isTitleEmpty) {
+                0
+            } else {
+                defaultStartInsetWithNavigation
+            }
+
+
     fun destroy() {
         isDestroyed = true
     }
@@ -88,7 +110,12 @@ class ScreenStackHeaderConfig(
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
 
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateHeaderConfigState(toolbar.width, toolbar.height, contentInsetStart, contentInsetEnd)
+            updateHeaderConfigState(
+                toolbar.width,
+                toolbar.height,
+                contentInsetStart,
+                contentInsetEnd
+            )
         } else {
             updatePaddings(contentInsetStart, contentInsetEnd)
         }
@@ -205,17 +232,18 @@ class ScreenStackHeaderConfig(
             screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
         )
 
+        // title
+        actionBar.title = title
+        if (TextUtils.isEmpty(title)) {
+            isTitleEmpty = true
+        }
+
         // Reset toolbar insets. By default we set symmetric inset for start and end to match iOS
         // implementation where both right and left icons are offset from the edge by default. We also
         // reset startWithNavigation inset which corresponds to the distance between navigation icon and
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
-        toolbar.updateContentInsets(
-            headerTopInset ?: 0,
-            defaultStartInset,
-            defaultStartInset,
-            defaultStartInsetWithNavigation
-        )
+        toolbar.updateContentInsets()
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
         // navigation click listener. The default behavior set in the wrapper is to call into
@@ -227,15 +255,6 @@ class ScreenStackHeaderConfig(
 
         // translucent
         screenFragment?.setToolbarTranslucent(isHeaderTranslucent)
-
-        // title
-        actionBar.title = title
-        if (TextUtils.isEmpty(title)) {
-            // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
-            // views. When it is set to default it'd take up additional distance from the back button
-            // which would impact the position of custom header views rendered at the center.
-            toolbar.contentInsetStartWithNavigation = 0
-        }
 
         val titleTextView = findTitleTextViewInToolbar(toolbar)
         if (titleColor != 0) {

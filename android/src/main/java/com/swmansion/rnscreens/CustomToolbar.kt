@@ -7,12 +7,12 @@ import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.utils.InsetsCompat
-import com.swmansion.rnscreens.utils.resolveDisplayCutoutInsets
-import com.swmansion.rnscreens.utils.resolveSystemBarInsets
+import com.swmansion.rnscreens.utils.resolveInsetsOrZero
 import kotlin.math.max
 
 /**
@@ -34,7 +34,8 @@ open class CustomToolbar(
     private val shouldApplyTopInset
         get() = config.isTopInsetEnabled
 
-    private var lastHorizontalInsets = InsetsCompat.NONE
+    private var lastInsets = InsetsCompat.NONE
+
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
     private var isLayoutEnqueued = false
@@ -96,20 +97,49 @@ open class CustomToolbar(
         // because cutout sometimes (only in certain scenarios, e.g. with headerLeft view present)
         // happen to be Insets.ZERO and is not reliable.
         val rootWindowInsets = rootWindowInsets
-        val cutoutInsets = resolveDisplayCutoutInsets(rootWindowInsets)
-        val systemBarInsets = resolveSystemBarInsets(rootWindowInsets)
+        val cutoutInsets =
+            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), rootWindowInsets)
+        val systemBarInsets =
+            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), rootWindowInsets)
+        val statusBarInsetsStable =
+            resolveInsetsOrZero(
+                WindowInsetsCompat.Type.systemBars(),
+                rootWindowInsets,
+                ignoreVisibility = true,
+            )
 
         // This seems to work fine in all tested configurations, because cutout & system bars overlap
         // only in portrait mode & top inset is controlled separately, therefore we don't count
         // any insets twice.
         val horizontalInsets =
-            with(InsetsCompat.add(cutoutInsets, systemBarInsets)) {
-                InsetsCompat.of(this.left, 0, this.right, 0)
-            }
+            InsetsCompat.of(
+                cutoutInsets.left + systemBarInsets.left,
+                0,
+                cutoutInsets.right + systemBarInsets.right,
+                0,
+            )
 
-        if (lastHorizontalInsets != horizontalInsets) {
-            lastHorizontalInsets = horizontalInsets
-            applyExactPadding(lastHorizontalInsets.left, paddingTop, lastHorizontalInsets.right, paddingBottom)
+        // We want to handle display cutout always, no matter the HeaderConfig prop values.
+        // If there are no cutout displays, we want to apply the additional padding to
+        // respect the status bar.
+        val verticalInsets =
+            InsetsCompat.of(
+                0,
+                max(cutoutInsets.top, if (shouldApplyTopInset) statusBarInsetsStable.top else 0),
+                0,
+                max(cutoutInsets.bottom, 0),
+            )
+
+        val newInsets = InsetsCompat.add(horizontalInsets, verticalInsets)
+
+        if (lastInsets != newInsets) {
+            lastInsets = newInsets
+            applyExactPadding(
+                lastInsets.left,
+                lastInsets.top,
+                lastInsets.right,
+                lastInsets.bottom,
+            )
         }
 
         return unhandledInsets
@@ -133,7 +163,10 @@ open class CustomToolbar(
         contentInsetEnd: Int,
     ) {
         super.setContentInsetsRelative(contentInsetStart, contentInsetEnd)
-        Log.i("CustomToolbar", "[CustomToolbar] setContentInsetsRelative: $contentInsetStart, $contentInsetEnd")
+        Log.i(
+            "CustomToolbar",
+            "[CustomToolbar] setContentInsetsRelative: $contentInsetStart, $contentInsetEnd",
+        )
     }
 
     override fun onLayout(
@@ -145,24 +178,21 @@ open class CustomToolbar(
     ) {
         super.onLayout(hasSizeChanged, l, t, r, b)
 
-        config.onNativeToolbarLayout(this, hasSizeChanged || isForceShadowStateUpdateOnLayoutRequested)
+        config.onNativeToolbarLayout(
+            this,
+            hasSizeChanged || isForceShadowStateUpdateOnLayoutRequested,
+        )
         isForceShadowStateUpdateOnLayoutRequested = false
     }
 
-    fun updateContentInsets(
-        topInset: Int,
-        startInset: Int,
-        endInset: Int,
-        startInsetWithNavigation: Int,
-    ) {
-        if (shouldApplyTopInset) {
-            applyMinimumTopInset(topInset)
-        } else if (paddingTop > 0) {
-            applyExactTopInset(0)
-        }
-
-        contentInsetStartWithNavigation = startInsetWithNavigation
-        setContentInsetsRelative(startInset, endInset)
+    fun updateContentInsets() {
+//        if (shouldApplyTopInset) {
+//            applyMinimumTopInset(topInset)
+//        } else if (paddingTop > 0) {
+//            applyExactTopInset(0)
+//        }
+        contentInsetStartWithNavigation = config.preferredContentInsetStartWithNavigation
+        setContentInsetsRelative(config.preferredContentInsetStart, config.preferredContentInsetEnd)
     }
 
     private fun applyMinimumTopInset(inset: Int) {
