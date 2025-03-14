@@ -86,6 +86,9 @@ class ScreenStackFragment :
 
     private var dimmingDelegate: DimmingViewManager? = null
 
+    // The lifecycle of sheetDelegate should be tied with screen itself,
+    // as it contains the state of the sheet (current detent), which should be preserved
+    // across fragment recreations.
     private var sheetDelegate: SheetDelegate? = null
 
     @SuppressLint("ValidFragment")
@@ -157,51 +160,6 @@ class ScreenStackFragment :
             screenStack.onViewAppearTransitionEnd()
         }
     }
-
-    // If the Screen has `formSheet` presentation this callback is attached to its behavior.
-    // It is responsible for firing detent changed events & removing the sheet from the container
-    // once it is hidden by user gesture.
-    private val bottomSheetStateCallback =
-        object : BottomSheetCallback() {
-            private var lastStableState: Int =
-                SheetUtils.sheetStateFromDetentIndex(
-                    screen.sheetInitialDetentIndex,
-                    screen.sheetDetents.count(),
-                )
-
-            override fun onStateChanged(
-                bottomSheet: View,
-                newState: Int,
-            ) {
-                if (SheetUtils.isStateStable(newState)) {
-                    lastStableState = newState
-                    screen.notifySheetDetentChange(
-                        SheetUtils.detentIndexFromSheetState(
-                            lastStableState,
-                            screen.sheetDetents.count(),
-                        ),
-                        true,
-                    )
-                } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    screen.notifySheetDetentChange(
-                        SheetUtils.detentIndexFromSheetState(
-                            lastStableState,
-                            screen.sheetDetents.count(),
-                        ),
-                        false,
-                    )
-                }
-
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    dismissSelf()
-                }
-            }
-
-            override fun onSlide(
-                bottomSheet: View,
-                slideOffset: Float,
-            ) = Unit
-        }
 
     /**
      * Currently this method dispatches event to JS where state is recomputed and fragment
@@ -457,10 +415,6 @@ class ScreenStackFragment :
         behavior.apply {
             isHideable = true
             isDraggable = true
-
-            // It seems that there is a guard in material implementation that will prevent
-            // this callback from being registered multiple times.
-            addBottomSheetCallback(bottomSheetStateCallback)
         }
 
         screen.footer?.registerWithSheetBehavior(behavior)

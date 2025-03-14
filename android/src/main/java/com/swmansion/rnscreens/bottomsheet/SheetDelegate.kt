@@ -20,8 +20,18 @@ class SheetDelegate(
     val screen: Screen,
 ) : LifecycleEventObserver,
     OnApplyWindowInsetsListener {
+
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
+    private var lastStableDetentIndex: Int = screen.sheetInitialDetentIndex
+
+    @BottomSheetBehavior.State
+    private var lastStableState: Int = SheetUtils.sheetStateFromDetentIndex(
+        screen.sheetInitialDetentIndex,
+        screen.sheetDetents.count()
+    )
+
+    private val sheetStateObserver = SheetStateObserver()
 
     private val sheetBehavior: BottomSheetBehavior<Screen>?
         get() = screen.sheetBehavior
@@ -36,6 +46,9 @@ class SheetDelegate(
     init {
         assert(screen.fragment is ScreenStackFragment) { "[RNScreens] Sheets are supported only in native stack" }
         screen.fragment!!.lifecycle.addObserver(this)
+
+        checkNotNull(sheetBehavior) { "[RNScreens] Sheet delegate accepts screen with initialized sheet behaviour only." }
+            .addBottomSheetCallback(sheetStateObserver)
     }
 
     // LifecycleEventObserver
@@ -61,6 +74,24 @@ class SheetDelegate(
 
     private fun handleHostFragmentOnPause() {
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
+    }
+
+    private fun onSheetStateChanged(newState: Int) {
+        val isStable = SheetUtils.isStateStable(newState)
+
+        if (isStable) {
+            lastStableState = newState
+            lastStableDetentIndex = SheetUtils.detentIndexFromSheetState(
+                newState,
+                screen.sheetDetents.count()
+            )
+        }
+
+        screen.onSheetDetentChanged(lastStableDetentIndex, isStable)
+
+        if (shouldDismissSheetInState(newState)) {
+            stackFragment.dismissSelf()
+        }
     }
 
     // This is listener function, not the view's.
@@ -111,6 +142,17 @@ class SheetDelegate(
                 WindowInsetsCompat.Type.navigationBars(),
                 Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, 0),
             ).build()
+    }
+
+    private fun shouldDismissSheetInState(@BottomSheetBehavior.State state: Int) =
+        state == BottomSheetBehavior.STATE_HIDDEN
+
+    private inner class SheetStateObserver : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            this@SheetDelegate.onSheetStateChanged(newState)
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
     }
 
     companion object {
