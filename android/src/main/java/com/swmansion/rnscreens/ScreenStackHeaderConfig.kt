@@ -124,16 +124,13 @@ class ScreenStackHeaderConfig(
 
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
 
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateHeaderConfigState(
-                toolbar.width,
-                toolbar.height,
-                contentInsetStart,
-                contentInsetEnd,
-            )
-        } else {
-            updatePaddings(contentInsetStart, contentInsetEnd)
-        }
+        // Note that implementation of the callee differs between architectures.
+        updateHeaderConfigState(
+            toolbar.width,
+            toolbar.height,
+            contentInsetStart,
+            contentInsetEnd,
+        )
     }
 
     override fun onLayout(

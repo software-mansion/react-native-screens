@@ -23,24 +23,20 @@ abstract class FabricEnabledHeaderConfigViewGroup(
         mStateWrapper = wrapper
     }
 
-    fun updatePaddings(
-        paddingStart: Int,
-        paddingEnd: Int,
-    ) {
-        // Do nothing on Fabric. This method is used only on Paper.
-    }
-
     fun updateHeaderConfigState(
         width: Int,
         height: Int,
         paddingStart: Int,
         paddingEnd: Int,
     ) {
+        // Implementation of this method differs between Fabric & Paper!
+        Log.i("ConfigShadowNode", "FABRIC updateHeaderConfigState")
         updateState(width, height, paddingStart, paddingEnd)
     }
 
+    // Implementation of this method differs between Fabric & Paper!
     @UiThread
-    fun updateState(
+    private fun updateState(
         width: Int,
         height: Int,
         paddingStart: Int,
