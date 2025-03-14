@@ -1383,6 +1383,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     self.view = view;
     _fakeView = [UIView new];
     _shouldNotify = YES;
+    _disappeared = NO;
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
@@ -1394,6 +1395,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+  _disappeared = NO;
   if (!_isSwiping) {
     [self.screenView notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
@@ -1421,6 +1423,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
+  _disappeared = NO;
   // self.navigationController might be null when we are dismissing a modal
   if (!self.transitionCoordinator.isInteractive && self.navigationController != nil) {
     // user might have long pressed ios 14 back button item,
@@ -1458,6 +1461,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
+  _disappeared = NO;
   if (!_isSwiping || _shouldNotify) {
     // we are going forward or dismissing without swipe
     // or successfully swiped back
@@ -1474,6 +1478,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
+  _disappeared = YES;
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     if (self.screenView.preventNativeDismiss) {
       // if we want to prevent the native dismiss, we do not send dismissal event,

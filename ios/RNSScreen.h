@@ -40,6 +40,7 @@ namespace react = facebook::react;
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
+@property (nonatomic, readonly) BOOL disappeared;
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
