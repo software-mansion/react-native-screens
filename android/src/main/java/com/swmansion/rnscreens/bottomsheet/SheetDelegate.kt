@@ -109,11 +109,6 @@ class SheetDelegate(
         }
     }
 
-    fun onSheetBehaviorAttached(behavior: BottomSheetBehavior<Screen>) {
-        // There is a guard internally that does not allow the callback to be duplicated.
-        behavior.addBottomSheetCallback(sheetStateObserver)
-    }
-
     internal fun configureBottomSheetBehaviour(
         behavior: BottomSheetBehavior<Screen>,
         keyboardState: KeyboardState = KeyboardNotVisible,
@@ -129,6 +124,7 @@ class SheetDelegate(
             isDraggable = true
         }
 
+        // There is a guard internally that does not allow the callback to be duplicated.
         behavior.addBottomSheetCallback(sheetStateObserver)
 
         Log.i(TAG, "Configure with selectedDetentIndex: $selectedDetentIndex")
