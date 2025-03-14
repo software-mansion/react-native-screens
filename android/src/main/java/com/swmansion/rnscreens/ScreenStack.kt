@@ -97,7 +97,7 @@ class ScreenStack(
     /**
      * Marks given fragment as to-be-dismissed and performs updates on container
      *
-     * @param fragmentWrapper to-be-dismissed wrapper
+     * @param screenFragment to-be-dismissed wrapper
      */
     fun dismiss(screenFragment: ScreenStackFragmentWrapper) {
         dismissedWrappers.add(screenFragment)
@@ -259,6 +259,8 @@ class ScreenStack(
                 childDrawingOrderStrategy =
                     ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
             }
+        } else if (newTop != null && !newTopAlreadyInStack && topScreenWrapper?.screen?.isTransparent() == true) {
+            childDrawingOrderStrategy = SwapLastTwo()
         }
 
         createTransaction().let { transaction ->

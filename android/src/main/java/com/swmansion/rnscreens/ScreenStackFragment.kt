@@ -326,6 +326,8 @@ class ScreenStackFragment :
             return null
         }
 
+        return null
+
         val animatorSet = AnimatorSet()
         val dimmingDelegate = requireDimmingDelegate()
 
