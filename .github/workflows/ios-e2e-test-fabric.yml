@@ -1,13 +1,13 @@
-name: Test iOS e2e - old architecture
+name: Test iOS e2e - new architecture
 on:
   pull_request:
     paths:
-      - '.github/workflows/ios-e2e-test.yml'
+      - '.github/workflows/ios-e2e-test-fabric.yml'
       - 'RNScreens.podspec'
       - 'package.json'
       - 'ios/**'
       - 'common/**'
-      - 'Example/**'
+      - 'FabricExample/**'
       - 'src/**'
   push:
     branches:
@@ -18,9 +18,9 @@ jobs:
     runs-on: macos-14
     timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: Example
+      WORKING_DIRECTORY: FabricExample
     concurrency:
-      group: ios-e2e-${{ github.ref }}
+      group: ios-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: checkout
