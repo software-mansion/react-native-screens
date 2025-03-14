@@ -76,9 +76,6 @@ class ScreenStackFragment :
 
     private var dimmingDelegate: DimmingViewManager? = null
 
-    // The lifecycle of sheetDelegate should be tied with screen itself,
-    // as it contains the state of the sheet (current detent), which should be preserved
-    // across fragment recreations.
     private var sheetDelegate: SheetDelegate? = null
 
     @SuppressLint("ValidFragment")
@@ -196,13 +193,8 @@ class ScreenStackFragment :
                         }
                 }
 
-        if (screen.usesFormSheetPresentation()) {
-            screen.clipToOutline = true
-            // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
-            attachShapeToScreen(screen)
-            screen.elevation = screen.sheetElevation
-        }
-
+        // This must be called before further sheet configuration.
+        // Otherwise there is no enter animation -> dunno why, just observed it.
         coordinatorLayout.addView(screen.recycle())
 
         if (!screen.usesFormSheetPresentation()) {
@@ -226,27 +218,27 @@ class ScreenStackFragment :
             }
             toolbar?.let { appBarLayout?.addView(it.recycle()) }
             setHasOptionsMenu(true)
+        } else {
+            screen.clipToOutline = true
+            // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
+            attachShapeToScreen(screen)
+            screen.elevation = screen.sheetElevation
+
+            // Lifecycle of sheet delegate is tied to fragment.
+            val sheetDelegate = requireSheetDelegate()
+            sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!)
+
+            val dimmingDelegate = requireDimmingDelegate(forceCreation = true)
+            dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
+            dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
+
+            val container = screen.container!!
+            coordinatorLayout.measure(
+                View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY),
+            )
+            coordinatorLayout.layout(0, 0, container.width, container.height)
         }
-
-        if (!screen.usesFormSheetPresentation()) {
-            return coordinatorLayout
-        }
-
-        // Lifecycle of sheet delegate is tied to fragment.
-        val sheetDelegate = requireSheetDelegate()
-
-        sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!)
-
-        val dimmingDelegate = requireDimmingDelegate(forceCreation = true)
-        dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
-        dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
-
-        val container = screen.container!!
-        coordinatorLayout.measure(
-            View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY),
-        )
-        coordinatorLayout.layout(0, 0, container.width, container.height)
 
         return coordinatorLayout
     }
