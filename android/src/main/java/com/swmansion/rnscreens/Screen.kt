@@ -275,7 +275,7 @@ class Screen(
             throw IllegalStateException("[RNScreens] activityState can only progress in NativeStack")
         }
         this.activityState = activityState
-        container?.notifyChildUpdate()
+        container?.onChildUpdate()
     }
 
     fun setScreenOrientation(screenOrientation: String?) {
