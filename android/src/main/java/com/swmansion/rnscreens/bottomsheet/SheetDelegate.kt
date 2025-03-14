@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.RequiresApi
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
@@ -14,7 +13,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.swmansion.rnscreens.InsetsObserverProxy
 import com.swmansion.rnscreens.KeyboardDidHide
 import com.swmansion.rnscreens.KeyboardNotVisible
@@ -27,7 +25,6 @@ class SheetDelegate(
     val screen: Screen,
 ) : LifecycleEventObserver,
     OnApplyWindowInsetsListener {
-
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
 
@@ -35,13 +32,15 @@ class SheetDelegate(
         private set
 
     @BottomSheetBehavior.State
-    var lastStableState: Int = SheetUtils.sheetStateFromDetentIndex(
-        screen.sheetInitialDetentIndex,
-        screen.sheetDetents.count()
-    )
+    var lastStableState: Int =
+        SheetUtils.sheetStateFromDetentIndex(
+            screen.sheetInitialDetentIndex,
+            screen.sheetDetents.count(),
+        )
         private set
 
     private val sheetStateObserver = SheetStateObserver()
+    private val keyboardHandlerCallback = KeyboardHandler()
 
     private val sheetBehavior: BottomSheetBehavior<Screen>?
         get() = screen.sheetBehavior
@@ -91,14 +90,15 @@ class SheetDelegate(
 
         if (isStable) {
             lastStableState = newState
-            lastStableDetentIndex = SheetUtils.detentIndexFromSheetState(
-                newState,
-                screen.sheetDetents.count()
-            )
+            lastStableDetentIndex =
+                SheetUtils.detentIndexFromSheetState(
+                    newState,
+                    screen.sheetDetents.count(),
+                )
 
             Log.i(
                 TAG,
-                "lastStableState: $lastStableState, lastStableDetentIndex: $lastStableDetentIndex"
+                "lastStableState: $lastStableState, lastStableDetentIndex: $lastStableDetentIndex",
             )
         }
 
@@ -119,7 +119,6 @@ class SheetDelegate(
         keyboardState: KeyboardState = KeyboardNotVisible,
         selectedDetentIndex: Int = lastStableDetentIndex,
     ): BottomSheetBehavior<Screen> {
-
         val containerHeight = tryResolveContainerHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
@@ -129,6 +128,8 @@ class SheetDelegate(
             isHideable = true
             isDraggable = true
         }
+
+        behavior.addBottomSheetCallback(sheetStateObserver)
 
         Log.i(TAG, "Configure with selectedDetentIndex: $selectedDetentIndex")
 
@@ -154,10 +155,10 @@ class SheetDelegate(
                     2 ->
                         behavior.useTwoDetents(
                             state =
-                            SheetUtils.sheetStateFromDetentIndex(
-                                selectedDetentIndex,
-                                screen.sheetDetents.count(),
-                            ),
+                                SheetUtils.sheetStateFromDetentIndex(
+                                    selectedDetentIndex,
+                                    screen.sheetDetents.count(),
+                                ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
                             secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
                         )
@@ -165,10 +166,10 @@ class SheetDelegate(
                     3 ->
                         behavior.useThreeDetents(
                             state =
-                            SheetUtils.sheetStateFromDetentIndex(
-                                selectedDetentIndex,
-                                screen.sheetDetents.count(),
-                            ),
+                                SheetUtils.sheetStateFromDetentIndex(
+                                    selectedDetentIndex,
+                                    screen.sheetDetents.count(),
+                                ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
                             halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
@@ -191,7 +192,7 @@ class SheetDelegate(
                     1 ->
                         behavior.apply {
                             useSingleDetent(height = newMaxHeight)
-                            addBottomSheetCallback(keyboardSheetCallback)
+                            addBottomSheetCallback(keyboardHandlerCallback)
                         }
 
                     2 ->
@@ -200,7 +201,7 @@ class SheetDelegate(
                                 state = BottomSheetBehavior.STATE_EXPANDED,
                                 secondHeight = newMaxHeight,
                             )
-                            addBottomSheetCallback(keyboardSheetCallback)
+                            addBottomSheetCallback(keyboardHandlerCallback)
                         }
 
                     3 ->
@@ -209,7 +210,7 @@ class SheetDelegate(
                                 state = BottomSheetBehavior.STATE_EXPANDED,
                             )
                             maxHeight = newMaxHeight
-                            addBottomSheetCallback(keyboardSheetCallback)
+                            addBottomSheetCallback(keyboardHandlerCallback)
                         }
 
                     else -> throw IllegalStateException(
@@ -223,7 +224,7 @@ class SheetDelegate(
                 // or the user dragged the sheet down. In any case the state should
                 // stay unchanged.
 
-                behavior.removeBottomSheetCallback(keyboardSheetCallback)
+                behavior.removeBottomSheetCallback(keyboardHandlerCallback)
                 when (screen.sheetDetents.count()) {
                     1 ->
                         behavior.useSingleDetent(
@@ -302,8 +303,9 @@ class SheetDelegate(
             ).build()
     }
 
-    private fun shouldDismissSheetInState(@BottomSheetBehavior.State state: Int) =
-        state == BottomSheetBehavior.STATE_HIDDEN
+    private fun shouldDismissSheetInState(
+        @BottomSheetBehavior.State state: Int,
+    ) = state == BottomSheetBehavior.STATE_HIDDEN
 
     /**
      * This method might return slightly different values depending on code path,
@@ -331,47 +333,50 @@ class SheetDelegate(
         return null
     }
 
-    private val keyboardSheetCallback =
-        object : BottomSheetCallback() {
-            @RequiresApi(Build.VERSION_CODES.M)
-            override fun onStateChanged(
-                bottomSheet: View,
-                newState: Int,
-            ) {
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    val isImeVisible =
-                        WindowInsetsCompat
-                            .toWindowInsetsCompat(bottomSheet.rootWindowInsets)
-                            .isVisible(WindowInsetsCompat.Type.ime())
-                    if (isImeVisible) {
-                        // Does it not interfere with React Native focus mechanism? In any case I'm not aware
-                        // of different way of hiding the keyboard.
-                        // https://stackoverflow.com/questions/1109022/how-can-i-close-hide-the-android-soft-keyboard-programmatically
-                        // https://developer.android.com/develop/ui/views/touch-and-input/keyboard-input/visibility
+    private inner class KeyboardHandler : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(
+            bottomSheet: View,
+            newState: Int,
+        ) {
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                val isImeVisible =
+                    WindowInsetsCompat
+                        .toWindowInsetsCompat(bottomSheet.rootWindowInsets)
+                        .isVisible(WindowInsetsCompat.Type.ime())
+                if (isImeVisible) {
+                    // Does it not interfere with React Native focus mechanism? In any case I'm not aware
+                    // of different way of hiding the keyboard.
+                    // https://stackoverflow.com/questions/1109022/how-can-i-close-hide-the-android-soft-keyboard-programmatically
+                    // https://developer.android.com/develop/ui/views/touch-and-input/keyboard-input/visibility
 
-                        // I want to be polite here and request focus before dismissing the keyboard,
-                        // however even if it fails I want to try to hide the keyboard. This sometimes works...
-                        bottomSheet.requestFocus()
-                        val imm =
-                            screen.reactContext.getSystemService(InputMethodManager::class.java)
-                        imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
-                    }
+                    // I want to be polite here and request focus before dismissing the keyboard,
+                    // however even if it fails I want to try to hide the keyboard. This sometimes works...
+                    bottomSheet.requestFocus()
+                    val imm =
+                        screen.reactContext.getSystemService(InputMethodManager::class.java)
+                    imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
                 }
             }
-
-            override fun onSlide(
-                bottomSheet: View,
-                slideOffset: Float,
-            ) = Unit
         }
 
+        override fun onSlide(
+            bottomSheet: View,
+            slideOffset: Float,
+        ) = Unit
+    }
 
     private inner class SheetStateObserver : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
+        override fun onStateChanged(
+            bottomSheet: View,
+            newState: Int,
+        ) {
             this@SheetDelegate.onSheetStateChanged(newState)
         }
 
-        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+        override fun onSlide(
+            bottomSheet: View,
+            slideOffset: Float,
+        ) = Unit
     }
 
     companion object {
