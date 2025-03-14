@@ -30,7 +30,6 @@ abstract class FabricEnabledHeaderConfigViewGroup(
         paddingEnd: Int,
     ) {
         // Implementation of this method differs between Fabric & Paper!
-        Log.i("ConfigShadowNode", "FABRIC updateHeaderConfigState")
         updateState(width, height, paddingStart, paddingEnd)
     }
 
