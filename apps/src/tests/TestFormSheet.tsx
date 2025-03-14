@@ -1,7 +1,7 @@
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Button, FlatList, ScrollView, Text, TextInput, View, Platform } from 'react-native';
+import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
 
 type ItemData = {
   id: number,
@@ -10,7 +10,9 @@ type ItemData = {
 
 type RouteParamList = {
   Home: undefined;
+  Second: undefined;
   FormSheet: undefined;
+  SecondFormSheet: undefined;
   FormSheetWithFlatList: undefined;
   FormSheetWithScrollView: undefined;
 };
@@ -29,9 +31,18 @@ function generateData(count: number): ItemData[] {
 function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
-      <Button title="Open sheeet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open sheet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
       <Button title="Open sheet with FlatList" onPress={() => navigation.navigate('FormSheetWithFlatList')} />
       <Button title="Open sheet with ScrollView" onPress={() => navigation.navigate('FormSheetWithScrollView')} />
+    </View>
+  );
+}
+
+function Second({ navigation }: RouteProps<'Second'>) {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
 }
@@ -43,9 +54,31 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
     <View style={{ backgroundColor: 'lightgreen', flex: 1 }}>
       <View style={{ paddingTop: 20 }}>
         <Button title="Go back" onPress={() => navigation.goBack()} />
+        <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
+        <Button title="Open SecondFormSheet" onPress={() => navigation.navigate('SecondFormSheet')} />
       </View>
       <View style={{ alignItems: 'center' }}>
         <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
+      </View>
+    </View>
+  );
+}
+
+function SecondFormSheet({ navigation }: RouteProps<'SecondFormSheet'>) {
+  return (
+    // When using `fitToContents` you can't use flex: 1. It is you who must provide
+    // the content size - you can't rely on parent size here.
+    <View style={{ backgroundColor: 'lightgreen', flex: undefined }}>
+      <View style={{ paddingTop: 20 }}>
+        <Button title="Go back" onPress={() => navigation.goBack()} />
+        <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
+        <Button title="Pop to top" onPress={() => navigation.popToTop()} />
+      </View>
+      <View style={{ alignItems: 'center' }}>
+        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
+      </View>
+      <View style={{ backgroundColor: 'green', height: 500 }}>
+        <Text>Additional content</Text>
       </View>
     </View>
   );
@@ -122,10 +155,23 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Second" component={Second} />
         <Stack.Screen name="FormSheet" component={FormSheet} options={{
           presentation: 'formSheet',
           sheetAllowedDetents: [0.4, 0.75],
           //sheetAllowedDetents: 'fitToContents',
+          sheetLargestUndimmedDetentIndex: 'none',
+          sheetCornerRadius: 8,
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: 'lightblue',
+          },
+          //unstable_sheetFooter: FormSheetFooter,
+        }} />
+        <Stack.Screen name="SecondFormSheet" component={SecondFormSheet} options={{
+          presentation: 'formSheet',
+          //sheetAllowedDetents: [0.4, 0.75],
+          sheetAllowedDetents: 'fitToContents',
           sheetLargestUndimmedDetentIndex: 'none',
           sheetCornerRadius: 8,
           headerShown: false,

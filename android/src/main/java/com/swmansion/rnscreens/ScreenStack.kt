@@ -9,8 +9,75 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
+import com.swmansion.rnscreens.utils.setTweenAnimations
 import java.util.Collections
 import kotlin.collections.ArrayList
+import kotlin.math.max
+
+internal interface ChildDrawingOrderStrategy {
+    /**
+     * Mutates the list of draw operations **in-place**.
+     */
+    fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>)
+
+    /**
+     * Enables the given strategy. When enabled - the strategy **might** mutate the operations
+     * list passed to `apply` method.
+     */
+    fun enable()
+
+    /**
+     * Disables the given strategy - even when `apply` is called it **must not** produce
+     * any side effect (it must not manipulate the drawing operations list passed to `apply` method).
+     */
+    fun disable()
+
+    fun isEnabled(): Boolean
+}
+
+internal abstract class ChildDrawingOrderStrategyBase(
+    var enabled: Boolean = false,
+) : ChildDrawingOrderStrategy {
+    override fun enable() {
+        enabled = true
+    }
+
+    override fun disable() {
+        enabled = false
+    }
+
+    override fun isEnabled() = enabled
+}
+
+internal class SwapLastTwo : ChildDrawingOrderStrategyBase() {
+    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
+        if (!isEnabled()) {
+            return
+        }
+        if (drawingOperations.size >= 2) {
+            Collections.swap(drawingOperations, drawingOperations.lastIndex, drawingOperations.lastIndex - 1)
+        }
+    }
+}
+
+internal class ReverseOrderInRange(
+    val range: IntRange,
+) : ChildDrawingOrderStrategyBase() {
+    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
+        if (!isEnabled()) {
+            return
+        }
+
+        var startRange = range.start
+        var endRange = range.endInclusive
+
+        while (startRange < endRange) {
+            Collections.swap(drawingOperations, startRange, endRange)
+            startRange += 1
+            endRange -= 1
+        }
+    }
+}
 
 class ScreenStack(
     context: Context?,
@@ -21,9 +88,10 @@ class ScreenStack(
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
-    private var isDetachingCurrentScreen = false
-    private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
+
+    private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
+
     var goingForward = false
 
     /**
@@ -55,11 +123,13 @@ class ScreenStack(
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
+        childDrawingOrderStrategy?.enable()
         removalTransitionStarted = true
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
+        childDrawingOrderStrategy?.disable()
         if (removalTransitionStarted) {
             removalTransitionStarted = false
             dispatchOnFinishTransitioning()
@@ -97,208 +167,131 @@ class ScreenStack(
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
         // handle the case of newTop being NULL, which happens in several places below
         var newTop: ScreenFragmentWrapper? = null // newTop is nullable, see the above comment ^
-        var visibleBottom: ScreenFragmentWrapper? =
-            null // this is only set if newTop has one of transparent presentation modes
-        isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
 
-        for (i in screenWrappers.indices.reversed()) {
-            val screenWrapper = getScreenFragmentWrapperAt(i)
-            if (!dismissedWrappers.contains(screenWrapper) && screenWrapper.screen.activityState !== Screen.ActivityState.INACTIVE) {
-                if (newTop == null) {
-                    newTop = screenWrapper
-                } else {
-                    visibleBottom = screenWrapper
-                }
-                if (!screenWrapper.screen.isTransparent()) {
-                    break
-                }
-            }
+        // this is only set if newTop has one of transparent presentation modes
+        var visibleBottom: ScreenFragmentWrapper? = null
+
+        // reset, to not use previously set strategy by mistake
+        childDrawingOrderStrategy = null
+
+        // Determine new first & last visible screens.
+        // Scope function to limit the scope of locals.
+        run {
+            val notDismissedWrappers =
+                screenWrappers
+                    .asReversed()
+                    .asSequence()
+                    .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
+
+            newTop = notDismissedWrappers.firstOrNull()
+            visibleBottom =
+                notDismissedWrappers
+                    .dropWhile { it.screen.isTransparent() }
+                    .firstOrNull()
+                    ?.takeUnless { it === newTop }
         }
 
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
-        if (!stack.contains(newTop)) {
+
+        val newTopAlreadyInStack = stack.contains(newTop)
+        val topScreenWillChange = newTop !== topScreenWrapper
+
+        if (newTop != null && !newTopAlreadyInStack) {
             // if new top screen wasn't on stack we do "open animation" so long it is not the very first
             // screen on stack
-            if (topScreenWrapper != null && newTop != null) {
+            if (topScreenWrapper != null) {
                 // there was some other screen attached before
                 // if the previous top screen does not exist anymore and the new top was not on the stack
                 // before, probably replace or reset was called, so we play the "close animation".
                 // Otherwise it's open animation
-                val containsTopScreen = topScreenWrapper?.let { screenWrappers.contains(it) } == true
+                val previousTopScreenRemainsInStack = topScreenWrapper?.let { screenWrappers.contains(it) } == true
                 val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
-                shouldUseOpenAnimation = containsTopScreen || isPushReplace
+                shouldUseOpenAnimation = previousTopScreenRemainsInStack || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
                 stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
-            } else if (topScreenWrapper == null && newTop != null) {
+            } else {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering
                 stackAnimation = StackAnimation.NONE
                 goingForward = true
             }
-        } else if (topScreenWrapper != null && topScreenWrapper != newTop) {
+        } else if (newTop != null && topScreenWrapper != null && topScreenWillChange) {
             // otherwise if we are performing top screen change we do "close animation"
             shouldUseOpenAnimation = false
             stackAnimation = topScreenWrapper?.screen?.stackAnimation
         }
 
-        createTransaction().let {
-            // animation logic start
+        goingForward = shouldUseOpenAnimation
+
+        if (shouldUseOpenAnimation &&
+            newTop != null &&
+            needsDrawReordering(newTop, stackAnimation) &&
+            visibleBottom == null
+        ) {
+            // When using an open animation in which two screens overlap (eg. fade_from_bottom or
+            // slide_from_bottom), we want to draw the previous screen under the new one,
+            // which is apparently not the default option. Android always draws the disappearing view
+            // on top of the appearing one. We then reverse the order of the views so the new screen
+            // appears on top of the previous one. You can read more about in the comment
+            // for the code we use to change that behavior:
+            // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
+            // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
+            // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
+            childDrawingOrderStrategy = SwapLastTwo()
+        } else if (newTop != null &&
+            newTopAlreadyInStack &&
+            topScreenWrapper?.screen?.isTransparent() == true &&
+            newTop.screen.isTransparent() == false
+        ) {
+            // In case where we dismiss multiple transparent views we want to ensure
+            // that they are drawn in correct order - Android swaps them by default,
+            // so we need to swap the swap to unswap :D
+            val dismissedTransparentScreenApproxCount =
+                stack
+                    .asReversed()
+                    .asSequence()
+                    .takeWhile {
+                        it !== newTop &&
+                            it.screen.isTransparent()
+                    }.count()
+            if (dismissedTransparentScreenApproxCount > 1) {
+                childDrawingOrderStrategy =
+                    ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
+            }
+        }
+
+        createTransaction().let { transaction ->
             if (stackAnimation != null) {
-                if (shouldUseOpenAnimation) {
-                    when (stackAnimation) {
-                        StackAnimation.DEFAULT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_default_enter_in,
-                                R.anim.rns_default_enter_out,
-                            )
-
-                        StackAnimation.NONE ->
-                            it.setCustomAnimations(
-                                R.anim.rns_no_animation_20,
-                                R.anim.rns_no_animation_20,
-                            )
-
-                        StackAnimation.FADE ->
-                            it.setCustomAnimations(
-                                R.anim.rns_fade_in,
-                                R.anim.rns_fade_out,
-                            )
-
-                        StackAnimation.SLIDE_FROM_RIGHT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_slide_in_from_right,
-                                R.anim.rns_slide_out_to_left,
-                            )
-                        StackAnimation.SLIDE_FROM_LEFT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_slide_in_from_left,
-                                R.anim.rns_slide_out_to_right,
-                            )
-                        StackAnimation.SLIDE_FROM_BOTTOM ->
-                            it.setCustomAnimations(
-                                R.anim.rns_slide_in_from_bottom,
-                                R.anim.rns_no_animation_medium,
-                            )
-                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
-                        StackAnimation.IOS_FROM_RIGHT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_ios_from_right_foreground_open,
-                                R.anim.rns_ios_from_right_background_open,
-                            )
-                        StackAnimation.IOS_FROM_LEFT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_ios_from_left_foreground_open,
-                                R.anim.rns_ios_from_left_background_open,
-                            )
-                    }
-                } else {
-                    when (stackAnimation) {
-                        StackAnimation.DEFAULT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_default_exit_in,
-                                R.anim.rns_default_exit_out,
-                            )
-
-                        StackAnimation.NONE ->
-                            it.setCustomAnimations(
-                                R.anim.rns_no_animation_20,
-                                R.anim.rns_no_animation_20,
-                            )
-
-                        StackAnimation.FADE ->
-                            it.setCustomAnimations(
-                                R.anim.rns_fade_in,
-                                R.anim.rns_fade_out,
-                            )
-
-                        StackAnimation.SLIDE_FROM_RIGHT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_slide_in_from_left,
-                                R.anim.rns_slide_out_to_right,
-                            )
-                        StackAnimation.SLIDE_FROM_LEFT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_slide_in_from_right,
-                                R.anim.rns_slide_out_to_left,
-                            )
-                        StackAnimation.SLIDE_FROM_BOTTOM ->
-                            it.setCustomAnimations(
-                                R.anim.rns_no_animation_medium,
-                                R.anim.rns_slide_out_to_bottom,
-                            )
-                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
-                        StackAnimation.IOS_FROM_RIGHT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_ios_from_right_background_close,
-                                R.anim.rns_ios_from_right_foreground_close,
-                            )
-                        StackAnimation.IOS_FROM_LEFT ->
-                            it.setCustomAnimations(
-                                R.anim.rns_ios_from_left_background_close,
-                                R.anim.rns_ios_from_left_foreground_close,
-                            )
-                    }
-                }
-            }
-            // animation logic end
-            goingForward = shouldUseOpenAnimation
-
-            if (shouldUseOpenAnimation &&
-                newTop != null &&
-                needsDrawReordering(newTop, stackAnimation) &&
-                visibleBottom == null
-            ) {
-                // When using an open animation in which two screens overlap (eg. fade_from_bottom or
-                // slide_from_bottom), we want to draw the previous screen under the new one,
-                // which is apparently not the default option. Android always draws the disappearing view
-                // on top of the appearing one. We then reverse the order of the views so the new screen
-                // appears on top of the previous one. You can read more about in the comment
-                // for the code we use to change that behavior:
-                // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
-                // Note: This should not be set in case there is only a single screen in stack or animation `none` is used. Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
-                isDetachingCurrentScreen = true
+                transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
 
-            // remove all screens previously on stack
-            for (fragmentWrapper in stack) {
-                if (!screenWrappers.contains(fragmentWrapper) || dismissedWrappers.contains(fragmentWrapper)) {
-                    it.remove(fragmentWrapper.fragment)
-                }
-            }
-            for (fragmentWrapper in screenWrappers) {
-                // Stop detaching screens when reaching visible bottom. All screens above bottom should be
-                // visible.
-                if (fragmentWrapper === visibleBottom) {
-                    break
-                }
-                // detach all screens that should not be visible
-                if ((fragmentWrapper !== newTop && !dismissedWrappers.contains(fragmentWrapper)) ||
-                    fragmentWrapper.screen.activityState === Screen.ActivityState.INACTIVE
-                ) {
-                    it.remove(fragmentWrapper.fragment)
-                }
-            }
+            // Remove all screens that are currently on stack, but should be dismissed, because they're
+            // no longer rendered or were dismissed natively.
+            stack
+                .asSequence()
+                .filter { wrapper -> !screenWrappers.contains(wrapper) || dismissedWrappers.contains(wrapper) }
+                .forEach { wrapper -> transaction.remove(wrapper.fragment) }
+
+            // Remove all screens underneath visibleBottom && these marked for preload, but keep newTop.
+            screenWrappers
+                .asSequence()
+                .takeWhile { it !== visibleBottom }
+                .filter { (it !== newTop && !dismissedWrappers.contains(it)) || it.screen.activityState === Screen.ActivityState.INACTIVE }
+                .forEach { wrapper -> transaction.remove(wrapper.fragment) }
 
             // attach screens that just became visible
             if (visibleBottom != null && !visibleBottom.fragment.isAdded) {
                 val top = newTop
-                var beneathVisibleBottom = true
-                for (fragmentWrapper in screenWrappers) {
-                    // ignore all screens beneath the visible bottom
-                    if (beneathVisibleBottom) {
-                        beneathVisibleBottom =
-                            if (fragmentWrapper === visibleBottom) {
-                                false
-                            } else {
-                                continue
-                            }
+                screenWrappers
+                    .asSequence()
+                    .dropWhile { it !== visibleBottom } // ignore all screens beneath the visible bottom
+                    .forEach { wrapper ->
+                        // TODO: It should be enough to dispatch this on commit action once.
+                        transaction.add(id, wrapper.fragment).runOnCommit {
+                            top?.screen?.bringToFront()
+                        }
                     }
-                    // when first visible screen found, make all screens after that visible
-                    it.add(id, fragmentWrapper.fragment).runOnCommit {
-                        top?.screen?.bringToFront()
-                    }
-                }
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.isSheetFitToContents()) {
                     // On old architecture the content wrapper might not have received its frame yet,
@@ -306,15 +299,14 @@ class ScreenStack(
                     // we delay the transition and trigger it after views receive the layout.
                     newTop.fragment.postponeEnterTransition()
                 }
-                it.add(id, newTop.fragment)
+                transaction.add(id, newTop.fragment)
             }
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
-            stack.addAll(screenWrappers.map { it as ScreenStackFragmentWrapper })
+            stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
-
-            it.commitNowAllowingStateLoss()
+            transaction.commitNowAllowingStateLoss()
         }
     }
 
@@ -346,23 +338,6 @@ class ScreenStack(
         stack.forEach { it.onContainerUpdate() }
     }
 
-    // below methods are taken from
-    // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L43
-    // and are used to swap the order of drawing views when navigating forward with the transitions
-    // that are making transitioning fragments appear one on another. See more info in the comment to
-    // the linked class.
-    override fun removeView(view: View) {
-        // we set this property to reverse the order of drawing views
-        // when we want to push new fragment on top of the previous one and their animations collide.
-        // More information in:
-        // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L17
-        if (isDetachingCurrentScreen) {
-            isDetachingCurrentScreen = false
-            reverseLastTwoChildren = true
-        }
-        super.removeView(view)
-    }
-
     private fun drawAndRelease() {
         // We make a copy of the drawingOps and use it to dispatch draws in order to be sure
         // that we do not modify the original list. There are cases when `op.draw` can call
@@ -381,12 +356,12 @@ class ScreenStack(
 
         // check the view removal is completed (by comparing the previous children count)
         if (drawingOps.size < previousChildrenCount) {
-            reverseLastTwoChildren = false
+            childDrawingOrderStrategy = null
         }
         previousChildrenCount = drawingOps.size
-        if (reverseLastTwoChildren && drawingOps.size >= 2) {
-            Collections.swap(drawingOps, drawingOps.size - 1, drawingOps.size - 2)
-        }
+
+        childDrawingOrderStrategy?.apply(drawingOps)
+
         drawAndRelease()
     }
 
@@ -415,7 +390,7 @@ class ScreenStack(
     // See: https://developer.android.com/about/versions/15/behavior-changes-15?hl=en#openjdk-api-changes
     private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
 
-    private inner class DrawingOp {
+    internal inner class DrawingOp {
         var canvas: Canvas? = null
         var child: View? = null
         var drawingTime: Long = 0

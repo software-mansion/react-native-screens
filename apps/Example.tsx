@@ -34,13 +34,10 @@ import SearchBar from './src/screens/SearchBar';
 import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
 
-import { enableFreeze } from 'react-native-screens';
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import * as Tests from './src/tests';
-
-enableFreeze();
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {

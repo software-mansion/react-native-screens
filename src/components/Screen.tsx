@@ -36,14 +36,14 @@ interface ViewConfig extends View {
   viewConfig: {
     validAttributes: {
       style: {
-        display: boolean;
+        display: boolean | null;
       };
     };
   };
   _viewConfig: {
     validAttributes: {
       style: {
-        display: boolean;
+        display: boolean | null;
       };
     };
   };
@@ -96,7 +96,7 @@ function resolveSheetAllowedDetents(
     return SHEET_COMPAT_ALL;
   } else {
     // Safe default, only large detent is allowed.
-    return [1.0];
+    return SHEET_COMPAT_LARGE;
   }
 }
 
@@ -257,16 +257,18 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       }
 
       const handleRef = (ref: ViewConfig) => {
+        // Workaround is necessary to prevent React Native from hiding frozen screens.
+        // See this PR: https://github.com/grahammendick/navigation/pull/860
         if (ref?.viewConfig?.validAttributes?.style) {
           ref.viewConfig.validAttributes.style = {
             ...ref.viewConfig.validAttributes.style,
-            display: false,
+            display: null,
           };
           setRef(ref);
         } else if (ref?._viewConfig?.validAttributes?.style) {
           ref._viewConfig.validAttributes.style = {
             ...ref._viewConfig.validAttributes.style,
-            display: false,
+            display: null,
           };
           setRef(ref);
         }

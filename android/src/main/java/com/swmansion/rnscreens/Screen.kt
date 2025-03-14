@@ -275,7 +275,7 @@ class Screen(
             throw IllegalStateException("[RNScreens] activityState can only progress in NativeStack")
         }
         this.activityState = activityState
-        container?.notifyChildUpdate()
+        container?.onChildUpdate()
     }
 
     fun setScreenOrientation(screenOrientation: String?) {
@@ -482,7 +482,14 @@ class Screen(
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
-    internal fun notifySheetDetentChange(
+    internal fun onSheetDetentChanged(
+        detentIndex: Int,
+        isStable: Boolean,
+    ) {
+        dispatchSheetDetentChanged(detentIndex, isStable)
+    }
+
+    private fun dispatchSheetDetentChanged(
         detentIndex: Int,
         isStable: Boolean,
     ) {
@@ -571,3 +578,5 @@ class Screen(
         const val SHEET_FIT_TO_CONTENTS = -1.0
     }
 }
+
+internal fun View.asScreen() = this as Screen

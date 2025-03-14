@@ -20,6 +20,11 @@ internal fun View.recycle(): View {
     // dumped. Since we don't restore the state but want to reuse the view we need to change
     // visibility back to VISIBLE in order for the fragment manager to animate in the view.
     this.visibility = View.VISIBLE
+
+    // Needed for cases where the Screen is is animated by translationY manipulation (e.g. formSheet)
+    // and then reused (reattached).
+    this.translationY = 0f
+
     return this
 }
 
@@ -30,3 +35,5 @@ internal fun View.maybeBgColor(): Int? {
     }
     return null
 }
+
+internal fun View.asViewGroupOrNull(): ViewGroup? = this as? ViewGroup
