@@ -482,7 +482,14 @@ class Screen(
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
-    internal fun notifySheetDetentChange(
+    internal fun onSheetDetentChanged(
+        detentIndex: Int,
+        isStable: Boolean,
+    ) {
+        dispatchSheetDetentChanged(detentIndex, isStable)
+    }
+
+    private fun dispatchSheetDetentChanged(
         detentIndex: Int,
         isStable: Boolean,
     ) {

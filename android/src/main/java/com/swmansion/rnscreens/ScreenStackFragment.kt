@@ -7,7 +7,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -16,33 +15,23 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.Transformation
-import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
-import com.swmansion.rnscreens.bottomsheet.SheetUtils
-import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
-import com.swmansion.rnscreens.bottomsheet.useSingleDetent
-import com.swmansion.rnscreens.bottomsheet.useThreeDetents
-import com.swmansion.rnscreens.bottomsheet.useTwoDetents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -158,51 +147,6 @@ class ScreenStackFragment :
         }
     }
 
-    // If the Screen has `formSheet` presentation this callback is attached to its behavior.
-    // It is responsible for firing detent changed events & removing the sheet from the container
-    // once it is hidden by user gesture.
-    private val bottomSheetStateCallback =
-        object : BottomSheetCallback() {
-            private var lastStableState: Int =
-                SheetUtils.sheetStateFromDetentIndex(
-                    screen.sheetInitialDetentIndex,
-                    screen.sheetDetents.count(),
-                )
-
-            override fun onStateChanged(
-                bottomSheet: View,
-                newState: Int,
-            ) {
-                if (SheetUtils.isStateStable(newState)) {
-                    lastStableState = newState
-                    screen.notifySheetDetentChange(
-                        SheetUtils.detentIndexFromSheetState(
-                            lastStableState,
-                            screen.sheetDetents.count(),
-                        ),
-                        true,
-                    )
-                } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    screen.notifySheetDetentChange(
-                        SheetUtils.detentIndexFromSheetState(
-                            lastStableState,
-                            screen.sheetDetents.count(),
-                        ),
-                        false,
-                    )
-                }
-
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    dismissSelf()
-                }
-            }
-
-            override fun onSlide(
-                bottomSheet: View,
-                slideOffset: Float,
-            ) = Unit
-        }
-
     /**
      * Currently this method dispatches event to JS where state is recomputed and fragment
      * gets removed in the result of incoming state update.
@@ -240,7 +184,7 @@ class ScreenStackFragment :
                 ).apply {
                     behavior =
                         if (screen.usesFormSheetPresentation()) {
-                            createAndConfigureBottomSheetBehaviour()
+                            createBottomSheetBehaviour()
                         } else if (isToolbarTranslucent) {
                             null
                         } else {
@@ -248,13 +192,8 @@ class ScreenStackFragment :
                         }
                 }
 
-        if (screen.usesFormSheetPresentation()) {
-            screen.clipToOutline = true
-            // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
-            attachShapeToScreen(screen)
-            screen.elevation = screen.sheetElevation
-        }
-
+        // This must be called before further sheet configuration.
+        // Otherwise there is no enter animation -> dunno why, just observed it.
         coordinatorLayout.addView(screen.recycle())
 
         if (!screen.usesFormSheetPresentation()) {
@@ -278,7 +217,28 @@ class ScreenStackFragment :
             }
             toolbar?.let { appBarLayout?.addView(it.recycle()) }
             setHasOptionsMenu(true)
+        } else {
+            screen.clipToOutline = true
+            // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
+            attachShapeToScreen(screen)
+            screen.elevation = screen.sheetElevation
+
+            // Lifecycle of sheet delegate is tied to fragment.
+            val sheetDelegate = requireSheetDelegate()
+            sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!)
+
+            val dimmingDelegate = requireDimmingDelegate(forceCreation = true)
+            dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
+            dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
+
+            val container = screen.container!!
+            coordinatorLayout.measure(
+                View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY),
+            )
+            coordinatorLayout.layout(0, 0, container.width, container.height)
         }
+
         return coordinatorLayout
     }
 
@@ -287,24 +247,6 @@ class ScreenStackFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-
-        if (!screen.usesFormSheetPresentation()) {
-            return
-        }
-
-        sheetDelegate = SheetDelegate(screen)
-
-        assert(view == coordinatorLayout)
-        val dimmingDelegate = requireDimmingDelegate(forceCreation = true)
-        dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
-        dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
-
-        val container = screen.container!!
-        coordinatorLayout.measure(
-            View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY),
-        )
-        coordinatorLayout.layout(0, 0, container.width, container.height)
     }
 
     override fun onCreateAnimation(
@@ -386,209 +328,7 @@ class ScreenStackFragment :
         return animatorSet
     }
 
-    /**
-     * This method might return slightly different values depending on code path,
-     * but during testing I've found this effect negligible. For practical purposes
-     * this is acceptable.
-     */
-    private fun tryResolveContainerHeight(): Int? {
-        if (screen.container != null) {
-            return screenStack.height
-        }
-
-        context
-            ?.resources
-            ?.displayMetrics
-            ?.heightPixels
-            ?.let { return it }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)
-                ?.currentWindowMetrics
-                ?.bounds
-                ?.height()
-                ?.let { return it }
-        }
-        return null
-    }
-
-    private val keyboardSheetCallback =
-        object : BottomSheetCallback() {
-            @RequiresApi(Build.VERSION_CODES.M)
-            override fun onStateChanged(
-                bottomSheet: View,
-                newState: Int,
-            ) {
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    val isImeVisible =
-                        WindowInsetsCompat
-                            .toWindowInsetsCompat(bottomSheet.rootWindowInsets)
-                            .isVisible(WindowInsetsCompat.Type.ime())
-                    if (isImeVisible) {
-                        // Does it not interfere with React Native focus mechanism? In any case I'm not aware
-                        // of different way of hiding the keyboard.
-                        // https://stackoverflow.com/questions/1109022/how-can-i-close-hide-the-android-soft-keyboard-programmatically
-                        // https://developer.android.com/develop/ui/views/touch-and-input/keyboard-input/visibility
-
-                        // I want to be polite here and request focus before dismissing the keyboard,
-                        // however even if it fails I want to try to hide the keyboard. This sometimes works...
-                        bottomSheet.requestFocus()
-                        val imm = requireContext().getSystemService(InputMethodManager::class.java)
-                        imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
-                    }
-                }
-            }
-
-            override fun onSlide(
-                bottomSheet: View,
-                slideOffset: Float,
-            ) = Unit
-        }
-
-    internal fun configureBottomSheetBehaviour(
-        behavior: BottomSheetBehavior<Screen>,
-        keyboardState: KeyboardState = KeyboardNotVisible,
-    ): BottomSheetBehavior<Screen> {
-        val containerHeight = tryResolveContainerHeight()
-        check(containerHeight != null) {
-            "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
-        }
-
-        behavior.apply {
-            isHideable = true
-            isDraggable = true
-
-            // It seems that there is a guard in material implementation that will prevent
-            // this callback from being registered multiple times.
-            addBottomSheetCallback(bottomSheetStateCallback)
-        }
-
-        screen.footer?.registerWithSheetBehavior(behavior)
-
-        return when (keyboardState) {
-            is KeyboardNotVisible -> {
-                when (screen.sheetDetents.count()) {
-                    1 ->
-                        behavior.apply {
-                            val height =
-                                if (screen.isSheetFitToContents()) {
-                                    screen.contentWrapper
-                                        .get()
-                                        ?.height
-                                        .takeIf { screen.contentWrapper.get()?.isLaidOut == true }
-                                } else {
-                                    (screen.sheetDetents.first() * containerHeight).toInt()
-                                }
-                            useSingleDetent(height = height)
-                        }
-
-                    2 ->
-                        behavior.useTwoDetents(
-                            state =
-                                SheetUtils.sheetStateFromDetentIndex(
-                                    screen.sheetInitialDetentIndex,
-                                    screen.sheetDetents.count(),
-                                ),
-                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
-                        )
-
-                    3 ->
-                        behavior.useThreeDetents(
-                            state =
-                                SheetUtils.sheetStateFromDetentIndex(
-                                    screen.sheetInitialDetentIndex,
-                                    screen.sheetDetents.count(),
-                                ),
-                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
-                            expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
-                        )
-
-                    else -> throw IllegalStateException(
-                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
-                    )
-                }
-            }
-
-            is KeyboardVisible -> {
-                val newMaxHeight =
-                    if (behavior.maxHeight - keyboardState.height > 1) {
-                        behavior.maxHeight - keyboardState.height
-                    } else {
-                        behavior.maxHeight
-                    }
-                when (screen.sheetDetents.count()) {
-                    1 ->
-                        behavior.apply {
-                            useSingleDetent(height = newMaxHeight)
-                            addBottomSheetCallback(keyboardSheetCallback)
-                        }
-
-                    2 ->
-                        behavior.apply {
-                            useTwoDetents(
-                                state = BottomSheetBehavior.STATE_EXPANDED,
-                                secondHeight = newMaxHeight,
-                            )
-                            addBottomSheetCallback(keyboardSheetCallback)
-                        }
-
-                    3 ->
-                        behavior.apply {
-                            useThreeDetents(
-                                state = BottomSheetBehavior.STATE_EXPANDED,
-                            )
-                            maxHeight = newMaxHeight
-                            addBottomSheetCallback(keyboardSheetCallback)
-                        }
-
-                    else -> throw IllegalStateException(
-                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
-                    )
-                }
-            }
-
-            is KeyboardDidHide -> {
-                // Here we assume that the keyboard was either closed explicitly by user,
-                // or the user dragged the sheet down. In any case the state should
-                // stay unchanged.
-
-                behavior.removeBottomSheetCallback(keyboardSheetCallback)
-                when (screen.sheetDetents.count()) {
-                    1 ->
-                        behavior.useSingleDetent(
-                            height = (screen.sheetDetents.first() * containerHeight).toInt(),
-                            forceExpandedState = false,
-                        )
-
-                    2 ->
-                        behavior.useTwoDetents(
-                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
-                        )
-
-                    3 ->
-                        behavior.useThreeDetents(
-                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
-                            expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
-                        )
-
-                    else -> throw IllegalStateException(
-                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
-                    )
-                }
-            }
-        }
-    }
-
     private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
-
-    // In general it would be great to create BottomSheetBehaviour only via this method as it runs some
-    // side effects.
-    private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> =
-        configureBottomSheetBehaviour(createBottomSheetBehaviour())
 
     private fun resolveBackgroundColor(screen: Screen): Int? {
         val screenColor =
@@ -721,6 +461,13 @@ class ScreenStackFragment :
             dimmingDelegate = DimmingViewManager(screen.reactContext, screen)
         }
         return dimmingDelegate!!
+    }
+
+    private fun requireSheetDelegate(): SheetDelegate {
+        if (sheetDelegate == null) {
+            sheetDelegate = SheetDelegate(screen)
+        }
+        return sheetDelegate!!
     }
 
     private class ScreensCoordinatorLayout(
