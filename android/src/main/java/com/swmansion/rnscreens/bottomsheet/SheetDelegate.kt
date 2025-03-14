@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.bottomsheet
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -95,11 +94,6 @@ class SheetDelegate(
                     newState,
                     screen.sheetDetents.count(),
                 )
-
-            Log.i(
-                TAG,
-                "lastStableState: $lastStableState, lastStableDetentIndex: $lastStableDetentIndex",
-            )
         }
 
         screen.onSheetDetentChanged(lastStableDetentIndex, isStable)
@@ -126,8 +120,6 @@ class SheetDelegate(
 
         // There is a guard internally that does not allow the callback to be duplicated.
         behavior.addBottomSheetCallback(sheetStateObserver)
-
-        Log.i(TAG, "Configure with selectedDetentIndex: $selectedDetentIndex")
 
         screen.footer?.registerWithSheetBehavior(behavior)
 

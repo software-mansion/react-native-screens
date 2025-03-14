@@ -8,7 +8,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -466,7 +465,6 @@ class ScreenStackFragment :
 
     private fun requireSheetDelegate(): SheetDelegate {
         if (sheetDelegate == null) {
-            Log.i(TAG, "create sheet delegate")
             sheetDelegate = SheetDelegate(screen)
         }
         return sheetDelegate!!
