@@ -61,6 +61,7 @@ class ScreenStackViewManager :
         index: Int,
     ): View = parent.getScreenAt(index)
 
+    // Old architecture only.
     override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreensShadowNode(context)
 
     override fun needsCustomLayoutForChildren() = true
