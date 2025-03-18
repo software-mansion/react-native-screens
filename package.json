@@ -67,6 +67,11 @@
     "url": "https://github.com/software-mansion/react-native-screens/issues"
   },
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): cut the ${version}"
+    }
+  },
   "dependencies": {
     "react-freeze": "^1.0.0",
     "warn-once": "^0.1.0"
