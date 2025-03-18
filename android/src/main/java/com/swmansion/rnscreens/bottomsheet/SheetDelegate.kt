@@ -130,10 +130,9 @@ class SheetDelegate(
                         behavior.apply {
                             val height =
                                 if (screen.isSheetFitToContents()) {
-                                    screen.contentWrapper
-                                        .get()
-                                        ?.height
-                                        .takeIf { screen.contentWrapper.get()?.isLaidOut == true }
+                                    screen.contentWrapper.get()?.let { contentWrapper ->
+                                        contentWrapper.height.takeIf { contentWrapper.isLaidOut || contentWrapper.height > 0 }
+                                    }
                                 } else {
                                     (screen.sheetDetents.first() * containerHeight).toInt()
                                 }
