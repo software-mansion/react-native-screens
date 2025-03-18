@@ -45,7 +45,7 @@ const DetailsScreen = ({ navigation }: StackScreenProps<'Details'>) => {
     navigation.setOptions({
       headerBackVisible: !x,
       headerRight: () =>
-        x ? <Square size={20} color="green" /> : <Square size={10} />,
+        x ? <Square size={20} color="green" testID="details-green-square" /> : <Square size={10} testID="details-red-square" />,
     });
   }, [navigation, x]);
 
@@ -61,13 +61,13 @@ const InfoScreen = ({ navigation }: StackScreenProps<'Info'>) => {
 
   const square1 = (props: { tintColor?: string }) => (
     <View style={{ gap: 8, flexDirection: 'row' }}>
-      {hasLeftItem && <Square {...props} color="green" size={20} />}
-      <Square {...props} color="green" size={20} />
+      {hasLeftItem && <Square {...props} color="green" size={20} testID="info-green-square-2" />}
+      <Square {...props} color="green" size={20} testID="info-green-square-1" />
     </View>
   );
 
   const square2 = (props: { tintColor?: string }) => (
-    <Square {...props} color="red" size={20} />
+    <Square {...props} color="red" size={20} testID="info-red-square" />
   );
 
   useLayoutEffect(() => {
@@ -95,7 +95,7 @@ const StackNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          headerRight: () => <Square size={20} color="black" />,
+          headerRight: () => <Square size={20} color="black" testID="home-square" />,
         }}
       />
       <Stack.Screen name="Details" component={DetailsScreen} />
@@ -112,7 +112,7 @@ const StackNavigator = () => {
         options={{
           presentation: 'modal',
           animation: 'slide_from_bottom',
-          headerRight: () => <Square size={30} />,
+          headerRight: () => <Square size={30} testID="settings-square" />,
         }}
       />
     </Stack.Navigator>
