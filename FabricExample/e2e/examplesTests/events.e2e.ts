@@ -13,14 +13,7 @@ const pressBack = async () => {
 const awaitClassicalEventBehavior = async () => {
   if (device.getPlatform() === 'ios') {
     // The order of events in this test differs from the Paper version of the same test.
-    // When screen is removed after using iOS native back button, native side notifies JS via:
-    // 1. onDismissed => in reaction to this event, a navigation action is dispatched,
-    //    which causes emission of beforeRemove event;
-    // 2. onDisappear => in reaction to this event, transitionEnd with closing=true is emitted.
-    // On Fabric, these events are handled in the same order as the order of notifications from the native side.
-    // On Paper, this is not the case - onDismissed is executed after two transitionEnd events are already handled.
-    // onDismissed is dispatched asynchronously from the native side and this probably delays handling it on JS side
-    // but I am not sure of the details why it is dispatched asynchronously.
+    // Please see https://github.com/software-mansion/react-native-screens/pull/2785 for details.
     await expect(
       element(by.text('9. Chats | transitionStart | closing')),
     ).toExist();
