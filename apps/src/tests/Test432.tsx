@@ -26,14 +26,17 @@ const HomeScreen = ({ navigation }: StackScreenProps<'Home'>) => {
       <Button
         title={'Go to details'}
         onPress={() => navigation.navigate('Details')}
+        testID="go-to-details"
       />
       <Button
         title={'Go to info'}
         onPress={() => navigation.navigate('Info')}
+        testID="go-to-info"
       />
       <Button
         title={'Show settings'}
         onPress={() => navigation.navigate('Settings')}
+        testID="show-settings"
       />
     </View>
   );
@@ -45,15 +48,19 @@ const DetailsScreen = ({ navigation }: StackScreenProps<'Details'>) => {
     navigation.setOptions({
       headerBackVisible: !x,
       headerRight: () =>
-        x ? <Square size={20} color="green" testID="details-green-square" /> : <Square size={10} testID="details-red-square" />,
+        x ? (
+          <Square size={20} color="green" testID="details-green-square" />
+        ) : (
+          <Square size={10} testID="details-red-square" />
+        ),
     });
   }, [navigation, x]);
 
-  return <Button title="Toggle subviews" onPress={() => setX(prev => !prev)} />;
+  return <Button title="Toggle subviews" onPress={() => setX(prev => !prev)} testID='details-toggle-subviews' />;
 };
 
 const SettingsScreen = () => {
-  return <Text>Settings</Text>;
+  return <Text testID='settings-text'>Settings</Text>;
 };
 
 const InfoScreen = ({ navigation }: StackScreenProps<'Info'>) => {
@@ -61,7 +68,14 @@ const InfoScreen = ({ navigation }: StackScreenProps<'Info'>) => {
 
   const square1 = (props: { tintColor?: string }) => (
     <View style={{ gap: 8, flexDirection: 'row' }}>
-      {hasLeftItem && <Square {...props} color="green" size={20} testID="info-green-square-2" />}
+      {hasLeftItem && (
+        <Square
+          {...props}
+          color="green"
+          size={20}
+          testID="info-green-square-2"
+        />
+      )}
       <Square {...props} color="green" size={20} testID="info-green-square-1" />
     </View>
   );
@@ -82,6 +96,7 @@ const InfoScreen = ({ navigation }: StackScreenProps<'Info'>) => {
     <Button
       title="Toggle subviews"
       onPress={() => setHasLeftItem(prev => !prev)}
+      testID='info-toggle-subviews'
     />
   );
 };
@@ -95,7 +110,9 @@ const StackNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          headerRight: () => <Square size={20} color="black" testID="home-square" />,
+          headerRight: () => (
+            <Square size={20} color="black" testID="home-square" />
+          ),
         }}
       />
       <Stack.Screen name="Details" component={DetailsScreen} />
