@@ -21,14 +21,14 @@ const awaitClassicalEventBehavior = async () => {
     await expect(
       element(by.text('11. Main | transitionStart | opening')),
     ).toExist();
+    await expect(element(by.text('12. Privacy | beforeRemove'))).toExist();
+    await expect(element(by.text('13. Chats | beforeRemove'))).toExist();
     await expect(
-      element(by.text('12. Chats | transitionEnd | closing')),
+      element(by.text('14. Chats | transitionEnd | closing')),
     ).toExist();
     await expect(
-      element(by.text('13. Privacy | transitionEnd | closing')),
+      element(by.text('15. Privacy | transitionEnd | closing')),
     ).toExist();
-    await expect(element(by.text('14. Privacy | beforeRemove'))).toExist();
-    await expect(element(by.text('15. Chats | beforeRemove'))).toExist();
     await expect(
       element(by.text('16. Main | transitionEnd | opening')),
     ).toExist();
