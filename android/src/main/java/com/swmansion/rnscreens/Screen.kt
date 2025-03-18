@@ -103,6 +103,9 @@ class Screen(
             field = value
         }
 
+    private val isNativeStackScreen: Boolean
+        get() = container is ScreenStack
+
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
@@ -173,7 +176,9 @@ class Screen(
         r: Int,
         b: Int,
     ) {
-        if (container is ScreenStack && changed) {
+        // In case of form sheet we get layout notification a bit later, in `onBottomSheetBehaviorDidLayout`
+        // after the attached behaviour laid out this view.
+        if (changed && isNativeStackScreen && !usesFormSheetPresentation()) {
             val width = r - l
             val height = b - t
 
@@ -182,14 +187,21 @@ class Screen(
             } else {
                 updateScreenSizePaper(width, height)
             }
-
-            footer?.onParentLayout(changed, l, t, r, b, container!!.height)
+            // FormSheet has no header in current model.
             notifyHeaderHeightChange(t)
-
-            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                maybeTriggerPostponedTransition()
-            }
         }
+    }
+
+    internal fun onBottomSheetBehaviorDidLayout(coordinatorLayoutDidChange: Boolean) {
+        if (coordinatorLayoutDidChange && usesFormSheetPresentation() && isNativeStackScreen && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateScreenSizeFabric(width, height, top)
+        }
+        if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateScreenSizePaper(width, height)
+            maybeTriggerPostponedTransition()
+        }
+
+        footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
     }
 
     private fun maybeTriggerPostponedTransition() {
@@ -487,6 +499,11 @@ class Screen(
         isStable: Boolean,
     ) {
         dispatchSheetDetentChanged(detentIndex, isStable)
+        // There is no need to update shadow state for transient sheet states -
+        // we are unsure of the exact sheet position anyway.
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
+            updateScreenSizeFabric(width, height, top)
+        }
     }
 
     private fun dispatchSheetDetentChanged(

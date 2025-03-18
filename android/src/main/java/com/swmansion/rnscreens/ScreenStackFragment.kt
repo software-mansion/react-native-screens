@@ -543,6 +543,14 @@ class ScreenStackFragment :
             }
         }
 
+        override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+            super.onLayout(changed, l, t, r, b)
+
+            if (fragment.screen.usesFormSheetPresentation()) {
+                fragment.screen.onBottomSheetBehaviorDidLayout(changed)
+            }
+        }
+
 //        override fun reactTagForTouch(touchX: Float, touchY: Float): Int {
 //            throw IllegalStateException("Screen wrapper should never be asked for the view tag")
 //        }
