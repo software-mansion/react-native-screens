@@ -22,12 +22,10 @@ type TwoStackRouteParamList = OneStackRouteParamList & {
 }
 
 type RootStackRouteNavProps = NavigationRouteProps<RootStackRouteParamList>;
-type OneStackRouteNavProps = NavigationRouteProps<OneStackRouteParamList>;
 type TwoStackRouteNavProps = NavigationRouteProps<TwoStackRouteParamList>;
 
 
 const RootStack = createNativeStackNavigator<RootStackRouteParamList>();
-const OneStack = createNativeStackNavigator<OneStackRouteParamList>();
 const TwoStack = createNativeStackNavigator<TwoStackRouteParamList>();
 
 function RootStackHostComponent() {
@@ -38,21 +36,7 @@ function RootStackHostComponent() {
   );
 }
 
-function RootStackHome({ navigation }: RootStackRouteNavProps) {
-  return (
-    <TwoStackHostComponent />
-  );
-}
-
-function OneStackHostComponent() {
-  return (
-    <OneStack.Navigator>
-      <OneStack.Screen name="OneHome" component={OneStackHome} />
-    </OneStack.Navigator>
-  );
-}
-
-function OneStackHome({ navigation }: OneStackRouteNavProps) {
+function RootStackHome({ }: RootStackRouteNavProps) {
   return (
     <TwoStackHostComponent />
   );
