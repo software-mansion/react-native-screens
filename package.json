@@ -20,7 +20,8 @@
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install",
     "architectures-consistency-check": "node ./scripts/codegen-check-consistency.js",
-    "sync-architectures": "node ./scripts/codegen-sync-archs.js"
+    "sync-architectures": "node ./scripts/codegen-sync-archs.js",
+    "update-lockfiles": "cd ${APP_DIR} && yarn && cd ios && pod install && cd ../../"
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -69,7 +70,10 @@
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
   "release-it": {
     "git": {
-      "commitMessage": "chore(release): cut the ${version}"
+      "commitMessage": "chore(release): cut the ${version}",
+      "hooks": {
+        "after:bump": "APP_DIR=Example yarn update-lockfiles && APP_DIR=FabricExample yarn update-lockfiles"
+      }
     }
   },
   "dependencies": {
