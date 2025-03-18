@@ -51,7 +51,7 @@
     "@types/react": "^19.0.0",
     "@types/react-test-renderer": "^19.0.0",
     "babel-jest": "^29.6.3",
-    "detox": "^20.34.2",
+    "detox": "^20.34.5",
     "eslint": "^8.19.0",
     "jest": "^29.6.3",
     "patch-package": "^8.0.0",

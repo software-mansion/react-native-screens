@@ -2902,7 +2902,7 @@ __metadata:
     "@types/react": "npm:^19.0.0"
     "@types/react-test-renderer": "npm:^19.0.0"
     babel-jest: "npm:^29.6.3"
-    detox: "npm:^20.34.2"
+    detox: "npm:^20.34.5"
     eslint: "npm:^8.19.0"
     jest: "npm:^29.6.3"
     jotai: "npm:^2.9.0"
@@ -4256,16 +4256,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detox@npm:^20.34.2":
-  version: 20.34.2
-  resolution: "detox@npm:20.34.2"
+"detox@npm:^20.34.5":
+  version: 20.34.5
+  resolution: "detox@npm:20.34.5"
   dependencies:
     ajv: "npm:^8.6.3"
     bunyan: "npm:^1.8.12"
     bunyan-debug-stream: "npm:^3.1.0"
     caf: "npm:^15.0.1"
     chalk: "npm:^4.0.0"
-    child-process-promise: "npm:^2.2.0"
     detox-copilot: "npm:^0.0.27"
     execa: "npm:^5.1.1"
     find-up: "npm:^5.0.0"
@@ -4279,6 +4278,7 @@ __metadata:
     multi-sort-stream: "npm:^1.0.3"
     multipipe: "npm:^4.0.0"
     node-ipc: "npm:9.2.1"
+    promisify-child-process: "npm:^4.1.2"
     proper-lockfile: "npm:^3.0.2"
     resolve-from: "npm:^5.0.0"
     sanitize-filename: "npm:^1.6.1"
@@ -4303,7 +4303,7 @@ __metadata:
       optional: true
   bin:
     detox: local-cli/cli.js
-  checksum: 10c0/d7531648552d0dce11f98ce438edd24d0c0185ac3785466fcbc402b0932a00741226ccb6da0ec81324dc14f02c8d20e5cd980dec7bdfaef0a3040c2f73a5d8d6
+  checksum: 10c0/1be4c20e93981a72b574222fbfed542c9c1225e82565f757c44801b4527a66b58f37f8dff78aa77b4ba0b52124ca69c8214b4b402596699257dca9a6da207d83
   languageName: node
   linkType: hard
 
@@ -8389,13 +8389,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"promise-polyfill@npm:^6.0.1":
-  version: 6.1.0
-  resolution: "promise-polyfill@npm:6.1.0"
-  checksum: 10c0/8fa1172b1b50efbc43f5eb8772e6a526ef70b9856f3d49172c8bea0ccee4413b29eb5d7f8b44015fe43b2d77a9db16d4c49d337b48b218661f92e5ab1c1fc672
-  languageName: node
-  linkType: hard
-
 "promise-retry@npm:^2.0.1":
   version: 2.0.1
   resolution: "promise-retry@npm:2.0.1"
@@ -8412,6 +8405,13 @@ __metadata:
   dependencies:
     asap: "npm:~2.0.6"
   checksum: 10c0/6fccae27a10bcce7442daf090279968086edd2e3f6cebe054b71816403e2526553edf510d13088a4d0f14d7dfa9b9dfb188cab72d6f942e186a4353b6a29c8bf
+  languageName: node
+  linkType: hard
+
+"promisify-child-process@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "promisify-child-process@npm:4.1.2"
+  checksum: 10c0/e5347137f1c333af4b7b4d2272a091d31007b30320af4b852f30f41776db378e22b3db1e67e40026a18301c243d9c9780e41c211cfce76ba26aedba17e3a385c
   languageName: node
   linkType: hard
 
@@ -8444,13 +8444,6 @@ __metadata:
     retry: "npm:^0.12.0"
     signal-exit: "npm:^3.0.2"
   checksum: 10c0/b3a0bbf87f1b842ab57d91bee2e8c73d6cb2e90558aad259e83561cf5467f20885a1eb127343ecd9db214c78aaa196867ef8edb76e3681dc07ee43a489fd53bd
-  languageName: node
-  linkType: hard
-
-"pseudomap@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "pseudomap@npm:1.0.2"
-  checksum: 10c0/5a91ce114c64ed3a6a553aa7d2943868811377388bb31447f9d8028271bae9b05b340fe0b6961a64e45b9c72946aeb0a4ab635e8f7cb3715ffd0ff2beeb6a679
   languageName: node
   linkType: hard
 
@@ -10281,7 +10274,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which@npm:^1.2.9, which@npm:^1.3.1":
+"which@npm:^1.3.1":
   version: 1.3.1
   resolution: "which@npm:1.3.1"
   dependencies:

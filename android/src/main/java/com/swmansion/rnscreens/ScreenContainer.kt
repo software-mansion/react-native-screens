@@ -91,7 +91,7 @@ open class ScreenContainer(
     val isNested: Boolean
         get() = parentScreenWrapper != null
 
-    fun notifyChildUpdate() {
+    fun onChildUpdate() {
         performUpdatesNow()
     }
 

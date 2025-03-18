@@ -80,7 +80,7 @@ const headerOptions = {
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ statusBarTranslucent: false }}>
+      <Stack.Navigator screenOptions={{ statusBarTranslucent: true }}>
         <Stack.Screen
           name={homeScreenTitle}
           component={Screen}

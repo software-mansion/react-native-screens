@@ -48,7 +48,7 @@ function detectAndroidEmulatorName() {
 
 /**
  * @type {Detox.DetoxConfig}
- * @param {string} app name (FabricExample / ScreensExample)
+ * @param {string} applicationName name (FabricExample / ScreensExample)
  * @returns {Detox.DetoxConfig}
  */
 function commonDetoxConfigFactory(applicationName) {
@@ -101,7 +101,7 @@ function commonDetoxConfigFactory(applicationName) {
       attached: {
         type: 'android.attached',
         device: {
-          adbName: 'e2e_emulator',
+          adbName: CI_AVD_NAME,
         },
         utilBinaryPaths: testButlerApkPath,
       },
