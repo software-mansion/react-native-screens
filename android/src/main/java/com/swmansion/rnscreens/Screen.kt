@@ -182,22 +182,21 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height, t)
-            } else {
-                updateScreenSizePaper(width, height)
-            }
+            dispatchShadowStateUpdate(width, height, t)
+
             // FormSheet has no header in current model.
             notifyHeaderHeightChange(t)
         }
     }
 
     internal fun onBottomSheetBehaviorDidLayout(coordinatorLayoutDidChange: Boolean) {
-        if (coordinatorLayoutDidChange && usesFormSheetPresentation() && isNativeStackScreen && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, height, top)
+        if (!usesFormSheetPresentation()) {
+            return
+        }
+        if (coordinatorLayoutDidChange && isNativeStackScreen) {
+            dispatchShadowStateUpdate(width, height, top)
         }
         if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizePaper(width, height)
             maybeTriggerPostponedTransition()
         }
 
@@ -224,6 +223,21 @@ class Screen(
                 }
             },
         )
+    }
+
+    /**
+     * @param offsetY ignored on old architecture
+     */
+    private fun dispatchShadowStateUpdate(
+        width: Int,
+        height: Int,
+        offsetY: Int,
+    ) {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateScreenSizeFabric(width, height, offsetY)
+        } else {
+            updateScreenSizePaper(width, height)
+        }
     }
 
     val headerConfig: ScreenStackHeaderConfig?
