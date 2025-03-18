@@ -114,7 +114,7 @@
     "react-native-safe-area-context": "5.1.0",
     "react-native-windows": "^0.64.8",
     "react-test-renderer": "^19.0.0",
-    "release-it": "^15.6.0",
+    "release-it": "^18.1.2",
     "typescript": "5.4.3"
   },
   "resolutions": {
