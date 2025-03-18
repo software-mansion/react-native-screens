@@ -4,13 +4,16 @@ import androidx.fragment.app.FragmentTransaction
 import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen.StackAnimation
 
-internal fun FragmentTransaction.setTweenAnimations(stackAnimation: StackAnimation, shouldUseOpenAnimation: Boolean) {
+internal fun FragmentTransaction.setTweenAnimations(
+    stackAnimation: StackAnimation,
+    shouldUseOpenAnimation: Boolean,
+) {
     if (shouldUseOpenAnimation) {
         when (stackAnimation) {
             StackAnimation.DEFAULT ->
                 this.setCustomAnimations(
-                    R.anim.rns_default_enter_in,
-                    R.anim.rns_default_enter_out,
+                    R.animator.rns_default_enter_in,
+                    R.animator.rns_default_enter_out,
                 )
 
             StackAnimation.NONE ->
@@ -56,8 +59,8 @@ internal fun FragmentTransaction.setTweenAnimations(stackAnimation: StackAnimati
         when (stackAnimation) {
             StackAnimation.DEFAULT ->
                 this.setCustomAnimations(
-                    R.anim.rns_default_exit_in,
-                    R.anim.rns_default_exit_out,
+                    R.animator.rns_default_exit_in,
+                    R.animator.rns_default_exit_out,
                 )
 
             StackAnimation.NONE ->
