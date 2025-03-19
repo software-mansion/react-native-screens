@@ -27,6 +27,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
@@ -135,11 +136,7 @@ class Screen(
         val height = bottom - top
 
         if (isSheetFitToContents()) {
-            sheetBehavior?.let {
-                if (it.maxHeight != height) {
-                    it.maxHeight = height
-                }
-            }
+            sheetBehavior?.useSingleDetent(height)
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 // On old architecture we delay enter transition in order to wait for initial frame.
