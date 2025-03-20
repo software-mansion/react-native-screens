@@ -248,6 +248,15 @@ RNS_IGNORE_SUPER_CALL_END
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
 #endif
       break;
+
+    case RNSScreenStackPresentationPageSheet:
+#if !TARGET_OS_TV
+      _controller.modalPresentationStyle = UIModalPresentationPageSheet;
+#else
+      _controller.modalPresentationStyle = UIModalPresentationFullScreen;
+#endif
+      break;
+
     case RNSScreenStackPresentationFullScreenModal:
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
       break;
@@ -2024,6 +2033,7 @@ RCT_ENUM_CONVERTER(
       @"modal" : @(RNSScreenStackPresentationModal),
       @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
       @"formSheet" : @(RNSScreenStackPresentationFormSheet),
+      @"pageSheet" : @(RNSScreenStackPresentationPageSheet),
       @"containedModal" : @(RNSScreenStackPresentationContainedModal),
       @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
       @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)

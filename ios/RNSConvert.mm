@@ -49,6 +49,8 @@
       return RNSScreenStackPresentationFullScreenModal;
     case FormSheet:
       return RNSScreenStackPresentationFormSheet;
+    case PageSheet:
+      return RNSScreenStackPresentationPageSheet;
     case ContainedModal:
       return RNSScreenStackPresentationContainedModal;
     case TransparentModal:

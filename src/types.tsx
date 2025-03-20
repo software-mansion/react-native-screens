@@ -27,7 +27,8 @@ export type StackPresentationTypes =
   | 'containedModal'
   | 'containedTransparentModal'
   | 'fullScreenModal'
-  | 'formSheet';
+  | 'formSheet'
+  | 'pageSheet';
 export type StackAnimationTypes =
   | 'default'
   | 'fade'
@@ -425,6 +426,7 @@ export interface ScreenProps extends ViewProps {
    * - "containedTransparentModal" – will use "UIModalPresentationOverCurrentContext" modal style on iOS and will fallback to "transparentModal" on Android.
    * - "fullScreenModal" – will use "UIModalPresentationFullScreen" modal style on iOS and will fallback to "modal" on Android.
    * - "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS, on Android this will use Material BottomSheetBehaviour. On Android neested stack rendering is not yet supported.
+   * - "pageSheet" – will use "UIModalPresentationPageSheet" modal style on iOS and will fallback to "modal" on Android.
    */
   stackPresentation?: StackPresentationTypes;
   /**
