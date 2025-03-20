@@ -214,7 +214,7 @@ android {
 
 repositories {
     maven {
-        url "${reactNativeRootDir}/android"
+        url = "${reactNativeRootDir}/android"
     }
 
     mavenCentral()
