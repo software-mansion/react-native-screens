@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.os.Build
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
@@ -47,6 +48,7 @@ class ScreenStackHeaderConfig(
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
     private val defaultStartInsetWithNavigation: Int
+    private var needsLayoutZeroing = false
     private val backClickListener =
         OnClickListener {
             screenFragment?.let {
@@ -139,7 +141,16 @@ class ScreenStackHeaderConfig(
         t: Int,
         r: Int,
         b: Int,
-    ) = Unit
+    ) {
+        if (needsLayoutZeroing && changed) {
+            // Setting visibility = GONE is not enough, since it only prevents the Android framework
+            // from laying out the view, however RN still sets the frame.
+            // This is needed only below API level 29, otherwise we use `suppressLayout`.
+            // Please note that we can not simply zero the header config frame in ShadowTree,
+            // because it would cause layout issues with header subviews.
+            layout(l, 0, r, 0)
+        }
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -447,6 +458,12 @@ class ScreenStackHeaderConfig(
             toolbar.setBackgroundColor(tv.data)
         }
         toolbar.clipChildren = false
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            suppressLayout(true)
+        } else {
+            needsLayoutZeroing = true
+        }
     }
 
     companion object {
