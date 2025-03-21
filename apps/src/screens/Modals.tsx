@@ -12,6 +12,7 @@ type StackParamList = {
   FullscreenModal: undefined;
   Alert: undefined;
   ContainedModal: undefined;
+  PageSheet: undefined;
 };
 
 interface MainScreenProps {
@@ -29,6 +30,10 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
     <Button
       title="Open contained modal"
       onPress={() => navigation.navigate('ContainedModal')}
+    />
+    <Button
+      title="Open pageSheet"
+      onPress={() => navigation.navigate('PageSheet')}
     />
     <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
   </View>
@@ -49,6 +54,10 @@ const ModalScreen = ({ navigation }: ModalScreenProps): React.JSX.Element => (
     <Button
       title="Open contained modal"
       onPress={() => navigation.navigate('ContainedModal')}
+    />
+    <Button
+      title="Open pageSheet"
+      onPress={() => navigation.push('PageSheet')}
     />
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </View>
@@ -80,6 +89,11 @@ const App = (): React.JSX.Element => (
       name="ContainedModal"
       component={ModalScreen}
       options={{ presentation: 'containedModal' }}
+    />
+    <Stack.Screen
+      name="PageSheet"
+      component={ModalScreen}
+      options={{ presentation: 'pageSheet' }}
     />
     <Stack.Screen
       name="Alert"

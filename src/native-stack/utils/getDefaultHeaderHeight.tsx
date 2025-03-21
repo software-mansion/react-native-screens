@@ -16,9 +16,11 @@ export default function getDefaultHeaderHeight(
   if (Platform.OS === 'ios') {
     const isLandscape = layout.width > layout.height;
     const isFormSheetModal =
-      stackPresentation === 'modal' || stackPresentation === 'formSheet';
+      stackPresentation === 'modal' ||
+      stackPresentation === 'formSheet' ||
+      stackPresentation === 'pageSheet';
     if (isFormSheetModal && !isLandscape) {
-      // `modal` and `formSheet` presentations do not take whole screen, so should not take the inset.
+      // `modal`, `formSheet` and `pageSheet` presentations do not take whole screen, so should not take the inset.
       statusBarHeight = 0;
     }
 

@@ -16,6 +16,7 @@ type StackParamList = {
   ContainedTransparentModal: undefined;
   FullScreenModal: undefined;
   FormSheet: { usesFormSheetPresentation?: boolean };
+  PageSheet: undefined;
 };
 
 interface MainScreenProps {
@@ -61,6 +62,11 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         title="formSheet"
         onPress={() => navigation.navigate('FormSheet')}
         testID="stack-presentation-form-sheet-button"
+      />
+      <Button
+        title="pageSheet"
+        onPress={() => navigation.navigate('PageSheet')}
+        testID="stack-presentation-page-sheet-button"
       />
       <Button
         testID="stack-presentation-go-back-button"
@@ -122,6 +128,22 @@ const ModalScreen = ({ navigation }: ModalScreenProps): React.JSX.Element => (
     />
   </View>
 );
+
+interface PageSheetScreenProps {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}
+
+const PageSheetScreen = ({ navigation }: PageSheetScreenProps): React.JSX.Element => (
+  <View style={styles.container}>
+    <Choose />
+    <Button
+      testID="stack-presentation-page-sheet-screen-go-back-button"
+      title="Go back"
+      onPress={() => navigation.goBack()}
+    />
+  </View>
+);
+
 
 interface FullScreenModalProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -203,6 +225,11 @@ const App = (): React.JSX.Element => (
       initialParams={{
         usesFormSheetPresentation: true
       }}
+    />
+    <Stack.Screen
+      name="PageSheet"
+      component={PageSheetScreen}
+      options={{ presentation: 'pageSheet' }}
     />
   </Stack.Navigator>
 );

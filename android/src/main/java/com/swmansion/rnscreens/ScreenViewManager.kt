@@ -126,7 +126,7 @@ open class ScreenViewManager :
             when (presentation) {
                 "push" -> Screen.StackPresentation.PUSH
                 "formSheet" -> Screen.StackPresentation.FORM_SHEET
-                "modal", "containedModal", "fullScreenModal" ->
+                "modal", "containedModal", "fullScreenModal", "pageSheet" ->
                     Screen.StackPresentation.MODAL
                 "transparentModal", "containedTransparentModal" ->
                     Screen.StackPresentation.TRANSPARENT_MODAL
