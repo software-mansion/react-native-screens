@@ -92,7 +92,6 @@ class ScreenStack(
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
-    private var previousChildrenCount = 0
     private var removalTransitionChildrenCount = 0
 
     private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
@@ -130,13 +129,13 @@ class ScreenStack(
         super.startViewTransition(view)
         childDrawingOrderStrategy?.enable()
         removalTransitionChildrenCount += 1
-        // println("+1, now: " + removalTransitionChildrenCount)
+//        println("+1, now: " + removalTransitionChildrenCount)
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
         removalTransitionChildrenCount = max(0, removalTransitionChildrenCount - 1)
-        // println("-1, now: " + removalTransitionChildrenCount)
+//        println("-1 , now: " + removalTransitionChildrenCount)
         if (removalTransitionChildrenCount == 0) {
             childDrawingOrderStrategy?.disable()
             dispatchOnFinishTransitioning()
@@ -246,17 +245,21 @@ class ScreenStack(
             // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
             // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
 
-            val disappearingCount = screenWrappers
-                .asReversed()
-                .asSequence()
-                .filter { !dismissedWrappers.contains(it)
-                        && it.screen.activityState !== Screen.ActivityState.INACTIVE }
-                .drop(1)
-                .takeWhile { it.screen.isTransparent() }
-                .count() + 1
+            val disappearingCount =
+                screenWrappers
+                    .asReversed()
+                    .asSequence()
+                    .filter {
+                        !dismissedWrappers.contains(it) &&
+                            it.screen.activityState !== Screen.ActivityState.INACTIVE
+                    }.drop(1)
+                    .takeWhile { it.screen.isTransparent() }
+                    .count() + 1
 
-            childDrawingOrderStrategy = ReverseOrderInRange(
-                screenWrappers.lastIndex - disappearingCount..screenWrappers.lastIndex)
+            childDrawingOrderStrategy =
+                ReverseOrderInRange(
+                    screenWrappers.lastIndex - disappearingCount..screenWrappers.lastIndex,
+                )
         } else if (newTop != null &&
             newTopAlreadyInStack &&
             topScreenWrapper?.screen?.isTransparent() == true &&
