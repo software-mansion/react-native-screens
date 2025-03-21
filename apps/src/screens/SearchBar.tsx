@@ -43,6 +43,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
     useState(true);
   const [hideWhenScrolling, setHideWhenScrolling] = useState(false);
   const [obscureBackground, setObscureBackground] = useState(false);
+  const [showBookmarkButton, setShowBookmarkButton] = useState(false);
   const [hideNavigationBar, setHideNavigationBar] = useState(false);
   const [autoCapitalize, setAutoCapitalize] =
     useState<AutoCapitalize>('sentences');
@@ -59,6 +60,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         shouldShowHintSearchIcon,
         hideWhenScrolling,
         obscureBackground,
+        showBookmarkButton,
         hideNavigationBar,
         autoCapitalize,
         placeholder,
@@ -67,6 +69,11 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         onCancelButtonPress: () =>
           toast.push({
             message: '[iOS] Cancel button pressed',
+            backgroundColor: 'orange',
+          }),
+        onBookmarkButtonPress: () =>
+          toast.push({
+            message: '[iOS] Bookmark button pressed',
             backgroundColor: 'orange',
           }),
         onClose: () =>
@@ -106,6 +113,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
     shouldShowHintSearchIcon,
     hideWhenScrolling,
     obscureBackground,
+    showBookmarkButton,
     hideNavigationBar,
     autoCapitalize,
     inputType,
@@ -148,6 +156,11 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         label="Hide when scrolling"
         value={hideWhenScrolling}
         onValueChange={setHideWhenScrolling}
+      />
+      <SettingsSwitch
+        label="Show Bookmark Button"
+        value={showBookmarkButton}
+        onValueChange={setShowBookmarkButton}
       />
       <ThemedText style={styles.heading}>Android only</ThemedText>
       <SettingsPicker<InputType>
