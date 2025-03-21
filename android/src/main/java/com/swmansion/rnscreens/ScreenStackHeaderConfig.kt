@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.os.Build
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
@@ -16,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
@@ -24,7 +24,11 @@ import kotlin.math.max
 
 class ScreenStackHeaderConfig(
     context: Context,
-) : FabricEnabledHeaderConfigViewGroup(context) {
+    private val pointerEventsImpl: ReactPointerEventsView
+) : FabricEnabledHeaderConfigViewGroup(context), ReactPointerEventsView by pointerEventsImpl {
+
+    constructor(context: Context): this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
+
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
@@ -48,7 +52,6 @@ class ScreenStackHeaderConfig(
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
     private val defaultStartInsetWithNavigation: Int
-    private var needsLayoutZeroing = false
     private val backClickListener =
         OnClickListener {
             screenFragment?.let {
@@ -141,16 +144,7 @@ class ScreenStackHeaderConfig(
         t: Int,
         r: Int,
         b: Int,
-    ) {
-        if (needsLayoutZeroing && changed) {
-            // Setting visibility = GONE is not enough, since it only prevents the Android framework
-            // from laying out the view, however RN still sets the frame.
-            // This is needed only below API level 29, otherwise we use `suppressLayout`.
-            // Please note that we can not simply zero the header config frame in ShadowTree,
-            // because it would cause layout issues with header subviews.
-            layout(l, 0, r, 0)
-        }
-    }
+    ) = Unit
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -458,12 +452,6 @@ class ScreenStackHeaderConfig(
             toolbar.setBackgroundColor(tv.data)
         }
         toolbar.clipChildren = false
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            suppressLayout(true)
-        } else {
-            needsLayoutZeroing = true
-        }
     }
 
     companion object {
