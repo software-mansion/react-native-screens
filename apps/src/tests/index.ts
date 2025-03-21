@@ -113,6 +113,7 @@ export { default as Test2252 } from './Test2252';
 export { default as Test2271 } from './Test2271';
 export { default as Test2282 } from './Test2282';
 export { default as Test2317 } from './Test2317';
+export { default as Test2318 } from './Test2318';
 export { default as Test2320 } from './Test2320';
 export { default as Test2332 } from './Test2332';
 export { default as Test2379 } from './Test2379';
