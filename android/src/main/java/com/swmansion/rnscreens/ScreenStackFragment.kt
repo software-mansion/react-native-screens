@@ -725,9 +725,9 @@ class ScreenStackFragment :
         return dimmingDelegate!!
     }
 
-    private class ScreensCoordinatorLayout(
+    internal class ScreensCoordinatorLayout(
         context: Context,
-        private val fragment: ScreenStackFragment,
+        internal val fragment: ScreenStackFragment,
         private val pointerEventsImpl: ReactPointerEventsView,
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context),

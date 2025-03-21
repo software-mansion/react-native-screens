@@ -406,6 +406,7 @@ class Screen(
 
     fun startRemovalTransition() {
         if (!isBeingRemoved) {
+            println("isBeingRemoved = true")
             isBeingRemoved = true
             startTransitionRecursive(this)
         }
@@ -415,6 +416,7 @@ class Screen(
         if (!isBeingRemoved) {
             return
         }
+        println("isBeingRemoved = false")
         isBeingRemoved = false
         endTransitionRecursive(this)
     }

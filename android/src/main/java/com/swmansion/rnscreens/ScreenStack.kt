@@ -13,6 +13,7 @@ import com.swmansion.rnscreens.utils.setTweenAnimations
 import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.math.max
+import kotlin.math.min
 
 internal interface ChildDrawingOrderStrategy {
     /**
@@ -68,8 +69,12 @@ internal class ReverseOrderInRange(
             return
         }
 
-        var startRange = range.start
-        var endRange = range.endInclusive
+        if (drawingOperations.isEmpty()) {
+            return
+        }
+
+        var startRange = min(range.start, drawingOperations.lastIndex)
+        var endRange = min(range.endInclusive, drawingOperations.lastIndex)
 
         while (startRange < endRange) {
             Collections.swap(drawingOperations, startRange, endRange)
@@ -87,8 +92,8 @@ class ScreenStack(
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
-    private var removalTransitionStarted = false
     private var previousChildrenCount = 0
+    private var removalTransitionChildrenCount = 0
 
     private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
 
@@ -124,20 +129,22 @@ class ScreenStack(
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
         childDrawingOrderStrategy?.enable()
-        removalTransitionStarted = true
+        removalTransitionChildrenCount += 1
+        // println("+1, now: " + removalTransitionChildrenCount)
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
-        childDrawingOrderStrategy?.disable()
-        if (removalTransitionStarted) {
-            removalTransitionStarted = false
+        removalTransitionChildrenCount = max(0, removalTransitionChildrenCount - 1)
+        // println("-1, now: " + removalTransitionChildrenCount)
+        if (removalTransitionChildrenCount == 0) {
+            childDrawingOrderStrategy?.disable()
             dispatchOnFinishTransitioning()
         }
     }
 
     fun onViewAppearTransitionEnd() {
-        if (!removalTransitionStarted) {
+        if (removalTransitionChildrenCount == 0) {
             dispatchOnFinishTransitioning()
         }
     }
@@ -229,16 +236,27 @@ class ScreenStack(
             needsDrawReordering(newTop, stackAnimation) &&
             visibleBottom == null
         ) {
-            // When using an open animation in which two screens overlap (eg. fade_from_bottom or
-            // slide_from_bottom), we want to draw the previous screen under the new one,
-            // which is apparently not the default option. Android always draws the disappearing view
+            // When using an open animation in which screens overlap (eg. fade_from_bottom or
+            // slide_from_bottom), we want to draw the previous screens under the new one,
+            // which is apparently not the default option. Android always draws the disappearing views
             // on top of the appearing one. We then reverse the order of the views so the new screen
-            // appears on top of the previous one. You can read more about in the comment
+            // appears on top of the previous ones. You can read more about in the comment
             // for the code we use to change that behavior:
             // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
             // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
             // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
-            childDrawingOrderStrategy = SwapLastTwo()
+
+            val disappearingCount = screenWrappers
+                .asReversed()
+                .asSequence()
+                .filter { !dismissedWrappers.contains(it)
+                        && it.screen.activityState !== Screen.ActivityState.INACTIVE }
+                .drop(1)
+                .takeWhile { it.screen.isTransparent() }
+                .count() + 1
+
+            childDrawingOrderStrategy = ReverseOrderInRange(
+                screenWrappers.lastIndex - disappearingCount..screenWrappers.lastIndex)
         } else if (newTop != null &&
             newTopAlreadyInStack &&
             topScreenWrapper?.screen?.isTransparent() == true &&
@@ -259,8 +277,6 @@ class ScreenStack(
                 childDrawingOrderStrategy =
                     ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
             }
-        } else if (newTop != null && !newTopAlreadyInStack && topScreenWrapper?.screen?.isTransparent() == true) {
-            childDrawingOrderStrategy = SwapLastTwo()
         }
 
         createTransaction().let { transaction ->
@@ -355,12 +371,6 @@ class ScreenStack(
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-
-        // check the view removal is completed (by comparing the previous children count)
-        if (drawingOps.size < previousChildrenCount) {
-            childDrawingOrderStrategy = null
-        }
-        previousChildrenCount = drawingOps.size
 
         childDrawingOrderStrategy?.apply(drawingOps)
 
