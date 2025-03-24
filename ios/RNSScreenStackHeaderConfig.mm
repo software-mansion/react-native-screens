@@ -49,7 +49,7 @@ namespace react = facebook::react;
 
 @implementation NSString (RNSStringUtil)
 
-+ (BOOL)RNSisBlank:(NSString *)string
++ (BOOL)rnscreens_isBlank:(NSString *)string
 {
   if (string == nil) {
     return YES;
@@ -621,7 +621,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
 #if !TARGET_OS_TV
-  const auto isBackTitleBlank = [NSString RNSisBlank:config.backTitle] == YES;
+  const auto isBackTitleBlank = [NSString rnscreens_isBlank:config.backTitle] == YES;
   NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
   RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
                                                                               style:UIBarButtonItemStylePlain
