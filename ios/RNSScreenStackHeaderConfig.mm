@@ -629,7 +629,7 @@ RNS_IGNORE_SUPER_CALL_END
                                                                              action:nil];
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
+  auto shouldUseCustomBackBarButtonItem = !isBackTitleBlank || config.disableBackButtonMenu;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
@@ -646,7 +646,7 @@ RNS_IGNORE_SUPER_CALL_END
          // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
          ![config.backTitleFontFamily isEqual:@"System"]) ||
         config.backTitleFontSize) {
-      isBackButtonCustomized = YES;
+      shouldUseCustomBackBarButtonItem = YES;
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
       if (config.backTitleFontFamily) {
@@ -669,7 +669,7 @@ RNS_IGNORE_SUPER_CALL_END
     // When backBarButtonItem's title is null, back menu will use value
     // of backButtonTitle
     [backBarButtonItem setTitle:nil];
-    isBackButtonCustomized = YES;
+    shouldUseCustomBackBarButtonItem = YES;
     prevItem.backButtonTitle = resolvedBackTitle;
   }
 
@@ -677,7 +677,7 @@ RNS_IGNORE_SUPER_CALL_END
   // as assigning one will override the native behavior of automatically shortening
   // the title to "Back" or hide the back title if there's not enough space.
   // See: https://github.com/software-mansion/react-native-screens/issues/1589
-  if (isBackButtonCustomized) {
+  if (shouldUseCustomBackBarButtonItem) {
     prevItem.backBarButtonItem = backBarButtonItem;
   }
 
