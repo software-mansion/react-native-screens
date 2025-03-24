@@ -474,7 +474,6 @@ class ScreenStackFragment :
         context: Context,
         private val fragment: ScreenStackFragment,
         private val pointerEventsImpl: ReactPointerEventsView,
-//    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context),
         ReactPointerEventsView by pointerEventsImpl {
         constructor(context: Context, fragment: ScreenStackFragment) : this(
@@ -556,23 +555,6 @@ class ScreenStackFragment :
                 fragment.screen.onBottomSheetBehaviorDidLayout(changed)
             }
         }
-
-//        override fun reactTagForTouch(touchX: Float, touchY: Float): Int {
-//            throw IllegalStateException("Screen wrapper should never be asked for the view tag")
-//        }
-//
-//        override fun interceptsTouchEvent(touchX: Float, touchY: Float): Boolean {
-//            return false
-//        }
-//
-//        override fun getHitSlopRect(): Rect? {
-//            val screen: Screen = fragment.screen
-// //            left – The X coordinate of the left side of the rectangle
-// //            top – The Y coordinate of the top of the rectangle i
-// //            right – The X coordinate of the right side of the rectangle
-// //            bottom – The Y coordinate of the bottom of the rectangle
-//            return Rect(screen.x.toInt(), -screen.y.toInt(), screen.x.toInt() + screen.width, screen.y.toInt() + screen.height)
-//        }
     }
 
     private class ScreensAnimation(
