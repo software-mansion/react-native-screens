@@ -612,23 +612,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
-
-  if ((config.direction == UISemanticContentAttributeForceLeftToRight ||
-       config.direction == UISemanticContentAttributeForceRightToLeft) &&
-      // iOS 12 cancels swipe gesture when direction is changed. See #1091
-      navctr.view.semanticContentAttribute != config.direction) {
-    // This is needed for swipe back gesture direction
-    navctr.view.semanticContentAttribute = config.direction;
-
-    // This is responsible for the direction of the navigationBar and its contents
-    navctr.navigationBar.semanticContentAttribute = config.direction;
-    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
-        setSemanticContentAttribute:config.direction];
-    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
-        setSemanticContentAttribute:config.direction];
-    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
-        setSemanticContentAttribute:config.direction];
-  }
+  [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
   if (shouldHide) {
     navitem.title = config.title;
@@ -845,6 +829,26 @@ RNS_IGNORE_SUPER_CALL_END
         }];
   } else {
     [self setAnimatedConfig:vc withConfig:config];
+  }
+}
+
+- (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
+{
+  if ((self.direction == UISemanticContentAttributeForceLeftToRight ||
+       self.direction == UISemanticContentAttributeForceRightToLeft) &&
+      // iOS 12 cancels swipe gesture when direction is changed. See #1091
+      navCtrl.view.semanticContentAttribute != self.direction) {
+    // This is needed for swipe back gesture direction
+    navCtrl.view.semanticContentAttribute = self.direction;
+
+    // This is responsible for the direction of the navigationBar and its contents
+    navCtrl.navigationBar.semanticContentAttribute = self.direction;
+    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
+        setSemanticContentAttribute:self.direction];
+    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
+        setSemanticContentAttribute:self.direction];
+    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
+        setSemanticContentAttribute:self.direction];
   }
 }
 
