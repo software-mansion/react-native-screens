@@ -9,6 +9,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
+import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import java.util.Collections
 import kotlin.collections.ArrayList
@@ -91,6 +92,7 @@ class ScreenStack(
     private var previousChildrenCount = 0
 
     private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
+    private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
 
     var goingForward = false
 
@@ -122,14 +124,25 @@ class ScreenStack(
         }
 
     override fun startViewTransition(view: View) {
+        check(view is ScreensCoordinatorLayout) { "[RNScreens] Unexpected type of ScreenStack direct subview ${view.javaClass}"}
         super.startViewTransition(view)
-        childDrawingOrderStrategy?.enable()
+        if (view.fragment.screen.isInRemovalTransition()) {
+            disappearingTransitioningChildren.add(view)
+        }
+        if (disappearingTransitioningChildren.isNotEmpty()) {
+            childDrawingOrderStrategy?.enable()
+        }
         removalTransitionStarted = true
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
-        childDrawingOrderStrategy?.disable()
+
+        disappearingTransitioningChildren.remove(view)
+
+        if (disappearingTransitioningChildren.isEmpty()) {
+            childDrawingOrderStrategy?.disable()
+        }
         if (removalTransitionStarted) {
             removalTransitionStarted = false
             dispatchOnFinishTransitioning()

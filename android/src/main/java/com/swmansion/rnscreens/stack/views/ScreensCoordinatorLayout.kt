@@ -13,7 +13,7 @@ import com.swmansion.rnscreens.stack.anim.ScreensAnimation
 
 internal class ScreensCoordinatorLayout(
     context: Context,
-    private val fragment: ScreenStackFragment,
+    internal val fragment: ScreenStackFragment,
     private val pointerEventsImpl: ReactPointerEventsView,
 ) : CoordinatorLayout(context),
     ReactPointerEventsView by pointerEventsImpl {

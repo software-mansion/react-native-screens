@@ -532,6 +532,8 @@ class Screen(
         )
     }
 
+    internal fun isInRemovalTransition(): Boolean = isBeingRemoved
+
     internal fun onFinalizePropsUpdate() {
         if (shouldUpdateSheetCornerRadius) {
             shouldUpdateSheetCornerRadius = false
