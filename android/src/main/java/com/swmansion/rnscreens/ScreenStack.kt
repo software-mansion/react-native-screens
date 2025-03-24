@@ -403,7 +403,7 @@ class ScreenStack(
             fragmentWrapper: ScreenFragmentWrapper,
             resolvedStackAnimation: StackAnimation?,
         ): Boolean {
-            val stackAnimation = if (resolvedStackAnimation != null) resolvedStackAnimation else fragmentWrapper.screen.stackAnimation
+            val stackAnimation = resolvedStackAnimation ?: fragmentWrapper.screen.stackAnimation
             // On Android sdk 33 and above the animation is different and requires draw reordering.
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
             // Hence, we're comparing numerical version here.
