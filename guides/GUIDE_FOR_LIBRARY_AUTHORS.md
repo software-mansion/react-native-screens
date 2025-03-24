@@ -247,7 +247,10 @@ Using `containedModal` and `containedTransparentModal` with other types of modal
 
 For iOS:
 
-- `modal` will use [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc) on iOS 13 and later, and will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc) on iOS 12 and earlier. For iOS 18 and later, additional prop `prefersPageSizing` will be set to `true` to ensure consistent behavior between iOS versions (`UIModalPresentationAutomatic` was mapped to `UIModalPresentationPageSheet` before iOS 18 but now it is mapped to `UIModalPresentationFormSheet`).
+- `modal` will use:
+   *  on iOS 18 and later [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc). However, since the iOS 18 changed the default behaviour from `UIModalPresentationPageSheet` to `UIModalPresentationFormSheet` (it looks vastly different on regular size classes devices, e.g. iPad), for the sake of backward compatibility, we keep the default behaviour from before iOS 18. *This might change in future major release of `react-native-screens`.
+   *  on iOS 13 and later [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc)
+   * on iOS 12 and earlier will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc). 
 - `fullScreenModal` will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc)
 - `formSheet` will use [`UIModalPresentationFormSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationformsheet?language=objc)
 - `transparentModal` will use [`UIModalPresentationOverFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationoverfullscreen?language=objc)
