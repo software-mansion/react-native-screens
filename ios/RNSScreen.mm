@@ -247,7 +247,8 @@ RNS_IGNORE_SUPER_CALL_END
 #else
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
 #endif
-#if !TARGET_OS_TV
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_17_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_17_0 && !TARGET_OS_TV
       if (@available(iOS 18.0, *)) {
         UISheetPresentationController *sheetController = _controller.sheetPresentationController;
         if (sheetController != nil) {
