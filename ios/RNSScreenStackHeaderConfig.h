@@ -12,7 +12,7 @@
 
 @interface NSString (RNSStringUtil)
 
-+ (BOOL)rnscreens_isBlank:(nullable NSString *)string;
++ (BOOL)rnscreens_isBlankOrNull:(nullable NSString *)string;
 
 @end
 
