@@ -9,32 +9,12 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
+import com.swmansion.rnscreens.stack.views.ChildDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.math.max
-
-internal interface ChildDrawingOrderStrategy {
-    /**
-     * Mutates the list of draw operations **in-place**.
-     */
-    fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>)
-
-    /**
-     * Enables the given strategy. When enabled - the strategy **might** mutate the operations
-     * list passed to `apply` method.
-     */
-    fun enable()
-
-    /**
-     * Disables the given strategy - even when `apply` is called it **must not** produce
-     * any side effect (it must not manipulate the drawing operations list passed to `apply` method).
-     */
-    fun disable()
-
-    fun isEnabled(): Boolean
-}
 
 internal abstract class ChildDrawingOrderStrategyBase(
     var enabled: Boolean = false,
@@ -124,7 +104,7 @@ class ScreenStack(
         }
 
     override fun startViewTransition(view: View) {
-        check(view is ScreensCoordinatorLayout) { "[RNScreens] Unexpected type of ScreenStack direct subview ${view.javaClass}"}
+        check(view is ScreensCoordinatorLayout) { "[RNScreens] Unexpected type of ScreenStack direct subview ${view.javaClass}" }
         super.startViewTransition(view)
         if (view.fragment.isRemoving) {
             disappearingTransitioningChildren.add(view)
