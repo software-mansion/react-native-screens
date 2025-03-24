@@ -89,7 +89,7 @@ class ScreenStack(
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
-    private var previousChildrenCount = 0
+//    private var previousChildrenCount = 0
 
     private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
     private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
@@ -126,7 +126,7 @@ class ScreenStack(
     override fun startViewTransition(view: View) {
         check(view is ScreensCoordinatorLayout) { "[RNScreens] Unexpected type of ScreenStack direct subview ${view.javaClass}"}
         super.startViewTransition(view)
-        if (view.fragment.screen.isInRemovalTransition()) {
+        if (view.fragment.isRemoving) {
             disappearingTransitioningChildren.add(view)
         }
         if (disappearingTransitioningChildren.isNotEmpty()) {
@@ -367,11 +367,11 @@ class ScreenStack(
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
-        // check the view removal is completed (by comparing the previous children count)
-        if (drawingOps.size < previousChildrenCount) {
-            childDrawingOrderStrategy = null
-        }
-        previousChildrenCount = drawingOps.size
+//        // check the view removal is completed (by comparing the previous children count)
+//        if (drawingOps.size < previousChildrenCount) {
+//            childDrawingOrderStrategy = null
+//        }
+//        previousChildrenCount = drawingOps.size
 
         childDrawingOrderStrategy?.apply(drawingOps)
 
