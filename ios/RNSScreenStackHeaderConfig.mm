@@ -612,6 +612,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
+
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
   if (shouldHide) {
