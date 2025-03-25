@@ -6,7 +6,7 @@ export { default as Test263 } from './Test263';     // [E2E skipped]: example di
 export { default as Test349 } from './Test349';     // [E2E skipped]: can't check autofill easily, wrong prop name
 export { default as Test364 } from './Test364';     // [E2E skipped]: tabBarVisible prop doesn't exist anymore, suggested solution is to change navigator hierarchy (proposed in PR and in react-navigation docs)
 export { default as Test432 } from './Test432';     // [E2E created]
-export { default as Test528 } from './Test528';
+export { default as Test528 } from './Test528';     // [E2E created](iOS): Detox supports changing orientation only on iOS
 export { default as Test550 } from './Test550';
 export { default as Test556 } from './Test556';
 export { default as Test564 } from './Test564';
