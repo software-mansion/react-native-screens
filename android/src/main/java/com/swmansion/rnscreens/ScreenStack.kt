@@ -30,17 +30,6 @@ internal abstract class ChildDrawingOrderStrategyBase(
     override fun isEnabled() = enabled
 }
 
-internal class SwapLastTwo : ChildDrawingOrderStrategyBase() {
-    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
-        if (!isEnabled()) {
-            return
-        }
-        if (drawingOperations.size >= 2) {
-            Collections.swap(drawingOperations, drawingOperations.lastIndex, drawingOperations.lastIndex - 1)
-        }
-    }
-}
-
 internal class ReverseOrderInRange(
     val range: IntRange,
 ) : ChildDrawingOrderStrategyBase() {
@@ -52,6 +41,24 @@ internal class ReverseOrderInRange(
         var startRange = range.start
         var endRange = range.endInclusive
 
+        while (startRange < endRange) {
+            Collections.swap(drawingOperations, startRange, endRange)
+            startRange += 1
+            endRange -= 1
+        }
+    }
+}
+
+internal class ReverseOrderStartingFrom(
+    val startIndex: Int,
+) : ChildDrawingOrderStrategyBase() {
+    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
+        if (!isEnabled()) {
+            return
+        }
+
+        var startRange = startIndex
+        var endRange = drawingOperations.lastIndex
         while (startRange < endRange) {
             Collections.swap(drawingOperations, startRange, endRange)
             startRange += 1
@@ -168,21 +175,21 @@ class ScreenStack(
         childDrawingOrderStrategy = null
 
         // Determine new first & last visible screens.
-        // Scope function to limit the scope of locals.
-        run {
-            val notDismissedWrappers =
-                screenWrappers
-                    .asReversed()
-                    .asSequence()
-                    .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
+        val notDismissedWrappers =
+            screenWrappers
+                .asReversed()
+                .asSequence()
+                .filter {
+                    !dismissedWrappers.contains(it) &&
+                        it.screen.activityState !== Screen.ActivityState.INACTIVE
+                }
 
-            newTop = notDismissedWrappers.firstOrNull()
-            visibleBottom =
-                notDismissedWrappers
-                    .dropWhile { it.screen.isTransparent() }
-                    .firstOrNull()
-                    ?.takeUnless { it === newTop }
-        }
+        newTop = notDismissedWrappers.firstOrNull()
+        visibleBottom =
+            notDismissedWrappers
+                .dropWhile { it.screen.isTransparent() }
+                .firstOrNull()
+                ?.takeUnless { it === newTop }
 
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
@@ -222,16 +229,26 @@ class ScreenStack(
             needsDrawReordering(newTop, stackAnimation) &&
             visibleBottom == null
         ) {
-            // When using an open animation in which two screens overlap (eg. fade_from_bottom or
-            // slide_from_bottom), we want to draw the previous screen under the new one,
-            // which is apparently not the default option. Android always draws the disappearing view
+            // When using an open animation in which screens overlap (eg. fade_from_bottom or
+            // slide_from_bottom), we want to draw the previous screens under the new one,
+            // which is apparently not the default option. Android always draws the disappearing views
             // on top of the appearing one. We then reverse the order of the views so the new screen
-            // appears on top of the previous one. You can read more about in the comment
+            // appears on top of the previous ones. You can read more about in the comment
             // for the code we use to change that behavior:
             // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
             // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
             // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
-            childDrawingOrderStrategy = SwapLastTwo()
+
+            val disappearingCount =
+                notDismissedWrappers
+                    .drop(1)
+                    .takeWhile { it.screen.isTransparent() }
+                    .count() + 1
+
+            childDrawingOrderStrategy =
+                ReverseOrderStartingFrom(
+                    screenWrappers.lastIndex - disappearingCount,
+                )
         } else if (newTop != null &&
             newTopAlreadyInStack &&
             topScreenWrapper?.screen?.isTransparent() == true &&
