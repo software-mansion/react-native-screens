@@ -9,6 +9,7 @@ set(LIB_COMMON_DIR ${LIB_ANDROID_DIR}/../common/cpp)
 set(LIB_COMMON_COMPONENTS_DIR ${LIB_COMMON_DIR}/react/renderer/components/${LIB_LITERAL})
 set(LIB_ANDROID_GENERATED_JNI_DIR ${LIB_ANDROID_DIR}/build/generated/source/codegen/jni)
 set(LIB_ANDROID_GENERATED_COMPONENTS_DIR ${LIB_ANDROID_GENERATED_JNI_DIR}/react/renderer/components/${LIB_LITERAL})
+find_library(log-lib log)
 
 add_compile_options(
   -fexceptions
@@ -45,6 +46,7 @@ if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
     ReactAndroid::reactnative
     ReactAndroid::jsi
     fbjni::fbjni
+          ${log-lib}
   )
 else()
   target_link_libraries(
@@ -65,6 +67,7 @@ else()
     rrc_view
     turbomodulejsijni
     yoga
+          ${log-lib}
   )
 endif()
 

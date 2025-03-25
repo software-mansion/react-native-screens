@@ -29,6 +29,7 @@ abstract class FabricEnabledHeaderSubviewViewGroup(
         offsetX: Int,
         offsetY: Int,
     ) {
+        println("==mylog== FabricEnabledHeaderSubviewViewGroup updateSubviewFrameState " + "offsetX: ${offsetX}, offsetY: ${offsetY}, width: ${width}, height: ${height}")
         updateState(width, height, offsetX, offsetY)
     }
 
@@ -66,7 +67,7 @@ abstract class FabricEnabledHeaderSubviewViewGroup(
                 putDouble("contentOffsetX", offsetXDip.toDouble())
                 putDouble("contentOffsetY", offsetYDip.toDouble())
             }
-
+        println("==mylog==" + " FabricEnabledHeaderSubviewViewGroup updateState" + " width: ${realWidth}, height: ${realHeight}" );
         mStateWrapper?.updateState(map)
     }
 

@@ -737,6 +737,10 @@ class ScreenStackFragment :
             ScreensCoordinatorLayoutPointerEventsImpl(),
         )
 
+        override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+            println("==mylog==" + " ScreensCoordinatorLayout onLayout" + " changed: ${changed} r: ${r} l: ${l} t: ${t} b: ${b}" );
+            super.onLayout(changed, l, t, r, b)
+        }
         override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
 
         private val animationListener: Animation.AnimationListener =

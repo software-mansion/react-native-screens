@@ -30,6 +30,7 @@ open class ScreenContainer(
     private var isAttached = false
     private var needsUpdate = false
     private var isLayoutEnqueued = false
+    private var prevLayoutLol: String = "ewf"
     private val layoutCallback: ChoreographerCompat.FrameCallback =
         object : ChoreographerCompat.FrameCallback() {
             override fun doFrame(frameTimeNanos: Long) {
@@ -38,6 +39,11 @@ open class ScreenContainer(
                     MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
                 )
+
+                var curr_layout_vals = "l: ${left}, r: ${right}, t: ${top}, b: ${bottom}"
+
+                println("==mylog== doFrame before " + "l: ${left}, r: ${right}, t: ${top}, b: ${bottom} " + "prev: " + prevLayoutLol);
+
                 layout(left, top, right, bottom)
             }
         }
@@ -50,9 +56,13 @@ open class ScreenContainer(
         r: Int,
         b: Int,
     ) {
+        println("==mylog==" + " ScreenContainer onLayout" + " changed: ${changed} r: ${r} l: ${l} t: ${t} b: ${b}" );
+
         var i = 0
         val size = childCount
         while (i < size) {
+            println( "==mylog== ScreenContainer onLayout child:" + getChildAt(i).toString() )
+
             getChildAt(i).layout(0, 0, width, height)
             i++
         }

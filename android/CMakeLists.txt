@@ -2,6 +2,16 @@ cmake_minimum_required(VERSION 3.9.0)
 
 project(rnscreens)
 
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
+find_library(log-lib log)
+if (log-lib)
+    message(WARNING "HAS loglib") # This message gets printed
+else(log-lib)
+    message(SEND_ERROR "NO loglib")
+endif(log-lib)
+
 if(${RNS_NEW_ARCH_ENABLED})
 add_library(rnscreens
     SHARED
@@ -47,6 +57,7 @@ if(${RNS_NEW_ARCH_ENABLED})
             ReactAndroid::jsi
             fbjni::fbjni
             android
+                ${log-lib}
         )
     else()
         target_link_libraries(
@@ -70,11 +81,13 @@ if(${RNS_NEW_ARCH_ENABLED})
                 ReactAndroid::react_render_observers_events
                 fbjni::fbjni
                 android
+                ${log-lib}
         )
     endif()
 else()
     target_link_libraries(rnscreens
         ReactAndroid::jsi
         android
+            ${log-lib}
     )
 endif()

@@ -1,4 +1,5 @@
 #include "RNSScreenStackHeaderConfigShadowNode.h"
+#include <android/log.h>
 
 namespace facebook::react {
 
@@ -6,8 +7,12 @@ extern const char RNSScreenStackHeaderConfigComponentName[] =
     "RNSScreenStackHeaderConfig";
 
 void RNSScreenStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
-  YogaLayoutableShadowNode::layout(layoutContext);
+//    __android_log_print(3, "==mylog==", "RNSScreenStackHeaderConfigShadowNode layout before is x: %f, y: %f, height: %f, width: %f", layoutMetrics_.frame.origin.x, layoutMetrics_.frame.origin.y, layoutMetrics_.frame.size.height, layoutMetrics_.frame.size.width);
+
+    YogaLayoutableShadowNode::layout(layoutContext);
   applyFrameCorrections();
+
+//  __android_log_print(3, "==mylog==", "RNSScreenStackHeaderConfigShadowNode layout after is x: %f, y: %f, height: %f, width: %f", layoutMetrics_.frame.origin.x, layoutMetrics_.frame.origin.y, layoutMetrics_.frame.size.height, layoutMetrics_.frame.size.width);
 }
 
 void RNSScreenStackHeaderConfigShadowNode::applyFrameCorrections() {

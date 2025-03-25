@@ -2,6 +2,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, Text, StyleSheet, Pressable, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useEffect } from 'react';
 
 
 const Stack = createNativeStackNavigator();
@@ -48,7 +49,7 @@ function TitleTextComponent({ length }: { length?: number }): React.JSX.Element 
 }
 
 const headerOptions = {
-  headerLeft: () => <HeaderLeftSmall />,
+  headerLeft: () => <HeaderRightTwoRects />,
   // headerRight: () => (
   //   <View style={{ width: 120, height: 20, backgroundColor: 'goldenrod', opacity: 0.4, flexDirection: 'row' }}>
   //   </View>
@@ -75,6 +76,7 @@ const headerOptions = {
   headerTitle: () => <TitleTextComponent />,
   //title: baseTitle.repeat(titleLength),
   headerTitleAlign: 'left',
+  statusBarTranslucent: true
 };
 
 function App() {
@@ -110,8 +112,20 @@ function App() {
 }
 
 function Screen({ navigation }: any) {
+  console.log("==mylog== Screen");
 
   // Just a reference contents, mimicking the setup with header config & subviews
+  // setTimeout(() =>
+  //   navigation.setOptions({
+  //     headerLeft: () => <HeaderLeftSmall />
+  //   }), 500
+  // );
+
+  // setTimeout(() =>
+  //   navigation.setOptions({
+  //     headerRight: () => <HeaderRightTwoRects />
+  //   }), 700
+  // );
 
   return (
     <View>
@@ -133,7 +147,27 @@ function Screen({ navigation }: any) {
 }
 
 function DetailsScreen({ navigation }: any) {
+  console.log("==mylog== DetailsScreen");
   let counter = React.useRef(0);
+
+  // setTimeout(() =>
+  //   navigation.setOptions({
+  //     headerLeft: () => <HeaderLeftSmall />
+  //   }), 5000
+  // );
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <Text style={{fontWeight: 'bold'}}>Foo</Text>,
+    });
+  }, [navigation]);
+
+
+  // setTimeout(() =>
+  //   navigation.setOptions({
+  //     headerRight: () => <HeaderRightTwoRects />
+  //   }), 700
+  // );
 
   return (
     <View style={{ ...styles.container, backgroundColor: 'beige' }}>
