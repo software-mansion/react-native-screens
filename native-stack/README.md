@@ -82,7 +82,9 @@ Boolean indicating whether to show the menu on longPress of iOS >= 14 back butto
 
 #### `backButtonDisplayMode` (iOS only)
 
-Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+Enum value indicating display mode of back button. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu`, `backTitle` and `backTitleVisible=false` is set. When the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). The `backTitleVisible` forces `backButtonDisplayMode: minimal` and omits other values. Read more [#2800](https://github.com/software-mansion/react-native-screens/pull/2800)
+
+Possible options:
 
 - `default` – show given back button previous controller title, system generic or just icon based on available space
 - `generic` – show given system generic or just icon based on available space
@@ -128,7 +130,9 @@ Style object for header back title. Supported properties:
 
 #### `headerBackTitleVisible` (iOS only)
 
-Whether the back button title should be visible or not. Defaults to `true`.
+Whether the back button title should be visible. Defaults to `true`.
+
+When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `disableBackButtonMenu`, and `backTitle` works only for back button menu.
 
 #### `headerCenter`
 
