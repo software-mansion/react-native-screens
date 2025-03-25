@@ -175,21 +175,18 @@ class ScreenStack(
         childDrawingOrderStrategy = null
 
         // Determine new first & last visible screens.
-        // Scope function to limit the scope of locals.
-        run {
-            val notDismissedWrappers =
-                screenWrappers
-                    .asReversed()
-                    .asSequence()
-                    .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
+        val notDismissedWrappers =
+            screenWrappers
+                .asReversed()
+                .asSequence()
+                .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
 
-            newTop = notDismissedWrappers.firstOrNull()
-            visibleBottom =
-                notDismissedWrappers
-                    .dropWhile { it.screen.isTransparent() }
-                    .firstOrNull()
-                    ?.takeUnless { it === newTop }
-        }
+        newTop = notDismissedWrappers.firstOrNull()
+        visibleBottom =
+            notDismissedWrappers
+                .dropWhile { it.screen.isTransparent() }
+                .firstOrNull()
+                ?.takeUnless { it === newTop }
 
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null

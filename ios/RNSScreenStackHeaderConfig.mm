@@ -49,7 +49,7 @@ namespace react = facebook::react;
 
 @implementation NSString (RNSStringUtil)
 
-+ (BOOL)RNSisBlank:(NSString *)string
++ (BOOL)rnscreens_isBlankOrNull:(NSString *)string
 {
   if (string == nil) {
     return YES;
@@ -613,22 +613,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
 
-  if ((config.direction == UISemanticContentAttributeForceLeftToRight ||
-       config.direction == UISemanticContentAttributeForceRightToLeft) &&
-      // iOS 12 cancels swipe gesture when direction is changed. See #1091
-      navctr.view.semanticContentAttribute != config.direction) {
-    // This is needed for swipe back gesture direction
-    navctr.view.semanticContentAttribute = config.direction;
-
-    // This is responsible for the direction of the navigationBar and its contents
-    navctr.navigationBar.semanticContentAttribute = config.direction;
-    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
-        setSemanticContentAttribute:config.direction];
-    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
-        setSemanticContentAttribute:config.direction];
-    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
-        setSemanticContentAttribute:config.direction];
-  }
+  [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
   if (shouldHide) {
     navitem.title = config.title;
@@ -636,7 +621,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
 #if !TARGET_OS_TV
-  const auto isBackTitleBlank = [NSString RNSisBlank:config.backTitle] == YES;
+  const auto isBackTitleBlank = [NSString rnscreens_isBlankOrNull:config.backTitle] == YES;
   NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
   RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
                                                                               style:UIBarButtonItemStylePlain
@@ -644,7 +629,7 @@ RNS_IGNORE_SUPER_CALL_END
                                                                              action:nil];
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
+  auto shouldUseCustomBackBarButtonItem = !isBackTitleBlank || config.disableBackButtonMenu;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
@@ -661,7 +646,7 @@ RNS_IGNORE_SUPER_CALL_END
          // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
          ![config.backTitleFontFamily isEqual:@"System"]) ||
         config.backTitleFontSize) {
-      isBackButtonCustomized = YES;
+      shouldUseCustomBackBarButtonItem = YES;
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
       if (config.backTitleFontFamily) {
@@ -684,7 +669,7 @@ RNS_IGNORE_SUPER_CALL_END
     // When backBarButtonItem's title is null, back menu will use value
     // of backButtonTitle
     [backBarButtonItem setTitle:nil];
-    isBackButtonCustomized = YES;
+    shouldUseCustomBackBarButtonItem = YES;
     prevItem.backButtonTitle = resolvedBackTitle;
   }
 
@@ -692,7 +677,7 @@ RNS_IGNORE_SUPER_CALL_END
   // as assigning one will override the native behavior of automatically shortening
   // the title to "Back" or hide the back title if there's not enough space.
   // See: https://github.com/software-mansion/react-native-screens/issues/1589
-  if (isBackButtonCustomized) {
+  if (shouldUseCustomBackBarButtonItem) {
     prevItem.backBarButtonItem = backBarButtonItem;
   }
 
@@ -845,6 +830,26 @@ RNS_IGNORE_SUPER_CALL_END
         }];
   } else {
     [self setAnimatedConfig:vc withConfig:config];
+  }
+}
+
+- (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
+{
+  if ((self.direction == UISemanticContentAttributeForceLeftToRight ||
+       self.direction == UISemanticContentAttributeForceRightToLeft) &&
+      // iOS 12 cancels swipe gesture when direction is changed. See #1091
+      navCtrl.view.semanticContentAttribute != self.direction) {
+    // This is needed for swipe back gesture direction
+    navCtrl.view.semanticContentAttribute = self.direction;
+
+    // This is responsible for the direction of the navigationBar and its contents
+    navCtrl.navigationBar.semanticContentAttribute = self.direction;
+    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
+        setSemanticContentAttribute:self.direction];
+    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
+        setSemanticContentAttribute:self.direction];
+    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
+        setSemanticContentAttribute:self.direction];
   }
 }
 

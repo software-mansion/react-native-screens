@@ -32,7 +32,7 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
 
     auto state = std::static_pointer_cast<
         const RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(
-        shadowNode.getMostRecentState());
+        shadowNode.getState());
     auto stateData = state->getData();
 
     if (!isSizeEmpty(stateData.frameSize)) {

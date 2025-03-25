@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
@@ -23,7 +24,11 @@ import kotlin.math.max
 
 class ScreenStackHeaderConfig(
     context: Context,
-) : FabricEnabledHeaderConfigViewGroup(context) {
+    private val pointerEventsImpl: ReactPointerEventsView
+) : FabricEnabledHeaderConfigViewGroup(context), ReactPointerEventsView by pointerEventsImpl {
+
+    constructor(context: Context): this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
+
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden

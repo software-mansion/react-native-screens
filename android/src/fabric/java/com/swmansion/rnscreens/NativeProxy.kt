@@ -41,7 +41,8 @@ class NativeProxy {
         }
     }
 
-    // Called from native
+    // Called from native. Currently this method is called from MountingCoordinator thread,
+    // which usually is not UI thread.
     @DoNotStrip
     public fun notifyScreenRemoved(screenTag: Int) {
         // Since RN 0.78 the screenTag we receive as argument here might not belong to a screen

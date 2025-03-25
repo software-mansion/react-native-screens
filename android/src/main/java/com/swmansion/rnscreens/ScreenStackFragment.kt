@@ -480,7 +480,7 @@ class ScreenStackFragment :
         constructor(context: Context, fragment: ScreenStackFragment) : this(
             context,
             fragment,
-            ScreensCoordinatorLayoutPointerEventsImpl(),
+            PointerEventsBoxNoneImpl(),
         )
 
         override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
@@ -540,6 +540,20 @@ class ScreenStackFragment :
         override fun clearFocus() {
             if (visibility != INVISIBLE) {
                 super.clearFocus()
+            }
+        }
+
+        override fun onLayout(
+            changed: Boolean,
+            l: Int,
+            t: Int,
+            r: Int,
+            b: Int,
+        ) {
+            super.onLayout(changed, l, t, r, b)
+
+            if (fragment.screen.usesFormSheetPresentation()) {
+                fragment.screen.onBottomSheetBehaviorDidLayout(changed)
             }
         }
 

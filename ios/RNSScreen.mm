@@ -247,6 +247,18 @@ RNS_IGNORE_SUPER_CALL_END
 #else
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
 #endif
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_17_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_17_0 && !TARGET_OS_TV
+      if (@available(iOS 18.0, *)) {
+        UISheetPresentationController *sheetController = _controller.sheetPresentationController;
+        if (sheetController != nil) {
+          sheetController.prefersPageSizing = true;
+        } else {
+          RCTLogError(
+              @"[RNScreens] sheetPresentationController is null when attempting to set prefersPageSizing for modal");
+        }
+      }
+#endif
       break;
     case RNSScreenStackPresentationFullScreenModal:
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;

@@ -3,7 +3,7 @@ require "json"
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
-platform = new_arch_enabled ? "11.0" : "9.0"
+min_supported_ios_version = new_arch_enabled ? "15.1" : "15.1"
 source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : ["ios/**/*.{h,m,mm}", "cpp/RNScreensTurboModule.cpp", "cpp/RNScreensTurboModule.h"]
 
 Pod::Spec.new do |s|
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/software-mansion/react-native-screens"
   s.license      = "MIT"
   s.author       = { "author" => "author@domain.cn" }
-  s.platforms    = { :ios => platform, :tvos => "11.0", :visionos => "1.0" }
+  s.platforms    = { :ios => min_supported_ios_version, :tvos => "11.0", :visionos => "1.0" }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
   s.project_header_files = "cpp/**/*.h" # Don't expose C++ headers publicly to allow importing framework into Swift files

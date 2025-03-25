@@ -8,9 +8,11 @@ std::optional<MountingTransaction> RNSScreenRemovalListener::pullTransaction(
     const TransactionTelemetry &telemetry,
     ShadowViewMutationList mutations) const {
   for (const ShadowViewMutation &mutation : mutations) {
+    // When using RNSModalScreen on Android it should be added here.
     if (mutation.type == ShadowViewMutation::Type::Remove &&
         mutation.oldChildShadowView.componentName != nullptr &&
-        strcmp(mutation.oldChildShadowView.componentName, "RNSScreen") == 0) {
+        std::strcmp(mutation.oldChildShadowView.componentName, "RNSScreen") ==
+            0) {
       // We call the listener function even if this screen has not been owned
       // by RNSScreenStack as since RN 0.78 we do not have enough information
       // here. This final filter is applied later in NativeProxy.

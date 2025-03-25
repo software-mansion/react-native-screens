@@ -213,15 +213,23 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         sheetInitialDetentIndex,
         resolvedSheetAllowedDetents.length - 1,
       );
-      // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens
-      const AnimatedScreen =
-        Platform.OS === 'android' ||
-        stackPresentation === undefined ||
-        stackPresentation === 'push' ||
-        stackPresentation === 'containedModal' ||
-        stackPresentation === 'containedTransparentModal'
-          ? AnimatedNativeScreen
-          : AnimatedNativeModalScreen;
+
+      // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens (there is a need for different
+      // shadow nodes).
+      const shouldUseModalScreenComponent = Platform.select({
+        ios: !(
+          stackPresentation === undefined ||
+          stackPresentation === 'push' ||
+          stackPresentation === 'containedModal' ||
+          stackPresentation === 'containedTransparentModal'
+        ),
+        android: false,
+        default: false,
+      });
+
+      const AnimatedScreen = shouldUseModalScreenComponent
+        ? AnimatedNativeModalScreen
+        : AnimatedNativeScreen;
 
       let {
         // Filter out active prop in this case because it is unused and
