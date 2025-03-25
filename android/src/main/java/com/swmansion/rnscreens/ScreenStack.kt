@@ -76,7 +76,6 @@ class ScreenStack(
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
-//    private var previousChildrenCount = 0
 
     private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
     private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
@@ -239,6 +238,8 @@ class ScreenStack(
             // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
             // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
 
+            // Count how many screens are disappearing
+            // (all transparent screens beneath newTop + one screen under them)
             val disappearingCount =
                 notDismissedWrappers
                     .drop(1)
@@ -363,12 +364,6 @@ class ScreenStack(
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-
-//        // check the view removal is completed (by comparing the previous children count)
-//        if (drawingOps.size < previousChildrenCount) {
-//            childDrawingOrderStrategy = null
-//        }
-//        previousChildrenCount = drawingOps.size
 
         childDrawingOrderStrategy?.apply(drawingOps)
 
