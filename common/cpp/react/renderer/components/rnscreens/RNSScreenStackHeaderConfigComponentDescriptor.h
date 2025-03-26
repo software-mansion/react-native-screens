@@ -34,8 +34,8 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
         shadowNode.getState());
     auto stateData = state->getData();
 
-    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(stateData.frameSize);
+    if (stateData.frameSize.width != 0) {
+      layoutableShadowNode.setSize({stateData.frameSize.width, YGUndefined});
 #ifdef ANDROID
       layoutableShadowNode.setPadding({
           stateData.paddingStart,
