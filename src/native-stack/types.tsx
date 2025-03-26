@@ -140,7 +140,8 @@ export type NativeStackNavigationOptions = {
    */
   disableBackButtonMenu?: boolean;
   /**
-   * How the back button behaves. It is used only when none of: `headerBackTitleStyle`, `disableBackButtonMenu`, `headerBackTitle` and `headerBackTitleVisible=false` is set.
+   * How the back button behaves. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu`, `backTitle` and `backTitleVisible=false` is set.
+   * The following values are currently supported (they correspond to [UINavigationItemBackButtonDisplayMode](https://developer.apple.com/documentation/uikit/uinavigationitembackbuttondisplaymode?language=objc)):
    *
    * - `default` – show given back button previous controller title, system generic or just icon based on available space
    * - `generic` – show given system generic or just icon based on available space
