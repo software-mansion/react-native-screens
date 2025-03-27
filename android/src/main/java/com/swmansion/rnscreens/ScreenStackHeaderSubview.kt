@@ -10,6 +10,14 @@ class ScreenStackHeaderSubview(
 ) : FabricEnabledHeaderSubviewViewGroup(context) {
     private var reactWidth = 0
     private var reactHeight = 0
+
+    /**
+     * Semantics: true iff we **believe** that SurfaceMountingManager has measured this view during mount item
+     * execution. We recognize this case by checking measure mode in `onMeasure`. If Androidx
+     * happens to use `EXACTLY` for both dimensions this property might convey invalid information.
+     */
+    private var isReactSizeSet = false
+
     var type = Type.RIGHT
 
     val config: ScreenStackHeaderConfig?
@@ -22,9 +30,10 @@ class ScreenStackHeaderSubview(
         if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY &&
             MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
         ) {
-            // dimensions provided by react
+            // dimensions provided by react (with high probability)
             reactWidth = MeasureSpec.getSize(widthMeasureSpec)
             reactHeight = MeasureSpec.getSize(heightMeasureSpec)
+            isReactSizeSet = true
             val parent = parent
             if (parent != null) {
                 forceLayout()
@@ -44,7 +53,15 @@ class ScreenStackHeaderSubview(
         if (changed && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             val width = r - l
             val height = b - t
-            updateSubviewFrameState(width, height, l, t)
+
+            // When setting subviews via `setOptions` from `useEffect` hook in a component, the first
+            // frame received might be computed by native layout & completely invalid (zero height).
+            // RN layout is the source of subview **size** (not origin) & we need to avoid sending
+            // this native size to ST. Doing otherwise might lead to problems.
+            // See: https://github.com/software-mansion/react-native-screens/pull/2812
+            if (isReactSizeSet) {
+                updateSubviewFrameState(width, height, l, t)
+            }
         }
     }
 
