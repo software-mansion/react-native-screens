@@ -77,7 +77,8 @@ namespace react = facebook::react;
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
         (screenController.presentedViewController != nil &&
-         ![screenController.presentedViewController isBeingDismissed]);
+         ![screenController.presentedViewController isBeingDismissed]) ||
+        ([screenController.presentedViewController isKindOfClass:[UISearchController class]]);
 
     // Calculate header height during simple transition from one screen to another.
     // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
