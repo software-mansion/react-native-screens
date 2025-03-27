@@ -19,6 +19,7 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.swmansion.rnscreens.Screen.WindowTraits
+import kotlin.math.max
 
 object ScreenWindowTraits {
     // Methods concerning statusBar management were taken from `react-native`'s status bar module:
@@ -39,6 +40,7 @@ object ScreenWindowTraits {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val windowInsets =
                         defaultInsets.getInsets(WindowInsetsCompat.Type.statusBars())
+                    val imeInsets = defaultInsets.getInsets(WindowInsetsCompat.Type.ime())
 
                     return WindowInsetsCompat
                         .Builder()
@@ -48,7 +50,7 @@ object ScreenWindowTraits {
                                 windowInsets.left,
                                 0,
                                 windowInsets.right,
-                                windowInsets.bottom,
+                                max(windowInsets.bottom, imeInsets.bottom),
                             ),
                         ).build()
                 } else {
