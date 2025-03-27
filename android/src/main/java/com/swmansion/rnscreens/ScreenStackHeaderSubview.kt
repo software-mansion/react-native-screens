@@ -58,7 +58,7 @@ class ScreenStackHeaderSubview(
             // frame received might be computed by native layout & completely invalid (zero height).
             // RN layout is the source of subview **size** (not origin) & we need to avoid sending
             // this native size to ST. Doing otherwise might lead to problems.
-            // See: TODO: PR LINK
+            // See: https://github.com/software-mansion/react-native-screens/pull/2812
             if (isReactSizeSet) {
                 updateSubviewFrameState(width, height, l, t)
             }
