@@ -20,7 +20,8 @@
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install",
     "architectures-consistency-check": "node ./scripts/codegen-check-consistency.js",
-    "sync-architectures": "node ./scripts/codegen-sync-archs.js"
+    "sync-architectures": "node ./scripts/codegen-sync-archs.js",
+    "update-lockfiles": "cd ${APP_DIR} && yarn && cd ios && pod install && cd ../../"
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -67,6 +68,14 @@
     "url": "https://github.com/software-mansion/react-native-screens/issues"
   },
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): cut the ${version}",
+      "hooks": {
+        "after:bump": "APP_DIR=Example yarn update-lockfiles && APP_DIR=FabricExample yarn update-lockfiles"
+      }
+    }
+  },
   "dependencies": {
     "react-freeze": "^1.0.0",
     "warn-once": "^0.1.0"
@@ -114,7 +123,7 @@
     "react-native-safe-area-context": "5.1.0",
     "react-native-windows": "^0.64.8",
     "react-test-renderer": "^19.0.0",
-    "release-it": "^15.6.0",
+    "release-it": "^18.1.2",
     "typescript": "5.4.3"
   },
   "resolutions": {
