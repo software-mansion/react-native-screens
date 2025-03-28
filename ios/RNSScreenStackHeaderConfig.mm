@@ -631,12 +631,9 @@ RNS_IGNORE_SUPER_CALL_END
 
   auto shouldUseCustomBackBarButtonItem = !isBackTitleBlank || config.disableBackButtonMenu;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
-  if (@available(iOS 14.0, *)) {
-    prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
-  }
-#endif
+  // This has any effect only in case the `backBarButtonItem` is not set.
+  // We apply it before we configure the back item, because it might get overriden.
+  prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
 
   if (config.isBackTitleVisible) {
     if ((config.backTitleFontFamily &&
@@ -666,11 +663,9 @@ RNS_IGNORE_SUPER_CALL_END
     // back button title should be not visible next to back button,
     // but it should still appear in back menu (if one is enabled)
 
-    // When backBarButtonItem's title is null, back menu will use value
-    // of backButtonTitle
-    [backBarButtonItem setTitle:nil];
-    shouldUseCustomBackBarButtonItem = YES;
     prevItem.backButtonTitle = resolvedBackTitle;
+    prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
+    shouldUseCustomBackBarButtonItem = NO;
   }
 
   // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
