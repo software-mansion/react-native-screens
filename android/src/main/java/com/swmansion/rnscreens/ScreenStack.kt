@@ -240,9 +240,11 @@ class ScreenStack(
 
             // Count how many screens are disappearing
             // (all transparent screens beneath newTop + one screen under them)
+            // This is a heuristic that does not work in every case.
+            // See: https://github.com/software-mansion/react-native-screens/pull/2806#discussion_r2019106843
             val disappearingCount =
                 notDismissedWrappers
-                    .drop(1)
+                    .drop(1) // Skip topScreen
                     .takeWhile { it.screen.isTransparent() }
                     .count() + 1
 
