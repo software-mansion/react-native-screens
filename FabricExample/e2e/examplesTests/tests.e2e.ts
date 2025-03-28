@@ -5,21 +5,21 @@ describe('Test432', () => {
     await device.reloadReactNative();
   });
 
-  it('should Test432 exist', async () => {
+  it('Test432 should exist', async () => {
     await waitFor(element(by.id('root-screen-tests-Test432')))
-    .toBeVisible()
-    .whileElement(by.id('root-screen-examples-scrollview'))
-    .scroll(600, 'down', NaN, 0.85);
+      .toBeVisible()
+      .whileElement(by.id('root-screen-examples-scrollview'))
+      .scroll(600, 'down', NaN, 0.85);
 
     await expect(element(by.id('root-screen-tests-Test432'))).toBeVisible();
     await element(by.id('root-screen-tests-Test432')).tap();
   });
 
-  it('home-square should be fully visible', async () => {
+  it('headerRight element should be fully visible', async () => {
     await expect(element(by.id('home-square'))).toBeVisible(100);
   });
 
-  it('squares from details screen should be fully visible', async () => {
+  it('headerRight elements should toggle and stay fully visible', async () => {
     await element(by.id('go-to-details')).tap();
     await expect(element(by.id('details-red-square'))).toBeVisible(100);
 
@@ -39,7 +39,7 @@ describe('Test432', () => {
     await expect(element(by.id('home-square'))).toBeVisible(100);
   });
 
-  it('squares from info screen should be fully visible', async () => {
+  it('headerLeft and headerRight elements should toggle and stay fully visible', async () => {
     await element(by.id('go-to-info')).tap();
     await expect(element(by.id('info-green-square-1'))).toBeVisible(100);
 
@@ -60,7 +60,7 @@ describe('Test432', () => {
     await expect(element(by.id('home-square'))).toBeVisible(100);
   });
 
-  it('squares from settings screen should be fully visible', async () => {
+  it('headerRight element on modal should be fully visible', async () => {
     await element(by.id('show-settings')).tap();
     await expect(element(by.id('settings-square'))).toBeVisible(100);
 
@@ -80,17 +80,17 @@ if (device.getPlatform() === 'ios') {
       await device.reloadReactNative();
     });
 
-    it('should Test528 exist', async () => {
+    it('Test528 should exist', async () => {
       await waitFor(element(by.id('root-screen-tests-Test528')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
+        .toBeVisible()
+        .whileElement(by.id('root-screen-examples-scrollview'))
+        .scroll(600, 'down', NaN, 0.85);
 
       await expect(element(by.id('root-screen-tests-Test528'))).toBeVisible();
       await element(by.id('root-screen-tests-Test528')).tap();
     });
 
-    it('displays headerRight button after orientation change on Screen1', async () => {
+    it('headerRight button should be visible after orientation change', async () => {
       await expect(element(by.text('Custom Button'))).toBeVisible(100);
       await device.setOrientation('landscape');
       await expect(element(by.text('Custom Button'))).toBeVisible(100);
@@ -98,7 +98,7 @@ if (device.getPlatform() === 'ios') {
       await expect(element(by.text('Custom Button'))).toBeVisible(100);
     });
 
-    it('displays headerRight button on Screen1 after orientation change on Screen2', async () => {
+    it('headerRight button should be visible after coming back from horizontal screen', async () => {
       await element(by.text('Go to Screen 2')).tap();
       await device.setOrientation('landscape');
       await element(by.id('BackButton')).tap();
@@ -108,4 +108,3 @@ if (device.getPlatform() === 'ios') {
     });
   });
 }
-
