@@ -7,9 +7,9 @@ describe('Test432', () => {
 
   it('should Test432 exist', async () => {
     await waitFor(element(by.id('root-screen-tests-Test432')))
-    .toBeVisible()
-    .whileElement(by.id('root-screen-examples-scrollview'))
-    .scroll(600, 'down', NaN, 0.85);
+      .toBeVisible()
+      .whileElement(by.id('root-screen-examples-scrollview'))
+      .scroll(600, 'down', NaN, 0.85);
 
     await expect(element(by.id('root-screen-tests-Test432'))).toBeVisible();
     await element(by.id('root-screen-tests-Test432')).tap();
@@ -72,66 +72,3 @@ describe('Test432', () => {
     await expect(element(by.id('home-square'))).toBeVisible(100);
   });
 });
-
-// Detox currently supports orientation only on iOS
-if (device.getPlatform() === 'ios') {
-  describe('Test528', () => {
-    beforeAll(async () => {
-      await device.reloadReactNative();
-    });
-
-    it('should Test528 exist', async () => {
-      await waitFor(element(by.id('root-screen-tests-Test528')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-      await expect(element(by.id('root-screen-tests-Test528'))).toBeVisible();
-      await element(by.id('root-screen-tests-Test528')).tap();
-    });
-
-    it('displays headerRight button after orientation change on Screen1', async () => {
-      await expect(element(by.text('Custom Button'))).toBeVisible(100);
-      await device.setOrientation('landscape');
-      await expect(element(by.text('Custom Button'))).toBeVisible(100);
-      await device.setOrientation('portrait');
-      await expect(element(by.text('Custom Button'))).toBeVisible(100);
-    });
-
-    it('displays headerRight button on Screen1 after orientation change on Screen2', async () => {
-      await element(by.text('Go to Screen 2')).tap();
-      await device.setOrientation('landscape');
-      await element(by.id('BackButton')).tap();
-      await expect(element(by.text('Custom Button'))).toBeVisible(100);
-      await device.setOrientation('portrait');
-      await expect(element(by.text('Custom Button'))).toBeVisible(100);
-    });
-  });
-}
-
-// This issue is related to iOS modal
-if (device.getPlatform() === 'ios') {
-  describe('Test577', () => {
-    beforeAll(async () => {
-      await device.reloadReactNative();
-    });
-
-    it('should Test577 exist', async () => {
-      await waitFor(element(by.id('root-screen-tests-Test577')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-      await expect(element(by.id('root-screen-tests-Test577'))).toBeVisible();
-      await element(by.id('root-screen-tests-Test577')).tap();
-    });
-
-    it('does not display content underneath modal when attempting to close it', async () => {
-      await element(by.text('Open modal')).tap();
-      for (let i = 0; i < 5; ++i) {
-        await element(by.text('Modal')).swipe('down', 'fast');
-        await expect(element(by.text('Open modal'))).not.toBeVisible();
-      }
-    });
-  });
-}
