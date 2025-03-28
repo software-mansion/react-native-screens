@@ -7,9 +7,9 @@ export { default as Test349 } from './Test349';     // [E2E skipped]: can't chec
 export { default as Test364 } from './Test364';     // [E2E skipped]: tabBarVisible prop doesn't exist anymore, suggested solution is to change navigator hierarchy (proposed in PR and in react-navigation docs)
 export { default as Test432 } from './Test432';     // [E2E created]
 export { default as Test528 } from './Test528';     // [E2E created](iOS): Detox supports changing orientation only on iOS
-export { default as Test550 } from './Test550';     // [E2E skipped]: The prop does not work, when fixed we can add the test
+export { default as Test550 } from './Test550';     // [E2E skipped]: the prop does not work, when fixed we can add the test
 export { default as Test556 } from './Test556';     // [E2E skipped]: can't check flickering nor non-deterministic white screen bug
-export { default as Test564 } from './Test564';
+export { default as Test564 } from './Test564';     // [E2E skipped]: issue still present
 export { default as Test577 } from './Test577';
 export { default as Test593 } from './Test593';
 export { default as Test619 } from './Test619';
