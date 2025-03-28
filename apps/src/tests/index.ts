@@ -10,7 +10,7 @@ export { default as Test528 } from './Test528';     // [E2E created](iOS): Detox
 export { default as Test550 } from './Test550';     // [E2E skipped]: the prop does not work, when fixed we can add the test
 export { default as Test556 } from './Test556';     // [E2E skipped]: can't check flickering nor non-deterministic white screen bug
 export { default as Test564 } from './Test564';     // [E2E skipped]: issue still present
-export { default as Test577 } from './Test577';
+export { default as Test577 } from './Test577';     // [E2E created](iOS): issue is related to iOS modal
 export { default as Test593 } from './Test593';
 export { default as Test619 } from './Test619';
 export { default as Test624 } from './Test624';
