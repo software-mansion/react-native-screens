@@ -260,7 +260,7 @@ class Screen(
         )
     }
 
-    fun isTransparent(): Boolean =
+    fun isTranslucent(): Boolean =
         when (stackPresentation) {
             StackPresentation.TRANSPARENT_MODAL,
             StackPresentation.FORM_SHEET,
