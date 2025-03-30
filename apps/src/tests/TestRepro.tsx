@@ -1,8 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Screen, ScreenStack } from 'react-native-screens';
 
 
@@ -18,24 +17,26 @@ function SharedPressable() {
 
 function HomeOne() {
   return (
-    <View style={{ height: 600, backgroundColor: 'orange' }}>
-      <View style={{ flex: 1, backgroundColor: 'seagreen' }}>
-        <SharedPressable />
-      </View>
+    <View style={{ height: 600, backgroundColor: 'seagreen' }}>
+      <SharedPressable />
     </View>
   );
 }
 
 export function App() {
+  const gesture = Gesture.Pan()
+    .onBegin(() => {
+      'worklet';
+    });
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetectorProvider>
+      <GestureDetector gesture={gesture}>
         <ScreenStack>
           <Screen>
             <HomeOne />
           </Screen>
         </ScreenStack>
-      </GestureDetectorProvider>
+      </GestureDetector>
     </GestureHandlerRootView>
   );
 }
