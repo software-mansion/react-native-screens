@@ -24,7 +24,7 @@ import {
 } from './constraints';
 import { GestureProviderProps } from '../types';
 
-const EmptyGestureHandler = Gesture.Fling();
+const EmptyGestureHandler = Gesture.Fling().enabled(false);
 
 const ScreenGestureDetector = ({
   children,
