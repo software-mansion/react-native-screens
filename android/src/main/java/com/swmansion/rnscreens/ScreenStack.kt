@@ -49,21 +49,13 @@ internal class ReverseOrderInRange(
     }
 }
 
-internal class ReverseOrderStartingFrom(
-    val startIndex: Int,
-) : ChildDrawingOrderStrategyBase() {
+internal class ReverseOrder : ChildDrawingOrderStrategyBase() {
     override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
         if (!isEnabled()) {
             return
         }
 
-        var startRange = startIndex
-        var endRange = drawingOperations.lastIndex
-        while (startRange < endRange) {
-            Collections.swap(drawingOperations, startRange, endRange)
-            startRange += 1
-            endRange -= 1
-        }
+        drawingOperations.reverse()
     }
 }
 
@@ -237,21 +229,7 @@ class ScreenStack(
             // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
             // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
             // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
-
-            // Count how many screens are disappearing
-            // (all transparent screens beneath newTop + one screen under them)
-            // This is a heuristic that does not work in every case.
-            // See: https://github.com/software-mansion/react-native-screens/pull/2806#discussion_r2019106843
-            val disappearingCount =
-                notDismissedWrappers
-                    .drop(1) // Skip topScreen
-                    .takeWhile { it.screen.isTransparent() }
-                    .count() + 1
-
-            childDrawingOrderStrategy =
-                ReverseOrderStartingFrom(
-                    screenWrappers.lastIndex - disappearingCount,
-                )
+            childDrawingOrderStrategy = ReverseOrder()
         } else if (newTop != null &&
             newTopAlreadyInStack &&
             topScreenWrapper?.screen?.isTransparent() == true &&
