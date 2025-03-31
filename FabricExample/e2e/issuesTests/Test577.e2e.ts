@@ -1,22 +1,22 @@
 import { device, expect, element, by } from 'detox';
 
-// This issue is related to iOS modal
-if (device.getPlatform() === 'ios') {
-  describe('Test577', () => {
-    beforeAll(async () => {
-      await device.reloadReactNative();
-    });
+describe('Test577', () => {
+  beforeAll(async () => {
+    await device.reloadReactNative();
+  });
 
-    it('should Test577 exist', async () => {
-      await waitFor(element(by.id('root-screen-tests-Test577')))
-        .toBeVisible()
-        .whileElement(by.id('root-screen-examples-scrollview'))
-        .scroll(600, 'down', NaN, 0.85);
+  it('should Test577 exist', async () => {
+    await waitFor(element(by.id('root-screen-tests-Test577')))
+      .toBeVisible()
+      .whileElement(by.id('root-screen-examples-scrollview'))
+      .scroll(600, 'down', NaN, 0.85);
 
-      await expect(element(by.id('root-screen-tests-Test577'))).toBeVisible();
-      await element(by.id('root-screen-tests-Test577')).tap();
-    });
+    await expect(element(by.id('root-screen-tests-Test577'))).toBeVisible();
+    await element(by.id('root-screen-tests-Test577')).tap();
+  });
 
+  // This issue is related to iOS modal
+  if (device.getPlatform() === 'ios') {
     it('does not display content underneath modal when attempting to close it', async () => {
       await element(by.text('Open modal')).tap();
       for (let i = 0; i < 5; ++i) {
@@ -24,5 +24,5 @@ if (device.getPlatform() === 'ios') {
         await expect(element(by.text('Open modal'))).not.toBeVisible();
       }
     });
-  });
-}
+  }
+});
