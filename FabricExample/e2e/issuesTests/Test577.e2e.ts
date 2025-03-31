@@ -5,7 +5,7 @@ describe('Test577', () => {
     await device.reloadReactNative();
   });
 
-  it('should Test577 exist', async () => {
+  it('Test577 should exist', async () => {
     await waitFor(element(by.id('root-screen-tests-Test577')))
       .toBeVisible()
       .whileElement(by.id('root-screen-examples-scrollview'))
@@ -17,7 +17,7 @@ describe('Test577', () => {
 
   // This issue is related to iOS modal
   if (device.getPlatform() === 'ios') {
-    it('does not display content underneath modal when attempting to close it', async () => {
+    it('does not display content underneath modal with gesture disabled when attempting to close it', async () => {
       await element(by.text('Open modal')).tap();
       for (let i = 0; i < 5; ++i) {
         await element(by.text('Modal')).swipe('down', 'fast');
