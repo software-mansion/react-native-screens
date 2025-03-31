@@ -184,7 +184,7 @@ class ScreenStack(
         newTop = notDismissedWrappers.firstOrNull()
         visibleBottom =
             notDismissedWrappers
-                .dropWhile { it.screen.isTransparent() }
+                .dropWhile { it.isTranslucent() }
                 .firstOrNull()
                 ?.takeUnless { it === newTop }
 
@@ -238,8 +238,8 @@ class ScreenStack(
             childDrawingOrderStrategy = SwapLastTwo()
         } else if (newTop != null &&
             newTopAlreadyInStack &&
-            topScreenWrapper?.screen?.isTransparent() == true &&
-            newTop.screen.isTransparent() == false
+            topScreenWrapper?.isTranslucent() == true &&
+            newTop.isTranslucent() == false
         ) {
             // In case where we dismiss multiple transparent views we want to ensure
             // that they are drawn in correct order - Android swaps them by default,
@@ -250,7 +250,7 @@ class ScreenStack(
                     .asSequence()
                     .takeWhile {
                         it !== newTop &&
-                            it.screen.isTransparent()
+                            it.isTranslucent()
                     }.count()
             if (dismissedTransparentScreenApproxCount > 1) {
                 childDrawingOrderStrategy =
@@ -311,7 +311,7 @@ class ScreenStack(
     private fun turnOffA11yUnderTransparentScreen(visibleBottom: ScreenFragmentWrapper?) {
         if (screenWrappers.size > 1 && visibleBottom != null) {
             topScreenWrapper?.let {
-                if (it.screen.isTransparent()) {
+                if (it.isTranslucent()) {
                     val screenFragmentsBeneathTop = screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {

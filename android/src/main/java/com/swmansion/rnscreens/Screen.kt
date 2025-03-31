@@ -260,7 +260,10 @@ class Screen(
         )
     }
 
-    fun isTransparent(): Boolean =
+    /**
+     * Whether this screen allows to see the content underneath it.
+     */
+    fun isTranslucent(): Boolean =
         when (stackPresentation) {
             StackPresentation.TRANSPARENT_MODAL,
             StackPresentation.FORM_SHEET,
