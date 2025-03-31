@@ -7,7 +7,7 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
-import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import java.util.Collections
@@ -290,14 +290,18 @@ class ScreenStack(
                         }
                     }
             } else if (newTop != null && !newTop.fragment.isAdded) {
-                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.isSheetFitToContents()) {
+                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.usesFormSheetPresentation()) {
                     // On old architecture the content wrapper might not have received its frame yet,
                     // which is required to determine height of the sheet after animation. Therefore
                     // we delay the transition and trigger it after views receive the layout.
+                    // This is used only for formSheet presentation, because we use value animators
+                    // there. Tween animations have some magic way to make this work (maybe they
+                    // postpone the transition internally, dunno).
                     newTop.fragment.postponeEnterTransition()
                 }
                 transaction.add(id, newTop.fragment)
             }
+
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
