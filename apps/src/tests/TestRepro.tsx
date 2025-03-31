@@ -31,11 +31,9 @@ export function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={gesture}>
-        <ScreenStack>
-          <Screen>
-            <HomeOne />
-          </Screen>
-        </ScreenStack>
+        <Screen>
+          <HomeOne />
+        </Screen>
       </GestureDetector>
     </GestureHandlerRootView>
   );
