@@ -132,8 +132,10 @@ class Screen(
     ) {
         val height = bottom - top
 
-        if (isSheetFitToContents()) {
-            sheetBehavior?.useSingleDetent(height)
+        if (usesFormSheetPresentation()) {
+            if (isSheetFitToContents()) {
+                sheetBehavior?.useSingleDetent(height)
+            }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 // On old architecture we delay enter transition in order to wait for initial frame.
