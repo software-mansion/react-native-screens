@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.bottomsheet
 
+import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -133,3 +134,9 @@ fun Screen.isSheetFitToContents(): Boolean =
         sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS
 
 fun Screen.usesFormSheetPresentation(): Boolean = stackPresentation === Screen.StackPresentation.FORM_SHEET
+
+/**
+ * The view might not be laid out, but have cached dimensions e.g. when host fragment
+ * is reattached to container.
+ */
+fun View.isLaidOutOrHasCachedLayout() = this.isLaidOut || height > 0 || width > 0

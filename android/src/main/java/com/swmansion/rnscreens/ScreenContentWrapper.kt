@@ -35,11 +35,4 @@ class ScreenContentWrapper(
     ) {
         delegate?.onContentWrapperLayout(changed, left, top, right, bottom)
     }
-
-    /**
-     * The view might not be laid out, but have cached dimensions e.g. when host fragment
-     * is reattached to container.
-     */
-    val isLaidOutOrHasCachedLayout: Boolean
-        get() = isLaidOut || height > 0 || width > 0
 }

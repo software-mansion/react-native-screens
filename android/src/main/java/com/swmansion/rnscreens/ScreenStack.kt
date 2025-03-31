@@ -7,6 +7,7 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
+import com.swmansion.rnscreens.bottomsheet.isLaidOutOrHasCachedLayout
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.utils.setTweenAnimations
@@ -55,7 +56,11 @@ internal class SwapLastTwo : ChildDrawingOrderStrategyBase() {
             return
         }
         if (drawingOperations.size >= 2) {
-            Collections.swap(drawingOperations, drawingOperations.lastIndex, drawingOperations.lastIndex - 1)
+            Collections.swap(
+                drawingOperations,
+                drawingOperations.lastIndex,
+                drawingOperations.lastIndex - 1
+            )
         }
     }
 }
@@ -202,11 +207,13 @@ class ScreenStack(
                 // if the previous top screen does not exist anymore and the new top was not on the stack
                 // before, probably replace or reset was called, so we play the "close animation".
                 // Otherwise it's open animation
-                val previousTopScreenRemainsInStack = topScreenWrapper?.let { screenWrappers.contains(it) } == true
+                val previousTopScreenRemainsInStack =
+                    topScreenWrapper?.let { screenWrappers.contains(it) } == true
                 val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
                 shouldUseOpenAnimation = previousTopScreenRemainsInStack || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
-                stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
+                stackAnimation =
+                    if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
             } else {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering
@@ -250,11 +257,16 @@ class ScreenStack(
                     .asSequence()
                     .takeWhile {
                         it !== newTop &&
-                            it.isTranslucent()
+                                it.isTranslucent()
                     }.count()
             if (dismissedTransparentScreenApproxCount > 1) {
                 childDrawingOrderStrategy =
-                    ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
+                    ReverseOrderInRange(
+                        max(
+                            stack.lastIndex - dismissedTransparentScreenApproxCount + 1,
+                            0
+                        )..stack.lastIndex
+                    )
             }
         }
 
@@ -267,7 +279,11 @@ class ScreenStack(
             // no longer rendered or were dismissed natively.
             stack
                 .asSequence()
-                .filter { wrapper -> !screenWrappers.contains(wrapper) || dismissedWrappers.contains(wrapper) }
+                .filter { wrapper ->
+                    !screenWrappers.contains(wrapper) || dismissedWrappers.contains(
+                        wrapper
+                    )
+                }
                 .forEach { wrapper -> transaction.remove(wrapper.fragment) }
 
             // Remove all screens underneath visibleBottom && these marked for preload, but keep newTop.
@@ -290,7 +306,10 @@ class ScreenStack(
                         }
                     }
             } else if (newTop != null && !newTop.fragment.isAdded) {
-                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.usesFormSheetPresentation()) {
+                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED &&
+                    newTop.screen.usesFormSheetPresentation() &&
+                    (!newTop.screen.isLaidOutOrHasCachedLayout() || newTop.screen.contentWrapper?.isLaidOutOrHasCachedLayout() != true)
+                ) {
                     // On old architecture the content wrapper might not have received its frame yet,
                     // which is required to determine height of the sheet after animation. Therefore
                     // we delay the transition and trigger it after views receive the layout.
@@ -316,7 +335,8 @@ class ScreenStack(
         if (screenWrappers.size > 1 && visibleBottom != null) {
             topScreenWrapper?.let {
                 if (it.isTranslucent()) {
-                    val screenFragmentsBeneathTop = screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
+                    val screenFragmentsBeneathTop =
+                        screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {
                         fragmentWrapper.screen.changeAccessibilityMode(
@@ -389,7 +409,8 @@ class ScreenStack(
 
     // Can't use `drawingOpPool.removeLast` here due to issues with static name resolution in Android SDK 35+.
     // See: https://developer.android.com/about/versions/15/behavior-changes-15?hl=en#openjdk-api-changes
-    private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
+    private fun obtainDrawingOp(): DrawingOp =
+        if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
 
     internal inner class DrawingOp {
         var canvas: Canvas? = null
@@ -411,18 +432,19 @@ class ScreenStack(
             fragmentWrapper: ScreenFragmentWrapper,
             resolvedStackAnimation: StackAnimation?,
         ): Boolean {
-            val stackAnimation = if (resolvedStackAnimation != null) resolvedStackAnimation else fragmentWrapper.screen.stackAnimation
+            val stackAnimation =
+                if (resolvedStackAnimation != null) resolvedStackAnimation else fragmentWrapper.screen.stackAnimation
             // On Android sdk 33 and above the animation is different and requires draw reordering.
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
             // Hence, we're comparing numerical version here.
             return (
-                Build.VERSION.SDK_INT >= 33 ||
-                    stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
-                    stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
-                    stackAnimation === StackAnimation.IOS_FROM_RIGHT ||
-                    stackAnimation === StackAnimation.IOS_FROM_LEFT
-            ) &&
-                stackAnimation !== StackAnimation.NONE
+                    Build.VERSION.SDK_INT >= 33 ||
+                            stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+                            stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
+                            stackAnimation === StackAnimation.IOS_FROM_RIGHT ||
+                            stackAnimation === StackAnimation.IOS_FROM_LEFT
+                    ) &&
+                    stackAnimation !== StackAnimation.NONE
         }
     }
 }
