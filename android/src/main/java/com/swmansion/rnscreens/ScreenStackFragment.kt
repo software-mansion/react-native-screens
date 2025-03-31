@@ -341,7 +341,7 @@ class ScreenStackFragment :
             return screenColor
         }
 
-        val contentWrapper = screen.contentWrapper.get()
+        val contentWrapper = screen.contentWrapper
         if (contentWrapper == null) {
             return null
         }

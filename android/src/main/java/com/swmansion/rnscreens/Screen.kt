@@ -32,7 +32,6 @@ import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.parentAsViewGroup
-import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
@@ -41,8 +40,6 @@ class Screen(
     ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
-
-    var contentWrapper = WeakReference<ScreenContentWrapper>(null)
 
     val sheetBehavior: BottomSheetBehavior<Screen>?
         get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
@@ -153,7 +150,6 @@ class Screen(
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
         wrapper.delegate = this
-        this.contentWrapper = WeakReference(wrapper)
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -239,6 +235,9 @@ class Screen(
 
     val headerConfig: ScreenStackHeaderConfig?
         get() = children.find { it is ScreenStackHeaderConfig } as? ScreenStackHeaderConfig
+
+    val contentWrapper: ScreenContentWrapper?
+        get() = children.find { it is ScreenContentWrapper } as? ScreenContentWrapper
 
     /**
      * While transitioning this property allows to optimize rendering behavior on Android and provide

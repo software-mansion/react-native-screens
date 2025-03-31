@@ -130,13 +130,13 @@ class SheetDelegate(
                         behavior.apply {
                             val height =
                                 if (screen.isSheetFitToContents()) {
-                                    screen.contentWrapper.get()?.let { contentWrapper ->
+                                    screen.contentWrapper?.let { contentWrapper ->
                                         contentWrapper.height.takeIf {
                                             // subtree might not be laid out, e.g. after fragment reattachment
                                             // and view recreation, however since it is retained by
                                             // react-native it has its height cached. We want to use it.
                                             // Otherwise we would have to trigger RN layout manually.
-                                            contentWrapper.isLaidOut || contentWrapper.height > 0
+                                            contentWrapper.isLaidOutOrHasCachedLayout
                                         }
                                     }
                                 } else {
