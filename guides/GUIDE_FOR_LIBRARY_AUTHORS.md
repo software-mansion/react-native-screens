@@ -242,6 +242,7 @@ Defines how the method that should be used to present the given screen. It is a 
 - `containedTransparentModal` – Explained below.
 - `fullScreenModal` – Explained below.
 - `formSheet` – Explained below.
+- `pageSheet` - Explained below.
 
 Using `containedModal` and `containedTransparentModal` with other types of modals in one native stack navigator is not recommended and can result in a freeze or a crash of the application.
 
@@ -253,13 +254,14 @@ For iOS:
    * on iOS 12 and earlier will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc). 
 - `fullScreenModal` will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc)
 - `formSheet` will use [`UIModalPresentationFormSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationformsheet?language=objc)
+- `pageSheet` will use [`UIModalPresentationPageSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/pagesheet?language=objc)
 - `transparentModal` will use [`UIModalPresentationOverFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationoverfullscreen?language=objc)
 - `containedModal` will use [`UIModalPresentationCurrentContext`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationcurrentcontext?language=objc)
 - `containedTransparentModal` will use [`UIModalPresentationOverCurrentContext`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationovercurrentcontext?language=objc)
 
 For Android:
 
-`modal`, `containedModal`, `fullScreenModal`, `formSheet` will use `Screen.StackPresentation.MODAL`.
+`modal`, `containedModal`, `fullScreenModal`, `formSheet`, `pageSheet` will use `Screen.StackPresentation.MODAL`.
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
@@ -502,6 +504,8 @@ Allows for customizing font size to be used for back button title on iOS.
 
 Whether the back button title should be visible. Defaults to `true`.
 
+When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `disableBackButtonMenu`, and `backTitle` works only for back button menu.
+
 ### `blurEffect` (iOS only)
 
 Blur effect to be applied to the header. Works with `backgroundColor`'s alpha < 1.
@@ -520,7 +524,9 @@ Boolean indicating whether to show the menu on longPress of iOS >= 14 back butto
 
 ### `backButtonDisplayMode` (iOS only)
 
-Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+Enum value indicating display mode of back button. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu`, `backTitle` and `backTitleVisible=false` is set. The `backTitleVisible` forces `backButtonDisplayMode: minimal` and omits other values. Read more [#2800](https://github.com/software-mansion/react-native-screens/pull/2800). The other props, under the hood, customize `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123).
+
+Possible options:
 
 - `default` – show given back button previous controller title, system generic or just icon based on available space
 - `generic` – show given system generic or just icon based on available space
