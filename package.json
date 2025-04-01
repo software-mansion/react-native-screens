@@ -109,7 +109,7 @@
     "react-native": "0.78.0",
     "react-native-builder-bob": "^0.23.2",
     "react-native-gesture-handler": "^2.24.0",
-    "react-native-reanimated": "^3.17.0",
+    "react-native-reanimated": "^3.17.2",
     "react-native-safe-area-context": "5.2.0",
     "react-native-windows": "^0.64.8",
     "react-test-renderer": "^19.0.0",
