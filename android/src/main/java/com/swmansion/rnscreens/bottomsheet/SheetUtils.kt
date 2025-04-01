@@ -6,6 +6,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPS
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.Screen
 
 object SheetUtils {
@@ -134,6 +135,25 @@ fun Screen.isSheetFitToContents(): Boolean =
         sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS
 
 fun Screen.usesFormSheetPresentation(): Boolean = stackPresentation === Screen.StackPresentation.FORM_SHEET
+
+fun Screen.requiresEnterTransitionPostponing(): Boolean {
+    // On old architecture the content wrapper might not have received its frame yet,
+    // which is required to determine height of the sheet after animation. Therefore
+    // we delay the transition and trigger it after views receive the layout.
+    // This is used only for formSheet presentation, because we use value animators
+    // there. Tween animations have some magic way to make this work (maybe they
+    // postpone the transition internally, dunno).
+
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED || !this.usesFormSheetPresentation()) {
+        return false
+    }
+    return if (this.isSheetFitToContents()) {
+        // fitToContents requires known layout from content wrapper
+        this.contentWrapper?.isLaidOutOrHasCachedLayout() != true
+    } else {
+        this.isLaidOutOrHasCachedLayout() == false
+    }
+}
 
 /**
  * The view might not be laid out, but have cached dimensions e.g. when host fragment

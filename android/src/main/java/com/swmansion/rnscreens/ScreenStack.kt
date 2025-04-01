@@ -7,8 +7,7 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
-import com.swmansion.rnscreens.bottomsheet.isLaidOutOrHasCachedLayout
-import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
+import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import java.util.Collections
@@ -59,7 +58,7 @@ internal class SwapLastTwo : ChildDrawingOrderStrategyBase() {
             Collections.swap(
                 drawingOperations,
                 drawingOperations.lastIndex,
-                drawingOperations.lastIndex - 1
+                drawingOperations.lastIndex - 1,
             )
         }
     }
@@ -257,15 +256,15 @@ class ScreenStack(
                     .asSequence()
                     .takeWhile {
                         it !== newTop &&
-                                it.isTranslucent()
+                            it.isTranslucent()
                     }.count()
             if (dismissedTransparentScreenApproxCount > 1) {
                 childDrawingOrderStrategy =
                     ReverseOrderInRange(
                         max(
                             stack.lastIndex - dismissedTransparentScreenApproxCount + 1,
-                            0
-                        )..stack.lastIndex
+                            0,
+                        )..stack.lastIndex,
                     )
             }
         }
@@ -280,11 +279,11 @@ class ScreenStack(
             stack
                 .asSequence()
                 .filter { wrapper ->
-                    !screenWrappers.contains(wrapper) || dismissedWrappers.contains(
-                        wrapper
-                    )
-                }
-                .forEach { wrapper -> transaction.remove(wrapper.fragment) }
+                    !screenWrappers.contains(wrapper) ||
+                        dismissedWrappers.contains(
+                            wrapper,
+                        )
+                }.forEach { wrapper -> transaction.remove(wrapper.fragment) }
 
             // Remove all screens underneath visibleBottom && these marked for preload, but keep newTop.
             screenWrappers
@@ -306,16 +305,7 @@ class ScreenStack(
                         }
                     }
             } else if (newTop != null && !newTop.fragment.isAdded) {
-                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED &&
-                    newTop.screen.usesFormSheetPresentation() &&
-                    (!newTop.screen.isLaidOutOrHasCachedLayout() || newTop.screen.contentWrapper?.isLaidOutOrHasCachedLayout() != true)
-                ) {
-                    // On old architecture the content wrapper might not have received its frame yet,
-                    // which is required to determine height of the sheet after animation. Therefore
-                    // we delay the transition and trigger it after views receive the layout.
-                    // This is used only for formSheet presentation, because we use value animators
-                    // there. Tween animations have some magic way to make this work (maybe they
-                    // postpone the transition internally, dunno).
+                if (newTop.screen.requiresEnterTransitionPostponing()) {
                     newTop.fragment.postponeEnterTransition()
                 }
                 transaction.add(id, newTop.fragment)
@@ -409,8 +399,7 @@ class ScreenStack(
 
     // Can't use `drawingOpPool.removeLast` here due to issues with static name resolution in Android SDK 35+.
     // See: https://developer.android.com/about/versions/15/behavior-changes-15?hl=en#openjdk-api-changes
-    private fun obtainDrawingOp(): DrawingOp =
-        if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
+    private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
 
     internal inner class DrawingOp {
         var canvas: Canvas? = null
@@ -438,13 +427,13 @@ class ScreenStack(
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
             // Hence, we're comparing numerical version here.
             return (
-                    Build.VERSION.SDK_INT >= 33 ||
-                            stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
-                            stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
-                            stackAnimation === StackAnimation.IOS_FROM_RIGHT ||
-                            stackAnimation === StackAnimation.IOS_FROM_LEFT
-                    ) &&
-                    stackAnimation !== StackAnimation.NONE
+                Build.VERSION.SDK_INT >= 33 ||
+                    stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+                    stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
+                    stackAnimation === StackAnimation.IOS_FROM_RIGHT ||
+                    stackAnimation === StackAnimation.IOS_FROM_LEFT
+            ) &&
+                stackAnimation !== StackAnimation.NONE
         }
     }
 }
