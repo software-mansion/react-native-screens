@@ -207,10 +207,10 @@ class Screen(
     }
 
     private fun triggerPostponedEnterTransitionIfNeeded() {
-        Log.i("RNScreens", "startPostponedEnterTransition")
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
+            Log.i("RNScreens", "startPostponedEnterTransition")
             fragment?.startPostponedEnterTransition()
         }
     }
