@@ -8,6 +8,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -289,6 +290,7 @@ class ScreenStackFragment :
                 ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
+                        Log.i("RNScreens", "updateListener ${animatedValue}")
                         animatedValue?.let { screen.translationY = it }
                     }
                 }

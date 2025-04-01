@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -307,6 +308,7 @@ class ScreenStack(
                     }
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 if (newTop.screen.requiresEnterTransitionPostponing()) {
+                    Log.i("RNScreens", "postponeEnterTransition, screen laidout: ${newTop.screen.isLaidOutOrHasCachedLayout()}, contentwrapper: ${newTop.screen.contentWrapper?.isLaidOutOrHasCachedLayout()}")
                     newTop.fragment.postponeEnterTransition()
                 }
                 transaction.add(id, newTop.fragment)

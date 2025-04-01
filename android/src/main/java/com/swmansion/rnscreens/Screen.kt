@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
@@ -125,6 +126,8 @@ class Screen(
     ) {
         val height = bottom - top
 
+        Log.i("RNScreens", "onContentWrapperLayout h: $height")
+
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents()) {
                 sheetBehavior?.useSingleDetent(height)
@@ -136,6 +139,7 @@ class Screen(
                 if (parent != null && !parent.isInLayout) {
                     // There are reported cases (irreproducible) when Screen is not laid out after
                     // maxHeight is set on behaviour.
+                    Log.i("RNScreens", "onContentWrapperLayout request parent layout")
                     parent.requestLayout()
                 }
             }
@@ -163,6 +167,7 @@ class Screen(
         r: Int,
         b: Int,
     ) {
+        Log.i("RNScreens", "Screen.onLayout h: ${b - t}")
         // In case of form sheet we get layout notification a bit later, in `onBottomSheetBehaviorDidLayout`
         // after the attached behaviour laid out this view.
         if (changed && isNativeStackScreen && !usesFormSheetPresentation()) {
@@ -194,6 +199,7 @@ class Screen(
     }
 
     private fun triggerPostponedEnterTransitionIfNeeded() {
+        Log.i("RNScreens", "startPostponedEnterTransition")
         // This will trigger enter transition only if one was requested by ScreenStack
         fragment?.startPostponedEnterTransition()
     }
