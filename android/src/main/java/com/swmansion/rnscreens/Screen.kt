@@ -84,13 +84,6 @@ class Screen(
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
 
-    /**
-     * When using form sheet presentation we want to delay enter transition **on Paper** in order
-     * to wait for initial layout from React, otherwise the animator-based animation will look
-     * glitchy. *This is not needed on Fabric*.
-     */
-    var shouldTriggerPostponedTransitionAfterLayout = false
-
     var footer: ScreenFooter? = null
         set(value) {
             if (value == null && field != null) {
@@ -139,7 +132,6 @@ class Screen(
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 // On old architecture we delay enter transition in order to wait for initial frame.
-                shouldTriggerPostponedTransitionAfterLayout = true
                 val parent = parentAsViewGroup()
                 if (parent != null && !parent.isInLayout) {
                     // There are reported cases (irreproducible) when Screen is not laid out after
@@ -185,24 +177,25 @@ class Screen(
     }
 
     internal fun onBottomSheetBehaviorDidLayout(coordinatorLayoutDidChange: Boolean) {
-        if (!usesFormSheetPresentation()) {
+        if (!usesFormSheetPresentation() || !isNativeStackScreen) {
             return
         }
-        if (coordinatorLayoutDidChange && isNativeStackScreen) {
+        if (coordinatorLayoutDidChange) {
             dispatchShadowStateUpdate(width, height, top)
         }
         if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            maybeTriggerPostponedTransition()
+            // When using form sheet presentation we want to delay enter transition **on Paper** in order
+            // to wait for initial layout from React, otherwise the animator-based animation will look
+            // glitchy. *This seems to not be needed on Fabric*.
+            triggerPostponedEnterTransitionIfNeeded()
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
     }
 
-    private fun maybeTriggerPostponedTransition() {
-        if (shouldTriggerPostponedTransitionAfterLayout) {
-            shouldTriggerPostponedTransitionAfterLayout = false
-            fragment?.startPostponedEnterTransition()
-        }
+    private fun triggerPostponedEnterTransitionIfNeeded() {
+        // This will trigger enter transition only if one was requested by ScreenStack
+        fragment?.startPostponedEnterTransition()
     }
 
     private fun updateScreenSizePaper(

@@ -7,6 +7,7 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
+import com.swmansion.rnscreens.bottomsheet.isLaidOutOrHasCachedLayout
 import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.utils.setTweenAnimations
