@@ -151,16 +151,10 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
         Log.i("RNScreens", "false (new arch or not formsheet)")
         return false
     }
-    return if (this.isSheetFitToContents()) {
-        // fitToContents requires known layout from content wrapper
-        val result = this.contentWrapper?.isLaidOutOrHasCachedLayout() != true
-        Log.i("RNScreens", "$result (content wrapper laid out or not)")
-        result
-    } else {
-        val result = this.isLaidOutOrHasCachedLayout() == false
-        Log.i("RNScreens", "$result (screen laid out or not)")
-        result
-    }
+    // Assumes that formSheet uses content wrapper
+    val result = !this.isLaidOutOrHasCachedLayout() || this.contentWrapper?.isLaidOutOrHasCachedLayout() != true
+    Log.i("RNScreens", "$result (screen or wrapper do not have layout)")
+    return result
 }
 
 /**

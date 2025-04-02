@@ -196,14 +196,15 @@ class Screen(
         if (coordinatorLayoutDidChange) {
             dispatchShadowStateUpdate(width, height, top)
         }
+
+        footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
+
         if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             // When using form sheet presentation we want to delay enter transition **on Paper** in order
             // to wait for initial layout from React, otherwise the animator-based animation will look
             // glitchy. *This seems to not be needed on Fabric*.
             triggerPostponedEnterTransitionIfNeeded()
         }
-
-        footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
     }
 
     private fun triggerPostponedEnterTransitionIfNeeded() {
