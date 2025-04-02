@@ -10,54 +10,12 @@ import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
+import com.swmansion.rnscreens.stack.views.ReverseFromIndex
+import com.swmansion.rnscreens.stack.views.ReverseOrder
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.setTweenAnimations
-import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.math.max
-
-internal abstract class ChildrenDrawingOrderStrategyBase(
-    var enabled: Boolean = false,
-) : ChildrenDrawingOrderStrategy {
-    override fun enable() {
-        enabled = true
-    }
-
-    override fun disable() {
-        enabled = false
-    }
-
-    override fun isEnabled() = enabled
-}
-
-internal class ReverseFromIndex(
-    val startIndex: Int,
-) : ChildrenDrawingOrderStrategyBase() {
-    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
-        if (!isEnabled()) {
-            return
-        }
-
-        var currentLeftIndex = startIndex
-        var currentRightIndex = drawingOperations.lastIndex
-
-        while (currentLeftIndex < currentRightIndex) {
-            Collections.swap(drawingOperations, currentLeftIndex, currentRightIndex)
-            currentLeftIndex += 1
-            currentRightIndex -= 1
-        }
-    }
-}
-
-internal class ReverseOrder : ChildrenDrawingOrderStrategyBase() {
-    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
-        if (!isEnabled()) {
-            return
-        }
-
-        drawingOperations.reverse()
-    }
-}
 
 class ScreenStack(
     context: Context?,
