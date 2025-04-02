@@ -229,6 +229,8 @@ class ScreenStackFragment :
             dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
             dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
+            // Pre-layout the content for the sake of enter transition.
+
             val container = screen.container!!
             coordinatorLayout.measure(
                 View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY),
@@ -337,7 +339,7 @@ class ScreenStackFragment :
             return screenColor
         }
 
-        val contentWrapper = screen.contentWrapper.get()
+        val contentWrapper = screen.contentWrapper
         if (contentWrapper == null) {
             return null
         }

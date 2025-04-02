@@ -7,7 +7,7 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
-import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ReverseFromIndex
@@ -154,11 +154,13 @@ class ScreenStack(
                 // if the previous top screen does not exist anymore and the new top was not on the stack
                 // before, probably replace or reset was called, so we play the "close animation".
                 // Otherwise it's open animation
-                val previousTopScreenRemainsInStack = topScreenWrapper?.let { screenWrappers.contains(it) } == true
+                val previousTopScreenRemainsInStack =
+                    topScreenWrapper?.let { screenWrappers.contains(it) } == true
                 val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
                 shouldUseOpenAnimation = previousTopScreenRemainsInStack || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
-                stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
+                stackAnimation =
+                    if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
             } else {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering
@@ -219,8 +221,12 @@ class ScreenStack(
             // no longer rendered or were dismissed natively.
             stack
                 .asSequence()
-                .filter { wrapper -> !screenWrappers.contains(wrapper) || dismissedWrappers.contains(wrapper) }
-                .forEach { wrapper -> transaction.remove(wrapper.fragment) }
+                .filter { wrapper ->
+                    !screenWrappers.contains(wrapper) ||
+                        dismissedWrappers.contains(
+                            wrapper,
+                        )
+                }.forEach { wrapper -> transaction.remove(wrapper.fragment) }
 
             // Remove all screens underneath visibleBottom && these marked for preload, but keep newTop.
             screenWrappers
@@ -242,14 +248,12 @@ class ScreenStack(
                         }
                     }
             } else if (newTop != null && !newTop.fragment.isAdded) {
-                if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && newTop.screen.isSheetFitToContents()) {
-                    // On old architecture the content wrapper might not have received its frame yet,
-                    // which is required to determine height of the sheet after animation. Therefore
-                    // we delay the transition and trigger it after views receive the layout.
+                if (newTop.screen.requiresEnterTransitionPostponing()) {
                     newTop.fragment.postponeEnterTransition()
                 }
                 transaction.add(id, newTop.fragment)
             }
+
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
@@ -264,7 +268,8 @@ class ScreenStack(
         if (screenWrappers.size > 1 && visibleBottom != null) {
             topScreenWrapper?.let {
                 if (it.isTranslucent()) {
-                    val screenFragmentsBeneathTop = screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
+                    val screenFragmentsBeneathTop =
+                        screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {
                         fragmentWrapper.screen.changeAccessibilityMode(

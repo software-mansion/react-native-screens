@@ -32,7 +32,6 @@ import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.parentAsViewGroup
-import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
@@ -41,8 +40,6 @@ class Screen(
     ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
-
-    var contentWrapper = WeakReference<ScreenContentWrapper>(null)
 
     val sheetBehavior: BottomSheetBehavior<Screen>?
         get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
@@ -135,8 +132,10 @@ class Screen(
     ) {
         val height = bottom - top
 
-        if (isSheetFitToContents()) {
-            sheetBehavior?.useSingleDetent(height)
+        if (usesFormSheetPresentation()) {
+            if (isSheetFitToContents()) {
+                sheetBehavior?.useSingleDetent(height)
+            }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 // On old architecture we delay enter transition in order to wait for initial frame.
@@ -153,7 +152,6 @@ class Screen(
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
         wrapper.delegate = this
-        this.contentWrapper = WeakReference(wrapper)
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -187,22 +185,27 @@ class Screen(
     }
 
     internal fun onBottomSheetBehaviorDidLayout(coordinatorLayoutDidChange: Boolean) {
-        if (!usesFormSheetPresentation()) {
+        if (!usesFormSheetPresentation() || !isNativeStackScreen) {
             return
         }
-        if (coordinatorLayoutDidChange && isNativeStackScreen) {
+        if (coordinatorLayoutDidChange) {
             dispatchShadowStateUpdate(width, height, top)
-        }
-        if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            maybeTriggerPostponedTransition()
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
+
+        if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // When using form sheet presentation we want to delay enter transition **on Paper** in order
+            // to wait for initial layout from React, otherwise the animator-based animation will look
+            // glitchy. *This seems to not be needed on Fabric*.
+            triggerPostponedEnterTransitionIfNeeded()
+        }
     }
 
-    private fun maybeTriggerPostponedTransition() {
+    private fun triggerPostponedEnterTransitionIfNeeded() {
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
+            // This will trigger enter transition only if one was requested by ScreenStack
             fragment?.startPostponedEnterTransition()
         }
     }
@@ -239,6 +242,9 @@ class Screen(
 
     val headerConfig: ScreenStackHeaderConfig?
         get() = children.find { it is ScreenStackHeaderConfig } as? ScreenStackHeaderConfig
+
+    val contentWrapper: ScreenContentWrapper?
+        get() = children.find { it is ScreenContentWrapper } as? ScreenContentWrapper
 
     /**
      * While transitioning this property allows to optimize rendering behavior on Android and provide
