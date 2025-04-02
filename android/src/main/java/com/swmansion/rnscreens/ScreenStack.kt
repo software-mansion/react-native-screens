@@ -3,12 +3,10 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
-import com.swmansion.rnscreens.bottomsheet.isLaidOutOrHasCachedLayout
 import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.utils.setTweenAnimations
@@ -272,7 +270,6 @@ class ScreenStack(
         }
 
         createTransaction().let { transaction ->
-            Log.i("RNScreens", "ScreenStack.createTransaction")
             if (stackAnimation != null) {
                 transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
@@ -309,7 +306,6 @@ class ScreenStack(
                     }
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 if (newTop.screen.requiresEnterTransitionPostponing()) {
-                    Log.i("RNScreens", "postponeEnterTransition, screen laidout: ${newTop.screen.isLaidOutOrHasCachedLayout()}, contentwrapper: ${newTop.screen.contentWrapper?.isLaidOutOrHasCachedLayout()}")
                     newTop.fragment.postponeEnterTransition()
                 }
                 transaction.add(id, newTop.fragment)
@@ -320,7 +316,6 @@ class ScreenStack(
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
-            Log.i("RNScreens", "ScreenStack.commitTransaction")
             transaction.commitNowAllowingStateLoss()
         }
     }

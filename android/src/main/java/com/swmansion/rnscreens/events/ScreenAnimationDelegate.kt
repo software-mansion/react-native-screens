@@ -30,7 +30,6 @@ class ScreenAnimationDelegate(
     override fun onAnimationStart(animation: Animator) {
         if (currentState === LifecycleState.INITIALIZED) {
             progressState()
-            Log.i("RNScreens", "AnimationDelegate.onAnimationStart")
 
             // These callbacks do not work as expected from this call site, TODO: investigate it.
             // To fix it quickly we emit required events manually
@@ -54,7 +53,6 @@ class ScreenAnimationDelegate(
         if (currentState === LifecycleState.START_DISPATCHED) {
             progressState()
             animation.removeListener(this)
-            Log.i("RNScreens", "AnimationDelegate.onAnimationEnd")
 
 //            wrapper.onViewAnimationEnd()
 

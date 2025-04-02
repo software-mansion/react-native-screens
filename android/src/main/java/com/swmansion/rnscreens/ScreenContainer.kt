@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.content.ContextWrapper
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
@@ -106,7 +105,6 @@ open class ScreenContainer(
         screen.fragmentWrapper = fragment
         screenWrappers.add(index, fragment)
         screen.container = this
-        Log.i("RNScreens", "Container adds a screen, ${screen.stackPresentation}")
         onScreenChanged()
     }
 

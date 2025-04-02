@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.bottomsheet
 
-import android.util.Log
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
@@ -145,16 +144,11 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
     // there. Tween animations have some magic way to make this work (maybe they
     // postpone the transition internally, dunno).
 
-    Log.i("RNScreens", "Determining whether screen requires enter transition postponing")
-
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED || !this.usesFormSheetPresentation()) {
-        Log.i("RNScreens", "false (new arch or not formsheet)")
         return false
     }
     // Assumes that formSheet uses content wrapper
-    val result = !this.isLaidOutOrHasCachedLayout() || this.contentWrapper?.isLaidOutOrHasCachedLayout() != true
-    Log.i("RNScreens", "$result (screen or wrapper do not have layout)")
-    return result
+    return !this.isLaidOutOrHasCachedLayout() || this.contentWrapper?.isLaidOutOrHasCachedLayout() != true
 }
 
 /**
