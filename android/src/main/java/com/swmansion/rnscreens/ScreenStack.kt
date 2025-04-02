@@ -69,7 +69,7 @@ class ScreenStack(
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
 
-    private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
+    private var childrenDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
     private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
 
     var goingForward = false
@@ -108,7 +108,7 @@ class ScreenStack(
             disappearingTransitioningChildren.add(view)
         }
         if (disappearingTransitioningChildren.isNotEmpty()) {
-            childDrawingOrderStrategy?.enable()
+            childrenDrawingOrderStrategy?.enable()
         }
         removalTransitionStarted = true
     }
@@ -119,7 +119,7 @@ class ScreenStack(
         disappearingTransitioningChildren.remove(view)
 
         if (disappearingTransitioningChildren.isEmpty()) {
-            childDrawingOrderStrategy?.disable()
+            childrenDrawingOrderStrategy?.disable()
         }
         if (removalTransitionStarted) {
             removalTransitionStarted = false
@@ -163,7 +163,7 @@ class ScreenStack(
         var visibleBottom: ScreenFragmentWrapper? = null
 
         // reset, to not use previously set strategy by mistake
-        childDrawingOrderStrategy = null
+        childrenDrawingOrderStrategy = null
 
         // Determine new first & last visible screens.
         val notDismissedWrappers =
@@ -229,7 +229,7 @@ class ScreenStack(
             // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
             // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
             // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
-            childDrawingOrderStrategy = ReverseOrder()
+            childrenDrawingOrderStrategy = ReverseOrder()
         } else if (newTop != null &&
             newTopAlreadyInStack &&
             topScreenWrapper?.isTranslucent() == true &&
@@ -247,7 +247,7 @@ class ScreenStack(
                             it.isTranslucent()
                     }.count()
             if (dismissedTransparentScreenApproxCount > 1) {
-                childDrawingOrderStrategy =
+                childrenDrawingOrderStrategy =
                     ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
             }
         }
@@ -345,7 +345,7 @@ class ScreenStack(
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
-        childDrawingOrderStrategy?.apply(drawingOps)
+        childrenDrawingOrderStrategy?.apply(drawingOps)
 
         drawAndRelease()
     }
