@@ -24,7 +24,9 @@ import {
 } from './constraints';
 import { GestureProviderProps } from '../types';
 
-const EmptyGestureHandler = Gesture.Fling();
+// The detector is disabled to work around issue with pressables
+// losing focus. See https://github.com/software-mansion/react-native-screens/pull/2819
+const EmptyGestureHandler = Gesture.Fling().enabled(false);
 
 const ScreenGestureDetector = ({
   children,

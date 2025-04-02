@@ -26,6 +26,15 @@ interface ScreenFragmentWrapper :
 
     fun onViewAnimationEnd()
 
+    // Fragment information
+
+    /**
+     * Whether this screen fragment makes it possible to see content underneath it
+     * (not fully opaque or does not fill full screen).
+     */
+    fun isTranslucent(): Boolean
+
+
     // Helpers
     fun tryGetActivity(): Activity?
 

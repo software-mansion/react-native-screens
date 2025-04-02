@@ -128,6 +128,9 @@ open class ScreenFragment :
         ScreenWindowTraits.trySetWindowTraits(screen, activity, tryGetContext())
     }
 
+    // Plain ScreenFragments can not be translucent
+    override fun isTranslucent() = false
+
     override fun tryGetActivity(): Activity? {
         activity?.let { return it }
         val context = screen.context
