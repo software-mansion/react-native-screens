@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -14,15 +13,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.animation.Animation
-import android.view.animation.AnimationSet
-import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.PixelUtil
-import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
@@ -37,6 +32,7 @@ import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.ext.recycle
+import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
@@ -472,123 +468,5 @@ class ScreenStackFragment :
             sheetDelegate = SheetDelegate(screen)
         }
         return sheetDelegate!!
-    }
-
-    private class ScreensCoordinatorLayout(
-        context: Context,
-        private val fragment: ScreenStackFragment,
-        private val pointerEventsImpl: ReactPointerEventsView,
-//    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
-    ) : CoordinatorLayout(context),
-        ReactPointerEventsView by pointerEventsImpl {
-        constructor(context: Context, fragment: ScreenStackFragment) : this(
-            context,
-            fragment,
-            PointerEventsBoxNoneImpl(),
-        )
-
-        override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
-
-        private val animationListener: Animation.AnimationListener =
-            object : Animation.AnimationListener {
-                override fun onAnimationStart(animation: Animation) {
-                    fragment.onViewAnimationStart()
-                }
-
-                override fun onAnimationEnd(animation: Animation) {
-                    fragment.onViewAnimationEnd()
-                }
-
-                override fun onAnimationRepeat(animation: Animation) {}
-            }
-
-        override fun startAnimation(animation: Animation) {
-            // For some reason View##onAnimationEnd doesn't get called for
-            // exit transitions so we explicitly attach animation listener.
-            // We also have some animations that are an AnimationSet, so we don't wrap them
-            // in another set since it causes some visual glitches when going forward.
-            // We also set the listener only when going forward, since when going back,
-            // there is already a listener for dismiss action added, which would be overridden
-            // and also this is not necessary when going back since the lifecycle methods
-            // are correctly dispatched then.
-            // We also add fakeAnimation to the set of animations, which sends the progress of animation
-            val fakeAnimation = ScreensAnimation(fragment).apply { duration = animation.duration }
-
-            if (animation is AnimationSet && !fragment.isRemoving) {
-                animation
-                    .apply {
-                        addAnimation(fakeAnimation)
-                        setAnimationListener(animationListener)
-                    }.also {
-                        super.startAnimation(it)
-                    }
-            } else {
-                AnimationSet(true)
-                    .apply {
-                        addAnimation(animation)
-                        addAnimation(fakeAnimation)
-                        setAnimationListener(animationListener)
-                    }.also {
-                        super.startAnimation(it)
-                    }
-            }
-        }
-
-        /**
-         * This method implements a workaround for RN's autoFocus functionality. Because of the way
-         * autoFocus is implemented it dismisses soft keyboard in fragment transition
-         * due to change of visibility of the view at the start of the transition. Here we override the
-         * call to `clearFocus` when the visibility of view is `INVISIBLE` since `clearFocus` triggers the
-         * hiding of the keyboard in `ReactEditText.java`.
-         */
-        override fun clearFocus() {
-            if (visibility != INVISIBLE) {
-                super.clearFocus()
-            }
-        }
-
-        override fun onLayout(
-            changed: Boolean,
-            l: Int,
-            t: Int,
-            r: Int,
-            b: Int,
-        ) {
-            super.onLayout(changed, l, t, r, b)
-
-            if (fragment.screen.usesFormSheetPresentation()) {
-                fragment.screen.onBottomSheetBehaviorDidLayout(changed)
-            }
-        }
-
-//        override fun reactTagForTouch(touchX: Float, touchY: Float): Int {
-//            throw IllegalStateException("Screen wrapper should never be asked for the view tag")
-//        }
-//
-//        override fun interceptsTouchEvent(touchX: Float, touchY: Float): Boolean {
-//            return false
-//        }
-//
-//        override fun getHitSlopRect(): Rect? {
-//            val screen: Screen = fragment.screen
-// //            left – The X coordinate of the left side of the rectangle
-// //            top – The Y coordinate of the top of the rectangle i
-// //            right – The X coordinate of the right side of the rectangle
-// //            bottom – The Y coordinate of the bottom of the rectangle
-//            return Rect(screen.x.toInt(), -screen.y.toInt(), screen.x.toInt() + screen.width, screen.y.toInt() + screen.height)
-//        }
-    }
-
-    private class ScreensAnimation(
-        private val mFragment: ScreenFragment,
-    ) : Animation() {
-        override fun applyTransformation(
-            interpolatedTime: Float,
-            t: Transformation,
-        ) {
-            super.applyTransformation(interpolatedTime, t)
-            // interpolated time should be the progress of the current transition
-            mFragment.dispatchTransitionProgressEvent(interpolatedTime, !mFragment.isResumed)
-        }
     }
 }
