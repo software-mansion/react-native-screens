@@ -61,6 +61,7 @@ function RootSheet() {
   return (
     <View style={{ flex: 1, backgroundColor: 'seagreen' }}>
       <Text>RootSheet</Text>
+      <Button title="Open TabTwo" onPress={() => navigation.navigate('TabsHost', { screen: 'TabTwo' })} />
       <Button title="Open TabThree" onPress={() => navigation.navigate('TabsHost', { screen: 'TabThree' })} />
     </View>
   );
