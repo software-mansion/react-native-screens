@@ -272,6 +272,7 @@ class ScreenStack(
         }
 
         createTransaction().let { transaction ->
+            Log.i("RNScreens", "ScreenStack.createTransaction")
             if (stackAnimation != null) {
                 transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
@@ -319,6 +320,7 @@ class ScreenStack(
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
+            Log.i("RNScreens", "ScreenStack.commitTransaction")
             transaction.commitNowAllowingStateLoss()
         }
     }
