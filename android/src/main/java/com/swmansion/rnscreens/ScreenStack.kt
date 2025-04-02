@@ -9,75 +9,13 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
+import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
+import com.swmansion.rnscreens.stack.views.ReverseFromIndex
+import com.swmansion.rnscreens.stack.views.ReverseOrder
+import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.setTweenAnimations
-import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.math.max
-
-internal interface ChildDrawingOrderStrategy {
-    /**
-     * Mutates the list of draw operations **in-place**.
-     */
-    fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>)
-
-    /**
-     * Enables the given strategy. When enabled - the strategy **might** mutate the operations
-     * list passed to `apply` method.
-     */
-    fun enable()
-
-    /**
-     * Disables the given strategy - even when `apply` is called it **must not** produce
-     * any side effect (it must not manipulate the drawing operations list passed to `apply` method).
-     */
-    fun disable()
-
-    fun isEnabled(): Boolean
-}
-
-internal abstract class ChildDrawingOrderStrategyBase(
-    var enabled: Boolean = false,
-) : ChildDrawingOrderStrategy {
-    override fun enable() {
-        enabled = true
-    }
-
-    override fun disable() {
-        enabled = false
-    }
-
-    override fun isEnabled() = enabled
-}
-
-internal class SwapLastTwo : ChildDrawingOrderStrategyBase() {
-    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
-        if (!isEnabled()) {
-            return
-        }
-        if (drawingOperations.size >= 2) {
-            Collections.swap(drawingOperations, drawingOperations.lastIndex, drawingOperations.lastIndex - 1)
-        }
-    }
-}
-
-internal class ReverseOrderInRange(
-    val range: IntRange,
-) : ChildDrawingOrderStrategyBase() {
-    override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
-        if (!isEnabled()) {
-            return
-        }
-
-        var startRange = range.start
-        var endRange = range.endInclusive
-
-        while (startRange < endRange) {
-            Collections.swap(drawingOperations, startRange, endRange)
-            startRange += 1
-            endRange -= 1
-        }
-    }
-}
 
 class ScreenStack(
     context: Context?,
@@ -88,9 +26,9 @@ class ScreenStack(
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
-    private var previousChildrenCount = 0
 
-    private var childDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
+    private var childrenDrawingOrderStrategy: ChildrenDrawingOrderStrategy? = null
+    private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
 
     var goingForward = false
 
@@ -122,14 +60,25 @@ class ScreenStack(
         }
 
     override fun startViewTransition(view: View) {
+        check(view is ScreensCoordinatorLayout) { "[RNScreens] Unexpected type of ScreenStack direct subview ${view.javaClass}" }
         super.startViewTransition(view)
-        childDrawingOrderStrategy?.enable()
+        if (view.fragment.isRemoving) {
+            disappearingTransitioningChildren.add(view)
+        }
+        if (disappearingTransitioningChildren.isNotEmpty()) {
+            childrenDrawingOrderStrategy?.enable()
+        }
         removalTransitionStarted = true
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
-        childDrawingOrderStrategy?.disable()
+
+        disappearingTransitioningChildren.remove(view)
+
+        if (disappearingTransitioningChildren.isEmpty()) {
+            childrenDrawingOrderStrategy?.disable()
+        }
         if (removalTransitionStarted) {
             removalTransitionStarted = false
             dispatchOnFinishTransitioning()
@@ -172,14 +121,17 @@ class ScreenStack(
         var visibleBottom: ScreenFragmentWrapper? = null
 
         // reset, to not use previously set strategy by mistake
-        childDrawingOrderStrategy = null
+        childrenDrawingOrderStrategy = null
 
         // Determine new first & last visible screens.
         val notDismissedWrappers =
             screenWrappers
                 .asReversed()
                 .asSequence()
-                .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
+                .filter {
+                    !dismissedWrappers.contains(it) &&
+                        it.screen.activityState !== Screen.ActivityState.INACTIVE
+                }
 
         newTop = notDismissedWrappers.firstOrNull()
         visibleBottom =
@@ -226,16 +178,16 @@ class ScreenStack(
             needsDrawReordering(newTop, stackAnimation) &&
             visibleBottom == null
         ) {
-            // When using an open animation in which two screens overlap (eg. fade_from_bottom or
-            // slide_from_bottom), we want to draw the previous screen under the new one,
-            // which is apparently not the default option. Android always draws the disappearing view
+            // When using an open animation in which screens overlap (eg. fade_from_bottom or
+            // slide_from_bottom), we want to draw the previous screens under the new one,
+            // which is apparently not the default option. Android always draws the disappearing views
             // on top of the appearing one. We then reverse the order of the views so the new screen
-            // appears on top of the previous one. You can read more about in the comment
+            // appears on top of the previous ones. You can read more about in the comment
             // for the code we use to change that behavior:
             // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
             // Note: This should not be set in case there is only a single screen in stack or animation `none` is used.
             // Atm needsDrawReordering implementation guards that assuming that first screen on stack uses `NONE` animation.
-            childDrawingOrderStrategy = SwapLastTwo()
+            childrenDrawingOrderStrategy = ReverseOrder()
         } else if (newTop != null &&
             newTopAlreadyInStack &&
             topScreenWrapper?.isTranslucent() == true &&
@@ -253,8 +205,8 @@ class ScreenStack(
                             it.isTranslucent()
                     }.count()
             if (dismissedTransparentScreenApproxCount > 1) {
-                childDrawingOrderStrategy =
-                    ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
+                childrenDrawingOrderStrategy =
+                    ReverseFromIndex(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0))
             }
         }
 
@@ -351,13 +303,7 @@ class ScreenStack(
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
-        // check the view removal is completed (by comparing the previous children count)
-        if (drawingOps.size < previousChildrenCount) {
-            childDrawingOrderStrategy = null
-        }
-        previousChildrenCount = drawingOps.size
-
-        childDrawingOrderStrategy?.apply(drawingOps)
+        childrenDrawingOrderStrategy?.apply(drawingOps)
 
         drawAndRelease()
     }
@@ -407,7 +353,7 @@ class ScreenStack(
             fragmentWrapper: ScreenFragmentWrapper,
             resolvedStackAnimation: StackAnimation?,
         ): Boolean {
-            val stackAnimation = if (resolvedStackAnimation != null) resolvedStackAnimation else fragmentWrapper.screen.stackAnimation
+            val stackAnimation = resolvedStackAnimation ?: fragmentWrapper.screen.stackAnimation
             // On Android sdk 33 and above the animation is different and requires draw reordering.
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
             // Hence, we're comparing numerical version here.
