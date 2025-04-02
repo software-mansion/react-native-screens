@@ -9,16 +9,16 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
-import com.swmansion.rnscreens.stack.views.ChildDrawingOrderStrategy
+import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.math.max
 
-internal abstract class ChildDrawingOrderStrategyBase(
+internal abstract class ChildrenDrawingOrderStrategyBase(
     var enabled: Boolean = false,
-) : ChildDrawingOrderStrategy {
+) : ChildrenDrawingOrderStrategy {
     override fun enable() {
         enabled = true
     }
@@ -30,26 +30,26 @@ internal abstract class ChildDrawingOrderStrategyBase(
     override fun isEnabled() = enabled
 }
 
-internal class ReverseOrderInRange(
-    val range: IntRange,
-) : ChildDrawingOrderStrategyBase() {
+internal class ReverseFromIndex(
+    val startIndex: Int,
+) : ChildrenDrawingOrderStrategyBase() {
     override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
         if (!isEnabled()) {
             return
         }
 
-        var startRange = range.start
-        var endRange = range.endInclusive
+        var currentLeftIndex = startIndex
+        var currentRightIndex = drawingOperations.lastIndex
 
-        while (startRange < endRange) {
-            Collections.swap(drawingOperations, startRange, endRange)
-            startRange += 1
-            endRange -= 1
+        while (currentLeftIndex < currentRightIndex) {
+            Collections.swap(drawingOperations, currentLeftIndex, currentRightIndex)
+            currentLeftIndex += 1
+            currentRightIndex -= 1
         }
     }
 }
 
-internal class ReverseOrder : ChildDrawingOrderStrategyBase() {
+internal class ReverseOrder : ChildrenDrawingOrderStrategyBase() {
     override fun apply(drawingOperations: MutableList<ScreenStack.DrawingOp>) {
         if (!isEnabled()) {
             return
@@ -69,7 +69,7 @@ class ScreenStack(
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
 
-    private var childrenDrawingOrderStrategy: ChildDrawingOrderStrategy? = null
+    private var childrenDrawingOrderStrategy: ChildrenDrawingOrderStrategy? = null
     private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
 
     var goingForward = false
@@ -248,7 +248,7 @@ class ScreenStack(
                     }.count()
             if (dismissedTransparentScreenApproxCount > 1) {
                 childrenDrawingOrderStrategy =
-                    ReverseOrderInRange(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0)..stack.lastIndex)
+                    ReverseFromIndex(max(stack.lastIndex - dismissedTransparentScreenApproxCount + 1, 0))
             }
         }
 

@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.stack.views
 
 import com.swmansion.rnscreens.ScreenStack
 
-internal interface ChildDrawingOrderStrategy {
+internal interface ChildrenDrawingOrderStrategy {
     /**
      * Mutates the list of draw operations **in-place**.
      */
