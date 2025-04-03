@@ -8,7 +8,7 @@ import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ext.parentAsView
 
-class CustomAnimationSetProvider {
+class CustomAnimatorSetProvider {
     companion object {
         fun customize(
             context: Context?,

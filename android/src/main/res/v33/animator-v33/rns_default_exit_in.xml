@@ -6,11 +6,4 @@
         android:valueFrom="1.0"
         android:valueTo="1.0"
         android:interpolator="@android:interpolator/linear"/>
-
-<!--    <objectAnimator-->
-<!--        android:propertyName="translationX"-->
-<!--        android:duration="450"-->
-<!--        android:valueFrom="-10%"-->
-<!--        android:valueTo="0"-->
-<!--        android:interpolator="@android:interpolator/fast_out_extra_slow_in"/>-->
 </set>

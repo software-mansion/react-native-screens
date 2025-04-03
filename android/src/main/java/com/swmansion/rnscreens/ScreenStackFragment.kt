@@ -26,7 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.animator.CustomAnimationSetProvider
+import com.swmansion.rnscreens.animator.CustomAnimatorSetProvider
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -266,7 +266,6 @@ class ScreenStackFragment :
         nextAnim: Int,
     ): Animator? {
         var animatorSet = AnimatorSet()
-        val dimmingDelegate = requireDimmingDelegate()
 
         if (!screen.usesFormSheetPresentation()) {
             when (nextAnim) {
@@ -276,7 +275,7 @@ class ScreenStackFragment :
                 R.animator.rns_default_enter_in,
                 -> {
                     animatorSet =
-                        CustomAnimationSetProvider.customize(
+                        CustomAnimatorSetProvider.customize(
                             context,
                             nextAnim,
                             (AnimatorInflater.loadAnimator(context, nextAnim) as AnimatorSet),
@@ -288,6 +287,8 @@ class ScreenStackFragment :
                 }
             }
         } else {
+            val dimmingDelegate = requireDimmingDelegate()
+
             if (enter) {
                 val alphaAnimator =
                     ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
