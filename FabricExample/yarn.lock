@@ -3665,7 +3665,7 @@ __metadata:
     react: "npm:19.0.0"
     react-native: "npm:0.78.0"
     react-native-gesture-handler: "npm:^2.24.0"
-    react-native-reanimated: "npm:^3.17.0"
+    react-native-reanimated: "npm:^3.17.2"
     react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:5.2.0"
     react-native-screens: "link:../"
@@ -8869,9 +8869,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:^3.17.0":
-  version: 3.17.0
-  resolution: "react-native-reanimated@npm:3.17.0"
+"react-native-reanimated@npm:^3.17.2":
+  version: 3.17.2
+  resolution: "react-native-reanimated@npm:3.17.2"
   dependencies:
     "@babel/plugin-transform-arrow-functions": "npm:^7.0.0-0"
     "@babel/plugin-transform-class-properties": "npm:^7.0.0-0"
@@ -8889,7 +8889,7 @@ __metadata:
     "@babel/core": ^7.0.0-0
     react: "*"
     react-native: "*"
-  checksum: 10c0/a3a89b790f04e344ba16ad4efc2176a33769713f979d84c1c3c486814de93748e61ac1a85c0970c3ef5f52c100641dc7e00d3296b387bbbc38c4fdaf6dca7108
+  checksum: 10c0/f4c4a6c092f9fd5da258ee8373b5450e5775b99a8ff87c9c9af2fe801403ee06d2ba4dedac38d08d8f6de95ea881863b2a47217bc29a5aa3522b16a5b050f667
   languageName: node
   linkType: hard
 

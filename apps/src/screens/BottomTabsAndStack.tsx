@@ -101,12 +101,12 @@ const NavigationTabsAndStack = (): React.JSX.Element => (
     <Tab.Screen
       name="A"
       component={AStack}
-      options={{ tabBarButtonTestID: 'bottom-tabs-A-tab' }}
+      options={{ tabBarTestID: 'bottom-tabs-A-tab' }}
     />
     <Tab.Screen
       name="B"
       component={BStack}
-      options={{ tabBarButtonTestID: 'bottom-tabs-B-tab' }}
+      options={{ tabBarTestID: 'bottom-tabs-B-tab' }}
     />
     <Tab.Screen name="C" component={CStack} />
     <Tab.Screen name="D" component={DStack} />
