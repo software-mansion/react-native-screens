@@ -28,7 +28,6 @@
     "react": "19.0.0",
     "react-native": "0.79.0-rc.4",
     "react-native-gesture-handler": "2.22.0",
-    "react-native-reanimated": "^4.0.0-nightly-20250218-e5a0cdf69",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "5.2.0",
     "react-native-screens": "link:../"
