@@ -121,8 +121,10 @@ void ScreenViewManager::UpdateProperties(
           screen->SetStackAnimation(StackAnimation::SLIDE_FROM_BOTTOM);
         } else if (propertyValue.AsString() == "fade_from_bottom") {
           screen->SetStackAnimation(StackAnimation::FADE_FROM_BOTTOM);
-        } else if (propertyValue.AsString() == "ios") {
-          screen->SetStackAnimation(StackAnimation::IOS);
+        } else if (propertyValue.AsString() == "ios_from_right") {
+          screen->SetStackAnimation(StackAnimation::IOS_FROM_RIGHT);
+        } else if (propertyValue.AsString() == "ios_from_left") {
+          screen->SetStackAnimation(StackAnimation::IOS_FROM_LEFT);
         } else {
             std::string error = "Unknown animation type: ";
             error += propertyValue.AsString();
