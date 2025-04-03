@@ -92,6 +92,8 @@ class ScreenModalFragment :
         savedInstanceState: Bundle?,
     ): View? = null
 
+    override fun isTranslucent(): Boolean = true
+
     override fun dismissFromContainer() {
         check(container is ScreenStack)
         val container = container as ScreenStack

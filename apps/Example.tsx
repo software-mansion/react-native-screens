@@ -34,13 +34,10 @@ import SearchBar from './src/screens/SearchBar';
 import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
 
-import { enableFreeze } from 'react-native-screens';
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import * as Tests from './src/tests';
-
-enableFreeze();
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
@@ -151,18 +148,34 @@ if (isTestSectionEnabled()) {
   });
 }
 
-
 const screens = Object.keys(SCREENS);
 const examples = screens.filter(name => SCREENS[name].type === 'example');
 const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
-const tests = isTestSectionEnabled() ? screens.filter(name => SCREENS[name].type === 'test') : [];
+const tests = isTestSectionEnabled()
+  ? screens
+      .filter(name => SCREENS[name].type === 'test')
+      .sort((name1, name2) => {
+        const testNumber1 = Number(name1.substring(4));
+        const testNumber2 = Number(name2.substring(4));
+
+        if (Number.isNaN(testNumber1) && Number.isNaN(testNumber2)) {
+          return 0;
+        } else if (Number.isNaN(testNumber1)) {
+          return 1;
+        } else if (Number.isNaN(testNumber2)) {
+          return -1;
+        } else {
+          return testNumber1 - testNumber2;
+        }
+      })
+  : [];
 
 type RootStackParamList = {
   Main: undefined;
   Tests: undefined;
 } & {
-    [P in keyof typeof SCREENS]: undefined;
-  };
+  [P in keyof typeof SCREENS]: undefined;
+};
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -213,17 +226,19 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           disabled={!isPlatformReady(name)}
         />
       ))}
+      {isTestSectionEnabled() && (
+        <ThemedText style={styles.label}>Tests</ThemedText>
+      )}
       {isTestSectionEnabled() &&
-        <ThemedText style={styles.label}>Tests</ThemedText>}
-      {isTestSectionEnabled() && tests.map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-tests-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-          disabled={false}
-        />
-      ))}
+        tests.map(name => (
+          <ListItem
+            key={name}
+            testID={`root-screen-tests-${name}`}
+            title={SCREENS[name].title}
+            onPress={() => navigation.navigate(name)}
+            disabled={false}
+          />
+        ))}
     </ScrollView>
   );
 };
@@ -248,8 +263,9 @@ const ExampleApp = (): React.JSX.Element => {
               <Stack.Screen
                 name="Main"
                 options={{
-                  title: `${Platform.isTV ? '📺' : '📱'
-                    } React Native Screens Examples`,
+                  title: `${
+                    Platform.isTV ? '📺' : '📱'
+                  } React Native Screens Examples`,
                 }}
                 component={MainScreen}
               />

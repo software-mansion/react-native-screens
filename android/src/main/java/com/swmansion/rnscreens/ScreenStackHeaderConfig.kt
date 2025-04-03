@@ -3,12 +3,10 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.os.Build
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
-import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -17,19 +15,25 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
+import kotlin.math.max
 
 class ScreenStackHeaderConfig(
     context: Context,
-) : FabricEnabledHeaderConfigViewGroup(context) {
+    private val pointerEventsImpl: ReactPointerEventsView
+) : FabricEnabledHeaderConfigViewGroup(context), ReactPointerEventsView by pointerEventsImpl {
+
+    constructor(context: Context): this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
+
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
-    var isHeaderTranslucent = false // named this way to avoid conflict with platform's isTranslucent
-    private var headerTopInset: Int? = null
+    var isHeaderTranslucent =
+        false // named this way to avoid conflict with platform's isTranslucent
     private var title: String? = null
     private var titleColor = 0
     private var titleFontFamily: String? = null
@@ -41,7 +45,9 @@ class ScreenStackHeaderConfig(
     private var isShadowHidden = false
     private var isDestroyed = false
     private var backButtonInCustomView = false
-    private var isTopInsetEnabled = true
+    var isTopInsetEnabled = true
+        private set
+
     private var tintColor = 0
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
@@ -69,19 +75,76 @@ class ScreenStackHeaderConfig(
             }
         }
 
+    var isTitleEmpty: Boolean = false
+
+    val preferredContentInsetStart
+        get() = defaultStartInset
+
+    val preferredContentInsetEnd
+        get() = defaultStartInset
+
+    val preferredContentInsetStartWithNavigation
+        get() =
+            // Reset toolbar insets. By default we set symmetric inset for start and end to match iOS
+            // implementation where both right and left icons are offset from the edge by default. We also
+            // reset startWithNavigation inset which corresponds to the distance between navigation icon and
+            // title. If title isn't set we clear that value few lines below to give more space to custom
+            // center-mounted views.
+            if (isTitleEmpty) {
+                0
+            } else {
+                defaultStartInsetWithNavigation
+            }
+
+    fun destroy() {
+        isDestroyed = true
+    }
+
+    /**
+     * Native toolbar should notify the header config component that it has completed its layout.
+     */
+    fun onNativeToolbarLayout(
+        toolbar: Toolbar,
+        shouldUpdateShadowStateHint: Boolean,
+    ) {
+        if (!shouldUpdateShadowStateHint) {
+            return
+        }
+
+        val isBackButtonDisplayed = toolbar.navigationIcon != null
+
+        val contentInsetStartEstimation =
+            if (isBackButtonDisplayed) {
+                toolbar.currentContentInsetStart + toolbar.paddingStart
+            } else {
+                max(toolbar.currentContentInsetStart, toolbar.paddingStart)
+            }
+
+        // Assuming that there is nothing to the left of back button here, the content
+        // offset we're interested in in ShadowTree is the `left` of the subview left.
+        // In case it is not available we fallback to approximation.
+        val contentInsetStart =
+            configSubviews.firstOrNull { it.type === ScreenStackHeaderSubview.Type.LEFT }?.left
+                ?: contentInsetStartEstimation
+
+        val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
+
+        // Note that implementation of the callee differs between architectures.
+        updateHeaderConfigState(
+            toolbar.width,
+            toolbar.height,
+            contentInsetStart,
+            contentInsetEnd,
+        )
+    }
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
         t: Int,
         r: Int,
         b: Int,
-    ) {
-        // no-op
-    }
-
-    fun destroy() {
-        isDestroyed = true
-    }
+    ) = Unit
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -90,19 +153,6 @@ class ScreenStackHeaderConfig(
         UIManagerHelper
             .getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderAttachedEvent(surfaceId, id))
-        // we want to save the top inset before the status bar can be hidden, which would resolve in
-        // inset being 0
-        if (headerTopInset == null) {
-            headerTopInset =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    rootWindowInsets.getInsets(WindowInsets.Type.systemBars()).top
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    rootWindowInsets.systemWindowInsetTop
-                } else {
-                    // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
-                    (25 * resources.displayMetrics.density).toInt()
-                }
-        }
         onUpdate()
     }
 
@@ -176,32 +226,27 @@ class ScreenStackHeaderConfig(
             screenFragment?.setToolbar(toolbar)
         }
 
-        if (isTopInsetEnabled) {
-            headerTopInset.let {
-                toolbar.setPadding(0, it ?: 0, 0, 0)
-            }
-        } else {
-            if (toolbar.paddingTop > 0) {
-                toolbar.setPadding(0, 0, 0, 0)
-            }
-        }
-
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
         val actionBar = requireNotNull(activity.supportActionBar)
+
+        // hide back button
+        actionBar.setDisplayHomeAsUpEnabled(
+            screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
+        )
+
+        // title
+        actionBar.title = title
+        if (TextUtils.isEmpty(title)) {
+            isTitleEmpty = true
+        }
 
         // Reset toolbar insets. By default we set symmetric inset for start and end to match iOS
         // implementation where both right and left icons are offset from the edge by default. We also
         // reset startWithNavigation inset which corresponds to the distance between navigation icon and
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
-        toolbar.contentInsetStartWithNavigation = defaultStartInsetWithNavigation
-        toolbar.setContentInsetsRelative(defaultStartInset, defaultStartInset)
-
-        // hide back button
-        actionBar.setDisplayHomeAsUpEnabled(
-            screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
-        )
+        toolbar.updateContentInsets()
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
         // navigation click listener. The default behavior set in the wrapper is to call into
@@ -213,15 +258,6 @@ class ScreenStackHeaderConfig(
 
         // translucent
         screenFragment?.setToolbarTranslucent(isHeaderTranslucent)
-
-        // title
-        actionBar.title = title
-        if (TextUtils.isEmpty(title)) {
-            // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
-            // views. When it is set to default it'd take up additional distance from the back button
-            // which would impact the position of custom header views rendered at the center.
-            toolbar.contentInsetStartWithNavigation = 0
-        }
 
         val titleTextView = findTitleTextViewInToolbar(toolbar)
         if (titleColor != 0) {
@@ -250,7 +286,8 @@ class ScreenStackHeaderConfig(
 
         // color
         if (tintColor != 0) {
-            toolbar.navigationIcon?.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
+            toolbar.navigationIcon?.colorFilter =
+                PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
         }
 
         // subviews
@@ -288,12 +325,14 @@ class ScreenStackHeaderConfig(
                     toolbar.title = null
                     params.gravity = Gravity.START
                 }
+
                 ScreenStackHeaderSubview.Type.RIGHT -> params.gravity = Gravity.END
                 ScreenStackHeaderSubview.Type.CENTER -> {
                     params.width = LayoutParams.MATCH_PARENT
                     params.gravity = Gravity.CENTER_HORIZONTAL
                     toolbar.title = null
                 }
+
                 else -> {}
             }
             view.layoutParams = params
@@ -402,7 +441,8 @@ class ScreenStackHeaderConfig(
 
     init {
         visibility = GONE
-        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
+        toolbar =
+            if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
         defaultStartInset = toolbar.contentInsetStart
         defaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 

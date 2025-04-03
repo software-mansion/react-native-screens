@@ -18,6 +18,19 @@ buildscript {
     }
 }
 
+// Detox repository for `com.wix:detox` dependency specified
+// in app build.gradle. This most likely does not have to be
+// specified for each project but AFAIK it does not create any conflicts.
+// See: https://github.com/wix/Detox/issues/3973#issuecomment-1459895555
+// TODO: Find out which project should have it added.
+allprojects {
+    repositories {
+        maven {
+            url("$rootDir/../node_modules/detox/Detox-android")
+        }
+    }
+}
+
 apply plugin: "com.facebook.react.rootproject"
 
 // Custom configuration. This is done in order to simplify process

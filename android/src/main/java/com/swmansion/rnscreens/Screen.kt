@@ -27,11 +27,11 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.parentAsViewGroup
-import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
@@ -40,8 +40,6 @@ class Screen(
     ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
-
-    var contentWrapper = WeakReference<ScreenContentWrapper>(null)
 
     val sheetBehavior: BottomSheetBehavior<Screen>?
         get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
@@ -103,6 +101,9 @@ class Screen(
             field = value
         }
 
+    private val isNativeStackScreen: Boolean
+        get() = container is ScreenStack
+
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
@@ -131,11 +132,9 @@ class Screen(
     ) {
         val height = bottom - top
 
-        if (isSheetFitToContents()) {
-            sheetBehavior?.let {
-                if (it.maxHeight != height) {
-                    it.maxHeight = height
-                }
+        if (usesFormSheetPresentation()) {
+            if (isSheetFitToContents()) {
+                sheetBehavior?.useSingleDetent(height)
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -153,7 +152,6 @@ class Screen(
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
         wrapper.delegate = this
-        this.contentWrapper = WeakReference(wrapper)
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -173,28 +171,41 @@ class Screen(
         r: Int,
         b: Int,
     ) {
-        if (container is ScreenStack && changed) {
+        // In case of form sheet we get layout notification a bit later, in `onBottomSheetBehaviorDidLayout`
+        // after the attached behaviour laid out this view.
+        if (changed && isNativeStackScreen && !usesFormSheetPresentation()) {
             val width = r - l
             val height = b - t
 
-            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height, t)
-            } else {
-                updateScreenSizePaper(width, height)
-            }
+            dispatchShadowStateUpdate(width, height, t)
 
-            footer?.onParentLayout(changed, l, t, r, b, container!!.height)
+            // FormSheet has no header in current model.
             notifyHeaderHeightChange(t)
-
-            if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                maybeTriggerPostponedTransition()
-            }
         }
     }
 
-    private fun maybeTriggerPostponedTransition() {
+    internal fun onBottomSheetBehaviorDidLayout(coordinatorLayoutDidChange: Boolean) {
+        if (!usesFormSheetPresentation() || !isNativeStackScreen) {
+            return
+        }
+        if (coordinatorLayoutDidChange) {
+            dispatchShadowStateUpdate(width, height, top)
+        }
+
+        footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
+
+        if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // When using form sheet presentation we want to delay enter transition **on Paper** in order
+            // to wait for initial layout from React, otherwise the animator-based animation will look
+            // glitchy. *This seems to not be needed on Fabric*.
+            triggerPostponedEnterTransitionIfNeeded()
+        }
+    }
+
+    private fun triggerPostponedEnterTransitionIfNeeded() {
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
+            // This will trigger enter transition only if one was requested by ScreenStack
             fragment?.startPostponedEnterTransition()
         }
     }
@@ -214,8 +225,26 @@ class Screen(
         )
     }
 
+    /**
+     * @param offsetY ignored on old architecture
+     */
+    private fun dispatchShadowStateUpdate(
+        width: Int,
+        height: Int,
+        offsetY: Int,
+    ) {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateScreenSizeFabric(width, height, offsetY)
+        } else {
+            updateScreenSizePaper(width, height)
+        }
+    }
+
     val headerConfig: ScreenStackHeaderConfig?
         get() = children.find { it is ScreenStackHeaderConfig } as? ScreenStackHeaderConfig
+
+    val contentWrapper: ScreenContentWrapper?
+        get() = children.find { it is ScreenContentWrapper } as? ScreenContentWrapper
 
     /**
      * While transitioning this property allows to optimize rendering behavior on Android and provide
@@ -237,7 +266,10 @@ class Screen(
         )
     }
 
-    fun isTransparent(): Boolean =
+    /**
+     * Whether this screen allows to see the content underneath it.
+     */
+    fun isTranslucent(): Boolean =
         when (stackPresentation) {
             StackPresentation.TRANSPARENT_MODAL,
             StackPresentation.FORM_SHEET,
@@ -275,7 +307,7 @@ class Screen(
             throw IllegalStateException("[RNScreens] activityState can only progress in NativeStack")
         }
         this.activityState = activityState
-        container?.notifyChildUpdate()
+        container?.onChildUpdate()
     }
 
     fun setScreenOrientation(screenOrientation: String?) {
@@ -482,7 +514,19 @@ class Screen(
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
-    internal fun notifySheetDetentChange(
+    internal fun onSheetDetentChanged(
+        detentIndex: Int,
+        isStable: Boolean,
+    ) {
+        dispatchSheetDetentChanged(detentIndex, isStable)
+        // There is no need to update shadow state for transient sheet states -
+        // we are unsure of the exact sheet position anyway.
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
+            updateScreenSizeFabric(width, height, top)
+        }
+    }
+
+    private fun dispatchSheetDetentChanged(
         detentIndex: Int,
         isStable: Boolean,
     ) {
@@ -571,3 +615,5 @@ class Screen(
         const val SHEET_FIT_TO_CONTENTS = -1.0
     }
 }
+
+internal fun View.asScreen() = this as Screen

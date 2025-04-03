@@ -36,14 +36,14 @@ interface ViewConfig extends View {
   viewConfig: {
     validAttributes: {
       style: {
-        display: boolean;
+        display: boolean | null;
       };
     };
   };
   _viewConfig: {
     validAttributes: {
       style: {
-        display: boolean;
+        display: boolean | null;
       };
     };
   };
@@ -213,15 +213,23 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         sheetInitialDetentIndex,
         resolvedSheetAllowedDetents.length - 1,
       );
-      // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens
-      const AnimatedScreen =
-        Platform.OS === 'android' ||
-        stackPresentation === undefined ||
-        stackPresentation === 'push' ||
-        stackPresentation === 'containedModal' ||
-        stackPresentation === 'containedTransparentModal'
-          ? AnimatedNativeScreen
-          : AnimatedNativeModalScreen;
+
+      // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens (there is a need for different
+      // shadow nodes).
+      const shouldUseModalScreenComponent = Platform.select({
+        ios: !(
+          stackPresentation === undefined ||
+          stackPresentation === 'push' ||
+          stackPresentation === 'containedModal' ||
+          stackPresentation === 'containedTransparentModal'
+        ),
+        android: false,
+        default: false,
+      });
+
+      const AnimatedScreen = shouldUseModalScreenComponent
+        ? AnimatedNativeModalScreen
+        : AnimatedNativeScreen;
 
       let {
         // Filter out active prop in this case because it is unused and
@@ -257,16 +265,18 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       }
 
       const handleRef = (ref: ViewConfig) => {
+        // Workaround is necessary to prevent React Native from hiding frozen screens.
+        // See this PR: https://github.com/grahammendick/navigation/pull/860
         if (ref?.viewConfig?.validAttributes?.style) {
           ref.viewConfig.validAttributes.style = {
             ...ref.viewConfig.validAttributes.style,
-            display: false,
+            display: null,
           };
           setRef(ref);
         } else if (ref?._viewConfig?.validAttributes?.style) {
           ref._viewConfig.validAttributes.style = {
             ...ref._viewConfig.validAttributes.style,
-            display: false,
+            display: null,
           };
           setRef(ref);
         }

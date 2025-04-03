@@ -1,7 +1,8 @@
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Button, FlatList, ScrollView, Text, TextInput, View, Platform } from 'react-native';
+import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
+import PressableWithFeedback from '../shared/PressableWithFeedback';
 
 type ItemData = {
   id: number,
@@ -12,6 +13,7 @@ type RouteParamList = {
   Home: undefined;
   Second: undefined;
   FormSheet: undefined;
+  SecondFormSheet: undefined;
   FormSheetWithFlatList: undefined;
   FormSheetWithScrollView: undefined;
 };
@@ -34,6 +36,11 @@ function Home({ navigation }: RouteProps<'Home'>) {
       <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
       <Button title="Open sheet with FlatList" onPress={() => navigation.navigate('FormSheetWithFlatList')} />
       <Button title="Open sheet with ScrollView" onPress={() => navigation.navigate('FormSheetWithScrollView')} />
+      <PressableWithFeedback>
+        <View style={{ alignItems: 'center', height: 40, justifyContent: 'center' }}>
+          <Text>Pressable</Text>
+        </View>
+      </PressableWithFeedback>
     </View>
   );
 }
@@ -54,9 +61,35 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
       <View style={{ paddingTop: 20 }}>
         <Button title="Go back" onPress={() => navigation.goBack()} />
         <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
+        <Button title="Open SecondFormSheet" onPress={() => navigation.navigate('SecondFormSheet')} />
+        <PressableWithFeedback>
+          <View style={{ alignItems: 'center', height: 40, justifyContent: 'center' }}>
+            <Text>Pressable</Text>
+          </View>
+        </PressableWithFeedback>
       </View>
       <View style={{ alignItems: 'center' }}>
         <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
+      </View>
+    </View>
+  );
+}
+
+function SecondFormSheet({ navigation }: RouteProps<'SecondFormSheet'>) {
+  return (
+    // When using `fitToContents` you can't use flex: 1. It is you who must provide
+    // the content size - you can't rely on parent size here.
+    <View style={{ backgroundColor: 'lightgreen', flex: undefined }}>
+      <View style={{ paddingTop: 20 }}>
+        <Button title="Go back" onPress={() => navigation.goBack()} />
+        <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
+        <Button title="Pop to top" onPress={() => navigation.popToTop()} />
+      </View>
+      <View style={{ alignItems: 'center' }}>
+        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
+      </View>
+      <View style={{ backgroundColor: 'green', height: 500 }}>
+        <Text>Additional content</Text>
       </View>
     </View>
   );
@@ -118,6 +151,7 @@ function FormSheetWithScrollView() {
   );
 }
 
+// @ts-ignore // uncomment the usage down below if needed
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FormSheetFooter() {
   return (
@@ -138,6 +172,18 @@ export default function App() {
           presentation: 'formSheet',
           sheetAllowedDetents: [0.4, 0.75],
           //sheetAllowedDetents: 'fitToContents',
+          sheetLargestUndimmedDetentIndex: 'none',
+          sheetCornerRadius: 8,
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: 'lightblue',
+          },
+          //unstable_sheetFooter: FormSheetFooter,
+        }} />
+        <Stack.Screen name="SecondFormSheet" component={SecondFormSheet} options={{
+          presentation: 'formSheet',
+          //sheetAllowedDetents: [0.4, 0.75],
+          sheetAllowedDetents: 'fitToContents',
           sheetLargestUndimmedDetentIndex: 'none',
           sheetCornerRadius: 8,
           headerShown: false,

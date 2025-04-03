@@ -34,17 +34,21 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
         shadowNode.getState());
     auto stateData = state->getData();
 
-    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(stateData.frameSize);
 #ifdef ANDROID
+    if (stateData.frameSize.width != 0) {
+      layoutableShadowNode.setSize({stateData.frameSize.width, YGUndefined});
       layoutableShadowNode.setPadding({
           stateData.paddingStart,
           0,
           stateData.paddingEnd,
           0,
       });
-#endif // ANDROID
     }
+#else
+    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+      layoutableShadowNode.setSize(stateData.frameSize);
+    }
+#endif // ANDROID
 
     ConcreteComponentDescriptor::adopt(shadowNode);
 #if !defined(ANDROID) && !defined(NDEBUG)

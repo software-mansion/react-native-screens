@@ -30,7 +30,7 @@ class ScreenStackViewManager :
         child: View,
         index: Int,
     ) {
-        require(child is Screen) { "Attempt attach child that is not of type RNScreen" }
+        require(child is Screen) { "Attempt attach child that is not of type Screen" }
         NativeProxy.addScreenToMap(child.id, child)
         parent.addScreen(child, index)
     }
@@ -61,6 +61,7 @@ class ScreenStackViewManager :
         index: Int,
     ): View = parent.getScreenAt(index)
 
+    // Old architecture only.
     override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreensShadowNode(context)
 
     override fun needsCustomLayoutForChildren() = true

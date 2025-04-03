@@ -27,7 +27,8 @@ export type StackPresentationTypes =
   | 'containedModal'
   | 'containedTransparentModal'
   | 'fullScreenModal'
-  | 'formSheet';
+  | 'formSheet'
+  | 'pageSheet';
 export type StackAnimationTypes =
   | 'default'
   | 'fade'
@@ -425,6 +426,7 @@ export interface ScreenProps extends ViewProps {
    * - "containedTransparentModal" – will use "UIModalPresentationOverCurrentContext" modal style on iOS and will fallback to "transparentModal" on Android.
    * - "fullScreenModal" – will use "UIModalPresentationFullScreen" modal style on iOS and will fallback to "modal" on Android.
    * - "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS, on Android this will use Material BottomSheetBehaviour. On Android neested stack rendering is not yet supported.
+   * - "pageSheet" – will use "UIModalPresentationPageSheet" modal style on iOS and will fallback to "modal" on Android.
    */
   stackPresentation?: StackPresentationTypes;
   /**
@@ -544,6 +546,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   backTitleFontSize?: number;
   /**
    * Whether the back button title should be visible or not. Defaults to `true`.
+   *
+   * When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `disableBackButtonMenu`.
+   * For `backTitle` it works only in back button menu.
+   *
    * @platform ios
    */
   backTitleVisible?: boolean;
@@ -570,11 +576,13 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   disableBackButtonMenu?: boolean;
   /**
-   * How the back button behaves by default (when not customized). Available on iOS>=14, and is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set.
-   * The following values are currently supported (they correspond to https://developer.apple.com/documentation/uikit/uinavigationitembackbuttondisplaymode?language=objc):
-   * - "default" – show given back button previous controller title, system generic or just icon based on available space
-   * - "generic" – show given system generic or just icon based on available space
-   * - "minimal" – show just an icon
+   * How the back button behaves. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu`, `backTitle` and `backTitleVisible=false` is set.
+   * The following values are currently supported (they correspond to [UINavigationItemBackButtonDisplayMode](https://developer.apple.com/documentation/uikit/uinavigationitembackbuttondisplaymode?language=objc)):
+   *
+   * - `default` – show given back button previous controller title, system generic or just icon based on available space
+   * - `generic` – show given system generic or just icon based on available space
+   * - `minimal` – show just an icon
+   *
    * @platform ios
    */
   backButtonDisplayMode?: BackButtonDisplayMode;
