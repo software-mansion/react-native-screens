@@ -4,46 +4,24 @@
 #include "winrt/Microsoft.ReactNative.h"
 
 namespace winrt::RNScreens::implementation {
-
-class ScreenViewManager
+class SearchBarViewManager
     : public winrt::implements<
-          ScreenViewManager,
-          winrt::Microsoft::ReactNative::IViewManager,
-          winrt::Microsoft::ReactNative::IViewManagerRequiresNativeLayout,
-          winrt::Microsoft::ReactNative::IViewManagerWithChildren,
-          winrt::Microsoft::ReactNative::IViewManagerWithReactContext,
-          winrt::Microsoft::ReactNative::IViewManagerWithNativeProperties,
-          winrt::Microsoft::ReactNative::
-              IViewManagerWithExportedEventTypeConstants,
-          winrt::Microsoft::ReactNative::IViewManagerWithCommands> {
+        SearchBarViewManager,
+        winrt::Microsoft::ReactNative::IViewManager,
+        winrt::Microsoft::ReactNative::IViewManagerWithNativeProperties,
+        winrt::Microsoft::ReactNative::IViewManagerWithCommands,
+        winrt::Microsoft::ReactNative::IViewManagerWithExportedEventTypeConstants,
+        winrt::Microsoft::ReactNative::IViewManagerRequiresNativeLayout,
+        winrt::Microsoft::ReactNative::IViewManagerWithReactContext> {
  public:
-  ScreenViewManager() = default;
+  SearchBarViewManager() = default;
 
   // IViewManager
-  virtual winrt::hstring Name() noexcept;
+  winrt::hstring Name() noexcept;
   winrt::Windows::UI::Xaml::FrameworkElement CreateView() noexcept;
 
   // IViewManagerRequiresNativeLayout
   bool RequiresNativeLayout();
-
-  // IViewManagerWithChildren
-  void AddView(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      winrt::Windows::UI::Xaml::UIElement child,
-      int64_t index);
-  void RemoveAllChildren(winrt::Windows::UI::Xaml::FrameworkElement parent);
-  void RemoveChildAt(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      int64_t index);
-  void ReplaceChild(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      winrt::Windows::UI::Xaml::UIElement oldChild,
-      winrt::Windows::UI::Xaml::UIElement newChild);
-
-  // IViewManagerWithReactContext
-  winrt::Microsoft::ReactNative::IReactContext ReactContext() noexcept;
-  void ReactContext(
-      winrt::Microsoft::ReactNative::IReactContext reactContext) noexcept;
 
   // IViewManagerWithNativeProperties
   winrt::Windows::Foundation::Collections::IMapView<
@@ -62,6 +40,7 @@ class ScreenViewManager
   winrt::Microsoft::ReactNative::ConstantProviderDelegate
   ExportedCustomDirectEventTypeConstants() noexcept;
 
+
   // IViewManagerWithCommands
   winrt::Windows::Foundation::Collections::IVectorView<winrt::hstring>
   Commands() noexcept;
@@ -71,6 +50,11 @@ class ScreenViewManager
       winrt::hstring const &commandId,
       winrt::Microsoft::ReactNative::IJSValueReader const
           &commandArgsReader) noexcept;
+
+  // IViewManagerWithReactContext
+  winrt::Microsoft::ReactNative::IReactContext ReactContext() noexcept;
+  void ReactContext(
+      winrt::Microsoft::ReactNative::IReactContext reactContext) noexcept;
 
  private:
   winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};

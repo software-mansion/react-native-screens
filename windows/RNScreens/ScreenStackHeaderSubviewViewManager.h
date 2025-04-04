@@ -4,23 +4,21 @@
 #include "winrt/Microsoft.ReactNative.h"
 
 namespace winrt::RNScreens::implementation {
-
-class ScreenViewManager
+class ScreenStackHeaderSubviewViewManager
     : public winrt::implements<
-          ScreenViewManager,
-          winrt::Microsoft::ReactNative::IViewManager,
-          winrt::Microsoft::ReactNative::IViewManagerRequiresNativeLayout,
-          winrt::Microsoft::ReactNative::IViewManagerWithChildren,
-          winrt::Microsoft::ReactNative::IViewManagerWithReactContext,
-          winrt::Microsoft::ReactNative::IViewManagerWithNativeProperties,
-          winrt::Microsoft::ReactNative::
-              IViewManagerWithExportedEventTypeConstants,
-          winrt::Microsoft::ReactNative::IViewManagerWithCommands> {
+        ScreenStackHeaderSubviewViewManager,
+        winrt::Microsoft::ReactNative::IViewManager,
+        winrt::Microsoft::ReactNative::IViewManagerWithNativeProperties,
+        winrt::Microsoft::ReactNative::IViewManagerWithCommands,
+        winrt::Microsoft::ReactNative::IViewManagerWithChildren,
+        winrt::Microsoft::ReactNative::IViewManagerWithExportedEventTypeConstants,
+        winrt::Microsoft::ReactNative::IViewManagerRequiresNativeLayout,
+        winrt::Microsoft::ReactNative::IViewManagerWithReactContext> {
  public:
-  ScreenViewManager() = default;
+  ScreenStackHeaderSubviewViewManager() = default;
 
   // IViewManager
-  virtual winrt::hstring Name() noexcept;
+  winrt::hstring Name() noexcept;
   winrt::Windows::UI::Xaml::FrameworkElement CreateView() noexcept;
 
   // IViewManagerRequiresNativeLayout
@@ -40,11 +38,6 @@ class ScreenViewManager
       winrt::Windows::UI::Xaml::UIElement oldChild,
       winrt::Windows::UI::Xaml::UIElement newChild);
 
-  // IViewManagerWithReactContext
-  winrt::Microsoft::ReactNative::IReactContext ReactContext() noexcept;
-  void ReactContext(
-      winrt::Microsoft::ReactNative::IReactContext reactContext) noexcept;
-
   // IViewManagerWithNativeProperties
   winrt::Windows::Foundation::Collections::IMapView<
       winrt::hstring,
@@ -62,6 +55,7 @@ class ScreenViewManager
   winrt::Microsoft::ReactNative::ConstantProviderDelegate
   ExportedCustomDirectEventTypeConstants() noexcept;
 
+
   // IViewManagerWithCommands
   winrt::Windows::Foundation::Collections::IVectorView<winrt::hstring>
   Commands() noexcept;
@@ -71,6 +65,11 @@ class ScreenViewManager
       winrt::hstring const &commandId,
       winrt::Microsoft::ReactNative::IJSValueReader const
           &commandArgsReader) noexcept;
+
+  // IViewManagerWithReactContext
+  winrt::Microsoft::ReactNative::IReactContext ReactContext() noexcept;
+  void ReactContext(
+      winrt::Microsoft::ReactNative::IReactContext reactContext) noexcept;
 
  private:
   winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};

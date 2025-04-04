@@ -1,11 +1,11 @@
 #pragma once
 
 namespace winrt::RNScreens::implementation {
-class ScreenStackHeaderConfig
+class ScreenStackHeaderSubview
     : public winrt::Windows::UI::Xaml::Controls::StackPanelT<
-          ScreenStackHeaderConfig> {
+          ScreenStackHeaderSubview> {
  public:
-  ScreenStackHeaderConfig(
+  ScreenStackHeaderSubview(
       winrt::Microsoft::ReactNative::IReactContext reactContext);
 
   void addView(winrt::Windows::UI::Xaml::UIElement element);
@@ -17,6 +17,7 @@ class ScreenStackHeaderConfig
 
   winrt::Windows::Foundation::Collections::IVector<Windows::UI::Xaml::UIElement>
       m_children;
+
  private:
   winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
 };

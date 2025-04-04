@@ -17,8 +17,13 @@
     <ClCompile Include="RNScreens.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenStackHeaderConfigViewManager.cpp" />
+    <ClCompile Include="ScreenStackHeaderSubviewViewManager.cpp" />
+    <ClCompile Include="SearchBarViewManager.cpp" />
+    <ClCompile Include="ModalScreenViewManager.cpp" />
     <ClCompile Include="ScreenViewManager.cpp" />
     <ClCompile Include="ScreenStackHeaderConfig.cpp" />
+    <ClCompile Include="ScreenStackHeaderSubview.cpp" />
+    <ClCompile Include="SearchBar.cpp" />
     <ClCompile Include="ScreenStackViewManager.cpp" />
     <ClCompile Include="ScreenStack.cpp" />
     <ClCompile Include="ScreenContainerViewManager.cpp" />
@@ -31,8 +36,13 @@
     <ClInclude Include="RNScreens.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenStackHeaderConfigViewManager.h" />
+    <ClInclude Include="ScreenStackHeaderSubviewViewManager.h" />
+    <ClInclude Include="SearchBarViewManager.h" />
+    <ClInclude Include="ModalScreenViewManager.h" />
     <ClInclude Include="ScreenViewManager.h" />
     <ClInclude Include="ScreenStackHeaderConfig.h" />
+    <ClInclude Include="ScreenStackHeaderSubview.h" />
+    <ClInclude Include="SearchBar.h" />
     <ClInclude Include="ScreenStackViewManager.h" />
     <ClInclude Include="ScreenStack.h" />
     <ClInclude Include="ScreenContainer.h" />
