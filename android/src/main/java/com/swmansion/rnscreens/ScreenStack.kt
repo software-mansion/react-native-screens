@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -213,6 +214,7 @@ class ScreenStack(
         }
 
         createTransaction().let { transaction ->
+            Log.i("HT", "ScreenStack createTransaction")
             if (stackAnimation != null) {
                 transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
@@ -259,6 +261,7 @@ class ScreenStack(
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
+            Log.i("HT", "ScreenStack commitTransaction")
             transaction.commitNowAllowingStateLoss()
         }
     }
