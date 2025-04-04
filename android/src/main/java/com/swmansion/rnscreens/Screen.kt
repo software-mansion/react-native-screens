@@ -133,6 +133,8 @@ class Screen(
     ) {
         val height = bottom - top
 
+        Log.i("HT", "Screen [$id] onContentWrapperLayout - $height")
+
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents()) {
                 sheetBehavior?.useSingleDetent(height)
@@ -140,11 +142,13 @@ class Screen(
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 // On old architecture we delay enter transition in order to wait for initial frame.
+                Log.i("HT", "Screen [$id] onContentWrapperLayout - request transition trigger")
                 shouldTriggerPostponedTransitionAfterLayout = true
                 val parent = parentAsViewGroup()
                 if (parent != null && !parent.isInLayout) {
                     // There are reported cases (irreproducible) when Screen is not laid out after
                     // maxHeight is set on behaviour.
+                    Log.i("HT", "Screen [$id] onContentWrapperLayout - request parent layout")
                     parent.requestLayout()
                 }
             }
@@ -172,6 +176,7 @@ class Screen(
         r: Int,
         b: Int,
     ) {
+        Log.i("HT", "Screen [$id] received layout ${b - t}")
         // In case of form sheet we get layout notification a bit later, in `onBottomSheetBehaviorDidLayout`
         // after the attached behaviour laid out this view.
         if (changed && isNativeStackScreen && !usesFormSheetPresentation()) {
@@ -194,6 +199,7 @@ class Screen(
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
+        Log.i("HT", "Screen [$id] behavior layout")
 
         if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             // When using form sheet presentation we want to delay enter transition **on Paper** in order
@@ -207,6 +213,7 @@ class Screen(
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
+            Log.i("HT", "Screen [$id] triggering postponed transition")
             fragment?.startPostponedEnterTransition()
         }
     }
