@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const RootStack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
+const TabThreeStack = createNativeStackNavigator();
 
 function RootStackHost() {
   return (
@@ -27,6 +28,12 @@ function RootStackHost() {
 }
 
 function TabsHost() {
+  const navigation = useNavigation();
+
+  React.useEffect(() => {
+    navigation.preload('RootSheet');
+  }, [navigation]);
+
   return (
     <Tabs.Navigator>
       <Tabs.Screen name="TabOne" component={TabOne} />
@@ -63,6 +70,10 @@ function RootSheet() {
       <Text>RootSheet</Text>
       <Button title="Open TabTwo" onPress={() => navigation.navigate('TabsHost', { screen: 'TabTwo' })} />
       <Button title="Open TabThree" onPress={() => navigation.navigate('TabsHost', { screen: 'TabThree' })} />
+      <Button title="Open TabThreeStackScreenOne" onPress={() => navigation.navigate('TabsHost', { screen: 'TabThree', params: { screen: 'TabThreeStackScreenOne' } })} />
+      <Button title="Open TabThreeStackScreenTwo" onPress={() => navigation.navigate('TabsHost', { screen: 'TabThree', params: { screen: 'TabThreeStackScreenTwo' } })} />
+      <Button title="Open TabThreeStackScreenOne OS" onPress={() => navigation.navigate('TabThreeStackScreenOne')} />
+      <Button title="Open TabThreeStackScreenTwo OS" onPress={() => navigation.navigate('TabThreeStackScreenTwo')} />
     </View>
   );
 }
@@ -84,16 +95,45 @@ function TabTwo() {
 }
 
 function TabThree() {
+  // return (
+  //   <View style={{ flex: 1, backgroundColor: 'darkgreen' }}>
+  //     <Text>TabThree</Text>
+  //   </View>
+  // );
   return (
-    <View style={{ flex: 1, backgroundColor: 'darkgreen' }}>
-      <Text>TabThree</Text>
+    <TabThreeStackHost />
+  );
+}
+
+function TabThreeStackScreenOne() {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'orange' }}>
+      <Text>TabThreeStackScreenOne</Text>
     </View>
+  );
+}
+
+function TabThreeStackScreenTwo() {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
+      <Text>TabThreeStackScreenTwo</Text>
+    </View>
+  );
+}
+
+function TabThreeStackHost() {
+  return (
+    <TabThreeStack.Navigator>
+      <TabThreeStack.Screen name="TabThreeStackScreenOne" component={TabThreeStackScreenOne} />
+      <TabThreeStack.Screen name="TabThreeStackScreenTwo" component={TabThreeStackScreenTwo} />
+    </TabThreeStack.Navigator>
+
   );
 }
 
 function App() {
   return (
-    <NavigationContainer>
+    <NavigationContainer navigationInChildEnabled>
       <RootStackHost />
     </NavigationContainer>
   );
