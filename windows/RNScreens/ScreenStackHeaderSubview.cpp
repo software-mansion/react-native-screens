@@ -24,11 +24,11 @@ void ScreenStackHeaderSubview::addView(winrt::Windows::UI::Xaml::UIElement eleme
 }
 
 void ScreenStackHeaderSubview::removeAllChildren() {
-//   Children().Clear();
+  Children().Clear();
 }
 
 void ScreenStackHeaderSubview::removeChildAt(int64_t index) {
-//   Children().RemoveAt(static_cast<uint32_t>(index));
+  Children().RemoveAt(static_cast<uint32_t>(index));
 }
 
 void ScreenStackHeaderSubview::replaceChild(
