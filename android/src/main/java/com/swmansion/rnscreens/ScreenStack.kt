@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -213,6 +214,7 @@ class ScreenStack(
         }
 
         createTransaction().let { transaction ->
+            Log.i("HT", "ScreenStack createTransaction")
             if (stackAnimation != null) {
                 transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
             }
@@ -226,14 +228,18 @@ class ScreenStack(
                         dismissedWrappers.contains(
                             wrapper,
                         )
-                }.forEach { wrapper -> transaction.remove(wrapper.fragment) }
+                }.forEach { wrapper ->
+                    Log.i("HT", "ScreenStack remove 1 ${wrapper.fragment.id}")
+                    transaction.remove(wrapper.fragment) }
 
             // Remove all screens underneath visibleBottom && these marked for preload, but keep newTop.
             screenWrappers
                 .asSequence()
                 .takeWhile { it !== visibleBottom }
                 .filter { (it !== newTop && !dismissedWrappers.contains(it)) || it.screen.activityState === Screen.ActivityState.INACTIVE }
-                .forEach { wrapper -> transaction.remove(wrapper.fragment) }
+                .forEach { wrapper ->
+                    Log.i("HT", "ScreenStack remove 2 ${wrapper.fragment.id}")
+                    transaction.remove(wrapper.fragment) }
 
             // attach screens that just became visible
             if (visibleBottom != null && !visibleBottom.fragment.isAdded) {
@@ -243,14 +249,17 @@ class ScreenStack(
                     .dropWhile { it !== visibleBottom } // ignore all screens beneath the visible bottom
                     .forEach { wrapper ->
                         // TODO: It should be enough to dispatch this on commit action once.
+                        Log.i("HT", "ScreenStack add 1 ${wrapper.fragment.id}")
                         transaction.add(id, wrapper.fragment).runOnCommit {
                             top?.screen?.bringToFront()
                         }
                     }
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 if (newTop.screen.requiresEnterTransitionPostponing()) {
+                    Log.i("HT", "ScreenStack postponeEnterTransition of ${newTop.screen.id}")
                     newTop.fragment.postponeEnterTransition()
                 }
+                Log.i("HT", "ScreenStack add 2 ${newTop.screen.id}")
                 transaction.add(id, newTop.fragment)
             }
 
@@ -259,6 +268,7 @@ class ScreenStack(
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
+            Log.i("HT", "ScreenStack commitTransaction")
             transaction.commitNowAllowingStateLoss()
         }
     }
