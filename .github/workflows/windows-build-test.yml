@@ -72,5 +72,5 @@ jobs:
           Copy-Item -Path ".\package\*" -Destination ".\WindowsExample\node_modules\react-native-screens"
 
       - name: Build app
-        working-directory: WindowsExample
+        working-directory: WindowsExample/windows
         run: npx react-native run-windows --logging --no-packager --no-deploy --no-autolink
