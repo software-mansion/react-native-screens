@@ -19,7 +19,6 @@ class CustomAnimatorSetProvider {
             val finalAnimatorSet = AnimatorSet()
             val screenParent = screen.parentAsView()
 
-            // does this generalize well? parent has 0 width :(
             val screenWidth = screen.measuredWidth
 
             when (animator) {
@@ -66,6 +65,9 @@ class CustomAnimatorSetProvider {
                                 interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
                             },
                     )
+                }
+                R.animator.rns_no_animation_20 -> {
+                    finalAnimatorSet.play(initialAnimatorSet)
                 }
             }
             return finalAnimatorSet

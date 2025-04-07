@@ -18,8 +18,8 @@ internal fun FragmentTransaction.setTweenAnimations(
 
             StackAnimation.NONE ->
                 this.setCustomAnimations(
-                    R.anim.rns_no_animation_20,
-                    R.anim.rns_no_animation_20,
+                    R.animator.rns_no_animation_20,
+                    R.animator.rns_no_animation_20,
                 )
 
             StackAnimation.FADE ->
@@ -65,8 +65,8 @@ internal fun FragmentTransaction.setTweenAnimations(
 
             StackAnimation.NONE ->
                 this.setCustomAnimations(
-                    R.anim.rns_no_animation_20,
-                    R.anim.rns_no_animation_20,
+                    R.animator.rns_no_animation_20,
+                    R.animator.rns_no_animation_20,
                 )
 
             StackAnimation.FADE ->
