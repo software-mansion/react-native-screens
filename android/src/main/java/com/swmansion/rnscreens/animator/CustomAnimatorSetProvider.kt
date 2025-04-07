@@ -19,7 +19,12 @@ class CustomAnimatorSetProvider {
             val finalAnimatorSet = AnimatorSet()
             val screenParent = screen.parentAsView()
 
+            // TODO: verify that these values can be used to get width/height
             val screenWidth = screen.measuredWidth
+
+            // TODO: first value available when entering, second when exiting; last fallback
+            //       is off by header's height
+            val screenHeight = screen.container?.height ?: screenParent?.height ?: screen.measuredHeight
 
             when (animator) {
                 R.animator.rns_default_enter_in -> {
@@ -72,7 +77,7 @@ class CustomAnimatorSetProvider {
                             .ofFloat(screenParent, "translationX", 0.0f, -screenWidth.toFloat())
                             .apply {
                                 duration = 400
-                            }
+                            },
                     )
                 }
                 R.animator.rns_slide_in_from_left -> {
@@ -81,7 +86,7 @@ class CustomAnimatorSetProvider {
                             .ofFloat(screenParent, "translationX", -screenWidth.toFloat(), 0.0f)
                             .apply {
                                 duration = 400
-                            }
+                            },
                     )
                 }
                 R.animator.rns_slide_out_to_right -> {
@@ -90,7 +95,7 @@ class CustomAnimatorSetProvider {
                             .ofFloat(screenParent, "translationX", 0.0f, screenWidth.toFloat())
                             .apply {
                                 duration = 400
-                            }
+                            },
                     )
                 }
                 R.animator.rns_slide_in_from_right -> {
@@ -99,12 +104,32 @@ class CustomAnimatorSetProvider {
                             .ofFloat(screenParent, "translationX", screenWidth.toFloat(), 0.0f)
                             .apply {
                                 duration = 400
-                            }
+                            },
+                    )
+                }
+                R.animator.rns_slide_out_to_bottom -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationY", 0.0f, screenHeight.toFloat())
+                            .apply {
+                                duration = 400
+                            },
+                    )
+                }
+                R.animator.rns_slide_in_from_bottom -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationY", screenHeight.toFloat(), 0.0f)
+                            .apply {
+                                duration = 400
+                            },
                     )
                 }
                 R.animator.rns_no_animation_20,
                 R.animator.rns_fade_out,
-                R.animator.rns_fade_in -> {
+                R.animator.rns_fade_in,
+                R.animator.rns_no_animation_medium,
+                -> {
                     finalAnimatorSet.play(initialAnimatorSet)
                 }
             }

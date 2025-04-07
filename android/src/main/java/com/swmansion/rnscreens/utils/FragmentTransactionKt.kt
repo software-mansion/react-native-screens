@@ -40,8 +40,8 @@ internal fun FragmentTransaction.setTweenAnimations(
                 )
             StackAnimation.SLIDE_FROM_BOTTOM ->
                 this.setCustomAnimations(
-                    R.anim.rns_slide_in_from_bottom,
-                    R.anim.rns_no_animation_medium,
+                    R.animator.rns_slide_in_from_bottom,
+                    R.animator.rns_no_animation_medium,
                 )
             StackAnimation.FADE_FROM_BOTTOM -> this.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
             StackAnimation.IOS_FROM_RIGHT ->
@@ -87,8 +87,8 @@ internal fun FragmentTransaction.setTweenAnimations(
                 )
             StackAnimation.SLIDE_FROM_BOTTOM ->
                 this.setCustomAnimations(
-                    R.anim.rns_no_animation_medium,
-                    R.anim.rns_slide_out_to_bottom,
+                    R.animator.rns_no_animation_medium,
+                    R.animator.rns_slide_out_to_bottom,
                 )
             StackAnimation.FADE_FROM_BOTTOM -> this.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
             StackAnimation.IOS_FROM_RIGHT ->
