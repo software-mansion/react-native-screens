@@ -40,6 +40,11 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Install react-native-windows dev dependencies
+        run: |
+          Set-ExecutionPolicy Unrestricted -Scope Process -Force;
+          iex (New-Object System.Net.WebClient).DownloadString('https://aka.ms/rnw-vs2022-deps.ps1');
+
       - name: Install dependencies
         run: yarn
 
@@ -52,7 +57,6 @@ jobs:
       - name: Unpack
         run: tar -xzf (Get-ChildItem -Path .\*.tgz)
 
-      # will most recent version of rn be ok?
       - name: Create Example app
         run: npx @react-native-community/cli@latest init WindowsExample
 
