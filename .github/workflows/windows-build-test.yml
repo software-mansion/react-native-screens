@@ -1,4 +1,5 @@
 name: Test Windows build
+
 on:
   pull_request:
     branches:
@@ -6,13 +7,16 @@ on:
     paths:
       - 'windows/**'
       - '.github/workflows/windows-build-test.yml'
+
   push:
     branches:
       - main
     paths:
       - 'windows/**'
       - '.github/workflows/windows-build-test.yml'
+
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: windows-2022
@@ -20,6 +24,7 @@ jobs:
     concurrency:
       group: windows-${{ github.ref }}
       cancel-in-progress: true
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,21 +45,16 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      # - name: Install react-native-windows dev dependencies
-      #   run: |
-      #     Set-ExecutionPolicy Unrestricted -Scope Process -Force;
-      #     iex (New-Object System.Net.WebClient).DownloadString('https://aka.ms/rnw-vs2022-deps.ps1');
-
-      - name: Install dependencies
+      - name: Install library dependencies
         run: yarn
 
-      - name: Prepare
+      - name: Prepare library
         run: yarn prepare
 
-      - name: Pack
+      - name: Pack library
         run: npm pack
 
-      - name: Unpack
+      - name: Unpack library files
         run: tar -xzf (Get-ChildItem -Path .\*.tgz)
 
       - name: Create Example app
@@ -70,7 +70,7 @@ jobs:
         working-directory: WindowsExample
         run: npx react-native init-windows --overwrite
 
-      - name: Change react-native-screens files
+      - name: Replace react-native-screens files
         run: |
           Remove-Item -Path ".\WindowsExample\node_modules\react-native-screens\*" -Recurse -Force
           Copy-Item -Path ".\package\*" -Destination ".\WindowsExample\node_modules\react-native-screens"
