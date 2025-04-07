@@ -66,6 +66,42 @@ class CustomAnimatorSetProvider {
                             },
                     )
                 }
+                R.animator.rns_slide_out_to_left -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", 0.0f, -screenWidth.toFloat())
+                            .apply {
+                                duration = 400
+                            }
+                    )
+                }
+                R.animator.rns_slide_in_from_left -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", -screenWidth.toFloat(), 0.0f)
+                            .apply {
+                                duration = 400
+                            }
+                    )
+                }
+                R.animator.rns_slide_out_to_right -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", 0.0f, screenWidth.toFloat())
+                            .apply {
+                                duration = 400
+                            }
+                    )
+                }
+                R.animator.rns_slide_in_from_right -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", screenWidth.toFloat(), 0.0f)
+                            .apply {
+                                duration = 400
+                            }
+                    )
+                }
                 R.animator.rns_no_animation_20,
                 R.animator.rns_fade_out,
                 R.animator.rns_fade_in -> {

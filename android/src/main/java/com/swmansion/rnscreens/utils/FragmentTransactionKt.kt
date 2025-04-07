@@ -30,13 +30,13 @@ internal fun FragmentTransaction.setTweenAnimations(
 
             StackAnimation.SLIDE_FROM_RIGHT ->
                 this.setCustomAnimations(
-                    R.anim.rns_slide_in_from_right,
-                    R.anim.rns_slide_out_to_left,
+                    R.animator.rns_slide_in_from_right,
+                    R.animator.rns_slide_out_to_left,
                 )
             StackAnimation.SLIDE_FROM_LEFT ->
                 this.setCustomAnimations(
-                    R.anim.rns_slide_in_from_left,
-                    R.anim.rns_slide_out_to_right,
+                    R.animator.rns_slide_in_from_left,
+                    R.animator.rns_slide_out_to_right,
                 )
             StackAnimation.SLIDE_FROM_BOTTOM ->
                 this.setCustomAnimations(
@@ -77,13 +77,13 @@ internal fun FragmentTransaction.setTweenAnimations(
 
             StackAnimation.SLIDE_FROM_RIGHT ->
                 this.setCustomAnimations(
-                    R.anim.rns_slide_in_from_left,
-                    R.anim.rns_slide_out_to_right,
+                    R.animator.rns_slide_in_from_left,
+                    R.animator.rns_slide_out_to_right,
                 )
             StackAnimation.SLIDE_FROM_LEFT ->
                 this.setCustomAnimations(
-                    R.anim.rns_slide_in_from_right,
-                    R.anim.rns_slide_out_to_left,
+                    R.animator.rns_slide_in_from_right,
+                    R.animator.rns_slide_out_to_left,
                 )
             StackAnimation.SLIDE_FROM_BOTTOM ->
                 this.setCustomAnimations(

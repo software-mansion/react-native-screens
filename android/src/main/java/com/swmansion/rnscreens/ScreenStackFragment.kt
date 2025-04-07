@@ -276,6 +276,10 @@ class ScreenStackFragment :
                 R.animator.rns_no_animation_20,
                 R.animator.rns_fade_out,
                 R.animator.rns_fade_in,
+                R.animator.rns_slide_out_to_left,
+                R.animator.rns_slide_in_from_left,
+                R.animator.rns_slide_out_to_right,
+                R.animator.rns_slide_in_from_right,
                 -> {
                     animatorSet =
                         CustomAnimatorSetProvider.customize(
