@@ -50,13 +50,13 @@ internal fun FragmentTransaction.setTweenAnimations(
                 )
             StackAnimation.IOS_FROM_RIGHT ->
                 this.setCustomAnimations(
-                    R.anim.rns_ios_from_right_foreground_open,
-                    R.anim.rns_ios_from_right_background_open,
+                    R.animator.rns_ios_from_right_foreground_open,
+                    R.animator.rns_ios_from_right_background_open,
                 )
             StackAnimation.IOS_FROM_LEFT ->
                 this.setCustomAnimations(
-                    R.anim.rns_ios_from_left_foreground_open,
-                    R.anim.rns_ios_from_left_background_open,
+                    R.animator.rns_ios_from_left_foreground_open,
+                    R.animator.rns_ios_from_left_background_open,
                 )
         }
     } else {
@@ -101,13 +101,13 @@ internal fun FragmentTransaction.setTweenAnimations(
                 )
             StackAnimation.IOS_FROM_RIGHT ->
                 this.setCustomAnimations(
-                    R.anim.rns_ios_from_right_background_close,
-                    R.anim.rns_ios_from_right_foreground_close,
+                    R.animator.rns_ios_from_right_background_close,
+                    R.animator.rns_ios_from_right_foreground_close,
                 )
             StackAnimation.IOS_FROM_LEFT ->
                 this.setCustomAnimations(
-                    R.anim.rns_ios_from_left_background_close,
-                    R.anim.rns_ios_from_left_foreground_close,
+                    R.animator.rns_ios_from_left_background_close,
+                    R.animator.rns_ios_from_left_foreground_close,
                 )
         }
     }

@@ -147,6 +147,82 @@ class CustomAnimatorSetProvider {
                             },
                     )
                 }
+                R.animator.rns_ios_from_left_background_close -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", 0.3f * screenWidth.toFloat(), 0.0f)
+                            .apply {
+                                duration = 200
+                            },
+                    )
+                }
+                R.animator.rns_ios_from_left_background_open -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", 0.0f, 0.3f * screenWidth.toFloat())
+                            .apply {
+                                duration = 200
+                            },
+                    )
+                }
+                R.animator.rns_ios_from_left_foreground_close -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", 0.0f, -screenWidth.toFloat())
+                            .apply {
+                                duration = 200
+                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_decelerate)
+                            },
+                    )
+                }
+                R.animator.rns_ios_from_left_foreground_open -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", -screenWidth.toFloat(), 0.0f)
+                            .apply {
+                                duration = 200
+                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_decelerate)
+                            },
+                    )
+                }
+                R.animator.rns_ios_from_right_background_close -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", -0.3f * screenWidth.toFloat(), 0.0f)
+                            .apply {
+                                duration = 200
+                            },
+                    )
+                }
+                R.animator.rns_ios_from_right_background_open -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", 0.0f, -0.3f * screenWidth.toFloat())
+                            .apply {
+                                duration = 200
+                            },
+                    )
+                }
+                R.animator.rns_ios_from_right_foreground_close -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", 0.0f, screenWidth.toFloat())
+                            .apply {
+                                duration = 200
+                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_decelerate)
+                            },
+                    )
+                }
+                R.animator.rns_ios_from_right_foreground_open -> {
+                    finalAnimatorSet.play(
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationX", screenWidth.toFloat(), 0.0f)
+                            .apply {
+                                duration = 200
+                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_decelerate)
+                            },
+                    )
+                }
                 R.animator.rns_no_animation_20,
                 R.animator.rns_fade_out,
                 R.animator.rns_fade_in,

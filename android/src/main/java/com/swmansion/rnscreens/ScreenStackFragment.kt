@@ -287,6 +287,14 @@ class ScreenStackFragment :
                 R.animator.rns_no_animation_350,
                 R.animator.rns_fade_from_bottom,
                 R.animator.rns_fade_to_bottom,
+                R.animator.rns_ios_from_right_background_close,
+                R.animator.rns_ios_from_right_foreground_close,
+                R.animator.rns_ios_from_right_background_open,
+                R.animator.rns_ios_from_right_foreground_open,
+                R.animator.rns_ios_from_left_background_close,
+                R.animator.rns_ios_from_left_foreground_close,
+                R.animator.rns_ios_from_left_background_open,
+                R.animator.rns_ios_from_left_foreground_open,
                 -> {
                     animatorSet =
                         CustomAnimatorSetProvider.customize(
