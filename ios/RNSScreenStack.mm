@@ -1234,6 +1234,9 @@ RNS_IGNORE_SUPER_CALL_END
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   for (const auto &mutation : transaction.getMutations()) {
+    // Note that self.tag might be invalid in cases this stack is removed.
+    // This mostlikely does not cause any problems now, but it is something
+    // worth to be aware of.
     if (MUTATION_PARENT_TAG(mutation) == self.tag &&
         (mutation.type == react::ShadowViewMutation::Type::Insert ||
          mutation.type == react::ShadowViewMutation::Type::Remove)) {
