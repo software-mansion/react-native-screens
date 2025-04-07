@@ -24,8 +24,8 @@ internal fun FragmentTransaction.setTweenAnimations(
 
             StackAnimation.FADE ->
                 this.setCustomAnimations(
-                    R.anim.rns_fade_in,
-                    R.anim.rns_fade_out,
+                    R.animator.rns_fade_in,
+                    R.animator.rns_fade_out,
                 )
 
             StackAnimation.SLIDE_FROM_RIGHT ->
@@ -71,8 +71,8 @@ internal fun FragmentTransaction.setTweenAnimations(
 
             StackAnimation.FADE ->
                 this.setCustomAnimations(
-                    R.anim.rns_fade_in,
-                    R.anim.rns_fade_out,
+                    R.animator.rns_fade_in,
+                    R.animator.rns_fade_out,
                 )
 
             StackAnimation.SLIDE_FROM_RIGHT ->

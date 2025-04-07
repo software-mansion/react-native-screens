@@ -66,7 +66,9 @@ class CustomAnimatorSetProvider {
                             },
                     )
                 }
-                R.animator.rns_no_animation_20 -> {
+                R.animator.rns_no_animation_20,
+                R.animator.rns_fade_out,
+                R.animator.rns_fade_in -> {
                     finalAnimatorSet.play(initialAnimatorSet)
                 }
             }

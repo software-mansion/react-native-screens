@@ -274,6 +274,8 @@ class ScreenStackFragment :
                 R.animator.rns_default_enter_out,
                 R.animator.rns_default_enter_in,
                 R.animator.rns_no_animation_20,
+                R.animator.rns_fade_out,
+                R.animator.rns_fade_in,
                 -> {
                     animatorSet =
                         CustomAnimatorSetProvider.customize(
