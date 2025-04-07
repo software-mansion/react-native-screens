@@ -1,0 +1,72 @@
+name: Test Windows build
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'windows/**'
+      - '.github/workflows/windows-build-test.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'windows/**'
+      - '.github/workflows/windows-build-test.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    concurrency:
+      group: windows-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create directory for app
+        run: |
+          mkdir WindowsExample
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
+          cache-dependency-path: |
+            yarn.lock
+            WindowsExample/yarn.lock
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Prepare
+        run: yarn prepare
+
+      - name: Pack
+        run: npm pack
+
+      - name: Unpack
+        run: tar -xzf (Get-ChildItem -Path .\*.tgz)
+
+      # will most recent version of rn be ok?
+      - name: Create Example app
+        run: npx @react-native-community/cli@latest init WindowsExample
+
+      - name: Install app dependencies
+        working-directory: WindowsExample
+        run: |
+          New-Item yarn.lock
+          yarn add react-native-windows react-native-screens
+
+      - name: Change react-native-screens files
+        run: |
+          Remove-Item -Path ".\WindowsExample\node_modules\react-native-screens\*" -Recurse -Force
+          Copy-Item -Path ".\package\*" -Destination ".\WindowsExample\node_modules\react-native-screens"
+
+      - name: Build app
+        working-directory: WindowsExample
+        run: npx react-native run-windows --logging --no-packager --no-deploy --no-autolink
