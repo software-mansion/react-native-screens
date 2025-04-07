@@ -65,6 +65,10 @@ jobs:
         run: |
           New-Item yarn.lock
           yarn add react-native-windows react-native-screens
+      
+      - name: Init example app
+        working-directory: WindowsExample
+        run: npx react-native init-windows --overwrite
 
       - name: Change react-native-screens files
         run: |
