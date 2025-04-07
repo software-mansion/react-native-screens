@@ -283,6 +283,10 @@ class ScreenStackFragment :
                 R.animator.rns_no_animation_medium,
                 R.animator.rns_slide_out_to_bottom,
                 R.animator.rns_slide_in_from_bottom,
+                R.animator.rns_no_animation_250,
+                R.animator.rns_no_animation_350,
+                R.animator.rns_fade_from_bottom,
+                R.animator.rns_fade_to_bottom,
                 -> {
                     animatorSet =
                         CustomAnimatorSetProvider.customize(

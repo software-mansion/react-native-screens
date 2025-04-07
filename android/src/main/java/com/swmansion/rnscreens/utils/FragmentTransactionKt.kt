@@ -43,7 +43,11 @@ internal fun FragmentTransaction.setTweenAnimations(
                     R.animator.rns_slide_in_from_bottom,
                     R.animator.rns_no_animation_medium,
                 )
-            StackAnimation.FADE_FROM_BOTTOM -> this.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
+            StackAnimation.FADE_FROM_BOTTOM ->
+                this.setCustomAnimations(
+                    R.animator.rns_fade_from_bottom,
+                    R.animator.rns_no_animation_350
+                )
             StackAnimation.IOS_FROM_RIGHT ->
                 this.setCustomAnimations(
                     R.anim.rns_ios_from_right_foreground_open,
@@ -90,7 +94,11 @@ internal fun FragmentTransaction.setTweenAnimations(
                     R.animator.rns_no_animation_medium,
                     R.animator.rns_slide_out_to_bottom,
                 )
-            StackAnimation.FADE_FROM_BOTTOM -> this.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
+            StackAnimation.FADE_FROM_BOTTOM ->
+                this.setCustomAnimations(
+                    R.animator.rns_no_animation_250,
+                    R.animator.rns_fade_to_bottom
+                )
             StackAnimation.IOS_FROM_RIGHT ->
                 this.setCustomAnimations(
                     R.anim.rns_ios_from_right_background_close,

@@ -125,10 +125,34 @@ class CustomAnimatorSetProvider {
                             },
                     )
                 }
+                R.animator.rns_fade_from_bottom -> {
+                    finalAnimatorSet.playTogether(
+                        initialAnimatorSet,
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationY", 0.08f * screenHeight.toFloat(), 0.0f)
+                            .apply {
+                                duration = 350
+                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.decelerate_quint)
+                            },
+                    )
+                }
+                R.animator.rns_fade_to_bottom -> {
+                    finalAnimatorSet.playTogether(
+                        initialAnimatorSet,
+                        ObjectAnimator
+                            .ofFloat(screenParent, "translationY", 0.0f, 0.08f * screenHeight.toFloat())
+                            .apply {
+                                duration = 250
+                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_quint)
+                            },
+                    )
+                }
                 R.animator.rns_no_animation_20,
                 R.animator.rns_fade_out,
                 R.animator.rns_fade_in,
                 R.animator.rns_no_animation_medium,
+                R.animator.rns_no_animation_250,
+                R.animator.rns_no_animation_350
                 -> {
                     finalAnimatorSet.play(initialAnimatorSet)
                 }
