@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 60
     concurrency:
       group: windows-${{ github.ref }}
@@ -40,10 +40,10 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Install react-native-windows dev dependencies
-        run: |
-          Set-ExecutionPolicy Unrestricted -Scope Process -Force;
-          iex (New-Object System.Net.WebClient).DownloadString('https://aka.ms/rnw-vs2022-deps.ps1');
+      # - name: Install react-native-windows dev dependencies
+      #   run: |
+      #     Set-ExecutionPolicy Unrestricted -Scope Process -Force;
+      #     iex (New-Object System.Net.WebClient).DownloadString('https://aka.ms/rnw-vs2022-deps.ps1');
 
       - name: Install dependencies
         run: yarn
