@@ -155,6 +155,26 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
 }
 
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  NSLog(
+      @"Subview [%ld] addsReactSubview [%ld] with frame %@",
+      self.tag,
+      childComponentView.tag,
+      NSStringFromCGRect(childComponentView.frame));
+  [super mountChildComponentView:childComponentView index:index];
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  NSLog(
+      @"Subview [%ld] removesReactSubview [%ld] with frame %@",
+      self.tag,
+      childComponentView.tag,
+      NSStringFromCGRect(childComponentView.frame));
+  [super unmountChildComponentView:childComponentView index:index];
+}
+
 - (void)updateHeaderSubviewFrameInShadowTree:(CGRect)frame
 {
   if (_state == nullptr) {
@@ -164,6 +184,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState =
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
+    NSLog(@"Subview [%ld] send state update %@", self.tag, NSStringFromCGRect(frame));
     _state->updateState(std::move(newState));
     _lastScheduledFrame = frame;
   }

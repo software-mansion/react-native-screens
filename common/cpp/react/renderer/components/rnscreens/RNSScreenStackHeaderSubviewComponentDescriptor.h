@@ -51,7 +51,7 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
     // rozmiar SN, to nie będziemy wstanie zareagować na zmiany rozmiaru
     // zrobione nie ze strony natywnej, a z JSa...
     if (!isSizeEmpty(stateData.frameSize)) {
-      layoutableShadowNode.setSize(stateData.frameSize);
+      //      layoutableShadowNode.setSize(stateData.frameSize);
     }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
