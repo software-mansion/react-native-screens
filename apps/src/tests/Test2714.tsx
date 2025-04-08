@@ -114,14 +114,25 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useEffect } from 'react';
+
+function HeaderItemSmall() {
+  return (
+    <Text style={styles.headerRight}>Hi</Text>
+  );
+}
+
+function HeaderItemLarge() {
+  return (
+    <Text style={styles.headerRight}>Longer Header Right</Text>
+  );
+}
 
 const RootStack = createNativeStackNavigator({
   screens: {
     Home: {
       screen: HomeScreen,
       options: {
-        headerRight: () => <Text style={styles.headerRight}>Hi</Text>,
+        headerRight: HeaderItemSmall,
         headerTitle: 'Longer Screen Title',
       },
     },
@@ -140,17 +151,23 @@ export default function App() {
 
 function HomeScreen() {
   const navigation = useNavigation();
+  const [isLargeHeaderItem, setLargeHeaderItem] = React.useState(false);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Button
         title={'Update Header'}
         onPress={() => {
-          navigation.setOptions({
-            headerRight: () => (
-              <Text style={[styles.headerRight]}>Longer Header Right</Text>
-            ),
-          });
+          if (isLargeHeaderItem) {
+            navigation.setOptions({
+              headerRight: HeaderItemSmall,
+            });
+          } else {
+            navigation.setOptions({
+              headerRight: HeaderItemLarge,
+            });
+          }
+          setLargeHeaderItem(old => !old);
         }}
       />
     </View>
