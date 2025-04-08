@@ -51,9 +51,9 @@ const awaitValidEventBehavior = async () => {
       element(by.text('18. Status | transitionEnd | opening')),
     ).toExist();
   } else {
-    await waitFor(element(by.text('13. Status | transitionStart | opening')))
-      .toExist()
-      .withTimeout(500);
+    await expect(
+      element(by.text('13. Status | transitionStart | opening')),
+    ).toExist();
     await expect(
       element(by.text('14. Status | transitionEnd | opening')),
     ).toExist();
