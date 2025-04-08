@@ -73,6 +73,7 @@ namespace react = facebook::react;
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+  NSLog(@"NavCtrl view=[%ld] didLayoutSubviews", static_cast<UIView *>(self.delegate).tag);
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||

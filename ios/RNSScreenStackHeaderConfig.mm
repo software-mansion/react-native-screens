@@ -217,6 +217,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateHeaderConfigState:(CGSize)size
 {
   if (!CGSizeEqualToSize(size, _lastSize)) {
+    NSLog(@"Config [%ld] updateShadowState %@", self.tag, NSStringFromCGSize(size));
     auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size));
     _state->updateState(std::move(newState));
     _lastSize = size;
@@ -228,6 +229,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (!navigationBar) {
     return;
   }
+  NSLog(@"Config [%ld] maybe update shadow state of navigation bar components", self.tag);
 
   [self updateHeaderConfigState:navigationBar.frame.size];
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
