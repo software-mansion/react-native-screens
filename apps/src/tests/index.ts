@@ -14,7 +14,7 @@ export { default as Test577 } from './Test577';     // [E2E created](iOS): issue
 export { default as Test593 } from './Test593';
 export { default as Test619 } from './Test619';     // [E2E skipped]: can't check components jumping
 export { default as Test624 } from './Test624';     // [E2E skipped]: PR changed library internals, test screen seems unrelated
-export { default as Test640 } from './Test640';
+export { default as Test640 } from './Test640';     // [E2E created]
 export { default as Test642 } from './Test642';
 export { default as Test645 } from './Test645';
 export { default as Test648 } from './Test648';
