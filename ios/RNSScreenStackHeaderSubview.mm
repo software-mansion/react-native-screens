@@ -58,6 +58,7 @@ namespace react = facebook::react;
   // TODO: It is possible, that this needs to be called only on old architecture.
   // Make sure that Test432 keeps working.
   [toLayoutView setNeedsLayout];
+  //  [self setNeedsLayout];
 
   // TODO: Determine why this must be called & deferring layout to next "update cycle"
   // is not sufficient. See Test2552 and Test432. (Talking Paper here).
@@ -106,6 +107,7 @@ namespace react = facebook::react;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
+
 // System layouts the subviews.
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
@@ -122,11 +124,25 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         NSStringFromCGRect(frame),
         self);
   } else {
+    NSLog(@"Subview [%ld] updateLayoutMetrics %@", self.tag, NSStringFromCGRect(CGRect{CGPointZero, frame.size}));
     self.bounds = CGRect{CGPointZero, frame.size};
     [self layoutNavigationBar];
   }
 }
+
 RNS_IGNORE_SUPER_CALL_BEGIN
+
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"Subview [%ld] setFrame %@", self.tag, NSStringFromCGRect(frame));
+  [super setFrame:frame];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+  NSLog(@"Subview [%ld] setBounds %@", self.tag, NSStringFromCGRect(bounds));
+  [super setBounds:bounds];
+}
 
 + (BOOL)shouldBeRecycled
 {
