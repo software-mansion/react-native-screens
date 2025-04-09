@@ -89,13 +89,11 @@ describeIfiOS('Test2809', () => {
             await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         // TODO: We should be able to fix that
-         // Custom text overrides backButtonDisplayMode
          it('has custom text', async () => {
             await element(by.text('EnabledGenericCustomText')).tap();
             await element(by.text('Open screen')).tap();
-            await expect(element(by.text('Custom'))).toBeVisible(); // TODO: We should be able to fix that
-            await expectBackButtonMenuWithTheSameLabel('Custom'); // Check if backButtonMenu works
+            await expect(element(by.text('Back'))).toBeVisible();
+            await expectBackButtonMenuWithDifferentLabels('Back', 'Custom'); // Check if backButtonMenu works
             await element(by.text('Pop to top')).tap(); // Go back
          });
 
@@ -244,9 +242,7 @@ describeIfiOS('Test2809', () => {
       await element(by.text('Pop to top')).tap(); // Go back
    });
 
-   // TODO: We should be able to fix that
-   // Custom text overrides backButtonDisplayMode because of using backButtonItem
-   it.failing('Custom long back label should be truncated to generic by buckButtonDisplayMode', async () => {
+   it('Custom long back label should be truncated to generic by buckButtonDisplayMode', async () => {
       await element(by.text('CustomLongCustomText')).tap();
       await element(by.text('Open screen')).tap();
       await expect(element(by.text('Back'))).toBeVisible();
@@ -254,9 +250,7 @@ describeIfiOS('Test2809', () => {
       await element(by.text('Pop to top')).tap(); // Go back
    });
 
-   // TODO: We should be able to fix that
-   // Custom text overrides backButtonDisplayMode because of using backButtonItem
-   it.failing('Custom back label should be truncated to minimal by buckButtonDisplayMode when title is long', async () => {
+   it('Custom back label should be truncated to minimal by buckButtonDisplayMode when title is long', async () => {
       await element(by.text('CustomCustomTextWithLongTitle')).tap();
       await element(by.text('Open screen')).tap();
       await expect(element(by.id('chevron.backward'))).toBeVisible();
