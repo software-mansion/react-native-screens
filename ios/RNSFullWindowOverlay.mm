@@ -232,7 +232,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<react::RNSFullWindowOverlayProps>(_props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSFullWindowOverlayProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFullWindowOverlayProps>(props);
 
   if (newComponentProps.containerAccessibilityViewIsModal != oldComponentProps.containerAccessibilityViewIsModal) {
