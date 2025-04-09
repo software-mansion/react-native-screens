@@ -32,10 +32,10 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
-      - name: Use Node.js 18
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
           cache: 'yarn'
           cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/yarn.lock
       - name: Install node dependencies
