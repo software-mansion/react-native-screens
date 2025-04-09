@@ -263,7 +263,9 @@ For iOS:
 
 For Android:
 
-`modal`, `containedModal`, `fullScreenModal`, `formSheet`, `pageSheet` will use `Screen.StackPresentation.MODAL`.
+`modal`, `containedModal`, `fullScreenModal`, `pageSheet` will use `Screen.StackPresentation.MODAL`.
+
+`formSheet` will use `Screen.StackPresentation.FORM_SHEET`.
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
