@@ -57,8 +57,14 @@ jobs:
       - name: Unpack library files
         run: tar -xzf (Get-ChildItem -Path .\*.tgz)
 
+      - name: Determine latest react-native version supported by react-native-windows
+        id: determine-rn-version
+        run: |
+          rn=$(npm view react-native-windows version | sed -n 's/^\([0-9]*\.[0-9]*\)\..*/\1/p')
+          echo "rn=$rn" >> $GITHUB_OUTPUT
+
       - name: Create Example app
-        run: npx @react-native-community/cli@latest init WindowsExample --version (npm view react-native-windows version | sed -n 's/^\([0-9]*\.[0-9]*\)\..*/\1/p')
+        run: npx @react-native-community/cli@latest init WindowsExample --version ${{ steps.determine-rn-version.outputs.rn }}
 
       - name: Install app dependencies
         working-directory: WindowsExample
