@@ -6,7 +6,7 @@ import { WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 
 // Internal export, not part of stable library API.
 export interface NativeProps extends ViewProps {
-  containerAccessibilityViewIsModal?: WithDefault<boolean, true>;
+  accessibilityContainerViewIsModal?: WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSFullWindowOverlay', {

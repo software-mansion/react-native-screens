@@ -111,16 +111,16 @@
 - (void)initCommonProps
 {
   // Default value used by container.
-  _containerAccessibilityViewIsModal = YES;
+  _accessibilityContainerViewIsModal = YES;
   _reactFrame = CGRectNull;
   _container = self.container;
   [self show];
 }
 
-- (void)setContainerAccessibilityViewIsModal:(BOOL)containerAccessibilityViewIsModal
+- (void)setAccessibilityContainerViewIsModal:(BOOL)accessibilityContainerViewIsModal
 {
-  _containerAccessibilityViewIsModal = containerAccessibilityViewIsModal;
-  self.container.accessibilityViewIsModal = containerAccessibilityViewIsModal;
+  _accessibilityContainerViewIsModal = accessibilityContainerViewIsModal;
+  self.container.accessibilityViewIsModal = accessibilityContainerViewIsModal;
 }
 
 - (void)addSubview:(UIView *)view
@@ -132,7 +132,7 @@
 {
   if (_container == nil) {
     _container = [[RNSFullWindowOverlayContainer alloc] initWithFrame:_reactFrame
-                                             accessibilityViewIsModal:_containerAccessibilityViewIsModal];
+                                             accessibilityViewIsModal:_accessibilityContainerViewIsModal];
   }
 
   return _container;
@@ -236,7 +236,7 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFullWindowOverlayProps>(props);
 
   if (newComponentProps.containerAccessibilityViewIsModal != oldComponentProps.containerAccessibilityViewIsModal) {
-    [self setContainerAccessibilityViewIsModal:newComponentProps.containerAccessibilityViewIsModal];
+    [self setAccessibilityContainerViewIsModal:newComponentProps.containerAccessibilityViewIsModal];
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -272,7 +272,7 @@ Class<RCTComponentViewProtocol> RNSFullWindowOverlayCls(void)
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_VIEW_PROPERTY(containerAccessibilityViewIsModal, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(accessibilityContainerViewIsModal, BOOL)
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
