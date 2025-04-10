@@ -68,7 +68,7 @@ jobs:
       
       - name: Init example app
         working-directory: WindowsExample
-        run: npx react-native init-windows --overwrite --logging 
+        run: npx react-native init-windows --overwrite
 
       - name: Replace react-native-screens files
         run: |
