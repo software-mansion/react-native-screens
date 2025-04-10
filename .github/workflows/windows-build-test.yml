@@ -33,10 +33,10 @@ jobs:
         run: |
           mkdir WindowsExample
 
-      - name: Use Node.js 18
+      - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
           cache: 'yarn'
           cache-dependency-path: |
             yarn.lock
@@ -57,8 +57,23 @@ jobs:
       - name: Unpack library files
         run: tar -xzf (Get-ChildItem -Path .\*.tgz)
 
+      - name: Determine latest react-native version supported by react-native-windows
+        id: determine-rn-version
+        run: |
+          $rnwVersion = npm view react-native-windows version
+          if ($rnwVersion -match '(\d+)\.(\d+)\.') {
+              $major = $matches[1]
+              $minor = $matches[2]
+              $desiredVersion = "$major.$minor"
+              echo "Installing $desiredVersion version."
+              echo "rn=$desiredVersion" >> $env:GITHUB_OUTPUT
+          } else {
+              echo "Failed to parse version from npm. Installing latest version."
+              echo "rn=latest" >> $env:GITHUB_OUTPUT
+          }
+
       - name: Create Example app
-        run: npx @react-native-community/cli@latest init WindowsExample
+        run: npx @react-native-community/cli@latest init WindowsExample --version ${{ steps.determine-rn-version.outputs.rn }}
 
       - name: Install app dependencies
         working-directory: WindowsExample
