@@ -32,7 +32,7 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
