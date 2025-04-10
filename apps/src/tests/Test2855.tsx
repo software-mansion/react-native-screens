@@ -6,11 +6,19 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function ProfileScreen() {
   const navigation = useNavigation();
+  const [count, setCount] = useState(0);
+  const onPress = () => setCount(prevCount => prevCount + 1);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Profile Screen</Text>
       <Button title="goto Home" onPress={() => navigation.navigate('Home')} />
+      <View style={styles.countContainer}>
+        <Text>Count: {count}</Text>
+      </View>
+      <TouchableOpacity style={styles.button} onPress={onPress}>
+        <Text>Press Here</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -52,7 +60,7 @@ const Stack = createNativeStackNavigator();
 
 function RootStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Profile">
       <Stack.Screen
         name="Home"
         component={HomeScreen}
@@ -61,6 +69,7 @@ function RootStack() {
           headerShadowVisible: false,
         }}
       />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }
