@@ -58,7 +58,7 @@ jobs:
         run: tar -xzf (Get-ChildItem -Path .\*.tgz)
 
       - name: Create Example app
-        run: npx @react-native-community/cli@latest init WindowsExample
+        run: npx @react-native-community/cli@latest init WindowsExample --version (npm view react-native-windows version | sed -n 's/^\([0-9]*\.[0-9]*\)\..*/\1/p')
 
       - name: Install app dependencies
         working-directory: WindowsExample
