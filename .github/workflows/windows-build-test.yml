@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir WindowsExample
 
-      - name: Use Node.js 18
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -68,7 +68,7 @@ jobs:
       
       - name: Init example app
         working-directory: WindowsExample
-        run: npx react-native init-windows --overwrite
+        run: npx react-native init-windows --overwrite --logging 
 
       - name: Replace react-native-screens files
         run: |
