@@ -60,7 +60,7 @@ jobs:
       - name: Determine latest react-native version supported by react-native-windows
         id: determine-rn-version
         run: |
-          rn=$(npm view react-native-windows version | sed -n 's/^\([0-9]*\.[0-9]*\)\..*/\1/p')
+          $rn=$(npm view react-native-windows version | sed -n 's/^\([0-9]*\.[0-9]*\)\..*/\1/p')
           echo "rn=$rn" >> $GITHUB_OUTPUT
 
       - name: Create Example app
