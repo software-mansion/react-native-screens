@@ -154,7 +154,8 @@ RNS_IGNORE_SUPER_CALL_END
 
     // in large title, ScrollView handles the offset of content so we cannot set it here also
     // TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreView is
-    // used? When config.translucent, we currently use `edgesForExtendedLayout` and the screen is laid out under the
+    // used?
+    // When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
     // navigation bar, therefore there is no need to set content offset in shadow tree.
     const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent
         ? 0
