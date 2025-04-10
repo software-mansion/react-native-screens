@@ -60,9 +60,17 @@ jobs:
       - name: Determine latest react-native version supported by react-native-windows
         id: determine-rn-version
         run: |
-          $rn=$(npm view react-native-windows version | sed -n 's/^\([0-9]*\.[0-9]*\)\..*/\1/p')
-          echo "rn=$rn" >> $GITHUB_OUTPUT
-          echo "rn=$rn"
+          $rnwVersion = npm view react-native-windows version
+          if ($rnwVersion -match '(\d+)\.(\d+)\.') {
+              $major = $matches[1]
+              $minor = $matches[2]
+              $desiredVersion = "$major.$minor"
+              echo "Installing $desiredVersion version."
+              echo "rn=$desiredVersion" >> $GITHUB_OUTPUT
+          } else {
+              echo "Failed to parse version from npm. Installing latest version."
+              echo "rn=latest" >> $GITHUB_OUTPUT
+          }
 
       - name: Create Example app
         run: npx @react-native-community/cli@latest init WindowsExample --version ${{ steps.determine-rn-version.outputs.rn }}
