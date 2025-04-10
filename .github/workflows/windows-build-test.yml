@@ -62,6 +62,7 @@ jobs:
         run: |
           $rn=$(npm view react-native-windows version | sed -n 's/^\([0-9]*\.[0-9]*\)\..*/\1/p')
           echo "rn=$rn" >> $GITHUB_OUTPUT
+          echo "rn=$rn"
 
       - name: Create Example app
         run: npx @react-native-community/cli@latest init WindowsExample --version ${{ steps.determine-rn-version.outputs.rn }}
