@@ -52,16 +52,15 @@ const Stack = createNativeStackNavigator();
 
 function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="Profile">
+    <Stack.Navigator>
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={() => ({
+        options={{
           headerTransparent: true,
           headerShadowVisible: false,
-        })}
+        }}
       />
-      <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }
