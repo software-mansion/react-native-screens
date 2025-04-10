@@ -235,8 +235,8 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSFullWindowOverlayProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFullWindowOverlayProps>(props);
 
-  if (newComponentProps.containerAccessibilityViewIsModal != oldComponentProps.containerAccessibilityViewIsModal) {
-    [self setAccessibilityContainerViewIsModal:newComponentProps.containerAccessibilityViewIsModal];
+  if (newComponentProps.accessibilityContainerViewIsModal != oldComponentProps.accessibilityContainerViewIsModal) {
+    [self setAccessibilityContainerViewIsModal:newComponentProps.accessibilityContainerViewIsModal];
   }
 
   [super updateProps:props oldProps:oldProps];
