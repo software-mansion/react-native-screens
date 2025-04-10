@@ -19,7 +19,11 @@ function wait(timeout) {
 
 function HomeScreen({ navigation }) {
   return (
-    <Button title="Navigate" onPress={() => navigation.navigate('Modal')} />
+    <Button
+      title="Navigate"
+      onPress={() => navigation.navigate('Modal')}
+      testID="home-button-go-to-modal"
+    />
   );
 }
 
@@ -35,7 +39,11 @@ function Modal({ navigation }) {
   return (
     <ScrollView
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          testID="modal-refresh-control"
+        />
       }
       contentInsetAdjustmentBehavior="automatic"
       scrollToOverflowEnabled
