@@ -66,10 +66,10 @@ jobs:
               $minor = $matches[2]
               $desiredVersion = "$major.$minor"
               echo "Installing $desiredVersion version."
-              echo "rn=$desiredVersion" >> $GITHUB_OUTPUT
+              echo "rn=$desiredVersion" >> $env:GITHUB_OUTPUT
           } else {
               echo "Failed to parse version from npm. Installing latest version."
-              echo "rn=latest" >> $GITHUB_OUTPUT
+              echo "rn=latest" >> $env:GITHUB_OUTPUT
           }
 
       - name: Create Example app
