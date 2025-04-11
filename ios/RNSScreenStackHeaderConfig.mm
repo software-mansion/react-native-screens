@@ -35,7 +35,10 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-#ifndef RCT_NEW_ARCH_ENABLED
+static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
+static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
+
+#if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
@@ -436,7 +439,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 
     NSString *family = config.titleFontFamily ?: nil;
-    NSNumber *size = config.titleFontSize ?: @17;
+    NSNumber *size = config.titleFontSize ?: DEFAULT_TITLE_FONT_SIZE;
     NSString *weight = config.titleFontWeight ?: nil;
     if (family || weight) {
       attrs[NSFontAttributeName] = [RCTFont updateFont:nil
@@ -464,7 +467,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 
     NSString *largeFamily = config.largeTitleFontFamily ?: nil;
-    NSNumber *largeSize = config.largeTitleFontSize ?: @34;
+    NSNumber *largeSize = config.largeTitleFontSize ?: DEFAULT_TITLE_LARGE_FONT_SIZE;
     NSString *largeWeight = config.largeTitleFontWeight ?: nil;
     if (largeFamily || largeWeight) {
       largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil
