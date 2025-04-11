@@ -629,11 +629,12 @@ RNS_IGNORE_SUPER_CALL_END
                                                                              action:nil];
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-  auto shouldUseCustomBackBarButtonItem = !isBackTitleBlank || config.disableBackButtonMenu;
+  auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
 
   // This has any effect only in case the `backBarButtonItem` is not set.
   // We apply it before we configure the back item, because it might get overriden.
   prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
+  prevItem.backButtonTitle = resolvedBackTitle;
 
   if (config.isBackTitleVisible) {
     if ((config.backTitleFontFamily &&
@@ -661,9 +662,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
   } else {
     // back button title should be not visible next to back button,
-    // but it should still appear in back menu (if one is enabled)
-
-    prevItem.backButtonTitle = resolvedBackTitle;
+    // but it should still appear in back menu
     prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
     shouldUseCustomBackBarButtonItem = NO;
   }

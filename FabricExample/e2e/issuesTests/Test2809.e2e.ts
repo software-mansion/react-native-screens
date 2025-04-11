@@ -89,11 +89,9 @@ describeIfiOS('Test2809', () => {
             await expectBackButtonMenuWithDifferentLabels('Back', 'First'); // Check if backButtonMenu works
          });
 
-         // TODO: We should be able to fix that
-         // Custom text overrides backButtonDisplayMode
-         it('custom text is NOT truncated by backButtonDisplayMode and is used in back button menu', async () => {
-            await expectInitialPageToExist('EnabledGenericCustomText', by.text('Custom'));
-            await expectBackButtonMenuWithTheSameLabel('Custom'); // Check if backButtonMenu works
+         it('custom text is truncated by backButtonDisplayMode and is used in back button menu', async () => {
+            await expectInitialPageToExist('EnabledGenericCustomText', by.text('Back'));
+            await expectBackButtonMenuWithDifferentLabels('Back', 'Custom'); // Check if backButtonMenu works
          });
 
          // Custom styles override backButtonDisplayMode
@@ -195,17 +193,13 @@ describeIfiOS('Test2809', () => {
       await element(by.text('Pop to top')).tap(); // Go back
    });
 
-   // TODO: We should be able to fix that
-   // Custom text overrides backButtonDisplayMode because of using backButtonItem
-   it.failing('Custom long back label should be truncated to generic by backButtonDisplayMode', async () => {
+   it('Custom long back label should be truncated to generic by backButtonDisplayMode', async () => {
       await expectInitialPageToExist('CustomLongCustomText', by.text('Back'));
       await expectBackButtonMenuWithDifferentLabels('Back', 'LongLongLongLongLong'); // Check if backButtonMenu works
       await element(by.text('Pop to top')).tap(); // Go back
    });
 
-   // TODO: We should be able to fix that
-   // Custom text overrides backButtonDisplayMode because of using backButtonItem
-   it.failing('Custom back label should be truncated to minimal by backButtonDisplayMode when title is long', async () => {
+   it('Custom back label should be truncated to minimal by backButtonDisplayMode when title is long', async () => {
       await expectInitialPageToExist('CustomCustomTextWithLongTitle', by.id('chevron.backward'), by.text('CustomBack'));
       await expectBackButtonMenuIconAndLabel('chevron.backward', 'CustomBack'); // Check if backButtonMenu works
       await element(by.text('Pop to top')).tap(); // Go back

@@ -153,11 +153,6 @@ function Home({
         title="CustomCustomTextWithLongTitle"
         onPress={() => navigation.navigate('CustomCustomTextWithLongTitle')}
       />
-
-      <Button
-        title="Go back"
-        onPress={() => navigation.goBack()}
-      />
     </View>
   );
 }
