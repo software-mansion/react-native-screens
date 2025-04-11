@@ -188,7 +188,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect and is subject to removal in the future.
    *  For SDK below 35 this works only with specific app setup.
-   *  This props is subject to removal in the future.
+   *  This prop is subject to removal in the future.
    *  See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
    */
   navigationBarColor?: ColorValue;

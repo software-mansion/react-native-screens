@@ -26,6 +26,8 @@ namespace react = facebook::react;
     RCTView <RCTInvalidating>
 #endif // RCT_NEW_ARCH_ENABLED
 
+@property (nonatomic) BOOL accessibilityContainerViewIsModal;
+
 #ifdef RCT_NEW_ARCH_ENABLED
 @property (nonatomic) react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;

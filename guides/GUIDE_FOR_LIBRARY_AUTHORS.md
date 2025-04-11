@@ -96,6 +96,8 @@ Defaults to `false`.
 
 ### `navigationBarColor` (Android only)
 
+This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+
 Sets the navigation bar color. Defaults to initial status bar color.
 
 ### `navigationBarHidden` (Android only)
@@ -261,7 +263,9 @@ For iOS:
 
 For Android:
 
-`modal`, `containedModal`, `fullScreenModal`, `formSheet`, `pageSheet` will use `Screen.StackPresentation.MODAL`.
+`modal`, `containedModal`, `fullScreenModal`, `pageSheet` will use `Screen.StackPresentation.MODAL`.
+
+`formSheet` will use `Screen.StackPresentation.FORM_SHEET`.
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
@@ -272,6 +276,8 @@ Sets the status bar animation (similar to the `StatusBar` component). Requires e
 Defaults to `fade` on iOS and `none` on Android.
 
 ### `statusBarColor` (Android only)
+
+This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
 
 Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
@@ -288,6 +294,8 @@ Sets the status bar color (similar to the `StatusBar` component). Requires enabl
 Defaults to `auto`.
 
 ### `statusBarTranslucent` (Android only)
+
+This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
