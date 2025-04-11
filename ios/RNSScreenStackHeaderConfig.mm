@@ -669,6 +669,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)configureBackItem:(nullable UINavigationItem *)prevItem API_UNAVAILABLE(tvos)
 {
+#if !TARGET_OS_TV
   if (prevItem == nil) {
     return;
   }
@@ -728,6 +729,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (shouldUseCustomBackBarButtonItem) {
     prevItem.backBarButtonItem = backBarButtonItem;
   }
+#endif
 }
 
 - (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
