@@ -662,9 +662,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
   } else {
     // back button title should be not visible next to back button,
-    // but it should still appear in back menu (if one is enabled)
-
-    prevItem.backButtonTitle = resolvedBackTitle;
+    // but it should still appear in back menu
     prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
     shouldUseCustomBackBarButtonItem = NO;
   }
