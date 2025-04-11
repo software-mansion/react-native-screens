@@ -34,233 +34,179 @@ const expectBackButtonMenuToNotExistOnLabel = async (text: string) => {
    await expect(element(by.type('_UIContextMenuView'))).not.toExist();
 };
 
+const expectInitialPageToExist = async (testName: string, expectToExist: Detox.NativeMatcher, expectToNotExist?: Detox.NativeMatcher) => {
+   await element(by.text(testName)).tap();
+   await element(by.text('Open screen')).tap();
+   await expect(element(expectToExist)).toBeVisible();
+   if (expectToNotExist) {
+      await expect(element(expectToNotExist)).not.toBeVisible();
+   }
+};
 
 describeIfiOS('Test2809', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
+   beforeAll(async () => {
+         await device.reloadReactNative();
+   });
 
   it('Test2809 should exist', async () => {
-   await waitFor(element(by.id('root-screen-tests-Test2809')))
-     .toBeVisible()
-     .whileElement(by.id('root-screen-examples-scrollview'))
-     .scroll(600, 'down', NaN, 0.85);
+      await waitFor(element(by.id('root-screen-tests-Test2809')))
+      .toBeVisible()
+      .whileElement(by.id('root-screen-examples-scrollview'))
+      .scroll(600, 'down', NaN, 0.85);
 
-   await expect(element(by.id('root-screen-tests-Test2809'))).toBeVisible();
-   await element(by.id('root-screen-tests-Test2809')).tap();
- });
+      await expect(element(by.id('root-screen-tests-Test2809'))).toBeVisible();
+      await element(by.id('root-screen-tests-Test2809')).tap();
+   });
 
    describe('backButtonMenuEnabled: true', () => {
+      afterEach(async () => {
+         await element(by.text('Pop to top')).tap(); // Go back
+      });
+
       describe('backButtonDisplayMode: default', () => {
-         it('with default text', async () => {
-            await element(by.text('EnabledDefaultDefaultText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('First'))).toBeVisible();
+         it('default text stays visible and matches label in back button menu', async () => {
+            await expectInitialPageToExist('EnabledDefaultDefaultText', by.text('First'));
             await expectBackButtonMenuWithTheSameLabel('First'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with custom text', async () => {
-            await element(by.text('EnabledDefaultCustomText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('Custom'))).toBeVisible();
+         it('custom text stays visible and matches label in back button menu', async () => {
+            await expectInitialPageToExist('EnabledDefaultCustomText', by.text('Custom'));
             await expectBackButtonMenuWithTheSameLabel('Custom'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
          // We don't check if the styles are applied, I think that it could be flaky, but it can be done
          // using element(by.type('UIButtonLabel')).getAttributes() and looking at bounds. The values there
          // doesn't match the ones in the code exactly (I think some padding is added), so I don't think we should do that.
-         it('with styled text', async () => {
-            await element(by.text('EnabledDefaultStyledText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('First'))).toBeVisible();
+         it('styled text stays visible and matches label in back button menu', async () => {
+            await expectInitialPageToExist('EnabledDefaultStyledText', by.text('First'));
             await expectBackButtonMenuWithTheSameLabel('First'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
       });
 
       describe('backButtonDisplayMode: generic', () => {
-         it('with default text', async () => {
-            await element(by.text('EnabledGenericDefaultText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('Back'))).toBeVisible();
+         it('default text is truncated by backButtonDisplayMode and is used in back button menu', async () => {
+            await expectInitialPageToExist('EnabledGenericDefaultText', by.text('Back'));
             await expectBackButtonMenuWithDifferentLabels('Back', 'First'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
          // TODO: We should be able to fix that
          // Custom text overrides backButtonDisplayMode
-         it('has custom text', async () => {
-            await element(by.text('EnabledGenericCustomText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('Custom'))).toBeVisible(); // TODO: We should be able to fix that
+         it('custom text is NOT truncated by backButtonDisplayMode and is used in back button menu', async () => {
+            await expectInitialPageToExist('EnabledGenericCustomText', by.text('Custom'));
             await expectBackButtonMenuWithTheSameLabel('Custom'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
          // Custom styles override backButtonDisplayMode
-         it('with custom text', async () => {
-            await element(by.text('EnabledGenericStyledText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('First'))).toBeVisible();
+         it('styled text is NOT truncated by backButtonDisplayMode and is used in back button menu', async () => {
+            await expectInitialPageToExist('EnabledGenericStyledText', by.text('First'));
             await expectBackButtonMenuWithTheSameLabel('First'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
       });
 
       describe('backButtonDisplayMode: minimal', () => {
-         it('with default text', async () => {
-            await element(by.text('EnabledMinimalDefaultText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.id('chevron.backward'))).toBeVisible();
-            await expect(element(by.text('First'))).not.toBeVisible();
+         it('chevron is used as back button and default text is used in back button menu', async () => {
+            await expectInitialPageToExist('EnabledMinimalDefaultText', by.id('chevron.backward'), by.text('First'));
             await expectBackButtonMenuIconAndLabel('chevron.backward', 'First'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with custom text', async () => {
-            await element(by.text('EnabledMinimalCustomText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.id('chevron.backward'))).toBeVisible();
-            await expect(element(by.text('Custom'))).not.toBeVisible();
+         it('chevron is used as back button and custom text is used in back button menu', async () => {
+            await expectInitialPageToExist('EnabledMinimalCustomText', by.id('chevron.backward'), by.text('Custom'));
             await expectBackButtonMenuIconAndLabel('chevron.backward', 'Custom'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with styled text', async () => {
-            await element(by.text('EnabledMinimalStyledText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.id('chevron.backward'))).toBeVisible();
-            await expect(element(by.text('First'))).not.toBeVisible();
+         it('styles are omitted, chevron is used as back button and default text is used in back button menu', async () => {
+            await expectInitialPageToExist('EnabledMinimalStyledText', by.id('chevron.backward'), by.text('First'));
             await expectBackButtonMenuIconAndLabel('chevron.backward', 'First'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
       });
    });
 
    describe('backButtonMenuEnabled: false', () => {
+      afterEach(async () => {
+         await element(by.text('Pop to top')).tap(); // Go back
+      });
+
       describe('backButtonDisplayMode: default', () => {
-         it('with default text', async () => {
-            await element(by.text('DisabledDefaultDefaultText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('First'))).toBeVisible();
+         it('default text stays visible and back button menu is disabled', async () => {
+            await expectInitialPageToExist('DisabledDefaultDefaultText', by.text('First'));
             await expectBackButtonMenuToNotExistOnLabel('First'); // Check if backButtonMenu is disabled
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with custom text', async () => {
-            await element(by.text('DisabledDefaultCustomText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('Custom'))).toBeVisible();
+         it('custom text stays visible and back button menu is disabled', async () => {
+            await expectInitialPageToExist('DisabledDefaultCustomText', by.text('Custom'));
             await expectBackButtonMenuToNotExistOnLabel('Custom'); // Check if backButtonMenu is disabled
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with styled text', async () => {
-            await element(by.text('DisabledDefaultStyledText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('First'))).toBeVisible();
+         it('styled text stays visible and back button menu is disabled', async () => {
+            await expectInitialPageToExist('DisabledDefaultStyledText', by.text('First'));
             await expectBackButtonMenuToNotExistOnLabel('First'); // Check if backButtonMenu is disabled
-            await element(by.text('Pop to top')).tap(); // Go back
          });
       });
 
       // [backButtonMenuEnabled: false and backButtonDisplayMode: generic]
       // generic is not working as currently backButtonDisplayMode is causing backButtonItem to be set
-      describe('backButtonDisplayMode: generic not working', () => {
-         it('with default text', async () => {
-            await element(by.text('DisabledGenericDefaultText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('First'))).toBeVisible();
+      describe('backButtonDisplayMode: generic', () => {
+         it('default text is visible, because backButtonDisplayMode is overwritten by backButtonDisplayMode', async () => {
+            await expectInitialPageToExist('DisabledGenericDefaultText', by.text('First'));
             await expectBackButtonMenuToNotExistOnLabel('First'); // Check if backButtonMenu is disabled
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with custom text', async () => {
-            await element(by.text('DisabledGenericCustomText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('Custom'))).toBeVisible();
+         it('custom text is visible, because backButtonDisplayMode is overwritten by backButtonDisplayMode', async () => {
+            await expectInitialPageToExist('DisabledGenericCustomText', by.text('Custom'));
             await expectBackButtonMenuToNotExistOnLabel('Custom'); // Check if backButtonMenu is disabled
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with styled text', async () => {
-            await element(by.text('DisabledGenericStyledText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.text('First'))).toBeVisible();
+         it('styled text is visible, because backButtonDisplayMode is overwritten by backButtonDisplayMode', async () => {
+            await expectInitialPageToExist('DisabledGenericStyledText', by.text('First'));
             await expectBackButtonMenuToNotExistOnLabel('First'); // Check if backButtonMenu is disabled
-            await element(by.text('Pop to top')).tap(); // Go back
          });
       });
 
       // [backButtonMenuEnabled: false and backButtonDisplayMode: minimal]
       // backButtonDisplayMode: minimal works as a kill switch so backButtonMenu value is omitted
       describe('backButtonDisplayMode: minimal', () => {
-         it('with default text', async () => {
-            await element(by.text('DisabledMinimalDefaultText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.id('chevron.backward'))).toBeVisible();
-            await expect(element(by.text('First'))).not.toBeVisible();
+         it('chevron is used as back button and default text is used in back button menu, backButtonMenuEnabled is omitted', async () => {
+            await expectInitialPageToExist('DisabledMinimalDefaultText', by.id('chevron.backward'), by.text('First'));
             await expectBackButtonMenuIconAndLabel('chevron.backward', 'First');  // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with custom text', async () => {
-            await element(by.text('DisabledMinimalCustomText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.id('chevron.backward'))).toBeVisible();
-            await expect(element(by.text('Custom'))).not.toBeVisible();
+         it('chevron is used as back button and custom text is used in back button menu, backButtonMenuEnabled is omitted', async () => {
+            await expectInitialPageToExist('DisabledMinimalCustomText', by.id('chevron.backward'), by.text('Custom'));
             await expectBackButtonMenuIconAndLabel('chevron.backward', 'Custom'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
 
-         it('with styled text', async () => {
-            await element(by.text('DisabledMinimalStyledText')).tap();
-            await element(by.text('Open screen')).tap();
-            await expect(element(by.id('chevron.backward'))).toBeVisible();
-            await expect(element(by.text('First'))).not.toBeVisible();
+         it('backButtonMenuEnabled is omitted, chevron is used as back button and default text is used in back button menu', async () => {
+            await expectInitialPageToExist('DisabledMinimalStyledText', by.id('chevron.backward'), by.text('First'));
             await expectBackButtonMenuIconAndLabel('chevron.backward', 'First'); // Check if backButtonMenu works
-            await element(by.text('Pop to top')).tap(); // Go back
          });
       });
    });
 
    // Custom
-   it('Default long back label should be truncated to generic by buckButtonDisplayMode', async () => {
-      await element(by.text('CustomLongDefaultText')).tap();
-      await element(by.text('Open screen')).tap();
-      await expect(element(by.text('Back'))).toBeVisible();
+   it('Default long back label should be truncated to generic by backButtonDisplayMode', async () => {
+      await expectInitialPageToExist('CustomLongDefaultText', by.text('Back'));
       await expectBackButtonMenuWithDifferentLabels('Back', 'LongLongLongLongLong'); // Check if backButtonMenu works
       await element(by.text('Pop to top')).tap(); // Go back
    });
 
-   it('Default label should be truncated to minimal by buckButtonDisplayMode when title is long', async () => {
-      await element(by.text('CustomDefaultTextWithLongTitle')).tap();
-      await element(by.text('Open screen')).tap();
-      await expect(element(by.id('chevron.backward'))).toBeVisible();
-      await expect(element(by.text('First'))).not.toBeVisible();
+   it('Default label should be truncated to minimal by backButtonDisplayMode when title is long', async () => {
+      await expectInitialPageToExist('CustomDefaultTextWithLongTitle', by.id('chevron.backward'), by.text('First'));
       await expectBackButtonMenuIconAndLabel('chevron.backward', 'First'); // Check if backButtonMenu works
       await element(by.text('Pop to top')).tap(); // Go back
    });
 
    // TODO: We should be able to fix that
    // Custom text overrides backButtonDisplayMode because of using backButtonItem
-   it.failing('Custom long back label should be truncated to generic by buckButtonDisplayMode', async () => {
-      await element(by.text('CustomLongCustomText')).tap();
-      await element(by.text('Open screen')).tap();
-      await expect(element(by.text('Back'))).toBeVisible();
+   it.failing('Custom long back label should be truncated to generic by backButtonDisplayMode', async () => {
+      await expectInitialPageToExist('CustomLongCustomText', by.text('Back'));
       await expectBackButtonMenuWithDifferentLabels('Back', 'LongLongLongLongLong'); // Check if backButtonMenu works
       await element(by.text('Pop to top')).tap(); // Go back
    });
 
    // TODO: We should be able to fix that
    // Custom text overrides backButtonDisplayMode because of using backButtonItem
-   it.failing('Custom back label should be truncated to minimal by buckButtonDisplayMode when title is long', async () => {
-      await element(by.text('CustomCustomTextWithLongTitle')).tap();
-      await element(by.text('Open screen')).tap();
-      await expect(element(by.id('chevron.backward'))).toBeVisible();
-      await expect(element(by.text('CustomBack'))).not.toBeVisible();
+   it.failing('Custom back label should be truncated to minimal by backButtonDisplayMode when title is long', async () => {
+      await expectInitialPageToExist('CustomCustomTextWithLongTitle', by.id('chevron.backward'), by.text('CustomBack'));
       await expectBackButtonMenuIconAndLabel('chevron.backward', 'CustomBack'); // Check if backButtonMenu works
       await element(by.text('Pop to top')).tap(); // Go back
    });
