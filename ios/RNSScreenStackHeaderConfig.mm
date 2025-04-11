@@ -594,55 +594,35 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif
 
-  // TODO: This needs to be removed after min. tvOS deployment target bump
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, tvOS 13.0, *)) {
-    UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
-    navitem.standardAppearance = appearance;
-    navitem.compactAppearance = appearance;
+  UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
+  navitem.standardAppearance = appearance;
+  navitem.compactAppearance = appearance;
 
 // appearance does not apply to the tvOS so we need to use lagacy customization
 #if TARGET_OS_TV
-    navctr.navigationBar.titleTextAttributes = appearance.titleTextAttributes;
-    navctr.navigationBar.backgroundColor = appearance.backgroundColor;
+  navctr.navigationBar.titleTextAttributes = appearance.titleTextAttributes;
+  navctr.navigationBar.backgroundColor = appearance.backgroundColor;
 #endif
 
-    UINavigationBarAppearance *scrollEdgeAppearance =
-        [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
-    if (config.largeTitleBackgroundColor != nil) {
-      // Add support for using a fully transparent bar when the backgroundColor is set to transparent.
-      if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
-        // This will also remove the background blur effect in the large title which is otherwise inherited from the
-        // standard appearance.
-        [scrollEdgeAppearance configureWithTransparentBackground];
-        // This must be set to nil otherwise a default view will be added to the navigation bar background with an
-        // opaque background.
-        scrollEdgeAppearance.backgroundColor = nil;
-      } else {
-        scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
-      }
+  UINavigationBarAppearance *scrollEdgeAppearance =
+      [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
+  if (config.largeTitleBackgroundColor != nil) {
+    // Add support for using a fully transparent bar when the backgroundColor is set to transparent.
+    if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
+      // This will also remove the background blur effect in the large title which is otherwise inherited from the
+      // standard appearance.
+      [scrollEdgeAppearance configureWithTransparentBackground];
+      // This must be set to nil otherwise a default view will be added to the navigation bar background with an
+      // opaque background.
+      scrollEdgeAppearance.backgroundColor = nil;
+    } else {
+      scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
     }
-    if (config.largeTitleHideShadow) {
-      scrollEdgeAppearance.shadowColor = nil;
-    }
-    navitem.scrollEdgeAppearance = scrollEdgeAppearance;
-  } else
-#endif // Check for iOS / tvOS 13
-  {
-#if !TARGET_OS_TV
-    // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
-    // to update it before the navigation starts.
-    UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
-    if (backButtonImage) {
-      navctr.navigationBar.backIndicatorImage = backButtonImage;
-      navctr.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
-    } else if (navctr.navigationBar.backIndicatorImage) {
-      navctr.navigationBar.backIndicatorImage = nil;
-      navctr.navigationBar.backIndicatorTransitionMaskImage = nil;
-    }
-#endif
   }
+  if (config.largeTitleHideShadow) {
+    scrollEdgeAppearance.shadowColor = nil;
+  }
+  navitem.scrollEdgeAppearance = scrollEdgeAppearance;
 #if !TARGET_OS_TV
   navitem.hidesBackButton = config.hideBackButton;
 #endif
