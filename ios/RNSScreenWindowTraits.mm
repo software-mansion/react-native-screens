@@ -40,32 +40,22 @@
 #if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    switch (statusBarStyle) {
-      case RNSStatusBarStyleAuto:
-        return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
-            ? UIStatusBarStyleLightContent
-            : UIStatusBarStyleDarkContent;
-      case RNSStatusBarStyleInverted:
-        return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
-            ? UIStatusBarStyleDarkContent
-            : UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleLight:
-        return UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleDark:
-        return UIStatusBarStyleDarkContent;
-      default:
-        return UIStatusBarStyleLightContent;
-    }
+  switch (statusBarStyle) {
+    case RNSStatusBarStyleAuto:
+      return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
+          ? UIStatusBarStyleLightContent
+          : UIStatusBarStyleDarkContent;
+    case RNSStatusBarStyleInverted:
+      return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
+          ? UIStatusBarStyleDarkContent
+          : UIStatusBarStyleLightContent;
+    case RNSStatusBarStyleLight:
+      return UIStatusBarStyleLightContent;
+    case RNSStatusBarStyleDark:
+      return UIStatusBarStyleDarkContent;
+    default:
+      return UIStatusBarStyleLightContent;
   }
-#endif
-  // it is the only non-default style available for iOS < 13
-  if (statusBarStyle == RNSStatusBarStyleLight) {
-    return UIStatusBarStyleLightContent;
-  }
-  return UIStatusBarStyleDefault;
 }
 #endif
 
