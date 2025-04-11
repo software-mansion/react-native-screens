@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
@@ -25,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.animator.CustomAnimatorSetProvider
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -263,57 +265,97 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animator? {
+        var animatorSet = AnimatorSet()
+
         if (!screen.usesFormSheetPresentation()) {
-            // Use animation defined while defining transaction in screen stack
-            return null
-        }
-
-        val animatorSet = AnimatorSet()
-        val dimmingDelegate = requireDimmingDelegate()
-
-        if (enter) {
-            val alphaAnimator =
-                ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
-                    addUpdateListener { anim ->
-                        val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
-                    }
+            when (nextAnim) {
+                R.animator.rns_default_exit_out,
+                R.animator.rns_default_exit_in,
+                R.animator.rns_default_enter_out,
+                R.animator.rns_default_enter_in,
+                R.animator.rns_no_animation_20,
+                R.animator.rns_fade_out,
+                R.animator.rns_fade_in,
+                R.animator.rns_slide_out_to_left,
+                R.animator.rns_slide_in_from_left,
+                R.animator.rns_slide_out_to_right,
+                R.animator.rns_slide_in_from_right,
+                R.animator.rns_no_animation_medium,
+                R.animator.rns_slide_out_to_bottom,
+                R.animator.rns_slide_in_from_bottom,
+                R.animator.rns_no_animation_250,
+                R.animator.rns_no_animation_350,
+                R.animator.rns_fade_from_bottom,
+                R.animator.rns_fade_to_bottom,
+                R.animator.rns_ios_from_right_background_close,
+                R.animator.rns_ios_from_right_foreground_close,
+                R.animator.rns_ios_from_right_background_open,
+                R.animator.rns_ios_from_right_foreground_open,
+                R.animator.rns_ios_from_left_background_close,
+                R.animator.rns_ios_from_left_foreground_close,
+                R.animator.rns_ios_from_left_background_open,
+                R.animator.rns_ios_from_left_foreground_open,
+                -> {
+                    animatorSet =
+                        CustomAnimatorSetProvider.customize(
+                            context,
+                            nextAnim,
+                            (AnimatorInflater.loadAnimator(context, nextAnim) as AnimatorSet),
+                            screen,
+                        )
                 }
-            val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
-            val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
-            val slideAnimator =
-                ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
-                    addUpdateListener { anim ->
-                        val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
-                    }
+                else -> {
+                    return null
                 }
-
-            animatorSet
-                .play(slideAnimator)
-                .takeIf {
-                    dimmingDelegate.willDimForDetentIndex(
-                        screen,
-                        screen.sheetInitialDetentIndex,
-                    )
-                }?.with(alphaAnimator)
+            }
         } else {
-            val alphaAnimator =
-                ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
-                    addUpdateListener { anim ->
-                        val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
+            val dimmingDelegate = requireDimmingDelegate()
+
+            if (enter) {
+                val alphaAnimator =
+                    ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
+                        addUpdateListener { anim ->
+                            val animatedValue = anim.animatedValue as? Float
+                            animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
+                        }
                     }
-                }
-            val slideAnimator =
-                ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
-                    addUpdateListener { anim ->
-                        val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
+                val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
+                val slideAnimator =
+                    ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
+                        addUpdateListener { anim ->
+                            val animatedValue = anim.animatedValue as? Float
+                            animatedValue?.let { screen.translationY = it }
+                        }
                     }
-                }
-            animatorSet.play(alphaAnimator).with(slideAnimator)
+
+                animatorSet
+                    .play(slideAnimator)
+                    .takeIf {
+                        dimmingDelegate.willDimForDetentIndex(
+                            screen,
+                            screen.sheetInitialDetentIndex,
+                        )
+                    }?.with(alphaAnimator)
+            } else {
+                val alphaAnimator =
+                    ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
+                        addUpdateListener { anim ->
+                            val animatedValue = anim.animatedValue as? Float
+                            animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
+                        }
+                    }
+                val slideAnimator =
+                    ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
+                        addUpdateListener { anim ->
+                            val animatedValue = anim.animatedValue as? Float
+                            animatedValue?.let { screen.translationY = it }
+                        }
+                    }
+                animatorSet.play(alphaAnimator).with(slideAnimator)
+            }
         }
+
         animatorSet.addListener(
             ScreenAnimationDelegate(
                 this,
