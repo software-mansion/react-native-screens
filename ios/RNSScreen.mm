@@ -237,16 +237,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   switch (stackPresentation) {
     case RNSScreenStackPresentationModal:
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-      if (@available(iOS 13.0, tvOS 13.0, *)) {
-        _controller.modalPresentationStyle = UIModalPresentationAutomatic;
-      } else {
-        _controller.modalPresentationStyle = UIModalPresentationFullScreen;
-      }
-#else
-      _controller.modalPresentationStyle = UIModalPresentationFullScreen;
-#endif
+      _controller.modalPresentationStyle = UIModalPresentationAutomatic;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_17_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_17_0 && !TARGET_OS_TV
       if (@available(iOS 18.0, *)) {
@@ -337,12 +328,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, tvOS 13.0, *)) {
-    _controller.modalInPresentation = !gestureEnabled;
-  }
-#endif
+  _controller.modalInPresentation = !gestureEnabled;
 
   _gestureEnabled = gestureEnabled;
 }
@@ -753,8 +739,6 @@ RNS_IGNORE_SUPER_CALL_END
   return _gestureEnabled;
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 - (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
 {
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
@@ -764,7 +748,6 @@ RNS_IGNORE_SUPER_CALL_END
     [self notifyDismissCancelledWithDismissCount:1];
   }
 }
-#endif
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
@@ -1572,18 +1555,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
-    if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0)
-      return fallbackStatusBarSize;
-
-    return primaryStatusBarSize;
-  } else {
+  CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
+  if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0) {
     return fallbackStatusBarSize;
   }
-#endif /* Check for iOS 13.0 */
+
+  return primaryStatusBarSize;
 
 #else
   // TVOS does not have status bar.
