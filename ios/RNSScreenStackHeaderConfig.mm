@@ -603,7 +603,7 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
   if (!shouldHide && !config.translucent) {
-    // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
+    // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
     // the screen underneath navigation controllers
     vc.edgesForExtendedLayout = UIRectEdgeNone;
   } else {

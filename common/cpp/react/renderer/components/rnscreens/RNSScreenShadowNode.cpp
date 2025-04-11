@@ -11,8 +11,7 @@ extern const char RNSScreenComponentName[] = "RNSScreen";
 Point RNSScreenShadowNode::getContentOriginOffset(
     bool /*includeTransform*/) const {
   auto stateData = getStateData();
-  auto contentOffset = stateData.contentOffset;
-  return {contentOffset.x, contentOffset.y};
+  return stateData.contentOffset;
 }
 
 std::optional<std::reference_wrapper<const ShadowNode::Shared>>
