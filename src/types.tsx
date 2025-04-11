@@ -753,6 +753,12 @@ export interface SearchBarProps {
    */
   obscureBackground?: boolean;
   /**
+   * Indicates whether the search bar should display a bookmark button.
+   *
+   * @platform iOS
+   */
+  showBookmarkButton?: boolean;
+  /**
    * A callback that gets called when search bar has lost focus
    */
   onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
@@ -762,6 +768,13 @@ export interface SearchBarProps {
    * @platform ios
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+
+  /**
+   * A callback that gets called when the bookmark button is pressed.
+   *
+   * @platform iOS
+   */
+  onBookmarkButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 
   /**
    * A callback that gets called when the text changes. It receives the current text value of the search bar.
