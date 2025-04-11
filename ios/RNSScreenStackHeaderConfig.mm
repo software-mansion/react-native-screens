@@ -667,7 +667,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)configureBackItem:(nullable UINavigationItem *)prevItem
+- (void)configureBackItem:(nullable UINavigationItem *)prevItem API_UNAVAILABLE(tvos)
 {
   if (prevItem == nil) {
     return;
