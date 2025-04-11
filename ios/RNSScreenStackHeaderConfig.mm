@@ -1155,25 +1155,23 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
   }];
 
 #if !TARGET_OS_TV
-  if (@available(iOS 13.0, *)) {
-    [blurEffects addEntriesFromDictionary:@{
-      @"systemUltraThinMaterial" : @(RNSBlurEffectStyleSystemUltraThinMaterial),
-      @"systemThinMaterial" : @(RNSBlurEffectStyleSystemThinMaterial),
-      @"systemMaterial" : @(RNSBlurEffectStyleSystemMaterial),
-      @"systemThickMaterial" : @(RNSBlurEffectStyleSystemThickMaterial),
-      @"systemChromeMaterial" : @(RNSBlurEffectStyleSystemChromeMaterial),
-      @"systemUltraThinMaterialLight" : @(RNSBlurEffectStyleSystemUltraThinMaterialLight),
-      @"systemThinMaterialLight" : @(RNSBlurEffectStyleSystemThinMaterialLight),
-      @"systemMaterialLight" : @(RNSBlurEffectStyleSystemMaterialLight),
-      @"systemThickMaterialLight" : @(RNSBlurEffectStyleSystemThickMaterialLight),
-      @"systemChromeMaterialLight" : @(RNSBlurEffectStyleSystemChromeMaterialLight),
-      @"systemUltraThinMaterialDark" : @(RNSBlurEffectStyleSystemUltraThinMaterialDark),
-      @"systemThinMaterialDark" : @(RNSBlurEffectStyleSystemThinMaterialDark),
-      @"systemMaterialDark" : @(RNSBlurEffectStyleSystemMaterialDark),
-      @"systemThickMaterialDark" : @(RNSBlurEffectStyleSystemThickMaterialDark),
-      @"systemChromeMaterialDark" : @(RNSBlurEffectStyleSystemChromeMaterialDark),
-    }];
-  }
+  [blurEffects addEntriesFromDictionary:@{
+    @"systemUltraThinMaterial" : @(RNSBlurEffectStyleSystemUltraThinMaterial),
+    @"systemThinMaterial" : @(RNSBlurEffectStyleSystemThinMaterial),
+    @"systemMaterial" : @(RNSBlurEffectStyleSystemMaterial),
+    @"systemThickMaterial" : @(RNSBlurEffectStyleSystemThickMaterial),
+    @"systemChromeMaterial" : @(RNSBlurEffectStyleSystemChromeMaterial),
+    @"systemUltraThinMaterialLight" : @(RNSBlurEffectStyleSystemUltraThinMaterialLight),
+    @"systemThinMaterialLight" : @(RNSBlurEffectStyleSystemThinMaterialLight),
+    @"systemMaterialLight" : @(RNSBlurEffectStyleSystemMaterialLight),
+    @"systemThickMaterialLight" : @(RNSBlurEffectStyleSystemThickMaterialLight),
+    @"systemChromeMaterialLight" : @(RNSBlurEffectStyleSystemChromeMaterialLight),
+    @"systemUltraThinMaterialDark" : @(RNSBlurEffectStyleSystemUltraThinMaterialDark),
+    @"systemThinMaterialDark" : @(RNSBlurEffectStyleSystemThinMaterialDark),
+    @"systemMaterialDark" : @(RNSBlurEffectStyleSystemMaterialDark),
+    @"systemThickMaterialDark" : @(RNSBlurEffectStyleSystemThickMaterialDark),
+    @"systemChromeMaterialDark" : @(RNSBlurEffectStyleSystemChromeMaterialDark),
+  }];
 #endif
   return blurEffects;
 }
