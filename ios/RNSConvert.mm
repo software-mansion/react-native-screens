@@ -195,53 +195,50 @@
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect
 {
   using enum react::RNSScreenStackHeaderConfigBlurEffect;
-#if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    switch (blurEffect) {
-      case None:
-        return RNSBlurEffectStyleNone;
-      case ExtraLight:
-        return RNSBlurEffectStyleExtraLight;
-      case Light:
-        return RNSBlurEffectStyleLight;
-      case Dark:
-        return RNSBlurEffectStyleDark;
-      case Regular:
-        return RNSBlurEffectStyleRegular;
-      case Prominent:
-        return RNSBlurEffectStyleProminent;
-      case SystemUltraThinMaterial:
-        return RNSBlurEffectStyleSystemUltraThinMaterial;
-      case SystemThinMaterial:
-        return RNSBlurEffectStyleSystemThinMaterial;
-      case SystemMaterial:
-        return RNSBlurEffectStyleSystemMaterial;
-      case SystemThickMaterial:
-        return RNSBlurEffectStyleSystemThickMaterial;
-      case SystemChromeMaterial:
-        return RNSBlurEffectStyleSystemChromeMaterial;
-      case SystemUltraThinMaterialLight:
-        return RNSBlurEffectStyleSystemUltraThinMaterialLight;
-      case SystemThinMaterialLight:
-        return RNSBlurEffectStyleSystemThinMaterialLight;
-      case SystemMaterialLight:
-        return RNSBlurEffectStyleSystemMaterialLight;
-      case SystemThickMaterialLight:
-        return RNSBlurEffectStyleSystemThickMaterialLight;
-      case SystemChromeMaterialLight:
-        return RNSBlurEffectStyleSystemChromeMaterialLight;
-      case SystemUltraThinMaterialDark:
-        return RNSBlurEffectStyleSystemUltraThinMaterialDark;
-      case SystemThinMaterialDark:
-        return RNSBlurEffectStyleSystemThinMaterialDark;
-      case SystemMaterialDark:
-        return RNSBlurEffectStyleSystemMaterialDark;
-      case SystemThickMaterialDark:
-        return RNSBlurEffectStyleSystemThickMaterialDark;
-      case SystemChromeMaterialDark:
-        return RNSBlurEffectStyleSystemChromeMaterialDark;
-    }
+#if !TARGET_OS_TV
+  switch (blurEffect) {
+    case None:
+      return RNSBlurEffectStyleNone;
+    case ExtraLight:
+      return RNSBlurEffectStyleExtraLight;
+    case Light:
+      return RNSBlurEffectStyleLight;
+    case Dark:
+      return RNSBlurEffectStyleDark;
+    case Regular:
+      return RNSBlurEffectStyleRegular;
+    case Prominent:
+      return RNSBlurEffectStyleProminent;
+    case SystemUltraThinMaterial:
+      return RNSBlurEffectStyleSystemUltraThinMaterial;
+    case SystemThinMaterial:
+      return RNSBlurEffectStyleSystemThinMaterial;
+    case SystemMaterial:
+      return RNSBlurEffectStyleSystemMaterial;
+    case SystemThickMaterial:
+      return RNSBlurEffectStyleSystemThickMaterial;
+    case SystemChromeMaterial:
+      return RNSBlurEffectStyleSystemChromeMaterial;
+    case SystemUltraThinMaterialLight:
+      return RNSBlurEffectStyleSystemUltraThinMaterialLight;
+    case SystemThinMaterialLight:
+      return RNSBlurEffectStyleSystemThinMaterialLight;
+    case SystemMaterialLight:
+      return RNSBlurEffectStyleSystemMaterialLight;
+    case SystemThickMaterialLight:
+      return RNSBlurEffectStyleSystemThickMaterialLight;
+    case SystemChromeMaterialLight:
+      return RNSBlurEffectStyleSystemChromeMaterialLight;
+    case SystemUltraThinMaterialDark:
+      return RNSBlurEffectStyleSystemUltraThinMaterialDark;
+    case SystemThinMaterialDark:
+      return RNSBlurEffectStyleSystemThinMaterialDark;
+    case SystemMaterialDark:
+      return RNSBlurEffectStyleSystemMaterialDark;
+    case SystemThickMaterialDark:
+      return RNSBlurEffectStyleSystemThickMaterialDark;
+    case SystemChromeMaterialDark:
+      return RNSBlurEffectStyleSystemChromeMaterialDark;
   }
 #endif
 

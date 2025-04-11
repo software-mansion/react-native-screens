@@ -40,32 +40,22 @@
 #if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    switch (statusBarStyle) {
-      case RNSStatusBarStyleAuto:
-        return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
-            ? UIStatusBarStyleLightContent
-            : UIStatusBarStyleDarkContent;
-      case RNSStatusBarStyleInverted:
-        return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
-            ? UIStatusBarStyleDarkContent
-            : UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleLight:
-        return UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleDark:
-        return UIStatusBarStyleDarkContent;
-      default:
-        return UIStatusBarStyleLightContent;
-    }
+  switch (statusBarStyle) {
+    case RNSStatusBarStyleAuto:
+      return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
+          ? UIStatusBarStyleLightContent
+          : UIStatusBarStyleDarkContent;
+    case RNSStatusBarStyleInverted:
+      return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
+          ? UIStatusBarStyleDarkContent
+          : UIStatusBarStyleLightContent;
+    case RNSStatusBarStyleLight:
+      return UIStatusBarStyleLightContent;
+    case RNSStatusBarStyleDark:
+      return UIStatusBarStyleDarkContent;
+    default:
+      return UIStatusBarStyleLightContent;
   }
-#endif
-  // it is the only non-default style available for iOS < 13
-  if (statusBarStyle == RNSStatusBarStyleLight) {
-    return UIStatusBarStyleLightContent;
-  }
-  return UIStatusBarStyleDefault;
 }
 #endif
 
@@ -194,19 +184,11 @@
 // https://stackoverflow.com/questions/57965701/statusbarorientation-was-deprecated-in-ios-13-0-when-attempting-to-get-app-ori/61249908#61249908
 + (UIInterfaceOrientation)interfaceOrientation
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    UIWindowScene *windowScene = RCTKeyWindow().windowScene;
-    if (windowScene == nil) {
-      return UIInterfaceOrientationUnknown;
-    }
-    return windowScene.interfaceOrientation;
-  } else
-#endif
-  {
-    return UIApplication.sharedApplication.statusBarOrientation;
+  UIWindowScene *windowScene = RCTKeyWindow().windowScene;
+  if (windowScene == nil) {
+    return UIInterfaceOrientationUnknown;
   }
+  return windowScene.interfaceOrientation;
 }
 #endif
 
