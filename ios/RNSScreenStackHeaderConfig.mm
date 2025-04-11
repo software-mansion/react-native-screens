@@ -588,6 +588,8 @@ RNS_IGNORE_SUPER_CALL_END
     prevItem.backBarButtonItem = backBarButtonItem;
   }
 
+  [config configureBackItem:prevItem];
+
   if (@available(iOS 11.0, *)) {
     if (config.largeTitle) {
       navctr.navigationBar.prefersLargeTitles = YES;
@@ -719,6 +721,10 @@ RNS_IGNORE_SUPER_CALL_END
   } else {
     [self setAnimatedConfig:vc withConfig:config];
   }
+}
+
+- (void)configureBackItem:(UINavigationItem *)prevItem
+{
 }
 
 - (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
