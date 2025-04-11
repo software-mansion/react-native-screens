@@ -184,19 +184,11 @@
 // https://stackoverflow.com/questions/57965701/statusbarorientation-was-deprecated-in-ios-13-0-when-attempting-to-get-app-ori/61249908#61249908
 + (UIInterfaceOrientation)interfaceOrientation
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    UIWindowScene *windowScene = RCTKeyWindow().windowScene;
-    if (windowScene == nil) {
-      return UIInterfaceOrientationUnknown;
-    }
-    return windowScene.interfaceOrientation;
-  } else
-#endif
-  {
-    return UIApplication.sharedApplication.statusBarOrientation;
+  UIWindowScene *windowScene = RCTKeyWindow().windowScene;
+  if (windowScene == nil) {
+    return UIInterfaceOrientationUnknown;
   }
+  return windowScene.interfaceOrientation;
 }
 #endif
 
