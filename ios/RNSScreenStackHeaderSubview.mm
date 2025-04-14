@@ -39,6 +39,11 @@ namespace react = facebook::react;
   return headerConfig;
 }
 
+- (nullable UINavigationBar *)findNavigationBar
+{
+  return [[[[[self getHeaderConfig] screenView] reactViewController] navigationController] navigationBar];
+}
+
 // We're forcing the navigation controller's view to re-layout
 // see: https://github.com/software-mansion/react-native-screens/pull/2385
 - (void)layoutNavigationBar
@@ -50,10 +55,7 @@ namespace react = facebook::react;
     return;
   }
 
-  RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
-  UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
-
-  UIView *toLayoutView = navctr.navigationBar;
+  UIView *toLayoutView = [self findNavigationBar];
 
   // TODO: It is possible, that this needs to be called only on old architecture.
   // Make sure that Test432 keeps working.
@@ -130,16 +132,27 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   }
 }
 
+- (void)layoutSubviews
+{
+  NSLog(@"Subview [%ld] layoutSubviews", self.tag);
+  [super layoutSubviews];
+  [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
+}
+
 RNS_IGNORE_SUPER_CALL_BEGIN
 
 - (void)setFrame:(CGRect)frame
 {
+  // This is mostly called by UIKit
   NSLog(@"Subview [%ld] setFrame %@", self.tag, NSStringFromCGRect(frame));
+  //  if (CGRectEqualToRect(frame, self.frame)) {
+  //  }
   [super setFrame:frame];
 }
 
 - (void)setBounds:(CGRect)bounds
 {
+  // This is most likely called by `updateLayoutMetrics:oldLayoutMetrics:`
   NSLog(@"Subview [%ld] setBounds %@", self.tag, NSStringFromCGRect(bounds));
   [super setBounds:bounds];
 }
@@ -175,7 +188,18 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   [super unmountChildComponentView:childComponentView index:index];
 }
 
-- (void)updateHeaderSubviewFrameInShadowTree:(CGRect)frame
+- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView
+{
+  if (ancestorView == nil) {
+    // We can not compute valid value
+    return;
+  }
+
+  CGRect frame = [self convertRect:self.frame toView:ancestorView];
+  [self updateShadowStateWithFrame:frame];
+}
+
+- (void)updateShadowStateWithFrame:(CGRect)frame
 {
   if (_state == nullptr) {
     return;

@@ -214,7 +214,7 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)updateHeaderConfigState:(CGSize)size
+- (void)updateShadowStateWithSize:(CGSize)size
 {
   if (!CGSizeEqualToSize(size, _lastSize)) {
     NSLog(@"Config [%ld] updateShadowState %@", self.tag, NSStringFromCGSize(size));
@@ -231,10 +231,10 @@ RNS_IGNORE_SUPER_CALL_END
   }
   NSLog(@"Config [%ld] maybe update shadow state of navigation bar components", self.tag);
 
-  [self updateHeaderConfigState:navigationBar.frame.size];
+  [self updateShadowStateWithSize:navigationBar.frame.size];
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
     CGRect frameInNavBarCoordinates = [subview convertRect:subview.frame toView:navigationBar];
-    [subview updateHeaderSubviewFrameInShadowTree:frameInNavBarCoordinates];
+    [subview updateShadowStateWithFrame:frameInNavBarCoordinates];
   }
 }
 #else
