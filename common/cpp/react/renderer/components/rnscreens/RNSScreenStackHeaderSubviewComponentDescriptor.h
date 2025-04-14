@@ -35,6 +35,12 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
         shadowNode.getState());
     auto stateData = state->getData();
 
+    auto mostRecentState = std::static_pointer_cast<
+        const RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(
+        shadowNode.getMostRecentState());
+
+    auto mostRecentStateData = mostRecentState->getData();
+
     std::printf(
         "SubviewCD [%d] adopt frameSize {%.2lf, %.2lf}\n",
         shadowNode.getTag(),
@@ -51,7 +57,11 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
     // rozmiar SN, to nie będziemy wstanie zareagować na zmiany rozmiaru
     // zrobione nie ze strony natywnej, a z JSa...
     if (!isSizeEmpty(stateData.frameSize)) {
-      //      layoutableShadowNode.setSize(stateData.frameSize);
+      if (stateData.frameSize != mostRecentStateData.frameSize) {
+        layoutableShadowNode.setSize(stateData.frameSize);
+      } else {
+        layoutableShadowNode.setSize({YGUndefined, YGUndefined});
+      }
     }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
