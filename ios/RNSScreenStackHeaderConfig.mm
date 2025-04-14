@@ -715,10 +715,16 @@ RNS_IGNORE_SUPER_CALL_END
       [RNSScreenStackHeaderConfig setTitleAttibutes:attrs forButton:backBarButtonItem];
     }
 
+    // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
+    // as assigning one will override the native behavior of automatically shortening
+    // the title to "Back" or hide the back title if there's not enough space.
+    // See: https://github.com/software-mansion/react-native-screens/issues/1589
     if (shouldUseCustomBackBarButtonItem) {
       prevItem.backBarButtonItem = backBarButtonItem;
     }
   } else {
+    // back button title should be not visible next to back button,
+    // but it should still appear in back menu
     prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
   }
 #endif
