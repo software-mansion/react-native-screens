@@ -1,8 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Pressable, Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 
 const styles = StyleSheet.create({
@@ -24,7 +23,7 @@ const styles = StyleSheet.create({
 
 const Stack = createNativeStackNavigator();
 
-function MyStack() {
+function RootStack() {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -44,36 +43,21 @@ const HomeScreen = ({ navigation }: any) => {
 
   const headerRight = React.useCallback(() => {
     return (
-      <>
+      <View style={[styles.buttonsView, !showAllButtons && { display: 'none' }]}>
         <PressableWithFeedback style={styles.button} onPress={() => console.log(1)}>
           <Text>1</Text>
         </PressableWithFeedback>
-        {secondButtonShown && (
-          <PressableWithFeedback style={styles.button} onPress={() => console.log(2)}>
-            <Text>2</Text>
-          </PressableWithFeedback>
-        )}
-        {thirdButtonShown && (
-          <PressableWithFeedback style={styles.button} onPress={() => console.log(3)}>
-            <Text>3</Text>
-          </PressableWithFeedback>
-        )}
-      </>
+        <PressableWithFeedback style={styles.button} onPress={() => console.log('D')}>
+          <Text>[D]</Text>
+        </PressableWithFeedback>
+      </View>
     );
-  }, [secondButtonShown, thirdButtonShown]);
+  }, [secondButtonShown, thirdButtonShown, showAllButtons]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerStyle: { backgroundColor: 'pink' },
-      headerRight: () => (
-        <View
-          style={[styles.buttonsView, !showAllButtons && { display: 'none' }]}>
-          {headerRight()}
-          <PressableWithFeedback style={styles.button} onPress={() => console.log('D')}>
-            <Text>[D]</Text>
-          </PressableWithFeedback>
-        </View>
-      ),
+      headerRight: headerRight,
     });
   }, [navigation, headerRight, showAllButtons]);
 
@@ -98,11 +82,9 @@ const HomeScreen = ({ navigation }: any) => {
 
 function App() {
   return (
-    <GestureHandlerRootView>
-      <NavigationContainer>
-        <MyStack />
-      </NavigationContainer>
-    </GestureHandlerRootView>
+    <NavigationContainer>
+      <RootStack />
+    </NavigationContainer>
   );
 }
 
