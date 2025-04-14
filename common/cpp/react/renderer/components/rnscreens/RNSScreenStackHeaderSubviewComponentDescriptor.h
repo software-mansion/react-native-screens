@@ -49,31 +49,28 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
         mostRecentStateData.frameSize.width,
         mostRecentStateData.frameSize.height);
 
-    // Po zmianie rozmiaru kontentu, shadow node jest klonowany i ustawiany jest
-    // tutaj stan z poprzedniego shadow node'a (możliwe, że też ostatni
-    // zamontowany), który był obliczony dla poprzedniego rozmiaru kontentu.
-    // Strona natywna, nic nie zmieni, bo Yoga wylayoutuje ten subview tak, żeby
-    // się zmieścił w tej ograniczonej przestrzeni. Bądź tu mądry. Jak to teraz
-    // naprawić? Wydaje się, że potrzebujemy w ST znać zarówno rozmiar jak i
-    // content offset, żeby działały pressable. Natomiast jeżeli wymusimy
-    // rozmiar SN, to nie będziemy wstanie zareagować na zmiany rozmiaru
-    // zrobione nie ze strony natywnej, a z JSa...
     if (!isSizeEmpty(stateData.frameSize)) {
       // This is a ugly hack to workaround issue with dynamic content change.
       // When the size of this shadow node contents (children) change due to JS
-      // update, e.g. new icon is added,
+      // update, e.g. new icon is added, if the size is set for the yogaNode
+      // corresponding to this shadow node, the enforced size will be used
+      // and the size won't be updated by Yoga to reflect the contents size
+      // change ->
+      // -> host tree won't get layout metrics update -> we won't trigger native
+      // layout -> the views in header will be positioned incorrectly. Here we
+      // try to detect, whether this shadow node is cloned as a result of state
+      // update (we assume that only source if the state updates is HostTree) or
+      // other change.
       if (stateData.frameSize != mostRecentStateData.frameSize) {
         std::printf("SubviewCD [%d] adopt APPLY\n", shadowNode.getTag());
         layoutableShadowNode.setSize(stateData.frameSize);
       } else {
+        // If the state has not changed we assign undefined size, to allow Yoga
+        // to recompute the shadow node layout.
         std::printf("SubviewCD [%d] adopt ZERO\n", shadowNode.getTag());
         layoutableShadowNode.setSize({YGUndefined, YGUndefined});
       }
     }
-
-    //    if (!isSizeEmpty(stateData.frameSize)) {
-    //      layoutableShadowNode.setSize(stateData.frameSize);
-    //    }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
