@@ -42,10 +42,12 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
     auto mostRecentStateData = mostRecentState->getData();
 
     std::printf(
-        "SubviewCD [%d] adopt frameSize {%.2lf, %.2lf}\n",
+        "SubviewCD [%d] adopt frameSize {%.2lf, %.2lf}, mostRecent {%.2lf, %.2lf}\n",
         shadowNode.getTag(),
         stateData.frameSize.width,
-        stateData.frameSize.height);
+        stateData.frameSize.height,
+        mostRecentStateData.frameSize.width,
+        mostRecentStateData.frameSize.height);
 
     // Po zmianie rozmiaru kontentu, shadow node jest klonowany i ustawiany jest
     // tutaj stan z poprzedniego shadow node'a (możliwe, że też ostatni
@@ -57,12 +59,21 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
     // rozmiar SN, to nie będziemy wstanie zareagować na zmiany rozmiaru
     // zrobione nie ze strony natywnej, a z JSa...
     if (!isSizeEmpty(stateData.frameSize)) {
+      // This is a ugly hack to workaround issue with dynamic content change.
+      // When the size of this shadow node contents (children) change due to JS
+      // update, e.g. new icon is added,
       if (stateData.frameSize != mostRecentStateData.frameSize) {
+        std::printf("SubviewCD [%d] adopt APPLY\n", shadowNode.getTag());
         layoutableShadowNode.setSize(stateData.frameSize);
       } else {
+        std::printf("SubviewCD [%d] adopt ZERO\n", shadowNode.getTag());
         layoutableShadowNode.setSize({YGUndefined, YGUndefined});
       }
     }
+
+    //    if (!isSizeEmpty(stateData.frameSize)) {
+    //      layoutableShadowNode.setSize(stateData.frameSize);
+    //    }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
