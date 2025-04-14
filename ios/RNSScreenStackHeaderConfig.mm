@@ -684,11 +684,11 @@ RNS_IGNORE_SUPER_CALL_END
   prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
 
   if (config.isBackTitleVisible) {
-    auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
     RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
                                                                                 style:UIBarButtonItemStylePlain
                                                                                target:nil
                                                                                action:nil];
+    auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
     if ((config.backTitleFontFamily &&
