@@ -35,6 +35,11 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
         shadowNode.getState());
     auto stateData = state->getData();
 
+#if defined(ANDROID)
+    if (!isSizeEmpty(stateData.frameSize)) {
+      layoutableShadowNode.setSize(stateData.frameSize);
+    }
+#else
     auto mostRecentState = std::static_pointer_cast<
         const RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(
         shadowNode.getMostRecentState());
@@ -71,6 +76,7 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
         layoutableShadowNode.setSize({YGUndefined, YGUndefined});
       }
     }
+#endif // Android
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
