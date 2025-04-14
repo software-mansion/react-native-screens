@@ -48,6 +48,7 @@ const PressableWithFeedback = React.forwardRef((props: PressableProps, ref: Forw
         onPress={onPressCallback}
         onPressOut={onPressOutCallback}
         onResponderMove={onResponderMoveCallback}
+        style={props.style}
       >
         {props.children}
       </Pressable>
