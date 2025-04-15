@@ -1,0 +1,48 @@
+import { device, expect, element, by } from 'detox';
+import { describeIfiOS } from '../e2e-utils';
+
+// headerLargeTitle is supported only on iOS
+describeIfiOS('Test645', () => {
+  beforeAll(async () => {
+    await device.reloadReactNative();
+  });
+
+  it('Test645 should exist', async () => {
+    await waitFor(element(by.id('root-screen-tests-Test645')))
+      .toBeVisible()
+      .whileElement(by.id('root-screen-examples-scrollview'))
+      .scroll(600, 'down', NaN, 0.85);
+
+    await expect(element(by.id('root-screen-tests-Test645'))).toBeVisible();
+    await element(by.id('root-screen-tests-Test645')).tap();
+  });
+
+  it('header large title "Main" should be fully visible', async () => {
+    await expect(element(by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
+  });
+
+  it('header large title "Details" should be fully visible', async () => {
+    await element(by.id('home-button-go-to-details')).tap();
+    await expect(element(by.text('Details').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
+  });
+
+  it('header large title "Settings" should be fully visible', async () => {
+    await element(by.id('details-button-go-to-settings')).tap();
+    await expect(element(by.text('Settings').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
+  });
+
+  it('header large title "Main" should be fully visible after coming back from Settings', async () => {
+    await element(by.id('settings-button-go-to-home')).tap();
+    await expect(element(by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
+  });
+
+  it('header large title "Main" should be fully visible on Second tab screen', async () => {
+    await element(by.id('home-button-go-to-second')).tap();
+    await expect(element(by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
+  });
+
+  it('header large title "Main" should be fully visible after coming back from Second tab screen', async () => {
+    await element(by.id('second-button-go-back')).tap();
+    await expect(element(by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
+  });
+});

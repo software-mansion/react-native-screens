@@ -12,10 +12,12 @@ function HomeScreen({ navigation }) {
       <Button
         onPress={() => navigation.navigate('Details')}
         title="Go to Details"
+        testID="home-button-go-to-details"
       />
       <Button
         onPress={() => navigation.navigate('Second')}
         title="Go to Second"
+        testID="home-button-go-to-second"
       />
     </View>
   );
@@ -27,8 +29,9 @@ function DetailsScreen({ navigation }) {
       <Button
         onPress={() => navigation.navigate('Settings')}
         title="Go to Settings"
+        testID="details-button-go-to-settings"
       />
-      <Text>Details</Text>
+      <Text>Some text.</Text>
     </View>
   );
 }
@@ -39,8 +42,9 @@ function SettingsScreen({ navigation }) {
       <Button
         onPress={() => navigation.popTo('Main', { screen: 'Home' })}
         title="Go to Home"
+        testID="settings-button-go-to-home"
       />
-      <Text>Details</Text>
+      <Text>Some text.</Text>
     </View>
   );
 }
@@ -49,7 +53,7 @@ function SecondScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ fontSize: 30 }}>This is a second screen!</Text>
-      <Button onPress={() => navigation.goBack()} title="go back" />
+      <Button onPress={() => navigation.goBack()} title="go back" testID="second-button-go-back" />
     </View>
   );
 }
