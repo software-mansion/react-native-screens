@@ -2979,7 +2979,7 @@ __metadata:
     react-native-gesture-handler: "npm:2.22.0"
     react-native-reanimated: "npm:4.0.0-nightly-20250415-1169af1d2"
     react-native-restart: "npm:^0.0.27"
-    react-native-safe-area-context: "npm:5.2.0"
+    react-native-safe-area-context: "npm:5.4.0"
     react-native-screens: "link:../"
     react-native-worklets: "npm:0.2.0-nightly-20250415-1169af1d2"
     react-test-renderer: "npm:19.0.0"
@@ -8491,13 +8491,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-safe-area-context@npm:5.2.0":
-  version: 5.2.0
-  resolution: "react-native-safe-area-context@npm:5.2.0"
+"react-native-safe-area-context@npm:5.4.0":
+  version: 5.4.0
+  resolution: "react-native-safe-area-context@npm:5.4.0"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/4b8587cf01070a434b56c1453e5666ea2fbf8a15b2316f407ae361e83650a087a0236ab4bcd6aba421028457df59c18f51384d82862c77558da44987ba8dd5f1
+  checksum: 10c0/729fef1f768d57b905f51882374aa93b209d54576b8a0cf328e0a349c8dc9705ae8f9032e572fd7a7c9e94b588105f44760c0bb15ab9911b7977073d6754b54d
   languageName: node
   linkType: hard
 

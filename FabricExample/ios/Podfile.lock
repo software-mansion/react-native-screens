@@ -1334,7 +1334,7 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-restart (0.0.27):
     - React-Core
-  - react-native-safe-area-context (5.2.0):
+  - react-native-safe-area-context (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1349,8 +1349,8 @@ PODS:
     - React-hermes
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.2.0)
-    - react-native-safe-area-context/fabric (= 5.2.0)
+    - react-native-safe-area-context/common (= 5.4.0)
+    - react-native-safe-area-context/fabric (= 5.4.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1360,7 +1360,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/common (5.2.0):
+  - react-native-safe-area-context/common (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1384,7 +1384,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/fabric (5.2.0):
+  - react-native-safe-area-context/fabric (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2265,7 +2265,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 8df5296f9d9a61f980d293b55026cfebcd8dfb0a
   React-microtasksnativemodule: c8ed30f8ec30affbc73411c54207bd67b1125bbb
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
-  react-native-safe-area-context: 98119184660b9638e090e21d0c76f4faa4ac57d8
+  react-native-safe-area-context: 562163222d999b79a51577eda2ea8ad2c32b4d06
   React-NativeModulesApple: 8a465be9a58afc56f48c1322331ffbdecd3d4877
   React-oscompat: 74eb4badd12e93899f37a5dbb03d8a638011a292
   React-perflogger: dba4ffef10c54537fa33cb2580cf6d4c48458d36
