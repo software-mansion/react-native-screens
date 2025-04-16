@@ -2977,7 +2977,7 @@ __metadata:
     react: "npm:19.0.0"
     react-native: "npm:0.79.1"
     react-native-gesture-handler: "npm:2.22.0"
-    react-native-reanimated: "npm:^4.0.0-nightly-20250415-1169af1d2"
+    react-native-reanimated: "npm:4.0.0-nightly-20250415-1169af1d2"
     react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:5.2.0"
     react-native-screens: "link:../"
@@ -8457,7 +8457,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:^4.0.0-nightly-20250415-1169af1d2":
+"react-native-reanimated@npm:4.0.0-nightly-20250415-1169af1d2":
   version: 4.0.0-nightly-20250415-1169af1d2
   resolution: "react-native-reanimated@npm:4.0.0-nightly-20250415-1169af1d2"
   dependencies:
