@@ -4,6 +4,12 @@ import React from 'react';
 import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 
+import {
+  ReanimatedScreenProvider,
+  useReanimatedSheetTranslation,
+} from 'react-native-screens/reanimated';
+import Animated, { SharedValue, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
+
 type ItemData = {
   id: number,
   text: string;
@@ -23,6 +29,9 @@ type RouteProps<RouteName extends keyof RouteParamList> = {
   route: RouteProp<RouteParamList, RouteName>;
 }
 
+const TranslationContext = React.createContext<{ y: SharedValue<number>, setY: (value: number) => void } | undefined>(undefined);
+
+
 const Stack = createNativeStackNavigator<RouteParamList>();
 
 function generateData(count: number): ItemData[] {
@@ -30,6 +39,18 @@ function generateData(count: number): ItemData[] {
 }
 
 function Home({ navigation }: RouteProps<'Home'>) {
+  const context = React.useContext(TranslationContext)
+
+  const translateY = useDerivedValue(() => {
+    return context?.y.value ?? 0
+  })
+
+  const circleStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: -translateY.value }
+    ]
+  }))
+
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
       <Button title="Open sheet" onPress={() => navigation.navigate('FormSheet')} />
@@ -41,6 +62,7 @@ function Home({ navigation }: RouteProps<'Home'>) {
           <Text>Pressable</Text>
         </View>
       </PressableWithFeedback>
+      <Animated.View style={[{ position: 'absolute', right: 16, bottom: 50, width: 64, height: 64, borderRadius: 32, backgroundColor: 'red' }, circleStyle]} />
     </View>
   );
 }
@@ -54,6 +76,13 @@ function Second({ navigation }: RouteProps<'Second'>) {
 }
 
 function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
+  const context = React.useContext(TranslationContext)
+  const translation = useReanimatedSheetTranslation()
+
+  useDerivedValue(() => {
+    context?.setY(translation.value)
+  })
+
   return (
     // When using `fitToContents` you can't use flex: 1. It is you who must provide
     // the content size - you can't rely on parent size here.
@@ -163,57 +192,67 @@ function FormSheetFooter() {
 }
 
 export default function App() {
+  const translationY = useSharedValue(0)
+  const setY = (value: number) => {
+    'worklet'
+    translationY.value = value
+  }
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Second" component={Second} />
-        <Stack.Screen name="FormSheet" component={FormSheet} options={{
-          presentation: 'formSheet',
-          sheetAllowedDetents: [0.4, 0.75],
-          //sheetAllowedDetents: 'fitToContents',
-          sheetLargestUndimmedDetentIndex: 'none',
-          sheetCornerRadius: 8,
-          headerShown: false,
-          contentStyle: {
-            backgroundColor: 'lightblue',
-          },
-          //unstable_sheetFooter: FormSheetFooter,
-        }} />
-        <Stack.Screen name="SecondFormSheet" component={SecondFormSheet} options={{
-          presentation: 'formSheet',
-          //sheetAllowedDetents: [0.4, 0.75],
-          sheetAllowedDetents: 'fitToContents',
-          sheetLargestUndimmedDetentIndex: 'none',
-          sheetCornerRadius: 8,
-          headerShown: false,
-          contentStyle: {
-            backgroundColor: 'lightblue',
-          },
-          //unstable_sheetFooter: FormSheetFooter,
-        }} />
-        <Stack.Screen name="FormSheetWithFlatList" component={FormSheetWithFlatList} options={{
-          presentation: 'formSheet',
-          sheetAllowedDetents: [1.0],
-          sheetCornerRadius: 8,
-          headerShown: false,
-          contentStyle: {
-            backgroundColor: 'lightblue',
-          },
-        }} />
-        <Stack.Screen name="FormSheetWithScrollView" component={FormSheetWithScrollView} options={{
-          presentation: 'formSheet',
-          sheetAllowedDetents: [0.6],
-          sheetExpandsWhenScrolledToEdge: false,
-          sheetGrabberVisible: true,
-          sheetCornerRadius: 8,
-          headerShown: false,
-          contentStyle: {
-            backgroundColor: 'lightblue',
-          },
-        }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ReanimatedScreenProvider>
+      <TranslationContext.Provider value={{ y: translationY, setY }}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Second" component={Second} />
+            <Stack.Screen name="FormSheet" component={FormSheet} options={{
+              presentation: 'formSheet',
+              sheetAllowedDetents: [0.4, 0.75],
+              //sheetAllowedDetents: 'fitToContents',
+              sheetLargestUndimmedDetentIndex: 'none',
+              sheetCornerRadius: 8,
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: 'lightblue',
+              },
+              //unstable_sheetFooter: FormSheetFooter,
+            }} />
+            <Stack.Screen name="SecondFormSheet" component={SecondFormSheet} options={{
+              presentation: 'formSheet',
+              //sheetAllowedDetents: [0.4, 0.75],
+              sheetAllowedDetents: 'fitToContents',
+              sheetLargestUndimmedDetentIndex: 'none',
+              sheetCornerRadius: 8,
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: 'lightblue',
+              },
+              //unstable_sheetFooter: FormSheetFooter,
+            }} />
+            <Stack.Screen name="FormSheetWithFlatList" component={FormSheetWithFlatList} options={{
+              presentation: 'formSheet',
+              sheetAllowedDetents: [1.0],
+              sheetCornerRadius: 8,
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: 'lightblue',
+              },
+            }} />
+            <Stack.Screen name="FormSheetWithScrollView" component={FormSheetWithScrollView} options={{
+              presentation: 'formSheet',
+              sheetAllowedDetents: [0.6],
+              sheetExpandsWhenScrolledToEdge: false,
+              sheetGrabberVisible: true,
+              sheetCornerRadius: 8,
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: 'lightblue',
+              },
+            }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </TranslationContext.Provider>
+    </ReanimatedScreenProvider>
   );
 }
 

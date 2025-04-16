@@ -5,6 +5,7 @@ import {
   HeaderHeightChangeEventType,
   ScreenProps,
   TransitionProgressEventType,
+  SheetTranslationEventType,
 } from '../types';
 
 // @ts-ignore file to be used only if `react-native-reanimated` available in the project
@@ -17,6 +18,7 @@ import {
 import getDefaultHeaderHeight from '../native-stack/utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../native-stack/utils/getStatusBarHeight';
 import ReanimatedHeaderHeightContext from './ReanimatedHeaderHeightContext';
+import ReanimatedSheetTranslationContext from './ReanimatedSheetTranslationContext';
 
 const AnimatedScreen = Animated.createAnimatedComponent(
   InnerScreen as unknown as React.ComponentClass,
@@ -59,6 +61,8 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   const closing = useSharedValue(0);
   const goingForward = useSharedValue(0);
 
+  const translationY = useSharedValue(0);
+
   return (
     <AnimatedScreen
       // @ts-ignore some problems with ref and onTransitionProgressReanimated being "fake" prop for parsing of `useEvent` return value
@@ -81,6 +85,22 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : 'topTransitionProgress',
         ],
       )}
+      onSheetTranslationReanimated={useEvent(
+        (event: SheetTranslationEventType) => {
+          'worklet';
+          translationY.value = event.y;
+        },
+        [
+          // This should not be necessary, but is not properly managed by `react-native-reanimated`
+          // @ts-ignore wrong type
+          Platform.OS === 'android'
+            ? 'onSheetTranslation'
+            : // for some reason there is a difference in required event name between architectures
+            ENABLE_FABRIC
+            ? 'onSheetTranslation'
+            : 'topSheetTranslation',
+        ],
+      )}
       onHeaderHeightChangeReanimated={useEvent(
         (event: HeaderHeightChangeEventType) => {
           'worklet';
@@ -99,16 +119,18 @@ const ReanimatedNativeStackScreen = React.forwardRef<
         ],
       )}
       {...rest}>
-      <ReanimatedHeaderHeightContext.Provider value={headerHeight}>
-        <ReanimatedTransitionProgressContext.Provider
-          value={{
-            progress,
-            closing,
-            goingForward,
-          }}>
-          {children}
-        </ReanimatedTransitionProgressContext.Provider>
-      </ReanimatedHeaderHeightContext.Provider>
+      <ReanimatedSheetTranslationContext.Provider value={translationY}>
+        <ReanimatedHeaderHeightContext.Provider value={headerHeight}>
+          <ReanimatedTransitionProgressContext.Provider
+            value={{
+              progress,
+              closing,
+              goingForward,
+            }}>
+            {children}
+          </ReanimatedTransitionProgressContext.Provider>
+        </ReanimatedHeaderHeightContext.Provider>
+      </ReanimatedSheetTranslationContext.Provider>
     </AnimatedScreen>
   );
 });

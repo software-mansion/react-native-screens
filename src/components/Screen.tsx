@@ -4,6 +4,7 @@ import React from 'react';
 import { Animated, View, Platform } from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
+import SheetTranslationContext from '../SheetTranslationContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
 import { ScreenProps } from '../types';
 
@@ -174,6 +175,8 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
     const progress = React.useRef(new Animated.Value(0)).current;
     const goingForward = React.useRef(new Animated.Value(0)).current;
 
+    const translationY = React.useRef(new Animated.Value(0)).current;
+
     const {
       enabled = screensEnabled(),
       freezeOnBlur = freezeEnabled(),
@@ -343,18 +346,34 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
                     ],
                     { useNativeDriver: true },
                   )
+            }
+            onSheetTranslation={
+              !isNativeStack
+                ? undefined
+                : Animated.event(
+                    [
+                      {
+                        nativeEvent: {
+                          y: translationY,
+                        },
+                      },
+                    ],
+                    { useNativeDriver: true },
+                  )
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (
-              <TransitionProgressContext.Provider
-                value={{
-                  progress,
-                  closing,
-                  goingForward,
-                }}>
-                {children}
-              </TransitionProgressContext.Provider>
+              <SheetTranslationContext.Provider value={translationY}>
+                <TransitionProgressContext.Provider
+                  value={{
+                    progress,
+                    closing,
+                    goingForward,
+                  }}>
+                  {children}
+                </TransitionProgressContext.Provider>
+              </SheetTranslationContext.Provider>
             )}
           </AnimatedScreen>
         </DelayedFreeze>

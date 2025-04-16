@@ -91,6 +91,10 @@ export type TransitionProgressEventType = {
   goingForward: number;
 };
 
+export type SheetTranslationEventType = {
+  y: number;
+};
+
 export type GestureResponseDistanceType = {
   start?: number;
   end?: number;
@@ -258,6 +262,12 @@ export interface ScreenProps extends ViewProps {
    */
   onTransitionProgress?: (
     e: NativeSyntheticEvent<TransitionProgressEventType>,
+  ) => void;
+  /**
+   * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
+   */
+  onSheetTranslation?: (
+    e: NativeSyntheticEvent<SheetTranslationEventType>,
   ) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.

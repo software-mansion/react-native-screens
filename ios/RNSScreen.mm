@@ -718,6 +718,27 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 }
 
+- (void)notifySheetTranslation:(double)y
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onSheetTranslation(react::RNSScreenEventEmitter::OnSheetTranslation{
+            .y = y});
+  }
+  RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onSheetTranslation"
+                                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                                   y:y];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
+#else
+  if (self.onSheetTranslation) {
+    self.onSheetTranslation(@{
+      @"y" : @(y),
+    });
+  }
+#endif
+}
+
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
   // We need to call both "cancel" and "reset" here because RN's gesture recognizer
@@ -1378,13 +1399,17 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   CGRect _lastViewFrame;
   RNSScreenView *_initialView;
   UIView *_fakeView;
+  UIView *_gestureView;
   CADisplayLink *_animationTimer;
+  CADisplayLink *_translationTimer;
+  CGFloat _lastTrackedY;
   CGFloat _currentAlpha;
   BOOL _closing;
   BOOL _goingForward;
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
+  BOOL _isDragging;
 }
 
 #pragma mark - Common
@@ -1427,6 +1452,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _closing = NO;
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
+    [self setupSheetTranslation];
+    [self setupGestureHandler];
   }
 }
 
@@ -1655,6 +1682,75 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   }
   return nil;
+}
+
+#pragma mark - sheet translation related methods
+
+- (void)setupGestureHandler
+{
+  UIView *presentedView = self.sheetPresentationController.presentedView;
+  if (!presentedView) {
+    return;
+  }
+
+  for (UIGestureRecognizer *recognizer in presentedView.gestureRecognizers ?: @[]) {
+    if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+      UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)recognizer;
+      [panGesture addTarget:self action:@selector(handlePanGesture:)];
+    }
+  }
+}
+
+- (void)handlePanGesture:(UIPanGestureRecognizer *)gesture {
+  switch (gesture.state) {
+    case UIGestureRecognizerStateBegan:
+      _isDragging = YES;
+      [self setupSheetTranslation];
+      break;
+    case UIGestureRecognizerStateEnded:
+    case UIGestureRecognizerStateCancelled:
+      _isDragging = NO;
+    default:
+        break;
+  }
+}
+
+- (void)setupSheetTranslation
+{
+  if (!_translationTimer) {
+    _translationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleSheetTranslation)];
+    [_translationTimer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+
+    _lastTrackedY = 0;
+  }
+}
+
+- (void)handleSheetTranslation
+{
+  UIView *presentedView = self.sheetPresentationController.presentedView;
+  if (!presentedView) return;
+  
+  CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+  CGFloat sheetY = presentedView.frame.origin.y;
+  CGFloat currentY = screenHeight - sheetY;
+  
+  if (!_isDragging && _lastTrackedY == currentY) {
+    [_translationTimer invalidate];
+    _translationTimer = nil;
+    _lastTrackedY = 0;
+  } else {
+    _lastTrackedY = currentY;
+    [self notifySheetTranslation:currentY];
+  }
+}
+
+- (void)notifySheetTranslation:(double)y
+{
+  if ([self.view isKindOfClass:[RNSScreenView class]]) {
+    // if the view is already snapshot, there is not sense in sending progress since on JS side
+    // the component is already not present
+    [(RNSScreenView *)self.view notifySheetTranslation:y];
+  }
 }
 
 #pragma mark - transition progress related methods
@@ -1961,6 +2057,7 @@ RCT_EXPORT_VIEW_PROPERTY(onHeaderHeightChange, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onSheetTranslation, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
