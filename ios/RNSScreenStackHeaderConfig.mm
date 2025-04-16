@@ -35,7 +35,10 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-#ifndef RCT_NEW_ARCH_ENABLED
+static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
+static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
+
+#if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
@@ -276,96 +279,9 @@ RNS_IGNORE_SUPER_CALL_END
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
-  // It is workaround for loading custom back icon when transitioning from a screen without header to the screen which
-  // has one. This action fails when navigating to the screen with header for the second time and loads default back
-  // button. It looks like changing the tint color of navbar triggers an update of the items belonging to it and it
-  // seems to load the custom back image so we change the tint color's alpha by a very small amount and then set it to
-  // the one it should have.
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
-  // it brakes the behavior of `headerRight` in iOS 14, where the bug desribed above seems to be fixed, so we do nothing
-  // in iOS 14
-  if (@available(iOS 14.0, *)) {
-  } else
-#endif
-  {
-    [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
-  }
   [navbar setTintColor:config.color];
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    // font customized on the navigation item level, so nothing to do here
-  } else
-#endif
-  {
-    BOOL hideShadow = config.hideShadow;
-
-    if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
-      [navbar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-      [navbar setBarTintColor:[UIColor clearColor]];
-      hideShadow = YES;
-    } else {
-      [navbar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-      [navbar setBarTintColor:config.backgroundColor];
-    }
-    [navbar setTranslucent:config.translucent];
-    [navbar setValue:@(hideShadow ? YES : NO) forKey:@"hidesShadow"];
-
-    if (config.titleFontFamily || config.titleFontSize || config.titleFontWeight || config.titleColor) {
-      NSMutableDictionary *attrs = [NSMutableDictionary new];
-
-      if (config.titleColor) {
-        attrs[NSForegroundColorAttributeName] = config.titleColor;
-      }
-
-      NSString *family = config.titleFontFamily ?: nil;
-      NSNumber *size = config.titleFontSize ?: @17;
-      NSString *weight = config.titleFontWeight ?: nil;
-      if (family || weight) {
-        attrs[NSFontAttributeName] = [RCTFont updateFont:nil
-                                              withFamily:family
-                                                    size:size
-                                                  weight:weight
-                                                   style:nil
-                                                 variant:nil
-                                         scaleMultiplier:1.0];
-      } else {
-        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
-      }
-      [navbar setTitleTextAttributes:attrs];
-    }
-
-#if !TARGET_OS_TV && !TARGET_OS_VISION
-    if (@available(iOS 11.0, *)) {
-      if (config.largeTitle &&
-          (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight ||
-           config.largeTitleColor || config.titleColor)) {
-        NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
-        if (config.largeTitleColor || config.titleColor) {
-          largeAttrs[NSForegroundColorAttributeName] =
-              config.largeTitleColor ? config.largeTitleColor : config.titleColor;
-        }
-        NSString *largeFamily = config.largeTitleFontFamily ?: nil;
-        NSNumber *largeSize = config.largeTitleFontSize ?: @34;
-        NSString *largeWeight = config.largeTitleFontWeight ?: nil;
-        if (largeFamily || largeWeight) {
-          largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil
-                                                     withFamily:largeFamily
-                                                           size:largeSize
-                                                         weight:largeWeight
-                                                          style:nil
-                                                        variant:nil
-                                                scaleMultiplier:1.0];
-        } else {
-          largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
-        }
-        [navbar setLargeTitleTextAttributes:largeAttrs];
-      }
-    }
-#endif
-  }
+  // font customized on the navigation item level, so nothing to do here
 }
 
 + (void)setTitleAttibutes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
@@ -476,8 +392,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 + (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc
                                     withConfig:(RNSScreenStackHeaderConfig *)config API_AVAILABLE(ios(13.0))
 {
@@ -525,7 +439,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 
     NSString *family = config.titleFontFamily ?: nil;
-    NSNumber *size = config.titleFontSize ?: @17;
+    NSNumber *size = config.titleFontSize ?: DEFAULT_TITLE_FONT_SIZE;
     NSString *weight = config.titleFontWeight ?: nil;
     if (family || weight) {
       attrs[NSFontAttributeName] = [RCTFont updateFont:nil
@@ -553,7 +467,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 
     NSString *largeFamily = config.largeTitleFontFamily ?: nil;
-    NSNumber *largeSize = config.largeTitleFontSize ?: @34;
+    NSNumber *largeSize = config.largeTitleFontSize ?: DEFAULT_TITLE_LARGE_FONT_SIZE;
     NSString *largeWeight = config.largeTitleFontWeight ?: nil;
     if (largeFamily || largeWeight) {
       largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil
@@ -578,7 +492,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
   return appearance;
 }
-#endif // Check for >= iOS 13.0
 
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
@@ -603,7 +516,7 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
   if (!shouldHide && !config.translucent) {
-    // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
+    // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
     // the screen underneath navigation controllers
     vc.edgesForExtendedLayout = UIRectEdgeNone;
   } else {
@@ -621,118 +534,44 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
 #if !TARGET_OS_TV
-  const auto isBackTitleBlank = [NSString rnscreens_isBlankOrNull:config.backTitle] == YES;
-  NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
-  RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:nil
-                                                                             action:nil];
-  [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+  [config configureBackItem:prevItem];
 
-  auto shouldUseCustomBackBarButtonItem = !isBackTitleBlank || config.disableBackButtonMenu;
-
-  // This has any effect only in case the `backBarButtonItem` is not set.
-  // We apply it before we configure the back item, because it might get overriden.
-  prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
-
-  if (config.isBackTitleVisible) {
-    if ((config.backTitleFontFamily &&
-         // While being used by react-navigation, the `backTitleFontFamily` will
-         // be set to "System" by default - which is the system default font.
-         // To avoid always considering the font as customized, we need to have an additional check.
-         // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
-         ![config.backTitleFontFamily isEqual:@"System"]) ||
-        config.backTitleFontSize) {
-      shouldUseCustomBackBarButtonItem = YES;
-      NSMutableDictionary *attrs = [NSMutableDictionary new];
-      NSNumber *size = config.backTitleFontSize ?: @17;
-      if (config.backTitleFontFamily) {
-        attrs[NSFontAttributeName] = [RCTFont updateFont:nil
-                                              withFamily:config.backTitleFontFamily
-                                                    size:size
-                                                  weight:nil
-                                                   style:nil
-                                                 variant:nil
-                                         scaleMultiplier:1.0];
-      } else {
-        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
-      }
-      [self setTitleAttibutes:attrs forButton:backBarButtonItem];
-    }
-  } else {
-    // back button title should be not visible next to back button,
-    // but it should still appear in back menu (if one is enabled)
-
-    prevItem.backButtonTitle = resolvedBackTitle;
-    prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
-    shouldUseCustomBackBarButtonItem = NO;
+  if (config.largeTitle) {
+    navctr.navigationBar.prefersLargeTitles = YES;
   }
-
-  // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
-  // as assigning one will override the native behavior of automatically shortening
-  // the title to "Back" or hide the back title if there's not enough space.
-  // See: https://github.com/software-mansion/react-native-screens/issues/1589
-  if (shouldUseCustomBackBarButtonItem) {
-    prevItem.backBarButtonItem = backBarButtonItem;
-  }
-
-  if (@available(iOS 11.0, *)) {
-    if (config.largeTitle) {
-      navctr.navigationBar.prefersLargeTitles = YES;
-    }
-    navitem.largeTitleDisplayMode =
-        config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
-  }
+  navitem.largeTitleDisplayMode =
+      config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
 #endif
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, tvOS 13.0, *)) {
-    UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
-    navitem.standardAppearance = appearance;
-    navitem.compactAppearance = appearance;
+  UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
+  navitem.standardAppearance = appearance;
+  navitem.compactAppearance = appearance;
 
 // appearance does not apply to the tvOS so we need to use lagacy customization
 #if TARGET_OS_TV
-    navctr.navigationBar.titleTextAttributes = appearance.titleTextAttributes;
-    navctr.navigationBar.backgroundColor = appearance.backgroundColor;
+  navctr.navigationBar.titleTextAttributes = appearance.titleTextAttributes;
+  navctr.navigationBar.backgroundColor = appearance.backgroundColor;
 #endif
 
-    UINavigationBarAppearance *scrollEdgeAppearance =
-        [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
-    if (config.largeTitleBackgroundColor != nil) {
-      // Add support for using a fully transparent bar when the backgroundColor is set to transparent.
-      if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
-        // This will also remove the background blur effect in the large title which is otherwise inherited from the
-        // standard appearance.
-        [scrollEdgeAppearance configureWithTransparentBackground];
-        // This must be set to nil otherwise a default view will be added to the navigation bar background with an
-        // opaque background.
-        scrollEdgeAppearance.backgroundColor = nil;
-      } else {
-        scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
-      }
+  UINavigationBarAppearance *scrollEdgeAppearance =
+      [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
+  if (config.largeTitleBackgroundColor != nil) {
+    // Add support for using a fully transparent bar when the backgroundColor is set to transparent.
+    if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
+      // This will also remove the background blur effect in the large title which is otherwise inherited from the
+      // standard appearance.
+      [scrollEdgeAppearance configureWithTransparentBackground];
+      // This must be set to nil otherwise a default view will be added to the navigation bar background with an
+      // opaque background.
+      scrollEdgeAppearance.backgroundColor = nil;
+    } else {
+      scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
     }
-    if (config.largeTitleHideShadow) {
-      scrollEdgeAppearance.shadowColor = nil;
-    }
-    navitem.scrollEdgeAppearance = scrollEdgeAppearance;
-  } else
-#endif
-  {
-#if !TARGET_OS_TV
-    // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
-    // to update it before the navigation starts.
-    UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
-    if (backButtonImage) {
-      navctr.navigationBar.backIndicatorImage = backButtonImage;
-      navctr.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
-    } else if (navctr.navigationBar.backIndicatorImage) {
-      navctr.navigationBar.backIndicatorImage = nil;
-      navctr.navigationBar.backIndicatorTransitionMaskImage = nil;
-    }
-#endif
   }
+  if (config.largeTitleHideShadow) {
+    scrollEdgeAppearance.shadowColor = nil;
+  }
+  navitem.scrollEdgeAppearance = scrollEdgeAppearance;
 #if !TARGET_OS_TV
   navitem.hidesBackButton = config.hideBackButton;
 #endif
@@ -826,6 +665,71 @@ RNS_IGNORE_SUPER_CALL_END
   } else {
     [self setAnimatedConfig:vc withConfig:config];
   }
+}
+
+- (void)configureBackItem:(nullable UINavigationItem *)prevItem API_UNAVAILABLE(tvos)
+{
+#if !TARGET_OS_TV
+  if (prevItem == nil) {
+    return;
+  }
+
+  const auto *config = self;
+
+  const auto isBackTitleBlank = [NSString rnscreens_isBlankOrNull:config.backTitle] == YES;
+  NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+  RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:nil
+                                                                             action:nil];
+  [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+
+  auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
+
+  // This has any effect only in case the `backBarButtonItem` is not set.
+  // We apply it before we configure the back item, because it might get overriden.
+  prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
+  prevItem.backButtonTitle = resolvedBackTitle;
+
+  if (config.isBackTitleVisible) {
+    if ((config.backTitleFontFamily &&
+         // While being used by react-navigation, the `backTitleFontFamily` will
+         // be set to "System" by default - which is the system default font.
+         // To avoid always considering the font as customized, we need to have an additional check.
+         // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
+         ![config.backTitleFontFamily isEqual:@"System"]) ||
+        config.backTitleFontSize) {
+      shouldUseCustomBackBarButtonItem = YES;
+      NSMutableDictionary *attrs = [NSMutableDictionary new];
+      NSNumber *size = config.backTitleFontSize ?: @17;
+      if (config.backTitleFontFamily) {
+        attrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                              withFamily:config.backTitleFontFamily
+                                                    size:size
+                                                  weight:nil
+                                                   style:nil
+                                                 variant:nil
+                                         scaleMultiplier:1.0];
+      } else {
+        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+      }
+      [RNSScreenStackHeaderConfig setTitleAttibutes:attrs forButton:backBarButtonItem];
+    }
+  } else {
+    // back button title should be not visible next to back button,
+    // but it should still appear in back menu
+    prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
+    shouldUseCustomBackBarButtonItem = NO;
+  }
+
+  // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
+  // as assigning one will override the native behavior of automatically shortening
+  // the title to "Back" or hide the back title if there's not enough space.
+  // See: https://github.com/software-mansion/react-native-screens/issues/1589
+  if (shouldUseCustomBackBarButtonItem) {
+    prevItem.backBarButtonItem = backBarButtonItem;
+  }
+#endif
 }
 
 - (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
@@ -1239,35 +1143,28 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
     @"extraLight" : @(RNSBlurEffectStyleExtraLight),
     @"light" : @(RNSBlurEffectStyleLight),
     @"dark" : @(RNSBlurEffectStyleDark),
+    @"regular" : @(RNSBlurEffectStyleRegular),
+    @"prominent" : @(RNSBlurEffectStyleProminent),
   }];
 
-  if (@available(iOS 10.0, *)) {
-    [blurEffects addEntriesFromDictionary:@{
-      @"regular" : @(RNSBlurEffectStyleRegular),
-      @"prominent" : @(RNSBlurEffectStyleProminent),
-    }];
-  }
-#if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    [blurEffects addEntriesFromDictionary:@{
-      @"systemUltraThinMaterial" : @(RNSBlurEffectStyleSystemUltraThinMaterial),
-      @"systemThinMaterial" : @(RNSBlurEffectStyleSystemThinMaterial),
-      @"systemMaterial" : @(RNSBlurEffectStyleSystemMaterial),
-      @"systemThickMaterial" : @(RNSBlurEffectStyleSystemThickMaterial),
-      @"systemChromeMaterial" : @(RNSBlurEffectStyleSystemChromeMaterial),
-      @"systemUltraThinMaterialLight" : @(RNSBlurEffectStyleSystemUltraThinMaterialLight),
-      @"systemThinMaterialLight" : @(RNSBlurEffectStyleSystemThinMaterialLight),
-      @"systemMaterialLight" : @(RNSBlurEffectStyleSystemMaterialLight),
-      @"systemThickMaterialLight" : @(RNSBlurEffectStyleSystemThickMaterialLight),
-      @"systemChromeMaterialLight" : @(RNSBlurEffectStyleSystemChromeMaterialLight),
-      @"systemUltraThinMaterialDark" : @(RNSBlurEffectStyleSystemUltraThinMaterialDark),
-      @"systemThinMaterialDark" : @(RNSBlurEffectStyleSystemThinMaterialDark),
-      @"systemMaterialDark" : @(RNSBlurEffectStyleSystemMaterialDark),
-      @"systemThickMaterialDark" : @(RNSBlurEffectStyleSystemThickMaterialDark),
-      @"systemChromeMaterialDark" : @(RNSBlurEffectStyleSystemChromeMaterialDark),
-    }];
-  }
+#if !TARGET_OS_TV
+  [blurEffects addEntriesFromDictionary:@{
+    @"systemUltraThinMaterial" : @(RNSBlurEffectStyleSystemUltraThinMaterial),
+    @"systemThinMaterial" : @(RNSBlurEffectStyleSystemThinMaterial),
+    @"systemMaterial" : @(RNSBlurEffectStyleSystemMaterial),
+    @"systemThickMaterial" : @(RNSBlurEffectStyleSystemThickMaterial),
+    @"systemChromeMaterial" : @(RNSBlurEffectStyleSystemChromeMaterial),
+    @"systemUltraThinMaterialLight" : @(RNSBlurEffectStyleSystemUltraThinMaterialLight),
+    @"systemThinMaterialLight" : @(RNSBlurEffectStyleSystemThinMaterialLight),
+    @"systemMaterialLight" : @(RNSBlurEffectStyleSystemMaterialLight),
+    @"systemThickMaterialLight" : @(RNSBlurEffectStyleSystemThickMaterialLight),
+    @"systemChromeMaterialLight" : @(RNSBlurEffectStyleSystemChromeMaterialLight),
+    @"systemUltraThinMaterialDark" : @(RNSBlurEffectStyleSystemUltraThinMaterialDark),
+    @"systemThinMaterialDark" : @(RNSBlurEffectStyleSystemThinMaterialDark),
+    @"systemMaterialDark" : @(RNSBlurEffectStyleSystemMaterialDark),
+    @"systemThickMaterialDark" : @(RNSBlurEffectStyleSystemThickMaterialDark),
+    @"systemChromeMaterialDark" : @(RNSBlurEffectStyleSystemChromeMaterialDark),
+  }];
 #endif
   return blurEffects;
 }

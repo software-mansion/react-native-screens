@@ -2,15 +2,16 @@
 
 namespace winrt::RNScreens::implementation {
 
-enum class StackPresentation { PUSH, MODAL, TRANSPARENT_MODAL };
+enum class StackPresentation { PUSH, MODAL, TRANSPARENT_MODAL, FORM_SHEET };
 
 enum class StackAnimation {
   DEFAULT,
   NONE,
   FADE,
-  SIMPLE_FROM_BOTTOM,
+  SLIDE_FROM_BOTTOM,
   SLIDE_FROM_RIGHT,
   SLIDE_FROM_LEFT,
+  FADE_FROM_BOTTOM,
   IOS_FROM_RIGHT,
   IOS_FROM_LEFT
 };
@@ -59,8 +60,11 @@ class Screen : public winrt::Windows::UI::Xaml::Controls::StackPanelT<Screen> {
   void dispatchOnDisappear();
   void dispatchOnWillAppear();
   void dispatchOnWillDisappear();
+  StackAnimation GetStackAnimation() const;
+  void SetStackAnimation(StackAnimation const& animation);
 
  private:
   winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
+  StackAnimation stackAnimation;
 };
 } // namespace winrt::RNScreens::implementation

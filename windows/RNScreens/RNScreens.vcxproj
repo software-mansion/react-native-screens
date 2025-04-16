@@ -20,7 +20,7 @@
   <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.WindowsSdk.Default.props" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.WindowsSdk.Default.props')" />
   <PropertyGroup Label="Fallback Windows SDK Versions">
    <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0.18362.0</WindowsTargetPlatformVersion>
-   <WindowsTargetPlatformMinVersion Condition=" '$(WindowsTargetPlatformMinVersion)' == '' ">10.0.16299.0</WindowsTargetPlatformMinVersion>
+   <WindowsTargetPlatformMinVersion Condition=" '$(WindowsTargetPlatformMinVersion)' == '' ">10.0.17763.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ItemGroup Label="ProjectConfigurations">
@@ -122,6 +122,9 @@
     <ClInclude Include="ScreenContainerViewManager.h" />
     <ClInclude Include="ScreenStack.h" />
     <ClInclude Include="ScreenStackHeaderConfigViewManager.h" />
+    <ClInclude Include="ScreenStackHeaderSubviewViewManager.h" />
+    <ClInclude Include="SearchBarViewManager.h" />
+    <ClInclude Include="ModalScreenViewManager.h" />
     <ClInclude Include="ScreenViewManager.h" />
     <ClInclude Include="RNScreens.h">
       <DependentUpon>RNScreens.idl</DependentUpon>
@@ -133,6 +136,8 @@
       <DependentUpon>RNScreens.idl</DependentUpon>
     </ClCompile>
     <ClInclude Include="ScreenStackHeaderConfig.h" />
+    <ClInclude Include="ScreenStackHeaderSubview.h" />
+    <ClInclude Include="SearchBar.h" />
     <ClInclude Include="ScreenStackViewManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -144,12 +149,17 @@
     <ClCompile Include="ScreenContainerViewManager.cpp" />
     <ClCompile Include="ScreenStack.cpp" />
     <ClCompile Include="ScreenStackHeaderConfigViewManager.cpp" />
+    <ClCompile Include="ScreenStackHeaderSubviewViewManager.cpp" />
+    <ClCompile Include="SearchBarViewManager.cpp" />
+    <ClCompile Include="ModalScreenViewManager.cpp" />
     <ClCompile Include="ScreenViewManager.cpp" />
     <ClCompile Include="ReactPackageProvider.cpp">
       <DependentUpon>ReactPackageProvider.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="ScreenStackHeaderConfig.cpp" />
+    <ClCompile Include="ScreenStackHeaderSubview.cpp" />
+    <ClCompile Include="SearchBar.cpp" />
     <ClCompile Include="ScreenStackViewManager.cpp" />
   </ItemGroup>
   <ItemGroup>

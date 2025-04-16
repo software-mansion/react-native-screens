@@ -173,11 +173,8 @@ namespace react = facebook::react;
 
 - (void)setBarTintColor:(UIColor *)barTintColor
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0 && !TARGET_OS_TV
-  if (@available(iOS 13.0, *)) {
-    [_controller.searchBar.searchTextField setBackgroundColor:barTintColor];
-  }
+#if !TARGET_OS_TV
+  [_controller.searchBar.searchTextField setBackgroundColor:barTintColor];
 #endif
 }
 
@@ -188,12 +185,9 @@ namespace react = facebook::react;
 
 - (void)setTextColor:(UIColor *)textColor
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0 && !TARGET_OS_TV
+#if !TARGET_OS_TV
   _textColor = textColor;
-  if (@available(iOS 13.0, *)) {
-    [_controller.searchBar.searchTextField setTextColor:_textColor];
-  }
+  [_controller.searchBar.searchTextField setTextColor:_textColor];
 #endif
 }
 
@@ -205,11 +199,11 @@ namespace react = facebook::react;
 - (void)hideCancelButton
 {
 #if !TARGET_OS_TV
-  if (@available(iOS 13, *)) {
+  if (!_controller.automaticallyShowsCancelButton) {
+    [_controller.searchBar setShowsCancelButton:NO animated:YES];
+  } else {
     // On iOS 13+ UISearchController automatically shows/hides cancel button
     // https://developer.apple.com/documentation/uikit/uisearchcontroller/3152926-automaticallyshowscancelbutton?language=objc
-  } else {
-    [_controller.searchBar setShowsCancelButton:NO animated:YES];
   }
 #endif
 }
@@ -217,11 +211,11 @@ namespace react = facebook::react;
 - (void)showCancelButton
 {
 #if !TARGET_OS_TV
-  if (@available(iOS 13, *)) {
+  if (!_controller.automaticallyShowsCancelButton) {
+    [_controller.searchBar setShowsCancelButton:YES animated:YES];
+  } else {
     // On iOS 13+ UISearchController automatically shows/hides cancel button
     // https://developer.apple.com/documentation/uikit/uisearchcontroller/3152926-automaticallyshowscancelbutton?language=objc
-  } else {
-    [_controller.searchBar setShowsCancelButton:YES animated:YES];
   }
 #endif
 }
@@ -246,14 +240,11 @@ namespace react = facebook::react;
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0 && !TARGET_OS_TV
-  if (@available(iOS 13.0, *)) {
-    // for some reason, the color does not change when set at the beginning,
-    // so we apply it again here
-    if (_textColor != nil) {
-      [_controller.searchBar.searchTextField setTextColor:_textColor];
-    }
+#if !TARGET_OS_TV
+  // for some reason, the color does not change when set at the beginning,
+  // so we apply it again here
+  if (_textColor != nil) {
+    [_controller.searchBar.searchTextField setTextColor:_textColor];
   }
 #endif
 

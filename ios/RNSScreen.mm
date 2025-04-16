@@ -151,12 +151,20 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
-    // in large title, ScrollView handles the offset of content so we cannot set it here also.
-    CGFloat headerHeight =
-        config.largeTitle ? 0 : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
-    auto newState =
-        react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), RCTPointFromCGPoint(CGPointMake(0, headerHeight))};
+
+    // in large title, ScrollView handles the offset of content so we cannot set it here also
+    // TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
+    // used?
+    // When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
+    // navigation bar, therefore there is no need to set content offset in shadow tree.
+    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent
+        ? 0
+        : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
+
+    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
     _state->updateState(std::move(newState));
+
+    // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
   }
@@ -237,16 +245,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   switch (stackPresentation) {
     case RNSScreenStackPresentationModal:
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-      if (@available(iOS 13.0, tvOS 13.0, *)) {
-        _controller.modalPresentationStyle = UIModalPresentationAutomatic;
-      } else {
-        _controller.modalPresentationStyle = UIModalPresentationFullScreen;
-      }
-#else
-      _controller.modalPresentationStyle = UIModalPresentationFullScreen;
-#endif
+      _controller.modalPresentationStyle = UIModalPresentationAutomatic;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_17_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_17_0 && !TARGET_OS_TV
       if (@available(iOS 18.0, *)) {
@@ -337,12 +336,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, tvOS 13.0, *)) {
-    _controller.modalInPresentation = !gestureEnabled;
-  }
-#endif
+  _controller.modalInPresentation = !gestureEnabled;
 
   _gestureEnabled = gestureEnabled;
 }
@@ -753,8 +747,6 @@ RNS_IGNORE_SUPER_CALL_END
   return _gestureEnabled;
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 - (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
 {
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
@@ -764,7 +756,6 @@ RNS_IGNORE_SUPER_CALL_END
     [self notifyDismissCancelledWithDismissCount:1];
   }
 }
-#endif
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
@@ -1572,18 +1563,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
-    if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0)
-      return fallbackStatusBarSize;
-
-    return primaryStatusBarSize;
-  } else {
+  CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
+  if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0) {
     return fallbackStatusBarSize;
   }
-#endif /* Check for iOS 13.0 */
+
+  return primaryStatusBarSize;
 
 #else
   // TVOS does not have status bar.
@@ -1914,6 +1899,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window != nil) {
     UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    snapshot.frame = self.view.frame;
     [self.view removeFromSuperview];
     self.view = snapshot;
     [superView addSubview:snapshot];

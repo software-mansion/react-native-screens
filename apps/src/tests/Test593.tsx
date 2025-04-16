@@ -1,5 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+} from 'react';
 import {
   ScrollView,
   Button,
@@ -15,18 +21,37 @@ import { nanoid } from 'nanoid/non-secure';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
+  NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
+import { SettingsPicker } from '../shared';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
+type NavigatorProps = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+  stackAnimation: StackAnimation;
+  setStackAnimation: (value: StackAnimation) => void;
+};
+
+type StackAnimation = Exclude<
+  NativeStackNavigationOptions['animation'],
+  undefined
+>;
+
 const Stack = createNativeStackNavigator();
 const NestedStack = createNativeStackNavigator();
 
-function Deeper({ navigation }: Props) {
+function Deeper({ navigation, stackAnimation }: NavigatorProps) {
   const toast = useToast();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      animation: stackAnimation,
+    });
+  }, [navigation, stackAnimation]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener(
@@ -88,7 +113,7 @@ function Deeper({ navigation }: Props) {
     <NestedStack.Navigator
       screenOptions={{
         headerShown: true,
-        animation: 'slide_from_right',
+        animation: stackAnimation,
       }}>
       <NestedStack.Screen name="Privacy" component={Privacy} />
       <NestedStack.Screen name="Another" component={Another} />
@@ -97,23 +122,52 @@ function Deeper({ navigation }: Props) {
 }
 
 export default function NativeNavigation() {
+  const [stackAnimation, setStackAnimation] =
+    useState<StackAnimation>('default');
+
   return (
     <NavigationContainer>
       <ToastProvider>
         <Stack.Navigator
           screenOptions={{
-            animation: 'slide_from_bottom',
+            animation: stackAnimation,
           }}>
-          <Stack.Screen name="Status" component={Status} />
-          <Stack.Screen name="Deeper" component={Deeper} />
+          <Stack.Screen name="Status">
+            {({ navigation }) => (
+              <Status
+                navigation={navigation}
+                stackAnimation={stackAnimation}
+                setStackAnimation={setStackAnimation}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Deeper">
+            {({ navigation }) => (
+              <Deeper
+                navigation={navigation}
+                stackAnimation={stackAnimation}
+                setStackAnimation={setStackAnimation}
+              />
+            )}
+          </Stack.Screen>
         </Stack.Navigator>
       </ToastProvider>
     </NavigationContainer>
   );
 }
 
-function Status({ navigation }: Props) {
+function Status({
+  navigation,
+  stackAnimation,
+  setStackAnimation,
+}: NavigatorProps) {
   const toast = useToast();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      animation: stackAnimation,
+    });
+  }, [navigation, stackAnimation]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener(
@@ -173,7 +227,18 @@ function Status({ navigation }: Props) {
 
   return (
     <ScrollView>
-      <Button title="Click" onPress={() => navigation.navigate('Deeper')} />
+      <SettingsPicker<StackAnimation>
+        testID="Test593-stack-animation-picker"
+        label="Stack animation"
+        value={stackAnimation}
+        onValueChange={setStackAnimation}
+        items={['default', 'none']}
+      />
+      <Button
+        title="Click"
+        onPress={() => navigation.navigate('Deeper')}
+        testID="status-button-go-to-deeper"
+      />
     </ScrollView>
   );
 }
@@ -239,7 +304,11 @@ function Privacy({ navigation }: Props) {
 
   return (
     <View style={{ flex: 1, backgroundColor: 'rgba(255,0,0,0.2)' }}>
-      <Button title="Click" onPress={() => navigation.navigate('Another')} />
+      <Button
+        title="Click"
+        onPress={() => navigation.navigate('Another')}
+        testID="privacy-button-go-to-another"
+      />
     </View>
   );
 }

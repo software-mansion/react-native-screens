@@ -98,22 +98,51 @@ ScreenViewManager::NativeProps() noexcept {
 void ScreenViewManager::UpdateProperties(
     FrameworkElement const &view,
     IJSValueReader const &propertyMapReader) noexcept {
-  (void)view;
-  const JSValueObject &propertyMap = JSValue::ReadObjectFrom(propertyMapReader);
-  for (auto const &pair : propertyMap) {
-    auto const &propertyName = pair.first;
-    auto const &propertyValue = pair.second;
-    if (propertyValue != nullptr) {
-      if (propertyName == "replaceAnimation") {
-        auto const &value = propertyValue.AsString();
-        // TODO: Implement this for Windows
-        (void)value;
-      } else if (propertyName == "stackPresentation") {
-        auto const &value = propertyValue.AsString();
-        // TODO: Implement this for Windows
-        (void)value;
-      } else {
-        OutputDebugStringA("Unknown property in ScreenViewManager\n");
+  if (auto screen = view.try_as<Screen>()) {
+    const JSValueObject &propertyMap = JSValue::ReadObjectFrom(propertyMapReader);
+    for (auto const &pair : propertyMap) {
+      auto const &propertyName = pair.first;
+      auto const &propertyValue = pair.second;
+      if (propertyName == "stackAnimation") {
+        if (propertyValue.IsNull() ||
+            propertyValue.AsString() == "default" ||
+            propertyValue.AsString() == "flip" ||
+            propertyValue.AsString() == "simple_push") {
+          screen->SetStackAnimation(winrt::RNScreens::implementation::StackAnimation::DEFAULT);
+        } else if (propertyValue.AsString() == "none") {
+          screen->SetStackAnimation(StackAnimation::NONE);
+        } else if (propertyValue.AsString() == "fade") {
+          screen->SetStackAnimation(StackAnimation::FADE);
+        } else if (propertyValue.AsString() == "slide_from_right") {
+          screen->SetStackAnimation(StackAnimation::SLIDE_FROM_RIGHT);
+        } else if (propertyValue.AsString() == "slide_from_left") {
+          screen->SetStackAnimation(StackAnimation::SLIDE_FROM_LEFT);
+        } else if (propertyValue.AsString() == "slide_from_bottom") {
+          screen->SetStackAnimation(StackAnimation::SLIDE_FROM_BOTTOM);
+        } else if (propertyValue.AsString() == "fade_from_bottom") {
+          screen->SetStackAnimation(StackAnimation::FADE_FROM_BOTTOM);
+        } else if (propertyValue.AsString() == "ios_from_right") {
+          screen->SetStackAnimation(StackAnimation::IOS_FROM_RIGHT);
+        } else if (propertyValue.AsString() == "ios_from_left") {
+          screen->SetStackAnimation(StackAnimation::IOS_FROM_LEFT);
+        } else {
+            std::string error = "Unknown animation type: ";
+            error += propertyValue.AsString();
+            throw std::runtime_error(error);
+        }
+      }
+      if (propertyValue != nullptr) {
+        if (propertyName == "replaceAnimation") {
+          auto const &value = propertyValue.AsString();
+          // TODO: Implement this for Windows
+          (void)value;
+        } else if (propertyName == "stackPresentation") {
+          auto const &value = propertyValue.AsString();
+          // TODO: Implement this for Windows
+          (void)value;
+        } else {
+          OutputDebugStringA("Unknown property in ScreenViewManager\n");
+        }
       }
     }
   }

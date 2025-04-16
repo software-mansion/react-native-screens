@@ -11,10 +11,10 @@ export { default as Test550 } from './Test550';     // [E2E skipped]: the prop d
 export { default as Test556 } from './Test556';     // [E2E skipped]: can't check flickering nor non-deterministic white screen bug
 export { default as Test564 } from './Test564';     // [E2E skipped]: issue still present
 export { default as Test577 } from './Test577';     // [E2E created](iOS): issue is related to iOS modal
-export { default as Test593 } from './Test593';
-export { default as Test619 } from './Test619';
-export { default as Test624 } from './Test624';
-export { default as Test640 } from './Test640';
+export { default as Test593 } from './Test593';     // [E2E created]
+export { default as Test619 } from './Test619';     // [E2E skipped]: can't check components jumping
+export { default as Test624 } from './Test624';     // [E2E skipped]: PR changed library internals, test screen seems unrelated
+export { default as Test640 } from './Test640';     // [E2E created]
 export { default as Test642 } from './Test642';
 export { default as Test645 } from './Test645';
 export { default as Test648 } from './Test648';
@@ -118,6 +118,7 @@ export { default as Test2332 } from './Test2332';
 export { default as Test2379 } from './Test2379';
 export { default as Test2395 } from './Test2395';
 export { default as Test2466 } from './Test2466';
+export { default as Test2538 } from './Test2538';
 export { default as Test2552 } from './Test2552';
 export { default as Test2611 } from './Test2611';
 export { default as Test2631 } from './Test2631';
@@ -126,8 +127,10 @@ export { default as Test2675 } from './Test2675';
 export { default as Test2717 } from './Test2717';
 export { default as Test2767 } from './Test2767';
 export { default as Test2789 } from './Test2789';
+export { default as Test2809 } from './Test2809';
 export { default as Test2811 } from './Test2811';
 export { default as Test2819 } from './Test2819';
+export { default as Test2855 } from './Test2855';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';

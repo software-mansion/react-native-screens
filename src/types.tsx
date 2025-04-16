@@ -188,7 +188,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect and is subject to removal in the future.
    *  For SDK below 35 this works only with specific app setup.
-   *  This props is subject to removal in the future.
+   *  This prop is subject to removal in the future.
    *  See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
    */
   navigationBarColor?: ColorValue;
@@ -576,7 +576,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   disableBackButtonMenu?: boolean;
   /**
-   * How the back button behaves. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu`, `backTitle` and `backTitleVisible=false` is set.
+   * How the back button behaves. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` and `backTitleVisible=false` is set.
    * The following values are currently supported (they correspond to [UINavigationItemBackButtonDisplayMode](https://developer.apple.com/documentation/uikit/uinavigationitembackbuttondisplaymode?language=objc)):
    *
    * - `default` – show given back button previous controller title, system generic or just icon based on available space
