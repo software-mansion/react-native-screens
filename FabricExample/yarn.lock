@@ -2896,7 +2896,6 @@ __metadata:
     detox: "npm:^20.34.5"
     eslint: "npm:^8.19.0"
     jest: "npm:^29.6.3"
-    jotai: "npm:^2.9.0"
     nanoid: "npm:^4.0.2"
     patch-package: "npm:^8.0.0"
     prettier: "npm:2.8.8"
@@ -6685,21 +6684,6 @@ __metadata:
     "@sideway/formula": "npm:^3.0.1"
     "@sideway/pinpoint": "npm:^2.0.0"
   checksum: 10c0/9262aef1da3f1bec5b03caf50c46368899fe03b8ff26cbe3d53af4584dd1049079fc97230bbf1500b6149db7cc765b9ee45f0deb24bb6fc3fa06229d7148c17f
-  languageName: node
-  linkType: hard
-
-"jotai@npm:^2.9.0":
-  version: 2.12.1
-  resolution: "jotai@npm:2.12.1"
-  peerDependencies:
-    "@types/react": ">=17.0.0"
-    react: ">=17.0.0"
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    react:
-      optional: true
-  checksum: 10c0/8ef622b7d626919d87595d7382467cb81698a14925befdd27abc3b03d441077eca35328d51d10dc6fe3e91ee4d4e9ba7456bacbdf36940161bd2afeba861ac83
   languageName: node
   linkType: hard
 
