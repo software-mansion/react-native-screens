@@ -1,7 +1,7 @@
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 
 import {
@@ -39,10 +39,11 @@ function generateData(count: number): ItemData[] {
 }
 
 function Home({ navigation }: RouteProps<'Home'>) {
+  const dimentions = useWindowDimensions()
   const context = React.useContext(TranslationContext)
 
   const translateY = useDerivedValue(() => {
-    return context?.y.value ?? 0
+    return dimentions.height - (context?.y.value ?? 0)
   })
 
   const circleStyle = useAnimatedStyle(() => ({

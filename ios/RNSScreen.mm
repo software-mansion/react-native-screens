@@ -1400,16 +1400,17 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   RNSScreenView *_initialView;
   UIView *_fakeView;
   UIView *_gestureView;
-  CADisplayLink *_animationTimer;
-  CADisplayLink *_translationTimer;
-  CGFloat _lastTrackedY;
+  CADisplayLink *_transitionTimer;
   CGFloat _currentAlpha;
+  CGFloat _trackedY;
+  BOOL _isTrackingY;
+  BOOL _isTransitioning;
+  BOOL _isDragging;
   BOOL _closing;
   BOOL _goingForward;
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
-  BOOL _isDragging;
 }
 
 #pragma mark - Common
@@ -1419,6 +1420,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (self = [super init]) {
     self.view = view;
     _fakeView = [UIView new];
+    _trackedY = [UIScreen mainScreen].bounds.size.height;
     _shouldNotify = YES;
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
@@ -1427,10 +1429,25 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return self;
 }
 
+- (void)viewWillLayoutSubviews
+{
+  [super viewWillLayoutSubviews];
+  
+  if (!_isTransitioning) {
+    _isTrackingY = YES;
+    UIView *presentedView = self.sheetPresentationController.presentedView;
+    if (!presentedView) return;
+    
+    CGFloat sheetY = presentedView.frame.origin.y;
+    [self notifySheetTranslation:sheetY];
+  }
+}
+
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+  
   if (!_isSwiping) {
     [self.screenView notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
@@ -1452,14 +1469,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _closing = NO;
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
-    [self setupSheetTranslation];
     [self setupGestureHandler];
   }
+  
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
+  
   // self.navigationController might be null when we are dismissing a modal
   if (!self.transitionCoordinator.isInteractive && self.navigationController != nil) {
     // user might have long pressed ios 14 back button item,
@@ -1505,6 +1523,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   } else {
     [self.screenView notifyGestureCancel];
   }
+  
+  _trackedY = self.sheetPresentationController.presentedView.frame.origin.y;
 
   _isSwiping = NO;
   _shouldNotify = YES;
@@ -1529,9 +1549,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self.screenView notifyDisappear];
     [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
   }
+  
+  _trackedY = self.sheetPresentationController.presentedView.frame.origin.y;
 
   _isSwiping = NO;
   _shouldNotify = YES;
+  _isTrackingY = NO;
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
   [self traverseForScrollView:self.screenView];
@@ -1553,6 +1577,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (self.screenView.isPresentedAsNativeModal) {
     [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
   }
+  
+  _isTrackingY = NO;
 
   if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1703,44 +1729,20 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gesture {
   switch (gesture.state) {
-    case UIGestureRecognizerStateBegan:
-      _isDragging = YES;
-      [self setupSheetTranslation];
+    case UIGestureRecognizerStateChanged: {
+      if (!_isTrackingY) {
+        _isDragging = YES;
+        CGFloat sheetY = gesture.view.frame.origin.y;
+        [self notifySheetTranslation:sheetY];
+      }
       break;
+    }
     case UIGestureRecognizerStateEnded:
     case UIGestureRecognizerStateCancelled:
       _isDragging = NO;
+      break;
     default:
-        break;
-  }
-}
-
-- (void)setupSheetTranslation
-{
-  if (!_translationTimer) {
-    _translationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleSheetTranslation)];
-    [_translationTimer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-
-    _lastTrackedY = 0;
-  }
-}
-
-- (void)handleSheetTranslation
-{
-  UIView *presentedView = self.sheetPresentationController.presentedView;
-  if (!presentedView) return;
-  
-  CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
-  CGFloat sheetY = presentedView.frame.origin.y;
-  CGFloat currentY = screenHeight - sheetY;
-  
-  if (!_isDragging && _lastTrackedY == currentY) {
-    [_translationTimer invalidate];
-    _translationTimer = nil;
-    _lastTrackedY = 0;
-  } else {
-    _lastTrackedY = currentY;
-    [self notifySheetTranslation:currentY];
+      break;
   }
 }
 
@@ -1758,29 +1760,53 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)setupProgressNotification
 {
   if (self.transitionCoordinator != nil) {
+    _isTransitioning = YES;
     _fakeView.alpha = 0.0;
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+          self->_transitionTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleTransition)];
+          [self->_transitionTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self->_animationTimer setPaused:YES];
-          [self->_animationTimer invalidate];
+          [self->_transitionTimer setPaused:YES];
+          [self->_transitionTimer invalidate];
           [self->_fakeView removeFromSuperview];
+          self->_isTransitioning = NO;
         }];
   }
 }
 
-- (void)handleAnimation
+- (void)handleTransition
 {
   if ([[_fakeView layer] presentationLayer] != nil) {
     CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
+      
+      UIView *presentedView = self.sheetPresentationController.presentedView;
+      CGFloat sheetY = presentedView.frame.origin.y;
+      
+      if (presentedView != nil && !_isDragging) {
+        if (!_isSwiping) {
+          if (_closing) {
+            sheetY = _trackedY + ((sheetY - _trackedY) * _currentAlpha);
+          } else {
+            sheetY = _trackedY - ((_trackedY - sheetY) * _currentAlpha);
+          }
+        } else {
+          if (_closing) {
+            sheetY = _trackedY - ((_trackedY - sheetY) * _currentAlpha);
+          } else {
+            sheetY = _trackedY + ((sheetY - _trackedY) * _currentAlpha);
+          }
+        }
+        
+        NSLog(@"_trackedY: %f, sheetY: %f, _currentAlpha: %f", _trackedY, sheetY, _currentAlpha);
+        [self notifySheetTranslation:sheetY];
+      }
     }
   }
 }
