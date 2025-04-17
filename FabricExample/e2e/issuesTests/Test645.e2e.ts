@@ -21,6 +21,16 @@ describeIfiOS('Test645', () => {
     await expect(element(by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
   });
 
+  it('large title should collapse after scrolling down', async () => {
+    await element(by.id('main-scrollview')).scroll(200, 'down', NaN, 0.85);
+    await expect(element(by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')))).not.toBeVisible();
+  });
+
+  it('large title should reappear after scrolling to top', async () => {
+    await element(by.id('main-scrollview')).scroll(250, 'up', NaN, 0.85);
+    await expect(element(by.text('Main').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
+  });
+
   it('header large title "Details" should be fully visible', async () => {
     await element(by.id('home-button-go-to-details')).tap();
     await expect(element(by.text('Details').withAncestor(by.type('_UINavigationBarLargeTitleView')))).toBeVisible(100);
