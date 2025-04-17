@@ -25,11 +25,9 @@ function Home({ navigation }: StackNavigationProp) {
       <Button
         title="Open FormSheet"
         onPress={() => navigation.navigate('FormSheet')}
+        testID="home-button-open-formsheet"
       />
-      <Button
-        title="Go back"
-        onPress={() => navigation.pop()}
-      />
+      <Button title="Go back" onPress={() => navigation.pop()} />
     </View>
   );
 }
@@ -57,16 +55,18 @@ function FormSheet({ navigation }: StackNavigationProp) {
         }}>
         <Text>Every second, sheet's height should change.</Text>
       </View>
-      {extended && <View
-        style={{
-          height: 200,
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'lightgreen',
-        }}>
-        <Text>Like this.</Text>
-      </View>}
+      {extended && (
+        <View
+          style={{
+            height: 200,
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'lightgreen',
+          }}>
+          <Text>Like this.</Text>
+        </View>
+      )}
     </View>
   );
 }
