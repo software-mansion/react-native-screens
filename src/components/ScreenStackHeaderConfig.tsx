@@ -31,7 +31,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   <ScreenStackHeaderConfigNativeComponent
     {...props}
     ref={ref}
-    topInsetEnabled={EDGE_TO_EDGE ? true : undefined}
+    topInsetEnabled={EDGE_TO_EDGE ? true : props.topInsetEnabled}
     style={styles.headerConfig}
     pointerEvents="box-none"
   />
