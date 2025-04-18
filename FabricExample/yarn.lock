@@ -2952,6 +2952,7 @@ __metadata:
     prettier: "npm:2.8.8"
     react: "npm:19.0.0"
     react-native: "npm:0.78.0-rc.5"
+    react-native-edge-to-edge: "npm:^1.6.0"
     react-native-gesture-handler: "npm:2.22.0"
     react-native-reanimated: "npm:^4.0.0-nightly-20250218-e5a0cdf69"
     react-native-restart: "npm:^0.0.27"
@@ -8522,6 +8523,16 @@ __metadata:
   version: 19.0.0
   resolution: "react-is@npm:19.0.0"
   checksum: 10c0/d1be8e8500cf04f76df71942a21ef3a71266397a383d7ec8885f35190df818d35c65efd35aed7be47a89ad99aaff2c52e0c4e39e8930844a6b997622e50625a8
+  languageName: node
+  linkType: hard
+
+"react-native-edge-to-edge@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "react-native-edge-to-edge@npm:1.6.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/6373cc1b447eae31689a9b62e38b15621e9273626e2324700c4c3eb58c02ce489236a4b9e3e0dc1187e062defd8316195c5b1213facd718706b79b92127a05a3
   languageName: node
   linkType: hard
 

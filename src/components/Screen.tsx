@@ -3,6 +3,8 @@
 import React from 'react';
 import { Animated, View, Platform } from 'react-native';
 
+import { EDGE_TO_EDGE, transformEdgeToEdgeProps } from './helpers/edge-to-edge';
+
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
 import { ScreenProps } from '../types';
@@ -391,7 +393,12 @@ export const ScreenContext = React.createContext(InnerScreen);
 const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
-  return <ScreenWrapper {...props} ref={ref} />;
+  return (
+    <ScreenWrapper
+      {...(EDGE_TO_EDGE ? transformEdgeToEdgeProps(props) : props)}
+      ref={ref}
+    />
+  );
 });
 
 Screen.displayName = 'Screen';
