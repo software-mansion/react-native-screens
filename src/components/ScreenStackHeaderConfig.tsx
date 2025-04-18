@@ -1,11 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  HeaderSubviewTypes,
-  ScreenStackHeaderConfigProps,
-  SearchBarProps,
-} from '../types';
+import { ScreenStackHeaderConfigProps, SearchBarProps } from '../types';
 import {
   Image,
   ImageProps,
@@ -17,12 +13,13 @@ import {
 
 // Native components
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
-import ScreenStackHeaderSubviewNativeComponent from '../fabric/ScreenStackHeaderSubviewNativeComponent';
+import ScreenStackHeaderSubviewNativeComponent, {
+  type NativeProps as ScreenStackHeaderSubviewNativeProps,
+} from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 import { EDGE_TO_EDGE } from './helpers/edge-to-edge';
 
-export const ScreenStackHeaderSubview: React.ComponentType<
-  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
-> = ScreenStackHeaderSubviewNativeComponent as any;
+export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
+  ScreenStackHeaderSubviewNativeComponent;
 
 export const ScreenStackHeaderConfig = React.forwardRef<
   View,
