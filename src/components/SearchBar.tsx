@@ -35,10 +35,13 @@ type SearchBarCommandsType = {
   cancelSearch: (viewRef: NativeSearchBarRef) => void;
 };
 
-function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
+function SearchBar(
+  props: SearchBarProps,
+  forwardedRef: React.Ref<SearchBarCommands>,
+) {
   const searchBarRef = React.useRef<SearchBarCommands | null>(null);
 
-  React.useImperativeHandle(ref, () => ({
+  React.useImperativeHandle(forwardedRef, () => ({
     blur: () => {
       _callMethodWithRef(ref => NativeSearchBarCommands.blur(ref));
     },
