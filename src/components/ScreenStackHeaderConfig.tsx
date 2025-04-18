@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ScreenStackHeaderConfigProps, SearchBarProps } from '../types';
+import { ScreenStackHeaderConfigProps } from '../types';
 import {
   Image,
   ImageProps,
@@ -87,7 +87,7 @@ export const ScreenStackHeaderCenterView = (
 };
 
 export const ScreenStackHeaderSearchBarView = (
-  props: React.PropsWithChildren<SearchBarProps>,
+  props: React.PropsWithChildren<ViewProps>,
 ): JSX.Element => (
   <ScreenStackHeaderSubview
     {...props}
