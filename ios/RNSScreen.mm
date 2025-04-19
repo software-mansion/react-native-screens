@@ -1402,10 +1402,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIView *_gestureView;
   CADisplayLink *_transitionTimer;
   CGFloat _currentAlpha;
-  CGFloat _trackedY;
-  BOOL _isTrackingY;
+  BOOL _trackingYFromLayout;
+  BOOL _trackingYFromDrag;
   BOOL _isTransitioning;
-  BOOL _isDragging;
   BOOL _closing;
   BOOL _goingForward;
   int _dismissCount;
@@ -1420,7 +1419,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (self = [super init]) {
     self.view = view;
     _fakeView = [UIView new];
-    _trackedY = [UIScreen mainScreen].bounds.size.height;
     _shouldNotify = YES;
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
@@ -1433,13 +1431,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [super viewWillLayoutSubviews];
   
-  if (!_isTransitioning) {
-    _isTrackingY = YES;
-    UIView *presentedView = self.sheetPresentationController.presentedView;
-    if (!presentedView) return;
-    
-    CGFloat sheetY = presentedView.frame.origin.y;
-    [self notifySheetTranslation:sheetY];
+  if (@available(iOS 15.0, *)) {
+    if (!_isTransitioning) {
+      _trackingYFromLayout = YES;
+      UIView *presentedView = self.sheetPresentationController.presentedView;
+      if (!presentedView) return;
+      
+      CGFloat sheetY = presentedView.frame.origin.y;
+      [self notifySheetTranslation:sheetY];
+    }
   }
 }
 
@@ -1472,7 +1472,21 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self setupGestureHandler];
   }
   
+//  UIView *presentedView = self.sheetPresentationController.presentedView;
+//  [presentedView addObserver:self forKeyPath:@"frame" options:0 context:NULL];
 }
+
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+//{
+//  if ([keyPath isEqualToString:@"frame"]) {
+//    if (!_isTransitioning && !_trackingYFromLayout) {
+//      UIView *presentedView = (UIView *)object;
+//      [self notifySheetTranslation:presentedView.frame.origin.y];
+//    }
+//  } else {
+//    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+//  }
+//}
 
 - (void)viewWillDisappear:(BOOL)animated
 {
@@ -1523,8 +1537,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   } else {
     [self.screenView notifyGestureCancel];
   }
-  
-  _trackedY = self.sheetPresentationController.presentedView.frame.origin.y;
 
   _isSwiping = NO;
   _shouldNotify = YES;
@@ -1549,12 +1561,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self.screenView notifyDisappear];
     [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
   }
-  
-  _trackedY = self.sheetPresentationController.presentedView.frame.origin.y;
 
   _isSwiping = NO;
   _shouldNotify = YES;
-  _isTrackingY = NO;
+  _trackingYFromLayout = NO;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
@@ -1578,7 +1588,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
   }
   
-  _isTrackingY = NO;
+  _trackingYFromLayout = NO;
 
   if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1728,18 +1738,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gesture {
+  CGFloat draggedY = gesture.view.frame.origin.y;
+
   switch (gesture.state) {
     case UIGestureRecognizerStateChanged: {
-      if (!_isTrackingY) {
-        _isDragging = YES;
-        CGFloat sheetY = gesture.view.frame.origin.y;
-        [self notifySheetTranslation:sheetY];
+      if (!_trackingYFromLayout) {
+        _trackingYFromDrag = YES;
+         [self notifySheetTranslation:draggedY];
       }
       break;
     }
     case UIGestureRecognizerStateEnded:
     case UIGestureRecognizerStateCancelled:
-      _isDragging = NO;
+      _trackingYFromDrag = NO;
       break;
     default:
       break;
@@ -1762,10 +1773,24 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (self.transitionCoordinator != nil) {
     _isTransitioning = YES;
     _fakeView.alpha = 0.0;
+
+    if (@available(iOS 15.0, *)) {
+      _fakeView.frame = CGRectMake(0, _closing ?
+                                   self.sheetPresentationController.presentedView.frame.origin.y :
+                                   self.sheetPresentationController.containerView.frame.size.height, 0, 0);
+    }
+
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
+      
+          if (@available(iOS 15.0, *)) {
+            self->_fakeView.frame = CGRectMake(0, self->_closing ?
+                                               self.sheetPresentationController.containerView.frame.size.height :
+                                               self.sheetPresentationController.presentedView.frame.origin.y, 0, 0);
+          }
+      
           self->_transitionTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleTransition)];
           [self->_transitionTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
@@ -1785,28 +1810,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
-      
-      UIView *presentedView = self.sheetPresentationController.presentedView;
-      CGFloat sheetY = presentedView.frame.origin.y;
-      
-      if (presentedView != nil && !_isDragging) {
-        if (!_isSwiping) {
-          if (_closing) {
-            sheetY = _trackedY + ((sheetY - _trackedY) * _currentAlpha);
-          } else {
-            sheetY = _trackedY - ((_trackedY - sheetY) * _currentAlpha);
-          }
-        } else {
-          if (_closing) {
-            sheetY = _trackedY - ((_trackedY - sheetY) * _currentAlpha);
-          } else {
-            sheetY = _trackedY + ((sheetY - _trackedY) * _currentAlpha);
-          }
-        }
-        
-        NSLog(@"_trackedY: %f, sheetY: %f, _currentAlpha: %f", _trackedY, sheetY, _currentAlpha);
-        [self notifySheetTranslation:sheetY];
-      }
+    }
+    
+    if (!_trackingYFromDrag) {
+      CGFloat sheetY = _fakeView.layer.presentationLayer.frame.origin.y;
+      [self notifySheetTranslation:sheetY];
     }
   }
 }
