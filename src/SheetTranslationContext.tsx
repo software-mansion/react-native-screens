@@ -3,6 +3,4 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
 
-export default React.createContext<Animated.Value | undefined>(
-  undefined,
-);
+export default React.createContext<Animated.Value | undefined>(undefined);

@@ -723,12 +723,11 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onSheetTranslation(react::RNSScreenEventEmitter::OnSheetTranslation{
-            .y = y});
+        ->onSheetTranslation(react::RNSScreenEventEmitter::OnSheetTranslation{.y = y});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onSheetTranslation"
                                                                    reactTag:[NSNumber numberWithInt:self.tag]
-                                                                   y:y];
+                                                                          y:y];
   [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onSheetTranslation) {
@@ -1434,9 +1433,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillLayoutSubviews
 {
   [super viewWillLayoutSubviews];
-  
-  #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-      __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   // We are tracking translation Y on layout.
   // Note that this doesn't trigger when user is about to close the sheet
   // so we are going to track it again during transition (see below).
@@ -1449,14 +1448,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self notifySheetTranslation:sheetY];
     }
   }
-  #endif
+#endif
 }
 
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  
+
   if (!_isSwiping) {
     [self.screenView notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
@@ -1480,21 +1479,21 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self setupProgressNotification];
     [self setupGestureHandler];
   }
-  
-  #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-      __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   if (@available(iOS 15.0, *)) {
     if (self.presentedView != nil) {
       [self.presentedView addObserver:self forKeyPath:@"frame" options:0 context:NULL];
     }
   }
-  #endif
+#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  
+
   // self.navigationController might be null when we are dismissing a modal
   if (!self.transitionCoordinator.isInteractive && self.navigationController != nil) {
     // user might have long pressed ios 14 back button item,
@@ -1527,17 +1526,17 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
-  
+
   _trackingYFromLayout = NO;
-  
-  #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-      __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   if (@available(iOS 15.0, *)) {
     if (self.presentedView != nil) {
       [self.presentedView removeObserver:self forKeyPath:@"frame"];
     }
   }
-  #endif
+#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -1588,7 +1587,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 // KVO for the sheet Y only when gesture is disabled.
 // Transition does not trigger when dragging in this case.
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
 {
   if ([keyPath isEqualToString:@"frame"]) {
     if (!_isTransitioning && self.modalInPresentation) {
@@ -1750,9 +1752,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)setupGestureHandler
 {
-  
-  #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-      __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   if (@available(iOS 15.0, *)) {
     if (self.presentedView == nil) {
       return;
@@ -1765,11 +1766,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       }
     }
   }
-  #endif
+#endif
 }
 
 // Track sheet Y when dragging.
-- (void)handlePanGesture:(UIPanGestureRecognizer *)gesture {
+- (void)handlePanGesture:(UIPanGestureRecognizer *)gesture
+{
   switch (gesture.state) {
     case UIGestureRecognizerStateBegan: {
       _dragging = YES;
@@ -1832,16 +1834,16 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
     }
-    
-    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-        __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
     if (@available(iOS 15.0, *)) {
       if (!_dragging && self.presentedView != nil) {
         CGFloat sheetY = self.presentedView.layer.presentationLayer.frame.origin.y;
         [self notifySheetTranslation:sheetY];
       }
     }
-    #endif
+#endif
   }
 }
 
