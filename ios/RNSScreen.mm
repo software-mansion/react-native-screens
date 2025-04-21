@@ -1413,6 +1413,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - Common
 
+- (UIView *)presentedView API_AVAILABLE(ios(15.0))
+{
+  return self.sheetPresentationController.presentedView;
+}
+
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
@@ -1429,17 +1434,22 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillLayoutSubviews
 {
   [super viewWillLayoutSubviews];
-
+  
+  #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+      __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+  // We are tracking translation Y on layout.
+  // Note that this doesn't trigger when user is about to close the sheet
+  // so we are going to track it again during transition (see below).
   if (@available(iOS 15.0, *)) {
-    if (!_isTransitioning && !self.modalInPresentation) {
+    // Only when not transition and gesture is enabled
+    if (self.presentedView != nil && !_isTransitioning && !self.modalInPresentation) {
       _trackingYFromLayout = YES;
-      UIView *presentedView = self.sheetPresentationController.presentedView;
-      if (!presentedView) return;
 
-      CGFloat sheetY = presentedView.frame.origin.y;
-      [self notifySheetTranslation:sheetY from:@"layout"];
+      CGFloat sheetY = self.presentedView.frame.origin.y;
+      [self notifySheetTranslation:sheetY];
     }
   }
+  #endif
 }
 
 // TODO: Find out why this is executed when screen is going out
@@ -1471,8 +1481,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self setupGestureHandler];
   }
   
-  UIView *presentedView = self.sheetPresentationController.presentedView;
-  [presentedView addObserver:self forKeyPath:@"frame" options:0 context:NULL];
+  #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+      __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+  if (@available(iOS 15.0, *)) {
+    if (self.presentedView != nil) {
+      [self.presentedView addObserver:self forKeyPath:@"frame" options:0 context:NULL];
+    }
+  }
+  #endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -1514,8 +1530,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   
   _trackingYFromLayout = NO;
   
-  UIView *presentedView = self.sheetPresentationController.presentedView;
-  [presentedView removeObserver:self forKeyPath:@"frame"];
+  #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+      __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+  if (@available(iOS 15.0, *)) {
+    if (self.presentedView != nil) {
+      [self.presentedView removeObserver:self forKeyPath:@"frame"];
+    }
+  }
+  #endif
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -1564,12 +1586,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
+// KVO for the sheet Y only when gesture is disabled.
+// Transition does not trigger when dragging in this case.
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
   if ([keyPath isEqualToString:@"frame"]) {
     if (!_isTransitioning && self.modalInPresentation) {
       UIView *presentedView = (UIView *)object;
-      [self notifySheetTranslation:presentedView.frame.origin.y from:@"kvo"];
+      [self notifySheetTranslation:presentedView.frame.origin.y];
     }
   } else {
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -1726,19 +1750,25 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)setupGestureHandler
 {
-  UIView *presentedView = self.sheetPresentationController.presentedView;
-  if (!presentedView) {
-    return;
-  }
+  
+  #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+      __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+  if (@available(iOS 15.0, *)) {
+    if (self.presentedView == nil) {
+      return;
+    }
 
-  for (UIGestureRecognizer *recognizer in presentedView.gestureRecognizers ?: @[]) {
-    if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-      UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)recognizer;
-      [panGesture addTarget:self action:@selector(handlePanGesture:)];
+    for (UIGestureRecognizer *recognizer in self.presentedView.gestureRecognizers ?: @[]) {
+      if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)recognizer;
+        [panGesture addTarget:self action:@selector(handlePanGesture:)];
+      }
     }
   }
+  #endif
 }
 
+// Track sheet Y when dragging.
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gesture {
   switch (gesture.state) {
     case UIGestureRecognizerStateBegan: {
@@ -1746,9 +1776,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       break;
     }
     case UIGestureRecognizerStateChanged: {
+      // We only send event when not tracking from layout
+      // Also when gesture is enabled.
       if (!_trackingYFromLayout && !self.modalInPresentation) {
         CGFloat draggedY = gesture.view.frame.origin.y;
-        [self notifySheetTranslation:draggedY from:@"drag"];
+        [self notifySheetTranslation:draggedY];
       }
       break;
     }
@@ -1761,12 +1793,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
-- (void)notifySheetTranslation:(double)y from:(NSString *)from
+- (void)notifySheetTranslation:(double)y
 {
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
-    NSLog(@"%f from: %@", y, from);
-    // if the view is already snapshot, there is not sense in sending progress since on JS side
-    // the component is already not present
     [(RNSScreenView *)self.view notifySheetTranslation:y];
   }
 }
@@ -1804,10 +1833,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
     }
     
-    if (!_dragging) {
-      CGFloat sheetY = self.sheetPresentationController.presentedView.layer.presentationLayer.frame.origin.y;
-      [self notifySheetTranslation:sheetY from:@"transition"];
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+        __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+    if (@available(iOS 15.0, *)) {
+      if (!_dragging && self.presentedView != nil) {
+        CGFloat sheetY = self.presentedView.layer.presentationLayer.frame.origin.y;
+        [self notifySheetTranslation:sheetY];
+      }
     }
+    #endif
   }
 }
 
