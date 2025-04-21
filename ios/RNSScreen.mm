@@ -1779,23 +1779,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _isTransitioning = YES;
     _fakeView.alpha = 0.0;
 
-    if (@available(iOS 15.0, *)) {
-      _fakeView.frame = CGRectMake(0, _closing ?
-                                   self.sheetPresentationController.presentedView.frame.origin.y :
-                                   self.sheetPresentationController.containerView.frame.size.height, 0, 0);
-    }
-
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-      
-          if (@available(iOS 15.0, *)) {
-            self->_fakeView.frame = CGRectMake(0, self->_closing ?
-                                               self.sheetPresentationController.containerView.frame.size.height :
-                                               self.sheetPresentationController.presentedView.frame.origin.y, 0, 0);
-          }
-      
           self->_transitionTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleTransition)];
           [self->_transitionTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
@@ -1818,7 +1805,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
     
     if (!_dragging) {
-      CGFloat sheetY = _fakeView.layer.presentationLayer.frame.origin.y;
+      CGFloat sheetY = self.sheetPresentationController.presentedView.layer.presentationLayer.frame.origin.y;
       [self notifySheetTranslation:sheetY from:@"transition"];
     }
   }

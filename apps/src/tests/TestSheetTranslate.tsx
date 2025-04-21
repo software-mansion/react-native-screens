@@ -67,12 +67,9 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   return (
     // When using `fitToContents` you can't use flex: 1. It is you who must provide
     // the content size - you can't rely on parent size here.
-    <View style={{ backgroundColor: 'lightgreen', flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <View style={{ paddingTop: 20 }}>
         <Button title="Go back" onPress={goBack} />
-      </View>
-      <View style={{ alignItems: 'center' }}>
-        <TextInput style={{ marginVertical: 12, paddingVertical: 8, backgroundColor: 'lavender', borderRadius: 24, width: '80%' }} placeholder="Trigger keyboard..." />
       </View>
     </View>
   );
@@ -89,14 +86,11 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="FormSheet" component={FormSheet} options={{
               presentation: 'formSheet',
-              sheetAllowedDetents: [0.4, 0.75],
+              sheetAllowedDetents: [0.2, 0.5, 0.8],
               sheetLargestUndimmedDetentIndex: 'none',
               sheetCornerRadius: 8,
               headerShown: false,
-              gestureEnabled: false,
-              contentStyle: {
-                backgroundColor: 'lightblue',
-              },
+              // gestureEnabled: false,
             }} />
           </Stack.Navigator>
         </NavigationContainer>
