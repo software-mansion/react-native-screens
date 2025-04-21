@@ -1399,11 +1399,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   CGRect _lastViewFrame;
   RNSScreenView *_initialView;
   UIView *_fakeView;
-  UIView *_gestureView;
   CADisplayLink *_transitionTimer;
   CGFloat _currentAlpha;
   BOOL _trackingYFromLayout;
-  BOOL _trackingYFromDrag;
+  BOOL _dragging;
   BOOL _isTransitioning;
   BOOL _closing;
   BOOL _goingForward;
@@ -1430,15 +1429,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillLayoutSubviews
 {
   [super viewWillLayoutSubviews];
-  
+
   if (@available(iOS 15.0, *)) {
-    if (!_isTransitioning) {
+    if (!_isTransitioning && !self.modalInPresentation) {
       _trackingYFromLayout = YES;
       UIView *presentedView = self.sheetPresentationController.presentedView;
       if (!presentedView) return;
-      
+
       CGFloat sheetY = presentedView.frame.origin.y;
-      [self notifySheetTranslation:sheetY];
+      [self notifySheetTranslation:sheetY from:@"layout"];
     }
   }
 }
@@ -1472,21 +1471,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self setupGestureHandler];
   }
   
-//  UIView *presentedView = self.sheetPresentationController.presentedView;
-//  [presentedView addObserver:self forKeyPath:@"frame" options:0 context:NULL];
+  UIView *presentedView = self.sheetPresentationController.presentedView;
+  [presentedView addObserver:self forKeyPath:@"frame" options:0 context:NULL];
 }
-
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-//{
-//  if ([keyPath isEqualToString:@"frame"]) {
-//    if (!_isTransitioning && !_trackingYFromLayout) {
-//      UIView *presentedView = (UIView *)object;
-//      [self notifySheetTranslation:presentedView.frame.origin.y];
-//    }
-//  } else {
-//    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-//  }
-//}
 
 - (void)viewWillDisappear:(BOOL)animated
 {
@@ -1524,6 +1511,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
+  
+  _trackingYFromLayout = NO;
+  
+  UIView *presentedView = self.sheetPresentationController.presentedView;
+  [presentedView removeObserver:self forKeyPath:@"frame"];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -1572,6 +1564,18 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+  if ([keyPath isEqualToString:@"frame"]) {
+    if (!_isTransitioning && self.modalInPresentation) {
+      UIView *presentedView = (UIView *)object;
+      [self notifySheetTranslation:presentedView.frame.origin.y from:@"kvo"];
+    }
+  } else {
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+  }
+}
+
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
@@ -1587,8 +1591,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (self.screenView.isPresentedAsNativeModal) {
     [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
   }
-  
-  _trackingYFromLayout = NO;
 
   if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1738,28 +1740,31 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gesture {
-  CGFloat draggedY = gesture.view.frame.origin.y;
-
   switch (gesture.state) {
+    case UIGestureRecognizerStateBegan: {
+      _dragging = YES;
+      break;
+    }
     case UIGestureRecognizerStateChanged: {
-      if (!_trackingYFromLayout) {
-        _trackingYFromDrag = YES;
-         [self notifySheetTranslation:draggedY];
+      if (!_trackingYFromLayout && !self.modalInPresentation) {
+        CGFloat draggedY = gesture.view.frame.origin.y;
+        [self notifySheetTranslation:draggedY from:@"drag"];
       }
       break;
     }
     case UIGestureRecognizerStateEnded:
     case UIGestureRecognizerStateCancelled:
-      _trackingYFromDrag = NO;
+      _dragging = NO;
       break;
     default:
       break;
   }
 }
 
-- (void)notifySheetTranslation:(double)y
+- (void)notifySheetTranslation:(double)y from:(NSString *)from
 {
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
+    NSLog(@"%f from: %@", y, from);
     // if the view is already snapshot, there is not sense in sending progress since on JS side
     // the component is already not present
     [(RNSScreenView *)self.view notifySheetTranslation:y];
@@ -1812,9 +1817,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
     }
     
-    if (!_trackingYFromDrag) {
+    if (!_dragging) {
       CGFloat sheetY = _fakeView.layer.presentationLayer.frame.origin.y;
-      [self notifySheetTranslation:sheetY];
+      [self notifySheetTranslation:sheetY from:@"transition"];
     }
   }
 }
