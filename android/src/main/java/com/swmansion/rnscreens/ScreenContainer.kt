@@ -31,7 +31,7 @@ open class ScreenContainer(
     private var needsUpdate = false
     private var isLayoutEnqueued = false
     private val layoutCallback: Choreographer.FrameCallback =
-        object : Choreographer.FrameCallback() {
+        object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
                 measure(

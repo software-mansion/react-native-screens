@@ -39,7 +39,7 @@ open class CustomToolbar(
 
     private var isLayoutEnqueued = false
     private val layoutCallback: Choreographer.FrameCallback =
-        object : Choreographer.FrameCallback() {
+        object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
                 // The following measure specs are selected to work only with Android APIs <= 29.
