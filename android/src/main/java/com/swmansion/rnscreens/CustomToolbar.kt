@@ -3,11 +3,11 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.view.Choreographer
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowInsetsCompat
-import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.utils.InsetsCompat
@@ -38,8 +38,8 @@ open class CustomToolbar(
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
     private var isLayoutEnqueued = false
-    private val layoutCallback: ChoreographerCompat.FrameCallback =
-        object : ChoreographerCompat.FrameCallback() {
+    private val layoutCallback: Choreographer.FrameCallback =
+        object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
                 // The following measure specs are selected to work only with Android APIs <= 29.
