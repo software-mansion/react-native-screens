@@ -264,7 +264,7 @@ export interface ScreenProps extends ViewProps {
     e: NativeSyntheticEvent<TransitionProgressEventType>,
   ) => void;
   /**
-   * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
+   * An internal callback called every frame during Y translation of the sheet. Use only with `formSheet` presentation.
    */
   onSheetTranslation?: (
     e: NativeSyntheticEvent<SheetTranslationEventType>,

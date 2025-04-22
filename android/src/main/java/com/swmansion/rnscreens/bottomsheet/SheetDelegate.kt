@@ -2,7 +2,9 @@ package com.swmansion.rnscreens.bottomsheet
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.graphics.Insets
@@ -82,6 +84,11 @@ class SheetDelegate(
 
     private fun handleHostFragmentOnPause() {
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
+    }
+
+    private fun onSheetSlide(bottomSheet: View) {
+        Log.d(TAG, "${(screen.parent as ViewGroup).top}")
+        screen.onSheetTranslation(bottomSheet.top)
     }
 
     private fun onSheetStateChanged(newState: Int) {
@@ -369,7 +376,9 @@ class SheetDelegate(
         override fun onSlide(
             bottomSheet: View,
             slideOffset: Float,
-        ) = Unit
+        ) {
+            this@SheetDelegate.onSheetSlide(bottomSheet)
+        }
     }
 
     companion object {

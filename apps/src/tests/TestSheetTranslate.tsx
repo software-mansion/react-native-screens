@@ -3,7 +3,7 @@ import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-na
 import React from 'react';
 import { Button, View, useWindowDimensions } from 'react-native';
 import { ReanimatedScreenProvider, useReanimatedSheetTranslation } from 'react-native-screens/reanimated';
-import Animated, { useAnimatedReaction, SharedValue, WithSpringConfig, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedReaction, SharedValue, WithSpringConfig, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 const SPRING_CONFIG: WithSpringConfig = {
   damping: 500,

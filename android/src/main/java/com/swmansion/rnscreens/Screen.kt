@@ -31,6 +31,7 @@ import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.events.SheetTranslationEvent
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -512,6 +513,20 @@ class Screen(
         UIManagerHelper
             .getEventDispatcherForReactTag(screenContext, id)
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
+    }
+
+    internal fun onSheetTranslation(
+        top: Int
+    ) {
+        val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
+        val translationY = PixelUtil.toDIPFromPixel(top.toFloat())
+        reactEventDispatcher?.dispatchEvent(
+            SheetTranslationEvent(
+                surfaceId,
+                id,
+                translationY,
+            ),
+        )
     }
 
     internal fun onSheetDetentChanged(
