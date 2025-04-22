@@ -47,6 +47,16 @@ const HomeScreen = ({ navigation }: any) => {
         <PressableWithFeedback style={styles.button} onPress={() => console.log(1)}>
           <Text>1</Text>
         </PressableWithFeedback>
+        {secondButtonShown && (
+          <PressableWithFeedback style={styles.button} onPress={() => console.log(2)}>
+            <Text>2</Text>
+          </PressableWithFeedback>
+        )}
+        {thirdButtonShown && (
+          <PressableWithFeedback style={styles.button} onPress={() => console.log(3)}>
+            <Text>3</Text>
+          </PressableWithFeedback>
+        )}
         <PressableWithFeedback style={styles.button} onPress={() => console.log('D')}>
           <Text>[D]</Text>
         </PressableWithFeedback>
