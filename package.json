@@ -168,7 +168,8 @@
         "RNSScreenStackHeaderConfig": "RNSScreenStackHeaderConfig",
         "RNSScreenStackHeaderSubview": "RNSScreenStackHeaderSubview",
         "RNSScreenStack": "RNSScreenStackView",
-        "RNSSearchBar": "RNSSearchBar"
+        "RNSSearchBar": "RNSSearchBar",
+        "RNSHeaderSubviewContentWrapper": "RNSHeaderSubviewContentWrapper"
       }
     }
   },
