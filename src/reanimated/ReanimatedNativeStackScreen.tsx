@@ -61,7 +61,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   const closing = useSharedValue(0);
   const goingForward = useSharedValue(0);
 
-  const translationY = useSharedValue(0);
+  const translationY = useSharedValue(dimensions.height);
 
   return (
     <AnimatedScreen
@@ -91,11 +91,10 @@ const ReanimatedNativeStackScreen = React.forwardRef<
           translationY.value = event.y;
         },
         [
-          // This should not be necessary, but is not properly managed by `react-native-reanimated`
           // @ts-ignore wrong type
           Platform.OS === 'android'
             ? 'onSheetTranslation'
-            : // for some reason there is a difference in required event name between architectures
+            :
             ENABLE_FABRIC
             ? 'onSheetTranslation'
             : 'topSheetTranslation',

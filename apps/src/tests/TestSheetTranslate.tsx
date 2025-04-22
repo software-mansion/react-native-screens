@@ -1,9 +1,9 @@
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Button, TextInput, View, useWindowDimensions } from 'react-native';
+import { Button, View, useWindowDimensions } from 'react-native';
 import { ReanimatedScreenProvider, useReanimatedSheetTranslation } from 'react-native-screens/reanimated';
-import Animated, { SharedValue, WithSpringConfig, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedReaction, SharedValue, WithSpringConfig, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from 'react-native-reanimated';
 
 const SPRING_CONFIG: WithSpringConfig = {
   damping: 500,
@@ -50,7 +50,7 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   const contextY = React.useContext(TranslationContext)
   const translation = useReanimatedSheetTranslation()
 
-  useDerivedValue(() => {
+  useAnimatedReaction(() => translation.value, () => {
     if (!contextY) return
     contextY.value = -(dimentions.height - translation.value)
   })
