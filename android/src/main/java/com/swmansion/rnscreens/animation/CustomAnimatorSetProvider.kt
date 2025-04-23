@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.animator
+package com.swmansion.rnscreens.animation
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator

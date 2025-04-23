@@ -7,13 +7,13 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
+import com.swmansion.rnscreens.animation.ScreenStackAnimationManager
 import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ReverseFromIndex
 import com.swmansion.rnscreens.stack.views.ReverseOrder
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
-import com.swmansion.rnscreens.utils.setTweenAnimations
 import kotlin.collections.ArrayList
 import kotlin.math.max
 
@@ -31,6 +31,8 @@ class ScreenStack(
     private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
 
     var goingForward = false
+
+    val animationManager: ScreenStackAnimationManager = ScreenStackAnimationManager()
 
     /**
      * Marks given fragment as to-be-dismissed and performs updates on container
@@ -55,8 +57,8 @@ class ScreenStack(
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
-            Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen)
-            else -> ScreenStackFragment(screen)
+            Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen, animationManager)
+            else -> ScreenStackFragment(screen, animationManager)
         }
 
     override fun startViewTransition(view: View) {
@@ -142,6 +144,7 @@ class ScreenStack(
 
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
+        animationManager.reset()
 
         val newTopAlreadyInStack = stack.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
@@ -213,9 +216,9 @@ class ScreenStack(
         }
 
         createTransaction().let { transaction ->
-            if (stackAnimation != null) {
-                transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
-            }
+//            if (stackAnimation != null) {
+//                transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
+//            }
 
             // Remove all screens that are currently on stack, but should be dismissed, because they're
             // no longer rendered or were dismissed natively.
@@ -257,6 +260,10 @@ class ScreenStack(
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
+
+            if (stackAnimation != null) {
+                animationManager.configure(stackAnimation, shouldUseOpenAnimation, setOf())
+            }
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()
