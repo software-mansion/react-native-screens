@@ -10,20 +10,20 @@ export const ScreenStackHeaderBackButtonImage = (
   </View>
 );
 
-export const ScreenStackHeaderRightView = (
-  props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => <View {...props} />;
+export const ScreenStackHeaderRightView = (props: ViewProps): JSX.Element => (
+  <View {...props} />
+);
 
-export const ScreenStackHeaderLeftView = (
-  props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => <View {...props} />;
+export const ScreenStackHeaderLeftView = (props: ViewProps): JSX.Element => (
+  <View {...props} />
+);
 
-export const ScreenStackHeaderCenterView = (
-  props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => <View {...props} />;
+export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => (
+  <View {...props} />
+);
 
 export const ScreenStackHeaderSearchBarView = (
-  props: React.PropsWithChildren<ViewProps>,
+  props: ViewProps,
 ): JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderConfig = (
