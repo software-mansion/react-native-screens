@@ -17,6 +17,7 @@ import ScreenStackHeaderSubviewNativeComponent, {
   type NativeProps as ScreenStackHeaderSubviewNativeProps,
 } from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 import { EDGE_TO_EDGE } from './helpers/edge-to-edge';
+import HeaderSubviewContentWrapper from './HeaderSubviewContentWrapper';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
@@ -45,38 +46,41 @@ export const ScreenStackHeaderBackButtonImage = (
 );
 
 export const ScreenStackHeaderRightView = (props: ViewProps): JSX.Element => {
-  const { style, ...rest } = props;
+  const { style, children, ...rest } = props;
 
   return (
     <ScreenStackHeaderSubview
       {...rest}
       type="right"
-      style={[styles.headerSubview, style]}
-    />
+      style={[styles.headerSubview, style]}>
+      <HeaderSubviewContentWrapper>{children}</HeaderSubviewContentWrapper>
+    </ScreenStackHeaderSubview>
   );
 };
 
 export const ScreenStackHeaderLeftView = (props: ViewProps): JSX.Element => {
-  const { style, ...rest } = props;
+  const { style, children, ...rest } = props;
 
   return (
     <ScreenStackHeaderSubview
       {...rest}
       type="left"
-      style={[styles.headerSubview, style]}
-    />
+      style={[styles.headerSubview, style]}>
+      <HeaderSubviewContentWrapper>{children}</HeaderSubviewContentWrapper>
+    </ScreenStackHeaderSubview>
   );
 };
 
 export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => {
-  const { style, ...rest } = props;
+  const { style, children, ...rest } = props;
 
   return (
     <ScreenStackHeaderSubview
       {...rest}
       type="center"
-      style={[styles.headerSubviewCenter, style]}
-    />
+      style={[styles.headerSubviewCenter, style]}>
+      <HeaderSubviewContentWrapper>{children}</HeaderSubviewContentWrapper>
+    </ScreenStackHeaderSubview>
   );
 };
 
@@ -86,8 +90,9 @@ export const ScreenStackHeaderSearchBarView = (
   <ScreenStackHeaderSubview
     {...props}
     type="searchBar"
-    style={styles.headerSubview}
-  />
+    style={styles.headerSubview}>
+    <HeaderSubviewContentWrapper>{props.children}</HeaderSubviewContentWrapper>
+  </ScreenStackHeaderSubview>
 );
 
 const styles = StyleSheet.create({
