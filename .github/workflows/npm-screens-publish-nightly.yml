@@ -1,4 +1,4 @@
-name: NPM Screens publish [Nightly]
+name: Build nightly and publish on npm
 env:
   YARN_ENABLE_HARDENED_MODE: 0
 on:

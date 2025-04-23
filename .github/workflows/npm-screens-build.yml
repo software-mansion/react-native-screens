@@ -1,4 +1,4 @@
-name: NPM screens build
+name: npm package build
 env:
   YARN_ENABLE_HARDENED_MODE: 0
 on:
