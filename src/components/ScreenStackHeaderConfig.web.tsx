@@ -27,9 +27,9 @@ export const ScreenStackHeaderSearchBarView = (
 ): JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderConfig = (
-  props: React.PropsWithChildren<ScreenStackHeaderConfigProps>,
+  props: ScreenStackHeaderConfigProps,
 ): JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderSubview: React.ComponentType<
-  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
+  ViewProps & { type?: HeaderSubviewTypes }
 > = View;
