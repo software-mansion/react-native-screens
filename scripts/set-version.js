@@ -1,13 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const getVersion = require('./releasing').getVersion;
+const { getVersion } = require('./releasing');
 
 const packageJsonPath = path.resolve(__dirname, '../package.json');
 
-const { currentVersion, newVersion } = getVersion(
-  process.argv,
-  packageJsonPath
-);
+const { currentVersion, newVersion } = getVersion(packageJsonPath);
 
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 packageJson.version = newVersion;
