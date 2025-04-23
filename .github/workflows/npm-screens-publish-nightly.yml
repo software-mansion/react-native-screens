@@ -1,0 +1,25 @@
+name: NPM Screens publish [Nightly]
+env:
+  YARN_ENABLE_HARDENED_MODE: 0
+on:
+  schedule:
+    - cron: '27 23 * * *' # at 23:27 every day
+  workflow_dispatch:
+
+jobs:
+  npm-screens-4-publish-nightly:
+    if: github.repository == 'software-mansion/react-native-screens'
+    uses: ./.github/workflows/npm-screens-build.yml
+    with:
+      option: --nightly
+      publish_on_npm: true
+    secrets: inherit
+
+  npm-screens-3-publish-nightly:
+    if: github.repository == 'software-mansion/react-native-screens'
+    uses: ./.github/workflows/npm-screens-build.yml
+    with:
+      option: --nightly
+      publish_on_npm: true
+      ref: 3.x
+    secrets: inherit
