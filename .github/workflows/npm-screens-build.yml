@@ -81,7 +81,7 @@ jobs:
           MAJOR=$(echo $VERSION | awk -F. '{print $1}')
           MINOR=$(echo $VERSION | awk -F. '{print $2}')
           NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
-          node ./scripts/set-screens-version.js $NEW_VERSION
+          node ./scripts/set-version.js $NEW_VERSION
 
       - name: Build package
         id: build
