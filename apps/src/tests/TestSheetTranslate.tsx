@@ -1,6 +1,6 @@
-import { NavigationContainer, RouteProp } from '@react-navigation/native';
+import { NavigationContainer, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Button, View, useWindowDimensions } from 'react-native';
 import { ReanimatedScreenProvider, useReanimatedSheetTranslation } from 'react-native-screens/reanimated';
 import Animated, { useAnimatedReaction, SharedValue, WithSpringConfig, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -55,21 +55,21 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
     contextY.value = -(dimentions.height - translation.value)
   })
 
-  const goBack = () => {
-    navigation.goBack()
-    if (contextY) {
-      // Reanimated doesn't get fired when dismissed programmatically even if native is firing it.
-      // I guess due to the component being unmounted early?
+  // Reanimated doesn't get fired when dismissed even if native is firing it.
+  // I guess due to the component being unmounted early in react-navigation?
+  useFocusEffect(useCallback(() => {
+    return () => {
+      if (!contextY) return;
       contextY.value = withSpring(0, SPRING_CONFIG);
     }
-  }
+  }, []))
 
   return (
     // When using `fitToContents` you can't use flex: 1. It is you who must provide
     // the content size - you can't rely on parent size here.
     <View style={{ flex: 1 }}>
       <View style={{ paddingTop: 20 }}>
-        <Button title="Go back" onPress={goBack} />
+        <Button title="Go back" onPress={() => navigation.goBack()} />
       </View>
     </View>
   );
