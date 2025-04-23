@@ -27,7 +27,6 @@ function Home({ navigation }: StackNavigationProp) {
         onPress={() => navigation.navigate('FormSheet')}
         testID="home-button-open-formsheet"
       />
-      <Button title="Go back" onPress={() => navigation.pop()} />
     </View>
   );
 }
