@@ -6,7 +6,7 @@ if ! CURRENT_VERSION=$(node ./set-version.js --nightly); then
   exit 1
 fi
 
-yarn build
+yarn prepare
 
 npm pack
 
