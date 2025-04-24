@@ -216,11 +216,6 @@ class ScreenStack(
         }
 
         createTransaction().let { transaction ->
-            // TODO: remove
-//            if (stackAnimation != null) {
-//                transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
-//            }
-
             // Remove all screens that are currently on stack, but should be dismissed, because they're
             // no longer rendered or were dismissed natively.
             stack
