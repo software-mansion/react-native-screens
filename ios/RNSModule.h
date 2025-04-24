@@ -1,4 +1,3 @@
-
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <rnscreens/rnscreens.h>
 #else

@@ -10,6 +10,7 @@
 
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTMountingTransactionObserving.h>
 
 #import <rnscreens/RNSScreenStackHeaderSubviewComponentDescriptor.h>
 #endif // RCT_NEW_ARCH_ENABLED
@@ -17,6 +18,12 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
+
+#ifdef RCT_NEW_ARCH_ENABLED
+@interface RNSScreenStackHeaderSubview () <RCTMountingTransactionObserving>
+
+@end
+#endif
 
 @implementation RNSScreenStackHeaderSubview {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -67,6 +74,22 @@ namespace react = facebook::react;
   [toLayoutView layoutIfNeeded];
 }
 
+#pragma mark - RNSHeaderSubviewContentWrapperDelegate
+
+- (void)headerSubviewContentWrapper:(RNSHeaderSubviewContentWrapper *)contentWrapper
+                 receivedReactFrame:(CGRect)reactFrame
+                          didChange:(BOOL)frameChanged
+{
+  if (!frameChanged) {
+    return;
+  }
+
+  // This is a signal for us, that the size of our content has changed.
+  // We need to react to that
+  reactFrame.origin = CGPointMake(0.f, 0.f);
+  [self setBounds:reactFrame];
+}
+
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma mark - Fabric specific
@@ -87,6 +110,12 @@ namespace react = facebook::react;
 
   return self;
 }
+
+//- (void)handleContentBoundsChange
+//{
+//  [self setBounds:<#(CGRect)#>]
+//  [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
+//}
 
 #pragma mark - RCTComponentViewProtocol
 
@@ -115,6 +144,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
+  NSLog(@"Subview [%ld] updateLayoutMetrics %@", self.tag, NSStringFromCGRect(CGRect{CGPointZero, frame.size}));
   // CALayer will crash if we pass NaN or Inf values.
   // It's unclear how to detect this case on cross-platform manner holistically, so we have to do it on the mounting
   // layer as well. NaN/Inf is a kinda valid result of some math operations. Even if we can (and should) detect (and
@@ -126,15 +156,20 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         NSStringFromCGRect(frame),
         self);
   } else {
-    NSLog(@"Subview [%ld] updateLayoutMetrics %@", self.tag, NSStringFromCGRect(CGRect{CGPointZero, frame.size}));
-    self.bounds = CGRect{CGPointZero, frame.size};
-    [self layoutNavigationBar];
+    const CGRect newBounds = CGRect{CGPointZero, frame.size};
+
+    // This prevents unnecessary layout scheduling
+    if (!CGRectEqualToRect(self.bounds, newBounds)) {
+      self.bounds = newBounds;
+      [self layoutNavigationBar];
+    }
   }
 }
 
 - (void)layoutSubviews
 {
   NSLog(@"Subview [%ld] layoutSubviews", self.tag);
+  // TODO: DO I NEED THIS!?
   [super layoutSubviews];
   [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
 }
@@ -170,11 +205,18 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSHeaderSubviewContentWrapper.class],
+      @"RNSScreenStackHeaderSubview accepts only instances of @RNSHeaderSubviewContentWrapper as direct children. Got: %@",
+      childComponentView.class);
+
   NSLog(
       @"Subview [%ld] addsReactSubview [%ld] with frame %@",
       self.tag,
       childComponentView.tag,
       NSStringFromCGRect(childComponentView.frame));
+
+  static_cast<RNSHeaderSubviewContentWrapper *>(childComponentView).delegate = self;
   [super mountChildComponentView:childComponentView index:index];
 }
 
@@ -185,7 +227,27 @@ RNS_IGNORE_SUPER_CALL_BEGIN
       self.tag,
       childComponentView.tag,
       NSStringFromCGRect(childComponentView.frame));
+  if ([childComponentView isKindOfClass:RNSHeaderSubviewContentWrapper.class]) {
+    static_cast<RNSHeaderSubviewContentWrapper *>(childComponentView).delegate = nil;
+  }
   [super unmountChildComponentView:childComponentView index:index];
+}
+
+#pragma mark - RCTMountingTransactionObserving
+
+- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
+                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  for (const auto &mutation : transaction.getMutations()) {
+    if (MUTATION_PARENT_TAG(mutation) == self.tag && mutation.type == react::ShadowViewMutation::Type::Update &&
+        mutation.newChildShadowView.layoutMetrics != mutation.oldChildShadowView.layoutMetrics) {
+      // Our direct child will receive layout update.
+      NSLog(@"Subview [%ld] pre-updating layout metrics", self.tag);
+      CGRect newChildFrame = RCTCGRectFromRect(mutation.newChildShadowView.layoutMetrics.frame);
+      newChildFrame.origin = CGPointZero;
+      self.bounds = newChildFrame;
+    }
+  }
 }
 
 - (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView

@@ -6,6 +6,7 @@
 #import <React/RCTConvert.h>
 #import <React/RCTViewManager.h>
 #import "RNSEnums.h"
+#import "RNSHeaderSubviewContentWrapper.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 #else
     UIView
 #endif
+    <RNSHeaderSubviewContentWrapperDelegate>
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 

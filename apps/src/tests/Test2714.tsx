@@ -15,6 +15,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'blue',
   },
+  largeButton: {
+    width: 64,
+    height: 42,
+    marginHorizontal: 5,
+    padding: 5,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'blue',
+  },
   buttonsView: {
     flexDirection: 'row',
     borderWidth: 1,
@@ -40,11 +50,12 @@ const HomeScreen = ({ navigation }: any) => {
   const [secondButtonShown, setSecondButtonShown] = React.useState(true);
   const [thirdButtonShown, setThirdButtonShown] = React.useState(true);
   const [showAllButtons, setShowAllButtons] = React.useState(true);
+  const [isLargeSize, setLargeSize] = React.useState(true);
 
   const headerRight = React.useCallback(() => {
     return (
       <View style={[styles.buttonsView, !showAllButtons && { display: 'none' }]}>
-        <PressableWithFeedback style={styles.button} onPress={() => console.log(1)}>
+        <PressableWithFeedback style={isLargeSize ? styles.largeButton : styles.button} onPress={() => console.log(1)}>
           <Text>1</Text>
         </PressableWithFeedback>
         {secondButtonShown && (
@@ -62,7 +73,7 @@ const HomeScreen = ({ navigation }: any) => {
         </PressableWithFeedback>
       </View>
     );
-  }, [secondButtonShown, thirdButtonShown, showAllButtons]);
+  }, [secondButtonShown, thirdButtonShown, showAllButtons, isLargeSize]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -74,6 +85,10 @@ const HomeScreen = ({ navigation }: any) => {
   return (
     <View>
       <Text>Home Screen</Text>
+      <Button
+        title="Toggle size"
+        onPress={() => setLargeSize(p => !p)}
+      />
       <Button
         title="Toggle 2nd button"
         onPress={() => setSecondButtonShown(p => !p)}

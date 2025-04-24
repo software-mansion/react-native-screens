@@ -233,8 +233,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self updateShadowStateWithSize:navigationBar.frame.size];
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
-    CGRect frameInNavBarCoordinates = [subview convertRect:subview.frame toView:navigationBar];
-    [subview updateShadowStateWithFrame:frameInNavBarCoordinates];
+    [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
 }
 #else

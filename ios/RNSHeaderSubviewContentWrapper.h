@@ -11,7 +11,29 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSHeaderSubviewContentWrapper;
+
+@protocol RNSHeaderSubviewContentWrapperDelegate <NSObject>
+
+/**
+ * Called by the content wrapper on a delegate when React Native updates the layout.
+ */
+- (void)headerSubviewContentWrapper:(RNSHeaderSubviewContentWrapper *)contentWrapper
+                 receivedReactFrame:(CGRect)reactFrame
+                          didChange:(BOOL)frameChanged;
+
+@end
+
+/**
+ * Component view with layout managed by react-native. Notifies it's delegate on react-native driven layout changes.
+ * Does not send notifications when frame is set by native layout.
+ */
 @interface RNSHeaderSubviewContentWrapper : RCTViewComponentView
+
+/**
+ * Register delegate here, to get notifications when layout of this component changes.
+ */
+@property (nonatomic, nullable, weak) id<RNSHeaderSubviewContentWrapperDelegate> delegate;
 
 @end
 
