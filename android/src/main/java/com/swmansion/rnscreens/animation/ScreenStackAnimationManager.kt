@@ -26,7 +26,10 @@ class ScreenStackAnimationManager {
         propertyAnimationFragments.clear()
     }
 
-    fun configure(stackAnimation: Screen.StackAnimation, shouldUseOpenAnimation: Boolean) {
+    fun configure(
+        stackAnimation: Screen.StackAnimation,
+        shouldUseOpenAnimation: Boolean,
+    ) {
         this.stackAnimation = stackAnimation
         this.shouldUseOpenAnimation = shouldUseOpenAnimation
     }
@@ -55,116 +58,35 @@ class ScreenStackAnimationManager {
         }
     }
 
-    fun getAnimationForFragment(fragment: ScreenStackFragment, enter: Boolean): Animation? {
-        // TODO(animations): refactor, verify correct animations
-
-        // TODO(animations): dont detect formSheet here but depend on propertyAnimationFragments?
+    fun getAnimationForFragment(
+        fragment: ScreenStackFragment,
+        enter: Boolean,
+    ): Animation? {
         if (propertyAnimationFragments.contains(fragment)) {
             return null
         }
 
         // TODO(animations): remove log
-        println("${fragment} uses tween animation")
-
-        val enterAnimation: Int
-        val exitAnimation: Int
-
-        if (shouldUseOpenAnimation) {
-            when (stackAnimation) {
-                Screen.StackAnimation.DEFAULT -> {
-                    enterAnimation = R.anim.rns_default_enter_in
-                    exitAnimation = R.anim.rns_default_enter_out
-                }
-                Screen.StackAnimation.NONE -> {
-                    enterAnimation = R.anim.rns_no_animation_20
-                    exitAnimation = R.anim.rns_no_animation_20
-                }
-                Screen.StackAnimation.FADE -> {
-                    enterAnimation = R.anim.rns_fade_in
-                    exitAnimation = R.anim.rns_fade_out
-                }
-                Screen.StackAnimation.SLIDE_FROM_RIGHT -> {
-                    enterAnimation = R.anim.rns_slide_in_from_right
-                    exitAnimation = R.anim.rns_slide_out_to_left
-                }
-                Screen.StackAnimation.SLIDE_FROM_LEFT -> {
-                    enterAnimation = R.anim.rns_slide_in_from_left
-                    exitAnimation = R.anim.rns_slide_out_to_right
-                }
-                Screen.StackAnimation.SLIDE_FROM_BOTTOM -> {
-                    enterAnimation = R.anim.rns_slide_in_from_bottom
-                    exitAnimation = R.anim.rns_no_animation_medium
-                }
-                Screen.StackAnimation.FADE_FROM_BOTTOM -> {
-                    enterAnimation = R.anim.rns_fade_from_bottom
-                    exitAnimation = R.anim.rns_no_animation_350
-                }
-                Screen.StackAnimation.IOS_FROM_RIGHT -> {
-                    enterAnimation = R.anim.rns_ios_from_right_foreground_open
-                    exitAnimation = R.anim.rns_ios_from_right_background_open
-                }
-                Screen.StackAnimation.IOS_FROM_LEFT -> {
-                    enterAnimation = R.anim.rns_ios_from_left_foreground_open
-                    exitAnimation = R.anim.rns_ios_from_left_background_open
-                }
-            }
-        } else {
-            when (stackAnimation) {
-                Screen.StackAnimation.DEFAULT -> {
-                    enterAnimation = R.anim.rns_default_exit_in
-                    exitAnimation = R.anim.rns_default_exit_out
-                }
-                Screen.StackAnimation.NONE -> {
-                    enterAnimation = R.anim.rns_no_animation_20
-                    exitAnimation = R.anim.rns_no_animation_20
-                }
-                Screen.StackAnimation.FADE -> {
-                    enterAnimation = R.anim.rns_fade_in
-                    exitAnimation = R.anim.rns_fade_out
-                }
-                Screen.StackAnimation.SLIDE_FROM_RIGHT -> {
-                    enterAnimation = R.anim.rns_slide_in_from_left
-                    exitAnimation = R.anim.rns_slide_out_to_right
-                }
-                Screen.StackAnimation.SLIDE_FROM_LEFT -> {
-                    enterAnimation = R.anim.rns_slide_in_from_right
-                    exitAnimation = R.anim.rns_slide_out_to_left
-                }
-                Screen.StackAnimation.SLIDE_FROM_BOTTOM -> {
-                    enterAnimation = R.anim.rns_no_animation_medium
-                    exitAnimation = R.anim.rns_slide_out_to_bottom
-                }
-                Screen.StackAnimation.FADE_FROM_BOTTOM -> {
-                    enterAnimation = R.anim.rns_no_animation_250
-                    exitAnimation = R.anim.rns_fade_to_bottom
-                }
-                Screen.StackAnimation.IOS_FROM_RIGHT -> {
-                    enterAnimation = R.anim.rns_ios_from_right_background_close
-                    exitAnimation = R.anim.rns_ios_from_right_foreground_close
-                }
-                Screen.StackAnimation.IOS_FROM_LEFT -> {
-                    enterAnimation = R.anim.rns_ios_from_left_background_close
-                    exitAnimation = R.anim.rns_ios_from_left_foreground_close
-                }
-            }
-        }
+        println("$fragment uses tween animation")
 
         return AnimationUtils.loadAnimation(
             fragment.context,
-            if (enter) enterAnimation else exitAnimation
+            getAnimationResource(enter),
         )
     }
 
-    fun getAnimatorForFragment(fragment: ScreenStackFragment, enter: Boolean): Animator? {
+    fun getAnimatorForFragment(
+        fragment: ScreenStackFragment,
+        enter: Boolean,
+    ): Animator? {
         // TODO(animations): refactor!!, verify correct animators
 
-        // TODO(animations): remove false from condition
         if (!propertyAnimationFragments.contains(fragment)) {
             return null
         }
 
         // TODO(animations): remove log
-        println("${fragment} uses animator")
+        println("$fragment uses animator")
 
         var animatorSet: AnimatorSet = AnimatorSet()
 
@@ -321,5 +243,92 @@ class ScreenStackAnimationManager {
             ),
         )
         return animatorSet
+    }
+
+    private fun getAnimationResource(enter: Boolean): Int {
+        val enterAnimation: Int
+        val exitAnimation: Int
+
+        if (shouldUseOpenAnimation) {
+            when (stackAnimation) {
+                Screen.StackAnimation.DEFAULT -> {
+                    enterAnimation = R.anim.rns_default_enter_in
+                    exitAnimation = R.anim.rns_default_enter_out
+                }
+                Screen.StackAnimation.NONE -> {
+                    enterAnimation = R.anim.rns_no_animation_20
+                    exitAnimation = R.anim.rns_no_animation_20
+                }
+                Screen.StackAnimation.FADE -> {
+                    enterAnimation = R.anim.rns_fade_in
+                    exitAnimation = R.anim.rns_fade_out
+                }
+                Screen.StackAnimation.SLIDE_FROM_RIGHT -> {
+                    enterAnimation = R.anim.rns_slide_in_from_right
+                    exitAnimation = R.anim.rns_slide_out_to_left
+                }
+                Screen.StackAnimation.SLIDE_FROM_LEFT -> {
+                    enterAnimation = R.anim.rns_slide_in_from_left
+                    exitAnimation = R.anim.rns_slide_out_to_right
+                }
+                Screen.StackAnimation.SLIDE_FROM_BOTTOM -> {
+                    enterAnimation = R.anim.rns_slide_in_from_bottom
+                    exitAnimation = R.anim.rns_no_animation_medium
+                }
+                Screen.StackAnimation.FADE_FROM_BOTTOM -> {
+                    enterAnimation = R.anim.rns_fade_from_bottom
+                    exitAnimation = R.anim.rns_no_animation_350
+                }
+                Screen.StackAnimation.IOS_FROM_RIGHT -> {
+                    enterAnimation = R.anim.rns_ios_from_right_foreground_open
+                    exitAnimation = R.anim.rns_ios_from_right_background_open
+                }
+                Screen.StackAnimation.IOS_FROM_LEFT -> {
+                    enterAnimation = R.anim.rns_ios_from_left_foreground_open
+                    exitAnimation = R.anim.rns_ios_from_left_background_open
+                }
+            }
+        } else {
+            when (stackAnimation) {
+                Screen.StackAnimation.DEFAULT -> {
+                    enterAnimation = R.anim.rns_default_exit_in
+                    exitAnimation = R.anim.rns_default_exit_out
+                }
+                Screen.StackAnimation.NONE -> {
+                    enterAnimation = R.anim.rns_no_animation_20
+                    exitAnimation = R.anim.rns_no_animation_20
+                }
+                Screen.StackAnimation.FADE -> {
+                    enterAnimation = R.anim.rns_fade_in
+                    exitAnimation = R.anim.rns_fade_out
+                }
+                Screen.StackAnimation.SLIDE_FROM_RIGHT -> {
+                    enterAnimation = R.anim.rns_slide_in_from_left
+                    exitAnimation = R.anim.rns_slide_out_to_right
+                }
+                Screen.StackAnimation.SLIDE_FROM_LEFT -> {
+                    enterAnimation = R.anim.rns_slide_in_from_right
+                    exitAnimation = R.anim.rns_slide_out_to_left
+                }
+                Screen.StackAnimation.SLIDE_FROM_BOTTOM -> {
+                    enterAnimation = R.anim.rns_no_animation_medium
+                    exitAnimation = R.anim.rns_slide_out_to_bottom
+                }
+                Screen.StackAnimation.FADE_FROM_BOTTOM -> {
+                    enterAnimation = R.anim.rns_no_animation_250
+                    exitAnimation = R.anim.rns_fade_to_bottom
+                }
+                Screen.StackAnimation.IOS_FROM_RIGHT -> {
+                    enterAnimation = R.anim.rns_ios_from_right_background_close
+                    exitAnimation = R.anim.rns_ios_from_right_foreground_close
+                }
+                Screen.StackAnimation.IOS_FROM_LEFT -> {
+                    enterAnimation = R.anim.rns_ios_from_left_background_close
+                    exitAnimation = R.anim.rns_ios_from_left_foreground_close
+                }
+            }
+        }
+
+        return if (enter) enterAnimation else exitAnimation
     }
 }
