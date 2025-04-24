@@ -49,7 +49,11 @@ class CustomAnimatorProvider {
                                 .ofFloat(screenParent, "translationX", 0.1f * screenWidth, 0.0f)
                                 .apply {
                                     duration = 450
-                                    interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
+                                    interpolator =
+                                        AnimationUtils.loadInterpolator(
+                                            context,
+                                            android.R.interpolator.fast_out_extra_slow_in,
+                                        )
                                 },
                             ObjectAnimator
                                 .ofFloat(screenParent, "alpha", 0.0f, 1.0f)
@@ -222,7 +226,7 @@ class CustomAnimatorProvider {
                     }
                 }
 
-                R.anim.rns_slide_out_to_left -> {
+                R.anim.rns_slide_out_to_left ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationX", 0.0f, -screenWidth.toFloat())
@@ -230,9 +234,8 @@ class CustomAnimatorProvider {
                                 duration = 400
                             },
                     )
-                }
 
-                R.anim.rns_slide_in_from_left -> {
+                R.anim.rns_slide_in_from_left ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationX", -screenWidth.toFloat(), 0.0f)
@@ -240,9 +243,8 @@ class CustomAnimatorProvider {
                                 duration = 400
                             },
                     )
-                }
 
-                R.anim.rns_slide_out_to_right -> {
+                R.anim.rns_slide_out_to_right ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationX", 0.0f, screenWidth.toFloat())
@@ -250,9 +252,8 @@ class CustomAnimatorProvider {
                                 duration = 400
                             },
                     )
-                }
 
-                R.anim.rns_slide_in_from_right -> {
+                R.anim.rns_slide_in_from_right ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationX", screenWidth.toFloat(), 0.0f)
@@ -260,9 +261,8 @@ class CustomAnimatorProvider {
                                 duration = 400
                             },
                     )
-                }
 
-                R.anim.rns_slide_out_to_bottom -> {
+                R.anim.rns_slide_out_to_bottom ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationY", 0.0f, screenHeight.toFloat())
@@ -270,9 +270,8 @@ class CustomAnimatorProvider {
                                 duration = 400
                             },
                     )
-                }
 
-                R.anim.rns_slide_in_from_bottom -> {
+                R.anim.rns_slide_in_from_bottom ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationY", screenHeight.toFloat(), 0.0f)
@@ -280,26 +279,49 @@ class CustomAnimatorProvider {
                                 duration = 400
                             },
                     )
-                }
 
                 R.anim.rns_fade_from_bottom ->
                     animatorSet.playTogether(
                         ObjectAnimator.ofFloat(screenParent, "alpha", 0.0f, 1.0f).apply {
                             duration = 210
-                            interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.decelerate_quint)
+                            interpolator =
+                                AnimationUtils.loadInterpolator(
+                                    context,
+                                    android.R.interpolator.decelerate_quint,
+                                )
                         },
-                        ObjectAnimator.ofFloat(screenParent, "translationY", 0.08f * screenHeight, 0.0f).apply {
-                            duration = 350
-                            interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.decelerate_quint)
-                        },
+                        ObjectAnimator
+                            .ofFloat(
+                                screenParent,
+                                "translationY",
+                                0.08f * screenHeight,
+                                0.0f,
+                            ).apply {
+                                duration = 350
+                                interpolator =
+                                    AnimationUtils.loadInterpolator(
+                                        context,
+                                        android.R.interpolator.decelerate_quint,
+                                    )
+                            },
                     )
 
                 R.anim.rns_fade_to_bottom ->
                     animatorSet.playTogether(
-                        ObjectAnimator.ofFloat(screenParent, "translationY", 0.0f, 0.08f * screenHeight).apply {
-                            duration = 250
-                            interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_quint)
-                        },
+                        ObjectAnimator
+                            .ofFloat(
+                                screenParent,
+                                "translationY",
+                                0.0f,
+                                0.08f * screenHeight,
+                            ).apply {
+                                duration = 250
+                                interpolator =
+                                    AnimationUtils.loadInterpolator(
+                                        context,
+                                        android.R.interpolator.accelerate_quint,
+                                    )
+                            },
                         ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 0.0f).apply {
                             duration = 150
                             startDelay = 100
@@ -307,112 +329,149 @@ class CustomAnimatorProvider {
                         },
                     )
 
-                R.anim.rns_ios_from_left_background_close -> {
+                R.anim.rns_ios_from_left_background_close ->
                     animatorSet.play(
                         ObjectAnimator
-                            .ofFloat(screenParent, "translationX", 0.3f * screenWidth.toFloat(), 0.0f)
-                            .apply {
+                            .ofFloat(
+                                screenParent,
+                                "translationX",
+                                0.3f * screenWidth.toFloat(),
+                                0.0f,
+                            ).apply {
                                 duration = 200
                             },
                     )
-                }
-                R.anim.rns_ios_from_left_background_open -> {
+
+                R.anim.rns_ios_from_left_background_open ->
                     animatorSet.play(
                         ObjectAnimator
-                            .ofFloat(screenParent, "translationX", 0.0f, 0.3f * screenWidth.toFloat())
-                            .apply {
+                            .ofFloat(
+                                screenParent,
+                                "translationX",
+                                0.0f,
+                                0.3f * screenWidth.toFloat(),
+                            ).apply {
                                 duration = 200
                             },
                     )
-                }
-                R.anim.rns_ios_from_left_foreground_close -> {
+
+                R.anim.rns_ios_from_left_foreground_close ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationX", 0.0f, -screenWidth.toFloat())
                             .apply {
                                 duration = 200
-                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_decelerate)
+                                interpolator =
+                                    AnimationUtils.loadInterpolator(
+                                        context,
+                                        android.R.interpolator.accelerate_decelerate,
+                                    )
                             },
                     )
-                }
-                R.anim.rns_ios_from_left_foreground_open -> {
+
+                R.anim.rns_ios_from_left_foreground_open ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationX", -screenWidth.toFloat(), 0.0f)
                             .apply {
                                 duration = 200
-                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_decelerate)
+                                interpolator =
+                                    AnimationUtils.loadInterpolator(
+                                        context,
+                                        android.R.interpolator.accelerate_decelerate,
+                                    )
                             },
                     )
-                }
-                R.anim.rns_ios_from_right_background_close -> {
+
+                R.anim.rns_ios_from_right_background_close ->
                     animatorSet.play(
                         ObjectAnimator
-                            .ofFloat(screenParent, "translationX", -0.3f * screenWidth.toFloat(), 0.0f)
-                            .apply {
+                            .ofFloat(
+                                screenParent,
+                                "translationX",
+                                -0.3f * screenWidth.toFloat(),
+                                0.0f,
+                            ).apply {
                                 duration = 200
                             },
                     )
-                }
-                R.anim.rns_ios_from_right_background_open -> {
+
+                R.anim.rns_ios_from_right_background_open ->
                     animatorSet.play(
                         ObjectAnimator
-                            .ofFloat(screenParent, "translationX", 0.0f, -0.3f * screenWidth.toFloat())
-                            .apply {
+                            .ofFloat(
+                                screenParent,
+                                "translationX",
+                                0.0f,
+                                -0.3f * screenWidth.toFloat(),
+                            ).apply {
                                 duration = 200
                             },
                     )
-                }
-                R.anim.rns_ios_from_right_foreground_close -> {
+
+                R.anim.rns_ios_from_right_foreground_close ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationX", 0.0f, screenWidth.toFloat())
                             .apply {
                                 duration = 200
-                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_decelerate)
+                                interpolator =
+                                    AnimationUtils.loadInterpolator(
+                                        context,
+                                        android.R.interpolator.accelerate_decelerate,
+                                    )
                             },
                     )
-                }
-                R.anim.rns_ios_from_right_foreground_open -> {
+
+                R.anim.rns_ios_from_right_foreground_open ->
                     animatorSet.play(
                         ObjectAnimator
                             .ofFloat(screenParent, "translationX", screenWidth.toFloat(), 0.0f)
                             .apply {
                                 duration = 200
-                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.accelerate_decelerate)
+                                interpolator =
+                                    AnimationUtils.loadInterpolator(
+                                        context,
+                                        android.R.interpolator.accelerate_decelerate,
+                                    )
                             },
                     )
-                }
+
                 R.anim.rns_no_animation_20 ->
                     animatorSet.play(
                         ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
                             duration = 20
                         },
                     )
+
                 R.anim.rns_fade_out ->
                     animatorSet.play(
                         ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 0.0f).apply {
                             duration = 150
                         },
                     )
+
                 R.anim.rns_fade_in ->
                     animatorSet.play(
                         ObjectAnimator.ofFloat(screenParent, "alpha", 0.0f, 1.0f).apply {
                             duration = 150
                         },
                     )
+
                 R.anim.rns_no_animation_medium ->
                     animatorSet.play(
                         ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
                             duration = 400
                         },
                     )
+
                 R.anim.rns_no_animation_250 ->
                     animatorSet.play(
                         ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
                             duration = 250
                         },
                     )
+
                 R.anim.rns_no_animation_350 ->
                     animatorSet.play(
                         ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
