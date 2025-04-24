@@ -1059,7 +1059,7 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
 
-    if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+    if (_sheetInitialDetent >= 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
       if (@available(iOS 16.0, *)) {

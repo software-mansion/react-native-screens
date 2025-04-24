@@ -76,12 +76,13 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
     // When using `fitToContents` you can't use flex: 1. It is you who must provide
     // the content size - you can't rely on parent size here.
     <View style={{ flex: 1 }}>
-      <View style={{ paddingTop: 20 }}>
-        <Button title="Go back" onPress={() => navigation.goBack()} />
-      </View>
-
-      <View style={{ alignItems: 'center' }}>
+      <View style={styles.inputWrapper}>
         <TextInput style={styles.input} placeholder="Trigger keyboard..."/>
+      </View>
+      <View style={{ marginTop: 20 }}>
+        <Button title="Expand" onPress={() => navigation.setOptions({ sheetInitialDetentIndex: 2 })} />
+        <Button title="Collapse" onPress={() => navigation.setOptions({ sheetInitialDetentIndex: 0 })} />
+        <Button title="Dismiss" onPress={() => navigation.goBack()} />
       </View>
     </View>
   );
@@ -98,9 +99,9 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="FormSheet" component={FormSheet} options={{
               presentation: 'formSheet',
-              sheetAllowedDetents: [0.2, 0.5, 0.8],
+              sheetAllowedDetents: [0.4, 0.6, 1],
               sheetLargestUndimmedDetentIndex: 'none',
-              sheetCornerRadius: 8,
+              sheetCornerRadius: 16,
               headerShown: false,
               // gestureEnabled: false,
               unstable_sheetFooter: FormSheetFooter,
@@ -116,17 +117,20 @@ const styles = StyleSheet.create({
   circle: {
     position: 'absolute',
     right: 16,
-    bottom: 50,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    bottom: 32,
+    width: 56,
+    height: 56,
+    borderRadius: 56 / 2,
     backgroundColor: 'white',
   },
+  inputWrapper: {
+    padding: 12,
+  },
   input: {
-    marginVertical: 12,
     paddingVertical: 8,
+    paddingHorizontal: 12,
+    height: 40,
     backgroundColor: 'lavender',
-    borderRadius: 24,
-    width: '80%',
+    borderRadius: 16,
   }
 })
