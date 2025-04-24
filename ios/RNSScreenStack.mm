@@ -264,6 +264,7 @@ namespace react = facebook::react;
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
+  NSLog(@"presentationControllerDidDismiss");
   // We don't directly set presentation delegate but instead rely on the ScreenView's delegate to
   // forward certain calls to the container (Stack).
   if ([presentationController.presentedViewController isKindOfClass:[RNSScreen class]]) {
@@ -302,8 +303,10 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
+  NSLog(@"[tag=%ld] didMoveToWindow", self.tag);
 #ifdef RCT_NEW_ARCH_ENABLED
   // for handling nested stacks
+  NSLog(@"[tag=%ld] RNSScreenStackView didMoveToWindow", self.tag);
   [self maybeAddToParentAndUpdateContainer];
 #else
   if (!_invalidated) {
@@ -319,12 +322,14 @@ RNS_IGNORE_SUPER_CALL_END
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
   if (!self.window && !wasScreenMounted) {
+    NSLog(@"[tag=%ld] RNSScreenStackView maybeAddToParentAndUpdateContainer <--- DONT update", self.tag);
     // We wait with adding to parent controller until the stack is mounted.
     // If we add it when window is not attached, some of the view transitions will be blocked (i.e.
     // modal transitions) and the internal view controler's state will get out of sync with what's
     // on screen without us knowing.
     return;
   }
+  NSLog(@"[tag=%ld] RNSScreenStackView maybeAddToParentAndUpdateContainer 1 window = %@", self.tag, self.window);
   [self updateContainer];
   if (!wasScreenMounted) {
     // when stack hasn't been added to parent VC yet we do two things:
@@ -336,6 +341,7 @@ RNS_IGNORE_SUPER_CALL_END
     // 3) we again call updateContainer – this time we do this to open modal controllers. Modals
     // won't open in (1) because they require navigator to be added to parent. We handle that case
     // gracefully in setModalViewControllers and can retry opening at any point.
+    NSLog(@"[tag=%ld] RNSScreenStackView maybeAddToParentAndUpdateContainer 2", self.tag);
     [self reactAddControllerToClosestParent:_controller];
     [self updateContainer];
   }
@@ -402,6 +408,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   // prevent re-entry
   if (_updatingModals) {
+    NSLog(@"[tag=%ld]RNSScreenStack setModalViewControllers prevent reentry!!", self.tag);
     _scheduleModalsUpdate = YES;
     return;
   }
@@ -410,12 +417,14 @@ RNS_IGNORE_SUPER_CALL_END
   // accidently trigger modal dismiss if we don't verify to run the below code only when an actual
   // change in the list of presented modal was made.
   if ([_presentedModals isEqualToArray:controllers]) {
+    NSLog(@"[tag=%ld]RNSScreenStack setModalViewControllers controlers did not changed !!", self.tag);
     return;
   }
 
   // if view controller is not yet attached to window we skip updates now and run them when view
   // is attached
   if (self.window == nil && _presentedModals.lastObject.view.window == nil) {
+    NSLog(@"[tag=%ld]RNSScreenStack setModalViewControllers not attached to window !!", self.tag);
     return;
   }
 
@@ -464,6 +473,7 @@ RNS_IGNORE_SUPER_CALL_END
       // flag in order to perform updates at a later point. Here we are done with all modals
       // transitions and check this flag again. If it was set, we reset the flag and execute updates.
       weakSelf.scheduleModalsUpdate = NO;
+      NSLog(@"[tag=%ld] RNSScreenStackView setModalViewControllers", self.tag);
       [weakSelf updateContainer];
     }
     // we trigger the update of orientation here because, when dismissing the modal from JS,
@@ -598,12 +608,14 @@ RNS_IGNORE_SUPER_CALL_END
 {
   // when there is no change we return immediately
   if ([_controller.viewControllers isEqualToArray:controllers]) {
+    NSLog(@"[tag=%ld]RNSScreenStack setPushViewControllers controllers did not change", self.tag);
     return;
   }
 
   // if view controller is not yet attached to window we skip updates now and run them when view
   // is attached
   if (self.window == nil) {
+    NSLog(@"[tag=%ld]RNSScreenStack setPushViewControllers vc not attached to window, vc = %@", self.tag, self);
     return;
   }
   // when transition is ongoing, any updates made to the controller will not be reflected until the
@@ -613,18 +625,39 @@ RNS_IGNORE_SUPER_CALL_END
   // making any updated when transition is ongoing and schedule updates for when the transition
   // is complete.
   if (_controller.transitionCoordinator != nil) {
+    NSLog(@"[tag=%ld] </---- ONGOING ANIMATION RETURN ---->", self.tag);
     if (!_updateScheduled) {
       _updateScheduled = YES;
       __weak RNSScreenStackView *weakSelf = self;
+      UIViewController *fromViewController =
+          [_controller.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+      UIViewController *toViewController =
+          [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+      NSLog(@"Transition coordinators: %@ %@", _controller, _controller.transitionCoordinator);
+      NSLog(
+          @"From ViewController: %@ tag=%ld %@",
+          NSStringFromClass([fromViewController class]),
+          fromViewController.view.tag,
+          fromViewController);
+      NSLog(
+          @"To ViewController: %@ tag=%ld %@",
+          NSStringFromClass([toViewController class]),
+          toViewController.view.tag,
+          toViewController);
       [_controller.transitionCoordinator
           animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
             // do nothing here, we only want to be notified when transition is complete
           }
           completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+            NSLog(@"Amimation finished, updateContainer");
             self->_updateScheduled = NO;
+            NSLog(@"[tag=%ld] RNSScreenStackView setPushControllers", self.tag);
             [weakSelf updateContainer];
           }];
+    } else {
+      NSLog(@"[tag=%ld]RNSScreenStack setPushViewControllers update scheduled", self.tag);
     }
+    NSLog(@"[tag=%ld] </---- ONGOING ANIMATION RETURN ---->", self.tag);
     return;
   }
 
@@ -693,9 +726,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateContainer
 {
+  NSLog(@"[tag=%ld] RNScreenStack updateContainer ref=%@", self.tag, self);
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
+    //        NSLog(@"[tag=%ld] RNSScreenStackView updateContainer attached screen with tag=%ld, state=%ld", self.tag,
+    //        screen.tag, screen.activityState);
     if (!screen.dismissed && screen.controller != nil && screen.activityState != RNSActivityStateInactive) {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
@@ -709,9 +745,50 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
   }
-
   [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
+  for (RNSScreen *controller in _controller.viewControllers) {
+    NSLog(@"[tag=%ld] RNScreenStack current controllers tag=%ld, ref=%@", self.tag, controller.view.tag, controller);
+  }
+  NSLog(
+      @"[tag=%ld] RNScreenStack current presentation ctrls tag=%ld, ref=%@",
+      self.tag,
+      _controller.presentedViewController.view.tag,
+      _controller.presentedViewController);
+  for (RNSScreen *controller in pushControllers) {
+    NSLog(
+        @"[tag=%ld] RNScreenStack updateContainer new setPushControllers tag=%ld, ref=%@",
+        self.tag,
+        controller.view.tag,
+        controller);
+  }
+  for (RNSScreen *controller in modalControllers) {
+    NSLog(
+        @"[tag=%ld] RNScreenStack updateContainer new modalControllers tag=%ld, ref=%@",
+        self.tag,
+        controller.view.tag,
+        controller);
+  }
+  if (_controller.transitionCoordinator != nil) {
+    NSLog(@"[tag=%ld] <---- ANIMATION STARTED ---->", self.tag);
+    UIViewController *fromViewController =
+        [_controller.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+    UIViewController *toViewController =
+        [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+    NSLog(@"Transition coordinators: %@ %@", _controller, _controller.transitionCoordinator);
+    NSLog(
+        @"From ViewController: %@ tag=%ld %@",
+        NSStringFromClass([fromViewController class]),
+        fromViewController.view.tag,
+        fromViewController);
+    NSLog(
+        @"To ViewController: %@ tag=%ld %@",
+        NSStringFromClass([toViewController class]),
+        toViewController.view.tag,
+        toViewController);
+    NSLog(@"[tag=%ld] </---- ANIMATION STARTED ---->", self.tag);
+  }
+  NSLog(@"[tag=%ld] RNScreenStack updateContainer END", self.tag);
 }
 
 - (void)layoutSubviews
@@ -753,6 +830,7 @@ RNS_IGNORE_SUPER_CALL_END
                                                fromViewController:(UIViewController *)fromVC
                                                  toViewController:(UIViewController *)toVC
 {
+  NSLog(@"Wrong");
   RNSScreenView *screen;
   if (operation == UINavigationControllerOperationPush) {
     screen = ((RNSScreen *)toVC).screenView;
@@ -927,6 +1005,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   RNSScreenView *fromView = [_controller.transitionCoordinator viewForKey:UITransitionContextFromViewKey];
   RNSScreenView *toView = [_controller.transitionCoordinator viewForKey:UITransitionContextToViewKey];
+  NSLog(@"[tag=%ld, ref=%@] Setting up transition from: %@ to: %@", self.tag, self, fromView, toView);
   // we can intercept clicking back button here, we check reactSuperview since this method also fires when
   // navigating back from JS
   if (_interactionController == nil && fromView.reactSuperview) {
@@ -940,6 +1019,7 @@ RNS_IGNORE_SUPER_CALL_END
         int toIndex = (int)[self->_reactSubviews indexOfObject:toView];
         int indexDiff = fromIndex - toIndex;
         int dismissCount = indexDiff > 0 ? indexDiff : 1;
+        NSLog(@"[tag=%ld] RNSScreenStackView navigationController", self.tag);
         [self updateContainer];
         [fromView notifyDismissCancelledWithDismissCount:dismissCount];
       });
@@ -974,6 +1054,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)markChildUpdated
 {
   // In native stack this should be called only for `preload` purposes.
+  NSLog(@"[tag=%ld] RNSScreenStackView markChildUpdated", self.tag);
   [self updateContainer];
 }
 
@@ -1127,6 +1208,7 @@ RNS_IGNORE_SUPER_CALL_END
   // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
   // ui queue will guarantee that the update will run after layout.
   dispatch_async(dispatch_get_main_queue(), ^{
+    NSLog(@"[tag=%ld] RNSScreenStackView didUpdateReactSubviews", self.tag);
     [self maybeAddToParentAndUpdateContainer];
   });
 }
@@ -1163,6 +1245,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  NSLog(@"[tag=%ld] RNSScreenStack mountChildComponentView with tag=%ld", self.tag, childComponentView.tag);
   if (![childComponentView isKindOfClass:[RNSScreenView class]]) {
     RCTLogError(@"ScreenStack only accepts children of type Screen");
     return;
@@ -1219,7 +1302,20 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
+  NSLog(@"[tag=%ld] mountingTransactionWillMount", self.tag);
+  bool flag = true;
   for (const auto &mutation : transaction.getMutations()) {
+    if (mutation.parentTag == 118 || mutation.parentTag == 164 || mutation.newChildShadowView.tag == 164 ||
+        mutation.newChildShadowView.tag == 118 || mutation.oldChildShadowView.tag == 164 ||
+        mutation.oldChildShadowView.tag == 118) {
+      flag = false;
+      NSLog(
+          @"mutation type=%hhu, parent=%d, oldShadowTag=%d, newShadowTag=%d",
+          mutation.type,
+          mutation.parentTag,
+          mutation.oldChildShadowView.tag,
+          mutation.newChildShadowView.tag);
+    }
     if (mutation.type == react::ShadowViewMutation::Delete) {
       RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
       if (toBeRemovedChild != nil) {
@@ -1228,12 +1324,37 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
   }
+  if (flag) {
+    NSLog(@"!!! None matched, displaing all !!!");
+    for (const auto &mutation : transaction.getMutations()) {
+      NSLog(
+          @"mutation type=%hhu, parent=%d, oldShadowTag=%d, newShadowTag=%d",
+          mutation.type,
+          mutation.parentTag,
+          mutation.oldChildShadowView.tag,
+          mutation.newChildShadowView.tag);
+    }
+  }
+  NSLog(@"[tag=%ld] mountingTransactionWillMount END", self.tag);
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
+  NSLog(@"[tag=%ld] mountingTransactionDidMount", self.tag);
+  bool flag = true;
   for (const auto &mutation : transaction.getMutations()) {
+    if (mutation.parentTag == 118 || mutation.parentTag == 164 || mutation.newChildShadowView.tag == 164 ||
+        mutation.newChildShadowView.tag == 118 || mutation.oldChildShadowView.tag == 164 ||
+        mutation.oldChildShadowView.tag == 118) {
+      flag = false;
+      NSLog(
+          @"mutation type=%hhu, parent=%d, oldShadowTag=%d, newShadowTag=%d",
+          mutation.type,
+          mutation.parentTag,
+          mutation.oldChildShadowView.tag,
+          mutation.newChildShadowView.tag);
+    }
     // Note that self.tag might be invalid in cases this stack is removed.
     // This mostlikely does not cause any problems now, but it is something
     // worth to be aware of.
@@ -1244,6 +1365,7 @@ RNS_IGNORE_SUPER_CALL_END
       // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
       // ui queue will guarantee that the update will run after layout.
       dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"[tag=%ld] RNSScreenStackView mountingTransactionDidMount", self.tag);
         [self maybeAddToParentAndUpdateContainer];
       });
       break;
@@ -1264,6 +1386,18 @@ RNS_IGNORE_SUPER_CALL_END
       strongSelf->_toBeDeletedScreens.clear();
     });
   }
+  if (flag) {
+    NSLog(@"!!! None matched, displaing all !!!");
+    for (const auto &mutation : transaction.getMutations()) {
+      NSLog(
+          @"mutation type=%hhu, parent=%d, oldShadowTag=%d, newShadowTag=%d",
+          mutation.type,
+          mutation.parentTag,
+          mutation.oldChildShadowView.tag,
+          mutation.newChildShadowView.tag);
+    }
+  }
+  NSLog(@"[tag=%ld] mountingTransactionDidMount END", self.tag);
 }
 
 - (void)prepareForRecycle

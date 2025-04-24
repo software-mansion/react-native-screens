@@ -162,6 +162,8 @@ RNS_IGNORE_SUPER_CALL_END
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
   for (RNSScreenView *screen in _reactSubviews) {
+    //      NSLog(@"[tag=%ld] RNSScreenContainerView updateContainer attached screen with tag=%ld, state=%ld", self.tag,
+    //      screen.tag, screen.activityState);
     if (screen.activityState == RNSActivityStateInactive && [_activeScreens containsObject:screen]) {
       screenRemoved = YES;
       [self detachScreen:screen];

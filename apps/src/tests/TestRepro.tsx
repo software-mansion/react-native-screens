@@ -31,7 +31,8 @@ function TabsHost() {
   const navigation = useNavigation();
 
   React.useEffect(() => {
-    navigation.preload('RootSheet');
+    // console.log("PRELOAD RootSheet");
+    // navigation.preload('RootSheet');
   }, [navigation]);
 
   return (
@@ -42,23 +43,13 @@ function TabsHost() {
         return {
           tabPress: (event) => {
             event.preventDefault();
+            console.log("PRELOAD TabThree");
             navigation.preload('TabThree');
             navigation.navigate('RootSheet');
           },
         };
       }} />
     </Tabs.Navigator>
-  );
-}
-
-function RootHome() {
-  const navigation = useNavigation();
-
-  return (
-    <View style={{ flex: 1, backgroundColor: 'seagreen' }}>
-      <Text>RootHome</Text>
-      <Button title="Open TabThree" onPress={() => navigation.navigate('TabsHost', { screen: 'TabThree' })} />
-    </View>
   );
 }
 
@@ -95,11 +86,6 @@ function TabTwo() {
 }
 
 function TabThree() {
-  // return (
-  //   <View style={{ flex: 1, backgroundColor: 'darkgreen' }}>
-  //     <Text>TabThree</Text>
-  //   </View>
-  // );
   return (
     <TabThreeStackHost />
   );
@@ -133,7 +119,7 @@ function TabThreeStackHost() {
 
 function App() {
   return (
-    <NavigationContainer navigationInChildEnabled>
+    <NavigationContainer navigationInChildEnabled onStateChange={(state) => console.log("Navigation State Change", state)} onUnhandledAction={(action) => console.log("ON UNHANDLED ACTION", action)}>
       <RootStackHost />
     </NavigationContainer>
   );

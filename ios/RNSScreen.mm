@@ -1499,6 +1499,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     if (self.screenView.preventNativeDismiss) {
       // if we want to prevent the native dismiss, we do not send dismissal event,
       // but instead call `updateContainer`, which restores the JS navigation stack
+      NSLog(@"[tag=%ld] RNSScreen updateContainer", self.view.tag);
       [self.screenView.reactSuperview updateContainer];
       [self.screenView notifyDismissCancelledWithDismissCount:_dismissCount];
     } else {
