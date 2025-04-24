@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
 import com.swmansion.rnscreens.R
@@ -28,71 +29,198 @@ class CustomAnimatorSetProvider {
             //                   is off by header's height
             val screenHeight = screen.container?.height ?: screenParent?.height ?: screen.measuredHeight
 
-            // TODO(animations): verify interpolator required API
-            // TODO(animations): handle animations before v33
             // TODO(animations): fix styling, move comments from anim/animator files (?), add comment about
             //                   edit being required in 2 places, optimize by removing unnecessary animations (?)
             // TODO(animations): check if correct events are dispatched
+
+            val useV33Animations = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU
+
             when (animationResource) {
-                R.anim.rns_default_enter_in ->
-                    animatorSet.playTogether(
-                        ObjectAnimator
-                            .ofFloat(screenParent, "alpha", 0.0f, 0.0f)
-                            .apply {
-                                duration = 50
-                                interpolator = LinearInterpolator()
+                R.anim.rns_default_enter_in -> {
+                    if (useV33Animations) {
+                        animatorSet.playTogether(
+                            ObjectAnimator
+                                .ofFloat(screenParent, "alpha", 0.0f, 0.0f)
+                                .apply {
+                                    duration = 50
+                                    interpolator = LinearInterpolator()
+                                },
+                            ObjectAnimator
+                                .ofFloat(screenParent, "translationX", 0.1f * screenWidth, 0.0f)
+                                .apply {
+                                    duration = 450
+                                    interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
+                                },
+                            ObjectAnimator
+                                .ofFloat(screenParent, "alpha", 0.0f, 1.0f)
+                                .apply {
+                                    duration = 83
+                                    startDelay = 50
+                                    interpolator = LinearInterpolator()
+                                },
+                        )
+                    } else {
+                        animatorSet.playTogether(
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 0.0f, 0.0f).apply {
+                                duration = 100
+                                interpolator = AccelerateDecelerateInterpolator()
                             },
-                        ObjectAnimator
-                            .ofFloat(screenParent, "translationX", 0.1f * screenWidth, 0.0f)
-                            .apply {
+                            ObjectAnimator.ofFloat(screenParent, "scaleX", 0.85f, 1.00f).apply {
+                                duration = 200
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "scaleY", 0.85f, 1.00f).apply {
+                                duration = 200
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 0.0f, 1.0f).apply {
+                                duration = 100
+                                startDelay = 100
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                        )
+                    }
+                }
+
+                R.anim.rns_default_enter_out -> {
+                    if (useV33Animations) {
+                        animatorSet.playTogether(
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
                                 duration = 450
-                                interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
+                                interpolator =
+                                    AnimationUtils.loadInterpolator(
+                                        context,
+                                        R.anim.rns_standard_accelerate_interpolator,
+                                    )
                             },
-                        ObjectAnimator
-                            .ofFloat(screenParent, "alpha", 0.0f, 1.0f)
-                            .apply {
-                                duration = 83
-                                startDelay = 50
+                            ObjectAnimator
+                                .ofFloat(
+                                    screenParent,
+                                    "translationX",
+                                    0.0f,
+                                    -0.1f * screenWidth,
+                                ).apply {
+                                    duration = 450
+                                    interpolator =
+                                        AnimationUtils.loadInterpolator(
+                                            context,
+                                            android.R.interpolator.fast_out_extra_slow_in,
+                                        )
+                                },
+                        )
+                    } else {
+                        animatorSet.playTogether(
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
+                                duration = 100
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "scaleX", 1.0f, 1.15f).apply {
+                                duration = 200
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "scaleY", 1.0f, 1.15f).apply {
+                                duration = 200
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 0.4f).apply {
+                                duration = 100
+                                startDelay = 100
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                        )
+                    }
+                }
+
+                R.anim.rns_default_exit_in -> {
+                    if (useV33Animations) {
+                        animatorSet.playTogether(
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
+                                duration = 450
                                 interpolator = LinearInterpolator()
                             },
-                    )
+                            ObjectAnimator
+                                .ofFloat(
+                                    screenParent,
+                                    "translationX",
+                                    -0.1f * screenWidth,
+                                    0.0f,
+                                ).apply {
+                                    duration = 450
+                                    interpolator =
+                                        AnimationUtils.loadInterpolator(
+                                            context,
+                                            android.R.interpolator.fast_out_extra_slow_in,
+                                        )
+                                },
+                        )
+                    } else {
+                        animatorSet.playTogether(
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 0.0f, 0.0f).apply {
+                                duration = 50
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "scaleX", 1.15f, 1.0f).apply {
+                                duration = 200
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "scaleY", 1.15f, 1.0f).apply {
+                                duration = 200
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 0.0f, 1.0f).apply {
+                                duration = 100
+                                startDelay = 50
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                        )
+                    }
+                }
 
-                R.anim.rns_default_enter_out ->
-                    animatorSet.playTogether(
-                        ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
-                            duration = 450
-                            interpolator = AnimationUtils.loadInterpolator(context, R.anim.rns_standard_accelerate_interpolator)
-                        },
-                        ObjectAnimator.ofFloat(screenParent, "translationX", 0.0f, -0.1f * screenWidth).apply {
-                            duration = 450
-                            interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
-                        },
-                    )
-
-                R.anim.rns_default_exit_in ->
-                    animatorSet.playTogether(
-                        ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
-                            duration = 450
-                            interpolator = LinearInterpolator()
-                        },
-                        ObjectAnimator.ofFloat(screenParent, "translationX", -0.1f * screenWidth, 0.0f).apply {
-                            duration = 450
-                            interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
-                        },
-                    )
-
-                R.anim.rns_default_exit_out ->
-                    animatorSet.playTogether(
-                        ObjectAnimator.ofFloat(screenParent, "translationX", 0.0f, 0.1f * screenWidth).apply {
-                            duration = 450
-                            interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
-                        },
-                        ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 0.0f).apply {
-                            duration = 83
-                            startDelay = 35
-                            interpolator = LinearInterpolator()
-                        },
-                    )
+                R.anim.rns_default_exit_out -> {
+                    if (useV33Animations) {
+                        animatorSet.playTogether(
+                            ObjectAnimator
+                                .ofFloat(
+                                    screenParent,
+                                    "translationX",
+                                    0.0f,
+                                    0.1f * screenWidth,
+                                ).apply {
+                                    duration = 450
+                                    interpolator =
+                                        AnimationUtils.loadInterpolator(
+                                            context,
+                                            android.R.interpolator.fast_out_extra_slow_in,
+                                        )
+                                },
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 0.0f).apply {
+                                duration = 83
+                                startDelay = 35
+                                interpolator = LinearInterpolator()
+                            },
+                        )
+                    } else {
+                        animatorSet.playTogether(
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 1.0f).apply {
+                                duration = 50
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "scaleX", 1.0f, 0.85f).apply {
+                                duration = 200
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "scaleY", 1.0f, 0.85f).apply {
+                                duration = 200
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                            ObjectAnimator.ofFloat(screenParent, "alpha", 1.0f, 0.0f).apply {
+                                duration = 100
+                                startDelay = 50
+                                interpolator = AccelerateDecelerateInterpolator()
+                            },
+                        )
+                    }
+                }
 
                 R.anim.rns_slide_out_to_left -> {
                     animatorSet.play(
