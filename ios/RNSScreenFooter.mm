@@ -1,5 +1,6 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreen.h"
+#import "UIView+Pinning.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 
@@ -12,6 +13,7 @@
 
 @implementation RNSScreenFooter {
   RNSScreenView *_parent;
+  NSLayoutConstraint *_heightConstraint;
 }
 
 - (instancetype)init
@@ -26,73 +28,38 @@
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
   [super willMoveToSuperview:newSuperview];
-  //  if ([newSuperview isKindOfClass:RNSScreenView.class]) {
-  //    RNSScreenView *screen = (RNSScreenView *)newSuperview;
-  //    _parent = (RNSScreenView *)newSuperview;
-
-  //    [NSLayoutConstraint activateConstraints:@[
-  //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom
-  //      relatedBy:NSLayoutRelationEqual toItem:screen attribute:NSLayoutAttributeBottom multiplier:1.0
-  //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft
-  //      relatedBy:NSLayoutRelationEqual toItem:screen attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
-  //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual
-  //      toItem:screen attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0], [NSLayoutConstraint
-  //      constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:screen
-  //      attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0], [NSLayoutConstraint constraintWithItem:screen
-  //      attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self
-  //      attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0], [NSLayoutConstraint
-  //      constraintWithItem:screen attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self
-  //      attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0], [NSLayoutConstraint constraintWithItem:screen
-  //      attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self
-  //      attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0], [NSLayoutConstraint constraintWithItem:screen
-  //      attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop
-  //      multiplier:1.0 constant:0.0],
-  //    ]];
-  //    [self setNeedsLayout];
-  //  }
+  if ([newSuperview isKindOfClass:RNSScreenView.class]) {
+    _parent = (RNSScreenView *)newSuperview;
+  }
 }
 
 - (void)didMoveToSuperview
 {
   if (_parent != nil) {
-    //    [NSLayoutConstraint activateConstraints:@[
-    //      [NSLayoutConstraint constraintWithItem:self
-    //                                   attribute:NSLayoutAttributeBottom
-    //                                   relatedBy:NSLayoutRelationEqual
-    //                                      toItem:_parent
-    //                                   attribute:NSLayoutAttributeBottom
-    //                                  multiplier:1.0
-    //                                    constant:0.0],
-    //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft
-    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeLeft multiplier:1.0
-    //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight
-    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeRight multiplier:1.0
-    //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop
-    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeTop multiplier:1.0
-    //      constant:0.0], [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeBottom
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0
-    //      constant:0.0], [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeLeft
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
-    //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeRight
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
-    //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeTop
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0],
-    //    ]];
-    //    [self setNeedsLayout];
+    [self pinToView:_parent.controller.view
+          fromEdges:UIRectEdgeLeft | UIRectEdgeRight | UIRectEdgeBottom
+         withHeight:@0
+        constraints:^(
+            NSLayoutConstraint *top,
+            NSLayoutConstraint *bottom,
+            NSLayoutConstraint *left,
+            NSLayoutConstraint *right,
+            NSLayoutConstraint *heightConstraint) {
+          self->_heightConstraint = heightConstraint;
+        }];
   }
 }
 
 - (void)layoutSubviews
 {
   [super layoutSubviews];
+
+  UIView *firstView = self.subviews.firstObject;
+  _heightConstraint.constant = firstView.frame.size.height;
+
   if (self.onLayout != nil) {
     self.onLayout(self.frame);
   }
-  //
-  //  if (self.subviews.count > 0) {
-  //    CGSize childsSize = self.subviews[0].frame.size;
-  //
-  //  }
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED

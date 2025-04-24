@@ -1,7 +1,7 @@
 import { NavigationContainer, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useCallback } from 'react';
-import { Button, View, useWindowDimensions } from 'react-native';
+import { Button, View, useWindowDimensions, StyleSheet, TextInput } from 'react-native';
 import { ReanimatedScreenProvider, useReanimatedSheetTranslation } from 'react-native-screens/reanimated';
 import Animated, { useAnimatedReaction, SharedValue, WithSpringConfig, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
@@ -40,7 +40,15 @@ function Home({ navigation }: RouteProps<'Home'>) {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
       <Button title="Open sheet" onPress={() => navigation.navigate('FormSheet')} />
-      <Animated.View style={[{ position: 'absolute', right: 16, bottom: 50, width: 64, height: 64, borderRadius: 32, backgroundColor: 'red' }, circleStyle]} />
+      <Animated.View style={[styles.circle, circleStyle]} />
+    </View>
+  );
+}
+
+function FormSheetFooter() {
+  return (
+    <View style={{ height: 64, backgroundColor: 'lavender' }}>
+      <Button title="Just click me" onPress={() => console.log('Footer button clicked')} />
     </View>
   );
 }
@@ -71,6 +79,10 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
       <View style={{ paddingTop: 20 }}>
         <Button title="Go back" onPress={() => navigation.goBack()} />
       </View>
+
+      <View style={{ alignItems: 'center' }}>
+        <TextInput style={styles.input} placeholder="Trigger keyboard..."/>
+      </View>
     </View>
   );
 }
@@ -91,6 +103,7 @@ export default function App() {
               sheetCornerRadius: 8,
               headerShown: false,
               // gestureEnabled: false,
+              unstable_sheetFooter: FormSheetFooter,
             }} />
           </Stack.Navigator>
         </NavigationContainer>
@@ -98,3 +111,22 @@ export default function App() {
     </ReanimatedScreenProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  circle: {
+    position: 'absolute',
+    right: 16,
+    bottom: 50,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'white',
+  },
+  input: {
+    marginVertical: 12,
+    paddingVertical: 8,
+    backgroundColor: 'lavender',
+    borderRadius: 24,
+    width: '80%',
+  }
+})

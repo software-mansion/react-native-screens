@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewProps } from 'react-native';
+import { View, ViewProps } from 'react-native';
 import ScreenFooterNativeComponent from '../fabric/ScreenFooterNativeComponent';
 
 /**
@@ -14,7 +14,11 @@ type FooterProps = {
 };
 
 export function FooterComponent({ children }: FooterProps) {
-  return <ScreenFooter collapsable={false}>{children}</ScreenFooter>;
+  return (
+    <ScreenFooter collapsable={false}>
+      <View collapsable>{children}</View>
+    </ScreenFooter>
+  );
 }
 
 export default ScreenFooter;

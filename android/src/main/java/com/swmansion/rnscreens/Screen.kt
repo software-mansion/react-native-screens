@@ -515,9 +515,7 @@ class Screen(
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
-    internal fun onSheetTranslation(
-        top: Int
-    ) {
+    internal fun onSheetTranslation(top: Int) {
         val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
         val translationY = PixelUtil.toDIPFromPixel(top.toFloat())
         reactEventDispatcher?.dispatchEvent(

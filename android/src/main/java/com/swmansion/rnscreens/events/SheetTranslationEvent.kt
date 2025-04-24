@@ -5,21 +5,21 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 
 class SheetTranslationEvent(
-  surfaceId: Int,
-  viewId: Int,
-  private val y: Float,
+    surfaceId: Int,
+    viewId: Int,
+    private val y: Float,
 ) : Event<SheetTranslationEvent>(surfaceId, viewId) {
-  override fun getEventName(): String = EVENT_NAME
+    override fun getEventName(): String = EVENT_NAME
 
-  // All events for a given view can be coalesced.
-  override fun getCoalescingKey(): Short = 0
+    // All events for a given view can be coalesced.
+    override fun getCoalescingKey(): Short = 0
 
-  override fun getEventData(): WritableMap? =
-    Arguments.createMap().apply {
-      putDouble("y", y.toDouble())
+    override fun getEventData(): WritableMap? =
+        Arguments.createMap().apply {
+            putDouble("y", y.toDouble())
+        }
+
+    companion object {
+        const val EVENT_NAME = "topSheetTranslation"
     }
-
-  companion object {
-    const val EVENT_NAME = "topSheetTranslation"
-  }
 }

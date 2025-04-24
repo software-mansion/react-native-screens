@@ -94,8 +94,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
           // @ts-ignore wrong type
           Platform.OS === 'android'
             ? 'onSheetTranslation'
-            :
-            ENABLE_FABRIC
+            : ENABLE_FABRIC
             ? 'onSheetTranslation'
             : 'topSheetTranslation',
         ],
