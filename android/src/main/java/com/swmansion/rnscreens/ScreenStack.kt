@@ -258,65 +258,16 @@ class ScreenStack(
                 transaction.add(id, newTop.fragment)
             }
 
-            val propertyAnimationFragments: MutableSet<ScreenStackFragment> = mutableSetOf()
-
-            // TODO: to refactor and extract from onUpdate
-            var begin = false
-            for ((index, screenWrapper) in stack.reversed().withIndex()) {
-                if (screenWrapper is ScreenStackFragment) {
-                    // should we use isTranslucent or detect formSheet only?
-                    if (begin) {
-                        if (screenWrapper.isTranslucent()) {
-                            propertyAnimationFragments.add(screenWrapper)
-                        } else {
-                            propertyAnimationFragments.add(screenWrapper)
-                            begin = false
-                        }
-                    }
-
-                    if ((!screenWrapper.isTranslucent() && index + 1 < stack.size && stack.reversed()[index + 1].isTranslucent()) ||
-                        screenWrapper.isTranslucent()
-                    ) {
-                        propertyAnimationFragments.add(screenWrapper)
-                        begin = true
-                    }
-                }
-            }
-
-            println("before " + stack)
+            animationManager.updatePropertyAnimationFragmentsFromStack(stack)
 
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
 
-            // TODO: to refactor and extract from onUpdate
-            begin = false
-            for ((index, screenWrapper) in stack.reversed().withIndex()) {
-                if (screenWrapper is ScreenStackFragment) {
-                    // should we use isTranslucent or detect formSheet only?
-                    if (begin) {
-                        if (screenWrapper.isTranslucent()) {
-                            propertyAnimationFragments.add(screenWrapper)
-                        } else {
-                            propertyAnimationFragments.add(screenWrapper)
-                            begin = false
-                        }
-                    }
-
-                    if ((!screenWrapper.isTranslucent() && index + 1 < stack.size && stack.reversed()[index + 1].isTranslucent()) ||
-                        screenWrapper.isTranslucent()
-                    ) {
-                        propertyAnimationFragments.add(screenWrapper)
-                        begin = true
-                    }
-                }
-            }
-
-            println("after " + stack)
+            animationManager.updatePropertyAnimationFragmentsFromStack(stack)
 
             if (stackAnimation != null) {
-                // TODO: implement choosing propertyAnimationFragments
-                animationManager.configure(stackAnimation, shouldUseOpenAnimation, propertyAnimationFragments)
+                animationManager.configure(stackAnimation, shouldUseOpenAnimation)
             }
 
             turnOffA11yUnderTransparentScreen(visibleBottom)

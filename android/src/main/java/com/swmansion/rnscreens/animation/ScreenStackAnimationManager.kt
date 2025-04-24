@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils
 import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
+import com.swmansion.rnscreens.ScreenStackFragmentWrapper
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenEventEmitter
@@ -25,15 +26,33 @@ class ScreenStackAnimationManager {
         propertyAnimationFragments.clear()
     }
 
-    fun configure(stackAnimation: Screen.StackAnimation, shouldUseOpenAnimation: Boolean,
-                  propertyAnimationFragments: Set<ScreenStackFragment>) {
+    fun configure(stackAnimation: Screen.StackAnimation, shouldUseOpenAnimation: Boolean) {
         this.stackAnimation = stackAnimation
         this.shouldUseOpenAnimation = shouldUseOpenAnimation
-        this.propertyAnimationFragments.apply {
-            clear()
-            addAll(propertyAnimationFragments)
+    }
+
+    fun updatePropertyAnimationFragmentsFromStack(stack: List<ScreenStackFragmentWrapper>) {
+        var begin = false
+        for ((index, screenWrapper) in stack.reversed().withIndex()) {
+            if (screenWrapper is ScreenStackFragment) {
+                // should we use isTranslucent or detect formSheet only?
+                if (begin) {
+                    if (screenWrapper.isTranslucent()) {
+                        propertyAnimationFragments.add(screenWrapper)
+                    } else {
+                        propertyAnimationFragments.add(screenWrapper)
+                        begin = false
+                    }
+                }
+
+                if ((!screenWrapper.isTranslucent() && index + 1 < stack.size && stack.reversed()[index + 1].isTranslucent()) ||
+                    screenWrapper.isTranslucent()
+                ) {
+                    propertyAnimationFragments.add(screenWrapper)
+                    begin = true
+                }
+            }
         }
-        println(propertyAnimationFragments)
     }
 
     fun getAnimationForFragment(fragment: ScreenStackFragment, enter: Boolean): Animation? {
