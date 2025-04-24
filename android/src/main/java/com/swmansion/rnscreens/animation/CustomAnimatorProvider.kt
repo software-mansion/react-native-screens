@@ -29,9 +29,8 @@ class CustomAnimatorProvider {
             //                   is off by header's height
             val screenHeight = screen.container?.height ?: screenParent?.height ?: screen.measuredHeight
 
-            // TODO(animations): fix styling, move comments from anim/animator files (?), add comment about
+            // TODO(animations): move comments from anim/animator files (?), add comment about
             //                   edit being required in 2 places, optimize by removing unnecessary animations (?)
-            // TODO(animations): check if correct events are dispatched
 
             val useV33Animations = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU
 

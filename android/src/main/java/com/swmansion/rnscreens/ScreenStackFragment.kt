@@ -69,7 +69,6 @@ class ScreenStackFragment :
 
     private var sheetDelegate: SheetDelegate? = null
 
-    // TODO(animations): init it in a more elegant way?
     private lateinit var animationManager: ScreenStackAnimationManager
 
     @SuppressLint("ValidFragment")
@@ -255,7 +254,6 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animation? {
-        // TODO(animations): confirm it is ok to have animationManager in fragment
         return animationManager.getAnimationForFragment(this, enter)
     }
 
@@ -264,7 +262,6 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animator? {
-        // TODO(animations): confirm it is ok to have animationManager in fragment
         return animationManager.getAnimatorForFragment(this, enter)
     }
 

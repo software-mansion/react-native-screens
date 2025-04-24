@@ -14,7 +14,7 @@ import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 
-class ScreenStackAnimationManager() {
+class ScreenStackAnimationManager {
     private var stackAnimation: Screen.StackAnimation = Screen.StackAnimation.NONE
     private var shouldUseOpenAnimation: Boolean = true
     private val propertyAnimationFragments: MutableSet<ScreenStackFragment> = mutableSetOf()
@@ -37,23 +37,22 @@ class ScreenStackAnimationManager() {
         val reversedStack = stack.reversed()
         var shouldUsePropertyAnimation = false
 
-        // We want to use property animation for translucent screens
-        // and non-translucent screens that are above/below translucent screens
+        // We want to use property animation for formSheets
+        // and non-formSheet screens that are directly above/below formSheet
         for ((index, screenWrapper) in reversedStack.withIndex()) {
             if (screenWrapper is ScreenStackFragment) {
-                // TODO(animations): should we use isTranslucent or detect formSheet only?
-                val nextScreenIsTranslucent =
-                    reversedStack.getOrNull(index + 1)?.isTranslucent() ?: false
+                val nextScreenIsFormSheet =
+                    reversedStack.getOrNull(index + 1)?.screen?.usesFormSheetPresentation() ?: false
 
-                if (screenWrapper.isTranslucent() ||
-                    (!screenWrapper.isTranslucent() && nextScreenIsTranslucent)
+                if (screenWrapper.screen.usesFormSheetPresentation() ||
+                    (!screenWrapper.screen.usesFormSheetPresentation() && nextScreenIsFormSheet)
                 ) {
                     shouldUsePropertyAnimation = true
                 }
 
                 if (shouldUsePropertyAnimation) {
                     propertyAnimationFragments.add(screenWrapper)
-                    if (!screenWrapper.isTranslucent()) {
+                    if (!screenWrapper.screen.usesFormSheetPresentation()) {
                         shouldUsePropertyAnimation = false
                     }
                 }
@@ -69,9 +68,6 @@ class ScreenStackAnimationManager() {
             return null
         }
 
-        // TODO(animations): remove log
-        println("$fragment uses tween animation")
-
         return AnimationUtils.loadAnimation(
             fragment.context,
             getAnimationResource(enter),
@@ -82,13 +78,9 @@ class ScreenStackAnimationManager() {
         fragment: ScreenStackFragment,
         enter: Boolean,
     ): Animator? {
-        // TODO(animations): refactor!!
         if (!propertyAnimationFragments.contains(fragment)) {
             return null
         }
-
-        // TODO(animations): remove log
-        println("$fragment uses animator")
 
         val animator = getAnimator(fragment, enter)
 
@@ -179,9 +171,10 @@ class ScreenStackAnimationManager() {
     ): Animator {
         if (!fragment.screen.usesFormSheetPresentation()) {
             val animationResource = getAnimationResource(enter)
-            return CustomAnimatorProvider.getAnimatorFromAnimationResource(animationResource, fragment.context, fragment.screen)
+            return CustomAnimatorProvider.getAnimatorFromAnimationResource(
+                animationResource, fragment.context, fragment.screen
+            )
         } else {
-            // TODO(animations): coordinatorLayout, requireDimmingDelegate changed visibility to make this work
             val animatorSet = AnimatorSet()
             val dimmingDelegate = fragment.requireDimmingDelegate()
             val screen = fragment.screen
