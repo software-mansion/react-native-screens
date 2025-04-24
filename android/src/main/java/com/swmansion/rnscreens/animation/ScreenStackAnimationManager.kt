@@ -33,16 +33,18 @@ class ScreenStackAnimationManager {
             clear()
             addAll(propertyAnimationFragments)
         }
+        println(propertyAnimationFragments)
     }
 
     fun getAnimationForFragment(fragment: ScreenStackFragment, enter: Boolean): Animation? {
         // TODO: refactor, verify correct animations
 
-        // TODO: dont detect formSheet here but depend on propertyAnimationFragments
-        // TODO: remove true from condition
-        if (propertyAnimationFragments.contains(fragment) || fragment.screen.usesFormSheetPresentation() || true) {
+        // TODO: dont detect formSheet here but depend on propertyAnimationFragments?
+        if (propertyAnimationFragments.contains(fragment)) {
             return null
         }
+
+        println("${fragment} uses tween animation")
 
         val enterAnimation: Int
         val exitAnimation: Int
@@ -137,9 +139,11 @@ class ScreenStackAnimationManager {
         // TODO: refactor!!, verify correct animators
 
         // TODO: remove false from condition
-        if (!propertyAnimationFragments.contains(fragment) && false) {
+        if (!propertyAnimationFragments.contains(fragment)) {
             return null
         }
+
+        println("${fragment} uses animator")
 
         var animatorSet: AnimatorSet = AnimatorSet()
 
