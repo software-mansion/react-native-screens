@@ -12,31 +12,22 @@
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenFooter {
-  RNSScreenView *_parent;
   NSLayoutConstraint *_heightConstraint;
+  NSLayoutConstraint *_bottomConstraint;
+  RNSScreenView *_screenView;
 }
 
-- (instancetype)init
+- (void)dealloc
 {
-  if (self = [super init]) {
-    self.translatesAutoresizingMaskIntoConstraints = false;
-    _parent = nil;
-  }
-  return self;
-}
-
-- (void)willMoveToSuperview:(UIView *)newSuperview
-{
-  [super willMoveToSuperview:newSuperview];
-  if ([newSuperview isKindOfClass:RNSScreenView.class]) {
-    _parent = (RNSScreenView *)newSuperview;
-  }
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didMoveToSuperview
 {
-  if (_parent != nil) {
-    [self pinToView:_parent.controller.view
+  [super didMoveToSuperview];
+  if ([self.superview isKindOfClass:RNSScreenView.class]) {
+    _screenView = (RNSScreenView *)self.superview;
+    [self pinToView:_screenView.controller.view
           fromEdges:UIRectEdgeLeft | UIRectEdgeRight | UIRectEdgeBottom
          withHeight:@0
         constraints:^(
@@ -44,22 +35,55 @@
             NSLayoutConstraint *bottom,
             NSLayoutConstraint *left,
             NSLayoutConstraint *right,
-            NSLayoutConstraint *heightConstraint) {
-          self->_heightConstraint = heightConstraint;
+            NSLayoutConstraint *height) {
+          self->_heightConstraint = height;
+          self->_bottomConstraint = bottom;
         }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
   }
 }
 
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-
-  UIView *firstView = self.subviews.firstObject;
-  _heightConstraint.constant = firstView.frame.size.height;
-
   if (self.onLayout != nil) {
     self.onLayout(self.frame);
   }
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+  NSDictionary *userInfo = notification.userInfo;
+  NSValue *keyboardFrameValue = userInfo[UIKeyboardFrameEndUserInfoKey];
+
+  if (keyboardFrameValue && [keyboardFrameValue isKindOfClass:[NSValue class]]) {
+    CGRect keyboardFrame = [keyboardFrameValue CGRectValue];
+    _bottomConstraint.constant = -keyboardFrame.size.height;
+
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                       [self->_screenView.controller.view layoutIfNeeded];
+                     }];
+  }
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+  _bottomConstraint.constant = 0;
+
+  [UIView animateWithDuration:0.3
+                   animations:^{
+                     [self->_screenView.controller.view layoutIfNeeded];
+                   }];
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -82,15 +106,23 @@ Class<RCTComponentViewProtocol> RNSScreenFooterCls(void)
   return RNSScreenFooter.class;
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
+- (void)updateLayoutMetrics:(react::LayoutMetrics const &)layoutMetrics
+           oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
+{
+  CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
+  _heightConstraint.constant = frame.size.height;
+}
+RNS_IGNORE_SUPER_CALL_END
+
 #else
 
 #pragma Paper specific
 
 - (void)reactSetFrame:(CGRect)frame
 {
-  // ignore frame from react
-  // this view should be layouted by it's parent screen
-  //  [super reactSetFrame:frame];
+  [super reactSetFrame:frame];
+  _heightConstraint.constant = frame.size.height;
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
