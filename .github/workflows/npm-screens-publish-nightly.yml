@@ -32,7 +32,7 @@ jobs:
 
       - name: Build package
         id: build
-        run: ./createNPMPackage.sh
+        run: ./scripts/create-npm-package.sh
 
       - name: Check if any node_modules were packed
         id: node_modules
