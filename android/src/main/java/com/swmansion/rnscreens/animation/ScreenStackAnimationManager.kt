@@ -83,8 +83,7 @@ class ScreenStackAnimationManager {
         fragment: ScreenStackFragment,
         enter: Boolean,
     ): Animator? {
-        // TODO(animations): refactor!!, verify correct animators
-
+        // TODO(animations): refactor!!
         if (!propertyAnimationFragments.contains(fragment)) {
             return null
         }
@@ -92,150 +91,9 @@ class ScreenStackAnimationManager {
         // TODO(animations): remove log
         println("$fragment uses animator")
 
-        var animatorSet: AnimatorSet = AnimatorSet()
+        val animator = getAnimator(fragment, enter)
 
-        if (!fragment.screen.usesFormSheetPresentation()) {
-            val enterAnimation: Int
-            val exitAnimation: Int
-
-            if (shouldUseOpenAnimation) {
-                when (stackAnimation) {
-                    Screen.StackAnimation.DEFAULT -> {
-                        enterAnimation = R.animator.rns_default_enter_in
-                        exitAnimation = R.animator.rns_default_enter_out
-                    }
-                    Screen.StackAnimation.NONE -> {
-                        enterAnimation = R.animator.rns_no_animation_20
-                        exitAnimation = R.animator.rns_no_animation_20
-                    }
-                    Screen.StackAnimation.FADE -> {
-                        enterAnimation = R.animator.rns_fade_in
-                        exitAnimation = R.animator.rns_fade_out
-                    }
-                    Screen.StackAnimation.SLIDE_FROM_RIGHT -> {
-                        enterAnimation = R.animator.rns_slide_in_from_right
-                        exitAnimation = R.animator.rns_slide_out_to_left
-                    }
-                    Screen.StackAnimation.SLIDE_FROM_LEFT -> {
-                        enterAnimation = R.animator.rns_slide_in_from_left
-                        exitAnimation = R.animator.rns_slide_out_to_right
-                    }
-                    Screen.StackAnimation.SLIDE_FROM_BOTTOM -> {
-                        enterAnimation = R.animator.rns_slide_in_from_bottom
-                        exitAnimation = R.animator.rns_no_animation_medium
-                    }
-                    Screen.StackAnimation.FADE_FROM_BOTTOM -> {
-                        enterAnimation = R.animator.rns_fade_from_bottom
-                        exitAnimation = R.animator.rns_no_animation_350
-                    }
-                    Screen.StackAnimation.IOS_FROM_RIGHT -> {
-                        enterAnimation = R.animator.rns_ios_from_right_foreground_open
-                        exitAnimation = R.animator.rns_ios_from_right_background_open
-                    }
-                    Screen.StackAnimation.IOS_FROM_LEFT -> {
-                        enterAnimation = R.animator.rns_ios_from_left_foreground_open
-                        exitAnimation = R.animator.rns_ios_from_left_background_open
-                    }
-                }
-            } else {
-                when (stackAnimation) {
-                    Screen.StackAnimation.DEFAULT -> {
-                        enterAnimation = R.animator.rns_default_exit_in
-                        exitAnimation = R.animator.rns_default_exit_out
-                    }
-                    Screen.StackAnimation.NONE -> {
-                        enterAnimation = R.animator.rns_no_animation_20
-                        exitAnimation = R.animator.rns_no_animation_20
-                    }
-                    Screen.StackAnimation.FADE -> {
-                        enterAnimation = R.animator.rns_fade_in
-                        exitAnimation = R.animator.rns_fade_out
-                    }
-                    Screen.StackAnimation.SLIDE_FROM_RIGHT -> {
-                        enterAnimation = R.animator.rns_slide_in_from_left
-                        exitAnimation = R.animator.rns_slide_out_to_right
-                    }
-                    Screen.StackAnimation.SLIDE_FROM_LEFT -> {
-                        enterAnimation = R.animator.rns_slide_in_from_right
-                        exitAnimation = R.animator.rns_slide_out_to_left
-                    }
-                    Screen.StackAnimation.SLIDE_FROM_BOTTOM -> {
-                        enterAnimation = R.animator.rns_no_animation_medium
-                        exitAnimation = R.animator.rns_slide_out_to_bottom
-                    }
-                    Screen.StackAnimation.FADE_FROM_BOTTOM -> {
-                        enterAnimation = R.animator.rns_no_animation_250
-                        exitAnimation = R.animator.rns_fade_to_bottom
-                    }
-                    Screen.StackAnimation.IOS_FROM_RIGHT -> {
-                        enterAnimation = R.animator.rns_ios_from_right_background_close
-                        exitAnimation = R.animator.rns_ios_from_right_foreground_close
-                    }
-                    Screen.StackAnimation.IOS_FROM_LEFT -> {
-                        enterAnimation = R.animator.rns_ios_from_left_background_close
-                        exitAnimation = R.animator.rns_ios_from_left_foreground_close
-                    }
-                }
-            }
-
-            animatorSet =
-                CustomAnimatorSetProvider.customize(
-                    fragment.context,
-                    if (enter) enterAnimation else exitAnimation,
-                    (AnimatorInflater.loadAnimator(fragment.context, if (enter) enterAnimation else exitAnimation) as AnimatorSet),
-                    fragment.screen,
-                )
-        } else {
-            val dimmingDelegate = fragment.requireDimmingDelegate()
-            val screen = fragment.screen
-
-            if (enter) {
-                val alphaAnimator =
-                    ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
-                        addUpdateListener { anim ->
-                            val animatedValue = anim.animatedValue as? Float
-                            animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
-                        }
-                    }
-                val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
-                val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
-                val slideAnimator =
-                    ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
-                        addUpdateListener { anim ->
-                            val animatedValue = anim.animatedValue as? Float
-                            animatedValue?.let { screen.translationY = it }
-                        }
-                    }
-
-                animatorSet
-                    .play(slideAnimator)
-                    .takeIf {
-                        dimmingDelegate.willDimForDetentIndex(
-                            screen,
-                            screen.sheetInitialDetentIndex,
-                        )
-                    }?.with(alphaAnimator)
-            } else {
-                val alphaAnimator =
-                    ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
-                        addUpdateListener { anim ->
-                            val animatedValue = anim.animatedValue as? Float
-                            animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
-                        }
-                    }
-                val slideAnimator =
-                    ValueAnimator.ofFloat(0f, (fragment.coordinatorLayout.bottom - screen.top).toFloat()).apply {
-                        addUpdateListener { anim ->
-                            val animatedValue = anim.animatedValue as? Float
-                            animatedValue?.let { screen.translationY = it }
-                        }
-                    }
-                animatorSet.play(alphaAnimator).with(slideAnimator)
-            }
-        }
-        // TODO(animations): coordinatorLayout, requireDimmingDelegate changed visibility to make this work
-
-        animatorSet.addListener(
+        animator.addListener(
             ScreenAnimationDelegate(
                 fragment,
                 ScreenEventEmitter(fragment.screen),
@@ -246,7 +104,8 @@ class ScreenStackAnimationManager {
                 },
             ),
         )
-        return animatorSet
+
+        return animator
     }
 
     private fun getAnimationResource(enter: Boolean): Int {
@@ -334,5 +193,158 @@ class ScreenStackAnimationManager {
         }
 
         return if (enter) enterAnimation else exitAnimation
+    }
+
+    private fun getAnimator(
+        fragment: ScreenStackFragment,
+        enter: Boolean,
+    ): Animator {
+        if (!fragment.screen.usesFormSheetPresentation()) {
+            val enterAnimation: Int
+            val exitAnimation: Int
+
+            if (shouldUseOpenAnimation) {
+                when (stackAnimation) {
+                    Screen.StackAnimation.DEFAULT -> {
+                        enterAnimation = R.animator.rns_default_enter_in
+                        exitAnimation = R.animator.rns_default_enter_out
+                    }
+                    Screen.StackAnimation.NONE -> {
+                        enterAnimation = R.animator.rns_no_animation_20
+                        exitAnimation = R.animator.rns_no_animation_20
+                    }
+                    Screen.StackAnimation.FADE -> {
+                        enterAnimation = R.animator.rns_fade_in
+                        exitAnimation = R.animator.rns_fade_out
+                    }
+                    Screen.StackAnimation.SLIDE_FROM_RIGHT -> {
+                        enterAnimation = R.animator.rns_slide_in_from_right
+                        exitAnimation = R.animator.rns_slide_out_to_left
+                    }
+                    Screen.StackAnimation.SLIDE_FROM_LEFT -> {
+                        enterAnimation = R.animator.rns_slide_in_from_left
+                        exitAnimation = R.animator.rns_slide_out_to_right
+                    }
+                    Screen.StackAnimation.SLIDE_FROM_BOTTOM -> {
+                        enterAnimation = R.animator.rns_slide_in_from_bottom
+                        exitAnimation = R.animator.rns_no_animation_medium
+                    }
+                    Screen.StackAnimation.FADE_FROM_BOTTOM -> {
+                        enterAnimation = R.animator.rns_fade_from_bottom
+                        exitAnimation = R.animator.rns_no_animation_350
+                    }
+                    Screen.StackAnimation.IOS_FROM_RIGHT -> {
+                        enterAnimation = R.animator.rns_ios_from_right_foreground_open
+                        exitAnimation = R.animator.rns_ios_from_right_background_open
+                    }
+                    Screen.StackAnimation.IOS_FROM_LEFT -> {
+                        enterAnimation = R.animator.rns_ios_from_left_foreground_open
+                        exitAnimation = R.animator.rns_ios_from_left_background_open
+                    }
+                }
+            } else {
+                when (stackAnimation) {
+                    Screen.StackAnimation.DEFAULT -> {
+                        enterAnimation = R.animator.rns_default_exit_in
+                        exitAnimation = R.animator.rns_default_exit_out
+                    }
+                    Screen.StackAnimation.NONE -> {
+                        enterAnimation = R.animator.rns_no_animation_20
+                        exitAnimation = R.animator.rns_no_animation_20
+                    }
+                    Screen.StackAnimation.FADE -> {
+                        enterAnimation = R.animator.rns_fade_in
+                        exitAnimation = R.animator.rns_fade_out
+                    }
+                    Screen.StackAnimation.SLIDE_FROM_RIGHT -> {
+                        enterAnimation = R.animator.rns_slide_in_from_left
+                        exitAnimation = R.animator.rns_slide_out_to_right
+                    }
+                    Screen.StackAnimation.SLIDE_FROM_LEFT -> {
+                        enterAnimation = R.animator.rns_slide_in_from_right
+                        exitAnimation = R.animator.rns_slide_out_to_left
+                    }
+                    Screen.StackAnimation.SLIDE_FROM_BOTTOM -> {
+                        enterAnimation = R.animator.rns_no_animation_medium
+                        exitAnimation = R.animator.rns_slide_out_to_bottom
+                    }
+                    Screen.StackAnimation.FADE_FROM_BOTTOM -> {
+                        enterAnimation = R.animator.rns_no_animation_250
+                        exitAnimation = R.animator.rns_fade_to_bottom
+                    }
+                    Screen.StackAnimation.IOS_FROM_RIGHT -> {
+                        enterAnimation = R.animator.rns_ios_from_right_background_close
+                        exitAnimation = R.animator.rns_ios_from_right_foreground_close
+                    }
+                    Screen.StackAnimation.IOS_FROM_LEFT -> {
+                        enterAnimation = R.animator.rns_ios_from_left_background_close
+                        exitAnimation = R.animator.rns_ios_from_left_foreground_close
+                    }
+                }
+            }
+
+            return CustomAnimatorSetProvider.customize(
+                fragment.context,
+                if (enter) enterAnimation else exitAnimation,
+                (
+                    AnimatorInflater.loadAnimator(
+                        fragment.context,
+                        if (enter) enterAnimation else exitAnimation,
+                    ) as AnimatorSet
+                ),
+                fragment.screen,
+            )
+        } else {
+            // TODO(animations): coordinatorLayout, requireDimmingDelegate changed visibility to make this work
+            val animatorSet = AnimatorSet()
+            val dimmingDelegate = fragment.requireDimmingDelegate()
+            val screen = fragment.screen
+
+            if (enter) {
+                val alphaAnimator =
+                    ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
+                        addUpdateListener { anim ->
+                            val animatedValue = anim.animatedValue as? Float
+                            animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
+                        }
+                    }
+                val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
+                val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
+                val slideAnimator =
+                    ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
+                        addUpdateListener { anim ->
+                            val animatedValue = anim.animatedValue as? Float
+                            animatedValue?.let { screen.translationY = it }
+                        }
+                    }
+
+                animatorSet
+                    .play(slideAnimator)
+                    .takeIf {
+                        dimmingDelegate.willDimForDetentIndex(
+                            screen,
+                            screen.sheetInitialDetentIndex,
+                        )
+                    }?.with(alphaAnimator)
+            } else {
+                val alphaAnimator =
+                    ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
+                        addUpdateListener { anim ->
+                            val animatedValue = anim.animatedValue as? Float
+                            animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
+                        }
+                    }
+                val slideAnimator =
+                    ValueAnimator.ofFloat(0f, (fragment.coordinatorLayout.bottom - screen.top).toFloat()).apply {
+                        addUpdateListener { anim ->
+                            val animatedValue = anim.animatedValue as? Float
+                            animatedValue?.let { screen.translationY = it }
+                        }
+                    }
+                animatorSet.play(alphaAnimator).with(slideAnimator)
+            }
+
+            return animatorSet
+        }
     }
 }
