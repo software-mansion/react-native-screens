@@ -19,11 +19,11 @@ class CustomAnimatorSetProvider {
             val finalAnimatorSet = AnimatorSet()
             val screenParent = screen.parentAsView()
 
-            // TODO: verify that these values can be used to get width/height
+            // TODO(animations): verify that these values can be used to get width/height
             val screenWidth = screen.measuredWidth
 
-            // TODO: first value available when entering, second when exiting; last fallback
-            //       is off by header's height
+            // TODO(animations): first value available when entering, second when exiting; last fallback
+            //                   is off by header's height
             val screenHeight = screen.container?.height ?: screenParent?.height ?: screen.measuredHeight
 
             when (animator) {
@@ -56,6 +56,7 @@ class CustomAnimatorSetProvider {
                             .ofFloat(screenParent, "translationX", -0.1f * screenWidth, 0.0f)
                             .apply {
                                 duration = 450
+                                // TODO(animations): verify interpolator API
                                 interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
                             },
                     )
@@ -67,6 +68,7 @@ class CustomAnimatorSetProvider {
                             .ofFloat(screenParent, "translationX", 0.0f, 0.1f * screenWidth)
                             .apply {
                                 duration = 450
+                                // TODO(animations): verify interpolator API
                                 interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_extra_slow_in)
                             },
                     )

@@ -35,7 +35,7 @@ class ScreenStackAnimationManager {
         var begin = false
         for ((index, screenWrapper) in stack.reversed().withIndex()) {
             if (screenWrapper is ScreenStackFragment) {
-                // should we use isTranslucent or detect formSheet only?
+                // TODO(animations): should we use isTranslucent or detect formSheet only?
                 if (begin) {
                     if (screenWrapper.isTranslucent()) {
                         propertyAnimationFragments.add(screenWrapper)
@@ -56,13 +56,14 @@ class ScreenStackAnimationManager {
     }
 
     fun getAnimationForFragment(fragment: ScreenStackFragment, enter: Boolean): Animation? {
-        // TODO: refactor, verify correct animations
+        // TODO(animations): refactor, verify correct animations
 
-        // TODO: dont detect formSheet here but depend on propertyAnimationFragments?
+        // TODO(animations): dont detect formSheet here but depend on propertyAnimationFragments?
         if (propertyAnimationFragments.contains(fragment)) {
             return null
         }
 
+        // TODO(animations): remove log
         println("${fragment} uses tween animation")
 
         val enterAnimation: Int
@@ -155,13 +156,14 @@ class ScreenStackAnimationManager {
     }
 
     fun getAnimatorForFragment(fragment: ScreenStackFragment, enter: Boolean): Animator? {
-        // TODO: refactor!!, verify correct animators
+        // TODO(animations): refactor!!, verify correct animators
 
-        // TODO: remove false from condition
+        // TODO(animations): remove false from condition
         if (!propertyAnimationFragments.contains(fragment)) {
             return null
         }
 
+        // TODO(animations): remove log
         println("${fragment} uses animator")
 
         var animatorSet: AnimatorSet = AnimatorSet()
@@ -305,8 +307,7 @@ class ScreenStackAnimationManager {
                 animatorSet.play(alphaAnimator).with(slideAnimator)
             }
         }
-        // TODO: coordinatorLayout, requireDimmingDelegate changed visibility to make this work
-
+        // TODO(animations): coordinatorLayout, requireDimmingDelegate changed visibility to make this work
 
         animatorSet.addListener(
             ScreenAnimationDelegate(

@@ -1,9 +1,6 @@
 package com.swmansion.rnscreens
 
 import android.animation.Animator
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -26,17 +23,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.animation.CustomAnimatorSetProvider
 import com.swmansion.rnscreens.animation.ScreenStackAnimationManager
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
-import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
-import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
 
@@ -76,7 +69,7 @@ class ScreenStackFragment :
 
     private var sheetDelegate: SheetDelegate? = null
 
-    // TODO: init it in a more elegant way
+    // TODO(animations): init it in a more elegant way?
     private lateinit var animationManager: ScreenStackAnimationManager
 
     @SuppressLint("ValidFragment")
@@ -262,9 +255,7 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animation? {
-        // Ensure onCreateAnimator is called
-        // return null
-        // TODO: confirm it is ok to have animationManager in fragment
+        // TODO(animations): confirm it is ok to have animationManager in fragment
         return animationManager.getAnimationForFragment(this, enter)
     }
 
@@ -273,113 +264,8 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animator? {
-        // TODO: confirm it is ok to have animationManager in fragment
+        // TODO(animations): confirm it is ok to have animationManager in fragment
         return animationManager.getAnimatorForFragment(this, enter)
-
-
-//        var animatorSet = AnimatorSet()
-//
-//        if (!screen.usesFormSheetPresentation()) {
-//            when (nextAnim) {
-//                R.animator.rns_default_exit_out,
-//                R.animator.rns_default_exit_in,
-//                R.animator.rns_default_enter_out,
-//                R.animator.rns_default_enter_in,
-//                R.animator.rns_no_animation_20,
-//                R.animator.rns_fade_out,
-//                R.animator.rns_fade_in,
-//                R.animator.rns_slide_out_to_left,
-//                R.animator.rns_slide_in_from_left,
-//                R.animator.rns_slide_out_to_right,
-//                R.animator.rns_slide_in_from_right,
-//                R.animator.rns_no_animation_medium,
-//                R.animator.rns_slide_out_to_bottom,
-//                R.animator.rns_slide_in_from_bottom,
-//                R.animator.rns_no_animation_250,
-//                R.animator.rns_no_animation_350,
-//                R.animator.rns_fade_from_bottom,
-//                R.animator.rns_fade_to_bottom,
-//                R.animator.rns_ios_from_right_background_close,
-//                R.animator.rns_ios_from_right_foreground_close,
-//                R.animator.rns_ios_from_right_background_open,
-//                R.animator.rns_ios_from_right_foreground_open,
-//                R.animator.rns_ios_from_left_background_close,
-//                R.animator.rns_ios_from_left_foreground_close,
-//                R.animator.rns_ios_from_left_background_open,
-//                R.animator.rns_ios_from_left_foreground_open,
-//                -> {
-//                    animatorSet =
-//                        CustomAnimatorSetProvider.customize(
-//                            context,
-//                            nextAnim,
-//                            (AnimatorInflater.loadAnimator(context, nextAnim) as AnimatorSet),
-//                            screen,
-//                        )
-//                }
-//                else -> {
-//                    return null
-//                }
-//            }
-//        } else {
-//            val dimmingDelegate = requireDimmingDelegate()
-//
-//            if (enter) {
-//                val alphaAnimator =
-//                    ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
-//                        addUpdateListener { anim ->
-//                            val animatedValue = anim.animatedValue as? Float
-//                            animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
-//                        }
-//                    }
-//                val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
-//                val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
-//                val slideAnimator =
-//                    ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
-//                        addUpdateListener { anim ->
-//                            val animatedValue = anim.animatedValue as? Float
-//                            animatedValue?.let { screen.translationY = it }
-//                        }
-//                    }
-//
-//                animatorSet
-//                    .play(slideAnimator)
-//                    .takeIf {
-//                        dimmingDelegate.willDimForDetentIndex(
-//                            screen,
-//                            screen.sheetInitialDetentIndex,
-//                        )
-//                    }?.with(alphaAnimator)
-//            } else {
-//                val alphaAnimator =
-//                    ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
-//                        addUpdateListener { anim ->
-//                            val animatedValue = anim.animatedValue as? Float
-//                            animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
-//                        }
-//                    }
-//                val slideAnimator =
-//                    ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
-//                        addUpdateListener { anim ->
-//                            val animatedValue = anim.animatedValue as? Float
-//                            animatedValue?.let { screen.translationY = it }
-//                        }
-//                    }
-//                animatorSet.play(alphaAnimator).with(slideAnimator)
-//            }
-//        }
-//
-//        animatorSet.addListener(
-//            ScreenAnimationDelegate(
-//                this,
-//                ScreenEventEmitter(this.screen),
-//                if (enter) {
-//                    ScreenAnimationDelegate.AnimationType.ENTER
-//                } else {
-//                    ScreenAnimationDelegate.AnimationType.EXIT
-//                },
-//            ),
-//        )
-//        return animatorSet
     }
 
     private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
