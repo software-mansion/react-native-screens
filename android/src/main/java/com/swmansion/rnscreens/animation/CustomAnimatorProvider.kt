@@ -29,11 +29,14 @@ class CustomAnimatorProvider {
             //                   is off by header's height
             val screenHeight = screen.container?.height ?: screenParent?.height ?: screen.measuredHeight
 
-            // TODO(animations): move comments from anim/animator files (?), add comment about
-            //                   edit being required in 2 places, optimize by removing unnecessary animations (?)
-
-            val useV33Animations = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU
-
+            // TODO(animations): optimize by attempting to remove unnecessary animations (?)
+            // These animators are adapted from tween animations defined in res/anim.
+            // There you can find additional comments about these animations.
+            // Both versions need to be kept in sync.
+            // Animators are implemented here instead of XML Resource files because
+            // percentage values (e.g. 10% width) cannot be implemented in Animator's XML.
+            val useV33Animations =
+                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU
             when (animationResource) {
                 R.anim.rns_default_enter_in -> {
                     if (useV33Animations) {

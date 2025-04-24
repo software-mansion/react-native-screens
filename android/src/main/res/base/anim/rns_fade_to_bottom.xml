@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Animations need to be kept in sync with their Animator equivalents in CustomAnimatorProvider -->
+
 <!--Android Nougat exit animation-->
 <!--http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml-->
 <set xmlns:android="http://schemas.android.com/apk/res/android"
