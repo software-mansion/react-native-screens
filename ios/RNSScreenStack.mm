@@ -303,10 +303,9 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-  NSLog(@"[tag=%ld] didMoveToWindow", self.tag);
 #ifdef RCT_NEW_ARCH_ENABLED
   // for handling nested stacks
-  NSLog(@"[tag=%ld] RNSScreenStackView didMoveToWindow", self.tag);
+  NSLog(@"[tag=%ld] RNSScreenStackView didMoveToWindow, schedule container update", self.tag);
   [self maybeAddToParentAndUpdateContainer];
 #else
   if (!_invalidated) {
@@ -473,7 +472,7 @@ RNS_IGNORE_SUPER_CALL_END
       // flag in order to perform updates at a later point. Here we are done with all modals
       // transitions and check this flag again. If it was set, we reset the flag and execute updates.
       weakSelf.scheduleModalsUpdate = NO;
-      NSLog(@"[tag=%ld] RNSScreenStackView setModalViewControllers", self.tag);
+      NSLog(@"[tag=%ld] RNSScreenStackView setModalViewControllers afterTransition!", self.tag);
       [weakSelf updateContainer];
     }
     // we trigger the update of orientation here because, when dismissing the modal from JS,
@@ -625,15 +624,16 @@ RNS_IGNORE_SUPER_CALL_END
   // making any updated when transition is ongoing and schedule updates for when the transition
   // is complete.
   if (_controller.transitionCoordinator != nil) {
-    NSLog(@"[tag=%ld] </---- ONGOING ANIMATION RETURN ---->", self.tag);
+    NSLog(@"[tag=%ld] setPushViewControllers; ONGOING animation detected", self.tag);
     if (!_updateScheduled) {
+      NSLog(@"[tag=%ld] setPushViewControllers; ONGOING animation detected; schedule update", self.tag);
       _updateScheduled = YES;
       __weak RNSScreenStackView *weakSelf = self;
       UIViewController *fromViewController =
           [_controller.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
       UIViewController *toViewController =
           [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
-      NSLog(@"Transition coordinators: %@ %@", _controller, _controller.transitionCoordinator);
+      NSLog(@"Transition coordinators: navctrl %@ transitionCoord %@", _controller, _controller.transitionCoordinator);
       NSLog(
           @"From ViewController: %@ tag=%ld %@",
           NSStringFromClass([fromViewController class]),
@@ -649,16 +649,18 @@ RNS_IGNORE_SUPER_CALL_END
             // do nothing here, we only want to be notified when transition is complete
           }
           completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-            NSLog(@"Amimation finished, updateContainer");
             self->_updateScheduled = NO;
-            NSLog(@"[tag=%ld] RNSScreenStackView setPushControllers", self.tag);
+            NSLog(
+                @"[tag=%ld] RNSScreenStackView setPushControllers after completion of existing transition; run updateContainer SYNC",
+                self.tag);
             [weakSelf updateContainer];
           }];
     } else {
-      NSLog(@"[tag=%ld]RNSScreenStack setPushViewControllers update scheduled", self.tag);
+      NSLog(@"[tag=%ld] setPushViewControllers; ONGOING ALREADY SCHEDULED UPDATE OF THIS STACK", self.tag);
     }
-    NSLog(@"[tag=%ld] </---- ONGOING ANIMATION RETURN ---->", self.tag);
     return;
+  } else {
+    NSLog(@"[tag=%ld] setPushViewControllers; NO ongoing animation detected; proceeding with VC update", self.tag);
   }
 
   UIViewController *top = controllers.lastObject;
@@ -830,7 +832,6 @@ RNS_IGNORE_SUPER_CALL_END
                                                fromViewController:(UIViewController *)fromVC
                                                  toViewController:(UIViewController *)toVC
 {
-  NSLog(@"Wrong");
   RNSScreenView *screen;
   if (operation == UINavigationControllerOperationPush) {
     screen = ((RNSScreen *)toVC).screenView;
@@ -1302,7 +1303,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  NSLog(@"[tag=%ld] mountingTransactionWillMount", self.tag);
+  NSLog(@"[tag=%ld] mountingTransactionWillMount, revision: %lld", self.tag, transaction.getNumber());
   bool flag = true;
   for (const auto &mutation : transaction.getMutations()) {
     if (mutation.parentTag == 118 || mutation.parentTag == 164 || mutation.newChildShadowView.tag == 164 ||
@@ -1341,7 +1342,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  NSLog(@"[tag=%ld] mountingTransactionDidMount", self.tag);
+  NSLog(@"[tag=%ld] mountingTransactionDidMount START, revision: %lld", self.tag, transaction.getNumber());
   bool flag = true;
   for (const auto &mutation : transaction.getMutations()) {
     if (mutation.parentTag == 118 || mutation.parentTag == 164 || mutation.newChildShadowView.tag == 164 ||
@@ -1364,8 +1365,16 @@ RNS_IGNORE_SUPER_CALL_END
       // we need to wait until children have their layout set. At this point they don't have the layout
       // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
       // ui queue will guarantee that the update will run after layout.
+      NSLog(
+          @"[tag=%ld] RNSScreenStackView mountingTransactionDidMount SCHEDULE async update, revision: %lld",
+          self.tag,
+          transaction.getNumber());
+      const auto transactionNumber = transaction.getNumber();
       dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"[tag=%ld] RNSScreenStackView mountingTransactionDidMount", self.tag);
+        NSLog(
+            @"[tag=%ld] RNSScreenStackView mountingTransactionDidMount EXECUTE async update, revision: %lld",
+            self.tag,
+            transactionNumber);
         [self maybeAddToParentAndUpdateContainer];
       });
       break;

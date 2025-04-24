@@ -683,6 +683,7 @@ RNS_IGNORE_SUPER_CALL_END
   } else {
     [_touchHandler detachFromView:self];
   }
+  NSLog(@"Screen [%ld] didMoveToWindow %@", self.tag, self.window);
 }
 
 - (nullable RNS_TOUCH_HANDLER_ARCH_TYPE *)touchHandler

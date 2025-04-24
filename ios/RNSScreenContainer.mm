@@ -231,10 +231,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)didMoveToWindow
 {
+  NSLog(@"Container [%ld] didMoveToWindow %@", self.tag, self.window);
   if (self.window && !_invalidated) {
     // We check whether the view has been invalidated before running side-effects in didMoveToWindow
     // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
     // to a window despite the fact it has been removed from the React Native view hierarchy.
+    NSLog(@"Container [%ld] didMoveToWindow addToClosestParent", self.tag);
     [self reactAddControllerToClosestParent:_controller];
   }
 }
@@ -273,6 +275,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   RNSScreenView *screenView = (RNSScreenView *)childComponentView;
 
+  NSLog(@"Container [%ld] mountChildComponentView: %ld", self.tag, childComponentView.tag);
+
   RCTAssert(
       childComponentView.reactSuperview == nil,
       @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
@@ -305,6 +309,7 @@ RNS_IGNORE_SUPER_CALL_END
       @(index),
       @([_reactSubviews indexOfObject:childComponentView]),
       @([[_reactSubviews objectAtIndex:index] tag]));
+  NSLog(@"Container [%ld] unmountChildComponentView: %ld", self.tag, childComponentView.tag);
   ((RNSScreenView *)childComponentView).reactSuperview = nil;
   [_reactSubviews removeObject:childComponentView];
   [childComponentView removeFromSuperview];

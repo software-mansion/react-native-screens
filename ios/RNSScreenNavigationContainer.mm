@@ -25,10 +25,12 @@ namespace react = facebook::react;
 
 - (void)updateContainer
 {
+  NSLog(@"NavigationContainer [%ld] updateContainer SYNC", self.tag);
   for (RNSScreenView *screen in self.reactSubviews) {
     if (screen.activityState == RNSActivityStateOnTop) {
       // there should never be more than one screen with `RNSActivityStateOnTop`
       // since this component should be used for `tabs` and `drawer` navigators
+      NSLog(@"NavigationContainer [%ld] updateContainer to %ld", self.tag, screen.controller.screenView.tag);
       [(RNSContainerNavigationController *)self.controller setViewControllers:@[ screen.controller ] animated:NO];
       [screen notifyFinishTransitioning];
     }
