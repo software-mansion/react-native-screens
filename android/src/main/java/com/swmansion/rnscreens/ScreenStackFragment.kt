@@ -28,6 +28,7 @@ import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -69,12 +70,8 @@ class ScreenStackFragment :
 
     private var sheetDelegate: SheetDelegate? = null
 
-    private lateinit var animationManager: ScreenStackAnimationManager
-
     @SuppressLint("ValidFragment")
-    constructor(screenView: Screen, animationManager: ScreenStackAnimationManager) : super(screenView) {
-        this.animationManager = animationManager
-    }
+    constructor(screenView: Screen) : super(screenView)
 
     constructor() {
         throw IllegalStateException(
@@ -254,7 +251,13 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animation? {
-        return animationManager.getAnimationForFragment(this, enter)
+        // We can't use screen.container because it is set to null when screen is removed.
+        // We use coordinatorLayout instead.
+        return if (coordinatorLayout.parent is ScreenStack) {
+            (coordinatorLayout.parent as ScreenStack).animationManager.getAnimationForFragment(this, enter)
+        } else {
+            null
+        }
     }
 
     override fun onCreateAnimator(
@@ -262,7 +265,13 @@ class ScreenStackFragment :
         enter: Boolean,
         nextAnim: Int,
     ): Animator? {
-        return animationManager.getAnimatorForFragment(this, enter)
+        // We can't use screen.container because it is set to null when screen is removed.
+        // We use coordinatorLayout instead.
+        return if (coordinatorLayout.parent is ScreenStack) {
+            (coordinatorLayout.parent as ScreenStack).animationManager.getAnimatorForFragment(this, enter)
+        } else {
+            null
+        }
     }
 
     private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()

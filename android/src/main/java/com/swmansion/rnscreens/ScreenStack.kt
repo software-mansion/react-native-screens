@@ -57,8 +57,8 @@ class ScreenStack(
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
-            Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen, animationManager)
-            else -> ScreenStackFragment(screen, animationManager)
+            Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen)
+            else -> ScreenStackFragment(screen)
         }
 
     override fun startViewTransition(view: View) {
