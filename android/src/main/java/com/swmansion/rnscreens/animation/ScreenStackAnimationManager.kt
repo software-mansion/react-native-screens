@@ -1,10 +1,8 @@
 package com.swmansion.rnscreens.animation
 
 import android.animation.Animator
-import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
-import android.content.Context
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.swmansion.rnscreens.R
@@ -181,7 +179,7 @@ class ScreenStackAnimationManager() {
     ): Animator {
         if (!fragment.screen.usesFormSheetPresentation()) {
             val animationResource = getAnimationResource(enter)
-            return CustomAnimatorSetProvider.getAnimatorFromAnimationResource(animationResource, fragment.context, fragment.screen)
+            return CustomAnimatorProvider.getAnimatorFromAnimationResource(animationResource, fragment.context, fragment.screen)
         } else {
             // TODO(animations): coordinatorLayout, requireDimmingDelegate changed visibility to make this work
             val animatorSet = AnimatorSet()

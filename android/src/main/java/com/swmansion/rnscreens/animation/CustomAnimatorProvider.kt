@@ -11,7 +11,7 @@ import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ext.parentAsView
 
-class CustomAnimatorSetProvider {
+class CustomAnimatorProvider {
     companion object {
         fun getAnimatorFromAnimationResource(
             animationResource: Int,
