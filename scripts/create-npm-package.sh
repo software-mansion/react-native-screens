@@ -2,7 +2,7 @@
 
 yarn install --immutable
 
-if ! CURRENT_VERSION=$(node ./set-version.js); then
+if ! CURRENT_VERSION=$(node ./set-version.js --nightly); then
   exit 1
 fi
 
