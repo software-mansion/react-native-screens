@@ -35,24 +35,28 @@ class ScreenStackAnimationManager {
     }
 
     fun updatePropertyAnimationFragmentsFromStack(stack: List<ScreenStackFragmentWrapper>) {
-        var begin = false
-        for ((index, screenWrapper) in stack.reversed().withIndex()) {
+        val reversedStack = stack.reversed()
+        var shouldUsePropertyAnimation = false
+
+        // We want to use property animation for translucent screens
+        // and non-translucent screens that are above/below translucent screens
+        for ((index, screenWrapper) in reversedStack.withIndex()) {
             if (screenWrapper is ScreenStackFragment) {
                 // TODO(animations): should we use isTranslucent or detect formSheet only?
-                if (begin) {
-                    if (screenWrapper.isTranslucent()) {
-                        propertyAnimationFragments.add(screenWrapper)
-                    } else {
-                        propertyAnimationFragments.add(screenWrapper)
-                        begin = false
-                    }
+                val nextScreenIsTranslucent =
+                    reversedStack.getOrNull(index + 1)?.isTranslucent() ?: false
+
+                if (screenWrapper.isTranslucent() ||
+                    (!screenWrapper.isTranslucent() && nextScreenIsTranslucent)
+                ) {
+                    shouldUsePropertyAnimation = true
                 }
 
-                if ((!screenWrapper.isTranslucent() && index + 1 < stack.size && stack.reversed()[index + 1].isTranslucent()) ||
-                    screenWrapper.isTranslucent()
-                ) {
+                if (shouldUsePropertyAnimation) {
                     propertyAnimationFragments.add(screenWrapper)
-                    begin = true
+                    if (!screenWrapper.isTranslucent()) {
+                        shouldUsePropertyAnimation = false
+                    }
                 }
             }
         }
