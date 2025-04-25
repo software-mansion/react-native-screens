@@ -1453,7 +1453,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // so we are going to track it again during transition (see below).
   if (@available(iOS 15.0, *)) {
     // Only when not transition and gesture is enabled
-    if (self.presentedView != nil && !_isTransitioning && !self.modalInPresentation) {
+    if (self.presentedView != nil && !_isTransitioning) {
       _trackingYFromLayout = YES;
 
       CGFloat sheetY = self.presentedView.frame.origin.y;
@@ -1491,15 +1491,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self setupProgressNotification];
     [self setupGestureHandler];
   }
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
-  if (@available(iOS 15.0, *)) {
-    if (self.presentedView != nil) {
-      [self.presentedView addObserver:self forKeyPath:@"frame" options:0 context:NULL];
-    }
-  }
-#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -1540,15 +1531,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 
   _trackingYFromLayout = NO;
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
-  if (@available(iOS 15.0, *)) {
-    if (self.presentedView != nil) {
-      [self.presentedView removeObserver:self forKeyPath:@"frame"];
-    }
-  }
-#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -1595,23 +1577,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
   [self traverseForScrollView:self.screenView];
 #endif
-}
-
-// KVO for the sheet Y only when gesture is disabled.
-// Transition does not trigger when dragging in this case.
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
-{
-  if ([keyPath isEqualToString:@"frame"]) {
-    if (!_isTransitioning && self.modalInPresentation) {
-      UIView *presentedView = (UIView *)object;
-      [self notifySheetTranslation:presentedView.frame.origin.y];
-    }
-  } else {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-  }
 }
 
 - (void)viewDidLayoutSubviews
@@ -1767,6 +1732,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   if (@available(iOS 15.0, *)) {
+    if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
+      return;
+    }
+
     if (self.presentedView == nil) {
       return;
     }
@@ -1791,8 +1760,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
     case UIGestureRecognizerStateChanged: {
       // We only send event when not tracking from layout
-      // Also when gesture is enabled.
-      if (!_trackingYFromLayout && !self.modalInPresentation) {
+      if (!_trackingYFromLayout) {
         CGFloat draggedY = gesture.view.frame.origin.y;
         [self notifySheetTranslation:draggedY];
       }
