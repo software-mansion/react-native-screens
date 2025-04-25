@@ -113,6 +113,7 @@ struct ContentWrapperBox {
   _stackPresentation = RNSScreenStackPresentationPush;
   _stackAnimation = RNSScreenStackAnimationDefault;
   _gestureEnabled = YES;
+  _sheetDismissible = YES;
   _replaceAnimation = RNSScreenReplaceAnimationPop;
   _dismissed = NO;
   _hasStatusBarStyleSet = NO;
@@ -337,8 +338,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setGestureEnabled:(BOOL)gestureEnabled
 {
   _controller.modalInPresentation = !gestureEnabled;
-
   _gestureEnabled = gestureEnabled;
+}
+
+- (void)setSheetDismissible:(BOOL)sheetDismissible
+{
+  _controller.modalInPresentation = !sheetDismissible;
+  _sheetDismissible = sheetDismissible;
 }
 
 - (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
@@ -764,6 +770,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (_preventNativeDismiss) {
     return NO;
   }
+
+  if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    return _sheetDismissible;
+  }
+
   return _gestureEnabled;
 }
 
@@ -1285,6 +1296,7 @@ RNS_IGNORE_SUPER_CALL_END
   [self setSheetGrabberVisible:newScreenProps.sheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
+  [self setSheetDismissible:newScreenProps.sheetDismissible];
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
     [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];

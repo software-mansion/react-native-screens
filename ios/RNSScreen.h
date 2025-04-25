@@ -94,6 +94,7 @@ namespace react = facebook::react;
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) NSInteger sheetInitialDetent;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
+@property (nonatomic) BOOL sheetDismissible;
 #endif // !TARGET_OS_TV
 
 #ifdef RCT_NEW_ARCH_ENABLED

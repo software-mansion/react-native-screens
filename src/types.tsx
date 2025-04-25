@@ -333,6 +333,13 @@ export interface ScreenProps extends ViewProps {
    */
   sheetAllowedDetents?: number[] | 'fitToContents' | 'medium' | 'large' | 'all';
   /**
+   * Whether you can interactively dismiss a sheet.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Defaults to `true`.
+   */
+  sheetDismissible?: boolean;
+  /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *
    * Not dynamic - changing it after the component is rendered won't have an effect.

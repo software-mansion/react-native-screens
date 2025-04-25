@@ -103,6 +103,7 @@ export default function App() {
               sheetLargestUndimmedDetentIndex: 'none',
               sheetCornerRadius: 16,
               headerShown: false,
+              // sheetDismissible: false,
               // gestureEnabled: false,
               unstable_sheetFooter: FormSheetFooter,
             }} />
