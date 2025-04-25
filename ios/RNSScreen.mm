@@ -18,6 +18,7 @@
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
+#import "RNSSheetTranslationEvent.h"
 #else
 #import <React/RCTScrollView.h>
 #import <React/RCTTouchHandler.h>
@@ -731,9 +732,10 @@ RNS_IGNORE_SUPER_CALL_END
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onSheetTranslation(react::RNSScreenEventEmitter::OnSheetTranslation{.y = y});
   }
-  RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onSheetTranslation"
-                                                                   reactTag:[NSNumber numberWithInt:self.tag]
-                                                                          y:y];
+  RNSSheetTranslationEvent *event =
+      [[RNSSheetTranslationEvent alloc] initWithEventName:@"onSheetTranslation"
+                                                 reactTag:[NSNumber numberWithInt:self.tag]
+                                                        y:y];
   [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onSheetTranslation) {
