@@ -1,6 +1,6 @@
 import { NavigationContainer, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, View, useWindowDimensions, StyleSheet, TextInput } from 'react-native';
 import { ReanimatedScreenProvider, useReanimatedSheetTranslation } from 'react-native-screens/reanimated';
 import Animated, { useAnimatedReaction, SharedValue, WithSpringConfig, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -54,6 +54,7 @@ function FormSheetFooter() {
 }
 
 function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
+  const [currentDetentIndex, setCurrentDetentIndex] = useState(0)
   const dimentions = useWindowDimensions();
   const contextY = React.useContext(TranslationContext)
   const translation = useReanimatedSheetTranslation()
@@ -72,6 +73,20 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
     }
   }, []))
 
+  useEffect(() => {
+    navigation.setOptions({
+      sheetInitialDetentIndex: currentDetentIndex,
+    })
+  }, [currentDetentIndex])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('sheetDetentChange', (e) => {
+      setCurrentDetentIndex(e.data.index);
+    })
+
+    return unsubscribe
+  }, [])
+
   return (
     // When using `fitToContents` you can't use flex: 1. It is you who must provide
     // the content size - you can't rely on parent size here.
@@ -80,8 +95,8 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
         <TextInput style={styles.input} placeholder="Trigger keyboard..."/>
       </View>
       <View style={{ marginTop: 20 }}>
-        <Button title="Expand" onPress={() => navigation.setOptions({ sheetInitialDetentIndex: 2 })} />
-        <Button title="Collapse" onPress={() => navigation.setOptions({ sheetInitialDetentIndex: 0 })} />
+        <Button title="Expand" onPress={() => setCurrentDetentIndex(1)} />
+        <Button title="Collapse" onPress={() => setCurrentDetentIndex(0)} />
         <Button title="Dismiss" onPress={() => navigation.goBack()} />
       </View>
     </View>
@@ -99,7 +114,7 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="FormSheet" component={FormSheet} options={{
               presentation: 'formSheet',
-              sheetAllowedDetents: [0.4, 0.6, 1],
+              sheetAllowedDetents: [0.3, 0.6, 1],
               sheetLargestUndimmedDetentIndex: 'none',
               sheetCornerRadius: 16,
               headerShown: false,
