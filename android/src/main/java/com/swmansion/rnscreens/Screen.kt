@@ -26,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -82,7 +83,15 @@ class Screen(
     // TODO: Model this with custom data structure to guarantee that this invariant is not violated.
     var sheetDetents = mutableListOf(1.0)
     var sheetLargestUndimmedDetentIndex: Int = -1
+
+    private var shouldUpdateSheetState = false
     var sheetInitialDetentIndex: Int = 0
+        set(value) {
+            if (field != value) {
+                field = value
+                shouldUpdateSheetState = true
+            }
+        }
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
 
@@ -560,10 +569,27 @@ class Screen(
             shouldUpdateSheetCornerRadius = false
             onSheetCornerRadiusChange()
         }
+
+        if (shouldUpdateSheetState) {
+            shouldUpdateSheetState = false
+            onSheetStateChange()
+        }
+    }
+
+    private fun onSheetStateChange() {
+        if (!usesFormSheetPresentation()) {
+            return
+        }
+
+        sheetBehavior?.state =
+            SheetUtils.sheetStateFromDetentIndex(
+                sheetInitialDetentIndex,
+                sheetDetents.count(),
+            )
     }
 
     internal fun onSheetCornerRadiusChange() {
-        if (stackPresentation !== StackPresentation.FORM_SHEET || background == null) {
+        if (!usesFormSheetPresentation() || background == null) {
             return
         }
         (background as? MaterialShapeDrawable?)?.let {

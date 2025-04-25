@@ -80,8 +80,10 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   }, [currentDetentIndex])
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('sheetDetentChange', (e) => {
-      setCurrentDetentIndex(e.data.index);
+    const unsubscribe = navigation.addListener('sheetDetentChange', ({ data }) => {
+      if (data.stable) {
+        setCurrentDetentIndex(data.index);
+      }
     })
 
     return unsubscribe
