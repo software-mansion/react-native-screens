@@ -163,6 +163,15 @@ open class ScreenViewManager :
         view.isGestureEnabled = gestureEnabled
     }
 
+    @ReactProp(name = "sheetDismissible", defaultBoolean = true)
+    override fun setSheetDismissible(
+        view: Screen,
+        sheetDismissible: Boolean,
+    ) {
+        view.isSheetDismissible = sheetDismissible
+        view.sheetClosesOnTouchOutside = sheetDismissible
+    }
+
     @ReactProp(name = "replaceAnimation")
     override fun setReplaceAnimation(
         view: Screen,

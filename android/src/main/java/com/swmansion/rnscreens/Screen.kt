@@ -64,6 +64,7 @@ class Screen(
 
     // Props for controlling modal presentation
     var isSheetGrabberVisible: Boolean = false
+    var isSheetDismissible: Boolean = true
 
     // corner radius must be updated after all props prop updates from a single transaction
     // have been applied, because it depends on the presentation type.

@@ -2,9 +2,7 @@ package com.swmansion.rnscreens.bottomsheet
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.graphics.Insets
@@ -87,7 +85,6 @@ class SheetDelegate(
     }
 
     private fun onSheetSlide(bottomSheet: View) {
-        Log.d(TAG, "${(screen.parent as ViewGroup).top}")
         screen.onSheetTranslation(bottomSheet.top)
     }
 
@@ -121,7 +118,7 @@ class SheetDelegate(
         }
 
         behavior.apply {
-            isHideable = true
+            isHideable = screen.isSheetDismissible
             isDraggable = true
         }
 
