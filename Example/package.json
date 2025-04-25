@@ -28,6 +28,7 @@
     "nanoid": "^4.0.2",
     "react": "19.0.0",
     "react-native": "0.78.0-rc.5",
+    "react-native-edge-to-edge": "^1.6.0",
     "react-native-gesture-handler": "2.22.0",
     "react-native-reanimated": "3.17.1",
     "react-native-restart": "^0.0.27",

@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
@@ -12,7 +13,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.facebook.react.ReactRootView
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -30,8 +30,8 @@ open class ScreenContainer(
     private var isAttached = false
     private var needsUpdate = false
     private var isLayoutEnqueued = false
-    private val layoutCallback: ChoreographerCompat.FrameCallback =
-        object : ChoreographerCompat.FrameCallback() {
+    private val layoutCallback: Choreographer.FrameCallback =
+        object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
                 measure(

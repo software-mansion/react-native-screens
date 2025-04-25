@@ -39,7 +39,7 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
     return MapBufferBuilder::EMPTY();
   };
 #else // ANDROID
-#ifndef NDEBUG
+#if !defined(NDEBUG)
   void setImageLoader(std::weak_ptr<void> imageLoader);
   std::weak_ptr<void> getImageLoader() const noexcept;
 #endif // !NDEBUG
