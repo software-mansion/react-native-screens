@@ -249,13 +249,13 @@ class ScreenStackFragment :
         transit: Int,
         enter: Boolean,
         nextAnim: Int,
-    ): Animation? = getAnimationManager()?.getAnimationForFragment(this, enter)
+    ): Animation? = getAnimationManager()?.getAnimationForFragment(this, nextAnim)
 
     override fun onCreateAnimator(
         transit: Int,
         enter: Boolean,
         nextAnim: Int,
-    ): Animator? = getAnimationManager()?.getAnimatorForFragment(this, enter)
+    ): Animator? = getAnimationManager()?.getAnimatorForFragment(this, nextAnim, enter)
 
     private fun getAnimationManager(): ScreenStackAnimationManager? {
         // We can't always use screen.container because it is set to null when screen is removed.

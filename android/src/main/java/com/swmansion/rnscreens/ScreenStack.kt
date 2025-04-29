@@ -216,6 +216,13 @@ class ScreenStack(
         }
 
         createTransaction().let { transaction ->
+            if (stackAnimation != null) {
+                transaction.setCustomAnimations(
+                    animationManager.getAnimationResource(stackAnimation, shouldUseOpenAnimation, true),
+                    animationManager.getAnimationResource(stackAnimation, shouldUseOpenAnimation, false),
+                )
+            }
+
             // Remove all screens that are currently on stack, but should be dismissed, because they're
             // no longer rendered or were dismissed natively.
             stack
@@ -268,8 +275,6 @@ class ScreenStack(
             if (stackAnimation != null) {
                 animationManager.updatePropertyAnimationFragmentsFromStack(stack)
             }
-
-            animationManager.configure(stackAnimation, shouldUseOpenAnimation)
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()
