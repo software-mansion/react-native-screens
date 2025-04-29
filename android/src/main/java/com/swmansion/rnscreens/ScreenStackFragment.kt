@@ -28,7 +28,6 @@ import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -250,25 +249,20 @@ class ScreenStackFragment :
         transit: Int,
         enter: Boolean,
         nextAnim: Int,
-    ): Animation? {
-        // We can't use screen.container because it is set to null when screen is removed.
-        // We use coordinatorLayout instead.
-        return if (coordinatorLayout.parent is ScreenStack) {
-            (coordinatorLayout.parent as ScreenStack).animationManager.getAnimationForFragment(this, enter)
-        } else {
-            null
-        }
-    }
+    ): Animation? = getAnimationManager()?.getAnimationForFragment(this, enter)
 
     override fun onCreateAnimator(
         transit: Int,
         enter: Boolean,
         nextAnim: Int,
-    ): Animator? {
-        // We can't use screen.container because it is set to null when screen is removed.
-        // We use coordinatorLayout instead.
+    ): Animator? = getAnimationManager()?.getAnimatorForFragment(this, enter)
+
+    private fun getAnimationManager(): ScreenStackAnimationManager? {
+        // We can't always use screen.container because it is set to null when screen is removed.
         return if (coordinatorLayout.parent is ScreenStack) {
-            (coordinatorLayout.parent as ScreenStack).animationManager.getAnimatorForFragment(this, enter)
+            (coordinatorLayout.parent as ScreenStack).animationManager
+        } else if (screen.container is ScreenStack) {
+            screenStack.animationManager
         } else {
             null
         }
