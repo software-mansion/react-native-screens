@@ -1,10 +1,6 @@
 import { Image, ImageProps, View, ViewProps } from 'react-native';
 import React from 'react';
-import {
-  HeaderSubviewTypes,
-  ScreenStackHeaderConfigProps,
-  SearchBarProps,
-} from '../types';
+import { HeaderSubviewTypes, ScreenStackHeaderConfigProps } from '../types';
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,
@@ -14,26 +10,26 @@ export const ScreenStackHeaderBackButtonImage = (
   </View>
 );
 
-export const ScreenStackHeaderRightView = (
-  props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => <View {...props} />;
+export const ScreenStackHeaderRightView = (props: ViewProps): JSX.Element => (
+  <View {...props} />
+);
 
-export const ScreenStackHeaderLeftView = (
-  props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => <View {...props} />;
+export const ScreenStackHeaderLeftView = (props: ViewProps): JSX.Element => (
+  <View {...props} />
+);
 
-export const ScreenStackHeaderCenterView = (
-  props: React.PropsWithChildren<ViewProps>,
-): JSX.Element => <View {...props} />;
+export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => (
+  <View {...props} />
+);
 
 export const ScreenStackHeaderSearchBarView = (
-  props: React.PropsWithChildren<Omit<SearchBarProps, 'ref'>>,
+  props: ViewProps,
 ): JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderConfig = (
-  props: React.PropsWithChildren<ScreenStackHeaderConfigProps>,
+  props: ScreenStackHeaderConfigProps,
 ): JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderSubview: React.ComponentType<
-  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
+  ViewProps & { type?: HeaderSubviewTypes }
 > = View;

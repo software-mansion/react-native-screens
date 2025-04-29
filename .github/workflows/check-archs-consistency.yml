@@ -23,10 +23,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: Use Node.js 18
+      - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
           cache: 'yarn'
       - name: Install node dependencies
         run: yarn

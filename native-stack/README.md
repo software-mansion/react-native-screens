@@ -82,7 +82,7 @@ Boolean indicating whether to show the menu on longPress of iOS >= 14 back butto
 
 #### `backButtonDisplayMode` (iOS only)
 
-Enum value indicating display mode of back button. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu`, `backTitle` and `backTitleVisible=false` is set. The `backTitleVisible` forces `backButtonDisplayMode: minimal` and omits other values. Read more [#2800](https://github.com/software-mansion/react-native-screens/pull/2800). The other props, under the hood, customize `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123).
+Enum value indicating display mode of back button. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` and `backTitleVisible=false` is set. The `backTitleVisible` forces `backButtonDisplayMode: minimal` and omits other values. Read more [#2800](https://github.com/software-mansion/react-native-screens/pull/2800). The other props, under the hood, customize `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123).
 
 Possible options:
 
@@ -349,7 +349,7 @@ How the screen should be presented. Possible values:
 - `containedModal` – will use "UIModalPresentationCurrentContext" modal style on iOS and will fallback to `"modal"` on Android.
 - `containedTransparentModal` – will use "UIModalPresentationOverCurrentContext" modal style on iOS and will fallback to `"transparentModal"` on Android.
 - `fullScreenModal` – will use "UIModalPresentationFullScreen" modal style on iOS and will fallback to `"modal"` on Android.
-- `formSheet` – will use "UIModalPresentationFormSheet" modal style on iOS and will fallback to `"modal"` on Android.
+- `formSheet` – will use "UIModalPresentationFormSheet" modal style on iOS and "BottomSheetBehavior" on Android.
 - `pageSheet` – will use "UIModalPresentationPageSheet" modal style on iOS and will fallback to `"modal"` on Android.
 
 Defaults to `push`.

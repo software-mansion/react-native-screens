@@ -10,6 +10,7 @@ class ScreenStackHeaderConfigViewManager
           winrt::Microsoft::ReactNative::IViewManager,
           winrt::Microsoft::ReactNative::IViewManagerRequiresNativeLayout,
           winrt::Microsoft::ReactNative::IViewManagerWithReactContext,
+          winrt::Microsoft::ReactNative::IViewManagerWithChildren,
           winrt::Microsoft::ReactNative::IViewManagerWithNativeProperties,
           winrt::Microsoft::ReactNative::
               IViewManagerWithExportedEventTypeConstants,
@@ -23,6 +24,20 @@ class ScreenStackHeaderConfigViewManager
 
   // IViewManagerRequiresNativeLayout
   bool RequiresNativeLayout();
+
+  // IViewManagerWithChildren
+  void AddView(
+      winrt::Windows::UI::Xaml::FrameworkElement parent,
+      winrt::Windows::UI::Xaml::UIElement child,
+      int64_t index);
+  void RemoveAllChildren(winrt::Windows::UI::Xaml::FrameworkElement parent);
+  void RemoveChildAt(
+      winrt::Windows::UI::Xaml::FrameworkElement parent,
+      int64_t index);
+  void ReplaceChild(
+      winrt::Windows::UI::Xaml::FrameworkElement parent,
+      winrt::Windows::UI::Xaml::UIElement oldChild,
+      winrt::Windows::UI::Xaml::UIElement newChild);
 
   // IViewManagerWithReactContext
   winrt::Microsoft::ReactNative::IReactContext ReactContext() noexcept;

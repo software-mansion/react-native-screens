@@ -28,6 +28,7 @@
     "nanoid": "^4.0.2",
     "react": "19.0.0",
     "react-native": "0.78.0-rc.5",
+    "react-native-edge-to-edge": "^1.6.0",
     "react-native-gesture-handler": "2.22.0",
     "react-native-reanimated": "3.17.1",
     "react-native-restart": "^0.0.27",
@@ -40,7 +41,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
-    "@babel/runtime": "^7.25.0",
+    "@babel/runtime": "^7.26.10",
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-android": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
