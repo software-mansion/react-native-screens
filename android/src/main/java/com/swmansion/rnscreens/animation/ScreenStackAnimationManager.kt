@@ -15,18 +15,18 @@ import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 
 class ScreenStackAnimationManager {
-    private var stackAnimation: Screen.StackAnimation = Screen.StackAnimation.NONE
+    private var stackAnimation: Screen.StackAnimation? = null
     private var shouldUseOpenAnimation: Boolean = true
     private val propertyAnimationFragments: MutableSet<ScreenStackFragment> = mutableSetOf()
 
     fun reset() {
-        stackAnimation = Screen.StackAnimation.NONE
+        stackAnimation = null
         shouldUseOpenAnimation = true
         propertyAnimationFragments.clear()
     }
 
     fun configure(
-        stackAnimation: Screen.StackAnimation,
+        stackAnimation: Screen.StackAnimation?,
         shouldUseOpenAnimation: Boolean,
     ) {
         this.stackAnimation = stackAnimation
@@ -70,7 +70,7 @@ class ScreenStackAnimationManager {
 
         return AnimationUtils.loadAnimation(
             fragment.context,
-            getAnimationResource(enter),
+            getAnimationResource(enter) ?: return null,
         )
     }
 
@@ -82,7 +82,7 @@ class ScreenStackAnimationManager {
             return null
         }
 
-        val animator = getAnimator(fragment, enter)
+        val animator = getAnimator(fragment, enter) ?: return null
 
         animator.addListener(
             ScreenAnimationDelegate(
@@ -99,7 +99,7 @@ class ScreenStackAnimationManager {
         return animator
     }
 
-    private fun getAnimationResource(enter: Boolean): Int {
+    private fun getAnimationResource(enter: Boolean): Int? {
         return if (shouldUseOpenAnimation) {
             when (stackAnimation) {
                 Screen.StackAnimation.DEFAULT ->
@@ -130,6 +130,8 @@ class ScreenStackAnimationManager {
                 Screen.StackAnimation.IOS_FROM_LEFT ->
                     if (enter) R.anim.rns_ios_from_left_foreground_open
                     else R.anim.rns_ios_from_left_background_open
+
+                else -> null
             }
         } else {
             when (stackAnimation) {
@@ -161,6 +163,8 @@ class ScreenStackAnimationManager {
                 Screen.StackAnimation.IOS_FROM_LEFT ->
                     if (enter) R.anim.rns_ios_from_left_background_close
                     else R.anim.rns_ios_from_left_foreground_close
+
+                else -> null
             }
         }
     }
@@ -168,9 +172,9 @@ class ScreenStackAnimationManager {
     private fun getAnimator(
         fragment: ScreenStackFragment,
         enter: Boolean,
-    ): Animator {
+    ): Animator? {
         if (!fragment.screen.usesFormSheetPresentation()) {
-            val animationResource = getAnimationResource(enter)
+            val animationResource = getAnimationResource(enter) ?: return null
             return CustomAnimatorProvider.getAnimatorFromAnimationResource(
                 animationResource, fragment.context, fragment.screen
             )

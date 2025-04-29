@@ -255,7 +255,9 @@ class ScreenStack(
 
             // We need to update animationManager before changing stack to include
             // screens that are disappearing in this transaction
-            animationManager.updatePropertyAnimationFragmentsFromStack(stack)
+            if (stackAnimation != null) {
+                animationManager.updatePropertyAnimationFragmentsFromStack(stack)
+            }
 
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
@@ -263,11 +265,11 @@ class ScreenStack(
 
             // We need to update animationManager after changing stack to include
             // screens that are appearing in this transaction
-            animationManager.updatePropertyAnimationFragmentsFromStack(stack)
-
             if (stackAnimation != null) {
-                animationManager.configure(stackAnimation, shouldUseOpenAnimation)
+                animationManager.updatePropertyAnimationFragmentsFromStack(stack)
             }
+
+            animationManager.configure(stackAnimation, shouldUseOpenAnimation)
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()
