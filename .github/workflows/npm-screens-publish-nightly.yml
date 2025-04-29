@@ -62,4 +62,4 @@ jobs:
       - name: Publish npm package
         run: npm publish $PACKAGE_NAME --tag nightly --provenance
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
