@@ -134,16 +134,21 @@ class Screen(
 
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents()) {
-                sheetBehavior?.useSingleDetent(height)
+                sheetBehavior?.useSingleDetent(height, screen = this)
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 // On old architecture we delay enter transition in order to wait for initial frame.
                 shouldTriggerPostponedTransitionAfterLayout = true
+            }
+
+            println("onContentWrapperLayout $height, ${sheetBehavior?.maxHeight}, ${sheetBehavior?.peekHeight}")
+            if (height > (sheetBehavior?.peekHeight ?: Int.MAX_VALUE)) {
                 val parent = parentAsViewGroup()
                 if (parent != null && !parent.isInLayout) {
                     // There are reported cases (irreproducible) when Screen is not laid out after
                     // maxHeight is set on behaviour.
+                    println("request")
                     parent.requestLayout()
                 }
             }
@@ -200,6 +205,11 @@ class Screen(
             // glitchy. *This seems to not be needed on Fabric*.
             triggerPostponedEnterTransitionIfNeeded()
         }
+        println("onBottomSheetBehaviorDidLayout $height, ${sheetBehavior?.maxHeight}, ${sheetBehavior?.peekHeight}")
+        if (sheetBehavior!!.peekHeight < sheetBehavior!!.maxHeight) {
+            sheetBehavior?.setPeekHeight(height, true)
+        }
+        sheetBehavior?.isDraggable = true
     }
 
     private fun triggerPostponedEnterTransitionIfNeeded() {

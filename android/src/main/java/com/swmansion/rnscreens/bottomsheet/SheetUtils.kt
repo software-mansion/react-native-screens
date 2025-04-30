@@ -85,7 +85,7 @@ object SheetUtils {
             1 ->
                 when (state) {
                     STATE_HIDDEN -> -1
-                    STATE_EXPANDED -> 0
+                    STATE_COLLAPSED, STATE_EXPANDED -> 0
                     else -> throw IllegalArgumentException("[RNScreens] Invalid state $state for detentCount $detentCount")
                 }
 
