@@ -197,6 +197,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           I18nManager.forceRTL(!I18nManager.isRTL);
           RNRestart.Restart();
         }}
+        testID="root-screen-switch-rtl"
       />
       <SettingsSwitch
         style={styles.switch}
