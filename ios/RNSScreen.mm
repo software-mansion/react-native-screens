@@ -444,7 +444,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   // We want to update and animate allowedDetents for FormSheet only if there was a change
   // in frame's height but sometimes we receive a frame with the same dimensions mutliple times.
-  // In order to prevent visual glitches, we comapre new value to the old one and update
+  // In order to prevent visual glitches, we compare new value to the old one and update
   // only if there was a change in height.
   if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _sheetContentHeight == reactFrame.size.height) {
     return;
