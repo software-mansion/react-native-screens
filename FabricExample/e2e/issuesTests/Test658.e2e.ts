@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 
-const checkScreenVisibility = async function (visible: boolean[]) {
+async function checkScreenVisibility(visible: boolean[]) {
   for (const [index, shouldBeVisible] of visible.entries()) {
     const assertionElement = expect(
       element(
@@ -14,7 +14,7 @@ const checkScreenVisibility = async function (visible: boolean[]) {
       await assertionElement.not.toBeVisible();
     }
   }
-};
+}
 
 describe('Test658', () => {
   beforeAll(async () => {
