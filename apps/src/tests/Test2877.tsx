@@ -33,18 +33,24 @@ function Home({ navigation }: StackNavigationProp) {
 
 function FormSheet({ navigation }: StackNavigationProp) {
   const [extended, setExtended] = useState(false);
+  const [intervalEnabled, setIntervalEnabled] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    if (!intervalEnabled) {
+      return;
+    }
+
+    const intervalHandle = setInterval(() => {
       setExtended(!extended);
     }, 1000);
 
-    return () => clearInterval(interval);
-  });
+    return () => clearInterval(intervalHandle);
+  }, [extended, intervalEnabled]);
 
   return (
     <View>
       <Button title="Go back" onPress={() => navigation.goBack()} />
+      <Button title="Toggle automatic toggling" onPress={() => setIntervalEnabled(old => !old)} />
       <View
         style={{
           height: 200,
