@@ -166,8 +166,6 @@ RNS_IGNORE_SUPER_CALL_END
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
     _state->updateState(std::move(newState));
 
-    NSLog(@"ScreenView [%ld] state update send, size: %@", self.tag, NSStringFromCGSize(self.bounds.size));
-
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
@@ -448,18 +446,7 @@ RNS_IGNORE_SUPER_CALL_END
   // in frame's height but sometimes we receive a frame with the same dimensions mutliple times.
   // In order to prevent visual glitches, we comapre new value to the old one and update
   // only if there was a change in height.
-  NSLog(
-      @"ScreenView [%ld] contentWrapper:[%ld] receivedReactFrame:%@",
-      self.tag,
-      contentWrapper.tag,
-      NSStringFromCGRect(reactFrame));
   if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _sheetContentHeight == reactFrame.size.height) {
-    NSLog(
-        @"ScreenView [%ld] contentWrapper:[%ld] receivedReactFrame:%@ sheetFrameHeight:%.2f - EARLY RETURN",
-        self.tag,
-        contentWrapper.tag,
-        NSStringFromCGRect(reactFrame),
-        _sheetContentHeight);
     return;
   }
 
@@ -1325,10 +1312,6 @@ RNS_IGNORE_SUPER_CALL_END
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
-    NSLog(
-        @"ScreenView [%ld] updateLayoutMetrics:%@",
-        self.tag,
-        NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)));
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
   // when screen is mounted under RNSNavigationController it's size is controller
