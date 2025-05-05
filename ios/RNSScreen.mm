@@ -62,7 +62,9 @@ struct ContentWrapperBox {
 
 @implementation RNSScreenView {
   __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
-  BOOL _didSetSheetAllowedDetentsOnController;
+
+  /// Up-to-date only when sheet is in `fitToContents` mode.
+  CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
@@ -126,7 +128,7 @@ struct ContentWrapperBox {
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
-  _didSetSheetAllowedDetentsOnController = NO;
+  _sheetContentHeight = 0.0;
 #ifdef RCT_NEW_ARCH_ENABLED
   _markedForUnmountInCurrentTransaction = NO;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -137,14 +139,14 @@ struct ContentWrapperBox {
   return _controller;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 RNS_IGNORE_SUPER_CALL_BEGIN
+#ifdef RCT_NEW_ARCH_ENABLED
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
 }
-RNS_IGNORE_SUPER_CALL_END
 #endif
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateBounds
 {
@@ -440,11 +442,13 @@ RNS_IGNORE_SUPER_CALL_END
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
 - (void)contentWrapper:(RNSScreenContentWrapper *)contentWrapper receivedReactFrame:(CGRect)reactFrame
 {
-  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _didSetSheetAllowedDetentsOnController == YES) {
+  // We want to update and animate allowedDetents for FormSheet only if there was a change
+  // in frame's height but sometimes we receive a frame with the same dimensions mutliple times.
+  // In order to prevent visual glitches, we compare new value to the old one and update
+  // only if there was a change in height.
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _sheetContentHeight == reactFrame.size.height) {
     return;
   }
-
-  _didSetSheetAllowedDetentsOnController = YES;
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
@@ -456,6 +460,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
 
     if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == SHEET_FIT_TO_CONTENTS) {
+      _sheetContentHeight = reactFrame.size.height;
       auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height +
                                                               _contentWrapperBox.contentHeightErrata] ]];
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
