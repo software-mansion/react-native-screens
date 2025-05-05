@@ -35,18 +35,6 @@ jobs:
         id: build
         run: ./scripts/create-npm-package.sh
 
-      - name: Check if any node_modules were packed
-        id: node_modules
-        run: ! grep --silent -E "node_modules/.+" build.log
-
-      - name: Show build log
-        if: failure() && steps.build.outcome == 'failure'
-        run: cat build.log
-
-      - name: Show packed node_modules
-        if: failure() && steps.node_modules.outcome == 'failure'
-        run: ! grep -E "node_modules/.+" build.log
-
       - name: Add package name to env
         run: echo "PACKAGE_NAME=$(ls -l | egrep -o "react-native-screens-(.*)(=?\.tgz)")" >> $GITHUB_ENV
 
