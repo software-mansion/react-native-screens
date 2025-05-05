@@ -17,8 +17,8 @@ export { default as Test624 } from './Test624';     // [E2E skipped]: PR changed
 export { default as Test640 } from './Test640';     // [E2E created]
 export { default as Test642 } from './Test642';     // [E2E skipped]: can't check status bar visibility/style
 export { default as Test645 } from './Test645';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
-export { default as Test648 } from './Test648';
-export { default as Test649 } from './Test649';
+export { default as Test648 } from './Test648';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test649 } from './Test649';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
 export { default as Test654 } from './Test654';
 export { default as Test658 } from './Test658';
 export { default as Test662 } from './Test662';
