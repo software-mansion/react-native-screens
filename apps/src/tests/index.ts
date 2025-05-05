@@ -17,10 +17,10 @@ export { default as Test624 } from './Test624';     // [E2E skipped]: PR changed
 export { default as Test640 } from './Test640';     // [E2E created]
 export { default as Test642 } from './Test642';     // [E2E skipped]: can't check status bar visibility/style
 export { default as Test645 } from './Test645';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
-export { default as Test648 } from './Test648';
-export { default as Test649 } from './Test649';
-export { default as Test654 } from './Test654';
-export { default as Test658 } from './Test658';
+export { default as Test648 } from './Test648';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test649 } from './Test649';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
+export { default as Test654 } from './Test654';     // [E2E created](iOS): issue related to iOS native back button
+export { default as Test658 } from './Test658';     // [E2E created]
 export { default as Test662 } from './Test662';
 export { default as Test691 } from './Test691';
 export { default as Test702 } from './Test702';
@@ -131,6 +131,7 @@ export { default as Test2809 } from './Test2809';
 export { default as Test2811 } from './Test2811';
 export { default as Test2819 } from './Test2819';
 export { default as Test2855 } from './Test2855';
+export { default as Test2877 } from './Test2877'; // [E2E created](iOS): issue is related to formSheet on iOS
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';
