@@ -62,7 +62,9 @@ struct ContentWrapperBox {
 
 @implementation RNSScreenView {
   __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
-  CGFloat _sheetFrameHeight;
+
+  /// Up-to-date only when sheet is in `fitToContents` mode.
+  CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
@@ -126,7 +128,7 @@ struct ContentWrapperBox {
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
-  _sheetFrameHeight = 0.0;
+  _sheetContentHeight = 0.0;
 #ifdef RCT_NEW_ARCH_ENABLED
   _markedForUnmountInCurrentTransaction = NO;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -163,6 +165,8 @@ RNS_IGNORE_SUPER_CALL_END
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
     _state->updateState(std::move(newState));
+
+    NSLog(@"ScreenView [%ld] state update send, size: %@", self.tag, NSStringFromCGSize(self.bounds.size));
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
@@ -444,7 +448,18 @@ RNS_IGNORE_SUPER_CALL_END
   // in frame's height but sometimes we receive a frame with the same dimensions mutliple times.
   // In order to prevent visual glitches, we comapre new value to the old one and update
   // only if there was a change in height.
-  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _sheetFrameHeight == reactFrame.size.height) {
+  NSLog(
+      @"ScreenView [%ld] contentWrapper:[%ld] receivedReactFrame:%@",
+      self.tag,
+      contentWrapper.tag,
+      NSStringFromCGRect(reactFrame));
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _sheetContentHeight == reactFrame.size.height) {
+    NSLog(
+        @"ScreenView [%ld] contentWrapper:[%ld] receivedReactFrame:%@ sheetFrameHeight:%.2f - EARLY RETURN",
+        self.tag,
+        contentWrapper.tag,
+        NSStringFromCGRect(reactFrame),
+        _sheetContentHeight);
     return;
   }
 
@@ -458,7 +473,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
 
     if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == SHEET_FIT_TO_CONTENTS) {
-      _sheetFrameHeight = reactFrame.size.height;
+      _sheetContentHeight = reactFrame.size.height;
       auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height +
                                                               _contentWrapperBox.contentHeightErrata] ]];
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
@@ -1310,6 +1325,10 @@ RNS_IGNORE_SUPER_CALL_END
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
+    NSLog(
+        @"ScreenView [%ld] updateLayoutMetrics:%@",
+        self.tag,
+        NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)));
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
   // when screen is mounted under RNSNavigationController it's size is controller
