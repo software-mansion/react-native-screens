@@ -8,11 +8,10 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
+      <Stack.Navigator>
+        <Stack.Screen name="First" component={First} options={{
           headerLargeTitle: true,
-        }}>
-        <Stack.Screen name="First" component={First} />
+        }}/>
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>
     </NavigationContainer>
@@ -21,10 +20,11 @@ export default function App() {
 
 function First({ navigation }) {
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ marginTop: 160, height: 1500 }}>
       <Button
         title="Tap me for second screen"
         onPress={() => navigation.navigate('Second')}
+        testID="first-button-go-to-second"
       />
     </ScrollView>
   );
@@ -36,6 +36,7 @@ function Second({ navigation }) {
       <Button
         title="Tap me for first screen"
         onPress={() => navigation.popTo('First')}
+        testID="second-button-go-to-first"
       />
     </ScrollView>
   );

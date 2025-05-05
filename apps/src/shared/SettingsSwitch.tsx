@@ -7,6 +7,7 @@ type Props = {
   value: boolean;
   onValueChange: (value: boolean) => void;
   style?: ViewStyle;
+  testID?: string;
 };
 
 export const SettingsSwitch = ({
@@ -14,9 +15,10 @@ export const SettingsSwitch = ({
   value,
   onValueChange,
   style = {},
+  testID,
 }: Props): React.JSX.Element => {
   return (
-    <TouchableOpacity onPress={() => onValueChange(!value)}>
+    <TouchableOpacity onPress={() => onValueChange(!value)} testID={testID}>
       <ThemedView style={[styles.container, style]}>
         <ThemedText style={styles.label}>{`${label}: ${value}`}</ThemedText>
       </ThemedView>

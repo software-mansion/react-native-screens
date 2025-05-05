@@ -91,6 +91,7 @@
     "@types/jest": "^29.5.13",
     "@types/react": "^19.0.0",
     "@types/react-test-renderer": "^19.0.0",
+    "@types/shelljs": "^0",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
     "clang-format": "^1.8.0",
@@ -116,6 +117,7 @@
     "react-native-windows": "^0.64.8",
     "react-test-renderer": "^19.0.0",
     "release-it": "^15.6.0",
+    "shelljs": "^0.9.2",
     "typescript": "5.4.3"
   },
   "resolutions": {
