@@ -137,14 +137,14 @@ struct ContentWrapperBox {
   return _controller;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
 RNS_IGNORE_SUPER_CALL_BEGIN
+#ifdef RCT_NEW_ARCH_ENABLED
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
 }
-RNS_IGNORE_SUPER_CALL_END
 #endif
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateBounds
 {
