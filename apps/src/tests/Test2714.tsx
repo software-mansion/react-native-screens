@@ -1,35 +1,8 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
-
-const styles = StyleSheet.create({
-  button: {
-    width: 42,
-    height: 42,
-    marginHorizontal: 5,
-    padding: 5,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'blue',
-  },
-  largeButton: {
-    width: 64,
-    height: 42,
-    marginHorizontal: 5,
-    padding: 5,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'blue',
-  },
-  buttonsView: {
-    flexDirection: 'row',
-    borderWidth: 1,
-  },
-});
 
 const Stack = createNativeStackNavigator();
 
@@ -105,13 +78,82 @@ const HomeScreen = ({ navigation }: any) => {
   );
 };
 
-function App() {
+function SimpleHome() {
+  const navigation = useNavigation();
+  const [isExpanded, setExpanded] = React.useState(false);
+
+  const headerRight = React.useCallback(() => {
+    return (
+      <PressableWithFeedback>
+        <View style={[{ width: 128, height: 42 }, isExpanded ? { width: 192 } : null]} />
+      </PressableWithFeedback>
+    );
+  }, [isExpanded]);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight,
+    });
+  }, [headerRight, navigation]);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
+      <Button title="Toggle subview size" onPress={() => setExpanded(val => !val)} />
+    </View>
+  );
+}
+
+function SimpleStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={SimpleHome} />
+    </Stack.Navigator>
+  );
+}
+
+// function App() {
+//   return (
+//     <NavigationContainer>
+//       <RootStack />
+//     </NavigationContainer>
+//   );
+// }
+
+function AppSimplified() {
   return (
     <NavigationContainer>
-      <RootStack />
+      <SimpleStack />
     </NavigationContainer>
   );
 }
 
-export default App;
+// export default App;
+export default AppSimplified;
 
+
+const styles = StyleSheet.create({
+  button: {
+    width: 42,
+    height: 42,
+    marginHorizontal: 5,
+    padding: 5,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'blue',
+  },
+  largeButton: {
+    width: 64,
+    height: 42,
+    marginHorizontal: 5,
+    padding: 5,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'blue',
+  },
+  buttonsView: {
+    flexDirection: 'row',
+    borderWidth: 1,
+  },
+});
