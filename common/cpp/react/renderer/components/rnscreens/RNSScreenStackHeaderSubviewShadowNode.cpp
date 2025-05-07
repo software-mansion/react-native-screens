@@ -29,6 +29,7 @@ void RNSScreenStackHeaderSubviewShadowNode::applyFrameCorrections() {
   layoutMetrics_.frame.origin.x = stateData.contentOffset.x;
   layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
 
+#if !defined(ANDROID)
   // Only a single child is expected
   react_native_assert(yogaNode_.getChildCount() == 1);
 
@@ -38,6 +39,7 @@ void RNSScreenStackHeaderSubviewShadowNode::applyFrameCorrections() {
 
   // We want to have exactly the same size as our child.
   layoutMetrics_.frame.size = childLayoutMetrics.frame.size;
+#endif
 }
 
 } // namespace facebook::react
