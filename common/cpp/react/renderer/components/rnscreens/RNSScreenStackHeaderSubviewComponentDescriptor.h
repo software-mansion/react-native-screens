@@ -20,6 +20,7 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
+#ifdef ANDROID
     react_native_assert(
         dynamic_cast<RNSScreenStackHeaderSubviewShadowNode *>(&shadowNode));
     auto &subviewShadowNode =
@@ -35,9 +36,10 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
         shadowNode.getState());
     auto stateData = state->getData();
 
-    //    if (!isSizeEmpty(stateData.frameSize)) {
-    //      layoutableShadowNode.setSize(stateData.frameSize);
-    //    }
+    if (!isSizeEmpty(stateData.frameSize)) {
+      layoutableShadowNode.setSize(stateData.frameSize);
+    }
+#endif
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
