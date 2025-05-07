@@ -55,10 +55,7 @@ namespace react = facebook::react;
     return;
   }
 
-  RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
-  UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
-
-  UIView *toLayoutView = navctr.navigationBar;
+  UIView *toLayoutView = [self findNavigationBar];
 
   // TODO: It is possible, that this needs to be called only on old architecture.
   // Make sure that Test432 keeps working.
