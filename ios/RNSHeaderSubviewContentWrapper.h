@@ -19,16 +19,19 @@ NS_ASSUME_NONNULL_BEGIN
  * Called by the content wrapper on a delegate when React Native updates the layout.
  */
 - (void)headerSubviewContentWrapper:(RNSHeaderSubviewContentWrapper *)contentWrapper
-                 receivedReactFrame:(CGRect)reactFrame
-                          didChange:(BOOL)frameChanged;
+                  receivedReactSize:(CGSize)reactSize;
 
 @end
 
 /**
  * Component view with layout managed by react-native. Notifies it's delegate on react-native driven layout changes.
  * Does not send notifications when frame is set by native layout.
+ *
+ * Note: this view assumes it is placed exactly at origin=(0, 0) relative to its parent in view hierarchy. It overrides
+ * the frame received from React enforcing this "partial invariant". "Partial" - because in case it is laid natively it
+ * just accepts given frame as is.
  */
-@interface RNSHeaderSubviewContentWrapper : RCTViewComponentView
+@interface RNSHeaderSubviewContentWrapper : UIView <RCTComponentViewProtocol>
 
 /**
  * Register delegate here, to get notifications when layout of this component changes.

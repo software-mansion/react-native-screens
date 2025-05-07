@@ -16,14 +16,9 @@ namespace react = facebook::react;
   CGRect _lastReactFrame;
 }
 
-- (void)notifyDelegateWithFrame:(CGRect)reactFrame
+- (void)notifyDelegateWithReactFrame:(CGRect)reactFrame actualFrame:(CGRect)actualFrame
 {
-  BOOL didChange = NO;
-  if (!CGRectEqualToRect(_lastReactFrame, reactFrame)) {
-    _lastReactFrame = reactFrame;
-    didChange = YES;
-  }
-  [self.delegate headerSubviewContentWrapper:self receivedReactFrame:reactFrame didChange:didChange];
+  [self.delegate headerSubviewContentWrapper:self receivedReactSize:reactFrame.size];
 }
 
 #pragma mark - Fabric specific
@@ -44,14 +39,21 @@ namespace react = facebook::react;
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {
+  // No transform / hidden support
+
   NSLog(
-      @"HSContentWrapper [%ld] updateLayoutMetrics %@",
+      @"HSContentWrapper [%ld] updateLayoutMetrics:%@",
       self.tag,
       NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)));
-  [self notifyDelegateWithFrame:RCTCGRectFromRect(layoutMetrics.frame)];
 
-  NSLog(@"HSContentWrapper [%ld] super call", self.tag);
-  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+  CGRect reactFrame = RCTCGRectFromRect(layoutMetrics.frame);
+  CGRect adjustedFrame = CGRect{CGPointZero, reactFrame.size};
+
+  if (!CGSizeEqualToSize(self.bounds.size, adjustedFrame.size)) {
+    self.center = CGPointMake(CGRectGetMidX(adjustedFrame), CGRectGetMidY(adjustedFrame));
+    self.bounds = adjustedFrame;
+    [self notifyDelegateWithReactFrame:RCTCGRectFromRect(layoutMetrics.frame) actualFrame:adjustedFrame];
+  }
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

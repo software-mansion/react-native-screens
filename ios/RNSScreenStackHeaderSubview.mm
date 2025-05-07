@@ -28,7 +28,13 @@ namespace react = facebook::react;
 @implementation RNSScreenStackHeaderSubview {
 #ifdef RCT_NEW_ARCH_ENABLED
   react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
+
+  /// Last frame sent from this component view to the shadow node. This might have non-zero origin. CGRectZero
+  /// initially.
   CGRect _lastScheduledFrame;
+
+  /// Last size reported by the content wrapper. CGSizeZero initially.
+  CGSize _reactContentSize;
 #endif
 }
 
@@ -62,32 +68,82 @@ namespace react = facebook::react;
     return;
   }
 
+#if !defined(RCT_NEW_ARCH_ENABLED)
   UIView *toLayoutView = [self findNavigationBar];
 
   // TODO: It is possible, that this needs to be called only on old architecture.
   // Make sure that Test432 keeps working.
   [toLayoutView setNeedsLayout];
-  //  [self setNeedsLayout];
 
   // TODO: Determine why this must be called & deferring layout to next "update cycle"
   // is not sufficient. See Test2552 and Test432. (Talking Paper here).
   [toLayoutView layoutIfNeeded];
+#endif
+}
+
+//- (CGSize)intrinsicContentSize
+//{
+//  // If there is no content wrapper yet, e.g. it is mounted in useEffect or delayed for some other reason, we want
+//  // to provide non undefined size to prevent system from zeroing the frame.
+//  if (CGSizeEqualToSize(CGSizeZero, _reactContentSize)) {
+//    NSLog(@"Subview [%ld] intrinsicContentSize:%@", self.tag, NSStringFromCGSize(self.bounds.size));
+//    return self.bounds.size;
+//  } else {
+//    NSLog(@"Subview [%ld] intrinsicContentSize:%@", self.tag, NSStringFromCGSize(_reactContentSize));
+//    return _reactContentSize;
+//  }
+//}
+
+- (void)layoutSubviews
+{
+  NSLog(@"Subview [%ld] layoutSubviews", self.tag);
+  // TODO: DO I NEED THIS!?
+  [super layoutSubviews];
+  [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
+}
+
+- (void)setFrame:(CGRect)frame
+{
+  // This is mostly called by UIKit
+  NSLog(@"Subview [%ld] setFrame:%@ oldFrame:%@", self.tag, NSStringFromCGRect(frame), NSStringFromCGRect(self.frame));
+  [super setFrame:frame];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+  // This is most likely called by `updateLayoutMetrics:oldLayoutMetrics:`
+  NSLog(
+      @"Subview [%ld] setBounds:%@ oldBounds:%@",
+      self.tag,
+      NSStringFromCGRect(bounds),
+      NSStringFromCGRect(self.bounds));
+  [super setBounds:bounds];
+}
+
+- (void)setCenter:(CGPoint)center
+{
+  NSLog(
+      @"Subview [%ld] setCenter:%@ oldCenter:%@",
+      self.tag,
+      NSStringFromCGPoint(center),
+      NSStringFromCGPoint(self.center));
+  [super setCenter:center];
 }
 
 #pragma mark - RNSHeaderSubviewContentWrapperDelegate
 
 - (void)headerSubviewContentWrapper:(RNSHeaderSubviewContentWrapper *)contentWrapper
-                 receivedReactFrame:(CGRect)reactFrame
-                          didChange:(BOOL)frameChanged
+                  receivedReactSize:(CGSize)reactSize;
 {
-  if (!frameChanged) {
-    return;
-  }
-
   // This is a signal for us, that the size of our content has changed.
   // We need to react to that
-  reactFrame.origin = CGPointMake(0.f, 0.f);
-  [self setBounds:reactFrame];
+
+#ifdef RCT_NEW_ARCH_ENABLED
+  if (!CGSizeEqualToSize(_reactContentSize, reactSize)) {
+    _reactContentSize = reactSize;
+    //    [self invalidateIntrinsicContentSize];
+  }
+#endif
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -106,16 +162,14 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderSubviewProps>();
     _props = defaultProps;
     _lastScheduledFrame = CGRectZero;
+    _reactContentSize = CGSizeZero;
+    // #ifdef RCT_NEW_ARCH_ENABLED
+    //     self.translatesAutoresizingMaskIntoConstraints = YES;
+    // #endif
   }
 
   return self;
 }
-
-//- (void)handleContentBoundsChange
-//{
-//  [self setBounds:<#(CGRect)#>]
-//  [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
-//}
 
 #pragma mark - RCTComponentViewProtocol
 
@@ -137,14 +191,20 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderSubviewComponentDescriptor>();
 }
 
+// System positions the subviews, however their size is determined depending on content by Yoga.
+// It is enforced in shadow node of this component that the frame we receive here is the same as frame
+// of direct child - content wrapper.
+//
+// Implementation of this method assumes that this view is mounted at origin=(0, 0) of parent system view.
+// Currently it is `_UIButtonBarStackView` or `_UIATCMIAdaptorView`, depending on whether auto resizing is enabled or
+// not.
 RNS_IGNORE_SUPER_CALL_BEGIN
-
-// System layouts the subviews.
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
-  NSLog(@"Subview [%ld] updateLayoutMetrics %@", self.tag, NSStringFromCGRect(CGRect{CGPointZero, frame.size}));
+  NSLog(@"Subview [%ld] updateLayoutMetrics:%@", self.tag, NSStringFromCGRect(frame));
+
   // CALayer will crash if we pass NaN or Inf values.
   // It's unclear how to detect this case on cross-platform manner holistically, so we have to do it on the mounting
   // layer as well. NaN/Inf is a kinda valid result of some math operations. Even if we can (and should) detect (and
@@ -156,41 +216,19 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         NSStringFromCGRect(frame),
         self);
   } else {
-    const CGRect newBounds = CGRect{CGPointZero, frame.size};
+    if (!CGSizeEqualToSize(frame.size, self.bounds.size)) {
+      NSLog(@"Subview [%ld] invalidateIntrinsicContentSize:%@", self.tag, NSStringFromCGSize(frame.size));
+      CGRect newBounds = CGRect{CGPointZero, frame.size};
 
-    // This prevents unnecessary layout scheduling
-    if (!CGRectEqualToRect(self.bounds, newBounds)) {
+      // Assuming here we're at origin=(0,0) relative to native parent view!
+      self.center = CGPointMake(CGRectGetMidX(newBounds), CGRectGetMidY(newBounds));
       self.bounds = newBounds;
-      [self layoutNavigationBar];
+
+      //      [self invalidateIntrinsicContentSize];
     }
   }
 }
-
-- (void)layoutSubviews
-{
-  NSLog(@"Subview [%ld] layoutSubviews", self.tag);
-  // TODO: DO I NEED THIS!?
-  [super layoutSubviews];
-  [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
-}
-
-RNS_IGNORE_SUPER_CALL_BEGIN
-
-- (void)setFrame:(CGRect)frame
-{
-  // This is mostly called by UIKit
-  NSLog(@"Subview [%ld] setFrame %@", self.tag, NSStringFromCGRect(frame));
-  //  if (CGRectEqualToRect(frame, self.frame)) {
-  //  }
-  [super setFrame:frame];
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-  // This is most likely called by `updateLayoutMetrics:oldLayoutMetrics:`
-  NSLog(@"Subview [%ld] setBounds %@", self.tag, NSStringFromCGRect(bounds));
-  [super setBounds:bounds];
-}
+RNS_IGNORE_SUPER_CALL_END
 
 + (BOOL)shouldBeRecycled
 {
@@ -233,32 +271,20 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   [super unmountChildComponentView:childComponentView index:index];
 }
 
-#pragma mark - RCTMountingTransactionObserving
-
-- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
-                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  for (const auto &mutation : transaction.getMutations()) {
-    if (MUTATION_PARENT_TAG(mutation) == self.tag && mutation.type == react::ShadowViewMutation::Type::Update &&
-        mutation.newChildShadowView.layoutMetrics != mutation.oldChildShadowView.layoutMetrics) {
-      // Our direct child will receive layout update.
-      NSLog(@"Subview [%ld] pre-updating layout metrics", self.tag);
-      CGRect newChildFrame = RCTCGRectFromRect(mutation.newChildShadowView.layoutMetrics.frame);
-      newChildFrame.origin = CGPointZero;
-      self.bounds = newChildFrame;
-    }
-  }
-}
-
-- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView
+- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView withFrame:(CGRect)frame
 {
   if (ancestorView == nil) {
     // We can not compute valid value
     return;
   }
 
-  CGRect frame = [self convertRect:self.frame toView:ancestorView];
-  [self updateShadowStateWithFrame:frame];
+  CGRect convertedFrame = [self convertRect:frame toView:ancestorView];
+  [self updateShadowStateWithFrame:convertedFrame];
+}
+
+- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView
+{
+  [self updateShadowStateInContextOfAncestorView:ancestorView withFrame:self.frame];
 }
 
 - (void)updateShadowStateWithFrame:(CGRect)frame

@@ -33,10 +33,20 @@ NS_ASSUME_NONNULL_BEGIN
  * Updates state of the header subview shadow node in shadow tree in context of given ancestor view.
  * This method updates state of header subview shadow node only.
  *
- *  @param ancestorView - ancestor view in relation to which, the frame send in state update is computed; if this is
+ * @param ancestorView - ancestor view in relation to which, the frame send in state update is computed; if this is
  * `nil` the method does nothing.
  */
 - (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView;
+
+/**
+ * Updates state of the header subview shadow node in shadow tree in context of given ancestor view.
+ * This method updates state of header subview shadow node only.
+ *
+ * @param ancestorView ancestor view in relation to which, the frame send in state update is computed; if this is
+ * `nil` the method does nothing.
+ * @param frame source frame, which will be transformed in relation to `ancestorView`.
+ */
+- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView withFrame:(CGRect)frame;
 #endif
 
 @end

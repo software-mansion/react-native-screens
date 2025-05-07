@@ -1097,9 +1097,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 #endif // !TARGET_OS_TV
 
-RNS_IGNORE_SUPER_CALL_BEGIN
 // We hijack the udpates as we don't want to update UIKit model yet.
 // This is done after all mutations are processed.
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
 {
   if (![subview isKindOfClass:[RNSScreenView class]]) {
@@ -1215,6 +1215,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
+  NSLog(@"ScreenStack [%ld] transactionWILLMountWithNumber: %lld", self.tag, transaction.getNumber());
   for (const auto &mutation : transaction.getMutations()) {
     if (mutation.type == react::ShadowViewMutation::Delete) {
       RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
@@ -1229,6 +1230,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
+  NSLog(@"ScreenStack [%ld] transactionDIDMountWithNumber: %lld", self.tag, transaction.getNumber());
   for (const auto &mutation : transaction.getMutations()) {
     // Note that self.tag might be invalid in cases this stack is removed.
     // This mostlikely does not cause any problems now, but it is something

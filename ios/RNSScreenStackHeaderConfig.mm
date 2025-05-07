@@ -135,6 +135,18 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   _blurEffect = RNSBlurEffectStyleNone;
 }
 
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"HeaderConfig [%ld] setFrame:%@", self.tag, NSStringFromCGRect(frame));
+  [super setFrame:frame];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+  NSLog(@"HeaderConfig [%ld] setBounds:%@", self.tag, NSStringFromCGRect(bounds));
+  [super setBounds:bounds];
+}
+
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (UIView *)reactSuperview
 {
@@ -762,9 +774,10 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 {
   [_reactSubviews removeObject:subview];
 }
-RNS_IGNORE_SUPER_CALL_BEGIN
+RNS_IGNORE_SUPER_CALL_END
 
 #ifdef RCT_NEW_ARCH_ENABLED
+
 #pragma mark - Fabric specific
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
