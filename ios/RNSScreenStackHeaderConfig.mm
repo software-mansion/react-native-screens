@@ -11,6 +11,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
+#import "UINavigationBar+RNSUtility.h"
 #ifndef NDEBUG
 #import <react/utils/ManagedObjectWrapper.h>
 #endif // !NDEBUG
@@ -71,7 +72,8 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
-  CGSize _lastSize;
+
+  react::RNSScreenStackHeaderConfigState _lastSendState;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
 
   /// Whether a react subview has been added / removed in current transaction. This flag is reset after each react
@@ -102,6 +104,7 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
     _show = YES;
     _translucent = NO;
     _addedReactSubviewsInCurrentTransaction = false;
+    _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
     [self initProps];
   }
   return self;
@@ -214,12 +217,17 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)updateHeaderConfigState:(CGSize)size
+- (void)updateShadowStateWithSize:(CGSize)size edgeInsets:(NSDirectionalEdgeInsets)edgeInsets
 {
-  if (!CGSizeEqualToSize(size, _lastSize)) {
-    auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size));
+  // I believe Yoga handles RTL internally & .left will be treated as .right in RTL etc.
+  react::EdgeInsets convertedEdgeInsets{
+      .left = edgeInsets.leading, .top = edgeInsets.top, .right = edgeInsets.trailing, .bottom = edgeInsets.bottom};
+  react::Size convertedSize = RCTSizeFromCGSize(size);
+  auto newState = react::RNSScreenStackHeaderConfigState(convertedSize, convertedEdgeInsets);
+
+  if (newState != _lastSendState) {
+    _lastSendState = newState;
     _state->updateState(std::move(newState));
-    _lastSize = size;
   }
 }
 
@@ -229,11 +237,33 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  [self updateHeaderConfigState:navigationBar.frame.size];
+  [self updateShadowStateWithSize:navigationBar.frame.size
+                       edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]];
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
     [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
 }
+
+- (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
+{
+  NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
+  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
+
+  BOOL isDisplayingBackButton = [self shouldBackButtonBeVisibleInNavigationBar:navigationBar];
+
+  // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
+  UIView *barButtonView = isDisplayingBackButton ? navigationBar.rnscreens_findBackButtonWrapperView : nil;
+  CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
+
+  const auto edgeInsets = NSDirectionalEdgeInsets{
+      .leading =
+          navBarMargins.leading + navBarContentMargins.leading + (isDisplayingBackButton ? platformBackButtonWidth : 0),
+      .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+  };
+
+  return edgeInsets;
+}
+
 #else
 - (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
 {
@@ -896,7 +926,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 
 #ifdef RCT_NEW_ARCH_ENABLED
-  _lastSize = CGSizeZero;
+  _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
 #else
   _lastHeaderInsets = NSDirectionalEdgeInsets{};
 #endif
