@@ -35,9 +35,9 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
         shadowNode.getState());
     auto stateData = state->getData();
 
-    if (!isSizeEmpty(stateData.frameSize)) {
-      layoutableShadowNode.setSize(stateData.frameSize);
-    }
+    //    if (!isSizeEmpty(stateData.frameSize)) {
+    //      layoutableShadowNode.setSize(stateData.frameSize);
+    //    }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
