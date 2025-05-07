@@ -126,7 +126,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
     [self layoutNavigationBar];
   }
 }
-RNS_IGNORE_SUPER_CALL_BEGIN
+RNS_IGNORE_SUPER_CALL_END
 
 + (BOOL)shouldBeRecycled
 {
