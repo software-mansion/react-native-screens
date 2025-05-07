@@ -99,6 +99,7 @@ function SimpleHome() {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
       <Button title="Toggle subview size" onPress={() => setExpanded(val => !val)} />
+      <Button title="Go to HomeScreen" onPress={() => navigation.navigate('HomeScreen')} />
     </View>
   );
 }
@@ -106,7 +107,8 @@ function SimpleHome() {
 function SimpleStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={SimpleHome} />
+      <Stack.Screen name="SimpleHome" component={SimpleHome} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
     </Stack.Navigator>
   );
 }
