@@ -761,7 +761,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 {
   [_reactSubviews removeObject:subview];
 }
-RNS_IGNORE_SUPER_CALL_BEGIN
+RNS_IGNORE_SUPER_CALL_END
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific

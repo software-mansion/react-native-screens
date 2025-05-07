@@ -105,8 +105,8 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderSubviewComponentDescriptor>();
 }
 
-RNS_IGNORE_SUPER_CALL_BEGIN
 // System layouts the subviews.
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
@@ -126,7 +126,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
     [self layoutNavigationBar];
   }
 }
-RNS_IGNORE_SUPER_CALL_BEGIN
+RNS_IGNORE_SUPER_CALL_END
 
 + (BOOL)shouldBeRecycled
 {
