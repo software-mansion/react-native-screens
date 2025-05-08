@@ -12,6 +12,9 @@ import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -188,6 +191,19 @@ class Screen(
         if (!usesFormSheetPresentation() || !isNativeStackScreen) {
             return
         }
+
+        ViewCompat.setWindowInsetsAnimationCallback(
+            this,
+            object : WindowInsetsAnimationCompat.Callback(
+                DISPATCH_MODE_STOP,
+            ) {
+                override fun onProgress(
+                    insets: WindowInsetsCompat,
+                    runningAnimations: MutableList<WindowInsetsAnimationCompat>,
+                ): WindowInsetsCompat = insets
+            },
+        )
+
         if (coordinatorLayoutDidChange) {
             dispatchShadowStateUpdate(width, height, top)
         }
