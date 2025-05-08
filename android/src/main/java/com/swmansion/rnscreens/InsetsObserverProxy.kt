@@ -2,6 +2,8 @@ package com.swmansion.rnscreens
 
 import android.util.Log
 import android.view.View
+import androidx.collection.ArraySet
+import androidx.collection.arraySetOf
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -10,7 +12,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import java.lang.ref.WeakReference
 
 object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener {
-    private val listeners: ArrayList<OnApplyWindowInsetsListener> = arrayListOf()
+    private val listeners: ArraySet<OnApplyWindowInsetsListener> = arraySetOf()
     private var eventSourceView: WeakReference<View> = WeakReference(null)
 
     // Please note semantics of this property. This is not `isRegistered`, because somebody, could unregister
