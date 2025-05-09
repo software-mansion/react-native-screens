@@ -231,7 +231,7 @@ object ScreenWindowTraits {
         screen: Screen,
         activity: Activity?,
     ) {
-        if (activity == null) {
+        if (activity == null || EdgeToEdgePackageDetector.ENABLED) {
             return
         }
 
