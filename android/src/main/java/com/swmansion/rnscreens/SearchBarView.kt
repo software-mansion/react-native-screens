@@ -29,6 +29,9 @@ class SearchBarView(
     var shouldOverrideBackButton: Boolean = true
     var autoFocus: Boolean = false
     var shouldShowHintSearchIcon: Boolean = true
+    var defaultValue: String? = null
+        private set
+    private var defaultValueApplied = false
 
     private var searchViewFormatter: SearchViewFormatter? = null
 
@@ -81,6 +84,7 @@ class SearchBarView(
             if (autoFocus) {
                 screenStackFragment?.searchView?.focus()
             }
+            applyDefaultValueIfNeeded()
         }
     }
 
@@ -199,5 +203,23 @@ class SearchBarView(
         }, ;
 
         abstract fun toAndroidInputType(capitalize: SearchBarAutoCapitalize): Int
+    }
+
+    fun setDefaultValue(value: String?) {
+        if (defaultValue == null && value != null) {
+            defaultValue = value
+            applyDefaultValueIfNeeded()
+        }
+    }
+
+    private fun applyDefaultValueIfNeeded() {
+        if (!defaultValueApplied && defaultValue != null) {
+            screenStackFragment?.searchView?.let { searchView ->
+                if (searchView.query.isEmpty()) {
+                    searchView.setQuery(defaultValue, false)
+                    defaultValueApplied = true
+                }
+            }
+        }
     }
 }
