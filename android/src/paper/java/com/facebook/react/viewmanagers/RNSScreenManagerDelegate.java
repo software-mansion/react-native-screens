@@ -28,6 +28,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
       case "sheetAllowedDetents":
         mViewManager.setSheetAllowedDetents(view, (ReadableArray) value);
         break;
+      case "sheetDismissible":
+        mViewManager.setSheetDismissible(view, value == null ? false : (boolean) value);
+        break;
       case "sheetLargestUndimmedDetent":
         mViewManager.setSheetLargestUndimmedDetent(view, value == null ? -1 : ((Double) value).intValue());
         break;

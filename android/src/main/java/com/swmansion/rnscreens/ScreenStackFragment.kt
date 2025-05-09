@@ -303,7 +303,10 @@ class ScreenStackFragment :
                 ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        animatedValue?.let {
+                            screen.translationY = it
+                            screen.onSheetTranslation(minOf((screen.top + it).toInt(), screen.height))
+                        }
                     }
                 }
 
@@ -327,7 +330,10 @@ class ScreenStackFragment :
                 ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        animatedValue?.let {
+                            screen.translationY = it
+                            screen.onSheetTranslation(minOf((screen.top + it).toInt(), screen.height))
+                        }
                     }
                 }
             animatorSet.play(alphaAnimator).with(slideAnimator)

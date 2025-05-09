@@ -266,6 +266,13 @@ There are also legacy & **deprecated** options available:
 
 Defaults to `[1.0]` literal.
 
+### `sheetDismissible`
+
+Whether you can interactively dismiss a sheet.
+Works only when `stackPresentation` is set to `formSheet`.
+
+Defaults to `true`.
+
 #### `sheetElevation` (Android only)
 
 Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
