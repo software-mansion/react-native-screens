@@ -162,6 +162,13 @@ RNS_IGNORE_SUPER_CALL_END
 {
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeLeft || subview.type == RNSScreenStackHeaderSubviewTypeRight) {
+      // E.g. presence of focused search bar might cause the subviews to be temporarily unmounted & we don't want
+      // them to be touch targets then, otherwise we might e.g. block cancel button.
+      // See: https://github.com/software-mansion/react-native-screens/issues/2899
+      if (subview.window == nil) {
+        continue;
+      }
+
       // we wrap the headerLeft/Right component in a UIBarButtonItem
       // so we need to hit test subviews from left to right, because of the view flattening
       UIView *headerComponent = nil;
