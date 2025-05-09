@@ -19,6 +19,7 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.swmansion.rnscreens.Screen.WindowTraits
+import com.swmansion.rnscreens.utils.EdgeToEdge
 
 object ScreenWindowTraits {
     // Methods concerning statusBar management were taken from `react-native`'s status bar module:
@@ -142,12 +143,16 @@ object ScreenWindowTraits {
         }
     }
 
+    @Deprecated(
+        "For apps targeting SDK 35 or above this prop has no effect because " +
+                "edge-to-edge is enabled by default and the status bar is always translucent."
+    )
     internal fun setTranslucent(
         screen: Screen,
         activity: Activity?,
         context: ReactContext?,
     ) {
-        if (activity == null || context == null) {
+        if (activity == null || context == null || EdgeToEdge.ENABLED) {
             return
         }
         val screenForTranslucent = findScreenForTrait(screen, WindowTraits.TRANSLUCENT)

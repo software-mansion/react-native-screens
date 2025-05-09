@@ -362,6 +362,10 @@ class Screen(
             fragmentWrapper?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
+    @Deprecated(
+        "For apps targeting SDK 35 or above this prop has no effect because " +
+            "edge-to-edge is enabled by default and the status bar is always translucent.",
+    )
     var isStatusBarTranslucent: Boolean? = null
         set(statusBarTranslucent) {
             if (statusBarTranslucent != null) {
