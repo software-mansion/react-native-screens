@@ -35,6 +35,13 @@ class ScreensModule(
 
     private external fun nativeInstall(jsiPtr: Long)
 
+    private external fun nativeUninstall()
+
+    override fun invalidate() {
+        super.invalidate()
+        nativeUninstall()
+    }
+
     override fun initialize() {
         super.initialize()
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {

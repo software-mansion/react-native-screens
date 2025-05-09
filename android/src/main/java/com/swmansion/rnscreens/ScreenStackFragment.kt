@@ -17,6 +17,9 @@ import android.view.animation.Animation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.appbar.AppBarLayout
@@ -237,6 +240,21 @@ class ScreenStackFragment :
                 View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY),
             )
             coordinatorLayout.layout(0, 0, container.width, container.height)
+
+            // Replace InsetsAnimationCallback created by BottomSheetBehavior with empty
+            // implementation so it does not interfere with our custom formSheet entering animation
+            // More details: https://github.com/software-mansion/react-native-screens/pull/2909
+            ViewCompat.setWindowInsetsAnimationCallback(
+                screen,
+                object : WindowInsetsAnimationCompat.Callback(
+                    DISPATCH_MODE_STOP,
+                ) {
+                    override fun onProgress(
+                        insets: WindowInsetsCompat,
+                        runningAnimations: MutableList<WindowInsetsAnimationCompat>,
+                    ): WindowInsetsCompat = insets
+                },
+            )
         }
 
         return coordinatorLayout

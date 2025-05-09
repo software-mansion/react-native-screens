@@ -39,6 +39,11 @@ namespace react = facebook::react;
   return headerConfig;
 }
 
+- (nullable UINavigationBar *)findNavigationBar
+{
+  return [[[[[self getHeaderConfig] screenView] reactViewController] navigationController] navigationBar];
+}
+
 // We're forcing the navigation controller's view to re-layout
 // see: https://github.com/software-mansion/react-native-screens/pull/2385
 - (void)layoutNavigationBar
@@ -50,10 +55,7 @@ namespace react = facebook::react;
     return;
   }
 
-  RNSScreenStackHeaderConfig *headerConfig = [self getHeaderConfig];
-  UINavigationController *navctr = headerConfig.screenView.reactViewController.navigationController;
-
-  UIView *toLayoutView = navctr.navigationBar;
+  UIView *toLayoutView = [self findNavigationBar];
 
   // TODO: It is possible, that this needs to be called only on old architecture.
   // Make sure that Test432 keeps working.
@@ -67,6 +69,42 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma mark - Fabric specific
+
+- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView withFrame:(CGRect)frame
+{
+  if (ancestorView == nil) {
+    // We can not compute valid value
+    return;
+  }
+
+  CGRect convertedFrame = [self convertRect:frame toView:ancestorView];
+  [self updateShadowStateWithFrame:convertedFrame];
+}
+
+- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView
+{
+  [self updateShadowStateInContextOfAncestorView:ancestorView withFrame:self.frame];
+}
+
+- (void)updateShadowStateWithFrame:(CGRect)frame
+{
+  if (_state == nullptr) {
+    return;
+  }
+
+  if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
+    auto newState =
+        react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
+    _state->updateState(std::move(newState));
+    _lastScheduledFrame = frame;
+  }
+}
+
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+  [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
+}
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
 + (void)load
@@ -105,8 +143,8 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderSubviewComponentDescriptor>();
 }
 
-RNS_IGNORE_SUPER_CALL_BEGIN
 // System layouts the subviews.
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
@@ -126,7 +164,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
     [self layoutNavigationBar];
   }
 }
-RNS_IGNORE_SUPER_CALL_BEGIN
+RNS_IGNORE_SUPER_CALL_END
 
 + (BOOL)shouldBeRecycled
 {
@@ -137,20 +175,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
            oldState:(const facebook::react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(state);
-}
-
-- (void)updateHeaderSubviewFrameInShadowTree:(CGRect)frame
-{
-  if (_state == nullptr) {
-    return;
-  }
-
-  if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
-    auto newState =
-        react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
-    _state->updateState(std::move(newState));
-    _lastScheduledFrame = frame;
-  }
 }
 #else // RCT_NEW_ARCH_ENABLED
 #pragma mark - Paper specific

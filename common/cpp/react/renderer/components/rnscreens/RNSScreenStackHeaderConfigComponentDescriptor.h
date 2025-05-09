@@ -47,6 +47,7 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       layoutableShadowNode.setSize(stateData.frameSize);
+      layoutableShadowNode.setPadding(stateData.edgeInsets);
     }
 #endif // ANDROID
 

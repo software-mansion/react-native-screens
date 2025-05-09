@@ -94,6 +94,16 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(
       std::move(rnScreensModuleHostObject));
 }
 
+extern "C" JNIEXPORT void JNICALL
+Java_com_swmansion_rnscreens_ScreensModule_nativeUninstall(
+        JNIEnv *env,
+        jobject thiz) {
+    if (globalThis != nullptr) {
+        env->DeleteGlobalRef(globalThis);
+        globalThis = nullptr;
+    }
+}
+
 void JNICALL JNI_OnUnload(JavaVM *jvm, void *) {
   JNIEnv *env;
   if (jvm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {

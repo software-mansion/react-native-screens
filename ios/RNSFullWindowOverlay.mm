@@ -209,8 +209,8 @@
   [childComponentView removeFromSuperview];
 }
 
-RNS_IGNORE_SUPER_CALL_BEGIN
 // We do not set frame for ouselves, but rather for the container.
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)updateLayoutMetrics:(react::LayoutMetrics const &)layoutMetrics
            oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
 {
@@ -226,7 +226,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   _reactFrame = frame;
   [_container setFrame:frame];
 }
-
 RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props

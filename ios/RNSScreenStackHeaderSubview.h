@@ -21,7 +21,30 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) UIView *reactSuperview;
 
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)updateHeaderSubviewFrameInShadowTree:(CGRect)frame;
+/**
+ * Updates state of the header subview shadow node in shadow tree.
+ * This method updates state of header subview shadow node only.
+ */
+- (void)updateShadowStateWithFrame:(CGRect)frame;
+
+/**
+ * Updates state of the header subview shadow node in shadow tree in context of given ancestor view.
+ * This method updates state of header subview shadow node only.
+ *
+ * @param ancestorView - ancestor view in relation to which, the frame send in state update is computed; if this is
+ * `nil` the method does nothing.
+ */
+- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView;
+
+/**
+ * Updates state of the header subview shadow node in shadow tree in context of given ancestor view.
+ * This method updates state of header subview shadow node only.
+ *
+ * @param ancestorView ancestor view in relation to which, the frame send in state update is computed; if this is
+ * `nil` the method does nothing.
+ * @param frame source frame, which will be transformed in relation to `ancestorView`.
+ */
+- (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView withFrame:(CGRect)frame;
 #endif
 
 @end
