@@ -37,10 +37,10 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   const { stackPresentation = 'push', hasLargeHeader } = rest;
 
   const dimensions = useSafeAreaFrame();
-  const topInset = useSafeAreaInsets().top;
+  const insets = useSafeAreaInsets();
   const isStatusBarTranslucent = rest.statusBarTranslucent ?? false;
   const statusBarHeight = getStatusBarHeight(
-    topInset,
+    insets.top,
     dimensions,
     isStatusBarTranslucent,
   );
@@ -61,7 +61,13 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   const closing = useSharedValue(0);
   const goingForward = useSharedValue(0);
 
-  const translationY = useSharedValue(dimensions.height);
+  // On Android, when edge-to-edge is enabled, Y value includes status bar and navigation bar height.
+  // We need to ignore them to get the correct value versus the container height.
+  //
+  // TODO: Dunno if we should do this in native?
+  const translationOffset =
+    Platform.OS === 'android' ? insets.top + insets.bottom : 0;
+  const translationY = useSharedValue(dimensions.height - translationOffset);
 
   return (
     <AnimatedScreen
@@ -88,7 +94,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
       onSheetTranslationReanimated={useEvent(
         (event: SheetTranslationEventType) => {
           'worklet';
-          translationY.value = event.y;
+          translationY.value = event.y - translationOffset;
         },
         [
           // @ts-ignore wrong type

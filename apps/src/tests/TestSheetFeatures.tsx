@@ -1,9 +1,18 @@
 import { NavigationContainer, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, View, useWindowDimensions, StyleSheet, TextInput } from 'react-native';
+import { Button, View, useWindowDimensions, StyleSheet, TextInput, Platform } from 'react-native';
 import { ReanimatedScreenProvider, useReanimatedSheetTranslation } from 'react-native-screens/reanimated';
-import Animated, { useAnimatedReaction, SharedValue, WithSpringConfig, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+
+import Animated, {
+  useAnimatedReaction,
+  SharedValue,
+  WithSpringConfig,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 const SPRING_CONFIG: WithSpringConfig = {
   damping: 500,
@@ -69,7 +78,9 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   useFocusEffect(useCallback(() => {
     return () => {
       if (!contextY) return;
-      contextY.value = withSpring(0, SPRING_CONFIG);
+      contextY.value = Platform.OS === 'android' ?
+        withTiming(0, { duration: 350 }) :
+        withSpring(0, SPRING_CONFIG);
     }
   }, []))
 
