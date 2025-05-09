@@ -12,7 +12,11 @@ function First({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ fontSize: 30 }}>This is a first screen!</Text>
-      <Button onPress={() => navigation.navigate('Modal')} title="Modal" />
+      <Button
+        onPress={() => navigation.navigate('Modal')}
+        title="Modal"
+        testID="first-button-open-modal"
+      />
     </View>
   );
 }
@@ -21,7 +25,11 @@ function Modal({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ fontSize: 30 }}>This is a modal screen!</Text>
-      <Button onPress={() => navigation.navigate('Tab2')} title="Tab2" />
+      <Button
+        onPress={() => navigation.navigate('Tab2')}
+        title="Tab2"
+        testID="modal-button-go-to-tab2"
+      />
     </View>
   );
 }

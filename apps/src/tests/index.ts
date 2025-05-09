@@ -21,8 +21,8 @@ export { default as Test648 } from './Test648';     // [E2E skipped]: can't chec
 export { default as Test649 } from './Test649';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
 export { default as Test654 } from './Test654';     // [E2E created](iOS): issue related to iOS native back button
 export { default as Test658 } from './Test658';     // [E2E created]
-export { default as Test662 } from './Test662';
-export { default as Test691 } from './Test691';
+export { default as Test662 } from './Test662';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test691 } from './Test691';     // [E2E created](iOS): issue related to iOS modal behavior
 export { default as Test702 } from './Test702';
 export { default as Test706 } from './Test706';
 export { default as Test713 } from './Test713';
