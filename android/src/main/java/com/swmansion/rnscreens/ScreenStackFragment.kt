@@ -249,18 +249,6 @@ class ScreenStackFragment :
                 object : WindowInsetsAnimationCompat.Callback(
                     DISPATCH_MODE_STOP,
                 ) {
-                    override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-                        // FormSheet's onResume is called after finishing animator animation but adding
-                        // insets handler then is often too late if we use input autofocus.
-                        // This callback's onPrepare is called before onApplyWindowInsets so we use it
-                        // to set the handler earlier.
-                        (fragment as ScreenStackFragment?)?.sheetDelegate?.let {
-                            InsetsObserverProxy.addOnApplyWindowInsetsListener(
-                                it
-                            )
-                        }
-                    }
-
                     override fun onProgress(
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
