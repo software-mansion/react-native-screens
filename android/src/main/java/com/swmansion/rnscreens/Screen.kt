@@ -188,6 +188,7 @@ class Screen(
         if (!usesFormSheetPresentation() || !isNativeStackScreen) {
             return
         }
+
         if (coordinatorLayoutDidChange) {
             dispatchShadowStateUpdate(width, height, top)
         }
