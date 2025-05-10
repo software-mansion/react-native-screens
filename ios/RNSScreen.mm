@@ -166,10 +166,6 @@ RNS_IGNORE_SUPER_CALL_END
         ? 0
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
-    if ([self isKindOfClass:RNSModalScreen.class]) {
-      NSLog(@"ModalScreen [%ld] effectiveContentOffsetY: %f", self.tag, effectiveContentOffsetY);
-    }
-
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
     _state->updateState(std::move(newState));
 
