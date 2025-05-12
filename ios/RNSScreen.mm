@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RNSModalScreen.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
@@ -156,12 +157,14 @@ RNS_IGNORE_SUPER_CALL_END
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
 
-    // in large title, ScrollView handles the offset of content so we cannot set it here also
-    // TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
+    // * in large title, ScrollView handles the offset of content so we cannot set it here also
+    // * TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
     // used?
-    // When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
+    // * When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
     // navigation bar, therefore there is no need to set content offset in shadow tree.
-    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent
+    // * When this view is the modal root controller (presented in separate view hierarchy) it does not have navigation
+    // bar! We send non-zero size to JS, for some reason. TODO: this needs to be investigated.
+    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent || self.isPresentedAsNativeModal
         ? 0
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
