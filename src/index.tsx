@@ -40,6 +40,8 @@ export { default as ScreenStackItem } from './components/ScreenStackItem';
 export { default as FullWindowOverlay } from './components/FullWindowOverlay';
 export { default as ScreenFooter } from './components/ScreenFooter';
 export { default as ScreenContentWrapper } from './components/ScreenContentWrapper';
+export { default as BottomTabs } from './components/BottomTabs';
+export { default as BottomTabsScreen } from './components/BottomTabsScreen';
 
 /**
  * Utils
