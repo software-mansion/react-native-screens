@@ -544,12 +544,11 @@ class Screen(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        // Insets handler for formSheet is added onResume but it is often
-        // too late if we use input with autofocus. It happens because onResume is called after
-        // finishing animator animation. onAttachedToWindow is called before onApplyWindowInsets
-        // so we use it to set the handler earlier.
-        // More details: https://github.com/software-mansion/react-native-screens/pull/2911
-        if (usesFormSheetPresentation()) {
+        // Insets handler for formSheet is added onResume but it is often too late if we use input
+        // with autofocus - onResume is called after finishing animator animation.
+        // onAttachedToWindow is called before onApplyWindowInsets so we use it to set the handler
+        // earlier. More details: https://github.com/software-mansion/react-native-screens/pull/2911
+        if (usesFormSheetPresentation() && isNativeStackScreen) {
             (fragment as ScreenStackFragment?)?.sheetDelegate?.let {
                 InsetsObserverProxy.addOnApplyWindowInsetsListener(
                     it,
