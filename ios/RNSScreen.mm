@@ -31,6 +31,7 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSTabBarController.h"
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
@@ -1159,6 +1160,18 @@ RNS_IGNORE_SUPER_CALL_END
 
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"ScreenView [%ld] setFrame: %@", self.tag, NSStringFromCGRect(frame));
+  [super setFrame:frame];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+  NSLog(@"ScreenView [%ld] setBounds: %@", self.tag, NSStringFromCGRect(bounds));
+  [super setBounds:bounds];
+}
+
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
@@ -1529,13 +1542,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
   // screen size
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
+  BOOL isTabScreen = [self.parentViewController isKindOfClass:RNSTabBarController.class];
 
   // Calculate header height on modal open
   if (self.screenView.isPresentedAsNativeModal) {
     [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
   }
 
-  if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
+  if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
 #else

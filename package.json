@@ -160,6 +160,8 @@
     },
     "ios": {
       "componentProvider": {
+        "RNSBottomTabsScreen": "RNSBottomTabsScreenComponentView",
+        "RNSBottomTabs": "RNSBottomTabsHostComponentView",
         "RNSFullWindowOverlay": "RNSFullWindowOverlay",
         "RNSModalScreen": "RNSModalScreen",
         "RNSScreenContainer": "RNSScreenContainerView",
