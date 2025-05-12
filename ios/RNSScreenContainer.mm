@@ -12,6 +12,8 @@ namespace react = facebook::react;
 
 #endif // RCT_NEW_ARCH_ENABLED
 
+#pragma mark - RNSViewController
+
 @implementation RNSViewController
 
 #if !TARGET_OS_TV
@@ -53,6 +55,8 @@ namespace react = facebook::react;
 }
 
 @end
+
+#pragma mark - RNSScreenContainerView
 
 @implementation RNSScreenContainerView {
   BOOL _invalidated;
@@ -261,6 +265,8 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super load];
 }
+
+#pragma mark - RCTViewComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
