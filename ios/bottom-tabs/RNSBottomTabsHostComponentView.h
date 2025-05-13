@@ -1,5 +1,6 @@
 #import <React/RCTViewComponentView.h>
 #import "RNSBottomTabsHostComponentViewManager.h"
+#import "RNSEnums.h"
 #import "RNSScreenContainer.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -18,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 // TODO: Extract all props to single struct / use codegened struct
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
+@property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
 
 @end
 
