@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS } from '../e2e-utils';
+import { describeIfiOS, selectTestScreen } from '../e2e-utils';
 
 // issue related to iOS native back button
 describeIfiOS('Test654', () => {
@@ -9,13 +9,7 @@ describeIfiOS('Test654', () => {
   });
 
   it('Test654 should exist', async () => {
-    await waitFor(element(by.id('root-screen-tests-Test654')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-    await expect(element(by.id('root-screen-tests-Test654'))).toBeVisible();
-    await element(by.id('root-screen-tests-Test654')).tap();
+    await selectTestScreen('Test654');
   });
 
   it('back button should be visible on Second screen', async () => {

@@ -1,4 +1,5 @@
 import { device, expect, element, by } from 'detox';
+import { selectTestScreen } from '../e2e-utils';
 
 describe('Test640', () => {
   beforeAll(async () => {
@@ -6,13 +7,7 @@ describe('Test640', () => {
   });
 
   it('Test640 should exist', async () => {
-    await waitFor(element(by.id('root-screen-tests-Test640')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-    await expect(element(by.id('root-screen-tests-Test640'))).toBeVisible();
-    await element(by.id('root-screen-tests-Test640')).tap();
+    await selectTestScreen('Test640');
   });
 
   it('scrolling down on modal should not close the modal but activate refresh', async () => {

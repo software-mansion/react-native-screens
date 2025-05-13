@@ -1,4 +1,5 @@
 import { device, expect, element, by } from 'detox';
+import { selectTestScreen } from '../e2e-utils';
 
 const awaitValidEventBehavior = async () => {
   await expect(
@@ -63,21 +64,10 @@ const awaitValidEventBehavior = async () => {
 describe('Test593', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-
-    await waitFor(element(by.id('root-screen-tests-Test593')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-  });
-
-  it('Test593 should exist', async () => {
-    await expect(element(by.id('root-screen-tests-Test593'))).toBeVisible();
-    await element(by.id('root-screen-tests-Test593')).tap();
+    await selectTestScreen('Test593');
   });
 
   it('should run transitionStart & transitionEnd opening events', async () => {
-    await element(by.id('root-screen-tests-Test593')).tap();
-
     await expect(
       element(by.text('1. Status | transitionStart | opening')),
     ).toExist();
@@ -87,8 +77,6 @@ describe('Test593', () => {
   });
 
   it('should go back from screen in nested stack and run opening & closing events in correct order', async () => {
-    await element(by.id('root-screen-tests-Test593')).tap();
-
     await element(by.id('status-button-go-to-deeper')).tap();
     await element(by.id('privacy-button-go-to-another')).tap();
 
@@ -104,8 +92,6 @@ describe('Test593', () => {
   });
 
   it('should use "none" animation, go back from screen in nested stack and run opening & closing events in correct order', async () => {
-    await element(by.id('root-screen-tests-Test593')).tap();
-
     await element(by.id('Test593-stack-animation-picker')).tap();
     await element(by.id('stack-animation-none')).tap();
 
