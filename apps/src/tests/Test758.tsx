@@ -42,6 +42,7 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
     barTintColor: 'powderblue',
     tintColor: 'red',
     textColor: 'red',
+    defaultValue: 'Some default',
     hideWhenScrolling: true,
     obscureBackground: false,
     hideNavigationBar: false,

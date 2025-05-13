@@ -21,6 +21,7 @@ public interface RNSSearchBarManagerInterface<T extends View>  {
   void setObscureBackground(T view, boolean value);
   void setHideNavigationBar(T view, boolean value);
   void setCancelButtonText(T view, @Nullable String value);
+  void setDefaultValue(T view, @Nullable String value);
   void setBarTintColor(T view, @Nullable Integer value);
   void setTintColor(T view, @Nullable Integer value);
   void setTextColor(T view, @Nullable Integer value);

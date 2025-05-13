@@ -316,6 +316,13 @@ namespace react = facebook::react;
 #endif
 }
 
+- (void)setDefaultValue:(NSString *)defaultValue
+{
+  if (defaultValue != nil && _controller.searchBar.text.length == 0) {
+    [_controller.searchBar setText:defaultValue];
+  }
+}
+
 #pragma mark-- Fabric specific
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -362,6 +369,10 @@ namespace react = facebook::react;
 
   if (oldScreenProps.placement != newScreenProps.placement) {
     self.placement = [RNSConvert RNSScreenSearchBarPlacementFromCppEquivalent:newScreenProps.placement];
+  }
+
+  if (oldScreenProps.defaultValue != newScreenProps.defaultValue) {
+    [self setDefaultValue:RCTNSStringFromStringNilIfEmpty(newScreenProps.defaultValue)];
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -411,6 +422,7 @@ RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
+RCT_EXPORT_VIEW_PROPERTY(defaultValue, NSString)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTDirectEventBlock)
