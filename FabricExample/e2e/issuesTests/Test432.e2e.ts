@@ -1,4 +1,5 @@
 import { device, expect, element, by } from 'detox';
+import { selectTestScreen } from '../e2e-utils';
 
 describe('Test432', () => {
   beforeAll(async () => {
@@ -6,13 +7,7 @@ describe('Test432', () => {
   });
 
   it('Test432 should exist', async () => {
-    await waitFor(element(by.id('root-screen-tests-Test432')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-    await expect(element(by.id('root-screen-tests-Test432'))).toBeVisible();
-    await element(by.id('root-screen-tests-Test432')).tap();
+    await selectTestScreen('Test432');
   });
 
   it('headerRight element should be fully visible', async () => {
