@@ -6,6 +6,8 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSBottomTabsScreenComponentView.h"
+#import "RNSConversions.h"
+#import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSTabBarController.h"
 
@@ -47,7 +49,16 @@ namespace react = facebook::react;
 - (nullable UITabBarAppearance *)makeTabBarAppearance
 {
   UITabBarAppearance *newAppearance = [[UITabBarAppearance alloc] init];
+
   newAppearance.backgroundColor = _tabBarBackgroundColor;
+
+  if (_tabBarBlurEffect != RNSBlurEffectStyleNone) {
+    newAppearance.backgroundEffect =
+        [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:_tabBarBlurEffect]];
+  } else {
+    newAppearance.backgroundEffect = nil;
+  }
+
   return newAppearance;
 }
 
@@ -140,6 +151,12 @@ namespace react = facebook::react;
   if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
+  }
+
+  if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
+    _needsTabBarAppearanceUpdate = YES;
+    _tabBarBlurEffect =
+        rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
