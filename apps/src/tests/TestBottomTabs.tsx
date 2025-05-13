@@ -16,7 +16,7 @@ function LayoutView(props: PropsWithChildren<ViewProps>) {
 function App() {
   return (
     <View style={{ flex: 1 }}>
-      <BottomTabs tabBarBackgroundColor={'yellow'}>
+      <BottomTabs tabBarBackgroundColor={'rgba(255, 255, 0, 0.5)'} tabBarBlurEffect={'dark'}>
         <BottomTabsScreen>
           <LayoutView style={{ backgroundColor: 'lightgreen' }}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
