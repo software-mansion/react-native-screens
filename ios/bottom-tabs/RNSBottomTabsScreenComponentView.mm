@@ -97,7 +97,7 @@ namespace react = facebook::react;
 
   if (newComponentProps.isFocused != oldComponentProps.isFocused) {
     _isFocused = newComponentProps.isFocused;
-    [_controller onTabScreenFocusChanged:_isFocused];
+    [_controller tabScreenFocusHasChanged];
   }
 
   [super updateProps:props oldProps:oldProps];

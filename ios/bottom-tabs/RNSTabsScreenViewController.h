@@ -7,7 +7,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) RNSBottomTabsScreenComponentView *tabScreenComponentView;
 
-- (void)onTabScreenFocusChanged:(BOOL)isFocused;
+/**
+ * Tell the controller that the tab screen it owns has got its react-props-focus changed.
+ */
+- (void)tabScreenFocusHasChanged;
 
 @end
 
