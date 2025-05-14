@@ -16,12 +16,18 @@ export type LifecycleStateChangeEvent = Readonly<{
 }>;
 
 export interface NativeProps extends ViewProps {
-  isFocused?: boolean;
+  // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
   onWillAppear?: DirectEventHandler<GenericEmptyEvent>;
   onDidAppear?: DirectEventHandler<GenericEmptyEvent>;
   onWillDisappear?: DirectEventHandler<GenericEmptyEvent>;
   onDidDisappear?: DirectEventHandler<GenericEmptyEvent>;
+
+  // Control
+  isFocused?: boolean;
+
+  // Appearance
+  badgeValue?: string;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});
