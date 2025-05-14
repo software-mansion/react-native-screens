@@ -13,6 +13,7 @@ export type BottomTabsProps = BottomTabsNativeComponentProps;
 // }
 
 function BottomTabs(props: BottomTabsProps) {
+  console.info(`BottomTabs render`);
   return (
     <BottomTabsNativeComponent style={styles.fillParent} {...props}>
       {props.children}

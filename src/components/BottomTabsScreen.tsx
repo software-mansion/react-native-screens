@@ -4,6 +4,7 @@ import React from 'react';
 import BottomTabsScreenNativeComponent from '../fabric/BottomTabScreenNativeComponent';
 import { StyleSheet, View, ViewProps, findNodeHandle } from 'react-native';
 import { Freeze } from 'react-freeze';
+import { freezeEnabled } from '../core';
 
 export interface BottomTabsScreenProps {
   children: ViewProps['children'];
@@ -16,7 +17,13 @@ export interface BottomTabsScreenProps {
 // const LIFECYCLE_STATE_RESUMED = 3;
 
 function BottomTabsScreen(props: BottomTabsScreenProps) {
+  const [nativeViewHasDisappeared, setNativeViewHasDisappeared] =
+    React.useState(true);
+
   const isFocused = props.isFocused ?? false;
+
+  const shouldFreeze =
+    freezeEnabled() && !isFocused && nativeViewHasDisappeared;
 
   const componentNodeRef = React.useRef<View>(null);
   const componentNodeHandle = React.useRef<number>(-1);
@@ -34,7 +41,8 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     console.log(
       `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
     );
-  }, [componentNodeHandle]);
+    setNativeViewHasDisappeared(false);
+  }, []);
 
   const onDidAppearCallback = React.useCallback(() => {
     console.log(
@@ -52,7 +60,14 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     console.log(
       `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
     );
+    setNativeViewHasDisappeared(true);
   }, []);
+
+  console.info(
+    `TabsScreen [${
+      componentNodeHandle.current ?? -1
+    }] render; shouldFreeze: ${shouldFreeze}, nativeViewHasDisappeared: ${nativeViewHasDisappeared}`,
+  );
 
   return (
     <BottomTabsScreenNativeComponent
@@ -64,7 +79,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onDidDisappear={onDidDisappearCallback}
       ref={componentNodeRef}
       {...props}>
-      <Freeze freeze={!isFocused && false}>{props.children}</Freeze>
+      <Freeze freeze={shouldFreeze}>{props.children}</Freeze>
     </BottomTabsScreenNativeComponent>
   );
 }
