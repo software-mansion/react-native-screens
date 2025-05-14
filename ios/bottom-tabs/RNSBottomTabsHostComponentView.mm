@@ -100,7 +100,7 @@ namespace react = facebook::react;
 
   NSLog(@"updateContainer: tabControllers: %@", tabControllers);
 
-  [_controller updateContainerWithChildViewControllers:tabControllers];
+  [_controller childViewControllersHaveChangedTo:tabControllers];
 
   [[_controller tabBar] setItemPositioning:UITabBarItemPositioningCentered];
   NSLog(@"updateContainer: tabBarItems %@", [[_controller tabBar] items]);
@@ -185,7 +185,7 @@ namespace react = facebook::react;
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
-  [_controller reactTransactionWillMount];
+  [_controller reactMountingTransactionWillMount];
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -194,7 +194,7 @@ namespace react = facebook::react;
   if (_hasModifiedReactSubviewsInCurrentTransaction) {
     [self updateContainer];
   }
-  [_controller reactTransactionDidMount];
+  [_controller reactMountingTransactionDidMount];
 }
 
 @end

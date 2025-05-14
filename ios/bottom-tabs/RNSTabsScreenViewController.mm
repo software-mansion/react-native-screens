@@ -13,10 +13,13 @@
   return static_cast<RNSBottomTabsScreenComponentView *>(self.view);
 }
 
-- (void)onTabScreenFocusChanged:(BOOL)isFocused
+- (void)tabScreenFocusHasChanged
 {
-  NSLog(@"TabScreen [%ld] changed focus: %d", self.tabScreenComponentView.tag, isFocused);
-  [[self findTabBarController] setNeedsContainerUpdateAfterReactTransaction:true];
+  NSLog(@"TabScreen [%ld] changed focus: %d", self.tabScreenComponentView.tag, self.tabScreenComponentView.isFocused);
+
+  // The focus of owned tab has been updated from react. We tell the parent controller that it should update the
+  // container.
+  [[self findTabBarController] setNeedsUpdateOfSelectedTab:true];
 }
 
 - (void)viewWillAppear:(BOOL)animated

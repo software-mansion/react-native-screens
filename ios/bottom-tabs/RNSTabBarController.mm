@@ -1,7 +1,18 @@
 #import "RNSTabBarController.h"
 #import <React/RCTAssert.h>
+#import <React/RCTLog.h>
 
-@implementation RNSTabBarController
+@implementation RNSTabBarController {
+  NSArray<RNSTabsScreenViewController *> *_Nullable _updatedChildren;
+}
+
+- (instancetype)init
+{
+  if (self = [super init]) {
+    _updatedChildren = nil;
+  }
+  return self;
+}
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
@@ -15,27 +26,59 @@
   [[self tabBar] setScrollEdgeAppearance:appearance];
 }
 
-- (void)updateContainerWithChildViewControllers:(NSArray<RNSTabsScreenViewController *> *)childViewControllers
+#pragma mark-- Signals
+
+- (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
 {
-  [self setViewControllers:childViewControllers animated:NO];
+  _updatedChildren = reactChildControllers;
+  self.needsUpdateOfReactChildrenControllers = true;
+}
+
+- (void)setNeedsUpdateOfReactChildrenControllers:(bool)needsReactChildrenUpdate
+{
+  _needsUpdateOfReactChildrenControllers = true;
+  self.needsUpdateOfSelectedTab = true;
+}
+
+- (void)setNeedsUpdateOfSelectedTab:(bool)needsSelectedTabUpdate
+{
+  _needsUpdateOfSelectedTab = needsSelectedTabUpdate;
 }
 
 #pragma mark-- RNSReactTransactionObserving
 
-- (void)reactTransactionWillMount
+- (void)reactMountingTransactionWillMount
 {
 }
 
-- (void)reactTransactionDidMount
+- (void)reactMountingTransactionDidMount
 {
-  if (self.needsContainerUpdateAfterReactTransaction) {
-    _needsContainerUpdateAfterReactTransaction = false;
+  if (_needsUpdateOfReactChildrenControllers) {
+    [self updateReactChildrenControllers];
+  }
+
+  if (_needsUpdateOfSelectedTab) {
     [self updateSelectedViewController];
   }
 }
 
+- (void)updateReactChildrenControllers
+{
+  _needsUpdateOfReactChildrenControllers = false;
+
+  if (_updatedChildren == nil) {
+    RCTLogWarn(@"[RNScreens] Attempt to update react children while the _updatedChildren array is nil!");
+    return;
+  }
+
+  [self setViewControllers:_updatedChildren];
+  _updatedChildren = nil;
+}
+
 - (void)updateSelectedViewController
 {
+  _needsUpdateOfSelectedTab = false;
+
   UIViewController *_Nullable selectedViewController = nil;
   for (RNSTabsScreenViewController *tabViewController in self.viewControllers) {
     NSLog(
