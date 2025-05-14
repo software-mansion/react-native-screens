@@ -31,7 +31,13 @@ namespace react = facebook::react;
   _controller = [RNSTabsScreenViewController new];
   _controller.view = self;
   _reactSuperview = nil;
+  [self resetProps];
+}
+
+- (void)resetProps
+{
   _isFocused = NO;
+  _badgeValue = nil;
 }
 
 - (nullable RNSBottomTabsHostComponentView *)reactSuperview
@@ -98,6 +104,11 @@ namespace react = facebook::react;
   if (newComponentProps.isFocused != oldComponentProps.isFocused) {
     _isFocused = newComponentProps.isFocused;
     [_controller tabScreenFocusHasChanged];
+  }
+
+  if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
+    _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
+    _controller.tabBarItem.badgeValue = _badgeValue;
   }
 
   [super updateProps:props oldProps:oldProps];
