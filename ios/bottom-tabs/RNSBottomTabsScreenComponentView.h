@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSBottomTabsScreenComponentView ()
 
 @property (nonatomic, readonly) BOOL isFocused;
+@property (nonatomic, readonly, nullable) NSString *badgeValue;
 
 @end
 
