@@ -15,8 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSBottomTabsHostComponentView : RCTViewComponentView <RNSScreenContainerDelegate>
 
+@end
+
 #pragma mark - Props
-// TODO: Extract all props to single struct / use codegened struct
+
+@interface RNSBottomTabsHostComponentView ()
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
 @property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
