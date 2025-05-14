@@ -9,6 +9,7 @@ import { freezeEnabled } from '../core';
 export interface BottomTabsScreenProps {
   children: ViewProps['children'];
   isFocused?: boolean;
+  badgeValue?: string;
 }
 
 // const LIFECYCLE_STATE_INITIAL = 0;
