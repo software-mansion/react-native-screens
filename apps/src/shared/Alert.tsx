@@ -5,7 +5,7 @@ import useThemeColorPallette from './styling/adapter/react-navigation/useColorPa
 
 export const Alert = (): React.JSX.Element => {
   const navigation = useNavigation();
-  const colors = useThemeColorPallette();
+  const { colors } = useThemeColorPallette();
 
   const backgrounds = [
     colors.BlueLight80,
