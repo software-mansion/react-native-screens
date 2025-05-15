@@ -8,6 +8,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Colors from './styling/Colors';
 
 export const Dialog = (): React.JSX.Element => {
   const navigation = useNavigation();
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     width: Dimensions.get('screen').width - 40,
-    backgroundColor: 'white',
+    backgroundColor: Colors.background,
     shadowColor: 'black',
     shadowOffset: {
       width: 0,
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    backgroundColor: 'dodgerblue',
+    backgroundColor: Colors.BlueLight80,
     height: 40,
     borderRadius: 8,
     justifyContent: 'center',

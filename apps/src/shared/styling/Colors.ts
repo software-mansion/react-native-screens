@@ -93,7 +93,7 @@ export const Palette = {
 
   LightOffNavy: '#30354a',
   OffNavy: '#272b3c',
-  Navy: '#32736',
+  Navy: '#232736',
 } as const;
 
 export type ColorPallette = typeof Palette & {

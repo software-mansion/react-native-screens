@@ -5,11 +5,8 @@ import {
   I18nManager,
   Platform,
   useColorScheme,
-  View,
 } from 'react-native';
 import {
-  DarkTheme,
-  DefaultTheme,
   NavigationContainer,
   NavigationIndependentTree,
   useTheme,
@@ -39,7 +36,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import * as Tests from './src/tests';
 import { ScreensDarkTheme, ScreensLightTheme } from './src/shared/styling/adapter/react-navigation';
-import Colors from './src/shared/styling/Colors';
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
