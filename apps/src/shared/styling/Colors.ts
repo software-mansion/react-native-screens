@@ -1,3 +1,5 @@
+import { ColorValue } from 'react-native';
+
 export const Palette = {
   NavyLight100: '#001a72',
   NavyLight80: '#33488e',
@@ -92,15 +94,36 @@ export const Palette = {
   LightOffNavy: '#30354a',
   OffNavy: '#272b3c',
   Navy: '#32736',
+} as const;
+
+export type ColorPallette = typeof Palette & {
+  background: ColorValue,
+  offBackground: ColorValue,
+  primary: ColorValue,
+  cardBackground: ColorValue,
+  cardBorder: ColorValue,
 };
 
-const Colors = {
+export const Colors: ColorPallette = {
   ...Palette,
   background: Palette.White,
   offBackground: Palette.OffWhite,
-  border: Palette.NavyLight40,
-  badge: Palette.NavyLight100,
+  primary: Palette.NavyLight100,
+  cardBackground: Palette.White,
+  cardBorder: Palette.NavyLight20,
+};
+
+export const LightColors: ColorPallette = Colors;
+
+export const DarkColors: ColorPallette = {
+  ...Palette,
+  background: Palette.Navy,
+  offBackground: Palette.OffNavy,
+  primary: Palette.NavyLight10,
+  cardBackground: Palette.Navy,
+  cardBorder: Palette.NavyDark60,
 };
 
 export default Colors;
+
 
