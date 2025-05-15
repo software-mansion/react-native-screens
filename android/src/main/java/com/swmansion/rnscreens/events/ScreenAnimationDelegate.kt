@@ -31,21 +31,7 @@ class ScreenAnimationDelegate(
         if (currentState === LifecycleState.INITIALIZED) {
             progressState()
 
-            // These callbacks do not work as expected from this call site, TODO: investigate it.
-            // To fix it quickly we emit required events manually
-//            wrapper.onViewAnimationStart()
-
-            when (animationType) {
-                AnimationType.ENTER -> eventEmitter?.dispatchOnWillAppear()
-                AnimationType.EXIT -> eventEmitter?.dispatchOnWillDisappear()
-            }
-
-            val isExitAnimation = animationType === AnimationType.EXIT
-            eventEmitter?.dispatchTransitionProgress(
-                0.0f,
-                isExitAnimation,
-                isExitAnimation,
-            )
+            wrapper.onViewAnimationStart()
         }
     }
 
@@ -54,21 +40,7 @@ class ScreenAnimationDelegate(
             progressState()
             animation.removeListener(this)
 
-//            wrapper.onViewAnimationEnd()
-
-            when (animationType) {
-                AnimationType.ENTER -> eventEmitter?.dispatchOnAppear()
-                AnimationType.EXIT -> eventEmitter?.dispatchOnDisappear()
-            }
-
-            val isExitAnimation = animationType === AnimationType.EXIT
-            eventEmitter?.dispatchTransitionProgress(
-                1.0f,
-                isExitAnimation,
-                isExitAnimation,
-            )
-
-            wrapper.screen.endRemovalTransition()
+            wrapper.onViewAnimationEnd()
         }
     }
 
