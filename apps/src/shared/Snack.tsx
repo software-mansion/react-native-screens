@@ -23,7 +23,7 @@ export const Snack = ({ route, navigation }: Props): React.JSX.Element => {
       navigation.goBack();
     }, DISAPPEAR_AFTER);
     return () => clearTimeout(timer);
-  }, []);
+  }, [navigation]);
 
   return (
     <Pressable style={styles.container} onPress={() => navigation.goBack()}>
