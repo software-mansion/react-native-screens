@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS } from '../e2e-utils';
+import { describeIfiOS, selectTestScreen } from '../e2e-utils';
 
 const expectBackButtonMenuWithTheSameLabel = async (text: string) => {
    await element(by.text(text)).longPressAndDrag(700, NaN, NaN, element(by.text('VOID')), NaN, NaN, "fast", 0); // open
@@ -45,17 +45,11 @@ const expectInitialPageToExist = async (testName: string, expectToExist: Detox.N
 
 describeIfiOS('Test2809', () => {
    beforeAll(async () => {
-         await device.reloadReactNative();
+      await device.reloadReactNative();
    });
 
   it('Test2809 should exist', async () => {
-      await waitFor(element(by.id('root-screen-tests-Test2809')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-      await expect(element(by.id('root-screen-tests-Test2809'))).toBeVisible();
-      await element(by.id('root-screen-tests-Test2809')).tap();
+      await selectTestScreen('Test2809');
    });
 
    describe('backButtonMenuEnabled: true', () => {
