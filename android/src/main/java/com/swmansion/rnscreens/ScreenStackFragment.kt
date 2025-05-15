@@ -24,10 +24,10 @@ import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.CustomBottomSheetBehavior
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -249,10 +249,34 @@ class ScreenStackFragment :
                 object : WindowInsetsAnimationCompat.Callback(
                     DISPATCH_MODE_STOP,
                 ) {
+                    var startBottom = 0;
+                    var endBottom = 0;
+                    var availableSpace = 0;
+
+                    override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                        availableSpace = sheetDelegate.getMaxOffsetFromTop()
+                        super.onPrepare(animation)
+                    }
+                    override fun onStart(
+                        animation: WindowInsetsAnimationCompat,
+                        bounds: WindowInsetsAnimationCompat.BoundsCompat
+                    ): WindowInsetsAnimationCompat.BoundsCompat {
+                        startBottom = bounds.lowerBound.bottom
+                        endBottom = bounds.upperBound.bottom
+                        return super.onStart(animation, bounds)
+                    }
                     override fun onProgress(
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
-                    ): WindowInsetsCompat = insets
+                    ): WindowInsetsCompat {
+                        val currentBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom.toFloat();
+                        val maxInset = endBottom - startBottom
+                        val progress = (currentBottomInset - startBottom)/maxInset;
+                        val translationDistance =  if (availableSpace > maxInset) maxInset else availableSpace
+                        val translationY = translationDistance * progress
+                        screen.translationY = -translationY;
+                        return insets
+                    }
                 },
             )
         }
@@ -346,7 +370,7 @@ class ScreenStackFragment :
         return animatorSet
     }
 
-    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
+    private fun createBottomSheetBehaviour(): CustomBottomSheetBehavior<Screen> = CustomBottomSheetBehavior<Screen>(screen)
 
     private fun resolveBackgroundColor(screen: Screen): Int? {
         val screenColor =
