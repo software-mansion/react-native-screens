@@ -38,6 +38,8 @@ import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import * as Tests from './src/tests';
+import { ScreensDarkTheme, ScreensLightTheme } from './src/shared/styling/adapter/react-navigation';
+import Colors from './src/shared/styling/Colors';
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
@@ -153,29 +155,29 @@ const examples = screens.filter(name => SCREENS[name].type === 'example');
 const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
 const tests = isTestSectionEnabled()
   ? screens
-      .filter(name => SCREENS[name].type === 'test')
-      .sort((name1, name2) => {
-        const testNumber1 = Number(name1.substring(4));
-        const testNumber2 = Number(name2.substring(4));
+    .filter(name => SCREENS[name].type === 'test')
+    .sort((name1, name2) => {
+      const testNumber1 = Number(name1.substring(4));
+      const testNumber2 = Number(name2.substring(4));
 
-        if (Number.isNaN(testNumber1) && Number.isNaN(testNumber2)) {
-          return 0;
-        } else if (Number.isNaN(testNumber1)) {
-          return 1;
-        } else if (Number.isNaN(testNumber2)) {
-          return -1;
-        } else {
-          return testNumber1 - testNumber2;
-        }
-      })
+      if (Number.isNaN(testNumber1) && Number.isNaN(testNumber2)) {
+        return 0;
+      } else if (Number.isNaN(testNumber1)) {
+        return 1;
+      } else if (Number.isNaN(testNumber2)) {
+        return -1;
+      } else {
+        return testNumber1 - testNumber2;
+      }
+    })
   : [];
 
 type RootStackParamList = {
   Main: undefined;
   Tests: undefined;
 } & {
-  [P in keyof typeof SCREENS]: undefined;
-};
+    [P in keyof typeof SCREENS]: undefined;
+  };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -258,15 +260,14 @@ const ExampleApp = (): React.JSX.Element => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetectorProvider>
         <ThemeToggle.Provider value={{ toggleTheme }}>
-          <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
+          <NavigationContainer theme={isDark ? ScreensDarkTheme : ScreensLightTheme}>
             <Stack.Navigator
               screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
               <Stack.Screen
                 name="Main"
                 options={{
-                  title: `${
-                    Platform.isTV ? '📺' : '📱'
-                  } React Native Screens Examples`,
+                  title: `${Platform.isTV ? '📺' : '📱'
+                    } React Native Screens Examples`,
                 }}
                 component={MainScreen}
               />
