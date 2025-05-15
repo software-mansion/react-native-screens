@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginBottom
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -41,7 +42,7 @@ class SheetDelegate(
     private val sheetStateObserver = SheetStateObserver()
     private val keyboardHandlerCallback = KeyboardHandler()
 
-    private val sheetBehavior: BottomSheetBehavior<Screen>?
+    private val sheetBehavior: CustomBottomSheetBehavior<Screen>?
         get() = screen.sheetBehavior
 
     private val stackFragment: ScreenStackFragment
@@ -104,10 +105,10 @@ class SheetDelegate(
     }
 
     internal fun configureBottomSheetBehaviour(
-        behavior: BottomSheetBehavior<Screen>,
+        behavior: CustomBottomSheetBehavior<Screen>,
         keyboardState: KeyboardState = KeyboardNotVisible,
         selectedDetentIndex: Int = lastStableDetentIndex,
-    ): BottomSheetBehavior<Screen> {
+    ): CustomBottomSheetBehavior<Screen> {
         val containerHeight = tryResolveContainerHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
@@ -246,6 +247,42 @@ class SheetDelegate(
         }
     }
 
+    internal fun getMaxOffsetFromTop(): Int {
+        val containerHeight = tryResolveContainerHeight();
+
+        check(containerHeight != null) {
+            "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
+        }
+        val offestFromTop = when (screen.sheetDetents.count()) {
+            1 -> {
+                val height =
+                    if (screen.isSheetFitToContents()) {
+                        screen.contentWrapper?.let { contentWrapper ->
+                            contentWrapper.height.takeIf {
+                                // subtree might not be laid out, e.g. after fragment reattachment
+                                // and view recreation, however since it is retained by
+                                // react-native it has its height cached. We want to use it.
+                                // Otherwise we would have to trigger RN layout manually.
+                                contentWrapper.isLaidOutOrHasCachedLayout()
+                            }
+                        }
+                    } else {
+                        (screen.sheetDetents.first() * containerHeight).toInt()
+                    }
+
+                return containerHeight - (height?: 0)
+            }
+            2 -> ((1 - screen.sheetDetents[1]) * containerHeight).toInt()
+            3 -> ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+
+            else -> throw IllegalStateException(
+             "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
+            )
+        }
+
+        return offestFromTop
+    }
+
     // This is listener function, not the view's.
     override fun onApplyWindowInsets(
         v: View,
@@ -254,9 +291,15 @@ class SheetDelegate(
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
 
+        println("SheetDelegate visible=${isImeVisible} inset=${imeInset}")
         if (isImeVisible) {
             isKeyboardVisible = true
+            sheetBehavior?.requestCloseGesture();
             keyboardState = KeyboardVisible(imeInset.bottom)
+            val availableSpace = this.getMaxOffsetFromTop()
+            val bottomPadding =  if (availableSpace > imeInset.bottom) imeInset.bottom else availableSpace
+            screen.translationY = -bottomPadding.toFloat();
+
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
@@ -270,10 +313,12 @@ class SheetDelegate(
                         prevInsets.left,
                         prevInsets.top,
                         prevInsets.right,
-                        0,
+                        imeInset.bottom - bottomPadding, // If the available space is less then keyboard height then we cover part of the sheet
                     ),
                 ).build()
         } else {
+            sheetBehavior?.dismissCloseGesture();
+            screen.translationY = 0F;
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardDidHide)
@@ -282,7 +327,6 @@ class SheetDelegate(
                 } else {
                 }
             }
-
             keyboardState = KeyboardNotVisible
             isKeyboardVisible = false
         }
@@ -331,25 +375,26 @@ class SheetDelegate(
             bottomSheet: View,
             newState: Int,
         ) {
-            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                val isImeVisible =
-                    WindowInsetsCompat
-                        .toWindowInsetsCompat(bottomSheet.rootWindowInsets)
-                        .isVisible(WindowInsetsCompat.Type.ime())
-                if (isImeVisible) {
-                    // Does it not interfere with React Native focus mechanism? In any case I'm not aware
-                    // of different way of hiding the keyboard.
-                    // https://stackoverflow.com/questions/1109022/how-can-i-close-hide-the-android-soft-keyboard-programmatically
-                    // https://developer.android.com/develop/ui/views/touch-and-input/keyboard-input/visibility
-
-                    // I want to be polite here and request focus before dismissing the keyboard,
-                    // however even if it fails I want to try to hide the keyboard. This sometimes works...
-                    bottomSheet.requestFocus()
-                    val imm =
-                        screen.reactContext.getSystemService(InputMethodManager::class.java)
-                    imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
-                }
-            }
+            println("BottomSheetCallback bottomSheet=${bottomSheet}")
+//            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+//                val isImeVisible =
+//                    WindowInsetsCompat
+//                        .toWindowInsetsCompat(bottomSheet.rootWindowInsets)
+//                        .isVisible(WindowInsetsCompat.Type.ime())
+//                if (isImeVisible) {
+//                    // Does it not interfere with React Native focus mechanism? In any case I'm not aware
+//                    // of different way of hiding the keyboard.
+//                    // https://stackoverflow.com/questions/1109022/how-can-i-close-hide-the-android-soft-keyboard-programmatically
+//                    // https://developer.android.com/develop/ui/views/touch-and-input/keyboard-input/visibility
+//
+//                    // I want to be polite here and request focus before dismissing the keyboard,
+//                    // however even if it fails I want to try to hide the keyboard. This sometimes works...
+//                    bottomSheet.requestFocus()
+//                    val imm =
+//                        screen.reactContext.getSystemService(InputMethodManager::class.java)
+//                    imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
+//                }
+//            }
         }
 
         override fun onSlide(
