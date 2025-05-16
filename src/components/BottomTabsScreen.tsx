@@ -2,7 +2,13 @@
 
 import React from 'react';
 import BottomTabsScreenNativeComponent from '../fabric/BottomTabScreenNativeComponent';
-import { StyleSheet, View, ViewProps, findNodeHandle } from 'react-native';
+import {
+  ColorValue,
+  StyleSheet,
+  View,
+  ViewProps,
+  findNodeHandle,
+} from 'react-native';
 import { Freeze } from 'react-freeze';
 import { freezeEnabled } from '../core';
 
@@ -10,6 +16,7 @@ export interface BottomTabsScreenProps {
   children: ViewProps['children'];
   isFocused?: boolean;
   badgeValue?: string;
+  badgeColor?: ColorValue;
 }
 
 // const LIFECYCLE_STATE_INITIAL = 0;

@@ -3,13 +3,14 @@
 #import <React/RCTLog.h>
 
 @implementation RNSTabBarController {
-  NSArray<RNSTabsScreenViewController *> *_Nullable _updatedChildren;
+  NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 }
 
 - (instancetype)init
 {
   if (self = [super init]) {
-    _updatedChildren = nil;
+    _tabScreenControllers = nil;
+    _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
   }
   return self;
 }
@@ -20,17 +21,11 @@
   //  [super tabBar:tabBar didSelectItem:item];
 }
 
-- (void)applyTabBarAppearance:(nullable UITabBarAppearance *)appearance
-{
-  [[self tabBar] setStandardAppearance:appearance];
-  [[self tabBar] setScrollEdgeAppearance:appearance];
-}
-
 #pragma mark-- Signals
 
 - (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
 {
-  _updatedChildren = reactChildControllers;
+  _tabScreenControllers = reactChildControllers;
   self.needsUpdateOfReactChildrenControllers = true;
 }
 
@@ -45,6 +40,11 @@
   _needsUpdateOfSelectedTab = needsSelectedTabUpdate;
 }
 
+- (void)setNeedsUpdateOfTabBarAppearance:(bool)needsUpdateOfTabBarAppearance
+{
+  _needsUpdateOfTabBarAppearance = needsUpdateOfTabBarAppearance;
+}
+
 #pragma mark-- RNSReactTransactionObserving
 
 - (void)reactMountingTransactionWillMount
@@ -53,12 +53,15 @@
 
 - (void)reactMountingTransactionDidMount
 {
+  [self updateReactChildrenControllersIfNeeded];
+  [self updateSelectedViewControllerIfNeeded];
+  [self updateTabBarAppearanceIfNeeded];
+}
+
+- (void)updateReactChildrenControllersIfNeeded
+{
   if (_needsUpdateOfReactChildrenControllers) {
     [self updateReactChildrenControllers];
-  }
-
-  if (_needsUpdateOfSelectedTab) {
-    [self updateSelectedViewController];
   }
 }
 
@@ -66,13 +69,19 @@
 {
   _needsUpdateOfReactChildrenControllers = false;
 
-  if (_updatedChildren == nil) {
+  if (_tabScreenControllers == nil) {
     RCTLogWarn(@"[RNScreens] Attempt to update react children while the _updatedChildren array is nil!");
     return;
   }
 
-  [self setViewControllers:_updatedChildren];
-  _updatedChildren = nil;
+  [self setViewControllers:_tabScreenControllers];
+}
+
+- (void)updateSelectedViewControllerIfNeeded
+{
+  if (_needsUpdateOfSelectedTab) {
+    [self updateSelectedViewController];
+  }
 }
 
 - (void)updateSelectedViewController
@@ -96,6 +105,31 @@
   NSLog(@"Change selected view controller to: %@", selectedViewController);
 
   [self setSelectedViewController:selectedViewController];
+}
+
+- (void)updateTabBarAppearanceIfNeeded
+{
+  if (_needsUpdateOfTabBarAppearance) {
+    [self updateTabBarAppearance];
+  }
+}
+
+- (void)updateTabBarAppearance
+{
+  _needsUpdateOfTabBarAppearance = false;
+
+  UIView *_Nullable maybeHostView = [self.view superview];
+
+  if (![maybeHostView isKindOfClass:RNSBottomTabsHostComponentView.class]) {
+    RCTLogWarn(@"[RNScreens] Failed to resolve BottomTabsHostComponentView while updating tab bar appearance");
+    maybeHostView = nil;
+  }
+
+  auto *hostComponentView = static_cast<RNSBottomTabsHostComponentView *>(maybeHostView);
+
+  [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
+                                   withHostComponentView:hostComponentView
+                                    tabScreenControllers:_tabScreenControllers];
 }
 
 @end

@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Text, View, ViewProps } from 'react-native';
 
 import { BottomTabs, BottomTabsScreen, enableFreeze } from 'react-native-screens';
+import Colors from '../shared/styling/Colors';
 
 enableFreeze(true);
 
@@ -31,23 +32,23 @@ function App() {
 
   return (
     <View style={{ flex: 1 }}>
-      <BottomTabs tabBarBackgroundColor={'rgba(255, 255, 0, 0.5)'} tabBarBlurEffect={'dark'}>
-        <BottomTabsScreen isFocused={focusedTab % 3 === 0} badgeValue="Tab 1">
-          <LayoutView style={{ backgroundColor: 'lightgreen' }} tabID={0}>
+      <BottomTabs tabBarBackgroundColor={Colors.NavyLight100}>
+        <BottomTabsScreen isFocused={focusedTab % 3 === 0} badgeValue="Tab 1" badgeColor={Colors.NavyDark80}>
+          <LayoutView style={{ backgroundColor: Colors.OffWhite }} tabID={0}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text>Hello world from native bottom tab</Text>
               <Button title="Next tab" onPress={selectNextTab} />
             </View>
           </LayoutView>
         </BottomTabsScreen>
-        <BottomTabsScreen isFocused={focusedTab % 3 === 1} badgeValue="Tab 2">
-          <LayoutView style={{ backgroundColor: 'lightblue' }} tabID={1}>
+        <BottomTabsScreen isFocused={focusedTab % 3 === 1} badgeValue="Tab 2" badgeColor={Colors.PurpleLight100}>
+          <LayoutView style={{ backgroundColor: Colors.PurpleLight80 }} tabID={1}>
             <Text>Tab2 world from native bottom tab</Text>
             <Button title="Next tab" onPress={selectNextTab} />
           </LayoutView>
         </BottomTabsScreen>
-        <BottomTabsScreen isFocused={focusedTab % 3 === 2} badgeValue="Tab 3">
-          <LayoutView style={{ backgroundColor: 'yellow' }} tabID={2}>
+        <BottomTabsScreen isFocused={focusedTab % 3 === 2} badgeValue="Tab 3" badgeColor={Colors.YellowDark120}>
+          <LayoutView style={{ backgroundColor: Colors.YellowDark80 }} tabID={2}>
             <Text>Tab3 world from native bottom tab</Text>
             <Button title="Next tab" onPress={selectNextTab} />
           </LayoutView>

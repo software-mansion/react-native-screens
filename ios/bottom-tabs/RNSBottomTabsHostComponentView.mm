@@ -40,26 +40,13 @@ namespace react = facebook::react;
 {
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
+  _tabBarBlurEffect = nil;
+
   _controller = [[RNSTabBarController alloc] init];
   _reactSubviews = [NSMutableArray new];
+
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   _needsTabBarAppearanceUpdate = NO;
-}
-
-- (nullable UITabBarAppearance *)makeTabBarAppearance
-{
-  UITabBarAppearance *newAppearance = [[UITabBarAppearance alloc] init];
-
-  newAppearance.backgroundColor = _tabBarBackgroundColor;
-
-  if (_tabBarBlurEffect != RNSBlurEffectStyleNone) {
-    newAppearance.backgroundEffect =
-        [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:_tabBarBlurEffect]];
-  } else {
-    newAppearance.backgroundEffect = nil;
-  }
-
-  return newAppearance;
 }
 
 #pragma mark - UIView methods
@@ -101,12 +88,6 @@ namespace react = facebook::react;
   NSLog(@"updateContainer: tabControllers: %@", tabControllers);
 
   [_controller childViewControllersHaveChangedTo:tabControllers];
-
-  [[_controller tabBar] setItemPositioning:UITabBarItemPositioningCentered];
-  NSLog(@"updateContainer: tabBarItems %@", [[_controller tabBar] items]);
-  for (UITabBarItem *tabBarItem in [[_controller tabBar] items]) {
-    tabBarItem.badgeValue = @"Hello!";
-  }
 }
 
 - (void)markChildUpdated
@@ -158,7 +139,7 @@ namespace react = facebook::react;
   if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarBlurEffect =
-        rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
+        rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
@@ -169,7 +150,7 @@ namespace react = facebook::react;
 {
   if (_needsTabBarAppearanceUpdate) {
     _needsTabBarAppearanceUpdate = NO;
-    [_controller applyTabBarAppearance:[self makeTabBarAppearance]];
+    [_controller setNeedsUpdateOfTabBarAppearance:true];
   }
   [super finalizeUpdates:updateMask];
 }

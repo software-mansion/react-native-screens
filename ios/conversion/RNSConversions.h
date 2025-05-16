@@ -5,7 +5,13 @@
 
 namespace rnscreens::conversion {
 
-RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
-    facebook::react::RNSBottomTabsTabBarBlurEffect blurEffect);
+namespace react = facebook::react;
 
-};
+std::optional<UIBlurEffectStyle>
+RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
+    react::RNSBottomTabsTabBarBlurEffect blurEffect);
+
+UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(
+    react::RNSBottomTabsTabBarBlurEffect blurEffect);
+
+}; // namespace rnscreens::conversion
