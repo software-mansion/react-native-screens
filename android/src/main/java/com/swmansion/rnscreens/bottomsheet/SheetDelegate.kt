@@ -119,7 +119,7 @@ class SheetDelegate(
 
         behavior.apply {
             isHideable = screen.isSheetDismissible
-            isDraggable = true
+            isDraggable = if (screen.isSheetFitToContents()) screen.isSheetDismissible else true
         }
 
         // There is a guard internally that does not allow the callback to be duplicated.
