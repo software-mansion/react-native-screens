@@ -3,6 +3,8 @@ import { device, expect, element, by } from 'detox';
 export const describeIfiOS = device.getPlatform() === 'ios' ? describe : describe.skip;
 
 export async function selectTestScreen(screenName: string) {
+  await element(by.id('root-screen-switch-search-bar')).tap();
+
   if (device.getPlatform() === 'android') {
     await element(by.label('Search')).tap();
 

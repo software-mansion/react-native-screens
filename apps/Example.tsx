@@ -185,14 +185,22 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const { toggleTheme } = useContext(ThemeToggle);
   const isDark = useTheme().dark;
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchBarEnabled, setSearchBarEnabled] = React.useState(false);
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerSearchBarOptions: {
-        onChangeText: (event) => setSearchQuery(event.nativeEvent.text),
-      },
-    });
-  }, [navigation]);
+    if (searchBarEnabled) {
+      navigation.setOptions({
+        headerSearchBarOptions: {
+          onChangeText: (event) => setSearchQuery(event.nativeEvent.text),
+        },
+      });
+    } else {
+      setSearchQuery('');
+      navigation.setOptions({
+        headerSearchBarOptions: undefined,
+      });
+    }
+  }, [navigation, searchBarEnabled]);
 
   const searchFilter = (name: string) => searchQuery === '' || name.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -217,6 +225,13 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         label="Dark mode"
         value={isDark}
         onValueChange={toggleTheme}
+      />
+      <SettingsSwitch
+        style={styles.switch}
+        label="Search bar"
+        value={searchBarEnabled}
+        onValueChange={() => setSearchBarEnabled(!searchBarEnabled)}
+        testID="root-screen-switch-search-bar"
       />
       <ThemedText style={styles.label} testID="root-screen-examples-header">
         Examples
