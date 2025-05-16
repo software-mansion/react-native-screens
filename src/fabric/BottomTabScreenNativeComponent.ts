@@ -4,6 +4,7 @@ import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNati
 import type { ColorValue, ViewProps } from 'react-native';
 import {
   DirectEventHandler,
+  Float,
   Int32,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
@@ -14,6 +15,10 @@ export type LifecycleStateChangeEvent = Readonly<{
   previousState: Int32;
   newState: Int32;
 }>;
+
+export type TabBarItemAppearance = {
+  titleFontSize?: Float;
+};
 
 export interface NativeProps extends ViewProps {
   // Events
@@ -29,6 +34,8 @@ export interface NativeProps extends ViewProps {
   // Appearance
   badgeValue?: string;
   badgeColor?: ColorValue;
+
+  tabBarItemAppearance?: TabBarItemAppearance;
 
   // General
   title?: string | undefined | null;
