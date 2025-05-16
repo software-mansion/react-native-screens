@@ -4,12 +4,11 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import { Button, Text, View } from 'react-native';
+import { Button, Text, View, ScrollView } from 'react-native';
 import {
   ListItem,
   SettingsSwitch,
 } from '../shared';
-import { ScrollView } from 'react-native-gesture-handler';
 
 type StackRouteParamList = {
   Home: undefined;
@@ -55,7 +54,7 @@ function Home({ navigation }: StackNavigationProp) {
 
   return (
     <View style={[{ flex: 1, gap: 15 }]}>
-      <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={{marginTop: 15}}>
+      <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={{ marginTop: 15}}>
         <Button
           title="Open Second"
           onPress={() => navigation.navigate('Second')}
