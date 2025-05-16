@@ -108,14 +108,21 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSBottomTabsScreenProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSBottomTabsScreenProps>(props);
 
+  bool tabItemNeedsAppearanceUpdate{false};
+
   if (newComponentProps.title != oldComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
     _controller.title = _title;
   }
 
+  if (newComponentProps.tabBarItemAppearance.titleFontSize != oldComponentProps.tabBarItemAppearance.titleFontSize) {
+    _titleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemAppearance.titleFontSize];
+    tabItemNeedsAppearanceUpdate = true;
+  }
+
   if (newComponentProps.isFocused != oldComponentProps.isFocused) {
     _isFocused = newComponentProps.isFocused;
-    [_controller tabScreenFocusHasChanged];
+    tabItemNeedsAppearanceUpdate = true;
   }
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
@@ -128,6 +135,10 @@ RNS_IGNORE_SUPER_CALL_END
     // Note that this will prevent default color from being set.
     // TODO: support default color by setting nil here.
     NSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _badgeColor);
+    tabItemNeedsAppearanceUpdate = true;
+  }
+
+  if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
   }
 

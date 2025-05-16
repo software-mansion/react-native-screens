@@ -38,15 +38,22 @@ namespace react = facebook::react;
 
 - (void)initState
 {
-  static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
-  _props = defaultProps;
-  _tabBarBlurEffect = nil;
+  [self resetProps];
 
   _controller = [[RNSTabBarController alloc] init];
   _reactSubviews = [NSMutableArray new];
 
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   _needsTabBarAppearanceUpdate = NO;
+}
+
+- (void)resetProps
+{
+  static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
+  _props = defaultProps;
+  _tabBarBlurEffect = nil;
+  _tabBarBackgroundColor = nil;
+  _tabBarItemTitleFontSize = nil;
 }
 
 #pragma mark - UIView methods
@@ -140,6 +147,11 @@ namespace react = facebook::react;
     _needsTabBarAppearanceUpdate = YES;
     _tabBarBlurEffect =
         rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
+  }
+
+  if (newComponentProps.tabBarItemAppearance.titleFontSize != oldComponentProps.tabBarItemAppearance.titleFontSize) {
+    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemAppearance.titleFontSize];
+    _needsTabBarAppearanceUpdate = YES;
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
