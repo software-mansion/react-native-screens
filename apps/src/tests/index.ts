@@ -134,6 +134,7 @@ export { default as Test2819 } from './Test2819';
 export { default as Test2855 } from './Test2855';
 export { default as Test2877 } from './Test2877'; // [E2E created](iOS): issue is related to formSheet on iOS
 export { default as Test2895 } from './Test2895';
+export { default as Test2896 } from './Test2896'; // [E2E skipped]: unable to test visibility interactions with formSheet
 export { default as Test2899 } from './Test2899';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
