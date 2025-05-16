@@ -88,6 +88,10 @@
 {
   _needsUpdateOfSelectedTab = false;
 
+#if !defined(NDEBUG)
+  [self assertExactlyOneFocusedTab];
+#endif
+
   UIViewController *_Nullable selectedViewController = nil;
   for (RNSTabsScreenViewController *tabViewController in self.viewControllers) {
     NSLog(
@@ -131,5 +135,19 @@
                                    withHostComponentView:hostComponentView
                                     tabScreenControllers:_tabScreenControllers];
 }
+
+#if !defined(NDEBUG)
+- (void)assertExactlyOneFocusedTab
+{
+  int selectedCount = 0;
+  for (RNSTabsScreenViewController *tabViewController in _tabScreenControllers) {
+    if (tabViewController.tabScreenComponentView.isFocused) {
+      ++selectedCount;
+    }
+  }
+  RCTAssert(
+      selectedCount == 1, @"[RNScreens] Invariant violation. Expected exactly 1 focused tab, got: %d", selectedCount);
+}
+#endif
 
 @end
