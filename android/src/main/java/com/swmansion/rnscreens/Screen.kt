@@ -31,6 +31,7 @@ import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -562,7 +563,7 @@ class Screen(
             if (usesFormSheetPresentation() && listener != null) {
                 OnApplyWindowInsetsListener { v, insets ->
                     listener.onApplyWindowInsets(v, insets).also {
-                        parent.requestLayout()
+                        parentAsView()?.takeIf { !it.isInLayout }?.requestLayout()
                     }
                 }
             } else {
