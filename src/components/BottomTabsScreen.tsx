@@ -17,6 +17,7 @@ export interface BottomTabsScreenProps {
   isFocused?: boolean;
   badgeValue?: string;
   badgeColor?: ColorValue;
+  title?: string;
 }
 
 // const LIFECYCLE_STATE_INITIAL = 0;

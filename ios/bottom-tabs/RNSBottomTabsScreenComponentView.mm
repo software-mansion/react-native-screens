@@ -1,4 +1,5 @@
 #import "RNSBottomTabsScreenComponentView.h"
+#import "RNSDefines.h"
 #import "RNSTabBarController.h"
 
 #import <React/RCTConversions.h>
@@ -28,8 +29,10 @@ namespace react = facebook::react;
 {
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsScreenProps>();
   _props = defaultProps;
+
   _controller = [RNSTabsScreenViewController new];
   _controller.view = self;
+
   _reactSuperview = nil;
   [self resetProps];
 }
@@ -38,12 +41,16 @@ namespace react = facebook::react;
 {
   _isFocused = NO;
   _badgeValue = nil;
+  _title = nil;
+  _badgeColor = nil;
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (nullable RNSBottomTabsHostComponentView *)reactSuperview
 {
   return _reactSuperview;
 }
+RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Events
 
@@ -100,6 +107,11 @@ namespace react = facebook::react;
 {
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSBottomTabsScreenProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSBottomTabsScreenProps>(props);
+
+  if (newComponentProps.title != oldComponentProps.title) {
+    _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
+    _controller.title = _title;
+  }
 
   if (newComponentProps.isFocused != oldComponentProps.isFocused) {
     _isFocused = newComponentProps.isFocused;

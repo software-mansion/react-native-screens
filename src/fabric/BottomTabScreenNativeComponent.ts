@@ -29,6 +29,9 @@ export interface NativeProps extends ViewProps {
   // Appearance
   badgeValue?: string;
   badgeColor?: ColorValue;
+
+  // General
+  title?: string | undefined | null;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});
