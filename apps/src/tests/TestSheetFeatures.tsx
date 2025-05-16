@@ -126,13 +126,13 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="FormSheet" component={FormSheet} options={{
               presentation: 'formSheet',
-              // sheetAllowedDetents: [0.3, 0.6, 1],
-              sheetAllowedDetents: 'fitToContents',
+              sheetAllowedDetents: [0.3, 0.6, 1],
+              // sheetAllowedDetents: 'fitToContents',
               sheetLargestUndimmedDetentIndex: 'none',
               sheetCornerRadius: 16,
               headerShown: false,
               // sheetDismissible: false,
-              // unstable_sheetFooter: FormSheetFooter,
+              unstable_sheetFooter: FormSheetFooter,
             }} />
           </Stack.Navigator>
         </NavigationContainer>
