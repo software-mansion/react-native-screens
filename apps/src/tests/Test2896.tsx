@@ -71,8 +71,10 @@ function Home({ navigation }: StackNavigationProp) {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-          <Text testID="home-text-behind-form-sheet">This should be covered by expanded formSheet.</Text>
-        </View>
+        <Text testID="home-text-behind-form-sheet">
+          This should be covered by expanded formSheet.
+        </Text>
+      </View>
       <View
         style={{
           flex: 1,
