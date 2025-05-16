@@ -34,7 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL isFocused;
 @property (nonatomic, readonly, nullable) NSString *badgeValue;
 @property (nonatomic, readonly, nullable) UIColor *badgeColor;
+
 @property (nonatomic, readonly, nullable) NSString *title;
+@property (nonatomic, readonly, nullable) NSNumber *titleFontSize;
 
 @end
 
