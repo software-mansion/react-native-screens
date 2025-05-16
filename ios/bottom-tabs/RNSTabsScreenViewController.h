@@ -12,6 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)tabScreenFocusHasChanged;
 
+/**
+ * Tell the controller that the tab screen it owns has got its react-props related to appearance changed.
+ */
+- (void)tabItemAppearanceHasChanged;
+
 @end
 
 NS_ASSUME_NONNULL_END
