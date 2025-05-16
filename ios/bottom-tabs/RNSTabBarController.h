@@ -1,4 +1,5 @@
 #import <UIKit/UIKit.h>
+#import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabsScreenViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -23,12 +24,61 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving>
 
 /**
- * Apply appearance to the tab bar managed by this controller.
- *
- * @param appearance passed appearance instance will be set for all appearance modes (standard, scrollview, etc.)
- * supported by the tab bar. When set to `nil` the default system appearance will be used.
+ * Tab bar appearance coordinator. If you need to update tab bar appearance avoid using this one directly. Send the
+ * controller a signal, invalidate the tab bar appearance & either wait for the update flush or flush it manually.
  */
-- (void)applyTabBarAppearance:(nullable UITabBarAppearance *)appearance;
+@property (nonatomic, readonly, strong, nonnull) RNSTabBarAppearanceCoordinator *tabBarAppearanceCoordinator;
+
+/**
+ * Update tab controller state with previously provided children.
+ *
+ * This method does nothing if the children have not been changed / update has not been requested before.
+ * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
+ * invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateReactChildrenControllersIfNeeded;
+
+/**
+ * Force update of the tab controller state with previously provided children.
+ *
+ * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
+ * invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateReactChildrenControllers;
+
+/**
+ * Find out which tab bar controller is currently focused & select it.
+ *
+ * This method does nothing if the update has not been previoulsy requested.
+ * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
+ * appropriate invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateSelectedViewControllerIfNeeded;
+
+/**
+ * Find out which tab bar controller is currently focused & select it.
+ *
+ * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
+ * invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateSelectedViewController;
+
+/**
+ * Updates the tab bar appearance basing on configuration sources (host view, tab screens).
+ *
+ * This method does nothing if the update has not been previoulsy requested.
+ * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
+ * appropriate invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateTabBarAppearanceIfNeeded;
+
+/**
+ * Updates the tab bar appearance basing on configuration sources (host view, tab screens).
+ *
+ * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
+ * invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateTabBarAppearance;
 
 @end
 
@@ -61,6 +111,12 @@ NS_ASSUME_NONNULL_BEGIN
  * udpated.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfSelectedTab;
+
+/**
+ * Tell the controller that some configuration regarding the tab bar apperance has changed & the appearance requires
+ * update.
+ */
+@property (nonatomic, readwrite) bool needsUpdateOfTabBarAppearance;
 
 @end
 

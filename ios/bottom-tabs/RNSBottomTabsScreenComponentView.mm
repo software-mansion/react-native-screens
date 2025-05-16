@@ -111,6 +111,14 @@ namespace react = facebook::react;
     _controller.tabBarItem.badgeValue = _badgeValue;
   }
 
+  if (newComponentProps.badgeColor != oldComponentProps.badgeColor) {
+    _badgeColor = RCTUIColorFromSharedColor(newComponentProps.badgeColor);
+    // Note that this will prevent default color from being set.
+    // TODO: support default color by setting nil here.
+    NSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _badgeColor);
+    [_controller tabItemAppearanceHasChanged];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
