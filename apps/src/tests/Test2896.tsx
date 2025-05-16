@@ -83,6 +83,7 @@ function Home({ navigation }: StackNavigationProp) {
         {Object.keys(FORM_SHEET_CONFIGURATIONS).map(key => (
           <Button
             title={key}
+            key={key}
             onPress={() => navigation.navigate(key)}
             testID={`home-button-open-${key}`}
           />
@@ -114,6 +115,7 @@ export default function App() {
         {Object.keys(FORM_SHEET_CONFIGURATIONS).map(key => (
           <Stack.Screen
             name={key}
+            key={key}
             component={FormSheet}
             options={{
               presentation: 'formSheet',
