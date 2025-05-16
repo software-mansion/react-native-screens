@@ -13,6 +13,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { useSafeAreaFrame } from 'react-native-safe-area-context';
 
 const SPRING_CONFIG: WithSpringConfig = {
   damping: 500,
@@ -64,13 +65,13 @@ function FormSheetFooter() {
 
 function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   const [currentDetentIndex, setCurrentDetentIndex] = useState(0)
-  const dimentions = useWindowDimensions();
+  const frame = useSafeAreaFrame();
   const contextY = React.useContext(TranslationContext)
   const translation = useReanimatedSheetTranslation()
 
   useAnimatedReaction(() => translation.value, () => {
     if (!contextY) return
-    contextY.value = -(dimentions.height - translation.value)
+    contextY.value = -(frame.height - translation.value)
   })
 
   // Reanimated doesn't get fired when dismissed even if native is firing it.
@@ -101,9 +102,7 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   }, [])
 
   return (
-    // When using `fitToContents` you can't use flex: 1. It is you who must provide
-    // the content size - you can't rely on parent size here.
-    <View style={{ flex: 1 }}>
+    <View style={{ height: 500 }}>
       <View style={styles.inputWrapper}>
         <TextInput style={styles.input} placeholder="Trigger keyboard..."/>
       </View>
@@ -127,13 +126,13 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="FormSheet" component={FormSheet} options={{
               presentation: 'formSheet',
-              sheetAllowedDetents: [0.3, 0.6, 1],
+              // sheetAllowedDetents: [0.3, 0.6, 1],
+              sheetAllowedDetents: 'fitToContents',
               sheetLargestUndimmedDetentIndex: 'none',
               sheetCornerRadius: 16,
               headerShown: false,
               // sheetDismissible: false,
-              // gestureEnabled: false,
-              unstable_sheetFooter: FormSheetFooter,
+              // unstable_sheetFooter: FormSheetFooter,
             }} />
           </Stack.Navigator>
         </NavigationContainer>
