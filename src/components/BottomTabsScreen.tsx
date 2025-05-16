@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import BottomTabsScreenNativeComponent from '../fabric/BottomTabScreenNativeComponent';
+import BottomTabsScreenNativeComponent, {
+  type TabBarItemAppearance,
+} from '../fabric/BottomTabScreenNativeComponent';
 import {
   ColorValue,
   StyleSheet,
@@ -18,12 +20,8 @@ export interface BottomTabsScreenProps {
   badgeValue?: string;
   badgeColor?: ColorValue;
   title?: string;
+  tabBarItemAppearance?: TabBarItemAppearance;
 }
-
-// const LIFECYCLE_STATE_INITIAL = 0;
-// const LIFECYCLE_STATE_CREATED = 1;
-// const LIFECYCLE_STATE_INITIALIZED = 2;
-// const LIFECYCLE_STATE_RESUMED = 3;
 
 function BottomTabsScreen(props: BottomTabsScreenProps) {
   const [nativeViewHasDisappeared, setNativeViewHasDisappeared] =
