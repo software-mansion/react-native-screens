@@ -33,7 +33,7 @@ function App() {
   return (
     <View style={{ flex: 1 }}>
       <BottomTabs tabBarBackgroundColor={Colors.NavyLight100}>
-        <BottomTabsScreen isFocused={focusedTab % 3 === 0} badgeValue="Tab 1" badgeColor={Colors.NavyDark80}>
+        <BottomTabsScreen isFocused={focusedTab % 3 === 0} badgeValue="1" badgeColor={Colors.NavyDark80} title="Tab1">
           <LayoutView style={{ backgroundColor: Colors.OffWhite }} tabID={0}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text>Hello world from native bottom tab</Text>
@@ -41,13 +41,13 @@ function App() {
             </View>
           </LayoutView>
         </BottomTabsScreen>
-        <BottomTabsScreen isFocused={focusedTab % 3 === 1} badgeValue="Tab 2" badgeColor={Colors.PurpleLight100}>
+        <BottomTabsScreen isFocused={focusedTab % 3 === 1} badgeValue="2" badgeColor={Colors.PurpleLight100} title="Tab2">
           <LayoutView style={{ backgroundColor: Colors.PurpleLight80 }} tabID={1}>
             <Text>Tab2 world from native bottom tab</Text>
             <Button title="Next tab" onPress={selectNextTab} />
           </LayoutView>
         </BottomTabsScreen>
-        <BottomTabsScreen isFocused={focusedTab % 3 === 2} badgeValue="Tab 3" badgeColor={Colors.YellowDark120}>
+        <BottomTabsScreen isFocused={focusedTab % 3 === 2} badgeValue="3" badgeColor={Colors.YellowDark120} title="Tab3">
           <LayoutView style={{ backgroundColor: Colors.YellowDark80 }} tabID={2}>
             <Text>Tab3 world from native bottom tab</Text>
             <Button title="Next tab" onPress={selectNextTab} />
