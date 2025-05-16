@@ -84,6 +84,10 @@ class SheetDelegate(
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
     }
 
+    private fun onSheetSlide(bottomSheet: View) {
+        screen.onSheetTranslation(bottomSheet.top)
+    }
+
     private fun onSheetStateChanged(newState: Int) {
         val isStable = SheetUtils.isStateStable(newState)
 
@@ -114,8 +118,8 @@ class SheetDelegate(
         }
 
         behavior.apply {
-            isHideable = true
-            isDraggable = true
+            isHideable = screen.isSheetDismissible
+            isDraggable = if (screen.isSheetFitToContents()) screen.isSheetDismissible else true
         }
 
         // There is a guard internally that does not allow the callback to be duplicated.
@@ -369,7 +373,9 @@ class SheetDelegate(
         override fun onSlide(
             bottomSheet: View,
             slideOffset: Float,
-        ) = Unit
+        ) {
+            this@SheetDelegate.onSheetSlide(bottomSheet)
+        }
     }
 
     companion object {
