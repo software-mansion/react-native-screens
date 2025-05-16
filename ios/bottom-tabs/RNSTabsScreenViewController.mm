@@ -5,7 +5,7 @@
 
 - (nullable RNSTabBarController *)findTabBarController
 {
-  return static_cast<RNSTabBarController *>(self.tabBarController);
+  return static_cast<RNSTabBarController *_Nullable>(self.tabBarController);
 }
 
 - (nullable RNSBottomTabsScreenComponentView *)tabScreenComponentView
@@ -20,6 +20,11 @@
   // The focus of owned tab has been updated from react. We tell the parent controller that it should update the
   // container.
   [[self findTabBarController] setNeedsUpdateOfSelectedTab:true];
+}
+
+- (void)tabItemAppearanceHasChanged
+{
+  [[self findTabBarController] setNeedsUpdateOfTabBarAppearance:true];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -40,6 +45,28 @@
 - (void)viewDidDisappear:(BOOL)animated
 {
   [self.tabScreenComponentView emitOnDidDisappear];
+}
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  NSLog(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenComponentView.tag, parent);
+
+  if (parent == nil) {
+    return;
+  }
+
+  RCTAssert(
+      [parent isKindOfClass:RNSTabBarController.class],
+      @"[RNScreens] TabScreenViewController added to parent of unexpected type: %@",
+      parent.class);
+
+  RNSTabBarController *tabBarCtrl = [self findTabBarController];
+
+  RCTAssert(
+      tabBarCtrl != nil, @"[RNScreens] nullish tabBarCtrl after TabScreenViewController has been added to parent");
+
+  [tabBarCtrl setNeedsUpdateOfTabBarAppearance:true];
+  [tabBarCtrl updateTabBarAppearanceIfNeeded];
 }
 
 @end

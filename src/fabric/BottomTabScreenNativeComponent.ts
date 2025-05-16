@@ -1,7 +1,7 @@
 'use client';
 
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ViewProps } from 'react-native';
+import type { ColorValue, ViewProps } from 'react-native';
 import {
   DirectEventHandler,
   Int32,
@@ -28,6 +28,7 @@ export interface NativeProps extends ViewProps {
 
   // Appearance
   badgeValue?: string;
+  badgeColor?: ColorValue;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});
