@@ -7,18 +7,34 @@ import Colors from '../shared/styling/Colors';
 enableFreeze(true);
 
 interface LayoutViewProps extends ViewProps {
-  tabID: number;
+  tabID?: number;
+}
+
+function someExtensiveComputation(n: number = 100000000): string {
+  let a = 100;
+  for (let i = 0; i < n; i++) {
+    a += 1;
+  }
+  return a.toString();
 }
 
 function LayoutView(props: LayoutViewProps) {
   const { children, style, ...rest } = props;
 
   console.log(`LayoutView render; tabID: ${rest.tabID}`);
+  someExtensiveComputation();
 
   return (
     <View style={[{ flex: 1, width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }, style]} {...rest}>
       {children}
     </View>
+  );
+}
+
+function TabPlaceholder() {
+  console.log('Placeholder render');
+  return (
+    <View style={[{ flex: 1, width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.Navy }]} />
   );
 }
 
@@ -54,6 +70,7 @@ function App() {
           badgeValue="2"
           badgeColor={Colors.PurpleLight100}
           title="Tab2"
+          placeholder={<TabPlaceholder />}
         >
           <LayoutView style={{ backgroundColor: Colors.PurpleLight80 }} tabID={1}>
             <Text>Tab2 world from native bottom tab</Text>
@@ -66,6 +83,7 @@ function App() {
           badgeColor={Colors.YellowDark120}
           title="Tab3"
           tabBarItemAppearance={{ titleFontSize: 16 }}
+          placeholder={<TabPlaceholder />}
         >
           <LayoutView style={{ backgroundColor: Colors.YellowDark80 }} tabID={2}>
             <Text>Tab3 world from native bottom tab</Text>
