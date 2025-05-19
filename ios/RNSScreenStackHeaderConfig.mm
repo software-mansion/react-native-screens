@@ -653,18 +653,16 @@ RNS_IGNORE_SUPER_CALL_END
 
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
 #if !TARGET_OS_TV
-          if (@available(iOS 11.0, *)) {
-            RNSSearchBar *searchBar = subview.subviews[0];
-            searchBarPresent = true;
-            navitem.searchController = searchBar.controller;
-            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+          RNSSearchBar *searchBar = subview.subviews[0];
+          searchBarPresent = true;
+          navitem.searchController = searchBar.controller;
+          navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-            if (@available(iOS 16.0, *)) {
-              navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
-            }
-#endif /* Check for iOS 16.0 */
+          if (@available(iOS 16.0, *)) {
+            navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
+#endif /* Check for iOS 16.0 */
 #endif /* !TARGET_OS_TV */
         }
         break;
@@ -674,11 +672,10 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
   }
+
 #if !TARGET_OS_TV
-  if (@available(iOS 11.0, *)) {
-    if (!searchBarPresent) {
-      navitem.searchController = nil;
-    }
+  if (!searchBarPresent) {
+    navitem.searchController = nil;
   }
 #endif /* !TARGET_OS_TV */
 
