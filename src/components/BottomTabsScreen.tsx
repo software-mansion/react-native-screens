@@ -3,9 +3,10 @@
 import React from 'react';
 import BottomTabsScreenNativeComponent, {
   type TabBarItemAppearance,
-} from '../fabric/BottomTabScreenNativeComponent';
+} from '../fabric/BottomTabsScreenNativeComponent';
 import {
   ColorValue,
+  NativeSyntheticEvent,
   StyleSheet,
   View,
   ViewProps,
@@ -13,6 +14,11 @@ import {
 } from 'react-native';
 import { Freeze } from 'react-freeze';
 import { freezeEnabled } from '../core';
+
+export type EmptyObject = Record<string, never>;
+export type BottomTabsScreenEventHandler<T> = (
+  event: NativeSyntheticEvent<T>,
+) => void;
 
 export interface BottomTabsScreenProps {
   children: ViewProps['children'];
@@ -22,6 +28,12 @@ export interface BottomTabsScreenProps {
   badgeColor?: ColorValue;
   title?: string;
   tabBarItemAppearance?: TabBarItemAppearance;
+
+  // Events
+  onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
+  onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;
+  onWillDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
+  onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
 }
 
 function BottomTabsScreen(props: BottomTabsScreenProps) {
@@ -32,6 +44,14 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const shouldFreeze =
     freezeEnabled() && !isFocused && nativeViewHasDisappeared;
+
+  const {
+    onWillAppear,
+    onWillDisappear,
+    onDidAppear,
+    onDidDisappear,
+    ...propsWoEventHandlers
+  } = props;
 
   const componentNodeRef = React.useRef<View>(null);
   const componentNodeHandle = React.useRef<number>(-1);
@@ -45,31 +65,47 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     }
   }, []);
 
-  const onWillAppearCallback = React.useCallback(() => {
-    console.log(
-      `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
-    );
-    setNativeViewHasDisappeared(false);
-  }, []);
+  const onWillAppearCallback = React.useCallback(
+    (event: NativeSyntheticEvent<EmptyObject>) => {
+      console.log(
+        `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
+      );
+      setNativeViewHasDisappeared(false);
+      onWillAppear?.(event);
+    },
+    [onWillAppear],
+  );
 
-  const onDidAppearCallback = React.useCallback(() => {
-    console.log(
-      `TabsScreen [${componentNodeHandle.current}] onDidAppear received`,
-    );
-  }, []);
+  const onDidAppearCallback = React.useCallback(
+    (event: NativeSyntheticEvent<EmptyObject>) => {
+      console.log(
+        `TabsScreen [${componentNodeHandle.current}] onDidAppear received`,
+      );
+      onDidAppear?.(event);
+    },
+    [onDidAppear],
+  );
 
-  const onWillDisappearCallback = React.useCallback(() => {
-    console.log(
-      `TabsScreen [${componentNodeHandle.current}] onWillDisappear received`,
-    );
-  }, []);
+  const onWillDisappearCallback = React.useCallback(
+    (event: NativeSyntheticEvent<EmptyObject>) => {
+      console.log(
+        `TabsScreen [${componentNodeHandle.current}] onWillDisappear received`,
+      );
+      onWillDisappear?.(event);
+    },
+    [onWillDisappear],
+  );
 
-  const onDidDisappearCallback = React.useCallback(() => {
-    console.log(
-      `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
-    );
-    setNativeViewHasDisappeared(true);
-  }, []);
+  const onDidDisappearCallback = React.useCallback(
+    (event: NativeSyntheticEvent<EmptyObject>) => {
+      console.log(
+        `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
+      );
+      setNativeViewHasDisappeared(true);
+      onDidDisappear?.(event);
+    },
+    [onDidDisappear],
+  );
 
   console.info(
     `TabsScreen [${
@@ -86,9 +122,11 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       ref={componentNodeRef}
-      {...props}>
-      <Freeze freeze={shouldFreeze} placeholder={props.placeholder}>
-        {props.children}
+      {...propsWoEventHandlers}>
+      <Freeze
+        freeze={shouldFreeze}
+        placeholder={propsWoEventHandlers.placeholder}>
+        {propsWoEventHandlers.children}
       </Freeze>
     </BottomTabsScreenNativeComponent>
   );
