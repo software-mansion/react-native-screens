@@ -49,10 +49,12 @@
 
 - (void)reactMountingTransactionWillMount
 {
+  NSLog(@"TabBarCtrl mountintTransactionWillMount");
 }
 
 - (void)reactMountingTransactionDidMount
 {
+  NSLog(@"TabBarCtrl mountintTransactionDidMount running updates");
   [self updateReactChildrenControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
@@ -69,6 +71,7 @@
 
 - (void)updateReactChildrenControllers
 {
+  NSLog(@"TabBarCtrl updateReactChildrenControllers");
   _needsUpdateOfReactChildrenControllers = false;
 
   if (_tabScreenControllers == nil) {
@@ -88,6 +91,7 @@
 
 - (void)updateSelectedViewController
 {
+  NSLog(@"TabBarCtrl updateSelectedViewController");
   _needsUpdateOfSelectedTab = false;
 
 #if !defined(NDEBUG)
@@ -122,6 +126,7 @@
 
 - (void)updateTabBarAppearance
 {
+  NSLog(@"TabBarCtrl updateTabBarAppearance");
   _needsUpdateOfTabBarAppearance = false;
 
   UIView *_Nullable maybeHostView = [self.view superview];
