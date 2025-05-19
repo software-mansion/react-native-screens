@@ -16,6 +16,7 @@ import { freezeEnabled } from '../core';
 
 export interface BottomTabsScreenProps {
   children: ViewProps['children'];
+  placeholder?: React.ReactNode | undefined;
   isFocused?: boolean;
   badgeValue?: string;
   badgeColor?: ColorValue;
@@ -73,7 +74,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
   console.info(
     `TabsScreen [${
       componentNodeHandle.current ?? -1
-    }] render; shouldFreeze: ${shouldFreeze}, nativeViewHasDisappeared: ${nativeViewHasDisappeared}`,
+    }] render; shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewHasDisappeared: ${nativeViewHasDisappeared}`,
   );
 
   return (
@@ -86,7 +87,9 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onDidDisappear={onDidDisappearCallback}
       ref={componentNodeRef}
       {...props}>
-      <Freeze freeze={shouldFreeze}>{props.children}</Freeze>
+      <Freeze freeze={shouldFreeze} placeholder={props.placeholder}>
+        {props.children}
+      </Freeze>
     </BottomTabsScreenNativeComponent>
   );
 }
