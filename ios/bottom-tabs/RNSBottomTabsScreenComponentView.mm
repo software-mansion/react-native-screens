@@ -122,7 +122,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.isFocused != oldComponentProps.isFocused) {
     _isSelectedScreen = newComponentProps.isFocused;
-    tabItemNeedsAppearanceUpdate = true;
+    [_controller tabScreenFocusHasChanged];
   }
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
