@@ -615,6 +615,12 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
 
+#if !TARGET_OS_TV
+  // We want to set navitem.searchController to nil only if we are sure
+  // that we are removing the search bar from the header.
+  bool searchBarPresent = false;
+#endif /* !TARGET_OS_TV */
+
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     // This code should be kept in sync on Fabric with analogous switch statement in
     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
@@ -647,17 +653,16 @@ RNS_IGNORE_SUPER_CALL_END
 
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
 #if !TARGET_OS_TV
-          if (@available(iOS 11.0, *)) {
-            RNSSearchBar *searchBar = subview.subviews[0];
-            navitem.searchController = searchBar.controller;
-            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+          RNSSearchBar *searchBar = subview.subviews[0];
+          searchBarPresent = true;
+          navitem.searchController = searchBar.controller;
+          navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-            if (@available(iOS 16.0, *)) {
-              navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
-            }
-#endif /* Check for iOS 16.0 */
+          if (@available(iOS 16.0, *)) {
+            navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
+#endif /* Check for iOS 16.0 */
 #endif /* !TARGET_OS_TV */
         }
         break;
@@ -667,6 +672,12 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
   }
+
+#if !TARGET_OS_TV
+  if (!searchBarPresent) {
+    navitem.searchController = nil;
+  }
+#endif /* !TARGET_OS_TV */
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
