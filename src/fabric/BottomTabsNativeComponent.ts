@@ -2,7 +2,11 @@
 
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { ColorValue, ViewProps } from 'react-native';
-import { Float, WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
+import {
+  DirectEventHandler,
+  Float,
+  WithDefault,
+} from 'react-native/Libraries/Types/CodegenTypes';
 
 // TODO: Report issue on RN repo, that nesting color value inside a struct does not work.
 // Generated code is ok, but the value is not passed down correctly - whatever color is set
@@ -10,6 +14,9 @@ import { Float, WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 // type TabBarAppearance = {
 //   backgroundColor?: ColorValue;
 // };
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type GenericEmptyEvent = Readonly<{}>;
 
 type BlurEffect =
   | 'none'
@@ -35,6 +42,9 @@ type BlurEffect =
   | 'systemChromeMaterialDark';
 
 export interface NativeProps extends ViewProps {
+  // Events
+  onNativeFocusChange?: DirectEventHandler<GenericEmptyEvent>;
+
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
 

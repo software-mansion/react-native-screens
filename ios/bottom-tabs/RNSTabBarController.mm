@@ -18,7 +18,6 @@
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
   NSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
-  //  [super tabBar:tabBar didSelectItem:item];
 }
 
 #pragma mark-- Signals
