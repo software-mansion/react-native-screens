@@ -15,7 +15,10 @@
 
 - (void)tabScreenFocusHasChanged
 {
-  NSLog(@"TabScreen [%ld] changed focus: %d", self.tabScreenComponentView.tag, self.tabScreenComponentView.isFocused);
+  NSLog(
+      @"TabScreen [%ld] changed focus: %d",
+      self.tabScreenComponentView.tag,
+      self.tabScreenComponentView.isSelectedScreen);
 
   // The focus of owned tab has been updated from react. We tell the parent controller that it should update the
   // container.

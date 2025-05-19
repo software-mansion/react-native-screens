@@ -149,8 +149,8 @@ namespace react = facebook::react;
         rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
   }
 
-  if (newComponentProps.tabBarItemAppearance.titleFontSize != oldComponentProps.tabBarItemAppearance.titleFontSize) {
-    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemAppearance.titleFontSize];
+  if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
+    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
     _needsTabBarAppearanceUpdate = YES;
   }
 

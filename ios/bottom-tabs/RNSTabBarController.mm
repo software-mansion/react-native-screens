@@ -58,6 +58,8 @@
   [self updateTabBarAppearanceIfNeeded];
 }
 
+#pragma mark-- Signals related
+
 - (void)updateReactChildrenControllersIfNeeded
 {
   if (_needsUpdateOfReactChildrenControllers) {
@@ -97,8 +99,8 @@
     NSLog(
         @"Update Selected View Controller [%ld] isFocused %d",
         tabViewController.tabScreenComponentView.tag,
-        tabViewController.tabScreenComponentView.isFocused);
-    if (tabViewController.tabScreenComponentView.isFocused == true) {
+        tabViewController.tabScreenComponentView.isSelectedScreen);
+    if (tabViewController.tabScreenComponentView.isSelectedScreen == true) {
       selectedViewController = tabViewController;
       break;
     }
@@ -141,7 +143,7 @@
 {
   int selectedCount = 0;
   for (RNSTabsScreenViewController *tabViewController in _tabScreenControllers) {
-    if (tabViewController.tabScreenComponentView.isFocused) {
+    if (tabViewController.tabScreenComponentView.isSelectedScreen) {
       ++selectedCount;
     }
   }

@@ -34,8 +34,7 @@ function App() {
     <View style={{ flex: 1 }}>
       <BottomTabs
         tabBarBackgroundColor={Colors.NavyLight100}
-        tabBarAppearance={{ backgroundColor: Colors.NavyLight100 }}
-        tabBarItemAppearance={{ titleFontSize: 28 }}
+        tabBarItemTitleFontSize={14}
       >
         <BottomTabsScreen
           isFocused={focusedTab % 3 === 0}
