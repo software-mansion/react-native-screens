@@ -39,7 +39,7 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  _isFocused = NO;
+  _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
   _badgeColor = nil;
@@ -121,7 +121,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.isFocused != oldComponentProps.isFocused) {
-    _isFocused = newComponentProps.isFocused;
+    _isSelectedScreen = newComponentProps.isFocused;
     tabItemNeedsAppearanceUpdate = true;
   }
 
