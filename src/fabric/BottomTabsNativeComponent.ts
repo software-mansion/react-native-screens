@@ -7,13 +7,9 @@ import { Float, WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 // TODO: Report issue on RN repo, that nesting color value inside a struct does not work.
 // Generated code is ok, but the value is not passed down correctly - whatever color is set
 // host component receives RGBA(0, 0, 0, 0) anyway.
-type TabBarAppearance = {
-  backgroundColor?: ColorValue;
-};
-
-type TabBarItemAppearance = {
-  titleFontSize?: Float;
-};
+// type TabBarAppearance = {
+//   backgroundColor?: ColorValue;
+// };
 
 type BlurEffect =
   | 'none'
@@ -40,12 +36,11 @@ type BlurEffect =
 
 export interface NativeProps extends ViewProps {
   // Appearance
-  tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: WithDefault<BlurEffect, 'none'>;
-
-  tabBarItemAppearance?: TabBarItemAppearance;
-  tabBarItemSelectedAppearance?: TabBarItemAppearance;
+  tabBarItemTitleFontSize?: Float;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabs', {});
