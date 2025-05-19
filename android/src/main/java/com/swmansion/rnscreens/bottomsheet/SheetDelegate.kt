@@ -175,24 +175,9 @@ class SheetDelegate(
             }
 
             is KeyboardVisible -> {
-                // This code currently does not work (changing maxHeight requires relayout)
-                // but it creates visual glitch when closing formSheet with keyboard still open.
-                // Decided to temporarily comment it out.
-                // More details: https://github.com/software-mansion/react-native-screens/pull/2911
-
-                // val newMaxHeight =
-                //     if (behavior.maxHeight - keyboardState.height > 1) {
-                //         behavior.maxHeight - keyboardState.height
-                //     } else {
-                //         behavior.maxHeight
-                //     }
-
-                val newMaxHeight = behavior.maxHeight
-
                 when (screen.sheetDetents.count()) {
                     1 ->
                         behavior.apply {
-                            useSingleDetent(height = newMaxHeight)
                             addBottomSheetCallback(keyboardHandlerCallback)
                         }
 
@@ -200,7 +185,6 @@ class SheetDelegate(
                         behavior.apply {
                             useTwoDetents(
                                 state = BottomSheetBehavior.STATE_EXPANDED,
-                                secondHeight = newMaxHeight,
                             )
                             addBottomSheetCallback(keyboardHandlerCallback)
                         }
@@ -210,7 +194,6 @@ class SheetDelegate(
                             useThreeDetents(
                                 state = BottomSheetBehavior.STATE_EXPANDED,
                             )
-                            maxHeight = newMaxHeight
                             addBottomSheetCallback(keyboardHandlerCallback)
                         }
 
