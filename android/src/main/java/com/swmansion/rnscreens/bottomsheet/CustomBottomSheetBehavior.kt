@@ -5,7 +5,6 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.Screen
-import com.swmansion.rnscreens.bottomsheet.SimpleImeAnimationController.SimpleImeAnimationController
 
 class CustomBottomSheetBehavior<T : View>(
     val screen: Screen,

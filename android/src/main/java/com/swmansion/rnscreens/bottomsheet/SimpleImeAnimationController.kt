@@ -3,7 +3,7 @@
  * Based on https://youtu.be/acC7SR1EXsI?feature=shared&t=718
  */
 
-package com.swmansion.rnscreens.bottomsheet.SimpleImeAnimationController
+package com.swmansion.rnscreens.bottomsheet
 
 import android.os.CancellationSignal
 import android.view.View
