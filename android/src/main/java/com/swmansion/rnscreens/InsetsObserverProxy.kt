@@ -10,7 +10,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import java.lang.ref.WeakReference
 
 object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener {
-    private val listeners: ArrayList<OnApplyWindowInsetsListener> = arrayListOf()
+    private val listeners: HashSet<OnApplyWindowInsetsListener> = hashSetOf()
     private var eventSourceView: WeakReference<View> = WeakReference(null)
 
     // Please note semantics of this property. This is not `isRegistered`, because somebody, could unregister

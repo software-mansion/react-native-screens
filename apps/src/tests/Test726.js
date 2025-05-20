@@ -10,6 +10,7 @@ function TestScreen({ navigation }) {
         title="PUSH ME"
         onPress={() => navigation.push('Test')}
         style={styles.button}
+        testID="test-screen-button-push-me"
       />
     </View>
   );
@@ -17,8 +18,8 @@ function TestScreen({ navigation }) {
 
 function TestScreen2() {
   return (
-    <View style={styles.content}>
-      <Text>Try to swipe back, it will freeze</Text>
+    <View style={styles.content} testID="test-screen-2-view">
+      <Text testID="test-screen-2-text">Try to swipe back, it will freeze</Text>
       <TextInput autoFocus />
     </View>
   );
