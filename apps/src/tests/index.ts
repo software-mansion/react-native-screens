@@ -26,7 +26,7 @@ export { default as Test691 } from './Test691';     // [E2E created](iOS): issue
 export { default as Test702 } from './Test702';     // [E2E skipped]: can't check animation in a meaningful way
 export { default as Test706 } from './Test706';     // [E2E skipped]: can't check font weight
 export { default as Test726 } from './Test726';     // [E2E created](iOS): issue related to iOS
-export { default as Test748 } from './Test748';
+export { default as Test748 } from './Test748';     // [E2E skipped]: issue unclear, Test432 covers more complex cases already
 export { default as Test750 } from './Test750';
 export { default as Test758 } from './Test758';
 export { default as Test761 } from './Test761';
