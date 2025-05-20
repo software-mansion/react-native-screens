@@ -6,6 +6,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -249,32 +250,37 @@ class ScreenStackFragment :
                 object : WindowInsetsAnimationCompat.Callback(
                     DISPATCH_MODE_STOP,
                 ) {
-                    var startBottom = 0;
-                    var endBottom = 0;
-                    var availableSpace = 0;
+                    var startBottom = 0
+                    var endBottom = 0
+                    var availableSpace = 0
 
                     override fun onPrepare(animation: WindowInsetsAnimationCompat) {
                         availableSpace = sheetDelegate.getMaxOffsetFromTop()
                         super.onPrepare(animation)
                     }
+
                     override fun onStart(
                         animation: WindowInsetsAnimationCompat,
-                        bounds: WindowInsetsAnimationCompat.BoundsCompat
+                        bounds: WindowInsetsAnimationCompat.BoundsCompat,
                     ): WindowInsetsAnimationCompat.BoundsCompat {
                         startBottom = bounds.lowerBound.bottom
                         endBottom = bounds.upperBound.bottom
                         return super.onStart(animation, bounds)
                     }
+
                     override fun onProgress(
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
                     ): WindowInsetsCompat {
-                        val currentBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom.toFloat();
-                        val maxInset = endBottom - startBottom
-                        val progress = (currentBottomInset - startBottom)/maxInset;
-                        val translationDistance =  if (availableSpace > maxInset) maxInset else availableSpace
-                        val translationY = translationDistance * progress
-                        screen.translationY = -translationY;
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                            val currentBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom.toFloat()
+                            val maxInset = endBottom - startBottom
+                            val progress = (currentBottomInset - startBottom) / maxInset
+                            val translationDistance = if (availableSpace > maxInset) maxInset else availableSpace
+                            val translationY = translationDistance * progress
+                            screen.translationY = -translationY
+                        }
+
                         return insets
                     }
                 },

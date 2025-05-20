@@ -6,7 +6,6 @@ import android.view.View
 import android.view.WindowManager
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -306,11 +305,11 @@ class SheetDelegate(
             val availableSpace = this.getMaxOffsetFromTop()
             val bottomPadding =  if (availableSpace > imeInset.bottom) imeInset.bottom else availableSpace
 
-            if (sheetBehavior?.isAnimating == false) {
+            if (sheetBehavior?.isAnimating == false || Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 screen.translationY = -bottomPadding.toFloat();
-                sheetBehavior?.requestCloseGesture();
             }
 
+            sheetBehavior?.requestCloseGesture();
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
@@ -328,6 +327,9 @@ class SheetDelegate(
                     ),
                 ).build()
         } else {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                screen.translationY = 0F
+            }
             sheetBehavior?.dismissCloseGesture();
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
