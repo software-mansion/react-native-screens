@@ -274,9 +274,9 @@ class ScreenStackFragment :
                     ): WindowInsetsCompat {
                         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
                             val currentBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom.toFloat()
-                            val maxInset = endBottom - startBottom
-                            val progress = (currentBottomInset - startBottom) / maxInset
-                            val translationDistance = if (availableSpace > maxInset) maxInset else availableSpace
+                            val keyboardHeight = endBottom - startBottom
+                            val progress = (currentBottomInset - startBottom) / keyboardHeight
+                            val translationDistance = if (availableSpace > keyboardHeight) keyboardHeight else availableSpace
                             val translationY = translationDistance * progress
                             screen.translationY = -translationY
                         }
