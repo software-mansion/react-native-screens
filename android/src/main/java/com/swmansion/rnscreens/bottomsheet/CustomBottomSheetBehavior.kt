@@ -7,40 +7,46 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.bottomsheet.SimpleImeAnimationController.SimpleImeAnimationController
 
-class CustomBottomSheetBehavior<T: View>(val screen: Screen): BottomSheetBehavior<T>()
-{
+class CustomBottomSheetBehavior<T : View>(
+    val screen: Screen,
+) : BottomSheetBehavior<T>() {
     private val controller = SimpleImeAnimationController()
     private var lastTouch: Float? = null
-    private var isImeVisible = false;
-    private var isAnimating = false;
+    private var isImeVisible = false
+    var isAnimating = false
+        private set
 
     fun requestCloseGesture() {
-        isImeVisible = true;
+        isImeVisible = true
     }
 
     fun dismissCloseGesture() {
-        isImeVisible = false;
+        isImeVisible = false
     }
 
-    override fun onTouchEvent(parent: CoordinatorLayout, child: T, event: MotionEvent): Boolean {
-        println("CustomBottomSheetBehavior onTouchEvent keyboard = ${isImeVisible}, isAnimating = ${isAnimating}")
+    override fun onTouchEvent(
+        parent: CoordinatorLayout,
+        child: T,
+        event: MotionEvent,
+    ): Boolean {
+//        println("CustomBottomSheetBehavior onTouchEvent keyboard = ${isImeVisible}, isAnimating = ${isAnimating}")
 
         /*
-        * onApplyWindowInset is called with ime not visible immediately after we start touch
-        * we want to keep dragging until we finish with te started touch, thus two variables
-        * isImeVisible represents ime state
-        * isAnimating represents if the drag down gesture started
-        * */
+         * onApplyWindowInset is called with ime not visible immediately after we start touch
+         * we want to keep dragging until we finish with te started touch, thus two variables
+         * isImeVisible represents ime state
+         * isAnimating represents if the drag down gesture started
+         * */
         if (!isImeVisible && !isAnimating) {
-            return super.onTouchEvent(parent, child, event);
+            return super.onTouchEvent(parent, child, event)
         }
 
-        isAnimating = true;
+        isAnimating = true
 
-        return when(event.action) {
+        return when (event.action) {
             MotionEvent.ACTION_MOVE -> {
                 if (lastTouch != null) {
-                    val dy = event.y - lastTouch!!;
+                    val dy = event.y - lastTouch!!
                     if (!controller.isInsetAnimationInProgress()) {
                         controller.startControlRequest(child)
                     } else {
@@ -52,14 +58,14 @@ class CustomBottomSheetBehavior<T: View>(val screen: Screen): BottomSheetBehavio
             }
             MotionEvent.ACTION_UP -> {
                 controller.finish()
-                isAnimating = false;
-                lastTouch = null;
+                isAnimating = false
+                lastTouch = null
                 return true
             }
             MotionEvent.ACTION_CANCEL -> {
                 controller.cancel()
-                isAnimating = false;
-                lastTouch = null;
+                isAnimating = false
+                lastTouch = null
                 return true
             }
             else -> true

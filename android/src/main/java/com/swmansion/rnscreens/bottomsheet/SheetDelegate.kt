@@ -4,11 +4,10 @@ import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.marginBottom
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -79,6 +78,15 @@ class SheetDelegate(
 
     private fun handleHostFragmentOnResume() {
         InsetsObserverProxy.addOnApplyWindowInsetsListener(this)
+        /**
+         * Set initial insets when host is resumed. This is necessary for bottom sheet to work properly with keyboard, in
+         * case when keyboard was already open, then none of onApplyWindowInsets nor onProgress is fired, as the keyboard
+         * state do not change.
+         */
+        screen.rootWindowInsets?.let {
+            println("SheetDelegate applyWindowInsets insets=${it}")
+            this.onApplyWindowInsets(screen, WindowInsetsCompat.toWindowInsetsCompat(it))
+        }
     }
 
     private fun handleHostFragmentOnPause() {
@@ -294,11 +302,14 @@ class SheetDelegate(
         println("SheetDelegate visible=${isImeVisible} inset=${imeInset}")
         if (isImeVisible) {
             isKeyboardVisible = true
-            sheetBehavior?.requestCloseGesture();
             keyboardState = KeyboardVisible(imeInset.bottom)
             val availableSpace = this.getMaxOffsetFromTop()
             val bottomPadding =  if (availableSpace > imeInset.bottom) imeInset.bottom else availableSpace
-            screen.translationY = -bottomPadding.toFloat();
+
+            if (sheetBehavior?.isAnimating == false) {
+                screen.translationY = -bottomPadding.toFloat();
+                sheetBehavior?.requestCloseGesture();
+            }
 
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
@@ -318,7 +329,6 @@ class SheetDelegate(
                 ).build()
         } else {
             sheetBehavior?.dismissCloseGesture();
-            screen.translationY = 0F;
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardDidHide)
