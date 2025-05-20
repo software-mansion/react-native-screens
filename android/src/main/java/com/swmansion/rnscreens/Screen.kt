@@ -31,6 +31,7 @@ import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -538,6 +539,22 @@ class Screen(
         // we are unsure of the exact sheet position anyway.
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
             updateScreenSizeFabric(width, height, top)
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        // Insets handler for formSheet is added onResume but it is often too late if we use input
+        // with autofocus - onResume is called after finishing animator animation.
+        // onAttachedToWindow is called before onApplyWindowInsets so we use it to set the handler
+        // earlier. More details: https://github.com/software-mansion/react-native-screens/pull/2911
+        if (usesFormSheetPresentation()) {
+            fragment?.asScreenStackFragment()?.sheetDelegate?.let {
+                InsetsObserverProxy.addOnApplyWindowInsetsListener(
+                    it,
+                )
+            }
         }
     }
 

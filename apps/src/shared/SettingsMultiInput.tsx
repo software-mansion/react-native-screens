@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, View, Pressable, StyleSheet, TextInput } from 'react-native';
+import Colors from './styling/Colors';
 
 type Props = {
   label: string;
@@ -36,6 +37,7 @@ export function SettingsMultiInput({
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -44,8 +46,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#039be5',
-    backgroundColor: 'white',
+    borderColor: Colors.cardBorder,
+    backgroundColor: Colors.background,
   },
   labelWrapper: {
     flexDirection: 'row',
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     height: 40,
     flex: 1,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: Colors.cardBorder,
   },
   inputLabel: {
     fontSize: 15,

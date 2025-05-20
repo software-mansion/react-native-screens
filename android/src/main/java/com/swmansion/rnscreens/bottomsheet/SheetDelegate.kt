@@ -181,23 +181,13 @@ class SheetDelegate(
             }
 
             is KeyboardVisible -> {
-                val newMaxHeight =
-                    if (behavior.maxHeight - keyboardState.height > 1) {
-                        behavior.maxHeight - keyboardState.height
-                    } else {
-                        behavior.maxHeight
-                    }
                 when (screen.sheetDetents.count()) {
                     1 ->
-                        behavior.apply {
-                            useSingleDetent(height = newMaxHeight)
-                        }
-
+                        behavior
                     2 ->
                         behavior.apply {
                             useTwoDetents(
                                 state = BottomSheetBehavior.STATE_EXPANDED,
-                                secondHeight = newMaxHeight,
                             )
                         }
 
@@ -206,7 +196,6 @@ class SheetDelegate(
                             useThreeDetents(
                                 state = BottomSheetBehavior.STATE_EXPANDED,
                             )
-                            maxHeight = newMaxHeight
                         }
 
                     else -> throw IllegalStateException(
