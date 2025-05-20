@@ -82,7 +82,6 @@ class SheetDelegate(
          * state do not change.
          */
         screen.rootWindowInsets?.let {
-            println("SheetDelegate applyWindowInsets insets=$it")
             this.onApplyWindowInsets(screen, WindowInsetsCompat.toWindowInsetsCompat(it))
         }
     }
@@ -302,7 +301,6 @@ class SheetDelegate(
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
 
-        println("SheetDelegate visible=$isImeVisible inset=$imeInset")
         if (isImeVisible) {
             isKeyboardVisible = true
             keyboardState = KeyboardVisible(imeInset.bottom)
