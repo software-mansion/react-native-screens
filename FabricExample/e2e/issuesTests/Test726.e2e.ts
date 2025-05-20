@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS } from '../e2e-utils';
+import { describeIfiOS, selectTestScreen } from '../e2e-utils';
 
 // issue related to iOS
 describeIfiOS('Test726', () => {
@@ -8,13 +8,7 @@ describeIfiOS('Test726', () => {
   });
 
   it('Test726 should exist', async () => {
-    await waitFor(element(by.id('root-screen-tests-Test726')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-    await expect(element(by.id('root-screen-tests-Test726'))).toBeVisible();
-    await element(by.id('root-screen-tests-Test726')).tap();
+    await selectTestScreen('Test726');
   });
 
   it('swiping back should not cause the freeze', async () => {
