@@ -202,7 +202,12 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
     }
   }, [navigation, searchBarEnabled]);
 
-  const searchFilter = (name: string) => searchQuery === '' || name.toLowerCase().includes(searchQuery.toLowerCase());
+  const searchFilter = React.useCallback(
+    (name: string) =>
+      searchQuery === '' ||
+      name.toLowerCase().includes(searchQuery.toLowerCase()),
+    [searchQuery],
+  );
 
   const filteredExamples = examples.filter(searchFilter);
   const filteredPlaygrounds = playgrounds.filter(searchFilter);
