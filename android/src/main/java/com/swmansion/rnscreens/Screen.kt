@@ -31,6 +31,7 @@ import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -548,8 +549,8 @@ class Screen(
         // with autofocus - onResume is called after finishing animator animation.
         // onAttachedToWindow is called before onApplyWindowInsets so we use it to set the handler
         // earlier. More details: https://github.com/software-mansion/react-native-screens/pull/2911
-        if (usesFormSheetPresentation() && isNativeStackScreen) {
-            (fragment as ScreenStackFragment?)?.sheetDelegate?.let {
+        if (usesFormSheetPresentation()) {
+            fragment?.asScreenStackFragment()?.sheetDelegate?.let {
                 InsetsObserverProxy.addOnApplyWindowInsetsListener(
                     it,
                 )
