@@ -29,8 +29,6 @@ class CustomBottomSheetBehavior<T : View>(
         child: T,
         event: MotionEvent,
     ): Boolean {
-//        println("CustomBottomSheetBehavior onTouchEvent keyboard = ${isImeVisible}, isAnimating = ${isAnimating}")
-
         /*
          * onApplyWindowInset is called with ime not visible immediately after we start touch
          * we want to keep dragging until we finish with te started touch, thus two variables
