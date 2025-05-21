@@ -184,9 +184,37 @@ interface MainScreenProps {
 const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const { toggleTheme } = useContext(ThemeToggle);
   const isDark = useTheme().dark;
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchBarEnabled, setSearchBarEnabled] = React.useState(false);
+
+  React.useLayoutEffect(() => {
+    if (searchBarEnabled) {
+      navigation.setOptions({
+        headerSearchBarOptions: {
+          onChangeText: (event) => setSearchQuery(event.nativeEvent.text),
+        },
+      });
+    } else {
+      setSearchQuery('');
+      navigation.setOptions({
+        headerSearchBarOptions: undefined,
+      });
+    }
+  }, [navigation, searchBarEnabled]);
+
+  const searchFilter = React.useCallback(
+    (name: string) =>
+      searchQuery === '' ||
+      name.toLowerCase().includes(searchQuery.toLowerCase()),
+    [searchQuery],
+  );
+
+  const filteredExamples = examples.filter(searchFilter);
+  const filteredPlaygrounds = playgrounds.filter(searchFilter);
+  const filteredTests = tests.filter(searchFilter);
 
   return (
-    <ScrollView testID="root-screen-examples-scrollview">
+    <ScrollView testID="root-screen-examples-scrollview" contentInsetAdjustmentBehavior="automatic">
       <SettingsSwitch
         style={styles.switch}
         label="Right to left"
@@ -203,10 +231,17 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         value={isDark}
         onValueChange={toggleTheme}
       />
+      <SettingsSwitch
+        style={styles.switch}
+        label="Search bar"
+        value={searchBarEnabled}
+        onValueChange={() => setSearchBarEnabled(!searchBarEnabled)}
+        testID="root-screen-switch-search-bar"
+      />
       <ThemedText style={styles.label} testID="root-screen-examples-header">
         Examples
       </ThemedText>
-      {examples.map(name => (
+      {filteredExamples.map(name => (
         <ListItem
           key={name}
           testID={`root-screen-example-${name}`}
@@ -216,7 +251,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         />
       ))}
       <ThemedText style={styles.label}>Playgrounds</ThemedText>
-      {playgrounds.map(name => (
+      {filteredPlaygrounds.map(name => (
         <ListItem
           key={name}
           testID={`root-screen-playground-${name}`}
@@ -229,7 +264,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         <ThemedText style={styles.label}>Tests</ThemedText>
       )}
       {isTestSectionEnabled() &&
-        tests.map(name => (
+        filteredTests.map(name => (
           <ListItem
             key={name}
             testID={`root-screen-tests-${name}`}

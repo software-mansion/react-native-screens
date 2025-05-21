@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS } from '../e2e-utils';
+import { describeIfiOS, selectTestScreen } from '../e2e-utils';
 
 // headerLargeTitle is supported only on iOS
 describeIfiOS('Test649', () => {
@@ -8,13 +8,7 @@ describeIfiOS('Test649', () => {
   });
 
   it('Test649 should exist', async () => {
-    await waitFor(element(by.id('root-screen-tests-Test649')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-    await expect(element(by.id('root-screen-tests-Test649'))).toBeVisible();
-    await element(by.id('root-screen-tests-Test649')).tap();
+    await selectTestScreen('Test649');
   });
 
   it('header large title "First" should be fully visible', async () => {
