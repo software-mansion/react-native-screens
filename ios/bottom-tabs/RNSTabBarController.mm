@@ -11,6 +11,15 @@
   if (self = [super init]) {
     _tabScreenControllers = nil;
     _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
+    _tabsHostComponentView = nil;
+  }
+  return self;
+}
+
+- (instancetype)initWithTabsHostComponentView:(nullable RNSBottomTabsHostComponentView *)tabsHostComponentView
+{
+  if (self = [self init]) {
+    _tabsHostComponentView = tabsHostComponentView;
   }
   return self;
 }
@@ -128,17 +137,8 @@
   NSLog(@"TabBarCtrl updateTabBarAppearance");
   _needsUpdateOfTabBarAppearance = false;
 
-  UIView *_Nullable maybeHostView = [self.view superview];
-
-  if (![maybeHostView isKindOfClass:RNSBottomTabsHostComponentView.class]) {
-    RCTLogWarn(@"[RNScreens] Failed to resolve BottomTabsHostComponentView while updating tab bar appearance");
-    maybeHostView = nil;
-  }
-
-  auto *hostComponentView = static_cast<RNSBottomTabsHostComponentView *>(maybeHostView);
-
   [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
-                                   withHostComponentView:hostComponentView
+                                   withHostComponentView:self.tabsHostComponentView
                                     tabScreenControllers:_tabScreenControllers];
 }
 

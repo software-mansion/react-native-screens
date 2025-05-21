@@ -23,6 +23,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving>
 
+- (instancetype)initWithTabsHostComponentView:(nullable RNSBottomTabsHostComponentView *)tabsHostComponentView;
+
+/**
+ * Get reference to the host component view that owns this tab bar controller.
+ *
+ * Might return null in cases where the controller view hierararchy is not attached to parent.
+ */
+@property (nonatomic, readonly, nullable) RNSBottomTabsHostComponentView *tabsHostComponentView;
+
 /**
  * Tab bar appearance coordinator. If you need to update tab bar appearance avoid using this one directly. Send the
  * controller a signal, invalidate the tab bar appearance & either wait for the update flush or flush it manually.
