@@ -10,6 +10,7 @@
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSTabBarController.h"
+#import "RNSTabBarControllerDelegate.h"
 
 namespace react = facebook::react;
 
@@ -20,6 +21,7 @@ namespace react = facebook::react;
 
 @implementation RNSBottomTabsHostComponentView {
   RNSTabBarController *_controller;
+  RNSTabBarControllerDelegate *_controllerDelegate;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -40,7 +42,9 @@ namespace react = facebook::react;
 {
   [self resetProps];
 
-  _controller = [[RNSTabBarController alloc] init];
+  _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
+  _controllerDelegate = [RNSTabBarControllerDelegate new];
+  _controller.delegate = _controllerDelegate;
   _reactSubviews = [NSMutableArray new];
 
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
@@ -102,6 +106,22 @@ namespace react = facebook::react;
   [self updateContainer];
 }
 
+#pragma mark - React events
+
+- (std::shared_ptr<const react::RNSBottomTabsEventEmitter>)reactEventEmitter
+{
+  return std::dynamic_pointer_cast<const react::RNSBottomTabsEventEmitter>(_eventEmitter);
+}
+
+- (bool)emitOnNativeFocusChangeRequestSelectedTabScreen:(RNSBottomTabsScreenComponentView *)tabScreen
+{
+  if (const auto eventEmitter = self.reactEventEmitter; eventEmitter != nullptr) {
+    eventEmitter->onNativeFocusChange({RCTStringFromNSString(tabScreen.tabKey)});
+    return true;
+  }
+  return false;
+}
+
 #pragma mark - RCTViewComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -137,6 +157,10 @@ namespace react = facebook::react;
 {
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSBottomTabsProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSBottomTabsProps>(props);
+
+  if (newComponentProps.controlNavigationStateInJS != oldComponentProps.controlNavigationStateInJS) {
+    _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
+  }
 
   if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
     _needsTabBarAppearanceUpdate = YES;
