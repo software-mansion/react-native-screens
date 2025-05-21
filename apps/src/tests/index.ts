@@ -28,7 +28,7 @@ export { default as Test706 } from './Test706';     // [E2E skipped]: can't chec
 export { default as Test726 } from './Test726';     // [E2E created](iOS): issue related to iOS
 export { default as Test748 } from './Test748';     // [E2E skipped]: issue unclear, Test432 covers more complex cases already
 export { default as Test750 } from './Test750';     // [E2E skipped]: can't check insets
-export { default as Test758 } from './Test758';
+export { default as Test758 } from './Test758';     // [E2E created](iOS): PR related to iOS search bar
 export { default as Test761 } from './Test761';
 export { default as Test779 } from './Test779';
 export { default as Test780 } from './Test780';

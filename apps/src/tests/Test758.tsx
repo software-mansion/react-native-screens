@@ -38,7 +38,7 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
 
   const [search, setSearch] = React.useState('');
 
-  const searchBarOptions = {
+  const searchBarOptions: SearchBarProps = {
     barTintColor: 'powderblue',
     tintColor: 'red',
     textColor: 'red',
@@ -46,8 +46,8 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
     obscureBackground: false,
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
-    placeholder: 'Some text',
-    cancelButtonText: 'Some text',
+    placeholder: 'Placeholder text',
+    cancelButtonText: 'Cancel text',
     onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
