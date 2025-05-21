@@ -75,7 +75,7 @@ class ScreenStackFragment :
 
     private var dimmingDelegate: DimmingViewManager? = null
 
-    private var sheetDelegate: SheetDelegate? = null
+    internal var sheetDelegate: SheetDelegate? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)

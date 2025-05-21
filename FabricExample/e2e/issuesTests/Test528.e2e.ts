@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS } from '../e2e-utils';
+import { describeIfiOS, selectTestScreen } from '../e2e-utils';
 
 // Detox currently supports orientation only on iOS
 describeIfiOS('Test528', () => {
@@ -8,13 +8,7 @@ describeIfiOS('Test528', () => {
   });
 
   it('Test528 should exist', async () => {
-    await waitFor(element(by.id('root-screen-tests-Test528')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-    await expect(element(by.id('root-screen-tests-Test528'))).toBeVisible();
-    await element(by.id('root-screen-tests-Test528')).tap();
+    await selectTestScreen('Test528');
   });
 
   it('headerRight button should be visible after orientation change', async () => {

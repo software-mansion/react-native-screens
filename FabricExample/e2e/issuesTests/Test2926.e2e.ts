@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS } from '../e2e-utils';
+import { describeIfiOS, selectTestScreen } from '../e2e-utils';
 
 // PR related to iOS search bar
 describeIfiOS('Test2926', () => {
@@ -8,13 +8,7 @@ describeIfiOS('Test2926', () => {
   });
 
   it('Test2926 should exist', async () => {
-    await waitFor(element(by.id('root-screen-tests-Test2926')))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', NaN, 0.85);
-
-    await expect(element(by.id('root-screen-tests-Test2926'))).toBeVisible();
-    await element(by.id('root-screen-tests-Test2926')).tap();
+    await selectTestScreen('Test2926');
   });
 
   it('searchBar should be initially visible', async () => {
