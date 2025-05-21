@@ -12,6 +12,11 @@ export async function selectTestScreen(screenName: string) {
     // I don't know why element(by.type('androidx.appcompat.widget.SearchView.SearchAutoComplete'))
     // does not work even if it appears in view hierarchy returned by Detox in debug logging mode.
     await element(by.text('')).replaceText(screenName);
+
+    // Press back to hide the keyboard.
+    // This is necessary to make sure that search results are not obstructed by the keyboard.
+    // More details: https://github.com/software-mansion/react-native-screens/pull/2919
+    await device.pressBack();
   } else {
     await element(by.type('UISearchBarTextField')).replaceText(screenName);
   }
