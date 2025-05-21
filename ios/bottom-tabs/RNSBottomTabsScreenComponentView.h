@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSBottomTabsScreenComponentView ()
 
 @property (nonatomic, readonly) BOOL isSelectedScreen;
+@property (nonatomic, readonly, nullable) NSString *tabKey;
 @property (nonatomic, readonly, nullable) NSString *badgeValue;
 @property (nonatomic, readonly, nullable) UIColor *badgeColor;
 

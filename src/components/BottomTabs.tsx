@@ -2,21 +2,80 @@
 
 import React from 'react';
 import BottomTabsNativeComponent, {
+  BlurEffect,
+  NativeFocusChangeEvent,
   type NativeProps as BottomTabsNativeComponentProps,
 } from '../fabric/BottomTabsNativeComponent';
-import { StyleSheet } from 'react-native';
+import {
+  type ColorValue,
+  findNodeHandle,
+  type NativeSyntheticEvent,
+  StyleSheet,
+  type ViewProps,
+} from 'react-native';
 
-export type BottomTabsProps = BottomTabsNativeComponentProps;
+export interface BottomTabsProps extends ViewProps {
+  // Events
+  onNativeFocusChange?: (
+    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
+  ) => void;
 
-// export interface BottomTabsProps {
-//   children: React.ReactNode;
-// }
+  // Appearance
+  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+
+  tabBarBackgroundColor?: ColorValue;
+  tabBarBlurEffect?: BlurEffect; // defaults to 'none'
+  tabBarItemTitleFontSize?: number;
+
+  // Control
+
+  // Experimental support
+  experimentalControlNavigationStateInJS?: boolean; // defaults to `false`
+}
 
 function BottomTabs(props: BottomTabsProps) {
   console.info(`BottomTabs render`);
+
+  const {
+    onNativeFocusChange,
+    experimentalControlNavigationStateInJS = false,
+    ...filteredProps
+  } = props;
+
+  const componentNodeRef =
+    React.useRef<React.Component<BottomTabsNativeComponentProps>>(null);
+  const componentNodeHandle = React.useRef<number>(-1);
+
+  React.useEffect(() => {
+    if (componentNodeRef.current != null) {
+      componentNodeHandle.current =
+        findNodeHandle(componentNodeRef.current) ?? -1;
+    } else {
+      componentNodeHandle.current = -1;
+    }
+  }, []);
+
+  const onNativeFocusChangeCallback = React.useCallback(
+    (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
+      console.log(
+        `BottomTabs [${
+          componentNodeHandle.current ?? -1
+        }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
+      );
+      onNativeFocusChange?.(event);
+    },
+    [onNativeFocusChange],
+  );
+
   return (
-    <BottomTabsNativeComponent style={styles.fillParent} {...props}>
-      {props.children}
+    <BottomTabsNativeComponent
+      style={styles.fillParent}
+      onNativeFocusChange={onNativeFocusChangeCallback}
+      controlNavigationStateInJS={experimentalControlNavigationStateInJS}
+      // @ts-ignore suppress ref - debug only
+      ref={componentNodeRef}
+      {...filteredProps}>
+      {filteredProps.children}
     </BottomTabsNativeComponent>
   );
 }
