@@ -13,6 +13,7 @@ import {
   StyleSheet,
   type ViewProps,
 } from 'react-native';
+import featureFlags from '../flags';
 
 export interface BottomTabsProps extends ViewProps {
   // Events
@@ -38,7 +39,8 @@ function BottomTabs(props: BottomTabsProps) {
 
   const {
     onNativeFocusChange,
-    experimentalControlNavigationStateInJS = false,
+    experimentalControlNavigationStateInJS = featureFlags.experiment
+      .controlledBottomTabs,
     ...filteredProps
   } = props;
 
