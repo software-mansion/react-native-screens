@@ -34,9 +34,7 @@ const _featureFlags = {
   experiment: {
     controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
   },
-  stable: {
-
-  },
+  stable: {},
 };
 
 /**
@@ -53,18 +51,22 @@ export const featureFlags = {
       return _featureFlags.experiment.controlledBottomTabs;
     },
     set controlledBottomTabs(value: boolean) {
-      if (value !== _featureFlags.experiment.controlledBottomTabs && _featureFlags.experiment.controlledBottomTabs !== RNS_CONTROLLED_BOTTOM_TABS_DEFAULT) {
-        console.error(`[RNScreens] controlledBottomTabs feature flag modified for a second time; this might lead to unexpected effects`);
+      if (
+        value !== _featureFlags.experiment.controlledBottomTabs &&
+        _featureFlags.experiment.controlledBottomTabs !==
+          RNS_CONTROLLED_BOTTOM_TABS_DEFAULT
+      ) {
+        console.error(
+          `[RNScreens] controlledBottomTabs feature flag modified for a second time; this might lead to unexpected effects`,
+        );
       }
       _featureFlags.experiment.controlledBottomTabs = value;
-    }
+    },
   },
   /**
    * Section for stable flags, which can be used to configure library behaviour.
    */
-  stable: {
-
-  }
+  stable: {},
 };
 
 export default featureFlags;
