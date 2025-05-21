@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Animations need to be kept in sync with their Animator equivalents in CustomAnimatorProvider -->
 <translate xmlns:android="http://schemas.android.com/apk/res/android"
     android:duration="@android:integer/config_shortAnimTime"
     android:fromXDelta="0%"
