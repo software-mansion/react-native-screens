@@ -1,7 +1,6 @@
 // Side effects import declaration to ensure our TurboModule
 // is loaded.
 import './fabric/NativeScreensModule';
-import featureFlags from "react-native-screens/flags";
 
 export * from './types';
 
@@ -55,10 +54,7 @@ export {
 /**
  * Flags
  */
-export {
-  compatibilityFlags,
-  featureFlags,
-} from './flags';
+export { compatibilityFlags, featureFlags } from './flags';
 
 /**
  * Hooks
