@@ -2,13 +2,12 @@
 
 import React from 'react';
 import BottomTabsScreenNativeComponent, {
-  type TabBarItemAppearance,
+  type NativeProps,
 } from '../fabric/BottomTabsScreenNativeComponent';
 import {
   ColorValue,
   NativeSyntheticEvent,
   StyleSheet,
-  View,
   ViewProps,
   findNodeHandle,
 } from 'react-native';
@@ -23,11 +22,16 @@ export type BottomTabsScreenEventHandler<T> = (
 export interface BottomTabsScreenProps {
   children: ViewProps['children'];
   placeholder?: React.ReactNode | undefined;
+
+  // Control
   isFocused?: boolean;
+  tabKey: string;
+
+  // Appearance
   badgeValue?: string;
   badgeColor?: ColorValue;
   title?: string;
-  tabBarItemAppearance?: TabBarItemAppearance;
+  titleFontSize?: number;
 
   // Events
   onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
@@ -40,20 +44,19 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
   const [nativeViewHasDisappeared, setNativeViewHasDisappeared] =
     React.useState(true);
 
-  const isFocused = props.isFocused ?? false;
+  const {
+    onWillAppear,
+    onDidAppear,
+    onWillDisappear,
+    onDidDisappear,
+    isFocused = false,
+    ...propsWoEventHandlers
+  } = props;
 
   const shouldFreeze =
     freezeEnabled() && !isFocused && nativeViewHasDisappeared;
 
-  const {
-    onWillAppear,
-    onWillDisappear,
-    onDidAppear,
-    onDidDisappear,
-    ...propsWoEventHandlers
-  } = props;
-
-  const componentNodeRef = React.useRef<View>(null);
+  const componentNodeRef = React.useRef<React.Component<NativeProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 
   React.useEffect(() => {
@@ -121,6 +124,8 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onDidAppear={onDidAppearCallback}
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
+      isFocused={isFocused}
+      // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       {...propsWoEventHandlers}>
       <Freeze

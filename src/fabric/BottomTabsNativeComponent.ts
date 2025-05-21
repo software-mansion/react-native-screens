@@ -15,10 +15,11 @@ import {
 //   backgroundColor?: ColorValue;
 // };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type GenericEmptyEvent = Readonly<{}>;
+export type NativeFocusChangeEvent = {
+  tabKey: string;
+};
 
-type BlurEffect =
+export type BlurEffect =
   | 'none'
   | 'extraLight'
   | 'light'
@@ -43,7 +44,7 @@ type BlurEffect =
 
 export interface NativeProps extends ViewProps {
   // Events
-  onNativeFocusChange?: DirectEventHandler<GenericEmptyEvent>;
+  onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
 
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
@@ -51,6 +52,11 @@ export interface NativeProps extends ViewProps {
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: WithDefault<BlurEffect, 'none'>;
   tabBarItemTitleFontSize?: Float;
+
+  // Control
+
+  // Experimental support
+  controlNavigationStateInJS?: WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabs', {});

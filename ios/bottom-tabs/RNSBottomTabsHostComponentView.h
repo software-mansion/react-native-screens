@@ -1,9 +1,12 @@
 #import <React/RCTViewComponentView.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
 #import "RNSBottomTabsHostComponentViewManager.h"
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class RNSBottomTabsScreenComponentView;
 
 /**
  * Component view. Lifecycle is managed by React Native.
@@ -24,6 +27,23 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
 @property (nonatomic, strong, readonly, nullable) UIBlurEffect *tabBarBlurEffect;
 @property (nonatomic, strong, readonly, nullable) NSNumber *tabBarItemTitleFontSize;
+
+@property (nonatomic, readonly) bool experimental_controlNavigationStateInJS;
+
+@end
+
+#pragma mark - React Events
+
+@interface RNSBottomTabsHostComponentView ()
+
+/**
+ * This pointer might be `nullptr`!  All this method does is a cast of the backing field inherited from
+ * `RCTViewComponentView`. The nullability of this pointer is therefore determined by `_eventEmitter` lifecycle in the
+ * super class.
+ */
+- (std::shared_ptr<const facebook::react::RNSBottomTabsEventEmitter>)reactEventEmitter;
+
+- (bool)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen;
 
 @end
 

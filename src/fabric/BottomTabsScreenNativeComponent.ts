@@ -16,10 +16,6 @@ export type LifecycleStateChangeEvent = Readonly<{
   newState: Int32;
 }>;
 
-export type TabBarItemAppearance = {
-  titleFontSize?: Float;
-};
-
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
@@ -30,12 +26,12 @@ export interface NativeProps extends ViewProps {
 
   // Control
   isFocused?: boolean;
+  tabKey: string;
 
   // Appearance
   badgeValue?: string;
   badgeColor?: ColorValue;
-
-  tabBarItemAppearance?: TabBarItemAppearance;
+  titleFontSize?: Float;
 
   // General
   title?: string | undefined | null;

@@ -115,8 +115,13 @@ RNS_IGNORE_SUPER_CALL_END
     _controller.title = _title;
   }
 
-  if (newComponentProps.tabBarItemAppearance.titleFontSize != oldComponentProps.tabBarItemAppearance.titleFontSize) {
-    _titleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemAppearance.titleFontSize];
+  if (newComponentProps.tabKey != oldComponentProps.tabKey) {
+    RCTAssert(!newComponentProps.tabKey.empty(), @"[RNScreens] tabKey must not be empty!");
+    _tabKey = RCTNSStringFromString(newComponentProps.title);
+  }
+
+  if (newComponentProps.titleFontSize != oldComponentProps.titleFontSize) {
+    _titleFontSize = [NSNumber numberWithFloat:newComponentProps.titleFontSize];
     tabItemNeedsAppearanceUpdate = true;
   }
 
