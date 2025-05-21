@@ -1,6 +1,7 @@
 // Side effects import declaration to ensure our TurboModule
 // is loaded.
 import './fabric/NativeScreensModule';
+import featureFlags from "react-native-screens/flags";
 
 export * from './types';
 
@@ -48,9 +49,16 @@ export { default as BottomTabsScreen } from './components/BottomTabsScreen';
  */
 export {
   isSearchBarAvailableForCurrentPlatform,
-  compatibilityFlags,
   executeNativeBackPress,
 } from './utils';
+
+/**
+ * Flags
+ */
+export {
+  compatibilityFlags,
+  featureFlags,
+} from './flags';
 
 /**
  * Hooks
