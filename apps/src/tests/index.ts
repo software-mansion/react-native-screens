@@ -30,8 +30,8 @@ export { default as Test726 } from './Test726';     // [E2E created](iOS): issue
 export { default as Test748 } from './Test748';
 export { default as Test750 } from './Test750';
 export { default as Test758 } from './Test758';
-export { default as Test761 } from './Test761';     // [E2E skipped]: can't check animation
-export { default as Test779 } from './Test779';
+export { default as Test761 } from './Test761';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test779 } from './Test779';     // [E2E skipped]: can't check animation in a meaningful way
 export { default as Test780 } from './Test780';
 export { default as Test791 } from './Test791';
 export { default as Test800 } from './Test800';
