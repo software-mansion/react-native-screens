@@ -542,6 +542,21 @@ class Screen(
         }
     }
 
+//    override fun setOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener?) {
+//        val effectiveListener =
+//            if (usesFormSheetPresentation() && listener != null) {
+//                OnApplyWindowInsetsListener { v, insets ->
+//                    listener.onApplyWindowInsets(v, insets).also {
+//                        parentAsView()?.takeIf { !it.isInLayout }?.requestLayout()
+//                    }
+//                }
+//            } else {
+//                listener
+//            }
+//
+//        super.setOnApplyWindowInsetsListener(effectiveListener)
+//    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 

@@ -58,8 +58,8 @@ class ScreenStackFragment :
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
-
     private var lastFocusedChild: View? = null
+    private var isCustomAnimationRunning = false
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -265,6 +265,7 @@ class ScreenStackFragment :
                     ): WindowInsetsAnimationCompat.BoundsCompat {
                         startBottom = bounds.lowerBound.bottom
                         endBottom = bounds.upperBound.bottom
+                        println("onStart")
                         return super.onStart(animation, bounds)
                     }
 
@@ -272,13 +273,19 @@ class ScreenStackFragment :
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
                     ): WindowInsetsCompat {
-                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-                            val currentBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom.toFloat()
+                        runningAnimations.forEach( it -> )
+                        if (!isCustomAnimationRunning) {
+                            val currentBottomInset =
+                                insets.getInsets(WindowInsetsCompat.Type.ime()).bottom.toFloat()
                             val keyboardHeight = endBottom - startBottom
                             val progress = (currentBottomInset - startBottom) / keyboardHeight
-                            val translationDistance = if (availableSpace > keyboardHeight) keyboardHeight else availableSpace
+                            val translationDistance =
+                                if (availableSpace > keyboardHeight) keyboardHeight else availableSpace
                             val translationY = translationDistance * progress
                             screen.translationY = -translationY
+                            println("onProgress translationY = ${translationY}")
+                        } else {
+                            println("No onProgress")
                         }
 
                         return insets
@@ -320,6 +327,8 @@ class ScreenStackFragment :
         val dimmingDelegate = requireDimmingDelegate()
 
         if (enter) {
+            val keyboardTranslation = sheetDelegate?.getAvailableSpaceAboveKeyboard(WindowInsetsCompat.toWindowInsetsCompat(screen.rootWindowInsets))
+
             val alphaAnimator =
                 ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
                     addUpdateListener { anim ->
@@ -333,7 +342,8 @@ class ScreenStackFragment :
                 ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        println("set animated keyboard translation = ${(keyboardTranslation?.toFloat() ?: 0F)}")
+                        animatedValue?.let { screen.translationY = it - (keyboardTranslation?.toFloat() ?: 0F)}
                     }
                 }
 
@@ -373,6 +383,21 @@ class ScreenStackFragment :
                 },
             ),
         )
+        animatorSet.addListener(object: Animator.AnimatorListener {
+            override fun onAnimationStart(p0: Animator) {
+                println("ScreenStackFragment onAnimationStart")
+                isCustomAnimationRunning = true
+            }
+
+            override fun onAnimationEnd(p0: Animator) {
+                println("ScreenStackFragment onAnimationEnd")
+                isCustomAnimationRunning = false
+            }
+
+            override fun onAnimationCancel(p0: Animator) = Unit
+
+            override fun onAnimationRepeat(p0: Animator) = Unit
+        })
         return animatorSet
     }
 

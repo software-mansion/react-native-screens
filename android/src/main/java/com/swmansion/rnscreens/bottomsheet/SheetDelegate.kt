@@ -25,7 +25,6 @@ class SheetDelegate(
     OnApplyWindowInsetsListener {
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
-    private var isKeyboardTranslationApplied = false
     var lastStableDetentIndex: Int = screen.sheetInitialDetentIndex
         private set
 
@@ -76,14 +75,6 @@ class SheetDelegate(
 
     private fun handleHostFragmentOnResume() {
         InsetsObserverProxy.addOnApplyWindowInsetsListener(this)
-        /**
-         * Set initial insets when host is resumed. This is necessary for bottom sheet to work properly with keyboard, in
-         * case when keyboard was already open, then none of onApplyWindowInsets nor onProgress is fired, as the keyboard
-         * state do not change.
-         */
-        screen.rootWindowInsets?.let {
-            this.onApplyWindowInsets(screen, WindowInsetsCompat.toWindowInsetsCompat(it))
-        }
     }
 
     private fun handleHostFragmentOnPause() {
@@ -239,6 +230,7 @@ class SheetDelegate(
 
     internal fun getMaxOffsetFromTop(): Int {
         val containerHeight = tryResolveContainerHeight()
+        println("SheetDelegate getMaxOffsetFromTop containerHeight=${containerHeight}")
 
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
@@ -271,14 +263,16 @@ class SheetDelegate(
                 )
             }
 
+        println("SheetDelegate getMaxOffsetFromTop return=${offestFromTop}")
         return offestFromTop
     }
 
-    private fun getAvailableSpaceAboveKeyboard(insets: WindowInsetsCompat): Int {
+    internal fun getAvailableSpaceAboveKeyboard(insets: WindowInsetsCompat): Int {
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+
         val availableSpace = this.getMaxOffsetFromTop()
         val bottomPadding = if (availableSpace > imeInset.bottom) imeInset.bottom else availableSpace
-
+        println("SheetDelegate getAvailableSpaceAboveKeyboard availableSpace = ${availableSpace} imeInset = ${imeInset} navigationInsets = ${insets.getInsets(WindowInsetsCompat.Type.navigationBars())} return ${bottomPadding}")
         return bottomPadding
     }
 
@@ -289,20 +283,13 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+        println("SheetDelegate onApplyWindowInsets isIme = ${isImeVisible} imeInsets=${imeInset}")
 
         if (isImeVisible) {
             isKeyboardVisible = true
             keyboardState = KeyboardVisible(imeInset.bottom)
             val availableSpace = this.getMaxOffsetFromTop()
             val bottomPadding = if (availableSpace > imeInset.bottom) imeInset.bottom else availableSpace
-
-            if (
-                !isKeyboardTranslationApplied &&
-                (sheetBehavior?.isAnimating == false || Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
-            ) {
-                isKeyboardTranslationApplied = true
-                screen.translationY = -bottomPadding.toFloat()
-            }
 
             sheetBehavior?.requestCloseGesture()
             sheetBehavior?.let {
@@ -318,15 +305,10 @@ class SheetDelegate(
                         prevInsets.left,
                         prevInsets.top,
                         prevInsets.right,
-                        // If the available space is less then keyboard height then we cover part of the sheet
-                        imeInset.bottom - bottomPadding,
+                        bottomPadding,
                     ),
                 ).build()
         } else {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                isKeyboardTranslationApplied = true
-                screen.translationY = 0F
-            }
             sheetBehavior?.dismissCloseGesture()
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
@@ -384,6 +366,7 @@ class SheetDelegate(
             bottomSheet: View,
             newState: Int,
         ) {
+            println("SheetStateObserver onStateChanged ${newState}")
             this@SheetDelegate.onSheetStateChanged(newState)
         }
 
