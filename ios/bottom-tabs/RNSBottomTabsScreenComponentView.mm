@@ -175,6 +175,13 @@ RNS_IGNORE_SUPER_CALL_END
   return react::concreteComponentDescriptorProvider<react::RNSBottomTabsScreenComponentDescriptor>();
 }
 
++ (BOOL)shouldBeRecycled
+{
+  // There won't be tens of instances of this component usually & it's easier for now.
+  // We could consider enabling it someday though.
+  return NO;
+}
+
 @end
 
 #pragma mark - View class exposure
