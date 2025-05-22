@@ -48,9 +48,13 @@ export { default as BottomTabsScreen } from './components/BottomTabsScreen';
  */
 export {
   isSearchBarAvailableForCurrentPlatform,
-  compatibilityFlags,
   executeNativeBackPress,
 } from './utils';
+
+/**
+ * Flags
+ */
+export { compatibilityFlags, featureFlags } from './flags';
 
 /**
  * Hooks
