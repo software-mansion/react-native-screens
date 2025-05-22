@@ -1,34 +1,49 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction, useContext } from 'react';
 import {
   Button,
-  NativeSyntheticEvent,
+  type NativeSyntheticEvent,
   Text,
   View,
-  ViewProps,
+  type ViewProps,
 } from 'react-native';
 
 import {
   BottomTabs,
   BottomTabsScreen,
   enableFreeze,
+  featureFlags,
 } from 'react-native-screens';
 import Colors from '../shared/styling/Colors';
 import { NativeFocusChangeEvent } from 'react-native-screens/fabric/BottomTabsNativeComponent';
 
 enableFreeze(true);
 
-let gHeavyTabRender = false;
-const gExperimentalControlNavigationStateInJS = false;
+const defaultGlobalConfiguration = {
+  heavyTabRender: false,
+  controlledBottomTabs: featureFlags.experiment.controlledBottomTabs,
+} as const;
+
+interface Configuration {
+  heavyTabRender: boolean;
+  controlledBottomTabs: boolean;
+}
+
+interface ConfigWrapper {
+  config: Configuration;
+  setConfig?: Dispatch<SetStateAction<Configuration>>;
+}
+
+const ConfigWrapperContext = React.createContext<ConfigWrapper>({
+  config: defaultGlobalConfiguration,
+});
+
+featureFlags.experiment.controlledBottomTabs = false;
 
 interface LayoutViewProps extends ViewProps {
   tabID?: number;
 }
 
 function someExtensiveComputation(n: number = 50000000): string {
-  if (!gHeavyTabRender) {
-    return '';
-  }
-
   let a = 100;
   for (let i = 0; i < n; i++) {
     a += 1;
@@ -38,9 +53,13 @@ function someExtensiveComputation(n: number = 50000000): string {
 
 function LayoutView(props: LayoutViewProps) {
   const { children, style, ...rest } = props;
+  const { config } = useContext(ConfigWrapperContext);
 
   console.log(`LayoutView render; tabID: ${rest.tabID}`);
-  someExtensiveComputation();
+
+  if (config.heavyTabRender) {
+    someExtensiveComputation();
+  }
 
   return (
     <View
@@ -69,15 +88,31 @@ interface TabContentViewProps extends ViewProps {
 function TabContentView(props: TabContentViewProps) {
   const { selectNextTab, tabKey, message, ...viewProps } = props;
 
+  const configWrapper = React.useContext(ConfigWrapperContext);
+
+  console.log(
+    `TabContentView render with config: ${JSON.stringify(
+      configWrapper.config,
+    )}`,
+  );
+
   return (
     <View {...viewProps}>
       {message !== undefined && <Text>{message}</Text>}
       <Text>tabKey: {tabKey}</Text>
+      <Text>
+        heavyTabRender: {configWrapper.config.heavyTabRender ? 'true' : 'false'}
+      </Text>
       <Button title="Next tab" onPress={selectNextTab} />
       <Button
-        title="Toggle heavy render"
+        title="Toggle heavy render, current value {}"
         onPress={() => {
-          gHeavyTabRender = !gHeavyTabRender;
+          configWrapper.setConfig?.(prev => {
+            return {
+              ...prev,
+              heavyTabRender: !prev.heavyTabRender,
+            };
+          });
         }}
       />
     </View>
@@ -102,11 +137,13 @@ function TabPlaceholder() {
   );
 }
 
-function App() {
+function BottomTabsExample() {
   const [focusedTab, setFocusedTab] = React.useState(0);
   const selectNextTab = React.useCallback(() => {
     setFocusedTab(old => old + 1);
   }, [setFocusedTab]);
+
+  const configWrapper = React.useContext(ConfigWrapperContext);
 
   console.log(`Render: focusedTab: ${focusedTab}`);
 
@@ -118,7 +155,7 @@ function App() {
       const tabKey = event.nativeEvent.tabKey;
 
       // Use `startTransition` only if the state is controlled in JS
-      let transitionFn = gExperimentalControlNavigationStateInJS
+      const transitionFn = configWrapper.config.controlledBottomTabs
         ? startTransition
         : (callback: () => void) => {
             callback();
@@ -135,7 +172,7 @@ function App() {
         }
       });
     },
-    [],
+    [configWrapper.config.controlledBottomTabs],
   );
 
   return (
@@ -144,7 +181,7 @@ function App() {
         tabBarBackgroundColor={Colors.NavyLight100}
         tabBarItemTitleFontSize={14}
         experimentalControlNavigationStateInJS={
-          gExperimentalControlNavigationStateInJS
+          configWrapper.config.controlledBottomTabs
         }
         onNativeFocusChange={onNativeFocusChangeCallback}>
         <BottomTabsScreen
@@ -186,6 +223,22 @@ function App() {
         </BottomTabsScreen>
       </BottomTabs>
     </View>
+  );
+}
+
+function App() {
+  const [config, setConfig] = React.useState<Configuration>(
+    defaultGlobalConfiguration,
+  );
+
+  return (
+    <ConfigWrapperContext.Provider
+      value={{
+        config,
+        setConfig,
+      }}>
+      <BottomTabsExample />
+    </ConfigWrapperContext.Provider>
   );
 }
 
