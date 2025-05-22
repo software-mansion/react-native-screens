@@ -196,6 +196,13 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSBottomTabsComponentDescriptor>();
 }
 
++ (BOOL)shouldBeRecycled
+{
+  // There won't be tens of instances of this component usually & it's easier for now.
+  // We could consider enabling it someday though.
+  return NO;
+}
+
 #pragma mark - RCTMountingTransactionObserving
 
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
