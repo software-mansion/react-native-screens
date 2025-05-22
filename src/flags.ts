@@ -57,7 +57,7 @@ export const featureFlags = {
           RNS_CONTROLLED_BOTTOM_TABS_DEFAULT
       ) {
         console.error(
-          `[RNScreens] controlledBottomTabs feature flag modified for a second time; this might lead to unexpected effects`,
+          '[RNScreens] controlledBottomTabs feature flag modified for a second time; this might lead to unexpected effects',
         );
       }
       _featureFlags.experiment.controlledBottomTabs = value;
