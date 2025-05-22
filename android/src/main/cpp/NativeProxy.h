@@ -29,7 +29,7 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
       jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
           fabricUIManager);
 
-  void invalidateCpp();
+  void invalidateNative();
 };
 
 } // namespace rnscreens

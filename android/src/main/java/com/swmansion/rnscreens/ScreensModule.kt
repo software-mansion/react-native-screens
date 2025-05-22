@@ -39,7 +39,7 @@ class ScreensModule(
 
     override fun invalidate() {
         super.invalidate()
-        proxy?.invalidateCpp();
+        proxy?.invalidateNative();
         nativeUninstall()
     }
 

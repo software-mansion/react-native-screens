@@ -6,7 +6,7 @@ class NativeProxy {
     // do nothing on Paper
     fun nativeAddMutationsListener(fabricUIManager: FabricUIManager) = Unit
 
-    fun invalidateCpp() = Unit
+    fun invalidateNative() = Unit
 
     companion object {
         fun addScreenToMap(

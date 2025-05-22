@@ -20,7 +20,7 @@ void NativeProxy::registerNatives() {
        makeNativeMethod(
            "nativeAddMutationsListener",
            NativeProxy::nativeAddMutationsListener),
-       makeNativeMethod("invalidateCpp", NativeProxy::invalidateCpp)});
+       makeNativeMethod("invalidateNative", NativeProxy::invalidateNative)});
 }
 
 void NativeProxy::nativeAddMutationsListener(
@@ -47,7 +47,7 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
   return makeCxxInstance(jThis);
 }
 
-void NativeProxy::invalidateCpp() {
+void NativeProxy::invalidateNative() {
     javaPart_ = nullptr;
 }
 
