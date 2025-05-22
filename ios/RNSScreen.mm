@@ -67,7 +67,7 @@ struct ContentWrapperBox {
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
-  bool _hasInitialDetentSet;
+  bool _sheetHasInitialDetentSet;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -1049,7 +1049,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
 
     // Handle initial detent on the first update.
-    if (!_hasInitialDetentSet) {
+    if (!_sheetHasInitialDetentSet) {
       if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
@@ -1069,7 +1069,7 @@ RNS_IGNORE_SUPER_CALL_END
       } else if (_sheetInitialDetent != 0) {
         RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
       }
-      _hasInitialDetentSet = true;
+      _sheetHasInitialDetentSet = true;
     }
 
     sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
