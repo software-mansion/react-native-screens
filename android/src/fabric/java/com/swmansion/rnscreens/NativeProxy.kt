@@ -20,6 +20,8 @@ class NativeProxy {
 
     external fun nativeAddMutationsListener(fabricUIManager: FabricUIManager)
 
+    external fun invalidateNative()
+
     companion object {
         // we use ConcurrentHashMap here since it will be read on the JS thread,
         // and written to on the UI thread.
