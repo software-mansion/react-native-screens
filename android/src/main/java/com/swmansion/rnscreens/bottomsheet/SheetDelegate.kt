@@ -3,12 +3,15 @@ package com.swmansion.rnscreens.bottomsheet
 import android.content.Context
 import android.os.Build
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -25,6 +28,7 @@ class SheetDelegate(
     val screen: Screen,
 ) : LifecycleEventObserver,
     OnApplyWindowInsetsListener {
+    var keyboardTranslation = 0F
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
 
@@ -244,13 +248,22 @@ class SheetDelegate(
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
 
+        println("SheetDelegate onApplyWindowInsets isIme=${isImeVisible} imeInsets=${imeInset}")
         if (isImeVisible) {
             isKeyboardVisible = true
             keyboardState = KeyboardVisible(imeInset.bottom)
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
+
+            // TODO: Compute exactly
+            screen.translationY = -imeInset.bottom.toFloat()
+            keyboardTranslation = -imeInset.bottom.toFloat()
         } else {
+            // TODO: Compute exactly
+            screen.translationY = 0F
+            keyboardTranslation = 0F
+
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardDidHide)

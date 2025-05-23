@@ -57,7 +57,7 @@ class ScreenStackFragment :
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
-
+    private var isCustomAnimationRunning = false
     private var lastFocusedChild: View? = null
 
     var searchView: CustomSearchView? = null
@@ -249,10 +249,48 @@ class ScreenStackFragment :
                 object : WindowInsetsAnimationCompat.Callback(
                     DISPATCH_MODE_STOP,
                 ) {
+                    var startTranslationY = 0F
+                    var endTranslationY = 0F
+
+                    override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                        if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                            println("ScreenStackFragment onPrepare translationY = ${screen.translationY}")
+                            startTranslationY = screen.translationY
+                        }
+
+                        super.onPrepare(animation)
+                    }
+
+                    override fun onStart(
+                        animation: WindowInsetsAnimationCompat,
+                        bounds: WindowInsetsAnimationCompat.BoundsCompat,
+                    ): WindowInsetsAnimationCompat.BoundsCompat {
+                        if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                            println("ScreenStackFragment onStart translationY = ${screen.translationY}")
+                            endTranslationY = screen.translationY
+                        }
+
+                        return super.onStart(animation, bounds)
+                    }
+
                     override fun onProgress(
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
-                    ): WindowInsetsCompat = insets
+                    ): WindowInsetsCompat {
+                        if (isCustomAnimationRunning) {
+                            return insets
+                        }
+
+                        runningAnimations.forEach {
+                            if (it.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+//                                println("ScreenStackFragment IME onProgress interpolation = ${it.interpolatedFraction}")
+//                                screen.translationY = - startTranslationY + diff * it.interpolatedFraction
+                                screen.translationY = startTranslationY + (it.interpolatedFraction * (endTranslationY - startTranslationY))
+                            }
+                        }
+
+                        return insets
+                    }
                 },
             )
         }
@@ -289,6 +327,7 @@ class ScreenStackFragment :
         val animatorSet = AnimatorSet()
         val dimmingDelegate = requireDimmingDelegate()
 
+        println("ScreenStackFragment onCreateAnimator translationY=${screen.translationY}")
         if (enter) {
             val alphaAnimator =
                 ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
@@ -303,10 +342,12 @@ class ScreenStackFragment :
                 ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
+//                        animatedValue?.let { screen.translationY = it + (sheetDelegate?.keyboardTranslation ?: 0F) }
                         animatedValue?.let { screen.translationY = it }
                     }
                 }
 
+            println("")
             animatorSet
                 .play(slideAnimator)
                 .takeIf {
@@ -327,6 +368,7 @@ class ScreenStackFragment :
                 ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
+//                        animatedValue?.let { screen.translationY = it + (sheetDelegate?.keyboardTranslation ?: 0F) }
                         animatedValue?.let { screen.translationY = it }
                     }
                 }
@@ -342,6 +384,23 @@ class ScreenStackFragment :
                     ScreenAnimationDelegate.AnimationType.EXIT
                 },
             ),
+        )
+        animatorSet.addListener(
+            object : Animator.AnimatorListener {
+                override fun onAnimationStart(p0: Animator) {
+                    println("ScreenStackFragment onAnimationStart translationY=${screen.translationY}")
+                    isCustomAnimationRunning = true
+                }
+
+                override fun onAnimationEnd(p0: Animator) {
+                    println("ScreenStackFragment onAnimationEnd translationY=${screen.translationY}")
+                    isCustomAnimationRunning = false
+                }
+
+                override fun onAnimationCancel(p0: Animator) = Unit
+
+                override fun onAnimationRepeat(p0: Animator) = Unit
+            },
         )
         return animatorSet
     }
