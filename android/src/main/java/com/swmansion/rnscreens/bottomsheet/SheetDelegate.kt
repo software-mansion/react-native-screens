@@ -7,6 +7,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -72,16 +73,14 @@ class SheetDelegate(
         }
     }
 
-    private fun handleHostFragmentOnStart() {
-        InsetsObserverProxy.registerOnView(requireDecorView())
-    }
+    private fun handleHostFragmentOnStart() = Unit
 
     private fun handleHostFragmentOnResume() {
-        InsetsObserverProxy.addOnApplyWindowInsetsListener(this)
+        screen.insetsObserver.addOnApplyWindowInsetsListener(this)
     }
 
     private fun handleHostFragmentOnPause() {
-        InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
+        screen.insetsObserver.removeOnApplyWindowInsetsListener(this)
     }
 
     private fun onSheetStateChanged(newState: Int) {
@@ -251,19 +250,6 @@ class SheetDelegate(
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
-
-            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            return WindowInsetsCompat
-                .Builder(insets)
-                .setInsets(
-                    WindowInsetsCompat.Type.navigationBars(),
-                    Insets.of(
-                        prevInsets.left,
-                        prevInsets.top,
-                        prevInsets.right,
-                        0,
-                    ),
-                ).build()
         } else {
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
@@ -278,13 +264,7 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-        return WindowInsetsCompat
-            .Builder(insets)
-            .setInsets(
-                WindowInsetsCompat.Type.navigationBars(),
-                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, 0),
-            ).build()
+        return insets
     }
 
     private fun shouldDismissSheetInState(
