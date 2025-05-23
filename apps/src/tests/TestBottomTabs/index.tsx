@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useContext } from 'react';
+import React, { type Dispatch, type SetStateAction, useContext } from 'react';
 import {
   Button,
   type NativeSyntheticEvent,
@@ -13,7 +13,7 @@ import {
   enableFreeze,
   featureFlags,
 } from 'react-native-screens';
-import Colors from '../shared/styling/Colors';
+import Colors from '../../shared/styling/Colors';
 import { NativeFocusChangeEvent } from 'react-native-screens/fabric/BottomTabsNativeComponent';
 
 enableFreeze(true);
@@ -36,8 +36,6 @@ interface ConfigWrapper {
 const ConfigWrapperContext = React.createContext<ConfigWrapper>({
   config: defaultGlobalConfiguration,
 });
-
-featureFlags.experiment.controlledBottomTabs = false;
 
 interface LayoutViewProps extends ViewProps {
   tabID?: number;
@@ -103,9 +101,13 @@ function TabContentView(props: TabContentViewProps) {
       <Text>
         heavyTabRender: {configWrapper.config.heavyTabRender ? 'true' : 'false'}
       </Text>
+      <Text>
+        controlledBottomTabs:{' '}
+        {configWrapper.config.controlledBottomTabs ? 'true' : 'false'}
+      </Text>
       <Button title="Next tab" onPress={selectNextTab} />
       <Button
-        title="Toggle heavy render, current value {}"
+        title="Toggle heavy render"
         onPress={() => {
           configWrapper.setConfig?.(prev => {
             return {
@@ -141,11 +143,11 @@ function BottomTabsExample() {
   const [focusedTab, setFocusedTab] = React.useState(0);
   const selectNextTab = React.useCallback(() => {
     setFocusedTab(old => old + 1);
-  }, [setFocusedTab]);
+  }, []);
 
   const configWrapper = React.useContext(ConfigWrapperContext);
 
-  console.log(`Render: focusedTab: ${focusedTab}`);
+  console.log(`BottomTabsExample (topLevel) render: focusedTab: ${focusedTab}`);
 
   // Pending state can be used to render placeholder for the time of transition.
   const [_, startTransition] = React.useTransition();
@@ -155,12 +157,16 @@ function BottomTabsExample() {
       const tabKey = event.nativeEvent.tabKey;
 
       // Use `startTransition` only if the state is controlled in JS
-      const transitionFn = configWrapper.config.controlledBottomTabs
-        ? startTransition
-        : (callback: () => void) => {
-            callback();
-          };
+      // const transitionFn = !configWrapper.config.controlledBottomTabs
+      //   ? startTransition
+      //   : (callback: () => void) => {
+      //       callback();
+      //     };
+
+      const transitionFn = startTransition;
+
       transitionFn(() => {
+        console.info(`Starting transition to ${tabKey}`);
         if (tabKey === 'Tab1') {
           setFocusedTab(0);
         } else if (tabKey === 'Tab2') {

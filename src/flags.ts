@@ -1,4 +1,4 @@
-const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = false;
+const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = true;
 
 // TODO: Migrate freeze here
 
