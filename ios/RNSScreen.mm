@@ -1081,29 +1081,26 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
 
-    // Handle initial detent on the first update.
-    if (!_sheetHasInitialDetentSet) {
-      if (_sheetInitialDetent >= 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+    if (_sheetInitialDetent >= 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-        if (@available(iOS 16.0, *)) {
-          UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
-          [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
-        } else
+      if (@available(iOS 16.0, *)) {
+        UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+        [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+      } else
 #endif // Check for iOS >= 16
-        {
-          if (_sheetInitialDetent < 2) {
-            [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-          } else {
-            RCTLogError(
-                @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
-          }
+      {
+        if (_sheetInitialDetent < 2) {
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        } else {
+          RCTLogError(
+              @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
         }
-      } else if (_sheetInitialDetent != 0) {
-        RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
       }
-      _sheetHasInitialDetentSet = true;
+    } else if (_sheetInitialDetent != 0) {
+      RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
     }
+    _sheetHasInitialDetentSet = true;
 
     sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
     [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
