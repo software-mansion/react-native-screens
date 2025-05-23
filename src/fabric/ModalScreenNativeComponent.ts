@@ -84,7 +84,7 @@ export interface NativeProps extends ViewProps {
   onHeaderBackButtonClicked?: DirectEventHandler<ScreenEvent>;
   onSheetDetentChanged?: DirectEventHandler<SheetDetentChangedEvent>;
   sheetAllowedDetents?: number[];
-  sheetDismissible?: boolean;
+  sheetDismissible?: WithDefault<boolean, true>;
   sheetLargestUndimmedDetent?: WithDefault<Int32, -1>;
   sheetGrabberVisible?: WithDefault<boolean, false>;
   sheetCornerRadius?: WithDefault<Float, -1.0>;
