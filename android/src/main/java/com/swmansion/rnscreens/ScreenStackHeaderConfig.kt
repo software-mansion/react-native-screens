@@ -24,10 +24,10 @@ import kotlin.math.max
 
 class ScreenStackHeaderConfig(
     context: Context,
-    private val pointerEventsImpl: ReactPointerEventsView
-) : FabricEnabledHeaderConfigViewGroup(context), ReactPointerEventsView by pointerEventsImpl {
-
-    constructor(context: Context): this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
+    private val pointerEventsImpl: ReactPointerEventsView,
+) : FabricEnabledHeaderConfigViewGroup(context),
+    ReactPointerEventsView by pointerEventsImpl {
+    constructor(context: Context) : this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
 
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
