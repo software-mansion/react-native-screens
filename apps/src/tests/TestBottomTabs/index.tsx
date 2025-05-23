@@ -1,240 +1,53 @@
-import React, { type Dispatch, type SetStateAction, useContext } from 'react';
-import {
-  Button,
-  type NativeSyntheticEvent,
-  Text,
-  View,
-  type ViewProps,
-} from 'react-native';
+import React from 'react';
 
+import { enableFreeze } from 'react-native-screens';
+import ConfigWrapperContext, {
+  type Configuration,
+  DEFAULT_GLOBAL_CONFIGURATION,
+} from './ConfigWrapperContext';
 import {
-  BottomTabs,
-  BottomTabsScreen,
-  enableFreeze,
-  featureFlags,
-} from 'react-native-screens';
+  BottomTabsContainer,
+  type TabConfiguration,
+} from './BottomTabsContainer';
+import { Tab1, Tab2, Tab3 } from './tabs';
 import Colors from '../../shared/styling/Colors';
-import { NativeFocusChangeEvent } from 'react-native-screens/fabric/BottomTabsNativeComponent';
 
 enableFreeze(true);
 
-const defaultGlobalConfiguration = {
-  heavyTabRender: false,
-  controlledBottomTabs: featureFlags.experiment.controlledBottomTabs,
-} as const;
-
-interface Configuration {
-  heavyTabRender: boolean;
-  controlledBottomTabs: boolean;
-}
-
-interface ConfigWrapper {
-  config: Configuration;
-  setConfig?: Dispatch<SetStateAction<Configuration>>;
-}
-
-const ConfigWrapperContext = React.createContext<ConfigWrapper>({
-  config: defaultGlobalConfiguration,
-});
-
-interface LayoutViewProps extends ViewProps {
-  tabID?: number;
-}
-
-function someExtensiveComputation(n: number = 50000000): string {
-  let a = 100;
-  for (let i = 0; i < n; i++) {
-    a += 1;
-  }
-  return a.toString();
-}
-
-function LayoutView(props: LayoutViewProps) {
-  const { children, style, ...rest } = props;
-  const { config } = useContext(ConfigWrapperContext);
-
-  console.log(`LayoutView render; tabID: ${rest.tabID}`);
-
-  if (config.heavyTabRender) {
-    someExtensiveComputation();
-  }
-
-  return (
-    <View
-      style={[
-        {
-          flex: 1,
-          width: '100%',
-          height: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-        style,
-      ]}
-      {...rest}>
-      {children}
-    </View>
-  );
-}
-
-interface TabContentViewProps extends ViewProps {
-  selectNextTab: () => void;
-  tabKey: string;
-  message?: string;
-}
-
-function TabContentView(props: TabContentViewProps) {
-  const { selectNextTab, tabKey, message, ...viewProps } = props;
-
-  const configWrapper = React.useContext(ConfigWrapperContext);
-
-  console.log(
-    `TabContentView render with config: ${JSON.stringify(
-      configWrapper.config,
-    )}`,
-  );
-
-  return (
-    <View {...viewProps}>
-      {message !== undefined && <Text>{message}</Text>}
-      <Text>tabKey: {tabKey}</Text>
-      <Text>
-        heavyTabRender: {configWrapper.config.heavyTabRender ? 'true' : 'false'}
-      </Text>
-      <Text>
-        controlledBottomTabs:{' '}
-        {configWrapper.config.controlledBottomTabs ? 'true' : 'false'}
-      </Text>
-      <Button title="Next tab" onPress={selectNextTab} />
-      <Button
-        title="Toggle heavy render"
-        onPress={() => {
-          configWrapper.setConfig?.(prev => {
-            return {
-              ...prev,
-              heavyTabRender: !prev.heavyTabRender,
-            };
-          });
-        }}
-      />
-    </View>
-  );
-}
-
-function TabPlaceholder() {
-  console.log('Placeholder render');
-  return (
-    <View
-      style={[
-        {
-          flex: 1,
-          width: '100%',
-          height: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: Colors.Navy,
-        },
-      ]}
-    />
-  );
-}
-
-function BottomTabsExample() {
-  const [focusedTab, setFocusedTab] = React.useState(0);
-  const selectNextTab = React.useCallback(() => {
-    setFocusedTab(old => old + 1);
-  }, []);
-
-  const configWrapper = React.useContext(ConfigWrapperContext);
-
-  console.log(`BottomTabsExample (topLevel) render: focusedTab: ${focusedTab}`);
-
-  // Pending state can be used to render placeholder for the time of transition.
-  const [_, startTransition] = React.useTransition();
-
-  const onNativeFocusChangeCallback = React.useCallback(
-    (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
-      const tabKey = event.nativeEvent.tabKey;
-
-      // Use `startTransition` only if the state is controlled in JS
-      // const transitionFn = !configWrapper.config.controlledBottomTabs
-      //   ? startTransition
-      //   : (callback: () => void) => {
-      //       callback();
-      //     };
-
-      const transitionFn = startTransition;
-
-      transitionFn(() => {
-        console.info(`Starting transition to ${tabKey}`);
-        if (tabKey === 'Tab1') {
-          setFocusedTab(0);
-        } else if (tabKey === 'Tab2') {
-          setFocusedTab(1);
-        } else if (tabKey === 'Tab3') {
-          setFocusedTab(2);
-        } else {
-          console.error(`Tab key: ${tabKey}`);
-        }
-      });
+const TAB_CONFIGS: TabConfiguration[] = [
+  {
+    tabScreenProps: {
+      tabKey: 'Tab1',
+      badgeValue: '1',
+      badgeColor: Colors.NavyDark80,
+      title: 'Tab1',
+      isFocused: true,
     },
-    [configWrapper.config.controlledBottomTabs],
-  );
-
-  return (
-    <View style={{ flex: 1 }}>
-      <BottomTabs
-        tabBarBackgroundColor={Colors.NavyLight100}
-        tabBarItemTitleFontSize={14}
-        experimentalControlNavigationStateInJS={
-          configWrapper.config.controlledBottomTabs
-        }
-        onNativeFocusChange={onNativeFocusChangeCallback}>
-        <BottomTabsScreen
-          isFocused={focusedTab % 3 === 0}
-          badgeValue="1"
-          badgeColor={Colors.NavyDark80}
-          title="Tab1"
-          tabKey="Tab1">
-          <LayoutView style={{ backgroundColor: Colors.OffWhite }} tabID={0}>
-            <TabContentView selectNextTab={selectNextTab} tabKey={'Tab1'} />
-          </LayoutView>
-        </BottomTabsScreen>
-        <BottomTabsScreen
-          isFocused={focusedTab % 3 === 1}
-          badgeValue="2"
-          badgeColor={Colors.PurpleLight100}
-          title="Tab2"
-          tabKey="Tab2"
-          placeholder={<TabPlaceholder />}>
-          <LayoutView
-            style={{ backgroundColor: Colors.PurpleLight80 }}
-            tabID={1}>
-            <TabContentView selectNextTab={selectNextTab} tabKey={'Tab2'} />
-          </LayoutView>
-        </BottomTabsScreen>
-        <BottomTabsScreen
-          isFocused={focusedTab % 3 === 2}
-          badgeValue="3"
-          badgeColor={Colors.YellowDark120}
-          title="Tab3"
-          tabKey="Tab3"
-          titleFontSize={16}
-          placeholder={<TabPlaceholder />}>
-          <LayoutView
-            style={{ backgroundColor: Colors.YellowDark80 }}
-            tabID={2}>
-            <TabContentView selectNextTab={selectNextTab} tabKey={'Tab3'} />
-          </LayoutView>
-        </BottomTabsScreen>
-      </BottomTabs>
-    </View>
-  );
-}
+    contentViewRenderFn: Tab1,
+  },
+  {
+    tabScreenProps: {
+      tabKey: 'Tab2',
+      badgeValue: '2',
+      badgeColor: Colors.PurpleLight100,
+      title: 'Tab2',
+    },
+    contentViewRenderFn: Tab2,
+  },
+  {
+    tabScreenProps: {
+      tabKey: 'Tab3',
+      badgeValue: '3',
+      badgeColor: Colors.YellowDark120,
+      title: 'Tab3',
+    },
+    contentViewRenderFn: Tab3,
+  },
+];
 
 function App() {
   const [config, setConfig] = React.useState<Configuration>(
-    defaultGlobalConfiguration,
+    DEFAULT_GLOBAL_CONFIGURATION,
   );
 
   return (
@@ -243,7 +56,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsExample />
+      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }
