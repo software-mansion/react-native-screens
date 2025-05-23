@@ -100,9 +100,12 @@ Boolean indicating whether the full screen dismiss gesture has shadow under view
 doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
 default iOS shadow. Defaults to `true`.
 
-#### `gestureEnabled` (iOS only)
+#### `gestureEnabled`
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`.
+
+On iOS, this affects both modal presentation and stack navigation gestures.
+On Android, when using `formSheet` presentation, this controls whether the bottom sheet can be dismissed by dragging.
 
 #### `gestureResponseDistance` (iOS only)
 

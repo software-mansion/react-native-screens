@@ -115,7 +115,7 @@ class SheetDelegate(
 
         behavior.apply {
             isHideable = true
-            isDraggable = true
+            isDraggable = screen.isGestureEnabled
         }
 
         // There is a guard internally that does not allow the callback to be duplicated.

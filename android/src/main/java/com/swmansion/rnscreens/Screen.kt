@@ -57,6 +57,13 @@ class Screen(
     var replaceAnimation = ReplaceAnimation.POP
     var stackAnimation = StackAnimation.DEFAULT
     var isGestureEnabled = true
+        set(value) {
+            if (field != value) {
+                field = value
+                sheetBehavior?.isDraggable = value
+                sheetClosesOnTouchOutside = value
+            }
+        }
     var screenOrientation: Int? = null
         private set
     var isStatusBarAnimated: Boolean? = null
@@ -82,7 +89,7 @@ class Screen(
     var sheetDetents = mutableListOf(1.0)
     var sheetLargestUndimmedDetentIndex: Int = -1
     var sheetInitialDetentIndex: Int = 0
-    var sheetClosesOnTouchOutside = true
+    var sheetClosesOnTouchOutside = isGestureEnabled
     var sheetElevation: Float = 24F
 
     /**
