@@ -21,7 +21,7 @@ export type BottomTabsScreenEventHandler<T> = (
 ) => void;
 
 export interface BottomTabsScreenProps {
-  children: ViewProps['children'];
+  children?: ViewProps['children'];
   placeholder?: React.ReactNode | undefined;
 
   // Control
@@ -72,11 +72,6 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
   if (featureFlags.experiment.controlledBottomTabs) {
     // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
     shouldFreeze = shouldFreeze && !nativeViewIsVisible && !isFocused;
-    console.info(
-      `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
-        propsWoEventHandlers.tabKey
-      } UPDATE DUE TO CONTROLLED TABS TO shouldFreeze: ${shouldFreeze}`,
-    );
   } else {
     shouldFreeze = shouldFreeze && !nativeViewIsVisible;
   }
