@@ -2,6 +2,7 @@ import React from 'react';
 import { type ViewProps, View, Text, Button } from 'react-native';
 import ConfigWrapperContext from '../ConfigWrapperContext';
 import { someExtensiveComputation } from '../utils';
+import { TabConfigurationSummary } from './TabConfigurationSummary';
 
 export interface TabContentViewProps extends ViewProps {
   selectNextTab?: (() => void) | undefined;
@@ -27,14 +28,7 @@ export function TabContentView(props: TabContentViewProps) {
   return (
     <View {...viewProps}>
       {message !== undefined && <Text>{message}</Text>}
-      <Text>tabKey: {tabKey}</Text>
-      <Text>
-        heavyTabRender: {configWrapper.config.heavyTabRender ? 'true' : 'false'}
-      </Text>
-      <Text>
-        controlledBottomTabs:{' '}
-        {configWrapper.config.controlledBottomTabs ? 'true' : 'false'}
-      </Text>
+      <TabConfigurationSummary tabKey={tabKey} />
       <Button title="Next tab" onPress={selectNextTab} />
       <Button
         title="Toggle heavy render"
