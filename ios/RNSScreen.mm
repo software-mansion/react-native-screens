@@ -68,7 +68,6 @@ struct ContentWrapperBox {
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
-  bool _sheetHasInitialDetentSet;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -1100,7 +1099,6 @@ RNS_IGNORE_SUPER_CALL_END
     } else if (_sheetInitialDetent != 0) {
       RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
     }
-    _sheetHasInitialDetentSet = true;
 
     sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
     [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
