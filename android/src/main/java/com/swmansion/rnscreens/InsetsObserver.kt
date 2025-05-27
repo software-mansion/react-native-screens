@@ -33,19 +33,21 @@ class InsetsObserver(
     }
 
     fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
-        var rollingInsets = insets
+        var currentInsets = insets
 
         externalListener?.onApplyWindowInsets(observedView, insets)?.let {
-            rollingInsets = it
+            currentInsets = it
         }
 
         ownListeners.forEach {
-            it.onApplyWindowInsets(observedView, WindowInsetsCompat.toWindowInsetsCompat(insets)).toWindowInsets()?.let { windowInsets ->
-                rollingInsets = windowInsets
-            }
+            val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets)
+            currentInsets =
+                checkNotNull(it.onApplyWindowInsets(observedView, insetsCompat).toWindowInsets()) {
+                    "[RNScreens] Window insets conversion should never fail above API level 20"
+                }
         }
 
-        return rollingInsets
+        return currentInsets
     }
 
     fun setExternalOnApplyWindowInsetsListener(listener: View.OnApplyWindowInsetsListener?) {
