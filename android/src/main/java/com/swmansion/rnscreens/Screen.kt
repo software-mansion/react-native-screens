@@ -559,6 +559,12 @@ class Screen(
         }
     }
 
+    /**
+     * This should not be called from inside this package. Any call to this method is treated
+     * as a call from external source & added listener is treated in a special manner.
+     *
+     * If you want to register a listener on this view, you should use `insetsObserver` directly.
+     */
     override fun setOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener?) {
         insetsObserver.setOnApplyWindowListener(listener)
     }
