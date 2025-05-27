@@ -40,7 +40,7 @@ class Screen(
     val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
     ScreenContentWrapper.OnLayoutCallback {
-    val insetsObserver = InsetsObserver(this, reactContext.reactApplicationContext)
+    val insetsObserver = InsetsObserver(reactContext.reactApplicationContext, this)
 
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
@@ -554,18 +554,22 @@ class Screen(
         // earlier. More details: https://github.com/software-mansion/react-native-screens/pull/2911
         if (usesFormSheetPresentation()) {
             fragment?.asScreenStackFragment()?.sheetDelegate?.let {
-                insetsObserver.addOnApplyWindowInsetsListener(it);
+                insetsObserver.addOnApplyWindowInsetsListener(it)
             }
         }
     }
 
+    /**
+     * This should not be called from inside this package. Any call to this method is treated
+     * as a call from external source & added listener is treated in a special manner.
+     *
+     * If you want to register a listener on this view, you should use `insetsObserver` directly.
+     */
     override fun setOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener?) {
-        insetsObserver.setOnApplyWindowListener(listener)
+        insetsObserver.setExternalOnApplyWindowInsetsListener(listener)
     }
 
-    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
-        return insetsObserver.onApplyWindowInsets( insets)
-    }
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets = insetsObserver.onApplyWindowInsets(insets)
 
     private fun dispatchSheetDetentChanged(
         detentIndex: Int,

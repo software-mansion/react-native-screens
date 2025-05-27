@@ -9,13 +9,16 @@ import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 
 class InsetsObserver(
-    view: View,
+    context: ReactApplicationContext,
+    private val observedView: View,
 ) {
-    private val observedView = view
-    private var systemListener: View.OnApplyWindowInsetsListener? = null
+    /**
+     * Listener set from outside of this package.
+     */
+    private var externalListener: View.OnApplyWindowInsetsListener? = null
     private val ownListeners: HashSet<OnApplyWindowInsetsListener> = hashSetOf()
 
-    constructor(view: View, context: ReactApplicationContext) : this(view) {
+    init {
         context.addLifecycleEventListener(
             object : LifecycleEventListener {
                 override fun onHostDestroy() {
@@ -30,23 +33,26 @@ class InsetsObserver(
     }
 
     fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
-        var rollingInsets = insets
+        var currentInsets = insets
 
-        systemListener?.onApplyWindowInsets(observedView, insets)?.let {
-            rollingInsets = it
+        externalListener?.onApplyWindowInsets(observedView, insets)?.let {
+            currentInsets = it
         }
 
         ownListeners.forEach {
-            it.onApplyWindowInsets(observedView, WindowInsetsCompat.toWindowInsetsCompat(insets)).toWindowInsets()?.let { windowInsets ->
-                rollingInsets = windowInsets
-            }
+            val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets)
+            currentInsets =
+                checkNotNull(it.onApplyWindowInsets(observedView, insetsCompat).toWindowInsets()) {
+                    "[RNScreens] Window insets conversion should never fail above API level 20"
+                }
         }
 
-        return rollingInsets
+        // These are insets of last registered observer!
+        return currentInsets
     }
 
-    fun setOnApplyWindowListener(listener: View.OnApplyWindowInsetsListener?) {
-        systemListener = listener
+    fun setExternalOnApplyWindowInsetsListener(listener: View.OnApplyWindowInsetsListener?) {
+        externalListener = listener
     }
 
     fun addOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
@@ -59,7 +65,7 @@ class InsetsObserver(
 
     fun clear() {
         ownListeners.clear()
-        systemListener = null
+        externalListener = null
         ViewCompat.setOnApplyWindowInsetsListener(observedView, null)
     }
 }
