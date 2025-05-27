@@ -12,7 +12,10 @@ class InsetsObserver(
     context: ReactApplicationContext,
     private val observedView: View,
 ) {
-    private var systemListener: View.OnApplyWindowInsetsListener? = null
+    /**
+     * Listener set from outside of this package.
+     */
+    private var externalListener: View.OnApplyWindowInsetsListener? = null
     private val ownListeners: HashSet<OnApplyWindowInsetsListener> = hashSetOf()
 
     init {
@@ -32,7 +35,7 @@ class InsetsObserver(
     fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
         var rollingInsets = insets
 
-        systemListener?.onApplyWindowInsets(observedView, insets)?.let {
+        externalListener?.onApplyWindowInsets(observedView, insets)?.let {
             rollingInsets = it
         }
 
@@ -46,7 +49,7 @@ class InsetsObserver(
     }
 
     fun setOnApplyWindowListener(listener: View.OnApplyWindowInsetsListener?) {
-        systemListener = listener
+        externalListener = listener
     }
 
     fun addOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
@@ -59,7 +62,7 @@ class InsetsObserver(
 
     fun clear() {
         ownListeners.clear()
-        systemListener = null
+        externalListener = null
         ViewCompat.setOnApplyWindowInsetsListener(observedView, null)
     }
 }
