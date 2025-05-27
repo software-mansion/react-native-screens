@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.bottomsheet
 
+import android.os.Build
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
@@ -144,9 +145,14 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
     // there. Tween animations have some magic way to make this work (maybe they
     // postpone the transition internally, dunno).
 
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && this.usesFormSheetPresentation()) {
+        return true
+    }
+
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED || !this.usesFormSheetPresentation()) {
         return false
     }
+
     // Assumes that formSheet uses content wrapper
     return !this.isLaidOutOrHasCachedLayout() || this.contentWrapper?.isLaidOutOrHasCachedLayout() != true
 }
