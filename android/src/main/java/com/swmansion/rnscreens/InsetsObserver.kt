@@ -9,13 +9,14 @@ import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 
 class InsetsObserver(
+    context: ReactApplicationContext,
     view: View,
 ) {
     private val observedView = view
     private var systemListener: View.OnApplyWindowInsetsListener? = null
     private val ownListeners: HashSet<OnApplyWindowInsetsListener> = hashSetOf()
 
-    constructor(view: View, context: ReactApplicationContext) : this(view) {
+    init {
         context.addLifecycleEventListener(
             object : LifecycleEventListener {
                 override fun onHostDestroy() {
