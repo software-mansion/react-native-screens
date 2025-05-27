@@ -3,20 +3,14 @@ package com.swmansion.rnscreens.bottomsheet
 import android.content.Context
 import android.os.Build
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updateMargins
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.swmansion.rnscreens.InsetsObserverProxy
 import com.swmansion.rnscreens.KeyboardDidHide
 import com.swmansion.rnscreens.KeyboardNotVisible
 import com.swmansion.rnscreens.KeyboardState
@@ -239,6 +233,51 @@ class SheetDelegate(
         }
     }
 
+    private fun getMaxOffsetFromTop(): Int {
+        val containerHeight = tryResolveContainerHeight()
+
+        check(containerHeight != null) {
+            "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
+        }
+        val offestFromTop =
+            when (screen.sheetDetents.count()) {
+                1 -> {
+                    val height =
+                        if (screen.isSheetFitToContents()) {
+                            screen.contentWrapper?.let { contentWrapper ->
+                                contentWrapper.height.takeIf {
+                                    // subtree might not be laid out, e.g. after fragment reattachment
+                                    // and view recreation, however since it is retained by
+                                    // react-native it has its height cached. We want to use it.
+                                    // Otherwise we would have to trigger RN layout manually.
+                                    contentWrapper.isLaidOutOrHasCachedLayout()
+                                }
+                            }
+                        } else {
+                            (screen.sheetDetents.first() * containerHeight).toInt()
+                        }
+
+                    return containerHeight - (height ?: 0)
+                }
+                2 -> ((1 - screen.sheetDetents[1]) * containerHeight).toInt()
+                3 -> ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+
+                else -> throw IllegalStateException(
+                    "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
+                )
+            }
+
+        return offestFromTop
+    }
+
+    private fun getAvailableSpaceAboveKeyboard(insets: WindowInsetsCompat): Int {
+        val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+        val availableSpace = this.getMaxOffsetFromTop()
+        val bottomPadding = if (availableSpace > imeInset.bottom) imeInset.bottom else availableSpace
+
+        return bottomPadding - insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+    }
+
     // This is listener function, not the view's.
     override fun onApplyWindowInsets(
         v: View,
@@ -247,7 +286,7 @@ class SheetDelegate(
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
 
-        println("SheetDelegate onApplyWindowInsets isIme=${isImeVisible} imeInsets=${imeInset}")
+        println("SheetDelegate onApplyWindowInsets isIme=$isImeVisible imeInsets=$imeInset")
         if (isImeVisible) {
             isKeyboardVisible = true
             keyboardState = KeyboardVisible(imeInset.bottom)
@@ -255,10 +294,8 @@ class SheetDelegate(
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
 
-            // TODO: Compute exactly
-            screen.translationY = -imeInset.bottom.toFloat()
+            screen.translationY = -getAvailableSpaceAboveKeyboard(insets).toFloat()
         } else {
-            // TODO: Compute exactly
             screen.translationY = 0F
 
             sheetBehavior?.let {
