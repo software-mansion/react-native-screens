@@ -47,6 +47,7 @@ class InsetsObserver(
                 }
         }
 
+        // These are insets of last registered observer!
         return currentInsets
     }
 
