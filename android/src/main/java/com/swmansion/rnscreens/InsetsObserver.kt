@@ -51,7 +51,6 @@ class InsetsObserver(
 
     fun addOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
         ownListeners.add(listener)
-        println("InsetsObserver addOnApplyWindowInsetsListener count=${ownListeners.count()}")
     }
 
     fun removeOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
