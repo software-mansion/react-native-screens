@@ -566,7 +566,7 @@ class Screen(
      * If you want to register a listener on this view, you should use `insetsObserver` directly.
      */
     override fun setOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener?) {
-        insetsObserver.setOnApplyWindowListener(listener)
+        insetsObserver.setExternalOnApplyWindowInsetsListener(listener)
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets = insetsObserver.onApplyWindowInsets(insets)

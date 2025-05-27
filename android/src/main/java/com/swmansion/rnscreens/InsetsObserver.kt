@@ -48,7 +48,7 @@ class InsetsObserver(
         return rollingInsets
     }
 
-    fun setOnApplyWindowListener(listener: View.OnApplyWindowInsetsListener?) {
+    fun setExternalOnApplyWindowInsetsListener(listener: View.OnApplyWindowInsetsListener?) {
         externalListener = listener
     }
 
