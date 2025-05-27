@@ -268,6 +268,7 @@ class ScreenStackFragment :
                         if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
                             println("ScreenStackFragment onStart translationY = ${screen.translationY}")
                             endTranslationY = screen.translationY
+                            screen.translationY = startTranslationY
                         }
 
                         return super.onStart(animation, bounds)
@@ -326,7 +327,7 @@ class ScreenStackFragment :
 
         val animatorSet = AnimatorSet()
         val dimmingDelegate = requireDimmingDelegate()
-
+        val initialTranslationY = screen.translationY
         println("ScreenStackFragment onCreateAnimator translationY=${screen.translationY}")
         if (enter) {
             val alphaAnimator =
@@ -337,12 +338,11 @@ class ScreenStackFragment :
                     }
                 }
             val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
-            val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
+            val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { initialTranslationY })
             val slideAnimator =
-                ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
+                ValueAnimator.ofObject(evaluator, screen.height.toFloat(), initialTranslationY).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-//                        animatedValue?.let { screen.translationY = it + (sheetDelegate?.keyboardTranslation ?: 0F) }
                         animatedValue?.let { screen.translationY = it }
                     }
                 }
@@ -365,10 +365,9 @@ class ScreenStackFragment :
                     }
                 }
             val slideAnimator =
-                ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
+                ValueAnimator.ofFloat(initialTranslationY, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-//                        animatedValue?.let { screen.translationY = it + (sheetDelegate?.keyboardTranslation ?: 0F) }
                         animatedValue?.let { screen.translationY = it }
                     }
                 }

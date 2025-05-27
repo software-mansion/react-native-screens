@@ -28,7 +28,6 @@ class SheetDelegate(
     val screen: Screen,
 ) : LifecycleEventObserver,
     OnApplyWindowInsetsListener {
-    var keyboardTranslation = 0F
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
 
@@ -258,11 +257,9 @@ class SheetDelegate(
 
             // TODO: Compute exactly
             screen.translationY = -imeInset.bottom.toFloat()
-            keyboardTranslation = -imeInset.bottom.toFloat()
         } else {
             // TODO: Compute exactly
             screen.translationY = 0F
-            keyboardTranslation = 0F
 
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
@@ -276,6 +273,8 @@ class SheetDelegate(
             keyboardState = KeyboardNotVisible
             isKeyboardVisible = false
         }
+
+        screen.fragment?.startPostponedEnterTransition()
 
         return insets
     }
