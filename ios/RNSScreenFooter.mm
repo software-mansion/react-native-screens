@@ -1,8 +1,9 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreen.h"
+#import "UIView+Pinning.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
-
+#import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -11,74 +12,43 @@
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenFooter {
-  RNSScreenView *_parent;
+  NSLayoutConstraint *_heightConstraint;
+  NSLayoutConstraint *_bottomConstraint;
+  RNSScreenView *_screenView;
 }
 
-- (instancetype)init
+- (void)dealloc
 {
-  if (self = [super init]) {
-    self.translatesAutoresizingMaskIntoConstraints = false;
-    _parent = nil;
-  }
-  return self;
-}
-
-- (void)willMoveToSuperview:(UIView *)newSuperview
-{
-  [super willMoveToSuperview:newSuperview];
-  //  if ([newSuperview isKindOfClass:RNSScreenView.class]) {
-  //    RNSScreenView *screen = (RNSScreenView *)newSuperview;
-  //    _parent = (RNSScreenView *)newSuperview;
-
-  //    [NSLayoutConstraint activateConstraints:@[
-  //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeBottom
-  //      relatedBy:NSLayoutRelationEqual toItem:screen attribute:NSLayoutAttributeBottom multiplier:1.0
-  //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft
-  //      relatedBy:NSLayoutRelationEqual toItem:screen attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
-  //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual
-  //      toItem:screen attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0], [NSLayoutConstraint
-  //      constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:screen
-  //      attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0], [NSLayoutConstraint constraintWithItem:screen
-  //      attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self
-  //      attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0], [NSLayoutConstraint
-  //      constraintWithItem:screen attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self
-  //      attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0], [NSLayoutConstraint constraintWithItem:screen
-  //      attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self
-  //      attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0], [NSLayoutConstraint constraintWithItem:screen
-  //      attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop
-  //      multiplier:1.0 constant:0.0],
-  //    ]];
-  //    [self setNeedsLayout];
-  //  }
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didMoveToSuperview
 {
-  if (_parent != nil) {
-    //    [NSLayoutConstraint activateConstraints:@[
-    //      [NSLayoutConstraint constraintWithItem:self
-    //                                   attribute:NSLayoutAttributeBottom
-    //                                   relatedBy:NSLayoutRelationEqual
-    //                                      toItem:_parent
-    //                                   attribute:NSLayoutAttributeBottom
-    //                                  multiplier:1.0
-    //                                    constant:0.0],
-    //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft
-    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeLeft multiplier:1.0
-    //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight
-    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeRight multiplier:1.0
-    //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop
-    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeTop multiplier:1.0
-    //      constant:0.0], [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeBottom
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0
-    //      constant:0.0], [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeLeft
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
-    //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeRight
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
-    //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeTop
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0],
-    //    ]];
-    //    [self setNeedsLayout];
+  [super didMoveToSuperview];
+  if ([self.superview isKindOfClass:RNSScreenView.class]) {
+    _screenView = (RNSScreenView *)self.superview;
+    [self pinToView:_screenView.controller.view
+          fromEdges:UIRectEdgeLeft | UIRectEdgeRight | UIRectEdgeBottom
+         withHeight:@0
+        constraints:^(
+            NSLayoutConstraint *top,
+            NSLayoutConstraint *bottom,
+            NSLayoutConstraint *left,
+            NSLayoutConstraint *right,
+            NSLayoutConstraint *height) {
+          self->_heightConstraint = height;
+          self->_bottomConstraint = bottom;
+        }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
   }
 }
 
@@ -88,11 +58,32 @@
   if (self.onLayout != nil) {
     self.onLayout(self.frame);
   }
-  //
-  //  if (self.subviews.count > 0) {
-  //    CGSize childsSize = self.subviews[0].frame.size;
-  //
-  //  }
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+  NSDictionary *userInfo = notification.userInfo;
+  NSValue *keyboardFrameValue = userInfo[UIKeyboardFrameEndUserInfoKey];
+
+  if (keyboardFrameValue && [keyboardFrameValue isKindOfClass:[NSValue class]]) {
+    CGRect keyboardFrame = [keyboardFrameValue CGRectValue];
+    _bottomConstraint.constant = -keyboardFrame.size.height;
+
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                       [self->_screenView.controller.view layoutIfNeeded];
+                     }];
+  }
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+  _bottomConstraint.constant = 0;
+
+  [UIView animateWithDuration:0.3
+                   animations:^{
+                     [self->_screenView.controller.view layoutIfNeeded];
+                   }];
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -115,15 +106,23 @@ Class<RCTComponentViewProtocol> RNSScreenFooterCls(void)
   return RNSScreenFooter.class;
 }
 
+RNS_IGNORE_SUPER_CALL_BEGIN
+- (void)updateLayoutMetrics:(react::LayoutMetrics const &)layoutMetrics
+           oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
+{
+  CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
+  _heightConstraint.constant = frame.size.height;
+}
+RNS_IGNORE_SUPER_CALL_END
+
 #else
 
 #pragma Paper specific
 
 - (void)reactSetFrame:(CGRect)frame
 {
-  // ignore frame from react
-  // this view should be layouted by it's parent screen
-  //  [super reactSetFrame:frame];
+  [super reactSetFrame:frame];
+  _heightConstraint.constant = frame.size.height;
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
