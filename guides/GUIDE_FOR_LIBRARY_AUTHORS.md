@@ -178,7 +178,7 @@ There are also legacy & **deprecated** options available:
 Defaults to `[1.0]` literal.
 
 
-\* on iOS there is additional `9999` value, that allows formsheet to be expanded to full screen. This prop is **unstable** as it's iOS private value and maybe changed/removed in the future. 
+\* on iOS there is additional `9999` value, that allows formsheet to be expanded to full screen. This prop is **unstable** as it's iOS internal value and maybe changed/removed in the future. 
 
 ### `sheetExpandsWhenScrolledToEdge` (iOS only)
 
