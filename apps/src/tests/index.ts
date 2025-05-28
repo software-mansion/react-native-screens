@@ -128,6 +128,7 @@ export { default as Test2675 } from './Test2675';
 export { default as Test2714 } from './Test2714';
 export { default as Test2717 } from './Test2717';
 export { default as Test2767 } from './Test2767';
+export { default as Test2774 } from './Test2774';
 export { default as Test2789 } from './Test2789';
 export { default as Test2809 } from './Test2809';
 export { default as Test2811 } from './Test2811';
