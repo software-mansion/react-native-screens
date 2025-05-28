@@ -1,7 +1,7 @@
 import { NavigationContainer, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, View, useWindowDimensions, StyleSheet, TextInput, Platform } from 'react-native';
+import { Button, View, useWindowDimensions, StyleSheet, TextInput, Platform, ScrollView } from 'react-native';
 import { ReanimatedScreenProvider, useReanimatedSheetTranslation } from 'react-native-screens/reanimated';
 
 import Animated, {
@@ -102,7 +102,7 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   }, [])
 
   return (
-    <View style={{ height: 500 }}>
+    <ScrollView>
       <View style={styles.inputWrapper}>
         <TextInput style={styles.input} placeholder="Trigger keyboard..."/>
       </View>
@@ -111,7 +111,7 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
         <Button title="Collapse" onPress={() => setCurrentDetentIndex(0)} />
         <Button title="Dismiss" onPress={() => navigation.goBack()} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -127,6 +127,7 @@ export default function App() {
             <Stack.Screen name="FormSheet" component={FormSheet} options={{
               presentation: 'formSheet',
               sheetAllowedDetents: [0.3, 0.6, 1],
+              // sheetAllowedDetents: [0.9997],
               // sheetAllowedDetents: 'fitToContents',
               sheetLargestUndimmedDetentIndex: 'none',
               sheetCornerRadius: 16,

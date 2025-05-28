@@ -1497,7 +1497,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _closing = NO;
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
-    [self setupGestureHandler];
+    [self setupGestureRecognizer];
   }
 }
 
@@ -1735,7 +1735,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - sheet translation related methods
 
-- (void)setupGestureHandler
+- (void)setupGestureRecognizer
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
@@ -1744,21 +1744,24 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       return;
     }
 
-    if (self.presentedView == nil) {
-      return;
-    }
+    RNS_REACT_SCROLL_VIEW_COMPONENT *sheetScrollView = [self.screenView tryFindDescendantScrollView];
 
-    for (UIGestureRecognizer *recognizer in self.presentedView.gestureRecognizers ?: @[]) {
-      if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-        UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)recognizer;
-        [panGesture addTarget:self action:@selector(handlePanGesture:)];
+    if (sheetScrollView != nil) {
+      // apply gesture recognizer to the scrollview if present
+      [sheetScrollView.scrollView.panGestureRecognizer addTarget:self action:@selector(handlePanGesture:)];
+    } else if (self.presentedView != nil) {
+      for (UIGestureRecognizer *recognizer in self.presentedView.gestureRecognizers ?: @[]) {
+        if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+          UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)recognizer;
+          [panGesture addTarget:self action:@selector(handlePanGesture:)];
+        }
       }
     }
   }
 #endif
 }
 
-// Track sheet Y when dragging.
+// track sheet Y when dragging.
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gesture
 {
   switch (gesture.state) {
@@ -1767,9 +1770,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       break;
     }
     case UIGestureRecognizerStateChanged: {
-      // We only send event when not tracking from layout
+      // we only send event when not tracking from layout
       if (!_trackingYFromLayout) {
-        CGFloat draggedY = gesture.view.frame.origin.y;
+        CGFloat draggedY = self.presentedView.frame.origin.y;
         [self notifySheetTranslation:draggedY];
       }
       break;
@@ -1786,7 +1789,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)notifySheetTranslation:(double)y
 {
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
-    [(RNSScreenView *)self.view notifySheetTranslation:y];
+    [self.screenView notifySheetTranslation:y];
   }
 }
 
@@ -1840,7 +1843,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
     // if the view is already snapshot, there is not sense in sending progress since on JS side
     // the component is already not present
-    [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+    [self.screenView notifyTransitionProgress:progress closing:closing goingForward:goingForward];
   }
 }
 
