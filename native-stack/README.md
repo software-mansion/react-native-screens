@@ -252,7 +252,7 @@ Defaults to `pop`.
 Describes heights where a sheet can rest.
 Works only when `stackPresentation` is set to `formSheet`.
 
-Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
+Heights should be described as fraction (a number from `[0, 1]`\* interval) of screen height / maximum detent height.
 There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
 to the height of its contents.
 
@@ -265,6 +265,8 @@ There are also legacy & **deprecated** options available:
 * 'all' - corresponds to `[0.5, 1.0]` value, the name is deceiving due to compatibility reasons.
 
 Defaults to `[1.0]` literal.
+
+\* on iOS there is additional `9999` value, that allows formsheet to be expanded to full screen. This prop is **unstable** as it's iOS private value and maybe changed/removed in the future. 
 
 #### `sheetElevation` (Android only)
 
