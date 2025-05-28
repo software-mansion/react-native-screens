@@ -25,9 +25,5 @@ export function transformEdgeToEdgeProps(props: ScreenProps): ScreenProps {
     });
   }
 
-  return {
-    ...rest,
-    statusBarTranslucent: true,
-    navigationBarTranslucent: true,
-  };
+  return rest;
 }
