@@ -1126,16 +1126,22 @@ RNS_IGNORE_SUPER_CALL_END
          withResolver:(CGFloat (^)(id<UISheetPresentationControllerDetentResolutionContext>, NSNumber *))resolver
     API_AVAILABLE(ios(16.0))
 {
+  auto fullScreenValue = @"_fullDetent";
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
       [NSMutableArray arrayWithCapacity:values.count];
   [values enumerateObjectsUsingBlock:^(NSNumber *value, NSUInteger index, BOOL *stop) {
     UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithInt:index] stringValue];
-    [customDetents addObject:[UISheetPresentationControllerDetent
-                                 customDetentWithIdentifier:ident
-                                                   resolver:^CGFloat(
-                                                       id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     return resolver(ctx, value);
-                                                   }]];
+    auto test = [[NSNumber alloc] initWithDouble:1.0];
+    if ([value doubleValue] == 9999) {
+      [customDetents addObject:[UISheetPresentationControllerDetent valueForKey:fullScreenValue]];
+    } else {
+      [customDetents addObject:[UISheetPresentationControllerDetent
+                                   customDetentWithIdentifier:ident
+                                                     resolver:^CGFloat(
+                                                         id<UISheetPresentationControllerDetentResolutionContext> ctx) {
+                                                       return resolver(ctx, value);
+                                                     }]];
+    }
   }];
   return customDetents;
 }
