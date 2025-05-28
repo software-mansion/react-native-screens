@@ -256,7 +256,13 @@ class ScreenStack(
 
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
-            stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
+            stack.addAll(
+                screenWrappers
+                    .asSequence()
+                    .filter {
+                        it.screen.activityState !== Screen.ActivityState.INACTIVE
+                    }.map { it as ScreenStackFragmentWrapper },
+            )
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()
