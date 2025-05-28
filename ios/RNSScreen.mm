@@ -1131,7 +1131,6 @@ RNS_IGNORE_SUPER_CALL_END
       [NSMutableArray arrayWithCapacity:values.count];
   [values enumerateObjectsUsingBlock:^(NSNumber *value, NSUInteger index, BOOL *stop) {
     UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithInt:index] stringValue];
-    auto test = [[NSNumber alloc] initWithDouble:1.0];
     if ([value doubleValue] == 9999) {
       [customDetents addObject:[UISheetPresentationControllerDetent valueForKey:fullScreenValue]];
     } else {
