@@ -19,8 +19,6 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
       jni::alias_ref<jhybridobject> jThis);
   static void registerNatives();
 
-  ~NativeProxy();
-
  private:
   friend HybridBase;
   jni::global_ref<NativeProxy::javaobject> javaPart_;
@@ -30,6 +28,8 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
   void nativeAddMutationsListener(
       jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
           fabricUIManager);
+
+  void invalidateNative();
 };
 
 } // namespace rnscreens
