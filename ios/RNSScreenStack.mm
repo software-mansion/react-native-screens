@@ -432,8 +432,10 @@ RNS_IGNORE_SUPER_CALL_END
   // (2) there are modals presented by other RNSNavigationControllers (nested/outer),
   // (3) there are modals presented by other controllers (e.g. React Native's Modal view).
 
-  // Last controller that is common for both _presentedModals & controllers
+  // Last controller that is common for both _presentedModals & controllers or this RNSNavigationController in case
+  // there is no common part.
   __block UIViewController *changeRootController = _controller;
+
   // Last common controller index + 1
   NSUInteger changeRootIndex = 0;
   for (NSUInteger i = 0; i < MIN(_presentedModals.count, controllers.count); i++) {
