@@ -429,8 +429,10 @@ RNS_IGNORE_SUPER_CALL_END
   // (2) there are modals presented by other RNSNavigationControllers (nested/outer),
   // (3) there are modals presented by other controllers (e.g. React Native's Modal view).
 
-  // Last controller that is common for both _presentedModals & controllers
+  // Last controller that is common for both _presentedModals & controllers or this RNSNavigationController in case
+  // there is no common part.
   __block UIViewController *changeRootController = _controller;
+
   // Last common controller index + 1
   NSUInteger changeRootIndex = 0;
   for (NSUInteger i = 0; i < MIN(_presentedModals.count, controllers.count); i++) {
@@ -533,12 +535,11 @@ RNS_IGNORE_SUPER_CALL_END
   UIViewController *firstModalToBeDismissed = changeRootController.presentedViewController;
 
   if (firstModalToBeDismissed != nil) {
-    BOOL shouldAnimate = changeRootIndex == controllers.count &&
-        [firstModalToBeDismissed isKindOfClass:[RNSScreen class]] &&
-        ((RNSScreen *)firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone;
+    const BOOL firstModalToBeDismissedIsOwned = [firstModalToBeDismissed isKindOfClass:RNSScreen.class];
+    const BOOL firstModalToBeDismissedIsOwnedByThisStack =
+        firstModalToBeDismissedIsOwned && [_presentedModals containsObject:firstModalToBeDismissed];
 
-    if ([_presentedModals containsObject:firstModalToBeDismissed] ||
-        ![firstModalToBeDismissed isKindOfClass:RNSScreen.class]) {
+    if (firstModalToBeDismissedIsOwnedByThisStack || !firstModalToBeDismissedIsOwned) {
       // We dismiss every VC that was presented by changeRootController VC or its descendant.
       // After the series of dismissals is completed we run completion block in which
       // we present modals on top of changeRootController (which may be the this stack VC)
@@ -548,7 +549,12 @@ RNS_IGNORE_SUPER_CALL_END
       // For now, to mitigate the issue, we also decide to trigger its dismissal before
       // starting the presentation chain down below in finish() callback.
       if (!firstModalToBeDismissed.isBeingDismissed) {
-        [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
+        // If the modal is owned we let it control whether the dismissal is animated or not. For foreign controllers
+        // we just assume animation.
+        const BOOL firstModalToBeDismissedPrefersAnimation = firstModalToBeDismissedIsOwned
+            ? static_cast<RNSScreen *>(firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone
+            : YES;
+        [changeRootController dismissViewControllerAnimated:firstModalToBeDismissedPrefersAnimation completion:finish];
       } else {
         // We need to wait for its dismissal and then run our presentation code.
         // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
