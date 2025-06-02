@@ -475,6 +475,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
     BOOL isAttached =
         changeRootController.parentViewController != nil || changeRootController.presentingViewController != nil;
+
     if (!isAttached || changeRootIndex >= controllers.count) {
       // if change controller view is not attached, presenting modals will silently fail on iOS.
       // In such a case we trigger controllers update from didMoveToWindow.
@@ -482,38 +483,38 @@ RNS_IGNORE_SUPER_CALL_END
       // of new controllers array. This means that no new controllers should be presented.
       afterTransitions();
       return;
-    } else {
-      UIViewController *previous = changeRootController;
+    }
 
-      for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
-        UIViewController *next = controllers[i];
-        BOOL lastModal = (i == controllers.count - 1);
+    UIViewController *previous = changeRootController;
 
-        // Inherit UI style from its parent - solves an issue with incorrect style being applied to some UIKit views
-        // like date picker or segmented control.
-        next.overrideUserInterfaceStyle = self->_controller.overrideUserInterfaceStyle;
+    for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
+      UIViewController *next = controllers[i];
+      BOOL lastModal = (i == controllers.count - 1);
 
-        BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
-            ((RNSScreen *)next).screenView.stackAnimation != RNSScreenStackAnimationNone;
+      // Inherit UI style from its parent - solves an issue with incorrect style being applied to some UIKit views
+      // like date picker or segmented control.
+      next.overrideUserInterfaceStyle = self->_controller.overrideUserInterfaceStyle;
 
-        // if you want to present another modal quick enough after dismissing the previous one,
-        // it will result in wrong changeRootController, see repro in
-        // https://github.com/software-mansion/react-native-screens/issues/1299 We call `updateContainer` again in
-        // `presentationControllerDidDismiss` to cover this case and present new controller
-        if (previous.beingDismissed) {
-          return;
-        }
+      BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
+          ((RNSScreen *)next).screenView.stackAnimation != RNSScreenStackAnimationNone;
 
-        [previous presentViewController:next
-                               animated:shouldAnimate
-                             completion:^{
-                               [weakSelf.presentedModals addObject:next];
-                               if (lastModal) {
-                                 afterTransitions();
-                               };
-                             }];
-        previous = next;
+      // if you want to present another modal quick enough after dismissing the previous one,
+      // it will result in wrong changeRootController, see repro in
+      // https://github.com/software-mansion/react-native-screens/issues/1299 We call `updateContainer` again in
+      // `presentationControllerDidDismiss` to cover this case and present new controller
+      if (previous.beingDismissed) {
+        return;
       }
+
+      [previous presentViewController:next
+                             animated:shouldAnimate
+                           completion:^{
+                             [weakSelf.presentedModals addObject:next];
+                             if (lastModal) {
+                               afterTransitions();
+                             };
+                           }];
+      previous = next;
     }
   };
 
