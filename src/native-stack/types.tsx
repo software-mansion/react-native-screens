@@ -485,11 +485,7 @@ export type NativeStackNavigationOptions = {
    */
   stackPresentation?: ScreenProps['stackPresentation'];
   /**
-   * Sets the status bar animation (similar to the `StatusBar` component).
-   * On Android, setting either `fade` or `slide` will set the transition of status bar color. On iOS, this option applies to appereance animation of the status bar.
-   * Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
-   *
-   * Defaults to `fade` on iOS and `none` on Android.
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    */
   statusBarAnimation?: ScreenProps['statusBarAnimation'];
   /**
@@ -503,9 +499,7 @@ export type NativeStackNavigationOptions = {
    */
   statusBarHidden?: boolean;
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
-   * `auto` and `inverted` are supported only on iOS. On Android, they will fallback to `light`.
-   * Defaults to `auto` on iOS and `light` on Android.
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
    */
   statusBarStyle?: ScreenProps['statusBarStyle'];
   /**
