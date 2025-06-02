@@ -421,9 +421,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   _updatingModals = YES;
 
-  NSMutableArray<UIViewController *> *newControllers = [NSMutableArray arrayWithArray:controllers];
-  [newControllers removeObjectsInArray:_presentedModals];
-
   // We need to find bottom-most view controller that should stay on the stack
   // for the duration of transition.
 
