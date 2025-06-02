@@ -965,7 +965,7 @@ RNS_IGNORE_SUPER_CALL_END
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
  * guarantee that values of all related props had been updated earlier. It should be invoked from `didSetProps`.
- * On Fabric we run it from `updateProps`.
+ * On Fabric we run it from `finalizeUpdates` if props have changed.
  */
 - (void)updateFormSheetPresentationStyle
 {
@@ -1300,10 +1300,6 @@ RNS_IGNORE_SUPER_CALL_END
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
-#if !TARGET_OS_TV && !TARGET_OS_VISION
-  [self updateFormSheetPresentationStyle];
-#endif // !TARGET_OS_TV && !TARGET_OS_VISION
-
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1333,6 +1329,11 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  if (updateMask & RNComponentViewUpdateMaskProps) {
+    [self updateFormSheetPresentationStyle];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Paper specific
