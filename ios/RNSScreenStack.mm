@@ -400,6 +400,18 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
 {
+  NSLog(@"setModalViewControllers:");
+  for (RNSScreen *controller : controllers) {
+    if (controller.screenView != nil) {
+      NSLog(
+          @"%@ %@ %ld %@",
+          controller,
+          controller.screenView,
+          static_cast<long>(controller.screenView.tag),
+          controller.screenView.reactTag);
+    }
+  }
+
   // prevent re-entry
   if (_updatingModals) {
     _scheduleModalsUpdate = YES;

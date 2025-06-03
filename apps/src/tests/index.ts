@@ -150,5 +150,6 @@ export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
 export { default as TestAndroidTransitions } from './TestAndroidTransitions';
 export { default as TestAnimation } from './TestAnimation';
+export { default as TestConsoleLog } from './TestConsoleLog';
 
 

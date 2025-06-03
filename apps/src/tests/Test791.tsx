@@ -12,10 +12,22 @@ const MainScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
       <Button
         onPress={() => {
           navigation.push('Push');
-          setTimeout(() => navigation.push('Push'), 10);
-          setTimeout(() => navigation.push('Push'), 20);
-          setTimeout(() => navigation.push('Push'), 30);
-          setTimeout(() => navigation.push('Push'), 40);
+          setTimeout(() => {
+            console.log('Pushing 1');
+            navigation.push('Push');
+          }, 1000);
+          setTimeout(() => {
+            console.log('Pushing 2');
+            navigation.push('Push');
+          }, 2000);
+          setTimeout(() => {
+            console.log('Pushing 3');
+            navigation.push('Push');
+          }, 3000);
+          setTimeout(() => {
+            console.log('Pushing 4');
+            navigation.push('Push');
+          }, 4000);
         }}
         title="Click this button to see the crash if native changes not applied"
       />
@@ -31,17 +43,32 @@ const MainScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
   );
 };
 
-const PushScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => (
+const PushScreen = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<ParamListBase>) => (
   <View style={styles.screen}>
     <Button
       testID="push-button-push-multiple"
-      onPress={() => {
-        navigation.push('Push');
-        setTimeout(() => navigation.push('Push'), 10);
-        setTimeout(() => navigation.push('Push'), 20);
-        setTimeout(() => navigation.push('Push'), 30);
-        setTimeout(() => navigation.push('Push'), 40);
-      }}
+        onPress={() => {
+          navigation.push('Push');
+          setTimeout(() => {
+            console.log('Pushing 1');
+            navigation.push('Push');
+          }, 1000);
+          setTimeout(() => {
+            console.log('Pushing 2');
+            navigation.push('Push');
+          }, 2000);
+          setTimeout(() => {
+            console.log('Pushing 3');
+            navigation.push('Push');
+          }, 3000);
+          setTimeout(() => {
+            console.log('Pushing 4');
+            navigation.push('Push');
+          }, 4000);
+        }}
       title="Click this button to see the crash if native changes not applied"
     />
     <Button
@@ -52,7 +79,9 @@ const PushScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => (
       }}
       title="Click this button to pop"
     />
+    <Button onPress={() => navigation.push('Push')} title="Push single" />
     <Text testID="push-text">Push screen</Text>
+    <Text>{route.key}</Text>
   </View>
 );
 
@@ -61,16 +90,17 @@ const Stack = createNativeStackNavigator();
 const App = () => (
   <NavigationContainer>
     <Stack.Navigator>
-      <Stack.Screen name="Main" component={MainScreen} />
+      <Stack.Screen name="Main" component={MainScreen} options={{ freezeOnBlur: false }} />
       <Stack.Screen
         name="Push"
         component={PushScreen}
-        options={{ presentation: 'card' }}
+        // options={{ presentation: 'card' }}
+        options={{ presentation: 'modal' }}
       />
       <Stack.Screen
         name="Modal"
         component={PushScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'modal', freezeOnBlur: false }}
       />
     </Stack.Navigator>
   </NavigationContainer>

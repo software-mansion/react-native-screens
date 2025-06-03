@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { Animated, View, Platform } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, View, Platform, findNodeHandle } from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -99,6 +99,24 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       onWillDisappear,
     } = rest;
 
+    // const componentNodeRef = useRef(null);
+    const componentNodeHandle = useRef(-1);
+
+    useEffect(() => {
+      if (innerRef.current != null) {
+        componentNodeHandle.current = findNodeHandle(innerRef.current) ?? -1;
+        console.log(
+          'useEffect',
+          componentNodeHandle.current,
+          `freezeOnBlur: ${freezeOnBlur}`,
+          `shouldFreeze: ${shouldFreeze}`,
+          stackPresentation,
+        );
+      } else {
+        componentNodeHandle.current = -1;
+      }
+    }, [freezeOnBlur, shouldFreeze, stackPresentation]);
+
     if (enabled && isNativePlatformSupported) {
       const resolvedSheetAllowedDetents =
         resolveSheetAllowedDetents(sheetAllowedDetents);
@@ -180,12 +198,23 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         }
       };
 
+      // console.log(stackPresentation);
+      // console.log(freezeOnBlur, shouldFreeze)
+
       const freeze =
         freezeOnBlur &&
         (shouldFreeze !== undefined ? shouldFreeze : activityState === 0);
 
+      console.log(
+        componentNodeHandle.current,
+        `freeze: ${freeze}`,
+        `freezeOnBlur: ${freezeOnBlur}`,
+        `shouldFreeze: ${shouldFreeze}`,
+        stackPresentation,
+      );
+
       return (
-        <DelayedFreeze freeze={freeze}>
+        <DelayedFreeze freeze={freeze} tag={componentNodeHandle.current}>
           <AnimatedScreen
             {...props}
             /**
@@ -258,6 +287,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         </DelayedFreeze>
       );
     } else {
+      console.log(
+        componentNodeHandle.current,
+        `freezeOnBlur: ${freezeOnBlur}`,
+        `shouldFreeze: ${shouldFreeze}`,
+        stackPresentation,
+      );
+
       // same reason as above
       let {
         active,
