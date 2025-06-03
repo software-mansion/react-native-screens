@@ -1334,12 +1334,6 @@ RNS_IGNORE_SUPER_CALL_END
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
-#if !TARGET_OS_TV && !TARGET_OS_VISION
-  if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
-    [self updateFormSheetPresentationStyle];
-  }
-#endif // !TARGET_OS_TV
-
   [super updateProps:props oldProps:oldProps];
 }
 
