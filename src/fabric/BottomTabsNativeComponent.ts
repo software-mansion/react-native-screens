@@ -2,7 +2,7 @@
 
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { ColorValue, ViewProps } from 'react-native';
-import {
+import type {
   DirectEventHandler,
   Float,
   WithDefault,
