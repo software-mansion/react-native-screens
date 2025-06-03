@@ -998,7 +998,7 @@ RNS_IGNORE_SUPER_CALL_END
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
  * guarantee that values of all related props had been updated earlier. It should be invoked from `didSetProps`.
- * On Fabric we should call this from `updateProps`.
+ * On Fabric we run it from `finalizeUpdates` if props have changed.
  */
 - (void)updateFormSheetPresentationStyle
 {
@@ -1364,6 +1364,16 @@ RNS_IGNORE_SUPER_CALL_END
   // pass the dimensions to ui view manager to take into account when laying out
   // subviews
   // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
+}
+
+- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
+{
+  [super finalizeUpdates:updateMask];
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  if (updateMask & RNComponentViewUpdateMaskProps) {
+    [self updateFormSheetPresentationStyle];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Paper specific
