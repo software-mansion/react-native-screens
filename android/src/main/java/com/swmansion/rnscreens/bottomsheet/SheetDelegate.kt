@@ -168,7 +168,7 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            halfExpandedRatio = screen.sheetDetents[1].toFloat(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
 
@@ -229,7 +229,7 @@ class SheetDelegate(
                     3 ->
                         behavior.useThreeDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            halfExpandedRatio = screen.sheetDetents[1].toFloat(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
 
