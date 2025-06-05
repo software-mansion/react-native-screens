@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   NavigationContainer,
   ParamListBase,
@@ -54,6 +54,7 @@ function Second({ navigation, route }: StackNavigationProp) {
           clearInterval(intervalId);
           navigation.popTo('Home');
         }}
+        testID={`screen-${screenNumber}-button-stop`}
         title="Stop"
       />
     </View>
@@ -61,7 +62,9 @@ function Second({ navigation, route }: StackNavigationProp) {
 }
 
 function Home({ navigation }: StackNavigationProp) {
-  const startPushingScreens = (screen: any) => {
+  const [screensLimit, setScreensLimit] = useState(false);
+
+  const startPushingScreens = (screen: any, screensLimitEnabled: boolean) => {
     let screenNumber = 1;
     let intervalId: number | NodeJS.Timeout | undefined;
 
@@ -70,6 +73,10 @@ function Home({ navigation }: StackNavigationProp) {
         screenNumber: screenNumber++,
         intervalId: intervalId,
       });
+
+      if (screensLimitEnabled && screenNumber > 5) {
+        clearInterval(intervalId);
+      }
     }, 1000);
   };
 
@@ -85,28 +92,48 @@ function Home({ navigation }: StackNavigationProp) {
       ]}>
       <Text
         style={{
+          color: Colors.PurpleDark120,
+          fontSize: 24,
+          fontWeight: 'bold',
+          marginBottom: 10,
+        }}>
+        Settings:
+      </Text>
+      <Button
+        title={`Screens limit is: ${screensLimit ? 'enabled' : 'disabled'}`}
+        onPress={() => setScreensLimit(!screensLimit)}
+        testID="home-button-toggle-screens-limit"
+      />
+      <Text
+        style={{
           color: Colors.GreenDark120,
           fontSize: 24,
           fontWeight: 'bold',
+          marginTop: 40,
           marginBottom: 10,
         }}>
         Working correctly:
       </Text>
       <Button
         title="card/push screens"
-        onPress={() => startPushingScreens('Push')}
+        onPress={() => startPushingScreens('Push', screensLimit)}
+        testID="home-button-push"
       />
       <Button
         title="pageSheets"
-        onPress={() => startPushingScreens('PageSheetWithHeader')}
+        onPress={() => startPushingScreens('PageSheetWithHeader', screensLimit)}
+        testID="home-button-page-sheets-with-header"
       />
       <Button
         title="modals without header"
-        onPress={() => startPushingScreens('ModalWithoutHeader')}
+        onPress={() => startPushingScreens('ModalWithoutHeader', screensLimit)}
+        testID="home-button-modals-without-header"
       />
       <Button
         title="formSheets without header"
-        onPress={() => startPushingScreens('FormSheetWithoutHeader')}
+        onPress={() =>
+          startPushingScreens('FormSheetWithoutHeader', screensLimit)
+        }
       />
       <Text
         style={{
@@ -120,11 +147,13 @@ function Home({ navigation }: StackNavigationProp) {
       </Text>
       <Button
         title="modals with header"
-        onPress={() => startPushingScreens('ModalWithHeader')}
+        onPress={() => startPushingScreens('ModalWithHeader', screensLimit)}
+        testID="home-button-modals-with-header"
       />
       <Button
         title="formSheets with header"
-        onPress={() => startPushingScreens('FormSheetWithHeader')}
+        onPress={() => startPushingScreens('FormSheetWithHeader', screensLimit)}
+        testID="home-button-form-sheets-with-header"
       />
     </View>
   );
@@ -162,12 +191,20 @@ export default function App() {
         <Stack.Screen
           name="FormSheetWithoutHeader"
           component={Second}
-          options={{ presentation: 'formSheet', headerShown: false, sheetAllowedDetents: [0.4] }}
+          options={{
+            presentation: 'formSheet',
+            headerShown: false,
+            sheetAllowedDetents: [0.4],
+          }}
         />
         <Stack.Screen
           name="FormSheetWithHeader"
           component={Second}
-          options={{ presentation: 'formSheet', headerShown: true, sheetAllowedDetents: [0.4] }}
+          options={{
+            presentation: 'formSheet',
+            headerShown: true,
+            sheetAllowedDetents: [0.4],
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
