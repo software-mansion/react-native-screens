@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -493,7 +494,9 @@ class Screen(
                     // wrong index if we called `startViewTransition` on the views on new arch.
                     // We add a simple View to bump the number of children to make it work.
                     // TODO: find a better way to handle this scenario
-                    it.addView(View(context), i)
+                    UiThreadUtil.runOnUiThread {
+                        it.addView(View(context), i)
+                    }
                 } else {
                     child?.let { view -> it.startViewTransition(view) }
                 }
