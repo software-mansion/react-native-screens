@@ -91,7 +91,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetElevation = 24,
       sheetInitialDetentIndex = 0,
       // Other
-      screenId = '',
+      screenId,
       stackPresentation,
       // Events for override
       onAppear,
