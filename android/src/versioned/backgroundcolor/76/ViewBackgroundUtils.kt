@@ -6,4 +6,3 @@ import com.facebook.react.views.view.ReactViewGroup
 
 @OptIn(UnstableReactNativeAPI::class)
 internal fun ReactViewGroup.resolveBackgroundColor(): Int? = (this.background as? CSSBackgroundDrawable)?.color
-

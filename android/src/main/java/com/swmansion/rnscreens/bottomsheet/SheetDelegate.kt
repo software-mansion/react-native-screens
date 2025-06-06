@@ -84,6 +84,10 @@ class SheetDelegate(
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
     }
 
+    private fun onSheetSlide(bottomSheet: View) {
+        screen.onSheetTranslation(bottomSheet.top)
+    }
+
     private fun onSheetStateChanged(newState: Int) {
         val isStable = SheetUtils.isStateStable(newState)
 
@@ -114,8 +118,8 @@ class SheetDelegate(
         }
 
         behavior.apply {
-            isHideable = true
-            isDraggable = true
+            isHideable = screen.isSheetDismissible
+            isDraggable = if (screen.isSheetFitToContents()) screen.isSheetDismissible else true
         }
 
         // There is a guard internally that does not allow the callback to be duplicated.
@@ -164,7 +168,7 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            halfExpandedRatio = screen.sheetDetents[1].toFloat(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
 
@@ -225,7 +229,7 @@ class SheetDelegate(
                     3 ->
                         behavior.useThreeDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            halfExpandedRatio = screen.sheetDetents[1].toFloat(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
 
@@ -360,7 +364,9 @@ class SheetDelegate(
         override fun onSlide(
             bottomSheet: View,
             slideOffset: Float,
-        ) = Unit
+        ) {
+            this@SheetDelegate.onSheetSlide(bottomSheet)
+        }
     }
 
     companion object {
