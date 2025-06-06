@@ -13,11 +13,11 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
   const [freezeState, setFreezeState] = React.useState(false);
 
   React.useEffect(() => {
-    const id = setImmediate(() => {
+    const id = setTimeout(() => {
       setFreezeState(freeze);
-    });
+    }, 0);
     return () => {
-      clearImmediate(id);
+      clearTimeout(id);
     };
   }, [freeze]);
 

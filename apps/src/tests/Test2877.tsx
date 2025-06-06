@@ -42,7 +42,7 @@ function FormSheet({ navigation }: StackNavigationProp) {
 
     const intervalHandle = setInterval(() => {
       setExtended(!extended);
-    }, 1000);
+    }, 2000);
 
     return () => clearInterval(intervalHandle);
   }, [extended, intervalEnabled]);
@@ -58,7 +58,7 @@ function FormSheet({ navigation }: StackNavigationProp) {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <Text>Every second, sheet's height should change.</Text>
+        <Text>Every 2 seconds, sheet's height should change.</Text>
       </View>
       {extended && (
         <View
