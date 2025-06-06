@@ -1348,6 +1348,17 @@ RNS_IGNORE_SUPER_CALL_END
 #pragma mark - Paper specific
 #else
 
+// On Fabric the setter is not needed, because value invariant (empty string to nil translation)
+// is upheld in `- [updateProps:oldProps:]`
+- (void)setScreenId:(NSString *)screenId
+{
+  if (screenId != nil && screenId.length == 0) {
+    _screenId = nil;
+  } else {
+    _screenId = screenId;
+  }
+}
+
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
