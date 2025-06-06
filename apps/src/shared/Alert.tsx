@@ -1,15 +1,18 @@
 import React from 'react';
 import { Text, StyleSheet, Dimensions, View, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import useThemeColorPallette from './styling/adapter/react-navigation/useColorPallette';
 
 export const Alert = (): React.JSX.Element => {
   const navigation = useNavigation();
+  const { colors } = useThemeColorPallette();
+
   const backgrounds = [
-    'darkviolet',
-    'slateblue',
-    'mediumseagreen',
-    'orange',
-    'indianred',
+    colors.BlueLight80,
+    colors.YellowDark80,
+    colors.PurpleLight80,
+    colors.BlueDark80,
+    colors.YellowLight80,
   ];
   const bgColor = backgrounds[Math.floor(Math.random() * backgrounds.length)];
 

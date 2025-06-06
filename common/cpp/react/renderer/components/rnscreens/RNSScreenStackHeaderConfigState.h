@@ -17,8 +17,31 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 
   RNSScreenStackHeaderConfigState() = default;
 
-  // Used in iOS code
-  RNSScreenStackHeaderConfigState(Size frameSize_) : frameSize{frameSize_} {}
+#if !defined(ANDROID)
+  RNSScreenStackHeaderConfigState(Size frameSize_, EdgeInsets edgeInsets_)
+      : frameSize{frameSize_}, edgeInsets{edgeInsets_} {}
+
+  // Make it copyable
+  RNSScreenStackHeaderConfigState(const RNSScreenStackHeaderConfigState &source)
+      : frameSize{source.frameSize}, edgeInsets{source.edgeInsets} {}
+  RNSScreenStackHeaderConfigState &operator=(
+      const RNSScreenStackHeaderConfigState &source) {
+    this->frameSize.width = source.frameSize.width;
+    this->frameSize.height = source.frameSize.height;
+    this->edgeInsets = source.edgeInsets;
+    return *this;
+  }
+
+  bool operator==(const RNSScreenStackHeaderConfigState &other) {
+    return this->frameSize == other.frameSize &&
+        this->edgeInsets == other.edgeInsets;
+  }
+
+  bool operator!=(const RNSScreenStackHeaderConfigState &other) {
+    return this->frameSize != other.frameSize ||
+        this->edgeInsets != other.edgeInsets;
+  }
+#endif
 
 #ifdef ANDROID
   RNSScreenStackHeaderConfigState(
@@ -39,13 +62,17 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
     return MapBufferBuilder::EMPTY();
   };
 #else // ANDROID
-#ifndef NDEBUG
+#if !defined(NDEBUG)
   void setImageLoader(std::weak_ptr<void> imageLoader);
   std::weak_ptr<void> getImageLoader() const noexcept;
 #endif // !NDEBUG
 #endif // ANDROID
 
-  const Size frameSize{};
+  Size frameSize{};
+
+#if !defined(ANDROID)
+  EdgeInsets edgeInsets{}; // zero initialized
+#endif
 
 #ifdef ANDROID
   Float paddingStart{0.f};

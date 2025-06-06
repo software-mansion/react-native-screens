@@ -31,6 +31,7 @@ import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -188,6 +189,7 @@ class Screen(
         if (!usesFormSheetPresentation() || !isNativeStackScreen) {
             return
         }
+
         if (coordinatorLayoutDidChange) {
             dispatchShadowStateUpdate(width, height, top)
         }
@@ -362,6 +364,10 @@ class Screen(
             fragmentWrapper?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
+    @Deprecated(
+        "For apps targeting SDK 35 or above this prop has no effect because " +
+            "edge-to-edge is enabled by default and the status bar is always translucent.",
+    )
     var isStatusBarTranslucent: Boolean? = null
         set(statusBarTranslucent) {
             if (statusBarTranslucent != null) {
@@ -377,6 +383,10 @@ class Screen(
             }
         }
 
+    @Deprecated(
+        "For apps targeting SDK 35 or above this prop has no effect because " +
+            "edge-to-edge is enabled by default and the status bar is always translucent.",
+    )
     var statusBarColor: Int? = null
         set(statusBarColor) {
             if (statusBarColor != null) {
@@ -392,6 +402,9 @@ class Screen(
             }
         }
 
+    @Deprecated(
+        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
+    )
     var navigationBarColor: Int? = null
         set(navigationBarColor) {
             if (navigationBarColor != null) {
@@ -406,6 +419,9 @@ class Screen(
             }
         }
 
+    @Deprecated(
+        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
+    )
     var isNavigationBarTranslucent: Boolean? = null
         set(navigationBarTranslucent) {
             if (navigationBarTranslucent != null) {
@@ -523,6 +539,22 @@ class Screen(
         // we are unsure of the exact sheet position anyway.
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
             updateScreenSizeFabric(width, height, top)
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        // Insets handler for formSheet is added onResume but it is often too late if we use input
+        // with autofocus - onResume is called after finishing animator animation.
+        // onAttachedToWindow is called before onApplyWindowInsets so we use it to set the handler
+        // earlier. More details: https://github.com/software-mansion/react-native-screens/pull/2911
+        if (usesFormSheetPresentation()) {
+            fragment?.asScreenStackFragment()?.sheetDelegate?.let {
+                InsetsObserverProxy.addOnApplyWindowInsetsListener(
+                    it,
+                )
+            }
         }
     }
 

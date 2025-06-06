@@ -15,25 +15,25 @@ export { default as Test593 } from './Test593';     // [E2E created]
 export { default as Test619 } from './Test619';     // [E2E skipped]: can't check components jumping
 export { default as Test624 } from './Test624';     // [E2E skipped]: PR changed library internals, test screen seems unrelated
 export { default as Test640 } from './Test640';     // [E2E created]
-export { default as Test642 } from './Test642';
-export { default as Test645 } from './Test645';
-export { default as Test648 } from './Test648';
-export { default as Test649 } from './Test649';
-export { default as Test654 } from './Test654';
-export { default as Test658 } from './Test658';
-export { default as Test662 } from './Test662';
-export { default as Test691 } from './Test691';
-export { default as Test702 } from './Test702';
-export { default as Test706 } from './Test706';
-export { default as Test713 } from './Test713';
-export { default as Test726 } from './Test726';
+export { default as Test642 } from './Test642';     // [E2E skipped]: can't check status bar visibility/style
+export { default as Test645 } from './Test645';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
+export { default as Test648 } from './Test648';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test649 } from './Test649';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
+export { default as Test654 } from './Test654';     // [E2E created](iOS): issue related to iOS native back button
+export { default as Test658 } from './Test658';     // [E2E created]
+export { default as Test662 } from './Test662';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test691 } from './Test691';     // [E2E created](iOS): issue related to iOS modal behavior
+export { default as Test702 } from './Test702';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test706 } from './Test706';     // [E2E skipped]: can't check font weight
+export { default as Test713 } from './Test713';     // [E2E skipped]: issue still present
+export { default as Test726 } from './Test726';     // [E2E created](iOS): issue related to iOS
 export { default as Test748 } from './Test748';
 export { default as Test750 } from './Test750';
 export { default as Test758 } from './Test758';
-export { default as Test761 } from './Test761';
-export { default as Test779 } from './Test779';
-export { default as Test780 } from './Test780';
-export { default as Test791 } from './Test791';
+export { default as Test761 } from './Test761';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test779 } from './Test779';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test780 } from './Test780';     // [E2E skipped]: can't use native swipe back gesture
+export { default as Test791 } from './Test791';     // [E2E created](iOS): issue related to iOS
 export { default as Test800 } from './Test800';
 export { default as Test817 } from './Test817';
 export { default as Test830 } from './Test830';
@@ -119,18 +119,26 @@ export { default as Test2379 } from './Test2379';
 export { default as Test2395 } from './Test2395';
 export { default as Test2466 } from './Test2466';
 export { default as Test2538 } from './Test2538';
+export { default as Test2543 } from './Test2543'; // [E2E created](iOS): issue related to iOS formSheet initial detent
 export { default as Test2552 } from './Test2552';
 export { default as Test2611 } from './Test2611';
 export { default as Test2631 } from './Test2631';
 export { default as Test2668 } from './Test2668';
 export { default as Test2675 } from './Test2675';
+export { default as Test2714 } from './Test2714';
 export { default as Test2717 } from './Test2717';
 export { default as Test2767 } from './Test2767';
 export { default as Test2789 } from './Test2789';
 export { default as Test2809 } from './Test2809';
 export { default as Test2811 } from './Test2811';
 export { default as Test2819 } from './Test2819';
+export { default as Test2842 } from './Test2842'; // [E2E created](iOS): issue is related to iOS
 export { default as Test2855 } from './Test2855';
+export { default as Test2877 } from './Test2877'; // [E2E created](iOS): issue is related to formSheet on iOS
+export { default as Test2895 } from './Test2895';
+export { default as Test2899 } from './Test2899';
+export { default as Test2926 } from './Test2926'; // [E2E created](iOS): PR related to iOS search bar
+export { default as Test2949 } from './Test2949'; // [E2E skipped]: can't check system bars styles
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';

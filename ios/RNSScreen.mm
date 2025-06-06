@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RNSModalScreen.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
@@ -62,8 +63,11 @@ struct ContentWrapperBox {
 
 @implementation RNSScreenView {
   __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
-  BOOL _didSetSheetAllowedDetentsOnController;
+
+  /// Up-to-date only when sheet is in `fitToContents` mode.
+  CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
+  bool _sheetHasInitialDetentSet;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -126,7 +130,7 @@ struct ContentWrapperBox {
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
-  _didSetSheetAllowedDetentsOnController = NO;
+  _sheetContentHeight = 0.0;
 #ifdef RCT_NEW_ARCH_ENABLED
   _markedForUnmountInCurrentTransaction = NO;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -152,12 +156,14 @@ RNS_IGNORE_SUPER_CALL_END
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
 
-    // in large title, ScrollView handles the offset of content so we cannot set it here also
-    // TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
+    // * in large title, ScrollView handles the offset of content so we cannot set it here also
+    // * TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
     // used?
-    // When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
+    // * When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
     // navigation bar, therefore there is no need to set content offset in shadow tree.
-    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent
+    // * When this view is the modal root controller (presented in separate view hierarchy) it does not have navigation
+    // bar! We send non-zero size to JS, for some reason. TODO: this needs to be investigated.
+    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent || self.isPresentedAsNativeModal
         ? 0
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
@@ -440,11 +446,13 @@ RNS_IGNORE_SUPER_CALL_END
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
 - (void)contentWrapper:(RNSScreenContentWrapper *)contentWrapper receivedReactFrame:(CGRect)reactFrame
 {
-  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _didSetSheetAllowedDetentsOnController == YES) {
+  // We want to update and animate allowedDetents for FormSheet only if there was a change
+  // in frame's height but sometimes we receive a frame with the same dimensions mutliple times.
+  // In order to prevent visual glitches, we compare new value to the old one and update
+  // only if there was a change in height.
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _sheetContentHeight == reactFrame.size.height) {
     return;
   }
-
-  _didSetSheetAllowedDetentsOnController = YES;
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
@@ -456,6 +464,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
 
     if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == SHEET_FIT_TO_CONTENTS) {
+      _sheetContentHeight = reactFrame.size.height;
       auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height +
                                                               _contentWrapperBox.contentHeightErrata] ]];
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
@@ -957,7 +966,7 @@ RNS_IGNORE_SUPER_CALL_END
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
  * guarantee that values of all related props had been updated earlier. It should be invoked from `didSetProps`.
- * On Fabric we have control over prop-setting process but it might be reasonable to run it from `finalizeUpdates`.
+ * On Fabric we run it from `finalizeUpdates` if props have changed.
  */
 - (void)updateFormSheetPresentationStyle
 {
@@ -1039,24 +1048,28 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
 
-    if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+    // Handle initial detent on the first update.
+    if (!_sheetHasInitialDetentSet) {
+      if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-      if (@available(iOS 16.0, *)) {
-        UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
-        [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
-      } else
+        if (@available(iOS 16.0, *)) {
+          UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+          [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+        } else
 #endif // Check for iOS >= 16
-      {
-        if (_sheetInitialDetent < 2) {
-          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-        } else {
-          RCTLogError(
-              @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
+        {
+          if (_sheetInitialDetent < 2) {
+            [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+          } else {
+            RCTLogError(
+                @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
+          }
         }
+      } else if (_sheetInitialDetent != 0) {
+        RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
       }
-    } else if (_sheetInitialDetent != 0) {
-      RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
+      _sheetHasInitialDetentSet = true;
     }
 
     sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
@@ -1322,8 +1335,10 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super finalizeUpdates:updateMask];
 #if !TARGET_OS_TV && !TARGET_OS_VISION
-  [self updateFormSheetPresentationStyle];
-#endif // !TARGET_OS_TV
+  if (updateMask & RNComponentViewUpdateMaskProps) {
+    [self updateFormSheetPresentationStyle];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Paper specific

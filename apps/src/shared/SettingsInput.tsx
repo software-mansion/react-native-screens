@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { ThemedText, ThemedView, ThemedTextInput } from '.';
+import Colors from './styling/Colors';
 
 type Props = {
   label: string;
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#039be5',
+    borderColor: Colors.cardBorder,
   },
   label: {
     fontSize: 15,

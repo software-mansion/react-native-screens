@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -19,6 +18,7 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.swmansion.rnscreens.Screen.WindowTraits
+import com.swmansion.rnscreens.utils.EdgeToEdgePackageDetector
 
 object ScreenWindowTraits {
     // Methods concerning statusBar management were taken from `react-native`'s status bar module:
@@ -86,6 +86,10 @@ object ScreenWindowTraits {
         activity.requestedOrientation = orientation
     }
 
+    @Deprecated(
+        "For apps targeting SDK 35 or above this prop has no effect because " +
+            "edge-to-edge is enabled by default and the status bar is always translucent.",
+    )
     internal fun setColor(
         screen: Screen,
         activity: Activity?,
@@ -142,19 +146,22 @@ object ScreenWindowTraits {
         }
     }
 
+    @Deprecated(
+        "For apps targeting SDK 35 or above this prop has no effect because " +
+            "edge-to-edge is enabled by default and the status bar is always translucent.",
+    )
     internal fun setTranslucent(
         screen: Screen,
         activity: Activity?,
         context: ReactContext?,
     ) {
-        if (activity == null || context == null) {
+        if (activity == null || context == null || EdgeToEdgePackageDetector.ENABLED) {
             return
         }
         val screenForTranslucent = findScreenForTrait(screen, WindowTraits.TRANSLUCENT)
         val translucent = screenForTranslucent?.isStatusBarTranslucent ?: false
         UiThreadUtil.runOnUiThread(
             object : GuardedRunnable(context.exceptionHandler) {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 override fun runGuarded() {
                     // If the status bar is translucent hook into the window insets calculations
                     // and consume all the top insets so no padding will be added under the status bar.
@@ -194,6 +201,9 @@ object ScreenWindowTraits {
 
     // Methods concerning navigationBar management were taken from `react-native-navigation`'s repo:
     // https://github.com/wix/react-native-navigation/blob/9bb70d81700692141a2c505c081c2d86c7f9c66e/lib/android/app/src/main/java/com/reactnativenavigation/utils/SystemUiUtils.kt
+    @Deprecated(
+        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
+    )
     internal fun setNavigationBarColor(
         screen: Screen,
         activity: Activity?,
@@ -214,11 +224,14 @@ object ScreenWindowTraits {
         window.navigationBarColor = color
     }
 
+    @Deprecated(
+        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
+    )
     internal fun setNavigationBarTranslucent(
         screen: Screen,
         activity: Activity?,
     ) {
-        if (activity == null) {
+        if (activity == null || EdgeToEdgePackageDetector.ENABLED) {
             return
         }
 

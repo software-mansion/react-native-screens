@@ -20,24 +20,9 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-    react_native_assert(
-        dynamic_cast<RNSScreenStackHeaderSubviewShadowNode *>(&shadowNode));
-    auto &subviewShadowNode =
-        static_cast<RNSScreenStackHeaderSubviewShadowNode &>(shadowNode);
-
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&subviewShadowNode));
-    auto &layoutableShadowNode =
-        dynamic_cast<YogaLayoutableShadowNode &>(subviewShadowNode);
-
-    auto state = std::static_pointer_cast<
-        const RNSScreenStackHeaderSubviewShadowNode::ConcreteState>(
-        shadowNode.getState());
-    auto stateData = state->getData();
-
-    if (!isSizeEmpty(stateData.frameSize)) {
-      layoutableShadowNode.setSize(stateData.frameSize);
-    }
+    // Note: Be very careful with calling `shadowNode.setSize` here. By doing
+    // that, you are likely to introduce a regressions on both platforms. See:
+    // https://github.com/software-mansion/react-native-screens/pull/2905
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }

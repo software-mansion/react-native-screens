@@ -11,6 +11,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
+#import "UINavigationBar+RNSUtility.h"
 #ifndef NDEBUG
 #import <react/utils/ManagedObjectWrapper.h>
 #endif // !NDEBUG
@@ -71,7 +72,8 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
-  CGSize _lastSize;
+
+  react::RNSScreenStackHeaderConfigState _lastSendState;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
 
   /// Whether a react subview has been added / removed in current transaction. This flag is reset after each react
@@ -102,6 +104,7 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
     _show = YES;
     _translucent = NO;
     _addedReactSubviewsInCurrentTransaction = false;
+    _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
     [self initProps];
   }
   return self;
@@ -159,6 +162,13 @@ RNS_IGNORE_SUPER_CALL_END
 {
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeLeft || subview.type == RNSScreenStackHeaderSubviewTypeRight) {
+      // E.g. presence of focused search bar might cause the subviews to be temporarily unmounted & we don't want
+      // them to be touch targets then, otherwise we might e.g. block cancel button.
+      // See: https://github.com/software-mansion/react-native-screens/issues/2899
+      if (subview.window == nil) {
+        continue;
+      }
+
       // we wrap the headerLeft/Right component in a UIBarButtonItem
       // so we need to hit test subviews from left to right, because of the view flattening
       UIView *headerComponent = nil;
@@ -214,12 +224,17 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)updateHeaderConfigState:(CGSize)size
+- (void)updateShadowStateWithSize:(CGSize)size edgeInsets:(NSDirectionalEdgeInsets)edgeInsets
 {
-  if (!CGSizeEqualToSize(size, _lastSize)) {
-    auto newState = react::RNSScreenStackHeaderConfigState(RCTSizeFromCGSize(size));
+  // I believe Yoga handles RTL internally & .left will be treated as .right in RTL etc.
+  react::EdgeInsets convertedEdgeInsets{
+      .left = edgeInsets.leading, .top = edgeInsets.top, .right = edgeInsets.trailing, .bottom = edgeInsets.bottom};
+  react::Size convertedSize = RCTSizeFromCGSize(size);
+  auto newState = react::RNSScreenStackHeaderConfigState(convertedSize, convertedEdgeInsets);
+
+  if (newState != _lastSendState) {
+    _lastSendState = newState;
     _state->updateState(std::move(newState));
-    _lastSize = size;
   }
 }
 
@@ -229,12 +244,33 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  [self updateHeaderConfigState:navigationBar.frame.size];
+  [self updateShadowStateWithSize:navigationBar.frame.size
+                       edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]];
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
-    CGRect frameInNavBarCoordinates = [subview convertRect:subview.frame toView:navigationBar];
-    [subview updateHeaderSubviewFrameInShadowTree:frameInNavBarCoordinates];
+    [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
 }
+
+- (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
+{
+  NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
+  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
+
+  BOOL isDisplayingBackButton = [self shouldBackButtonBeVisibleInNavigationBar:navigationBar];
+
+  // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
+  UIView *barButtonView = isDisplayingBackButton ? navigationBar.rnscreens_findBackButtonWrapperView : nil;
+  CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
+
+  const auto edgeInsets = NSDirectionalEdgeInsets{
+      .leading =
+          navBarMargins.leading + navBarContentMargins.leading + (isDisplayingBackButton ? platformBackButtonWidth : 0),
+      .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
+  };
+
+  return edgeInsets;
+}
+
 #else
 - (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
 {
@@ -579,6 +615,12 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
 
+#if !TARGET_OS_TV
+  // We want to set navitem.searchController to nil only if we are sure
+  // that we are removing the search bar from the header.
+  bool searchBarPresent = false;
+#endif /* !TARGET_OS_TV */
+
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     // This code should be kept in sync on Fabric with analogous switch statement in
     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
@@ -611,17 +653,16 @@ RNS_IGNORE_SUPER_CALL_END
 
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
 #if !TARGET_OS_TV
-          if (@available(iOS 11.0, *)) {
-            RNSSearchBar *searchBar = subview.subviews[0];
-            navitem.searchController = searchBar.controller;
-            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+          RNSSearchBar *searchBar = subview.subviews[0];
+          searchBarPresent = true;
+          navitem.searchController = searchBar.controller;
+          navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-            if (@available(iOS 16.0, *)) {
-              navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
-            }
-#endif /* Check for iOS 16.0 */
+          if (@available(iOS 16.0, *)) {
+            navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
+#endif /* Check for iOS 16.0 */
 #endif /* !TARGET_OS_TV */
         }
         break;
@@ -631,6 +672,12 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
   }
+
+#if !TARGET_OS_TV
+  if (!searchBarPresent) {
+    navitem.searchController = nil;
+  }
+#endif /* !TARGET_OS_TV */
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
@@ -678,20 +725,19 @@ RNS_IGNORE_SUPER_CALL_END
 
   const auto isBackTitleBlank = [NSString rnscreens_isBlankOrNull:config.backTitle] == YES;
   NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
-  RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:nil
-                                                                             action:nil];
-  [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
-
-  auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
-
+  prevItem.backButtonTitle = resolvedBackTitle;
   // This has any effect only in case the `backBarButtonItem` is not set.
   // We apply it before we configure the back item, because it might get overriden.
   prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
-  prevItem.backButtonTitle = resolvedBackTitle;
 
   if (config.isBackTitleVisible) {
+    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                                style:UIBarButtonItemStylePlain
+                                                                               target:nil
+                                                                               action:nil];
+    auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
+    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+
     if ((config.backTitleFontFamily &&
          // While being used by react-navigation, the `backTitleFontFamily` will
          // be set to "System" by default - which is the system default font.
@@ -715,19 +761,18 @@ RNS_IGNORE_SUPER_CALL_END
       }
       [RNSScreenStackHeaderConfig setTitleAttibutes:attrs forButton:backBarButtonItem];
     }
+
+    // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
+    // as assigning one will override the native behavior of automatically shortening
+    // the title to "Back" or hide the back title if there's not enough space.
+    // See: https://github.com/software-mansion/react-native-screens/issues/1589
+    if (shouldUseCustomBackBarButtonItem) {
+      prevItem.backBarButtonItem = backBarButtonItem;
+    }
   } else {
     // back button title should be not visible next to back button,
     // but it should still appear in back menu
     prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
-    shouldUseCustomBackBarButtonItem = NO;
-  }
-
-  // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
-  // as assigning one will override the native behavior of automatically shortening
-  // the title to "Back" or hide the back title if there's not enough space.
-  // See: https://github.com/software-mansion/react-native-screens/issues/1589
-  if (shouldUseCustomBackBarButtonItem) {
-    prevItem.backBarButtonItem = backBarButtonItem;
   }
 #endif
 }
@@ -763,7 +808,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 {
   [_reactSubviews removeObject:subview];
 }
-RNS_IGNORE_SUPER_CALL_BEGIN
+RNS_IGNORE_SUPER_CALL_END
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
@@ -899,7 +944,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 
 #ifdef RCT_NEW_ARCH_ENABLED
-  _lastSize = CGSizeZero;
+  _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
 #else
   _lastHeaderInsets = NSDirectionalEdgeInsets{};
 #endif

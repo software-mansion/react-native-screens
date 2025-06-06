@@ -1,6 +1,7 @@
 import React from 'react';
 import { ForwardedRef } from 'react';
 import { GestureResponderEvent, Pressable, PressableProps, StyleSheet, View } from 'react-native';
+import Colors from './styling/Colors';
 
 export type PressableState = 'pressed-in' | 'pressed' | 'pressed-out'
 
@@ -48,6 +49,7 @@ const PressableWithFeedback = React.forwardRef((props: PressableProps, ref: Forw
         onPress={onPressCallback}
         onPressOut={onPressOutCallback}
         onResponderMove={onResponderMoveCallback}
+        style={props.style}
       >
         {props.children}
       </Pressable>
@@ -58,13 +60,13 @@ const PressableWithFeedback = React.forwardRef((props: PressableProps, ref: Forw
 
 const styles = StyleSheet.create({
   pressablePressedIn: {
-    backgroundColor: 'lightsalmon',
+    backgroundColor: Colors.BlueLight100,
   },
   pressablePressed: {
-    backgroundColor: 'crimson',
+    backgroundColor: Colors.YellowLight100,
   },
   pressablePressedOut: {
-    backgroundColor: 'lightseagreen',
+    backgroundColor: Colors.PurpleLight100,
   },
 });
 
