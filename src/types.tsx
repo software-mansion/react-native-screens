@@ -283,6 +283,16 @@ export interface ScreenProps extends ViewProps {
    */
   replaceAnimation?: ScreenReplaceTypes;
   /**
+   * A way to identify the screen in native code. This value will be passed down to native side,
+   * where it can be later consulted. Meant for native integration with the library.
+   * This should be unique value across all screen instances, however it is not asserted on native side.
+   *
+   * Empty string translates to `undefined`.
+   *
+   * @platform ios
+   */
+  screenId?: string | undefined;
+  /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
    * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.

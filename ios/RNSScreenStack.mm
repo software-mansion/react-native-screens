@@ -1157,6 +1157,15 @@ RNS_IGNORE_SUPER_CALL_END
   _interactionController = nil;
 }
 
+- (nonnull NSArray<NSString *> *)screenIds
+{
+  NSMutableArray<NSString *> *ids = [NSMutableArray arrayWithCapacity:_reactSubviews.count];
+  for (RNSScreenView *childScreenView in _reactSubviews) {
+    [ids addObject:childScreenView.screenId];
+  }
+  return ids;
+}
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 

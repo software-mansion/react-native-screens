@@ -59,6 +59,7 @@ class Screen(
     var isGestureEnabled = true
     var screenOrientation: Int? = null
         private set
+    var screenId: String? = null
     var isStatusBarAnimated: Boolean? = null
     var isBeingRemoved = false
 

@@ -1305,6 +1305,10 @@ RNS_IGNORE_SUPER_CALL_END
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
+  if (newScreenProps.screenId != oldScreenProps.screenId) {
+    [self setScreenId:RCTNSStringFromStringNilIfEmpty(newScreenProps.screenId)];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1343,6 +1347,17 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Paper specific
 #else
+
+// On Fabric the setter is not needed, because value invariant (empty string to nil translation)
+// is upheld in `- [updateProps:oldProps:]`
+- (void)setScreenId:(NSString *)screenId
+{
+  if (screenId != nil && screenId.length == 0) {
+    _screenId = nil;
+  } else {
+    _screenId = screenId;
+  }
+}
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
@@ -1969,6 +1984,7 @@ RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);

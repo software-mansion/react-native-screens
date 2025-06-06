@@ -91,6 +91,11 @@ class ScreenStack(
         }
     }
 
+    /**
+     * Integration function. Allows other solutions to retrieve list of screens owned by this stack.
+     */
+    fun getScreenIds(): List<String?> = screenWrappers.map { it.screen.screenId }
+
     private fun dispatchOnFinishTransitioning() {
         val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper
