@@ -4,7 +4,6 @@ import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -206,12 +205,10 @@ class ScreenStackHeaderConfigViewManager :
         config.setDirection(direction)
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? =
-        MapBuilder.of(
-            HeaderAttachedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onAttached"),
-            HeaderDetachedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDetached"),
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
+        hashMapOf(
+            HeaderAttachedEvent.EVENT_NAME to hashMapOf("registrationName" to "onAttached"),
+            HeaderDetachedEvent.EVENT_NAME to hashMapOf("registrationName" to "onDetached"),
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> = delegate
