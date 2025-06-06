@@ -171,6 +171,41 @@
         "RNSScreenStackHeaderSubview": "RNSScreenStackHeaderSubview",
         "RNSScreenStack": "RNSScreenStackView",
         "RNSSearchBar": "RNSSearchBar"
+      },
+      "components": {
+        "RNSFullWindowOverlay": {
+          "className": "RNSFullWindowOverlay"
+        },
+        "RNSModalScreen": {
+          "className": "RNSModalScreen"
+        },
+        "RNSScreenContainer": {
+          "className": "RNSScreenContainerView"
+        },
+        "RNSScreenContentWrapper": {
+          "className": "RNSScreenContentWrapper"
+        },
+        "RNSScreenFooter": {
+          "className": "RNSScreenFooter"
+        },
+        "RNSScreen": {
+          "className": "RNSScreenView"
+        },
+        "RNSScreenNavigationContainer": {
+          "className": "RNSScreenNavigationContainerView"
+        },
+        "RNSScreenStackHeaderConfig": {
+          "className": "RNSScreenStackHeaderConfig"
+        },
+        "RNSScreenStackHeaderSubview": {
+          "className": "RNSScreenStackHeaderSubview"
+        },
+        "RNSScreenStack": {
+          "className": "RNSScreenStackView"
+        },
+        "RNSSearchBar": {
+          "className": "RNSSearchBar"
+        }
       }
     }
   },
