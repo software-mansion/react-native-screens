@@ -1305,6 +1305,10 @@ RNS_IGNORE_SUPER_CALL_END
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
+  if (newScreenProps.screenId != oldScreenProps.screenId) {
+    [self setScreenId:RCTNSStringFromStringNilIfEmpty(newScreenProps.screenId)];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1969,6 +1973,7 @@ RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
