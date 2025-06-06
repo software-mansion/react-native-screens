@@ -377,6 +377,10 @@ open class ScreenViewManager :
         view.sheetInitialDetentIndex = value
     }
 
+    override fun setScreenId(view: Screen, value: String?) {
+        view.screenId = if (value.isNullOrEmpty()) null else value
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
