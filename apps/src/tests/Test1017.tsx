@@ -9,11 +9,7 @@ import { Alert, LogBox } from 'react-native';
 import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import {
-  Header,
-  Colors,
-  DebugInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import Colors from '../shared/styling/Colors';
 
 type DataItem = {
   title: string;
@@ -58,7 +54,7 @@ const Screen: React.FC<{
 
   const renderItem = (item: DataItem) => (
     <Pressable
-      android_ripple={{ color: Colors.light }}
+      android_ripple={{ color: Colors.OffWhite }}
       style={styles.listItemContainer}
       onPress={handleItemPress(item)}>
       <View style={styles.listItemContentWrapper}>
@@ -78,9 +74,7 @@ const Screen: React.FC<{
         keyExtractor={item => item.value.toString()}
         renderItem={({ item }) => renderItem(item)}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListHeaderComponent={!isSecondScreen && Header}
         ListHeaderComponentStyle={styles.headerWrapper}
-        ListFooterComponent={!isSecondScreen && DebugInstructions}
         ListFooterComponentStyle={styles.footerWrapper}
         scrollEnabled={false}
       />
