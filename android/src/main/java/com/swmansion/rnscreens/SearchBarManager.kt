@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -138,20 +137,14 @@ class SearchBarManager :
         view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? =
-        MapBuilder.of(
-            SearchBarBlurEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onSearchBlur"),
-            SearchBarChangeTextEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onChangeText"),
-            SearchBarCloseEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onClose"),
-            SearchBarFocusEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onSearchFocus"),
-            SearchBarOpenEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onOpen"),
-            SearchBarSearchButtonPressEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onSearchButtonPress"),
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
+        hashMapOf(
+            SearchBarBlurEvent.EVENT_NAME to hashMapOf("registrationName" to "onSearchBlur"),
+            SearchBarChangeTextEvent.EVENT_NAME to hashMapOf("registrationName" to "onChangeText"),
+            SearchBarCloseEvent.EVENT_NAME to hashMapOf("registrationName" to "onClose"),
+            SearchBarFocusEvent.EVENT_NAME to hashMapOf("registrationName" to "onSearchFocus"),
+            SearchBarOpenEvent.EVENT_NAME to hashMapOf("registrationName" to "onOpen"),
+            SearchBarSearchButtonPressEvent.EVENT_NAME to hashMapOf("registrationName" to "onSearchButtonPress"),
         )
 
     companion object {

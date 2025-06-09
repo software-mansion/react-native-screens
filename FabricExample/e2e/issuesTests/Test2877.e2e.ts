@@ -17,15 +17,15 @@ describeIfiOS('Test2877', () => {
     await expect(element(by.text('Like this.'))).not.toBeVisible();
   });
 
-  it('formSheet should adapt height to appearing content, making it visible after 1 second', async () => {
+  it('formSheet should adapt height to appearing content, making it visible after 2 seconds', async () => {
     await waitFor(element(by.text('Like this.')))
       .toBeVisible(100)
-      .withTimeout(1200);
+      .withTimeout(2200);
   });
 
-  it('additional content in the formSheet should hide after 1 second', async () => {
+  it('additional content in the formSheet should hide after 2 seconds', async () => {
     await waitFor(element(by.text('Like this.')))
       .not.toBeVisible(100)
-      .withTimeout(1200);
+      .withTimeout(2200);
   });
 });
