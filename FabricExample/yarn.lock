@@ -3346,11 +3346,11 @@ __metadata:
     react-native: "npm:0.80.0-rc.4"
     react-native-edge-to-edge: "npm:^1.6.0"
     react-native-gesture-handler: "npm:2.25.0"
-    react-native-reanimated: "npm:^4.0.0-nightly-20250608-176581994"
+    react-native-reanimated: "npm:4.0.0-nightly-20250608-176581994"
     react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:5.4.0"
     react-native-screens: "link:../"
-    react-native-worklets: "npm:^0.4.0-nightly-20250608-176581994"
+    react-native-worklets: "npm:0.4.0-nightly-20250608-176581994"
     react-test-renderer: "npm:19.1.0"
     ts-jest: "npm:^29.0.3"
     typescript: "npm:5.0.4"
@@ -8926,7 +8926,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:^4.0.0-nightly-20250608-176581994":
+"react-native-reanimated@npm:4.0.0-nightly-20250608-176581994":
   version: 4.0.0-nightly-20250608-176581994
   resolution: "react-native-reanimated@npm:4.0.0-nightly-20250608-176581994"
   dependencies:
@@ -8967,7 +8967,7 @@ __metadata:
   languageName: node
   linkType: soft
 
-"react-native-worklets@npm:^0.4.0-nightly-20250608-176581994":
+"react-native-worklets@npm:0.4.0-nightly-20250608-176581994":
   version: 0.4.0-nightly-20250608-176581994
   resolution: "react-native-worklets@npm:0.4.0-nightly-20250608-176581994"
   dependencies:
