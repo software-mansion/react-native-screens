@@ -493,7 +493,7 @@ class Screen(
                     // wrong index if we called `startViewTransition` on the views on new arch.
                     // We add a simple View to bump the number of children to make it work.
                     // TODO: find a better way to handle this scenario
-                        it.addView(View(context), i)
+                    it.addView(View(context), i)
                 } else {
                     child?.let { view -> it.startViewTransition(view) }
                 }
