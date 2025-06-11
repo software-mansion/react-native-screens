@@ -36,6 +36,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark-- Integration
+
+@interface RNSScreenStackView ()
+
+/**
+ * \return Arrray with ids of screens owned by this stack. Ids are returned in no particular order. The list might be
+ * empty. The strings inside the list are nullable if the screen has not been assigned an ID.
+ */
+@property (nonatomic, readonly, nonnull) NSArray<NSString *> *screenIds;
+
+@end
+
 @interface RNSScreenStackManager : RCTViewManager <RCTInvalidating>
 
 @end

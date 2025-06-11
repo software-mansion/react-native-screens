@@ -137,6 +137,7 @@ function ScreenStackItem(
       isNativeStack
       activityState={activityState}
       shouldFreeze={shouldFreeze}
+      screenId={screenId}
       stackPresentation={stackPresentation}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       sheetAllowedDetents={sheetAllowedDetents}
