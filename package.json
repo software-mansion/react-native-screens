@@ -209,6 +209,18 @@
         },
         "RNSSearchBar": {
           "className": "RNSSearchBar"
+        },
+        "RNSStackScreen": {
+          "className": "RNSStackScreenComponentView"
+        },
+        "RNSScreenStackHost": {
+          "className": "RNSScreenStackHostComponentView"
+        },
+        "RNSBottomTabsScreen": {
+          "className": "RNSBottomTabsScreenComponentView"
+        },
+        "RNSBottomTabs": {
+          "className": "RNSBottomTabsHostComponentView"
         }
       }
     }
