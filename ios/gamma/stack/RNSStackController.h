@@ -1,8 +1,9 @@
 #import <UIKit/UIKit.h>
 #import "RNSReactMountingTransactionObserving.h"
-#import "RNSStackScreenController.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class RNSStackScreenController;
 
 @interface RNSStackController : UINavigationController <RNSReactMountingTransactionObserving>
 

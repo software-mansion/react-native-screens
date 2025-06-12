@@ -2817,7 +2817,7 @@ SPEC CHECKSUMS:
   React-RCTBlob: f3cb49ba585c7ec6f5b31788abf32d26c78513d6
   React-RCTFabric: 5c814db6ab16fd383c2c29d3d882abe5fba62109
   React-RCTFBReactNativeSpec: 6ebef934009aa34373443724bb2b3d2908769ea4
-  React-RCTImage: ccae6d47342d3d9c32cdc3769f5fff40d2f011f2
+  React-RCTImage: b28bcbb32ba1fe0de1160a69de5db25ac6fb264f
   React-RCTLinking: 295215e1af7827f2c41c04dd167543fb3b5cfec1
   React-RCTNetwork: f2d4e11715ea0f00cf9b9fa6d423ae15d7cf4fee
   React-RCTRuntime: 716ed2c30ab14ef9b0fa1f2346903cc48b3ca38a
@@ -2840,7 +2840,7 @@ SPEC CHECKSUMS:
   ReactCommon: 9198be3d354ddb8f6c15e2497fe23d7d6aecc72e
   RNGestureHandler: fabb15d507aebf871bf391ec1cdded706c58688b
   RNReanimated: ccf9c763a8fa3185858db7c6c1d72b02e6393312
-  RNScreens: ee2abe7e0c548eed14e92742e81ed991165c56aa
+  RNScreens: a9d8497db94a9b34dbf4a3c53231e796196a86ae
   RNWorklets: 48765ab46385c5167690d72f4b156c7553839614
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 811c88fda429a3d8f9f242b44e7f261c765020d5
