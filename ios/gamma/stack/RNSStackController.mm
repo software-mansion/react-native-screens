@@ -1,6 +1,7 @@
 #import "RNSStackController.h"
 #import <React/RCTAssert.h>
 #import "RNSReactMountingTransactionObserving.h"
+#import "RNScreens-Swift.h"
 
 @implementation RNSStackController {
   NSArray<RNSStackScreenController *> *_Nullable _pendingChildViewControllers;

@@ -5,7 +5,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import "RNSStackScreenController.h"
+#import "RNScreens-Swift.h"
 
 namespace react = facebook::react;
 
