@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { NativeStackScreenProps, createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  type NativeStackScreenProps,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 
 type StackParamList = {
   Home: undefined;
@@ -12,7 +15,6 @@ type StackParamList = {
   Screen2: undefined;
   Screen3: undefined;
 };
-
 
 function HomeScreen({
   navigation,
@@ -32,7 +34,9 @@ function HomeScreen({
   );
 }
 
-function MainStackScreen({ navigation }: NativeStackScreenProps<StackParamList, 'MainStackScreen'>) {
+function MainStackScreen({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'MainStackScreen'>) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Main stack screen</Text>
@@ -41,21 +45,21 @@ function MainStackScreen({ navigation }: NativeStackScreenProps<StackParamList, 
         onPress={() => navigation.navigate('MainStackScreen2')}
       />
       <Button
-        title="goBack"
-        onPress={() => navigation.goBack()}
+        title="Replace with the second modal"
+        onPress={() => navigation.replace('MainStackScreen2')}
       />
+      <Button title="goBack" onPress={() => navigation.goBack()} />
     </View>
   );
 }
 
-function MainStackScreen2({ navigation }: NativeStackScreenProps<StackParamList, 'MainStackScreen2'>) {
+function MainStackScreen2({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'MainStackScreen2'>) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Main stack screen 2</Text>
-      <Button
-        title="goBack"
-        onPress={() => navigation.goBack()}
-      />
+      <Button title="goBack" onPress={() => navigation.goBack()} />
     </View>
   );
 }
@@ -117,9 +121,21 @@ function RootStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="NestedStack" component={NestedStackScreen} options={{ headerShown: true, presentation: 'modal' }} />
-      <Stack.Screen name="MainStackScreen" component={MainStackScreen} options={{ headerShown: true, presentation: 'modal' }} />
-      <Stack.Screen name="MainStackScreen2" component={MainStackScreen2} options={{ headerShown: true, presentation: 'modal' }} />
+      <Stack.Screen
+        name="NestedStack"
+        component={NestedStackScreen}
+        options={{ headerShown: true, presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="MainStackScreen"
+        component={MainStackScreen}
+        options={{ headerShown: true, presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="MainStackScreen2"
+        component={MainStackScreen2}
+        options={{ headerShown: true, presentation: 'modal' }}
+      />
     </Stack.Navigator>
   );
 }

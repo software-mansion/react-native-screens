@@ -14,14 +14,13 @@ namespace rnscreens {
 NativeProxy::NativeProxy(jni::alias_ref<NativeProxy::javaobject> jThis)
     : javaPart_(jni::make_global(jThis)) {}
 
-NativeProxy::~NativeProxy() {}
-
 void NativeProxy::registerNatives() {
   registerHybrid(
       {makeNativeMethod("initHybrid", NativeProxy::initHybrid),
        makeNativeMethod(
            "nativeAddMutationsListener",
-           NativeProxy::nativeAddMutationsListener)});
+           NativeProxy::nativeAddMutationsListener),
+       makeNativeMethod("invalidateNative", NativeProxy::invalidateNative)});
 }
 
 void NativeProxy::nativeAddMutationsListener(
@@ -46,6 +45,10 @@ void NativeProxy::nativeAddMutationsListener(
 jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
     jni::alias_ref<jhybridobject> jThis) {
   return makeCxxInstance(jThis);
+}
+
+void NativeProxy::invalidateNative() {
+    javaPart_ = nullptr;
 }
 
 } // namespace rnscreens

@@ -4,7 +4,6 @@ import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
@@ -377,17 +376,21 @@ open class ScreenViewManager :
         view.sheetInitialDetentIndex = value
     }
 
+    override fun setScreenId(view: Screen, value: String?) {
+        view.screenId = if (value.isNullOrEmpty()) null else value
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
-            ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
-            ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),
-            ScreenAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onAppear"),
-            ScreenWillDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillDisappear"),
-            ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
-            HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
-            HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
-            ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress"),
-            SheetDetentChangedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onSheetDetentChanged"),
+            ScreenDismissedEvent.EVENT_NAME to hashMapOf("registrationName" to "onDismissed"),
+            ScreenWillAppearEvent.EVENT_NAME to hashMapOf("registrationName" to "onWillAppear"),
+            ScreenAppearEvent.EVENT_NAME to hashMapOf("registrationName" to "onAppear"),
+            ScreenWillDisappearEvent.EVENT_NAME to hashMapOf("registrationName" to "onWillDisappear"),
+            ScreenDisappearEvent.EVENT_NAME to hashMapOf("registrationName" to "onDisappear"),
+            HeaderHeightChangeEvent.EVENT_NAME to hashMapOf("registrationName" to "onHeaderHeightChange"),
+            HeaderBackButtonClickedEvent.EVENT_NAME to hashMapOf("registrationName" to "onHeaderBackButtonClicked"),
+            ScreenTransitionProgressEvent.EVENT_NAME to hashMapOf("registrationName" to "onTransitionProgress"),
+            SheetDetentChangedEvent.EVENT_NAME to hashMapOf("registrationName" to "onSheetDetentChanged"),
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate

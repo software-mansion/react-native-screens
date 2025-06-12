@@ -20,12 +20,13 @@ const MainScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
         title="Click this button to see the crash if native changes not applied"
       />
       <Button
+        testID="main-button-push-modal"
         onPress={() => {
           navigation.push('Modal');
         }}
         title="Push modal"
       />
-      <Text>Issue 791</Text>
+      <Text testID="main-text">Issue 791</Text>
     </View>
   );
 };
@@ -33,6 +34,7 @@ const MainScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
 const PushScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => (
   <View style={styles.screen}>
     <Button
+      testID="push-button-push-multiple"
       onPress={() => {
         navigation.push('Push');
         setTimeout(() => navigation.push('Push'), 10);
@@ -50,6 +52,7 @@ const PushScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => (
       }}
       title="Click this button to pop"
     />
+    <Text testID="push-text">Push screen</Text>
   </View>
 );
 
@@ -59,7 +62,11 @@ const App = () => (
   <NavigationContainer>
     <Stack.Navigator>
       <Stack.Screen name="Main" component={MainScreen} />
-      <Stack.Screen name="Push" component={PushScreen} />
+      <Stack.Screen
+        name="Push"
+        component={PushScreen}
+        options={{ presentation: 'card' }}
+      />
       <Stack.Screen
         name="Modal"
         component={PushScreen}

@@ -966,7 +966,7 @@ RNS_IGNORE_SUPER_CALL_END
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
  * guarantee that values of all related props had been updated earlier. It should be invoked from `didSetProps`.
- * On Fabric we have control over prop-setting process but it might be reasonable to run it from `finalizeUpdates`.
+ * On Fabric we run it from `finalizeUpdates` if props have changed.
  */
 - (void)updateFormSheetPresentationStyle
 {
@@ -1305,6 +1305,10 @@ RNS_IGNORE_SUPER_CALL_END
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
+  if (newScreenProps.screenId != oldScreenProps.screenId) {
+    [self setScreenId:RCTNSStringFromStringNilIfEmpty(newScreenProps.screenId)];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1335,12 +1339,25 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super finalizeUpdates:updateMask];
 #if !TARGET_OS_TV && !TARGET_OS_VISION
-  [self updateFormSheetPresentationStyle];
-#endif // !TARGET_OS_TV
+  if (updateMask & RNComponentViewUpdateMaskProps) {
+    [self updateFormSheetPresentationStyle];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Paper specific
 #else
+
+// On Fabric the setter is not needed, because value invariant (empty string to nil translation)
+// is upheld in `- [updateProps:oldProps:]`
+- (void)setScreenId:(NSString *)screenId
+{
+  if (screenId != nil && screenId.length == 0) {
+    _screenId = nil;
+  } else {
+    _screenId = screenId;
+  }
+}
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
@@ -1967,6 +1984,7 @@ RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);

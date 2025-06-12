@@ -283,6 +283,16 @@ export interface ScreenProps extends ViewProps {
    */
   replaceAnimation?: ScreenReplaceTypes;
   /**
+   * A way to identify the screen in native code. This value will be passed down to native side,
+   * where it can be later consulted. Meant for native integration with the library.
+   * This should be unique value across all screen instances, however it is not asserted on native side.
+   *
+   * Empty string translates to `undefined`.
+   *
+   * @platform ios
+   */
+  screenId?: string | undefined;
+  /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
    * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
@@ -430,7 +440,11 @@ export interface ScreenProps extends ViewProps {
    */
   stackPresentation?: StackPresentationTypes;
   /**
-   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   * Sets the status bar animation (similar to the `StatusBar` component).
+   * On Android, setting either `fade` or `slide` will set the transition of status bar color. On iOS, this option applies to appereance animation of the status bar.
+   * Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   *
+   * Defaults to `fade` on iOS and `none` on Android.
    */
   statusBarAnimation?: 'none' | 'fade' | 'slide';
   /**
@@ -449,7 +463,9 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarHidden?: boolean;
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   * `auto` and `inverted` are supported only on iOS. On Android, they will fallback to `light`.
+   * Defaults to `auto` on iOS and `light` on Android.
    */
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
   /**

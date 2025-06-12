@@ -78,6 +78,7 @@ namespace react = facebook::react;
 @property (nonatomic, retain) RNSScreen *controller;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
 @property (nonatomic) int activityState;
+@property (nonatomic, nullable) NSString *screenId;
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 
 #if !TARGET_OS_TV

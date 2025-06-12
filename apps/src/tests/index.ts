@@ -30,10 +30,10 @@ export { default as Test726 } from './Test726';     // [E2E created](iOS): issue
 export { default as Test748 } from './Test748';
 export { default as Test750 } from './Test750';
 export { default as Test758 } from './Test758';
-export { default as Test761 } from './Test761';
-export { default as Test779 } from './Test779';
-export { default as Test780 } from './Test780';
-export { default as Test791 } from './Test791';
+export { default as Test761 } from './Test761';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test779 } from './Test779';     // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test780 } from './Test780';     // [E2E skipped]: can't use native swipe back gesture
+export { default as Test791 } from './Test791';     // [E2E created](iOS): issue related to iOS
 export { default as Test800 } from './Test800';
 export { default as Test817 } from './Test817';
 export { default as Test830 } from './Test830';
@@ -83,7 +83,7 @@ export { default as Test1509 } from './Test1509';
 export { default as Test1539 } from './Test1539';
 export { default as Test1645 } from './Test1645';
 export { default as Test1646 } from './Test1646';
-export { default as Test1649 } from './Test1649';
+// export { default as Test1649 } from './Test1649';
 export { default as Test1671 } from './Test1671';
 export { default as Test1683 } from './Test1683';
 export { default as Test1726 } from './Test1726';
@@ -139,6 +139,8 @@ export { default as Test2895 } from './Test2895';
 export { default as Test2899 } from './Test2899';
 export { default as Test2926 } from './Test2926'; // [E2E created](iOS): PR related to iOS search bar
 export { default as Test2940 } from './Test2940'; // [E2E skipped]: can't check animation
+export { default as Test2949 } from './Test2949'; // [E2E skipped]: can't check system bars styles
+export { default as Test2963 } from './Test2963'; // [E2E created](iOS): issue related to iOS
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';
@@ -150,5 +152,4 @@ export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
 export { default as TestAndroidTransitions } from './TestAndroidTransitions';
 export { default as TestAnimation } from './TestAnimation';
-
 
