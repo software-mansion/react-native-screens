@@ -1927,7 +1927,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // In order to handle presenting modals other than react-native-screens modals (e.g. react-native's Modal),
   // we need to delay presenting it if we're in an ongoing transition. This might be necessary
   // when we use an animation to cancel back button dismiss and try to present a modal at the same time.
-  // For more details see: .
+  // For more details see: https://github.com/software-mansion/react-native-screens/pull/2976.
   if (self.parentViewController == nil) {
     UIViewController *controller = self.screenView.reactSuperview.reactViewController;
 
