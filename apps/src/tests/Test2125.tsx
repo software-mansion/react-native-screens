@@ -11,6 +11,7 @@ import {
 } from '@react-navigation/native-stack';
 import React, { useCallback, useState } from 'react';
 import { Button, Modal, StyleSheet, Text, View } from 'react-native';
+import Colors from '../shared/styling/Colors';
 
 type StackRouteParamList = {
   Home: undefined;
@@ -50,7 +51,10 @@ function SecondScreen({ navigation }: StackNavigationProp) {
       <Text>This is second</Text>
       <Modal visible={!!pendingAction} transparent>
         <View
-          style={[styles.container, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+          style={[
+            styles.container,
+            { backgroundColor: Colors.NavyLightTransparent },
+          ]}>
           <View style={styles.content}>
             <Button title={'Go back'} onPress={handlePressConfirm} />
             <Button title={'Cancel'} onPress={handlePressCancel} />
@@ -90,7 +94,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.White,
     padding: 25,
     borderRadius: 25,
   },
