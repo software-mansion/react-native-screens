@@ -101,6 +101,7 @@ export { default as Test2028 } from './Test2028';
 export { default as Test2048 } from './Test2048';
 export { default as Test2069 } from './Test2069';
 export { default as Test2118 } from './Test2118';
+export { default as Test2125 } from './Test2125'; // [E2E skipped]: issue happens nondeterministically
 export { default as Test2167 } from './Test2167';
 export { default as Test2175 } from './Test2175';
 export { default as Test2184 } from './Test2184';
