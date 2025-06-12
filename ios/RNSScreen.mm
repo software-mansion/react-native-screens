@@ -1920,6 +1920,32 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
+- (void)presentViewController:(UIViewController *)viewControllerToPresent
+                     animated:(BOOL)flag
+                   completion:(void (^)())completion
+{
+  // In order to handle presenting modals other than react-native-screens modals (e.g. react-native's Modal),
+  // we need to delay presenting it if we're in an ongoing transition. This might be necessary
+  // when we use an animation to cancel back button dismiss and try to present a modal at the same time.
+  // For more details see: .
+  if (self.parentViewController == nil) {
+    UIViewController *controller = self.screenView.reactSuperview.reactViewController;
+
+    if (controller.transitionCoordinator != nil) {
+      [controller.transitionCoordinator
+          animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+            // do nothing here, we only want to be notified when transition is complete
+          }
+          completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+            [super presentViewController:viewControllerToPresent animated:flag completion:completion];
+          }];
+      return;
+    }
+  }
+
+  [super presentViewController:viewControllerToPresent animated:flag completion:completion];
+}
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
