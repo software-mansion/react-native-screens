@@ -6,7 +6,7 @@ new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 min_supported_ios_version = new_arch_enabled ? "15.1" : "15.1"
 min_supported_tvos_version = "15.1"
 min_supported_visionos_version = "1.0"
-source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : ["ios/**/*.{h,m,mm}", "cpp/RNScreensTurboModule.cpp", "cpp/RNScreensTurboModule.h"]
+source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp,swift}' : ["ios/**/*.{h,m,mm}", "cpp/RNScreensTurboModule.cpp", "cpp/RNScreensTurboModule.h"]
 
 Pod::Spec.new do |s|
   s.name         = "RNScreens"
@@ -23,6 +23,10 @@ Pod::Spec.new do |s|
   s.source_files = source_files
   s.project_header_files = "cpp/**/*.h" # Don't expose C++ headers publicly to allow importing framework into Swift files
   s.requires_arc = true
+
+  s.pod_target_xcconfig = {
+    'DEFINES_MODULE' => 'YES'
+  }
 
   install_modules_dependencies(s)
   if new_arch_enabled

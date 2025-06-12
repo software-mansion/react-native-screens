@@ -10,6 +10,7 @@
 
 #import "RNSStackController.h"
 #import "RNSStackScreenComponentView.h"
+#import "RNScreens-Swift.h"
 
 namespace react = facebook::react;
 

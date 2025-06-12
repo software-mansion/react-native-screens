@@ -2743,8 +2743,9 @@ SPEC CHECKSUMS:
   ReactCodegen: 0afb13ea005155b3799d39a7026d47c4a7276cc9
   ReactCommon: 9198be3d354ddb8f6c15e2497fe23d7d6aecc72e
   RNGestureHandler: fabb15d507aebf871bf391ec1cdded706c58688b
-  RNReanimated: a6da5cfa87fc5f41a3e61926a1f9ab03daf35caa
-  RNScreens: ab490a252dd536fca261c72ab7e5538e656dcb2b
+  RNReanimated: ccf9c763a8fa3185858db7c6c1d72b02e6393312
+  RNScreens: a9d8497db94a9b34dbf4a3c53231e796196a86ae
+  RNWorklets: 48765ab46385c5167690d72f4b156c7553839614
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 811c88fda429a3d8f9f242b44e7f261c765020d5
 
