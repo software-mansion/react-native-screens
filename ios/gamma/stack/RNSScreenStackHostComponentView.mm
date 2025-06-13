@@ -8,7 +8,6 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
-#import "RNSStackController.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNScreens-Swift.h"
 
@@ -111,7 +110,7 @@ namespace react = facebook::react;
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   _hasModifiedReactSubviewsInCurrentTransaction = false;
-  [_controller reactMountingTransactionWillMount:transaction];
+  [_controller reactMountingTransactionWillMount];
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -127,7 +126,7 @@ namespace react = facebook::react;
 
     [_controller setNeedsUpdateOfChildViewControllers:childViewControllers];
   }
-  [_controller reactMountingTransactionDidMount:transaction];
+  [_controller reactMountingTransactionDidMount];
 }
 
 @end
