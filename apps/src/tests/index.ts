@@ -83,7 +83,7 @@ export { default as Test1509 } from './Test1509';
 export { default as Test1539 } from './Test1539';
 export { default as Test1645 } from './Test1645';
 export { default as Test1646 } from './Test1646';
-export { default as Test1649 } from './Test1649';
+// export { default as Test1649 } from './Test1649';
 export { default as Test1671 } from './Test1671';
 export { default as Test1683 } from './Test1683';
 export { default as Test1726 } from './Test1726';
@@ -101,6 +101,7 @@ export { default as Test2028 } from './Test2028';
 export { default as Test2048 } from './Test2048';
 export { default as Test2069 } from './Test2069';
 export { default as Test2118 } from './Test2118';
+export { default as Test2125 } from './Test2125'; // [E2E skipped]: issue happens nondeterministically
 export { default as Test2167 } from './Test2167';
 export { default as Test2175 } from './Test2175';
 export { default as Test2184 } from './Test2184';
@@ -139,6 +140,7 @@ export { default as Test2895 } from './Test2895';
 export { default as Test2899 } from './Test2899';
 export { default as Test2926 } from './Test2926'; // [E2E created](iOS): PR related to iOS search bar
 export { default as Test2949 } from './Test2949'; // [E2E skipped]: can't check system bars styles
+export { default as Test2963 } from './Test2963'; // [E2E created](iOS): issue related to iOS
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';

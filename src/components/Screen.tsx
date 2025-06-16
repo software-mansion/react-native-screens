@@ -94,6 +94,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetElevation = 24,
       sheetInitialDetentIndex = 0,
       // Other
+      screenId,
       stackPresentation,
       // Events for override
       onAppear,
@@ -213,6 +214,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             // Detailed information can be found here https://github.com/software-mansion/react-native-screens/pull/2351
             style={[style, { zIndex: undefined }]}
             activityState={activityState}
+            screenId={screenId}
             sheetAllowedDetents={resolvedSheetAllowedDetents}
             sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
             sheetElevation={sheetElevation}
