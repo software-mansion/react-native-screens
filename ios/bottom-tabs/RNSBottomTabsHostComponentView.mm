@@ -23,6 +23,8 @@ namespace react = facebook::react;
   RNSTabBarController *_controller;
   RNSTabBarControllerDelegate *_controllerDelegate;
 
+  RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
+
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
   NSMutableArray<RNSBottomTabsScreenComponentView *> *_reactSubviews;
@@ -45,7 +47,9 @@ namespace react = facebook::react;
   _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
   _controllerDelegate = [RNSTabBarControllerDelegate new];
   _controller.delegate = _controllerDelegate;
+
   _reactSubviews = [NSMutableArray new];
+  _reactEventEmitter = [RNSBottomTabsHostEventEmitter new];
 
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   _needsTabBarAppearanceUpdate = NO;
@@ -108,18 +112,15 @@ namespace react = facebook::react;
 
 #pragma mark - React events
 
-- (std::shared_ptr<const react::RNSBottomTabsEventEmitter>)reactEventEmitter
+- (nonnull RNSBottomTabsHostEventEmitter *)reactEventEmitter
 {
-  return std::dynamic_pointer_cast<const react::RNSBottomTabsEventEmitter>(_eventEmitter);
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
 }
 
-- (bool)emitOnNativeFocusChangeRequestSelectedTabScreen:(RNSBottomTabsScreenComponentView *)tabScreen
+- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(RNSBottomTabsScreenComponentView *)tabScreen
 {
-  if (const auto eventEmitter = self.reactEventEmitter; eventEmitter != nullptr) {
-    eventEmitter->onNativeFocusChange({RCTStringFromNSString(tabScreen.tabKey)});
-    return true;
-  }
-  return false;
+  return [_reactEventEmitter emitOnNativeFocusChange:OnNativeFocusChangePayload{.tabKey = tabScreen.tabKey}];
 }
 
 #pragma mark - RCTViewComponentViewProtocol
@@ -180,6 +181,14 @@ namespace react = facebook::react;
 
   // Super call updates _props pointer. We should NOT update it before calling super.
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+
+  const auto &castedEventEmitter = std::static_pointer_cast<const react::RNSBottomTabsEventEmitter>(eventEmitter);
+  [_reactEventEmitter updateEventEmitter:castedEventEmitter];
 }
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask

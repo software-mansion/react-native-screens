@@ -1,7 +1,7 @@
-#import <React/RCTViewComponentView.h>
-#import <react/renderer/components/rnscreens/EventEmitters.h>
 #import "RNSBottomTabsHostComponentViewManager.h"
+#import "RNSBottomTabsHostEventEmitter.h"
 #import "RNSEnums.h"
+#import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSBottomTabsHostComponentView : RCTViewComponentView <RNSScreenContainerDelegate>
+@interface RNSBottomTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate>
 
 @end
 
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) UIBlurEffect *tabBarBlurEffect;
 @property (nonatomic, strong, readonly, nullable) NSNumber *tabBarItemTitleFontSize;
 
-@property (nonatomic, readonly) bool experimental_controlNavigationStateInJS;
+@property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
 @end
 
@@ -37,13 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSBottomTabsHostComponentView ()
 
 /**
- * This pointer might be `nullptr`!  All this method does is a cast of the backing field inherited from
- * `RCTViewComponentView`. The nullability of this pointer is therefore determined by `_eventEmitter` lifecycle in the
- * super class.
+ * Use returned object to emit appropriate React Events to Element Tree.
  */
-- (std::shared_ptr<const facebook::react::RNSBottomTabsEventEmitter>)reactEventEmitter;
+- (nonnull RNSBottomTabsHostEventEmitter *)reactEventEmitter;
 
-- (bool)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen;
+- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen;
 
 @end
 

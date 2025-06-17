@@ -1,5 +1,6 @@
 #pragma once
 
+#if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
@@ -15,3 +16,5 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(
     react::RNSBottomTabsTabBarBlurEffect blurEffect);
 
 }; // namespace rnscreens::conversion
+
+#endif

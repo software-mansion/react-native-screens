@@ -1,7 +1,7 @@
 import Foundation
 
 @objc
-protocol ReactMountingTransactionObserving {
+public protocol ReactMountingTransactionObserving {
   func reactMountingTransactionWillMount()
   func reactMountingTransactionDidMount()
 }

@@ -9,7 +9,8 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import "RNSStackScreenComponentView.h"
-#import "RNScreens-Swift.h"
+
+#import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
