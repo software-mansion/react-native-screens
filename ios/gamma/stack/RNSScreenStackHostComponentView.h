@@ -1,9 +1,8 @@
-#import <React/RCTViewComponentView.h>
-#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScreenStackHostComponentView : RCTViewComponentView
+@interface RNSScreenStackHostComponentView : RNSReactBaseView
 
 @end
 

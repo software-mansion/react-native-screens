@@ -21,7 +21,6 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_supported_ios_version, :tvos => min_supported_tvos_version, :visionos => min_supported_visionos_version }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
-  s.project_header_files = "cpp/**/*.h" # Don't expose C++ headers publicly to allow importing framework into Swift files
   s.requires_arc = true
 
   s.pod_target_xcconfig = {
@@ -32,6 +31,7 @@ Pod::Spec.new do |s|
   if new_arch_enabled
     s.subspec "common" do |ss|
       ss.source_files         = ["common/cpp/**/*.{cpp,h}", "cpp/**/*.{cpp,h}"]
+      ss.project_header_files = "common/cpp/**/*.h", "cpp/**/*.h" # Don't expose C++ headers publicly to allow importing framework into Swift files
       ss.header_dir           = "rnscreens"
       ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
     end

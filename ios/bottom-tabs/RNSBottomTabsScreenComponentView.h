@@ -1,5 +1,5 @@
-#import <React/RCTViewComponentView.h>
-#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import "RNSBottomTabsScreenEventEmitter.h"
+#import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSBottomTabsScreenComponentView : RCTViewComponentView
+@interface RNSBottomTabsScreenComponentView : RNSReactBaseView
 
 /**
  * View controller responsible for managing tab represented by this component view.
@@ -43,24 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Events
 
-/**
- * These methods can be called to send an appropriate event to ElementTree.
- * Returned value denotes whether the event has been successfully dispatched to React event pipeline.
- * The returned value of `true` does not mean, that the event has been successfully delivered.
- */
 @interface RNSBottomTabsScreenComponentView ()
 
 /**
- * This pointer might be `nullptr`!  All this method does is a cast of the backing field inherited from
- * `RCTViewComponentView`. The nullability of this pointer is therefore determined by `_eventEmitter` lifecycle in the
- * super class.
+ * Use returned object to emit appropriate React Events to Element Tree.
  */
-- (std::shared_ptr<const facebook::react::RNSBottomTabsScreenEventEmitter>)reactEventEmitter;
-
-- (bool)emitOnWillAppear;
-- (bool)emitOnDidAppear;
-- (bool)emitOnWillDisappear;
-- (bool)emitOnDidDisappear;
+- (nonnull RNSBottomTabsScreenEventEmitter *)reactEventEmitter;
 
 @end
 
