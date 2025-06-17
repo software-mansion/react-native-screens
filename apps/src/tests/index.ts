@@ -154,4 +154,4 @@ export { default as TestAndroidTransitions } from './TestAndroidTransitions';
 export { default as TestAnimation } from './TestAnimation';
 export { default as TestBottomTabs } from './TestBottomTabs';
 
-export { default as TestScreenStack } from './gamma/TestScreenStack';
+export { default as TestScreenStack } from './TestScreenStack';

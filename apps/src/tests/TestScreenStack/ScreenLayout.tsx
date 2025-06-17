@@ -1,0 +1,27 @@
+import React from 'react';
+import { View, StyleSheet, Text, Button } from 'react-native';
+import Colors from '../../shared/styling/Colors';
+import { useStackNavigation } from './StackContainer';
+
+export const ScreenLayout = ({children}: {children: React.ReactNode}) => {
+   const navigation = useStackNavigation();
+
+   console.log(`Render screen ${navigation.name} with id ${navigation.id}`);
+
+   return (
+      <View style={styles.container}>
+         <Text>Screen name: {navigation.name}</Text>
+         <Button onPress={navigation.pop} title="Pop" />
+         {children}
+      </View>
+   );
+};
+
+const styles = StyleSheet.create({
+   container: {
+      flex: 1,
+      backgroundColor: Colors.BlueLight40,
+      alignItems: 'center',
+      justifyContent: 'center',
+   },
+});
