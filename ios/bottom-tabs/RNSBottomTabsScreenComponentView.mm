@@ -15,6 +15,8 @@ namespace react = facebook::react;
 @implementation RNSBottomTabsScreenComponentView {
   RNSTabsScreenViewController *_controller;
   RNSBottomTabsHostComponentView *__weak _Nullable _reactSuperview;
+
+  RNSBottomTabsScreenEventEmitter *_Nonnull _reactEventEmitter;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -34,6 +36,8 @@ namespace react = facebook::react;
   _controller.view = self;
 
   _reactSuperview = nil;
+  _reactEventEmitter = [RNSBottomTabsScreenEventEmitter new];
+
   [self resetProps];
 }
 
@@ -54,45 +58,10 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Events
 
-- (std::shared_ptr<const facebook::react::RNSBottomTabsScreenEventEmitter>)reactEventEmitter
+- (nonnull RNSBottomTabsScreenEventEmitter *)reactEventEmitter
 {
-  return std::dynamic_pointer_cast<const facebook::react::RNSBottomTabsScreenEventEmitter>(_eventEmitter);
-}
-
-- (bool)emitOnWillAppear
-{
-  if (const auto eventEmitter = self.reactEventEmitter; eventEmitter != nullptr) {
-    eventEmitter->onWillAppear({});
-    return true;
-  }
-  return false;
-}
-
-- (bool)emitOnDidAppear
-{
-  if (const auto eventEmitter = self.reactEventEmitter; eventEmitter != nullptr) {
-    eventEmitter->onDidAppear({});
-    return true;
-  }
-  return false;
-}
-
-- (bool)emitOnWillDisappear
-{
-  if (const auto eventEmitter = self.reactEventEmitter; eventEmitter != nullptr) {
-    eventEmitter->onWillDisappear({});
-    return true;
-  }
-  return false;
-}
-
-- (bool)emitOnDidDisappear
-{
-  if (const auto eventEmitter = self.reactEventEmitter; eventEmitter != nullptr) {
-    eventEmitter->onDidDisappear({});
-    return true;
-  }
-  return false;
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
 }
 
 - (nullable RNSTabBarController *)findTabBarController
@@ -156,6 +125,13 @@ RNS_IGNORE_SUPER_CALL_END
   NSLog(
       @"TabScreen [%ld] updateLayoutMetrics: %@", self.tag, NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)));
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+}
+
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_reactEventEmitter
+      updateEventEmitter:std::static_pointer_cast<const react::RNSBottomTabsScreenEventEmitter>(eventEmitter)];
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index

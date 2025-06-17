@@ -2,23 +2,23 @@ import Foundation
 import UIKit
 
 @objc
-class RNSStackController : UINavigationController, ReactMountingTransactionObserving {
+public class RNSStackController : UINavigationController, ReactMountingTransactionObserving {
   private var pendingChildViewControllers: [RNSStackScreenController]?
   
   @objc
-  func setNeedsUpdateOfChildViewControllers(_ viewControllers: [RNSStackScreenController]) {
+  public func setNeedsUpdateOfChildViewControllers(_ viewControllers: [RNSStackScreenController]) {
     pendingChildViewControllers = viewControllers
   }
   
   @objc
-  func updateChildViewControllersIfNeeded() {
+  public func updateChildViewControllersIfNeeded() {
     if pendingChildViewControllers != nil {
       updateChildViewControllers()
     }
   }
   
   @objc
-  func updateChildViewControllers() {
+  public func updateChildViewControllers() {
     guard let pendingChildViewControllers = pendingChildViewControllers else {
       fatalError("[RNScreens] Pending update must not be nil while it is forced!")
     }
@@ -30,12 +30,12 @@ class RNSStackController : UINavigationController, ReactMountingTransactionObser
   // MARK: ReactMountingTransactionObserving
   
   @objc
-  func reactMountingTransactionWillMount() {
+  public func reactMountingTransactionWillMount() {
     // noop
   }
   
   @objc
-  func reactMountingTransactionDidMount() {
+  public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
   }
 }
