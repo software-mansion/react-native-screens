@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ViewProps } from 'react-native';
+import {StyleSheet} from 'react-native';
 import StackScreenNativeComponent from '../../fabric/gamma/StackScreenNativeComponent';
 
 interface StackScreenProps {
@@ -8,7 +9,7 @@ interface StackScreenProps {
 
 function StackScreen(props: StackScreenProps) {
   return (
-    <StackScreenNativeComponent style={{ flex: 1 }}>
+    <StackScreenNativeComponent style={StyleSheet.absoluteFill}>
       {props.children}
     </StackScreenNativeComponent>
   );
