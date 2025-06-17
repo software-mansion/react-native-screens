@@ -1,6 +1,8 @@
 name: Test iOS e2e - old architecture
 on:
   pull_request:
+    branches-ignore:
+      - main-labs
     paths:
       - '.github/workflows/ios-e2e-test.yml'
       - 'RNScreens.podspec'
