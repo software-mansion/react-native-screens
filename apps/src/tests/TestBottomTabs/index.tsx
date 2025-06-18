@@ -19,7 +19,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab1',
       badgeValue: '1',
-      badgeColor: Colors.NavyDark80,
       title: 'Tab1',
       isFocused: true,
     },
@@ -29,7 +28,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       badgeValue: '2',
-      badgeColor: Colors.PurpleLight100,
+      tabBarItemBadgeBackgroundColor: Colors.PurpleLight100,
+      tabBarBackgroundColor: Colors.NavyDark140,
+      tabBarItemTitleFontSize: 20,
       title: 'Tab2',
     },
     contentViewRenderFn: Tab2,
@@ -38,7 +39,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab3',
       badgeValue: '3',
-      badgeColor: Colors.YellowDark120,
+      tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
       title: 'Tab3',
     },
     contentViewRenderFn: Tab3,
