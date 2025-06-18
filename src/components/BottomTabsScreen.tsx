@@ -9,6 +9,7 @@ import {
   type ColorValue,
   type NativeSyntheticEvent,
   StyleSheet,
+  TextStyle,
   type ViewProps,
   findNodeHandle,
 } from 'react-native';
@@ -35,7 +36,13 @@ export interface BottomTabsScreenProps {
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: BlurEffect; // defaults to 'none'
-  tabBarItemTitleFontSize?: number;
+
+  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
+  tabBarItemTitleFontSize?: TextStyle['fontSize'];
+  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
+  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+  tabBarItemTitleFontColor?: TextStyle['color'];
+  
   tabBarItemBadgeBackgroundColor?: ColorValue;
   
   // General

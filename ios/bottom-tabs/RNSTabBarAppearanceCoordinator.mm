@@ -90,12 +90,13 @@
   if (hostComponent.tabBarItemTitleFontSize != nil) {
     titleTextAttributes = [[NSMutableDictionary alloc] init];
     titleTextAttributes[NSFontAttributeName] = [RCTFont updateFont:nil
-                                                        withFamily:nil
+                                                        withFamily:hostComponent.tabBarItemTitleFontFamily
                                                               size:hostComponent.tabBarItemTitleFontSize
-                                                            weight:nil
-                                                             style:nil
+                                                            weight:hostComponent.tabBarItemTitleFontWeight
+                                                             style:hostComponent.tabBarItemTitleFontStyle
                                                            variant:nil
                                                    scaleMultiplier:1.0];
+    titleTextAttributes[NSForegroundColorAttributeName] = hostComponent.tabBarItemTitleFontColor;
   }
 
   [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal
@@ -122,12 +123,13 @@
     titleTextAttributes = [[NSMutableDictionary alloc] init];
     titleTextAttributes[NSFontAttributeName] =
         [RCTFont updateFont:nil
-                 withFamily:nil
+                 withFamily:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontFamily
                        size:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontSize
-                     weight:nil
-                      style:nil
+                     weight:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontWeight
+                      style:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontStyle
                     variant:nil
             scaleMultiplier:1.0];
+    titleTextAttributes[NSForegroundColorAttributeName] = tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontColor;
   }
 
   [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal

@@ -39,7 +39,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
 @property (nonatomic, strong, readonly, nullable) UIBlurEffect *tabBarBlurEffect;
+
+@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontFamily;
 @property (nonatomic, strong, readonly, nullable) NSNumber *tabBarItemTitleFontSize;
+@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontWeight;
+@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontStyle;
+@property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemTitleFontColor;
+
 @property (nonatomic, readonly, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
 @property (nonatomic, readonly, nullable) NSString *title;

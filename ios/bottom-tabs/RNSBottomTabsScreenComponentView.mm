@@ -49,7 +49,13 @@ namespace react = facebook::react;
   _title = nil;
   _tabBarBlurEffect = nil;
   _tabBarBackgroundColor = nil;
+
+  _tabBarItemTitleFontFamily = nil;
   _tabBarItemTitleFontSize = nil;
+  _tabBarItemTitleFontWeight = nil;
+  _tabBarItemTitleFontStyle = nil;
+  _tabBarItemTitleFontColor = nil;
+  
   _tabBarItemBadgeBackgroundColor = nil;
 }
 
@@ -122,8 +128,28 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
+  if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
+    _tabBarItemTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontFamily);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
   if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
     _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
+    _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
+    _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
+    _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
