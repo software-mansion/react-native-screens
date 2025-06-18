@@ -3,6 +3,7 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
+#import "RNSTabBarAppearanceProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,11 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Props
 
-@interface RNSBottomTabsHostComponentView ()
+@interface RNSBottomTabsHostComponentView () <RNSTabBarAppearanceProvider>
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
 @property (nonatomic, strong, readonly, nullable) UIBlurEffect *tabBarBlurEffect;
 @property (nonatomic, strong, readonly, nullable) NSNumber *tabBarItemTitleFontSize;
+@property (nonatomic, readonly, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 

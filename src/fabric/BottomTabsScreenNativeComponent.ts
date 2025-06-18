@@ -6,6 +6,7 @@ import {
   DirectEventHandler,
   Float,
   Int32,
+  WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -15,6 +16,29 @@ export type LifecycleStateChangeEvent = Readonly<{
   previousState: Int32;
   newState: Int32;
 }>;
+
+export type BlurEffect = 
+  | 'none'
+  | 'extraLight'
+  | 'light'
+  | 'dark'
+  | 'regular'
+  | 'prominent'
+  | 'systemUltraThinMaterial'
+  | 'systemThinMaterial'
+  | 'systemMaterial'
+  | 'systemThickMaterial'
+  | 'systemChromeMaterial'
+  | 'systemUltraThinMaterialLight'
+  | 'systemThinMaterialLight'
+  | 'systemMaterialLight'
+  | 'systemThickMaterialLight'
+  | 'systemChromeMaterialLight'
+  | 'systemUltraThinMaterialDark'
+  | 'systemThinMaterialDark'
+  | 'systemMaterialDark'
+  | 'systemThickMaterialDark'
+  | 'systemChromeMaterialDark';
 
 export interface NativeProps extends ViewProps {
   // Events
@@ -28,13 +52,16 @@ export interface NativeProps extends ViewProps {
   isFocused?: boolean;
   tabKey: string;
 
-  // Appearance
-  badgeValue?: string;
-  badgeColor?: ColorValue;
-  titleFontSize?: Float;
+  // Tab Bar Appearance
+  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+  tabBarBackgroundColor?: ColorValue;
+  tabBarBlurEffect?: WithDefault<BlurEffect, 'none'>;
+  tabBarItemTitleFontSize?: Float;
+  tabBarItemBadgeBackgroundColor?: ColorValue;
 
   // General
   title?: string | undefined | null;
+  badgeValue?: string;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});

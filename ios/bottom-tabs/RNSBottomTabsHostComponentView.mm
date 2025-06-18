@@ -62,6 +62,7 @@ namespace react = facebook::react;
   _tabBarBlurEffect = nil;
   _tabBarBackgroundColor = nil;
   _tabBarItemTitleFontSize = nil;
+  _tabBarItemBadgeBackgroundColor = nil;
 }
 
 #pragma mark - UIView methods
@@ -176,6 +177,11 @@ namespace react = facebook::react;
 
   if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
     _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
+    _needsTabBarAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
+    _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
     _needsTabBarAppearanceUpdate = YES;
   }
 
