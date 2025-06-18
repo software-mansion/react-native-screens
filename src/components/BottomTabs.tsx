@@ -11,6 +11,7 @@ import {
   findNodeHandle,
   type NativeSyntheticEvent,
   StyleSheet,
+  TextStyle,
   type ViewProps,
 } from 'react-native';
 import featureFlags from '../flags';
@@ -25,7 +26,13 @@ export interface BottomTabsProps extends ViewProps {
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: BlurEffect; // defaults to 'none'
-  tabBarItemTitleFontSize?: number;
+
+  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
+  tabBarItemTitleFontSize?: TextStyle['fontSize'];
+  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
+  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+  tabBarItemTitleFontColor?: TextStyle['color'];
+  
   tabBarItemBadgeBackgroundColor?: ColorValue;
 
   // Control
