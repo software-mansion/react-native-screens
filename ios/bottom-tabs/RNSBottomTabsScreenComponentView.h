@@ -1,5 +1,7 @@
 #import "RNSBottomTabsScreenEventEmitter.h"
+#import "RNSEnums.h"
 #import "RNSReactBaseView.h"
+#import "RNSTabBarAppearanceProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,15 +31,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Properties set on component in JavaScript.
  */
-@interface RNSBottomTabsScreenComponentView ()
+@interface RNSBottomTabsScreenComponentView () <RNSTabBarAppearanceProvider>
 
 @property (nonatomic, readonly) BOOL isSelectedScreen;
 @property (nonatomic, readonly, nullable) NSString *tabKey;
 @property (nonatomic, readonly, nullable) NSString *badgeValue;
-@property (nonatomic, readonly, nullable) UIColor *badgeColor;
+
+@property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
+@property (nonatomic, strong, readonly, nullable) UIBlurEffect *tabBarBlurEffect;
+@property (nonatomic, strong, readonly, nullable) NSNumber *tabBarItemTitleFontSize;
+@property (nonatomic, readonly, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
 @property (nonatomic, readonly, nullable) NSString *title;
-@property (nonatomic, readonly, nullable) NSNumber *titleFontSize;
 
 @end
 

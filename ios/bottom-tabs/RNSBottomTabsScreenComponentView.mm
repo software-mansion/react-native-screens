@@ -1,6 +1,7 @@
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSDefines.h"
 #import "RNSTabBarController.h"
+#import "RNSConversions.h"
 
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -46,7 +47,10 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
-  _badgeColor = nil;
+  _tabBarBlurEffect = nil;
+  _tabBarBackgroundColor = nil;
+  _tabBarItemTitleFontSize = nil;
+  _tabBarItemBadgeBackgroundColor = nil;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -89,11 +93,6 @@ RNS_IGNORE_SUPER_CALL_END
     _tabKey = RCTNSStringFromString(newComponentProps.title);
   }
 
-  if (newComponentProps.titleFontSize != oldComponentProps.titleFontSize) {
-    _titleFontSize = [NSNumber numberWithFloat:newComponentProps.titleFontSize];
-    tabItemNeedsAppearanceUpdate = true;
-  }
-
   if (newComponentProps.isFocused != oldComponentProps.isFocused) {
     _isSelectedScreen = newComponentProps.isFocused;
     [_controller tabScreenFocusHasChanged];
@@ -104,12 +103,28 @@ RNS_IGNORE_SUPER_CALL_END
     _controller.tabBarItem.badgeValue = _badgeValue;
   }
 
-  if (newComponentProps.badgeColor != oldComponentProps.badgeColor) {
-    _badgeColor = RCTUIColorFromSharedColor(newComponentProps.badgeColor);
+  if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
+    _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
     // Note that this will prevent default color from being set.
     // TODO: support default color by setting nil here.
-    NSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _badgeColor);
-    tabItemNeedsAppearanceUpdate = true;
+    NSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _tabBarItemBadgeBackgroundColor);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
+    _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
+    _tabBarBlurEffect =
+        rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
+    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
+    tabItemNeedsAppearanceUpdate = YES;
   }
 
   if (tabItemNeedsAppearanceUpdate) {

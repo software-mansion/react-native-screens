@@ -15,6 +15,13 @@ RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
 UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(
     react::RNSBottomTabsTabBarBlurEffect blurEffect);
 
+std::optional<UIBlurEffectStyle>
+RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
+    react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
+
+UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(
+    react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
+
 }; // namespace rnscreens::conversion
 
 #endif

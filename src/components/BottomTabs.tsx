@@ -21,12 +21,12 @@ export interface BottomTabsProps extends ViewProps {
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
   ) => void;
 
-  // Appearance
+  // Tab Bar Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
-
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: BlurEffect; // defaults to 'none'
   tabBarItemTitleFontSize?: number;
+  tabBarItemBadgeBackgroundColor?: ColorValue;
 
   // Control
 

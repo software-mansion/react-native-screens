@@ -2,6 +2,7 @@
 
 import React from 'react';
 import BottomTabsScreenNativeComponent, {
+  BlurEffect,
   type NativeProps,
 } from '../fabric/BottomTabsScreenNativeComponent';
 import {
@@ -30,11 +31,16 @@ export interface BottomTabsScreenProps {
   isFocused?: boolean;
   tabKey: string;
 
-  // Appearance
-  badgeValue?: string;
-  badgeColor?: ColorValue;
+  // Tab Bar Appearance
+  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+  tabBarBackgroundColor?: ColorValue;
+  tabBarBlurEffect?: BlurEffect; // defaults to 'none'
+  tabBarItemTitleFontSize?: number;
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+  
+  // General
   title?: string;
-  titleFontSize?: number;
+  badgeValue?: string;
 
   // Events
   onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
