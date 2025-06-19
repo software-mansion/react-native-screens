@@ -297,7 +297,7 @@ open class ScreenFragment :
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
             // root view in order to achieve this.
-            if (isResumed) {
+            if (!fragment.isRemoving) {
                 // Android dispatches the animation start event for the fragment that is being added first
                 // however we want the one being dismissed first to match iOS. It also makes more sense from
                 // a navigation point of view to have the disappear event first.

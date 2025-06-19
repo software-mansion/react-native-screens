@@ -7,13 +7,13 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
+import com.swmansion.rnscreens.animation.ScreenStackAnimationManager
 import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ReverseFromIndex
 import com.swmansion.rnscreens.stack.views.ReverseOrder
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
-import com.swmansion.rnscreens.utils.setTweenAnimations
 import kotlin.collections.ArrayList
 import kotlin.math.max
 
@@ -31,6 +31,8 @@ class ScreenStack(
     private var disappearingTransitioningChildren: MutableList<View> = ArrayList()
 
     var goingForward = false
+
+    val animationManager: ScreenStackAnimationManager = ScreenStackAnimationManager()
 
     /**
      * Marks given fragment as to-be-dismissed and performs updates on container
@@ -147,6 +149,7 @@ class ScreenStack(
 
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
+        animationManager.reset()
 
         val newTopAlreadyInStack = stack.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
@@ -219,7 +222,10 @@ class ScreenStack(
 
         createTransaction().let { transaction ->
             if (stackAnimation != null) {
-                transaction.setTweenAnimations(stackAnimation, shouldUseOpenAnimation)
+                transaction.setCustomAnimations(
+                    animationManager.getAnimationResource(stackAnimation, shouldUseOpenAnimation, true),
+                    animationManager.getAnimationResource(stackAnimation, shouldUseOpenAnimation, false),
+                )
             }
 
             // Remove all screens that are currently on stack, but should be dismissed, because they're
@@ -259,9 +265,21 @@ class ScreenStack(
                 transaction.add(id, newTop.fragment)
             }
 
+            // We need to update animationManager before changing stack to include
+            // screens that are disappearing in this transaction
+            if (stackAnimation != null) {
+                animationManager.updatePropertyAnimationFragmentsFromStack(stack)
+            }
+
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
+
+            // We need to update animationManager after changing stack to include
+            // screens that are appearing in this transaction
+            if (stackAnimation != null) {
+                animationManager.updatePropertyAnimationFragmentsFromStack(stack)
+            }
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()
