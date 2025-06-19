@@ -21,6 +21,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_supported_ios_version, :tvos => min_supported_tvos_version, :visionos => min_supported_visionos_version }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
+  s.project_header_files = "ios/gamma/bridging/Swift-Bridging.h"
   s.requires_arc = true
 
   s.pod_target_xcconfig = {
