@@ -1,6 +1,7 @@
 #import "RNSTabBarController.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
+#import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
 
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
@@ -157,7 +158,8 @@
 
   [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
                                    withHostComponentView:self.tabsHostComponentView
-                                    tabScreenControllers:_tabScreenControllers];
+                                    tabScreenControllers:_tabScreenControllers
+                                             imageLoader:[self.tabsHostComponentView getImageLoader]];
 }
 
 #if !defined(NDEBUG)

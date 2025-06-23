@@ -9,6 +9,7 @@
 - (void)updateAppearanceOfTabBar:(nullable UITabBar *)tabBar
            withHostComponentView:(nullable RNSBottomTabsHostComponentView *)hostComponentView
             tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
+                     imageLoader:(nullable RCTImageLoader *)imageLoader
 {
   if (tabBar == nil) {
     return;

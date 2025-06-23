@@ -2,6 +2,7 @@
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
+#import <React/RCTImageLoader.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -14,7 +15,9 @@
 #import <react/utils/ManagedObjectWrapper.h>
 #endif // !NDEBUG
 
+#import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
 #endif // RCT_NEW_ARCH_ENABLED
+
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSConversions.h"
 #import "RNSConvert.h"
@@ -37,10 +40,8 @@ namespace react = facebook::react;
   RNSTabBarControllerDelegate *_controllerDelegate;
 
   RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
-  
-#ifndef NDEBUG
-  RCTImageLoader *imageLoader;
-#endif // !NDEBUG
+
+  RCTImageLoader *_imageLoader;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -261,14 +262,14 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 }
 
-- (void)updateState:(const facebook::react::State::Shared &)state oldState:(const facebook::react::State::Shared &)oldState
+- (void)updateState:(const facebook::react::State::Shared &)state
+           oldState:(const facebook::react::State::Shared &)oldState
 {
-  react::RNSBottomTabsShadowNode::ConcreteState::Shared stateTmp = std::static_pointer_cast<const react::RNSBottomTabsShadowNode::ConcreteState>(state);
-#ifndef NDEBUG
-  if (auto imgLoaderPtr = stateTmp.get()->getData().getImageLoader().lock()) {
-    imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+  react::RNSBottomTabsShadowNode::ConcreteState::Shared receivedState =
+      std::static_pointer_cast<const react::RNSBottomTabsShadowNode::ConcreteState>(state);
+  if (auto imgLoaderPtr = receivedState.get()->getData().getImageLoader().lock()) {
+    _imageLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
-#endif // !NDEBUG
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -462,6 +463,13 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RNSImageLoader
+
+- (RCTImageLoader *)getImageLoader
+{
+  return _imageLoader;
+}
 
 @end
 

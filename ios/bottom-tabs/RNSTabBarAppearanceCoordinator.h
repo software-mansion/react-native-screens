@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <React/RCTImageLoader.h>
 #import "RNSBottomTabsHostComponentView.h"
 #import "RNSTabsScreenViewController.h"
 
@@ -24,7 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateAppearanceOfTabBar:(nullable UITabBar *)tabBar
            withHostComponentView:(nullable RNSBottomTabsHostComponentView *)hostComponentView
-            tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls;
+            tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
+                     imageLoader:(nullable RCTImageLoader *)imageLoader;
 
 @end
 
