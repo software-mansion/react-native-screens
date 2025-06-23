@@ -77,4 +77,6 @@ export interface NativeProps extends ViewProps {
   controlNavigationStateInJS?: WithDefault<boolean, false>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSBottomTabs', {});
+export default codegenNativeComponent<NativeProps>('RNSBottomTabs', {
+  interfaceOnly: true,
+});

@@ -7,8 +7,14 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#endif // RCT_NEW_ARCH_ENABLED
+#import <rnscreens/RNSBottomTabsComponentDescriptor.h>
+#import <React/RCTImageLoader.h>
 
+#ifndef NDEBUG
+#import <react/utils/ManagedObjectWrapper.h>
+#endif // !NDEBUG
+
+#endif // RCT_NEW_ARCH_ENABLED
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSConversions.h"
 #import "RNSConvert.h"
@@ -31,6 +37,10 @@ namespace react = facebook::react;
   RNSTabBarControllerDelegate *_controllerDelegate;
 
   RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
+  
+#ifndef NDEBUG
+  RCTImageLoader *imageLoader;
+#endif // !NDEBUG
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -249,6 +259,16 @@ namespace react = facebook::react;
 
   // Super call updates _props pointer. We should NOT update it before calling super.
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)updateState:(const facebook::react::State::Shared &)state oldState:(const facebook::react::State::Shared &)oldState
+{
+  react::RNSBottomTabsShadowNode::ConcreteState::Shared stateTmp = std::static_pointer_cast<const react::RNSBottomTabsShadowNode::ConcreteState>(state);
+#ifndef NDEBUG
+  if (auto imgLoaderPtr = stateTmp.get()->getData().getImageLoader().lock()) {
+    imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+  }
+#endif // !NDEBUG
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
