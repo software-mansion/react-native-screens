@@ -28,11 +28,9 @@
     "react-native": "0.80.0-rc.4",
     "react-native-edge-to-edge": "^1.6.0",
     "react-native-gesture-handler": "2.25.0",
-    "react-native-reanimated": "4.0.0-nightly-20250608-176581994",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "5.4.0",
-    "react-native-screens": "link:../",
-    "react-native-worklets": "0.4.0-nightly-20250608-176581994"
+    "react-native-screens": "link:../"
   },
   "resolutions": {
     "@react-navigation/core": "link:../react-navigation/packages/core/"
