@@ -7,6 +7,11 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSBottomTabsScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSBottomTabsScreenManagerInterface
+import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
 
 @ReactModule(name = TabScreenViewManager.REACT_CLASS)
 class TabScreenViewManager :
@@ -83,20 +88,18 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
-//    override fun setBadgeColor(
-//        view: TabScreen?,
-//        value: Int?
-//    ) = Unit
-//
-//    override fun setTitleFontSize(
-//        view: TabScreen?,
-//        value: Float
-//    ) = Unit
-
     override fun setTitle(
         view: TabScreen?,
         value: String?,
     ) = Unit
+
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
+        mutableMapOf(
+            makeEventRegistrationInfo(TabScreenWillAppearEvent),
+            makeEventRegistrationInfo(TabScreenDidAppearEvent),
+            makeEventRegistrationInfo(TabScreenWillDisappearEvent),
+            makeEventRegistrationInfo(TabScreenDidDisappearEvent),
+        )
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"

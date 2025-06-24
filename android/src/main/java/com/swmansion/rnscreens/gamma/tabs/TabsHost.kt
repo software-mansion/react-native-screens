@@ -71,25 +71,21 @@ class TabsHost(
     ) {
         val tabScreenFragment = TabScreenFragment(reactSubview)
         tabScreenFragments.add(index, tabScreenFragment)
-        contentView.addView(reactSubview, index)
         scheduleContainerUpdate()
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
         tabScreenFragments.removeAt(index)
-        contentView.removeViewAt(index)
         scheduleContainerUpdate()
     }
 
     internal fun unmountReactSubview(reactSubview: TabScreen) {
         tabScreenFragments.removeIf { it.tabScreen === reactSubview }
-        contentView.removeView(reactSubview)
         scheduleContainerUpdate()
     }
 
     internal fun unmountAllReactSubviews() {
         tabScreenFragments.clear()
-        contentView.removeAllViews()
         scheduleContainerUpdate()
     }
 
