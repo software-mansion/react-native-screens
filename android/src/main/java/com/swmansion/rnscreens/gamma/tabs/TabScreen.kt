@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.tabs
 import android.util.Log
 import android.view.ViewGroup
 import com.facebook.react.uimanager.ThemedReactContext
+import java.lang.ref.WeakReference
 
 /**
  * React Component view.
@@ -18,9 +19,19 @@ class TabScreen(
         b: Int,
     ) = Unit
 
-    internal val eventEmitter = TabScreenEventEmitter(reactContext)
+    private var tabScreenDelegate: WeakReference<TabScreenDelegate> = WeakReference(null)
 
     internal lateinit var eventEmitter: TabScreenEventEmitter
+
+    var tabKey: String? = null
+        set(value) {
+            field =
+                if (value?.isBlank() == true) {
+                    null
+                } else {
+                    value
+                }
+        }
 
     override fun onAttachedToWindow() {
         Log.d(TAG, "TabScreen attached to window")
@@ -28,6 +39,20 @@ class TabScreen(
     }
 
     var isFocusedTab: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                onTabFocusChangedFromJS()
+            }
+        }
+
+    internal fun setTabScreenDelegate(delegate: TabScreenDelegate?) {
+        tabScreenDelegate = WeakReference(delegate)
+    }
+
+    private fun onTabFocusChangedFromJS() {
+        tabScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
+    }
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set

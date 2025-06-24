@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
-class TabScreenFragment(internal val tabScreen: TabScreen) : Fragment() {
+class TabScreenFragment(
+    internal val tabScreen: TabScreen,
+) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return tabScreen
-    }
+        savedInstanceState: Bundle?,
+    ): View = tabScreen
 
     override fun onStart() {
         tabScreen.eventEmitter.emitOnWillAppear()

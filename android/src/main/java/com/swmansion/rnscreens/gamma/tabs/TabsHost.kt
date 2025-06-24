@@ -14,7 +14,7 @@ import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 
 class TabsHost(
     val reactContext: ThemedReactContext,
-) : LinearLayout(reactContext) {
+) : LinearLayout(reactContext), TabScreenDelegate {
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(reactContext).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
@@ -33,6 +33,8 @@ class TabsHost(
             id = generateViewId()
         }
 
+    internal lateinit var eventEmitter: TabsHostEventEmitter
+
     private var fragmentManager: FragmentManager? = null
     private val requireFragmentManager
         get() = checkNotNull(fragmentManager) { "[RNScreens] Nullish fragment manager" }
@@ -49,7 +51,18 @@ class TabsHost(
         addView(bottomNavigationView)
 
         bottomNavigationView.addOnLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            Log.d(TAG, "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}")
+            Log.d(
+                TAG,
+                "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}"
+            )
+        }
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            Log.d(TAG, "Item selected $item")
+            val fragment = getFragmentForMenuItemId(item.itemId)
+            val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
+            eventEmitter.emitOnNativeFocusChange(tabKey)
+            true
         }
     }
 
@@ -66,26 +79,36 @@ class TabsHost(
     }
 
     internal fun mountReactSubviewAt(
-        reactSubview: TabScreen,
+        tabScreen: TabScreen,
         index: Int,
     ) {
-        val tabScreenFragment = TabScreenFragment(reactSubview)
+        val tabScreenFragment = TabScreenFragment(tabScreen)
         tabScreenFragments.add(index, tabScreenFragment)
+        tabScreen.setTabScreenDelegate(this)
         scheduleContainerUpdate()
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
-        tabScreenFragments.removeAt(index)
-        scheduleContainerUpdate()
+        tabScreenFragments.removeAt(index).also {
+            it.tabScreen.setTabScreenDelegate(null)
+            scheduleContainerUpdate()
+        }
     }
 
     internal fun unmountReactSubview(reactSubview: TabScreen) {
-        tabScreenFragments.removeIf { it.tabScreen === reactSubview }
-        scheduleContainerUpdate()
+        tabScreenFragments.removeIf { it.tabScreen === reactSubview }.takeIf { it }?.let {
+            reactSubview.setTabScreenDelegate(null)
+            scheduleContainerUpdate()
+        }
     }
 
     internal fun unmountAllReactSubviews() {
+        tabScreenFragments.forEach { it.tabScreen.setTabScreenDelegate(null) }
         tabScreenFragments.clear()
+        scheduleContainerUpdate()
+    }
+
+    override fun onTabFocusChangedFromJS(tabScreen: TabScreen, isFocused: Boolean) {
         scheduleContainerUpdate()
     }
 
@@ -108,7 +131,8 @@ class TabsHost(
     }
 
     private fun updateFocusedView() {
-        val newFocusedTab = checkNotNull(tabScreenFragments.find { it.tabScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
+        val newFocusedTab =
+            checkNotNull(tabScreenFragments.find { it.tabScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
 
         check(requireFragmentManager.fragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
         val oldFocusedTab = requireFragmentManager.fragments.firstOrNull()
@@ -160,6 +184,15 @@ class TabsHost(
         )
 
         layout(left, top, right, bottom)
+    }
+
+    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? =
+        tabScreenFragments.getOrNull(itemId)
+
+    internal fun onViewManagerAddEventEmitters() {
+        // When this is called from View Manager the view tag is already set
+        check(id != NO_ID) { "[RNScreens] TabsHost must have its tag set when registering event emitters" }
+        eventEmitter = TabsHostEventEmitter(reactContext, id)
     }
 
     companion object {
