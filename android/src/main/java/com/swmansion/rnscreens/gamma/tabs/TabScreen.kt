@@ -20,10 +20,7 @@ class TabScreen(
 
     internal val eventEmitter = TabScreenEventEmitter(reactContext)
 
-    override fun setId(id: Int) {
-        super.setId(id)
-        eventEmitter.viewTag = id
-    }
+    internal lateinit var eventEmitter: TabScreenEventEmitter
 
     override fun onAttachedToWindow() {
         Log.d(TAG, "TabScreen attached to window")
@@ -31,6 +28,12 @@ class TabScreen(
     }
 
     var isFocusedTab: Boolean = false
+
+    internal fun onViewManagerAddEventEmitters() {
+        // When this is called from View Manager the view tag is already set
+        check(id != NO_ID) { "[RNScreens] TabScreen must have its tag set when registering event emitters" }
+        eventEmitter = TabScreenEventEmitter(reactContext, id)
+    }
 
     companion object {
         const val TAG = "TabScreen"
