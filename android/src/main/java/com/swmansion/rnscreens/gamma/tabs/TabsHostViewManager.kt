@@ -7,6 +7,8 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSBottomTabsManagerDelegate
 import com.facebook.react.viewmanagers.RNSBottomTabsManagerInterface
+import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.tabs.event.TabsHostNativeFocusChangeEvent
 
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
 class TabsHostViewManager :
@@ -46,6 +48,19 @@ class TabsHostViewManager :
 
     override fun removeAllViews(parent: TabsHost) {
         parent.unmountAllReactSubviews()
+    }
+
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
+        mutableMapOf(
+            makeEventRegistrationInfo(TabsHostNativeFocusChangeEvent),
+        )
+
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: TabsHost,
+    ) {
+        super.addEventEmitters(reactContext, view)
+        view.onViewManagerAddEventEmitters()
     }
 
     // These should be ignored or another component, dedicated for Android should be used

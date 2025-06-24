@@ -28,6 +28,14 @@ class TabScreenViewManager :
 
     override fun getDelegate() = delegate
 
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
+        mutableMapOf(
+            makeEventRegistrationInfo(TabScreenWillAppearEvent),
+            makeEventRegistrationInfo(TabScreenDidAppearEvent),
+            makeEventRegistrationInfo(TabScreenWillDisappearEvent),
+            makeEventRegistrationInfo(TabScreenDidDisappearEvent),
+        )
+
     override fun addEventEmitters(reactContext: ThemedReactContext, view: TabScreen) {
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
@@ -84,9 +92,11 @@ class TabScreenViewManager :
     }
 
     override fun setTabKey(
-        view: TabScreen?,
+        view: TabScreen,
         value: String?,
-    ) = Unit
+    ) {
+        view.tabKey = value
+    }
 
     override fun setBadgeValue(
         view: TabScreen?,
@@ -97,14 +107,6 @@ class TabScreenViewManager :
         view: TabScreen?,
         value: String?,
     ) = Unit
-
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
-        mutableMapOf(
-            makeEventRegistrationInfo(TabScreenWillAppearEvent),
-            makeEventRegistrationInfo(TabScreenDidAppearEvent),
-            makeEventRegistrationInfo(TabScreenWillDisappearEvent),
-            makeEventRegistrationInfo(TabScreenDidDisappearEvent),
-        )
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
