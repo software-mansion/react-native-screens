@@ -14,7 +14,8 @@ import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 
 class TabsHost(
     val reactContext: ThemedReactContext,
-) : LinearLayout(reactContext), TabScreenDelegate {
+) : LinearLayout(reactContext),
+    TabScreenDelegate {
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(reactContext).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
@@ -53,7 +54,7 @@ class TabsHost(
         bottomNavigationView.addOnLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             Log.d(
                 TAG,
-                "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}"
+                "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}",
             )
         }
 
@@ -82,6 +83,10 @@ class TabsHost(
         tabScreen: TabScreen,
         index: Int,
     ) {
+        require(index < bottomNavigationView.maxItemCount) {
+            "[RNScreens] Attempt to insert TabScreen at index $index; BottomNavigationView supports at most ${bottomNavigationView.maxItemCount} items"
+        }
+
         val tabScreenFragment = TabScreenFragment(tabScreen)
         tabScreenFragments.add(index, tabScreenFragment)
         tabScreen.setTabScreenDelegate(this)
@@ -108,7 +113,10 @@ class TabsHost(
         scheduleContainerUpdate()
     }
 
-    override fun onTabFocusChangedFromJS(tabScreen: TabScreen, isFocused: Boolean) {
+    override fun onTabFocusChangedFromJS(
+        tabScreen: TabScreen,
+        isFocused: Boolean,
+    ) {
         scheduleContainerUpdate()
     }
 
@@ -116,13 +124,19 @@ class TabsHost(
         bottomNavigationView.isVisible = true
         bottomNavigationView.setBackgroundColor(Color.RED)
 
-        tabScreenFragments.forEachIndexed { index, tabScreen ->
+        // First clean the menu, then populate it
+        bottomNavigationView.menu.clear()
+
+        tabScreenFragments.forEachIndexed { index, fragment ->
             Log.d(TAG, "Add menu item")
             val item = bottomNavigationView.menu.add(Menu.NONE, index, Menu.NONE, "Tab $index")
             item.isEnabled = true
             item.isVisible = true
             item.setIcon(android.R.drawable.sym_action_chat)
         }
+
+        bottomNavigationView.selectedItemId =
+            checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
 
         post {
             forceSubtreeMeasureAndLayoutPass()
@@ -186,8 +200,14 @@ class TabsHost(
         layout(left, top, right, bottom)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? =
-        tabScreenFragments.getOrNull(itemId)
+    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? = tabScreenFragments.getOrNull(itemId)
+
+    private fun getSelectedTabScreenFragmentId(): Int? {
+        if (tabScreenFragments.isEmpty()) {
+            return null
+        }
+        return checkNotNull(tabScreenFragments.indexOfFirst { it.tabScreen.isFocusedTab }) { "[RNScreens] There must be a focused tab" }
+    }
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
