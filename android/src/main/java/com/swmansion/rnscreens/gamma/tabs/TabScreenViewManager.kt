@@ -28,6 +28,11 @@ class TabScreenViewManager :
 
     override fun getDelegate() = delegate
 
+    override fun addEventEmitters(reactContext: ThemedReactContext, view: TabScreen) {
+        super.addEventEmitters(reactContext, view)
+        view.onViewManagerAddEventEmitters()
+    }
+
     // These should be ignored or another component, dedicated for Android should be used
 
     override fun setTabBarBackgroundColor(
