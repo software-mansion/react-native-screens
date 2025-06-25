@@ -43,6 +43,9 @@ export default function BarButtonItemsExample() {
               enabled: false,
             },
             {
+              spacing: 0,
+            },
+            {
               onPress: () => Alert.alert('Search pressed'),
               image: require('../assets/search_black.png'),
               style: 'Prominent',

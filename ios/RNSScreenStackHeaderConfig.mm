@@ -849,17 +849,19 @@ RNS_IGNORE_SUPER_CALL_END
   NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count * 2 - 1];
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
-    RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict action:^(NSString *buttonId) {
-      if (self.onPressHeaderBarButtonItem && buttonId) {
-        self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
-      }
-    }];
-    [items addObject:item];
-    // if (i < dicts.count - 1) {
-    //   UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    //   fixedSpace.width = 0;
-    //   [items addObject:fixedSpace];
-    // }
+    if (dict[@"buttonId"]) {
+      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict action:^(NSString *buttonId) {
+        if (self.onPressHeaderBarButtonItem && buttonId) {
+          self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
+        }
+      }];
+      [items addObject:item];
+    } else if (dict[@"spacing"]) {
+      UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+      NSNumber *spacingValue = dict[@"spacing"];
+      fixedSpace.width = [spacingValue doubleValue];
+      [items addObject:fixedSpace];
+    }
   }
   return items;
 }
