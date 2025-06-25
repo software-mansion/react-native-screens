@@ -87,7 +87,7 @@ class TabScreenViewManager :
         view: TabScreen,
         value: Boolean,
     ) {
-        Log.d(REACT_CLASS, "setIsFocused $value")
+        Log.d(REACT_CLASS, "TabScreen [${view.id}] setIsFocused $value")
         view.isFocusedTab = value
     }
 
@@ -104,9 +104,11 @@ class TabScreenViewManager :
     ) = Unit
 
     override fun setTitle(
-        view: TabScreen?,
+        view: TabScreen,
         value: String?,
-    ) = Unit
+    ) {
+        view.tabTitle = value
+    }
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
