@@ -7,8 +7,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-
-#import "RNSStackScreenComponentView.h"
+#import "RNSDefines.h"
 
 #import "Swift-Bridging.h"
 
@@ -18,9 +17,9 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSScreenStackHostComponentView {
-  RNSStackController *_Nullable _controller;
+  RNSStackController *_Nonnull _controller;
+  NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _reactSubviews;
 
-  NSMutableArray<RNSStackScreenComponentView *> *_reactSubviews;
   bool _hasModifiedReactSubviewsInCurrentTransaction;
 }
 
@@ -34,7 +33,7 @@ namespace react = facebook::react;
 
 - (void)initState
 {
-  _controller = [RNSStackController new];
+  _controller = [[RNSStackController alloc] initWithStackHostComponentView:self];
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _reactSubviews = [NSMutableArray new];
 }
@@ -64,6 +63,13 @@ namespace react = facebook::react;
     return;
   }
 }
+
+RNS_IGNORE_SUPER_CALL_BEGIN
+- (nonnull NSMutableArray<RNSStackScreenComponentView *> *)reactSubviews
+{
+  return _reactSubviews;
+}
+RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - RCTViewComponentViewProtocol
 
@@ -118,14 +124,7 @@ namespace react = facebook::react;
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   if (_hasModifiedReactSubviewsInCurrentTransaction) {
-    NSMutableArray<RNSStackScreenController *> *childViewControllers =
-        [NSMutableArray arrayWithCapacity:_reactSubviews.count];
-
-    for (RNSStackScreenComponentView *stackScreen in _reactSubviews) {
-      [childViewControllers addObject:stackScreen.controller];
-    }
-
-    [_controller setNeedsUpdateOfChildViewControllers:childViewControllers];
+    [_controller setNeedsUpdateOfChildViewControllers];
   }
   [_controller reactMountingTransactionDidMount];
 }
