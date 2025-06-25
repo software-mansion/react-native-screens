@@ -5,12 +5,22 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
 
+@interface RNSStackScreenComponentView () <RCTMountingTransactionObserving>
+@end
+
+#pragma mark - View implementation
+
 @implementation RNSStackScreenComponentView {
-  RNSStackScreenController *_Nullable _controller;
+  RNSStackScreenController *_Nonnull _controller;
+  RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
+
+  // Flags
+  BOOL _needsLifecycleStateUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -24,16 +34,75 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  [self resetProps];
   [self setupController];
+
+  _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
+
+  _needsLifecycleStateUpdate = NO;
+}
+
+- (void)resetProps
+{
+  static const auto defaultProps = std::make_shared<const react::RNSScreenStackProps>();
+  _props = defaultProps;
+
+  // container state
+  _screenKey = nil;
+  _lifecycleState = RNSScreenStackLifecycleStateInitial;
 }
 
 - (void)setupController
 {
-  _controller = [RNSStackScreenController new];
+  _controller = [[RNSStackScreenController alloc] initWithComponentView:self];
   _controller.view = self;
 }
 
+#pragma mark - Events
+
+- (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter
+{
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
+}
+
 #pragma mark - RCTViewComponentViewProtocol
+
+- (void)updateProps:(const facebook::react::Props::Shared &)props
+           oldProps:(const facebook::react::Props::Shared &)oldProps
+{
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(props);
+
+  if (oldComponentProps.lifecycleState != newComponentProps.lifecycleState) {
+    _lifecycleState = (RNSScreenStackLifecycleState)newComponentProps.lifecycleState;
+    _needsLifecycleStateUpdate = YES;
+  }
+
+  if (oldComponentProps.screenKey != newComponentProps.screenKey) {
+    RCTAssert(_screenKey == nil, @"[RNScreens] ScreenController cannot change its screenKey");
+    _screenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey);
+  }
+
+  [super updateProps:props oldProps:oldProps];
+}
+
+- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
+{
+  if (_needsLifecycleStateUpdate) {
+    _needsLifecycleStateUpdate = NO;
+    [_controller setNeedsLifecycleStateUpdate];
+  }
+
+  [super finalizeUpdates:updateMask];
+}
+
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_reactEventEmitter
+      updateEventEmitter:std::static_pointer_cast<const react::RNSStackScreenEventEmitter>(eventEmitter)];
+}
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {

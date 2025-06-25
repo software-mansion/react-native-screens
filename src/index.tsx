@@ -43,7 +43,7 @@ export { default as ScreenContentWrapper } from './components/ScreenContentWrapp
 export { default as BottomTabs } from './components/BottomTabs';
 export { default as BottomTabsScreen } from './components/BottomTabsScreen';
 export { default as ScreenStackHost } from './components/gamma/ScreenStackHost';
-export { default as StackScreen } from './components/gamma/StackScreen';
+export { default as StackScreen, StackScreenLifecycleState } from './components/gamma/StackScreen';
 
 /**
  * Utils
