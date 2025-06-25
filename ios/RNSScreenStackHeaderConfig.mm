@@ -32,6 +32,8 @@
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
+#import "RNSUIBarButtonItem.h"
+#import "RNSBarButtonItem.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -620,6 +622,8 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
+  navitem.leftBarButtonItems = nil;
+  navitem.rightBarButtonItems = nil;
   navitem.titleView = nil;
 
 #if !TARGET_OS_TV
@@ -707,6 +711,15 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
+
+  // Set leftBarButtonItems if provided
+  if (config.headerLeftBarButtonItems) {
+      navitem.leftBarButtonItems = [config barButtonItemsFromDictionaries:config.headerLeftBarButtonItems];
+  }
+  // Set rightBarButtonItems if provided
+  if (config.headerRightBarButtonItems) {
+    navitem.rightBarButtonItems = [config barButtonItemsFromDictionaries:config.headerRightBarButtonItems];
+  }
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
@@ -831,6 +844,26 @@ RNS_IGNORE_SUPER_CALL_END
         setSemanticContentAttribute:self.direction];
   }
 }
+
+- (NSArray<UIBarButtonItem *> *)barButtonItemsFromDictionaries:(NSArray<NSDictionary<NSString *, id> *> *)dicts {
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count * 2 - 1];
+  for (NSUInteger i = 0; i < dicts.count; i++) {
+    NSDictionary *dict = dicts[i];
+    RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict action:^(NSString *buttonId) {
+      if (self.onPressHeaderBarButtonItem && buttonId) {
+        self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
+      }
+    }];
+    [items addObject:item];
+    if (i < dicts.count - 1) {
+      UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+      fixedSpace.width = 0;
+      [items addObject:fixedSpace];
+    }
+  }
+  return items;
+}
+
 
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
@@ -1115,6 +1148,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 }
 
 #endif
+
 @end
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1170,6 +1204,9 @@ RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(headerRightBarButtonItems, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonItem, RCTDirectEventBlock);
 
 @end
 
