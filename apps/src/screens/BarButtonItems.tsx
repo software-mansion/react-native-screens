@@ -31,8 +31,7 @@ export default function BarButtonItemsExample() {
             {
               title: 'Plain',
               onPress: () => Alert.alert('Plain pressed'),
-              tintColor: 'red',
-              style: 2,
+              tintColor: '#ff0000',
             },
           ],
           // Example: Right bar button items (using only typed props)
@@ -40,13 +39,13 @@ export default function BarButtonItemsExample() {
             {
               onPress: () => Alert.alert('Search pressed'),
               image: require('../assets/search_black.png'),
-              style: 1,
+              style: 'Plain',
               enabled: false,
             },
             {
               onPress: () => Alert.alert('Search pressed'),
               image: require('../assets/search_black.png'),
-              style: 2,
+              style: 'Prominent',
             },
           ],
         }}
