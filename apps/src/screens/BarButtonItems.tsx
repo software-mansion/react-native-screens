@@ -25,15 +25,15 @@ export default function BarButtonItemsExample() {
         name="BarButtonItems Demo"
         options={{
           headerTransparent: true,
+          headerBlurEffect: 'regular',
           title: 'BarButtonItems Demo',
-          // Example: Left bar button items (using only typed props)
           headerLeftBarButtonItems: [
             {
               title: 'Plain',
               onPress: () => Alert.alert('Plain pressed'),
+              titleStyle: { fontFamily: 'Georgia', fontSize: 16, fontWeight: '800' },
             },
           ],
-          // Example: Right bar button items (using only typed props)
           headerRightBarButtonItems: [
             {
               onPress: () => Alert.alert('Search pressed'),
