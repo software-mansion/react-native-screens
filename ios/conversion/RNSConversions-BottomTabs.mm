@@ -149,9 +149,11 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScree
   }
 }
 
-UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(react::RNSBottomTabsScreenTabBarBlurEffect blurEffect)
+UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(
+    react::RNSBottomTabsScreenTabBarBlurEffect blurEffect)
 {
-  std::optional<UIBlurEffectStyle> maybeStyle = RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(blurEffect);
+  std::optional<UIBlurEffectStyle> maybeStyle =
+      RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(blurEffect);
   if (maybeStyle) {
     return [UIBlurEffect effectWithStyle:maybeStyle.value()];
   }

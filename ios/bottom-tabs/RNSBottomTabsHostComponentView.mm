@@ -61,13 +61,13 @@ namespace react = facebook::react;
   _props = defaultProps;
   _tabBarBlurEffect = nil;
   _tabBarBackgroundColor = nil;
-  
+
   _tabBarItemTitleFontFamily = nil;
   _tabBarItemTitleFontSize = nil;
   _tabBarItemTitleFontWeight = nil;
   _tabBarItemTitleFontStyle = nil;
   _tabBarItemTitleFontColor = nil;
-  
+
   _tabBarItemBadgeBackgroundColor = nil;
 }
 
@@ -180,7 +180,7 @@ namespace react = facebook::react;
     _tabBarBlurEffect =
         rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
   }
-  
+
   if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
     _tabBarItemTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontFamily);
     _needsTabBarAppearanceUpdate = YES;
@@ -190,22 +190,22 @@ namespace react = facebook::react;
     _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
     _needsTabBarAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
     _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
     _needsTabBarAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
     _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
     _needsTabBarAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
     _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
     _needsTabBarAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
     _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
     _needsTabBarAppearanceUpdate = YES;

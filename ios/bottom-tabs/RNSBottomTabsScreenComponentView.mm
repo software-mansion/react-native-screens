@@ -1,7 +1,7 @@
 #import "RNSBottomTabsScreenComponentView.h"
+#import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSTabBarController.h"
-#import "RNSConversions.h"
 
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -55,7 +55,7 @@ namespace react = facebook::react;
   _tabBarItemTitleFontWeight = nil;
   _tabBarItemTitleFontStyle = nil;
   _tabBarItemTitleFontColor = nil;
-  
+
   _tabBarItemBadgeBackgroundColor = nil;
 }
 
@@ -96,7 +96,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.tabKey != oldComponentProps.tabKey) {
     RCTAssert(!newComponentProps.tabKey.empty(), @"[RNScreens] tabKey must not be empty!");
-    _tabKey = RCTNSStringFromString(newComponentProps.title);
+    _tabKey = RCTNSStringFromString(newComponentProps.tabKey);
   }
 
   if (newComponentProps.isFocused != oldComponentProps.isFocused) {
@@ -116,15 +116,15 @@ RNS_IGNORE_SUPER_CALL_END
     NSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _tabBarItemBadgeBackgroundColor);
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
     _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
   if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
-    _tabBarBlurEffect =
-        rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
+    _tabBarBlurEffect = rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(
+        newComponentProps.tabBarBlurEffect);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -137,17 +137,17 @@ RNS_IGNORE_SUPER_CALL_END
     _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
     _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
     _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
     _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
     tabItemNeedsAppearanceUpdate = YES;
