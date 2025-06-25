@@ -16,6 +16,71 @@ class TabsHost(
     val reactContext: ThemedReactContext,
 ) : LinearLayout(reactContext),
     TabScreenDelegate {
+    /**
+     * All container updates should go through instance of this class.
+     * The semantics are as follows:
+     *
+     * * `invalidateXXX` methods do mark that some update is required, however **they do not schedule the update**!
+     * * `postXXX` methods schedule an update
+     * * `runXXX` methods execute update synchronously
+     *
+     * If there is a posted update & before it is executed updates are flushed synchronously, then
+     * the posted update becomes a noop.
+     */
+    private inner class ContainerUpdateCoordinator {
+        private var isUpdatePending: Boolean = false
+
+        private var isSelectedTabInvalidated: Boolean = false
+        private var isBottomNavigationMenuInvalidated: Boolean = false
+
+        fun invalidateSelectedTab() {
+            isSelectedTabInvalidated = true
+        }
+
+        fun invalidateNavigationMenu() {
+            isBottomNavigationMenuInvalidated = true
+        }
+
+        fun invalidateAll() {
+            invalidateSelectedTab()
+            invalidateNavigationMenu()
+        }
+
+        fun postContainerUpdateIfNeeded() {
+            if (isUpdatePending) {
+                return
+            }
+            postContainerUpdate()
+        }
+
+        fun postContainerUpdate() {
+            isUpdatePending = true
+            post {
+                runContainerUpdateIfNeeded()
+            }
+        }
+
+        private fun runContainerUpdateIfNeeded() {
+            if (isUpdatePending) {
+                runContainerUpdate()
+            }
+        }
+
+        fun runContainerUpdate() {
+            isUpdatePending = false
+            if (isSelectedTabInvalidated) {
+                isSelectedTabInvalidated = false
+                this@TabsHost.updateSelectedTab()
+            }
+            if (isBottomNavigationMenuInvalidated) {
+                isBottomNavigationMenuInvalidated = false
+                this@TabsHost.updateBottomNavigationViewAppearance()
+            }
+        }
+    }
+
+    private val containerUpdateCoordinator = ContainerUpdateCoordinator()
+
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(reactContext).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
@@ -42,7 +107,6 @@ class TabsHost(
 
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
 
-    private var hasPendingUpdate: Boolean = false
     private var isLayoutInvalidated: Boolean = false
 
     init {
@@ -68,15 +132,16 @@ class TabsHost(
     }
 
     override fun onAttachedToWindow() {
-        Log.d(TAG, "TabsHost attached to window")
+        Log.d(TAG, "TabsHost [$id] attached to window")
         super.onAttachedToWindow()
         fragmentManager =
             checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
                 "[RNScreens] Nullish fragment manager - can't run container operations"
             }
-
-        hasPendingUpdate = true
-        updateContainer()
+        containerUpdateCoordinator.let {
+            it.invalidateAll()
+            it.runContainerUpdate()
+        }
     }
 
     internal fun mountReactSubviewAt(
@@ -90,37 +155,53 @@ class TabsHost(
         val tabScreenFragment = TabScreenFragment(tabScreen)
         tabScreenFragments.add(index, tabScreenFragment)
         tabScreen.setTabScreenDelegate(this)
-        scheduleContainerUpdate()
+        containerUpdateCoordinator.let {
+            it.invalidateAll()
+            it.postContainerUpdateIfNeeded()
+        }
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
         tabScreenFragments.removeAt(index).also {
             it.tabScreen.setTabScreenDelegate(null)
-            scheduleContainerUpdate()
+            containerUpdateCoordinator.let {
+                it.invalidateAll()
+                it.postContainerUpdateIfNeeded()
+            }
         }
     }
 
     internal fun unmountReactSubview(reactSubview: TabScreen) {
         tabScreenFragments.removeIf { it.tabScreen === reactSubview }.takeIf { it }?.let {
             reactSubview.setTabScreenDelegate(null)
-            scheduleContainerUpdate()
+            containerUpdateCoordinator.let {
+                it.invalidateAll()
+                it.postContainerUpdateIfNeeded()
+            }
         }
     }
 
     internal fun unmountAllReactSubviews() {
         tabScreenFragments.forEach { it.tabScreen.setTabScreenDelegate(null) }
         tabScreenFragments.clear()
-        scheduleContainerUpdate()
+        containerUpdateCoordinator.let {
+            it.invalidateAll()
+            it.postContainerUpdateIfNeeded()
+        }
     }
 
     override fun onTabFocusChangedFromJS(
         tabScreen: TabScreen,
         isFocused: Boolean,
     ) {
-        scheduleContainerUpdate()
+        containerUpdateCoordinator.let {
+            it.invalidateSelectedTab()
+            it.postContainerUpdateIfNeeded()
+        }
     }
 
     private fun updateBottomNavigationViewAppearance() {
+        Log.w(TAG, "updateBottomNavigationViewAppearance")
         bottomNavigationView.isVisible = true
         bottomNavigationView.setBackgroundColor(Color.RED)
 
@@ -128,10 +209,8 @@ class TabsHost(
         bottomNavigationView.menu.clear()
 
         tabScreenFragments.forEachIndexed { index, fragment ->
-            Log.d(TAG, "Add menu item")
+            Log.d(TAG, "Add menu item: $index")
             val item = bottomNavigationView.menu.add(Menu.NONE, index, Menu.NONE, "Tab $index")
-            item.isEnabled = true
-            item.isVisible = true
             item.setIcon(android.R.drawable.sym_action_chat)
         }
 
@@ -144,7 +223,7 @@ class TabsHost(
         }
     }
 
-    private fun updateFocusedView() {
+    private fun updateSelectedTab() {
         val newFocusedTab =
             checkNotNull(tabScreenFragments.find { it.tabScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
 
@@ -173,22 +252,6 @@ class TabsHost(
         }
     }
 
-    private fun updateContainer() {
-        if (!hasPendingUpdate) {
-            return
-        }
-        hasPendingUpdate = false
-        updateFocusedView()
-        updateBottomNavigationViewAppearance()
-    }
-
-    private fun scheduleContainerUpdate() {
-        hasPendingUpdate = true
-        post {
-            updateContainer()
-        }
-    }
-
     private fun forceSubtreeMeasureAndLayoutPass() {
         isLayoutInvalidated = false
 
@@ -200,7 +263,8 @@ class TabsHost(
         layout(left, top, right, bottom)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? = tabScreenFragments.getOrNull(itemId)
+    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? =
+        tabScreenFragments.getOrNull(itemId)
 
     private fun getSelectedTabScreenFragmentId(): Int? {
         if (tabScreenFragments.isEmpty()) {
