@@ -855,11 +855,11 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }];
     [items addObject:item];
-    if (i < dicts.count - 1) {
-      UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-      fixedSpace.width = 0;
-      [items addObject:fixedSpace];
-    }
+    // if (i < dicts.count - 1) {
+    //   UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    //   fixedSpace.width = 0;
+    //   [items addObject:fixedSpace];
+    // }
   }
   return items;
 }

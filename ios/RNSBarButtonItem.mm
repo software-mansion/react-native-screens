@@ -13,9 +13,50 @@ static char RNSBarButtonItemIdKey;
   self = [super init];
   if (self) {
     self.title = dict[@"title"];
+
     NSDictionary *imageObj = dict[@"image"];
     if (imageObj) {
       self.image = [RCTConvert UIImage:imageObj];
+    }
+      
+    id tintColorObj = dict[@"tintColor"];
+    if (tintColorObj) {
+      self.tintColor = [RCTConvert UIColor:tintColorObj];
+    }
+      
+    if (@available(iOS 16.0, *)) {
+      NSNumber *hiddenNum = dict[@"hidden"];
+      if (hiddenNum != nil) {
+        self.hidden = [hiddenNum boolValue];
+      }
+    }
+    
+    NSNumber *selectedNum = dict[@"selected"];
+    if (selectedNum != nil) {
+      self.selected = [selectedNum boolValue];
+    }
+    
+    NSNumber *enabledNum = dict[@"enabled"];
+    if (enabledNum != nil) {
+      self.enabled = [enabledNum boolValue];
+    }
+    
+    NSNumber *width = dict[@"width"];
+    if (width) {
+      self.width = [width doubleValue];
+    }
+    
+    NSString *style = dict[@"style"];
+    if (style) {
+      if ([style isEqualToString:@"Done"]) {
+        self.style = UIBarButtonItemStyleDone;
+      } else if ([style isEqualToString:@"Prominent"]) {
+        if (@available(iOS 26.0, *)) {
+          self.style = UIBarButtonItemStyleProminent;
+        }
+      } else {
+        self.style = UIBarButtonItemStylePlain;
+      }
     }
     
     NSString *buttonId = dict[@"buttonId"];
