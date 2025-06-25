@@ -6,7 +6,7 @@ import { useStackNavigation } from './StackContainer';
 export const ScreenLayout = ({children}: {children: React.ReactNode}) => {
    const navigation = useStackNavigation();
 
-   console.log(`Render screen ${navigation.name} with id ${navigation.id}`);
+   console.log(`ScreenLayout render screen ${navigation.name} with id ${navigation.screenKey} and lifecycle ${navigation.lifecycleState}`);
 
    return (
       <View style={styles.container}>

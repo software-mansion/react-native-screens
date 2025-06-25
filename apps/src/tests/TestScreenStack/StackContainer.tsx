@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScreenStackHost, StackScreen } from 'react-native-screens';
+import { ScreenStackHost, StackScreen, StackScreenLifecycleState } from 'react-native-screens';
+import type { StackScreenNativeProps } from 'react-native-screens/components/gamma/StackScreen';
 
 let id = 0;
 
@@ -15,15 +16,13 @@ interface ScreenProps {
   // TBA
 }
 
-interface Path {
+type Path = {
   name: string;
   component: () => React.ReactNode;
   options?: ScreenProps;
 }
 
-interface ConcretePath extends Path {
-  id: number;
-}
+type Screen = Path & StackScreenNativeProps;
 
 export const StackContainerPath = (_: Path) => {
   return null;
@@ -37,12 +36,13 @@ interface StackContainerProps {
    options?: StackProps;
 }
 
-export type StackNavigationProps = {
-  name: string;
-  id: number;
+
+type StackNavigationActions = {
   pop: () => void;
   push: (name: string) => void;
 }
+
+export type StackNavigationProps = StackNavigationActions & Omit<Screen, 'component'>
 
 const StackNavigationContext = React.createContext<StackNavigationProps | null>(null);
 
@@ -57,7 +57,7 @@ export const useStackNavigation = () => {
 };
 
 export const StackContainer = ({children, config}: StackContainerProps) => {
-  const [stack, setStack] = React.useState<ConcretePath[]>([]);
+  const [stack, setStack] = React.useState<Screen[]>([]);
 
   const paths: Path[] = React.useMemo(() => {
     const configuredPaths = (config?.length !== undefined && config?.length)  ?  config : children?.map(child => child.props);
@@ -81,20 +81,44 @@ export const StackContainer = ({children, config}: StackContainerProps) => {
     setStack(currentStack => [
       ...currentStack,
       {
-        id: getId(),
+        screenKey: getId().toString(),
+        lifecycleState: StackScreenLifecycleState.VISIBLE,
         ...requestedPath,
       },
     ]);
   }, [pathsMap]);
 
+  const handlePop = React.useCallback((screenKey: string) => {
+    setStack(currentStack => {
+      const lastElement = currentStack.at(-1);
+
+      if (!lastElement) {
+        console.warn('Cannot pop empty stack');
+        return currentStack;
+      }
+      if (lastElement.screenKey === screenKey) { // We need to check if it is the top most screen, as didDisappear is called also on the lower screens when new one is pushed
+        return currentStack.slice(0, -1);
+      }
+
+      return currentStack;
+    });
+  }, []);
+
   const pop = React.useCallback(() => {
     setStack(currentStack => {
       if (currentStack.length < 2) {
-        console.warn('Can not pop initial path');
+        console.warn('Cannot pop initial path');
         return currentStack;
       }
+      const lastElement = currentStack.pop()!; // We know that's not undefined, cause we check the length being >= 1
 
-      return currentStack.slice(0, -1);
+      return [
+        ...currentStack, // This is mutated through pop()
+        {
+          ...lastElement,
+          lifecycleState: StackScreenLifecycleState.POPPED,
+        },
+      ];
     });
   }, [setStack]);
 
@@ -110,21 +134,24 @@ export const StackContainer = ({children, config}: StackContainerProps) => {
     }
   }, [paths, push, stack.length]);
 
-  console.log('StackContainer render', paths, pathsMap, stack);
+  console.log('StackContainer render', stack);
 
   return (
     <ScreenStackHost>
-      {stack.map(stackItem => (
-        <StackScreen key={stackItem.id}>
+      {stack.map(({component: Component, ...screenProps}) => (
+        <StackScreen
+          key={screenProps.screenKey}
+          {...screenProps}
+          onPop={handlePop}
+        >
           <StackNavigationContext.Provider
             value={{
-                name: stackItem.name,
-                id: stackItem.id,
+                ...screenProps,
                 pop,
                 push,
             }}
            >
-            <stackItem.component />
+            <Component />
           </StackNavigationContext.Provider>
         </StackScreen>
       ))}

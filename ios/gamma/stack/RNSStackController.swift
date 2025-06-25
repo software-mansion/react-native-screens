@@ -3,28 +3,48 @@ import UIKit
 
 @objc
 public class RNSStackController : UINavigationController, ReactMountingTransactionObserving {
-  private var pendingChildViewControllers: [RNSStackScreenController]?
+  private var needsChildViewControllersUpdate = false
+  private let screenStackHostComponentView: RNSScreenStackHostComponentView
   
-  @objc
-  public func setNeedsUpdateOfChildViewControllers(_ viewControllers: [RNSStackScreenController]) {
-    pendingChildViewControllers = viewControllers
+  @objc public required init(stackHostComponentView: RNSScreenStackHostComponentView) {
+    self.screenStackHostComponentView = stackHostComponentView;
+    super.init(nibName: nil, bundle: nil)
   }
+  
+  required init?(coder aDecoder: NSCoder) {
+    return nil
+  }
+  
+  // MARK: Signals
+
+  @objc
+  public func setNeedsUpdateOfChildViewControllers() {
+    needsChildViewControllersUpdate = true;
+  }
+  
+  // MARK: Updating
   
   @objc
   public func updateChildViewControllersIfNeeded() {
-    if pendingChildViewControllers != nil {
+    if needsChildViewControllersUpdate {
       updateChildViewControllers()
     }
   }
   
   @objc
   public func updateChildViewControllers() {
-    guard let pendingChildViewControllers = pendingChildViewControllers else {
-      fatalError("[RNScreens] Pending update must not be nil while it is forced!")
+    precondition(needsChildViewControllersUpdate, "[RNScreens] Child view controller must be invalidated when update is forced!")
+    
+    let currentSubviews = screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
+    
+    let visibleViews = currentSubviews.filter {
+      $0.lifecycleState != RNSScreenStackLifecycleState.popped
     }
     
-    setViewControllers(pendingChildViewControllers, animated: true)
-    self.pendingChildViewControllers = nil
+    let visibleViewControllers = visibleViews.map { $0.controller }
+    setViewControllers(visibleViewControllers, animated: true)
+    
+    needsChildViewControllersUpdate = false;
   }
   
   // MARK: ReactMountingTransactionObserving
