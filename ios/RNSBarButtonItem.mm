@@ -46,6 +46,29 @@ static char RNSBarButtonItemIdKey;
       self.width = [width doubleValue];
     }
     
+    if (@available(iOS 15.0, *)) {
+      NSNumber *changesSelectionAsPrimaryActionNum = dict[@"changesSelectionAsPrimaryAction"];
+      if (changesSelectionAsPrimaryActionNum != nil) {
+        self.changesSelectionAsPrimaryAction = [changesSelectionAsPrimaryActionNum boolValue];
+      }
+    }
+    
+    if (@available(iOS 26.0, *)) {
+      NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
+      if (hidesSharedBackgroundNum != nil) {
+        self.hidesSharedBackground = [hidesSharedBackgroundNum boolValue];
+      }
+      NSNumber *sharesBackgroundNum = dict[@"sharesBackground"];
+      if (sharesBackgroundNum != nil) {
+        self.sharesBackground = [sharesBackgroundNum boolValue];
+      }
+      NSString *identifier = dict[@"identifier"];
+      if (identifier != nil) {
+        //self.identifier = identifier;
+      }
+    }
+  
+    
     NSString *style = dict[@"style"];
     if (style) {
       if ([style isEqualToString:@"Done"]) {
