@@ -34,7 +34,7 @@ class TabScreen(
         }
 
     override fun onAttachedToWindow() {
-        Log.d(TAG, "TabScreen attached to window")
+        Log.d(TAG, "TabScreen [$id] attached to window")
         super.onAttachedToWindow()
     }
 
