@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.ViewGroup
 import com.facebook.react.uimanager.ThemedReactContext
 import java.lang.ref.WeakReference
+import kotlin.properties.Delegates
 
 /**
  * React Component view.
@@ -33,6 +34,12 @@ class TabScreen(
                 }
         }
 
+    var tabTitle: String? by Delegates.observable(null) { property, oldValue, newValue ->
+        if (newValue != oldValue) {
+            onTabTitleChangedFromJS()
+        }
+    }
+
     override fun onAttachedToWindow() {
         Log.d(TAG, "TabScreen [$id] attached to window")
         super.onAttachedToWindow()
@@ -52,6 +59,10 @@ class TabScreen(
 
     private fun onTabFocusChangedFromJS() {
         tabScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
+    }
+
+    private fun onTabTitleChangedFromJS() {
+        tabScreenDelegate.get()?.onMenuItemAttributesChange(this)
     }
 
     internal fun onViewManagerAddEventEmitters() {

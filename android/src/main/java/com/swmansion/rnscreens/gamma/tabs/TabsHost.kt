@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.tabs
 import android.graphics.Color
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
@@ -200,6 +201,12 @@ class TabsHost(
         }
     }
 
+    override fun onMenuItemAttributesChange(tabScreen: TabScreen) {
+        getMenuItemForTabScreen(tabScreen)?.let { menuItem ->
+            updateMenuItemOfTabScreen(menuItem, tabScreen)
+        }
+    }
+
     private fun updateBottomNavigationViewAppearance() {
         Log.w(TAG, "updateBottomNavigationViewAppearance")
         bottomNavigationView.isVisible = true
@@ -210,7 +217,7 @@ class TabsHost(
 
         tabScreenFragments.forEachIndexed { index, fragment ->
             Log.d(TAG, "Add menu item: $index")
-            val item = bottomNavigationView.menu.add(Menu.NONE, index, Menu.NONE, "Tab $index")
+            val item = bottomNavigationView.menu.add(Menu.NONE, index, Menu.NONE, fragment.tabScreen.tabTitle)
             item.setIcon(android.R.drawable.sym_action_chat)
         }
 
@@ -271,6 +278,16 @@ class TabsHost(
             return null
         }
         return checkNotNull(tabScreenFragments.indexOfFirst { it.tabScreen.isFocusedTab }) { "[RNScreens] There must be a focused tab" }
+    }
+
+    private fun getMenuItemForTabScreen(tabScreen: TabScreen): MenuItem? {
+        return tabScreenFragments.indexOfFirst { it.tabScreen === tabScreen }.takeIf { it != -1 }?.let { index ->
+            bottomNavigationView.menu.findItem(index)
+        }
+    }
+
+    private fun updateMenuItemOfTabScreen(menuItem: MenuItem, tabScreen: TabScreen) {
+        menuItem.title = tabScreen.tabTitle
     }
 
     internal fun onViewManagerAddEventEmitters() {
