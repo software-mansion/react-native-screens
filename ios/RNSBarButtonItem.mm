@@ -1,6 +1,7 @@
 #import "RNSBarButtonItem.h"
 #import <React/RCTConvert.h>
 #import <objc/runtime.h>
+#import <React/RCTFont.h>
 
 static char RNSBarButtonItemActionKey;
 static char RNSBarButtonItemIdKey;
@@ -18,18 +19,45 @@ static char RNSBarButtonItemIdKey;
     if (imageObj) {
       self.image = [RCTConvert UIImage:imageObj];
     }
+    
+    NSDictionary *titleStyle = dict[@"titleStyle"];
+    if (titleStyle) {
+      NSString *fontFamily = titleStyle[@"fontFamily"];
+      NSNumber *fontSize = titleStyle[@"fontSize"];
+      NSString *fontWeight = titleStyle[@"fontWeight"];
+      NSMutableDictionary *attrs = [NSMutableDictionary new];
+      if (fontFamily || fontWeight) {
+        attrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                              withFamily:fontFamily
+                                                    size:fontSize
+                                                  weight:fontWeight
+                                                   style:nil
+                                                 variant:nil
+                                         scaleMultiplier:1.0];
+      } else {
+        attrs[NSFontAttributeName] = [UIFont systemFontOfSize:[fontSize floatValue]];
+      }
+      [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
+      [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
+      [self setTitleTextAttributes:attrs forState:UIControlStateDisabled];
+      [self setTitleTextAttributes:attrs forState:UIControlStateSelected];
+      [self setTitleTextAttributes:attrs forState:UIControlStateFocused];
+    }
       
     id tintColorObj = dict[@"tintColor"];
     if (tintColorObj) {
       self.tintColor = [RCTConvert UIColor:tintColorObj];
     }
       
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
     if (@available(iOS 16.0, *)) {
       NSNumber *hiddenNum = dict[@"hidden"];
       if (hiddenNum != nil) {
         self.hidden = [hiddenNum boolValue];
       }
     }
+    #endif
     
     NSNumber *selectedNum = dict[@"selected"];
     if (selectedNum != nil) {
@@ -45,14 +73,18 @@ static char RNSBarButtonItemIdKey;
     if (width) {
       self.width = [width doubleValue];
     }
-    
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
     if (@available(iOS 15.0, *)) {
       NSNumber *changesSelectionAsPrimaryActionNum = dict[@"changesSelectionAsPrimaryAction"];
       if (changesSelectionAsPrimaryActionNum != nil) {
         self.changesSelectionAsPrimaryAction = [changesSelectionAsPrimaryActionNum boolValue];
       }
     }
+    #endif
     
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
     if (@available(iOS 26.0, *)) {
       NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
       if (hidesSharedBackgroundNum != nil) {
@@ -67,6 +99,7 @@ static char RNSBarButtonItemIdKey;
         //self.identifier = identifier;
       }
     }
+    #endif
   
     
     NSString *style = dict[@"style"];
@@ -74,9 +107,12 @@ static char RNSBarButtonItemIdKey;
       if ([style isEqualToString:@"Done"]) {
         self.style = UIBarButtonItemStyleDone;
       } else if ([style isEqualToString:@"Prominent"]) {
+        #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+        __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
         if (@available(iOS 26.0, *)) {
           self.style = UIBarButtonItemStyleProminent;
         }
+        #endif
       } else {
         self.style = UIBarButtonItemStylePlain;
       }
