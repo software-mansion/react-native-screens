@@ -9,7 +9,9 @@ static char RNSBarButtonItemIdKey;
 @implementation RNSBarButtonItem
 
 - (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dict
-                           action:(RNSBarButtonItemAction)action
+                            action:(RNSBarButtonItemAction)action
+                            menuAction:(RNSBarButtonMenuItemAction)menuAction
+
 {
   self = [super init];
   if (self) {
@@ -131,27 +133,9 @@ static char RNSBarButtonItemIdKey;
     
     #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
     if (@available(iOS 14.0, *)) {
-      NSArray *menuItems = dict[@"menu"];
-      if (menuItems.count > 0) {
-        NSMutableArray<UIMenuElement *> *actions = [NSMutableArray new];
-        for (NSDictionary *item in menuItems) {
-          NSString *title = item[@"title"];
-          if (![title isKindOfClass:[NSString class]]) continue;
-          UIAction *actionElement = [UIAction actionWithTitle:title
-                                                        image:nil
-                                                   identifier:nil
-                                                      handler:^(__kindof UIAction * _Nonnull a) {
-            RNSBarButtonItemAction parentAction = objc_getAssociatedObject(self, &RNSBarButtonItemActionKey);
-            if (parentAction) {
-              parentAction(title);
-            }
-          }];
-          [actions addObject:actionElement];
-        }
-        NSMutableArray<UIMenuElement *> *children = [NSMutableArray new];
-        
-        [children addObject:[UIMenu menuWithTitle:@"på" children:actions]];
-        self.menu = [UIMenu menuWithTitle:@"hej" children:children];
+      NSDictionary *menu = dict[@"menu"];
+      if (menu) {
+        self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction];
       }
     }
     #endif
@@ -166,6 +150,40 @@ static char RNSBarButtonItemIdKey;
   }
   return self;
 }
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
++(UIMenu*)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict                             menuAction:(RNSBarButtonMenuItemAction)menuAction
+{
+  if (@available(iOS 14.0, *)) {
+    NSArray* items = dict[@"items"];
+    NSMutableArray<UIMenuElement *> *elements = [NSMutableArray new];
+    if (items.count > 0) {
+      for (NSDictionary *item in items) {
+        NSString *menuId = item[@"menuId"];
+        if (menuId) {
+          NSString *title = item[@"title"];
+          NSString *systemImage = item[@"systemImage"];
+          UIAction *actionElement = [UIAction actionWithTitle:title
+                                    image:systemImage ? [UIImage systemImageNamed:systemImage] : nil
+                                    identifier:nil
+                                    handler:^(__kindof UIAction * _Nonnull a) {
+                                      menuAction(menuId);
+                                    }];
+          [elements addObject:actionElement];
+        } else {
+          UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
+          if (childMenu) {
+            [elements addObject:childMenu];
+          }
+        }
+      }
+    }
+    NSString *title = dict[@"title"];
+    return [UIMenu menuWithTitle:title children:elements];
+  }
+  return nil;
+}
+#endif
 
 - (void)handleBarButtonItemPress:(UIBarButtonItem *)item
 {
