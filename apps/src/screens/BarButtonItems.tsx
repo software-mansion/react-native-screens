@@ -31,7 +31,7 @@ export default function BarButtonItemsExample() {
               title: '+allt',
               onPress: () => Alert.alert('Plain pressed'),
               titleStyle: { fontFamily: 'Georgia', fontSize: 16, fontWeight: '800', color: 'black' },
-              style: 'Prominent',
+              style: 'prominent',
               tintColor: 'yellow',
             },
             {
@@ -43,7 +43,7 @@ export default function BarButtonItemsExample() {
           ],
           headerRightBarButtonItems: [
             {
-              style: 'Prominent',
+              style: 'prominent',
               title: 'Menu',
               tintColor: 'purple',
               menu: {
@@ -52,10 +52,12 @@ export default function BarButtonItemsExample() {
                   title: 'Search',
                   systemImage: 'magnifyingglass.circle.fill',
                   onPress: () => Alert.alert('Search pressed'),
+                  state: 'mixed',
                 },
                 {
                   title: 'Search with long text that wraps',
                   onPress: () => Alert.alert('Search with long text pressed'),
+                  attributes: 'keepsMenuPresented',
                 },
                 {
                   title: 'Submenu',
