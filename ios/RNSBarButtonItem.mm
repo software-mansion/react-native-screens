@@ -37,6 +37,10 @@ static char RNSBarButtonItemIdKey;
       } else {
         attrs[NSFontAttributeName] = [UIFont systemFontOfSize:[fontSize floatValue]];
       }
+      id titleColor = titleStyle[@"color"];
+      if (titleColor) {
+        attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:titleColor];
+      }
       [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
       [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
       [self setTitleTextAttributes:attrs forState:UIControlStateDisabled];
@@ -118,6 +122,33 @@ static char RNSBarButtonItemIdKey;
       }
     }
     
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
+    if (@available(iOS 14.0, *)) {
+      NSArray *menuItems = dict[@"menu"];
+      if (menuItems.count > 0) {
+        NSMutableArray<UIMenuElement *> *actions = [NSMutableArray new];
+        for (NSDictionary *item in menuItems) {
+          NSString *title = item[@"title"];
+          if (![title isKindOfClass:[NSString class]]) continue;
+          UIAction *actionElement = [UIAction actionWithTitle:title
+                                                        image:nil
+                                                   identifier:nil
+                                                      handler:^(__kindof UIAction * _Nonnull a) {
+            RNSBarButtonItemAction parentAction = objc_getAssociatedObject(self, &RNSBarButtonItemActionKey);
+            if (parentAction) {
+              parentAction(title);
+            }
+          }];
+          [actions addObject:actionElement];
+        }
+        NSMutableArray<UIMenuElement *> *children = [NSMutableArray new];
+        
+        [children addObject:[UIMenu menuWithTitle:@"på" children:actions]];
+        self.menu = [UIMenu menuWithTitle:@"hej" children:children];
+      }
+    }
+    #endif
+    
     NSString *buttonId = dict[@"buttonId"];
     if (buttonId && action) {
       self.target = self;
@@ -138,4 +169,4 @@ static char RNSBarButtonItemIdKey;
   }
 }
 
-@end 
+@end
