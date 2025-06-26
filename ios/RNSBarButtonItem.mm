@@ -110,9 +110,9 @@ static char RNSBarButtonItemIdKey;
     
     NSString *style = dict[@"style"];
     if (style) {
-      if ([style isEqualToString:@"Done"]) {
+      if ([style isEqualToString:@"done"]) {
         self.style = UIBarButtonItemStyleDone;
-      } else if ([style isEqualToString:@"Prominent"]) {
+      } else if ([style isEqualToString:@"prominent"]) {
         #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
         __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
         if (@available(iOS 26.0, *)) {
@@ -169,6 +169,31 @@ static char RNSBarButtonItemIdKey;
                                     handler:^(__kindof UIAction * _Nonnull a) {
                                       menuAction(menuId);
                                     }];
+          NSString *state = item[@"state"];
+          if ([state isEqualToString:@"on"]) {
+            actionElement.state = UIMenuElementStateOn;
+          } else if ([state isEqualToString:@"off"]) {
+            actionElement.state = UIMenuElementStateOff;
+          } else if ([state isEqualToString:@"mixed"]) {
+            actionElement.state = UIMenuElementStateMixed;
+          }
+          
+          NSString *attributes = item[@"attributes"];
+          if ([attributes isEqualToString:@"destructive"]) {
+            actionElement.attributes = UIMenuElementAttributesDestructive;
+          } else if ([attributes isEqualToString:@"disabled"]) {
+            actionElement.attributes = UIMenuElementAttributesDisabled;
+          } else if ([attributes isEqualToString:@"hidden"]) {
+            actionElement.attributes = UIMenuElementAttributesHidden;
+          }
+          #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+          __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+          else if (@available(iOS 16.0, *)) {
+            if ([attributes isEqualToString:@"keepsMenuPresented"]) {
+              actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
+            }
+          }
+          #endif
           [elements addObject:actionElement];
         } else {
           UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
