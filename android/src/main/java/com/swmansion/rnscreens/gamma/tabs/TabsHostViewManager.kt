@@ -66,9 +66,11 @@ class TabsHostViewManager :
     // These should be ignored or another component, dedicated for Android should be used
 
     override fun setTabBarBackgroundColor(
-        view: TabsHost?,
+        view: TabsHost,
         value: Int?,
-    ) = Unit
+    ) {
+        view.tabBarBackgroundColor = value
+    }
 
     override fun setTabBarBlurEffect(
         view: TabsHost?,

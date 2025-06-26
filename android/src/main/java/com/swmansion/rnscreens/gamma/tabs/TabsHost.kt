@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.graphics.Color
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -12,6 +11,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
+import kotlin.properties.Delegates
 
 class TabsHost(
     val reactContext: ThemedReactContext,
@@ -109,6 +109,15 @@ class TabsHost(
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
 
     private var isLayoutInvalidated: Boolean = false
+
+    var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            containerUpdateCoordinator.let {
+                it.invalidateNavigationMenu()
+                it.postContainerUpdateIfNeeded()
+            }
+        }
+    }
 
     init {
         orientation = VERTICAL
@@ -210,7 +219,9 @@ class TabsHost(
     private fun updateBottomNavigationViewAppearance() {
         Log.w(TAG, "updateBottomNavigationViewAppearance")
         bottomNavigationView.isVisible = true
-        bottomNavigationView.setBackgroundColor(Color.RED)
+        bottomNavigationView.setBackgroundColor(
+            tabBarBackgroundColor ?: com.google.android.material.R.color.m3_sys_color_light_surface_container,
+        )
 
         // First clean the menu, then populate it
         bottomNavigationView.menu.clear()
@@ -270,8 +281,7 @@ class TabsHost(
         layout(left, top, right, bottom)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? =
-        tabScreenFragments.getOrNull(itemId)
+    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? = tabScreenFragments.getOrNull(itemId)
 
     private fun getSelectedTabScreenFragmentId(): Int? {
         if (tabScreenFragments.isEmpty()) {
@@ -280,13 +290,15 @@ class TabsHost(
         return checkNotNull(tabScreenFragments.indexOfFirst { it.tabScreen.isFocusedTab }) { "[RNScreens] There must be a focused tab" }
     }
 
-    private fun getMenuItemForTabScreen(tabScreen: TabScreen): MenuItem? {
-        return tabScreenFragments.indexOfFirst { it.tabScreen === tabScreen }.takeIf { it != -1 }?.let { index ->
+    private fun getMenuItemForTabScreen(tabScreen: TabScreen): MenuItem? =
+        tabScreenFragments.indexOfFirst { it.tabScreen === tabScreen }.takeIf { it != -1 }?.let { index ->
             bottomNavigationView.menu.findItem(index)
         }
-    }
 
-    private fun updateMenuItemOfTabScreen(menuItem: MenuItem, tabScreen: TabScreen) {
+    private fun updateMenuItemOfTabScreen(
+        menuItem: MenuItem,
+        tabScreen: TabScreen,
+    ) {
         menuItem.title = tabScreen.tabTitle
     }
 
