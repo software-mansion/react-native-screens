@@ -849,7 +849,7 @@ RNS_IGNORE_SUPER_CALL_END
   NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count * 2 - 1];
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
-    if (dict[@"buttonId"]) {
+    if (dict[@"buttonId"] || dict[@"menu"]) {
       RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict action:^(NSString *buttonId) {
         if (self.onPressHeaderBarButtonItem && buttonId) {
           self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
