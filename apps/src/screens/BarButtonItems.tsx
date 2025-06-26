@@ -33,6 +33,12 @@ export default function BarButtonItemsExample() {
               titleStyle: { fontFamily: 'Georgia', fontSize: 16, fontWeight: '800', color: 'black' },
               style: 'prominent',
               tintColor: 'yellow',
+              badge: {
+                value: '1',
+                color: 'white',
+                backgroundColor: 'red',
+                style: { fontFamily: 'Georgia', fontSize: 16, fontWeight: '100' },
+              },
             },
             {
               image: require('../assets/search_black.png'),
