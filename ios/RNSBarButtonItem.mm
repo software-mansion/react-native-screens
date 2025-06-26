@@ -100,7 +100,7 @@ static char RNSBarButtonItemIdKey;
       }
       NSString *identifier = dict[@"identifier"];
       if (identifier != nil) {
-        //self.identifier = identifier;
+        self.identifier = identifier;
       }
     }
     #endif
@@ -120,6 +120,13 @@ static char RNSBarButtonItemIdKey;
       } else {
         self.style = UIBarButtonItemStylePlain;
       }
+    }
+    
+    if (dict[@"accessibilityLabel"]) {
+      self.accessibilityLabel = dict[@"accessibilityLabel"];
+    }
+    if (dict[@"accessibilityHint"]) {
+      self.accessibilityHint = dict[@"accessibilityHint"];
     }
     
     #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
