@@ -25,26 +25,34 @@ export default function BarButtonItemsExample() {
         name="BarButtonItems Demo"
         options={{
           headerTransparent: true,
-          headerBlurEffect: 'regular',
           title: 'BarButtonItems Demo',
           headerLeftBarButtonItems: [
             {
-              title: 'Plain',
+              title: '+allt',
               onPress: () => Alert.alert('Plain pressed'),
-              titleStyle: { fontFamily: 'Georgia', fontSize: 16, fontWeight: '800' },
+              titleStyle: { fontFamily: 'Georgia', fontSize: 16, fontWeight: '800', color: 'black' },
+              style: 'Prominent',
+              tintColor: 'yellow',
+            },
+            {
+              image: require('../assets/search_black.png'),
+              onPress: () => Alert.alert('Search pressed'),
             },
           ],
           headerRightBarButtonItems: [
             {
-              onPress: () => Alert.alert('Search pressed'),
-              image: require('../assets/search_black.png'),
-              style: 'Plain',
-            },
-            {
-              onPress: () => Alert.alert('Button pressed 2'),
-              image: require('../assets/search_black.png'),
               style: 'Prominent',
-              tintColor: 'green',
+              title: 'Menu',
+              menu: [
+                {
+                  title: 'Search',
+                  onPress: () => Alert.alert('Search pressed'),
+                },
+                {
+                  title: 'Search with long text that wraps',
+                  onPress: () => Alert.alert('Search with long text pressed'),
+                },
+              ],
             },
           ],
         }}
