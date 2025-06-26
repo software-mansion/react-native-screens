@@ -850,11 +850,18 @@ RNS_IGNORE_SUPER_CALL_END
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
     if (dict[@"buttonId"] || dict[@"menu"]) {
-      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict action:^(NSString *buttonId) {
-        if (self.onPressHeaderBarButtonItem && buttonId) {
-          self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
-        }
-      }];
+      RNSBarButtonItem *item = [[RNSBarButtonItem alloc]
+                                initWithDictionary:dict
+                                action:^(NSString *buttonId) {
+                                  if (self.onPressHeaderBarButtonItem && buttonId) {
+                                    self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
+                                  }
+                                }
+                                menuAction:^(NSString *menuId) {
+                                  if (self.onPressHeaderBarButtonMenuItem && menuId) {
+                                      self.onPressHeaderBarButtonMenuItem(@{ @"menuId": menuId });
+                                  }
+                                }];
       [items addObject:item];
     } else if (dict[@"spacing"]) {
       UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
@@ -1209,6 +1216,7 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)
 RCT_EXPORT_VIEW_PROPERTY(headerRightBarButtonItems, NSArray)
 RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonItem, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonMenuItem, RCTDirectEventBlock);
 
 @end
 
