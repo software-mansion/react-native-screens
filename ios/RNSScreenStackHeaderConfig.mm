@@ -4,6 +4,7 @@
 #import <React/RCTImageComponentView.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
+#import <ReactCommon/TurboModuleUtils.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -853,15 +854,35 @@ RNS_IGNORE_SUPER_CALL_END
       RNSBarButtonItem *item = [[RNSBarButtonItem alloc]
                                 initWithDictionary:dict
                                 action:^(NSString *buttonId) {
-                                  if (self.onPressHeaderBarButtonItem && buttonId) {
-                                    self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
-                                  }
-                                }
+#ifdef RCT_NEW_ARCH_ENABLED
+        auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(self->_eventEmitter);
+        if (eventEmitter && buttonId) {
+          eventEmitter->onPressHeaderBarButtonItem
+          (facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem {
+            .buttonId = std::string([buttonId UTF8String])
+          });
+        }
+#else
+        if (self.onPressHeaderBarButtonItem && buttonId) {
+          self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
+        }
+#endif
+      }
                                 menuAction:^(NSString *menuId) {
-                                  if (self.onPressHeaderBarButtonMenuItem && menuId) {
-                                      self.onPressHeaderBarButtonMenuItem(@{ @"menuId": menuId });
-                                  }
-                                }];
+#ifdef RCT_NEW_ARCH_ENABLED
+        auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(self->_eventEmitter);
+        if (eventEmitter && menuId) {
+          eventEmitter->onPressHeaderBarButtonMenuItem
+          (facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem {
+            .menuId = std::string([menuId UTF8String])
+          });
+        }
+#else
+        if (self.onPressHeaderBarButtonMenuItem && menuId) {
+          self.onPressHeaderBarButtonMenuItem(@{ @"menuId": menuId });
+        }
+#endif
+      }];
       [items addObject:item];
     } else if (dict[@"spacing"]) {
       UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
@@ -975,6 +996,11 @@ RNS_IGNORE_SUPER_CALL_END
         RCTLogError(@"[RNScreens] Unhandled subview type: %ld", childComponentView.type);
     }
   }
+}
+
+- (void)onPressHeaderBarButtonItemHandler:(NSString *)buttonId
+{
+  
 }
 
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
@@ -1103,7 +1129,32 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
-
+  
+  if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {
+    const auto &vec = newScreenProps.headerLeftBarButtonItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _headerLeftBarButtonItems = array;
+  }
+  
+  
+  if (newScreenProps.headerRightBarButtonItems != oldScreenProps.headerRightBarButtonItems) {
+    const auto &vec = newScreenProps.headerRightBarButtonItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _headerRightBarButtonItems = array;
+  }
+  
   [self updateViewControllerIfNeeded];
 
   if (needsNavigationControllerLayout) {
