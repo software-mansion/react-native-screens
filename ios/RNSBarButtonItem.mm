@@ -1,7 +1,7 @@
 #import "RNSBarButtonItem.h"
 #import <React/RCTConvert.h>
-#import <objc/runtime.h>
 #import <React/RCTFont.h>
+#import <objc/runtime.h>
 
 static char RNSBarButtonItemActionKey;
 static char RNSBarButtonItemIdKey;
@@ -10,7 +10,7 @@ static char RNSBarButtonItemIdKey;
 
 - (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dict
                             action:(RNSBarButtonItemAction)action
-                            menuAction:(RNSBarButtonMenuItemAction)menuAction
+                        menuAction:(RNSBarButtonMenuItemAction)menuAction
 
 {
   self = [super init];
@@ -21,7 +21,7 @@ static char RNSBarButtonItemIdKey;
     if (imageObj) {
       self.image = [RCTConvert UIImage:imageObj];
     }
-    
+
     NSDictionary *titleStyle = dict[@"titleStyle"];
     if (titleStyle) {
       NSString *fontFamily = titleStyle[@"fontFamily"];
@@ -49,13 +49,13 @@ static char RNSBarButtonItemIdKey;
       [self setTitleTextAttributes:attrs forState:UIControlStateSelected];
       [self setTitleTextAttributes:attrs forState:UIControlStateFocused];
     }
-      
+
     id tintColorObj = dict[@"tintColor"];
     if (tintColorObj) {
       self.tintColor = [RCTConvert UIColor:tintColorObj];
     }
-      
-    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
     if (@available(iOS 16.0, *)) {
       NSNumber *hiddenNum = dict[@"hidden"];
@@ -63,23 +63,23 @@ static char RNSBarButtonItemIdKey;
         self.hidden = [hiddenNum boolValue];
       }
     }
-    #endif
-    
+#endif
+
     NSNumber *selectedNum = dict[@"selected"];
     if (selectedNum != nil) {
       self.selected = [selectedNum boolValue];
     }
-    
+
     NSNumber *enabledNum = dict[@"enabled"];
     if (enabledNum != nil) {
       self.enabled = [enabledNum boolValue];
     }
-    
+
     NSNumber *width = dict[@"width"];
     if (width) {
       self.width = [width doubleValue];
     }
-    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
     if (@available(iOS 15.0, *)) {
       NSNumber *changesSelectionAsPrimaryActionNum = dict[@"changesSelectionAsPrimaryAction"];
@@ -87,9 +87,9 @@ static char RNSBarButtonItemIdKey;
         self.changesSelectionAsPrimaryAction = [changesSelectionAsPrimaryActionNum boolValue];
       }
     }
-    #endif
-    
-    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+#endif
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
     if (@available(iOS 26.0, *)) {
       NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
@@ -135,41 +135,40 @@ static char RNSBarButtonItemIdKey;
         self.badge = badge;
       }
     }
-    #endif
-  
-    
+#endif
+
     NSString *style = dict[@"style"];
     if (style) {
       if ([style isEqualToString:@"done"]) {
         self.style = UIBarButtonItemStyleDone;
       } else if ([style isEqualToString:@"prominent"]) {
-        #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-        __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
         if (@available(iOS 26.0, *)) {
           self.style = UIBarButtonItemStyleProminent;
         }
-        #endif
+#endif
       } else {
         self.style = UIBarButtonItemStylePlain;
       }
     }
-    
+
     if (dict[@"accessibilityLabel"]) {
       self.accessibilityLabel = dict[@"accessibilityLabel"];
     }
     if (dict[@"accessibilityHint"]) {
       self.accessibilityHint = dict[@"accessibilityHint"];
     }
-    
-    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
     if (@available(iOS 14.0, *)) {
       NSDictionary *menu = dict[@"menu"];
       if (menu) {
         self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction];
       }
     }
-    #endif
-    
+#endif
+
     NSString *buttonId = dict[@"buttonId"];
     if (buttonId && action) {
       self.target = self;
@@ -182,10 +181,10 @@ static char RNSBarButtonItemIdKey;
 }
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
-+(UIMenu*)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict                             menuAction:(RNSBarButtonMenuItemAction)menuAction
++ (UIMenu *)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
 {
   if (@available(iOS 14.0, *)) {
-    NSArray* items = dict[@"items"];
+    NSArray *items = dict[@"items"];
     NSMutableArray<UIMenuElement *> *elements = [NSMutableArray new];
     if (items.count > 0) {
       for (NSDictionary *item in items) {
@@ -194,11 +193,11 @@ static char RNSBarButtonItemIdKey;
           NSString *title = item[@"title"];
           NSString *systemImage = item[@"systemImage"];
           UIAction *actionElement = [UIAction actionWithTitle:title
-                                    image:systemImage ? [UIImage systemImageNamed:systemImage] : nil
-                                    identifier:nil
-                                    handler:^(__kindof UIAction * _Nonnull a) {
-                                      menuAction(menuId);
-                                    }];
+                                                        image:systemImage ? [UIImage systemImageNamed:systemImage] : nil
+                                                   identifier:nil
+                                                      handler:^(__kindof UIAction *_Nonnull a) {
+                                                        menuAction(menuId);
+                                                      }];
           NSString *state = item[@"state"];
           if ([state isEqualToString:@"on"]) {
             actionElement.state = UIMenuElementStateOn;
@@ -207,7 +206,7 @@ static char RNSBarButtonItemIdKey;
           } else if ([state isEqualToString:@"mixed"]) {
             actionElement.state = UIMenuElementStateMixed;
           }
-          
+
           NSString *attributes = item[@"attributes"];
           if ([attributes isEqualToString:@"destructive"]) {
             actionElement.attributes = UIMenuElementAttributesDestructive;
@@ -216,14 +215,14 @@ static char RNSBarButtonItemIdKey;
           } else if ([attributes isEqualToString:@"hidden"]) {
             actionElement.attributes = UIMenuElementAttributesHidden;
           }
-          #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-          __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
           else if (@available(iOS 16.0, *)) {
             if ([attributes isEqualToString:@"keepsMenuPresented"]) {
               actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
             }
           }
-          #endif
+#endif
           [elements addObject:actionElement];
         } else {
           UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
