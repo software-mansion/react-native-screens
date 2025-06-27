@@ -1,6 +1,6 @@
 // NOTE: The full native feature set (style, image, menu, etc.) is available, but the TS types in src/types.tsx need to be updated to match. This example uses only the currently typed props (title, icon, onPress, enabled).
 import React from 'react';
-import { View, Alert, Button, Text } from 'react-native';
+import { View, Alert, Button, Text, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -63,7 +63,7 @@ const AdvancedMenuButtonDemo = DemoScreenContent;
 
 export default function BarButtonItemsExample() {
   return (
-    <Stack.Navigator screenOptions={{ headerTransparent: true }}>
+    <Stack.Navigator screenOptions={{ headerTransparent: Platform.OS === 'ios' && parseInt(Platform.Version) >= 26 }}>
       <Stack.Screen
         name="Main"
         component={MainScreen}
