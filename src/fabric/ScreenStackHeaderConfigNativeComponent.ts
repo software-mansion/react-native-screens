@@ -17,9 +17,8 @@ type OnAttachedEvent = Readonly<{}>;
 // eslint-disable-next-line @typescript-eslint/ban-types
 type OnDetachedEvent = Readonly<{}>;
 
-type OnPressHeaderBarButtonItemEvent = Readonly<{buttonId: string}>;
-type OnPressHeaderBarButtonMenuItemEvent = Readonly<{menuId: string}>;
-
+type OnPressHeaderBarButtonItemEvent = Readonly<{ buttonId: string }>;
+type OnPressHeaderBarButtonMenuItemEvent = Readonly<{ menuId: string }>;
 
 type BackButtonDisplayMode = 'minimal' | 'default' | 'generic';
 

@@ -322,15 +322,15 @@ class ScreenStackHeaderConfigViewManager :
     }
 
     override fun setHeaderLeftBarButtonItems(
-        view: ScreenStackHeaderConfig?, 
-        value: ReadableArray?
+        view: ScreenStackHeaderConfig?,
+        value: ReadableArray?,
     ) {
         logNotAvailable("headerLeftBarButtonItems")
     }
 
     override fun setHeaderRightBarButtonItems(
-        view: ScreenStackHeaderConfig?, 
-        value: ReadableArray?
+        view: ScreenStackHeaderConfig?,
+        value: ReadableArray?,
     ) {
         logNotAvailable("headerRightBarButtonItems")
     }
