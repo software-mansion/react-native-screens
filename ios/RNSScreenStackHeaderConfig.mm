@@ -26,13 +26,13 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
+#import "RNSBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
-#import "RNSBarButtonItem.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -704,7 +704,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   // Set leftBarButtonItems if provided
   if (config.headerLeftBarButtonItems) {
-      navitem.leftBarButtonItems = [config barButtonItemsFromDictionaries:config.headerLeftBarButtonItems];
+    navitem.leftBarButtonItems = [config barButtonItemsFromDictionaries:config.headerLeftBarButtonItems];
   }
   // Set rightBarButtonItems if provided
   if (config.headerRightBarButtonItems) {
@@ -825,46 +825,48 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (NSArray<UIBarButtonItem *> *)barButtonItemsFromDictionaries:(NSArray<NSDictionary<NSString *, id> *> *)dicts {
+- (NSArray<UIBarButtonItem *> *)barButtonItemsFromDictionaries:(NSArray<NSDictionary<NSString *, id> *> *)dicts
+{
   NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count * 2 - 1];
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
     if (dict[@"buttonId"] || dict[@"menu"]) {
-      RNSBarButtonItem *item = [[RNSBarButtonItem alloc]
-                                initWithDictionary:dict
-                                action:^(NSString *buttonId) {
+      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict
+          action:^(NSString *buttonId) {
 #ifdef RCT_NEW_ARCH_ENABLED
-        auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(self->_eventEmitter);
-        if (eventEmitter && buttonId) {
-          eventEmitter->onPressHeaderBarButtonItem
-          (facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem {
-            .buttonId = std::string([buttonId UTF8String])
-          });
-        }
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && buttonId) {
+              eventEmitter->onPressHeaderBarButtonItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
+                      .buttonId = std::string([buttonId UTF8String])});
+            }
 #else
-        if (self.onPressHeaderBarButtonItem && buttonId) {
-          self.onPressHeaderBarButtonItem(@{ @"buttonId": buttonId });
-        }
+            if (self.onPressHeaderBarButtonItem && buttonId) {
+              self.onPressHeaderBarButtonItem(@{@"buttonId" : buttonId});
+            }
 #endif
-      }
-                                menuAction:^(NSString *menuId) {
+          }
+          menuAction:^(NSString *menuId) {
 #ifdef RCT_NEW_ARCH_ENABLED
-        auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(self->_eventEmitter);
-        if (eventEmitter && menuId) {
-          eventEmitter->onPressHeaderBarButtonMenuItem
-          (facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem {
-            .menuId = std::string([menuId UTF8String])
-          });
-        }
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && menuId) {
+              eventEmitter->onPressHeaderBarButtonMenuItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
+                      .menuId = std::string([menuId UTF8String])});
+            }
 #else
-        if (self.onPressHeaderBarButtonMenuItem && menuId) {
-          self.onPressHeaderBarButtonMenuItem(@{ @"menuId": menuId });
-        }
+            if (self.onPressHeaderBarButtonMenuItem && menuId) {
+              self.onPressHeaderBarButtonMenuItem(@{@"menuId" : menuId});
+            }
 #endif
-      }];
+          }];
       [items addObject:item];
     } else if (dict[@"spacing"]) {
-      UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+      UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                                  target:nil
+                                                                                  action:nil];
       NSNumber *spacingValue = dict[@"spacing"];
       fixedSpace.width = [spacingValue doubleValue];
       [items addObject:fixedSpace];
@@ -872,7 +874,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
   return items;
 }
-
 
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
@@ -979,7 +980,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)onPressHeaderBarButtonItemHandler:(NSString *)buttonId
 {
-  
 }
 
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
@@ -1108,7 +1108,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
-  
+
   if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {
     const auto &vec = newScreenProps.headerLeftBarButtonItems;
     NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
@@ -1120,8 +1120,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     }
     _headerLeftBarButtonItems = array;
   }
-  
-  
+
   if (newScreenProps.headerRightBarButtonItems != oldScreenProps.headerRightBarButtonItems) {
     const auto &vec = newScreenProps.headerRightBarButtonItems;
     NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
@@ -1133,7 +1132,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     }
     _headerRightBarButtonItems = array;
   }
-  
+
   [self updateViewControllerIfNeeded];
 
   if (needsNavigationControllerLayout) {
