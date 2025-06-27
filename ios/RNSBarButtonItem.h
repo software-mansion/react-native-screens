@@ -5,6 +5,8 @@ typedef void (^RNSBarButtonMenuItemAction)(NSString *menuId);
 
 @interface RNSBarButtonItem : UIBarButtonItem
 
-- (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dict   action:(RNSBarButtonItemAction)action menuAction:(RNSBarButtonMenuItemAction)menuAction;
+- (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dict
+                            action:(RNSBarButtonItemAction)action
+                        menuAction:(RNSBarButtonMenuItemAction)menuAction;
 
-@end 
+@end

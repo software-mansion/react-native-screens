@@ -327,7 +327,8 @@
   }
 }
 
-+ (id)idFromFollyDynamic:(const folly::dynamic &)dyn {
++ (id)idFromFollyDynamic:(const folly::dynamic &)dyn
+{
   if (dyn.isNull()) {
     return nil;
   } else if (dyn.isBool()) {
