@@ -165,6 +165,7 @@
       "componentProvider": {
         "RNSStackScreen": "RNSStackScreenComponentView",
         "RNSScreenStackHost": "RNSScreenStackHostComponentView",
+        "RNSScreenStackNavigationBar": "RNSScreenStackNavigationBarComponentView",
         "RNSBottomTabsScreen": "RNSBottomTabsScreenComponentView",
         "RNSBottomTabs": "RNSBottomTabsHostComponentView",
         "RNSFullWindowOverlay": "RNSFullWindowOverlay",
@@ -220,6 +221,9 @@
         },
         "RNSScreenStackHost": {
           "className": "RNSScreenStackHostComponentView"
+        },
+          "RNSScreenStackNavigationBar": {
+          "className": "RNSScreenStackNavigationBarComponentView"
         },
         "RNSBottomTabsScreen": {
           "className": "RNSBottomTabsScreenComponentView"

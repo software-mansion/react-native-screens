@@ -1,4 +1,6 @@
 #import "RNSStackScreenComponentView.h"
+#import "RNSScreenStackNavigationBarComponentView.h"
+
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -67,6 +69,23 @@ namespace react = facebook::react;
 }
 
 #pragma mark - RCTViewComponentViewProtocol
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [super mountChildComponentView:childComponentView index:index];
+  if ([childComponentView isKindOfClass:RNSScreenStackNavigationBarComponentView.class]) {
+    auto *childScreen = static_cast<RNSScreenStackNavigationBarComponentView *>(childComponentView);
+    NSLog(@"Mounted navigation bar %@", childScreen);
+    [childScreen setNavigationItem:_controller.navigationItem];
+  }
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  // TODO
+  [super unmountChildComponentView:childComponentView index:index];
+}
+
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
