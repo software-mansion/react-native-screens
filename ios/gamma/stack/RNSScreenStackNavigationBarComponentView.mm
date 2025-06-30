@@ -19,7 +19,7 @@ namespace react = facebook::react;
 @implementation RNSScreenStackNavigationBarComponentView {
   RNSNavigationBarController *_Nonnull _controller;
   
-  // Flags
+  // flags
   BOOL _needsNavigationItemUpdate;
 }
 
@@ -37,7 +37,7 @@ namespace react = facebook::react;
   
   _controller = [[RNSNavigationBarController alloc] initWithNavigationBarComponentView:self];
   
-  // signals
+  // flags
   _needsNavigationItemUpdate = NO;
   // navigation item props
   _title = nil;

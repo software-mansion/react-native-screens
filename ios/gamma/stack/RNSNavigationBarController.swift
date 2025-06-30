@@ -6,7 +6,7 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
   @objc
   public var navigationItem: UINavigationItem?
   private let navigationBarComponentView: RNSScreenStackNavigationBarComponentView
-  // Signals
+  // Flags
   private var needsNavigationItemUpdate = false;
   
   @objc
@@ -14,14 +14,12 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
     self.navigationBarComponentView = navigationBarComponentView
   }
   
-  
   // MARK: Signals
   
   @objc
   public func setNeedsNavigationItemUpdate() {
     needsNavigationItemUpdate = true;
   }
-  
   
   // MARK: Updating
   
@@ -42,6 +40,7 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
     
     needsNavigationItemUpdate = false;
   }
+  
   // MARK: ReactMountingTransactionObserving
   
   @objc
