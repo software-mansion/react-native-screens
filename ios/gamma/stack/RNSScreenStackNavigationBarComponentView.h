@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSScreenStackNavigationBarComponentView()
 
-- (void)setNavigationItem:(UINavigationItem *)navigationItem;
+- (void)setNavigationItem:(UINavigationItem *_Nullable)navigationItem;
 
 @end
 

@@ -49,7 +49,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 }
 
-- (void)setNavigationItem:(UINavigationItem *)navigationItem
+- (void)setNavigationItem:(UINavigationItem *_Nullable)navigationItem
 {
   _controller.navigationItem = navigationItem;
 }

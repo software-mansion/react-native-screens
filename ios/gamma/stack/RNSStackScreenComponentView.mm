@@ -81,7 +81,10 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  // TODO
+  if ([childComponentView isKindOfClass:RNSScreenStackNavigationBarComponentView.class]) {
+    auto *childScreen = static_cast<RNSScreenStackNavigationBarComponentView *>(childComponentView);
+    [childScreen setNavigationItem:nil];
+  }
   [super unmountChildComponentView:childComponentView index:index];
 }
 
