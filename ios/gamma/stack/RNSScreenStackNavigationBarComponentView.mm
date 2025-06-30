@@ -36,17 +36,18 @@ namespace react = facebook::react;
   [self resetProps];
   
   _needsNavigationItemUpdate = NO;
+  
+  NSLog(@"RNSScreenStackNavigationBarComponentView initState -> init RNSNavigationBarController");
+  _controller = [[RNSNavigationBarController alloc] initWithNavigationBarComponentView:self];
+  
+  // navigation item props
+  _title = nil;
 }
 
 - (void)resetProps
 {
   static const auto defaultProps = std::make_shared<const react::RNSScreenStackProps>();
   _props = defaultProps;
-
-  _controller = [[RNSNavigationBarController alloc] initWithNavigationBarComponentView:self];
-  
-  // navigation item props
-  _title = nil;
 }
 
 - (void)setNavigationItem:(UINavigationItem *)navigationItem

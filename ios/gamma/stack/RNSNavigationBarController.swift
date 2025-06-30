@@ -38,7 +38,7 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
     precondition(needsNavigationItemUpdate, "[RNScreens] Navigation item needs to be invalidated when update is forced!")
     
     guard let navigationItem = navigationItem else {
-      fatalError("[RNScreens navigation item should be provided at this moment already]");
+      fatalError("[RNScreens] Navigation item should be provided at this moment already");
     }
     
     navigationItem.title = navigationBarComponentView.title;
