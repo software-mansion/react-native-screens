@@ -35,11 +35,10 @@ namespace react = facebook::react;
 {
   [self resetProps];
   
-  _needsNavigationItemUpdate = NO;
-  
-  NSLog(@"RNSScreenStackNavigationBarComponentView initState -> init RNSNavigationBarController");
   _controller = [[RNSNavigationBarController alloc] initWithNavigationBarComponentView:self];
   
+  // signals
+  _needsNavigationItemUpdate = NO;
   // navigation item props
   _title = nil;
 }
@@ -77,10 +76,8 @@ namespace react = facebook::react;
 {
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSScreenStackNavigationBarProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSScreenStackNavigationBarProps>(props);
-  NSLog(@"RNSScreenStackNavigationBarComponentView updateProps");
   if (oldComponentProps.title != newComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
-    NSLog(@"RNSScreenStackNavigationBarComponentView new title %@", _title);
     _needsNavigationItemUpdate = YES;
   }
 
