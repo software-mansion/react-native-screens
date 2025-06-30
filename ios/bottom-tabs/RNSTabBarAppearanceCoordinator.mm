@@ -60,7 +60,7 @@
                  forTabScreenController:tabScreenCtrl
                   withHostComponentView:hostComponentView];
 
-    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearace:tabAppearance];
+    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearace:tabAppearance imageLoader:imageLoader];
   }
 }
 
@@ -78,14 +78,45 @@
 
 - (void)configureTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
                                     withAppearace:(nonnull UITabBarAppearance *)tabAppearance
+                                      imageLoader:(nullable RCTImageLoader *)imageLoader
 {
   UITabBarItem *tabBarItem = tabScreenCtrl.tabBarItem;
 
   tabBarItem.standardAppearance = tabAppearance;
   tabBarItem.scrollEdgeAppearance = tabAppearance;
 
-  tabBarItem.image = [UIImage systemImageNamed:tabScreenCtrl.tabScreenComponentView.iconSFSymbolName];
-  tabBarItem.selectedImage = [UIImage systemImageNamed:tabScreenCtrl.tabScreenComponentView.selectedIconSFSymbolName];
+  if (tabScreenCtrl.tabScreenComponentView.iconImageSource != nil && imageLoader != nil) {
+    [self loadImageForTabBarItem:tabBarItem
+                            from:tabScreenCtrl.tabScreenComponentView.iconImageSource
+                 withImageLoader:imageLoader];
+  } else if (tabScreenCtrl.tabScreenComponentView.iconSFSymbolName != nil) {
+    tabBarItem.image = [UIImage systemImageNamed:tabScreenCtrl.tabScreenComponentView.iconSFSymbolName];
+  } else {
+    tabBarItem.image = nil;
+  }
+
+  //    tabBarItem.selectedImage = [UIImage
+  //    systemImageNamed:tabScreenCtrl.tabScreenComponentView.selectedIconSFSymbolName];
+}
+
+- (void)loadImageForTabBarItem:(nullable UITabBarItem *)tabBarItem
+                          from:(nonnull NSURLRequest *)imageSource
+               withImageLoader:(nonnull RCTImageLoader *)imageLoader
+{
+  [imageLoader loadImageWithURLRequest:imageSource
+      size:CGSizeZero
+      scale:3
+      clipped:false
+      resizeMode:RCTResizeModeContain
+      progressBlock:^(int64_t progress, int64_t total) {
+      }
+      partialLoadBlock:^(UIImage *_Nonnull image) {
+      }
+      completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+          tabBarItem.image = image;
+        });
+      }];
 }
 
 - (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance

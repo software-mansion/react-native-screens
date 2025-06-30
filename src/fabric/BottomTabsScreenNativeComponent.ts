@@ -9,6 +9,9 @@ import {
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
+// @ts-ignore: ImageSource type has been recently added to react-native: https://github.com/facebook/react-native/pull/51969
+import type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type GenericEmptyEvent = Readonly<{}>;
 
@@ -79,6 +82,9 @@ export interface NativeProps extends ViewProps {
 
   // Android-specific image handling
   iconResourceName?: string;
+
+  iconImageSource?: ImageSource;
+  selectedIconImageSource?: ImageSource;
 
   badgeValue?: string;
 

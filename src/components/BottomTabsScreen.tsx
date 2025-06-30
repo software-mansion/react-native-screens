@@ -7,6 +7,7 @@ import BottomTabsScreenNativeComponent, {
 } from '../fabric/BottomTabsScreenNativeComponent';
 import {
   type ColorValue,
+  ImageSourcePropType,
   type NativeSyntheticEvent,
   StyleSheet,
   TextStyle,
@@ -59,6 +60,9 @@ export interface BottomTabsScreenProps {
 
   // Android specific
   iconResourceName?: string;
+
+  iconImageSource?: ImageSourcePropType;
+  selectedIconImageSource?: ImageSourcePropType;
 
   badgeValue?: string;
 

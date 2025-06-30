@@ -11,6 +11,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTImagePrimitivesConversions.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #if RCT_NEW_ARCH_ENABLED
@@ -83,6 +84,9 @@ namespace react = facebook::react;
 
   _overrideScrollViewContentInsetAdjustmentBehavior = YES;
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
+  
+  _iconImageSource = nil;
+  _selectedIconImageSource = nil;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -246,6 +250,16 @@ RNS_IGNORE_SUPER_CALL_END
   // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
   // enabling us to warn users that dynamic changes are not supported.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
+
+  if (newComponentProps.iconImageSource != oldComponentProps.iconImageSource) {
+    _iconImageSource = NSURLRequestFromImageSource(newComponentProps.iconImageSource);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
+    _selectedIconImageSource = NSURLRequestFromImageSource(newComponentProps.selectedIconImageSource);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
 
   if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];

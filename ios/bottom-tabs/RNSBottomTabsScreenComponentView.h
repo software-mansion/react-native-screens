@@ -3,6 +3,7 @@
 #import "RNSReactBaseView.h"
 #import "RNSTabBarAppearanceProvider.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import <React/RCTImageSource.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -64,6 +65,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
+
+@property (nonatomic, strong, readonly, nullable) NSURLRequest *iconImageSource;
+@property (nonatomic, strong, readonly, nullable) NSURLRequest *selectedIconImageSource;
 
 @end
 
