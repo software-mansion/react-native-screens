@@ -2,13 +2,13 @@ import React from 'react';
 import type { ViewProps } from 'react-native';
 import StackScreenNavigationBarNativeComponent, {NativeProps} from '../../fabric/gamma/ScreenStackNavigationBarNativeComponent';
 
-export type ScreenStackNavigationNativeProps = NativeProps & {
+export type ScreenStackNavigationBarNativeProps = NativeProps & {
   // Overrides
 }
 
 type ScreenStackNavigationBarProps = {
   children?: ViewProps['children'];
-} & ScreenStackNavigationNativeProps;
+} & ScreenStackNavigationBarNativeProps;
 
 function ScreenStackNavigationBar({
   children,

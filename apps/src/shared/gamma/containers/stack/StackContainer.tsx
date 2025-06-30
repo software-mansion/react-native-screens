@@ -3,8 +3,10 @@ import {
   ScreenStackHost,
   StackScreen,
   StackScreenLifecycleState,
+  StackScreenNavigationBar,
 } from 'react-native-screens';
 import type { StackScreenNativeProps } from 'react-native-screens/components/gamma/StackScreen';
+import type { ScreenStackNavigationBarNativeProps } from 'react-native-screens/components/gamma/StackScreenNavigationBar';
 
 let id = 0;
 
@@ -17,7 +19,7 @@ interface StackProps {
 }
 
 interface ScreenProps {
-  // TBA
+  navigationBar: ScreenStackNavigationBarNativeProps;
 }
 
 type Path = {
@@ -156,10 +158,12 @@ export function StackContainer({ pathConfigs }: StackContainerProps) {
           onPop={handlePop}>
           <StackNavigationContext.Provider
             value={{
-              ...screenProps,
-              pop,
-              push,
-            }}>
+                ...screenProps,
+                pop,
+                push,
+            }}
+           >
+            <StackScreenNavigationBar {...(screenProps?.options?.navigationBar ?? {})}/>
             <Component />
           </StackNavigationContext.Provider>
         </StackScreen>

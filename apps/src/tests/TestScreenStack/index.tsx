@@ -8,3 +8,12 @@ export default function App() {
     <StackContainer pathConfigs={generateStackWithNames(['A', 'B', 'C'])} />
   );
 }
+
+// import { generateStackWithNames } from './helper';
+// import { StackContainer } from './StackContainer';
+
+// export default function App() {
+//   return (
+//     <StackContainer config={generateStackWithNames(['A', 'B', 'C'])}/>
+//   );
+// }
