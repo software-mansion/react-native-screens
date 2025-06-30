@@ -75,7 +75,7 @@ namespace react = facebook::react;
   [super mountChildComponentView:childComponentView index:index];
   if ([childComponentView isKindOfClass:RNSScreenStackNavigationBarComponentView.class]) {
     auto *childScreen = static_cast<RNSScreenStackNavigationBarComponentView *>(childComponentView);
-    NSLog(@"Mounted navigation bar %@", childScreen);
+    NSLog(@"RNSStackScreenComponentView mountChildComponentView with %@", _controller.navigationItem);
     [childScreen setNavigationItem:_controller.navigationItem];
   }
 }

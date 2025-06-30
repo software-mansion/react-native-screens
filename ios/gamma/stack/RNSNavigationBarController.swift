@@ -11,6 +11,7 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
   
   @objc
   public required init(navigationBarComponentView: RNSScreenStackNavigationBarComponentView) {
+    print("RNSNavigationBarController init()");
     self.navigationBarComponentView = navigationBarComponentView
   }
   
@@ -19,7 +20,7 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
   
   @objc
   public func setNeedsNavigationItemUpdate() {
-    print("setNeedsNavigationItemUpdate");
+    print("RNSNavigationBarController setNeedsNavigationItemUpdate");
     needsNavigationItemUpdate = true;
   }
   
@@ -33,6 +34,7 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
   }
  
   private func updateNavigationItem() {
+    NSLog("RNSNavigationBarController updateNavigationItem")
     precondition(needsNavigationItemUpdate, "[RNScreens] Navigation item needs to be invalidated when update is forced!")
     
     guard let navigationItem = navigationItem else {
@@ -40,7 +42,6 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
     }
     
     navigationItem.title = navigationBarComponentView.title;
-    print(navigationItem.title);
     
     needsNavigationItemUpdate = false;
   }
@@ -53,7 +54,6 @@ public class RNSNavigationBarController: NSObject, ReactMountingTransactionObser
   
   @objc
   public func reactMountingTransactionDidMount() {
-    print("update if needed \(needsNavigationItemUpdate)")
     updateNavigationIfNeeded()
   }
 }

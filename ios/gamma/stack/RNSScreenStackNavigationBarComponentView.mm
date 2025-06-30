@@ -76,10 +76,10 @@ namespace react = facebook::react;
 {
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSScreenStackNavigationBarProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSScreenStackNavigationBarProps>(props);
-  NSLog(@"props");
+  NSLog(@"RNSScreenStackNavigationBarComponentView updateProps");
   if (oldComponentProps.title != newComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
-    NSLog(@"props new title %@", _title);
+    NSLog(@"RNSScreenStackNavigationBarComponentView new title %@", _title);
     _needsNavigationItemUpdate = YES;
   }
 
