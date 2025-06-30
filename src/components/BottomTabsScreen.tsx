@@ -64,6 +64,9 @@ export interface BottomTabsScreenProps {
   iconImageSource?: ImageSourcePropType;
   selectedIconImageSource?: ImageSourcePropType;
 
+  iconTemplateSource?: ImageSourcePropType;
+  selectedIconTemplateSource?: ImageSourcePropType;
+
   badgeValue?: string;
 
   specialEffects?: {

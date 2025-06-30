@@ -43,6 +43,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       iconSFSymbolName: 'text.bubble',
       selectedIconSFSymbolName: 'text.bubble.fill',
+      iconImageSource: require('../../assets/variableIcons/icon.png'),
+      selectedIconImageSource: require('../../assets/variableIcons/icon_fill.png'),
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_missed', // Android specific
       title: 'Tab2',
@@ -54,8 +56,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabKey: 'Tab3',
       badgeValue: '3',
       tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
-      iconSFSymbolName: 'gear',
-      selectedIconSFSymbolName: 'gear',
+      iconTemplateSource: require('../../assets/variableIcons/icon.png'),
+      selectedIconTemplateSource: require('../../assets/variableIcons/icon_fill.png'),
+      tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_outgoing', // Android specific
       title: 'Tab3',
     },

@@ -85,28 +85,63 @@
   tabBarItem.standardAppearance = tabAppearance;
   tabBarItem.scrollEdgeAppearance = tabAppearance;
 
-  if (tabScreenCtrl.tabScreenComponentView.iconImageSource != nil && imageLoader != nil) {
-    [self loadImageForTabBarItem:tabBarItem
-                            from:tabScreenCtrl.tabScreenComponentView.iconImageSource
-                 withImageLoader:imageLoader];
-  } else if (tabScreenCtrl.tabScreenComponentView.iconSFSymbolName != nil) {
-    tabBarItem.image = [UIImage systemImageNamed:tabScreenCtrl.tabScreenComponentView.iconSFSymbolName];
+  [self setIconsForTabBarItem:tabBarItem fromScreenView:tabScreenCtrl.tabScreenComponentView withImageLoader:imageLoader];
+}
+
+- (void)setIconsForTabBarItem:(UITabBarItem *)tabBarItem
+               fromScreenView:(RNSBottomTabsScreenComponentView *)screenView
+              withImageLoader:(RCTImageLoader *_Nullable)imageLoader
+{
+  if (screenView.iconImageSource != nil && imageLoader != nil) {
+    [self loadImageFrom:screenView.iconImageSource
+        withImageLoader:imageLoader
+             asTemplate:false
+               callback:^(UIImage *image) {
+                 tabBarItem.image = image;
+               }];
+  } else if (screenView.iconTemplateSource && imageLoader != nil) {
+    [self loadImageFrom:screenView.iconTemplateSource
+        withImageLoader:imageLoader
+             asTemplate:true
+               callback:^(UIImage *image) {
+                 tabBarItem.image = image;
+               }];
+  } else if (screenView.iconSFSymbolName != nil) {
+    tabBarItem.image = [UIImage systemImageNamed:screenView.iconSFSymbolName];
   } else {
     tabBarItem.image = nil;
   }
 
-  //    tabBarItem.selectedImage = [UIImage
-  //    systemImageNamed:tabScreenCtrl.tabScreenComponentView.selectedIconSFSymbolName];
+  if (screenView.selectedIconImageSource != nil && imageLoader != nil) {
+    [self loadImageFrom:screenView.selectedIconImageSource
+        withImageLoader:imageLoader
+             asTemplate:false
+               callback:^(UIImage *image) {
+                 tabBarItem.selectedImage = image;
+               }];
+  } else if (screenView.selectedIconTemplateSource && imageLoader != nil) {
+    [self loadImageFrom:screenView.selectedIconTemplateSource
+        withImageLoader:imageLoader
+             asTemplate:true
+               callback:^(UIImage *image) {
+                 tabBarItem.selectedImage = image;
+               }];
+  } else if (screenView.selectedIconSFSymbolName != nil) {
+    tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSFSymbolName];
+  } else {
+    tabBarItem.selectedImage = nil;
+  }
 }
 
-- (void)loadImageForTabBarItem:(nullable UITabBarItem *)tabBarItem
-                          from:(nonnull NSURLRequest *)imageSource
-               withImageLoader:(nonnull RCTImageLoader *)imageLoader
+- (void)loadImageFrom:(nonnull RCTImageSource *)imageSource
+      withImageLoader:(nonnull RCTImageLoader *)imageLoader
+           asTemplate:(bool)isTemplate
+             callback:(void (^)(UIImage *image))setImageCallback
 {
-  [imageLoader loadImageWithURLRequest:imageSource
-      size:CGSizeZero
-      scale:3
-      clipped:false
+  [imageLoader loadImageWithURLRequest:imageSource.request
+      size:imageSource.size
+      scale:imageSource.scale
+      clipped:true
       resizeMode:RCTResizeModeContain
       progressBlock:^(int64_t progress, int64_t total) {
       }
@@ -114,7 +149,11 @@
       }
       completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
         dispatch_sync(dispatch_get_main_queue(), ^{
-          tabBarItem.image = image;
+          if (isTemplate) {
+            setImageCallback([image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]);
+          } else {
+            setImageCallback([image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]);
+          }
         });
       }];
 }

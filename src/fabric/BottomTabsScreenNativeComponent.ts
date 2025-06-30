@@ -86,6 +86,9 @@ export interface NativeProps extends ViewProps {
   iconImageSource?: ImageSource;
   selectedIconImageSource?: ImageSource;
 
+  iconTemplateSource?: ImageSource;
+  selectedIconTemplateSource?: ImageSource;
+
   badgeValue?: string;
 
   specialEffects?: {

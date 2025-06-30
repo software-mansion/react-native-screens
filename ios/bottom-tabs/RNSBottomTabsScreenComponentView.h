@@ -66,8 +66,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
-@property (nonatomic, strong, readonly, nullable) NSURLRequest *iconImageSource;
-@property (nonatomic, strong, readonly, nullable) NSURLRequest *selectedIconImageSource;
+@property (nonatomic, strong, readonly, nullable) RCTImageSource *iconImageSource;
+@property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
+
+@property (nonatomic, strong, readonly, nullable) RCTImageSource *iconTemplateSource;
+@property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconTemplateSource;
 
 @end
 

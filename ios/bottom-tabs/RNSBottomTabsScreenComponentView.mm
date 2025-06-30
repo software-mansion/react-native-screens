@@ -7,6 +7,7 @@
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
+#import <React/RCTImageSource.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -252,12 +253,42 @@ RNS_IGNORE_SUPER_CALL_END
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
   if (newComponentProps.iconImageSource != oldComponentProps.iconImageSource) {
-    _iconImageSource = NSURLRequestFromImageSource(newComponentProps.iconImageSource);
+    _iconImageSource =
+        [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.iconImageSource)
+                                              size:CGSizeMake(
+                                                       newComponentProps.iconImageSource.size.width,
+                                                       newComponentProps.iconImageSource.size.height)
+                                             scale:newComponentProps.iconImageSource.scale];
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
-    _selectedIconImageSource = NSURLRequestFromImageSource(newComponentProps.selectedIconImageSource);
+    _selectedIconImageSource = [[RCTImageSource alloc]
+        initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.selectedIconImageSource)
+                      size:CGSizeMake(
+                               newComponentProps.selectedIconImageSource.size.width,
+                               newComponentProps.selectedIconImageSource.size.height)
+                     scale:newComponentProps.selectedIconImageSource.scale];
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.iconTemplateSource != oldComponentProps.iconTemplateSource) {
+    _iconTemplateSource =
+        [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.iconTemplateSource)
+                                              size:CGSizeMake(
+                                                       newComponentProps.iconTemplateSource.size.width,
+                                                       newComponentProps.iconTemplateSource.size.height)
+                                             scale:newComponentProps.iconTemplateSource.scale];
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.selectedIconTemplateSource != oldComponentProps.selectedIconTemplateSource) {
+    _selectedIconTemplateSource = [[RCTImageSource alloc]
+        initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.selectedIconTemplateSource)
+                      size:CGSizeMake(
+                               newComponentProps.selectedIconTemplateSource.size.width,
+                               newComponentProps.selectedIconTemplateSource.size.height)
+                     scale:newComponentProps.selectedIconTemplateSource.scale];
     tabItemNeedsAppearanceUpdate = YES;
   }
 
