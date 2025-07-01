@@ -1,4 +1,4 @@
-#import "RNSScreenStackNavigationBarComponentView.h"
+#import "RNSStackScreenHeaderConfigComponentView.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -13,10 +13,10 @@
 
 namespace react = facebook::react;
 
-@interface RNSScreenStackNavigationBarComponentView () <RCTMountingTransactionObserving>
+@interface RNSStackScreenHeaderConfigComponentView () <RCTMountingTransactionObserving>
 @end
 
-@implementation RNSScreenStackNavigationBarComponentView {
+@implementation RNSStackScreenHeaderConfigComponentView {
   RNSNavigationBarController *_Nonnull _controller;
   
   // flags
@@ -68,14 +68,14 @@ namespace react = facebook::react;
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSScreenStackNavigationBarComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSStackScreenHeaderConfigComponentDescriptor>();
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSScreenStackNavigationBarProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSScreenStackNavigationBarProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackScreenHeaderConfigProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenHeaderConfigProps>(props);
   if (oldComponentProps.title != newComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
     _needsNavigationItemUpdate = YES;
@@ -118,7 +118,7 @@ namespace react = facebook::react;
 
 @end
 
-Class<RCTComponentViewProtocol> RNSScreenStackNavigationBarCls(void)
+Class<RCTComponentViewProtocol> RNSStackScreenHeaderConfigCls(void)
 {
-  return RNSScreenStackNavigationBarComponentView.class;
+  return RNSStackScreenHeaderConfigComponentView.class;
 }

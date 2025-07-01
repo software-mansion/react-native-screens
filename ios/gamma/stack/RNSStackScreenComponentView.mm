@@ -1,5 +1,5 @@
 #import "RNSStackScreenComponentView.h"
-#import "RNSScreenStackNavigationBarComponentView.h"
+#import "RNSStackScreenHeaderConfigComponentView.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -73,8 +73,8 @@ namespace react = facebook::react;
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super mountChildComponentView:childComponentView index:index];
-  if ([childComponentView isKindOfClass:RNSScreenStackNavigationBarComponentView.class]) {
-    auto *childScreen = static_cast<RNSScreenStackNavigationBarComponentView *>(childComponentView);
+  if ([childComponentView isKindOfClass:RNSStackScreenHeaderConfigComponentView.class]) {
+    auto *childScreen = static_cast<RNSStackScreenHeaderConfigComponentView *>(childComponentView);
     [childScreen setNavigationItem:_controller.navigationItem];
   }
 }
@@ -82,8 +82,8 @@ namespace react = facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super unmountChildComponentView:childComponentView index:index];
-  if ([childComponentView isKindOfClass:RNSScreenStackNavigationBarComponentView.class]) {
-    auto *childScreen = static_cast<RNSScreenStackNavigationBarComponentView *>(childComponentView);
+  if ([childComponentView isKindOfClass:RNSStackScreenHeaderConfigComponentView.class]) {
+    auto *childScreen = static_cast<RNSStackScreenHeaderConfigComponentView *>(childComponentView);
     [childScreen setNavigationItem:nil];
   }
 }

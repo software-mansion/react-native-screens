@@ -2,13 +2,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScreenStackNavigationBarComponentView : RNSReactBaseView
+@interface RNSStackScreenHeaderConfigComponentView : RNSReactBaseView
 
 @property (nonatomic, strong, readonly, nullable) NSString *title;
 
 @end
 
-@interface RNSScreenStackNavigationBarComponentView()
+@interface RNSStackScreenHeaderConfigComponentView()
 
 - (void)setNavigationItem:(UINavigationItem *_Nullable)navigationItem;
 

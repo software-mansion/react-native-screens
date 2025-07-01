@@ -5,12 +5,12 @@ import UIKit
 public class RNSNavigationBarController: NSObject, ReactMountingTransactionObserving {
   @objc
   public var navigationItem: UINavigationItem?
-  private let navigationBarComponentView: RNSScreenStackNavigationBarComponentView
+  private let navigationBarComponentView: RNSStackScreenHeaderConfigComponentView
   // Flags
   private var needsNavigationItemUpdate = false;
   
   @objc
-  public required init(navigationBarComponentView: RNSScreenStackNavigationBarComponentView) {
+  public required init(navigationBarComponentView: RNSStackScreenHeaderConfigComponentView) {
     self.navigationBarComponentView = navigationBarComponentView
   }
   

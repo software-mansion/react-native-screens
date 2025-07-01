@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScreenStackNavigationBarComponentViewManager : RCTViewManager
+@interface RNSStackScreenHeaderConfigComponentViewManager : RCTViewManager
 
 @end
 

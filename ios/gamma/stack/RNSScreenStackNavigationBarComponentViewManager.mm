@@ -1,7 +1,0 @@
-#import "RNSScreenStackNavigationBarComponentViewManager.h"
-
-@implementation RNSScreenStackNavigationBarComponentViewManager
-
-RCT_EXPORT_MODULE(RNSScreenStackNavigationBarComponentViewManager)
-
-@end

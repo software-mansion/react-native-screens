@@ -8,4 +8,4 @@ export interface NativeProps extends ViewProps {
    title?: WithDefault<string, ''>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSScreenStackNavigationBar', {});
+export default codegenNativeComponent<NativeProps>('RNSStackScreenHeaderConfig', {});
