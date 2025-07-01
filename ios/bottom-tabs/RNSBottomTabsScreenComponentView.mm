@@ -88,6 +88,8 @@ namespace react = facebook::react;
   
   _iconImageSource = nil;
   _selectedIconImageSource = nil;
+  _iconTemplateSource = nil;
+  _selectedIconTemplateSource = nil;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
