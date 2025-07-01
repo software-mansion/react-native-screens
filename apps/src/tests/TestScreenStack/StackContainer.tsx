@@ -33,10 +33,7 @@ export const StackContainerPath = (_: Path) => {
 };
 
 interface StackContainerProps {
-  children?: {
-    props: Path;
-  }[];
-  config?: Path[];
+  pathConfigs: Path[];
   options?: StackProps;
 }
 
@@ -64,35 +61,25 @@ export function useStackNavigation() {
   return context;
 }
 
-export function StackContainer({ children, config }: StackContainerProps) {
+function requireNotEmptyPaths(pathConfigs?: Path[]) {
+  if (pathConfigs == null || pathConfigs.length === 0) {
+    throw new Error('[RNScreens] There must be at least one path configured');
+  }
+}
+
+export function StackContainer({ pathConfigs }: StackContainerProps) {
+  requireNotEmptyPaths(pathConfigs);
+
   const [stack, setStack] = React.useState<Screen[]>([]);
 
-  const paths: Path[] = React.useMemo(() => {
-    const configuredPaths =
-      config?.length !== undefined && config?.length
-        ? config
-        : children?.map(child => child.props);
-
-    if (
-      configuredPaths?.length === undefined ||
-      configuredPaths?.length === 0
-    ) {
-      throw new Error(
-        'There must be at least one path configured, please define paths using StackContainerPath components or the config prop',
-      );
-    }
-
-    return configuredPaths;
-  }, [children, config]);
-
   const pathsMap = React.useMemo(
-    () => Object.fromEntries(paths.map(path => [path.name, path])),
-    [paths],
+    () => Object.fromEntries(pathConfigs.map(config => [config.name, config])),
+    [pathConfigs],
   );
 
   const push = React.useCallback(
     (name: string) => {
-      const requestedPath = pathsMap?.[name];
+      const requestedPath = pathsMap[name];
 
       if (!requestedPath) {
         throw new Error(`Path with name ${name} is not defined`);
@@ -148,7 +135,7 @@ export function StackContainer({ children, config }: StackContainerProps) {
 
   React.useEffect(() => {
     if (stack.length === 0) {
-      const firstPath = paths?.[0]?.name;
+      const firstPath = pathConfigs[0].name;
 
       if (!firstPath) {
         throw new Error('There must be at least one path defined');
@@ -156,7 +143,7 @@ export function StackContainer({ children, config }: StackContainerProps) {
 
       push(firstPath);
     }
-  }, [paths, push, stack.length]);
+  }, [pathConfigs, push, stack.length]);
 
   console.log('StackContainer render', stack);
 
