@@ -4,7 +4,12 @@ import UIKit
 @objc
 public class RNSStackScreenController : UIViewController {
   let screenStackComponentView: RNSStackScreenComponentView
-  
+  private var reactEventEmitter: RNSStackScreenComponentEventEmitter {
+    get {
+      return screenStackComponentView.reactEventEmitter()
+    }
+  }
+    
   @objc public required init(componentView: RNSStackScreenComponentView) {
     self.screenStackComponentView = componentView
     super.init(nibName: nil, bundle: nil)
@@ -28,18 +33,18 @@ public class RNSStackScreenController : UIViewController {
   // MARK: Events
   
   public override func viewWillAppear(_ animated: Bool) {
-    screenStackComponentView.reactEventEmitter().emitOnWillAppear()
+    reactEventEmitter.emitOnWillAppear()
   }
   
   public override func viewDidAppear(_ animated: Bool) {
-    screenStackComponentView.reactEventEmitter().emitOnDidAppear()
+    reactEventEmitter.emitOnDidAppear()
   }
   
   public override func viewWillDisappear(_ animated: Bool) {
-    screenStackComponentView.reactEventEmitter().emitOnWillDisappear()
+    reactEventEmitter.emitOnWillDisappear()
   }
   
   public override func viewDidDisappear(_ animated: Bool) {
-    screenStackComponentView.reactEventEmitter().emitOnDidDisappear()
+    reactEventEmitter.emitOnDidDisappear()
   }
 }
