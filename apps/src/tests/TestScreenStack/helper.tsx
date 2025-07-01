@@ -3,21 +3,25 @@ import { Button } from 'react-native';
 import { ScreenLayout } from './ScreenLayout';
 import { useStackNavigation } from './StackContainer';
 
-export const generateStackWithNames = (screenNames: string[]) => {
-   const TestComponent = () => {
-      const navigation = useStackNavigation();
+export function generateStackWithNames(screenNames: string[]) {
+  const TestComponent = () => {
+    const navigation = useStackNavigation();
 
-      return (
-         <ScreenLayout>
-            {screenNames.map(screenName => (
-               <Button onPress={() => navigation.push(screenName)} title={`Push ${screenName}`} key={screenName} />
-            ))}
-         </ScreenLayout>
-      );
-   };
+    return (
+      <ScreenLayout>
+        {screenNames.map(screenName => (
+          <Button
+            onPress={() => navigation.push(screenName)}
+            title={`Push ${screenName}`}
+            key={screenName}
+          />
+        ))}
+      </ScreenLayout>
+    );
+  };
 
-   return screenNames.map(screenName => ({
-      name: screenName,
-      component: TestComponent,
-   }));
-};
+  return screenNames.map(screenName => ({
+    name: screenName,
+    component: TestComponent,
+  }));
+}
