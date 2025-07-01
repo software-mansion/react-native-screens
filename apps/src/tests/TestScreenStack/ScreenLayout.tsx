@@ -3,25 +3,27 @@ import { View, StyleSheet, Text, Button } from 'react-native';
 import Colors from '../../shared/styling/Colors';
 import { useStackNavigation } from './StackContainer';
 
-export const ScreenLayout = ({children}: {children: React.ReactNode}) => {
-   const navigation = useStackNavigation();
+export function ScreenLayout({ children }: { children: React.ReactNode }) {
+  const navigation = useStackNavigation();
 
-   console.log(`ScreenLayout render screen ${navigation.name} with id ${navigation.screenKey} and lifecycle ${navigation.lifecycleState}`);
+  console.log(
+    `ScreenLayout render screen ${navigation.name} with id ${navigation.screenKey} and lifecycle ${navigation.lifecycleState}`,
+  );
 
-   return (
-      <View style={styles.container}>
-         <Text>Screen name: {navigation.name}</Text>
-         <Button onPress={navigation.pop} title="Pop" />
-         {children}
-      </View>
-   );
-};
+  return (
+    <View style={styles.container}>
+      <Text>Screen name: {navigation.name}</Text>
+      <Button onPress={navigation.pop} title="Pop" />
+      {children}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-   container: {
-      flex: 1,
-      backgroundColor: Colors.BlueLight40,
-      alignItems: 'center',
-      justifyContent: 'center',
-   },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.BlueLight40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
