@@ -18,6 +18,12 @@ class JSI_EXPORT RNSBottomTabsState final {
   RNSBottomTabsState() = default;
 
 #ifdef ANDROID
+  RNSBottomTabsState(
+      RNSBottomTabsState const &previousState,
+      folly::dynamic data) {}
+#endif
+
+#ifdef ANDROID
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
