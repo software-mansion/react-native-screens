@@ -70,25 +70,6 @@ namespace react = facebook::react;
 
 #pragma mark - RCTViewComponentViewProtocol
 
-- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
-{
-  [super mountChildComponentView:childComponentView index:index];
-  if ([childComponentView isKindOfClass:RNSStackScreenHeaderConfigComponentView.class]) {
-    auto *childScreen = static_cast<RNSStackScreenHeaderConfigComponentView *>(childComponentView);
-    [childScreen setNavigationItem:_controller.navigationItem];
-  }
-}
-
-- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
-{
-  [super unmountChildComponentView:childComponentView index:index];
-  if ([childComponentView isKindOfClass:RNSStackScreenHeaderConfigComponentView.class]) {
-    auto *childScreen = static_cast<RNSStackScreenHeaderConfigComponentView *>(childComponentView);
-    [childScreen setNavigationItem:nil];
-  }
-}
-
-
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {

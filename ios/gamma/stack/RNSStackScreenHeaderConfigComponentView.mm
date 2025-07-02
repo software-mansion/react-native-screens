@@ -8,6 +8,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSDefines.h"
+#import "RNSStackScreenComponentView.h"
 
 #import "Swift-Bridging.h"
 
@@ -17,8 +18,6 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSStackScreenHeaderConfigComponentView {
-  RNSNavigationBarController *_Nonnull _controller;
-  
   // flags
   BOOL _needsNavigationItemUpdate;
 }
@@ -35,8 +34,6 @@ namespace react = facebook::react;
 {
   [self resetProps];
   
-  _controller = [[RNSNavigationBarController alloc] initWithNavigationBarComponentView:self];
-  
   // flags
   _needsNavigationItemUpdate = NO;
   // navigation item props
@@ -49,22 +46,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 }
 
-- (void)setNavigationItem:(UINavigationItem *_Nullable)navigationItem
-{
-  _controller.navigationItem = navigationItem;
-}
-
 #pragma mark - RCTViewComponentViewProtocol
-
-- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
-{
-  [super mountChildComponentView:childComponentView index:index];
-}
-
-- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
-{
-  [super unmountChildComponentView:childComponentView index:index];
-}
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
@@ -87,11 +69,6 @@ namespace react = facebook::react;
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
-  if (_needsNavigationItemUpdate) {
-    _needsNavigationItemUpdate = NO;
-    [_controller setNeedsNavigationItemUpdate];
-  }
-
   [super finalizeUpdates:updateMask];
 }
 
@@ -107,13 +84,24 @@ namespace react = facebook::react;
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [_controller reactMountingTransactionWillMount];
+ // noop
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [_controller reactMountingTransactionDidMount];
+  if (_needsNavigationItemUpdate) {
+    _needsNavigationItemUpdate = NO;
+    
+    auto stackHeaderAppearanceProps = [[RNSStackHeaderAppearance alloc] init];
+    
+    stackHeaderAppearanceProps.title = _title;
+    
+    RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class], @"[RNScreens] Screen header config must be child of a screen");
+    auto *stackScreen = static_cast<RNSStackScreenComponentView *>(self.superview);
+    RNSStackScreenController *stackScreenController = stackScreen.controller;
+    [stackScreenController setNeedsHeaderAppearanceUpdateWithStackHeaderAppearance:stackHeaderAppearanceProps];
+  }
 }
 
 @end

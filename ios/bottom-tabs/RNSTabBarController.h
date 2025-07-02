@@ -122,7 +122,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) bool needsUpdateOfSelectedTab;
 
 /**
- * Tell the controller that some configuration regarding the tab bar apperance has changed & the appearance requires
+ * Tell the controller that some configuration regarding the tab bar appearance has changed & the appearance requires
  * update.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfTabBarAppearance;

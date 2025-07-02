@@ -10,8 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackScreenHeaderConfigComponentView()
 
-- (void)setNavigationItem:(UINavigationItem *_Nullable)navigationItem;
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -1,13 +1,9 @@
-import Foundation
-import UIKit
-
 @objc
 public class RNSStackScreenController: UIViewController {
   let screenStackComponentView: RNSStackScreenComponentView
-  private var reactEventEmitter: RNSStackScreenComponentEventEmitter {
-    return screenStackComponentView.reactEventEmitter()
-  }
-
+  public var stackHeaderApperance: RNSStackHeaderAppearance?
+  public var needsHeaderAppearanceUpdate: Bool = false
+  
   @objc public required init(componentView: RNSStackScreenComponentView) {
     self.screenStackComponentView = componentView
     super.init(nibName: nil, bundle: nil)
@@ -19,14 +15,14 @@ public class RNSStackScreenController: UIViewController {
 
   func findStackController() -> RNSStackController? {
     if let navCtrl = self.navigationController {
-      return navCtrl as? RNSStackController
-    }
+       return navCtrl as? RNSStackController
+     }
 
-    if let stackHost = self.screenStackComponentView.stackHost {
-      return stackHost.stackController
-    }
+     if let stackHost = self.screenStackComponentView.stackHost {
+       return stackHost.stackController
+     }
 
-    return nil
+     return nil
   }
 
   // MARK: Signals
@@ -35,7 +31,19 @@ public class RNSStackScreenController: UIViewController {
   public func setNeedsLifecycleStateUpdate() {
     findStackController()?.setNeedsUpdateOfChildViewControllers()
   }
-
+  
+  @objc
+  public func setNeedsHeaderAppearanceUpdate(stackHeaderAppearance: RNSStackHeaderAppearance) {
+    self.stackHeaderApperance = stackHeaderAppearance
+    needsHeaderAppearanceUpdate = true
+    findStackController()?.setNeedsUpdateOfHeaderAppearance();
+  }
+  
+  @objc
+  public func didHeaderUpdated() {
+    needsHeaderAppearanceUpdate = false
+  }
+  
   // MARK: Events
 
   public override func viewWillAppear(_ animated: Bool) {

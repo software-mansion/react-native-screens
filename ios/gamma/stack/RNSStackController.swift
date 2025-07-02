@@ -4,10 +4,13 @@ import UIKit
 @objc
 public class RNSStackController: UINavigationController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
+  private var needsHeaderAppearanceUpdate = false
   private let screenStackHostComponentView: RNSScreenStackHostComponentView
-
+  private let headerAppearanceCoordinator: RNSStackHeaderAppearanceCoordinator
+  
   @objc public required init(stackHostComponentView: RNSScreenStackHostComponentView) {
-    self.screenStackHostComponentView = stackHostComponentView
+    self.screenStackHostComponentView = stackHostComponentView;
+    self.headerAppearanceCoordinator = RNSStackHeaderAppearanceCoordinator()
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -21,6 +24,11 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
   public func setNeedsUpdateOfChildViewControllers() {
     needsChildViewControllersUpdate = true
   }
+  
+  @objc
+  public func setNeedsUpdateOfHeaderAppearance() {
+    needsHeaderAppearanceUpdate = true
+  }
 
   // MARK: Updating
 
@@ -33,24 +41,39 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
 
   @objc
   public func updateChildViewControllers() {
-    precondition(
-      needsChildViewControllersUpdate,
-      "[RNScreens] Child view controller must be invalidated when update is forced!")
-
-    let activeControllers = sourceAllViewControllers()
-      .filter { screenCtrl in screenCtrl.screenStackComponentView.maxLifecycleState == .attached }
-
-    setViewControllers(activeControllers, animated: true)
-
-    needsChildViewControllersUpdate = false
+    precondition(needsChildViewControllersUpdate, "[RNScreens] Child view controllers must be invalidated when update is forced!")
+    
+    let currentSubviews = screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
+    
+    let visibleViews = currentSubviews.filter {
+      $0.lifecycleState != RNSScreenStackLifecycleState.popped
+    }
+    
+    let visibleViewControllers = visibleViews.map { $0.controller }
+    setViewControllers(visibleViewControllers, animated: true)
+    
+    
+    needsChildViewControllersUpdate = false;
   }
-
-  private func sourceAllViewControllers() -> [RNSStackScreenController] {
-    let screenStackComponents =
-      screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
-    return screenStackComponents.lazy.map(\.controller)
+  
+  @objc
+  public func updateHeaderAppearanceIfNeeded() {
+    if needsHeaderAppearanceUpdate {
+      updateHeaderAppearance()
+    }
   }
-
+  
+  @objc
+  public func updateHeaderAppearance() {
+    precondition(needsHeaderAppearanceUpdate, "[RNScreens] Header appearance must be invalidated when update is forced!")
+    
+    let currentSubviews = screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
+    let viewControllers = currentSubviews.map { $0.controller }
+    
+    headerAppearanceCoordinator.updateAppearanceOfHeader(navigationBar: self.navigationBar, viewControllers: viewControllers);
+    needsHeaderAppearanceUpdate = false
+  }
+  
   // MARK: ReactMountingTransactionObserving
 
   @objc
@@ -61,5 +84,6 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
   @objc
   public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
+    updateHeaderAppearanceIfNeeded()
   }
 }
