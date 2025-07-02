@@ -19,7 +19,7 @@ namespace react = facebook::react;
 
 @implementation RNSStackScreenHeaderConfigComponentView {
   // flags
-  BOOL _needsNavigationUpdate;
+  BOOL _needsNavigationBarAppearanceUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -33,17 +33,17 @@ namespace react = facebook::react;
 - (void)initState
 {
   [self resetProps];
-  
-  // flags
-  _needsNavigationUpdate = NO;
-  // navigation item props
-  _title = nil;
 }
 
 - (void)resetProps
 {
   static const auto defaultProps = std::make_shared<const react::RNSScreenStackProps>();
   _props = defaultProps;
+  
+  // flags
+  _needsNavigationBarAppearanceUpdate = NO;
+  // navigation item props
+  _title = nil;
 }
 
 #pragma mark - RCTViewComponentViewProtocol
@@ -60,23 +60,11 @@ namespace react = facebook::react;
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenHeaderConfigProps>(props);
   if (oldComponentProps.title != newComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
-    _needsNavigationUpdate = YES;
+    _needsNavigationBarAppearanceUpdate = YES;
   }
 
 
   [super updateProps:props oldProps:oldProps];
-}
-
-- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
-{
-  [super finalizeUpdates:updateMask];
-}
-
-+ (BOOL)shouldBeRecycled
-{
-  // There won't be tens of instances of this component usually & it's easier for now.
-  // We could consider enabling it someday though.
-  return NO;
 }
 
 #pragma mark - RCTMountingTransactionObserving
@@ -90,8 +78,8 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  if (_needsNavigationUpdate) {
-    _needsNavigationUpdate = NO;
+  if (_needsNavigationBarAppearanceUpdate) {
+    _needsNavigationBarAppearanceUpdate = NO;
     
     auto stackNavigationProps = [[RNSStackNavigationAppearance alloc] init];
     
@@ -100,7 +88,7 @@ namespace react = facebook::react;
     RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class], @"[RNScreens] Screen header config must be child of a screen");
     auto *stackScreen = static_cast<RNSStackScreenComponentView *>(self.superview);
     RNSStackScreenController *stackScreenController = stackScreen.controller;
-    [stackScreenController setNeedsNavigationUpdate:stackNavigationProps];
+    [stackScreenController needsNavigationBarAppearanceUpdate:stackNavigationProps];
   }
 }
 

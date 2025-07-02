@@ -4,16 +4,16 @@ import UIKit
 @objc
 public class RNSStackNavigationAppearanceCoordinator: NSObject {
   @objc
-  func updateNavigationAppearance(navigationBar: UINavigationBar, viewControllers: [RNSStackScreenController]) {
+  func updateNavigationBarAppearance(navigationBar: UINavigationBar, viewControllers: [RNSStackScreenController]) {
     for viewController in viewControllers {
-      if (!viewController.needsNavigationUpdate) {
+      if (!viewController.needsNavigationBarAppearanceUpdate) {
         continue
       }
       
       // TODO: Improve once more props is available
       viewController.navigationItem.title = viewController.navigationAppearance?.title
       
-      viewController.navigationDidUpdate()
+      viewController.navigationBarAppearanceDidUpdate()
     }
   }
   

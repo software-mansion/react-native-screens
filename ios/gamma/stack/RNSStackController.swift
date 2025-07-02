@@ -4,13 +4,13 @@ import UIKit
 @objc
 public class RNSStackController: UINavigationController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
-  private var needsNavigationUpdate = false
+  private var needsNavigationBarAppearanceUpdate = false
   private let screenStackHostComponentView: RNSScreenStackHostComponentView
-  private let NavigationAppearanceCoordinator: RNSStackNavigationAppearanceCoordinator
+  private let navigationAppearanceCoordinator: RNSStackNavigationAppearanceCoordinator
   
   @objc public required init(stackHostComponentView: RNSScreenStackHostComponentView) {
     self.screenStackHostComponentView = stackHostComponentView;
-    self.NavigationAppearanceCoordinator = RNSStackNavigationAppearanceCoordinator()
+    self.navigationAppearanceCoordinator = RNSStackNavigationAppearanceCoordinator()
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -26,8 +26,8 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
   }
   
   @objc
-  public func setNeedsUpdateOfNavigation() {
-    needsNavigationUpdate = true
+  public func setNeedsNavigationBarAppearanceUpdate() {
+    needsNavigationBarAppearanceUpdate = true
   }
 
   // MARK: Updating
@@ -57,21 +57,21 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
   }
   
   @objc
-  public func updateNavigationIfNeeded() {
-    if needsNavigationUpdate {
-      updateNavigation()
+  public func updateNavigationBarAppearanceIfNeeded() {
+    if needsNavigationBarAppearanceUpdate {
+      updateNavigationBarAppearance()
     }
   }
   
   @objc
-  public func updateNavigation() {
-    precondition(needsNavigationUpdate, "[RNScreens] Header appearance must be invalidated when update is forced!")
+  public func updateNavigationBarAppearance() {
+    precondition(needsNavigationBarAppearanceUpdate, "[RNScreens] Header appearance must be invalidated when update is forced!")
     
     let currentSubviews = screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
     let viewControllers = currentSubviews.map { $0.controller }
     
-    NavigationAppearanceCoordinator.updateNavigationAppearance(navigationBar: self.navigationBar, viewControllers: viewControllers);
-    needsNavigationUpdate = false
+    navigationAppearanceCoordinator.updateNavigationBarAppearance(navigationBar: self.navigationBar, viewControllers: viewControllers);
+    needsNavigationBarAppearanceUpdate = false
   }
   
   // MARK: ReactMountingTransactionObserving
@@ -84,6 +84,6 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
   @objc
   public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
-    updateNavigationIfNeeded()
+    updateNavigationBarAppearanceIfNeeded()
   }
 }

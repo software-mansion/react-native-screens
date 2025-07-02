@@ -2,7 +2,7 @@
 public class RNSStackScreenController: UIViewController {
   let screenStackComponentView: RNSStackScreenComponentView
   public var navigationAppearance: RNSStackNavigationAppearance?
-  public var needsNavigationUpdate: Bool = false
+  public var needsNavigationBarAppearanceUpdate: Bool = false
   
   @objc public required init(componentView: RNSStackScreenComponentView) {
     self.screenStackComponentView = componentView
@@ -33,15 +33,15 @@ public class RNSStackScreenController: UIViewController {
   }
   
   @objc
-  public func setNeedsNavigationUpdate(_ navigationAppearance: RNSStackNavigationAppearance) {
+  public func needsNavigationBarAppearanceUpdate(_ navigationAppearance: RNSStackNavigationAppearance) {
     self.navigationAppearance = navigationAppearance
-    needsNavigationUpdate = true
-    findStackController()?.setNeedsUpdateOfNavigation();
+    needsNavigationBarAppearanceUpdate = true
+    findStackController()?.setNeedsNavigationBarAppearanceUpdate();
   }
   
   @objc
-  public func navigationDidUpdate() {
-    needsNavigationUpdate = false
+  public func navigationBarAppearanceDidUpdate() {
+    needsNavigationBarAppearanceUpdate = false
   }
   
   // MARK: Events
