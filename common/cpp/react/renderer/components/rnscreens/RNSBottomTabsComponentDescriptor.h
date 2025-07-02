@@ -20,10 +20,10 @@ class RNSBottomTabsComponentDescriptor final
 
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(dynamic_cast<RNSBottomTabsShadowNode *>(&shadowNode));
-    auto &configShadowNode = static_cast<RNSBottomTabsShadowNode &>(shadowNode);
 
     ConcreteComponentDescriptor::adopt(shadowNode);
 #if !defined(ANDROID) && !defined(NDEBUG)
+    auto &configShadowNode = static_cast<RNSBottomTabsShadowNode &>(shadowNode);
     std::weak_ptr<void> imageLoader =
         contextContainer_->at<std::shared_ptr<void>>("RCTImageLoader");
     configShadowNode.setImageLoader(imageLoader);
