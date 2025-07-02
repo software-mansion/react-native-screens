@@ -87,7 +87,7 @@
     return;
   }
 
-  [self setViewControllers:_tabScreenControllers];
+  [self setViewControllers:_tabScreenControllers animated:true];
 }
 
 - (void)updateSelectedViewControllerIfNeeded
