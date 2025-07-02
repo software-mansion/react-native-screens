@@ -86,8 +86,6 @@ namespace react = facebook::react;
       if (parentView.reactViewController) {
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
-#if !TARGET_OS_TV
-#endif
         [controller didMoveToParentViewController:parentView.reactViewController];
         break;
       }
