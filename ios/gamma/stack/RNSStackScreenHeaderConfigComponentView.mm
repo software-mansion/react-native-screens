@@ -19,7 +19,7 @@ namespace react = facebook::react;
 
 @implementation RNSStackScreenHeaderConfigComponentView {
   // flags
-  BOOL _needsNavigationItemUpdate;
+  BOOL _needsNavigationUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -35,7 +35,7 @@ namespace react = facebook::react;
   [self resetProps];
   
   // flags
-  _needsNavigationItemUpdate = NO;
+  _needsNavigationUpdate = NO;
   // navigation item props
   _title = nil;
 }
@@ -60,7 +60,7 @@ namespace react = facebook::react;
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenHeaderConfigProps>(props);
   if (oldComponentProps.title != newComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
-    _needsNavigationItemUpdate = YES;
+    _needsNavigationUpdate = YES;
   }
 
 
@@ -90,17 +90,17 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  if (_needsNavigationItemUpdate) {
-    _needsNavigationItemUpdate = NO;
+  if (_needsNavigationUpdate) {
+    _needsNavigationUpdate = NO;
     
-    auto stackHeaderAppearanceProps = [[RNSStackHeaderAppearance alloc] init];
+    auto stackNavigationProps = [[RNSStackNavigationAppearance alloc] init];
     
-    stackHeaderAppearanceProps.title = _title;
+    stackNavigationProps.title = _title;
     
     RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class], @"[RNScreens] Screen header config must be child of a screen");
     auto *stackScreen = static_cast<RNSStackScreenComponentView *>(self.superview);
     RNSStackScreenController *stackScreenController = stackScreen.controller;
-    [stackScreenController setNeedsHeaderAppearanceUpdateWithStackHeaderAppearance:stackHeaderAppearanceProps];
+    [stackScreenController setNeedsNavigationUpdate:stackNavigationProps];
   }
 }
 

@@ -1,7 +1,7 @@
 import Foundation
 
 @objc
-public class RNSStackHeaderAppearance: NSObject {
+public class RNSStackNavigationAppearance: NSObject {
   @objc
   public var title: String?
 }

@@ -2,11 +2,11 @@ import Foundation
 import UIKit
 
 @objc
-public class RNSStackHeaderAppearanceCoordinator: NSObject {
+public class RNSStackNavigationAppearanceCoordinator: NSObject {
   @objc
-  func updateAppearanceOfHeader(navigationBar: UINavigationBar, viewControllers: [RNSStackScreenController]) {
+  func updateNavigationAppearance(navigationBar: UINavigationBar, viewControllers: [RNSStackScreenController]) {
     for viewController in viewControllers {
-      if (!viewController.needsHeaderAppearanceUpdate) {
+      if (!viewController.needsNavigationAppearanceUpdate) {
         continue
       }
       
