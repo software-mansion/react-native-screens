@@ -15,12 +15,20 @@ RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
 UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(
     react::RNSBottomTabsTabBarBlurEffect blurEffect);
 
+UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
+    react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct
+        titlePositionAdjustment);
+
 std::optional<UIBlurEffectStyle>
 RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
 
 UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
+
+UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
+    react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct
+        titlePositionAdjustment);
 
 }; // namespace rnscreens::conversion
 

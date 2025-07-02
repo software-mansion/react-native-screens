@@ -55,6 +55,9 @@ namespace react = facebook::react;
   _tabBarItemTitleFontWeight = nil;
   _tabBarItemTitleFontStyle = nil;
   _tabBarItemTitleFontColor = nil;
+  _tabBarItemTitlePositionAdjustment = UIOffset(0.0, 0.0);
+
+  _tabBarItemIconColor = nil;
 
   _tabBarItemBadgeBackgroundColor = nil;
 }
@@ -150,6 +153,30 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
     _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemTitlePositionAdjustment.horizontal !=
+          oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
+      newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
+          oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
+    _tabBarItemTitlePositionAdjustment = rnscreens::conversion::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
+        newComponentProps.tabBarItemTitlePositionAdjustment);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemIconColor != oldComponentProps.tabBarItemIconColor) {
+    _tabBarItemIconColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemIconColor);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.iconSFSymbolName != oldComponentProps.iconSFSymbolName) {
+    _iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSFSymbolName);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.selectedIconSFSymbolName != oldComponentProps.selectedIconSFSymbolName) {
+    _selectedIconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSFSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
