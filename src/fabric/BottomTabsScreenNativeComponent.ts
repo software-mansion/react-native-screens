@@ -62,11 +62,21 @@ export interface NativeProps extends ViewProps {
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
   tabBarItemTitleFontColor?: ColorValue;
-  
+  tabBarItemTitlePositionAdjustment?: {
+    horizontal?: Float;
+    vertical?: Float;
+  };
+
+  tabBarItemIconColor?: ColorValue;
+
   tabBarItemBadgeBackgroundColor?: ColorValue;
 
   // General
   title?: string | undefined | null;
+
+  iconSFSymbolName?: string;
+  selectedIconSFSymbolName?: string;
+
   badgeValue?: string;
 }
 

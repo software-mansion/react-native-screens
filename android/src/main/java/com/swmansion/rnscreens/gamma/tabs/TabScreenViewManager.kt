@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import android.util.Log
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -81,6 +82,26 @@ class TabScreenViewManager :
     override fun setTabBarItemBadgeBackgroundColor(
         view: TabScreen,
         value: Int?,
+    ) = Unit
+
+    override fun setTabBarItemTitlePositionAdjustment(
+        view: TabScreen?,
+        value: ReadableMap?
+    ) = Unit
+
+    override fun setTabBarItemIconColor(
+        view: TabScreen?,
+        value: Int?
+    ) = Unit
+
+    override fun setIconSFSymbolName(
+        view: TabScreen?,
+        value: String?
+    ) = Unit
+
+    override fun setSelectedIconSFSymbolName(
+        view: TabScreen?,
+        value: String?
     ) = Unit
 
     override fun setIsFocused(

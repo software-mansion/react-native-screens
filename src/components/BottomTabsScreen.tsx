@@ -42,11 +42,21 @@ export interface BottomTabsScreenProps {
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
   tabBarItemTitleFontColor?: TextStyle['color'];
-  
+  tabBarItemTitlePositionAdjustment?: {
+    horizontal?: number;
+    vertical?: number;
+  };
+
+  tabBarItemIconColor?: ColorValue;
+
   tabBarItemBadgeBackgroundColor?: ColorValue;
   
   // General
   title?: string;
+
+  iconSFSymbolName?: string;
+  selectedIconSFSymbolName?: string;
+
   badgeValue?: string;
 
   // Events

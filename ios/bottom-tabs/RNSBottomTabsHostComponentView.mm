@@ -67,6 +67,9 @@ namespace react = facebook::react;
   _tabBarItemTitleFontWeight = nil;
   _tabBarItemTitleFontStyle = nil;
   _tabBarItemTitleFontColor = nil;
+  _tabBarItemTitlePositionAdjustment = UIOffset(0.0, 0.0);
+
+  _tabBarItemIconColor = nil;
 
   _tabBarItemBadgeBackgroundColor = nil;
 }
@@ -204,8 +207,22 @@ namespace react = facebook::react;
     _needsTabBarAppearanceUpdate = YES;
   }
 
+  if (newComponentProps.tabBarItemIconColor != oldComponentProps.tabBarItemIconColor) {
+    _tabBarItemIconColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemIconColor);
+    _needsTabBarAppearanceUpdate = YES;
+  }
+
   if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
     _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
+    _needsTabBarAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemTitlePositionAdjustment.horizontal !=
+          oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
+      newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
+          oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
+    _tabBarItemTitlePositionAdjustment = rnscreens::conversion::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
+        newComponentProps.tabBarItemTitlePositionAdjustment);
     _needsTabBarAppearanceUpdate = YES;
   }
 
