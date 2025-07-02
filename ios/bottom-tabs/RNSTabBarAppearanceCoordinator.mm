@@ -80,6 +80,9 @@
 
   tabBarItem.standardAppearance = tabAppearance;
   tabBarItem.scrollEdgeAppearance = tabAppearance;
+  
+  tabBarItem.image = [UIImage systemImageNamed:tabScreenCtrl.tabScreenComponentView.iconSFSymbolName];
+  tabBarItem.selectedImage = [UIImage systemImageNamed:tabScreenCtrl.tabScreenComponentView.selectedIconSFSymbolName];
 }
 
 - (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance
@@ -157,6 +160,12 @@
   if (titleTextAttributes != nil) {
     tabBarItemStateAppearance.titleTextAttributes = titleTextAttributes;
   }
+  
+  if (appearanceProvider.tabBarItemIconColor != nil) {
+    tabBarItemStateAppearance.iconColor = appearanceProvider.tabBarItemIconColor;
+  }
+  
+  tabBarItemStateAppearance.titlePositionAdjustment = appearanceProvider.tabBarItemTitlePositionAdjustment;
 }
 
 @end

@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import android.view.View
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -110,6 +111,16 @@ class TabsHostViewManager :
     override fun setTabBarItemBadgeBackgroundColor(
         view: TabsHost,
         value: Int?,
+    ) = Unit
+
+    override fun setTabBarItemTitlePositionAdjustment(
+        view: TabsHost?,
+        value: ReadableMap?
+    ) = Unit
+
+    override fun setTabBarItemIconColor(
+        view: TabsHost?,
+        value: Int?
     ) = Unit
 
     companion object {

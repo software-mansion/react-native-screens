@@ -33,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontWeight;
 @property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontStyle;
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemTitleFontColor;
+@property (nonatomic, readonly) UIOffset tabBarItemTitlePositionAdjustment;
+
+@property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemIconColor;
 
 @property (nonatomic, readonly, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
