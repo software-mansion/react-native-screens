@@ -85,51 +85,44 @@
   tabBarItem.standardAppearance = tabAppearance;
   tabBarItem.scrollEdgeAppearance = tabAppearance;
 
-  [self setIconsForTabBarItem:tabBarItem fromScreenView:tabScreenCtrl.tabScreenComponentView withImageLoader:imageLoader];
+  [self setIconsForTabBarItem:tabBarItem
+               fromScreenView:tabScreenCtrl.tabScreenComponentView
+              withImageLoader:imageLoader];
 }
 
 - (void)setIconsForTabBarItem:(UITabBarItem *)tabBarItem
                fromScreenView:(RNSBottomTabsScreenComponentView *)screenView
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
-  if (screenView.iconImageSource != nil && imageLoader != nil) {
-    [self loadImageFrom:screenView.iconImageSource
-        withImageLoader:imageLoader
-             asTemplate:false
-               callback:^(UIImage *image) {
-                 tabBarItem.image = image;
-               }];
-  } else if (screenView.iconTemplateSource && imageLoader != nil) {
-    [self loadImageFrom:screenView.iconTemplateSource
-        withImageLoader:imageLoader
-             asTemplate:true
-               callback:^(UIImage *image) {
-                 tabBarItem.image = image;
-               }];
-  } else if (screenView.iconSFSymbolName != nil) {
+  if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
     tabBarItem.image = [UIImage systemImageNamed:screenView.iconSFSymbolName];
-  } else {
-    tabBarItem.image = nil;
-  }
-
-  if (screenView.selectedIconImageSource != nil && imageLoader != nil) {
-    [self loadImageFrom:screenView.selectedIconImageSource
-        withImageLoader:imageLoader
-             asTemplate:false
-               callback:^(UIImage *image) {
-                 tabBarItem.selectedImage = image;
-               }];
-  } else if (screenView.selectedIconTemplateSource && imageLoader != nil) {
-    [self loadImageFrom:screenView.selectedIconTemplateSource
-        withImageLoader:imageLoader
-             asTemplate:true
-               callback:^(UIImage *image) {
-                 tabBarItem.selectedImage = image;
-               }];
-  } else if (screenView.selectedIconSFSymbolName != nil) {
     tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSFSymbolName];
   } else {
-    tabBarItem.selectedImage = nil;
+    bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
+    
+    // Normal icon
+    if (screenView.iconImageSource != nil) {
+      [self loadImageFrom:screenView.iconImageSource
+          withImageLoader:imageLoader
+               asTemplate:isTemplate
+                 callback:^(UIImage *image) {
+                   tabBarItem.image = image;
+                 }];
+    } else {
+      tabBarItem.image = nil;
+    }
+    
+    // Selected icon
+    if (screenView.selectedIconImageSource != nil) {
+      [self loadImageFrom:screenView.selectedIconImageSource
+          withImageLoader:imageLoader
+               asTemplate:isTemplate
+                 callback:^(UIImage *image) {
+                   tabBarItem.selectedImage = image;
+                 }];
+    } else {
+      tabBarItem.selectedImage = nil;
+    }
   }
 }
 

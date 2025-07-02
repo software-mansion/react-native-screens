@@ -3,6 +3,7 @@
 import React from 'react';
 import BottomTabsScreenNativeComponent, {
   BlurEffect,
+  IconType,
   type NativeProps,
 } from '../fabric/BottomTabsScreenNativeComponent';
 import {
@@ -22,6 +23,20 @@ export type EmptyObject = Record<string, never>;
 export type BottomTabsScreenEventHandler<T> = (
   event: NativeSyntheticEvent<T>,
 ) => void;
+
+export interface SFIcon {
+  sfSymbolName: string;
+}
+
+export interface ImageIcon {
+  imageSource: ImageSourcePropType;
+}
+
+export interface TemplateIcon {
+  templateSource: ImageSourcePropType;
+}
+
+export type Icon = SFIcon | ImageIcon | TemplateIcon;
 
 export interface BottomTabsScreenProps {
   children?: ViewProps['children'];
@@ -55,17 +70,11 @@ export interface BottomTabsScreenProps {
   // General
   title?: string;
 
-  iconSFSymbolName?: string;
-  selectedIconSFSymbolName?: string;
-
   // Android specific
   iconResourceName?: string;
 
-  iconImageSource?: ImageSourcePropType;
-  selectedIconImageSource?: ImageSourcePropType;
-
-  iconTemplateSource?: ImageSourcePropType;
-  selectedIconTemplateSource?: ImageSourcePropType;
+  icon?: Icon;
+  selectedIcon?: Icon;
 
   badgeValue?: string;
 
@@ -83,6 +92,63 @@ export interface BottomTabsScreenProps {
   onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;
   onWillDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
   onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
+}
+
+function parseIconToNativeProps(icon: Icon | undefined): {
+  iconType?: IconType;
+  iconSource?: ImageSourcePropType;
+} {
+  if (icon && 'sfSymbolName' in icon) {
+    return {
+      iconType: 'sfSymbol',
+      iconSource: {
+        body: icon.sfSymbolName,
+      },
+    };
+  } else if (icon && 'imageSource' in icon) {
+    return {
+      iconType: 'image',
+      iconSource: icon.imageSource,
+    };
+  } else if (icon && 'templateSource' in icon) {
+    return {
+      iconType: 'template',
+      iconSource: icon.templateSource,
+    };
+  } else {
+    return {};
+  }
+}
+
+function parseIconsToNativeProps(
+  icon: Icon | undefined,
+  selectedIcon: Icon | undefined,
+): {
+  iconType?: IconType;
+  iconSource?: ImageSourcePropType;
+  selectedIconSource?: ImageSourcePropType;
+} {
+  const { iconSource, iconType } = parseIconToNativeProps(icon);
+  const { iconSource: selectedIconSource, iconType: selectedIconType } =
+    parseIconToNativeProps(selectedIcon);
+
+  if (
+    iconType !== undefined &&
+    selectedIconType !== undefined &&
+    iconType !== selectedIconType
+  ) {
+    throw new Error('[RNScreens] icon and selectedIcon must be same type.');
+  } else if (iconType === undefined && selectedIconType !== undefined) {
+    throw new Error(
+      '[RNScreens] To use selectedIcon prop, the icon prop must also be provided.',
+    );
+  }
+
+  return {
+    iconType,
+    iconSource,
+    selectedIconSource,
+  };
 }
 
 function BottomTabsScreen(props: BottomTabsScreenProps) {
@@ -106,7 +172,9 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     onWillDisappear,
     onDidDisappear,
     isFocused = false,
-    ...propsWoEventHandlers
+    icon,
+    selectedIcon,
+    ...rest
   } = props;
 
   let shouldFreeze = freezeEnabled();
@@ -162,8 +230,13 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   console.info(
     `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
-      propsWoEventHandlers.tabKey
+      rest.tabKey
     } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
+  );
+
+  const { iconType, iconSource, selectedIconSource } = parseIconsToNativeProps(
+    icon,
+    selectedIcon,
   );
 
   return (
@@ -175,13 +248,14 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
+      iconType={iconType}
+      iconSource={iconSource}
+      selectedIconSource={selectedIconSource}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
-      {...propsWoEventHandlers}>
-      <Freeze
-        freeze={shouldFreeze}
-        placeholder={propsWoEventHandlers.placeholder}>
-        {propsWoEventHandlers.children}
+      {...rest}>
+      <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
+        {rest.children}
       </Freeze>
     </BottomTabsScreenNativeComponent>
   );

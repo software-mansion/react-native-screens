@@ -86,10 +86,13 @@ namespace react = facebook::react;
   _overrideScrollViewContentInsetAdjustmentBehavior = YES;
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
   
+  _iconType = RNSBottomTabsIconTypeSfSymbol;
+
   _iconImageSource = nil;
+  _iconSFSymbolName = nil;
+
   _selectedIconImageSource = nil;
-  _iconTemplateSource = nil;
-  _selectedIconTemplateSource = nil;
+  _selectedIconSFSymbolName = nil;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -216,16 +219,44 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.iconSFSymbolName != oldComponentProps.iconSFSymbolName) {
-    _iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSFSymbolName);
+  if (newComponentProps.iconType != oldComponentProps.iconType) {
+    _iconType = rnscreens::conversion::RNSBottomTabsIconTypeFromIcon(newComponentProps.iconType);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.selectedIconSFSymbolName != oldComponentProps.selectedIconSFSymbolName) {
-    _selectedIconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSFSymbolName);
+  if (newComponentProps.iconSource != oldComponentProps.iconSource) {
+    if (_iconType == RNSBottomTabsIconTypeSfSymbol) {
+      _iconImageSource = nil;
+      _iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSource.body);
+    } else {
+      _iconImageSource = [[RCTImageSource alloc]
+          initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.iconSource)
+                        size:CGSizeMake(
+                                 newComponentProps.iconSource.size.width, newComponentProps.iconSource.size.height)
+                       scale:newComponentProps.iconSource.scale];
+      _iconSFSymbolName = nil;
+    }
+
     tabItemNeedsAppearanceUpdate = YES;
   }
 
+  if (newComponentProps.selectedIconSource != oldComponentProps.selectedIconSource) {
+    if (_iconType == RNSBottomTabsIconTypeSfSymbol) {
+      _selectedIconImageSource = nil;
+      _selectedIconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSource.body);
+    } else {
+      _selectedIconImageSource =
+          [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.selectedIconSource)
+                                                size:CGSizeMake(
+                                                         newComponentProps.selectedIconSource.size.width,
+                                                         newComponentProps.selectedIconSource.size.height)
+                                               scale:newComponentProps.selectedIconSource.scale];
+      _selectedIconSFSymbolName = nil;
+    }
+
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
       oldComponentProps.specialEffects.repeatedTabSelection.popToRoot) {
     _shouldUseRepeatedTabSelectionPopToRootSpecialEffect =
@@ -248,51 +279,11 @@ RNS_IGNORE_SUPER_CALL_END
           @"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
     }
   }
-
+  
   // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
   // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
   // enabling us to warn users that dynamic changes are not supported.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
-
-  if (newComponentProps.iconImageSource != oldComponentProps.iconImageSource) {
-    _iconImageSource =
-        [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.iconImageSource)
-                                              size:CGSizeMake(
-                                                       newComponentProps.iconImageSource.size.width,
-                                                       newComponentProps.iconImageSource.size.height)
-                                             scale:newComponentProps.iconImageSource.scale];
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
-    _selectedIconImageSource = [[RCTImageSource alloc]
-        initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.selectedIconImageSource)
-                      size:CGSizeMake(
-                               newComponentProps.selectedIconImageSource.size.width,
-                               newComponentProps.selectedIconImageSource.size.height)
-                     scale:newComponentProps.selectedIconImageSource.scale];
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.iconTemplateSource != oldComponentProps.iconTemplateSource) {
-    _iconTemplateSource =
-        [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.iconTemplateSource)
-                                              size:CGSizeMake(
-                                                       newComponentProps.iconTemplateSource.size.width,
-                                                       newComponentProps.iconTemplateSource.size.height)
-                                             scale:newComponentProps.iconTemplateSource.scale];
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.selectedIconTemplateSource != oldComponentProps.selectedIconTemplateSource) {
-    _selectedIconTemplateSource = [[RCTImageSource alloc]
-        initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.selectedIconTemplateSource)
-                      size:CGSizeMake(
-                               newComponentProps.selectedIconTemplateSource.size.width,
-                               newComponentProps.selectedIconTemplateSource.size.height)
-                     scale:newComponentProps.selectedIconTemplateSource.scale];
-    tabItemNeedsAppearanceUpdate = YES;
-  }
 
   if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];

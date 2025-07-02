@@ -30,6 +30,8 @@ UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct
         titlePositionAdjustment);
 
+RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
+
 #pragma mark SplitView
 
 UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(

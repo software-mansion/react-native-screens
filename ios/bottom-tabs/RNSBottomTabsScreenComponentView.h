@@ -56,9 +56,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
-@property (nonatomic, strong, nullable) NSString *iconSFSymbolName;
-@property (nonatomic, strong, nullable) NSString *selectedIconSFSymbolName;
-
 @property (nonatomic, nullable) NSString *title;
 
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
@@ -66,11 +63,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
-@property (nonatomic, strong, readonly, nullable) RCTImageSource *iconImageSource;
-@property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
+@property (nonatomic, readonly) RNSBottomTabsIconType iconType;
 
-@property (nonatomic, strong, readonly, nullable) RCTImageSource *iconTemplateSource;
-@property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconTemplateSource;
+@property (nonatomic, strong, readonly, nullable) RCTImageSource *iconImageSource;
+@property (nonatomic, strong, readonly, nullable) NSString *iconSFSymbolName;
+
+@property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
+@property (nonatomic, strong, readonly, nullable) NSString *selectedIconSFSymbolName;
 
 @end
 

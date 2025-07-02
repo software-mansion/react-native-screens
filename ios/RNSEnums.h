@@ -118,3 +118,9 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
       API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemChromeMaterialDark
 
 } API_AVAILABLE(ios(8.0)) API_UNAVAILABLE(watchos);
+
+typedef NS_ENUM(NSInteger, RNSBottomTabsIconType) {
+  RNSBottomTabsIconTypeImage,
+  RNSBottomTabsIconTypeTemplate,
+  RNSBottomTabsIconTypeSfSymbol,
+};

@@ -172,4 +172,17 @@ UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
   return UIOffsetMake(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
 }
 
+RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType)
+{
+  using enum facebook::react::RNSBottomTabsScreenIconType;
+  switch (iconType) {
+    case Image:
+      return RNSBottomTabsIconTypeImage;
+    case Template:
+      return RNSBottomTabsIconTypeTemplate;
+    case SfSymbol:
+      return RNSBottomTabsIconTypeSfSymbol;
+  }
+}
+
 }; // namespace rnscreens::conversion

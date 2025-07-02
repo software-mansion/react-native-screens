@@ -21,9 +21,13 @@ const TAB_CONFIGS: TabConfiguration[] = [
       badgeValue: '1',
       title: 'Tab1',
       isFocused: true,
-      iconSFSymbolName: 'house',
-      selectedIconSFSymbolName: 'house.fill',
-      iconResourceName: "sym_call_incoming", // Android specific
+      iconResourceName: 'sym_call_incoming', // Android specific
+      icon: {
+        sfSymbolName: 'house',
+      },
+      selectedIcon: {
+        sfSymbolName: 'house.fill',
+      },
     },
     contentViewRenderFn: Tab1,
   },
@@ -41,10 +45,12 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemTitlePositionAdjustment: {
         vertical: 8,
       },
-      iconSFSymbolName: 'text.bubble',
-      selectedIconSFSymbolName: 'text.bubble.fill',
-      iconImageSource: require('../../assets/variableIcons/icon.png'),
-      selectedIconImageSource: require('../../assets/variableIcons/icon_fill.png'),
+      icon: {
+        templateSource: require('../../assets/variableIcons/icon.png'),
+      },
+      selectedIcon: {
+        templateSource: require('../../assets/variableIcons/icon_fill.png'),
+      },
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_missed', // Android specific
       title: 'Tab2',
@@ -56,8 +62,12 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabKey: 'Tab3',
       badgeValue: '3',
       tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
-      iconTemplateSource: require('../../assets/variableIcons/icon.png'),
-      selectedIconTemplateSource: require('../../assets/variableIcons/icon_fill.png'),
+      icon: {
+        imageSource: require('../../assets/variableIcons/icon.png'),
+      },
+      selectedIcon: {
+        imageSource: require('../../assets/variableIcons/icon_fill.png'),
+      },
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_outgoing', // Android specific
       title: 'Tab3',
@@ -67,8 +77,12 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab4',
-      iconSFSymbolName: 'rectangle.stack',
-      selectedIconSFSymbolName: 'rectangle.stack.fill',
+      icon: {
+        sfSymbolName: 'rectangle.stack',
+      },
+      selectedIcon: {
+        sfSymbolName: 'rectangle.stack.fill',
+      },
       title: 'Tab4',
     },
     contentViewRenderFn: Tab4,
