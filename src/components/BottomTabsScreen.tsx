@@ -50,7 +50,7 @@ export interface BottomTabsScreenProps {
   tabBarItemIconColor?: ColorValue;
 
   tabBarItemBadgeBackgroundColor?: ColorValue;
-  
+
   // General
   title?: string;
 

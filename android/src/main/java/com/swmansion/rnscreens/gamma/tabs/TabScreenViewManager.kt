@@ -37,7 +37,10 @@ class TabScreenViewManager :
             makeEventRegistrationInfo(TabScreenDidDisappearEvent),
         )
 
-    override fun addEventEmitters(reactContext: ThemedReactContext, view: TabScreen) {
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: TabScreen,
+    ) {
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
     }
@@ -86,22 +89,22 @@ class TabScreenViewManager :
 
     override fun setTabBarItemTitlePositionAdjustment(
         view: TabScreen?,
-        value: ReadableMap?
+        value: ReadableMap?,
     ) = Unit
 
     override fun setTabBarItemIconColor(
         view: TabScreen?,
-        value: Int?
+        value: Int?,
     ) = Unit
 
     override fun setIconSFSymbolName(
         view: TabScreen?,
-        value: String?
+        value: String?,
     ) = Unit
 
     override fun setSelectedIconSFSymbolName(
         view: TabScreen?,
-        value: String?
+        value: String?,
     ) = Unit
 
     override fun setIsFocused(

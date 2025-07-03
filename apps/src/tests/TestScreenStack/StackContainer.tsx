@@ -89,7 +89,7 @@ export function StackContainer({ pathConfigs }: StackContainerProps) {
         ...currentStack,
         {
           screenKey: getId().toString(),
-          lifecycleState: StackScreenLifecycleState.VISIBLE,
+          maxLifecycleState: StackScreenLifecycleState.ATTACHED,
           ...requestedPath,
         },
       ]);
@@ -127,7 +127,7 @@ export function StackContainer({ pathConfigs }: StackContainerProps) {
         ...currentStack, // This is mutated through pop()
         {
           ...lastElement,
-          lifecycleState: StackScreenLifecycleState.POPPED,
+          maxLifecycleState: StackScreenLifecycleState.DETACHED,
         },
       ];
     });

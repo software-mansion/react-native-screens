@@ -39,7 +39,6 @@ export interface BottomTabsProps extends ViewProps {
 
   tabBarItemIconColor?: ColorValue;
 
-
   tabBarItemBadgeBackgroundColor?: ColorValue;
 
   // Control

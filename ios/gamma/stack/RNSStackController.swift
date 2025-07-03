@@ -19,7 +19,7 @@ public class RNSStackController : UINavigationController, ReactMountingTransacti
 
   @objc
   public func setNeedsUpdateOfChildViewControllers() {
-    needsChildViewControllersUpdate = true;
+    needsChildViewControllersUpdate = true
   }
   
   // MARK: Updating
@@ -35,16 +35,17 @@ public class RNSStackController : UINavigationController, ReactMountingTransacti
   public func updateChildViewControllers() {
     precondition(needsChildViewControllersUpdate, "[RNScreens] Child view controller must be invalidated when update is forced!")
     
-    let currentSubviews = screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
+    let activeControllers = sourceAllViewControllers()
+      .filter { screenCtrl in screenCtrl.screenStackComponentView.maxLifecycleState == .attached }
     
-    let visibleViews = currentSubviews.filter {
-      $0.lifecycleState != RNSScreenStackLifecycleState.popped
-    }
-    
-    let visibleViewControllers = visibleViews.map { $0.controller }
-    setViewControllers(visibleViewControllers, animated: true)
+    setViewControllers(activeControllers, animated: true)
     
     needsChildViewControllersUpdate = false;
+  }
+  
+  private func sourceAllViewControllers() -> [RNSStackScreenController] {
+    let screenStackComponents = screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
+    return screenStackComponents.lazy.map(\.controller)
   }
   
   // MARK: ReactMountingTransactionObserving

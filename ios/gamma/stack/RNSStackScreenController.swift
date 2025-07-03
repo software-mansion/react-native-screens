@@ -20,7 +20,15 @@ public class RNSStackScreenController : UIViewController {
   }
   
   func findStackController() -> RNSStackController? {
-    return self.navigationController as! RNSStackController?
+    if let navCtrl = self.navigationController {
+      return navCtrl as? RNSStackController
+    }
+    
+    if let stackHost = self.screenStackComponentView.stackHost {
+      return stackHost.stackController
+    }
+    
+    return nil
   }
   
   // MARK: Signals
