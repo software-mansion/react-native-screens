@@ -1,19 +1,18 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import type { ViewProps } from 'react-native';
-import ScreenStackHostNativeComponent, {NativeProps} from '../../fabric/gamma/ScreenStackHostNativeComponent';
+import type { NativeProps } from '../../fabric/gamma/ScreenStackHostNativeComponent';
+import ScreenStackHostNativeComponent from '../../fabric/gamma/ScreenStackHostNativeComponent';
 
 export type ScreenStackNativeProps = NativeProps & {
   // Overrides
-}
+};
 
 type ScreenStackHostProps = {
   children?: ViewProps['children'];
 } & ScreenStackNativeProps;
 
-function ScreenStackHost({
-  children,
-}: ScreenStackHostProps) {
+function ScreenStackHost({ children }: ScreenStackHostProps) {
   return (
     <ScreenStackHostNativeComponent style={styles.container}>
       {children}
@@ -24,7 +23,7 @@ function ScreenStackHost({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
-})
+  },
+});
 
 export default ScreenStackHost;

@@ -4,20 +4,21 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSStackScreenController;
+@class RNSScreenStackHostComponentView;
 
 typedef NS_ENUM(int, RNSScreenStackLifecycleState) {
-  RNSScreenStackLifecycleStateInitial = 0, // JS rendered & detached native
-  RNSScreenStackLifecycleStateVisible = 1, // JS rendered & attached native
-  RNSScreenStackLifecycleStateFreezed = 2, // JS rendered+freezed & detached native
-  RNSScreenStackLifecycleStatePopped = 3, // JS rendered & detaching native
+  RNSScreenStackLifecycleInitial = 0,
+  RNSScreenStackLifecycleDetached = 1,
+  RNSScreenStackLifecycleAttached = 2,
 };
 
 @interface RNSStackScreenComponentView : RNSReactBaseView
 
+@property (nonatomic, weak, readwrite, nullable) RNSScreenStackHostComponentView *stackHost;
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
 
 @property (nonatomic, strong, readonly, nullable) NSString *screenKey;
-@property (nonatomic, readonly) RNSScreenStackLifecycleState lifecycleState;
+@property (nonatomic, readonly) RNSScreenStackLifecycleState maxLifecycleState;
 
 @end
 

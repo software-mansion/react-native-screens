@@ -17,7 +17,7 @@ export type LifecycleStateChangeEvent = Readonly<{
   newState: Int32;
 }>;
 
-export type BlurEffect = 
+export type BlurEffect =
   | 'none'
   | 'extraLight'
   | 'light'

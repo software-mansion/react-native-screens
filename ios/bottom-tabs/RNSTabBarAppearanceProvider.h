@@ -7,14 +7,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIColor *)tabBarBackgroundColor;
 - (UIBlurEffect *)tabBarBlurEffect;
 
--(NSString *)tabBarItemTitleFontFamily;
--(NSNumber *)tabBarItemTitleFontSize;
--(NSString *)tabBarItemTitleFontWeight;
--(NSString *)tabBarItemTitleFontStyle;
--(UIColor *)tabBarItemTitleFontColor;
--(UIOffset)tabBarItemTitlePositionAdjustment;
+- (NSString *)tabBarItemTitleFontFamily;
+- (NSNumber *)tabBarItemTitleFontSize;
+- (NSString *)tabBarItemTitleFontWeight;
+- (NSString *)tabBarItemTitleFontStyle;
+- (UIColor *)tabBarItemTitleFontColor;
+- (UIOffset)tabBarItemTitlePositionAdjustment;
 
--(UIColor *)tabBarItemIconColor;
+- (UIColor *)tabBarItemIconColor;
 
 - (UIColor *)tabBarItemBadgeBackgroundColor;
 

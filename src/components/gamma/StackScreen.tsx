@@ -5,16 +5,15 @@ import type { NativeSyntheticEvent, ViewProps } from 'react-native';
 import type { NativeProps } from '../../fabric/gamma/StackScreenNativeComponent';
 
 export const StackScreenLifecycleState = {
-  INIT: 0, // JS rendered & detached native
-  VISIBLE: 1, // JS rendered & attached native
-  FREEZED: 2, // JS rendered+freezed & detached native
-  POPPED: 3, // JS rendered & detaching native 
+  INITIAL: 0,
+  DETACHED: 1,
+  ATTACHED: 2,
 } as const;
 
 export type StackScreenNativeProps = NativeProps & {
   // Overrides
-  lifecycleState: (typeof StackScreenLifecycleState)[keyof typeof StackScreenLifecycleState];
-}
+  maxLifecycleState: (typeof StackScreenLifecycleState)[keyof typeof StackScreenLifecycleState];
+};
 
 type StackScreenProps = {
   children?: ViewProps['children'];
@@ -25,7 +24,7 @@ type StackScreenProps = {
 function StackScreen({
   children,
   // Control
-  lifecycleState,
+  maxLifecycleState,
   screenKey,
   // Events
   onWillAppear,
@@ -35,25 +34,25 @@ function StackScreen({
   // Custom events
   onPop,
 }: StackScreenProps) {
-
-
-  const handleOnDidDisappear = React.useCallback((e: NativeSyntheticEvent<Record<string, never>>) => {
-    onDidDisappear?.(e);
-    onPop?.(screenKey)
-  }, [onDidDisappear, onPop, screenKey]);
+  const handleOnDidDisappear = React.useCallback(
+    (e: NativeSyntheticEvent<Record<string, never>>) => {
+      onDidDisappear?.(e);
+      onPop?.(screenKey);
+    },
+    [onDidDisappear, onPop, screenKey],
+  );
 
   return (
-    <StackScreenNativeComponent 
+    <StackScreenNativeComponent
       style={StyleSheet.absoluteFill}
       // Control
-      lifecycleState={lifecycleState}
+      maxLifecycleState={maxLifecycleState}
       screenKey={screenKey}
       // Events
       onWillAppear={onWillAppear}
       onDidAppear={onDidAppear}
       onWillDisappear={onWillDisappear}
-      onDidDisappear={handleOnDidDisappear}
-    >
+      onDidDisappear={handleOnDidDisappear}>
       {children}
     </StackScreenNativeComponent>
   );

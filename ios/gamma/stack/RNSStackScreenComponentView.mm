@@ -49,7 +49,7 @@ namespace react = facebook::react;
 
   // container state
   _screenKey = nil;
-  _lifecycleState = RNSScreenStackLifecycleStateInitial;
+  _maxLifecycleState = RNSScreenStackLifecycleInitial;
 }
 
 - (void)setupController
@@ -74,8 +74,8 @@ namespace react = facebook::react;
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(props);
 
-  if (oldComponentProps.lifecycleState != newComponentProps.lifecycleState) {
-    _lifecycleState = (RNSScreenStackLifecycleState)newComponentProps.lifecycleState;
+  if (oldComponentProps.maxLifecycleState != newComponentProps.maxLifecycleState) {
+    _maxLifecycleState = static_cast<RNSScreenStackLifecycleState>(newComponentProps.maxLifecycleState);
     _needsLifecycleStateUpdate = YES;
   }
 
