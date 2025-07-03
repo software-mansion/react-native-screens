@@ -8,7 +8,7 @@ folly::dynamic RNSBottomTabsState::getDynamic() const {
   return {};
 }
 #else // ANDROID
-#ifndef NDEBUG
+#if !defined(NDEBUG)
 void RNSBottomTabsState::setImageLoader(
     std::weak_ptr<void> imageLoader) {
   imageLoader_ = imageLoader;

@@ -4,13 +4,9 @@
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
-#include <react/renderer/core/LayoutContext.h>
-#include "FrameCorrectionModes.h"
 #include "RNSBottomTabsState.h"
 
 namespace facebook::react {
-
-using namespace rnscreens;
 
 JSI_EXPORT extern const char RNSBottomTabsComponentName[];
 

@@ -5,13 +5,10 @@
 #endif
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/components/rnscreens/Props.h>
-#include <react/renderer/components/rnscreens/utils/RectUtil.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSBottomTabsShadowNode.h"
 
 namespace facebook::react {
-
-using namespace rnscreens;
 
 class RNSBottomTabsComponentDescriptor final
     : public ConcreteComponentDescriptor<RNSBottomTabsShadowNode> {
@@ -23,10 +20,10 @@ class RNSBottomTabsComponentDescriptor final
 
     ConcreteComponentDescriptor::adopt(shadowNode);
 #if !defined(ANDROID) && !defined(NDEBUG)
-    auto &configShadowNode = static_cast<RNSBottomTabsShadowNode &>(shadowNode);
+    auto &tabsShadowNode = static_cast<RNSBottomTabsShadowNode &>(shadowNode);
     std::weak_ptr<void> imageLoader =
         contextContainer_->at<std::shared_ptr<void>>("RCTImageLoader");
-    configShadowNode.setImageLoader(imageLoader);
+    tabsShadowNode.setImageLoader(imageLoader);
 #endif // !ANDROID && !NDEBUG
   }
 };
