@@ -152,5 +152,5 @@ export { default as TestFormSheet } from './TestFormSheet';
 export { default as TestAndroidTransitions } from './TestAndroidTransitions';
 export { default as TestAnimation } from './TestAnimation';
 export { default as TestBottomTabs } from './TestBottomTabs';
-
 export { default as TestScreenStack } from './TestScreenStack';
+export { default as TestSplitView } from './TestSplitView';
