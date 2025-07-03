@@ -47,6 +47,8 @@ export {
   default as StackScreen,
   StackScreenLifecycleState,
 } from './components/gamma/StackScreen';
+export { default as SplitViewHost } from './components/gamma/SplitViewHost';
+export { default as SplitViewScreen } from './components/gamma/SplitViewScreen';
 
 /**
  * Utils

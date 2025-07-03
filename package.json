@@ -174,7 +174,9 @@
         "RNSScreenStackHeaderConfig": "RNSScreenStackHeaderConfig",
         "RNSScreenStackHeaderSubview": "RNSScreenStackHeaderSubview",
         "RNSScreenStack": "RNSScreenStackView",
-        "RNSSearchBar": "RNSSearchBar"
+        "RNSSearchBar": "RNSSearchBar",
+        "RNSSplitViewHost": "RNSSplitViewHostComponentView",
+        "RNSSplitViewScreen": "RNSSplitViewScreenComponentView"
       },
       "components": {
         "RNSFullWindowOverlay": {
@@ -221,6 +223,12 @@
         },
         "RNSBottomTabs": {
           "className": "RNSBottomTabsHostComponentView"
+        },
+        "RNSSplitViewHost": {
+          "className": "RNSSplitViewHostComponentView"
+        },
+        "RNSSplitViewScreen": {
+          "className": "RNSSplitViewScreenComponentView"
         }
       }
     }
