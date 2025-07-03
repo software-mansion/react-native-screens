@@ -20,7 +20,7 @@ export default function App() {
 function SearchIconButton(props: { onPress: () => void }) {
   return (
     <TouchableOpacity onPress={props.onPress}>
-      <Image source={require('../../assets/search_black.png')} />
+      <Image source={require('../../../assets/search_black.png')} />
     </TouchableOpacity>
   );
 }

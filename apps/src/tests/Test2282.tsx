@@ -19,7 +19,7 @@ enableScreens(true);
 function Item({ children, ...props }: ViewProps) {
   return (
     <View style={styles.item} {...props}>
-      <Image source={require('../assets/trees.jpg')} style={styles.image} />
+      <Image source={require('../../assets/trees.jpg')} style={styles.image} />
       <Text style={styles.text}>{children}</Text>
     </View>
   );
@@ -47,7 +47,11 @@ function ListScreen() {
   );
 }
 
-function ListScreenSimplified({secondVisible}: {secondVisible?: (visible: boolean) => void}) {
+function ListScreenSimplified({
+  secondVisible,
+}: {
+  secondVisible?: (visible: boolean) => void;
+}) {
   const containerRef = React.useRef<View>(null);
   const innerViewRef = React.useRef<View>(null);
   const childViewRef = React.useRef<View>(null);
@@ -73,8 +77,13 @@ function ListScreenSimplified({secondVisible}: {secondVisible?: (visible: boolea
       style={{ flex: 1, backgroundColor: 'slateblue', overflow: 'hidden' }}
       removeClippedSubviews={false}>
       <View ref={innerViewRef} removeClippedSubviews style={{ height: '100%' }}>
-        <View ref={childViewRef} style={{ backgroundColor: 'pink', width: '100%', height: 50 }} removeClippedSubviews={false}>
-          {secondVisible && (<Button title='Hide second' onPress={() => secondVisible(false)} />)}
+        <View
+          ref={childViewRef}
+          style={{ backgroundColor: 'pink', width: '100%', height: 50 }}
+          removeClippedSubviews={false}>
+          {secondVisible && (
+            <Button title="Hide second" onPress={() => secondVisible(false)} />
+          )}
         </View>
       </View>
     </View>
@@ -145,7 +154,8 @@ export default function App(): React.JSX.Element {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ animation: 'slide_from_right' }}>
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="List" component={ListScreenSimplified}/> {/* <- Exchange here for ListScreen for more complex case */}
+        <Stack.Screen name="List" component={ListScreenSimplified} />{' '}
+        {/* <- Exchange here for ListScreen for more complex case */}
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -157,8 +167,8 @@ export function AppSimple(): React.JSX.Element {
   return (
     <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
       {!secondVisible && (
-        <View style={{ flex: 1, backgroundColor: 'lightblue' }} >
-          <Button title='Show second' onPress={() => setSecondVisible(true)} />
+        <View style={{ flex: 1, backgroundColor: 'lightblue' }}>
+          <Button title="Show second" onPress={() => setSecondVisible(true)} />
         </View>
       )}
       {secondVisible && (

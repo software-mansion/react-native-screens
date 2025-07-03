@@ -46,10 +46,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
         vertical: 8,
       },
       icon: {
-        templateSource: require('../../assets/variableIcons/icon.png'),
+        templateSource: require('../../../assets/variableIcons/icon.png'),
       },
       selectedIcon: {
-        templateSource: require('../../assets/variableIcons/icon_fill.png'),
+        templateSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_missed', // Android specific
@@ -63,10 +63,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
       badgeValue: '3',
       tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
       icon: {
-        imageSource: require('../../assets/variableIcons/icon.png'),
+        imageSource: require('../../../assets/variableIcons/icon.png'),
       },
       selectedIcon: {
-        imageSource: require('../../assets/variableIcons/icon_fill.png'),
+        imageSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_outgoing', // Android specific

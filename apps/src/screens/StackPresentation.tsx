@@ -85,14 +85,18 @@ const PushScreen = ({ navigation }: PushScreenProps) => (
   <View style={styles.container}>
     <FormScreenContent navigation={navigation} />
   </View>
-)
+);
 
 interface FormScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'FormSheet'>;
   route: RouteProp<StackParamList, 'FormSheet'>;
 }
 
-const FormScreenContent = ({ navigation }: { navigation: NativeStackNavigationProp<StackParamList, 'Push' | 'FormSheet'> }) => (
+const FormScreenContent = ({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<StackParamList, 'Push' | 'FormSheet'>;
+}) => (
   <>
     <Form />
     <Button
@@ -103,8 +107,10 @@ const FormScreenContent = ({ navigation }: { navigation: NativeStackNavigationPr
   </>
 );
 
-
-const FormScreen = ({ navigation, route }: FormScreenProps): React.JSX.Element => {
+const FormScreen = ({
+  navigation,
+  route,
+}: FormScreenProps): React.JSX.Element => {
   const isFormSheet = route.params?.usesFormSheetPresentation ?? false;
 
   return (
@@ -112,7 +118,7 @@ const FormScreen = ({ navigation, route }: FormScreenProps): React.JSX.Element =
       <FormScreenContent navigation={navigation} />
     </View>
   );
-}
+};
 
 interface ModalScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -133,7 +139,9 @@ interface PageSheetScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const PageSheetScreen = ({ navigation }: PageSheetScreenProps): React.JSX.Element => (
+const PageSheetScreen = ({
+  navigation,
+}: PageSheetScreenProps): React.JSX.Element => (
   <View style={styles.container}>
     <Choose />
     <Button
@@ -143,7 +151,6 @@ const PageSheetScreen = ({ navigation }: PageSheetScreenProps): React.JSX.Elemen
     />
   </View>
 );
-
 
 interface FullScreenModalProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -155,7 +162,7 @@ const FullScreenModalScreen = ({
   <View style={{ flex: 1 }}>
     <ImageBackground
       style={styles.image}
-      source={require('../assets/trees.jpg')}>
+      source={require('../../assets/trees.jpg')}>
       <Button
         testID="stack-presentation-fullscreen-modal-go-back-button"
         title="Go back"
@@ -223,7 +230,7 @@ const App = (): React.JSX.Element => (
       component={FormScreen}
       options={{ presentation: 'formSheet', sheetAllowedDetents: [0.5, 0.85] }}
       initialParams={{
-        usesFormSheetPresentation: true
+        usesFormSheetPresentation: true,
       }}
     />
     <Stack.Screen
