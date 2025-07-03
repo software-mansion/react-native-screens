@@ -24,6 +24,7 @@ export type BottomTabsScreenEventHandler<T> = (
   event: NativeSyntheticEvent<T>,
 ) => void;
 
+// iOS-specific: SFSymbol usage
 export interface SFIcon {
   sfSymbolName: string;
 }
@@ -92,63 +93,6 @@ export interface BottomTabsScreenProps {
   onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;
   onWillDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
   onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
-}
-
-function parseIconToNativeProps(icon: Icon | undefined): {
-  iconType?: IconType;
-  iconSource?: ImageSourcePropType;
-} {
-  if (icon && 'sfSymbolName' in icon) {
-    return {
-      iconType: 'sfSymbol',
-      iconSource: {
-        body: icon.sfSymbolName,
-      },
-    };
-  } else if (icon && 'imageSource' in icon) {
-    return {
-      iconType: 'image',
-      iconSource: icon.imageSource,
-    };
-  } else if (icon && 'templateSource' in icon) {
-    return {
-      iconType: 'template',
-      iconSource: icon.templateSource,
-    };
-  } else {
-    return {};
-  }
-}
-
-function parseIconsToNativeProps(
-  icon: Icon | undefined,
-  selectedIcon: Icon | undefined,
-): {
-  iconType?: IconType;
-  iconSource?: ImageSourcePropType;
-  selectedIconSource?: ImageSourcePropType;
-} {
-  const { iconSource, iconType } = parseIconToNativeProps(icon);
-  const { iconSource: selectedIconSource, iconType: selectedIconType } =
-    parseIconToNativeProps(selectedIcon);
-
-  if (
-    iconType !== undefined &&
-    selectedIconType !== undefined &&
-    iconType !== selectedIconType
-  ) {
-    throw new Error('[RNScreens] icon and selectedIcon must be same type.');
-  } else if (iconType === undefined && selectedIconType !== undefined) {
-    throw new Error(
-      '[RNScreens] To use selectedIcon prop, the icon prop must also be provided.',
-    );
-  }
-
-  return {
-    iconType,
-    iconSource,
-    selectedIconSource,
-  };
 }
 
 function BottomTabsScreen(props: BottomTabsScreenProps) {
@@ -259,6 +203,72 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       </Freeze>
     </BottomTabsScreenNativeComponent>
   );
+}
+
+function parseIconToNativeProps(icon: Icon | undefined): {
+  iconType?: IconType;
+  iconSource?: ImageSourcePropType;
+} {
+  if (!icon) {
+    return {};
+  }
+
+  // iOS-specific: SFSymbol usage
+  if ('sfSymbolName' in icon) {
+    return {
+      iconType: 'sfSymbol',
+      iconSource: {
+        body: icon.sfSymbolName,
+      },
+    };
+  } else if ('imageSource' in icon) {
+    return {
+      iconType: 'image',
+      iconSource: icon.imageSource,
+    };
+  } else if ('templateSource' in icon) {
+    return {
+      iconType: 'template',
+      iconSource: icon.templateSource,
+    };
+  } else {
+    // iOS-specific: SFSymbol usage
+    throw new Error(
+      '[RNScreens] Incorrect icon format. You must provide sfSymbolName, imageSource or templateSource.',
+    );
+  }
+}
+
+function parseIconsToNativeProps(
+  icon: Icon | undefined,
+  selectedIcon: Icon | undefined,
+): {
+  iconType?: IconType;
+  iconSource?: ImageSourcePropType;
+  selectedIconSource?: ImageSourcePropType;
+} {
+  const { iconSource, iconType } = parseIconToNativeProps(icon);
+  const { iconSource: selectedIconSource, iconType: selectedIconType } =
+    parseIconToNativeProps(selectedIcon);
+
+  if (
+    iconType !== undefined &&
+    selectedIconType !== undefined &&
+    iconType !== selectedIconType
+  ) {
+    throw new Error('[RNScreens] icon and selectedIcon must be same type.');
+  } else if (iconType === undefined && selectedIconType !== undefined) {
+    // iOS-specific: UIKit requirement
+    throw new Error(
+      '[RNScreens] To use selectedIcon prop, the icon prop must also be provided.',
+    );
+  }
+
+  return {
+    iconType,
+    iconSource,
+    selectedIconSource,
+  };
 }
 
 export default BottomTabsScreen;
