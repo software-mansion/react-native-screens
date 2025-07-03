@@ -69,6 +69,12 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
+- (nonnull RNSStackController *)stackController
+{
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
+  return _controller;
+}
+
 #pragma mark - RCTViewComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -80,6 +86,7 @@ RNS_IGNORE_SUPER_CALL_END
       RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
+  childScreen.stackHost = self;
   [_reactSubviews insertObject:childScreen atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
@@ -94,6 +101,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   [_reactSubviews removeObject:childScreen];
+  childScreen.stackHost = nil;
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
 

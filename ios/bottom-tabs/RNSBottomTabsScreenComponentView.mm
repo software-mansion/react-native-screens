@@ -160,8 +160,9 @@ RNS_IGNORE_SUPER_CALL_END
           oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
       newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
           oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
-    _tabBarItemTitlePositionAdjustment = rnscreens::conversion::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
-        newComponentProps.tabBarItemTitlePositionAdjustment);
+    _tabBarItemTitlePositionAdjustment =
+        rnscreens::conversion::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
+            newComponentProps.tabBarItemTitlePositionAdjustment);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
