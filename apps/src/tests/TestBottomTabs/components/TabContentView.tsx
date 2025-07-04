@@ -1,6 +1,6 @@
 import React from 'react';
 import { type ViewProps, View, Text, Button } from 'react-native';
-import ConfigWrapperContext from '../ConfigWrapperContext';
+import ConfigWrapperContext from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import { someExtensiveComputation } from '../utils';
 import { TabConfigurationSummary } from './TabConfigurationSummary';
 

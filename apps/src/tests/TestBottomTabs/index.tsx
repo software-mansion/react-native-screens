@@ -4,11 +4,11 @@ import { enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from './ConfigWrapperContext';
+} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
   BottomTabsContainer,
   type TabConfiguration,
-} from './BottomTabsContainer';
+} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3 } from './tabs';
 import Colors from '../../shared/styling/Colors';
 
