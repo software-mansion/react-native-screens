@@ -8,13 +8,12 @@ folly::dynamic RNSBottomTabsState::getDynamic() const {
   return {};
 }
 #else // ANDROID
-void RNSBottomTabsState::setImageLoader(
-    std::weak_ptr<void> imageLoader) {
+
+void RNSBottomTabsState::setImageLoader(std::weak_ptr<void> imageLoader) {
   imageLoader_ = imageLoader;
 }
 
-std::weak_ptr<void> RNSBottomTabsState::getImageLoader()
-    const noexcept {
+std::weak_ptr<void> RNSBottomTabsState::getImageLoader() const noexcept {
   return imageLoader_;
 }
 #endif // ANDROID
