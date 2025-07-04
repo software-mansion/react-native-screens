@@ -24,8 +24,8 @@ abstract class FabricEnabledHeaderConfigViewGroup(
         paddingStart: Int,
         paddingEnd: Int,
     ) {
-      // Implementation of this method differs between Fabric & Paper!
-      updateState(width, height, paddingStart, paddingEnd)
+        // Implementation of this method differs between Fabric & Paper!
+        updateState(width, height, paddingStart, paddingEnd)
     }
 
     // Implementation of this method differs between Fabric & Paper!

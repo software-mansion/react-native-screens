@@ -115,12 +115,12 @@ class TabsHostViewManager :
 
     override fun setTabBarItemTitlePositionAdjustment(
         view: TabsHost?,
-        value: ReadableMap?
+        value: ReadableMap?,
     ) = Unit
 
     override fun setTabBarItemIconColor(
         view: TabsHost?,
-        value: Int?
+        value: Int?,
     ) = Unit
 
     companion object {

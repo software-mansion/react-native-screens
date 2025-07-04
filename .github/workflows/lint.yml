@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - main
+      - main-labs
   pull_request:
     branches:
       - main
+      - main-labs
   workflow_dispatch:
 jobs:
   install-and-lint:
@@ -14,21 +16,29 @@ jobs:
       group: install-and-lint-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
+      
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+
       - name: Install node dependencies
         run: yarn
+
       - name: Format code
         run: |
           yarn format
+
       - name: Run linter
         run: |
           yarn lint
+
       - name: Check types
         run: |
           yarn check-types
