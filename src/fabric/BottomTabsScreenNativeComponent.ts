@@ -12,6 +12,7 @@ import {
 // @ts-ignore: ImageSource type has been recently added to react-native: https://github.com/facebook/react-native/pull/51969
 import type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
 
+// iOS-specific: SFSymbol, image as a template usage
 export type IconType = 'image' | 'template' | 'sfSymbol';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -82,6 +83,7 @@ export interface NativeProps extends ViewProps {
   // Android-specific image handling
   iconResourceName?: string;
 
+  // iOS-specific: SFSymbol usage
   iconType?: WithDefault<IconType, 'sfSymbol'>;
   iconSource?: ImageSource;
   selectedIconSource?: ImageSource;

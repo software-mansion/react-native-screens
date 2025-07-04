@@ -33,10 +33,12 @@ export interface ImageIcon {
   imageSource: ImageSourcePropType;
 }
 
+// iOS-specific: image as a template usage
 export interface TemplateIcon {
   templateSource: ImageSourcePropType;
 }
 
+// iOS-specific: SFSymbol, image as a template usage
 export type Icon = SFIcon | ImageIcon | TemplateIcon;
 
 export interface BottomTabsScreenProps {
@@ -213,8 +215,8 @@ function parseIconToNativeProps(icon: Icon | undefined): {
     return {};
   }
 
-  // iOS-specific: SFSymbol usage
   if ('sfSymbolName' in icon) {
+    // iOS-specific: SFSymbol usage
     return {
       iconType: 'sfSymbol',
       iconSource: {
@@ -227,12 +229,13 @@ function parseIconToNativeProps(icon: Icon | undefined): {
       iconSource: icon.imageSource,
     };
   } else if ('templateSource' in icon) {
+    // iOS-specifig: image as a template usage
     return {
       iconType: 'template',
       iconSource: icon.templateSource,
     };
   } else {
-    // iOS-specific: SFSymbol usage
+    // iOS-specific: SFSymbol, image as a template usage
     throw new Error(
       '[RNScreens] Incorrect icon format. You must provide sfSymbolName, imageSource or templateSource.',
     );

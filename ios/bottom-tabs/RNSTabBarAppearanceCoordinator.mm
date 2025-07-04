@@ -106,7 +106,7 @@
       [self loadImageFrom:screenView.iconImageSource
           withImageLoader:imageLoader
                asTemplate:isTemplate
-                 callback:^(UIImage *image) {
+          completionBlock:^(UIImage *image) {
                    tabBarItem.image = image;
                  }];
     } else {
@@ -118,7 +118,7 @@
       [self loadImageFrom:screenView.selectedIconImageSource
           withImageLoader:imageLoader
                asTemplate:isTemplate
-                 callback:^(UIImage *image) {
+          completionBlock:^(UIImage *image) {
                    tabBarItem.selectedImage = image;
                  }];
     } else {
@@ -128,9 +128,9 @@
 }
 
 - (void)loadImageFrom:(nonnull RCTImageSource *)imageSource
-      withImageLoader:(nonnull RCTImageLoader *)imageLoader
+      withImageLoader:(nullable RCTImageLoader *)imageLoader
            asTemplate:(bool)isTemplate
-             callback:(void (^)(UIImage *image))setImageCallback
+      completionBlock:(void (^)(UIImage *image))imageLoadingCompletionBlock
 {
   [imageLoader loadImageWithURLRequest:imageSource.request
       size:imageSource.size
@@ -146,9 +146,9 @@
         dispatch_sync(dispatch_get_main_queue(), ^{
 #endif // !NDEBUG
           if (isTemplate) {
-            setImageCallback([image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]);
+            imageLoadingCompletionBlock([image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]);
           } else {
-            setImageCallback([image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]);
+            imageLoadingCompletionBlock([image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]);
           }
 #if !defined(NDEBUG)
         });

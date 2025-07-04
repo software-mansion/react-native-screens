@@ -41,7 +41,7 @@ namespace react = facebook::react;
 
   RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
-  RCTImageLoader *_imageLoader;
+  RCTImageLoader *_Nullable _imageLoader;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
