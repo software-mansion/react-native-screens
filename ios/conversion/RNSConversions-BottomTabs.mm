@@ -193,14 +193,21 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
 {
   RCTImageSource *iconImageSource;
 
-  if (iconType == RNSBottomTabsIconTypeSfSymbol) {
-    iconImageSource = nil;
-  } else {
-    // RNSBottomTabsIconTypeImage and RNSBottomTabsIconTypeTemplate can be handled the same way
-    iconImageSource =
-        [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(*imageSource)
-                                              size:CGSizeMake(imageSource->size.width, imageSource->size.height)
-                                             scale:imageSource->scale];
+  switch (iconType) {
+    case RNSBottomTabsIconTypeSfSymbol:
+      iconImageSource = nil;
+      break;
+
+    case RNSBottomTabsIconTypeImage:
+    case RNSBottomTabsIconTypeTemplate:
+      iconImageSource =
+          [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(*imageSource)
+                                                size:CGSizeMake(imageSource->size.width, imageSource->size.height)
+                                               scale:imageSource->scale];
+      break;
+
+    default:
+      RCTLogError(@"[RNScreens] unsupported icon type");
   }
 
   return iconImageSource;
@@ -211,12 +218,19 @@ NSString *SFSymbolNameFromImageSourceAndIconType(
     RNSBottomTabsIconType iconType)
 {
   NSString *iconSFSymbolName;
-
-  if (iconType == RNSBottomTabsIconTypeSfSymbol) {
-    iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(imageSource->body);
-  } else {
-    // RNSBottomTabsIconTypeImage and RNSBottomTabsIconTypeTemplate can be handled the same way
-    iconSFSymbolName = nil;
+  
+  switch (iconType) {
+    case RNSBottomTabsIconTypeSfSymbol:
+      iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(imageSource->body);
+      break;
+      
+    case RNSBottomTabsIconTypeImage:
+    case RNSBottomTabsIconTypeTemplate:
+      iconSFSymbolName = nil;
+      break;
+    
+    default:
+      RCTLogError(@"[RNScreens] unsupported icon type");
   }
 
   return iconSFSymbolName;
