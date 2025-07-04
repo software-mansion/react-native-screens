@@ -2,7 +2,9 @@ package com.swmansion.rnscreens.gamma.tabs
 
 import android.util.Log
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
+import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -11,7 +13,8 @@ import kotlin.properties.Delegates
  */
 class TabScreen(
     val reactContext: ThemedReactContext,
-) : ViewGroup(reactContext) {
+) : ViewGroup(reactContext),
+    FragmentProviding {
     override fun onLayout(
         changed: Boolean,
         l: Int,
@@ -56,6 +59,8 @@ class TabScreen(
     internal fun setTabScreenDelegate(delegate: TabScreenDelegate?) {
         tabScreenDelegate = WeakReference(delegate)
     }
+
+    override fun getFragment(): Fragment? = tabScreenDelegate.get()?.getFragmentForTabScreen(this)
 
     private fun onTabFocusChangedFromJS() {
         tabScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
