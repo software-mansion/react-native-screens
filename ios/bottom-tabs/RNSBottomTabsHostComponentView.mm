@@ -267,9 +267,8 @@ namespace react = facebook::react;
 {
   react::RNSBottomTabsShadowNode::ConcreteState::Shared receivedState =
       std::static_pointer_cast<const react::RNSBottomTabsShadowNode::ConcreteState>(state);
-  if (auto imgLoaderPtr = receivedState.get()->getData().getImageLoader().lock()) {
-    _imageLoader = react::unwrapManagedObject(imgLoaderPtr);
-  }
+  
+  _imageLoader = [self retrieveImageLoaderFromState:receivedState];
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -464,7 +463,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #endif // RCT_NEW_ARCH_ENABLED
 
-#pragma mark - RNSImageLoader
+#pragma mark - React Image Loader
 
 - (RCTImageLoader *)reactImageLoader
 {

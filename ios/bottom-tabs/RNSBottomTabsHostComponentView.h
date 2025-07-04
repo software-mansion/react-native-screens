@@ -8,6 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomTabsScreenComponentView;
+@class RCTImageLoader;
 
 /**
  * Component view. Lifecycle is managed by React Native.
@@ -61,6 +62,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onNativeFocusChange;
 
 #endif
+
+#pragma mark - React Image Loader
+
+- (RCTImageLoader *)reactImageLoader;
 
 @end
 
