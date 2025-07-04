@@ -2,6 +2,7 @@
 
 #if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/Props.h>
+#import <React/RCTImageSource.h>
 #import "RNSEnums.h"
 
 namespace rnscreens::conversion {
@@ -31,6 +32,14 @@ UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
         titlePositionAdjustment);
 
 RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
+
+RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
+    const facebook::react::ImageSource *imageSource,
+    RNSBottomTabsIconType iconType);
+
+NSString *SFSymbolNameFromImageSourceAndIconType(
+    const facebook::react::ImageSource *imageSource,
+    RNSBottomTabsIconType iconType);
 
 #pragma mark SplitView
 

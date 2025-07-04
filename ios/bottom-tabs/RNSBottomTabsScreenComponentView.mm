@@ -12,7 +12,6 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import "RCTImagePrimitivesConversions.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #if RCT_NEW_ARCH_ENABLED
@@ -225,34 +224,19 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.iconSource != oldComponentProps.iconSource) {
-    if (_iconType == RNSBottomTabsIconTypeSfSymbol) {
-      _iconImageSource = nil;
-      _iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSource.body);
-    } else {
-      _iconImageSource = [[RCTImageSource alloc]
-          initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.iconSource)
-                        size:CGSizeMake(
-                                 newComponentProps.iconSource.size.width, newComponentProps.iconSource.size.height)
-                       scale:newComponentProps.iconSource.scale];
-      _iconSFSymbolName = nil;
-    }
+    _iconImageSource =
+        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconSource, _iconType);
+    _iconSFSymbolName =
+        rnscreens::conversion::SFSymbolNameFromImageSourceAndIconType(&newComponentProps.iconSource, _iconType);
 
     tabItemNeedsAppearanceUpdate = YES;
   }
 
   if (newComponentProps.selectedIconSource != oldComponentProps.selectedIconSource) {
-    if (_iconType == RNSBottomTabsIconTypeSfSymbol) {
-      _selectedIconImageSource = nil;
-      _selectedIconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSource.body);
-    } else {
-      _selectedIconImageSource =
-          [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(newComponentProps.selectedIconSource)
-                                                size:CGSizeMake(
-                                                         newComponentProps.selectedIconSource.size.width,
-                                                         newComponentProps.selectedIconSource.size.height)
-                                               scale:newComponentProps.selectedIconSource.scale];
-      _selectedIconSFSymbolName = nil;
-    }
+    _selectedIconImageSource =
+        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.selectedIconSource, _iconType);
+    _selectedIconSFSymbolName =
+        rnscreens::conversion::SFSymbolNameFromImageSourceAndIconType(&newComponentProps.selectedIconSource, _iconType);
 
     tabItemNeedsAppearanceUpdate = YES;
   }

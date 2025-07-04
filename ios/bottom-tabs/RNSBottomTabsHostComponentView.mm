@@ -466,7 +466,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - RNSImageLoader
 
-- (RCTImageLoader *)getImageLoader
+- (RCTImageLoader *)reactImageLoader
 {
   return _imageLoader;
 }

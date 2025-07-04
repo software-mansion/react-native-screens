@@ -1,9 +1,10 @@
 #import <Foundation/Foundation.h>
-#import <React/RCTImageLoader.h>
 #import "RNSBottomTabsHostComponentView.h"
 #import "RNSTabsScreenViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class RCTImageLoader;
 
 /**
  * Responsible for creating & applying appearance to the tab bar.

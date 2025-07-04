@@ -1,5 +1,6 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import <React/RCTFont.h>
+#import <React/RCTImageLoader.h>
 #import "RNSConversions.h"
 #import "RNSTabBarAppearanceProvider.h"
 #import "RNSTabsScreenViewController.h"

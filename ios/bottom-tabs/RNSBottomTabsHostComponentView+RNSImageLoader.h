@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSBottomTabsHostComponentView (RNSImageLoader)
 
-- (RCTImageLoader *)getImageLoader;
+- (RCTImageLoader *)reactImageLoader;
 
 @end
 

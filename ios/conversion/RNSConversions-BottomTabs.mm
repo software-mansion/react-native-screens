@@ -1,3 +1,5 @@
+#import <React/RCTConversions.h>
+#import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
 #import "RNSConversions.h"
 
 namespace rnscreens::conversion {
@@ -183,6 +185,41 @@ RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIc
     case SfSymbol:
       return RNSBottomTabsIconTypeSfSymbol;
   }
+}
+
+RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
+    const facebook::react::ImageSource *imageSource,
+    RNSBottomTabsIconType iconType)
+{
+  RCTImageSource *iconImageSource;
+
+  if (iconType == RNSBottomTabsIconTypeSfSymbol) {
+    iconImageSource = nil;
+  } else {
+    // RNSBottomTabsIconTypeImage and RNSBottomTabsIconTypeTemplate can be handled the same way
+    iconImageSource =
+        [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(*imageSource)
+                                              size:CGSizeMake(imageSource->size.width, imageSource->size.height)
+                                             scale:imageSource->scale];
+  }
+
+  return iconImageSource;
+}
+
+NSString *SFSymbolNameFromImageSourceAndIconType(
+    const facebook::react::ImageSource *imageSource,
+    RNSBottomTabsIconType iconType)
+{
+  NSString *iconSFSymbolName;
+
+  if (iconType == RNSBottomTabsIconTypeSfSymbol) {
+    iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(imageSource->body);
+  } else {
+    // RNSBottomTabsIconTypeImage and RNSBottomTabsIconTypeTemplate can be handled the same way
+    iconSFSymbolName = nil;
+  }
+
+  return iconSFSymbolName;
 }
 
 }; // namespace rnscreens::conversion
