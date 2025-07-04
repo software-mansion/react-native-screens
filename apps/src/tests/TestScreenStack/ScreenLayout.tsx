@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text, Button } from 'react-native';
 import Colors from '../../shared/styling/Colors';
-import { useStackNavigation } from './StackContainer';
+import { useStackNavigation } from '../../shared/gamma/containers/stack/StackContainer';
 
 export function ScreenLayout({ children }: { children: React.ReactNode }) {
   const navigation = useStackNavigation();
