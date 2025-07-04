@@ -1,9 +1,9 @@
 import React from 'react';
 import { type ViewProps, View } from 'react-native';
 
-export interface LayoutViewProps extends ViewProps {}
+export interface CenteredLayoutViewProps extends ViewProps {}
 
-export function LayoutView(props: LayoutViewProps) {
+export function CenteredLayoutView(props: CenteredLayoutViewProps) {
   const { children, style, ...rest } = props;
   return (
     <View

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
-import ConfigWrapperContext from '../ConfigWrapperContext';
+import ConfigWrapperContext from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 
 export interface TabConfigurationSummaryProps {
   tabKey: string;

@@ -1,7 +1,7 @@
 import React from 'react';
 import ConfigWrapperContext from './ConfigWrapperContext';
 import { BottomTabs, BottomTabsScreen } from 'react-native-screens';
-import { Colors } from '../../shared/styling/Colors';
+import { Colors } from '../../../styling/Colors';
 import type { BottomTabsScreenProps } from 'react-native-screens/components/BottomTabsScreen';
 import type { NativeSyntheticEvent } from 'react-native';
 import type { NativeFocusChangeEvent } from 'react-native-screens/fabric/BottomTabsNativeComponent';
