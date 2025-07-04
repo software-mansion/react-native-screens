@@ -5,7 +5,7 @@ namespace facebook::react {
 extern const char RNSBottomTabsComponentName[] =
     "RNSBottomTabs";
 
-#if !defined(ANDROID) && !defined(NDEBUG)
+#if !defined(ANDROID)
 void RNSBottomTabsShadowNode::setImageLoader(
     std::weak_ptr<void> imageLoader) {
   getStateDataMutable().setImageLoader(imageLoader);
@@ -18,5 +18,5 @@ RNSBottomTabsShadowNode::getStateDataMutable() {
   return const_cast<RNSBottomTabsShadowNode::StateData &>(
       getStateData());
 }
-#endif // !ANDROID && !NDEBUG
+#endif // !ANDROID
 } // namespace facebook::react

@@ -142,13 +142,17 @@
       partialLoadBlock:^(UIImage *_Nonnull image) {
       }
       completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
+#if !defined(NDEBUG)
         dispatch_sync(dispatch_get_main_queue(), ^{
+#endif // !NDEBUG
           if (isTemplate) {
             setImageCallback([image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]);
           } else {
             setImageCallback([image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]);
           }
+#if !defined(NDEBUG)
         });
+#endif // !NDEBUG
       }];
 }
 

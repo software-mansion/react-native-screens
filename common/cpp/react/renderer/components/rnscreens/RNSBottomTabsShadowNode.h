@@ -21,12 +21,12 @@ class JSI_EXPORT RNSBottomTabsShadowNode final : public ConcreteViewShadowNode<
 
 #pragma mark - Custom interface
 
-#if !defined(ANDROID) && !defined(NDEBUG)
+#if !defined(ANDROID)
   void setImageLoader(std::weak_ptr<void> imageLoader);
 
  private:
   StateData &getStateDataMutable();
-#endif // !ANDROID && !NDEBUG
+#endif // !ANDROID
 };
 
 } // namespace facebook::react
