@@ -8,7 +8,8 @@ import com.swmansion.rnscreens.gamma.common.NamingAwareEventType
 class TabScreenWillAppearEvent(
     surfaceId: Int,
     viewId: Int,
-) : Event<TabScreenWillAppearEvent>(surfaceId, viewId), NamingAwareEventType {
+) : Event<TabScreenWillAppearEvent>(surfaceId, viewId),
+    NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
 
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
@@ -23,6 +24,7 @@ class TabScreenWillAppearEvent(
         const val EVENT_REGISTRATION_NAME = "onWillAppear"
 
         override fun getEventName() = EVENT_NAME
+
         override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
     }
 }

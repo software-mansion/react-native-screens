@@ -1,7 +1,7 @@
-import UIKit
 import React
-import React_RCTAppDelegate
 import ReactAppDependencyProvider
+import React_RCTAppDelegate
+import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -39,11 +39,10 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
   }
 
   override func bundleURL() -> URL? {
-#if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-#else
-    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-#endif
+    #if DEBUG
+      RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+    #else
+      Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+    #endif
   }
 }
-
