@@ -216,6 +216,8 @@ class TabsHost(
         }
     }
 
+    override fun getFragmentForTabScreen(tabScreen: TabScreen): TabScreenFragment? = tabScreenFragments.find { it.tabScreen === tabScreen }
+
     private fun updateBottomNavigationViewAppearance() {
         Log.w(TAG, "updateBottomNavigationViewAppearance")
         bottomNavigationView.isVisible = true
