@@ -3,6 +3,7 @@
 import React from 'react';
 import BottomTabsNativeComponent, {
   BlurEffect,
+  TabBarMinimizeBehavior,
   NativeFocusChangeEvent,
   type NativeProps as BottomTabsNativeComponentProps,
 } from '../fabric/BottomTabsNativeComponent';
@@ -47,6 +48,8 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemTitleFontColorActive?: TextStyle['color']; 
   tabBarItemIconColorActive?: ColorValue;
   
+  tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+
   // Control
 
   // Experimental support
