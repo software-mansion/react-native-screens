@@ -6,19 +6,15 @@ import type { NativeProps } from '../../fabric/gamma/SplitViewScreenNativeCompon
 
 export type SplitViewScreenNativeProps = NativeProps & {
   // Overrides
-}
+};
 
 type SplitViewScreenProps = {
   children?: ViewProps['children'];
 } & SplitViewScreenNativeProps;
 
-function SplitViewScreen({
-  children,
-}: SplitViewScreenProps) {
+function SplitViewScreen({ children }: SplitViewScreenProps) {
   return (
-    <SplitViewScreenNativeComponent
-      style={StyleSheet.absoluteFill}
-    >
+    <SplitViewScreenNativeComponent style={StyleSheet.absoluteFill}>
       {children}
     </SplitViewScreenNativeComponent>
   );
