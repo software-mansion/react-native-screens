@@ -14,61 +14,63 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSSplitViewHostComponentView {
-    RNSSplitViewHostController *_Nonnull _controller;
-    NSMutableArray<RNSSplitViewScreenComponentView *> *_Nonnull _reactSubviews;
-    
-    bool _hasModifiedReactSubviewsInCurrentTransaction;
+  RNSSplitViewHostController *_Nonnull _controller;
+  NSMutableArray<RNSSplitViewScreenComponentView *> *_Nonnull _reactSubviews;
+
+  bool _hasModifiedReactSubviewsInCurrentTransaction;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    if (self = [super initWithFrame:frame]) {
-        [self initState];
-    }
-    return self;
+  if (self = [super initWithFrame:frame]) {
+    [self initState];
+  }
+  return self;
 }
 
 - (void)initState
 {
-    //    TODO: For now I'm hardcoding style in init, but style cannot be updated outside controller's constructor, thus we'll need to delay the initialization unitl Screen components will be mounted
-    _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self style:UISplitViewControllerStyleTripleColumn];
-    _hasModifiedReactSubviewsInCurrentTransaction = false;
-    _reactSubviews = [NSMutableArray new];
+  //    TODO: For now I'm hardcoding style in init, but style cannot be updated outside controller's constructor, thus
+  //    we'll need to delay the initialization unitl Screen components will be mounted
+  _controller =
+      [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self
+                                                                       style:UISplitViewControllerStyleTripleColumn];
+  _hasModifiedReactSubviewsInCurrentTransaction = false;
+  _reactSubviews = [NSMutableArray new];
 }
 
 - (void)didMoveToWindow
 {
-    RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
-    
-    [self reactAddControllerToClosestParent:_controller];
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
+
+  [self reactAddControllerToClosestParent:_controller];
 }
 
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller
 {
-    if (!controller.parentViewController) {
-        UIView *parentView = (UIView *)self.reactSuperview;
-        while (parentView) {
-            if (parentView.reactViewController) {
-                [parentView.reactViewController addChildViewController:controller];
-                [self addSubview:controller.view];
-                [controller didMoveToParentViewController:parentView.reactViewController];
-                break;
-            }
-            parentView = (UIView *)parentView.reactSuperview;
-        }
-        return;
+  if (!controller.parentViewController) {
+    UIView *parentView = (UIView *)self.reactSuperview;
+    while (parentView) {
+      if (parentView.reactViewController) {
+        [parentView.reactViewController addChildViewController:controller];
+        [self addSubview:controller.view];
+        [controller didMoveToParentViewController:parentView.reactViewController];
+        break;
+      }
+      parentView = (UIView *)parentView.reactSuperview;
     }
+    return;
+  }
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (nonnull NSMutableArray<RNSSplitViewScreenComponentView *> *)reactSubviews
 {
-    RCTAssert(
-              _reactSubviews != nil,
-              @"[RNScreens] Attempt to work with non-initialized list of RNSSplitViewScreenComponentView subviews. (for: %@)",
-              self
-              );
-    return _reactSubviews;
+  RCTAssert(
+      _reactSubviews != nil,
+      @"[RNScreens] Attempt to work with non-initialized list of RNSSplitViewScreenComponentView subviews. (for: %@)",
+      self);
+  return _reactSubviews;
 }
 RNS_IGNORE_SUPER_CALL_END
 
@@ -76,40 +78,40 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-    RCTAssert(
-              [childComponentView isKindOfClass:RNSSplitViewScreenComponentView.class],
-              @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
-              childComponentView.class,
-              RNSSplitViewScreenComponentView.class);
-    
-    auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
-    [_reactSubviews insertObject:childScreen atIndex:index];
-    _hasModifiedReactSubviewsInCurrentTransaction = true;
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSSplitViewScreenComponentView.class],
+      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSSplitViewScreenComponentView.class);
+
+  auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
+  [_reactSubviews insertObject:childScreen atIndex:index];
+  _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-    RCTAssert(
-              [childComponentView isKindOfClass:RNSSplitViewScreenComponentView.class],
-              @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
-              childComponentView.class,
-              RNSSplitViewScreenComponentView.class);
-    
-    auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
-    [_reactSubviews removeObject:childScreen];
-    _hasModifiedReactSubviewsInCurrentTransaction = true;
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSSplitViewScreenComponentView.class],
+      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSSplitViewScreenComponentView.class);
+
+  auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
+  [_reactSubviews removeObject:childScreen];
+  _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-    return react::concreteComponentDescriptorProvider<react::RNSSplitViewHostComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSSplitViewHostComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
 {
-    // There won't be tens of instances of this component usually & it's easier for now.
-    // We could consider enabling it someday though.
-    return NO;
+  // There won't be tens of instances of this component usually & it's easier for now.
+  // We could consider enabling it someday though.
+  return NO;
 }
 
 #pragma mark - RCTMountingTransactionObserving
@@ -117,23 +119,22 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-    _hasModifiedReactSubviewsInCurrentTransaction = false;
-    [_controller reactMountingTransactionWillMount];
+  _hasModifiedReactSubviewsInCurrentTransaction = false;
+  [_controller reactMountingTransactionWillMount];
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-    if (_hasModifiedReactSubviewsInCurrentTransaction) {
-        [_controller setNeedsUpdateOfChildViewControllers];
-    }
-    [_controller reactMountingTransactionDidMount];
+  if (_hasModifiedReactSubviewsInCurrentTransaction) {
+    [_controller setNeedsUpdateOfChildViewControllers];
+  }
+  [_controller reactMountingTransactionDidMount];
 }
 
 @end
 
-
 Class<RCTComponentViewProtocol> RNSSplitViewHostCls(void)
 {
-    return RNSSplitViewHostComponentView.class;
+  return RNSSplitViewHostComponentView.class;
 }

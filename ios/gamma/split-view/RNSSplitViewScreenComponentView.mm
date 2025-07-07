@@ -7,55 +7,55 @@
 namespace react = facebook::react;
 
 @implementation RNSSplitViewScreenComponentView {
-    RNSSplitViewScreenController *_Nullable _controller;
+  RNSSplitViewScreenController *_Nullable _controller;
 }
 
-- (RNSSplitViewScreenController *)controller {
-    RCTAssert(
-              _controller != nil,
-              @"[RNScreens] Attempt to access RNSSplitViewScreenController before RNSSplitViewScreenComponentView was initialized. (for: %@)",
-              self
-              );
-    return _controller;
+- (RNSSplitViewScreenController *)controller
+{
+  RCTAssert(
+      _controller != nil,
+      @"[RNScreens] Attempt to access RNSSplitViewScreenController before RNSSplitViewScreenComponentView was initialized. (for: %@)",
+      self);
+  return _controller;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    if (self = [super initWithFrame:frame]) {
-        [self initState];
-    }
-    
-    return self;
+  if (self = [super initWithFrame:frame]) {
+    [self initState];
+  }
+
+  return self;
 }
 
 - (void)initState
 {
-    [self setupController];
+  [self setupController];
 }
 
 - (void)setupController
 {
-    _controller = [[RNSSplitViewScreenController alloc] initWithSplitViewScreenComponentView:self];
-    _controller.view = self;
+  _controller = [[RNSSplitViewScreenController alloc] initWithSplitViewScreenComponentView:self];
+  _controller.view = self;
 }
 
 #pragma mark - RCTViewComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-    return react::concreteComponentDescriptorProvider<react::RNSSplitViewScreenComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSSplitViewScreenComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
 {
-    // There won't be tens of instances of this component usually & it's easier for now.
-    // We could consider enabling it someday though.
-    return NO;
+  // There won't be tens of instances of this component usually & it's easier for now.
+  // We could consider enabling it someday though.
+  return NO;
 }
 
 @end
 
 Class<RCTComponentViewProtocol> RNSSplitViewScreenCls(void)
 {
-    return RNSSplitViewScreenComponentView.class;
+  return RNSSplitViewScreenComponentView.class;
 }
