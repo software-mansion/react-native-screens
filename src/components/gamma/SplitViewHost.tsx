@@ -6,15 +6,13 @@ import type { NativeProps } from '../../fabric/gamma/SplitViewHostNativeComponen
 
 export type SplitViewNativeProps = NativeProps & {
   // Overrides
-}
+};
 
 type SplitViewHostProps = {
   children?: ViewProps['children'];
 } & SplitViewNativeProps;
 
-function ScreenStackHost({
-  children,
-}: SplitViewHostProps) {
+function ScreenStackHost({ children }: SplitViewHostProps) {
   return (
     <SplitViewHostNativeComponent style={styles.container}>
       {children}
@@ -25,7 +23,7 @@ function ScreenStackHost({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
-})
+  },
+});
 
 export default ScreenStackHost;
