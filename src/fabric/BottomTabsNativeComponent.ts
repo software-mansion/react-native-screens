@@ -48,6 +48,12 @@ export type TabBarItemLabelVisibilityMode =
   | 'labeled'
   | 'unlabeled';
 
+export type TabBarMinimizeBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
@@ -82,6 +88,8 @@ export interface NativeProps extends ViewProps {
     TabBarItemLabelVisibilityMode,
     'auto'
   >;
+
+  tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
 
   // Control
 
