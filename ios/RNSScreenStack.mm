@@ -30,6 +30,7 @@
 #import "RNSScrollViewFinder.h"
 #import "RNSTabsScreenViewController.h"
 #import "UIScrollView+RNScreens.h"
+#import "RNSDismissibleModalProtocol.h"
 #import "UIView+RNSUtility.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
