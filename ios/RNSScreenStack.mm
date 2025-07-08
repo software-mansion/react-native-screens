@@ -27,6 +27,7 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSDismissibleModalProtocol.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
 #import "UIView+RNSUtility.h"
