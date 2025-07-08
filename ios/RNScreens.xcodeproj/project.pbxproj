@@ -48,6 +48,7 @@
 		A3AF377826398E26003653D6 /* RNSSearchBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNSSearchBar.m; sourceTree = "<group>"; };
 		A3AF377926398E27003653D6 /* RNSSearchBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNSSearchBar.h; sourceTree = "<group>"; };
 		B5C32A4F220C6379000FFB8D /* libRNScreens-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libRNScreens-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE02C1BD2E1D396100887BE7 /* RNSDismissableModalProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNSDismissableModalProtocol.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +80,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				BE02C1BD2E1D396100887BE7 /* RNSDismissableModalProtocol.h */,
 				A3AF377926398E27003653D6 /* RNSSearchBar.h */,
 				A3AF377826398E26003653D6 /* RNSSearchBar.m */,
 				4482D5ED22CB391800D5A5B9 /* RNSScreenStackHeaderConfig.h */,
