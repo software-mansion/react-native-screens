@@ -569,9 +569,10 @@ RNS_IGNORE_SUPER_CALL_END
 
   UIViewController *firstModalToBeDismissed = changeRootController.presentedViewController;
 
-  // This check is for external modals that are not owned by this stack. They can prevent the dismissal of the modal by extending
-  // RNSDismissibleModalProtocol and returning NO from isDismissible method.
-  if (![firstModalToBeDismissed conformsToProtocol:@protocol(RNSDismissibleModalProtocol)] || [(id<RNSDismissibleModalProtocol>)firstModalToBeDismissed isDismissible]) {
+  // This check is for external modals that are not owned by this stack. They can prevent the dismissal of the modal by
+  // extending RNSDismissibleModalProtocol and returning NO from isDismissible method.
+  if (![firstModalToBeDismissed conformsToProtocol:@protocol(RNSDismissibleModalProtocol)] ||
+      [(id<RNSDismissibleModalProtocol>)firstModalToBeDismissed isDismissible]) {
     if (firstModalToBeDismissed != nil) {
       const BOOL firstModalToBeDismissedIsOwned = [firstModalToBeDismissed isKindOfClass:RNSScreen.class];
       const BOOL firstModalToBeDismissedIsOwnedByThisStack =
@@ -590,13 +591,16 @@ RNS_IGNORE_SUPER_CALL_END
           // If the modal is owned we let it control whether the dismissal is animated or not. For foreign controllers
           // we just assume animation.
           const BOOL firstModalToBeDismissedPrefersAnimation = firstModalToBeDismissedIsOwned
-              ? static_cast<RNSScreen *>(firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone
+              ? static_cast<RNSScreen *>(firstModalToBeDismissed).screenView.stackAnimation !=
+                  RNSScreenStackAnimationNone
               : YES;
-          [changeRootController dismissViewControllerAnimated:firstModalToBeDismissedPrefersAnimation completion:finish];
+          [changeRootController dismissViewControllerAnimated:firstModalToBeDismissedPrefersAnimation
+                                                   completion:finish];
         } else {
           // We need to wait for its dismissal and then run our presentation code.
           // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
-          // immediately present another owned one. Dismissal of the foreign one will be triggered by foreign controller.
+          // immediately present another owned one. Dismissal of the foreign one will be triggered by foreign
+          // controller.
           [[firstModalToBeDismissed transitionCoordinator]
               animateAlongsideTransition:nil
                               completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
@@ -607,12 +611,12 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
 
-    // changeRootController does not have presentedViewController but it does not mean that no modals are in presentation;
-    // modals could be presented by another stack (nested / outer), third-party view controller or they could be using
-    // UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in the last case
-    // for some reason system asks top-level (react root) vc to present instead of our stack, despite the fact that
-    // `definesPresentationContext` returns `YES` for UINavigationController.
-    // So we first need to find top-level controller manually:
+    // changeRootController does not have presentedViewController but it does not mean that no modals are in
+    // presentation; modals could be presented by another stack (nested / outer), third-party view controller or they
+    // could be using UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in
+    // the last case for some reason system asks top-level (react root) vc to present instead of our stack, despite the
+    // fact that `definesPresentationContext` returns `YES` for UINavigationController. So we first need to find
+    // top-level controller manually:
     UIViewController *reactRootVc = [self findReactRootViewController];
     UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
 
