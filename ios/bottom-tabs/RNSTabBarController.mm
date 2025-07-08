@@ -87,7 +87,7 @@
     return;
   }
 
-  [self setViewControllers:_tabScreenControllers animated:true];
+  [self setViewControllers:_tabScreenControllers animated:[[self viewControllers] count] != 0];
 }
 
 - (void)updateSelectedViewControllerIfNeeded
