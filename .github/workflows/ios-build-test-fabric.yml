@@ -23,6 +23,7 @@ jobs:
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
+      RNS_GAMMA_ENABLED: 1
     concurrency:
       group: ios-fabric-${{ github.ref }}
       cancel-in-progress: true
