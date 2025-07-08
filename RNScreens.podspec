@@ -2,11 +2,19 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
+gamma_project_enabled = ENV['RNS_GAMMA_ENABLED'] == '1'
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+
+source_files_exts = new_arch_enabled ? '{h,m,mm,cpp,swift}' : '{h,m,mm,swift}'
+source_files = ["ios/**/*.#{source_files_exts}"]
+
+if !new_arch_enabled
+  source_files.push("cpp/RNScreensTurboModule.cpp", "cpp/RNScreensTurboModule.h")
+end
+
 min_supported_ios_version = new_arch_enabled ? "15.1" : "15.1"
 min_supported_tvos_version = "15.1"
 min_supported_visionos_version = "1.0"
-source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp,swift}' : ["ios/**/*.{h,m,mm,swift}", "cpp/RNScreensTurboModule.cpp", "cpp/RNScreensTurboModule.h"]
 
 Pod::Spec.new do |s|
   s.name         = "RNScreens"
@@ -21,8 +29,14 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_supported_ios_version, :tvos => min_supported_tvos_version, :visionos => min_supported_visionos_version }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
-  s.project_header_files = "ios/gamma/bridging/Swift-Bridging.h"
+  s.project_header_files = "ios/bridging/Swift-Bridging.h"
   s.requires_arc = true
+
+  if !gamma_project_enabled
+    s.exclude_files = "ios/gamma/**/*.#{source_files_exts}"
+  else
+    Pod::UI.puts "[RNScreens] Gamma project enabled. Including source files."
+  end
 
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES'
