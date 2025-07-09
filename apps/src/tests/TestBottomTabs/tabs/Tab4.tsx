@@ -70,7 +70,7 @@ export function LongText() {
   );
 }
 
-export function Screen1({ navigation }: StackNavigationProp) {
+function Screen1({ navigation }: StackNavigationProp) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
@@ -82,7 +82,7 @@ export function Screen1({ navigation }: StackNavigationProp) {
   );
 }
 
-export function Screen2({ navigation }: StackNavigationProp) {
+function Screen2({ navigation }: StackNavigationProp) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
@@ -94,7 +94,7 @@ export function Screen2({ navigation }: StackNavigationProp) {
   );
 }
 
-export function Screen3() {
+function Screen3() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <LongText />

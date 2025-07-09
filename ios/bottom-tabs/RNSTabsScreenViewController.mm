@@ -1,5 +1,7 @@
 #import "RNSTabsScreenViewController.h"
 #import "RNSTabBarController.h"
+#import "RNSScrollViewFinder.h"
+#import "UIScrollView+RNScreens.h"
 
 @implementation RNSTabsScreenViewController
 
@@ -87,7 +89,12 @@
 
 - (bool)tabScreenSelectedRepeatedly
 {
-  return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelection];
+  if ([self tabsSpecialEffectsDelegate] != nil) {
+    return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelection];
+  } else {
+    UIScrollView* scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
+    return [scrollView rnscreens_scrollToTop];
+  }
 }
 
 @end
