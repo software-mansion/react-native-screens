@@ -134,6 +134,11 @@ class TabScreenViewManager :
         view.tabTitle = value
     }
 
+    override fun setSpecialEffects(
+        view: TabScreen,
+        value: ReadableMap?
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
     }

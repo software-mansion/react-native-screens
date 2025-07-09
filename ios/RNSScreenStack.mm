@@ -157,14 +157,18 @@ namespace react = facebook::react;
   }
 }
 
-- (bool)onRepeatedTabSelection
+- (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
 {
-  if ([[self viewControllers] count] > 1) {
+  if ([[self viewControllers] count] > 1
+      && tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
     return [[self popToRootViewControllerAnimated:true] count] > 0;
-  } else {
-    UIScrollView* scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[[self topViewController] view]];
+  } else if ([[self viewControllers] count] == 1
+             && tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+    UIScrollView *scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[[self topViewController] view]];
     return [scrollView rnscreens_scrollToTop];
   }
+  
+  return false;
 }
 
 @end

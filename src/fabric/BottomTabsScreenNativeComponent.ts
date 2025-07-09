@@ -78,6 +78,13 @@ export interface NativeProps extends ViewProps {
   selectedIconSFSymbolName?: string;
 
   badgeValue?: string;
+
+  specialEffects?: {
+    repeatedTabSelection?: {
+      popToRoot?: WithDefault<boolean, true>;
+      scrollToTop?: WithDefault<boolean, true>;
+    };
+  };
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});
