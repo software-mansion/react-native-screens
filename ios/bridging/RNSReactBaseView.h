@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_END
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSReactBaseView
+@interface RNSReactBaseView : UIView
 @end
 
 NS_ASSUME_NONNULL_END
