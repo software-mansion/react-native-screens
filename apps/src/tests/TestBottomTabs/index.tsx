@@ -9,7 +9,7 @@ import {
   BottomTabsContainer,
   type TabConfiguration,
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import { Tab1, Tab2, Tab3 } from './tabs';
+import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../shared/styling/Colors';
 
 enableFreeze(true);
@@ -57,6 +57,15 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab3',
     },
     contentViewRenderFn: Tab3,
+  },
+  {
+    tabScreenProps: {
+      tabKey: 'Tab4',
+      iconSFSymbolName: 'rectangle.stack',
+      selectedIconSFSymbolName: 'rectangle.stack.fill',
+      title: 'Tab4',
+    },
+    contentViewRenderFn: Tab4,
   },
 ];
 
