@@ -20,11 +20,24 @@
 
   RNSTabBarController *tabBarCtrl = static_cast<RNSTabBarController *>(tabBarController);
   RNSTabsScreenViewController *tabScreenCtrl = static_cast<RNSTabsScreenViewController *>(viewController);
-
-  [tabBarCtrl.tabsHostComponentView
-      emitOnNativeFocusChangeRequestSelectedTabScreen:tabScreenCtrl.tabScreenComponentView];
-
-  return ![self shouldPreventNativeTabChangeWithinTabBarController:tabBarCtrl];
+  
+  bool repeatedSelectionHandledNatively = false;
+  
+  // Detect repeated selection and inform tabScreenController
+  if ([tabBarCtrl selectedViewController] == tabScreenCtrl) {
+    repeatedSelectionHandledNatively = [tabScreenCtrl tabScreenSelectedRepeatedly];
+  }
+  
+  // TODO: send an event with information about event being handled natively
+  if (!repeatedSelectionHandledNatively) {
+    [tabBarCtrl.tabsHostComponentView
+        emitOnNativeFocusChangeRequestSelectedTabScreen:tabScreenCtrl.tabScreenComponentView];
+    
+    return ![self shouldPreventNativeTabChangeWithinTabBarController:tabBarCtrl];
+  }
+  
+  // As we're selecting the same controller, returning both true and false works here.
+  return true;
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController

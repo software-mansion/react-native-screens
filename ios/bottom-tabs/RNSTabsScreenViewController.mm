@@ -72,4 +72,22 @@
   [tabBarCtrl updateTabBarAppearanceIfNeeded];
 }
 
+- (void)setTabsSpecialEffectsDelegate:(id<RNSBottomTabsSpecialEffectsSupporting>)delegate
+{
+  RCTAssert(delegate != nil, @"[RNScreens] can't set special effects delegate to nil. Use clearTabsSpecialEffectsDelegateIfNeeded instead.");
+  _tabsSpecialEffectsDelegate = delegate;
+}
+
+- (void)clearTabsSpecialEffectsDelegateIfNeeded:(id<RNSBottomTabsSpecialEffectsSupporting>)delegate
+{
+  if (_tabsSpecialEffectsDelegate == delegate) {
+    _tabsSpecialEffectsDelegate = nil;
+  }
+}
+
+- (bool)tabScreenSelectedRepeatedly
+{
+  return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelection];
+}
+
 @end
