@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
+@property (nonatomic, readonly) RNSTabBarMinimizeBehavior tabBarMinimizeBehavior;
+
 @end
 
 #pragma mark - React Events
