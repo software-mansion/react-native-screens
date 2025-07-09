@@ -1,4 +1,5 @@
 #import "RNSReactBaseView.h"
+#import "RNSSplitViewScreenShadowStateProxy.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -7,6 +8,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitViewScreenComponentView : RNSReactBaseView
 
 @property (nonatomic, strong, readonly, nonnull) RNSSplitViewScreenController *controller;
+
+@end
+
+#pragma mark - ShadowTreeState
+
+@interface RNSSplitViewScreenComponentView ()
+
+- (nonnull RNSSplitViewScreenShadowStateProxy *)shadowStateProxy;
 
 @end
 

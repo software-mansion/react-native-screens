@@ -5,6 +5,10 @@ import UIKit
 public class RNSSplitViewScreenController: UIViewController {
   let splitViewScreenComponentView: RNSSplitViewScreenComponentView
 
+  private var shadowStateProxy: RNSSplitViewScreenShadowStateProxy {
+    return splitViewScreenComponentView.shadowStateProxy()
+  }
+
   @objc public required init(splitViewScreenComponentView: RNSSplitViewScreenComponentView) {
     self.splitViewScreenComponentView = splitViewScreenComponentView
     super.init(nibName: nil, bundle: nil)
@@ -15,7 +19,7 @@ public class RNSSplitViewScreenController: UIViewController {
   }
 
   func findSplitViewHostController() -> RNSSplitViewHostController? {
-    return self.navigationController as! RNSSplitViewHostController?
+    return self.splitViewController as? RNSSplitViewHostController
   }
 
   // MARK: Signals
@@ -23,5 +27,9 @@ public class RNSSplitViewScreenController: UIViewController {
   @objc
   public func setNeedsLifecycleStateUpdate() {
     findSplitViewHostController()?.setNeedsUpdateOfChildViewControllers()
+  }
+
+  func columnPositioningDidChangeIn(splitViewController: UISplitViewController) {
+    shadowStateProxy.updateShadowState(ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view)
   }
 }

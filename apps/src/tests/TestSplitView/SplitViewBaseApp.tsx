@@ -1,22 +1,44 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
+import PressableWithFeedback from '../../shared/PressableWithFeedback';
 import { Colors } from '../../shared/styling/Colors';
 
+const TestButton = ({ setButtonState }) => {
+  return (
+    <PressableWithFeedback
+      onPress={() => setButtonState('Pressed')}
+      onPressIn={() => setButtonState('Pressed In')}
+      onPressOut={() => setButtonState('Pressed Out')}
+      style={styles.button}>
+      <Text style={styles.text}>Touch me</Text>
+    </PressableWithFeedback>
+  )
+}
+
 const SplitViewBaseApp = () => {
+  const [buttonState, setButtonState] = React.useState('Initial');
+  const [buttonState2, setButtonState2] = React.useState('Initial');
+  const [buttonState3, setButtonState3] = React.useState('Initial');
+
   return (
     <SplitViewHost>
       <SplitViewScreen>
-        <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]} />
+        <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
+          <TestButton setButtonState={setButtonState} />
+          {buttonState && (<Text style={styles.text}>Button State: {buttonState}</Text>)}
+        </View>
       </SplitViewScreen>
       <SplitViewScreen>
-        <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]} />
+        <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]}>
+          <TestButton setButtonState={setButtonState2} />
+          {buttonState2 && (<Text style={styles.text}>Button State: {buttonState2}</Text>)}
+        </View>
       </SplitViewScreen>
       <SplitViewScreen>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
-          <Text style={styles.text}>
-            Basic demo for splitView application
-          </Text>
+          <TestButton setButtonState={setButtonState3} />
+          {buttonState3 && (<Text style={styles.text}>Button State: {buttonState3}</Text>)}
         </View>
       </SplitViewScreen>
     </SplitViewHost>
@@ -36,6 +58,13 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 24
+  },
+  button: {
+    width: 120,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.BlueDark100
   }
 })
 

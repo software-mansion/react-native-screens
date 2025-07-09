@@ -5,4 +5,6 @@ import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNati
 
 export interface NativeProps extends ViewProps {}
 
-export default codegenNativeComponent<NativeProps>('RNSSplitViewScreen', {});
+export default codegenNativeComponent<NativeProps>('RNSSplitViewScreen', {
+  interfaceOnly: true,
+});
