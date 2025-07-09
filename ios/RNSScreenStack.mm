@@ -27,6 +27,7 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSTabsScreenViewController.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
 #import "UIView+RNSUtility.h"
@@ -135,6 +136,30 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 }
 #endif
+
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+  [super willMoveToParentViewController:parent];
+  if ([self.parentViewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    RNSTabsScreenViewController *previousParentTabsScreenVC =
+      static_cast<RNSTabsScreenViewController *>(self.parentViewController);
+    [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
+  }
+}
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  [super didMoveToParentViewController:parent];
+  if ([parent isKindOfClass:RNSTabsScreenViewController.class]) {
+    RNSTabsScreenViewController *parentTabsScreenVC = static_cast<RNSTabsScreenViewController *>(parent);
+    [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
+  }
+}
+
+- (bool)onRepeatedTabSelection
+{
+  return [[self popToRootViewControllerAnimated:true] count] > 0;
+}
 
 @end
 
