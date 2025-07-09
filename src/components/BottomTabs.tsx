@@ -26,6 +26,7 @@ export interface BottomTabsProps extends ViewProps {
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: BlurEffect; // defaults to 'none'
+  tabBarTintColor?: ColorValue;
 
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
