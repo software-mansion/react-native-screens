@@ -50,6 +50,7 @@ export interface NativeProps extends ViewProps {
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: WithDefault<BlurEffect, 'none'>;
+  tabBarTintColor?: ColorValue;
 
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: Float;

@@ -30,6 +30,8 @@
   tabBar.standardAppearance = appearance;
   tabBar.scrollEdgeAppearance = appearance;
 
+  tabBar.tintColor = hostComponentView.tabBarTintColor;
+
   // Step 4 - build the appearance object for each tab & apply it
   if (tabScreenCtrls == nil) {
     return;

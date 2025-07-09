@@ -78,6 +78,11 @@ class TabsHostViewManager :
         value: String?,
     ) = Unit
 
+    override fun setTabBarTintColor(
+        view: TabsHost,
+        value: Int?
+    ) = Unit
+
     override fun setTabBarItemTitleFontSize(
         view: TabsHost?,
         value: Float,
