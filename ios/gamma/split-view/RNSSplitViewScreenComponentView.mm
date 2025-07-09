@@ -1,6 +1,6 @@
 #import "RNSSplitViewScreenComponentView.h"
 #import <React/RCTAssert.h>
-#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 
 #import "Swift-Bridging.h"
 
@@ -8,6 +8,7 @@ namespace react = facebook::react;
 
 @implementation RNSSplitViewScreenComponentView {
   RNSSplitViewScreenController *_Nullable _controller;
+  RNSSplitViewScreenShadowStateProxy *_Nonnull _shadowStateProxy;
 }
 
 - (RNSSplitViewScreenController *)controller
@@ -31,12 +32,22 @@ namespace react = facebook::react;
 - (void)initState
 {
   [self setupController];
+
+  _shadowStateProxy = [RNSSplitViewScreenShadowStateProxy new];
 }
 
 - (void)setupController
 {
   _controller = [[RNSSplitViewScreenController alloc] initWithSplitViewScreenComponentView:self];
   _controller.view = self;
+}
+
+#pragma mark - ShadowTreeState
+
+- (nonnull RNSSplitViewScreenShadowStateProxy *)shadowStateProxy
+{
+  RCTAssert(_shadowStateProxy != nil, @"[RNScreens] Attempt to access uninitialized _shadowStateProxy");
+  return _shadowStateProxy;
 }
 
 #pragma mark - RCTViewComponentViewProtocol
@@ -51,6 +62,13 @@ namespace react = facebook::react;
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+- (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
+{
+  [super updateState:state oldState:oldState];
+
+  [_shadowStateProxy updateState:state oldState:oldState];
 }
 
 @end
