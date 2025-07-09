@@ -61,6 +61,7 @@ namespace react = facebook::react;
   _props = defaultProps;
   _tabBarBlurEffect = nil;
   _tabBarBackgroundColor = nil;
+  _tabBarTintColor = nil;
 
   _tabBarItemTitleFontFamily = nil;
   _tabBarItemTitleFontSize = nil;
@@ -180,6 +181,11 @@ namespace react = facebook::react;
     _needsTabBarAppearanceUpdate = YES;
     _tabBarBlurEffect =
         rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
+  }
+  
+  if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
+    _needsTabBarAppearanceUpdate = YES;
+    _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
   }
 
   if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
