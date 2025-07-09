@@ -60,6 +60,9 @@ namespace react = facebook::react;
   _tabBarItemIconColor = nil;
 
   _tabBarItemBadgeBackgroundColor = nil;
+  
+  _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
+  _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -179,6 +182,16 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.selectedIconSFSymbolName != oldComponentProps.selectedIconSFSymbolName) {
     _selectedIconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSFSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot
+      != oldComponentProps.specialEffects.repeatedTabSelection.popToRoot) {
+    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = newComponentProps.specialEffects.repeatedTabSelection.popToRoot;
+  }
+  
+  if (newComponentProps.specialEffects.repeatedTabSelection.scrollToTop
+      != oldComponentProps.specialEffects.repeatedTabSelection.scrollToTop) {
+    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
   }
 
   if (tabItemNeedsAppearanceUpdate) {

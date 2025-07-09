@@ -59,6 +59,13 @@ export interface BottomTabsScreenProps {
 
   badgeValue?: string;
 
+  specialEffects?: {
+    repeatedTabSelection?: {
+      popToRoot?: boolean;
+      scrollToTop?: boolean;
+    };
+  };
+
   // Events
   onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
   onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;

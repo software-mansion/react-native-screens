@@ -90,11 +90,13 @@
 - (bool)tabScreenSelectedRepeatedly
 {
   if ([self tabsSpecialEffectsDelegate] != nil) {
-    return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelection];
-  } else {
+    return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
+  } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
     UIScrollView* scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
     return [scrollView rnscreens_scrollToTop];
   }
+
+  return false;
 }
 
 @end
