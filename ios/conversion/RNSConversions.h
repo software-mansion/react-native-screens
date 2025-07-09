@@ -20,6 +20,9 @@ UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct
         titlePositionAdjustment);
 
+RNSTabBarMinimizeBehavior RNSTabBarMinimizeBehaviorFromHostProp(
+    react::RNSBottomTabsTabBarMinimizeBehavior);
+
 std::optional<UIBlurEffectStyle>
 RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);

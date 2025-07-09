@@ -88,6 +88,23 @@ UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
   return UIOffsetMake(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
 }
 
+RNSTabBarMinimizeBehavior RNSTabBarMinimizeBehaviorFromHostProp(
+    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior)
+{
+  using enum facebook::react::RNSBottomTabsTabBarMinimizeBehavior;
+  
+  switch (tabBarMinimizeBehavior) {
+    case Automatic:
+      return RNSTabBarMinimizeBehaviorAutomatic;
+    case Never:
+      return RNSTabBarMinimizeBehaviorNever;
+    case OnScrollDown:
+      return RNSTabBarMinimizeBehaviorOnScrollDown;
+    case OnScrollUp:
+      return RNSTabBarMinimizeBehaviorOnScrollUp;
+  }
+}
+
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect)
 {

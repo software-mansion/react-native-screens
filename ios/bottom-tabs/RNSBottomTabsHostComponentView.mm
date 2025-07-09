@@ -261,6 +261,35 @@ namespace react = facebook::react;
         newComponentProps.tabBarItemTitlePositionAdjustment);
     _needsTabBarAppearanceUpdate = YES;
   }
+  
+  if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
+    _tabBarMinimizeBehavior = rnscreens::conversion::RNSTabBarMinimizeBehaviorFromHostProp(newComponentProps.tabBarMinimizeBehavior);
+    
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+    if (@available(iOS 26.0, *)) {
+      switch (_tabBarMinimizeBehavior) {
+        case RNSTabBarMinimizeBehaviorAutomatic:
+          _controller.tabBarMinimizeBehavior = UITabBarMinimizeBehaviorAutomatic;
+          break;
+          
+        case RNSTabBarMinimizeBehaviorNever:
+          _controller.tabBarMinimizeBehavior = UITabBarMinimizeBehaviorNever;
+          break;
+          
+        case RNSTabBarMinimizeBehaviorOnScrollDown:
+          _controller.tabBarMinimizeBehavior = UITabBarMinimizeBehaviorOnScrollDown;
+          break;
+          
+        case RNSTabBarMinimizeBehaviorOnScrollUp:
+          _controller.tabBarMinimizeBehavior = UITabBarMinimizeBehaviorOnScrollUp;
+          break;
+      }
+    } else if (_tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAutomatic) {
+      RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
+    }
+#endif // Check for iOS >= 26
+  }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
   [super updateProps:props oldProps:oldProps];
