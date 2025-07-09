@@ -186,6 +186,10 @@ class TabsHostViewManager :
     ) {
         view.tabBarItemRippleColor = value
     }
+    override fun setTabBarMinimizeBehavior(
+        view: TabsHost,
+        value: String?,
+    ) = Unit
 
     @ReactProp(name = "tabBarItemLabelVisibilityMode")
     override fun setTabBarItemLabelVisibilityMode(
