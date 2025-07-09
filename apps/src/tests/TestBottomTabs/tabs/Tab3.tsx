@@ -1,13 +1,28 @@
+import PressableWithFeedback from '../../../shared/PressableWithFeedback';
 import React from 'react';
-import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
-import { TabContentView } from '../components/TabContentView';
-import Colors from '../../../shared/styling/Colors';
+import { ScrollView, Text } from 'react-native';
 
 export function Tab3() {
-  // const
   return (
-    <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
-      <TabContentView selectNextTab={undefined} tabKey={'Tab3'} />
-    </CenteredLayoutView>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{
+        width: '100%',
+        height: 'auto',
+        gap: 15,
+        paddingHorizontal: 30,
+      }}>
+      {[...Array(30).keys()].map(index => (
+        <PressableWithFeedback
+          key={index + 1}
+          onPress={() => console.log(`Pressed #${index + 1}`)}
+          style={{
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+          }}>
+          <Text>Pressable #{index + 1}</Text>
+        </PressableWithFeedback>
+      ))}
+    </ScrollView>
   );
 }
