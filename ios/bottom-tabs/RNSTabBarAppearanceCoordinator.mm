@@ -124,6 +124,8 @@
     } else {
       tabBarItem.selectedImage = nil;
     }
+  } else {
+    RCTLogWarn(@"[RNScreens] unable to load tab bar item icons: imageLoader should not be nil");
   }
 }
 
