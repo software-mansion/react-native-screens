@@ -43,6 +43,7 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemBadgeBackgroundColor?: ColorValue;
 
   // Additional for Android
+  tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
   tabBarItemTitleFontColorActive?: TextStyle['color']; 
   tabBarItemIconColorActive?: ColorValue;
   

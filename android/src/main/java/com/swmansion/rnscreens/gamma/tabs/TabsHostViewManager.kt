@@ -86,7 +86,9 @@ class TabsHostViewManager :
     override fun setTabBarItemTitleFontSize(
         view: TabsHost?,
         value: Float,
-    ) = Unit
+    ) {
+        view?.tabBarItemTitleFontSize = value
+    }
 
     override fun setControlNavigationStateInJS(
         view: TabsHost?,
@@ -146,6 +148,13 @@ class TabsHostViewManager :
         value: Int?,
     ) {
         view.tabBarItemIconColorActive = value
+    }
+
+    override fun setTabBarItemTitleFontSizeActive(
+        view: TabsHost?,
+        value: Float,
+    ) {
+        view?.tabBarItemTitleFontSizeActive = value
     }
 
     companion object {

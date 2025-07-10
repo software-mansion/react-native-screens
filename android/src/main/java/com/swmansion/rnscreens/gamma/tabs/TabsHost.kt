@@ -5,8 +5,11 @@ import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.uimanager.ThemedReactContext
@@ -113,42 +116,37 @@ class TabsHost(
     private var isLayoutInvalidated: Boolean = false
 
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            containerUpdateCoordinator.let {
-                it.invalidateNavigationMenu()
-                it.postContainerUpdateIfNeeded()
-            }
-        }
+        updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
     var tabBarItemIconColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            containerUpdateCoordinator.let {
-                it.invalidateNavigationMenu()
-                it.postContainerUpdateIfNeeded()
-            }
-        }
+        updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
     var tabBarItemIconColorActive: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            containerUpdateCoordinator.let {
-                it.invalidateNavigationMenu()
-                it.postContainerUpdateIfNeeded()
-            }
-        }
+        updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
     var tabBarItemTitleFontColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            containerUpdateCoordinator.let {
-                it.invalidateNavigationMenu()
-                it.postContainerUpdateIfNeeded()
-            }
-        }
+        updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
     var tabBarItemTitleFontColorActive: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
+    var tabBarItemTitleFontSize: Float? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+    
+    var tabBarItemTitleFontSizeActive: Float? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
+    private fun <T> updateNavigationMenuIfNeeded(
+        oldValue: T,
+        newValue: T,
+    ) {
         if (newValue != oldValue) {
             containerUpdateCoordinator.let {
                 it.invalidateNavigationMenu()
@@ -283,7 +281,7 @@ class TabsHost(
         bottomNavigationView.menu.clear()
 
         tabScreenFragments.forEachIndexed { index, fragment ->
-            Log.d(TAG, "Add menu item: index=$index")
+            Log.d(TAG, "Add menu item: $index")
             val item =
                 bottomNavigationView.menu.add(
                     Menu.NONE,
@@ -295,12 +293,32 @@ class TabsHost(
             item.icon = fragment.tabScreen.icon
         }
 
+        // Update font styles
+        updateFontStyles()
+
         bottomNavigationView.selectedItemId =
             checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
 
         post {
             forceSubtreeMeasureAndLayoutPass()
             Log.d(TAG, "BottomNavigationView request layout")
+        }
+    }
+
+    private fun updateFontStyles() {
+        val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
+
+        for (menuItem in bottomNavigationMenuView.children) {
+            val largeLabel =
+                menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_large_label_view)
+            val smallLabel =
+                menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
+
+            val smallFontSize = tabBarItemTitleFontSize?.takeIf { it > 0 } ?: 12f
+            val largeFontSize = tabBarItemTitleFontSizeActive?.takeIf { it > 0 } ?: 14f
+
+            smallLabel.textSize = smallFontSize
+            largeLabel.textSize = largeFontSize
         }
     }
 
