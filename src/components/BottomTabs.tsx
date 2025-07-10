@@ -44,6 +44,7 @@ export interface BottomTabsProps extends ViewProps {
 
   // Additional for Android
   tabBarItemTitleFontColorActive?: TextStyle['color']; 
+  tabBarItemIconColorActive?: ColorValue;
   
   // Control
 

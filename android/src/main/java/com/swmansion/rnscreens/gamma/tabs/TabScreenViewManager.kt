@@ -136,7 +136,7 @@ class TabScreenViewManager :
 
     override fun setSpecialEffects(
         view: TabScreen,
-        value: ReadableMap?
+        value: ReadableMap?,
     ) = Unit
 
     companion object {

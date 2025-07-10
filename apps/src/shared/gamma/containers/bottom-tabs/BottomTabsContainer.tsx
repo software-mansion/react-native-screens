@@ -84,11 +84,15 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
   return (
     <BottomTabs
       onNativeFocusChange={onNativeFocusChangeCallback}
+
       tabBarBackgroundColor={Colors.NavyLight100}
       tabBarTintColor={Colors.YellowLight100}
       tabBarItemBadgeBackgroundColor={Colors.GreenDark100}
+      tabBarItemIconColor={Colors.BlueLight100}
       tabBarItemTitleFontColor={Colors.BlueLight40}
+      tabBarItemIconColorActive={Colors.GreenLight100}
       tabBarItemTitleFontColorActive={Colors.GreenLight40}
+
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }>

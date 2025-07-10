@@ -15,7 +15,6 @@ import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
-
 class TabsHost(
     val reactContext: ThemedReactContext,
 ) : LinearLayout(reactContext),
@@ -114,6 +113,24 @@ class TabsHost(
     private var isLayoutInvalidated: Boolean = false
 
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            containerUpdateCoordinator.let {
+                it.invalidateNavigationMenu()
+                it.postContainerUpdateIfNeeded()
+            }
+        }
+    }
+
+    var tabBarItemIconColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            containerUpdateCoordinator.let {
+                it.invalidateNavigationMenu()
+                it.postContainerUpdateIfNeeded()
+            }
+        }
+    }
+
+    var tabBarItemIconColorActive: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             containerUpdateCoordinator.let {
                 it.invalidateNavigationMenu()
@@ -251,9 +268,16 @@ class TabsHost(
 
         // Font color
         val fontInactiveColor = tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color_secondary
-        val fontActiveColor = tabBarItemTitleFontColorActive ?: tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color
+        val fontActiveColor =
+            tabBarItemTitleFontColorActive ?: tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color
         val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
+
+        // Icon color
+        val iconInactiveColor = tabBarItemIconColor ?: com.google.android.material.R.color.m3_tabs_icon_color_secondary
+        val iconActiveColor = tabBarItemIconColorActive ?: tabBarItemIconColor ?: com.google.android.material.R.color.m3_tabs_icon_color
+        val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
+        bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
         // First clean the menu, then populate it
         bottomNavigationView.menu.clear()
