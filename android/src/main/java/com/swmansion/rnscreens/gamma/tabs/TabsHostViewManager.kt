@@ -147,7 +147,7 @@ class TabsHostViewManager :
     ) {
         view.tabBarItemIconColorActive = value
     }
-    
+
     companion object {
         const val REACT_CLASS = "RNSBottomTabs"
     }

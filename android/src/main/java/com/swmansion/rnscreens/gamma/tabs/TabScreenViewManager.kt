@@ -134,6 +134,13 @@ class TabScreenViewManager :
         view.tabTitle = value
     }
 
+    override fun setIconResourceName(
+        view: TabScreen,
+        value: String?,
+    ) {
+        view.iconResourceName = value
+    }
+
     override fun setSpecialEffects(
         view: TabScreen,
         value: ReadableMap?,
