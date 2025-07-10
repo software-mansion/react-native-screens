@@ -77,6 +77,9 @@ export interface NativeProps extends ViewProps {
   iconSFSymbolName?: string;
   selectedIconSFSymbolName?: string;
 
+  // Android-specific image handling
+  iconResourceName?: string;
+
   badgeValue?: string;
 
   specialEffects?: {

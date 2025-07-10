@@ -1,10 +1,12 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -37,9 +39,26 @@ class TabScreen(
                 }
         }
 
-    var tabTitle: String? by Delegates.observable(null) { property, oldValue, newValue ->
+    var tabTitle: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+    }
+
+    var iconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
         if (newValue != oldValue) {
-            onTabTitleChangedFromJS()
+            icon = getSystemDrawableResource(reactContext, newValue)
+        }
+    }
+
+    var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+    }
+
+    private fun <T> updateMenuItemAttributesIfNeeded(
+        oldValue: T,
+        newValue: T,
+    ) {
+        if (newValue != oldValue) {
+            onMenuItemAttributesChange()
         }
     }
 
@@ -66,7 +85,7 @@ class TabScreen(
         tabScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
     }
 
-    private fun onTabTitleChangedFromJS() {
+    private fun onMenuItemAttributesChange() {
         tabScreenDelegate.get()?.onMenuItemAttributesChange(this)
     }
 
