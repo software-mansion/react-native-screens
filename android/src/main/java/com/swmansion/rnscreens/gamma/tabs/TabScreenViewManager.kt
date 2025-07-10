@@ -1,6 +1,9 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.graphics.Color
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -9,6 +12,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSBottomTabsScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSBottomTabsScreenManagerInterface
+import com.facebook.react.views.image.ReactImageView
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
@@ -44,6 +48,13 @@ class TabScreenViewManager :
     ) {
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
+    }
+
+    override fun addView(parent: TabScreen, child: View, index: Int) {
+        super.addView(parent, child, index)
+        if (child is ReactImageView) {
+            parent.icon = child.drawable
+        }
     }
 
     // These should be ignored or another component, dedicated for Android should be used
