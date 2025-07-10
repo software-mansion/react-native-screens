@@ -57,6 +57,12 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
       case "tabBarItemBadgeBackgroundColor":
         mViewManager.setTabBarItemBadgeBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
+      case "tabBarItemTitleFontColorActive":
+        mViewManager.setTabBarItemTitleFontColorActive(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
+      case "tabBarItemIconColorActive":
+        mViewManager.setTabBarItemIconColorActive(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
       case "controlNavigationStateInJS":
         mViewManager.setControlNavigationStateInJS(view, value == null ? false : (boolean) value);
         break;
