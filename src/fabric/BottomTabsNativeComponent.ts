@@ -66,6 +66,9 @@ export interface NativeProps extends ViewProps {
 
   tabBarItemBadgeBackgroundColor?: ColorValue;
 
+  // Android 
+  tabBarItemTitleFontColorActive?: ColorValue; 
+  
   // Control
 
   // Experimental support

@@ -87,7 +87,8 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarBackgroundColor={Colors.NavyLight100}
       tabBarTintColor={Colors.YellowLight100}
       tabBarItemBadgeBackgroundColor={Colors.GreenDark100}
-      tabBarItemIconColor={Colors.BlueLight40}
+      tabBarItemTitleFontColor={Colors.BlueLight40}
+      tabBarItemTitleFontColorActive={Colors.GreenLight40}
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }>
