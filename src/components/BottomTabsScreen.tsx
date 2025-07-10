@@ -57,7 +57,8 @@ export interface BottomTabsScreenProps {
   iconSFSymbolName?: string;
   selectedIconSFSymbolName?: string;
 
-  badgeValue?: string;
+  // Android specific
+  iconResourceName?: string;
 
   specialEffects?: {
     repeatedTabSelection?: {

@@ -283,9 +283,16 @@ class TabsHost(
         bottomNavigationView.menu.clear()
 
         tabScreenFragments.forEachIndexed { index, fragment ->
-            Log.d(TAG, "Add menu item: $index")
-            val item = bottomNavigationView.menu.add(Menu.NONE, index, Menu.NONE, fragment.tabScreen.tabTitle)
-            item.setIcon(android.R.drawable.sym_action_chat)
+            Log.d(TAG, "Add menu item: index=$index")
+            val item =
+                bottomNavigationView.menu.add(
+                    Menu.NONE,
+                    index,
+                    Menu.NONE,
+                    fragment.tabScreen.tabTitle,
+                )
+
+            item.icon = fragment.tabScreen.icon
         }
 
         bottomNavigationView.selectedItemId =
@@ -356,6 +363,7 @@ class TabsHost(
         tabScreen: TabScreen,
     ) {
         menuItem.title = tabScreen.tabTitle
+        menuItem.icon = tabScreen.icon
     }
 
     internal fun onViewManagerAddEventEmitters() {

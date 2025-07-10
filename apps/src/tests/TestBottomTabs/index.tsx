@@ -23,6 +23,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       isFocused: true,
       iconSFSymbolName: 'house',
       selectedIconSFSymbolName: 'house.fill',
+      iconResourceName: "sym_call_incoming", // Android specific
     },
     contentViewRenderFn: Tab1,
   },
@@ -43,6 +44,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       iconSFSymbolName: 'text.bubble',
       selectedIconSFSymbolName: 'text.bubble.fill',
       tabBarItemIconColor: Colors.RedDark120,
+      iconResourceName: 'sym_call_missed', // Android specific
       title: 'Tab2',
     },
     contentViewRenderFn: Tab2,
@@ -54,6 +56,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
       iconSFSymbolName: 'gear',
       selectedIconSFSymbolName: 'gear',
+      iconResourceName: 'sym_call_outgoing', // Android specific
       title: 'Tab3',
     },
     contentViewRenderFn: Tab3,
