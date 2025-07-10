@@ -111,7 +111,9 @@ class TabsHostViewManager :
     override fun setTabBarItemTitleFontColor(
         view: TabsHost,
         value: Int?,
-    ) = Unit
+    ) {
+        view.tabBarItemTitleFontColor = value
+    }
 
     override fun setTabBarItemBadgeBackgroundColor(
         view: TabsHost,
@@ -127,6 +129,12 @@ class TabsHostViewManager :
         view: TabsHost?,
         value: Int?,
     ) = Unit
+
+    // Android additional
+
+    override fun setTabBarItemTitleFontColorActive(view: TabsHost, value: Int?) {
+        view.tabBarItemTitleFontColorActive = value
+    }
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabs"
