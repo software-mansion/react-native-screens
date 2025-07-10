@@ -80,7 +80,7 @@ class TabsHostViewManager :
 
     override fun setTabBarTintColor(
         view: TabsHost,
-        value: Int?
+        value: Int?,
     ) = Unit
 
     override fun setTabBarItemTitleFontSize(
@@ -126,16 +126,28 @@ class TabsHostViewManager :
     ) = Unit
 
     override fun setTabBarItemIconColor(
-        view: TabsHost?,
+        view: TabsHost,
         value: Int?,
-    ) = Unit
+    ) {
+        view.tabBarItemIconColor = value
+    }
 
     // Android additional
 
-    override fun setTabBarItemTitleFontColorActive(view: TabsHost, value: Int?) {
+    override fun setTabBarItemTitleFontColorActive(
+        view: TabsHost,
+        value: Int?,
+    ) {
         view.tabBarItemTitleFontColorActive = value
     }
 
+    override fun setTabBarItemIconColorActive(
+        view: TabsHost,
+        value: Int?,
+    ) {
+        view.tabBarItemIconColorActive = value
+    }
+    
     companion object {
         const val REACT_CLASS = "RNSBottomTabs"
     }
