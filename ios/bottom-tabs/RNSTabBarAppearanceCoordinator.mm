@@ -98,7 +98,7 @@
   if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
     tabBarItem.image = [UIImage systemImageNamed:screenView.iconSFSymbolName];
     tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSFSymbolName];
-  } else {
+  } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
     
     // Normal icon
@@ -128,10 +128,13 @@
 }
 
 - (void)loadImageFrom:(nonnull RCTImageSource *)imageSource
-      withImageLoader:(nullable RCTImageLoader *)imageLoader
+      withImageLoader:(nonnull RCTImageLoader *)imageLoader
            asTemplate:(bool)isTemplate
       completionBlock:(void (^)(UIImage *image))imageLoadingCompletionBlock
 {
+  RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
+  RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
+  
   [imageLoader loadImageWithURLRequest:imageSource.request
       size:imageSource.size
       scale:imageSource.scale
