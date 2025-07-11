@@ -38,6 +38,9 @@ RNSSplitViewSplitBehavior RNSSplitViewSplitBehaviorFromHostProp(
 RNSSplitViewPrimaryEdge RNSSplitViewPrimaryEdgeFromHostProp(
     react::RNSSplitViewHostPrimaryEdge);
 
+RNSSplitViewDisplayMode RNSSplitViewDisplayModeFromHostProp(
+    react::RNSSplitViewHostDisplayMode);
+
 UISplitViewControllerSplitBehavior
 RNSSplitBehaviorToUISplitViewControllerSplitBehavior(
     RNSSplitViewSplitBehavior behavior);
@@ -45,6 +48,7 @@ RNSSplitBehaviorToUISplitViewControllerSplitBehavior(
 UISplitViewControllerPrimaryEdge
 RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(
     RNSSplitViewPrimaryEdge primaryEdge);
+
 }; // namespace rnscreens::conversion
 
 #endif

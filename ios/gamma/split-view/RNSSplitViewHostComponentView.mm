@@ -48,6 +48,7 @@ namespace react = facebook::react;
 
   _splitBehavior = RNSSplitViewSplitBehaviorAutomatic;
   _primaryEdge = RNSSplitViewPrimaryEdgeLeading;
+  _displayMode = RNSSplitViewDisplayModeAutomatic;
 }
 
 - (void)didMoveToWindow
@@ -149,6 +150,11 @@ RNS_IGNORE_SUPER_CALL_END
     _primaryEdge = rnscreens::conversion::RNSSplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
     _controller.primaryEdge =
         rnscreens::conversion::RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(_primaryEdge);
+  }
+
+  if (oldComponentProps.displayMode != newComponentProps.displayMode) {
+    _displayMode = rnscreens::conversion::RNSSplitViewDisplayModeFromHostProp(newComponentProps.displayMode);
+    _controller.preferredDisplayMode = convertRNSDisplayModeToUISplitViewControllerDisplayMode(_displayMode);
   }
 
   [super updateProps:props oldProps:oldProps];

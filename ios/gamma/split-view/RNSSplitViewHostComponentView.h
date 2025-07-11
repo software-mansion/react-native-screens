@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) RNSSplitViewSplitBehavior splitBehavior;
 @property (nonatomic, readonly) RNSSplitViewPrimaryEdge primaryEdge;
+@property (nonatomic, readonly) RNSSplitViewDisplayMode displayMode;
 
 @end
 

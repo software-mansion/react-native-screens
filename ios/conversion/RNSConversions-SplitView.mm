@@ -36,6 +36,29 @@ RNSSplitViewPrimaryEdge RNSSplitViewPrimaryEdgeFromHostProp(
   }
 }
 
+RNSSplitViewDisplayMode RNSSplitViewDisplayModeFromHostProp(facebook::react::RNSSplitViewHostDisplayMode displayMode)
+{
+  using enum facebook::react::RNSSplitViewHostDisplayMode;
+
+  switch (displayMode) {
+    case SecondaryOnly:
+      return RNSSplitViewDisplayModeSecondaryOnly;
+    case OneBesideSecondary:
+      return RNSSplitViewDisplayModeOneBesideSecondary;
+    case OneOverSecondary:
+      return RNSSplitViewDisplayModeOneOverSecondary;
+    case TwoBesideSecondary:
+      return RNSSplitViewDisplayModeTwoBesideSecondary;
+    case TwoOverSecondary:
+      return RNSSplitViewDisplayModeTwoOverSecondary;
+    case TwoDisplaceSecondary:
+      return RNSSplitViewDisplayModeTwoDisplaceSecondary;
+    case Automatic:
+    default:
+      return RNSSplitViewDisplayModeAutomatic;
+  }
+}
+
 #pragma mark Internal enum to UISplitViewController enum conversions
 
 UISplitViewControllerSplitBehavior RNSSplitBehaviorToUISplitViewControllerSplitBehavior(
