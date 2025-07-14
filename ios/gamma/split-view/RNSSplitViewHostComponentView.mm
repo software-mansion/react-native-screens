@@ -49,6 +49,7 @@ namespace react = facebook::react;
   _splitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
   _primaryEdge = UISplitViewControllerPrimaryEdgeLeading;
   _displayMode = UISplitViewControllerDisplayModeAutomatic;
+  _enableSwipeToDismiss = true;
 }
 
 - (void)didMoveToWindow
@@ -153,6 +154,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldComponentProps.displayMode != newComponentProps.displayMode) {
     _displayMode = rnscreens::conversion::SplitViewDisplayModeFromHostProp(newComponentProps.displayMode);
     _controller.preferredDisplayMode = _displayMode;
+  }
+
+  if (oldComponentProps.enableSwipeToDismiss != newComponentProps.enableSwipeToDismiss) {
+    _enableSwipeToDismiss = newComponentProps.enableSwipeToDismiss;
+    _controller.presentsWithGesture = _enableSwipeToDismiss;
   }
 
   [super updateProps:props oldProps:oldProps];
