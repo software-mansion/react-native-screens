@@ -86,7 +86,9 @@ class TabScreenViewManager :
     override fun setTabBarItemBadgeBackgroundColor(
         view: TabScreen,
         value: Int?,
-    ) = Unit
+    ) {
+        view.tabBarItemBadgeBackgroundColor = value
+    }
 
     override fun setTabBarItemTitlePositionAdjustment(
         view: TabScreen?,
@@ -142,9 +144,11 @@ class TabScreenViewManager :
     }
 
     override fun setBadgeValue(
-        view: TabScreen?,
+        view: TabScreen,
         value: String?,
-    ) = Unit
+    ) {
+        view.badgeValue = value
+    }
 
     @ReactProp(name = "title")
     override fun setTitle(

@@ -92,8 +92,10 @@ class TabsHost(
 
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
 
+    private val wrappedContext = ContextThemeWrapper(reactContext, R.style.custom)
+
     private val bottomNavigationView: BottomNavigationView =
-        BottomNavigationView(ContextThemeWrapper(reactContext, R.style.custom)).apply {
+        BottomNavigationView(wrappedContext).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         }
 
@@ -318,7 +320,11 @@ class TabsHost(
                     fragment.tabScreen.tabTitle,
                 )
 
+            // Icon
             item.icon = fragment.tabScreen.icon
+
+            // Badge
+            updateBadgeAppearance(index, fragment.tabScreen)
         }
 
         // Update font styles
@@ -367,6 +373,23 @@ class TabsHost(
             // Active
             largeLabel.textSize = largeFontSize
             largeLabel.typeface = fontFamily
+        }
+    }
+
+    private fun updateBadgeAppearance(menuItemIndex: Int, tabScreen: TabScreen) {
+        val badgeValue = tabScreen.badgeValue?.toIntOrNull()
+        if (tabScreen.badgeValue != null && badgeValue == null) {
+            Log.e(TAG, "[RNScreens] Android supports only numbers as badge value")
+        }
+
+        if (badgeValue != null) {
+            val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
+            badge.isVisible = true
+            badge.number = badgeValue
+            badge.backgroundColor = tabScreen.tabBarItemBadgeBackgroundColor ?: wrappedContext.getColor(com.google.android.material.R.color.error_color_material_light)
+        } else {
+            val badge = bottomNavigationView.getBadge(menuItemIndex)
+            badge?.isVisible = false
         }
     }
 
@@ -448,6 +471,10 @@ class TabsHost(
     ) {
         menuItem.title = tabScreen.tabTitle
         menuItem.icon = tabScreen.icon
+
+        // Badge
+        updateBadgeAppearance(bottomNavigationView.menu.children.indexOf(menuItem), tabScreen);
+
     }
 
     internal fun onViewManagerAddEventEmitters() {
