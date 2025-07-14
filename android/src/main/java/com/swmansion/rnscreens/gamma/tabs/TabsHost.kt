@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.R
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Menu
@@ -9,12 +8,15 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
+import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
@@ -88,7 +90,7 @@ class TabsHost(
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
 
     private val bottomNavigationView: BottomNavigationView =
-        BottomNavigationView(reactContext).apply {
+        BottomNavigationView(ContextThemeWrapper(reactContext, R.style.custom)).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         }
 
@@ -262,7 +264,7 @@ class TabsHost(
             tabBarBackgroundColor ?: com.google.android.material.R.color.m3_sys_color_light_surface_container,
         )
 
-        val states = arrayOf(intArrayOf(-R.attr.state_checked), intArrayOf(R.attr.state_checked))
+        val states = arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked))
 
         // Font color
         val fontInactiveColor = tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color_secondary
@@ -300,7 +302,7 @@ class TabsHost(
             checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
 
         post {
-            forceSubtreeMeasureAndLayoutPass()
+            refreshLayout()
             Log.d(TAG, "BottomNavigationView request layout")
         }
     }
@@ -349,6 +351,16 @@ class TabsHost(
                     this.add(contentView.id, newFocusedTab)
                 }.commitNowAllowingStateLoss()
         }
+    }
+
+    private fun refreshLayout() {
+        ReactChoreographer
+            .getInstance()
+            .postFrameCallback(
+                ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+            ) {
+                forceSubtreeMeasureAndLayoutPass()
+            }
     }
 
     private fun forceSubtreeMeasureAndLayoutPass() {

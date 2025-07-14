@@ -56,7 +56,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
       iconSFSymbolName: 'gear',
       selectedIconSFSymbolName: 'gear',
-      iconResourceName: 'sym_call_outgoing', // Android specific
+      iconResourceName: 'sym_action_email', // Android specific
       title: 'Tab3',
     },
     contentViewRenderFn: Tab3,
@@ -66,6 +66,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabKey: 'Tab4',
       iconSFSymbolName: 'rectangle.stack',
       selectedIconSFSymbolName: 'rectangle.stack.fill',
+      iconResourceName: 'sym_action_chat', // Android specific
       title: 'Tab4',
     },
     contentViewRenderFn: Tab4,
