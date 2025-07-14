@@ -158,14 +158,6 @@ class TabScreenViewManager :
         view.tabTitle = value
     }
 
-    @ReactProp(name = "iconResourceName")
-    override fun setIconResourceName(
-        view: TabScreen,
-        value: String?,
-    ) {
-        view.iconResourceName = value
-    }
-
     override fun setSpecialEffects(
         view: TabScreen,
         value: ReadableMap?,
@@ -175,6 +167,23 @@ class TabScreenViewManager :
         view: TabScreen,
         value: Boolean
     ) = Unit
+
+    // Android specific
+    @ReactProp(name = "tabBarItemBadgeTextColor")
+    override fun setTabBarItemBadgeTextColor(
+        view: TabScreen,
+        value: Int?,
+    ) {
+        view.tabBarItemBadgeTextColor = value
+    }
+
+    @ReactProp(name = "iconResourceName")
+    override fun setIconResourceName(
+        view: TabScreen,
+        value: String?,
+    ) {
+        view.iconResourceName = value
+    }
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"

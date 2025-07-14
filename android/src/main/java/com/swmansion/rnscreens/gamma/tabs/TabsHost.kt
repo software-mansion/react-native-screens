@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import com.swmansion.rnscreens.R
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Choreographer
@@ -23,6 +24,7 @@ import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
+@SuppressLint("PrivateResource") // We want to use variables from material design for default values
 class TabsHost(
     val reactContext: ThemedReactContext,
 ) : LinearLayout(reactContext),
@@ -390,9 +392,10 @@ class TabsHost(
             val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
             badge.isVisible = true
             badge.number = badgeValue
+            badge.badgeTextColor = tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
             badge.backgroundColor =
                 tabScreen.tabBarItemBadgeBackgroundColor
-                    ?: wrappedContext.getColor(com.google.android.material.R.color.error_color_material_light)
+                    ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_error)
         } else {
             val badge = bottomNavigationView.getBadge(menuItemIndex)
             badge?.isVisible = false
