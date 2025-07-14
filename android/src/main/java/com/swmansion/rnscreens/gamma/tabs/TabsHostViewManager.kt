@@ -143,6 +143,13 @@ class TabsHostViewManager :
         view.tabBarItemTitleFontColorActive = value
     }
 
+    override fun setTabBarItemActivityIndicatorColor(
+        view: TabsHost,
+        value: Int?,
+    ) {
+        view.tabBarItemActivityIndicatorColor = value
+    }
+
     override fun setTabBarItemIconColorActive(
         view: TabsHost,
         value: Int?,
