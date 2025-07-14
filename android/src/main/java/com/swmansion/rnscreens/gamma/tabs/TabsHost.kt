@@ -403,7 +403,8 @@ class TabsHost(
             badge.number = badgeValue
         }
 
-        badge.badgeTextColor = tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
+        badge.badgeTextColor =
+            tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
         badge.backgroundColor =
             tabScreen.tabBarItemBadgeBackgroundColor
                 ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_error)
