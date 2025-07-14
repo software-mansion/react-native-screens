@@ -16,7 +16,7 @@ export type SplitViewNativeProps = NativeProps & {
 
   // SplitView interactions
 
-  enableSwipeToDismiss?: boolean;
+  enableSwipe?: boolean;
 };
 
 type SplitViewHostProps = {
@@ -53,7 +53,7 @@ const isValidDisplayModeForSplitBehavior = (
 function SplitViewHost({
   children,
   displayMode,
-  enableSwipeToDismiss,
+  enableSwipe,
   primaryEdge,
   splitBehavior,
 }: SplitViewHostProps) {
@@ -79,7 +79,7 @@ function SplitViewHost({
   return (
     <SplitViewHostNativeComponent
       displayMode={displayMode}
-      enableSwipeToDismiss={enableSwipeToDismiss}
+      enableSwipe={enableSwipe}
       style={styles.container}
       splitBehavior={splitBehavior}
       primaryEdge={primaryEdge}>

@@ -23,7 +23,7 @@ const SplitViewBaseApp = () => {
   const [buttonState4, setButtonState4] = React.useState('Initial');
 
   return (
-    <SplitViewHost displayMode='twoBesideSecondary' primaryEdge='leading' enableSwipeToDismiss={false} splitBehavior='tile'>
+    <SplitViewHost displayMode='twoBesideSecondary' primaryEdge='leading' enableSwipe={false} splitBehavior='tile'>
       <SplitViewScreen>
         <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
           <TestButton setButtonState={setButtonState} />
