@@ -383,23 +383,30 @@ class TabsHost(
         menuItemIndex: Int,
         tabScreen: TabScreen,
     ) {
+        if (tabScreen.tabBarItemBadgeVisible != true) {
+            val badge = bottomNavigationView.getBadge(menuItemIndex)
+            badge?.isVisible = false
+
+            return
+        }
+
         val badgeValue = tabScreen.badgeValue?.toIntOrNull()
+
         if (tabScreen.badgeValue != null && badgeValue == null) {
             Log.e(TAG, "[RNScreens] Android supports only numbers as badge value")
         }
 
+        val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
+        badge.isVisible = true
+
         if (badgeValue != null) {
-            val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
-            badge.isVisible = true
             badge.number = badgeValue
-            badge.badgeTextColor = tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
-            badge.backgroundColor =
-                tabScreen.tabBarItemBadgeBackgroundColor
-                    ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_error)
-        } else {
-            val badge = bottomNavigationView.getBadge(menuItemIndex)
-            badge?.isVisible = false
         }
+
+        badge.badgeTextColor = tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
+        badge.backgroundColor =
+            tabScreen.tabBarItemBadgeBackgroundColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_error)
     }
 
     private fun updateSelectedTab() {

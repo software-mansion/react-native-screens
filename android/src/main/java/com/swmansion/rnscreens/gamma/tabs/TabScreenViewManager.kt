@@ -169,6 +169,14 @@ class TabScreenViewManager :
     ) = Unit
 
     // Android specific
+    @ReactProp(name = "tabBarItemBadgeVisible")
+    override fun setTabBarItemBadgeVisible(
+        view: TabScreen,
+        value: Boolean,
+    ) {
+        view.tabBarItemBadgeVisible = value
+    }
+
     @ReactProp(name = "tabBarItemBadgeTextColor")
     override fun setTabBarItemBadgeTextColor(
         view: TabScreen,
