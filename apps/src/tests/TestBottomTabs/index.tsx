@@ -18,7 +18,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab1',
-      badgeValue: '1',
+      badgeValue: '42',
       title: 'Tab1',
       isFocused: true,
       iconSFSymbolName: 'house',
@@ -30,7 +30,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab2',
-      badgeValue: '2',
+      badgeValue: 'SWM',
       tabBarItemBadgeBackgroundColor: Colors.PurpleLight100,
       tabBarBackgroundColor: Colors.NavyDark140,
       tabBarItemTitleFontSize: 20,
@@ -52,7 +52,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab3',
-      badgeValue: '3',
+      badgeValue: '2137',
       tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
       iconSFSymbolName: 'gear',
       selectedIconSFSymbolName: 'gear',

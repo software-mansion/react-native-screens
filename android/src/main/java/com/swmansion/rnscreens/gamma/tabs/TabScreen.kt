@@ -43,6 +43,14 @@ class TabScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
+    var tabBarItemBadgeBackgroundColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+    }
+
+    var badgeValue: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+    }
+
     var iconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             icon = getSystemDrawableResource(reactContext, newValue)
