@@ -53,7 +53,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab3',
       badgeValue: '2137',
-      tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
+      tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+      tabBarItemBadgeTextColor: Colors.RedDark120,
       iconSFSymbolName: 'gear',
       selectedIconSFSymbolName: 'gear',
       iconResourceName: 'sym_action_email', // Android specific

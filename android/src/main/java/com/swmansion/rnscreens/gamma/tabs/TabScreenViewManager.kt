@@ -138,17 +138,25 @@ class TabScreenViewManager :
         view.tabTitle = value
     }
 
+    override fun setSpecialEffects(
+        view: TabScreen,
+        value: ReadableMap?,
+    ) = Unit
+
+    // Android specific
+    override fun setTabBarItemBadgeTextColor(
+        view: TabScreen,
+        value: Int?,
+    ) {
+        view.tabBarItemBadgeTextColor = value
+    }
+
     override fun setIconResourceName(
         view: TabScreen,
         value: String?,
     ) {
         view.iconResourceName = value
     }
-
-    override fun setSpecialEffects(
-        view: TabScreen,
-        value: ReadableMap?,
-    ) = Unit
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"

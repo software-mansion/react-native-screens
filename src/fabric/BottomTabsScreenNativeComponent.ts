@@ -79,6 +79,7 @@ export interface NativeProps extends ViewProps {
 
   // Android-specific image handling
   iconResourceName?: string;
+  tabBarItemBadgeTextColor?: ColorValue;
 
   badgeValue?: string;
 
