@@ -390,21 +390,22 @@ class TabsHost(
             return
         }
 
-        val badgeValue = tabScreen.badgeValue?.toIntOrNull()
-
-        if (tabScreen.badgeValue != null && badgeValue == null) {
-            Log.e(TAG, "[RNScreens] Android supports only numbers as badge value")
-        }
+        val badgeValue = tabScreen.badgeValue
+        val badgeValueNumber = badgeValue?.toIntOrNull()
 
         val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
         badge.isVisible = true
 
-        if (badgeValue != null) {
-            badge.number = badgeValue
+        if (badgeValueNumber != null) {
+            badge.number = badgeValueNumber
+        } else if (badgeValue != null) {
+            badge.text = badgeValue
         } else {
             badge.clearNumber()
+            badge.clearText()
         }
 
+        // Styling
         badge.badgeTextColor =
             tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
         badge.backgroundColor =

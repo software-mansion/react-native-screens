@@ -18,8 +18,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab1',
-      badgeValue: '42',
-      tabBarItemBadgeVisible: true,
       title: 'Tab1',
       isFocused: true,
       icon: {
@@ -35,9 +33,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab2',
-      badgeValue: 'SWM',
+      badgeValue: 'NEW',
       tabBarItemBadgeVisible: true,
-      tabBarItemBadgeBackgroundColor: Colors.PurpleLight100,
+      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       tabBarBackgroundColor: Colors.NavyDark140,
       tabBarItemTitleFontSize: 20,
       tabBarItemTitleFontStyle: 'italic',
