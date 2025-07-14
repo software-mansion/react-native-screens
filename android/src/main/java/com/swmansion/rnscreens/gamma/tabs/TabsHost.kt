@@ -146,7 +146,7 @@ class TabsHost(
     var tabBarItemTitleFontSize: Float? by Delegates.observable(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
-    
+
     var tabBarItemTitleFontSizeActive: Float? by Delegates.observable(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
@@ -286,7 +286,8 @@ class TabsHost(
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
         // ActivityIndicator color
-        val activityIndicatorColor = tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
+        val activityIndicatorColor =
+            tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activityIndicatorColor)
 
         // First clean the menu, then populate it
@@ -338,7 +339,10 @@ class TabsHost(
         }
     }
 
-    private fun updateBadgeAppearance(menuItemIndex: Int, tabScreen: TabScreen) {
+    private fun updateBadgeAppearance(
+        menuItemIndex: Int,
+        tabScreen: TabScreen,
+    ) {
         val badgeValue = tabScreen.badgeValue?.toIntOrNull()
         if (tabScreen.badgeValue != null && badgeValue == null) {
             Log.e(TAG, "[RNScreens] Android supports only numbers as badge value")
@@ -348,7 +352,9 @@ class TabsHost(
             val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
             badge.isVisible = true
             badge.number = badgeValue
-            badge.backgroundColor = tabScreen.tabBarItemBadgeBackgroundColor ?: wrappedContext.getColor(com.google.android.material.R.color.error_color_material_light)
+            badge.backgroundColor =
+                tabScreen.tabBarItemBadgeBackgroundColor
+                    ?: wrappedContext.getColor(com.google.android.material.R.color.error_color_material_light)
         } else {
             val badge = bottomNavigationView.getBadge(menuItemIndex)
             badge?.isVisible = false
@@ -427,8 +433,7 @@ class TabsHost(
         menuItem.icon = tabScreen.icon
 
         // Badge
-        updateBadgeAppearance(bottomNavigationView.menu.children.indexOf(menuItem), tabScreen);
-
+        updateBadgeAppearance(bottomNavigationView.menu.children.indexOf(menuItem), tabScreen)
     }
 
     internal fun onViewManagerAddEventEmitters() {
