@@ -401,6 +401,8 @@ class TabsHost(
 
         if (badgeValue != null) {
             badge.number = badgeValue
+        } else {
+            badge.clearNumber()
         }
 
         badge.badgeTextColor =
