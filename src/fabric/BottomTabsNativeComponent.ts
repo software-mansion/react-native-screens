@@ -71,6 +71,7 @@ export interface NativeProps extends ViewProps {
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemTitleFontSizeActive?: Float;
   tabBarItemActivityIndicatorColor?: ColorValue;
+  tabBarItemRippleColor?: ColorValue;
 
   // Control
 

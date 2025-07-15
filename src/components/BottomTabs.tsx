@@ -47,6 +47,7 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemTitleFontColorActive?: TextStyle['color']; 
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemActivityIndicatorColor?: ColorValue;
+  tabBarItemRippleColor?: ColorValue;
   
   // Control
 
