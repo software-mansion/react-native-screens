@@ -8,11 +8,13 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   private let MIN_NUMBER_OF_COLUMNS: Int = 2
   private let MAX_NUMBER_OF_COLUMNS: Int = 3
+  private let MAX_NUMBER_OF_INSPECTORS: Int = 1
 
   @objc public init(
-    splitViewHostComponentView: RNSSplitViewHostComponentView, style: UISplitViewController.Style
+    splitViewHostComponentView: RNSSplitViewHostComponentView,
   ) {
     self.splitViewHostComponentView = splitViewHostComponentView
+    let style: UISplitViewController.Style = .tripleColumn
     super.init(style: style)
   }
 
@@ -44,17 +46,46 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
     let currentSubviews =
       splitViewHostComponentView.reactSubviews() as! [RNSSplitViewScreenComponentView]
-    let currentViewControllers = currentSubviews.map {
+    let currentColumns = filterSubviews(ofType: .column, in: currentSubviews)
+    let currentInspectors = filterSubviews(ofType: .inspector, in: currentSubviews)
+
+    assert(
+      currentColumns.count >= MIN_NUMBER_OF_COLUMNS
+        && currentColumns.count <= MAX_NUMBER_OF_COLUMNS,
+      "[RNScreens] SplitView can only have from \(MIN_NUMBER_OF_COLUMNS) to \(MAX_NUMBER_OF_COLUMNS) columns"
+    )
+    assert(
+      currentInspectors.count <= MAX_NUMBER_OF_INSPECTORS,
+      "[RNScreens] SplitView can only have 1 inspector")
+
+    let currentViewControllers = currentColumns.map {
       RNSSplitViewNavigationController(rootViewController: $0.controller)
     }
 
     viewControllers = currentViewControllers
 
+    if #available(iOS 26.0, *) {
+      let inspector = currentInspectors.first
+      if inspector != nil {
+        let inspectorViewController = RNSSplitViewNavigationController(
+          rootViewController: inspector!.controller)
+        setViewController(inspectorViewController, for: .inspector)
+      }
+    }
+
     for controller in currentViewControllers {
       controller.viewFrameOriginChangeObserver = self
     }
 
+    validateSplitViewHierarchy()
+
     needsChildViewControllersUpdate = false
+  }
+
+  func filterSubviews(
+    ofType type: RNSSplitViewScreenColumnType, in subviews: [RNSSplitViewScreenComponentView]
+  ) -> [RNSSplitViewScreenComponentView] {
+    return subviews.filter { $0.columnType == type }
   }
 
   // MARK: ReactMountingTransactionObserving
