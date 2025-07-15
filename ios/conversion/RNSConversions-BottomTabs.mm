@@ -88,40 +88,22 @@ UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
   return UIOffsetMake(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
 }
 
-RNSTabBarMinimizeBehavior RNSTabBarMinimizeBehaviorFromHostProp(
-    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior)
-{
-  using enum facebook::react::RNSBottomTabsTabBarMinimizeBehavior;
-  
-  switch (tabBarMinimizeBehavior) {
-    case Automatic:
-      return RNSTabBarMinimizeBehaviorAutomatic;
-    case Never:
-      return RNSTabBarMinimizeBehaviorNever;
-    case OnScrollDown:
-      return RNSTabBarMinimizeBehaviorOnScrollDown;
-    case OnScrollUp:
-      return RNSTabBarMinimizeBehaviorOnScrollUp;
-  }
-}
-
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
 API_AVAILABLE(ios(26.0))
-UITabBarMinimizeBehavior
-    UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(RNSTabBarMinimizeBehavior tabBarMinimizeBehavior)
+UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
+    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior)
 {
+  using enum facebook::react::RNSBottomTabsTabBarMinimizeBehavior;
+
   switch (tabBarMinimizeBehavior) {
-    case RNSTabBarMinimizeBehaviorAutomatic:
+    case Automatic:
       return UITabBarMinimizeBehaviorAutomatic;
-
-    case RNSTabBarMinimizeBehaviorNever:
+    case Never:
       return UITabBarMinimizeBehaviorNever;
-
-    case RNSTabBarMinimizeBehaviorOnScrollDown:
+    case OnScrollDown:
       return UITabBarMinimizeBehaviorOnScrollDown;
-
-    case RNSTabBarMinimizeBehaviorOnScrollUp:
+    case OnScrollUp:
       return UITabBarMinimizeBehaviorOnScrollUp;
   }
 }
