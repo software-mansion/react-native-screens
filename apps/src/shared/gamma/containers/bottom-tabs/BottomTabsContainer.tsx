@@ -94,6 +94,9 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemTitleFontColorActive={Colors.GreenLight40}
       tabBarItemTitleFontSize={10}
       tabBarItemTitleFontSizeActive={15}
+      tabBarItemTitleFontFamily='monospace'
+      tabBarItemTitleFontStyle='italic'
+      tabBarItemTitleFontWeight="700"
 
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
