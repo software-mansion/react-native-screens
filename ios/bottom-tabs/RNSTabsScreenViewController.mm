@@ -32,6 +32,11 @@
   [[self findTabBarController] setNeedsUpdateOfTabBarAppearance:true];
 }
 
+- (void)tabScreenOrientationHasChanged
+{
+  [[self findTabBarController] setNeedsUpdateOfOrientation:true];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
   [self.tabScreenComponentView.reactEventEmitter emitOnWillAppear];

@@ -139,6 +139,7 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSBottomTabsScreenProps>(props);
 
   bool tabItemNeedsAppearanceUpdate{false};
+  bool tabScreenOrientationNeedsUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
@@ -147,7 +148,7 @@ RNS_IGNORE_SUPER_CALL_END
   
   if (newComponentProps.orientation != oldComponentProps.orientation) {
     _orientation = rnscreens::conversion::RNSOrientationFromRNSBottomTabsScreenOrientation(newComponentProps.orientation);
-    // TODO: force orientation
+    tabScreenOrientationNeedsUpdate = YES;
   }
 
   if (newComponentProps.tabKey != oldComponentProps.tabKey) {
@@ -281,6 +282,10 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
+  }
+  
+  if (tabScreenOrientationNeedsUpdate) {
+    [_controller tabScreenOrientationHasChanged];
   }
 
   [super updateProps:props oldProps:oldProps];

@@ -71,6 +71,11 @@
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
+- (void)setNeedsUpdateOfOrientation:(bool)needsUpdateOfOrientation
+{
+  _needsUpdateOfOrientation = needsUpdateOfOrientation;
+}
+
 #pragma mark-- RNSReactTransactionObserving
 
 - (void)reactMountingTransactionWillMount
@@ -84,6 +89,7 @@
   [self updateReactChildrenControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
+  [self updateOrientationIfNeeded];
 }
 
 #pragma mark-- Signals related
@@ -142,7 +148,7 @@
 
   [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   [self setSelectedViewController:selectedViewController];
-  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
+  [self updateOrientation];
 }
 
 - (void)updateTabBarAppearanceIfNeeded
@@ -205,6 +211,18 @@
 
 #endif // !RCT_NEW_ARCH_ENABLED
 
+- (void)updateOrientationIfNeeded
+{
+  if (_needsUpdateOfOrientation) {
+    [self updateOrientation];
+  }
+}
+
+- (void)updateOrientation
+{
+  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
+}
+
 #pragma mark - RNSOrientationProviding
 - (RNSOrientation)evaluateOrientation
 {
@@ -212,7 +230,7 @@
     id<RNSOrientationProviding> selected = static_cast<id<RNSOrientationProviding>>(self.selectedViewController);
     return [selected evaluateOrientation];
   }
-  
+
   return RNSOrientationInherit;
 }
 
