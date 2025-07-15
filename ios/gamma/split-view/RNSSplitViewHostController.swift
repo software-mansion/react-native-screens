@@ -6,9 +6,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsChildViewControllersUpdate = false
   private var needsUpdateOfSplitViewAppearance = false
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
+  private let splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
 
   /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation, because SplitView doesn't support changing number of columns dynamically.
-  private var DEFINED_NUMBER_OF_COLUMNS: Int?
+  private let DEFINED_NUMBER_OF_COLUMNS: Int?
 
   private let MIN_NUMBER_OF_COLUMNS: Int = 2
   private let MAX_NUMBER_OF_COLUMNS: Int = 3
@@ -18,6 +19,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     splitViewHostComponentView: RNSSplitViewHostComponentView,
   ) {
     self.splitViewHostComponentView = splitViewHostComponentView
+    self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
     let currentSubviews =
       splitViewHostComponentView.reactSubviews() as! [RNSSplitViewScreenComponentView]
     DEFINED_NUMBER_OF_COLUMNS =
@@ -67,10 +69,8 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   func updateSplitViewAppearance() {
     needsUpdateOfSplitViewAppearance = false
 
-    //        TODO: Flush updates here
-    //      [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
-    //                                       withHostComponentView:self.tabsHostComponentView
-    //                                        tabScreenControllers:_tabScreenControllers];
+    splitViewAppearanceCoordinator.updateAppearance(
+      ofSplitView: self.splitViewHostComponentView, with: self)
   }
 
   @objc public func setNeedsUpdateOfSplitViewAppearance(_ needsUpdateOfSplitViewAppearance_: Bool) {
@@ -153,6 +153,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   @objc
   public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
+    updateSplitViewAppearanceIfNeeded()
     validateSplitViewHierarchy()
   }
 
