@@ -2,10 +2,15 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import type { ViewProps } from 'react-native';
 import SplitViewScreenNativeComponent from '../../fabric/gamma/SplitViewScreenNativeComponent';
-import type { NativeProps } from '../../fabric/gamma/SplitViewScreenNativeComponent';
+import type {
+  NativeProps,
+  SplitViewScreenColumnType,
+} from '../../fabric/gamma/SplitViewScreenNativeComponent';
 
 export type SplitViewScreenNativeProps = NativeProps & {
-  // Overrides
+  // Config
+
+  columnType?: SplitViewScreenColumnType;
 };
 
 type SplitViewScreenProps = {
@@ -15,9 +20,11 @@ type SplitViewScreenProps = {
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function SplitViewScreen({ children }: SplitViewScreenProps) {
+function SplitViewScreen({ children, columnType }: SplitViewScreenProps) {
   return (
-    <SplitViewScreenNativeComponent style={StyleSheet.absoluteFill}>
+    <SplitViewScreenNativeComponent
+      columnType={columnType}
+      style={StyleSheet.absoluteFill}>
       {children}
     </SplitViewScreenNativeComponent>
   );

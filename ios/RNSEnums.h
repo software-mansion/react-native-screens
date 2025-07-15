@@ -73,6 +73,12 @@ typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
   RNSSearchBarPlacementStacked,
 };
 
+
+typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {
+  RNSSplitViewScreenColumnTypeColumn,
+  RNSSplitViewScreenColumnTypeInspector,
+};
+
 // Redefinition of UIBlurEffectStyle. We need to represent additional case of `None`.
 typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
   /// No blur effect should be visible
