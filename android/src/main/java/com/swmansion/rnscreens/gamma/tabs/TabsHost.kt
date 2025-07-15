@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Choreographer
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -287,27 +288,33 @@ class TabsHost(
 
         bottomNavigationView.isVisible = true
         bottomNavigationView.setBackgroundColor(
-            tabBarBackgroundColor ?: com.google.android.material.R.color.m3_sys_color_light_surface_container,
+            tabBarBackgroundColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_surface_container),
         )
 
         val states = arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked))
 
         // Font color
-        val fontInactiveColor = tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color_secondary
+        val fontInactiveColor =
+            tabBarItemTitleFontColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
         val fontActiveColor =
-            tabBarItemTitleFontColorActive ?: tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color
+            tabBarItemTitleFontColorActive ?: tabBarItemTitleFontColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary)
         val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
 
         // Icon color
-        val iconInactiveColor = tabBarItemIconColor ?: com.google.android.material.R.color.m3_tabs_icon_color_secondary
-        val iconActiveColor = tabBarItemIconColorActive ?: tabBarItemIconColor ?: com.google.android.material.R.color.m3_tabs_icon_color
+        val iconInactiveColor =
+            tabBarItemIconColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
+        val iconActiveColor =
+            tabBarItemIconColorActive ?: tabBarItemIconColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_secondary_container)
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
         // ActivityIndicator color
         val activityIndicatorColor =
-            tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
+            tabBarItemActivityIndicatorColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary_container)
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activityIndicatorColor)
 
         // First clean the menu, then populate it
@@ -366,15 +373,19 @@ class TabsHost(
                     reactContext.assets,
                 )
 
-            val smallFontSize = tabBarItemTitleFontSize?.takeIf { it > 0 } ?: 12f
-            val largeFontSize = tabBarItemTitleFontSizeActive?.takeIf { it > 0 } ?: 14f
+            val smallFontSize =
+                tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { it * resources.displayMetrics.density }
+                    ?: wrappedContext.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+            val largeFontSize =
+                tabBarItemTitleFontSizeActive?.takeIf { it > 0 }?.let { it * resources.displayMetrics.density }
+                    ?: wrappedContext.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
 
             // Inactive
-            smallLabel.textSize = smallFontSize
+            smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, smallFontSize)
             smallLabel.typeface = fontFamily
 
             // Active
-            largeLabel.textSize = largeFontSize
+            largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, largeFontSize)
             largeLabel.typeface = fontFamily
         }
     }
