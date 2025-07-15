@@ -3,11 +3,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSSplitViewHostComponentView;
 @class RNSSplitViewScreenController;
 
 @interface RNSSplitViewScreenComponentView : RNSReactBaseView
 
 @property (nonatomic, strong, readonly, nonnull) RNSSplitViewScreenController *controller;
+@property (nonatomic, weak, readwrite, nullable) RNSSplitViewHostComponentView *splitViewHost;
 
 @end
 

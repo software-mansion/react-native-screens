@@ -74,6 +74,12 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
+- (nonnull RNSSplitViewHostController *)splitViewHostController
+{
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
+  return _controller;
+}
+
 #pragma mark - RCTViewComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -85,6 +91,7 @@ RNS_IGNORE_SUPER_CALL_END
       RNSSplitViewScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
+  childScreen.splitViewHost = self;
   [_reactSubviews insertObject:childScreen atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
@@ -98,6 +105,7 @@ RNS_IGNORE_SUPER_CALL_END
       RNSSplitViewScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
+  childScreen.splitViewHost = nil;
   [_reactSubviews removeObject:childScreen];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }

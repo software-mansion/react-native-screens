@@ -26,6 +26,11 @@ class JSI_EXPORT RNSSplitViewScreenShadowNode final
 #pragma mark - ShadowNode overrides
 
   Point getContentOriginOffset(bool includeTransform) const override;
+  static ShadowNodeTraits BaseTraits() {
+    auto traits = ConcreteViewShadowNode::BaseTraits();
+    traits.set(ShadowNodeTraits::Trait::RootNodeKind);
+    return traits;
+  }
 };
 
 } // namespace facebook::react

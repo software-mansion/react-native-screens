@@ -20,6 +20,7 @@ const SplitViewBaseApp = () => {
   const [buttonState, setButtonState] = React.useState('Initial');
   const [buttonState2, setButtonState2] = React.useState('Initial');
   const [buttonState3, setButtonState3] = React.useState('Initial');
+  const [buttonState4, setButtonState4] = React.useState('Initial');
 
   return (
     <SplitViewHost>
@@ -39,6 +40,13 @@ const SplitViewBaseApp = () => {
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <TestButton setButtonState={setButtonState3} />
           {buttonState3 && (<Text style={styles.text}>Button State: {buttonState3}</Text>)}
+        </View>
+      </SplitViewScreen>
+      {/* TODO: to be removed - only for testing purposes for inspector column */}
+      <SplitViewScreen>
+        <View style={[styles.container, { backgroundColor: Colors.GreenDark100 }]}>
+          <TestButton setButtonState={setButtonState4} />
+          {buttonState4 && (<Text style={styles.text}>Button State in modal: {buttonState4}</Text>)}
         </View>
       </SplitViewScreen>
     </SplitViewHost>
