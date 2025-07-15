@@ -1,6 +1,7 @@
 #import "RNSTabBarController.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
+#import "RNSScreenWindowTraits.h"
 
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
@@ -141,6 +142,7 @@
 
   [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   [self setSelectedViewController:selectedViewController];
+  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
 }
 
 - (void)updateTabBarAppearanceIfNeeded
@@ -202,5 +204,16 @@
 }
 
 #endif // !RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RNSOrientationProviding
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.selectedViewController respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> selected = static_cast<id<RNSOrientationProviding>>(self.selectedViewController);
+    return [selected evaluateOrientation];
+  }
+  
+  return RNSOrientationInherit;
+}
 
 @end

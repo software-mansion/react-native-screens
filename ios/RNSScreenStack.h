@@ -7,11 +7,11 @@
 
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
+#import "RNSOrientationProviding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSNavigationController
-    : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting>
+@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting, RNSOrientationProviding>
 
 @end
 

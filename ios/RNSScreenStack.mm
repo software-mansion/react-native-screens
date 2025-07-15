@@ -99,6 +99,16 @@ namespace react = facebook::react;
   return [self topViewController].supportedInterfaceOrientations;
 }
 
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.topViewController respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> top = static_cast<id<RNSOrientationProviding>>(self.topViewController);
+    return [top evaluateOrientation];
+  }
+  
+  return RNSOrientationInherit;
+}
+
 - (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
 {
   return [self topViewController];

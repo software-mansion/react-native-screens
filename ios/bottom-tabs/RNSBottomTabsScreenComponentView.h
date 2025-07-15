@@ -65,6 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
 @property (nonatomic, nullable) NSString *title;
+@property (nonatomic, readonly) RNSOrientation orientation;
 
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;

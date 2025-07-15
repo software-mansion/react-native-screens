@@ -4,6 +4,7 @@ import React from 'react';
 import BottomTabsScreenNativeComponent, {
   BlurEffect,
   type IconType,
+  type Orientation,
   type NativeProps,
 } from '../fabric/BottomTabsScreenNativeComponent';
 import {
@@ -72,6 +73,7 @@ export interface BottomTabsScreenProps {
 
   // General
   title?: string;
+  orientation?: Orientation; // defaults to 'inherit'
 
   // Android specific
   iconResourceName?: string;

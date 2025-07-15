@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabsScreenViewController.h"
+#import "RNSOrientationProviding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  * i.e. if you made changes through one of signals method, unless you flush them immediately (not needed atm), they will
  * be executed only after react finishes the transaction (from within transaction execution block).
  */
-@interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving>
+@interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving, RNSOrientationProviding>
 
 - (instancetype)initWithTabsHostComponentView:(nullable RNSBottomTabsHostComponentView *)tabsHostComponentView;
 

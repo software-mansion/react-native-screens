@@ -32,10 +32,12 @@
   if (!repeatedSelectionHandledNatively) {
     [tabBarCtrl.tabsHostComponentView
         emitOnNativeFocusChangeRequestSelectedTabScreen:tabScreenCtrl.tabScreenComponentView];
-      
+
     // TODO: handle overrideScrollViewBehaviorInFirstDescendantChainIfNeeded for natively-driven tabs
     return ![self shouldPreventNativeTabChangeWithinTabBarController:tabBarCtrl];
   }
+
+  // TODO: handle enforcing orientation with natively-driven tabs
 
   // As we're selecting the same controller, returning both true and false works here.
   return true;

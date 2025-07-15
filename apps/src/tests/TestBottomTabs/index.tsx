@@ -54,6 +54,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_missed', // Android specific
       title: 'Tab2',
+      orientation: 'landscape',
     },
     contentViewRenderFn: Tab2,
   },
@@ -84,6 +85,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         sfSymbolName: 'rectangle.stack.fill',
       },
       title: 'Tab4',
+      orientation: 'portrait',
     },
     contentViewRenderFn: Tab4,
   },
