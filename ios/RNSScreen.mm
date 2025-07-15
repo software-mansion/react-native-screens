@@ -32,6 +32,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSTabBarController.h"
+#import "RNSScrollViewHelper.h"
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
@@ -1177,6 +1178,36 @@ RNS_IGNORE_SUPER_CALL_END
   [super setBounds:bounds];
 }
 
+#pragma mark - RNSScrollViewBehaviorOverriding
+
+- (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
+{
+  // RNSScreenView does not have a property to control this behavior.
+  // It looks for parent that conforms to RNSScrollViewBehaviorOverriding to determine
+  // if it should override ScrollView's behavior.
+  
+  // As this method is called when RNSScreen willMoveToParentViewController
+  // and view does not have superView yet, we need to use reactSuperViews.
+  UIView *parent = [self reactSuperview];
+  
+  while (parent != nil) {
+    if ([parent respondsToSelector:@selector(shouldOverrideScrollViewContentInsetAdjustmentBehavior)]) {
+      id<RNSScrollViewBehaviorOverriding> overrideProvider = static_cast<id<RNSScrollViewBehaviorOverriding>>(parent);
+      return [overrideProvider shouldOverrideScrollViewContentInsetAdjustmentBehavior];
+    }
+    parent = [parent reactSuperview];
+  }
+  
+  return NO;
+}
+
+- (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
+{
+  if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
+    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+  }
+}
+
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
@@ -1669,6 +1700,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     if (responder != nil) {
       _previousFirstResponder = responder;
     }
+  } else {
+    [self.screenView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   }
 }
 

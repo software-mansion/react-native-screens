@@ -146,6 +146,11 @@ class TabScreenViewManager :
         value: ReadableMap?,
     ) = Unit
 
+    override fun setOverrideScrollViewContentInsetAdjustmentBehavior(
+        view: TabScreen,
+        value: Boolean
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
     }

@@ -2,6 +2,7 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSTabBarAppearanceProvider.h"
+#import "RNSScrollViewBehaviorOverriding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Properties set on component in JavaScript.
  */
-@interface RNSBottomTabsScreenComponentView () <RNSTabBarAppearanceProvider>
+@interface RNSBottomTabsScreenComponentView () <RNSTabBarAppearanceProvider, RNSScrollViewBehaviorOverriding>
 
 @property (nonatomic, readonly) BOOL isSelectedScreen;
 @property (nonatomic, readonly, nullable) NSString *tabKey;
@@ -58,6 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
 @property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
+
+@property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
 @end
 

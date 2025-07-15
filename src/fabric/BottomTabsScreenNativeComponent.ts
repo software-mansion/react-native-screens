@@ -88,6 +88,8 @@ export interface NativeProps extends ViewProps {
       scrollToTop?: WithDefault<boolean, true>;
     };
   };
+
+  overrideScrollViewContentInsetAdjustmentBehavior?: WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});
