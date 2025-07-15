@@ -1,4 +1,3 @@
-#import <Foundation/Foundation.h>
 #import "RNSSplitViewHostComponentView.h"
 
 NS_ASSUME_NONNULL_BEGIN

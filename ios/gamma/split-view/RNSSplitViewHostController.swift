@@ -5,11 +5,12 @@ import UIKit
 public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
   private var needsUpdateOfSplitViewAppearance = false
+
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
   private let splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
 
   /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation, because SplitView doesn't support changing number of columns dynamically.
-  private let DEFINED_NUMBER_OF_COLUMNS: Int?
+  private let FIXED_COLUMNS_COUNT: Int
 
   private let MIN_NUMBER_OF_COLUMNS: Int = 2
   private let MAX_NUMBER_OF_COLUMNS: Int = 3
@@ -22,12 +23,12 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
     let currentSubviews =
       splitViewHostComponentView.reactSubviews() as! [RNSSplitViewScreenComponentView]
-    DEFINED_NUMBER_OF_COLUMNS =
+    FIXED_COLUMNS_COUNT =
       RNSSplitViewHostController.filterSubviews(
         ofType: .column, in: currentSubviews
       ).count
     var style: UISplitViewController.Style = .unspecified
-    switch DEFINED_NUMBER_OF_COLUMNS {
+    switch FIXED_COLUMNS_COUNT {
     case 2:
       style = .doubleColumn
       break
@@ -99,7 +100,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
       currentInspectors.count <= MAX_NUMBER_OF_INSPECTORS,
       "[RNScreens] SplitView can only have 1 inspector")
     assert(
-      currentColumns.count == DEFINED_NUMBER_OF_COLUMNS,
+      currentColumns.count == FIXED_COLUMNS_COUNT,
       "[RNScreens] SplitView number of columns shouldn't change dynamically")
 
     let currentViewControllers = currentColumns.map {
@@ -166,7 +167,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
       "[RNScreens] SplitView can only have from \(MIN_NUMBER_OF_COLUMNS) to \(MAX_NUMBER_OF_COLUMNS) columns"
     )
     assert(
-      splitViewScreenColumns.count == DEFINED_NUMBER_OF_COLUMNS,
+      splitViewScreenColumns.count == FIXED_COLUMNS_COUNT,
       "[RNScreens] SplitView number of columns shouldn't change dynamically")
   }
 }

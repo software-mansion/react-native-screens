@@ -37,7 +37,7 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
     RNSBottomTabsIconType iconType);
 
-#pragma mark SplitView
+#pragma mark SplitViewHost props
 
 UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(
     react::RNSSplitViewHostSplitBehavior behavior);
@@ -47,6 +47,16 @@ UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
 
 UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
     react::RNSSplitViewHostDisplayMode displayMode);
+
+UISplitViewControllerSplitBehavior
+RNSSplitBehaviorToUISplitViewControllerSplitBehavior(
+    RNSSplitViewSplitBehavior behavior);
+
+UISplitViewControllerDisplayMode
+RNSDisplayModeToUISplitViewControllerDisplayMode(
+    RNSSplitViewDisplayMode displayMode);
+
+#pragma mark SplitViewScreen props
 
 RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
     react::RNSSplitViewScreenColumnType columnType);
