@@ -34,6 +34,7 @@ export interface NativeProps extends ViewProps {
   // Interactions
 
   presentsWithGesture?: WithDefault<boolean, true>;
+  showInspector?: WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewHost', {});

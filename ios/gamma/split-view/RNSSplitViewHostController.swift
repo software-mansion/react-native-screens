@@ -103,6 +103,18 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     needsChildViewControllersUpdate = false
   }
 
+  @objc
+  public func toggleSplitViewInspector(_ showInspector: Bool) {
+    if #available(iOS 26.0, *) {
+      if showInspector {
+        show(.inspector)
+
+      } else {
+        hide(.inspector)
+      }
+    }
+  }
+
   static func filterSubviews(
     ofType type: RNSSplitViewScreenColumnType, in subviews: [RNSSplitViewScreenComponentView]
   ) -> [RNSSplitViewScreenComponentView] {
