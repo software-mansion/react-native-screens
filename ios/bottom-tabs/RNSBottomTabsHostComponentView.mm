@@ -268,23 +268,7 @@ namespace react = facebook::react;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
     if (@available(iOS 26.0, *)) {
-      switch (_tabBarMinimizeBehavior) {
-        case RNSTabBarMinimizeBehaviorAutomatic:
-          _controller.tabBarMinimizeBehavior = UITabBarMinimizeBehaviorAutomatic;
-          break;
-          
-        case RNSTabBarMinimizeBehaviorNever:
-          _controller.tabBarMinimizeBehavior = UITabBarMinimizeBehaviorNever;
-          break;
-          
-        case RNSTabBarMinimizeBehaviorOnScrollDown:
-          _controller.tabBarMinimizeBehavior = UITabBarMinimizeBehaviorOnScrollDown;
-          break;
-          
-        case RNSTabBarMinimizeBehaviorOnScrollUp:
-          _controller.tabBarMinimizeBehavior = UITabBarMinimizeBehaviorOnScrollUp;
-          break;
-      }
+      _controller.tabBarMinimizeBehavior = rnscreens::conversion::UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(_tabBarMinimizeBehavior);
     } else if (_tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAutomatic) {
       RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
     }
