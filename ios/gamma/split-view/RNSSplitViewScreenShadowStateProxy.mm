@@ -1,8 +1,8 @@
 #import "RNSSplitViewScreenShadowStateProxy.h"
+#import "RNSSplitViewScreenComponentView.h"
 
 #import <React/RCTConversions.h>
 #import <rnscreens/RNSSplitViewScreenShadowNode.h>
-#import "RNSSplitViewScreenComponentView.h"
 
 namespace react = facebook::react;
 

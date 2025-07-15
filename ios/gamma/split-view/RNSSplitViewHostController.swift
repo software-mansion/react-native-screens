@@ -18,27 +18,12 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   @objc public init(
     splitViewHostComponentView: RNSSplitViewHostComponentView,
+    numberOfColumns: Int
   ) {
     self.splitViewHostComponentView = splitViewHostComponentView
     self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
-    let currentSubviews =
-      splitViewHostComponentView.reactSubviews() as! [RNSSplitViewScreenComponentView]
-    FIXED_COLUMNS_COUNT =
-      RNSSplitViewHostController.filterSubviews(
-        ofType: .column, in: currentSubviews
-      ).count
-    var style: UISplitViewController.Style = .unspecified
-    switch FIXED_COLUMNS_COUNT {
-    case 2:
-      style = .doubleColumn
-      break
-    case 3:
-      style = .tripleColumn
-      break
-    default:
-      style = .unspecified
-    }
-    super.init(style: style)
+    self.FIXED_COLUMNS_COUNT = numberOfColumns
+    super.init(style: RNSSplitViewHostController.styleByNumberOfColumns(numberOfColumns))
   }
 
   required init?(coder aDecoder: NSCoder) {
@@ -52,6 +37,11 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     needsChildViewControllersUpdate = true
   }
 
+  @objc
+  public func setNeedsUpdateOfSplitViewAppearance() {
+    needsUpdateOfSplitViewAppearance = true
+  }
+
   // MARK: Updating
 
   @objc
@@ -61,47 +51,19 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     }
   }
 
-  func updateSplitViewAppearanceIfNeeded() {
-    if needsUpdateOfSplitViewAppearance {
-      updateSplitViewAppearance()
-    }
-  }
-
-  func updateSplitViewAppearance() {
-    needsUpdateOfSplitViewAppearance = false
-
-    splitViewAppearanceCoordinator.updateAppearance(
-      ofSplitView: self.splitViewHostComponentView, with: self)
-  }
-
-  @objc public func setNeedsUpdateOfSplitViewAppearance(_ needsUpdateOfSplitViewAppearance_: Bool) {
-    needsUpdateOfSplitViewAppearance = needsUpdateOfSplitViewAppearance_
-  }
-
   @objc
   public func updateChildViewControllers() {
     precondition(
       needsChildViewControllersUpdate,
       "[RNScreens] Child view controller must be invalidated when update is forced!")
 
-    let currentSubviews =
-      splitViewHostComponentView.reactSubviews() as! [RNSSplitViewScreenComponentView]
-    let currentColumns = RNSSplitViewHostController.filterSubviews(
-      ofType: .column, in: currentSubviews)
-    let currentInspectors = RNSSplitViewHostController.filterSubviews(
-      ofType: .inspector, in: currentSubviews)
+    let currentColumns = filterSubviews(
+      ofType: .column, in: splitViewReactSubviews)
+    let currentInspectors = filterSubviews(
+      ofType: .inspector, in: splitViewReactSubviews)
 
-    assert(
-      currentColumns.count >= MIN_NUMBER_OF_COLUMNS
-        && currentColumns.count <= MAX_NUMBER_OF_COLUMNS,
-      "[RNScreens] SplitView can only have from \(MIN_NUMBER_OF_COLUMNS) to \(MAX_NUMBER_OF_COLUMNS) columns"
-    )
-    assert(
-      currentInspectors.count <= MAX_NUMBER_OF_INSPECTORS,
-      "[RNScreens] SplitView can only have 1 inspector")
-    assert(
-      currentColumns.count == FIXED_COLUMNS_COUNT,
-      "[RNScreens] SplitView number of columns shouldn't change dynamically")
+    validateColumns(currentColumns)
+    validateInspectors(currentInspectors)
 
     let currentViewControllers = currentColumns.map {
       RNSSplitViewNavigationController(rootViewController: $0.controller)
@@ -122,10 +84,41 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
       controller.viewFrameOriginChangeObserver = self
     }
 
-    validateSplitViewHierarchy()
-
     needsChildViewControllersUpdate = false
   }
+
+  func updateSplitViewAppearanceIfNeeded() {
+    if needsUpdateOfSplitViewAppearance {
+      updateSplitViewAppearance()
+    }
+  }
+
+  func updateSplitViewAppearance() {
+    needsUpdateOfSplitViewAppearance = false
+
+    splitViewAppearanceCoordinator.updateAppearance(
+      ofSplitView: self.splitViewHostComponentView, with: self)
+  }
+
+  // MARK: Helpers
+  static func styleByNumberOfColumns(_ numberOfColumns: Int) -> UISplitViewController.Style {
+    switch numberOfColumns {
+    case 2:
+      return .doubleColumn
+    case 3:
+      return .tripleColumn
+    default:
+      return .unspecified
+    }
+  }
+
+  func filterSubviews(
+    ofType type: RNSSplitViewScreenColumnType, in subviews: [RNSSplitViewScreenComponentView]
+  ) -> [RNSSplitViewScreenComponentView] {
+    return subviews.filter { $0.columnType == type }
+  }
+
+  // MARK: Public setters
 
   @objc
   public func toggleSplitViewInspector(_ showInspector: Bool) {
@@ -136,12 +129,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
         hide(.inspector)
       }
     }
-  }
-
-  static func filterSubviews(
-    ofType type: RNSSplitViewScreenColumnType, in subviews: [RNSSplitViewScreenComponentView]
-  ) -> [RNSSplitViewScreenComponentView] {
-    return subviews.filter { $0.columnType == type }
   }
 
   // MARK: ReactMountingTransactionObserving
@@ -160,15 +147,32 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   // MARK: Validators
 
-  @objc public func validateSplitViewHierarchy() {
+  func validateSplitViewHierarchy() {
+    let columns = filterSubviews(
+      ofType: .column, in: splitViewReactSubviews)
+    let inspectors = filterSubviews(
+      ofType: .inspector, in: splitViewReactSubviews)
+
+    validateColumns(columns)
+    validateInspectors(inspectors)
+  }
+
+  func validateColumns(_ columns: [RNSSplitViewScreenComponentView]) {
     assert(
-      splitViewScreenColumns.count >= MIN_NUMBER_OF_COLUMNS
-        && splitViewScreenColumns.count <= MAX_NUMBER_OF_COLUMNS,
+      columns.count >= MIN_NUMBER_OF_COLUMNS
+        && columns.count <= MAX_NUMBER_OF_COLUMNS,
       "[RNScreens] SplitView can only have from \(MIN_NUMBER_OF_COLUMNS) to \(MAX_NUMBER_OF_COLUMNS) columns"
     )
+
     assert(
-      splitViewScreenColumns.count == FIXED_COLUMNS_COUNT,
+      columns.count == FIXED_COLUMNS_COUNT,
       "[RNScreens] SplitView number of columns shouldn't change dynamically")
+  }
+
+  func validateInspectors(_ inspectors: [RNSSplitViewScreenComponentView]) {
+    assert(
+      inspectors.count <= MAX_NUMBER_OF_INSPECTORS,
+      "[RNScreens] SplitView can only have 1 inspector")
   }
 }
 
@@ -191,14 +195,14 @@ extension RNSSplitViewHostController {
     }
   }
 
-  var splitViewScreenColumns: [RNSSplitViewScreenComponentView] {
+  var splitViewReactSubviews: [RNSSplitViewScreenComponentView] {
     return self.splitViewHostComponentView.reactSubviews().lazy.map { subview in
       assert(
         subview is RNSSplitViewScreenComponentView,
         "[RNScreens] Expected RNSSplitViewScreenComponentView but got \(type(of: subview))")
 
       return subview as! RNSSplitViewScreenComponentView
-    }.filter { $0.columnType == RNSSplitViewScreenColumnType.column }
+    }
   }
 }
 

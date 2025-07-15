@@ -19,11 +19,12 @@ const TestButton = ({ setButtonState }) => {
 const SplitViewBaseApp = () => {
   const [buttonState, setButtonState] = React.useState('Initial');
   const [buttonState2, setButtonState2] = React.useState('Initial');
-  const [buttonState3, setButtonState3] = React.useState('Initial');
   const [buttonState4, setButtonState4] = React.useState('Initial');
 
+  const [inspectorVisible, setInspectorVisible] = React.useState(true);
+
   return (
-    <SplitViewHost displayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={true} splitBehavior='tile' showInspector={true}>
+    <SplitViewHost displayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={true} splitBehavior='tile' showInspector={inspectorVisible}>
       <SplitViewScreen columnType='column'>
         <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
           <TestButton setButtonState={setButtonState} />
@@ -38,8 +39,8 @@ const SplitViewBaseApp = () => {
       </SplitViewScreen>
       <SplitViewScreen columnType='column'>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
-          <TestButton setButtonState={setButtonState3} />
-          {buttonState3 && (<Text style={styles.text}>Button State: {buttonState3}</Text>)}
+          <TestButton setButtonState={() => setInspectorVisible(prev => !prev)} />
+          <Text style={styles.text}>Toggle inspector</Text>
         </View>
       </SplitViewScreen>
       <SplitViewScreen columnType='inspector'>
