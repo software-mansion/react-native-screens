@@ -6,6 +6,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsChildViewControllersUpdate = false
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
 
+  /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation, because SplitView doesn't support changing number of columns dynamically.
+  private var DEFINED_NUMBER_OF_COLUMNS: Int?
+
   private let MIN_NUMBER_OF_COLUMNS: Int = 2
   private let MAX_NUMBER_OF_COLUMNS: Int = 3
   private let MAX_NUMBER_OF_INSPECTORS: Int = 1
@@ -14,7 +17,23 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     splitViewHostComponentView: RNSSplitViewHostComponentView,
   ) {
     self.splitViewHostComponentView = splitViewHostComponentView
-    let style: UISplitViewController.Style = .tripleColumn
+    let currentSubviews =
+      splitViewHostComponentView.reactSubviews() as! [RNSSplitViewScreenComponentView]
+    DEFINED_NUMBER_OF_COLUMNS =
+      RNSSplitViewHostController.filterSubviews(
+        ofType: .column, in: currentSubviews
+      ).count
+    var style: UISplitViewController.Style = .unspecified
+    switch DEFINED_NUMBER_OF_COLUMNS {
+    case 2:
+      style = .doubleColumn
+      break
+    case 3:
+      style = .tripleColumn
+      break
+    default:
+      style = .unspecified
+    }
     super.init(style: style)
   }
 
@@ -46,8 +65,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
     let currentSubviews =
       splitViewHostComponentView.reactSubviews() as! [RNSSplitViewScreenComponentView]
-    let currentColumns = filterSubviews(ofType: .column, in: currentSubviews)
-    let currentInspectors = filterSubviews(ofType: .inspector, in: currentSubviews)
+    let currentColumns = RNSSplitViewHostController.filterSubviews(
+      ofType: .column, in: currentSubviews)
+    let currentInspectors = RNSSplitViewHostController.filterSubviews(
+      ofType: .inspector, in: currentSubviews)
 
     assert(
       currentColumns.count >= MIN_NUMBER_OF_COLUMNS
@@ -82,7 +103,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     needsChildViewControllersUpdate = false
   }
 
-  func filterSubviews(
+  static func filterSubviews(
     ofType type: RNSSplitViewScreenColumnType, in subviews: [RNSSplitViewScreenComponentView]
   ) -> [RNSSplitViewScreenComponentView] {
     return subviews.filter { $0.columnType == type }
