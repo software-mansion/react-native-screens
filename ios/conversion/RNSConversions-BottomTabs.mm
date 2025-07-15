@@ -287,4 +287,29 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
   return iconImageSource;
 }
 
+RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(
+    react::RNSBottomTabsScreenOrientation orientation)
+{
+  using enum facebook::react::RNSBottomTabsScreenOrientation;
+  
+  switch (orientation) {
+    case Inherit:
+      return RNSOrientationInherit;
+    case All:
+      return RNSOrientationAll;
+    case AllButUpsideDown:
+      return RNSOrientationAllButUpsideDown;
+    case Portrait:
+      return RNSOrientationPortrait;
+    case PortraitUpsideDown:
+      return RNSOrientationPortraitUpsideDown;
+    case Landscape:
+      return RNSOrientationLandscape;
+    case LandscapeLeft:
+      return RNSOrientationLandscapeLeft;
+    case LandscapeRight:
+      return RNSOrientationLandscapeRight;
+  }
+}
+
 }; // namespace rnscreens::conversion

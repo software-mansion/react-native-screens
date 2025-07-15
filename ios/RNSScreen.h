@@ -5,6 +5,7 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import "RNSOrientationProviding.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
@@ -33,7 +34,7 @@ namespace react = facebook::react;
 
 @class RNSScreenView;
 
-@interface RNSScreen : UIViewController <RNSViewControllerDelegate>
+@interface RNSScreen : UIViewController <RNSViewControllerDelegate, RNSOrientationProviding>
 
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;

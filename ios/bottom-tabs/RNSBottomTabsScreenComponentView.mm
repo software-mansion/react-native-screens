@@ -72,6 +72,7 @@ namespace react = facebook::react;
   _badgeValue = nil;
   _title = nil;
   _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
+  _orientation = RNSOrientationInherit;
   _tabBarBackgroundColor = nil;
 
   _tabBarItemTitleFontFamily = nil;
@@ -156,6 +157,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.title != oldComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
     _controller.title = _title;
+  }
+
+  if (newComponentProps.orientation != oldComponentProps.orientation) {
+    _orientation = rnscreens::conversion::RNSOrientationFromRNSBottomTabsScreenOrientation(newComponentProps.orientation);
+    // TODO: force orientation
   }
 
   if (newComponentProps.tabKey != oldComponentProps.tabKey) {

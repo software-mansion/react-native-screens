@@ -53,6 +53,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_missed', // Android specific
       title: 'Tab2',
+      orientation: 'landscape',
     },
     contentViewRenderFn: Tab2,
   },
@@ -85,6 +86,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       iconResourceName: 'sym_action_chat', // Android specific
       title: 'Tab4',
       badgeValue: '',
+      orientation: 'portrait',
     },
     contentViewRenderFn: Tab4,
   },
