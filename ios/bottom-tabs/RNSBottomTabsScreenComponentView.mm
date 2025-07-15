@@ -2,6 +2,7 @@
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSTabBarController.h"
+#import "RNSScrollViewHelper.h"
 
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -18,6 +19,9 @@ namespace react = facebook::react;
   RNSBottomTabsHostComponentView *__weak _Nullable _reactSuperview;
 
   RNSBottomTabsScreenEventEmitter *_Nonnull _reactEventEmitter;
+  
+  // We need this information to warn users about dynamic changes to behavior being currently unsupported.
+  BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -60,9 +64,12 @@ namespace react = facebook::react;
   _tabBarItemIconColor = nil;
 
   _tabBarItemBadgeBackgroundColor = nil;
-  
+
   _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
   _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
+
+  _overrideScrollViewContentInsetAdjustmentBehavior = YES;
+  _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -183,16 +190,30 @@ RNS_IGNORE_SUPER_CALL_END
     _selectedIconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSFSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot
       != oldComponentProps.specialEffects.repeatedTabSelection.popToRoot) {
     _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = newComponentProps.specialEffects.repeatedTabSelection.popToRoot;
   }
-  
+
   if (newComponentProps.specialEffects.repeatedTabSelection.scrollToTop
       != oldComponentProps.specialEffects.repeatedTabSelection.scrollToTop) {
     _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
   }
+
+  if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior
+      != oldComponentProps.overrideScrollViewContentInsetAdjustmentBehavior) {
+    _overrideScrollViewContentInsetAdjustmentBehavior = newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior;
+    
+    if (_isOverrideScrollViewContentInsetAdjustmentBehaviorSet) {
+      RCTLogWarn(@"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
+    }
+  }
+  
+  // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
+  // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
+  // enabling us to warn users that dynamic changes are not supported.
+  _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
   if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
@@ -238,6 +259,20 @@ RNS_IGNORE_SUPER_CALL_END
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+#pragma mark - RNSScrollViewBehaviorOverriding
+
+- (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
+{
+  return self.overrideScrollViewContentInsetAdjustmentBehavior;
+}
+
+- (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
+{
+  if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
+    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+  }
 }
 
 @end

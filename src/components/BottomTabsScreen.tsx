@@ -67,6 +67,8 @@ export interface BottomTabsScreenProps {
     };
   };
 
+  overrideScrollViewContentInsetAdjustmentBehavior?: boolean; // defaults to true
+
   // Events
   onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
   onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;

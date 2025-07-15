@@ -106,7 +106,7 @@
   [self assertExactlyOneFocusedTab];
 #endif
 
-  UIViewController *_Nullable selectedViewController = nil;
+  RNSTabsScreenViewController *_Nullable selectedViewController = nil;
   for (RNSTabsScreenViewController *tabViewController in self.viewControllers) {
     NSLog(
         @"Update Selected View Controller [%ld] isFocused %d",
@@ -121,7 +121,8 @@
   RCTAssert(selectedViewController != nil, @"[RNScreens] No selected view controller!");
 
   NSLog(@"Change selected view controller to: %@", selectedViewController);
-
+  
+  [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   [self setSelectedViewController:selectedViewController];
 }
 

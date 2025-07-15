@@ -72,7 +72,7 @@ export function LongText() {
 
 function Screen1({ navigation }: StackNavigationProp) {
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView>
       <Button
         title="Go to screen 2"
         onPress={() => navigation.push('Screen2')}
@@ -84,7 +84,7 @@ function Screen1({ navigation }: StackNavigationProp) {
 
 function Screen2({ navigation }: StackNavigationProp) {
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView>
       <Button
         title="Go to screen 3"
         onPress={() => navigation.push('Screen3')}
@@ -94,9 +94,13 @@ function Screen2({ navigation }: StackNavigationProp) {
   );
 }
 
-function Screen3() {
+function Screen3({ navigation }: StackNavigationProp) {
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView>
+      <Button
+        title="Go to screen 3"
+        onPress={() => navigation.push('Screen3')}
+      />
       <LongText />
     </ScrollView>
   );
@@ -106,9 +110,23 @@ export function Tab4() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Screen1" component={Screen1} />
-        <Stack.Screen name="Screen2" component={Screen2} />
-        <Stack.Screen name="Screen3" component={Screen3} />
+        <Stack.Screen
+          name="Screen1"
+          component={Screen1}
+          options={{ headerTransparent: true }}
+        />
+        <Stack.Screen
+          name="Screen2"
+          component={Screen2}
+          options={{
+            headerLargeTitle: true,
+          }}
+        />
+        <Stack.Screen
+          name="Screen3"
+          component={Screen3}
+          options={{ headerTransparent: true }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
