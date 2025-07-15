@@ -4,6 +4,7 @@ import UIKit
 @objc
 public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
+  private var needsUpdateOfSplitViewAppearance = false
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
 
   /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation, because SplitView doesn't support changing number of columns dynamically.
@@ -55,6 +56,25 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     if needsChildViewControllersUpdate {
       updateChildViewControllers()
     }
+  }
+
+  func updateSplitViewAppearanceIfNeeded() {
+    if needsUpdateOfSplitViewAppearance {
+      updateSplitViewAppearance()
+    }
+  }
+
+  func updateSplitViewAppearance() {
+    needsUpdateOfSplitViewAppearance = false
+
+    //        TODO: Flush updates here
+    //      [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
+    //                                       withHostComponentView:self.tabsHostComponentView
+    //                                        tabScreenControllers:_tabScreenControllers];
+  }
+
+  @objc public func setNeedsUpdateOfSplitViewAppearance(_ needsUpdateOfSplitViewAppearance_: Bool) {
+    needsUpdateOfSplitViewAppearance = needsUpdateOfSplitViewAppearance_
   }
 
   @objc
