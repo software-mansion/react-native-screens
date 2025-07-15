@@ -2,9 +2,9 @@
 
 import React from 'react';
 import BottomTabsNativeComponent, {
-  BlurEffect,
-  TabBarMinimizeBehavior,
-  NativeFocusChangeEvent,
+  type BlurEffect,
+  type TabBarMinimizeBehavior,
+  type NativeFocusChangeEvent,
   type NativeProps as BottomTabsNativeComponentProps,
 } from '../fabric/BottomTabsNativeComponent';
 import {
@@ -45,9 +45,9 @@ export interface BottomTabsProps extends ViewProps {
 
   // Additional for Android
   tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
-  tabBarItemTitleFontColorActive?: TextStyle['color']; 
+  tabBarItemTitleFontColorActive?: TextStyle['color'];
   tabBarItemIconColorActive?: ColorValue;
-  
+
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
 
   // Control

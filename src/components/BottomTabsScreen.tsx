@@ -2,7 +2,7 @@
 
 import React from 'react';
 import BottomTabsScreenNativeComponent, {
-  BlurEffect,
+  type BlurEffect,
   type IconType,
   type NativeProps,
 } from '../fabric/BottomTabsScreenNativeComponent';
