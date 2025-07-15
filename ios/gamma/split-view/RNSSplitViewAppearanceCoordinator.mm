@@ -1,5 +1,5 @@
-#import "RNSSplitViewAppearanceCoordinator.h"
 #import "RNSConversions.h"
+#import "RNSSplitViewAppearanceCoordinator.h"
 
 #import "Swift-Bridging.h"
 
