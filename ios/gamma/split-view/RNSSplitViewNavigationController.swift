@@ -2,7 +2,8 @@ import Foundation
 import UIKit
 
 protocol RNSSplitViewNavigationControllerViewFrameObserver: AnyObject {
-  func splitViewNavCtrlViewDidChangeFrameOrigin(_ splitViewNavCtrl: RNSSplitViewNavigationController)
+  func splitViewNavCtrlViewDidChangeFrameOrigin(
+    _ splitViewNavCtrl: RNSSplitViewNavigationController)
 }
 
 @objc

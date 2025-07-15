@@ -46,7 +46,12 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     }
 
     viewControllers = currentViewControllers
-    
+
+    //      TODO: to be removed - only for testing purposes for inspector column
+    //    if #available(iOS 26.0, *) {
+    //      setViewController(currentViewControllers.last, for: .inspector)
+    //    }
+
     for controller in currentViewControllers {
       controller.viewFrameOriginChangeObserver = self
     }
@@ -88,7 +93,9 @@ extension RNSSplitViewHostController {
 }
 
 extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameObserver {
-  func splitViewNavCtrlViewDidChangeFrameOrigin(_ splitViewNavCtrl: RNSSplitViewNavigationController) {
+  func splitViewNavCtrlViewDidChangeFrameOrigin(
+    _ splitViewNavCtrl: RNSSplitViewNavigationController
+  ) {
     for controller in self.splitViewScreenControllers {
       controller.columnPositioningDidChangeIn(splitViewController: self)
     }

@@ -12,8 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSSplitViewScreenShadowStateProxy : NSObject
 
+- (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView;
+
 - (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView
-             inContextOfAncestorView:(UIView *)ancestorView;
+             inContextOfAncestorView:(UIView *_Nullable)ancestorView;
 
 - (void)updateShadowStateWithFrame:(CGRect)frame;
 
