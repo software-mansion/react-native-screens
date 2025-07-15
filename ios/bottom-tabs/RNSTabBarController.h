@@ -90,6 +90,23 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateTabBarAppearance;
 
+/**
+ * Updates the interface orientation based on selected tab screen and its children.
+ *
+ * This method does nothing if the update has not been previoulsy requested.
+ * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
+ * appropriate invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateOrientationIfNeeded;
+
+/**
+ * Updates the interface orientation based on selected tab screen and its children.
+ *
+ * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
+ * invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateOrientation;
+
 @end
 
 #pragma mark - Signals
@@ -127,6 +144,11 @@ NS_ASSUME_NONNULL_BEGIN
  * update.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfTabBarAppearance;
+
+/**
+ * Tell the controller that some configuration regarding interface orientation has changed & it requires update.
+ */
+@property (nonatomic, readwrite) bool needsUpdateOfOrientation;
 
 @end
 
