@@ -78,6 +78,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     assert(
       currentInspectors.count <= MAX_NUMBER_OF_INSPECTORS,
       "[RNScreens] SplitView can only have 1 inspector")
+    assert(
+      currentColumns.count == DEFINED_NUMBER_OF_COLUMNS,
+      "[RNScreens] SplitView number of columns shouldn't change dynamically")
 
     let currentViewControllers = currentColumns.map {
       RNSSplitViewNavigationController(rootViewController: $0.controller)
@@ -108,7 +111,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     if #available(iOS 26.0, *) {
       if showInspector {
         show(.inspector)
-
       } else {
         hide(.inspector)
       }
@@ -142,6 +144,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
         && splitViewScreenColumns.count <= MAX_NUMBER_OF_COLUMNS,
       "[RNScreens] SplitView can only have from \(MIN_NUMBER_OF_COLUMNS) to \(MAX_NUMBER_OF_COLUMNS) columns"
     )
+    assert(
+      splitViewScreenColumns.count == DEFINED_NUMBER_OF_COLUMNS,
+      "[RNScreens] SplitView number of columns shouldn't change dynamically")
   }
 }
 
