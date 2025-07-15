@@ -172,6 +172,11 @@ class TabScreenViewManager :
         value: Boolean
     ) = Unit
 
+    override fun setOrientation(
+        view: TabScreen,
+        value: String?,
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
     }
