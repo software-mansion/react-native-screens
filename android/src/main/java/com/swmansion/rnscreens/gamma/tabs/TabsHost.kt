@@ -13,6 +13,7 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.common.assets.ReactFontManager
+import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
@@ -117,7 +118,7 @@ class TabsHost(
 
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
 
-    private var isLayoutInvalidated: Boolean = false
+    private var isLayoutEnqueued: Boolean = false
 
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
@@ -391,18 +392,19 @@ class TabsHost(
     }
 
     private fun refreshLayout() {
-        ReactChoreographer
-            .getInstance()
-            .postFrameCallback(
-                ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-            ) {
-                forceSubtreeMeasureAndLayoutPass()
-            }
+        if (!isLayoutEnqueued) {
+            ReactChoreographer
+                .getInstance()
+                .postFrameCallback(
+                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+                ) {
+                    isLayoutEnqueued = false
+                    forceSubtreeMeasureAndLayoutPass()
+                }
+        }
     }
 
     private fun forceSubtreeMeasureAndLayoutPass() {
-        isLayoutInvalidated = false
-
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
