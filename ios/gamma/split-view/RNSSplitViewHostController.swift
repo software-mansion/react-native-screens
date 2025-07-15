@@ -6,6 +6,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsChildViewControllersUpdate = false
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
 
+  private let MIN_NUMBER_OF_COLUMNS: Int = 2
+  private let MAX_NUMBER_OF_COLUMNS: Int = 3
+
   @objc public init(
     splitViewHostComponentView: RNSSplitViewHostComponentView, style: UISplitViewController.Style
   ) {
@@ -64,6 +67,17 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   @objc
   public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
+    validateSplitViewHierarchy()
+  }
+
+  // MARK: Validators
+
+  @objc public func validateSplitViewHierarchy() {
+    assert(
+      splitViewScreenColumns.count >= MIN_NUMBER_OF_COLUMNS
+        && splitViewScreenColumns.count <= MAX_NUMBER_OF_COLUMNS,
+      "[RNScreens] SplitView can only have from \(MIN_NUMBER_OF_COLUMNS) to \(MAX_NUMBER_OF_COLUMNS) columns"
+    )
   }
 }
 
@@ -84,6 +98,16 @@ extension RNSSplitViewHostController {
 
       return splitViewNavigationControllerTopViewController as! RNSSplitViewScreenController
     }
+  }
+
+  var splitViewScreenColumns: [RNSSplitViewScreenComponentView] {
+    return self.splitViewHostComponentView.reactSubviews().lazy.map { subview in
+      assert(
+        subview is RNSSplitViewScreenComponentView,
+        "[RNScreens] Expected RNSSplitViewScreenComponentView but got \(type(of: subview))")
+
+      return subview as! RNSSplitViewScreenComponentView
+    }.filter { $0.columnType == RNSSplitViewScreenColumnType.column }
   }
 }
 
