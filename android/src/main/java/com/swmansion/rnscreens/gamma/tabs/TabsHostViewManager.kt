@@ -98,17 +98,23 @@ class TabsHostViewManager :
     override fun setTabBarItemTitleFontFamily(
         view: TabsHost,
         value: String?,
-    ) = Unit
+    ) {
+        view.tabBarItemTitleFontFamily = value
+    }
 
     override fun setTabBarItemTitleFontWeight(
         view: TabsHost,
         value: String?,
-    ) = Unit
+    ) {
+        view.tabBarItemTitleFontWeight = value
+    }
 
     override fun setTabBarItemTitleFontStyle(
         view: TabsHost,
         value: String?,
-    ) = Unit
+    ) {
+        view.tabBarItemTitleFontStyle = value
+    }
 
     override fun setTabBarItemTitleFontColor(
         view: TabsHost,
