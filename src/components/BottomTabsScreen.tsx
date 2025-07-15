@@ -60,6 +60,8 @@ export interface BottomTabsScreenProps {
   // Android specific
   iconResourceName?: string;
 
+  badgeValue?: string;
+
   specialEffects?: {
     repeatedTabSelection?: {
       popToRoot?: boolean;
