@@ -48,6 +48,9 @@ UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
 UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
     react::RNSSplitViewHostDisplayMode displayMode);
 
+RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
+    react::RNSSplitViewScreenColumnType columnType);
+
 }; // namespace rnscreens::conversion
 
 #endif

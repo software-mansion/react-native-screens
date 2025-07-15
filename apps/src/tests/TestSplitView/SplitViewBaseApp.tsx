@@ -23,30 +23,29 @@ const SplitViewBaseApp = () => {
   const [buttonState4, setButtonState4] = React.useState('Initial');
 
   return (
-    <SplitViewHost displayMode='twoBesideSecondary' primaryEdge='leading' presentsWithGesture={false} splitBehavior='tile'>
-      <SplitViewScreen>
+    <SplitViewHost displayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={true} splitBehavior='tile'>
+      <SplitViewScreen columnType='column'>
         <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
           <TestButton setButtonState={setButtonState} />
           {buttonState && (<Text style={styles.text}>Button State: {buttonState}</Text>)}
         </View>
       </SplitViewScreen>
-      <SplitViewScreen>
+      <SplitViewScreen columnType='column'>
         <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]}>
           <TestButton setButtonState={setButtonState2} />
           {buttonState2 && (<Text style={styles.text}>Button State: {buttonState2}</Text>)}
         </View>
       </SplitViewScreen>
-      <SplitViewScreen>
+      <SplitViewScreen columnType='column'>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <TestButton setButtonState={setButtonState3} />
           {buttonState3 && (<Text style={styles.text}>Button State: {buttonState3}</Text>)}
         </View>
       </SplitViewScreen>
-      {/* TODO: to be removed - only for testing purposes for inspector column */}
-      <SplitViewScreen>
+      <SplitViewScreen columnType='inspector'>
         <View style={[styles.container, { backgroundColor: Colors.GreenDark100 }]}>
           <TestButton setButtonState={setButtonState4} />
-          {buttonState4 && (<Text style={styles.text}>Button State in modal: {buttonState4}</Text>)}
+          {buttonState4 && (<Text style={styles.text}>Button State: {buttonState4}</Text>)}
         </View>
       </SplitViewScreen>
     </SplitViewHost>
