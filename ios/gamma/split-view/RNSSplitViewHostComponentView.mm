@@ -49,6 +49,7 @@ namespace react = facebook::react;
   _displayMode = UISplitViewControllerDisplayModeAutomatic;
   _presentsWithGesture = true;
   _showSecondaryToggleButton = false;
+  _showInspector = false;
 
   _isShowSecondaryToggleButtonSet = false;
 }
@@ -171,6 +172,11 @@ RNS_IGNORE_SUPER_CALL_END
     if (_isShowSecondaryToggleButtonSet) {
       RCTLogWarn(@"[RNScreens] changing showSecondaryToggleButton dynamically is currently unsupported");
     }
+  }
+
+  if (oldComponentProps.showInspector != newComponentProps.showInspector) {
+    _showInspector = newComponentProps.showInspector;
+    [_controller toggleSplitViewInspector:_showInspector];
   }
 
   // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
