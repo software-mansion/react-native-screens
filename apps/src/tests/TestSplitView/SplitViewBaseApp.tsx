@@ -25,30 +25,30 @@ const SplitViewBaseApp = () => {
 
   return (
     <SplitViewHost displayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={true} splitBehavior='tile' showInspector={inspectorVisible}>
-      <SplitViewScreen columnType='column'>
+      <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
           <TestButton setButtonState={setButtonState} />
           {buttonState && (<Text style={styles.text}>Button State: {buttonState}</Text>)}
         </View>
-      </SplitViewScreen>
-      <SplitViewScreen columnType='column'>
+      </SplitViewScreen.Column>
+      <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]}>
           <TestButton setButtonState={setButtonState2} />
           {buttonState2 && (<Text style={styles.text}>Button State: {buttonState2}</Text>)}
         </View>
-      </SplitViewScreen>
-      <SplitViewScreen columnType='column'>
+      </SplitViewScreen.Column>
+      <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <TestButton setButtonState={() => setInspectorVisible(prev => !prev)} />
           <Text style={styles.text}>Toggle inspector</Text>
         </View>
-      </SplitViewScreen>
-      <SplitViewScreen columnType='inspector'>
+      </SplitViewScreen.Column>
+      <SplitViewScreen.Inspector>
         <View style={[styles.container, { backgroundColor: Colors.GreenDark100 }]}>
           <TestButton setButtonState={setButtonState4} />
           {buttonState4 && (<Text style={styles.text}>Button State: {buttonState4}</Text>)}
         </View>
-      </SplitViewScreen>
+      </SplitViewScreen.Inspector>
     </SplitViewHost>
   );
 }

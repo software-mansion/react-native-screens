@@ -4,14 +4,18 @@ import type { ViewProps } from 'react-native';
 import { WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 
-export type SplitViewScreenColumnType = 'column' | 'inspector';
+type SplitViewScreenColumnType = 'column' | 'inspector';
 
-export interface NativeProps extends ViewProps {
+interface InternalNativeProps extends ViewProps {
   // Config
-
   columnType?: WithDefault<SplitViewScreenColumnType, 'column'>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSSplitViewScreen', {
-  interfaceOnly: true,
-});
+export interface NativeProps extends ViewProps {}
+
+export default codegenNativeComponent<InternalNativeProps>(
+  'RNSSplitViewScreen',
+  {
+    interfaceOnly: true,
+  },
+);
