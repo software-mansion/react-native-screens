@@ -84,7 +84,6 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
   return (
     <BottomTabs
       onNativeFocusChange={onNativeFocusChangeCallback}
-
       tabBarBackgroundColor={Colors.NavyLight100}
       tabBarItemActivityIndicatorColor={Colors.GreenLight40}
       tabBarTintColor={Colors.YellowLight100}
@@ -96,11 +95,12 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemTitleFontSize={10}
       tabBarItemTitleFontSizeActive={15}
       tabBarItemRippleColor={Colors.WhiteTransparentDark}
-      tabBarItemTitleFontFamily='monospace'
-      tabBarItemTitleFontStyle='italic'
+      tabBarItemTitleFontFamily="monospace"
+      tabBarItemTitleFontStyle="italic"
       tabBarItemTitleFontWeight="700"
       tabBarItemLabelVisibilityMode="auto"
 
+      tabBarMinimizeBehavior="onScrollDown"
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }>
