@@ -21,10 +21,18 @@ namespace react = facebook::react;
 }
 
 - (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView
-             inContextOfAncestorView:(UIView *)ancestorView
 {
-  CGRect relativeFrame = [screenComponentView convertRect:screenComponentView.frame toView:ancestorView];
-  [self updateShadowStateWithFrame:relativeFrame];
+  [self updateShadowStateOfComponent:screenComponentView inContextOfAncestorView:nil];
+}
+
+- (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView
+             inContextOfAncestorView:(UIView *_Nullable)ancestorView
+{
+  CGRect frame = screenComponentView.frame;
+  if (ancestorView != nil) {
+    frame = [screenComponentView convertRect:frame toView:ancestorView];
+  }
+  [self updateShadowStateWithFrame:frame];
 }
 
 - (void)updateShadowStateWithFrame:(CGRect)frame
