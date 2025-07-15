@@ -95,7 +95,7 @@ class TabsHost(
 
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
 
-    private val wrappedContext = ContextThemeWrapper(reactContext, R.style.custom)
+    private val wrappedContext = ContextThemeWrapper(reactContext, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
 
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(wrappedContext).apply {
