@@ -34,11 +34,7 @@ namespace react = facebook::react;
 - (void)initState
 {
   [self resetProps];
-  //    TODO: For now I'm hardcoding style in init, but style cannot be updated outside controller's constructor, thus
-  //    we'll need to delay the initialization unitl Screen components will be mounted
-  _controller =
-      [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self
-                                                                       style:UISplitViewControllerStyleTripleColumn];
+
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _reactSubviews = [NSMutableArray new];
 }
@@ -59,7 +55,9 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
-  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
+  // We need to know how many reactSubviews controller has, because style can be set only once in UISplitViewController
+  // constructor
+  _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self];
 
   [self reactAddControllerToClosestParent:_controller];
 }
