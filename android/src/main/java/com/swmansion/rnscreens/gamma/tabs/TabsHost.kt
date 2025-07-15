@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
+import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
@@ -123,6 +124,10 @@ class TabsHost(
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
+    var tabBarItemTitleFontFamily: String? by Delegates.observable<String?>(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
     var tabBarItemIconColorActive: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
@@ -138,8 +143,16 @@ class TabsHost(
     var tabBarItemTitleFontSize: Float? by Delegates.observable(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
-    
+
     var tabBarItemTitleFontSizeActive: Float? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
+    var tabBarItemTitleFontWeight: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
+    var tabBarItemTitleFontStyle: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
@@ -314,11 +327,31 @@ class TabsHost(
             val smallLabel =
                 menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
 
+            val isFontStyleItalic = tabBarItemTitleFontStyle == "italic"
+
+            // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
+            // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
+            // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
+            val fontWeight = if (tabBarItemTitleFontWeight == "bold") 700 else tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
+
+            val fontFamily =
+                ReactFontManager.getInstance().getTypeface(
+                    tabBarItemTitleFontFamily ?: "",
+                    fontWeight,
+                    isFontStyleItalic,
+                    reactContext.assets,
+                )
+
             val smallFontSize = tabBarItemTitleFontSize?.takeIf { it > 0 } ?: 12f
             val largeFontSize = tabBarItemTitleFontSizeActive?.takeIf { it > 0 } ?: 14f
 
+            // Inactive
             smallLabel.textSize = smallFontSize
+            smallLabel.typeface = fontFamily
+
+            // Active
             largeLabel.textSize = largeFontSize
+            largeLabel.typeface = fontFamily
         }
     }
 
