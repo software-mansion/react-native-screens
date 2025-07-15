@@ -42,6 +42,12 @@ export type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+export type VisibilityMode = 
+  | 'auto'
+  | 'selected'
+  | 'labeled'
+  | 'unlabeled'
+
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
@@ -72,6 +78,7 @@ export interface NativeProps extends ViewProps {
   tabBarItemTitleFontSizeActive?: Float;
   tabBarItemActivityIndicatorColor?: ColorValue;
   tabBarItemRippleColor?: ColorValue;
+  tabBarItemVisibilityMode?: WithDefault<VisibilityMode, "auto">;
 
   // Control
 
