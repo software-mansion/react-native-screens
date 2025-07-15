@@ -69,11 +69,17 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "selectedIconSFSymbolName":
         mViewManager.setSelectedIconSFSymbolName(view, value == null ? null : (String) value);
         break;
+      case "iconResourceName":
+        mViewManager.setIconResourceName(view, value == null ? null : (String) value);
+        break;
       case "badgeValue":
         mViewManager.setBadgeValue(view, value == null ? null : (String) value);
         break;
       case "specialEffects":
         mViewManager.setSpecialEffects(view, (ReadableMap) value);
+        break;
+      case "overrideScrollViewContentInsetAdjustmentBehavior":
+        mViewManager.setOverrideScrollViewContentInsetAdjustmentBehavior(view, value == null ? true : (boolean) value);
         break;
       default:
         super.setProperty(view, propName, value);

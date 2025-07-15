@@ -5,7 +5,6 @@ import { ScrollView, Text } from 'react-native';
 export function Tab3() {
   return (
     <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{
         width: '100%',
         height: 'auto',
