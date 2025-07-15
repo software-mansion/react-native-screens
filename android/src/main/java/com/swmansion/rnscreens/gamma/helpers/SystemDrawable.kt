@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.gamma.helpers
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
@@ -15,10 +14,18 @@ internal fun getSystemDrawableResource(
         return null
     }
 
-    val id = Resources.getSystem().getIdentifier(iconName, "drawable", "android")
+    // Try to get resource app scope
+    val appDrawableId = context.resources.getIdentifier(iconName, "drawable", context.packageName)
 
-    if (id > 0) {
-        return AppCompatResources.getDrawable(context, id)
+    if (appDrawableId > 0) {
+        return AppCompatResources.getDrawable(context, appDrawableId)
+    }
+
+    // Try to get resource from system scope
+    val systemDrawableId = context.resources.getIdentifier(iconName, "drawable", "android")
+
+    if (systemDrawableId > 0) {
+        return AppCompatResources.getDrawable(context, systemDrawableId)
     }
 
     Log.w(TAG, "TabScreen could not resolve drawable resource with the name $iconName")
