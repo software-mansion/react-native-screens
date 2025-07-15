@@ -60,6 +60,43 @@ UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
   }
 }
 
+UISplitViewControllerSplitBehavior RNSSplitBehaviorToUISplitViewControllerSplitBehavior(
+    RNSSplitViewSplitBehavior behavior)
+{
+  switch (behavior) {
+    case RNSSplitViewSplitBehaviorDisplace:
+      return UISplitViewControllerSplitBehaviorDisplace;
+    case RNSSplitViewSplitBehaviorOverlay:
+      return UISplitViewControllerSplitBehaviorOverlay;
+    case RNSSplitViewSplitBehaviorTile:
+      return UISplitViewControllerSplitBehaviorTile;
+    case RNSSplitViewSplitBehaviorAutomatic:
+    default:
+      return UISplitViewControllerSplitBehaviorAutomatic;
+  }
+}
+
+UISplitViewControllerDisplayMode RNSDisplayModeToUISplitViewControllerDisplayMode(RNSSplitViewDisplayMode displayMode)
+{
+  switch (displayMode) {
+    case RNSSplitViewDisplayModeSecondaryOnly:
+      return UISplitViewControllerDisplayModeSecondaryOnly;
+    case RNSSplitViewDisplayModeOneBesideSecondary:
+      return UISplitViewControllerDisplayModeOneBesideSecondary;
+    case RNSSplitViewDisplayModeOneOverSecondary:
+      return UISplitViewControllerDisplayModeOneOverSecondary;
+    case RNSSplitViewDisplayModeTwoBesideSecondary:
+      return UISplitViewControllerDisplayModeTwoBesideSecondary;
+    case RNSSplitViewDisplayModeTwoOverSecondary:
+      return UISplitViewControllerDisplayModeTwoOverSecondary;
+    case RNSSplitViewDisplayModeTwoDisplaceSecondary:
+      return UISplitViewControllerDisplayModeTwoDisplaceSecondary;
+    case RNSSplitViewDisplayModeAutomatic:
+    default:
+      return UISplitViewControllerDisplayModeAutomatic;
+  }
+}
+
 #pragma mark SplitViewScreen props
 
 RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
