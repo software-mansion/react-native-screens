@@ -19,6 +19,7 @@ namespace react = facebook::react;
   NSMutableArray<RNSSplitViewScreenComponentView *> *_Nonnull _reactSubviews;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
+  bool _needsSplitViewAppearanceUpdate;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -36,6 +37,7 @@ namespace react = facebook::react;
   [self resetProps];
 
   _hasModifiedReactSubviewsInCurrentTransaction = false;
+  _needsSplitViewAppearanceUpdate = false;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -56,9 +58,7 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
-  // We need to know how many reactSubviews controller has, because style can be set only once in UISplitViewController
-  // constructor
-  _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self];
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
 
   [self reactAddControllerToClosestParent:_controller];
 }
@@ -146,28 +146,28 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(props);
 
   if (oldComponentProps.splitBehavior != newComponentProps.splitBehavior) {
+    _needsSplitViewAppearanceUpdate = true;
     _splitBehavior = rnscreens::conversion::SplitViewSplitBehaviorFromHostProp(newComponentProps.splitBehavior);
-    _controller.preferredSplitBehavior = _splitBehavior;
   }
 
   if (oldComponentProps.primaryEdge != newComponentProps.primaryEdge) {
+    _needsSplitViewAppearanceUpdate = true;
     _primaryEdge = rnscreens::conversion::SplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
-    _controller.primaryEdge = _primaryEdge;
   }
 
   if (oldComponentProps.displayMode != newComponentProps.displayMode) {
+    _needsSplitViewAppearanceUpdate = true;
     _displayMode = rnscreens::conversion::SplitViewDisplayModeFromHostProp(newComponentProps.displayMode);
-    _controller.preferredDisplayMode = _displayMode;
   }
 
   if (oldComponentProps.presentsWithGesture != newComponentProps.presentsWithGesture) {
+    _needsSplitViewAppearanceUpdate = true;
     _presentsWithGesture = newComponentProps.presentsWithGesture;
-    _controller.presentsWithGesture = _presentsWithGesture;
   }
 
   if (oldComponentProps.showSecondaryToggleButton != newComponentProps.showSecondaryToggleButton) {
+    _needsSplitViewAppearanceUpdate = true;
     _showSecondaryToggleButton = newComponentProps.showSecondaryToggleButton;
-    _controller.showsSecondaryOnlyButton = _showSecondaryToggleButton;
 
     if (_isShowSecondaryToggleButtonSet) {
       RCTLogWarn(@"[RNScreens] changing showSecondaryToggleButton dynamically is currently unsupported");
@@ -175,8 +175,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (oldComponentProps.showInspector != newComponentProps.showInspector) {
+    _needsSplitViewAppearanceUpdate = true;
     _showInspector = newComponentProps.showInspector;
-    [_controller toggleSplitViewInspector:_showInspector];
   }
 
   // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
@@ -185,6 +185,21 @@ RNS_IGNORE_SUPER_CALL_END
   _isShowSecondaryToggleButtonSet = true;
 
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
+{
+  // Controller needs to know about the number of reactSubviews before its initialization to pass proper number of
+  // columns to the constructor. Therefore, we must delay it until the 1st transaction will be processed.
+  if (_controller == nil) {
+    _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self];
+  }
+
+  if (_needsSplitViewAppearanceUpdate) {
+    _needsSplitViewAppearanceUpdate = NO;
+    [_controller setNeedsUpdateOfSplitViewAppearance:true];
+  }
+  [super finalizeUpdates:updateMask];
 }
 
 #pragma mark - RCTMountingTransactionObserving
