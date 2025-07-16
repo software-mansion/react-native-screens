@@ -71,9 +71,9 @@
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
-- (void)setNeedsUpdateOfOrientation:(bool)needsUpdateOfOrientation
+- (void)setNeedsOrientationUpdate:(bool)needsOrientationUpdate
 {
-  _needsUpdateOfOrientation = needsUpdateOfOrientation;
+  _needsOrientationUpdate = needsOrientationUpdate;
 }
 
 #pragma mark-- RNSReactTransactionObserving
@@ -213,7 +213,7 @@
 
 - (void)updateOrientationIfNeeded
 {
-  if (_needsUpdateOfOrientation) {
+  if (_needsOrientationUpdate) {
     [self updateOrientation];
   }
 }
@@ -224,6 +224,7 @@
 }
 
 #pragma mark - RNSOrientationProviding
+
 - (RNSOrientation)evaluateOrientation
 {
   if ([self.selectedViewController respondsToSelector:@selector(evaluateOrientation)]) {
