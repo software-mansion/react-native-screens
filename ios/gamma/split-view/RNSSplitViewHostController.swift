@@ -6,6 +6,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsChildViewControllersUpdate = false
   private var needsAppearanceUpdate = false
 
+  private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
+    return splitViewHostComponentView.reactEventEmitter()
+  }
+
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
   private let splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
 
@@ -247,11 +251,11 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 
 extension RNSSplitViewHostController: UISplitViewControllerDelegate {
   public func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
-    splitViewHostComponentView.notifySplitViewDidCollapse()
+    reactEventEmitter.emitOnCollapse()
   }
 
   public func splitViewControllerDidExpand(_ svc: UISplitViewController) {
-    splitViewHostComponentView.notifySplitViewDidExpand()
+    reactEventEmitter.emitOnExpand()
   }
 
   public func splitViewController(
@@ -271,7 +275,7 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
 
         if let inspectorViewController = viewController(for: .inspector) {
           if inspectorViewController.view.window == nil {
-            splitViewHostComponentView.emitInspectorDidHide()
+            reactEventEmitter.emitOnHideInspector()
           }
         }
       }
