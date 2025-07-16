@@ -74,14 +74,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
     viewControllers = currentViewControllers
 
-    if #available(iOS 26.0, *) {
-      let inspector = currentInspectors.first
-      if inspector != nil {
-        let inspectorViewController = RNSSplitViewNavigationController(
-          rootViewController: inspector!.controller)
-        setViewController(inspectorViewController, for: .inspector)
-      }
-    }
+    maybeSetupInspector(currentInspectors)
 
     for controller in currentViewControllers {
       controller.viewFrameOriginChangeObserver = self
@@ -125,12 +118,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   @objc
   public func toggleSplitViewInspector(_ showInspector: Bool) {
-    if #available(iOS 26.0, *) {
-      if showInspector {
-        show(.inspector)
-      } else {
-        hide(.inspector)
-      }
+    if showInspector {
+      maybeShowInspector()
+    } else {
+      maybeHideInspector()
     }
   }
 
@@ -219,19 +210,46 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
   }
 }
 
+/// This extension is a workaround for missing UISplitViewController symbols introduced in iOS 26,
+/// allowing the project to compile and run on iOS 18 or earlier versions.
+///
+/// Specifically, it enables usage of an additional split view column (e.g., 'inspector') by referencing
+/// it by a rawValue. This should be revisited and updated once we move to iOS 26 or later.
+extension RNSSplitViewHostController {
+  static var inspectorColumn: UISplitViewController.Column {
+    return UISplitViewController.Column(rawValue: 4)!
+  }
+
+  func maybeSetupInspector(_ inspectors: [RNSSplitViewScreenComponentView]) {
+    let inspector = inspectors.first
+    if inspector != nil {
+      let inspectorViewController = RNSSplitViewNavigationController(
+        rootViewController: inspector!.controller)
+      setViewController(inspectorViewController, for: RNSSplitViewHostController.inspectorColumn)
+    }
+  }
+
+  func maybeShowInspector() {
+    show(RNSSplitViewHostController.inspectorColumn)
+  }
+
+  func maybeHideInspector() {
+    hide(RNSSplitViewHostController.inspectorColumn)
+  }
+}
+
 extension RNSSplitViewHostController: UISplitViewControllerDelegate {
   public func splitViewController(
     _ svc: UISplitViewController, didHide column: UISplitViewController.Column
   ) {
-    if #available(iOS 26.0, *) {
-      if column != .inspector {
-        return
-      }
+    if column != RNSSplitViewHostController.inspectorColumn {
+      return
+    }
 
-      if let inspectorViewController = viewController(for: .inspector) {
-        if inspectorViewController.view.window == nil {
-          splitViewHostComponentView.notifyInspectorDidHide()
-        }
+    if let inspectorViewController = viewController(for: RNSSplitViewHostController.inspectorColumn)
+    {
+      if inspectorViewController.view.window == nil {
+        splitViewHostComponentView.notifyInspectorDidHide()
       }
     }
   }
