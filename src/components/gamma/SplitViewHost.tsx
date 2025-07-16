@@ -19,6 +19,10 @@ type SplitViewHostProps = {
   children?: ViewProps['children'];
 } & SplitViewNativeProps;
 
+// According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
+// Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
+// Therefore, we're adding check on the JS side to return a feedback to the client when that pairing isn't valid.
+// However, we're not blocking these props to be set on the native side, because it doesn't crash, just the result or transitions may not work as expected.
 const displayModeForSplitViewCompatibilityMap: Record<
   SplitViewSplitBehavior,
   SplitViewDisplayMode[]
