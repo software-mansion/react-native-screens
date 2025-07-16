@@ -83,7 +83,7 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(react::RNSBottomT
 UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct titlePositionAdjustment)
 {
-  return UIOffset(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
+  return UIOffsetMake(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
 }
 
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
@@ -169,7 +169,7 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(
 UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct titlePositionAdjustment)
 {
-  return UIOffset(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
+  return UIOffsetMake(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
 }
 
 }; // namespace rnscreens::conversion

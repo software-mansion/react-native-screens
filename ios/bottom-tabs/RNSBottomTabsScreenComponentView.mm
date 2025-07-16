@@ -2,8 +2,8 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
-#import "RNSTabBarController.h"
 #import "RNSScrollViewHelper.h"
+#import "RNSTabBarController.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -24,7 +24,7 @@ namespace react = facebook::react;
   RNSBottomTabsHostComponentView *__weak _Nullable _reactSuperview;
 
   RNSBottomTabsScreenEventEmitter *_Nonnull _reactEventEmitter;
-  
+
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
 #if !RCT_NEW_ARCH_ENABLED
@@ -72,7 +72,7 @@ namespace react = facebook::react;
   _tabBarItemTitleFontWeight = nil;
   _tabBarItemTitleFontStyle = nil;
   _tabBarItemTitleFontColor = nil;
-  _tabBarItemTitlePositionAdjustment = UIOffset(0.0, 0.0);
+  _tabBarItemTitlePositionAdjustment = UIOffsetMake(0.0, 0.0);
 
   _tabBarItemIconColor = nil;
 
@@ -231,15 +231,17 @@ RNS_IGNORE_SUPER_CALL_END
         newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
   }
 
-  if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior
-      != oldComponentProps.overrideScrollViewContentInsetAdjustmentBehavior) {
-    _overrideScrollViewContentInsetAdjustmentBehavior = newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior;
-    
+  if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior !=
+      oldComponentProps.overrideScrollViewContentInsetAdjustmentBehavior) {
+    _overrideScrollViewContentInsetAdjustmentBehavior =
+        newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior;
+
     if (_isOverrideScrollViewContentInsetAdjustmentBehaviorSet) {
-      RCTLogWarn(@"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
+      RCTLogWarn(
+          @"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
     }
   }
-  
+
   // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
   // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
   // enabling us to warn users that dynamic changes are not supported.

@@ -77,7 +77,7 @@ namespace react = facebook::react;
   _tabBarItemTitleFontWeight = nil;
   _tabBarItemTitleFontStyle = nil;
   _tabBarItemTitleFontColor = nil;
-  _tabBarItemTitlePositionAdjustment = UIOffset(0.0, 0.0);
+  _tabBarItemTitlePositionAdjustment = UIOffsetMake(0.0, 0.0);
 
   _tabBarItemIconColor = nil;
 
