@@ -23,7 +23,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     self.splitViewHostComponentView = splitViewHostComponentView
     self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
     self.FIXED_COLUMNS_COUNT = numberOfColumns
+
     super.init(style: RNSSplitViewHostController.styleByNumberOfColumns(numberOfColumns))
+
+    delegate = self
   }
 
   required init?(coder aDecoder: NSCoder) {
@@ -212,6 +215,24 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
   ) {
     for controller in self.splitViewScreenControllers {
       controller.columnPositioningDidChangeIn(splitViewController: self)
+    }
+  }
+}
+
+extension RNSSplitViewHostController: UISplitViewControllerDelegate {
+  public func splitViewController(
+    _ svc: UISplitViewController, didHide column: UISplitViewController.Column
+  ) {
+    if #available(iOS 26.0, *) {
+      if column != .inspector {
+        return
+      }
+
+      if let inspectorViewController = viewController(for: .inspector) {
+        if inspectorViewController.view.window == nil {
+          splitViewHostComponentView.notifyInspectorDidHide()
+        }
+      }
     }
   }
 }

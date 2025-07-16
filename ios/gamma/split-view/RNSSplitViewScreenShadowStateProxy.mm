@@ -1,5 +1,5 @@
-#import "RNSSplitViewScreenComponentView.h"
 #import "RNSSplitViewScreenShadowStateProxy.h"
+#import "RNSSplitViewScreenComponentView.h"
 
 #import <React/RCTConversions.h>
 #import <rnscreens/RNSSplitViewScreenShadowNode.h>
