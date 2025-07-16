@@ -15,7 +15,7 @@
   // Step 1 - general settings
   controller.preferredSplitBehavior = splitView.splitBehavior;
   controller.preferredDisplayMode = splitView.displayMode;
-  controller.presentsWithGesture = splitView.enableSwipe;
+  controller.presentsWithGesture = splitView.presentsWithGesture;
   controller.primaryEdge = splitView.primaryEdge;
   controller.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton;
 
