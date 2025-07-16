@@ -72,7 +72,7 @@
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
   "dependencies": {
     "react-freeze": "^1.0.0",
-    "react-native-is-edge-to-edge": "^1.1.7",
+    "react-native-is-edge-to-edge": "^1.2.1",
     "warn-once": "^0.1.0"
   },
   "peerDependencies": {
