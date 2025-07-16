@@ -30,7 +30,7 @@ export interface NativeProps extends ViewProps {
 
   // Interactions
 
-  enableSwipe?: WithDefault<boolean, true>;
+  presentsWithGesture?: WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewHost', {});

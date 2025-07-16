@@ -16,7 +16,7 @@ export type SplitViewNativeProps = NativeProps & {
 
   // SplitView interactions
 
-  enableSwipe?: boolean;
+  presentsWithGesture?: boolean;
 };
 
 type SplitViewHostProps = {
