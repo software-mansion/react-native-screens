@@ -8557,9 +8557,9 @@ __metadata:
   languageName: node
   linkType: soft
 
-"react-native@npm:0.80.0-rc.4":
-  version: 0.80.0-rc.4
-  resolution: "react-native@npm:0.80.0-rc.4"
+"react-native@npm:0.80.0-rc.5":
+  version: 0.80.0-rc.5
+  resolution: "react-native@npm:0.80.0-rc.5"
   dependencies:
     "@jest/create-cache-key-function": "npm:^29.7.0"
     "@react-native/assets-registry": "npm:0.80.0-rc.5"
