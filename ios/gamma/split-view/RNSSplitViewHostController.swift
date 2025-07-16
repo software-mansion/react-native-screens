@@ -4,7 +4,7 @@ import UIKit
 @objc
 public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
-  private var needsUpdateOfSplitViewAppearance = false
+  private var needsAppearanceUpdate = false
 
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
   private let splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
@@ -41,8 +41,8 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   }
 
   @objc
-  public func setNeedsUpdateOfSplitViewAppearance() {
-    needsUpdateOfSplitViewAppearance = true
+  public func setNeedsAppearanceUpdate() {
+    needsAppearanceUpdate = true
   }
 
   // MARK: Updating
@@ -91,13 +91,13 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   }
 
   func updateSplitViewAppearanceIfNeeded() {
-    if needsUpdateOfSplitViewAppearance {
+    if needsAppearanceUpdate {
       updateSplitViewAppearance()
     }
   }
 
   func updateSplitViewAppearance() {
-    needsUpdateOfSplitViewAppearance = false
+    needsAppearanceUpdate = false
 
     splitViewAppearanceCoordinator.updateAppearance(
       ofSplitView: self.splitViewHostComponentView, with: self)

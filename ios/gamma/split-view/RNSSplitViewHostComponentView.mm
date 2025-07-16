@@ -206,7 +206,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (_needsSplitViewAppearanceUpdate) {
     _needsSplitViewAppearanceUpdate = false;
-    [_controller setNeedsUpdateOfSplitViewAppearance];
+    [_controller setNeedsAppearanceUpdate];
   }
   [super finalizeUpdates:updateMask];
 }
