@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)tabItemAppearanceHasChanged;
 
 /**
-* Tell the controller that the tab item related to this controller has been selected again after being presented.
-* Returns boolean indicating whether the action has been handled.
+ * Tell the controller that the tab item related to this controller has been selected again after being presented.
+ * Returns boolean indicating whether the action has been handled.
  */
 - (bool)tabScreenSelectedRepeatedly;
 
@@ -31,8 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setTabsSpecialEffectsDelegate:(nonnull id<RNSBottomTabsSpecialEffectsSupporting>)delegate;
 
 /**
- * Inform the controller about resignation from being special effects delegate. If resignation comes from current tabsSpecialEffectsDelegate,
- * this method sets tabsSpecialEffectsDelegate to nil. If tabsSpecialEffectsDelegate has already changed (to other delegate or nil), this method does nothing.
+ * Inform the controller about resignation from being special effects delegate. If resignation comes from current
+ * tabsSpecialEffectsDelegate, this method sets tabsSpecialEffectsDelegate to nil. If tabsSpecialEffectsDelegate has
+ * already changed (to other delegate or nil), this method does nothing.
  */
 - (void)clearTabsSpecialEffectsDelegateIfNeeded:(nonnull id<RNSBottomTabsSpecialEffectsSupporting>)delegate;
 

@@ -27,11 +27,11 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
-#import "utils/UINavigationBar+RNSUtility.h"
-#import "RNSTabsScreenViewController.h"
 #import "RNSScrollViewFinder.h"
+#import "RNSTabsScreenViewController.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
+#import "utils/UINavigationBar+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -143,7 +143,7 @@ namespace react = facebook::react;
   [super willMoveToParentViewController:parent];
   if ([self.parentViewController isKindOfClass:RNSTabsScreenViewController.class]) {
     RNSTabsScreenViewController *previousParentTabsScreenVC =
-      static_cast<RNSTabsScreenViewController *>(self.parentViewController);
+        static_cast<RNSTabsScreenViewController *>(self.parentViewController);
     [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
   }
 }
@@ -159,15 +159,17 @@ namespace react = facebook::react;
 
 - (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
 {
-  if ([[self viewControllers] count] > 1
-      && tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
+  if ([[self viewControllers] count] > 1 &&
+      tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
     return [[self popToRootViewControllerAnimated:true] count] > 0;
-  } else if ([[self viewControllers] count] == 1
-             && tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-    UIScrollView *scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[[self topViewController] view]];
+  } else if (
+      [[self viewControllers] count] == 1 &&
+      tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+    UIScrollView *scrollView =
+        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[[self topViewController] view]];
     return [scrollView rnscreens_scrollToTop];
   }
-  
+
   return false;
 }
 

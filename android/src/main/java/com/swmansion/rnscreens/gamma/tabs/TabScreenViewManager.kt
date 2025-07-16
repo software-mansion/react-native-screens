@@ -6,6 +6,7 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
+import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSBottomTabsScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSBottomTabsScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
@@ -107,6 +108,8 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
+    // Annotation is Paper only
+    @ReactProp(name = "isFocused")
     override fun setIsFocused(
         view: TabScreen,
         value: Boolean,
@@ -115,6 +118,7 @@ class TabScreenViewManager :
         view.isFocusedTab = value
     }
 
+    @ReactProp(name = "tabKey")
     override fun setTabKey(
         view: TabScreen,
         value: String?,
@@ -127,6 +131,7 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
+    @ReactProp(name = "title")
     override fun setTitle(
         view: TabScreen,
         value: String?,
@@ -134,6 +139,7 @@ class TabScreenViewManager :
         view.tabTitle = value
     }
 
+    @ReactProp(name = "iconResourceName")
     override fun setIconResourceName(
         view: TabScreen,
         value: String?,
