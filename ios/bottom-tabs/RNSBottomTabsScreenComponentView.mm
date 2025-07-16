@@ -30,6 +30,7 @@ namespace react = facebook::react;
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
+  BOOL _tabScreenOrientationNeedsUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
@@ -56,6 +57,7 @@ namespace react = facebook::react;
 
 #if !RCT_NEW_ARCH_ENABLED
   _tabItemNeedsAppearanceUpdate = NO;
+  _tabScreenOrientationNeedsUpdate = NO;
 #endif
 
   // This is a temporary workaround to avoid UIScrollEdgeEffect glitch
@@ -297,7 +299,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
   }
-  
+
   if (tabScreenOrientationNeedsUpdate) {
     [_controller tabScreenOrientationHasChanged];
   }
@@ -363,6 +365,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (_tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
     _tabItemNeedsAppearanceUpdate = NO;
+  }
+
+  if (_tabScreenOrientationNeedsUpdate) {
+    [_controller tabScreenOrientationHasChanged];
+    _tabScreenOrientationNeedsUpdate = NO;
   }
 }
 
@@ -489,6 +496,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   // _isOverrideScrollViewContentInsetAdjustmentBehaviorSet flag is set in didSetProps to handle a case
   // when the prop is undefined in JS and default value is used instead of calling this setter.
+}
+
+- (void)setOrientation:(RNSOrientation)orientation
+{
+  _orientation = orientation;
+  _tabItemNeedsAppearanceUpdate = YES;
 }
 
 - (void)setOnWillAppear:(RCTDirectEventBlock)onWillAppear

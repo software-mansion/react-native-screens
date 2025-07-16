@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (RNSBottomTabsIconType)RNSBottomTabsIconType:(nonnull id)json;
 
++ (RNSOrientation)RNSOrientation:(nonnull id)json;
+
 @end
 
 NS_ASSUME_NONNULL_END

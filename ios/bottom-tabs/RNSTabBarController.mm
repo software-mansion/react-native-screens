@@ -74,6 +74,10 @@
 - (void)setNeedsOrientationUpdate:(bool)needsOrientationUpdate
 {
   _needsOrientationUpdate = needsOrientationUpdate;
+#if !RCT_NEW_ARCH_ENABLED
+  [self scheduleControllerUpdateIfNeeded];
+#endif // !RCT_NEW_ARCH_ENABLED
+
 }
 
 #pragma mark-- RNSReactTransactionObserving
