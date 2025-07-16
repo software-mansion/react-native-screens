@@ -42,9 +42,9 @@ export interface NativeProps extends ViewProps {
 
   // Custom events
 
-  onInspectorHide?: DirectEventHandler<GenericEmptyEvent>;
   onCollapse?: DirectEventHandler<GenericEmptyEvent>;
   onExpand?: DirectEventHandler<GenericEmptyEvent>;
+  onInspectorHide?: DirectEventHandler<GenericEmptyEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewHost', {});

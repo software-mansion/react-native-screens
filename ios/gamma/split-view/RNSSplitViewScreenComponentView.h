@@ -1,5 +1,6 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
+#import "RNSSplitViewScreenComponentEventEmitter.h"
 #import "RNSSplitViewScreenShadowStateProxy.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -27,6 +28,17 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitViewScreenComponentView ()
 
 @property (nonatomic, readonly) RNSSplitViewScreenColumnType columnType;
+
+@end
+
+#pragma mark - Events
+
+@interface RNSSplitViewScreenComponentView ()
+
+/**
+ * Use returned object to emit appropriate React Events to Element Tree.
+ */
+- (nonnull RNSSplitViewScreenComponentEventEmitter *)reactEventEmitter;
 
 @end
 

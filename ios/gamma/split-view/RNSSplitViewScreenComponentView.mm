@@ -9,6 +9,7 @@
 namespace react = facebook::react;
 
 @implementation RNSSplitViewScreenComponentView {
+  RNSSplitViewScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
   RNSSplitViewScreenController *_Nullable _controller;
   RNSSplitViewScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
@@ -37,6 +38,7 @@ namespace react = facebook::react;
   [self resetProps];
   [self setupController];
 
+  _reactEventEmitter = [RNSSplitViewScreenComponentEventEmitter new];
   _shadowStateProxy = [RNSSplitViewScreenShadowStateProxy new];
 }
 
@@ -87,6 +89,14 @@ namespace react = facebook::react;
   return _shadowStateProxy;
 }
 
+#pragma mark - Events
+
+- (nonnull RNSSplitViewScreenComponentEventEmitter *)reactEventEmitter
+{
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
+}
+
 #pragma mark - RCTViewComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -119,6 +129,13 @@ namespace react = facebook::react;
   }
 
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_reactEventEmitter
+      updateEventEmitter:std::static_pointer_cast<const react::RNSSplitViewScreenEventEmitter>(eventEmitter)];
 }
 
 @end
