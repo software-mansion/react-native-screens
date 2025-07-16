@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UISplitViewControllerSplitBehavior splitBehavior;
 @property (nonatomic, readonly) UISplitViewControllerPrimaryEdge primaryEdge;
 @property (nonatomic, readonly) UISplitViewControllerDisplayMode displayMode;
+@property (nonatomic, readonly) BOOL presentsWithGesture;
 
 @end
 

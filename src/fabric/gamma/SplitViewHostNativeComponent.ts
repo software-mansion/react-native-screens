@@ -27,6 +27,10 @@ export interface NativeProps extends ViewProps {
   displayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
   splitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
   primaryEdge?: WithDefault<SplitViewPrimaryEdge, 'leading'>;
+
+  // Interactions
+
+  presentsWithGesture?: WithDefault<boolean, true>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewHost', {});
