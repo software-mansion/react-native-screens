@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Find out which tab bar controller is currently focused & select it.
  *
- * This method does nothing if the update has not been previoulsy requested.
+ * This method does nothing if the update has not been previously requested.
  * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
  * appropriate invalidation signal & let the controller decide when to flush the updates.
  */
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Updates the tab bar appearance basing on configuration sources (host view, tab screens).
  *
- * This method does nothing if the update has not been previoulsy requested.
+ * This method does nothing if the update has not been previously requested.
  * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
  * appropriate invalidation signal & let the controller decide when to flush the updates.
  */
@@ -93,7 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Updates the interface orientation based on selected tab screen and its children.
  *
- * This method does nothing if the update has not been previoulsy requested.
+ * This method does nothing if the update has not been previously requested.
  * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
  * appropriate invalidation signal & let the controller decide when to flush the updates.
  */
@@ -119,7 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
- * udpated.
+ * updated.
  *
  * This also automatically raises `needsReactChildrenUpdate` flag, no need to call it manually.
  */
@@ -127,7 +127,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
- * udpated.
+ * updated.
  *
  * Do not raise this signal only when focused state of the tab has changed - use `needsSelectedTabUpdate` instead.
  */
@@ -135,7 +135,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
- * udpated.
+ * updated.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfSelectedTab;
 
@@ -148,7 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Tell the controller that some configuration regarding interface orientation has changed & it requires update.
  */
-@property (nonatomic, readwrite) bool needsUpdateOfOrientation;
+@property (nonatomic, readwrite) bool needsOrientationUpdate;
 
 @end
 

@@ -1983,6 +1983,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 
 #pragma mark - RNSOrientationProviding
+
 - (RNSOrientation)evaluateOrientation
 {
   return rnscreens::conversion::RNSOrientationFromUIInterfaceOrientationMask([self supportedInterfaceOrientations]);

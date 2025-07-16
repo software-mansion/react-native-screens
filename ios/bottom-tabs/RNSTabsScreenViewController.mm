@@ -34,7 +34,7 @@
 
 - (void)tabScreenOrientationHasChanged
 {
-  [[self findTabBarController] setNeedsUpdateOfOrientation:true];
+  [[self findTabBarController] setNeedsOrientationUpdate:true];
 }
 
 - (void)viewWillAppear:(BOOL)animated

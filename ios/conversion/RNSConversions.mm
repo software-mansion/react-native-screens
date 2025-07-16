@@ -24,7 +24,7 @@ UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrien
       RCTLogError(@"[RNScreens] RNSOrientationInherit does not map directly to any UIInterfaceOrientationMask");
       return 0;
     default:
-      RCTLogError(@"[RNScreens] unsupported orientaion");
+      RCTLogError(@"[RNScreens] Unsupported orientation");
       return 0;
   }
 }
@@ -46,7 +46,7 @@ RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientati
     case UIInterfaceOrientationMaskPortrait:
       return RNSOrientationPortrait;
     default:
-      RCTLogError(@"[RNScreens] unsupported orientation mask");
+      RCTLogError(@"[RNScreens] Unsupported orientation mask");
       return RNSOrientationInherit;
   }
 }
