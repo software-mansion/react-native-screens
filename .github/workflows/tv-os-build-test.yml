@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: TVOSExample
+      RNS_GAMMA_ENABLED: 0
     concurrency:
       group: ios-tv-${{ github.ref }}
       cancel-in-progress: true
