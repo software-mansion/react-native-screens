@@ -4,105 +4,57 @@ namespace rnscreens::conversion {
 
 #pragma mark RN Codegen enum to internal enum conversions
 
-RNSSplitViewSplitBehavior RNSSplitViewSplitBehaviorFromHostProp(
+UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(
     facebook::react::RNSSplitViewHostSplitBehavior splitBehavior)
 {
   using enum facebook::react::RNSSplitViewHostSplitBehavior;
 
   switch (splitBehavior) {
     case Displace:
-      return RNSSplitViewSplitBehaviorDisplace;
-    case Overlay:
-      return RNSSplitViewSplitBehaviorOverlay;
-    case Tile:
-      return RNSSplitViewSplitBehaviorTile;
-    case Automatic:
-    default:
-      return RNSSplitViewSplitBehaviorAutomatic;
-  }
-}
-
-RNSSplitViewPrimaryEdge RNSSplitViewPrimaryEdgeFromHostProp(facebook::react::RNSSplitViewHostPrimaryEdge primaryEdge)
-{
-  using enum facebook::react::RNSSplitViewHostPrimaryEdge;
-
-  switch (primaryEdge) {
-    case Trailing:
-      return RNSSplitViewPrimaryEdgeTrailing;
-    case Leading:
-    default:
-      return RNSSplitViewPrimaryEdgeLeading;
-  }
-}
-
-RNSSplitViewDisplayMode RNSSplitViewDisplayModeFromHostProp(facebook::react::RNSSplitViewHostDisplayMode displayMode)
-{
-  using enum facebook::react::RNSSplitViewHostDisplayMode;
-
-  switch (displayMode) {
-    case SecondaryOnly:
-      return RNSSplitViewDisplayModeSecondaryOnly;
-    case OneBesideSecondary:
-      return RNSSplitViewDisplayModeOneBesideSecondary;
-    case OneOverSecondary:
-      return RNSSplitViewDisplayModeOneOverSecondary;
-    case TwoBesideSecondary:
-      return RNSSplitViewDisplayModeTwoBesideSecondary;
-    case TwoOverSecondary:
-      return RNSSplitViewDisplayModeTwoOverSecondary;
-    case TwoDisplaceSecondary:
-      return RNSSplitViewDisplayModeTwoDisplaceSecondary;
-    case Automatic:
-    default:
-      return RNSSplitViewDisplayModeAutomatic;
-  }
-}
-
-#pragma mark Internal enum to UISplitViewController enum conversions
-
-UISplitViewControllerSplitBehavior RNSSplitBehaviorToUISplitViewControllerSplitBehavior(
-    RNSSplitViewSplitBehavior behavior)
-{
-  switch (behavior) {
-    case RNSSplitViewSplitBehaviorDisplace:
       return UISplitViewControllerSplitBehaviorDisplace;
-    case RNSSplitViewSplitBehaviorOverlay:
+    case Overlay:
       return UISplitViewControllerSplitBehaviorOverlay;
-    case RNSSplitViewSplitBehaviorTile:
+    case Tile:
       return UISplitViewControllerSplitBehaviorTile;
-    case RNSSplitViewSplitBehaviorAutomatic:
+    case Automatic:
     default:
       return UISplitViewControllerSplitBehaviorAutomatic;
   }
 }
 
-UISplitViewControllerPrimaryEdge RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(RNSSplitViewPrimaryEdge primaryEdge)
+UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
+    facebook::react::RNSSplitViewHostPrimaryEdge primaryEdge)
 {
+  using enum facebook::react::RNSSplitViewHostPrimaryEdge;
+
   switch (primaryEdge) {
-    case RNSSplitViewPrimaryEdgeTrailing:
+    case Trailing:
       return UISplitViewControllerPrimaryEdgeTrailing;
-    case RNSSplitViewPrimaryEdgeLeading:
+    case Leading:
     default:
       return UISplitViewControllerPrimaryEdgeLeading;
   }
 }
 
-UISplitViewControllerDisplayMode RNSDisplayModeToUISplitViewControllerDisplayMode(RNSSplitViewDisplayMode displayMode)
+UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
+    facebook::react::RNSSplitViewHostDisplayMode displayMode)
 {
+  using enum facebook::react::RNSSplitViewHostDisplayMode;
+
   switch (displayMode) {
-    case RNSSplitViewDisplayModeSecondaryOnly:
+    case SecondaryOnly:
       return UISplitViewControllerDisplayModeSecondaryOnly;
-    case RNSSplitViewDisplayModeOneBesideSecondary:
+    case OneBesideSecondary:
       return UISplitViewControllerDisplayModeOneBesideSecondary;
-    case RNSSplitViewDisplayModeOneOverSecondary:
+    case OneOverSecondary:
       return UISplitViewControllerDisplayModeOneOverSecondary;
-    case RNSSplitViewDisplayModeTwoBesideSecondary:
+    case TwoBesideSecondary:
       return UISplitViewControllerDisplayModeTwoBesideSecondary;
-    case RNSSplitViewDisplayModeTwoOverSecondary:
+    case TwoOverSecondary:
       return UISplitViewControllerDisplayModeTwoOverSecondary;
-    case RNSSplitViewDisplayModeTwoDisplaceSecondary:
+    case TwoDisplaceSecondary:
       return UISplitViewControllerDisplayModeTwoDisplaceSecondary;
-    case RNSSplitViewDisplayModeAutomatic:
+    case Automatic:
     default:
       return UISplitViewControllerDisplayModeAutomatic;
   }

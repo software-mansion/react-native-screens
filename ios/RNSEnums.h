@@ -73,30 +73,6 @@ typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
   RNSSearchBarPlacementStacked,
 };
 
-#pragma mark - SplitView
-
-typedef NS_ENUM(NSInteger, RNSSplitViewSplitBehavior) {
-  RNSSplitViewSplitBehaviorAutomatic,
-  RNSSplitViewSplitBehaviorDisplace,
-  RNSSplitViewSplitBehaviorOverlay,
-  RNSSplitViewSplitBehaviorTile,
-};
-
-typedef NS_ENUM(NSInteger, RNSSplitViewPrimaryEdge) {
-  RNSSplitViewPrimaryEdgeLeading,
-  RNSSplitViewPrimaryEdgeTrailing
-};
-
-typedef NS_ENUM(NSInteger, RNSSplitViewDisplayMode) {
-  RNSSplitViewDisplayModeAutomatic,
-  RNSSplitViewDisplayModeSecondaryOnly,
-  RNSSplitViewDisplayModeOneBesideSecondary,
-  RNSSplitViewDisplayModeOneOverSecondary,
-  RNSSplitViewDisplayModeTwoBesideSecondary,
-  RNSSplitViewDisplayModeTwoOverSecondary,
-  RNSSplitViewDisplayModeTwoDisplaceSecondary,
-};
-
 // Redefinition of UIBlurEffectStyle. We need to represent additional case of `None`.
 typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
   /// No blur effect should be visible

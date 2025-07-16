@@ -18,9 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSSplitViewHostComponentView ()
 
-@property (nonatomic, readonly) RNSSplitViewSplitBehavior splitBehavior;
-@property (nonatomic, readonly) RNSSplitViewPrimaryEdge primaryEdge;
-@property (nonatomic, readonly) RNSSplitViewDisplayMode displayMode;
+@property (nonatomic, readonly) UISplitViewControllerSplitBehavior splitBehavior;
+@property (nonatomic, readonly) UISplitViewControllerPrimaryEdge primaryEdge;
+@property (nonatomic, readonly) UISplitViewControllerDisplayMode displayMode;
 
 @end
 
