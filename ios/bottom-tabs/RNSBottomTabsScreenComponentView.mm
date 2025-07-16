@@ -240,7 +240,7 @@ RNS_IGNORE_SUPER_CALL_END
 
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
       oldComponentProps.specialEffects.repeatedTabSelection.popToRoot) {
     _shouldUseRepeatedTabSelectionPopToRootSpecialEffect =
@@ -418,6 +418,12 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
 {
   _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setIconType:(RNSBottomTabsIconType)iconType
+{
+  _iconType = iconType;
   _tabItemNeedsAppearanceUpdate = YES;
 }
 

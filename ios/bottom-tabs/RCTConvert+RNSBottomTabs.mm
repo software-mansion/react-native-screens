@@ -9,6 +9,17 @@
   return UIOffsetMake([json[@"horizontal"] floatValue], [json[@"vertical"] floatValue]);
 }
 
+RCT_ENUM_CONVERTER(
+  RNSBottomTabsIconType,
+  (@{
+    @"image": @(RNSBottomTabsIconTypeImage),
+    @"template": @(RNSBottomTabsIconTypeTemplate),
+    @"sfSymbol": @(RNSBottomTabsIconTypeSfSymbol),
+  }),
+  RNSBottomTabsIconTypeSfSymbol,
+  integerValue
+)
+
 @end
 
 #endif // !RCT_NEW_ARCH_ENABLED
