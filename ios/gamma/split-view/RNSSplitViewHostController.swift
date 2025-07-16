@@ -269,6 +269,9 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
       _ svc: UISplitViewController, didHide column: UISplitViewController.Column
     ) {
       if #available(iOS 26.0, *) {
+        // TODO: we may consider removing this logic, because it could be handled by onViewDidDisappear on the column level
+        // On the other hand, maybe dedicated event related to the inspector would be a better approach.
+        // For now I am leaving it, but feel free to drop this method if there's any reason that `onDidDisappear` works better.
         if column != .inspector {
           return
         }
@@ -281,7 +284,7 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
       }
     }
   #endif
-
+  
   public func splitViewController(
     _ svc: UISplitViewController, willShow column: UISplitViewController.Column
   ) {
