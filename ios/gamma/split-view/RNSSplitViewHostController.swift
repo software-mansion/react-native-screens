@@ -246,6 +246,20 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 #endif
 
 extension RNSSplitViewHostController: UISplitViewControllerDelegate {
+  public func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
+    splitViewHostComponentView.notifySplitViewDidCollapse()
+  }
+
+  public func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+    splitViewHostComponentView.notifySplitViewDidExpand()
+  }
+
+  public func splitViewController(
+    _ svc: UISplitViewController, willHide column: UISplitViewController.Column
+  ) {
+    // TODO: missing impl
+  }
+
   #if compiler(>=6.2)
     public func splitViewController(
       _ svc: UISplitViewController, didHide column: UISplitViewController.Column
@@ -263,4 +277,27 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
       }
     }
   #endif
+
+  public func splitViewController(
+    _ svc: UISplitViewController, willShow column: UISplitViewController.Column
+  ) {
+    // TODO: missing impl
+  }
+
+  public func splitViewController(
+    _ svc: UISplitViewController, didShow column: UISplitViewController.Column
+  ) {
+    // TODO: missing impl
+  }
+
+  public func splitViewControllerInteractivePresentationGestureWillBegin(
+    _ svc: UISplitViewController
+  ) {
+    // TODO: missing impl
+  }
+
+  public func splitViewControllerInteractivePresentationGestureDidEnd(_ svc: UISplitViewController)
+  {
+    // TODO: missing impl
+  }
 }

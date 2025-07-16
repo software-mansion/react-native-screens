@@ -241,6 +241,22 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Events
 
+- (void)notifySplitViewDidCollapse
+{
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const react::RNSSplitViewHostEventEmitter>(_eventEmitter)
+        ->onCollapse(react::RNSSplitViewHostEventEmitter::OnCollapse{});
+  }
+}
+
+- (void)notifySplitViewDidExpand
+{
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const react::RNSSplitViewHostEventEmitter>(_eventEmitter)
+        ->onExpand(react::RNSSplitViewHostEventEmitter::OnExpand{});
+  }
+}
+
 - (void)emitInspectorDidHide
 {
   if (_eventEmitter != nullptr) {
