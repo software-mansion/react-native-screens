@@ -1,3 +1,4 @@
+#import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -10,6 +11,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (nonnull NSMutableArray<RNSSplitViewScreenComponentView *> *)reactSubviews;
 
 @property (nonatomic, nonnull, strong, readonly) RNSSplitViewHostController *splitViewHostController;
+
+@end
+
+#pragma mark - Props
+
+@interface RNSSplitViewHostComponentView ()
+
+@property (nonatomic, readonly) RNSSplitViewSplitBehavior splitBehavior;
+@property (nonatomic, readonly) RNSSplitViewPrimaryEdge primaryEdge;
 
 @end
 
