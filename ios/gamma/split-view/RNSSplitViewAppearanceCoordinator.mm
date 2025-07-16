@@ -13,11 +13,10 @@
   }
 
   // Step 1 - general settings
-  controller.preferredSplitBehavior =
-      rnscreens::conversion::RNSSplitBehaviorToUISplitViewControllerSplitBehavior(splitView.splitBehavior);
-  controller.preferredDisplayMode =
-      rnscreens::conversion::RNSDisplayModeToUISplitViewControllerDisplayMode(splitView.displayMode);
+  controller.preferredSplitBehavior = splitView.splitBehavior;
+  controller.preferredDisplayMode = splitView.displayMode;
   controller.presentsWithGesture = splitView.enableSwipe;
+  controller.primaryEdge = splitView.primaryEdge;
   controller.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton;
 
   // Step 2 - manipulating columns

@@ -48,14 +48,6 @@ UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
 UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
     react::RNSSplitViewHostDisplayMode displayMode);
 
-UISplitViewControllerSplitBehavior
-RNSSplitBehaviorToUISplitViewControllerSplitBehavior(
-    RNSSplitViewSplitBehavior behavior);
-
-UISplitViewControllerDisplayMode
-RNSDisplayModeToUISplitViewControllerDisplayMode(
-    RNSSplitViewDisplayMode displayMode);
-
 #pragma mark SplitViewScreen props
 
 RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(

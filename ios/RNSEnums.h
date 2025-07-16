@@ -73,7 +73,6 @@ typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
   RNSSearchBarPlacementStacked,
 };
 
-
 typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {
   RNSSplitViewScreenColumnTypeColumn,
   RNSSplitViewScreenColumnTypeInspector,
