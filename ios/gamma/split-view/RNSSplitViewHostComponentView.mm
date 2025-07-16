@@ -229,6 +229,16 @@ RNS_IGNORE_SUPER_CALL_END
   [_controller reactMountingTransactionDidMount];
 }
 
+#pragma mark - Events
+
+- (void)notifyInspectorDidHide
+{
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const react::RNSSplitViewHostEventEmitter>(_eventEmitter)
+        ->onInspectorHide(react::RNSSplitViewHostEventEmitter::OnInspectorHide{});
+  }
+}
+
 @end
 
 Class<RCTComponentViewProtocol> RNSSplitViewHostCls(void)

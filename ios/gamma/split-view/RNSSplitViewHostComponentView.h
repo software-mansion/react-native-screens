@@ -27,4 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - Events
+
+@interface RNSSplitViewHostComponentView ()
+
+- (void)notifyInspectorDidHide;
+
+@end
+
 NS_ASSUME_NONNULL_END
