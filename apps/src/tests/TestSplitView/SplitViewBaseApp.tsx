@@ -1,28 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
 import { Colors } from '../../shared/styling/Colors';
 
-const TestButton = ({ onPress }) => {
-  return (
-    <PressableWithFeedback
-      onPress={onPress}
-      style={styles.button}>
-      <Text style={styles.text}>Touch me</Text>
-    </PressableWithFeedback>
-  )
-}
-
 const SplitViewBaseApp = () => {
-  const [inspectorVisible, setInspectorVisible] = React.useState(false);
+  const [lastSplitViewEvent, setLastSplitViewEvent] = React.useState<string>();
 
-  const onInspectorHide = () => {
-    setInspectorVisible(false);
-  }
+  const onCollapse = () => setLastSplitViewEvent('onCollapse');
+  const onExpand = () => setLastSplitViewEvent('onExpand');
 
   return (
-    <SplitViewHost onInspectorHide={onInspectorHide} displayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={true} splitBehavior='tile' showInspector={inspectorVisible}>
+    <SplitViewHost onCollapse={onCollapse} onExpand={onExpand}>
       <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]} />
       </SplitViewScreen.Column>
@@ -31,13 +19,9 @@ const SplitViewBaseApp = () => {
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
-          <TestButton onPress={() => setInspectorVisible(prev => !prev)} />
-          <Text style={styles.text}>Toggle inspector</Text>
+          <Text style={styles.text}>{`SplitView event received: ${lastSplitViewEvent}`}</Text>
         </View>
       </SplitViewScreen.Column>
-      <SplitViewScreen.Inspector>
-        <View style={[styles.container, { backgroundColor: Colors.GreenDark100 }]} />
-      </SplitViewScreen.Inspector>
     </SplitViewHost>
   );
 }
