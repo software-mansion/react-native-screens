@@ -19,6 +19,8 @@ namespace react = facebook::react;
   NSMutableArray<RNSSplitViewScreenComponentView *> *_Nonnull _reactSubviews;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
+  // We need this information to warn users about dynamic changes to behavior being currently unsupported.
+  bool _isShowSecondaryToggleButtonSet;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -50,6 +52,9 @@ namespace react = facebook::react;
   _primaryEdge = UISplitViewControllerPrimaryEdgeLeading;
   _displayMode = UISplitViewControllerDisplayModeAutomatic;
   _presentsWithGesture = true;
+  _showSecondaryToggleButton = false;
+
+  _isShowSecondaryToggleButtonSet = false;
 }
 
 - (void)didMoveToWindow
@@ -160,6 +165,20 @@ RNS_IGNORE_SUPER_CALL_END
     _presentsWithGesture = newComponentProps.presentsWithGesture;
     _controller.presentsWithGesture = _presentsWithGesture;
   }
+
+  if (oldComponentProps.showSecondaryToggleButton != newComponentProps.showSecondaryToggleButton) {
+    _showSecondaryToggleButton = newComponentProps.showSecondaryToggleButton;
+    _controller.showsSecondaryOnlyButton = _showSecondaryToggleButton;
+
+    if (_isShowSecondaryToggleButtonSet) {
+      RCTLogWarn(@"[RNScreens] changing showSecondaryToggleButton dynamically is currently unsupported");
+    }
+  }
+
+  // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
+  // This allows us to identify any subsequent changes to this prop,
+  // enabling us to warn users that dynamic changes are not supported.
+  _isShowSecondaryToggleButtonSet = true;
 
   [super updateProps:props oldProps:oldProps];
 }
