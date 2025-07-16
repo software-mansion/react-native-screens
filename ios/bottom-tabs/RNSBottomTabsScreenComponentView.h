@@ -34,31 +34,34 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSBottomTabsScreenComponentView () <RNSTabBarAppearanceProvider, RNSScrollViewBehaviorOverriding>
 
-@property (nonatomic, readonly) BOOL isSelectedScreen;
-@property (nonatomic, readonly, nullable) NSString *tabKey;
-@property (nonatomic, readonly, nullable) NSString *badgeValue;
+// TODO: All of these properties should be `readonly`. Do this when support for legacy
+// architecture is dropped.
 
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
-@property (nonatomic, strong, readonly, nullable) UIBlurEffect *tabBarBlurEffect;
+@property (nonatomic) BOOL isSelectedScreen;
+@property (nonatomic, nullable) NSString *tabKey;
+@property (nonatomic, nullable) NSString *badgeValue;
 
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontFamily;
-@property (nonatomic, strong, readonly, nullable) NSNumber *tabBarItemTitleFontSize;
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontWeight;
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontStyle;
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemTitleFontColor;
-@property (nonatomic, readonly) UIOffset tabBarItemTitlePositionAdjustment;
+@property (nonatomic, strong, nullable) UIColor *tabBarBackgroundColor;
+@property (nonatomic, strong, nullable) UIBlurEffect *tabBarBlurEffect;
 
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemIconColor;
+@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontFamily;
+@property (nonatomic, strong, nullable) NSNumber *tabBarItemTitleFontSize;
+@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontWeight;
+@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontStyle;
+@property (nonatomic, strong, nullable) UIColor *tabBarItemTitleFontColor;
+@property (nonatomic) UIOffset tabBarItemTitlePositionAdjustment;
 
-@property (nonatomic, readonly, nullable) UIColor *tabBarItemBadgeBackgroundColor;
+@property (nonatomic, strong, nullable) UIColor *tabBarItemIconColor;
 
-@property (nonatomic, strong, readonly, nullable) NSString *iconSFSymbolName;
-@property (nonatomic, strong, readonly, nullable) NSString *selectedIconSFSymbolName;
+@property (nonatomic, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
-@property (nonatomic, readonly, nullable) NSString *title;
+@property (nonatomic, strong, nullable) NSString *iconSFSymbolName;
+@property (nonatomic, strong, nullable) NSString *selectedIconSFSymbolName;
 
-@property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
-@property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
+@property (nonatomic, nullable) NSString *title;
+
+@property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
+@property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
@@ -72,6 +75,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSBottomTabsScreenEventEmitter *)reactEventEmitter;
+
+#if !RCT_NEW_ARCH_ENABLED
+#pragma mark - LEGACY Event emitting blocks
+@property (nonatomic, copy, nullable) RCTDirectEventBlock onWillAppear;
+@property (nonatomic, copy, nullable) RCTDirectEventBlock onDidAppear;
+@property (nonatomic, copy, nullable) RCTDirectEventBlock onWillDisappear;
+@property (nonatomic, copy, nullable) RCTDirectEventBlock onDidDisappear;
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
 

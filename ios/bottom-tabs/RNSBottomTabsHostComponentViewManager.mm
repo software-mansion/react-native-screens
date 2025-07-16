@@ -1,7 +1,46 @@
 #import "RNSBottomTabsHostComponentViewManager.h"
 
+#if !RCT_NEW_ARCH_ENABLED
+#import "RNSBottomTabsHostComponentView.h"
+#endif
+
 @implementation RNSBottomTabsHostComponentViewManager
 
-RCT_EXPORT_MODULE(RNSBottomTabsViewManager)
+// TODO: This seems to be legacy arch only - test & remove when no longer needed
+
+RCT_EXPORT_MODULE(RNSBottomTabsManager)
+
+#if !RCT_NEW_ARCH_ENABLED
+
+- (UIView *)view
+{
+  // This uses main initializer for Fabric implementation.
+  return [[RNSBottomTabsHostComponentView alloc] initWithFrame:CGRectZero];
+}
+
+#pragma mark - LEGACY Props
+
+RCT_EXPORT_VIEW_PROPERTY(tabBarBackgroundColor, UIColor);
+RCT_EXPORT_VIEW_PROPERTY(tabBarBlurEffect, UIBlurEffect);
+RCT_EXPORT_VIEW_PROPERTY(tabBarTintColor, UIColor);
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontFamily, NSString);
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontSize, NSNumber);
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontWeight, NSString);
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontStyle, NSString);
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontColor, UIColor);
+
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemIconColor, UIColor);
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemBadgeBackgroundColor, UIColor);
+
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitlePositionAdjustment, UIOffset);
+
+// TODO: Missing prop
+//@property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
+
+#pragma mark - LEGACY Events
+
+RCT_EXPORT_VIEW_PROPERTY(onNativeFocusChange, RCTDirectEventBlock);
+
+#endif
 
 @end

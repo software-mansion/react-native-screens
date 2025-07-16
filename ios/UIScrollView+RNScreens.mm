@@ -8,7 +8,7 @@
     [self setContentOffset:CGPointMake(0, -self.adjustedContentInset.top) animated:YES];
     return YES;
   }
-  
+
   return NO;
 }
 
