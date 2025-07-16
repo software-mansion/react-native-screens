@@ -50,13 +50,9 @@ const isValidDisplayModeForSplitBehavior = (
   );
 };
 
-function SplitViewHost({
-  children,
-  displayMode,
-  enableSwipe,
-  primaryEdge,
-  splitBehavior,
-}: SplitViewHostProps) {
+function SplitViewHost(props: SplitViewHostProps) {
+  const { displayMode, splitBehavior } = props;
+
   React.useEffect(() => {
     if (displayMode && splitBehavior) {
       const isValid = isValidDisplayModeForSplitBehavior(
@@ -77,13 +73,8 @@ function SplitViewHost({
   }, [displayMode, splitBehavior]);
 
   return (
-    <SplitViewHostNativeComponent
-      displayMode={displayMode}
-      enableSwipe={enableSwipe}
-      style={styles.container}
-      splitBehavior={splitBehavior}
-      primaryEdge={primaryEdge}>
-      {children}
+    <SplitViewHostNativeComponent {...props} style={styles.container}>
+      {props.children}
     </SplitViewHostNativeComponent>
   );
 }
