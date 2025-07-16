@@ -38,9 +38,17 @@ Pod::Spec.new do |s|
     Pod::UI.puts "[RNScreens] Gamma project enabled. Including source files."
   end
 
-  s.pod_target_xcconfig = {
-    'DEFINES_MODULE' => 'YES'
-  }
+  if gamma_project_enabled
+    # This setting is required to make Swift code build. However we have 
+    # dependency on `React-RCTImage` pod, which does not set `DEFINES_MODULE` 
+    # and therefore it fails to build. Currently we do patch react-native source
+    # code to make it work & the fix is already merged, however it'll be most likely released 
+    # with 0.81. We can not expect users to patch the react-native sources, thus 
+    # we can not have Swift code in stable package. 
+    s.pod_target_xcconfig = {
+      'DEFINES_MODULE' => 'YES'
+    }
+  end
 
   install_modules_dependencies(s)
   if new_arch_enabled
