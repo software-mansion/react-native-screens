@@ -16,7 +16,6 @@ import {
   type ViewProps,
 } from 'react-native';
 import featureFlags from '../flags';
-import { WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 
 export interface BottomTabsProps extends ViewProps {
   // Events
@@ -49,7 +48,7 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemTitleFontColorActive?: TextStyle['color']; 
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemActiveIndicatorColor?: ColorValue;
-  tabBarItemActiveIndicatorEnabled?: WithDefault<boolean, true>;
+  tabBarItemActiveIndicatorEnabled?: boolean;
   tabBarItemRippleColor?: ColorValue;
   tabBarItemVisibilityMode?: VisibilityMode;
   
