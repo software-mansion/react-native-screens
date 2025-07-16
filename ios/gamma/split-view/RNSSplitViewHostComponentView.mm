@@ -148,13 +148,13 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldComponentProps.primaryEdge != newComponentProps.primaryEdge) {
     _primaryEdge = rnscreens::conversion::RNSSplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
-    _controller.primaryEdge =
-        rnscreens::conversion::RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(_primaryEdge);
+    _controller.primaryEdge = rnscreens::conversion::RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(_primaryEdge);
   }
 
   if (oldComponentProps.displayMode != newComponentProps.displayMode) {
     _displayMode = rnscreens::conversion::RNSSplitViewDisplayModeFromHostProp(newComponentProps.displayMode);
-    _controller.preferredDisplayMode = convertRNSDisplayModeToUISplitViewControllerDisplayMode(_displayMode);
+    _controller.preferredDisplayMode =
+        rnscreens::conversion::RNSDisplayModeToUISplitViewControllerDisplayMode(_displayMode);
   }
 
   [super updateProps:props oldProps:oldProps];

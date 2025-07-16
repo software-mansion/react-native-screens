@@ -49,6 +49,10 @@ UISplitViewControllerPrimaryEdge
 RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(
     RNSSplitViewPrimaryEdge primaryEdge);
 
+UISplitViewControllerDisplayMode
+RNSDisplayModeToUISplitViewControllerDisplayMode(
+    RNSSplitViewDisplayMode displayMode);
+
 }; // namespace rnscreens::conversion
 
 #endif
