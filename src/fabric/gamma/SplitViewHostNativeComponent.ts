@@ -28,6 +28,9 @@ export interface NativeProps extends ViewProps {
   splitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
   primaryEdge?: WithDefault<SplitViewPrimaryEdge, 'leading'>;
 
+  // NOTE: this setter cannot change the value dynamically, even in pure native app
+  showSecondaryToggleButton?: WithDefault<boolean, false>;
+
   // Interactions
 
   presentsWithGesture?: WithDefault<boolean, true>;
