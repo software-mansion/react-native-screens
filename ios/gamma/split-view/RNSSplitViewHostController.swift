@@ -291,15 +291,4 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
   ) {
     // TODO: missing impl
   }
-
-  public func splitViewControllerInteractivePresentationGestureWillBegin(
-    _ svc: UISplitViewController
-  ) {
-    // TODO: missing impl
-  }
-
-  public func splitViewControllerInteractivePresentationGestureDidEnd(_ svc: UISplitViewController)
-  {
-    // TODO: missing impl
-  }
 }
