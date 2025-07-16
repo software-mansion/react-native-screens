@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitViewAppearanceCoordinator : NSObject
 
 - (void)updateAppearanceOfSplitView:(RNSSplitViewHostComponentView *)splitView
-                     withController:(UISplitViewController *)controller;
+                     withController:(RNSSplitViewHostController *)controller;
 
 @end
 

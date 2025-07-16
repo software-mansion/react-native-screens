@@ -6,7 +6,7 @@
 @implementation RNSSplitViewAppearanceCoordinator
 
 - (void)updateAppearanceOfSplitView:(RNSSplitViewHostComponentView *)splitView
-                     withController:(UISplitViewController *)controller
+                     withController:(RNSSplitViewHostController *)controller
 {
   if (splitView == nil) {
     return;
@@ -20,11 +20,7 @@
   controller.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton;
 
   // Step 2 - manipulating columns
-  if ([controller isKindOfClass:[RNSSplitViewHostController class]]) {
-    RNSSplitViewHostController *hostController = (RNSSplitViewHostController *)controller;
-
-    [hostController toggleSplitViewInspector:splitView.showInspector];
-  }
+  [controller toggleSplitViewInspector:splitView.showInspector];
 }
 
 @end
