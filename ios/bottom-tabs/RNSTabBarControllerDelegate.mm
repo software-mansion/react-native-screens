@@ -20,14 +20,14 @@
 
   RNSTabBarController *tabBarCtrl = static_cast<RNSTabBarController *>(tabBarController);
   RNSTabsScreenViewController *tabScreenCtrl = static_cast<RNSTabsScreenViewController *>(viewController);
-  
+
   bool repeatedSelectionHandledNatively = false;
-  
+
   // Detect repeated selection and inform tabScreenController
   if ([tabBarCtrl selectedViewController] == tabScreenCtrl) {
     repeatedSelectionHandledNatively = [tabScreenCtrl tabScreenSelectedRepeatedly];
   }
-  
+
   // TODO: send an event with information about event being handled natively
   if (!repeatedSelectionHandledNatively) {
     [tabBarCtrl.tabsHostComponentView
@@ -36,7 +36,7 @@
     // TODO: handle overrideScrollViewBehaviorInFirstDescendantChainIfNeeded for natively-driven tabs
     return ![self shouldPreventNativeTabChangeWithinTabBarController:tabBarCtrl];
   }
-  
+
   // As we're selecting the same controller, returning both true and false works here.
   return true;
 }

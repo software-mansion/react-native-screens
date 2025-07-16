@@ -1,6 +1,6 @@
 #import "RNSTabsScreenViewController.h"
-#import "RNSTabBarController.h"
 #import "RNSScrollViewFinder.h"
+#import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
 
 @implementation RNSTabsScreenViewController
@@ -76,7 +76,9 @@
 
 - (void)setTabsSpecialEffectsDelegate:(id<RNSBottomTabsSpecialEffectsSupporting>)delegate
 {
-  RCTAssert(delegate != nil, @"[RNScreens] can't set special effects delegate to nil. Use clearTabsSpecialEffectsDelegateIfNeeded instead.");
+  RCTAssert(
+      delegate != nil,
+      @"[RNScreens] can't set special effects delegate to nil. Use clearTabsSpecialEffectsDelegateIfNeeded instead.");
   _tabsSpecialEffectsDelegate = delegate;
 }
 
@@ -92,7 +94,8 @@
   if ([self tabsSpecialEffectsDelegate] != nil) {
     return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
   } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-    UIScrollView* scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
+    UIScrollView *scrollView =
+        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
     return [scrollView rnscreens_scrollToTop];
   }
 

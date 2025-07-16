@@ -1,16 +1,21 @@
 #import "RNSBottomTabsScreenComponentView.h"
+#import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSTabBarController.h"
 #import "RNSScrollViewHelper.h"
 
+#if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#endif // RCT_NEW_ARCH_ENABLED
 
+#if RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
 
 #pragma mark - View implementation
 
@@ -22,6 +27,9 @@ namespace react = facebook::react;
   
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
+#if !RCT_NEW_ARCH_ENABLED
+  BOOL _tabItemNeedsAppearanceUpdate;
+#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -34,8 +42,10 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+#if RCT_NEW_ARCH_ENABLED
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsScreenProps>();
   _props = defaultProps;
+#endif // RCT_NEW_ARCH_ENABLED
 
   _controller = [RNSTabsScreenViewController new];
   _controller.view = self;
@@ -43,6 +53,9 @@ namespace react = facebook::react;
   _reactSuperview = nil;
   _reactEventEmitter = [RNSBottomTabsScreenEventEmitter new];
 
+#if !RCT_NEW_ARCH_ENABLED
+  _tabItemNeedsAppearanceUpdate = NO;
+#endif
   [self resetProps];
 }
 
@@ -92,6 +105,21 @@ RNS_IGNORE_SUPER_CALL_END
   return static_cast<RNSTabBarController *>(_controller.tabBarController);
 }
 
+#pragma mark - RNSScrollViewBehaviorOverriding
+
+- (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
+{
+  return self.overrideScrollViewContentInsetAdjustmentBehavior;
+}
+
+- (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
+{
+  if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
+    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+  }
+}
+
+#if RCT_NEW_ARCH_ENABLED
 #pragma mark - RCTViewComponentViewProtocol
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -191,14 +219,16 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot
-      != oldComponentProps.specialEffects.repeatedTabSelection.popToRoot) {
-    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = newComponentProps.specialEffects.repeatedTabSelection.popToRoot;
+  if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
+      oldComponentProps.specialEffects.repeatedTabSelection.popToRoot) {
+    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect =
+        newComponentProps.specialEffects.repeatedTabSelection.popToRoot;
   }
 
-  if (newComponentProps.specialEffects.repeatedTabSelection.scrollToTop
-      != oldComponentProps.specialEffects.repeatedTabSelection.scrollToTop) {
-    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
+  if (newComponentProps.specialEffects.repeatedTabSelection.scrollToTop !=
+      oldComponentProps.specialEffects.repeatedTabSelection.scrollToTop) {
+    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect =
+        newComponentProps.specialEffects.repeatedTabSelection.scrollToTop;
   }
 
   if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior
@@ -261,25 +291,155 @@ RNS_IGNORE_SUPER_CALL_END
   return NO;
 }
 
-#pragma mark - RNSScrollViewBehaviorOverriding
+#else
 
-- (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
-{
-  return self.overrideScrollViewContentInsetAdjustmentBehavior;
-}
+#pragma mark - LEGACY RCTComponent protocol
 
-- (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
+- (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
-  if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
-    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+  [super didSetProps:changedProps];
+  if (_tabItemNeedsAppearanceUpdate) {
+    [_controller tabItemAppearanceHasChanged];
+    _tabItemNeedsAppearanceUpdate = NO;
   }
 }
 
+#pragma mark - LEGACY prop setters
+
+- (void)setIsSelectedScreen:(BOOL)isSelectedScreen
+{
+  if (_isSelectedScreen != isSelectedScreen) {
+    _isSelectedScreen = isSelectedScreen;
+    [_controller tabScreenFocusHasChanged];
+  }
+}
+
+- (void)setTabKey:(NSString *)tabKey
+{
+  RCTAssert([NSString rnscreens_isBlankOrNull:tabKey] == NO, @"[RNScreens] tabKey must not be empty");
+  _tabKey = tabKey;
+}
+
+- (void)setTitle:(NSString *)title
+{
+  _title = title;
+  _controller.title = title;
+}
+
+- (void)setBadgeValue:(NSString *)badgeValue
+{
+  _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
+}
+
+- (void)setTabBarBackgroundColor:(UIColor *)tabBarBackgroundColor
+{
+  _tabBarBackgroundColor = tabBarBackgroundColor;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setTabBarBlurEffect:(UIBlurEffect *)tabBarBlurEffect
+{
+  _tabBarBlurEffect = tabBarBlurEffect;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setTabBarItemTitleFontFamily:(NSString *)tabBarItemTitleFontFamily
+{
+  _tabBarItemTitleFontFamily = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontFamily];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setTabBarItemTitleFontSize:(NSNumber *)tabBarItemTitleFontSize
+{
+  _tabBarItemTitleFontSize = tabBarItemTitleFontSize;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setTabBarItemTitleFontWeight:(NSString *)tabBarItemTitleFontWeight
+{
+  _tabBarItemTitleFontWeight = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontWeight];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setTabBarItemTitleFontStyle:(NSString *)tabBarItemTitleFontStyle
+{
+  _tabBarItemTitleFontStyle = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontStyle];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setTabBarItemTitleFontColor:(UIColor *)tabBarItemTitleFontColor
+{
+  _tabBarItemTitleFontColor = tabBarItemTitleFontColor;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setTabBarItemIconColor:(UIColor *)tabBarItemIconColor
+{
+  _tabBarItemIconColor = tabBarItemIconColor;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setIconSFSymbolName:(NSString *)iconSFSymbolName
+{
+  _iconSFSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSFSymbolName];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setSelectedIconSFSymbolName:(NSString *)selectedIconSFSymbolName
+{
+  _selectedIconSFSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSFSymbolName];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
+{
+  _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setOnWillAppear:(RCTDirectEventBlock)onWillAppear
+{
+  [self.reactEventEmitter setOnWillAppear:onWillAppear];
+}
+
+- (void)setOnWillDisappear:(RCTDirectEventBlock)onWillDisappear
+{
+  [self.reactEventEmitter setOnWillDisappear:onWillDisappear];
+}
+
+- (void)setOnDidAppear:(RCTDirectEventBlock)onDidAppear
+{
+  [self.reactEventEmitter setOnDidAppear:onDidAppear];
+}
+
+- (void)setOnDidDisappear:(RCTDirectEventBlock)onDidDisappear
+{
+  [self.reactEventEmitter setOnDidDisappear:onDidDisappear];
+}
+
+#define RNS_FAILING_EVENT_GETTER(eventName)                                           \
+  -(RCTDirectEventBlock)eventName                                                     \
+  {                                                                                   \
+    RCTAssert(NO, @"[RNScreens] Events should be emitted through reactEventEmitter"); \
+    return nil;                                                                       \
+  }
+
+RNS_FAILING_EVENT_GETTER(onWillAppear);
+RNS_FAILING_EVENT_GETTER(onDidAppear);
+RNS_FAILING_EVENT_GETTER(onWillDisappear);
+RNS_FAILING_EVENT_GETTER(onDidDisappear);
+
+#undef RNS_FAILING_EVENT_GETTER
+
+#endif // RCT_NEW_ARCH_ENABLED
+
 @end
 
+#if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
 Class<RCTComponentViewProtocol> RNSBottomTabsScreen(void)
 {
   return RNSBottomTabsScreenComponentView.class;
 }
+#endif // RCT_NEW_ARCH_ENABLED

@@ -6,6 +6,7 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
+import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSBottomTabsManagerDelegate
 import com.facebook.react.viewmanagers.RNSBottomTabsManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
@@ -66,6 +67,7 @@ class TabsHostViewManager :
 
     // These should be ignored or another component, dedicated for Android should be used
 
+    @ReactProp(name = "tabBarBackgroundColor", customType = "Color")
     override fun setTabBarBackgroundColor(
         view: TabsHost,
         value: Int?,
@@ -83,6 +85,7 @@ class TabsHostViewManager :
         value: Int?,
     ) = Unit
 
+    @ReactProp(name = "tabBarItemTitleFontSize")
     override fun setTabBarItemTitleFontSize(
         view: TabsHost?,
         value: Float,
@@ -116,6 +119,7 @@ class TabsHostViewManager :
         view.tabBarItemTitleFontStyle = value
     }
 
+    @ReactProp(name = "tabBarItemTitleFontColor", customType = "Color")
     override fun setTabBarItemTitleFontColor(
         view: TabsHost,
         value: Int?,
@@ -133,6 +137,7 @@ class TabsHostViewManager :
         value: ReadableMap?,
     ) = Unit
 
+    @ReactProp(name = "tabBarItemIconColor", customType = "Color")
     override fun setTabBarItemIconColor(
         view: TabsHost,
         value: Int?,
@@ -142,6 +147,7 @@ class TabsHostViewManager :
 
     // Android additional
 
+    @ReactProp(name = "tabBarItemTitleFontColorActive", customType = "Color")
     override fun setTabBarItemTitleFontColorActive(
         view: TabsHost,
         value: Int?,
@@ -149,6 +155,7 @@ class TabsHostViewManager :
         view.tabBarItemTitleFontColorActive = value
     }
 
+    @ReactProp(name = "tabBarItemIconColorActive", customType = "Color")
     override fun setTabBarItemIconColorActive(
         view: TabsHost,
         value: Int?,
@@ -156,6 +163,7 @@ class TabsHostViewManager :
         view.tabBarItemIconColorActive = value
     }
 
+    @ReactProp(name = "tabBarItemTitleFontSizeActive")
     override fun setTabBarItemTitleFontSizeActive(
         view: TabsHost?,
         value: Float,
