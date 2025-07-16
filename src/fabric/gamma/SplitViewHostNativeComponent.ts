@@ -12,8 +12,19 @@ export type SplitViewSplitBehavior =
 
 export type SplitViewPrimaryEdge = 'leading' | 'trailing';
 
+export type SplitViewDisplayMode =
+  | 'automatic'
+  | 'secondaryOnly'
+  | 'oneBesideSecondary'
+  | 'oneOverSecondary'
+  | 'twoBesideSecondary'
+  | 'twoOverSecondary'
+  | 'twoDisplaceSecondary';
+
 export interface NativeProps extends ViewProps {
   // Appearance
+
+  displayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
   splitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
   primaryEdge?: WithDefault<SplitViewPrimaryEdge, 'leading'>;
 }

@@ -46,8 +46,9 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSSplitViewHostProps>();
   _props = defaultProps;
 
-  _splitBehavior = RNSSplitViewSplitBehaviorAutomatic;
-  _primaryEdge = RNSSplitViewPrimaryEdgeLeading;
+  _splitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
+  _primaryEdge = UISplitViewControllerPrimaryEdgeLeading;
+  _displayMode = UISplitViewControllerDisplayModeAutomatic;
 }
 
 - (void)didMoveToWindow
@@ -140,15 +141,18 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(props);
 
   if (oldComponentProps.splitBehavior != newComponentProps.splitBehavior) {
-    _splitBehavior = rnscreens::conversion::RNSSplitViewSplitBehaviorFromHostProp(newComponentProps.splitBehavior);
-    _controller.preferredSplitBehavior =
-        rnscreens::conversion::RNSSplitBehaviorToUISplitViewControllerSplitBehavior(_splitBehavior);
+    _splitBehavior = rnscreens::conversion::SplitViewSplitBehaviorFromHostProp(newComponentProps.splitBehavior);
+    _controller.preferredSplitBehavior = _splitBehavior;
   }
 
   if (oldComponentProps.primaryEdge != newComponentProps.primaryEdge) {
-    _primaryEdge = rnscreens::conversion::RNSSplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
-    _controller.primaryEdge =
-        rnscreens::conversion::RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(_primaryEdge);
+    _primaryEdge = rnscreens::conversion::SplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
+    _controller.primaryEdge = _primaryEdge;
+  }
+
+  if (oldComponentProps.displayMode != newComponentProps.displayMode) {
+    _displayMode = rnscreens::conversion::SplitViewDisplayModeFromHostProp(newComponentProps.displayMode);
+    _controller.preferredDisplayMode = _displayMode;
   }
 
   [super updateProps:props oldProps:oldProps];
