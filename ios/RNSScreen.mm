@@ -1986,6 +1986,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (RNSOrientation)evaluateOrientation
 {
+  if ([self.childViewControllers.lastObject respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> child = static_cast<id<RNSOrientationProviding>>(self.childViewControllers.lastObject);
+    RNSOrientation childOrientation = [child evaluateOrientation];
+    
+    if (childOrientation != RNSOrientationInherit) {
+      return childOrientation;
+    }
+  }
+  
   return rnscreens::conversion::RNSOrientationFromUIInterfaceOrientationMask([self supportedInterfaceOrientations]);
 }
 
