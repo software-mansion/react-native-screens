@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.tabs
 
 import android.content.res.ColorStateList
 import android.util.Log
+import android.view.Choreographer
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -386,16 +387,23 @@ class TabsHost(
         }
     }
 
+    private val layoutCallback = Choreographer.FrameCallback {
+        isLayoutEnqueued = false
+        forceSubtreeMeasureAndLayoutPass()
+    }
+
     private fun refreshLayout() {
-        if (!isLayoutEnqueued) {
+        @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
+        if (!isLayoutEnqueued && layoutCallback != null) {
+            isLayoutEnqueued = true
+            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
+            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
             ReactChoreographer
                 .getInstance()
                 .postFrameCallback(
                     ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                ) {
-                    isLayoutEnqueued = false
-                    forceSubtreeMeasureAndLayoutPass()
-                }
+                    layoutCallback
+                )
         }
     }
 
