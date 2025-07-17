@@ -58,6 +58,17 @@ namespace react = facebook::react;
   return self;
 }
 
+#if !RCT_NEW_ARCH_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader
+{
+  if (self = [super initWithFrame:frame]) {
+    _imageLoader = imageLoader;
+    [self initState];
+  }
+  return self;
+}
+#endif // !RCT_NEW_ARCH_ENABLED
+
 - (void)initState
 {
   [self resetProps];

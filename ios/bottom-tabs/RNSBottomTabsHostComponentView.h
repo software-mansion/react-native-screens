@@ -20,6 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSBottomTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate>
 
+#if !RCT_NEW_ARCH_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
+#endif // !RCT_NEW_ARCH_ENABLED
+
 @end
 
 #pragma mark - Props
