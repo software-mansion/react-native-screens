@@ -54,27 +54,25 @@ public class RNSSplitViewScreenController: UIViewController {
   @objc
   public override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
-    if #available(iOS 26.0, *) {
-      // For modals, which are presented outside the SplitViewHost subtree (and RN hierarchy),
-      // we're attaching our touch handler adn we don't need to apply any offset corrections,
-      // because it's positioned relatively to our RNSSplitViewScreenComponentView
-      if isInSplitViewHostSubtree() {
-        let ancestorView = findSplitViewHostController()?.view
+    // For modals, which are presented outside the SplitViewHost subtree (and RN hierarchy),
+    // we're attaching our touch handler adn we don't need to apply any offset corrections,
+    // because it's positioned relatively to our RNSSplitViewScreenComponentView
+    if isInSplitViewHostSubtree() {
+      let ancestorView = findSplitViewHostController()?.view
 
-        assert(
-          ancestorView != nil,
-          "[RNScreens] Expected to find RNSSplitViewHost component for RNSSplitViewScreen component"
-        )
+      assert(
+        ancestorView != nil,
+        "[RNScreens] Expected to find RNSSplitViewHost component for RNSSplitViewScreen component"
+      )
 
-        shadowStateProxy.updateShadowState(
-          ofComponent: splitViewScreenComponentView,
-          inContextOfAncestorView: ancestorView!
-        )
-      } else {
-        shadowStateProxy.updateShadowState(
-          ofComponent: splitViewScreenComponentView
-        )
-      }
+      shadowStateProxy.updateShadowState(
+        ofComponent: splitViewScreenComponentView,
+        inContextOfAncestorView: ancestorView!
+      )
+    } else {
+      shadowStateProxy.updateShadowState(
+        ofComponent: splitViewScreenComponentView
+      )
     }
 
     //      TODO: to be removed - only for testing purposes for inspector column
