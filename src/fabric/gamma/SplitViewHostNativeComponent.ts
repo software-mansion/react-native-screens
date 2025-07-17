@@ -40,6 +40,14 @@ interface ColumnMetrics {
   minimumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
   maximumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
   preferredSupplementaryColumnWidth?: WithDefault<Int32, -1>;
+
+  // iOS 26 only
+  minimumSecondaryColumnWidth?: WithDefault<Int32, -1>;
+  maximumSecondaryColumnWidth?: WithDefault<Int32, -1>;
+  preferredSecondaryColumnWidth?: WithDefault<Int32, -1>;
+  minimumInspectorColumnWidth?: WithDefault<Int32, -1>;
+  maximumInspectorColumnWidth?: WithDefault<Int32, -1>;
+  preferredInspectorColumnWidth?: WithDefault<Int32, -1>;
 }
 
 export interface NativeProps extends ViewProps {

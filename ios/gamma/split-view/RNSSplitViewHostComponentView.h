@@ -34,6 +34,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) int maximumSupplementaryColumnWidth;
 @property (nonatomic, readonly) int preferredSupplementaryColumnWidth;
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+@property (nonatomic, readonly) int minimumSecondaryColumnWidth;
+@property (nonatomic, readonly) int maximumSecondaryColumnWidth;
+@property (nonatomic, readonly) int preferredSecondaryColumnWidth;
+@property (nonatomic, readonly) int minimumInspectorColumnWidth;
+@property (nonatomic, readonly) int maximumInspectorColumnWidth;
+@property (nonatomic, readonly) int preferredInspectorColumnWidth;
+#endif
+
 @end
 
 #pragma mark - Events
