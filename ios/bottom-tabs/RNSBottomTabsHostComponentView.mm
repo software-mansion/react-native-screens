@@ -2,11 +2,14 @@
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
+#import <React/RCTImageLoader.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSBottomTabsComponentDescriptor.h>
+#import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSBottomTabsScreenComponentView.h"
@@ -32,6 +35,8 @@ namespace react = facebook::react;
 
   RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
+  RCTImageLoader *_Nullable _imageLoader;
+
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
   NSMutableArray<RNSBottomTabsScreenComponentView *> *_reactSubviews;
@@ -46,6 +51,16 @@ namespace react = facebook::react;
   }
   return self;
 }
+
+#if !RCT_NEW_ARCH_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader
+{
+  if (self = [self initWithFrame:frame]) {
+    _imageLoader = imageLoader;
+  }
+  return self;
+}
+#endif // !RCT_NEW_ARCH_ENABLED
 
 - (void)initState
 {
@@ -251,6 +266,15 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 }
 
+- (void)updateState:(const facebook::react::State::Shared &)state
+           oldState:(const facebook::react::State::Shared &)oldState
+{
+  react::RNSBottomTabsShadowNode::ConcreteState::Shared receivedState =
+      std::static_pointer_cast<const react::RNSBottomTabsShadowNode::ConcreteState>(state);
+  
+  _imageLoader = [self retrieveImageLoaderFromState:receivedState];
+}
+
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
 {
   [super updateEventEmitter:eventEmitter];
@@ -442,6 +466,13 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - React Image Loader
+
+- (nullable RCTImageLoader *)reactImageLoader
+{
+  return _imageLoader;
+}
 
 @end
 

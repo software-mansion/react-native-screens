@@ -1,3 +1,5 @@
+#import <React/RCTConversions.h>
+#import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
 #import "RNSConversions.h"
 
 namespace rnscreens::conversion {
@@ -170,6 +172,45 @@ UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct titlePositionAdjustment)
 {
   return UIOffsetMake(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
+}
+
+RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType)
+{
+  using enum facebook::react::RNSBottomTabsScreenIconType;
+  switch (iconType) {
+    case Image:
+      return RNSBottomTabsIconTypeImage;
+    case Template:
+      return RNSBottomTabsIconTypeTemplate;
+    case SfSymbol:
+      return RNSBottomTabsIconTypeSfSymbol;
+  }
+}
+
+RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
+    const facebook::react::ImageSource *imageSource,
+    RNSBottomTabsIconType iconType)
+{
+  RCTImageSource *iconImageSource;
+
+  switch (iconType) {
+    case RNSBottomTabsIconTypeSfSymbol:
+      iconImageSource = nil;
+      break;
+
+    case RNSBottomTabsIconTypeImage:
+    case RNSBottomTabsIconTypeTemplate:
+      iconImageSource =
+          [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(*imageSource)
+                                                size:CGSizeMake(imageSource->size.width, imageSource->size.height)
+                                               scale:imageSource->scale];
+      break;
+
+    default:
+      RCTLogError(@"[RNScreens] unsupported icon type");
+  }
+
+  return iconImageSource;
 }
 
 }; // namespace rnscreens::conversion

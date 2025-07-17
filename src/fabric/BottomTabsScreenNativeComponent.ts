@@ -9,6 +9,12 @@ import {
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
+// @ts-ignore: ImageSource type has been recently added: https://github.com/facebook/react-native/pull/51969
+import type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
+
+// iOS-specific: SFSymbol, image as a template usage
+export type IconType = 'image' | 'template' | 'sfSymbol';
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type GenericEmptyEvent = Readonly<{}>;
 
@@ -74,11 +80,17 @@ export interface NativeProps extends ViewProps {
   // General
   title?: string | undefined | null;
 
-  iconSFSymbolName?: string;
-  selectedIconSFSymbolName?: string;
-
   // Android-specific image handling
   iconResourceName?: string;
+
+  // iOS-specific: SFSymbol usage
+  iconType?: WithDefault<IconType, 'sfSymbol'>;
+
+  iconImageSource?: ImageSource;
+  iconSfSymbolName?: string;
+
+  selectedIconImageSource?: ImageSource;
+  selectedIconSfSymbolName?: string;
 
   badgeValue?: string;
 

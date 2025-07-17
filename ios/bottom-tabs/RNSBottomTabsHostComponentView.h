@@ -8,6 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomTabsScreenComponentView;
+@class RCTImageLoader;
 
 /**
  * Component view. Lifecycle is managed by React Native.
@@ -18,6 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
  * 3. two way communication channel with React (commands & events)
  */
 @interface RNSBottomTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate>
+
+#if !RCT_NEW_ARCH_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
 
@@ -61,6 +66,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onNativeFocusChange;
 
 #endif
+
+@end
+
+#pragma mark - React Image Loader
+
+@interface RNSBottomTabsHostComponentView ()
+
+- (nullable RCTImageLoader *)reactImageLoader;
 
 @end
 

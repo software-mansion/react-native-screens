@@ -2,6 +2,7 @@
 
 #if !RCT_NEW_ARCH_ENABLED
 #import "RNSBottomTabsHostComponentView.h"
+#import <React/RCTImageLoader.h>
 #endif
 
 @implementation RNSBottomTabsHostComponentViewManager
@@ -14,8 +15,9 @@ RCT_EXPORT_MODULE(RNSBottomTabsManager)
 
 - (UIView *)view
 {
-  // This uses main initializer for Fabric implementation.
-  return [[RNSBottomTabsHostComponentView alloc] initWithFrame:CGRectZero];
+  // For Paper, we need to initialize TabsHost with RCTImageLoader from bridge
+  return [[RNSBottomTabsHostComponentView alloc] initWithFrame:CGRectZero
+                                              reactImageLoader:[self.bridge moduleForClass:[RCTImageLoader class]]];
 }
 
 #pragma mark - LEGACY Props

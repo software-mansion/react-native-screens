@@ -63,14 +63,23 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "title":
         mViewManager.setTitle(view, value == null ? null : (String) value);
         break;
-      case "iconSFSymbolName":
-        mViewManager.setIconSFSymbolName(view, value == null ? null : (String) value);
-        break;
-      case "selectedIconSFSymbolName":
-        mViewManager.setSelectedIconSFSymbolName(view, value == null ? null : (String) value);
-        break;
       case "iconResourceName":
         mViewManager.setIconResourceName(view, value == null ? null : (String) value);
+        break;
+      case "iconType":
+        mViewManager.setIconType(view, (String) value);
+        break;
+      case "iconImageSource":
+        mViewManager.setIconImageSource(view, (ReadableMap) value);
+        break;
+      case "iconSfSymbolName":
+        mViewManager.setIconSfSymbolName(view, value == null ? null : (String) value);
+        break;
+      case "selectedIconImageSource":
+        mViewManager.setSelectedIconImageSource(view, (ReadableMap) value);
+        break;
+      case "selectedIconSfSymbolName":
+        mViewManager.setSelectedIconSfSymbolName(view, value == null ? null : (String) value);
         break;
       case "badgeValue":
         mViewManager.setBadgeValue(view, value == null ? null : (String) value);

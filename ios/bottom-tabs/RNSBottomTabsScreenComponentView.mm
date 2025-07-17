@@ -7,6 +7,7 @@
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
+#import <React/RCTImageSource.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -83,6 +84,14 @@ namespace react = facebook::react;
 
   _overrideScrollViewContentInsetAdjustmentBehavior = YES;
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
+  
+  _iconType = RNSBottomTabsIconTypeSfSymbol;
+
+  _iconImageSource = nil;
+  _iconSfSymbolName = nil;
+
+  _selectedIconImageSource = nil;
+  _selectedIconSfSymbolName = nil;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -209,13 +218,30 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.iconSFSymbolName != oldComponentProps.iconSFSymbolName) {
-    _iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSFSymbolName);
+  if (newComponentProps.iconType != oldComponentProps.iconType) {
+    _iconType = rnscreens::conversion::RNSBottomTabsIconTypeFromIcon(newComponentProps.iconType);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.selectedIconSFSymbolName != oldComponentProps.selectedIconSFSymbolName) {
-    _selectedIconSFSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSFSymbolName);
+  if (newComponentProps.iconImageSource != oldComponentProps.iconImageSource) {
+    _iconImageSource =
+        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconImageSource, _iconType);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.iconSfSymbolName != oldComponentProps.iconSfSymbolName) {
+    _iconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSfSymbolName);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
+    _selectedIconImageSource =
+        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.selectedIconImageSource, _iconType);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
+    _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -300,6 +326,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
+
   if (_tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
     _tabItemNeedsAppearanceUpdate = NO;
@@ -381,21 +408,39 @@ RNS_IGNORE_SUPER_CALL_END
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
-- (void)setIconSFSymbolName:(NSString *)iconSFSymbolName
-{
-  _iconSFSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSFSymbolName];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setSelectedIconSFSymbolName:(NSString *)selectedIconSFSymbolName
-{
-  _selectedIconSFSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSFSymbolName];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
 - (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
 {
   _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setIconType:(RNSBottomTabsIconType)iconType
+{
+  _iconType = iconType;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setIconImageSource:(RCTImageSource *)iconImageSource
+{
+  _iconImageSource = iconImageSource;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setIconSfSymbolName:(NSString *)iconSfSymbolName
+{
+  _iconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSfSymbolName];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setSelectedIconImageSource:(RCTImageSource *)selectedIconImageSource
+{
+  _selectedIconImageSource = selectedIconImageSource;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setSelectedIconSfSymbolName:(NSString *)selectedIconSfSymbolName
+{
+  _selectedIconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
 }
 

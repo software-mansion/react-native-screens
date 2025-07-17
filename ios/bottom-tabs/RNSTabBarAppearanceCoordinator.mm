@@ -1,5 +1,6 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import <React/RCTFont.h>
+#import <React/RCTImageLoader.h>
 #import "RNSConversions.h"
 #import "RNSTabBarAppearanceProvider.h"
 #import "RNSTabsScreenViewController.h"
@@ -9,6 +10,7 @@
 - (void)updateAppearanceOfTabBar:(nullable UITabBar *)tabBar
            withHostComponentView:(nullable RNSBottomTabsHostComponentView *)hostComponentView
             tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
+                     imageLoader:(nullable RCTImageLoader *)imageLoader
 {
   if (tabBar == nil) {
     return;
@@ -59,7 +61,7 @@
                  forTabScreenController:tabScreenCtrl
                   withHostComponentView:hostComponentView];
 
-    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearace:tabAppearance];
+    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearace:tabAppearance imageLoader:imageLoader];
   }
 }
 
@@ -77,14 +79,82 @@
 
 - (void)configureTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
                                     withAppearace:(nonnull UITabBarAppearance *)tabAppearance
+                                      imageLoader:(nullable RCTImageLoader *)imageLoader
 {
   UITabBarItem *tabBarItem = tabScreenCtrl.tabBarItem;
 
   tabBarItem.standardAppearance = tabAppearance;
   tabBarItem.scrollEdgeAppearance = tabAppearance;
 
-  tabBarItem.image = [UIImage systemImageNamed:tabScreenCtrl.tabScreenComponentView.iconSFSymbolName];
-  tabBarItem.selectedImage = [UIImage systemImageNamed:tabScreenCtrl.tabScreenComponentView.selectedIconSFSymbolName];
+  [self setIconsForTabBarItem:tabBarItem
+               fromScreenView:tabScreenCtrl.tabScreenComponentView
+              withImageLoader:imageLoader];
+}
+
+- (void)setIconsForTabBarItem:(UITabBarItem *)tabBarItem
+               fromScreenView:(RNSBottomTabsScreenComponentView *)screenView
+              withImageLoader:(RCTImageLoader *_Nullable)imageLoader
+{
+  if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
+    tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+    tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+  } else if (imageLoader != nil) {
+    bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
+    
+    // Normal icon
+    if (screenView.iconImageSource != nil) {
+      [self loadImageFrom:screenView.iconImageSource
+          withImageLoader:imageLoader
+               asTemplate:isTemplate
+          completionBlock:^(UIImage *image) {
+                   tabBarItem.image = image;
+                 }];
+    } else {
+      tabBarItem.image = nil;
+    }
+    
+    // Selected icon
+    if (screenView.selectedIconImageSource != nil) {
+      [self loadImageFrom:screenView.selectedIconImageSource
+          withImageLoader:imageLoader
+               asTemplate:isTemplate
+          completionBlock:^(UIImage *image) {
+                   tabBarItem.selectedImage = image;
+                 }];
+    } else {
+      tabBarItem.selectedImage = nil;
+    }
+  } else {
+    RCTLogWarn(@"[RNScreens] unable to load tab bar item icons: imageLoader should not be nil");
+  }
+}
+
+- (void)loadImageFrom:(nonnull RCTImageSource *)imageSource
+      withImageLoader:(nonnull RCTImageLoader *)imageLoader
+           asTemplate:(bool)isTemplate
+      completionBlock:(void (^)(UIImage *image))imageLoadingCompletionBlock
+{
+  RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
+  RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
+  
+  [imageLoader loadImageWithURLRequest:imageSource.request
+      size:imageSource.size
+      scale:imageSource.scale
+      clipped:true
+      resizeMode:RCTResizeModeContain
+      progressBlock:^(int64_t progress, int64_t total) {
+      }
+      partialLoadBlock:^(UIImage *_Nonnull image) {
+      }
+      completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+          if (isTemplate) {
+            imageLoadingCompletionBlock([image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]);
+          } else {
+            imageLoadingCompletionBlock([image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]);
+          }
+        });
+      }];
 }
 
 - (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance

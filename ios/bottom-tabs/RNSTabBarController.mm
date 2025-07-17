@@ -157,7 +157,8 @@
 
   [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
                                    withHostComponentView:self.tabsHostComponentView
-                                    tabScreenControllers:_tabScreenControllers];
+                                    tabScreenControllers:_tabScreenControllers
+                                             imageLoader:[self.tabsHostComponentView reactImageLoader]];
 }
 
 #if !defined(NDEBUG)

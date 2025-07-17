@@ -3,6 +3,7 @@
 #import "RNSReactBaseView.h"
 #import "RNSTabBarAppearanceProvider.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import <React/RCTImageSource.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,10 +54,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, nullable) UIColor *tabBarItemIconColor;
 
-@property (nonatomic, nullable) UIColor *tabBarItemBadgeBackgroundColor;
+@property (nonatomic, readonly) RNSBottomTabsIconType iconType;
 
-@property (nonatomic, strong, nullable) NSString *iconSFSymbolName;
-@property (nonatomic, strong, nullable) NSString *selectedIconSFSymbolName;
+@property (nonatomic, strong, readonly, nullable) RCTImageSource *iconImageSource;
+@property (nonatomic, strong, readonly, nullable) NSString *iconSfSymbolName;
+
+@property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
+@property (nonatomic, strong, readonly, nullable) NSString *selectedIconSfSymbolName;
+
+@property (nonatomic, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
 @property (nonatomic, nullable) NSString *title;
 

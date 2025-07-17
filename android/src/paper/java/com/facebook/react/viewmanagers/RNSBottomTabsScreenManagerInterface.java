@@ -28,9 +28,12 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
   void setTabBarItemIconColor(T view, @Nullable Integer value);
   void setTabBarItemBadgeBackgroundColor(T view, @Nullable Integer value);
   void setTitle(T view, @Nullable String value);
-  void setIconSFSymbolName(T view, @Nullable String value);
-  void setSelectedIconSFSymbolName(T view, @Nullable String value);
   void setIconResourceName(T view, @Nullable String value);
+  void setIconType(T view, @Nullable String value);
+  void setIconImageSource(T view, @Nullable ReadableMap value);
+  void setIconSfSymbolName(T view, @Nullable String value);
+  void setSelectedIconImageSource(T view, @Nullable ReadableMap value);
+  void setSelectedIconSfSymbolName(T view, @Nullable String value);
   void setBadgeValue(T view, @Nullable String value);
   void setSpecialEffects(T view, @Nullable ReadableMap value);
   void setOverrideScrollViewContentInsetAdjustmentBehavior(T view, boolean value);

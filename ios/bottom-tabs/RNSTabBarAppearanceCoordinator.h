@@ -4,6 +4,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RCTImageLoader;
+
 /**
  * Responsible for creating & applying appearance to the tab bar.
  *
@@ -24,7 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateAppearanceOfTabBar:(nullable UITabBar *)tabBar
            withHostComponentView:(nullable RNSBottomTabsHostComponentView *)hostComponentView
-            tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls;
+            tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
+                     imageLoader:(nullable RCTImageLoader *)imageLoader;
 
 @end
 

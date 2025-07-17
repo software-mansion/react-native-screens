@@ -3,10 +3,12 @@
 import React from 'react';
 import BottomTabsScreenNativeComponent, {
   BlurEffect,
+  type IconType,
   type NativeProps,
 } from '../fabric/BottomTabsScreenNativeComponent';
 import {
   type ColorValue,
+  type ImageSourcePropType,
   type NativeSyntheticEvent,
   StyleSheet,
   TextStyle,
@@ -21,6 +23,23 @@ export type EmptyObject = Record<string, never>;
 export type BottomTabsScreenEventHandler<T> = (
   event: NativeSyntheticEvent<T>,
 ) => void;
+
+// iOS-specific: SFSymbol usage
+export interface SFIcon {
+  sfSymbolName: string;
+}
+
+export interface ImageIcon {
+  imageSource: ImageSourcePropType;
+}
+
+// iOS-specific: image as a template usage
+export interface TemplateIcon {
+  templateSource: ImageSourcePropType;
+}
+
+// iOS-specific: SFSymbol, image as a template usage
+export type Icon = SFIcon | ImageIcon | TemplateIcon;
 
 export interface BottomTabsScreenProps {
   children?: ViewProps['children'];
@@ -54,11 +73,11 @@ export interface BottomTabsScreenProps {
   // General
   title?: string;
 
-  iconSFSymbolName?: string;
-  selectedIconSFSymbolName?: string;
-
   // Android specific
   iconResourceName?: string;
+
+  icon?: Icon;
+  selectedIcon?: Icon;
 
   badgeValue?: string;
 
@@ -99,7 +118,9 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     onWillDisappear,
     onDidDisappear,
     isFocused = false,
-    ...propsWoEventHandlers
+    icon,
+    selectedIcon,
+    ...rest
   } = props;
 
   let shouldFreeze = freezeEnabled();
@@ -155,9 +176,11 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   console.info(
     `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
-      propsWoEventHandlers.tabKey
+      rest.tabKey
     } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
   );
+
+  const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
   return (
     <BottomTabsScreenNativeComponent
@@ -168,16 +191,89 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
+      {...iconProps}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
-      {...propsWoEventHandlers}>
-      <Freeze
-        freeze={shouldFreeze}
-        placeholder={propsWoEventHandlers.placeholder}>
-        {propsWoEventHandlers.children}
+      {...rest}>
+      <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
+        {rest.children}
       </Freeze>
     </BottomTabsScreenNativeComponent>
   );
+}
+
+function parseIconToNativeProps(icon: Icon | undefined): {
+  iconType?: IconType;
+  iconImageSource?: ImageSourcePropType;
+  iconSfSymbolName?: string;
+} {
+  if (!icon) {
+    return {};
+  }
+
+  if ('sfSymbolName' in icon) {
+    // iOS-specific: SFSymbol usage
+    return {
+      iconType: 'sfSymbol',
+      iconSfSymbolName: icon.sfSymbolName,
+    };
+  } else if ('imageSource' in icon) {
+    return {
+      iconType: 'image',
+      iconImageSource: icon.imageSource,
+    };
+  } else if ('templateSource' in icon) {
+    // iOS-specifig: image as a template usage
+    return {
+      iconType: 'template',
+      iconImageSource: icon.templateSource,
+    };
+  } else {
+    // iOS-specific: SFSymbol, image as a template usage
+    throw new Error(
+      '[RNScreens] Incorrect icon format. You must provide sfSymbolName, imageSource or templateSource.',
+    );
+  }
+}
+
+function parseIconsToNativeProps(
+  icon: Icon | undefined,
+  selectedIcon: Icon | undefined,
+): {
+  iconType?: IconType;
+  iconImageSource?: ImageSourcePropType;
+  iconSfSymbolName?: string;
+  selectedIconImageSource?: ImageSourcePropType;
+  selectedIconSfSymbolName?: string;
+} {
+  const { iconImageSource, iconSfSymbolName, iconType } =
+    parseIconToNativeProps(icon);
+  const {
+    iconImageSource: selectedIconImageSource,
+    iconSfSymbolName: selectedIconSfSymbolName,
+    iconType: selectedIconType,
+  } = parseIconToNativeProps(selectedIcon);
+
+  if (
+    iconType !== undefined &&
+    selectedIconType !== undefined &&
+    iconType !== selectedIconType
+  ) {
+    throw new Error('[RNScreens] icon and selectedIcon must be same type.');
+  } else if (iconType === undefined && selectedIconType !== undefined) {
+    // iOS-specific: UIKit requirement
+    throw new Error(
+      '[RNScreens] To use selectedIcon prop, the icon prop must also be provided.',
+    );
+  }
+
+  return {
+    iconType,
+    iconImageSource,
+    iconSfSymbolName,
+    selectedIconImageSource,
+    selectedIconSfSymbolName,
+  };
 }
 
 export default BottomTabsScreen;
