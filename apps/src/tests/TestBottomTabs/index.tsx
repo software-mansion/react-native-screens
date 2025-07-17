@@ -11,6 +11,12 @@ import {
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../shared/styling/Colors';
+// import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+// import {
+//   NativeStackNavigationProp,
+//   createNativeStackNavigator,
+// } from '@react-navigation/native-stack';
+// import { Button, View } from 'react-native';
 
 enableFreeze(true);
 
@@ -72,6 +78,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_outgoing', // Android specific
       title: 'Tab3',
+      orientation: 'portrait',
     },
     contentViewRenderFn: Tab3,
   },
@@ -108,3 +115,52 @@ function App() {
 }
 
 export default App;
+
+// type RouteParamList = {
+//   Auth: undefined;
+//   Tabs: undefined;
+// };
+
+// type NavigationProp<ParamList extends ParamListBase> = {
+//   navigation: NativeStackNavigationProp<ParamList>;
+// };
+
+// type StackNavigationProp = NavigationProp<RouteParamList>;
+
+// const Stack = createNativeStackNavigator<RouteParamList>();
+
+// function AuthScreen({ navigation }: StackNavigationProp) {
+//   return (
+//     <View
+//       style={{
+//         flex: 1,
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//       }}>
+//       <Button title="Log in" onPress={() => navigation.push('Tabs')} />
+//     </View>
+//   );
+// }
+
+// function WrappedApp() {
+//   return (
+//     <NavigationContainer>
+//       <Stack.Navigator>
+//         <Stack.Screen
+//           name="Auth"
+//           component={AuthScreen}
+//           // options={{
+//           // orientation: 'landscape',
+//           // }}
+//         />
+//         <Stack.Screen
+//           name="Tabs"
+//           component={App}
+//           options={{ orientation: 'landscape' }}
+//         />
+//       </Stack.Navigator>
+//     </NavigationContainer>
+//   );
+// }
+
+// export default WrappedApp;
