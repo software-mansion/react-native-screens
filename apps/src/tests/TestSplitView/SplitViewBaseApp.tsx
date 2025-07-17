@@ -9,7 +9,9 @@ const SplitViewBaseApp = () => {
   return (
     <SplitViewHost displayModeButtonVisibility={buttonVisibility} displayMode='twoBesideSecondary' splitBehavior='tile'>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.GreenDark100 }]} />
+        <View style={[styles.container, { backgroundColor: Colors.White }]}>
+          <Text style={styles.text}>Primary column</Text>
+        </View>
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]}>
@@ -20,7 +22,9 @@ const SplitViewBaseApp = () => {
         </View>
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]} />
+        <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
+          <Text style={styles.text}>Secondary column</Text>
+        </View>
       </SplitViewScreen.Column>
     </SplitViewHost>
   );
