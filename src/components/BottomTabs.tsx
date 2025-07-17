@@ -44,15 +44,18 @@ export interface BottomTabsProps extends ViewProps {
 
   // Additional for Android
   tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
-  tabBarItemTitleFontColorActive?: TextStyle['color']; 
+  tabBarItemTitleFontColorActive?: TextStyle['color'];
   tabBarItemIconColorActive?: ColorValue;
-  
+
   // Control
 
   // Experimental support
   experimentalControlNavigationStateInJS?: boolean; // defaults to `false`
 }
 
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
 function BottomTabs(props: BottomTabsProps) {
   console.info(`BottomTabs render`);
 
