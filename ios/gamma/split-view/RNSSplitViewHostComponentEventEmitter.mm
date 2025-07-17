@@ -12,7 +12,7 @@
     _reactEventEmitter->onCollapse({});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnWillAppear event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnCollapse event emission due to nullish emitter");
     return NO;
   }
 }
@@ -23,7 +23,7 @@
     _reactEventEmitter->onExpand({});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnDidAppear event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnExpand event emission due to nullish emitter");
     return NO;
   }
 }
@@ -34,7 +34,7 @@
     _reactEventEmitter->onInspectorHide({});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnWillDisappear event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnHideInspector event emission due to nullish emitter");
     return NO;
   }
 }
