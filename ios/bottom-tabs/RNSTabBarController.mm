@@ -229,6 +229,8 @@
 
 #pragma mark - RNSOrientationProviding
 
+#if !TARGET_OS_TV
+
 - (RNSOrientation)evaluateOrientation
 {
   if ([self.selectedViewController respondsToSelector:@selector(evaluateOrientation)]) {
@@ -238,5 +240,7 @@
 
   return RNSOrientationInherit;
 }
+
+#endif // !TARGET_OS_TV
 
 @end

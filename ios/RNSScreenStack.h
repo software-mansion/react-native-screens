@@ -7,11 +7,18 @@
 
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
+
+#if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if !TARGET_OS_TV
 @interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting, RNSOrientationProviding>
+#else // !TARGET_OS_TV
+@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting>
+#endif // !TARGET_OS_TV
 
 @end
 
