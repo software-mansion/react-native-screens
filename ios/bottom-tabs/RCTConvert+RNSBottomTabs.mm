@@ -12,9 +12,9 @@
 RCT_ENUM_CONVERTER(
   RNSBottomTabsIconType,
   (@{
-    @"image" : @(RNSBottomTabsIconTypeImage),
-    @"template" : @(RNSBottomTabsIconTypeTemplate),
-    @"sfSymbol" : @(RNSBottomTabsIconTypeSfSymbol),
+    @"image": @(RNSBottomTabsIconTypeImage),
+    @"template": @(RNSBottomTabsIconTypeTemplate),
+    @"sfSymbol": @(RNSBottomTabsIconTypeSfSymbol),
   }),
   RNSBottomTabsIconTypeSfSymbol,
   integerValue)
@@ -22,14 +22,14 @@ RCT_ENUM_CONVERTER(
 RCT_ENUM_CONVERTER(
   RNSOrientation,
   (@{
-    @"inherit" : @(RNSOrientationInherit),
-    @"all" : @(RNSOrientationAll),
-    @"allButUpsideDown" : @(RNSOrientationAllButUpsideDown),
-    @"portrait" : @(RNSOrientationPortrait),
-    @"portraitUpsideDown" : @(RNSOrientationPortraitUpsideDown),
-    @"landscape" : @(RNSOrientationLandscape),
-    @"landscapeLeft" : @(RNSOrientationLandscapeLeft),
-    @"landscapeRight" : @(RNSOrientationLandscapeRight),
+    @"inherit": @(RNSOrientationInherit),
+    @"all": @(RNSOrientationAll),
+    @"allButUpsideDown": @(RNSOrientationAllButUpsideDown),
+    @"portrait": @(RNSOrientationPortrait),
+    @"portraitUpsideDown": @(RNSOrientationPortraitUpsideDown),
+    @"landscape": @(RNSOrientationLandscape),
+    @"landscapeLeft": @(RNSOrientationLandscapeLeft),
+    @"landscapeRight": @(RNSOrientationLandscapeRight),
   }),
   RNSOrientationInherit,
   integerValue)
