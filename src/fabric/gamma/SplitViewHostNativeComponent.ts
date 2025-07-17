@@ -7,6 +7,7 @@ import type {
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type SplitViewEvent = Readonly<{}>;
 
 export type SplitViewSplitBehavior =
