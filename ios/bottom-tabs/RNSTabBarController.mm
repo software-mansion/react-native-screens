@@ -4,6 +4,10 @@
 
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
+
+#if !RCT_NEW_ARCH_ENABLED
+  BOOL _isControllerFlushBlockScheduled;
+#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (instancetype)init
@@ -12,6 +16,10 @@
     _tabScreenControllers = nil;
     _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
     _tabsHostComponentView = nil;
+
+#if !RCT_NEW_ARCH_ENABLED
+    _isControllerFlushBlockScheduled = NO;
+#endif // !RCT_NEW_ARCH_ENABLED
   }
   return self;
 }
@@ -41,16 +49,25 @@
 {
   _needsUpdateOfReactChildrenControllers = true;
   self.needsUpdateOfSelectedTab = true;
+#if !RCT_NEW_ARCH_ENABLED
+  [self scheduleControllerUpdateIfNeeded];
+#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (void)setNeedsUpdateOfSelectedTab:(bool)needsSelectedTabUpdate
 {
   _needsUpdateOfSelectedTab = needsSelectedTabUpdate;
+#if !RCT_NEW_ARCH_ENABLED
+  [self scheduleControllerUpdateIfNeeded];
+#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (void)setNeedsUpdateOfTabBarAppearance:(bool)needsUpdateOfTabBarAppearance
 {
   _needsUpdateOfTabBarAppearance = needsUpdateOfTabBarAppearance;
+#if !RCT_NEW_ARCH_ENABLED
+  [self scheduleControllerUpdateIfNeeded];
+#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 #pragma mark-- RNSReactTransactionObserving
@@ -106,7 +123,7 @@
   [self assertExactlyOneFocusedTab];
 #endif
 
-  UIViewController *_Nullable selectedViewController = nil;
+  RNSTabsScreenViewController *_Nullable selectedViewController = nil;
   for (RNSTabsScreenViewController *tabViewController in self.viewControllers) {
     NSLog(
         @"Update Selected View Controller [%ld] isFocused %d",
@@ -122,6 +139,7 @@
 
   NSLog(@"Change selected view controller to: %@", selectedViewController);
 
+  [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   [self setSelectedViewController:selectedViewController];
 }
 
@@ -155,5 +173,33 @@
       selectedCount == 1, @"[RNScreens] Invariant violation. Expected exactly 1 focused tab, got: %d", selectedCount);
 }
 #endif
+
+#if !RCT_NEW_ARCH_ENABLED
+
+#pragma mark - LEGACY Paper scheduling methods
+
+// TODO: These could be moved to separate scheduler class
+
+- (void)scheduleControllerUpdateIfNeeded
+{
+  if (_isControllerFlushBlockScheduled) {
+    return;
+  }
+
+  _isControllerFlushBlockScheduled = YES;
+
+  auto *__weak weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto *strongSelf = weakSelf;
+    if (strongSelf == nil) {
+      return;
+    }
+    strongSelf->_isControllerFlushBlockScheduled = NO;
+    [strongSelf reactMountingTransactionWillMount];
+    [strongSelf reactMountingTransactionDidMount];
+  });
+}
+
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @end

@@ -4,6 +4,7 @@
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 
+#import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSSplitViewScreenComponentView.h"
 #import "Swift-Bridging.h"
@@ -30,6 +31,7 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  [self resetProps];
   //    TODO: For now I'm hardcoding style in init, but style cannot be updated outside controller's constructor, thus
   //    we'll need to delay the initialization unitl Screen components will be mounted
   _controller =
@@ -37,6 +39,15 @@ namespace react = facebook::react;
                                                                        style:UISplitViewControllerStyleTripleColumn];
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _reactSubviews = [NSMutableArray new];
+}
+
+- (void)resetProps
+{
+  static const auto defaultProps = std::make_shared<const react::RNSSplitViewHostProps>();
+  _props = defaultProps;
+
+  _splitBehavior = RNSSplitViewSplitBehaviorAutomatic;
+  _primaryEdge = RNSSplitViewPrimaryEdgeLeading;
 }
 
 - (void)didMoveToWindow
@@ -120,6 +131,27 @@ RNS_IGNORE_SUPER_CALL_END
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+- (void)updateProps:(const facebook::react::Props::Shared &)props
+           oldProps:(const facebook::react::Props::Shared &)oldProps
+{
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(props);
+
+  if (oldComponentProps.splitBehavior != newComponentProps.splitBehavior) {
+    _splitBehavior = rnscreens::conversion::RNSSplitViewSplitBehaviorFromHostProp(newComponentProps.splitBehavior);
+    _controller.preferredSplitBehavior =
+        rnscreens::conversion::RNSSplitBehaviorToUISplitViewControllerSplitBehavior(_splitBehavior);
+  }
+
+  if (oldComponentProps.primaryEdge != newComponentProps.primaryEdge) {
+    _primaryEdge = rnscreens::conversion::RNSSplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
+    _controller.primaryEdge =
+        rnscreens::conversion::RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(_primaryEdge);
+  }
+
+  [super updateProps:props oldProps:oldProps];
 }
 
 #pragma mark - RCTMountingTransactionObserving

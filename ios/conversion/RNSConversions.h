@@ -30,6 +30,21 @@ UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct
         titlePositionAdjustment);
 
+#pragma mark SplitView
+
+RNSSplitViewSplitBehavior RNSSplitViewSplitBehaviorFromHostProp(
+    react::RNSSplitViewHostSplitBehavior);
+
+RNSSplitViewPrimaryEdge RNSSplitViewPrimaryEdgeFromHostProp(
+    react::RNSSplitViewHostPrimaryEdge);
+
+UISplitViewControllerSplitBehavior
+RNSSplitBehaviorToUISplitViewControllerSplitBehavior(
+    RNSSplitViewSplitBehavior behavior);
+
+UISplitViewControllerPrimaryEdge
+RNSPrimaryEdgeToUISplitViewControllerPrimaryEdge(
+    RNSSplitViewPrimaryEdge primaryEdge);
 }; // namespace rnscreens::conversion
 
 #endif

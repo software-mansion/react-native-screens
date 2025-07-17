@@ -19,6 +19,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.R
+import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
@@ -200,9 +201,12 @@ class TabsHost(
             checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
                 "[RNScreens] Nullish fragment manager - can't run container operations"
             }
-        containerUpdateCoordinator.let {
-            it.invalidateAll()
-            it.runContainerUpdate()
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // On Paper the children are not yet attached here.
+            containerUpdateCoordinator.let {
+                it.invalidateAll()
+                it.runContainerUpdate()
+            }
         }
     }
 

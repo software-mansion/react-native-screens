@@ -55,6 +55,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen;
 
+#if !RCT_NEW_ARCH_ENABLED
+#pragma mark - LEGACY Event blocks
+
+@property (nonatomic, copy) RCTDirectEventBlock onNativeFocusChange;
+
+#endif
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -47,11 +47,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
     viewControllers = currentViewControllers
 
-    //      TODO: to be removed - only for testing purposes for inspector column
-    //    if #available(iOS 26.0, *) {
-    //      setViewController(currentViewControllers.last, for: .inspector)
-    //    }
-
     for controller in currentViewControllers {
       controller.viewFrameOriginChangeObserver = self
     }

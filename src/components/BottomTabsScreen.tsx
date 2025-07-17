@@ -60,12 +60,16 @@ export interface BottomTabsScreenProps {
   // Android specific
   iconResourceName?: string;
 
+  badgeValue?: string;
+
   specialEffects?: {
     repeatedTabSelection?: {
       popToRoot?: boolean;
       scrollToTop?: boolean;
     };
   };
+
+  overrideScrollViewContentInsetAdjustmentBehavior?: boolean; // defaults to true
 
   // Events
   onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
