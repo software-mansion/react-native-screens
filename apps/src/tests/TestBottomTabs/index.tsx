@@ -70,8 +70,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_outgoing', // Android specific
-      tabBarItemBadgeBackgroundColor: Colors.RedDark40,
-      tabBarItemBadgeTextColor: Colors.RedDark120,
       title: 'Tab3',
     },
     contentViewRenderFn: Tab3,
