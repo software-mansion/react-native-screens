@@ -223,21 +223,25 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.iconSource != oldComponentProps.iconSource) {
+  if (newComponentProps.iconImageSource != oldComponentProps.iconImageSource) {
     _iconImageSource =
-        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconSource, _iconType);
-    _iconSfSymbolName =
-        rnscreens::conversion::SFSymbolNameFromImageSourceAndIconType(&newComponentProps.iconSource, _iconType);
-
+        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconImageSource, _iconType);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.iconSfSymbolName != oldComponentProps.iconSfSymbolName) {
+    _iconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.selectedIconSource != oldComponentProps.selectedIconSource) {
+  if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
     _selectedIconImageSource =
-        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.selectedIconSource, _iconType);
-    _selectedIconSfSymbolName =
-        rnscreens::conversion::SFSymbolNameFromImageSourceAndIconType(&newComponentProps.selectedIconSource, _iconType);
-
+        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.selectedIconImageSource, _iconType);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+  
+  if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
+    _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
