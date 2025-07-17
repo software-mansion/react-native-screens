@@ -180,10 +180,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
   );
 
-  const { iconType, iconSource, selectedIconSource } = parseIconsToNativeProps(
-    icon,
-    selectedIcon,
-  );
+  const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
   return (
     <BottomTabsScreenNativeComponent
@@ -194,9 +191,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
-      iconType={iconType}
-      iconSource={iconSource}
-      selectedIconSource={selectedIconSource}
+      {...iconProps}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       {...rest}>
@@ -209,7 +204,8 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
 function parseIconToNativeProps(icon: Icon | undefined): {
   iconType?: IconType;
-  iconSource?: ImageSourcePropType;
+  iconImageSource?: ImageSourcePropType;
+  iconSfSymbolName?: string;
 } {
   if (!icon) {
     return {};
@@ -219,20 +215,18 @@ function parseIconToNativeProps(icon: Icon | undefined): {
     // iOS-specific: SFSymbol usage
     return {
       iconType: 'sfSymbol',
-      iconSource: {
-        body: icon.sfSymbolName,
-      },
+      iconSfSymbolName: icon.sfSymbolName,
     };
   } else if ('imageSource' in icon) {
     return {
       iconType: 'image',
-      iconSource: icon.imageSource,
+      iconImageSource: icon.imageSource,
     };
   } else if ('templateSource' in icon) {
     // iOS-specifig: image as a template usage
     return {
       iconType: 'template',
-      iconSource: icon.templateSource,
+      iconImageSource: icon.templateSource,
     };
   } else {
     // iOS-specific: SFSymbol, image as a template usage
@@ -247,12 +241,18 @@ function parseIconsToNativeProps(
   selectedIcon: Icon | undefined,
 ): {
   iconType?: IconType;
-  iconSource?: ImageSourcePropType;
-  selectedIconSource?: ImageSourcePropType;
+  iconImageSource?: ImageSourcePropType;
+  iconSfSymbolName?: string;
+  selectedIconImageSource?: ImageSourcePropType;
+  selectedIconSfSymbolName?: string;
 } {
-  const { iconSource, iconType } = parseIconToNativeProps(icon);
-  const { iconSource: selectedIconSource, iconType: selectedIconType } =
-    parseIconToNativeProps(selectedIcon);
+  const { iconImageSource, iconSfSymbolName, iconType } =
+    parseIconToNativeProps(icon);
+  const {
+    iconImageSource: selectedIconImageSource,
+    iconSfSymbolName: selectedIconSfSymbolName,
+    iconType: selectedIconType,
+  } = parseIconToNativeProps(selectedIcon);
 
   if (
     iconType !== undefined &&
@@ -269,8 +269,10 @@ function parseIconsToNativeProps(
 
   return {
     iconType,
-    iconSource,
-    selectedIconSource,
+    iconImageSource,
+    iconSfSymbolName,
+    selectedIconImageSource,
+    selectedIconSfSymbolName,
   };
 }
 

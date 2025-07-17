@@ -96,8 +96,8 @@
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
   if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
-    tabBarItem.image = [UIImage systemImageNamed:screenView.iconSFSymbolName];
-    tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSFSymbolName];
+    tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+    tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
     

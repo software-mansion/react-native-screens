@@ -85,8 +85,12 @@ export interface NativeProps extends ViewProps {
 
   // iOS-specific: SFSymbol usage
   iconType?: WithDefault<IconType, 'sfSymbol'>;
-  iconSource?: ImageSource;
-  selectedIconSource?: ImageSource;
+
+  iconImageSource?: ImageSource;
+  iconSfSymbolName?: string;
+
+  selectedIconImageSource?: ImageSource;
+  selectedIconSfSymbolName?: string;
 
   badgeValue?: string;
 

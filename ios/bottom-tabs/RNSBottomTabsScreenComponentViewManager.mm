@@ -35,6 +35,10 @@ RCT_EXPORT_VIEW_PROPERTY(tabBarItemIconColor, UIColor);
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemBadgeBackgroundColor, UIColor);
 
 RCT_EXPORT_VIEW_PROPERTY(iconType, RNSBottomTabsIconType);
+RCT_EXPORT_VIEW_PROPERTY(iconImageSource, RCTImageSource);
+RCT_EXPORT_VIEW_PROPERTY(iconSfSymbolName, NSString);
+RCT_EXPORT_VIEW_PROPERTY(selectedIconImageSource, RCTImageSource);
+RCT_EXPORT_VIEW_PROPERTY(selectedIconSfSymbolName, NSString);
 
 RCT_EXPORT_VIEW_PROPERTY(shouldUseRepeatedTabSelectionPopToRootSpecialEffect, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(shouldUseRepeatedTabSelectionScrollToTopSpecialEffect, BOOL);

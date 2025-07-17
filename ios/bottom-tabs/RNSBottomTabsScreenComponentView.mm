@@ -88,10 +88,10 @@ namespace react = facebook::react;
   _iconType = RNSBottomTabsIconTypeSfSymbol;
 
   _iconImageSource = nil;
-  _iconSFSymbolName = nil;
+  _iconSfSymbolName = nil;
 
   _selectedIconImageSource = nil;
-  _selectedIconSFSymbolName = nil;
+  _selectedIconSfSymbolName = nil;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -226,7 +226,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.iconSource != oldComponentProps.iconSource) {
     _iconImageSource =
         rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconSource, _iconType);
-    _iconSFSymbolName =
+    _iconSfSymbolName =
         rnscreens::conversion::SFSymbolNameFromImageSourceAndIconType(&newComponentProps.iconSource, _iconType);
 
     tabItemNeedsAppearanceUpdate = YES;
@@ -235,7 +235,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.selectedIconSource != oldComponentProps.selectedIconSource) {
     _selectedIconImageSource =
         rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.selectedIconSource, _iconType);
-    _selectedIconSFSymbolName =
+    _selectedIconSfSymbolName =
         rnscreens::conversion::SFSymbolNameFromImageSourceAndIconType(&newComponentProps.selectedIconSource, _iconType);
 
     tabItemNeedsAppearanceUpdate = YES;
@@ -322,6 +322,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
+  
   if (_tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
     _tabItemNeedsAppearanceUpdate = NO;
@@ -403,18 +404,6 @@ RNS_IGNORE_SUPER_CALL_END
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
-- (void)setIconSFSymbolName:(NSString *)iconSFSymbolName
-{
-  _iconSFSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSFSymbolName];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setSelectedIconSFSymbolName:(NSString *)selectedIconSFSymbolName
-{
-  _selectedIconSFSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSFSymbolName];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
 - (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
 {
   _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
@@ -424,6 +413,30 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setIconType:(RNSBottomTabsIconType)iconType
 {
   _iconType = iconType;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setIconImageSource:(RCTImageSource *)iconImageSource
+{
+  _iconImageSource = iconImageSource;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setIconSfSymbolName:(NSString *)iconSfSymbolName
+{
+  _iconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSfSymbolName];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setSelectedIconImageSource:(RCTImageSource *)selectedIconImageSource
+{
+  _selectedIconImageSource = selectedIconImageSource;
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setSelectedIconSfSymbolName:(NSString *)selectedIconSfSymbolName
+{
+  _selectedIconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
