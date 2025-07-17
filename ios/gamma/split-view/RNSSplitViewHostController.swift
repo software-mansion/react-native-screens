@@ -219,9 +219,6 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 
 /// This extension is a workaround for missing UISplitViewController symbols introduced in iOS 26,
 /// allowing the project to compile and run on iOS 18 or earlier versions.
-///
-/// Specifically, it enables usage of an additional split view column (e.g., 'inspector') by referencing
-/// it by a rawValue. This should be revisited and updated once we move to iOS 26 or later.
 
 #if compiler(>=6.2)
   extension RNSSplitViewHostController {
