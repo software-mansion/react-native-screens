@@ -57,6 +57,13 @@ namespace react = facebook::react;
   _showSecondaryToggleButton = false;
   _showInspector = false;
 
+  _minimumPrimaryColumnWidth = -1;
+  _maximumPrimaryColumnWidth = -1;
+  _preferredPrimaryColumnWidth = -1;
+  _minimumSupplementaryColumnWidth = -1;
+  _maximumSupplementaryColumnWidth = -1;
+  _preferredSupplementaryColumnWidth = -1;
+
   _isShowSecondaryToggleButtonSet = false;
 }
 
@@ -212,6 +219,42 @@ RNS_IGNORE_SUPER_CALL_END
     _needsSplitViewAppearanceUpdate = true;
     _displayModeButtonVisibility = rnscreens::conversion::SplitViewDisplayModeButtonVisibilityFromHostProp(
         newComponentProps.displayModeButtonVisibility);
+  }
+
+  if (oldComponentProps.columnMetrics.minimumPrimaryColumnWidth !=
+      newComponentProps.columnMetrics.minimumPrimaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _minimumPrimaryColumnWidth = newComponentProps.columnMetrics.minimumPrimaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.maximumPrimaryColumnWidth !=
+      newComponentProps.columnMetrics.maximumPrimaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _maximumPrimaryColumnWidth = newComponentProps.columnMetrics.maximumPrimaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.preferredPrimaryColumnWidth !=
+      newComponentProps.columnMetrics.preferredPrimaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _preferredPrimaryColumnWidth = newComponentProps.columnMetrics.preferredPrimaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.minimumSupplementaryColumnWidth !=
+      newComponentProps.columnMetrics.minimumSupplementaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _minimumSupplementaryColumnWidth = newComponentProps.columnMetrics.minimumSupplementaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.maximumSupplementaryColumnWidth !=
+      newComponentProps.columnMetrics.maximumSupplementaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _maximumSupplementaryColumnWidth = newComponentProps.columnMetrics.maximumSupplementaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.preferredSupplementaryColumnWidth !=
+      newComponentProps.columnMetrics.preferredSupplementaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _preferredSupplementaryColumnWidth = newComponentProps.columnMetrics.preferredSupplementaryColumnWidth;
   }
 
   // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.

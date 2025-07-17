@@ -27,6 +27,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL showSecondaryToggleButton;
 @property (nonatomic, readonly) BOOL showInspector;
 
+@property (nonatomic, readonly) int minimumPrimaryColumnWidth;
+@property (nonatomic, readonly) int maximumPrimaryColumnWidth;
+@property (nonatomic, readonly) int preferredPrimaryColumnWidth;
+@property (nonatomic, readonly) int minimumSupplementaryColumnWidth;
+@property (nonatomic, readonly) int maximumSupplementaryColumnWidth;
+@property (nonatomic, readonly) int preferredSupplementaryColumnWidth;
+
 @end
 
 #pragma mark - Events
