@@ -48,6 +48,7 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemTitleFontColorActive?: TextStyle['color'];
   tabBarItemIconColorActive?: ColorValue;
 
+  // iOS-specific
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
 
   // Control
