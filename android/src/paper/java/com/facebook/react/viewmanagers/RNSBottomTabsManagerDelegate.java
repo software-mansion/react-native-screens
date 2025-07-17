@@ -66,6 +66,9 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
       case "tabBarItemTitleFontSizeActive":
         mViewManager.setTabBarItemTitleFontSizeActive(view, value == null ? 0f : ((Double) value).floatValue());
         break;
+      case "tabBarMinimizeBehavior":
+        mViewManager.setTabBarMinimizeBehavior(view, (String) value);
+        break;
       case "controlNavigationStateInJS":
         mViewManager.setControlNavigationStateInJS(view, value == null ? false : (boolean) value);
         break;
