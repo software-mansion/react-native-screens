@@ -6,7 +6,7 @@ import { Colors } from '../../shared/styling/Colors';
 const SplitViewBaseApp = () => {
   return (
     <SplitViewHost 
-      columnMetrics={{preferredPrimaryColumnWidth: 250, preferredSupplementaryColumnWidth: 250}} 
+      columnMetrics={{preferredSupplementaryColumnWidth: 250}} 
       displayMode='twoBesideSecondary' 
       primaryEdge='leading' 
       presentsWithGesture={false} 
