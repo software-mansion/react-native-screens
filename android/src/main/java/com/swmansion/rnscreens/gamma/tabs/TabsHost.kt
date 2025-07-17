@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import com.swmansion.rnscreens.R
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Choreographer
@@ -19,8 +20,6 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.BuildConfig
-import com.facebook.react.modules.core.ReactChoreographer
-import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
