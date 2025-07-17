@@ -66,8 +66,11 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
       case "tabBarItemTitleFontSizeActive":
         mViewManager.setTabBarItemTitleFontSizeActive(view, value == null ? 0f : ((Double) value).floatValue());
         break;
-      case "tabBarItemActivityIndicatorColor":
-        mViewManager.setTabBarItemActivityIndicatorColor(view, ColorPropConverter.getColor(value, view.getContext()));
+      case "tabBarItemActiveIndicatorColor":
+        mViewManager.setTabBarItemActiveIndicatorColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
+      case "tabBarItemActiveIndicatorEnabled":
+        mViewManager.setTabBarItemActiveIndicatorEnabled(view, value == null ? true : (boolean) value);
         break;
       case "tabBarItemRippleColor":
         mViewManager.setTabBarItemRippleColor(view, ColorPropConverter.getColor(value, view.getContext()));
