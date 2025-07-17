@@ -81,6 +81,15 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "selectedIconSfSymbolName":
         mViewManager.setSelectedIconSfSymbolName(view, value == null ? null : (String) value);
         break;
+      case "iconResourceName":
+        mViewManager.setIconResourceName(view, value == null ? null : (String) value);
+        break;
+      case "tabBarItemBadgeVisible":
+        mViewManager.setTabBarItemBadgeVisible(view, value == null ? false : (boolean) value);
+        break;
+      case "tabBarItemBadgeTextColor":
+        mViewManager.setTabBarItemBadgeTextColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
       case "badgeValue":
         mViewManager.setBadgeValue(view, value == null ? null : (String) value);
         break;
