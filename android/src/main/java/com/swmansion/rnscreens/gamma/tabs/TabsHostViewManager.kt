@@ -179,6 +179,13 @@ class TabsHostViewManager :
         view?.tabBarItemTitleFontSizeActive = value
     }
 
+    override fun setTabBarItemRippleColor(
+        view: TabsHost,
+        value: Int?,
+    ) {
+        view.tabBarItemRippleColor = value
+    }
+
     companion object {
         const val REACT_CLASS = "RNSBottomTabs"
     }
