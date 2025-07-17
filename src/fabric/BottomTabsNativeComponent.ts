@@ -89,6 +89,7 @@ export interface NativeProps extends ViewProps {
     'auto'
   >;
 
+  // iOS-specific
   tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
 
   // Control

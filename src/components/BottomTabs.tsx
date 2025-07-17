@@ -52,6 +52,7 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemRippleColor?: ColorValue;
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
 
+  // iOS-specific
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
 
   // Control
