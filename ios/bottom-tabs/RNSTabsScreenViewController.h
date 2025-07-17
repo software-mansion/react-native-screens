@@ -1,11 +1,18 @@
 #import <UIKit/UIKit.h>
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
+
+#if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if !TARGET_OS_TV
 @interface RNSTabsScreenViewController : UIViewController <RNSOrientationProviding>
+#else // !TARGET_OS_TV
+@interface RNSTabsScreenViewController : UIViewController
+#endif // !TARGET_OS_TV
 
 @property (nonatomic, strong, readonly, nullable) RNSBottomTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSBottomTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;

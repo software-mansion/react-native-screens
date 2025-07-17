@@ -107,6 +107,8 @@
   return false;
 }
 
+#if !TARGET_OS_TV
+
 - (RNSOrientation)evaluateOrientation
 {
   if ([self.childViewControllers.lastObject respondsToSelector:@selector(evaluateOrientation)]) {
@@ -120,5 +122,7 @@
   
   return self.tabScreenComponentView.orientation;
 }
+
+#endif // !TARGET_OS_TV
 
 @end

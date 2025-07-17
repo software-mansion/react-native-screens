@@ -1996,6 +1996,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - RNSOrientationProviding
 
+#if !TARGET_OS_TV
+
 - (RNSOrientation)evaluateOrientation
 {
   if ([self.childViewControllers.lastObject respondsToSelector:@selector(evaluateOrientation)]) {
@@ -2006,9 +2008,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       return childOrientation;
     }
   }
-  
+
   return rnscreens::conversion::RNSOrientationFromUIInterfaceOrientationMask([self supportedInterfaceOrientations]);
 }
+
+#endif // !TARGET_OS_TV
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
