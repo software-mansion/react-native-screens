@@ -7,7 +7,7 @@
 
 @implementation RNSBottomTabsHostComponentView (RNSImageLoader)
 
-- (RCTImageLoader *)retrieveImageLoaderFromState:(facebook::react::RNSBottomTabsShadowNode::ConcreteState::Shared)receivedState
+- (nullable RCTImageLoader *)retrieveImageLoaderFromState:(facebook::react::RNSBottomTabsShadowNode::ConcreteState::Shared)receivedState
 {
   if (auto imgLoaderPtr = receivedState.get()->getData().getImageLoader().lock()) {
     return react::unwrapManagedObject(imgLoaderPtr);

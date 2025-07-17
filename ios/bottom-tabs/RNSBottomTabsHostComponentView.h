@@ -67,9 +67,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #endif
 
+@end
+
 #pragma mark - React Image Loader
 
-- (RCTImageLoader *)reactImageLoader;
+@interface RNSBottomTabsHostComponentView ()
+
+- (nullable RCTImageLoader *)reactImageLoader;
 
 @end
 

@@ -55,9 +55,8 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader
 {
-  if (self = [super initWithFrame:frame]) {
+  if (self = [self initWithFrame:frame]) {
     _imageLoader = imageLoader;
-    [self initState];
   }
   return self;
 }
@@ -470,7 +469,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - React Image Loader
 
-- (RCTImageLoader *)reactImageLoader
+- (nullable RCTImageLoader *)reactImageLoader
 {
   return _imageLoader;
 }
