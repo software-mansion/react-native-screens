@@ -1,12 +1,12 @@
 #import "RNSBottomTabsHostComponentView.h"
 
-#if defined(__cplusplus)
+#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
 #import "RNSBottomTabsShadowNode.h"
-#endif
+#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if defined(__cplusplus)
+#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
 
 @class RCTImageLoader;
 
@@ -16,6 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#endif
+#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_END
