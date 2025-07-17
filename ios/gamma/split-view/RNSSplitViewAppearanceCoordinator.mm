@@ -13,6 +13,7 @@
   }
 
   // Step 1 - general settings
+  controller.displayModeButtonVisibility = splitView.displayModeButtonVisibility;
   controller.preferredSplitBehavior = splitView.splitBehavior;
   controller.preferredDisplayMode = splitView.displayMode;
   controller.presentsWithGesture = splitView.presentsWithGesture;

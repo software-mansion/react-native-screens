@@ -1,26 +1,26 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
 import { Colors } from '../../shared/styling/Colors';
 
 const SplitViewBaseApp = () => {
-  const [lastSplitViewEvent, setLastSplitViewEvent] = React.useState<string>();
-
-  const onCollapse = () => setLastSplitViewEvent('onCollapse');
-  const onExpand = () => setLastSplitViewEvent('onExpand');
+  const [buttonVisibility, setButtonVisibility] = React.useState('automatic');
 
   return (
-    <SplitViewHost onCollapse={onCollapse} onExpand={onExpand}>
+    <SplitViewHost displayModeButtonVisibility={buttonVisibility} displayMode='twoBesideSecondary' splitBehavior='tile'>
+      <SplitViewScreen.Column>
+        <View style={[styles.container, { backgroundColor: Colors.GreenDark100 }]} />
+      </SplitViewScreen.Column>
+      <SplitViewScreen.Column>
+        <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]}>
+          <Text style={styles.text}>DisplayModeButtonVisibility demo</Text>
+          <Button onPress={() => setButtonVisibility('always')} title='always' />
+          <Button onPress={() => setButtonVisibility('automatic')} title='automatic' />
+          <Button onPress={() => setButtonVisibility('never')} title='never' />
+        </View>
+      </SplitViewScreen.Column>
       <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]} />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]} />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.White }]}>
-          <Text style={styles.text}>{`SplitView event received: ${lastSplitViewEvent}`}</Text>
-        </View>
       </SplitViewScreen.Column>
     </SplitViewHost>
   );
