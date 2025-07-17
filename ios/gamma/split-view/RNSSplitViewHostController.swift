@@ -253,13 +253,15 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
     public func splitViewController(
       _ svc: UISplitViewController, didHide column: UISplitViewController.Column
     ) {
-      if column != RNSSplitViewHostController.inspectorColumn {
-        return
-      }
+      if #available(iOS 26.0, *) {
+        if column != .inspector {
+          return
+        }
 
-      if let inspectorViewController = viewController(for: .inspector) {
-        if inspectorViewController.view.window == nil {
-          splitViewHostComponentView.notifyInspectorDidHide()
+        if let inspectorViewController = viewController(for: .inspector) {
+          if inspectorViewController.view.window == nil {
+            splitViewHostComponentView.notifyInspectorDidHide()
+          }
         }
       }
     }
