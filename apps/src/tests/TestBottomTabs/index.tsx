@@ -21,13 +21,13 @@ const TAB_CONFIGS: TabConfiguration[] = [
       badgeValue: '1',
       title: 'Tab1',
       isFocused: true,
-      iconResourceName: 'sym_call_incoming', // Android specific
       icon: {
         sfSymbolName: 'house',
       },
       selectedIcon: {
         sfSymbolName: 'house.fill',
       },
+      iconResourceName: 'sym_call_incoming', // Android specific
     },
     contentViewRenderFn: Tab1,
   },

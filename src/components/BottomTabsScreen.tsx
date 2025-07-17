@@ -3,12 +3,12 @@
 import React from 'react';
 import BottomTabsScreenNativeComponent, {
   BlurEffect,
-  IconType,
+  type IconType,
   type NativeProps,
 } from '../fabric/BottomTabsScreenNativeComponent';
 import {
   type ColorValue,
-  ImageSourcePropType,
+  type ImageSourcePropType,
   type NativeSyntheticEvent,
   StyleSheet,
   TextStyle,

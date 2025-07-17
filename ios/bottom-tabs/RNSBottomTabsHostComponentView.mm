@@ -9,12 +9,6 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSBottomTabsComponentDescriptor.h>
-#import <React/RCTImageLoader.h>
-
-#ifndef NDEBUG
-#import <react/utils/ManagedObjectWrapper.h>
-#endif // !NDEBUG
-
 #import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
 #endif // RCT_NEW_ARCH_ENABLED
 

@@ -37,10 +37,6 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
     RNSBottomTabsIconType iconType);
 
-NSString *SFSymbolNameFromImageSourceAndIconType(
-    const facebook::react::ImageSource *imageSource,
-    RNSBottomTabsIconType iconType);
-
 #pragma mark SplitView
 
 UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(

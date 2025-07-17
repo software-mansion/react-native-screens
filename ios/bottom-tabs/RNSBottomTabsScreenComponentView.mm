@@ -267,7 +267,7 @@ RNS_IGNORE_SUPER_CALL_END
           @"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
     }
   }
-  
+
   // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
   // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
   // enabling us to warn users that dynamic changes are not supported.
@@ -326,7 +326,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
-  
+
   if (_tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
     _tabItemNeedsAppearanceUpdate = NO;

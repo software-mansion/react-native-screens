@@ -213,27 +213,4 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
   return iconImageSource;
 }
 
-NSString *SFSymbolNameFromImageSourceAndIconType(
-    const facebook::react::ImageSource *imageSource,
-    RNSBottomTabsIconType iconType)
-{
-  NSString *iconSFSymbolName;
-  
-  switch (iconType) {
-    case RNSBottomTabsIconTypeSfSymbol:
-      iconSFSymbolName = RCTNSStringFromStringNilIfEmpty(imageSource->body);
-      break;
-      
-    case RNSBottomTabsIconTypeImage:
-    case RNSBottomTabsIconTypeTemplate:
-      iconSFSymbolName = nil;
-      break;
-    
-    default:
-      RCTLogError(@"[RNScreens] unsupported icon type");
-  }
-
-  return iconSFSymbolName;
-}
-
 }; // namespace rnscreens::conversion
