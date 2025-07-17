@@ -9,6 +9,10 @@ public class RNSSplitViewScreenController: UIViewController {
     return splitViewScreenComponentView.shadowStateProxy()
   }
 
+  private var reactEventEmitter: RNSSplitViewScreenComponentEventEmitter {
+    return splitViewScreenComponentView.reactEventEmitter()
+  }
+
   @objc public required init(splitViewScreenComponentView: RNSSplitViewScreenComponentView) {
     self.splitViewScreenComponentView = splitViewScreenComponentView
     super.init(nibName: nil, bundle: nil)
@@ -82,5 +86,23 @@ public class RNSSplitViewScreenController: UIViewController {
   func columnPositioningDidChangeIn(splitViewController: UISplitViewController) {
     shadowStateProxy.updateShadowState(
       ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view)
+  }
+
+  // MARK: Events
+
+  public override func viewWillAppear(_ animated: Bool) {
+    reactEventEmitter.emitOnWillAppear()
+  }
+
+  public override func viewDidAppear(_ animated: Bool) {
+    reactEventEmitter.emitOnDidAppear()
+  }
+
+  public override func viewWillDisappear(_ animated: Bool) {
+    reactEventEmitter.emitOnWillDisappear()
+  }
+
+  public override func viewDidDisappear(_ animated: Bool) {
+    reactEventEmitter.emitOnDidDisappear()
   }
 }

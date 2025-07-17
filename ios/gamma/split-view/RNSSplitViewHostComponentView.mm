@@ -15,6 +15,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSSplitViewHostComponentView {
+  RNSSplitViewHostComponentEventEmitter *_Nonnull _reactEventEmitter;
   RNSSplitViewHostController *_Nonnull _controller;
   NSMutableArray<RNSSplitViewScreenComponentView *> *_Nonnull _reactSubviews;
 
@@ -36,6 +37,8 @@ namespace react = facebook::react;
 - (void)initState
 {
   [self resetProps];
+
+  _reactEventEmitter = [RNSSplitViewHostComponentEventEmitter new];
 
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _needsSplitViewAppearanceUpdate = false;
@@ -229,14 +232,19 @@ RNS_IGNORE_SUPER_CALL_END
   [_controller reactMountingTransactionDidMount];
 }
 
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_reactEventEmitter
+      updateEventEmitter:std::static_pointer_cast<const react::RNSSplitViewHostEventEmitter>(eventEmitter)];
+}
+
 #pragma mark - Events
 
-- (void)notifyInspectorDidHide
+- (nonnull RNSSplitViewHostComponentEventEmitter *)reactEventEmitter
 {
-  if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const react::RNSSplitViewHostEventEmitter>(_eventEmitter)
-        ->onInspectorHide(react::RNSSplitViewHostEventEmitter::OnInspectorHide{});
-  }
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
 }
 
 @end

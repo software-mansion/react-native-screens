@@ -6,6 +6,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsChildViewControllersUpdate = false
   private var needsAppearanceUpdate = false
 
+  private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
+    return splitViewHostComponentView.reactEventEmitter()
+  }
+
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
   private let splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
 
@@ -248,21 +252,50 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 #endif
 
 extension RNSSplitViewHostController: UISplitViewControllerDelegate {
+  public func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
+    reactEventEmitter.emitOnCollapse()
+  }
+
+  public func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+    reactEventEmitter.emitOnExpand()
+  }
+
+  public func splitViewController(
+    _ svc: UISplitViewController, willHide column: UISplitViewController.Column
+  ) {
+    // TODO: missing impl
+  }
+
   #if compiler(>=6.2)
     public func splitViewController(
       _ svc: UISplitViewController, didHide column: UISplitViewController.Column
     ) {
       if #available(iOS 26.0, *) {
+        // TODO: we may consider removing this logic, because it could be handled by onViewDidDisappear on the column level
+        // On the other hand, maybe dedicated event related to the inspector would be a better approach.
+        // For now I am leaving it, but feel free to drop this method if there's any reason that `onDidDisappear` works better.
         if column != .inspector {
           return
         }
 
         if let inspectorViewController = viewController(for: .inspector) {
           if inspectorViewController.view.window == nil {
-            splitViewHostComponentView.notifyInspectorDidHide()
+            reactEventEmitter.emitOnHideInspector()
           }
         }
       }
     }
   #endif
+  
+  public func splitViewController(
+    _ svc: UISplitViewController, willShow column: UISplitViewController.Column
+  ) {
+    // TODO: missing impl
+  }
+
+  public func splitViewController(
+    _ svc: UISplitViewController, didShow column: UISplitViewController.Column
+  ) {
+    // TODO: missing impl
+  }
 }
