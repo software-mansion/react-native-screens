@@ -152,7 +152,10 @@ export interface ScreenProps extends ViewProps {
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    *
-   * @platform ios
+   * On iOS, this affects both modal presentation and stack navigation gestures.
+   * On Android, when using `formSheet` presentation, this controls whether the bottom sheet can be dismissed by dragging.
+   *
+   * @platform ios, android (formSheet only)
    */
   gestureEnabled?: boolean;
   /**
