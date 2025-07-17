@@ -10,11 +10,11 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private let splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
 
   /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation, because SplitView doesn't support changing number of columns dynamically.
-  private let FIXED_COLUMNS_COUNT: Int
+  private let fixedColumnsCount: Int
 
-  private let MIN_NUMBER_OF_COLUMNS: Int = 2
-  private let MAX_NUMBER_OF_COLUMNS: Int = 3
-  private let MAX_NUMBER_OF_INSPECTORS: Int = 1
+  private let minNumberOfColumns: Int = 2
+  private let maxNumberOfColumns: Int = 3
+  private let maxNumberOfInspectors: Int = 1
 
   @objc public init(
     splitViewHostComponentView: RNSSplitViewHostComponentView,
@@ -22,7 +22,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ) {
     self.splitViewHostComponentView = splitViewHostComponentView
     self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
-    self.FIXED_COLUMNS_COUNT = numberOfColumns
+    self.fixedColumnsCount = numberOfColumns
 
     super.init(style: RNSSplitViewHostController.styleByNumberOfColumns(numberOfColumns))
 
@@ -124,7 +124,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
       #if compiler(>=6.2)
         maybeShowInspector()
       #endif
-
     } else {
       #if compiler(>=6.2)
         maybeHideInspector()
@@ -160,19 +159,19 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   func validateColumns(_ columns: [RNSSplitViewScreenComponentView]) {
     assert(
-      columns.count >= MIN_NUMBER_OF_COLUMNS
-        && columns.count <= MAX_NUMBER_OF_COLUMNS,
-      "[RNScreens] SplitView can only have from \(MIN_NUMBER_OF_COLUMNS) to \(MAX_NUMBER_OF_COLUMNS) columns"
+      columns.count >= minNumberOfColumns
+        && columns.count <= maxNumberOfColumns,
+      "[RNScreens] SplitView can only have from \(minNumberOfColumns) to \(maxNumberOfColumns) columns"
     )
 
     assert(
-      columns.count == FIXED_COLUMNS_COUNT,
+      columns.count == fixedColumnsCount,
       "[RNScreens] SplitView number of columns shouldn't change dynamically")
   }
 
   func validateInspectors(_ inspectors: [RNSSplitViewScreenComponentView]) {
     assert(
-      inspectors.count <= MAX_NUMBER_OF_INSPECTORS,
+      inspectors.count <= maxNumberOfInspectors,
       "[RNScreens] SplitView can only have 1 inspector")
   }
 }
