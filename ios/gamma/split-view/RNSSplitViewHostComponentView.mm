@@ -67,7 +67,6 @@ namespace react = facebook::react;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
   _minimumSecondaryColumnWidth = -1;
-  _maximumSecondaryColumnWidth = -1;
   _preferredSecondaryColumnWidth = -1;
   _minimumInspectorColumnWidth = -1;
   _maximumInspectorColumnWidth = -1;
@@ -273,12 +272,6 @@ RNS_IGNORE_SUPER_CALL_END
       newComponentProps.columnMetrics.minimumSecondaryColumnWidth) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumSecondaryColumnWidth = newComponentProps.columnMetrics.minimumSecondaryColumnWidth;
-  }
-
-  if (oldComponentProps.columnMetrics.maximumSecondaryColumnWidth !=
-      newComponentProps.columnMetrics.maximumSecondaryColumnWidth) {
-    _needsSplitViewAppearanceUpdate = true;
-    _maximumSecondaryColumnWidth = newComponentProps.columnMetrics.maximumSecondaryColumnWidth;
   }
 
   if (oldComponentProps.columnMetrics.preferredSecondaryColumnWidth !=

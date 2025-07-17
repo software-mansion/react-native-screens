@@ -38,7 +38,6 @@
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
   ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, minimumSecondaryColumnWidth);
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, maximumSecondaryColumnWidth);
   ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, preferredSecondaryColumnWidth);
 
   ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, minimumInspectorColumnWidth);

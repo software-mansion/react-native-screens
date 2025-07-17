@@ -43,7 +43,6 @@ interface ColumnMetrics {
 
   // iOS 26 only
   minimumSecondaryColumnWidth?: WithDefault<Int32, -1>;
-  maximumSecondaryColumnWidth?: WithDefault<Int32, -1>;
   preferredSecondaryColumnWidth?: WithDefault<Int32, -1>;
   minimumInspectorColumnWidth?: WithDefault<Int32, -1>;
   maximumInspectorColumnWidth?: WithDefault<Int32, -1>;
