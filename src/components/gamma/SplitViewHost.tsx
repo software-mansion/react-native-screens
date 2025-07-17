@@ -9,14 +9,7 @@ import type {
 } from '../../fabric/gamma/SplitViewHostNativeComponent';
 
 export type SplitViewNativeProps = NativeProps & {
-  // SplitView appearance
-
-  displayMode?: SplitViewDisplayMode;
-  splitBehavior?: SplitViewSplitBehavior;
-
-  // SplitView interactions
-
-  presentsWithGesture?: boolean;
+  // Overrides
 };
 
 type SplitViewHostProps = {
