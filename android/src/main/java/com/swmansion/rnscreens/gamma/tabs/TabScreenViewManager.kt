@@ -103,14 +103,24 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
-    override fun setIconSource(
+    override fun setIconImageSource(
+        view: TabScreen?,
+        value: ReadableMap?,
+    ) = Unit
+
+    override fun setIconSfSymbolName(
+        view: TabScreen?,
+        value: String?,
+    ) =  Unit
+
+    override fun setSelectedIconImageSource(
         view: TabScreen?,
         value: ReadableMap?
     ) = Unit
 
-    override fun setSelectedIconSource(
+    override fun setSelectedIconSfSymbolName(
         view: TabScreen?,
-        value: ReadableMap?
+        value: String?
     ) = Unit
 
     // Annotation is Paper only
