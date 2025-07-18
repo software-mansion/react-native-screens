@@ -124,3 +124,14 @@ typedef NS_ENUM(NSInteger, RNSBottomTabsIconType) {
   RNSBottomTabsIconTypeTemplate,
   RNSBottomTabsIconTypeSfSymbol,
 };
+
+typedef NS_ENUM(NSInteger, RNSOrientation) {
+  RNSOrientationInherit,
+  RNSOrientationAll,
+  RNSOrientationAllButUpsideDown,
+  RNSOrientationPortrait,
+  RNSOrientationPortraitUpsideDown,
+  RNSOrientationLandscape,
+  RNSOrientationLandscapeLeft,
+  RNSOrientationLandscapeRight,
+};

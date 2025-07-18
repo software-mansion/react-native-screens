@@ -6,6 +6,10 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 
+#if !TARGET_OS_TV
+#import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
+
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #else
@@ -33,8 +37,11 @@ namespace react = facebook::react;
 
 @class RNSScreenView;
 
+#if !TARGET_OS_TV
+@interface RNSScreen : UIViewController <RNSViewControllerDelegate, RNSOrientationProviding>
+#else // !TARGET_OS_TV
 @interface RNSScreen : UIViewController <RNSViewControllerDelegate>
-
+#endif // !TARGET_OS_TV
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (BOOL)hasNestedStack;

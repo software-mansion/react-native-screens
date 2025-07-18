@@ -17,8 +17,22 @@ RCT_ENUM_CONVERTER(
     @"sfSymbol": @(RNSBottomTabsIconTypeSfSymbol),
   }),
   RNSBottomTabsIconTypeSfSymbol,
-  integerValue
-)
+  integerValue)
+
+RCT_ENUM_CONVERTER(
+  RNSOrientation,
+  (@{
+    @"inherit": @(RNSOrientationInherit),
+    @"all": @(RNSOrientationAll),
+    @"allButUpsideDown": @(RNSOrientationAllButUpsideDown),
+    @"portrait": @(RNSOrientationPortrait),
+    @"portraitUpsideDown": @(RNSOrientationPortraitUpsideDown),
+    @"landscape": @(RNSOrientationLandscape),
+    @"landscapeLeft": @(RNSOrientationLandscapeLeft),
+    @"landscapeRight": @(RNSOrientationLandscapeRight),
+  }),
+  RNSOrientationInherit,
+  integerValue)
 
 @end
 

@@ -37,6 +37,15 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
     RNSBottomTabsIconType iconType);
 
+RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(
+    react::RNSBottomTabsScreenOrientation orientation);
+
+UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(
+    RNSOrientation orientation);
+
+RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(
+    UIInterfaceOrientationMask orientationMask);
+
 #pragma mark SplitView
 
 UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(
