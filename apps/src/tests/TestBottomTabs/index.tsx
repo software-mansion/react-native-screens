@@ -18,7 +18,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab1',
-      badgeValue: '1',
       title: 'Tab1',
       isFocused: true,
       icon: {
@@ -34,8 +33,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab2',
-      badgeValue: '2',
-      tabBarItemBadgeBackgroundColor: Colors.PurpleLight100,
+      badgeValue: 'NEW',
+      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       tabBarBackgroundColor: Colors.NavyDark140,
       tabBarItemTitleFontSize: 20,
       tabBarItemTitleFontStyle: 'italic',
@@ -60,16 +59,16 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab3',
-      badgeValue: '3',
-      tabBarItemBadgeBackgroundColor: Colors.YellowDark120,
+      badgeValue: '2137',
+      tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+      tabBarItemBadgeTextColor: Colors.RedDark120,
       icon: {
         imageSource: require('../../../assets/variableIcons/icon.png'),
       },
       selectedIcon: {
         imageSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
-      tabBarItemIconColor: Colors.RedDark120,
-      iconResourceName: 'sym_call_outgoing', // Android specific
+      iconResourceName: 'sym_action_email', // Android specific
       title: 'Tab3',
     },
     contentViewRenderFn: Tab3,
@@ -85,6 +84,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       iconResourceName: 'sym_action_chat', // Android specific
       title: 'Tab4',
+      badgeValue: '',
     },
     contentViewRenderFn: Tab4,
   },

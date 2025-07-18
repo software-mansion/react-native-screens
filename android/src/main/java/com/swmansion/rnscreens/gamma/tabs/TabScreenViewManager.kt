@@ -83,10 +83,13 @@ class TabScreenViewManager :
         value: Int?,
     ) = Unit
 
+    @ReactProp(name = "tabBarItemBadgeBackgroundColor", customType = "Color")
     override fun setTabBarItemBadgeBackgroundColor(
         view: TabScreen,
         value: Int?,
-    ) = Unit
+    ) {
+        view.tabBarItemBadgeBackgroundColor = value
+    }
 
     override fun setTabBarItemTitlePositionAdjustment(
         view: TabScreen?,
@@ -142,9 +145,11 @@ class TabScreenViewManager :
     }
 
     override fun setBadgeValue(
-        view: TabScreen?,
+        view: TabScreen,
         value: String?,
-    ) = Unit
+    ) {
+        view.badgeValue = value
+    }
 
     @ReactProp(name = "title")
     override fun setTitle(
@@ -152,14 +157,6 @@ class TabScreenViewManager :
         value: String?,
     ) {
         view.tabTitle = value
-    }
-
-    @ReactProp(name = "iconResourceName")
-    override fun setIconResourceName(
-        view: TabScreen,
-        value: String?,
-    ) {
-        view.iconResourceName = value
     }
 
     override fun setSpecialEffects(
@@ -171,6 +168,23 @@ class TabScreenViewManager :
         view: TabScreen,
         value: Boolean
     ) = Unit
+
+    // Android specific
+    @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
+    override fun setTabBarItemBadgeTextColor(
+        view: TabScreen,
+        value: Int?,
+    ) {
+        view.tabBarItemBadgeTextColor = value
+    }
+
+    @ReactProp(name = "iconResourceName")
+    override fun setIconResourceName(
+        view: TabScreen,
+        value: String?,
+    ) {
+        view.iconResourceName = value
+    }
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"

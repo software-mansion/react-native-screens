@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import com.swmansion.rnscreens.R
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Choreographer
@@ -23,6 +24,7 @@ import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
+@SuppressLint("PrivateResource") // We want to use variables from material design for default values
 class TabsHost(
     val reactContext: ThemedReactContext,
 ) : LinearLayout(reactContext),
@@ -92,8 +94,10 @@ class TabsHost(
 
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
 
+    private val wrappedContext = ContextThemeWrapper(reactContext, R.style.custom)
+
     private val bottomNavigationView: BottomNavigationView =
-        BottomNavigationView(ContextThemeWrapper(reactContext, R.style.custom)).apply {
+        BottomNavigationView(wrappedContext).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         }
 
@@ -302,7 +306,8 @@ class TabsHost(
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
         // ActivityIndicator color
-        val activityIndicatorColor = tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
+        val activityIndicatorColor =
+            tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activityIndicatorColor)
 
         // First clean the menu, then populate it
@@ -318,7 +323,11 @@ class TabsHost(
                     fragment.tabScreen.tabTitle,
                 )
 
+            // Icon
             item.icon = fragment.tabScreen.icon
+
+            // Badge
+            updateBadgeAppearance(index, fragment.tabScreen)
         }
 
         // Update font styles
@@ -368,6 +377,41 @@ class TabsHost(
             largeLabel.textSize = largeFontSize
             largeLabel.typeface = fontFamily
         }
+    }
+
+    private fun updateBadgeAppearance(
+        menuItemIndex: Int,
+        tabScreen: TabScreen,
+    ) {
+        val badgeValue = tabScreen.badgeValue
+
+        if (badgeValue == null) {
+            val badge = bottomNavigationView.getBadge(menuItemIndex)
+            badge?.isVisible = false
+
+            return
+        }
+
+        val badgeValueNumber = badgeValue.toIntOrNull()
+
+        val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
+        badge.isVisible = true
+
+        badge.clearText()
+        badge.clearNumber()
+
+        if (badgeValueNumber != null) {
+            badge.number = badgeValueNumber
+        } else if (badgeValue != "") {
+            badge.text = badgeValue
+        }
+
+        // Styling
+        badge.badgeTextColor =
+            tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
+        badge.backgroundColor =
+            tabScreen.tabBarItemBadgeBackgroundColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_error)
     }
 
     private fun updateSelectedTab() {
@@ -448,6 +492,9 @@ class TabsHost(
     ) {
         menuItem.title = tabScreen.tabTitle
         menuItem.icon = tabScreen.icon
+
+        // Badge
+        updateBadgeAppearance(bottomNavigationView.menu.children.indexOf(menuItem), tabScreen)
     }
 
     internal fun onViewManagerAddEventEmitters() {
