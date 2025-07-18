@@ -83,7 +83,7 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
 #endif
-  _tabBarBlurEffect = nil;
+  _tabBarBlurEffect = RNSExtendedBlurEffectStyleDefault;
   _tabBarBackgroundColor = nil;
   _tabBarTintColor = nil;
 
@@ -209,8 +209,8 @@ namespace react = facebook::react;
 
   if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
     _needsTabBarAppearanceUpdate = YES;
-    _tabBarBlurEffect =
-        rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
+    _tabBarBlurEffect = rnscreens::conversion::RNSExtendedBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
+        newComponentProps.tabBarBlurEffect);
   }
 
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
@@ -400,9 +400,9 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateTabBarAppearance];
 }
 
-- (void)setTabBarBlurEffectFromRNSBlurEffectStyle:(RNSBlurEffectStyle)tabBarBlurEffect
+- (void)setTabBarBlurEffect:(RNSExtendedBlurEffectStyle)tabBarBlurEffect
 {
-  _tabBarBlurEffect = rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(tabBarBlurEffect);
+  _tabBarBlurEffect = tabBarBlurEffect;
   [self invalidateTabBarAppearance];
 }
 
