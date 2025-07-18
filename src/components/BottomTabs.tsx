@@ -26,33 +26,26 @@ export interface BottomTabsProps extends ViewProps {
 
   // Tab Bar Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+
+  // Android-only appearance
   tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: BlurEffect; // defaults to 'none'
-  tabBarTintColor?: ColorValue;
 
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
+  tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
   tabBarItemTitleFontColor?: TextStyle['color'];
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: number;
-    vertical?: number;
-  };
+  tabBarItemTitleFontColorActive?: TextStyle['color'];
 
   tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // Additional for Android
-  tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
-  tabBarItemTitleFontColorActive?: TextStyle['color'];
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemActivityIndicatorColor?: ColorValue;
   tabBarItemRippleColor?: ColorValue;
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
 
-  // iOS-specific
+  // iOS-only appearance
+  tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
 
   // Control

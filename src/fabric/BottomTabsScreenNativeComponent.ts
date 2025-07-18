@@ -59,8 +59,18 @@ export interface NativeProps extends ViewProps {
   isFocused?: boolean;
   tabKey: string;
 
+  // General
+  title?: string | undefined | null;
+  badgeValue?: string;
+
   // Tab Bar Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+
+  // Android-only appearance
+  iconResourceName?: string;
+  tabBarItemBadgeTextColor?: ColorValue;
+
+  // iOS-only appearance
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
 
@@ -74,18 +84,6 @@ export interface NativeProps extends ViewProps {
     vertical?: Float;
   };
 
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // General
-  title?: string | undefined | null;
-
-  // Android-specific image handling
-  iconResourceName?: string;
-  tabBarItemBadgeTextColor?: ColorValue;
-
-  // iOS-specific: SFSymbol usage
   iconType?: WithDefault<IconType, 'sfSymbol'>;
 
   iconImageSource?: ImageSource;
@@ -94,7 +92,9 @@ export interface NativeProps extends ViewProps {
   selectedIconImageSource?: ImageSource;
   selectedIconSfSymbolName?: string;
 
-  badgeValue?: string;
+  tabBarItemIconColor?: ColorValue;
+
+  tabBarItemBadgeBackgroundColor?: ColorValue;
 
   specialEffects?: {
     repeatedTabSelection?: {

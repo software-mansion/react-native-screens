@@ -2,7 +2,6 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import "RNSConversions.h"
-#import "RNSTabBarAppearanceProvider.h"
 #import "RNSTabsScreenViewController.h"
 
 @implementation RNSTabBarAppearanceCoordinator
@@ -16,25 +15,10 @@
     return;
   }
 
-  // Step 1 - start with default appearance
-  UITabBarAppearance *appearance = [[UITabBarAppearance alloc] init];
-
-  // Step 2 - general settings
-  if (hostComponentView != nil) {
-    [self configureTabBarAppearance:appearance fromAppearanceProvider:hostComponentView];
-
-    [self configureTabBarItemAppearance:appearance.stackedLayoutAppearance withTabsHost:hostComponentView];
-    [self configureTabBarItemAppearance:appearance.compactInlineLayoutAppearance withTabsHost:hostComponentView];
-    [self configureTabBarItemAppearance:appearance.inlineLayoutAppearance withTabsHost:hostComponentView];
-  }
-
-  // Step 3 - apply general settings to the tab bar
-  tabBar.standardAppearance = appearance;
-  tabBar.scrollEdgeAppearance = appearance;
-
+  // Step 1 - apply host-related appearance props
   tabBar.tintColor = hostComponentView.tabBarTintColor;
 
-  // Step 4 - build the appearance object for each tab & apply it
+  // Step 2 - build the appearance object for each tab & apply it
   if (tabScreenCtrls == nil) {
     return;
   }
@@ -46,11 +30,10 @@
       continue;
     }
 
-    // Inherit general properties from host
-    // TODO: don't inherit properties from host
-    UITabBarAppearance *tabAppearance = [[UITabBarAppearance alloc] initWithBarAppearance:appearance];
+    // Start with default appearance
+    UITabBarAppearance *tabAppearance = [[UITabBarAppearance alloc] init];
 
-    [self configureTabBarAppearance:tabAppearance fromAppearanceProvider:tabScreenCtrl.tabScreenComponentView];
+    [self configureTabBarAppearance:tabAppearance fromTabsScreen:tabScreenCtrl.tabScreenComponentView];
 
     [self configureTabBarItemAppearance:tabAppearance.compactInlineLayoutAppearance
                  forTabScreenController:tabScreenCtrl
@@ -67,13 +50,13 @@
 }
 
 - (void)configureTabBarAppearance:(nonnull UITabBarAppearance *)appearance
-           fromAppearanceProvider:(id<RNSTabBarAppearanceProvider>)appearanceProvider
+                   fromTabsScreen:(nonnull RNSBottomTabsScreenComponentView *)tabsScreen
 {
-  if (appearanceProvider.tabBarBackgroundColor != nil) {
-    appearance.backgroundColor = appearanceProvider.tabBarBackgroundColor;
+  if (tabsScreen.tabBarBackgroundColor != nil) {
+    appearance.backgroundColor = tabsScreen.tabBarBackgroundColor;
   }
 
-  switch (appearanceProvider.tabBarBlurEffect) {
+  switch (tabsScreen.tabBarBlurEffect) {
     case RNSBlurEffectStyleNone:
       appearance.backgroundEffect = nil;
       break;
@@ -88,7 +71,7 @@
 
     default:
       appearance.backgroundEffect =
-          rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(appearanceProvider.tabBarBlurEffect);
+          rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(tabsScreen.tabBarBlurEffect);
   }
 }
 
@@ -173,37 +156,6 @@
 }
 
 - (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance
-                         withTabsHost:(nonnull RNSBottomTabsHostComponentView *)hostComponent
-{
-  NSMutableDictionary *titleTextAttributes = nil;
-
-  if (hostComponent.tabBarItemTitleFontSize != nil) {
-    titleTextAttributes = [[NSMutableDictionary alloc] init];
-    titleTextAttributes[NSFontAttributeName] = [RCTFont updateFont:nil
-                                                        withFamily:hostComponent.tabBarItemTitleFontFamily
-                                                              size:hostComponent.tabBarItemTitleFontSize
-                                                            weight:hostComponent.tabBarItemTitleFontWeight
-                                                             style:hostComponent.tabBarItemTitleFontStyle
-                                                           variant:nil
-                                                   scaleMultiplier:1.0];
-    titleTextAttributes[NSForegroundColorAttributeName] = hostComponent.tabBarItemTitleFontColor;
-  }
-
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal
-                    withAppearanceProvider:hostComponent
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected
-                    withAppearanceProvider:hostComponent
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused
-                    withAppearanceProvider:hostComponent
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled
-                    withAppearanceProvider:hostComponent
-                   withTitleTextAttributes:titleTextAttributes];
-}
-
-- (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance
                forTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
                 withHostComponentView:(nonnull RNSBottomTabsHostComponentView *)tabsHostComponent
 {
@@ -223,36 +175,36 @@
   }
 
   [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal
-                    withAppearanceProvider:tabScreenCtrl.tabScreenComponentView
+                            withTabsScreen:tabScreenCtrl.tabScreenComponentView
                    withTitleTextAttributes:titleTextAttributes];
   [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected
-                    withAppearanceProvider:tabScreenCtrl.tabScreenComponentView
+                            withTabsScreen:tabScreenCtrl.tabScreenComponentView
                    withTitleTextAttributes:titleTextAttributes];
   [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused
-                    withAppearanceProvider:tabScreenCtrl.tabScreenComponentView
+                            withTabsScreen:tabScreenCtrl.tabScreenComponentView
                    withTitleTextAttributes:titleTextAttributes];
   [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled
-                    withAppearanceProvider:tabScreenCtrl.tabScreenComponentView
+                            withTabsScreen:tabScreenCtrl.tabScreenComponentView
                    withTitleTextAttributes:titleTextAttributes];
 }
 
 - (void)configureTabBarItemStateAppearance:(nonnull UITabBarItemStateAppearance *)tabBarItemStateAppearance
-                    withAppearanceProvider:(id<RNSTabBarAppearanceProvider>)appearanceProvider
+                            withTabsScreen:(nonnull RNSBottomTabsScreenComponentView *)tabsScreen
                    withTitleTextAttributes:(nullable NSDictionary<NSAttributedStringKey, id> *)titleTextAttributes
 {
-  if (appearanceProvider.tabBarItemBadgeBackgroundColor != nil) {
-    tabBarItemStateAppearance.badgeBackgroundColor = appearanceProvider.tabBarItemBadgeBackgroundColor;
+  if (tabsScreen.tabBarItemBadgeBackgroundColor != nil) {
+    tabBarItemStateAppearance.badgeBackgroundColor = tabsScreen.tabBarItemBadgeBackgroundColor;
   }
 
   if (titleTextAttributes != nil) {
     tabBarItemStateAppearance.titleTextAttributes = titleTextAttributes;
   }
 
-  if (appearanceProvider.tabBarItemIconColor != nil) {
-    tabBarItemStateAppearance.iconColor = appearanceProvider.tabBarItemIconColor;
+  if (tabsScreen.tabBarItemIconColor != nil) {
+    tabBarItemStateAppearance.iconColor = tabsScreen.tabBarItemIconColor;
   }
 
-  tabBarItemStateAppearance.titlePositionAdjustment = appearanceProvider.tabBarItemTitlePositionAdjustment;
+  tabBarItemStateAppearance.titlePositionAdjustment = tabsScreen.tabBarItemTitlePositionAdjustment;
 }
 
 @end
