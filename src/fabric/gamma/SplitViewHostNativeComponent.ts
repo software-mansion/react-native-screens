@@ -10,6 +10,11 @@ import type {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
+export type SplitViewDisplayModeButtonVisibility =
+  | 'always'
+  | 'automatic'
+  | 'never';
+
 export type SplitViewSplitBehavior =
   | 'automatic'
   | 'displace'
@@ -34,6 +39,10 @@ export interface NativeProps extends ViewProps {
   splitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
   primaryEdge?: WithDefault<SplitViewPrimaryEdge, 'leading'>;
   showSecondaryToggleButton?: WithDefault<boolean, false>;
+  displayModeButtonVisibility?: WithDefault<
+    SplitViewDisplayModeButtonVisibility,
+    'automatic'
+  >;
 
   // Interactions
 

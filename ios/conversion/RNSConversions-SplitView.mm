@@ -60,6 +60,22 @@ UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
   }
 }
 
+UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
+    react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility)
+{
+  using enum facebook::react::RNSSplitViewHostDisplayModeButtonVisibility;
+
+  switch (displayModeButtonVisibility) {
+    case Always:
+      return UISplitViewControllerDisplayModeButtonVisibilityAlways;
+    case Never:
+      return UISplitViewControllerDisplayModeButtonVisibilityNever;
+    case Automatic:
+    default:
+      return UISplitViewControllerDisplayModeButtonVisibilityAutomatic;
+  }
+}
+
 #pragma mark SplitViewScreen props
 
 RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
