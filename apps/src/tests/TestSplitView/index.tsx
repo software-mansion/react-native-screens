@@ -13,8 +13,8 @@ import { SplitViewBaseConfig } from './helpers/types';
 
 const App = () => {
   const splitViewBaseConfig: SplitViewBaseConfig = {
-    displayMode: 'oneOverSecondary',
-    splitBehavior: 'overlay',
+    preferredDisplayMode: 'oneOverSecondary',
+    preferredSplitBehavior: 'overlay',
   }
 
   return (

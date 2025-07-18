@@ -19,9 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSSplitViewHostComponentView ()
 
-@property (nonatomic, readonly) UISplitViewControllerSplitBehavior splitBehavior;
+@property (nonatomic, readonly) UISplitViewControllerSplitBehavior preferredSplitBehavior;
 @property (nonatomic, readonly) UISplitViewControllerPrimaryEdge primaryEdge;
-@property (nonatomic, readonly) UISplitViewControllerDisplayMode displayMode;
+@property (nonatomic, readonly) UISplitViewControllerDisplayMode preferredDisplayMode;
 @property (nonatomic, readonly) UISplitViewControllerDisplayModeButtonVisibility displayModeButtonVisibility;
 @property (nonatomic, readonly) BOOL presentsWithGesture;
 @property (nonatomic, readonly) BOOL showSecondaryToggleButton;
