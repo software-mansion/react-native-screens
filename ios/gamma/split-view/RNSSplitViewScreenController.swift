@@ -55,7 +55,7 @@ public class RNSSplitViewScreenController: UIViewController {
   public override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     // For modals, which are presented outside the SplitViewHost subtree (and RN hierarchy),
-    // we're attaching our touch handler adn we don't need to apply any offset corrections,
+    // we're attaching our touch handler and we don't need to apply any offset corrections,
     // because it's positioned relatively to our RNSSplitViewScreenComponentView
     if isInSplitViewHostSubtree() {
       let ancestorView = findSplitViewHostController()?.view
