@@ -76,6 +76,7 @@ export interface NativeProps extends ViewProps {
   tabBarItemTitleFontColorActive?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemTitleFontSizeActive?: Float;
+  tabBarItemActivityIndicatorColor?: ColorValue;
 
   // iOS-specific
   tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;

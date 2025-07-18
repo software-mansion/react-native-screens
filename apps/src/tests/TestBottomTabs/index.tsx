@@ -83,6 +83,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       selectedIcon: {
         sfSymbolName: 'rectangle.stack.fill',
       },
+      iconResourceName: 'sym_action_chat', // Android specific
       title: 'Tab4',
     },
     contentViewRenderFn: Tab4,

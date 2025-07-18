@@ -47,6 +47,7 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
   tabBarItemTitleFontColorActive?: TextStyle['color'];
   tabBarItemIconColorActive?: ColorValue;
+  tabBarItemActivityIndicatorColor?: ColorValue;
 
   // iOS-specific
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
@@ -57,6 +58,9 @@ export interface BottomTabsProps extends ViewProps {
   experimentalControlNavigationStateInJS?: boolean; // defaults to `false`
 }
 
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
 function BottomTabs(props: BottomTabsProps) {
   console.info(`BottomTabs render`);
 

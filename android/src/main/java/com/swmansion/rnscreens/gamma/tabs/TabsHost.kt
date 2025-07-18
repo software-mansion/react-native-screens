@@ -1,22 +1,25 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.R
 import android.content.res.ColorStateList
 import android.util.Log
+import android.view.Choreographer
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.common.assets.ReactFontManager
+import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
@@ -90,7 +93,7 @@ class TabsHost(
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
 
     private val bottomNavigationView: BottomNavigationView =
-        BottomNavigationView(reactContext).apply {
+        BottomNavigationView(ContextThemeWrapper(reactContext, R.style.custom)).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         }
 
@@ -115,9 +118,13 @@ class TabsHost(
 
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
 
-    private var isLayoutInvalidated: Boolean = false
+    private var isLayoutEnqueued: Boolean = false
 
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
+    var tabBarItemActivityIndicatorColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
@@ -279,7 +286,7 @@ class TabsHost(
             tabBarBackgroundColor ?: com.google.android.material.R.color.m3_sys_color_light_surface_container,
         )
 
-        val states = arrayOf(intArrayOf(-R.attr.state_checked), intArrayOf(R.attr.state_checked))
+        val states = arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked))
 
         // Font color
         val fontInactiveColor = tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color_secondary
@@ -293,6 +300,11 @@ class TabsHost(
         val iconActiveColor = tabBarItemIconColorActive ?: tabBarItemIconColor ?: com.google.android.material.R.color.m3_tabs_icon_color
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
+
+        // ActivityIndicator color
+        val activityIndicatorColor =
+            tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
+        bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activityIndicatorColor)
 
         // First clean the menu, then populate it
         bottomNavigationView.menu.clear()
@@ -317,7 +329,7 @@ class TabsHost(
             checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
 
         post {
-            forceSubtreeMeasureAndLayoutPass()
+            refreshLayout()
             Log.d(TAG, "BottomNavigationView request layout")
         }
     }
@@ -388,9 +400,28 @@ class TabsHost(
         }
     }
 
-    private fun forceSubtreeMeasureAndLayoutPass() {
-        isLayoutInvalidated = false
+    private val layoutCallback =
+        Choreographer.FrameCallback {
+            isLayoutEnqueued = false
+            forceSubtreeMeasureAndLayoutPass()
+        }
 
+    private fun refreshLayout() {
+        @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
+        if (!isLayoutEnqueued && layoutCallback != null) {
+            isLayoutEnqueued = true
+            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
+            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
+            ReactChoreographer
+                .getInstance()
+                .postFrameCallback(
+                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+                    layoutCallback,
+                )
+        }
+    }
+
+    private fun forceSubtreeMeasureAndLayoutPass() {
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),

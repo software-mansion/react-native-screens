@@ -29,6 +29,7 @@ public interface RNSBottomTabsManagerInterface<T extends View>  {
   void setTabBarItemTitleFontColorActive(T view, @Nullable Integer value);
   void setTabBarItemIconColorActive(T view, @Nullable Integer value);
   void setTabBarItemTitleFontSizeActive(T view, float value);
+  void setTabBarItemActivityIndicatorColor(T view, @Nullable Integer value);
   void setTabBarMinimizeBehavior(T view, @Nullable String value);
   void setControlNavigationStateInJS(T view, boolean value);
 }

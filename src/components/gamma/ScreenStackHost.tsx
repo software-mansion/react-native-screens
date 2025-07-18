@@ -12,6 +12,9 @@ type ScreenStackHostProps = {
   children?: ViewProps['children'];
 } & ScreenStackNativeProps;
 
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
 function ScreenStackHost({ children }: ScreenStackHostProps) {
   return (
     <ScreenStackHostNativeComponent style={styles.container}>

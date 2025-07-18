@@ -43,6 +43,9 @@ const isValidDisplayModeForSplitBehavior = (
   );
 };
 
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
 function SplitViewHost(props: SplitViewHostProps) {
   const { displayMode, splitBehavior } = props;
 

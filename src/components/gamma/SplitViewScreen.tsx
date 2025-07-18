@@ -12,6 +12,9 @@ type SplitViewScreenProps = {
   children?: ViewProps['children'];
 } & SplitViewScreenNativeProps;
 
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
 function SplitViewScreen({ children }: SplitViewScreenProps) {
   return (
     <SplitViewScreenNativeComponent style={StyleSheet.absoluteFill}>

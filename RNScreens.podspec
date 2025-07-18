@@ -35,6 +35,7 @@ Pod::Spec.new do |s|
   if !gamma_project_enabled
     s.exclude_files = "ios/gamma/**/*.#{source_files_exts}"
   else
+    s.exclude_files = "ios/stubs/**/*.#{source_files_exts}"
     Pod::UI.puts "[RNScreens] Gamma project enabled. Including source files."
   end
 
