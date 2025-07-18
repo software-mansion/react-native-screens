@@ -46,4 +46,6 @@
 #endif
 }
 
+#undef ASSIGN_PROP_IF_NONNEGATIVE
+
 @end
