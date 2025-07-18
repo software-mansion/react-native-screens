@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSBottomTabsHostComponentView () <RNSTabBarAppearanceProvider>
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
-@property (nonatomic, strong, readonly, nullable) UIBlurEffect *tabBarBlurEffect;
+@property (nonatomic, readonly) RNSExtendedBlurEffectStyle tabBarBlurEffect;
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 

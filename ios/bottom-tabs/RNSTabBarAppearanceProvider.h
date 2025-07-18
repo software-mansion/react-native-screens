@@ -1,11 +1,12 @@
 #import <UIKit/UIKit.h>
+#import "RNSEnums.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSTabBarAppearanceProvider
 
 - (UIColor *)tabBarBackgroundColor;
-- (UIBlurEffect *)tabBarBlurEffect;
+- (RNSExtendedBlurEffectStyle)tabBarBlurEffect;
 
 - (NSString *)tabBarItemTitleFontFamily;
 - (NSNumber *)tabBarItemTitleFontSize;
