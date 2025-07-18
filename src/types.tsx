@@ -913,3 +913,68 @@ export interface GestureProviderProps extends GestureProps {
   children?: React.ReactNode;
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }
+
+// SplitView
+
+export type SplitViewDisplayModeButtonVisibility =
+  | 'always'
+  | 'automatic'
+  | 'never';
+
+export type SplitViewSplitBehavior =
+  | 'automatic'
+  | 'displace'
+  | 'overlay'
+  | 'tile';
+
+export type SplitViewPrimaryEdge = 'leading' | 'trailing';
+
+export type SplitViewDisplayMode =
+  | 'automatic'
+  | 'secondaryOnly'
+  | 'oneBesideSecondary'
+  | 'oneOverSecondary'
+  | 'twoBesideSecondary'
+  | 'twoOverSecondary'
+  | 'twoDisplaceSecondary';
+
+export interface SplitViewHostColumnMetrics {
+  minimumPrimaryColumnWidth?: number;
+  maximumPrimaryColumnWidth?: number;
+  preferredPrimaryColumnWidth?: number;
+  minimumSupplementaryColumnWidth?: number;
+  maximumSupplementaryColumnWidth?: number;
+  preferredSupplementaryColumnWidth?: number;
+
+  // iOS 26 only
+  minimumSecondaryColumnWidth?: number;
+  preferredSecondaryColumnWidth?: number;
+  minimumInspectorColumnWidth?: number;
+  maximumInspectorColumnWidth?: number;
+  preferredInspectorColumnWidth?: number;
+}
+
+export interface SplitViewHostProps extends ViewProps {
+  children?: React.ReactNode;
+  columnMetrics?: SplitViewHostColumnMetrics;
+  
+  displayMode?: SplitViewDisplayMode;
+  displayModeButtonVisibility?: SplitViewDisplayModeButtonVisibility;
+  onCollapse?: () => void;
+  onExpand?: () => void;
+  onInspectorHide?: () => void;
+  presentsWithGesture?: boolean;
+  primaryEdge?: SplitViewPrimaryEdge;
+  showInspector?: boolean;
+  showSecondaryToggleButton?: boolean;
+  splitBehavior?: SplitViewPrimaryEdge;
+}
+
+export interface SplitViewScreenProps extends ViewProps {
+  children?: React.ReactNode;
+  onDidAppear?: () => void;
+  onDidDisappear?: () => void;
+  onWillAppear?: () => void;
+  onWillDisappear?: () => void;
+}
+
