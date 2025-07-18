@@ -164,7 +164,7 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimize
 }
 #endif // Check for iOS >= 26
 
-RNSExtendedBlurEffectStyle RNSExtendedBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
+RNSExtendedBlurEffectStyle RNSExtendedBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect)
 {
   using enum facebook::react::RNSBottomTabsScreenTabBarBlurEffect;
