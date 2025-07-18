@@ -286,7 +286,7 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
       }
     }
   #endif
-  
+
   public func splitViewController(
     _ svc: UISplitViewController, willShow column: UISplitViewController.Column
   ) {
