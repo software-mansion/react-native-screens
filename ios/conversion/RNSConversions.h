@@ -17,14 +17,6 @@ UIBlurEffect *RNSUIBlurEffectFromRNSExtendedBlurEffectStyle(
     RNSExtendedBlurEffectStyle blurEffect);
 
 RNSExtendedBlurEffectStyle
-RNSExtendedBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
-    react::RNSBottomTabsTabBarBlurEffect blurEffect);
-
-UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
-    react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct
-        titlePositionAdjustment);
-
-RNSExtendedBlurEffectStyle
 RNSExtendedBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
 
