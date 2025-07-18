@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import com.swmansion.rnscreens.R
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Choreographer
@@ -23,6 +24,7 @@ import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
+@SuppressLint("PrivateResource") // We want to use variables from material design for default values
 class TabsHost(
     val reactContext: ThemedReactContext,
 ) : LinearLayout(reactContext),
@@ -381,22 +383,34 @@ class TabsHost(
         menuItemIndex: Int,
         tabScreen: TabScreen,
     ) {
-        val badgeValue = tabScreen.badgeValue?.toIntOrNull()
-        if (tabScreen.badgeValue != null && badgeValue == null) {
-            Log.e(TAG, "[RNScreens] Android supports only numbers as badge value")
-        }
-
-        if (badgeValue != null) {
-            val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
-            badge.isVisible = true
-            badge.number = badgeValue
-            badge.backgroundColor =
-                tabScreen.tabBarItemBadgeBackgroundColor
-                    ?: wrappedContext.getColor(com.google.android.material.R.color.error_color_material_light)
-        } else {
+        if (tabScreen.tabBarItemBadgeVisible != true) {
             val badge = bottomNavigationView.getBadge(menuItemIndex)
             badge?.isVisible = false
+
+            return
         }
+
+        val badgeValue = tabScreen.badgeValue
+        val badgeValueNumber = badgeValue?.toIntOrNull()
+
+        val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
+        badge.isVisible = true
+
+        if (badgeValueNumber != null) {
+            badge.number = badgeValueNumber
+        } else if (badgeValue != null) {
+            badge.text = badgeValue
+        } else {
+            badge.clearNumber()
+            badge.clearText()
+        }
+
+        // Styling
+        badge.badgeTextColor =
+            tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
+        badge.backgroundColor =
+            tabScreen.tabBarItemBadgeBackgroundColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_error)
     }
 
     private fun updateSelectedTab() {
