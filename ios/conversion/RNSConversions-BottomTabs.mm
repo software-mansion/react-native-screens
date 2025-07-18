@@ -4,6 +4,87 @@
 
 namespace rnscreens::conversion {
 
+UIBlurEffect *RNSUIBlurEffectFromOptionalUIBlurEffectStyle(std::optional<UIBlurEffectStyle> &maybeStyle)
+{
+  if (maybeStyle) {
+    return [UIBlurEffect effectWithStyle:maybeStyle.value()];
+  }
+  return nil;
+}
+
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect)
+{
+#if !TARGET_OS_TV
+  switch (blurEffect) {
+    case RNSBlurEffectStyleNone:
+      return std::nullopt;
+    case RNSBlurEffectStyleExtraLight:
+      return {UIBlurEffectStyleExtraLight};
+    case RNSBlurEffectStyleLight:
+      return {UIBlurEffectStyleLight};
+    case RNSBlurEffectStyleDark:
+      return {UIBlurEffectStyleDark};
+    case RNSBlurEffectStyleRegular:
+      return {UIBlurEffectStyleRegular};
+    case RNSBlurEffectStyleProminent:
+      return {UIBlurEffectStyleProminent};
+    case RNSBlurEffectStyleSystemUltraThinMaterial:
+      return {UIBlurEffectStyleSystemUltraThinMaterial};
+    case RNSBlurEffectStyleSystemThinMaterial:
+      return {UIBlurEffectStyleSystemThinMaterial};
+    case RNSBlurEffectStyleSystemMaterial:
+      return {UIBlurEffectStyleSystemMaterial};
+    case RNSBlurEffectStyleSystemThickMaterial:
+      return {UIBlurEffectStyleSystemThickMaterial};
+    case RNSBlurEffectStyleSystemChromeMaterial:
+      return {UIBlurEffectStyleSystemChromeMaterial};
+    case RNSBlurEffectStyleSystemUltraThinMaterialLight:
+      return {UIBlurEffectStyleSystemUltraThinMaterialLight};
+    case RNSBlurEffectStyleSystemThinMaterialLight:
+      return {UIBlurEffectStyleSystemThinMaterialLight};
+    case RNSBlurEffectStyleSystemMaterialLight:
+      return {UIBlurEffectStyleSystemMaterialLight};
+    case RNSBlurEffectStyleSystemThickMaterialLight:
+      return {UIBlurEffectStyleSystemThickMaterialLight};
+    case RNSBlurEffectStyleSystemChromeMaterialLight:
+      return {UIBlurEffectStyleSystemChromeMaterialLight};
+    case RNSBlurEffectStyleSystemUltraThinMaterialDark:
+      return {UIBlurEffectStyleSystemUltraThinMaterialDark};
+    case RNSBlurEffectStyleSystemThinMaterialDark:
+      return {UIBlurEffectStyleSystemThinMaterialDark};
+    case RNSBlurEffectStyleSystemMaterialDark:
+      return {UIBlurEffectStyleSystemMaterialDark};
+    case RNSBlurEffectStyleSystemThickMaterialDark:
+      return {UIBlurEffectStyleSystemThickMaterialDark};
+    case RNSBlurEffectStyleSystemChromeMaterialDark:
+      return {UIBlurEffectStyleSystemChromeMaterialDark};
+  }
+#endif
+
+  switch (blurEffect) {
+    case RNSBlurEffectStyleNone:
+      return std::nullopt;
+    case RNSBlurEffectStyleLight:
+      return {UIBlurEffectStyleLight};
+    case RNSBlurEffectStyleDark:
+      return {UIBlurEffectStyleDark};
+    case RNSBlurEffectStyleRegular:
+      return {UIBlurEffectStyleRegular};
+    case RNSBlurEffectStyleProminent:
+      return {UIBlurEffectStyleProminent};
+    case RNSBlurEffectStyleExtraLight:
+      return {UIBlurEffectStyleExtraLight};
+    default:
+      return std::nullopt;
+  }
+}
+
+UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect)
+{
+  std::optional<UIBlurEffectStyle> maybeStyle = RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(blurEffect);
+  return RNSUIBlurEffectFromOptionalUIBlurEffectStyle(maybeStyle);
+}
+
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
     react::RNSBottomTabsTabBarBlurEffect blurEffect)
 {
@@ -76,10 +157,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBa
 UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(react::RNSBottomTabsTabBarBlurEffect blurEffect)
 {
   std::optional<UIBlurEffectStyle> maybeStyle = RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(blurEffect);
-  if (maybeStyle) {
-    return [UIBlurEffect effectWithStyle:maybeStyle.value()];
-  }
-  return nil;
+  return RNSUIBlurEffectFromOptionalUIBlurEffectStyle(maybeStyle);
 }
 
 UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
@@ -162,10 +240,7 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBottomTabsScreenTabBarBlurEffect(
 {
   std::optional<UIBlurEffectStyle> maybeStyle =
       RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(blurEffect);
-  if (maybeStyle) {
-    return [UIBlurEffect effectWithStyle:maybeStyle.value()];
-  }
-  return nil;
+  return RNSUIBlurEffectFromOptionalUIBlurEffectStyle(maybeStyle);
 }
 
 UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
