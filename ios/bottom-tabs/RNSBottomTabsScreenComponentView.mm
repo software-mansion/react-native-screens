@@ -57,6 +57,12 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   _tabItemNeedsAppearanceUpdate = NO;
 #endif
+
+  // This is a temporary workaround to avoid UIScrollEdgeEffect glitch
+  // when changing tabs when ScrollView is present.
+  // TODO: don't hardcode color here
+  self.backgroundColor = [UIColor whiteColor];
+
   [self resetProps];
 }
 
