@@ -49,28 +49,23 @@ export interface NativeProps extends ViewProps {
 
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+
+  // Android-only appearance
   tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'default'>;
-  tabBarTintColor?: ColorValue;
 
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: Float;
+  tabBarItemTitleFontSizeActive?: Float;
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
   tabBarItemTitleFontColor?: ColorValue;
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: Float;
-    vertical?: Float;
-  };
+  tabBarItemTitleFontColorActive?: ColorValue;
 
   tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // Android
-  tabBarItemTitleFontColorActive?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
-  tabBarItemTitleFontSizeActive?: Float;
+
+  // iOS-only appearance
+  tabBarTintColor?: ColorValue;
 
   // Control
 

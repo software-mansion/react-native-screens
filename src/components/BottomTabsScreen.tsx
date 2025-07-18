@@ -29,6 +29,7 @@ export interface SFIcon {
   sfSymbolName: string;
 }
 
+// iOS-specific
 export interface ImageIcon {
   imageSource: ImageSourcePropType;
 }
@@ -51,8 +52,17 @@ export interface BottomTabsScreenProps {
   isFocused?: boolean;
   tabKey: string;
 
+  // General
+  title?: string;
+  badgeValue?: string;
+
   // Tab Bar Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+
+  // Android-only appearance
+  iconResourceName?: string;
+
+  // iOS-only appearance
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: BlurEffect; // defaults to 'none'
 
@@ -66,20 +76,12 @@ export interface BottomTabsScreenProps {
     vertical?: number;
   };
 
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // General
-  title?: string;
-
-  // Android specific
-  iconResourceName?: string;
-
   icon?: Icon;
   selectedIcon?: Icon;
 
-  badgeValue?: string;
+  tabBarItemIconColor?: ColorValue;
+
+  tabBarItemBadgeBackgroundColor?: ColorValue;
 
   specialEffects?: {
     repeatedTabSelection?: {
