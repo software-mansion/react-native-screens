@@ -22,7 +22,7 @@ const SplitViewBaseApp = () => {
   }
 
   return (
-    <SplitViewHost onInspectorHide={onInspectorHide} displayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={true} splitBehavior='tile' showInspector={inspectorVisible}>
+    <SplitViewHost onInspectorHide={onInspectorHide} preferredDisplayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={true} preferredSplitBehavior='tile' showInspector={inspectorVisible}>
       <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]} />
       </SplitViewScreen.Column>

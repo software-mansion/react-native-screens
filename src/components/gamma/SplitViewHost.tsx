@@ -47,26 +47,26 @@ const isValidDisplayModeForSplitBehavior = (
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function SplitViewHost(props: SplitViewHostProps) {
-  const { displayMode, splitBehavior } = props;
+  const { preferredDisplayMode, preferredSplitBehavior } = props;
 
   React.useEffect(() => {
-    if (displayMode && splitBehavior) {
+    if (preferredDisplayMode && preferredSplitBehavior) {
       const isValid = isValidDisplayModeForSplitBehavior(
-        displayMode,
-        splitBehavior,
+        preferredDisplayMode,
+        preferredSplitBehavior,
       );
       if (!isValid) {
         const validDisplayModes =
-          displayModeForSplitViewCompatibilityMap[splitBehavior];
+          displayModeForSplitViewCompatibilityMap[preferredSplitBehavior];
         console.warn(
-          `Invalid display mode "${displayMode}" for split behavior "${splitBehavior}".` +
-            `\nValid modes for "${splitBehavior}" are: ${validDisplayModes.join(
+          `Invalid display mode "${preferredDisplayMode}" for split behavior "${preferredSplitBehavior}".` +
+            `\nValid modes for "${preferredSplitBehavior}" are: ${validDisplayModes.join(
               ', ',
             )}.`,
         );
       }
     }
-  }, [displayMode, splitBehavior]);
+  }, [preferredDisplayMode, preferredSplitBehavior]);
 
   return (
     <SplitViewHostNativeComponent {...props} style={styles.container}>
