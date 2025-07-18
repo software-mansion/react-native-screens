@@ -34,7 +34,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       badgeValue: 'NEW',
-      tabBarItemBadgeVisible: true,
       tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       tabBarBackgroundColor: Colors.NavyDark140,
       tabBarItemTitleFontSize: 20,
@@ -61,7 +60,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab3',
       badgeValue: '2137',
-      tabBarItemBadgeVisible: true,
       tabBarItemBadgeBackgroundColor: Colors.RedDark40,
       tabBarItemBadgeTextColor: Colors.RedDark120,
       icon: {
@@ -84,9 +82,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
       selectedIcon: {
         sfSymbolName: 'rectangle.stack.fill',
       },
-      tabBarItemBadgeVisible: true,
       iconResourceName: 'sym_action_chat', // Android specific
       title: 'Tab4',
+      badgeValue: '',
     },
     contentViewRenderFn: Tab4,
   },
