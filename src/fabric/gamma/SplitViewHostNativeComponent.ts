@@ -30,8 +30,8 @@ export type SplitViewDisplayMode =
 export interface NativeProps extends ViewProps {
   // Appearance
 
-  displayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
-  splitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
+  preferredDisplayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
+  preferredSplitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
   primaryEdge?: WithDefault<SplitViewPrimaryEdge, 'leading'>;
   showSecondaryToggleButton?: WithDefault<boolean, false>;
 

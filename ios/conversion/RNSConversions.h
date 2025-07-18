@@ -1,8 +1,8 @@
 #pragma once
 
 #if defined(__cplusplus)
-#import <react/renderer/components/rnscreens/Props.h>
 #import <React/RCTImageSource.h>
+#import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
 namespace rnscreens::conversion {
@@ -31,7 +31,8 @@ UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct
         titlePositionAdjustment);
 
-RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
+RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(
+    react::RNSBottomTabsScreenIconType iconType);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
@@ -39,14 +40,14 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
 
 #pragma mark SplitViewHost props
 
-UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(
-    react::RNSSplitViewHostSplitBehavior behavior);
+UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
+    react::RNSSplitViewHostPreferredSplitBehavior behavior);
 
 UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
     react::RNSSplitViewHostPrimaryEdge primaryEdge);
 
-UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
-    react::RNSSplitViewHostDisplayMode displayMode);
+UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
+    react::RNSSplitViewHostPreferredDisplayMode displayMode);
 
 #pragma mark SplitViewScreen props
 
