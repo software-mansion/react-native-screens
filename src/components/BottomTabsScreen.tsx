@@ -75,8 +75,8 @@ export interface BottomTabsScreenProps {
 
   // Android specific
   iconResourceName?: string;
-  tabBarItemBadgeVisible: boolean;
-  
+  tabBarItemBadgeTextColor?: ColorValue;
+
   icon?: Icon;
   selectedIcon?: Icon;
 
@@ -98,6 +98,9 @@ export interface BottomTabsScreenProps {
   onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
 }
 
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
 function BottomTabsScreen(props: BottomTabsScreenProps) {
   const componentNodeRef = React.useRef<React.Component<NativeProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);

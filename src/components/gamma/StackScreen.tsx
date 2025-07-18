@@ -21,6 +21,9 @@ type StackScreenProps = {
   onPop?: (screenKey: string) => void;
 } & StackScreenNativeProps;
 
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
 function StackScreen({
   children,
   // Control

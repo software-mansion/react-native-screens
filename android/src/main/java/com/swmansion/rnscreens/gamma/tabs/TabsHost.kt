@@ -394,26 +394,27 @@ class TabsHost(
         menuItemIndex: Int,
         tabScreen: TabScreen,
     ) {
-        if (tabScreen.tabBarItemBadgeVisible != true) {
+        val badgeValue = tabScreen.badgeValue
+
+        if (badgeValue == null) {
             val badge = bottomNavigationView.getBadge(menuItemIndex)
             badge?.isVisible = false
 
             return
         }
 
-        val badgeValue = tabScreen.badgeValue
-        val badgeValueNumber = badgeValue?.toIntOrNull()
+        val badgeValueNumber = badgeValue.toIntOrNull()
 
         val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
         badge.isVisible = true
 
+        badge.clearText()
+        badge.clearNumber()
+
         if (badgeValueNumber != null) {
             badge.number = badgeValueNumber
-        } else if (badgeValue != null) {
+        } else if (badgeValue != "") {
             badge.text = badgeValue
-        } else {
-            badge.clearNumber()
-            badge.clearText()
         }
 
         // Styling
