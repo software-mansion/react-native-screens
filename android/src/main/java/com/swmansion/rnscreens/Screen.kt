@@ -32,6 +32,7 @@ import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
+import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -557,6 +558,21 @@ class Screen(
                 )
             }
         }
+    }
+
+    override fun setOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener?) {
+        val effectiveListener =
+            if (usesFormSheetPresentation() && listener != null) {
+                OnApplyWindowInsetsListener { v, insets ->
+                    listener.onApplyWindowInsets(v, insets).also {
+                        parentAsView()?.takeIf { !it.isInLayout }?.requestLayout()
+                    }
+                }
+            } else {
+                listener
+            }
+
+        super.setOnApplyWindowInsetsListener(effectiveListener)
     }
 
     private fun dispatchSheetDetentChanged(
