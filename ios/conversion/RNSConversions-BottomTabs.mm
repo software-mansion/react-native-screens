@@ -97,14 +97,14 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimize
   using enum facebook::react::RNSBottomTabsTabBarMinimizeBehavior;
 
   switch (tabBarMinimizeBehavior) {
-    case Automatic:
-      return UITabBarMinimizeBehaviorAutomatic;
     case Never:
       return UITabBarMinimizeBehaviorNever;
     case OnScrollDown:
       return UITabBarMinimizeBehaviorOnScrollDown;
     case OnScrollUp:
       return UITabBarMinimizeBehaviorOnScrollUp;
+    default:
+      return UITabBarMinimizeBehaviorAutomatic;
   }
 }
 #endif // Check for iOS >= 26
