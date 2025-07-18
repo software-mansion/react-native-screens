@@ -85,19 +85,19 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
     <BottomTabs
       onNativeFocusChange={onNativeFocusChangeCallback}
 
-      tabBarBackgroundColor={Colors.NavyLight100}
-      tabBarItemActivityIndicatorColor={Colors.GreenLight40}
-      tabBarTintColor={Colors.YellowLight100}
-      tabBarItemBadgeBackgroundColor={Colors.GreenDark100}
-      tabBarItemIconColor={Colors.BlueLight100}
-      tabBarItemTitleFontColor={Colors.BlueLight40}
-      tabBarItemIconColorActive={Colors.GreenLight100}
-      tabBarItemTitleFontColorActive={Colors.GreenLight40}
-      tabBarItemTitleFontSize={10}
-      tabBarItemTitleFontSizeActive={15}
-      tabBarItemTitleFontFamily='monospace'
-      tabBarItemTitleFontStyle='italic'
-      tabBarItemTitleFontWeight="700"
+      // tabBarBackgroundColor={Colors.NavyLight100}
+      // tabBarItemActivityIndicatorColor={Colors.GreenLight40}
+      // tabBarTintColor={Colors.YellowLight100}
+      // tabBarItemBadgeBackgroundColor={Colors.GreenDark100}
+      // tabBarItemIconColor={Colors.BlueLight100}
+      // tabBarItemTitleFontColor={Colors.BlueLight40}
+      // tabBarItemIconColorActive={Colors.GreenLight100}
+      // tabBarItemTitleFontColorActive={Colors.GreenLight40}
+      // tabBarItemTitleFontSize={10}
+      // tabBarItemTitleFontSizeActive={15}
+      // tabBarItemTitleFontFamily='monospace'
+      // tabBarItemTitleFontStyle='italic'
+      // tabBarItemTitleFontWeight="700"
 
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
