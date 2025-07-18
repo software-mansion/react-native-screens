@@ -17,6 +17,9 @@ import com.facebook.react.bridge.ReadableMap;
 public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
   void setIsFocused(T view, boolean value);
   void setTabKey(T view, @Nullable String value);
+  void setTitle(T view, @Nullable String value);
+  void setBadgeValue(T view, @Nullable String value);
+  void setIconResourceName(T view, @Nullable String value);
   void setTabBarBackgroundColor(T view, @Nullable Integer value);
   void setTabBarBlurEffect(T view, @Nullable String value);
   void setTabBarItemTitleFontFamily(T view, @Nullable String value);
@@ -25,16 +28,13 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
   void setTabBarItemTitleFontStyle(T view, @Nullable String value);
   void setTabBarItemTitleFontColor(T view, @Nullable Integer value);
   void setTabBarItemTitlePositionAdjustment(T view, @Nullable ReadableMap value);
-  void setTabBarItemIconColor(T view, @Nullable Integer value);
-  void setTabBarItemBadgeBackgroundColor(T view, @Nullable Integer value);
-  void setTitle(T view, @Nullable String value);
-  void setIconResourceName(T view, @Nullable String value);
   void setIconType(T view, @Nullable String value);
   void setIconImageSource(T view, @Nullable ReadableMap value);
   void setIconSfSymbolName(T view, @Nullable String value);
   void setSelectedIconImageSource(T view, @Nullable ReadableMap value);
   void setSelectedIconSfSymbolName(T view, @Nullable String value);
-  void setBadgeValue(T view, @Nullable String value);
+  void setTabBarItemIconColor(T view, @Nullable Integer value);
+  void setTabBarItemBadgeBackgroundColor(T view, @Nullable Integer value);
   void setSpecialEffects(T view, @Nullable ReadableMap value);
   void setOverrideScrollViewContentInsetAdjustmentBehavior(T view, boolean value);
 }
