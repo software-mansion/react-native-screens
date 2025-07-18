@@ -69,6 +69,9 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
       case "tabBarItemActivityIndicatorColor":
         mViewManager.setTabBarItemActivityIndicatorColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
+      case "tabBarMinimizeBehavior":
+        mViewManager.setTabBarMinimizeBehavior(view, (String) value);
+        break;
       case "controlNavigationStateInJS":
         mViewManager.setControlNavigationStateInJS(view, value == null ? false : (boolean) value);
         break;

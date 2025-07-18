@@ -179,6 +179,11 @@ class TabsHostViewManager :
         view?.tabBarItemTitleFontSizeActive = value
     }
 
+    override fun setTabBarMinimizeBehavior(
+        view: TabsHost,
+        value: String?,
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSBottomTabs"
     }

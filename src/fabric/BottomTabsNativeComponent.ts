@@ -42,6 +42,12 @@ export type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+export type TabBarMinimizeBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
@@ -66,11 +72,14 @@ export interface NativeProps extends ViewProps {
 
   tabBarItemBadgeBackgroundColor?: ColorValue;
 
-  // Android 
-  tabBarItemTitleFontColorActive?: ColorValue; 
+  // Android
+  tabBarItemTitleFontColorActive?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemTitleFontSizeActive?: Float;
   tabBarItemActivityIndicatorColor?: ColorValue;
+
+  // iOS-specific
+  tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
 
   // Control
 

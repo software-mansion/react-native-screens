@@ -20,6 +20,14 @@ UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct
         titlePositionAdjustment);
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+API_AVAILABLE(ios(26.0))
+UITabBarMinimizeBehavior
+UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
+    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior);
+#endif // Check for iOS >= 26
+
 std::optional<UIBlurEffectStyle>
 RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);

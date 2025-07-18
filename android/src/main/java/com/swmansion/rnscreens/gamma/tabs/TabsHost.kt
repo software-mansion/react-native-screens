@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import com.swmansion.rnscreens.R
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Choreographer
@@ -20,6 +19,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
@@ -302,7 +302,8 @@ class TabsHost(
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
         // ActivityIndicator color
-        val activityIndicatorColor = tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
+        val activityIndicatorColor =
+            tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activityIndicatorColor)
 
         // First clean the menu, then populate it
@@ -399,10 +400,11 @@ class TabsHost(
         }
     }
 
-    private val layoutCallback = Choreographer.FrameCallback {
-        isLayoutEnqueued = false
-        forceSubtreeMeasureAndLayoutPass()
-    }
+    private val layoutCallback =
+        Choreographer.FrameCallback {
+            isLayoutEnqueued = false
+            forceSubtreeMeasureAndLayoutPass()
+        }
 
     private fun refreshLayout() {
         @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
@@ -414,7 +416,7 @@ class TabsHost(
                 .getInstance()
                 .postFrameCallback(
                     ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                    layoutCallback
+                    layoutCallback,
                 )
         }
     }

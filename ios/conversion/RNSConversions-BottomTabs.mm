@@ -88,6 +88,27 @@ UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
   return UIOffsetMake(titlePositionAdjustment.horizontal, titlePositionAdjustment.vertical);
 }
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+API_AVAILABLE(ios(26.0))
+UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
+    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior)
+{
+  using enum facebook::react::RNSBottomTabsTabBarMinimizeBehavior;
+
+  switch (tabBarMinimizeBehavior) {
+    case Never:
+      return UITabBarMinimizeBehaviorNever;
+    case OnScrollDown:
+      return UITabBarMinimizeBehaviorOnScrollDown;
+    case OnScrollUp:
+      return UITabBarMinimizeBehaviorOnScrollUp;
+    default:
+      return UITabBarMinimizeBehaviorAutomatic;
+  }
+}
+#endif // Check for iOS >= 26
+
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect)
 {
