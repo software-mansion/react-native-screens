@@ -15,12 +15,36 @@ type SplitViewScreenProps = {
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function SplitViewScreen({ children }: SplitViewScreenProps) {
+function Column({ children }: SplitViewScreenProps) {
   return (
-    <SplitViewScreenNativeComponent style={StyleSheet.absoluteFill}>
+    <SplitViewScreenNativeComponent
+      columnType="column"
+      style={StyleSheet.absoluteFill}>
       {children}
     </SplitViewScreenNativeComponent>
   );
 }
+
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
+function Inspector({ children }: SplitViewScreenProps) {
+  return (
+    <SplitViewScreenNativeComponent
+      columnType="inspector"
+      style={StyleSheet.absoluteFill}>
+      {children}
+    </SplitViewScreenNativeComponent>
+  );
+}
+
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
+// TODO: refactor to drop `Screen` suffix as the API name is really long at the moment
+const SplitViewScreen = {
+  Column,
+  Inspector,
+};
 
 export default SplitViewScreen;

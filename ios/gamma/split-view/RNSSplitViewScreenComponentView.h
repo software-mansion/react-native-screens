@@ -1,3 +1,4 @@
+#import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSSplitViewScreenShadowStateProxy.h"
 
@@ -18,6 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitViewScreenComponentView ()
 
 - (nonnull RNSSplitViewScreenShadowStateProxy *)shadowStateProxy;
+
+@end
+
+#pragma mark - Props
+
+@interface RNSSplitViewScreenComponentView ()
+
+@property (nonatomic, readonly) RNSSplitViewScreenColumnType columnType;
 
 @end
 

@@ -2,6 +2,7 @@
 #import <React/RCTAssert.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
+#import "RNSConversions.h"
 
 #import "Swift-Bridging.h"
 
@@ -33,6 +34,7 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  [self resetProps];
   [self setupController];
 
   _shadowStateProxy = [RNSSplitViewScreenShadowStateProxy new];
@@ -69,6 +71,14 @@ namespace react = facebook::react;
   }
 }
 
+- (void)resetProps
+{
+  static const auto defaultProps = std::make_shared<const react::RNSSplitViewScreenProps>();
+  _props = defaultProps;
+
+  _columnType = RNSSplitViewScreenColumnTypeColumn;
+}
+
 #pragma mark - ShadowTreeState
 
 - (nonnull RNSSplitViewScreenShadowStateProxy *)shadowStateProxy
@@ -96,6 +106,19 @@ namespace react = facebook::react;
   [super updateState:state oldState:oldState];
 
   [_shadowStateProxy updateState:state oldState:oldState];
+}
+
+- (void)updateProps:(const facebook::react::Props::Shared &)props
+           oldProps:(const facebook::react::Props::Shared &)oldProps
+{
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitViewScreenProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitViewScreenProps>(props);
+
+  if (oldComponentProps.columnType != newComponentProps.columnType) {
+    _columnType = rnscreens::conversion::RNSSplitViewScreenColumnTypeFromScreenProp(newComponentProps.columnType);
+  }
+
+  [super updateProps:props oldProps:oldProps];
 }
 
 @end

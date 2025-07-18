@@ -2,7 +2,7 @@
 
 namespace rnscreens::conversion {
 
-#pragma mark RN Codegen enum to internal enum conversions
+#pragma mark SplitViewHost props
 
 UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(
     facebook::react::RNSSplitViewHostSplitBehavior splitBehavior)
@@ -57,6 +57,22 @@ UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
     case Automatic:
     default:
       return UISplitViewControllerDisplayModeAutomatic;
+  }
+}
+
+#pragma mark SplitViewScreen props
+
+RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
+    facebook::react::RNSSplitViewScreenColumnType columnType)
+{
+  using enum facebook::react::RNSSplitViewScreenColumnType;
+
+  switch (columnType) {
+    case Inspector:
+      return RNSSplitViewScreenColumnTypeInspector;
+    case Column:
+    default:
+      return RNSSplitViewScreenColumnTypeColumn;
   }
 }
 
