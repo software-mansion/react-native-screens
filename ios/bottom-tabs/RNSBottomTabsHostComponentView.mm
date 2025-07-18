@@ -271,7 +271,7 @@ namespace react = facebook::react;
 {
   react::RNSBottomTabsShadowNode::ConcreteState::Shared receivedState =
       std::static_pointer_cast<const react::RNSBottomTabsShadowNode::ConcreteState>(state);
-  
+
   _imageLoader = [self retrieveImageLoaderFromState:receivedState];
 }
 
@@ -400,9 +400,9 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateTabBarAppearance];
 }
 
-- (void)setTabBarBlurEffect:(UIBlurEffect *_Nullable)tabBarBlurEffect
+- (void)setTabBarBlurEffectFromRNSBlurEffectStyle:(RNSBlurEffectStyle)tabBarBlurEffect
 {
-  _tabBarBlurEffect = tabBarBlurEffect;
+  _tabBarBlurEffect = rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(tabBarBlurEffect);
   [self invalidateTabBarAppearance];
 }
 

@@ -1,8 +1,8 @@
 #import "RNSBottomTabsHostComponentViewManager.h"
 
 #if !RCT_NEW_ARCH_ENABLED
-#import "RNSBottomTabsHostComponentView.h"
 #import <React/RCTImageLoader.h>
+#import "RNSBottomTabsHostComponentView.h"
 #endif
 
 @implementation RNSBottomTabsHostComponentViewManager
@@ -23,7 +23,7 @@ RCT_EXPORT_MODULE(RNSBottomTabsManager)
 #pragma mark - LEGACY Props
 
 RCT_EXPORT_VIEW_PROPERTY(tabBarBackgroundColor, UIColor);
-RCT_EXPORT_VIEW_PROPERTY(tabBarBlurEffect, UIBlurEffect);
+RCT_REMAP_VIEW_PROPERTY(tabBarBlurEffect, tabBarBlurEffectFromRNSBlurEffectStyle, RNSBlurEffectStyle);
 RCT_EXPORT_VIEW_PROPERTY(tabBarTintColor, UIColor);
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontFamily, NSString);
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontSize, NSNumber);

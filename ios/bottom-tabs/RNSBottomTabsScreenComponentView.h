@@ -1,9 +1,9 @@
+#import <React/RCTImageSource.h>
 #import "RNSBottomTabsScreenEventEmitter.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
-#import "RNSTabBarAppearanceProvider.h"
 #import "RNSScrollViewBehaviorOverriding.h"
-#import <React/RCTImageSource.h>
+#import "RNSTabBarAppearanceProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -44,6 +44,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, nullable) UIColor *tabBarBackgroundColor;
 @property (nonatomic, strong, nullable) UIBlurEffect *tabBarBlurEffect;
+
+#if !RCT_NEW_ARCH_ENABLED
+- (void)setTabBarBlurEffectFromRNSBlurEffectStyle;
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontFamily;
 @property (nonatomic, strong, nullable) NSNumber *tabBarItemTitleFontSize;
