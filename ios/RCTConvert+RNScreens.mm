@@ -42,6 +42,47 @@
 
 RCT_ENUM_CONVERTER(RNSBlurEffectStyle, ([self blurEffectsForIOSVersion]), RNSBlurEffectStyleNone, integerValue)
 
++ (NSMutableDictionary *)extendedBlurEffectsForIOSVersion
+{
+  NSMutableDictionary *blurEffects = [NSMutableDictionary new];
+  [blurEffects addEntriesFromDictionary:@{
+    @"none" : @(RNSExtendedBlurEffectStyleNone),
+    @"default" : @(RNSExtendedBlurEffectStyleDefault),
+    @"extraLight" : @(RNSExtendedBlurEffectStyleExtraLight),
+    @"light" : @(RNSExtendedBlurEffectStyleLight),
+    @"dark" : @(RNSExtendedBlurEffectStyleDark),
+    @"regular" : @(RNSExtendedBlurEffectStyleRegular),
+    @"prominent" : @(RNSExtendedBlurEffectStyleProminent),
+  }];
+
+#if !TARGET_OS_TV
+  [blurEffects addEntriesFromDictionary:@{
+    @"systemUltraThinMaterial" : @(RNSExtendedBlurEffectStyleSystemUltraThinMaterial),
+    @"systemThinMaterial" : @(RNSExtendedBlurEffectStyleSystemThinMaterial),
+    @"systemMaterial" : @(RNSExtendedBlurEffectStyleSystemMaterial),
+    @"systemThickMaterial" : @(RNSExtendedBlurEffectStyleSystemThickMaterial),
+    @"systemChromeMaterial" : @(RNSExtendedBlurEffectStyleSystemChromeMaterial),
+    @"systemUltraThinMaterialLight" : @(RNSExtendedBlurEffectStyleSystemUltraThinMaterialLight),
+    @"systemThinMaterialLight" : @(RNSExtendedBlurEffectStyleSystemThinMaterialLight),
+    @"systemMaterialLight" : @(RNSExtendedBlurEffectStyleSystemMaterialLight),
+    @"systemThickMaterialLight" : @(RNSExtendedBlurEffectStyleSystemThickMaterialLight),
+    @"systemChromeMaterialLight" : @(RNSExtendedBlurEffectStyleSystemChromeMaterialLight),
+    @"systemUltraThinMaterialDark" : @(RNSExtendedBlurEffectStyleSystemUltraThinMaterialDark),
+    @"systemThinMaterialDark" : @(RNSExtendedBlurEffectStyleSystemThinMaterialDark),
+    @"systemMaterialDark" : @(RNSExtendedBlurEffectStyleSystemMaterialDark),
+    @"systemThickMaterialDark" : @(RNSExtendedBlurEffectStyleSystemThickMaterialDark),
+    @"systemChromeMaterialDark" : @(RNSExtendedBlurEffectStyleSystemChromeMaterialDark),
+  }];
+#endif
+  return blurEffects;
+}
+
+RCT_ENUM_CONVERTER(
+    RNSExtendedBlurEffectStyle,
+    ([self extendedBlurEffectsForIOSVersion]),
+    RNSExtendedBlurEffectStyleDefault,
+    integerValue)
+
 @end
 
 #endif // !RCT_NEW_ARCH_ENABLED
