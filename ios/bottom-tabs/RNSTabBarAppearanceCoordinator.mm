@@ -30,6 +30,11 @@
       continue;
     }
 
+    if (tabScreenCtrl.tabScreenComponentView == nil) {
+      RCTLogWarn(@"[RNScreens] Nullish TabScreen while tab bar appearance update!");
+      continue;
+    }
+
     // Start with default appearance
     UITabBarAppearance *tabAppearance = [[UITabBarAppearance alloc] init];
 
