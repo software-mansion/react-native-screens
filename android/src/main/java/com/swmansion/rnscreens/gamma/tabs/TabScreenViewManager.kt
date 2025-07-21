@@ -83,6 +83,7 @@ class TabScreenViewManager :
         value: Int?,
     ) = Unit
 
+    @ReactProp(name = "tabBarItemBadgeBackgroundColor", customType = "Color")
     override fun setTabBarItemBadgeBackgroundColor(
         view: TabScreen,
         value: Int?,
@@ -165,18 +166,10 @@ class TabScreenViewManager :
 
     override fun setOverrideScrollViewContentInsetAdjustmentBehavior(
         view: TabScreen,
-        value: Boolean,
+        value: Boolean
     ) = Unit
 
     // Android specific
-    @ReactProp(name = "tabBarItemBadgeVisible")
-    override fun setTabBarItemBadgeVisible(
-        view: TabScreen,
-        value: Boolean,
-    ) {
-        view.tabBarItemBadgeVisible = value
-    }
-
     @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
     override fun setTabBarItemBadgeTextColor(
         view: TabScreen,
