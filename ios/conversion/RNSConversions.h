@@ -71,6 +71,9 @@ SplitViewDisplayModeButtonVisibilityFromHostProp(
     react::RNSSplitViewHostDisplayModeButtonVisibility
         displayModeButtonVisibility);
 
+std::string UISplitViewControllerDisplayModeToString(
+    UISplitViewControllerDisplayMode displayMode);
+
 #pragma mark SplitViewScreen props
 
 RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
