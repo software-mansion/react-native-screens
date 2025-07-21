@@ -327,6 +327,14 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super didSetProps:changedProps];
 
+  // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
+  // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
+  // enabling us to warn users that dynamic changes are not supported.
+  // On Paper, setter for the prop may not be called (when it is undefined in JS).
+  // Therefore we set the flag in didSetProps to make sure to handle this case as well.
+  // didSetProps will always be called because tabKey prop is required.
+  _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
+
   if (_tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
     _tabItemNeedsAppearanceUpdate = NO;
@@ -454,10 +462,8 @@ RNS_IGNORE_SUPER_CALL_END
         @"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
   }
 
-  // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
-  // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
-  // enabling us to warn users that dynamic changes are not supported.
-  _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
+  // _isOverrideScrollViewContentInsetAdjustmentBehaviorSet flag is set in didSetProps to handle a case
+  // when the prop is undefined in JS and default value is used instead of calling this setter.
 }
 
 - (void)setOnWillAppear:(RCTDirectEventBlock)onWillAppear
