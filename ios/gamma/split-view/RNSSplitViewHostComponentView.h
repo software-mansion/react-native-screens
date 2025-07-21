@@ -23,6 +23,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UISplitViewControllerDisplayMode displayMode;
 @property (nonatomic, readonly) BOOL presentsWithGesture;
 @property (nonatomic, readonly) BOOL showSecondaryToggleButton;
+@property (nonatomic, readonly) BOOL showInspector;
+
+@end
+
+#pragma mark - Events
+
+@interface RNSSplitViewHostComponentView ()
+
+- (void)emitInspectorDidHide;
 
 @end
 

@@ -2,7 +2,13 @@
 
 import type { ViewProps } from 'react-native';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
+import type {
+  DirectEventHandler,
+  WithDefault,
+} from 'react-native/Libraries/Types/CodegenTypes';
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+type SplitViewEvent = Readonly<{}>;
 
 export type SplitViewSplitBehavior =
   | 'automatic'
@@ -27,13 +33,16 @@ export interface NativeProps extends ViewProps {
   displayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
   splitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
   primaryEdge?: WithDefault<SplitViewPrimaryEdge, 'leading'>;
-
-  // NOTE: this setter cannot change the value dynamically, even in pure native app
   showSecondaryToggleButton?: WithDefault<boolean, false>;
 
   // Interactions
 
   presentsWithGesture?: WithDefault<boolean, true>;
+  showInspector?: WithDefault<boolean, false>;
+
+  // Custom events
+
+  onInspectorHide?: DirectEventHandler<SplitViewEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewHost', {});

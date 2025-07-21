@@ -4,12 +4,10 @@ import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
 import PressableWithFeedback from '../../shared/PressableWithFeedback';
 import { Colors } from '../../shared/styling/Colors';
 
-const TestButton = ({ setButtonState }) => {
+const TestButton = ({ onPress }) => {
   return (
     <PressableWithFeedback
-      onPress={() => setButtonState('Pressed')}
-      onPressIn={() => setButtonState('Pressed In')}
-      onPressOut={() => setButtonState('Pressed Out')}
+      onPress={onPress}
       style={styles.button}>
       <Text style={styles.text}>Touch me</Text>
     </PressableWithFeedback>
@@ -17,38 +15,29 @@ const TestButton = ({ setButtonState }) => {
 }
 
 const SplitViewBaseApp = () => {
-  const [buttonState, setButtonState] = React.useState('Initial');
-  const [buttonState2, setButtonState2] = React.useState('Initial');
-  const [buttonState3, setButtonState3] = React.useState('Initial');
-  const [buttonState4, setButtonState4] = React.useState('Initial');
+  const [inspectorVisible, setInspectorVisible] = React.useState(false);
+
+  const onInspectorHide = () => {
+    setInspectorVisible(false);
+  }
 
   return (
-    <SplitViewHost displayMode='twoBesideSecondary' primaryEdge='leading' presentsWithGesture={false} splitBehavior='tile'>
-      <SplitViewScreen>
-        <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
-          <TestButton setButtonState={setButtonState} />
-          {buttonState && (<Text style={styles.text}>Button State: {buttonState}</Text>)}
-        </View>
-      </SplitViewScreen>
-      <SplitViewScreen>
-        <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]}>
-          <TestButton setButtonState={setButtonState2} />
-          {buttonState2 && (<Text style={styles.text}>Button State: {buttonState2}</Text>)}
-        </View>
-      </SplitViewScreen>
-      <SplitViewScreen>
+    <SplitViewHost onInspectorHide={onInspectorHide} displayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={true} splitBehavior='tile' showInspector={inspectorVisible}>
+      <SplitViewScreen.Column>
+        <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]} />
+      </SplitViewScreen.Column>
+      <SplitViewScreen.Column>
+        <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]} />
+      </SplitViewScreen.Column>
+      <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
-          <TestButton setButtonState={setButtonState3} />
-          {buttonState3 && (<Text style={styles.text}>Button State: {buttonState3}</Text>)}
+          <TestButton onPress={() => setInspectorVisible(prev => !prev)} />
+          <Text style={styles.text}>Toggle inspector</Text>
         </View>
-      </SplitViewScreen>
-      {/* TODO: to be removed - only for testing purposes for inspector column */}
-      <SplitViewScreen>
-        <View style={[styles.container, { backgroundColor: Colors.GreenDark100 }]}>
-          <TestButton setButtonState={setButtonState4} />
-          {buttonState4 && (<Text style={styles.text}>Button State in modal: {buttonState4}</Text>)}
-        </View>
-      </SplitViewScreen>
+      </SplitViewScreen.Column>
+      <SplitViewScreen.Inspector>
+        <View style={[styles.container, { backgroundColor: Colors.GreenDark100 }]} />
+      </SplitViewScreen.Inspector>
     </SplitViewHost>
   );
 }
