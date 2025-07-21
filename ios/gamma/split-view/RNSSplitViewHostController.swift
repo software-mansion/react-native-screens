@@ -258,12 +258,6 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
     reactEventEmitter.emitOnExpand()
   }
 
-  public func splitViewController(
-    _ svc: UISplitViewController, willHide column: UISplitViewController.Column
-  ) {
-    // TODO: missing impl
-  }
-
   #if compiler(>=6.2)
     public func splitViewController(
       _ svc: UISplitViewController, didHide column: UISplitViewController.Column
@@ -284,16 +278,4 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
       }
     }
   #endif
-  
-  public func splitViewController(
-    _ svc: UISplitViewController, willShow column: UISplitViewController.Column
-  ) {
-    // TODO: missing impl
-  }
-
-  public func splitViewController(
-    _ svc: UISplitViewController, didShow column: UISplitViewController.Column
-  ) {
-    // TODO: missing impl
-  }
 }
