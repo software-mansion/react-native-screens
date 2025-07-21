@@ -231,7 +231,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Events
 
-- (void)notifyInspectorDidHide
+- (void)emitInspectorDidHide
 {
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSplitViewHostEventEmitter>(_eventEmitter)

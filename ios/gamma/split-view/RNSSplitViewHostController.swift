@@ -259,7 +259,7 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
 
         if let inspectorViewController = viewController(for: .inspector) {
           if inspectorViewController.view.window == nil {
-            splitViewHostComponentView.notifyInspectorDidHide()
+            splitViewHostComponentView.emitInspectorDidHide()
           }
         }
       }

@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSSplitViewHostComponentView ()
 
-- (void)notifyInspectorDidHide;
+- (void)emitInspectorDidHide;
 
 @end
 
