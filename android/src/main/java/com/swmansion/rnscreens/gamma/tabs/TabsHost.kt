@@ -174,7 +174,7 @@ class TabsHost(
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
-    var tabBarItemVisibilityMode: String? by Delegates.observable(null) { _, oldValue, newValue ->
+    var tabBarItemLabelVisibilityMode: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
@@ -323,7 +323,7 @@ class TabsHost(
         // From docs: can be one of LABEL_VISIBILITY_AUTO, LABEL_VISIBILITY_SELECTED, LABEL_VISIBILITY_LABELED, or LABEL_VISIBILITY_UNLABELED
 
         val visibilityMode =
-            when (tabBarItemVisibilityMode) {
+            when (tabBarItemLabelVisibilityMode) {
                 "selected" -> NavigationBarView.LABEL_VISIBILITY_SELECTED
                 "labeled" -> NavigationBarView.LABEL_VISIBILITY_LABELED
                 "unlabeled" -> NavigationBarView.LABEL_VISIBILITY_UNLABELED

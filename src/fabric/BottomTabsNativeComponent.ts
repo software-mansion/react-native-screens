@@ -78,7 +78,10 @@ export interface NativeProps extends ViewProps {
   tabBarItemTitleFontSizeActive?: Float;
   tabBarItemActivityIndicatorColor?: ColorValue;
   tabBarItemRippleColor?: ColorValue;
-  tabBarItemVisibilityMode?: WithDefault<TabBarItemLabelVisibilityMode, 'auto'>;
+  tabBarItemLabelVisibilityMode?: WithDefault<
+    TabBarItemLabelVisibilityMode,
+    'auto'
+  >;
 
   // Control
 

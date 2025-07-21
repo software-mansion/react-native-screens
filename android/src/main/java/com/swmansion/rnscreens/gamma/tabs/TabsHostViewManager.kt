@@ -187,12 +187,12 @@ class TabsHostViewManager :
         view.tabBarItemRippleColor = value
     }
 
-    @ReactProp(name = "tabBarItemVisibilityMode")
-    override fun setTabBarItemVisibilityMode(
+    @ReactProp(name = "tabBarItemLabelVisibilityMode")
+    override fun setTabBarItemLabelVisibilityMode(
         view: TabsHost,
         value: String?,
     ) {
-        view.tabBarItemVisibilityMode = value
+        view.tabBarItemLabelVisibilityMode = value
     }
 
     companion object {
