@@ -1,5 +1,6 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
+#import "RNSSplitViewHostComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSSplitViewHostComponentView ()
 
-- (void)emitInspectorDidHide;
+/**
+ * Use returned object to emit appropriate React Events to Element Tree.
+ */
+- (nonnull RNSSplitViewHostComponentEventEmitter *)reactEventEmitter;
 
 @end
 

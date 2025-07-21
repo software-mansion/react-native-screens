@@ -5,15 +5,31 @@ import SplitViewScreenNativeComponent from '../../fabric/gamma/SplitViewScreenNa
 
 type SplitViewScreenProps = {
   children?: ViewProps['children'];
+
+  // Events
+  onWillAppear?: () => void;
+  onDidAppear?: () => void;
+  onWillDisappear?: () => void;
+  onDidDisappear?: () => void;
 };
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function Column({ children }: SplitViewScreenProps) {
+function Column({
+  children,
+  onDidAppear,
+  onDidDisappear,
+  onWillAppear,
+  onWillDisappear,
+}: SplitViewScreenProps) {
   return (
     <SplitViewScreenNativeComponent
       columnType="column"
+      onDidAppear={onDidAppear}
+      onDidDisappear={onDidDisappear}
+      onWillAppear={onWillAppear}
+      onWillDisappear={onWillDisappear}
       style={StyleSheet.absoluteFill}>
       {children}
     </SplitViewScreenNativeComponent>
@@ -23,10 +39,20 @@ function Column({ children }: SplitViewScreenProps) {
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function Inspector({ children }: SplitViewScreenProps) {
+function Inspector({
+  children,
+  onDidAppear,
+  onDidDisappear,
+  onWillAppear,
+  onWillDisappear,
+}: SplitViewScreenProps) {
   return (
     <SplitViewScreenNativeComponent
       columnType="inspector"
+      onDidAppear={onDidAppear}
+      onDidDisappear={onDidDisappear}
+      onWillAppear={onWillAppear}
+      onWillDisappear={onWillDisappear}
       style={StyleSheet.absoluteFill}>
       {children}
     </SplitViewScreenNativeComponent>

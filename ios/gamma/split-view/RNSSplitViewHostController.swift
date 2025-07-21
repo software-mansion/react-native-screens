@@ -6,6 +6,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsChildViewControllersUpdate = false
   private var needsAppearanceUpdate = false
 
+  private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
+    return splitViewHostComponentView.reactEventEmitter()
+  }
+
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
   private let splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
 
@@ -246,18 +250,32 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 #endif
 
 extension RNSSplitViewHostController: UISplitViewControllerDelegate {
+  public func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
+    reactEventEmitter.emitOnCollapse()
+  }
+
+  public func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+    reactEventEmitter.emitOnExpand()
+  }
+
   #if compiler(>=6.2)
     public func splitViewController(
       _ svc: UISplitViewController, didHide column: UISplitViewController.Column
     ) {
       if #available(iOS 26.0, *) {
+        // TODO: we may consider removing this logic, because it could be handled by onViewDidDisappear on the column level
+        // On the other hand, maybe dedicated event related to the inspector would be a better approach.
+        // For now I am leaving it, but feel free to drop this method if there's any reason that `onDidDisappear` works better.
         if column != .inspector {
           return
         }
 
+        // `didHide` for modal is called on finger down for dismiss, what is problematic, because we can cancel dismissing modal.
+        // In this scenario, the modal inspector might receive an invalid state and will deviate from the JS value.
+        // Therefore, for event emissions, we need to ensure that the view was detached from the view hierarchy, by checking its window. 
         if let inspectorViewController = viewController(for: .inspector) {
           if inspectorViewController.view.window == nil {
-            splitViewHostComponentView.emitInspectorDidHide()
+            reactEventEmitter.emitOnHideInspector()
           }
         }
       }

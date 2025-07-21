@@ -8,7 +8,7 @@ import type {
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-type SplitViewEvent = Readonly<{}>;
+type GenericEmptyEvent = Readonly<{}>;
 
 export type SplitViewSplitBehavior =
   | 'automatic'
@@ -42,7 +42,9 @@ export interface NativeProps extends ViewProps {
 
   // Custom events
 
-  onInspectorHide?: DirectEventHandler<SplitViewEvent>;
+  onCollapse?: DirectEventHandler<GenericEmptyEvent>;
+  onExpand?: DirectEventHandler<GenericEmptyEvent>;
+  onInspectorHide?: DirectEventHandler<GenericEmptyEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewHost', {});
