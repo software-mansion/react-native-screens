@@ -65,39 +65,195 @@ export interface BottomTabsScreenProps {
    */
   isFocused?: boolean;
 
+  /**
+   * Identifies screen, e.g. when receiving onNativeFocusChange event.
+   *
+   * @platform android, ios
+   */
   tabKey: string;
+
+  // General
+
+  /**
+   * Title of the tab screen, displayed in the tab bar.
+   *
+   * @platform android, ios
+   */
+  title?: string;
+
+  /**
+   * Specifies content of tab bar item badge.
+   *
+   * TODO: Android
+   * On iOS, badge is displayed as regular string.
+   *
+   * @platform android, ios
+   */
+  badgeValue?: string;
 
   // Tab Bar Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
-  tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: BlurEffect; // defaults to 'none'
 
+  // Android-only appearance
+  iconResourceName?: string;
+  tabBarItemBadgeTextColor?: ColorValue;
+
+  // iOS-only appearance
+
+  /**
+   * Specifies background color of the entire tab bar when tab screen is selected.
+   *
+   * Since iOS 26, it does not affect the tab bar.
+   *
+   * @platform ios
+   */
+  tabBarBackgroundColor?: ColorValue;
+
+  /**
+   * Specifies blur effect applied to tab bar when tab screen is selected.
+   * Works with backgroundColor's alpha < 1.
+   *
+   * Can be:
+   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`,
+   * - `default` - uses UIKit's default tab bar blur effect,
+   * - `none` - disables blur effect.
+   *
+   * Since iOS 26, it does not affect the tab bar.
+   *
+   * @default Defaults to `default`.
+   *
+   * @platform ios
+   */
+  tabBarBlurEffect?: BlurEffect;
+
+  /**
+   * Specifies title font family of every tab item in the tab bar
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
+
+  /**
+   * Specifies title font size of every tab item in the tab bar
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
+
+  /**
+   * Specifies title font weight of every tab item in the tab bar
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
+
+  /**
+   * Specifies title font style of every tab item in the tab bar
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+
+  /**
+   * Specifies title font color of every tab item in the tab bar
+   * when tab screen is selected.
+   *
+   * Overrides color defined in `tabBarTintColor` and `tabBarItemIconColor`.
+   *
+   * @platform ios
+   */
   tabBarItemTitleFontColor?: TextStyle['color'];
+
+  /**
+   * Specifies title offset of every tab item in the tab bar
+   * when tab screen is selected.
+   *
+   * Depending on iOS version, interface orientation,
+   * this setting might impact text, badge and icon.
+   *
+   * @platform ios
+   */
   tabBarItemTitlePositionAdjustment?: {
     horizontal?: number;
     vertical?: number;
   };
 
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // General
-  title?: string;
-
-  // Android specific
-  iconResourceName?: string;
-  tabBarItemBadgeTextColor?: ColorValue;
-
+  /**
+   * Specifies icon for tab bar item representing the tab screen.
+   *
+   * Can be:
+   * - an object with `sfSymbolName` - will attempt to use SF
+   *   Symbol with given name,
+   * - an object with `imageSource` - will attempt to use image
+   *   from provided resource,
+   * - an object with `templateSource` - will attempt to use image
+   *   from provided resource as template (color of the image will
+   *   depend on tabBarIconColor, tintColor and tab bar item state).
+   *
+   * If no `selectedIcon` is provided, it will also be used as `selectedIcon`.
+   *
+   * @platform ios
+   */
   icon?: Icon;
+
+  /**
+   * Specifies icon for tab bar item representing the tab screen
+   * when it is selected.
+   *
+   * Accepts the same prop type as `icon`.
+   *
+   * To use `selectedIcon`, `icon` must also be provided.
+   *
+   * @platform ios
+   */
   selectedIcon?: Icon;
 
-  badgeValue?: string;
+  /**
+   * Specifies color of the icons for every tab item in the tab bar
+   * when tab screen is selected. Impacts also title text color.
+   *
+   * On iOS 26, it only applies to selected tab bar item. Other items
+   * are dark or light depending on the tab bar.
+   *
+   * Is overriden by `tabBarItemTitleFontColor` (for title text color).
+   * Overrides `tabBarTintColor`.
+   *
+   * @platform ios
+   */
+  tabBarItemIconColor?: ColorValue;
 
+  /**
+   * Specifies background color of badges for every tab item in the
+   * tab bar when tab screen is selected.
+   *
+   * @platform ios
+   */
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+
+  /**
+   * Specifies which special effects (also known as microinteractions)
+   * are enabled for tab screen.
+   *
+   * For repeated tab selection (selecting already focused tab bar item),
+   * there are 2 special effects:
+   * - `popToRoot` - when Stack is nested inside tab screen and repeated
+   *   selection is detected, the Stack will pop to root screen.
+   * - `scrollToTop` - when ScrollView is in first descendant chain from
+   *   tab screen and repeated selection is detected, ScrollView will
+   *   be scrolled to top.
+   *
+   * Important notes:
+   * - `popToRoot` has priority over `scrollToTop`,
+   * - for nested Stack, `scrollToTop` works only on root screen.
+   *
+   * @default All special effects are enabled by default.
+   *
+   * @platform ios
+   */
   specialEffects?: {
     repeatedTabSelection?: {
       popToRoot?: boolean;
@@ -105,12 +261,55 @@ export interface BottomTabsScreenProps {
     };
   };
 
+  /**
+   * Specifies if `contentInsetAdjustmentBehavior` of ScrollViews in first
+   * descendant chain from tab screen should be overriden back from `never`
+   * to `automatic`.
+   *
+   * By default, `react-native`'s ScrollView has `contentInsetAdjustmentBehavior`
+   * set to `never` instead of UIKit-default (which is `automatic`). This
+   * prevents ScrollViews from respecting navigation bar instets.
+   * When this prop is set to `true`, `automatic` behavior is reverted for
+   * ScrollViews in first descendant chain from tab screen.
+   *
+   * @default Defaults to `true`.
+   *
+   * @platform ios
+   */
   overrideScrollViewContentInsetAdjustmentBehavior?: boolean; // defaults to true
 
   // Events
+
+  /**
+   * A callback that gets invoked when the tab screen will appear.
+   * This is called as soon as the transition begins.
+   *
+   * @platform ios
+   */
   onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
+
+  /**
+   * A callback that gets invoked when the tab screen did appear.
+   * This is called as soon as the transition ends.
+   *
+   * @platform ios
+   */
   onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;
+
+  /**
+   * A callback that gets invoked when the tab screeen will disappear.
+   * This is called as soon as the transition begins.
+   *
+   * @platform ios
+   */
   onWillDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
+
+  /**
+   * A callback that gets invoked when the tab screen did disappear.
+   * This is called as soon as the transition ends.
+   *
+   * @platform ios
+   */
   onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
 }
 
