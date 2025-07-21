@@ -51,45 +51,35 @@
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-  if (splitView.minimumSecondaryColumnWidth >= 0) {
-    if (@available(iOS 26.0, *)) {
+  if (@available(iOS 26.0, *)) {
+    if (splitView.minimumSecondaryColumnWidth >= 0) {
       controller.minimumSecondaryColumnWidth = splitView.minimumSecondaryColumnWidth;
     }
-  }
 
-  if (splitView.preferredSecondaryColumnWidthOrFraction >= 0 && splitView.preferredSecondaryColumnWidthOrFraction < 1) {
-    if (@available(iOS 26.0, *)) {
+    if (splitView.preferredSecondaryColumnWidthOrFraction >= 0 &&
+        splitView.preferredSecondaryColumnWidthOrFraction < 1) {
       controller.preferredSecondaryColumnWidthFraction = splitView.preferredSecondaryColumnWidthOrFraction;
-    }
-  } else if (splitView.preferredInspectorColumnWidthOrFraction >= 1) {
-    if (@available(iOS 26.0, *)) {
+    } else if (splitView.preferredInspectorColumnWidthOrFraction >= 1) {
       controller.preferredSecondaryColumnWidth = splitView.preferredSecondaryColumnWidthOrFraction;
     }
-  }
 
-  if (splitView.minimumInspectorColumnWidth >= 0) {
-    if (@available(iOS 26.0, *)) {
+    if (splitView.minimumInspectorColumnWidth >= 0) {
       controller.minimumInspectorColumnWidth = splitView.minimumInspectorColumnWidth;
     }
-  }
 
-  if (splitView.maximumInspectorColumnWidth >= 0) {
-    if (@available(iOS 26.0, *)) {
+    if (splitView.maximumInspectorColumnWidth >= 0) {
       controller.maximumInspectorColumnWidth = splitView.maximumInspectorColumnWidth;
     }
-  }
 
-  if (splitView.preferredInspectorColumnWidthOrFraction >= 0 && splitView.preferredInspectorColumnWidthOrFraction < 1) {
-    if (@available(iOS 26.0, *)) {
+    if (splitView.preferredInspectorColumnWidthOrFraction >= 0 &&
+        splitView.preferredInspectorColumnWidthOrFraction < 1) {
       controller.preferredInspectorColumnWidthFraction = splitView.preferredInspectorColumnWidthOrFraction;
-    }
-  } else if (splitView.preferredInspectorColumnWidthOrFraction >= 1) {
-    if (@available(iOS 26.0, *)) {
+    } else if (splitView.preferredInspectorColumnWidthOrFraction >= 1) {
       controller.preferredInspectorColumnWidth = splitView.preferredInspectorColumnWidthOrFraction;
     }
   }
 #endif
-    
+
   [controller toggleSplitViewInspector:splitView.showInspector];
 }
 
