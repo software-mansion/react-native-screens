@@ -12,6 +12,7 @@ UIBlurEffect *RNSUIBlurEffectFromOptionalUIBlurEffectStyle(std::optional<UIBlurE
   return nil;
 }
 
+#if !RCT_NEW_ARCH_ENABLED
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect)
 {
   switch (blurEffect) {
@@ -70,6 +71,7 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
   std::optional<UIBlurEffectStyle> maybeStyle = RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(blurEffect);
   return RNSUIBlurEffectFromOptionalUIBlurEffectStyle(maybeStyle);
 }
+#endif // !RCT_NEW_ARCH_ENABLED
 
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
     react::RNSBottomTabsTabBarBlurEffect blurEffect)

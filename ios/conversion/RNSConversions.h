@@ -9,11 +9,13 @@ namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
+#if !RCT_NEW_ARCH_ENABLED
 std::optional<UIBlurEffectStyle>
 RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
 
 UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(
     RNSBlurEffectStyle blurEffect);
+#endif // !RCT_NEW_ARCH_ENABLED
 
 std::optional<UIBlurEffectStyle>
 RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
