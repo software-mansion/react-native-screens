@@ -191,6 +191,8 @@ RNS_IGNORE_SUPER_CALL_END
 {
   // Controller needs to know about the number of reactSubviews before its initialization to pass proper number of
   // columns to the constructor. Therefore, we must delay it until the 1st transaction will be processed.
+  // At this point, children are already attached to the Host component, therefore, we may create SplitView controller
+  // right before 1st props update.
   if (_controller == nil) {
     NSArray *columns = [_reactSubviews
         filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
