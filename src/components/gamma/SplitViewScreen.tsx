@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import type { ViewProps } from 'react-native';
 import SplitViewScreenNativeComponent from '../../fabric/gamma/SplitViewScreenNativeComponent';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type SplitViewScreenNativeProps = {};
 
 type SplitViewScreenProps = {
