@@ -68,10 +68,6 @@
 
     case RNSBlurEffectStyleSystemDefault:
       // Initialized appearance already has default blur effect.
-
-      // This won't work as expected with current inheriting appearance logic:
-      // screen will not revert to default but inherit blur from host
-      // TODO: remove appearance inheritance
       break;
 
     default:
