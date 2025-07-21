@@ -120,15 +120,13 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   @objc
   public func toggleSplitViewInspector(_ showInspector: Bool) {
-    if showInspector {
-      #if compiler(>=6.2)
+    #if compiler(>=6.2)
+      if showInspector {
         maybeShowInspector()
-      #endif
-    } else {
-      #if compiler(>=6.2)
+      } else {
         maybeHideInspector()
-      #endif
-    }
+      }
+    #endif
   }
 
   // MARK: ReactMountingTransactionObserving
