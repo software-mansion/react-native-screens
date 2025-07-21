@@ -1,3 +1,6 @@
+// Needed on Paper only to hide the files from Swift build process
+#if defined(__cplusplus)
+
 #include <jsi/jsi.h>
 #include <array>
 
@@ -38,3 +41,5 @@ class RNScreensTurboModule : public jsi::HostObject {
 };
 
 } // namespace RNScreens
+
+#endif // __cplusplus

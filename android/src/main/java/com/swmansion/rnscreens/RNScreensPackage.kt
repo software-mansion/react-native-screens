@@ -7,6 +7,8 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.swmansion.rnscreens.gamma.tabs.TabScreenViewManager
+import com.swmansion.rnscreens.gamma.tabs.TabsHostViewManager
 import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
 
 // Fool autolinking for older versions that do not support BaseReactPackage.
@@ -45,6 +47,8 @@ class RNScreensPackage : BaseReactPackage() {
             SearchBarManager(),
             ScreenFooterManager(),
             ScreenContentWrapperManager(),
+            TabsHostViewManager(),
+            TabScreenViewManager(),
         )
     }
 

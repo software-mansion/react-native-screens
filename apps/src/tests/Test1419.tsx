@@ -50,7 +50,7 @@ function Second() {
             justifyContent: 'center',
           }}>
           <Image
-            source={require('../assets/backButton.png')}
+            source={require('../../assets/backButton.png')}
             style={{
               width: 150,
               height: 150,

@@ -1,39 +1,39 @@
 // @ts-nocheck
 
-export { default as Test42 } from './Test42';       // [E2E skipped]: can't check orientation, unclear problem description
-export { default as Test111 } from './Test111';     // [E2E skipped]: can't check flickering
-export { default as Test263 } from './Test263';     // [E2E skipped]: example differs from PR, even if changed the problem still occurs
-export { default as Test349 } from './Test349';     // [E2E skipped]: can't check autofill easily, wrong prop name
-export { default as Test364 } from './Test364';     // [E2E skipped]: tabBarVisible prop doesn't exist anymore, suggested solution is to change navigator hierarchy (proposed in PR and in react-navigation docs)
-export { default as Test432 } from './Test432';     // [E2E created]
-export { default as Test528 } from './Test528';     // [E2E created](iOS): Detox supports changing orientation only on iOS
-export { default as Test550 } from './Test550';     // [E2E skipped]: the prop does not work, when fixed we can add the test
-export { default as Test556 } from './Test556';     // [E2E skipped]: can't check flickering nor non-deterministic white screen bug
-export { default as Test564 } from './Test564';     // [E2E skipped]: issue still present
-export { default as Test577 } from './Test577';     // [E2E created](iOS): issue is related to iOS modal
-export { default as Test593 } from './Test593';     // [E2E created]
-export { default as Test619 } from './Test619';     // [E2E skipped]: can't check components jumping
-export { default as Test624 } from './Test624';     // [E2E skipped]: PR changed library internals, test screen seems unrelated
-export { default as Test640 } from './Test640';     // [E2E created]
-export { default as Test642 } from './Test642';     // [E2E skipped]: can't check status bar visibility/style
-export { default as Test645 } from './Test645';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
-export { default as Test648 } from './Test648';     // [E2E skipped]: can't check animation in a meaningful way
-export { default as Test649 } from './Test649';     // [E2E created](iOS): headerLargeTitle is supported only on iOS
-export { default as Test654 } from './Test654';     // [E2E created](iOS): issue related to iOS native back button
-export { default as Test658 } from './Test658';     // [E2E created]
-export { default as Test662 } from './Test662';     // [E2E skipped]: can't check animation in a meaningful way
-export { default as Test691 } from './Test691';     // [E2E created](iOS): issue related to iOS modal behavior
-export { default as Test702 } from './Test702';     // [E2E skipped]: can't check animation in a meaningful way
-export { default as Test706 } from './Test706';     // [E2E skipped]: can't check font weight
-export { default as Test713 } from './Test713';     // [E2E skipped]: issue still present
-export { default as Test726 } from './Test726';     // [E2E created](iOS): issue related to iOS
+export { default as Test42 } from './Test42'; // [E2E skipped]: can't check orientation, unclear problem description
+export { default as Test111 } from './Test111'; // [E2E skipped]: can't check flickering
+export { default as Test263 } from './Test263'; // [E2E skipped]: example differs from PR, even if changed the problem still occurs
+export { default as Test349 } from './Test349'; // [E2E skipped]: can't check autofill easily, wrong prop name
+export { default as Test364 } from './Test364'; // [E2E skipped]: tabBarVisible prop doesn't exist anymore, suggested solution is to change navigator hierarchy (proposed in PR and in react-navigation docs)
+export { default as Test432 } from './Test432'; // [E2E created]
+export { default as Test528 } from './Test528'; // [E2E created](iOS): Detox supports changing orientation only on iOS
+export { default as Test550 } from './Test550'; // [E2E skipped]: the prop does not work, when fixed we can add the test
+export { default as Test556 } from './Test556'; // [E2E skipped]: can't check flickering nor non-deterministic white screen bug
+export { default as Test564 } from './Test564'; // [E2E skipped]: issue still present
+export { default as Test577 } from './Test577'; // [E2E created](iOS): issue is related to iOS modal
+export { default as Test593 } from './Test593'; // [E2E created]
+export { default as Test619 } from './Test619'; // [E2E skipped]: can't check components jumping
+export { default as Test624 } from './Test624'; // [E2E skipped]: PR changed library internals, test screen seems unrelated
+export { default as Test640 } from './Test640'; // [E2E created]
+export { default as Test642 } from './Test642'; // [E2E skipped]: can't check status bar visibility/style
+export { default as Test645 } from './Test645'; // [E2E created](iOS): headerLargeTitle is supported only on iOS
+export { default as Test648 } from './Test648'; // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test649 } from './Test649'; // [E2E created](iOS): headerLargeTitle is supported only on iOS
+export { default as Test654 } from './Test654'; // [E2E created](iOS): issue related to iOS native back button
+export { default as Test658 } from './Test658'; // [E2E created]
+export { default as Test662 } from './Test662'; // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test691 } from './Test691'; // [E2E created](iOS): issue related to iOS modal behavior
+export { default as Test702 } from './Test702'; // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test706 } from './Test706'; // [E2E skipped]: can't check font weight
+export { default as Test713 } from './Test713'; // [E2E skipped]: issue still present
+export { default as Test726 } from './Test726'; // [E2E created](iOS): issue related to iOS
 export { default as Test748 } from './Test748';
 export { default as Test750 } from './Test750';
 export { default as Test758 } from './Test758';
-export { default as Test761 } from './Test761';     // [E2E skipped]: can't check animation in a meaningful way
-export { default as Test779 } from './Test779';     // [E2E skipped]: can't check animation in a meaningful way
-export { default as Test780 } from './Test780';     // [E2E skipped]: can't use native swipe back gesture
-export { default as Test791 } from './Test791';     // [E2E created](iOS): issue related to iOS
+export { default as Test761 } from './Test761'; // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test779 } from './Test779'; // [E2E skipped]: can't check animation in a meaningful way
+export { default as Test780 } from './Test780'; // [E2E skipped]: can't use native swipe back gesture
+export { default as Test791 } from './Test791'; // [E2E created](iOS): issue related to iOS
 export { default as Test800 } from './Test800';
 export { default as Test817 } from './Test817';
 export { default as Test830 } from './Test830';
@@ -141,6 +141,7 @@ export { default as Test2899 } from './Test2899';
 export { default as Test2926 } from './Test2926'; // [E2E created](iOS): PR related to iOS search bar
 export { default as Test2949 } from './Test2949'; // [E2E skipped]: can't check system bars styles
 export { default as Test2963 } from './Test2963'; // [E2E created](iOS): issue related to iOS
+export { default as Test3045 } from './Test3045';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';
@@ -152,4 +153,7 @@ export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
 export { default as TestAndroidTransitions } from './TestAndroidTransitions';
 export { default as TestAnimation } from './TestAnimation';
+export { default as TestBottomTabs } from './TestBottomTabs';
+export { default as TestScreenStack } from './TestScreenStack';
+export { default as TestSplitView } from './TestSplitView';
 export { default as TestSheetFeatures } from './TestSheetFeatures';

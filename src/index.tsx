@@ -46,12 +46,29 @@ export { default as ScreenContentWrapper } from './components/ScreenContentWrapp
  */
 export {
   isSearchBarAvailableForCurrentPlatform,
-  compatibilityFlags,
   executeNativeBackPress,
 } from './utils';
+
+/**
+ * Flags
+ */
+export { compatibilityFlags, featureFlags } from './flags';
 
 /**
  * Hooks
  */
 export { default as useTransitionProgress } from './useTransitionProgress';
 export { default as useSheetTranslation } from './useSheetTranslation';
+
+/**
+ * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE
+ */
+export { default as BottomTabs } from './components/BottomTabs';
+export { default as BottomTabsScreen } from './components/BottomTabsScreen';
+export { default as ScreenStackHost } from './components/gamma/ScreenStackHost';
+export {
+  default as StackScreen,
+  StackScreenLifecycleState,
+} from './components/gamma/StackScreen';
+export { default as SplitViewHost } from './components/gamma/SplitViewHost';
+export { default as SplitViewScreen } from './components/gamma/SplitViewScreen';

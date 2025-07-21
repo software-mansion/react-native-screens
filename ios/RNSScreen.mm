@@ -32,6 +32,8 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScrollViewHelper.h"
+#import "RNSTabBarController.h"
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
@@ -1192,6 +1194,48 @@ RNS_IGNORE_SUPER_CALL_END
 
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"ScreenView [%ld] setFrame: %@", self.tag, NSStringFromCGRect(frame));
+  [super setFrame:frame];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+  NSLog(@"ScreenView [%ld] setBounds: %@", self.tag, NSStringFromCGRect(bounds));
+  [super setBounds:bounds];
+}
+
+#pragma mark - RNSScrollViewBehaviorOverriding
+
+- (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
+{
+  // RNSScreenView does not have a property to control this behavior.
+  // It looks for parent that conforms to RNSScrollViewBehaviorOverriding to determine
+  // if it should override ScrollView's behavior.
+
+  // As this method is called when RNSScreen willMoveToParentViewController
+  // and view does not have superView yet, we need to use reactSuperViews.
+  UIView *parent = [self reactSuperview];
+
+  while (parent != nil) {
+    if ([parent respondsToSelector:@selector(shouldOverrideScrollViewContentInsetAdjustmentBehavior)]) {
+      id<RNSScrollViewBehaviorOverriding> overrideProvider = static_cast<id<RNSScrollViewBehaviorOverriding>>(parent);
+      return [overrideProvider shouldOverrideScrollViewContentInsetAdjustmentBehavior];
+    }
+    parent = [parent reactSuperview];
+  }
+
+  return NO;
+}
+
+- (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
+{
+  if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
+    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+  }
+}
+
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
@@ -1616,13 +1660,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
   // screen size
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
+  BOOL isTabScreen = [self.parentViewController isKindOfClass:RNSTabBarController.class];
 
   // Calculate header height on modal open
   if (self.screenView.isPresentedAsNativeModal) {
     [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
   }
 
-  if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
+  if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
 #else
@@ -1735,6 +1780,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     if (responder != nil) {
       _previousFirstResponder = responder;
     }
+  } else {
+    [self.screenView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   }
 }
 

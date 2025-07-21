@@ -73,6 +73,11 @@ typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
   RNSSearchBarPlacementStacked,
 };
 
+typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {
+  RNSSplitViewScreenColumnTypeColumn,
+  RNSSplitViewScreenColumnTypeInspector,
+};
+
 // Redefinition of UIBlurEffectStyle. We need to represent additional case of `None`.
 typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
   /// No blur effect should be visible
@@ -118,3 +123,9 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
       API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemChromeMaterialDark
 
 } API_AVAILABLE(ios(8.0)) API_UNAVAILABLE(watchos);
+
+typedef NS_ENUM(NSInteger, RNSBottomTabsIconType) {
+  RNSBottomTabsIconTypeImage,
+  RNSBottomTabsIconTypeTemplate,
+  RNSBottomTabsIconTypeSfSymbol,
+};

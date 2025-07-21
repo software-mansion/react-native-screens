@@ -1,6 +1,6 @@
 {
   "name": "react-native-screens",
-  "version": "4.11.1",
+  "version": "4.13.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn && yarn build && cd ../)",
@@ -9,14 +9,17 @@
     "test:unit": "jest --passWithNoTests",
     "format-js": "prettier --write --list-different './{src,Example}/**/*.{js,ts,tsx}'",
     "format-android": "node ./scripts/format-android.js",
-    "format-ios": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.cpp\" -o -iname \"*.mm\" | xargs clang-format -i",
+    "format-ios-swift": "sh scripts/swift-format-helper.sh format",
+    "format-ios-cpp": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.cpp\" -o -iname \"*.mm\" | xargs clang-format -i",
+    "format-ios": "yarn format-ios-swift && yarn format-ios-cpp",
     "format-common": "find common/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format-cpp": "find cpp/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format-android-cpp": "find android/src/main/cpp -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format": "yarn format-js && yarn format-android && yarn format-ios && yarn format-common && yarn format-cpp && yarn format-android-cpp",
     "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
-    "lint": "yarn lint-js && yarn lint-android",
+    "lint-swift": "sh scripts/swift-format-helper.sh lint",
+    "lint": "yarn lint-js && yarn lint-android && yarn lint-swift",
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install",
     "architectures-consistency-check": "node ./scripts/codegen-check-consistency.js",
@@ -69,7 +72,7 @@
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
   "dependencies": {
     "react-freeze": "^1.0.0",
-    "react-native-is-edge-to-edge": "^1.1.7",
+    "react-native-is-edge-to-edge": "^1.2.1",
     "warn-once": "^0.1.0"
   },
   "peerDependencies": {
@@ -94,7 +97,6 @@
     "@types/shelljs": "^0",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
-    "clang-format": "^1.8.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-config-standard": "^17.1.0",
@@ -109,7 +111,7 @@
     "prettier": "^2.8.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-native": "0.80.0-rc.5",
+    "react-native": "0.80.1",
     "react-native-builder-bob": "^0.23.2",
     "react-native-gesture-handler": "^2.22.0",
     "react-native-reanimated": "3.16.7",
@@ -125,12 +127,13 @@
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
+    "FabricExample/ios/**/*.swift": "yarn format-ios-swift",
     "src/**/*.{js,ts,tsx}": "yarn lint-js",
     "common/**/*.{h,cpp}": "yarn format-common",
     "cpp/**/*.{h,cpp}": "yarn format-cpp",
     "android/src/main/cpp/.{cpp, h}": "yarn format-android-cpp",
     "android/**/*.kt": "yarn format-android",
-    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios",
+    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios-cpp",
     "src/fabric/*.ts": "yarn sync-architectures"
   },
   "react-native-builder-bob": {
@@ -160,6 +163,10 @@
     },
     "ios": {
       "componentProvider": {
+        "RNSStackScreen": "RNSStackScreenComponentView",
+        "RNSScreenStackHost": "RNSScreenStackHostComponentView",
+        "RNSBottomTabsScreen": "RNSBottomTabsScreenComponentView",
+        "RNSBottomTabs": "RNSBottomTabsHostComponentView",
         "RNSFullWindowOverlay": "RNSFullWindowOverlay",
         "RNSModalScreen": "RNSModalScreen",
         "RNSScreenContainer": "RNSScreenContainerView",
@@ -170,7 +177,9 @@
         "RNSScreenStackHeaderConfig": "RNSScreenStackHeaderConfig",
         "RNSScreenStackHeaderSubview": "RNSScreenStackHeaderSubview",
         "RNSScreenStack": "RNSScreenStackView",
-        "RNSSearchBar": "RNSSearchBar"
+        "RNSSearchBar": "RNSSearchBar",
+        "RNSSplitViewHost": "RNSSplitViewHostComponentView",
+        "RNSSplitViewScreen": "RNSSplitViewScreenComponentView"
       },
       "components": {
         "RNSFullWindowOverlay": {
@@ -205,6 +214,24 @@
         },
         "RNSSearchBar": {
           "className": "RNSSearchBar"
+        },
+        "RNSStackScreen": {
+          "className": "RNSStackScreenComponentView"
+        },
+        "RNSScreenStackHost": {
+          "className": "RNSScreenStackHostComponentView"
+        },
+        "RNSBottomTabsScreen": {
+          "className": "RNSBottomTabsScreenComponentView"
+        },
+        "RNSBottomTabs": {
+          "className": "RNSBottomTabsHostComponentView"
+        },
+        "RNSSplitViewHost": {
+          "className": "RNSSplitViewHostComponentView"
+        },
+        "RNSSplitViewScreen": {
+          "className": "RNSSplitViewScreenComponentView"
         }
       }
     }

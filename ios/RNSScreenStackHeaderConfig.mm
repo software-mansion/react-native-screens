@@ -554,7 +554,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
     // the screen underneath navigation controllers
-    vc.edgesForExtendedLayout = UIRectEdgeNone;
+    vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
   } else {
     // system default is UIRectEdgeAll
     vc.edgesForExtendedLayout = UIRectEdgeAll;
