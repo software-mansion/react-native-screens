@@ -20,6 +20,22 @@
   controller.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton;
 
   // Step 2 - manipulating columns
+  // Step 2.1 - validating column constraints
+
+  [self validateColumnConstraintsWithMinWidth:splitView.minimumPrimaryColumnWidth
+                                     maxWidth:splitView.maximumPrimaryColumnWidth];
+  [self validateColumnConstraintsWithMinWidth:splitView.minimumSupplementaryColumnWidth
+                                     maxWidth:splitView.maximumSupplementaryColumnWidth];
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+  if (@available(iOS 26.0, *)) {
+    [self validateColumnConstraintsWithMinWidth:splitView.minimumInspectorColumnWidth
+                                       maxWidth:splitView.maximumInspectorColumnWidth];
+  }
+#endif
+
+  // Step 2.2 - applying updates
   if (splitView.minimumPrimaryColumnWidth >= 0) {
     controller.minimumPrimaryColumnWidth = splitView.minimumPrimaryColumnWidth;
   }
@@ -81,6 +97,15 @@
 #endif
 
   [controller toggleSplitViewInspector:splitView.showInspector];
+}
+
+- (void)validateColumnConstraintsWithMinWidth:(CGFloat)minWidth maxWidth:(CGFloat)maxWidth
+{
+  RCTAssert(
+      minWidth <= maxWidth,
+      @"[RNScreens] SplitView column constraints are invalid: minWidth %f cannot be greater that maxWidth %f",
+      minWidth,
+      maxWidth);
 }
 
 @end
