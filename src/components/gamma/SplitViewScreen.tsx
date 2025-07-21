@@ -2,11 +2,8 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import type { ViewProps } from 'react-native';
 import SplitViewScreenNativeComponent from '../../fabric/gamma/SplitViewScreenNativeComponent';
-import type { NativeProps } from '../../fabric/gamma/SplitViewScreenNativeComponent';
 
-export type SplitViewScreenNativeProps = NativeProps & {
-  // Overrides
-};
+export type SplitViewScreenNativeProps = {};
 
 type SplitViewScreenProps = {
   children?: ViewProps['children'];
