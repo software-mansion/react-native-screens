@@ -5,13 +5,9 @@
 
 @implementation RNSSplitViewAppearanceCoordinator
 
-- (void)updateAppearanceOfSplitView:(RNSSplitViewHostComponentView *)splitView
-                     withController:(RNSSplitViewHostController *)controller
+- (void)updateAppearanceOfSplitView:(RNSSplitViewHostComponentView *_Nonnull)splitView
+                     withController:(RNSSplitViewHostController *_Nonnull)controller
 {
-  if (splitView == nil) {
-    return;
-  }
-
   // Step 1 - general settings
   controller.preferredSplitBehavior = splitView.splitBehavior;
   controller.preferredDisplayMode = splitView.displayMode;
