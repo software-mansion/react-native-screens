@@ -61,9 +61,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
       "[RNScreens] Child view controller must be invalidated when update is forced!")
 
     let currentColumns = filterSubviews(
-      ofType: .column, in: splitViewReactSubviews)
+      ofType: RNSSplitViewScreenColumnType.column, in: splitViewReactSubviews)
     let currentInspectors = filterSubviews(
-      ofType: .inspector, in: splitViewReactSubviews)
+      ofType: RNSSplitViewScreenColumnType.inspector, in: splitViewReactSubviews)
 
     validateColumns(currentColumns)
     validateInspectors(currentInspectors)
@@ -149,9 +149,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   func validateSplitViewHierarchy() {
     let columns = filterSubviews(
-      ofType: .column, in: splitViewReactSubviews)
+      ofType: RNSSplitViewScreenColumnType.column, in: splitViewReactSubviews)
     let inspectors = filterSubviews(
-      ofType: .inspector, in: splitViewReactSubviews)
+      ofType: RNSSplitViewScreenColumnType.inspector, in: splitViewReactSubviews)
 
     validateColumns(columns)
     validateInspectors(inspectors)
