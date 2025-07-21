@@ -42,11 +42,7 @@ export type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-export type VisibilityMode = 
-  | 'auto'
-  | 'selected'
-  | 'labeled'
-  | 'unlabeled'
+export type VisibilityMode = 'auto' | 'selected' | 'labeled' | 'unlabeled';
 
 export interface NativeProps extends ViewProps {
   // Events
@@ -72,13 +68,13 @@ export interface NativeProps extends ViewProps {
 
   tabBarItemBadgeBackgroundColor?: ColorValue;
 
-  // Android 
-  tabBarItemTitleFontColorActive?: ColorValue; 
+  // Android
+  tabBarItemTitleFontColorActive?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemTitleFontSizeActive?: Float;
   tabBarItemActivityIndicatorColor?: ColorValue;
   tabBarItemRippleColor?: ColorValue;
-  tabBarItemVisibilityMode?: WithDefault<VisibilityMode, "auto">;
+  tabBarItemVisibilityMode?: WithDefault<VisibilityMode, 'auto'>;
 
   // Control
 

@@ -83,6 +83,7 @@ class TabScreenViewManager :
         value: Int?,
     ) = Unit
 
+    @ReactProp(name = "tabBarItemBadgeBackgroundColor", customType = "Color")
     override fun setTabBarItemBadgeBackgroundColor(
         view: TabScreen,
         value: Int?,
@@ -113,16 +114,16 @@ class TabScreenViewManager :
     override fun setIconSfSymbolName(
         view: TabScreen?,
         value: String?,
-    ) =  Unit
+    ) = Unit
 
     override fun setSelectedIconImageSource(
         view: TabScreen?,
-        value: ReadableMap?
+        value: ReadableMap?,
     ) = Unit
 
     override fun setSelectedIconSfSymbolName(
         view: TabScreen?,
-        value: String?
+        value: String?,
     ) = Unit
 
     // Annotation is Paper only
@@ -169,15 +170,7 @@ class TabScreenViewManager :
     ) = Unit
 
     // Android specific
-    @ReactProp(name = "tabBarItemBadgeVisible")
-    override fun setTabBarItemBadgeVisible(
-        view: TabScreen,
-        value: Boolean,
-    ) {
-        view.tabBarItemBadgeVisible = value
-    }
-
-    @ReactProp(name = "tabBarItemBadgeTextColor")
+    @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
     override fun setTabBarItemBadgeTextColor(
         view: TabScreen,
         value: Int?,

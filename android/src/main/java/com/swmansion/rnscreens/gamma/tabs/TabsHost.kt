@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import com.swmansion.rnscreens.R
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.util.Log
@@ -18,10 +17,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
@@ -174,6 +175,10 @@ class TabsHost(
     }
 
     var tabBarItemVisibilityMode: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
+    var tabBarItemRippleColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
@@ -398,11 +403,20 @@ class TabsHost(
                     reactContext.assets,
                 )
 
+            /*
+                Short explanation about computations we're doing below.
+                R.dimen, has defined value in SP, getDimension converts it to pixels, and by default
+                TextView.setTextSize accepts SP, so the size is multiplied by density twice. Thus we need
+                to convert both values to pixels and make sure that setTextSizes is about that.
+                The Text tag in RN uses SP or DP based on `allowFontScaling` prop. For now we're going
+                with SP, if there will be a need for skipping scale, the we should introduce similar
+                `allowFontScaling` prop.
+             */
             val smallFontSize =
-                tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { it * resources.displayMetrics.density }
+                tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
                     ?: wrappedContext.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
             val largeFontSize =
-                tabBarItemTitleFontSizeActive?.takeIf { it > 0 }?.let { it * resources.displayMetrics.density }
+                tabBarItemTitleFontSizeActive?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
                     ?: wrappedContext.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
 
             // Inactive
@@ -419,26 +433,27 @@ class TabsHost(
         menuItemIndex: Int,
         tabScreen: TabScreen,
     ) {
-        if (tabScreen.tabBarItemBadgeVisible != true) {
+        val badgeValue = tabScreen.badgeValue
+
+        if (badgeValue == null) {
             val badge = bottomNavigationView.getBadge(menuItemIndex)
             badge?.isVisible = false
 
             return
         }
 
-        val badgeValue = tabScreen.badgeValue
-        val badgeValueNumber = badgeValue?.toIntOrNull()
+        val badgeValueNumber = badgeValue.toIntOrNull()
 
         val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
         badge.isVisible = true
 
+        badge.clearText()
+        badge.clearNumber()
+
         if (badgeValueNumber != null) {
             badge.number = badgeValueNumber
-        } else if (badgeValue != null) {
+        } else if (badgeValue != "") {
             badge.text = badgeValue
-        } else {
-            badge.clearNumber()
-            badge.clearText()
         }
 
         // Styling
@@ -478,10 +493,11 @@ class TabsHost(
         }
     }
 
-    private val layoutCallback = Choreographer.FrameCallback {
-        isLayoutEnqueued = false
-        forceSubtreeMeasureAndLayoutPass()
-    }
+    private val layoutCallback =
+        Choreographer.FrameCallback {
+            isLayoutEnqueued = false
+            forceSubtreeMeasureAndLayoutPass()
+        }
 
     private fun refreshLayout() {
         @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
@@ -493,7 +509,7 @@ class TabsHost(
                 .getInstance()
                 .postFrameCallback(
                     ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                    layoutCallback
+                    layoutCallback,
                 )
         }
     }

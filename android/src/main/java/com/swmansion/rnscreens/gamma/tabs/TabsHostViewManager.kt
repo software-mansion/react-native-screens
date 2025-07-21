@@ -179,18 +179,12 @@ class TabsHostViewManager :
         view?.tabBarItemTitleFontSizeActive = value
     }
 
+    @ReactProp(name = "tabBarItemRippleColor", customType = "Color")
     override fun setTabBarItemRippleColor(
         view: TabsHost,
         value: Int?,
     ) {
         view.tabBarItemRippleColor = value
-    }
-
-    override fun setTabBarItemVisibilityMode(
-        view: TabsHost,
-        value: String?,
-    ) {
-        view.tabBarItemVisibilityMode = value
     }
 
     companion object {
