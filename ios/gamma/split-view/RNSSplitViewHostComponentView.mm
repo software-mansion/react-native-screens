@@ -20,7 +20,6 @@ namespace react = facebook::react;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
   bool _needsSplitViewAppearanceUpdate;
-  int _columnsCount;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -39,7 +38,6 @@ namespace react = facebook::react;
 
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _needsSplitViewAppearanceUpdate = false;
-  _columnsCount = 0;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -112,9 +110,6 @@ RNS_IGNORE_SUPER_CALL_END
   auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
   childScreen.splitViewHost = self;
   [_reactSubviews insertObject:childScreen atIndex:index];
-  if (childScreen.columnType == RNSSplitViewScreenColumnTypeColumn) {
-    _columnsCount++;
-  }
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
 
@@ -129,9 +124,6 @@ RNS_IGNORE_SUPER_CALL_END
   auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
   childScreen.splitViewHost = nil;
   [_reactSubviews removeObject:childScreen];
-  if (childScreen.columnType == RNSSplitViewScreenColumnTypeColumn) {
-    _columnsCount--;
-  }
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
 
@@ -200,8 +192,13 @@ RNS_IGNORE_SUPER_CALL_END
   // Controller needs to know about the number of reactSubviews before its initialization to pass proper number of
   // columns to the constructor. Therefore, we must delay it until the 1st transaction will be processed.
   if (_controller == nil) {
+    NSArray *columns = [_reactSubviews
+        filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+          return ([object columnType] == RNSSplitViewScreenColumnTypeColumn);
+        }]];
+
     _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self
-                                                                         numberOfColumns:_columnsCount];
+                                                                         numberOfColumns:columns.count];
   }
 
   if (_needsSplitViewAppearanceUpdate) {
