@@ -170,7 +170,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   func validateInspectors(_ inspectors: [RNSSplitViewScreenComponentView]) {
     assert(
       inspectors.count <= maxNumberOfInspectors,
-      "[RNScreens] SplitView can only have 1 inspector")
+      "[RNScreens] SplitView can only have \(maxNumberOfInspectors) inspector")
   }
 }
 
