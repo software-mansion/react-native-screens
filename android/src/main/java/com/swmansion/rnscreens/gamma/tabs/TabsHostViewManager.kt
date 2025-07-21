@@ -187,6 +187,14 @@ class TabsHostViewManager :
         view.tabBarItemRippleColor = value
     }
 
+    @ReactProp(name = "tabBarItemVisibilityMode")
+    override fun setTabBarItemVisibilityMode(
+        view: TabsHost,
+        value: String?,
+    ) {
+        view.tabBarItemVisibilityMode = value
+    }
+
     companion object {
         const val REACT_CLASS = "RNSBottomTabs"
     }

@@ -178,10 +178,6 @@ class TabsHost(
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
-    var tabBarItemRippleColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
     private fun <T> updateNavigationMenuIfNeeded(
         oldValue: T,
         newValue: T,
