@@ -4629,13 +4629,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:^3.2.3":
-  version: 3.2.6
-  resolution: "async@npm:3.2.6"
-  checksum: 10c0/36484bb15ceddf07078688d95e27076379cc2f87b10c03b6dd8a83e89475a3c8df5848859dd06a4c95af1e4c16fc973de0171a77f18ea00be899aca2a4f85e70
-  languageName: node
-  linkType: hard
-
 "atob@npm:^2.1.2":
   version: 2.1.2
   resolution: "atob@npm:2.1.2"
@@ -5455,21 +5448,6 @@ __metadata:
   version: 1.4.3
   resolution: "cjs-module-lexer@npm:1.4.3"
   checksum: 10c0/076b3af85adc4d65dbdab1b5b240fe5b45d44fcf0ef9d429044dd94d19be5589376805c44fb2d4b3e684e5fe6a9b7cf3e426476a6507c45283c5fc6ff95240be
-  languageName: node
-  linkType: hard
-
-"clang-format@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "clang-format@npm:1.8.0"
-  dependencies:
-    async: "npm:^3.2.3"
-    glob: "npm:^7.0.0"
-    resolve: "npm:^1.1.6"
-  bin:
-    check-clang-format: bin/check-clang-format.js
-    clang-format: index.js
-    git-clang-format: bin/git-clang-format
-  checksum: 10c0/2bd1b9bc503695e8bf9571902c94759215b72f3d0fd8379e327181dd35df8775f82e8bbc38655554d294c83fcb55c081fe3736d057606bb0d535a87d8f29860e
   languageName: node
   linkType: hard
 
@@ -13208,7 +13186,6 @@ __metadata:
     "@types/shelljs": "npm:^0"
     "@typescript-eslint/eslint-plugin": "npm:^6.5.0"
     "@typescript-eslint/parser": "npm:^6.5.0"
-    clang-format: "npm:^1.8.0"
     eslint: "npm:^8.56.0"
     eslint-config-prettier: "npm:^8.10.0"
     eslint-config-standard: "npm:^17.1.0"
