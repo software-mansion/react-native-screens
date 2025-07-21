@@ -284,7 +284,7 @@ export interface BottomTabsScreenProps {
    * A callback that gets invoked when the tab screen will appear.
    * This is called as soon as the transition begins.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
 
@@ -292,7 +292,7 @@ export interface BottomTabsScreenProps {
    * A callback that gets invoked when the tab screen did appear.
    * This is called as soon as the transition ends.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;
 
@@ -300,7 +300,7 @@ export interface BottomTabsScreenProps {
    * A callback that gets invoked when the tab screeen will disappear.
    * This is called as soon as the transition begins.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onWillDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
 
@@ -308,7 +308,7 @@ export interface BottomTabsScreenProps {
    * A callback that gets invoked when the tab screen did disappear.
    * This is called as soon as the transition ends.
    *
-   * @platform ios
+   * @platform android, ios
    */
   onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
 }
