@@ -1088,11 +1088,10 @@ RNS_IGNORE_SUPER_CALL_END
   for (RNSScreenView *s in _reactSubviews.reverseObjectEnumerator) {
     // Skip preloaded screens (state=RNSActivityStateInactive) that are on top and not yet navigated to
     // The "real" top screen is the one with state=RNSActivityStateOnTop
-    if (s.activityState != RNSActivityStateOnTop) {
-      continue;
+    if (s.activityState == RNSActivityStateOnTop) {
+      topScreen = s;
+      break;
     }
-
-    topScreen = s;
   }
 
   if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
