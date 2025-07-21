@@ -1,9 +1,9 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import com.swmansion.rnscreens.R
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.util.Log
+import android.util.TypedValue
 import android.view.Choreographer
 import android.view.Menu
 import android.view.MenuItem
@@ -17,10 +17,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
@@ -94,7 +96,7 @@ class TabsHost(
 
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
 
-    private val wrappedContext = ContextThemeWrapper(reactContext, R.style.custom)
+    private val wrappedContext = ContextThemeWrapper(reactContext, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
 
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(wrappedContext).apply {
@@ -287,27 +289,33 @@ class TabsHost(
 
         bottomNavigationView.isVisible = true
         bottomNavigationView.setBackgroundColor(
-            tabBarBackgroundColor ?: com.google.android.material.R.color.m3_sys_color_light_surface_container,
+            tabBarBackgroundColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_surface_container),
         )
 
         val states = arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked))
 
         // Font color
-        val fontInactiveColor = tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color_secondary
+        val fontInactiveColor =
+            tabBarItemTitleFontColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
         val fontActiveColor =
-            tabBarItemTitleFontColorActive ?: tabBarItemTitleFontColor ?: com.google.android.material.R.color.m3_tabs_text_color
+            tabBarItemTitleFontColorActive ?: tabBarItemTitleFontColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary)
         val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
 
         // Icon color
-        val iconInactiveColor = tabBarItemIconColor ?: com.google.android.material.R.color.m3_tabs_icon_color_secondary
-        val iconActiveColor = tabBarItemIconColorActive ?: tabBarItemIconColor ?: com.google.android.material.R.color.m3_tabs_icon_color
+        val iconInactiveColor =
+            tabBarItemIconColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
+        val iconActiveColor =
+            tabBarItemIconColorActive ?: tabBarItemIconColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_secondary_container)
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
         // ActivityIndicator color
         val activityIndicatorColor =
-            tabBarItemActivityIndicatorColor ?: com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
+            tabBarItemActivityIndicatorColor
+                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary_container)
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activityIndicatorColor)
 
         // First clean the menu, then populate it
@@ -366,15 +374,28 @@ class TabsHost(
                     reactContext.assets,
                 )
 
-            val smallFontSize = tabBarItemTitleFontSize?.takeIf { it > 0 } ?: 12f
-            val largeFontSize = tabBarItemTitleFontSizeActive?.takeIf { it > 0 } ?: 14f
+            /*
+                Short explanation about computations we're doing below.
+                R.dimen, has defined value in SP, getDimension converts it to pixels, and by default
+                TextView.setTextSize accepts SP, so the size is multiplied by density twice. Thus we need
+                to convert both values to pixels and make sure that setTextSizes is about that.
+                The Text tag in RN uses SP or DP based on `allowFontScaling` prop. For now we're going
+                with SP, if there will be a need for skipping scale, the we should introduce similar
+                `allowFontScaling` prop.
+             */
+            val smallFontSize =
+                tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                    ?: wrappedContext.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+            val largeFontSize =
+                tabBarItemTitleFontSizeActive?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                    ?: wrappedContext.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
 
             // Inactive
-            smallLabel.textSize = smallFontSize
+            smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, smallFontSize)
             smallLabel.typeface = fontFamily
 
             // Active
-            largeLabel.textSize = largeFontSize
+            largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, largeFontSize)
             largeLabel.typeface = fontFamily
         }
     }
@@ -443,10 +464,11 @@ class TabsHost(
         }
     }
 
-    private val layoutCallback = Choreographer.FrameCallback {
-        isLayoutEnqueued = false
-        forceSubtreeMeasureAndLayoutPass()
-    }
+    private val layoutCallback =
+        Choreographer.FrameCallback {
+            isLayoutEnqueued = false
+            forceSubtreeMeasureAndLayoutPass()
+        }
 
     private fun refreshLayout() {
         @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
@@ -458,7 +480,7 @@ class TabsHost(
                 .getInstance()
                 .postFrameCallback(
                     ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                    layoutCallback
+                    layoutCallback,
                 )
         }
     }
