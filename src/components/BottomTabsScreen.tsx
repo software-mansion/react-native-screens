@@ -276,7 +276,7 @@ export interface BottomTabsScreenProps {
    *
    * @platform ios
    */
-  overrideScrollViewContentInsetAdjustmentBehavior?: boolean; // defaults to true
+  overrideScrollViewContentInsetAdjustmentBehavior?: boolean;
 
   // Events
 
