@@ -56,20 +56,34 @@ namespace react = facebook::react;
   _isShowSecondaryToggleButtonSet = false;
 }
 
-- (void)didMoveToWindow
+- (int)getNumberOfColumns
+{
+  int numberOfColumns = 0;
+  for (RNSSplitViewScreenComponentView *component in _reactSubviews) {
+    if (component.columnType == RNSSplitViewScreenColumnTypeColumn) {
+      numberOfColumns++;
+    }
+  }
+  return numberOfColumns;
+}
+
+- (void)setupController
 {
   // Controller needs to know about the number of reactSubviews before its initialization to pass proper number of
   // columns to the constructor. Therefore, we must delay it's creation until attaching it to window.
   // At this point, children are already attached to the Host component, therefore, we may create SplitView controller.
   if (_controller == nil) {
-    NSArray *columns = [_reactSubviews
-        filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
-          return ([object columnType] == RNSSplitViewScreenColumnTypeColumn);
-        }]];
+    int numberOfColumns = [self getNumberOfColumns];
 
     _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self
-                                                                         numberOfColumns:columns.count];
+                                                                         numberOfColumns:numberOfColumns];
   }
+}
+
+- (void)didMoveToWindow
+{
+  [self setupController];
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
 
   [self reactAddControllerToClosestParent:_controller];
 }

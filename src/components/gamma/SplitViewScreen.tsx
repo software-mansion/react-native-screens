@@ -5,7 +5,7 @@ import SplitViewScreenNativeComponent from '../../fabric/gamma/SplitViewScreenNa
 
 type SplitViewScreenProps = {
   children?: ViewProps['children'];
-}
+};
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
