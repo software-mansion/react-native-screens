@@ -95,6 +95,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemTitleFontColorActive={Colors.GreenLight40}
       tabBarItemTitleFontSize={10}
       tabBarItemTitleFontSizeActive={15}
+      tabBarItemRippleColor={Colors.WhiteTransparentDark}
       tabBarItemTitleFontFamily='monospace'
       tabBarItemTitleFontStyle='italic'
       tabBarItemTitleFontWeight="700"

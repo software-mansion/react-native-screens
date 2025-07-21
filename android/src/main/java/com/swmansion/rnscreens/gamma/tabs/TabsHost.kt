@@ -170,6 +170,10 @@ class TabsHost(
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
+    var tabBarItemRippleColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
     private fun <T> updateNavigationMenuIfNeeded(
         oldValue: T,
         newValue: T,
@@ -311,6 +315,11 @@ class TabsHost(
                 ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_secondary_container)
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
+
+        // Ripple color
+        val rippleColor =
+            tabBarItemRippleColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_navigation_item_ripple_color)
+        bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
 
         // ActivityIndicator color
         val activityIndicatorColor =
