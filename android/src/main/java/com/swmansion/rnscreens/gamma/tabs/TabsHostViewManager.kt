@@ -179,6 +179,7 @@ class TabsHostViewManager :
         view?.tabBarItemTitleFontSizeActive = value
     }
 
+    @ReactProp(name = "tabBarItemRippleColor", customType = "Color")
     override fun setTabBarItemRippleColor(
         view: TabsHost,
         value: Int?,
