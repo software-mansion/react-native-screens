@@ -49,7 +49,7 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemActivityIndicatorColor?: ColorValue;
   tabBarItemRippleColor?: ColorValue;
-  tabBarItemVisibilityMode?: TabBarItemLabelVisibilityMode;
+  tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
 
   // Control
 
