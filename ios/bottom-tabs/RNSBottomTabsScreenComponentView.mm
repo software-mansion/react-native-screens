@@ -445,6 +445,21 @@ RNS_IGNORE_SUPER_CALL_END
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
+- (void)setOverrideScrollViewContentInsetAdjustmentBehavior:(BOOL)overrideScrollViewContentInsetAdjustmentBehavior
+{
+  _overrideScrollViewContentInsetAdjustmentBehavior = overrideScrollViewContentInsetAdjustmentBehavior;
+
+  if (_isOverrideScrollViewContentInsetAdjustmentBehaviorSet) {
+    RCTLogWarn(
+        @"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
+  }
+
+  // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
+  // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
+  // enabling us to warn users that dynamic changes are not supported.
+  _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
+}
+
 - (void)setOnWillAppear:(RCTDirectEventBlock)onWillAppear
 {
   [self.reactEventEmitter setOnWillAppear:onWillAppear];
