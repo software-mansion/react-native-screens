@@ -166,7 +166,7 @@ class TabScreenViewManager :
 
     override fun setOverrideScrollViewContentInsetAdjustmentBehavior(
         view: TabScreen,
-        value: Boolean
+        value: Boolean,
     ) = Unit
 
     // Android specific

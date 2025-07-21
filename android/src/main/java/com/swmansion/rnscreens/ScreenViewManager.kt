@@ -376,7 +376,10 @@ open class ScreenViewManager :
         view.sheetInitialDetentIndex = value
     }
 
-    override fun setScreenId(view: Screen, value: String?) {
+    override fun setScreenId(
+        view: Screen,
+        value: String?,
+    ) {
         view.screenId = if (value.isNullOrEmpty()) null else value
     }
 

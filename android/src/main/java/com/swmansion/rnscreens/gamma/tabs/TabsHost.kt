@@ -3,8 +3,8 @@ package com.swmansion.rnscreens.gamma.tabs
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.util.Log
-import android.view.Choreographer
 import android.util.TypedValue
+import android.view.Choreographer
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -169,7 +169,7 @@ class TabsHost(
     var tabBarItemTitleFontStyle: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
-    
+
     var tabBarItemRippleColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
