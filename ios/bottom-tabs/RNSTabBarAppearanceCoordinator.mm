@@ -89,7 +89,6 @@
     default:
       appearance.backgroundEffect =
           rnscreens::conversion::RNSUIBlurEffectFromRNSExtendedBlurEffectStyle(appearanceProvider.tabBarBlurEffect);
-      break;
   }
 }
 
