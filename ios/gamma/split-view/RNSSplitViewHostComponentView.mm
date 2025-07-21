@@ -58,7 +58,18 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
-  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
+  // Controller needs to know about the number of reactSubviews before its initialization to pass proper number of
+  // columns to the constructor. Therefore, we must delay it's creation until attaching it to window.
+  // At this point, children are already attached to the Host component, therefore, we may create SplitView controller.
+  if (_controller == nil) {
+    NSArray *columns = [_reactSubviews
+        filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+          return ([object columnType] == RNSSplitViewScreenColumnTypeColumn);
+        }]];
+
+    _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self
+                                                                         numberOfColumns:columns.count];
+  }
 
   [self reactAddControllerToClosestParent:_controller];
 }
@@ -189,20 +200,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
-  // Controller needs to know about the number of reactSubviews before its initialization to pass proper number of
-  // columns to the constructor. Therefore, we must delay it until the 1st transaction will be processed.
-  // At this point, children are already attached to the Host component, therefore, we may create SplitView controller
-  // right before 1st props update.
-  if (_controller == nil) {
-    NSArray *columns = [_reactSubviews
-        filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
-          return ([object columnType] == RNSSplitViewScreenColumnTypeColumn);
-        }]];
-
-    _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self
-                                                                         numberOfColumns:columns.count];
-  }
-
   if (_needsSplitViewAppearanceUpdate) {
     _needsSplitViewAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
