@@ -9,47 +9,47 @@ import UIKit
 @objc
 public class RNSSplitViewScreenController: UIViewController {
 
-  /**
-   * @brief The associated React Native component view managed by this controller.
-   */
+  ///
+  /// @brief The associated React Native component view managed by this controller.
+  ///
   let splitViewScreenComponentView: RNSSplitViewScreenComponentView
 
-  /**
-   * @brief Proxy that updates the layout state of the corresponding ShadowNode.
-   */
+  ///
+  /// @brief Proxy that updates the layout state of the corresponding ShadowNode.
+  ///
   private var shadowStateProxy: RNSSplitViewScreenShadowStateProxy {
     return splitViewScreenComponentView.shadowStateProxy()
   }
 
-  /**
-   * @brief The event emitter for sending lifecycle events to the React tree.
-   */
+  ///
+  /// @brief The event emitter for sending lifecycle events to the React tree.
+  ///
   private var reactEventEmitter: RNSSplitViewScreenComponentEventEmitter {
     return splitViewScreenComponentView.reactEventEmitter()
   }
 
-  /**
-   * @brief Initializes the controller with the associated view.
-   *
-   * @param splitViewScreenComponentView The RNSSplitViewScreenComponentView linked to this controller.
-   */
+  ///
+  /// @brief Initializes the controller with the associated view.
+  ///
+  /// @param splitViewScreenComponentView The RNSSplitViewScreenComponentView linked to this controller.
+  ///
   @objc public required init(splitViewScreenComponentView: RNSSplitViewScreenComponentView) {
     self.splitViewScreenComponentView = splitViewScreenComponentView
     super.init(nibName: nil, bundle: nil)
   }
 
-  /**
-   * @brief Unavailable, only for satisfying the compiler.
-   */
+  ///
+  /// @brief Unavailable, only for satisfying the compiler.
+  ///
   required init?(coder aDecoder: NSCoder) {
     return nil
   }
 
-  /**
-   * @brief Searching for the SplitViewHost controller
-   *
-   * @return If found - a RNSSplitViewHostController instance, otherwise nil.
-   */
+  ///
+  /// @brief Searching for the SplitViewHost controller
+  ///
+  /// @return If found - a RNSSplitViewHostController instance, otherwise nil.
+  ///
   func findSplitViewHostController() -> RNSSplitViewHostController? {
     if let splitViewHostController = self.splitViewController as? RNSSplitViewHostController {
       return splitViewHostController
@@ -62,13 +62,13 @@ public class RNSSplitViewScreenController: UIViewController {
     return nil
   }
 
-  /**
-   * @brief Determines if this controller is nested inside a SplitViewHost hierarchy.
-   *
-   * Used to differentiate between screens embedded in the native host and modal presentations.
-   *
-   * @return true if inside RNSSplitViewHostController, false otherwise.
-   */
+  ///
+  /// @brief Determines if this controller is nested inside a SplitViewHost hierarchy.
+  ///
+  /// Used to differentiate between screens embedded in the native host and modal presentations.
+  ///
+  /// @return true if inside RNSSplitViewHostController, false otherwise.
+  ///
   @objc
   public func isInSplitViewHostSubtree() -> Bool {
     return self.splitViewController is RNSSplitViewHostController
@@ -76,9 +76,9 @@ public class RNSSplitViewScreenController: UIViewController {
 
   // MARK: Signals
 
-  /**
-   * @brief Requests the host split view controller to mark its child view controllers for update.
-   */
+  ///
+  /// @brief Requests the host split view controller to mark its child view controllers for update.
+  ///
   @objc
   public func setNeedsLifecycleStateUpdate() {
     findSplitViewHostController()?.setNeedsUpdateOfChildViewControllers()
@@ -86,11 +86,11 @@ public class RNSSplitViewScreenController: UIViewController {
 
   // MARK: Layout
 
-  /**
-   * @brief Handles frame layout changes and updates Shadow Tree accordingly.
-   *
-   * Requests for the ShadowNode updates through the shadow state proxy.
-   */
+  ///
+  /// @brief Handles frame layout changes and updates Shadow Tree accordingly.
+  ///
+  /// Requests for the ShadowNode updates through the shadow state proxy.
+  ///
   @objc
   public override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
@@ -116,16 +116,16 @@ public class RNSSplitViewScreenController: UIViewController {
     }
 
     //      TODO: to be removed - only for testing purposes for inspector column
-    //    if #available(iOS 26.0, *) {
+    //    if #available(iOS 26.0, ///) {
     //      findSplitViewHostController()?.show(.inspector)
     //    }
   }
 
-  /**
-   * @brief Request ShadowNode state update when the SplitView screen frame origin has changed.
-   *
-   * @param splitViewController The UISplitViewController whose layout positioning changed, represented by RNSSplitViewHostController.
-   */
+  ///
+  /// @brief Request ShadowNode state update when the SplitView screen frame origin has changed.
+  ///
+  /// @param splitViewController The UISplitViewController whose layout positioning changed, represented by RNSSplitViewHostController.
+  ///
   func columnPositioningDidChangeIn(splitViewController: UISplitViewController) {
     shadowStateProxy.updateShadowState(
       ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view)
@@ -133,30 +133,30 @@ public class RNSSplitViewScreenController: UIViewController {
 
   // MARK: Events
 
-  /**
-   * @brief Emits React event before the view becomes visible.
-   */
+  ///
+  /// @brief Emits React event before the view becomes visible.
+  ///
   public override func viewWillAppear(_ animated: Bool) {
     reactEventEmitter.emitOnWillAppear()
   }
 
-  /**
-   * @brief Emits React event after the view has became visible.
-   */
+  ///
+  /// @brief Emits React event after the view has became visible.
+  ///
   public override func viewDidAppear(_ animated: Bool) {
     reactEventEmitter.emitOnDidAppear()
   }
 
-  /**
-   * @brief Emits React event before the view is removed.
-   */
+  ///
+  /// @brief Emits React event before the view is removed.
+  ///
   public override func viewWillDisappear(_ animated: Bool) {
     reactEventEmitter.emitOnWillDisappear()
   }
 
-  /**
-   * @brief Emits React event after the view has been removed.
-   */
+  ///
+  /// @brief Emits React event after the view has been removed.
+  ///
   public override func viewDidDisappear(_ animated: Bool) {
     reactEventEmitter.emitOnDidDisappear()
   }
