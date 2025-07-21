@@ -52,6 +52,7 @@ namespace react = facebook::react;
   _splitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
   _primaryEdge = UISplitViewControllerPrimaryEdgeLeading;
   _displayMode = UISplitViewControllerDisplayModeAutomatic;
+  _displayModeButtonVisibility = UISplitViewControllerDisplayModeButtonVisibilityAutomatic;
   _presentsWithGesture = true;
   _showSecondaryToggleButton = false;
   _showInspector = false;
@@ -205,6 +206,12 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldComponentProps.showInspector != newComponentProps.showInspector) {
     _needsSplitViewAppearanceUpdate = true;
     _showInspector = newComponentProps.showInspector;
+  }
+
+  if (oldComponentProps.displayModeButtonVisibility != newComponentProps.displayModeButtonVisibility) {
+    _needsSplitViewAppearanceUpdate = true;
+    _displayModeButtonVisibility = rnscreens::conversion::SplitViewDisplayModeButtonVisibilityFromHostProp(
+        newComponentProps.displayModeButtonVisibility);
   }
 
   // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
