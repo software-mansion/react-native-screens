@@ -5,11 +5,6 @@
 
 @implementation RNSSplitViewAppearanceCoordinator
 
-#define ASSIGN_PROP_IF_NONNEGATIVE(target, source, property) \
-  if ((source).property >= 0) {                              \
-    (target).property = (source).property;                   \
-  }
-
 - (void)updateAppearanceOfSplitView:(RNSSplitViewHostComponentView *_Nonnull)splitView
                      withController:(RNSSplitViewHostController *_Nonnull)controller
 {
@@ -25,27 +20,77 @@
   controller.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton;
 
   // Step 2 - manipulating columns
-  [controller toggleSplitViewInspector:splitView.showInspector];
+  if (splitView.minimumPrimaryColumnWidth >= 0) {
+    controller.minimumPrimaryColumnWidth = splitView.minimumPrimaryColumnWidth;
+  }
 
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, minimumPrimaryColumnWidth);
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, maximumPrimaryColumnWidth);
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, preferredPrimaryColumnWidth);
+  if (splitView.maximumPrimaryColumnWidth >= 0) {
+    controller.maximumPrimaryColumnWidth = splitView.maximumPrimaryColumnWidth;
+  }
 
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, minimumSupplementaryColumnWidth);
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, maximumSupplementaryColumnWidth);
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, preferredSupplementaryColumnWidth);
+  if (splitView.preferredPrimaryColumnWidthOrFraction >= 0 && splitView.preferredPrimaryColumnWidthOrFraction < 1) {
+    controller.preferredPrimaryColumnWidthFraction = splitView.preferredPrimaryColumnWidthOrFraction;
+  } else if (splitView.preferredSupplementaryColumnWidthOrFraction >= 1) {
+    controller.preferredPrimaryColumnWidth = splitView.preferredPrimaryColumnWidthOrFraction;
+  }
+
+  if (splitView.minimumSupplementaryColumnWidth >= 0) {
+    controller.minimumSupplementaryColumnWidth = splitView.minimumSupplementaryColumnWidth;
+  }
+
+  if (splitView.maximumSupplementaryColumnWidth >= 0) {
+    controller.maximumSupplementaryColumnWidth = splitView.maximumSupplementaryColumnWidth;
+  }
+
+  if (splitView.preferredSupplementaryColumnWidthOrFraction >= 0 &&
+      splitView.preferredSupplementaryColumnWidthOrFraction < 1) {
+    controller.preferredSupplementaryColumnWidthFraction = splitView.preferredSupplementaryColumnWidthOrFraction;
+  } else if (splitView.preferredSupplementaryColumnWidthOrFraction >= 1) {
+    controller.preferredSupplementaryColumnWidth = splitView.preferredSupplementaryColumnWidthOrFraction;
+  }
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, minimumSecondaryColumnWidth);
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, preferredSecondaryColumnWidth);
+  if (splitView.minimumSecondaryColumnWidth >= 0) {
+    if (@available(iOS 26.0, *)) {
+      controller.minimumSecondaryColumnWidth = splitView.minimumSecondaryColumnWidth;
+    }
+  }
 
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, minimumInspectorColumnWidth);
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, maximumInspectorColumnWidth);
-  ASSIGN_PROP_IF_NONNEGATIVE(controller, splitView, preferredInspectorColumnWidth);
+  if (splitView.preferredSecondaryColumnWidthOrFraction >= 0 && splitView.preferredSecondaryColumnWidthOrFraction < 1) {
+    if (@available(iOS 26.0, *)) {
+      controller.preferredSecondaryColumnWidthFraction = splitView.preferredSecondaryColumnWidthOrFraction;
+    }
+  } else if (splitView.preferredInspectorColumnWidthOrFraction >= 1) {
+    if (@available(iOS 26.0, *)) {
+      controller.preferredSecondaryColumnWidth = splitView.preferredSecondaryColumnWidthOrFraction;
+    }
+  }
+
+  if (splitView.minimumInspectorColumnWidth >= 0) {
+    if (@available(iOS 26.0, *)) {
+      controller.minimumInspectorColumnWidth = splitView.minimumInspectorColumnWidth;
+    }
+  }
+
+  if (splitView.maximumInspectorColumnWidth >= 0) {
+    if (@available(iOS 26.0, *)) {
+      controller.maximumInspectorColumnWidth = splitView.maximumInspectorColumnWidth;
+    }
+  }
+
+  if (splitView.preferredInspectorColumnWidthOrFraction >= 0 && splitView.preferredInspectorColumnWidthOrFraction < 1) {
+    if (@available(iOS 26.0, *)) {
+      controller.preferredInspectorColumnWidthFraction = splitView.preferredInspectorColumnWidthOrFraction;
+    }
+  } else if (splitView.preferredInspectorColumnWidthOrFraction >= 1) {
+    if (@available(iOS 26.0, *)) {
+      controller.preferredInspectorColumnWidth = splitView.preferredInspectorColumnWidthOrFraction;
+    }
+  }
 #endif
+    
+  [controller toggleSplitViewInspector:splitView.showInspector];
 }
-
-#undef ASSIGN_PROP_IF_NONNEGATIVE
 
 @end
