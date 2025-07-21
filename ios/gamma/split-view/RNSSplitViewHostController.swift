@@ -125,11 +125,20 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     refreshSecondaryNavBar()
   }
 
+  /// This function is handling the logic related to the issue described next to `setNeedsSecondaryScreenNavBarUpdate` method which explains the purpose why we need to have another signal.
   private func refreshSecondaryNavBar() {
-    guard let secondaryViewController = viewController(for: .secondary) else { return }
-    let navigationController = secondaryViewController as? UINavigationController
-    navigationController?.setNavigationBarHidden(true, animated: false)
-    navigationController?.setNavigationBarHidden(false, animated: false)
+    let secondaryViewController = viewController(for: .secondary)
+    assert(
+      secondaryViewController != nil,
+      "[RNScreens] Failed to refresh secondary nav bar. Secondary view controller is nil.")
+    assert(
+      secondaryViewController is UINavigationController,
+      "[RNScreens] Expected UINavigationController but got \(type(of: secondaryViewController))")
+    let navigationController = secondaryViewController as! UINavigationController
+
+    /// The assumption is that it should come in a single batch and it won't cause any delays in rendering the content.
+    navigationController.setNavigationBarHidden(true, animated: false)
+    navigationController.setNavigationBarHidden(false, animated: false)
   }
 
   // MARK: Helpers
