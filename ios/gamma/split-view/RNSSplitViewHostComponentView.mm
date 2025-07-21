@@ -21,6 +21,7 @@ namespace react = facebook::react;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
   bool _needsSplitViewAppearanceUpdate;
+  bool _needsSplitViewSecondaryScreenNavBarUpdate;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -41,6 +42,7 @@ namespace react = facebook::react;
 
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _needsSplitViewAppearanceUpdate = false;
+  _needsSplitViewSecondaryScreenNavBarUpdate = false;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -212,11 +214,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldComponentProps.showSecondaryToggleButton != newComponentProps.showSecondaryToggleButton) {
     _needsSplitViewAppearanceUpdate = true;
+    _needsSplitViewSecondaryScreenNavBarUpdate = true;
     _showSecondaryToggleButton = newComponentProps.showSecondaryToggleButton;
-
-    if (_isShowSecondaryToggleButtonSet) {
-      RCTLogWarn(@"[RNScreens] changing showSecondaryToggleButton dynamically is currently unsupported");
-    }
   }
 
   if (oldComponentProps.showInspector != newComponentProps.showInspector) {
@@ -318,6 +317,10 @@ RNS_IGNORE_SUPER_CALL_END
   if (_needsSplitViewAppearanceUpdate && _controller != nil) {
     _needsSplitViewAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
+  }
+  if (_needsSplitViewSecondaryScreenNavBarUpdate) {
+    _needsSplitViewSecondaryScreenNavBarUpdate = false;
+    [_controller setNeedsSecondaryScreenNavBarUpdate];
   }
 }
 

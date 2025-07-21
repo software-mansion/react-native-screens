@@ -5,6 +5,7 @@ import UIKit
 public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
   private var needsAppearanceUpdate = false
+  private var needsSecondaryScreenNavBarAppearanceUpdate = false
 
   private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
     return splitViewHostComponentView.reactEventEmitter()
@@ -47,6 +48,11 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   @objc
   public func setNeedsAppearanceUpdate() {
     needsAppearanceUpdate = true
+  }
+
+  @objc
+  public func setNeedsSecondaryScreenNavBarUpdate() {
+    needsSecondaryScreenNavBarAppearanceUpdate = true
   }
 
   // MARK: Updating
@@ -95,11 +101,30 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     }
   }
 
+  func updateSplitViewSecondaryScreenNavBarAppearanceIfNeeded() {
+    if needsSecondaryScreenNavBarAppearanceUpdate {
+      updateSplitViewSecondaryScreenNavBarAppearance()
+    }
+  }
+
   func updateSplitViewAppearance() {
     needsAppearanceUpdate = false
 
     splitViewAppearanceCoordinator.updateAppearance(
       ofSplitView: self.splitViewHostComponentView, with: self)
+  }
+
+  func updateSplitViewSecondaryScreenNavBarAppearance() {
+    needsSecondaryScreenNavBarAppearanceUpdate = false
+
+    refreshSecondaryNavBar()
+  }
+
+  private func refreshSecondaryNavBar() {
+    guard let secondaryViewController = viewController(for: .secondary) else { return }
+    let navigationController = secondaryViewController as? UINavigationController
+    navigationController?.setNavigationBarHidden(true, animated: false)
+    navigationController?.setNavigationBarHidden(false, animated: false)
   }
 
   // MARK: Helpers
@@ -144,6 +169,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
     updateSplitViewAppearanceIfNeeded()
+    updateSplitViewSecondaryScreenNavBarAppearanceIfNeeded()
     validateSplitViewHierarchy()
   }
 
