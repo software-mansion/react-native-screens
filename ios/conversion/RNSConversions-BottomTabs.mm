@@ -14,7 +14,6 @@ UIBlurEffect *RNSUIBlurEffectFromOptionalUIBlurEffectStyle(std::optional<UIBlurE
 
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect)
 {
-#if !TARGET_OS_TV
   switch (blurEffect) {
     case RNSBlurEffectStyleNone:
       return std::nullopt;
@@ -28,6 +27,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle
       return {UIBlurEffectStyleRegular};
     case RNSBlurEffectStyleProminent:
       return {UIBlurEffectStyleProminent};
+#if !TARGET_OS_TV
     case RNSBlurEffectStyleSystemUltraThinMaterial:
       return {UIBlurEffectStyleSystemUltraThinMaterial};
     case RNSBlurEffectStyleSystemThinMaterial:
@@ -58,24 +58,10 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle
       return {UIBlurEffectStyleSystemThickMaterialDark};
     case RNSBlurEffectStyleSystemChromeMaterialDark:
       return {UIBlurEffectStyleSystemChromeMaterialDark};
-  }
-#endif
-
-  switch (blurEffect) {
-    case RNSBlurEffectStyleNone:
-      return std::nullopt;
-    case RNSBlurEffectStyleLight:
-      return {UIBlurEffectStyleLight};
-    case RNSBlurEffectStyleDark:
-      return {UIBlurEffectStyleDark};
-    case RNSBlurEffectStyleRegular:
-      return {UIBlurEffectStyleRegular};
-    case RNSBlurEffectStyleProminent:
-      return {UIBlurEffectStyleProminent};
-    case RNSBlurEffectStyleExtraLight:
-      return {UIBlurEffectStyleExtraLight};
+#else // !TARGET_OS_TV
     default:
       return std::nullopt;
+#endif // !TARGET_OS_TV
   }
 }
 
@@ -89,7 +75,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBa
     react::RNSBottomTabsTabBarBlurEffect blurEffect)
 {
   using enum facebook::react::RNSBottomTabsTabBarBlurEffect;
-#if !TARGET_OS_TV
+
   switch (blurEffect) {
     case None:
       return std::nullopt;
@@ -103,6 +89,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBa
       return {UIBlurEffectStyleRegular};
     case Prominent:
       return {UIBlurEffectStyleProminent};
+#if !TARGET_OS_TV
     case SystemUltraThinMaterial:
       return {UIBlurEffectStyleSystemUltraThinMaterial};
     case SystemThinMaterial:
@@ -133,24 +120,10 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBa
       return {UIBlurEffectStyleSystemThickMaterialDark};
     case SystemChromeMaterialDark:
       return {UIBlurEffectStyleSystemChromeMaterialDark};
-  }
-#endif
-
-  switch (blurEffect) {
-    case None:
-      return std::nullopt;
-    case Light:
-      return {UIBlurEffectStyleLight};
-    case Dark:
-      return {UIBlurEffectStyleDark};
-    case Regular:
-      return {UIBlurEffectStyleRegular};
-    case Prominent:
-      return {UIBlurEffectStyleProminent};
-    case ExtraLight:
-      return {UIBlurEffectStyleExtraLight};
+#else // !TARGET_OS_TV
     default:
       return std::nullopt;
+#endif
   }
 }
 
@@ -170,7 +143,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScree
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect)
 {
   using enum facebook::react::RNSBottomTabsScreenTabBarBlurEffect;
-#if !TARGET_OS_TV
+
   switch (blurEffect) {
     case None:
       return std::nullopt;
@@ -184,6 +157,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScree
       return {UIBlurEffectStyleRegular};
     case Prominent:
       return {UIBlurEffectStyleProminent};
+#if !TARGET_OS_TV
     case SystemUltraThinMaterial:
       return {UIBlurEffectStyleSystemUltraThinMaterial};
     case SystemThinMaterial:
@@ -214,24 +188,10 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScree
       return {UIBlurEffectStyleSystemThickMaterialDark};
     case SystemChromeMaterialDark:
       return {UIBlurEffectStyleSystemChromeMaterialDark};
-  }
-#endif
-
-  switch (blurEffect) {
-    case None:
-      return std::nullopt;
-    case Light:
-      return {UIBlurEffectStyleLight};
-    case Dark:
-      return {UIBlurEffectStyleDark};
-    case Regular:
-      return {UIBlurEffectStyleRegular};
-    case Prominent:
-      return {UIBlurEffectStyleProminent};
-    case ExtraLight:
-      return {UIBlurEffectStyleExtraLight};
+#else // !TARGET_OS_TV
     default:
       return std::nullopt;
+#endif
   }
 }
 
