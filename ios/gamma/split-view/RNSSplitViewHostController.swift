@@ -12,6 +12,14 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsAppearanceUpdate = false
   private var needsSecondaryScreenNavBarAppearanceUpdate = false
 
+  @objc
+  public var needsDisplayModeUpdate: Bool {
+    get { _needsDisplayModeUpdate }
+    set { _needsDisplayModeUpdate = newValue }
+  }
+
+  private var _needsDisplayModeUpdate = false
+
   private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
     return splitViewHostComponentView.reactEventEmitter()
   }
@@ -71,6 +79,18 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     // After some testing, it looks well and I haven't noticed any flicker - missing button is appearing naturally.
     // Please note that this is a hack rather than a solution so feel free to remove this code in case of any problems and treat the bug with toggling button as a platform's issue.
     needsSecondaryScreenNavBarAppearanceUpdate = true
+  }
+
+  @objc
+  public func setNeedsDisplayModeUpdate() {
+    needsDisplayModeUpdate = true
+  }
+
+  @objc
+  public func consumeDisplayModeUpdateIfNeeded() -> Bool {
+    guard needsDisplayModeUpdate else { return false }
+    needsDisplayModeUpdate = false
+    return true
   }
 
   // MARK: Updating

@@ -24,6 +24,7 @@ static const CGFloat epsilon = 1e-6;
   bool _hasModifiedReactSubviewsInCurrentTransaction;
   bool _needsSplitViewAppearanceUpdate;
   bool _needsSplitViewSecondaryScreenNavBarUpdate;
+  bool _needsSplitViewDisplayModeUpdate;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -45,6 +46,7 @@ static const CGFloat epsilon = 1e-6;
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _needsSplitViewAppearanceUpdate = false;
   _needsSplitViewSecondaryScreenNavBarUpdate = false;
+  _needsSplitViewDisplayModeUpdate = false;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -208,6 +210,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldComponentProps.preferredDisplayMode != newComponentProps.preferredDisplayMode) {
     _needsSplitViewAppearanceUpdate = true;
+    _needsSplitViewDisplayModeUpdate = true;
     _preferredDisplayMode =
         rnscreens::conversion::SplitViewPreferredDisplayModeFromHostProp(newComponentProps.preferredDisplayMode);
   }
@@ -328,6 +331,10 @@ RNS_IGNORE_SUPER_CALL_END
   if (_needsSplitViewAppearanceUpdate && _controller != nil) {
     _needsSplitViewAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
+  }
+  if (_needsSplitViewDisplayModeUpdate && _controller != nil) {
+    _needsSplitViewDisplayModeUpdate = false;
+    [_controller setNeedsDisplayModeUpdate];
   }
 }
 
