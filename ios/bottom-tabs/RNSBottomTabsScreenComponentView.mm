@@ -84,7 +84,7 @@ namespace react = facebook::react;
 
   _overrideScrollViewContentInsetAdjustmentBehavior = YES;
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
-  
+
   _iconType = RNSBottomTabsIconTypeSfSymbol;
 
   _iconImageSource = nil;
@@ -228,18 +228,18 @@ RNS_IGNORE_SUPER_CALL_END
         rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconImageSource, _iconType);
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.iconSfSymbolName != oldComponentProps.iconSfSymbolName) {
     _iconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
   if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
-    _selectedIconImageSource =
-        rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.selectedIconImageSource, _iconType);
+    _selectedIconImageSource = rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(
+        &newComponentProps.selectedIconImageSource, _iconType);
     tabItemNeedsAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
     _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
@@ -358,6 +358,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setBadgeValue:(NSString *)badgeValue
 {
   _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
+  _controller.tabBarItem.badgeValue = _badgeValue;
 }
 
 - (void)setTabBarBackgroundColor:(UIColor *)tabBarBackgroundColor
