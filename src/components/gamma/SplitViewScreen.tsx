@@ -5,6 +5,12 @@ import SplitViewScreenNativeComponent from '../../fabric/gamma/SplitViewScreenNa
 
 type SplitViewScreenProps = {
   children?: ViewProps['children'];
+
+  // Events
+  onWillAppear?: () => void;
+  onDidAppear?: () => void;
+  onWillDisappear?: () => void;
+  onDidDisappear?: () => void;
 };
 
 /**
