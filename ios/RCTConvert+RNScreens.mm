@@ -1,4 +1,7 @@
 #import "RCTConvert+RNScreens.h"
+
+#if !RCT_NEW_ARCH_ENABLED
+
 #import "RNSEnums.h"
 
 @implementation RCTConvert (RNScreens)
@@ -40,3 +43,5 @@
 RCT_ENUM_CONVERTER(RNSBlurEffectStyle, ([self blurEffectsForIOSVersion]), RNSBlurEffectStyleNone, integerValue)
 
 @end
+
+#endif // !RCT_NEW_ARCH_ENABLED
