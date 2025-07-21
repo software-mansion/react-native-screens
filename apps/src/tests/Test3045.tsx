@@ -1,8 +1,7 @@
 import React from 'react';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button, ScrollView } from 'react-native';
-import { Text } from 'react-native-gesture-handler';
+import { Button, ScrollView, Text } from 'react-native';
 
 type StackRouteParamList = {
   First: undefined;
@@ -16,7 +15,7 @@ type NavigationProp<ParamList extends ParamListBase> = {
 
 type StackNavigationProp = NavigationProp<StackRouteParamList>;
 
-const First = ({navigation}: StackNavigationProp) => {
+function First({navigation}: StackNavigationProp) {
   return <ScrollView contentInsetAdjustmentBehavior='automatic'>
     <Button onPress={() => navigation.navigate("Second")} title='Second'/>
     <Button onPress={() => navigation.preload("Second")} title='Preload Second'/>
@@ -24,14 +23,14 @@ const First = ({navigation}: StackNavigationProp) => {
   </ScrollView>
 }
 
-const Second = ({navigation}: StackNavigationProp) => {
+function Second({navigation}: StackNavigationProp) {
   return <ScrollView contentInsetAdjustmentBehavior='automatic'>
     <Button onPress={() => navigation.navigate("Third")} title='Third'/>
     <Button onPress={() => {navigation.preload("Third")}} title='Preload Third'/>
   </ScrollView>
 }
 
-const Third = ({navigation}: StackNavigationProp) => {
+function Third() {
   return <Text>Bonjour</Text>
 }
 
