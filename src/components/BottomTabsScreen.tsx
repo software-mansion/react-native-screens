@@ -43,12 +43,28 @@ export type Icon = SFIcon | ImageIcon | TemplateIcon;
 
 export interface BottomTabsScreenProps {
   children?: ViewProps['children'];
+
+  /**
+   * Defines what should be rendered when tab screen is frozen.
+   *
+   * For more information, refer to `react-freeze`'s docs.
+   *
+   * @platform android, ios
+   */
   placeholder?: React.ReactNode | undefined;
 
   // Control
 
-  // Works only in 'controlled' mode. Otherwise this prop indicates only initally selected tab.
+  /**
+   * In controlled container mode, determines if tab screen is currently
+   * focused. There should be exactly one focused screen at any given time.
+   *
+   * In managed container mode, it only indicates initially selected tab.
+   *
+   * @platform android, ios
+   */
   isFocused?: boolean;
+
   tabKey: string;
 
   // Tab Bar Appearance

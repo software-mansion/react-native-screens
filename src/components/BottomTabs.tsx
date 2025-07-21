@@ -20,6 +20,12 @@ import featureFlags from '../flags';
 
 export interface BottomTabsProps extends ViewProps {
   // Events
+
+  /**
+   * A callback that gets invoked when user requests change of focused tab screen.
+   *
+   * @platform android, ios
+   */
   onNativeFocusChange?: (
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
   ) => void;
@@ -53,13 +59,44 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemRippleColor?: ColorValue;
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
 
-  // iOS-specific
+  // iOS-only appearance
+
+  /**
+   * The color used for selected tab's text and icon color.
+   * Starting from iOS 26, it also impacts glow of Liquid Glass tab
+   * selection view.
+   *
+   * tabBarItemTitleFontColor and tabBarItemIconColor defined on
+   * BottomTabsScreen component override this color.
+   *
+   * @platform ios
+   */
+  tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
 
   // Control
 
   // Experimental support
-  experimentalControlNavigationStateInJS?: boolean; // defaults to `false`
+
+  /**
+   * Experimental prop for changing container control.
+   *
+   * If set to true, tab screen changes need to be handled by JS using
+   * onNativeFocusChange callback (controlled/programatically-driven).
+   *
+   * If set to false, tab screen change will not be prevented by the
+   * native side (managed/natively-driven).
+   *
+   * On iOS, some features are not fully implemented for managed tabs
+   * (e.g. overrideScrollViewContentInsetAdjustmentBehavior).
+   *
+   * On Android, only controlled tabs are currently supported.
+   *
+   * @default Defaults to `false`.
+   *
+   * @platform android, ios
+   */
+  experimentalControlNavigationStateInJS?: boolean;
 }
 
 /**
