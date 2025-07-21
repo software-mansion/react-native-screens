@@ -226,7 +226,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   /**
    * @brief Shows or hides the inspector screen.
-   * @remarks Available only on iOS26 or higher.
+   * @remarks Available only on iOS 26 or higher.
    *
    * @param showInspector Determines whether the inspector column should be visible.
    */
@@ -372,7 +372,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
   extension RNSSplitViewHostController {
     /**
      * @brief Sets up the inspector column if available.
-     * @remarks Available only on iOS26 or higher.
+     * @remarks Available only on iOS 26 or higher.
      *
      * Attaches a view controller for the inspector column.
      *
@@ -392,7 +392,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 
     /**
      * @brief Shows the inspector column when available.
-     * @remarks Available only on iOS26 or higher.
+     * @remarks Available only on iOS 26 or higher.
      *
      * Uses the UISplitViewController's new API introduced in iOS 26 to show the inspector column.
      */
@@ -404,7 +404,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 
     /**
      * @brief Hides the inspector column when available.
-     * @remarks Available only on iOS26 or higher.
+     * @remarks Available only on iOS 26 or higher.
      *
      * Uses the UISplitViewController's new API introduced in iOS 26 to hide the inspector column.
      */
