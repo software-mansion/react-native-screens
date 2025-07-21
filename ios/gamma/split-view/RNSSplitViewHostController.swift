@@ -272,7 +272,7 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
 
         // `didHide` for modal is called on finger down for dismiss, what is problematic, because we can cancel dismissing modal.
         // In this scenario, the modal inspector might receive an invalid state and will deviate from the JS value.
-        // Therefore, for event emissions, we need to ensure that the view was detached from the view hierarchy, by checking its window. 
+        // Therefore, for event emissions, we need to ensure that the view was detached from the view hierarchy, by checking its window.
         if let inspectorViewController = viewController(for: .inspector) {
           if inspectorViewController.view.window == nil {
             reactEventEmitter.emitOnHideInspector()
