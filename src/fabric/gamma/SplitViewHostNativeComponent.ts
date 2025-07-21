@@ -4,6 +4,7 @@ import type { ViewProps } from 'react-native';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type {
   DirectEventHandler,
+  Int32,
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
@@ -32,6 +33,22 @@ export type SplitViewDisplayMode =
   | 'twoOverSecondary'
   | 'twoDisplaceSecondary';
 
+interface ColumnMetrics {
+  minimumPrimaryColumnWidth?: WithDefault<Int32, -1>;
+  maximumPrimaryColumnWidth?: WithDefault<Int32, -1>;
+  preferredPrimaryColumnWidth?: WithDefault<Int32, -1>;
+  minimumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
+  maximumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
+  preferredSupplementaryColumnWidth?: WithDefault<Int32, -1>;
+
+  // iOS 26 only
+  minimumSecondaryColumnWidth?: WithDefault<Int32, -1>;
+  preferredSecondaryColumnWidth?: WithDefault<Int32, -1>;
+  minimumInspectorColumnWidth?: WithDefault<Int32, -1>;
+  maximumInspectorColumnWidth?: WithDefault<Int32, -1>;
+  preferredInspectorColumnWidth?: WithDefault<Int32, -1>;
+}
+
 export interface NativeProps extends ViewProps {
   // Appearance
 
@@ -43,6 +60,7 @@ export interface NativeProps extends ViewProps {
     SplitViewDisplayModeButtonVisibility,
     'automatic'
   >;
+  columnMetrics?: ColumnMetrics;
 
   // Interactions
 

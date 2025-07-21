@@ -57,6 +57,22 @@ namespace react = facebook::react;
   _showSecondaryToggleButton = false;
   _showInspector = false;
 
+  _minimumPrimaryColumnWidth = -1;
+  _maximumPrimaryColumnWidth = -1;
+  _preferredPrimaryColumnWidth = -1;
+  _minimumSupplementaryColumnWidth = -1;
+  _maximumSupplementaryColumnWidth = -1;
+  _preferredSupplementaryColumnWidth = -1;
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+  _minimumSecondaryColumnWidth = -1;
+  _preferredSecondaryColumnWidth = -1;
+  _minimumInspectorColumnWidth = -1;
+  _maximumInspectorColumnWidth = -1;
+  _preferredInspectorColumnWidth = -1;
+#endif
+
   _isShowSecondaryToggleButtonSet = false;
 }
 
@@ -213,6 +229,75 @@ RNS_IGNORE_SUPER_CALL_END
     _displayModeButtonVisibility = rnscreens::conversion::SplitViewDisplayModeButtonVisibilityFromHostProp(
         newComponentProps.displayModeButtonVisibility);
   }
+
+  if (oldComponentProps.columnMetrics.minimumPrimaryColumnWidth !=
+      newComponentProps.columnMetrics.minimumPrimaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _minimumPrimaryColumnWidth = newComponentProps.columnMetrics.minimumPrimaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.maximumPrimaryColumnWidth !=
+      newComponentProps.columnMetrics.maximumPrimaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _maximumPrimaryColumnWidth = newComponentProps.columnMetrics.maximumPrimaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.preferredPrimaryColumnWidth !=
+      newComponentProps.columnMetrics.preferredPrimaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _preferredPrimaryColumnWidth = newComponentProps.columnMetrics.preferredPrimaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.minimumSupplementaryColumnWidth !=
+      newComponentProps.columnMetrics.minimumSupplementaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _minimumSupplementaryColumnWidth = newComponentProps.columnMetrics.minimumSupplementaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.maximumSupplementaryColumnWidth !=
+      newComponentProps.columnMetrics.maximumSupplementaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _maximumSupplementaryColumnWidth = newComponentProps.columnMetrics.maximumSupplementaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.preferredSupplementaryColumnWidth !=
+      newComponentProps.columnMetrics.preferredSupplementaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _preferredSupplementaryColumnWidth = newComponentProps.columnMetrics.preferredSupplementaryColumnWidth;
+  }
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+  if (oldComponentProps.columnMetrics.minimumSecondaryColumnWidth !=
+      newComponentProps.columnMetrics.minimumSecondaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _minimumSecondaryColumnWidth = newComponentProps.columnMetrics.minimumSecondaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.preferredSecondaryColumnWidth !=
+      newComponentProps.columnMetrics.preferredSecondaryColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _preferredSecondaryColumnWidth = newComponentProps.columnMetrics.preferredSecondaryColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.minimumInspectorColumnWidth !=
+      newComponentProps.columnMetrics.minimumInspectorColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _minimumInspectorColumnWidth = newComponentProps.columnMetrics.minimumInspectorColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.maximumInspectorColumnWidth !=
+      newComponentProps.columnMetrics.maximumInspectorColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _maximumInspectorColumnWidth = newComponentProps.columnMetrics.maximumInspectorColumnWidth;
+  }
+
+  if (oldComponentProps.columnMetrics.preferredInspectorColumnWidth !=
+      newComponentProps.columnMetrics.preferredInspectorColumnWidth) {
+    _needsSplitViewAppearanceUpdate = true;
+    _preferredInspectorColumnWidth = newComponentProps.columnMetrics.preferredInspectorColumnWidth;
+  }
+#endif
 
   // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
   // This allows us to identify any subsequent changes to this prop,

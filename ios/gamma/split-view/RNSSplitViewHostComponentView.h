@@ -27,6 +27,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL showSecondaryToggleButton;
 @property (nonatomic, readonly) BOOL showInspector;
 
+@property (nonatomic, readonly) int minimumPrimaryColumnWidth;
+@property (nonatomic, readonly) int maximumPrimaryColumnWidth;
+@property (nonatomic, readonly) int preferredPrimaryColumnWidth;
+@property (nonatomic, readonly) int minimumSupplementaryColumnWidth;
+@property (nonatomic, readonly) int maximumSupplementaryColumnWidth;
+@property (nonatomic, readonly) int preferredSupplementaryColumnWidth;
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+@property (nonatomic, readonly) int minimumSecondaryColumnWidth;
+@property (nonatomic, readonly) int preferredSecondaryColumnWidth;
+@property (nonatomic, readonly) int minimumInspectorColumnWidth;
+@property (nonatomic, readonly) int maximumInspectorColumnWidth;
+@property (nonatomic, readonly) int preferredInspectorColumnWidth;
+#endif
+
 @end
 
 #pragma mark - Events
