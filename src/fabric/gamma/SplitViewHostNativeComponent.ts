@@ -8,13 +8,24 @@ import type {
   Int32,
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
-import {
-  GenericEmptyEvent,
-  SplitViewDisplayMode,
-  SplitViewDisplayModeButtonVisibility,
-  SplitViewPrimaryEdge,
-  SplitViewSplitBehavior,
-} from 'react-native-screens/components/gamma/SplitViewHost.types';
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+type GenericEmptyEvent = Readonly<{}>;
+
+type SplitViewDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
+
+type SplitViewSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
+
+type SplitViewPrimaryEdge = 'leading' | 'trailing';
+
+type SplitViewDisplayMode =
+  | 'automatic'
+  | 'secondaryOnly'
+  | 'oneBesideSecondary'
+  | 'oneOverSecondary'
+  | 'twoBesideSecondary'
+  | 'twoOverSecondary'
+  | 'twoDisplaceSecondary';
 
 interface ColumnMetrics {
   minimumPrimaryColumnWidth?: WithDefault<Int32, -1>;

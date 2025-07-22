@@ -1,15 +1,16 @@
 'use client';
 
 import type { ViewProps } from 'react-native';
-import type {
-  GenericEmptyEvent,
-  SplitViewScreenColumnType,
-} from 'react-native-screens/components/gamma/SplitViewScreen.types';
 import {
   DirectEventHandler,
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+type GenericEmptyEvent = Readonly<{}>;
+
+type SplitViewScreenColumnType = 'column' | 'inspector';
 
 interface NativeProps extends ViewProps {
   // Config
