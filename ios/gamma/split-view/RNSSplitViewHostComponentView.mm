@@ -104,7 +104,7 @@ namespace react = facebook::react;
 {
   [self setupController];
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
-
+  [self requestSplitViewHostControllerForAppearanceUpdate];
   [self reactAddControllerToClosestParent:_controller];
 }
 
@@ -309,11 +309,16 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
-  if (_needsSplitViewAppearanceUpdate) {
+  [self requestSplitViewHostControllerForAppearanceUpdate];
+  [super finalizeUpdates:updateMask];
+}
+
+- (void)requestSplitViewHostControllerForAppearanceUpdate
+{
+  if (_needsSplitViewAppearanceUpdate && _controller != nil) {
     _needsSplitViewAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
   }
-  [super finalizeUpdates:updateMask];
 }
 
 #pragma mark - RCTMountingTransactionObserving
