@@ -166,6 +166,25 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimize
       return UITabBarMinimizeBehaviorAutomatic;
   }
 }
+
+#if !RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
+    RNSTabBarMinimizeBehavior tabBarMinimizeBehavior)
+{
+  switch (tabBarMinimizeBehavior) {
+    case RNSTabBarMinimizeBehaviorNever:
+      return UITabBarMinimizeBehaviorNever;
+    case RNSTabBarMinimizeBehaviorOnScrollDown:
+      return UITabBarMinimizeBehaviorOnScrollDown;
+    case RNSTabBarMinimizeBehaviorOnScrollUp:
+      return UITabBarMinimizeBehaviorOnScrollUp;
+    default:
+      return UITabBarMinimizeBehaviorAutomatic;
+  }
+}
+#endif // !RCT_NEW_ARCH_ENABLED
+
 #endif // Check for iOS >= 26
 
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(

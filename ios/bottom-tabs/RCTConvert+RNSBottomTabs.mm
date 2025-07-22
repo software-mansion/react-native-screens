@@ -10,15 +10,25 @@
 }
 
 RCT_ENUM_CONVERTER(
-  RNSBottomTabsIconType,
-  (@{
-    @"image": @(RNSBottomTabsIconTypeImage),
-    @"template": @(RNSBottomTabsIconTypeTemplate),
-    @"sfSymbol": @(RNSBottomTabsIconTypeSfSymbol),
-  }),
-  RNSBottomTabsIconTypeSfSymbol,
-  integerValue
-)
+    RNSBottomTabsIconType,
+    (@{
+      @"image" : @(RNSBottomTabsIconTypeImage),
+      @"template" : @(RNSBottomTabsIconTypeTemplate),
+      @"sfSymbol" : @(RNSBottomTabsIconTypeSfSymbol),
+    }),
+    RNSBottomTabsIconTypeSfSymbol,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSTabBarMinimizeBehavior,
+    (@{
+      @"automatic" : @(RNSTabBarMinimizeBehaviorAutomatic),
+      @"never" : @(RNSTabBarMinimizeBehaviorNever),
+      @"onScrollDown" : @(RNSTabBarMinimizeBehaviorOnScrollDown),
+      @"onScrollUp" : @(RNSTabBarMinimizeBehaviorOnScrollUp),
+    }),
+    RNSTabBarMinimizeBehaviorAutomatic,
+    integerValue)
 
 @end
 
