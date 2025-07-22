@@ -2,7 +2,6 @@
 
 import React from 'react';
 import BottomTabsNativeComponent, {
-  type BlurEffect,
   type TabBarMinimizeBehavior,
   type NativeFocusChangeEvent,
   type TabBarItemLabelVisibilityMode,
