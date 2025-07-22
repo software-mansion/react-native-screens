@@ -186,6 +186,7 @@ class TabsHostViewManager :
     ) {
         view.tabBarItemRippleColor = value
     }
+
     override fun setTabBarMinimizeBehavior(
         view: TabsHost,
         value: String?,
