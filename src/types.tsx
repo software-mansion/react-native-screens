@@ -1022,13 +1022,13 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * It supports definitions for the following columns:
    *
-   * - "primary" - the leftmost sidebar
-   * - "supplementary" - the intermediate sidebar
+   * - `primary` - the leftmost sidebar
+   * - `supplementary` - the intermediate sidebar
    *
    * On iOS 26 or higher, it also supports definitions for:
    *
-   * - "secondary" - the view with the main content
-   * - "inspector" - the view which is providing additional data about the secondary column
+   * - `secondary` - the view with the main content
+   * - `inspector` - the view which is providing additional data about the secondary column
    *
    * @platform ios
    */
@@ -1037,13 +1037,13 @@ export interface SplitViewHostProps extends ViewProps {
    * Specifies the display mode which will be preferred to use, if the layout requirements are met.
    * The following values are currently supported (they correspond to [UISplitViewController.DisplayMode](https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum)):
    *
-   * - "automatic" - display mode is chosen by the OS, the appropriate display mode is based on the device and the current app size
-   * - "secondaryOnly" – only the secondary column is displayed
-   * - "oneBesideSecondary" – a sidebar is displayed side-by-side with the secondary column
-   * - "twoBesideSecondary" – two sidebars are displayed side-by-side with the secondary column
-   * - "oneOverSecondary" – a one sidebar is displayed over the secondary column
-   * - "twoOverSecondary" – two sidebars are displayed over the secondary column
-   * - "twoDisplaceSecondary" – two sidebars are displacind the secondary column, moving it partially offscreen
+   * - `automatic` - display mode is chosen by the OS, the appropriate display mode is based on the device and the current app size
+   * - `secondaryOnly` – only the secondary column is displayed
+   * - `oneBesideSecondary` – a sidebar is displayed side-by-side with the secondary column
+   * - `twoBesideSecondary` – two sidebars are displayed side-by-side with the secondary column
+   * - `oneOverSecondary` – a one sidebar is displayed over the secondary column
+   * - `twoOverSecondary` – two sidebars are displayed over the secondary column
+   * - `twoDisplaceSecondary` – two sidebars are displacind the secondary column, moving it partially offscreen
    *
    * @platform ios
    */
@@ -1052,9 +1052,9 @@ export interface SplitViewHostProps extends ViewProps {
    * Determines whether the button for changing the SplitView display mode is visible on the screen.
    * The following values are currently supported (they correspond to [UISplitViewController.DisplayModeButtonVisibility](https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymodebuttonvisibility-swift.enum)):
    *
-   * - "automatic" - the visibility of the display mode button is set by system
-   * - "always" – the display mode button is always visible
-   * - "never" – the display mode button is always hidden
+   * - `automatic` - the visibility of the display mode button is set by system
+   * - `always` – the display mode button is always visible
+   * - `never` – the display mode button is always hidden
    *
    * @platform ios
    */
@@ -1091,8 +1091,8 @@ export interface SplitViewHostProps extends ViewProps {
    * Indicates on which side primary sidebar is placed, affecting the split view layout.
    * The following values are currently supported (they correspond to [UISplitViewController.PrimaryEdge](https://developer.apple.com/documentation/uikit/uisplitviewcontroller/primaryedge-swift.enum)):
    *
-   * - "leading" - primary sidebar is placed on the leading edge of the interface
-   * - "trailing" - primary sidebar is placed on the trailing edge of the interface
+   * - `leading` - primary sidebar is placed on the leading edge of the interface
+   * - `trailing` - primary sidebar is placed on the trailing edge of the interface
    *
    * @platform ios
    */
@@ -1117,10 +1117,10 @@ export interface SplitViewHostProps extends ViewProps {
    * Specifies the split behavior which will be preferred to use, if the layout requirements are met.
    * The following values are currently supported (they correspond to [UISplitViewController.SplitBehavior](https://developer.apple.com/documentation/uikit/uisplitviewcontroller/splitbehavior-swift.enum)):
    *
-   * - "automatic" - chosen by the OS, the appropriate split behavior is based on the device and the current app size
-   * - "displace" – the main column is moved partially offscreen, making a space for sidebars
-   * - "overlay" – the sidebars are partially covering main column
-   * - "tile" – the sidebars appears side-by-side with the main column
+   * - `automatic` - chosen by the OS, the appropriate split behavior is based on the device and the current app size
+   * - `displace` – the main column is moved partially offscreen, making a space for sidebars
+   * - `overlay` – the sidebars are partially covering main column
+   * - `tile` – the sidebars appears side-by-side with the main column
    *
    * @platform ios
    */
