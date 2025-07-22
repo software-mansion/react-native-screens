@@ -1,7 +1,18 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
+import PressableWithFeedback from '../../shared/PressableWithFeedback';
 import { Colors } from '../../shared/styling/Colors';
+
+const TestButton = ({ onPress }) => {
+  return (
+    <PressableWithFeedback
+      onPress={onPress}
+      style={styles.button}>
+      <Text style={styles.text}>Touch me</Text>
+    </PressableWithFeedback>
+  )
+}
 
 const SplitViewBaseApp = () => {
   const [showSecondaryToggleButton, setShowSecondaryToggleButton] = React.useState(false);
@@ -11,7 +22,7 @@ const SplitViewBaseApp = () => {
   }
 
   return (
-    <SplitViewHost columnMetrics={{preferredSupplementaryColumnWidth: 250}} displayMode='twoBesideSecondary' presentsWithGesture={true} showSecondaryToggleButton={showSecondaryToggleButton} splitBehavior='tile'>
+    <SplitViewHost columnMetrics={{preferredSupplementaryColumnWidth: 250}} displayMode='secondaryOnly' presentsWithGesture={true} showSecondaryToggleButton={showSecondaryToggleButton} splitBehavior='tile'>
       <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
           <Text style={styles.text}>Primary column</Text>
@@ -25,7 +36,7 @@ const SplitViewBaseApp = () => {
       <SplitViewScreen.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Secondary column</Text>
-          <Button onPress={onPress} title="Toggle showSecondaryOnlyButton" />
+          <TestButton onPress={onPress} />
         </View>
       </SplitViewScreen.Column>
     </SplitViewHost>
