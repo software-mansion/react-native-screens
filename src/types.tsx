@@ -980,35 +980,35 @@ export interface SplitViewColumnMetrics {
   /**
    * Specifies the minimum width for the secondary column in the SplitView layout, typically for the view with the main content.
    *
-   * @platform iOS 26+
+   * @platform ios
    * @supported iOS 26 or higher
    */
   minimumSecondaryColumnWidth?: number;
   /**
    * Specifies the preferred width for the secondary column in the SplitView layout, typically for the view with the main content.
    *
-   * @platform iOS 26+
+   * @platform ios
    * @supported iOS 26 or higher
    */
   preferredSecondaryColumnWidth?: number;
   /**
    * Specifies the minimum width for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
    *
-   * @platform iOS 26+
+   * @platform ios
    * @supported iOS 26 or higher
    */
   minimumInspectorColumnWidth?: number;
   /**
    * Specifies the maximum width for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
    *
-   * @platform iOS 26+
+   * @platform ios
    * @supported iOS 26 or higher
    */
   maximumInspectorColumnWidth?: number;
   /**
    * Specifies the preferred width for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
    *
-   * @platform iOS 26+
+   * @platform ios
    * @supported iOS 26 or higher
    */
   preferredInspectorColumnWidth?: number;
@@ -1077,7 +1077,7 @@ export interface SplitViewHostProps extends ViewProps {
    * @remarks
    * The purpose of this callback depends on whether the SplitView is collapsed or expanded.
    *
-   * @platform iOS 26+
+   * @platform ios
    * @supported iOS 26 or higher
    */
   onInspectorHide?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
@@ -1103,7 +1103,7 @@ export interface SplitViewHostProps extends ViewProps {
    * @remarks
    * The result on the interface for this prop depends on whether the SplitView is collapsed or expanded.
    *
-   * @platform iOS 26+
+   * @platform ios
    * @supported iOS 26 or higher
    */
   showInspector?: boolean;
