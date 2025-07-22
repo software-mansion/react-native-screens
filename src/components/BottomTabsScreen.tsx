@@ -116,12 +116,12 @@ export interface BottomTabsScreenProps {
    *
    * Can be:
    * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`,
-   * - `default` - uses UIKit's default tab bar blur effect,
+   * - `systemDefault` - uses UIKit's default tab bar blur effect,
    * - `none` - disables blur effect.
    *
    * Since iOS 26, it does not affect the tab bar.
    *
-   * @default Defaults to `default`.
+   * @default Defaults to `systemDefault`.
    *
    * @platform ios
    * @supported iOS 18 or lower
