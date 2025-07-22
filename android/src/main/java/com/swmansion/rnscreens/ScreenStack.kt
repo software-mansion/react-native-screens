@@ -148,7 +148,8 @@ class ScreenStack(
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
 
-        val newTopAlreadyInStack = stack.contains(newTop)
+        val newTopWasPreloaded = newTop?.screen?.isBeingActivated ?: false
+        val newTopAlreadyInStack = stack.contains(newTop) && !newTopWasPreloaded
         val topScreenWillChange = newTop !== topScreenWrapper
 
         if (newTop != null && !newTopAlreadyInStack) {

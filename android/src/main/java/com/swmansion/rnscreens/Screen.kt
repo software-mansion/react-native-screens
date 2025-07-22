@@ -61,6 +61,7 @@ class Screen(
         private set
     var screenId: String? = null
     var isStatusBarAnimated: Boolean? = null
+    var isBeingActivated = false
     var isBeingRemoved = false
 
     // Props for controlling modal presentation
@@ -306,8 +307,12 @@ class Screen(
         if (activityState == this.activityState) {
             return
         }
-        if (container is ScreenStack && this.activityState != null && activityState < this.activityState!!) {
-            throw IllegalStateException("[RNScreens] activityState can only progress in NativeStack")
+        if (container is ScreenStack) {
+            if (this.activityState != null && activityState < this.activityState!!) {
+                throw IllegalStateException("[RNScreens] activityState can only progress in NativeStack")
+            }
+
+            this.isBeingActivated = this.activityState == ActivityState.INACTIVE && activityState == ActivityState.ON_TOP
         }
         this.activityState = activityState
         container?.onChildUpdate()
