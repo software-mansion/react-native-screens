@@ -23,7 +23,7 @@ RCT_EXPORT_MODULE(RNSBottomTabsManager)
 #pragma mark - LEGACY Props
 
 RCT_EXPORT_VIEW_PROPERTY(tabBarBackgroundColor, UIColor);
-RCT_EXPORT_VIEW_PROPERTY(tabBarBlurEffect, RNSExtendedBlurEffectStyle);
+RCT_EXPORT_VIEW_PROPERTY(tabBarBlurEffect, RNSBlurEffectStyle);
 RCT_EXPORT_VIEW_PROPERTY(tabBarTintColor, UIColor);
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontFamily, NSString);
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontSize, NSNumber);

@@ -74,11 +74,11 @@
   }
 
   switch (appearanceProvider.tabBarBlurEffect) {
-    case RNSExtendedBlurEffectStyleNone:
+    case RNSBlurEffectStyleNone:
       appearance.backgroundEffect = nil;
       break;
 
-    case RNSExtendedBlurEffectStyleDefault:
+    case RNSBlurEffectStyleDefault:
       // Initialized appearance already has default blur effect.
 
       // This won't work as expected with current inheriting appearance logic:
@@ -88,7 +88,7 @@
 
     default:
       appearance.backgroundEffect =
-          rnscreens::conversion::RNSUIBlurEffectFromRNSExtendedBlurEffectStyle(appearanceProvider.tabBarBlurEffect);
+          rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(appearanceProvider.tabBarBlurEffect);
   }
 }
 

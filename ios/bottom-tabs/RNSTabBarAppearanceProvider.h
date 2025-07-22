@@ -6,7 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RNSTabBarAppearanceProvider
 
 - (UIColor *)tabBarBackgroundColor;
-- (RNSExtendedBlurEffectStyle)tabBarBlurEffect;
+- (RNSBlurEffectStyle)tabBarBlurEffect;
 
 - (NSString *)tabBarItemTitleFontFamily;
 - (NSNumber *)tabBarItemTitleFontSize;

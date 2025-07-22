@@ -83,7 +83,7 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
 #endif
-  _tabBarBlurEffect = RNSExtendedBlurEffectStyleDefault;
+  _tabBarBlurEffect = RNSBlurEffectStyleDefault;
   _tabBarBackgroundColor = nil;
   _tabBarTintColor = nil;
 
@@ -209,8 +209,8 @@ namespace react = facebook::react;
 
   if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
     _needsTabBarAppearanceUpdate = YES;
-    _tabBarBlurEffect = rnscreens::conversion::RNSExtendedBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
-        newComponentProps.tabBarBlurEffect);
+    _tabBarBlurEffect =
+        rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
   }
 
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
@@ -261,7 +261,7 @@ namespace react = facebook::react;
         newComponentProps.tabBarItemTitlePositionAdjustment);
     _needsTabBarAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
@@ -414,7 +414,7 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateTabBarAppearance];
 }
 
-- (void)setTabBarBlurEffect:(RNSExtendedBlurEffectStyle)tabBarBlurEffect
+- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
 {
   _tabBarBlurEffect = tabBarBlurEffect;
   [self invalidateTabBarAppearance];

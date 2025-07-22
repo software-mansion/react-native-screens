@@ -78,8 +78,10 @@ typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {
   RNSSplitViewScreenColumnTypeInspector,
 };
 
-// Redefinition of UIBlurEffectStyle. We need to represent additional case of `None`.
+// Redefinition of UIBlurEffectStyle. We need to represent additional cases of `None` and `Default`.
 typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
+  /// Default blur effect should be used
+  RNSBlurEffectStyleDefault = -2,
   /// No blur effect should be visible
   RNSBlurEffectStyleNone = -1,
   RNSBlurEffectStyleExtraLight = UIBlurEffectStyleExtraLight,
@@ -120,54 +122,6 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
   RNSBlurEffectStyleSystemThickMaterialDark API_AVAILABLE(ios(13.0))
       API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterialDark,
   RNSBlurEffectStyleSystemChromeMaterialDark API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemChromeMaterialDark
-
-} API_AVAILABLE(ios(8.0)) API_UNAVAILABLE(watchos);
-
-// The same as above but with Default option, to be renamed after removing old stack implementation.
-typedef NS_ENUM(NSInteger, RNSExtendedBlurEffectStyle) {
-  /// Default blur effect should be used
-  RNSExtendedBlurEffectStyleDefault = -2,
-  /// No blur effect should be visible
-  RNSExtendedBlurEffectStyleNone = -1,
-  RNSExtendedBlurEffectStyleExtraLight = UIBlurEffectStyleExtraLight,
-  RNSExtendedBlurEffectStyleLight = UIBlurEffectStyleLight,
-  RNSExtendedBlurEffectStyleDark = UIBlurEffectStyleDark,
-  // TODO: Add support for this variant on tvOS
-  //  RNSExtendedBlurEffectStyleExtraDark = UIBlurEffectStyleExtraDark API_AVAILABLE(tvos(10.0)) API_UNAVAILABLE(ios)
-  //  API_UNAVAILABLE(watchos),
-  RNSExtendedBlurEffectStyleRegular API_AVAILABLE(ios(10.0)) API_UNAVAILABLE(watchos) = UIBlurEffectStyleRegular,
-  RNSExtendedBlurEffectStyleProminent API_AVAILABLE(ios(10.0)) API_UNAVAILABLE(watchos) = UIBlurEffectStyleProminent,
-  RNSExtendedBlurEffectStyleSystemUltraThinMaterial API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemUltraThinMaterial,
-  RNSExtendedBlurEffectStyleSystemThinMaterial API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThinMaterial,
-  RNSExtendedBlurEffectStyleSystemMaterial API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterial,
-  RNSExtendedBlurEffectStyleSystemThickMaterial API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterial,
-  RNSExtendedBlurEffectStyleSystemChromeMaterial API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemChromeMaterial,
-  RNSExtendedBlurEffectStyleSystemUltraThinMaterialLight API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemUltraThinMaterialLight,
-  RNSExtendedBlurEffectStyleSystemThinMaterialLight API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThinMaterialLight,
-  RNSExtendedBlurEffectStyleSystemMaterialLight API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterialLight,
-  RNSExtendedBlurEffectStyleSystemThickMaterialLight API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterialLight,
-  RNSExtendedBlurEffectStyleSystemChromeMaterialLight API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemChromeMaterialLight,
-
-  RNSExtendedBlurEffectStyleSystemUltraThinMaterialDark API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemUltraThinMaterialDark,
-  RNSExtendedBlurEffectStyleSystemThinMaterialDark API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThinMaterialDark,
-  RNSExtendedBlurEffectStyleSystemMaterialDark API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemMaterialDark,
-  RNSExtendedBlurEffectStyleSystemThickMaterialDark API_AVAILABLE(ios(13.0))
-      API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemThickMaterialDark,
-  RNSExtendedBlurEffectStyleSystemChromeMaterialDark API_AVAILABLE(ios(13.0))
       API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemChromeMaterialDark
 
 } API_AVAILABLE(ios(8.0)) API_UNAVAILABLE(watchos);

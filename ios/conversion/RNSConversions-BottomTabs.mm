@@ -12,53 +12,52 @@ UIBlurEffect *RNSUIBlurEffectFromOptionalUIBlurEffectStyle(std::optional<UIBlurE
   return nil;
 }
 
-std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSExtendedBlurEffectStyle(
-    RNSExtendedBlurEffectStyle blurEffect)
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect)
 {
   switch (blurEffect) {
-    case RNSExtendedBlurEffectStyleNone:
-    case RNSExtendedBlurEffectStyleDefault:
+    case RNSBlurEffectStyleNone:
+    case RNSBlurEffectStyleDefault:
       return std::nullopt;
-    case RNSExtendedBlurEffectStyleExtraLight:
+    case RNSBlurEffectStyleExtraLight:
       return {UIBlurEffectStyleExtraLight};
-    case RNSExtendedBlurEffectStyleLight:
+    case RNSBlurEffectStyleLight:
       return {UIBlurEffectStyleLight};
-    case RNSExtendedBlurEffectStyleDark:
+    case RNSBlurEffectStyleDark:
       return {UIBlurEffectStyleDark};
-    case RNSExtendedBlurEffectStyleRegular:
+    case RNSBlurEffectStyleRegular:
       return {UIBlurEffectStyleRegular};
-    case RNSExtendedBlurEffectStyleProminent:
+    case RNSBlurEffectStyleProminent:
       return {UIBlurEffectStyleProminent};
 #if !TARGET_OS_TV
-    case RNSExtendedBlurEffectStyleSystemUltraThinMaterial:
+    case RNSBlurEffectStyleSystemUltraThinMaterial:
       return {UIBlurEffectStyleSystemUltraThinMaterial};
-    case RNSExtendedBlurEffectStyleSystemThinMaterial:
+    case RNSBlurEffectStyleSystemThinMaterial:
       return {UIBlurEffectStyleSystemThinMaterial};
-    case RNSExtendedBlurEffectStyleSystemMaterial:
+    case RNSBlurEffectStyleSystemMaterial:
       return {UIBlurEffectStyleSystemMaterial};
-    case RNSExtendedBlurEffectStyleSystemThickMaterial:
+    case RNSBlurEffectStyleSystemThickMaterial:
       return {UIBlurEffectStyleSystemThickMaterial};
-    case RNSExtendedBlurEffectStyleSystemChromeMaterial:
+    case RNSBlurEffectStyleSystemChromeMaterial:
       return {UIBlurEffectStyleSystemChromeMaterial};
-    case RNSExtendedBlurEffectStyleSystemUltraThinMaterialLight:
+    case RNSBlurEffectStyleSystemUltraThinMaterialLight:
       return {UIBlurEffectStyleSystemUltraThinMaterialLight};
-    case RNSExtendedBlurEffectStyleSystemThinMaterialLight:
+    case RNSBlurEffectStyleSystemThinMaterialLight:
       return {UIBlurEffectStyleSystemThinMaterialLight};
-    case RNSExtendedBlurEffectStyleSystemMaterialLight:
+    case RNSBlurEffectStyleSystemMaterialLight:
       return {UIBlurEffectStyleSystemMaterialLight};
-    case RNSExtendedBlurEffectStyleSystemThickMaterialLight:
+    case RNSBlurEffectStyleSystemThickMaterialLight:
       return {UIBlurEffectStyleSystemThickMaterialLight};
-    case RNSExtendedBlurEffectStyleSystemChromeMaterialLight:
+    case RNSBlurEffectStyleSystemChromeMaterialLight:
       return {UIBlurEffectStyleSystemChromeMaterialLight};
-    case RNSExtendedBlurEffectStyleSystemUltraThinMaterialDark:
+    case RNSBlurEffectStyleSystemUltraThinMaterialDark:
       return {UIBlurEffectStyleSystemUltraThinMaterialDark};
-    case RNSExtendedBlurEffectStyleSystemThinMaterialDark:
+    case RNSBlurEffectStyleSystemThinMaterialDark:
       return {UIBlurEffectStyleSystemThinMaterialDark};
-    case RNSExtendedBlurEffectStyleSystemMaterialDark:
+    case RNSBlurEffectStyleSystemMaterialDark:
       return {UIBlurEffectStyleSystemMaterialDark};
-    case RNSExtendedBlurEffectStyleSystemThickMaterialDark:
+    case RNSBlurEffectStyleSystemThickMaterialDark:
       return {UIBlurEffectStyleSystemThickMaterialDark};
-    case RNSExtendedBlurEffectStyleSystemChromeMaterialDark:
+    case RNSBlurEffectStyleSystemChromeMaterialDark:
       return {UIBlurEffectStyleSystemChromeMaterialDark};
     default:
       RCTLogError(@"[RNScreens] unsupported blur effect style");
@@ -70,69 +69,68 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSExtendedBlurEff
   }
 }
 
-UIBlurEffect *RNSUIBlurEffectFromRNSExtendedBlurEffectStyle(RNSExtendedBlurEffectStyle blurEffect)
+UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect)
 {
-  std::optional<UIBlurEffectStyle> maybeStyle = RNSMaybeUIBlurEffectStyleFromRNSExtendedBlurEffectStyle(blurEffect);
+  std::optional<UIBlurEffectStyle> maybeStyle = RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(blurEffect);
   return RNSUIBlurEffectFromOptionalUIBlurEffectStyle(maybeStyle);
 }
 
-RNSExtendedBlurEffectStyle RNSExtendedBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
-    react::RNSBottomTabsTabBarBlurEffect blurEffect)
+RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(react::RNSBottomTabsTabBarBlurEffect blurEffect)
 {
   using enum facebook::react::RNSBottomTabsTabBarBlurEffect;
 
   switch (blurEffect) {
     case None:
-      return RNSExtendedBlurEffectStyleNone;
+      return RNSBlurEffectStyleNone;
     case Default:
-      return RNSExtendedBlurEffectStyleDefault;
+      return RNSBlurEffectStyleDefault;
     case ExtraLight:
-      return RNSExtendedBlurEffectStyleExtraLight;
+      return RNSBlurEffectStyleExtraLight;
     case Light:
-      return RNSExtendedBlurEffectStyleLight;
+      return RNSBlurEffectStyleLight;
     case Dark:
-      return RNSExtendedBlurEffectStyleDark;
+      return RNSBlurEffectStyleDark;
     case Regular:
-      return RNSExtendedBlurEffectStyleRegular;
+      return RNSBlurEffectStyleRegular;
     case Prominent:
-      return RNSExtendedBlurEffectStyleProminent;
+      return RNSBlurEffectStyleProminent;
 #if !TARGET_OS_TV
     case SystemUltraThinMaterial:
-      return RNSExtendedBlurEffectStyleSystemUltraThinMaterial;
+      return RNSBlurEffectStyleSystemUltraThinMaterial;
     case SystemThinMaterial:
-      return RNSExtendedBlurEffectStyleSystemThinMaterial;
+      return RNSBlurEffectStyleSystemThinMaterial;
     case SystemMaterial:
-      return RNSExtendedBlurEffectStyleSystemMaterial;
+      return RNSBlurEffectStyleSystemMaterial;
     case SystemThickMaterial:
-      return RNSExtendedBlurEffectStyleSystemThickMaterial;
+      return RNSBlurEffectStyleSystemThickMaterial;
     case SystemChromeMaterial:
-      return RNSExtendedBlurEffectStyleSystemChromeMaterial;
+      return RNSBlurEffectStyleSystemChromeMaterial;
     case SystemUltraThinMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemUltraThinMaterialLight;
+      return RNSBlurEffectStyleSystemUltraThinMaterialLight;
     case SystemThinMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemThinMaterialLight;
+      return RNSBlurEffectStyleSystemThinMaterialLight;
     case SystemMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemMaterialLight;
+      return RNSBlurEffectStyleSystemMaterialLight;
     case SystemThickMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemThickMaterialLight;
+      return RNSBlurEffectStyleSystemThickMaterialLight;
     case SystemChromeMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemChromeMaterialLight;
+      return RNSBlurEffectStyleSystemChromeMaterialLight;
     case SystemUltraThinMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemUltraThinMaterialDark;
+      return RNSBlurEffectStyleSystemUltraThinMaterialDark;
     case SystemThinMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemThinMaterialDark;
+      return RNSBlurEffectStyleSystemThinMaterialDark;
     case SystemMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemMaterialDark;
+      return RNSBlurEffectStyleSystemMaterialDark;
     case SystemThickMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemThickMaterialDark;
+      return RNSBlurEffectStyleSystemThickMaterialDark;
     case SystemChromeMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemChromeMaterialDark;
+      return RNSBlurEffectStyleSystemChromeMaterialDark;
     default:
       RCTLogError(@"[RNScreens] unsupported blur effect style");
-      return RNSExtendedBlurEffectStyleNone;
+      return RNSBlurEffectStyleNone;
 #else // !TARGET_OS_TV
     default:
-      return RNSExtendedBlurEffectStyleNone;
+      return RNSBlurEffectStyleNone;
 #endif
   }
 }
@@ -164,63 +162,63 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimize
 }
 #endif // Check for iOS >= 26
 
-RNSExtendedBlurEffectStyle RNSExtendedBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
+RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect)
 {
   using enum facebook::react::RNSBottomTabsScreenTabBarBlurEffect;
 
   switch (blurEffect) {
     case None:
-      return RNSExtendedBlurEffectStyleNone;
+      return RNSBlurEffectStyleNone;
     case Default:
-      return RNSExtendedBlurEffectStyleDefault;
+      return RNSBlurEffectStyleDefault;
     case ExtraLight:
-      return RNSExtendedBlurEffectStyleExtraLight;
+      return RNSBlurEffectStyleExtraLight;
     case Light:
-      return RNSExtendedBlurEffectStyleLight;
+      return RNSBlurEffectStyleLight;
     case Dark:
-      return RNSExtendedBlurEffectStyleDark;
+      return RNSBlurEffectStyleDark;
     case Regular:
-      return RNSExtendedBlurEffectStyleRegular;
+      return RNSBlurEffectStyleRegular;
     case Prominent:
-      return RNSExtendedBlurEffectStyleProminent;
+      return RNSBlurEffectStyleProminent;
 #if !TARGET_OS_TV
     case SystemUltraThinMaterial:
-      return RNSExtendedBlurEffectStyleSystemUltraThinMaterial;
+      return RNSBlurEffectStyleSystemUltraThinMaterial;
     case SystemThinMaterial:
-      return RNSExtendedBlurEffectStyleSystemThinMaterial;
+      return RNSBlurEffectStyleSystemThinMaterial;
     case SystemMaterial:
-      return RNSExtendedBlurEffectStyleSystemMaterial;
+      return RNSBlurEffectStyleSystemMaterial;
     case SystemThickMaterial:
-      return RNSExtendedBlurEffectStyleSystemThickMaterial;
+      return RNSBlurEffectStyleSystemThickMaterial;
     case SystemChromeMaterial:
-      return RNSExtendedBlurEffectStyleSystemChromeMaterial;
+      return RNSBlurEffectStyleSystemChromeMaterial;
     case SystemUltraThinMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemUltraThinMaterialLight;
+      return RNSBlurEffectStyleSystemUltraThinMaterialLight;
     case SystemThinMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemThinMaterialLight;
+      return RNSBlurEffectStyleSystemThinMaterialLight;
     case SystemMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemMaterialLight;
+      return RNSBlurEffectStyleSystemMaterialLight;
     case SystemThickMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemThickMaterialLight;
+      return RNSBlurEffectStyleSystemThickMaterialLight;
     case SystemChromeMaterialLight:
-      return RNSExtendedBlurEffectStyleSystemChromeMaterialLight;
+      return RNSBlurEffectStyleSystemChromeMaterialLight;
     case SystemUltraThinMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemUltraThinMaterialDark;
+      return RNSBlurEffectStyleSystemUltraThinMaterialDark;
     case SystemThinMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemThinMaterialDark;
+      return RNSBlurEffectStyleSystemThinMaterialDark;
     case SystemMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemMaterialDark;
+      return RNSBlurEffectStyleSystemMaterialDark;
     case SystemThickMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemThickMaterialDark;
+      return RNSBlurEffectStyleSystemThickMaterialDark;
     case SystemChromeMaterialDark:
-      return RNSExtendedBlurEffectStyleSystemChromeMaterialDark;
+      return RNSBlurEffectStyleSystemChromeMaterialDark;
     default:
       RCTLogError(@"[RNScreens] unsupported blur effect style");
-      return RNSExtendedBlurEffectStyleNone;
+      return RNSBlurEffectStyleNone;
 #else // !TARGET_OS_TV
     default:
-      return RNSExtendedBlurEffectStyleNone;
+      return RNSBlurEffectStyleNone;
 #endif
   }
 }

@@ -71,7 +71,7 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
-  _tabBarBlurEffect = RNSExtendedBlurEffectStyleDefault;
+  _tabBarBlurEffect = RNSBlurEffectStyleDefault;
   _tabBarBackgroundColor = nil;
 
   _tabBarItemTitleFontFamily = nil;
@@ -179,7 +179,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
-    _tabBarBlurEffect = rnscreens::conversion::RNSExtendedBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
+    _tabBarBlurEffect = rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
         newComponentProps.tabBarBlurEffect);
     tabItemNeedsAppearanceUpdate = YES;
   }
@@ -373,7 +373,7 @@ RNS_IGNORE_SUPER_CALL_END
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
-- (void)setTabBarBlurEffect:(RNSExtendedBlurEffectStyle)tabBarBlurEffect
+- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
 {
   _tabBarBlurEffect = tabBarBlurEffect;
   _tabItemNeedsAppearanceUpdate = YES;

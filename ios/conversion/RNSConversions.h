@@ -10,14 +10,12 @@ namespace rnscreens::conversion {
 namespace react = facebook::react;
 
 std::optional<UIBlurEffectStyle>
-RNSMaybeUIBlurEffectStyleFromRNSExtendedBlurEffectStyle(
-    RNSExtendedBlurEffectStyle blurEffect);
+RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
 
-UIBlurEffect *RNSUIBlurEffectFromRNSExtendedBlurEffectStyle(
-    RNSExtendedBlurEffectStyle blurEffect);
+UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(
+    RNSBlurEffectStyle blurEffect);
 
-RNSExtendedBlurEffectStyle
-RNSExtendedBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
+RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
     react::RNSBottomTabsTabBarBlurEffect blurEffect);
 
 UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
@@ -36,8 +34,7 @@ std::optional<UIBlurEffectStyle>
 RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
 
-RNSExtendedBlurEffectStyle
-RNSExtendedBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
+RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
 
 UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
