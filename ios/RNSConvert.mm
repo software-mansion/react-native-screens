@@ -1,4 +1,5 @@
 #import "RNSConvert.h"
+#import <React/RCTLog.h>
 
 #ifndef RCT_NEW_ARCH_ENABLED
 #import <React/RCTAssert.h>
@@ -198,8 +199,6 @@
   switch (blurEffect) {
     case None:
       return RNSBlurEffectStyleNone;
-    case SystemDefault:
-      return RNSBlurEffectStyleSystemDefault;
     case ExtraLight:
       return RNSBlurEffectStyleExtraLight;
     case Light:
