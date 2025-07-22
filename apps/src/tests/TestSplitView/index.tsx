@@ -1,10 +1,24 @@
 import React from 'react';
 
-import SplitViewApp from './SplitViewBaseApp';
+import SplitViewBaseApp from './SplitViewBaseApp';
+import {
+  SplitViewWithNestedStack,
+  SplitViewWithNativeStackBase,
+  SplitViewWithNativeStackContainedModal,
+  SplitViewWithNativeStackHeader,
+  SplitViewWithNativeStackModal,
+  SplitViewWithNativeStackPresentation
+} from './SplitViewWithNativeStack';
+import { SplitViewBaseConfig } from './helpers/types';
 
 const App = () => {
+  const splitViewBaseConfig: SplitViewBaseConfig = {
+    displayMode: 'oneOverSecondary',
+    splitBehavior: 'overlay',
+  }
+
   return (
-    <SplitViewApp />
+    <SplitViewBaseApp splitViewBaseConfig={splitViewBaseConfig} />
   );
 }
 

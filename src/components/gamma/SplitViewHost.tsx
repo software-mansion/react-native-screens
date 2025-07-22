@@ -12,7 +12,7 @@ export type SplitViewNativeProps = NativeProps & {
   // Overrides
 };
 
-type SplitViewHostProps = {
+export type SplitViewHostProps = {
   children?: ViewProps['children'];
 } & SplitViewNativeProps;
 
