@@ -144,6 +144,7 @@ class TabScreenViewManager :
         view.tabKey = value
     }
 
+    @ReactProp(name = "badgeValue")
     override fun setBadgeValue(
         view: TabScreen,
         value: String?,
