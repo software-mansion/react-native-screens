@@ -202,6 +202,12 @@ export interface BottomTabsScreenProps {
    */
   iconResourceName?: string;
   /**
+   * TODO: @t0maboro - add description
+   *
+   * @platform android
+   */
+  iconResource?: ImageSourcePropType;
+  /**
    * @summary Specifies the color of the text in the badge.
    *
    * @platform android
