@@ -471,22 +471,15 @@ class TabsHost(
             return
         }
 
-        if (oldFocusedTab == null) {
-            requireFragmentManager
-                .beginTransaction()
-                .setReorderingAllowed(true)
-                .apply {
-                    this.add(contentView.id, newFocusedTab)
-                }.commitNowAllowingStateLoss()
-        } else {
-            requireFragmentManager
-                .beginTransaction()
-                .setReorderingAllowed(true)
-                .apply {
+        requireFragmentManager
+            .beginTransaction()
+            .setReorderingAllowed(true)
+            .apply {
+                if (oldFocusedTab != null) {
                     this.remove(oldFocusedTab)
-                    this.add(contentView.id, newFocusedTab)
-                }.commitNowAllowingStateLoss()
-        }
+                }
+                this.add(contentView.id, newFocusedTab)
+            }.commitNowAllowingStateLoss()
     }
 
     private val layoutCallback =
