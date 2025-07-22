@@ -80,6 +80,7 @@ export interface BottomTabsProps extends ViewProps {
    * @default Defaults to `automatic`.
    *
    * @platform ios
+   * @supported iOS 26 or higher
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
 

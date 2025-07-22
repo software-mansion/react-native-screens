@@ -106,6 +106,7 @@ export interface BottomTabsScreenProps {
    * Since iOS 26, it does not affect the tab bar.
    *
    * @platform ios
+   * @supported iOS 18 or lower
    */
   tabBarBackgroundColor?: ColorValue;
 
@@ -123,6 +124,7 @@ export interface BottomTabsScreenProps {
    * @default Defaults to `default`.
    *
    * @platform ios
+   * @supported iOS 18 or lower
    */
   tabBarBlurEffect?: BlurEffect;
 
