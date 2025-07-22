@@ -84,7 +84,7 @@ export interface BottomTabsScreenProps {
   /**
    * Specifies content of tab bar item badge.
    *
-   * TODO: Android
+   * @todo Describe prop behavior on Android.
    * On iOS, badge is displayed as regular string.
    *
    * @platform android, ios
@@ -268,7 +268,7 @@ export interface BottomTabsScreenProps {
    *
    * By default, `react-native`'s ScrollView has `contentInsetAdjustmentBehavior`
    * set to `never` instead of UIKit-default (which is `automatic`). This
-   * prevents ScrollViews from respecting navigation bar instets.
+   * prevents ScrollViews from respecting navigation bar insets.
    * When this prop is set to `true`, `automatic` behavior is reverted for
    * ScrollViews in first descendant chain from tab screen.
    *
