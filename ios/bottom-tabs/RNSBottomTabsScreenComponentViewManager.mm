@@ -23,7 +23,9 @@ RCT_REMAP_VIEW_PROPERTY(isFocused, isSelectedScreen, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(title, NSString);
 RCT_EXPORT_VIEW_PROPERTY(badgeValue, NSString);
 RCT_EXPORT_VIEW_PROPERTY(tabBarBackgroundColor, UIColor);
-RCT_EXPORT_VIEW_PROPERTY(tabBarBlurEffect, UIBlurEffect); // needs custom conversion, cause it has `none`
+
+// This remapping allows us to store UIBlurEffect in the component while accepting a custom enum as input from JS.
+RCT_REMAP_VIEW_PROPERTY(tabBarBlurEffect, tabBarBlurEffectFromRNSBlurEffectStyle, RNSBlurEffectStyle);
 
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontFamily, NSString);
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontSize, NSNumber);

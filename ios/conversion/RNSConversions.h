@@ -1,13 +1,21 @@
 #pragma once
 
 #if defined(__cplusplus)
-#import <react/renderer/components/rnscreens/Props.h>
 #import <React/RCTImageSource.h>
+#import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
+
+#if !RCT_NEW_ARCH_ENABLED
+std::optional<UIBlurEffectStyle>
+RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
+
+UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(
+    RNSBlurEffectStyle blurEffect);
+#endif // !RCT_NEW_ARCH_ENABLED
 
 std::optional<UIBlurEffectStyle>
 RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
@@ -39,7 +47,8 @@ UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct
         titlePositionAdjustment);
 
-RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
+RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(
+    react::RNSBottomTabsScreenIconType iconType);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,

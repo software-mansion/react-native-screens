@@ -1,9 +1,9 @@
+#import <React/RCTImageSource.h>
 #import "RNSBottomTabsScreenEventEmitter.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
-#import "RNSTabBarAppearanceProvider.h"
 #import "RNSScrollViewBehaviorOverriding.h"
-#import <React/RCTImageSource.h>
+#import "RNSTabBarAppearanceProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
