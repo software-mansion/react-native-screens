@@ -26,7 +26,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
       selectedIcon: {
         sfSymbolName: 'house.fill',
       },
-      iconResourceName: 'sym_call_incoming', // Android specific
+      // iconResourceName: 'sym_call_incoming', // Android specific
+      iconResource: require('../../../assets/variableIcons/icon_fill.png'),
     },
     contentViewRenderFn: Tab1,
   },
@@ -51,7 +52,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
         templateSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
       tabBarItemIconColor: Colors.RedDark120,
-      iconResourceName: 'sym_call_missed', // Android specific
+      // iconResourceName: 'sym_call_missed', // Android specific
+      iconResource: require('../../../assets/variableIcons/icon.png'),
       title: 'Tab2',
     },
     contentViewRenderFn: Tab2,
@@ -68,7 +70,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
       selectedIcon: {
         imageSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
-      iconResourceName: 'sym_action_email', // Android specific
+      // iconResourceName: 'sym_action_email', // Android specific
+      iconResource: require('../../../assets/variableIcons/icon_fill.png'),
       title: 'Tab3',
     },
     contentViewRenderFn: Tab3,
@@ -82,7 +85,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
       selectedIcon: {
         sfSymbolName: 'rectangle.stack.fill',
       },
-      iconResourceName: 'sym_action_chat', // Android specific
+      // iconResourceName: 'sym_action_chat', // Android specific
+      iconResource: require('../../../assets/variableIcons/icon.png'),
       title: 'Tab4',
       badgeValue: '',
     },

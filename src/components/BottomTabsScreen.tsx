@@ -75,6 +75,7 @@ export interface BottomTabsScreenProps {
 
   // Android specific
   iconResourceName?: string;
+  iconResource?: ImageSourcePropType;
   tabBarItemBadgeTextColor?: ColorValue;
 
   icon?: Icon;
