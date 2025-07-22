@@ -16,7 +16,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle
 {
   switch (blurEffect) {
     case RNSBlurEffectStyleNone:
-    case RNSBlurEffectStyleDefault:
+    case RNSBlurEffectStyleSystemDefault:
       return std::nullopt;
     case RNSBlurEffectStyleExtraLight:
       return {UIBlurEffectStyleExtraLight};
@@ -82,8 +82,8 @@ RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(react::RN
   switch (blurEffect) {
     case None:
       return RNSBlurEffectStyleNone;
-    case Default:
-      return RNSBlurEffectStyleDefault;
+    case SystemDefault:
+      return RNSBlurEffectStyleSystemDefault;
     case ExtraLight:
       return RNSBlurEffectStyleExtraLight;
     case Light:
@@ -170,8 +170,8 @@ RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
   switch (blurEffect) {
     case None:
       return RNSBlurEffectStyleNone;
-    case Default:
-      return RNSBlurEffectStyleDefault;
+    case SystemDefault:
+      return RNSBlurEffectStyleSystemDefault;
     case ExtraLight:
       return RNSBlurEffectStyleExtraLight;
     case Light:

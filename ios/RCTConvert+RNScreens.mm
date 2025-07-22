@@ -11,7 +11,7 @@
   NSMutableDictionary *blurEffects = [NSMutableDictionary new];
   [blurEffects addEntriesFromDictionary:@{
     @"none" : @(RNSBlurEffectStyleNone),
-    @"default" : @(RNSBlurEffectStyleDefault),
+    @"systemDefault" : @(RNSBlurEffectStyleSystemDefault),
     @"extraLight" : @(RNSBlurEffectStyleExtraLight),
     @"light" : @(RNSBlurEffectStyleLight),
     @"dark" : @(RNSBlurEffectStyleDark),
@@ -41,7 +41,7 @@
   return blurEffects;
 }
 
-RCT_ENUM_CONVERTER(RNSBlurEffectStyle, ([self blurEffectsForIOSVersion]), RNSBlurEffectStyleDefault, integerValue)
+RCT_ENUM_CONVERTER(RNSBlurEffectStyle, ([self blurEffectsForIOSVersion]), RNSBlurEffectStyleSystemDefault, integerValue)
 
 @end
 

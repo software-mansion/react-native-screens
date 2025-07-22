@@ -21,7 +21,7 @@ export type NativeFocusChangeEvent = {
 
 export type BlurEffect =
   | 'none'
-  | 'default'
+  | 'systemDefault'
   | 'extraLight'
   | 'light'
   | 'dark'
@@ -62,7 +62,7 @@ export interface NativeProps extends ViewProps {
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'default'>;
+  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
   tabBarTintColor?: ColorValue;
 
   tabBarItemTitleFontFamily?: string;

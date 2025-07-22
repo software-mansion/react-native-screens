@@ -78,7 +78,7 @@
       appearance.backgroundEffect = nil;
       break;
 
-    case RNSBlurEffectStyleDefault:
+    case RNSBlurEffectStyleSystemDefault:
       // Initialized appearance already has default blur effect.
 
       // This won't work as expected with current inheriting appearance logic:

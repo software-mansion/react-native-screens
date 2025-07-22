@@ -25,7 +25,7 @@ export type LifecycleStateChangeEvent = Readonly<{
 
 export type BlurEffect =
   | 'none'
-  | 'default'
+  | 'systemDefault'
   | 'extraLight'
   | 'light'
   | 'dark'
@@ -62,7 +62,7 @@ export interface NativeProps extends ViewProps {
   // Tab Bar Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'default'>;
+  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
 
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: Float;

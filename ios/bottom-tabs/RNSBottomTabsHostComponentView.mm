@@ -83,7 +83,7 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
 #endif
-  _tabBarBlurEffect = RNSBlurEffectStyleDefault;
+  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
   _tabBarBackgroundColor = nil;
   _tabBarTintColor = nil;
 

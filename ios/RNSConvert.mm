@@ -198,8 +198,8 @@
   switch (blurEffect) {
     case None:
       return RNSBlurEffectStyleNone;
-    case Default:
-      return RNSBlurEffectStyleDefault;
+    case SystemDefault:
+      return RNSBlurEffectStyleSystemDefault;
     case ExtraLight:
       return RNSBlurEffectStyleExtraLight;
     case Light:
@@ -256,15 +256,15 @@
 + (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-  react_native_assert(blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleDefault);
+  react_native_assert(blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleSystemDefault);
 #else
   RCTAssert(
-      blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleDefault,
-      @"RNSBlurEffectStyleNone and RNSBlurEffectStyleDefualt variants are not convertible to UIBlurEffectStyle");
+      blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleSystemDefault,
+      @"RNSBlurEffectStyleNone and RNSBlurEffectStyleSystemDefault variants are not convertible to UIBlurEffectStyle");
 #endif // RCT_NEW_ARCH_ENABLED
 
   // Cast safety: RNSBlurEffectStyle is defined in such way that its values map 1:1 with
-  // UIBlurEffectStyle, except RNSBlurEffectStyleNone and RNSBlurEffectStyleDefault which are excluded above.
+  // UIBlurEffectStyle, except RNSBlurEffectStyleNone and RNSBlurEffectStyleSystemDefault which are excluded above.
   return (UIBlurEffectStyle)blurEffect;
 }
 

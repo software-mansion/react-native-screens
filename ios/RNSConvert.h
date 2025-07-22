@@ -50,7 +50,7 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 /// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` or `blurEffect ==
-/// RNSBlurEffectStyleDefault` which have no counter parts in the UIKit types.
+/// RNSBlurEffectStyleSystemDefault` which have no counter parts in the UIKit types.
 + (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect;
 
 @end

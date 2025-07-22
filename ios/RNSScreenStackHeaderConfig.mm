@@ -458,8 +458,8 @@ RNS_IGNORE_SUPER_CALL_END
       appearance.backgroundEffect = nil;
       break;
 
-    case RNSBlurEffectStyleDefault:
-      RCTLogError(@"[RNScreens] ScreenStack does not support RNSBlurEffectStyleDefault.");
+    case RNSBlurEffectStyleSystemDefault:
+      RCTLogError(@"[RNScreens] ScreenStack does not support RNSBlurEffectStyleSystemDefault.");
       break;
 
     default:

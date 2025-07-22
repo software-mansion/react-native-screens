@@ -71,7 +71,7 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
-  _tabBarBlurEffect = RNSBlurEffectStyleDefault;
+  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
   _tabBarBackgroundColor = nil;
 
   _tabBarItemTitleFontFamily = nil;
