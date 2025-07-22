@@ -155,12 +155,20 @@ class TabsHostViewManager :
         view.tabBarItemTitleFontColorActive = value
     }
 
-    @ReactProp(name = "tabBarItemActivityIndicatorColor", customType = "Color")
-    override fun setTabBarItemActivityIndicatorColor(
+    @ReactProp(name = "tabBarItemActiveIndicatorColor", customType = "Color")
+    override fun setTabBarItemActiveIndicatorColor(
         view: TabsHost,
         value: Int?,
     ) {
-        view.tabBarItemActivityIndicatorColor = value
+        view.tabBarItemActiveIndicatorColor = value
+    }
+
+    @ReactProp(name = "tabBarItemActiveIndicatorEnabled")
+    override fun setTabBarItemActiveIndicatorEnabled(
+        view: TabsHost,
+        value: Boolean,
+    ) {
+        view.isTabBarItemActiveIndicatorEnabled = value
     }
 
     @ReactProp(name = "tabBarItemIconColorActive", customType = "Color")

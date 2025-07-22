@@ -130,7 +130,11 @@ class TabsHost(
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
-    var tabBarItemActivityIndicatorColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
+    var tabBarItemActiveIndicatorColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
+    var isTabBarItemActiveIndicatorEnabled: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
@@ -321,10 +325,12 @@ class TabsHost(
             tabBarItemRippleColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_navigation_item_ripple_color)
         bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
 
-        // ActivityIndicator color
+        // ActivityIndicator
         val activityIndicatorColor =
-            tabBarItemActivityIndicatorColor
+            tabBarItemActiveIndicatorColor
                 ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary_container)
+
+        bottomNavigationView.isItemActiveIndicatorEnabled = isTabBarItemActiveIndicatorEnabled
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activityIndicatorColor)
 
         // First clean the menu, then populate it
