@@ -129,7 +129,7 @@ RNSExtendedBlurEffectStyle RNSExtendedBlurEffectStyleFromRNSBottomTabsTabBarBlur
       return RNSExtendedBlurEffectStyleSystemChromeMaterialDark;
     default:
       RCTLogError(@"[RNScreens] unsupported blur effect style");
-      return std::nullopt;
+      return RNSExtendedBlurEffectStyleNone;
 #else // !TARGET_OS_TV
     default:
       return std::nullopt;
@@ -217,7 +217,7 @@ RNSExtendedBlurEffectStyle RNSExtendedBlurEffectStyleFromRNSBottomTabsScreenTabB
       return RNSExtendedBlurEffectStyleSystemChromeMaterialDark;
     default:
       RCTLogError(@"[RNScreens] unsupported blur effect style");
-      return std::nullopt;
+      return RNSExtendedBlurEffectStyleNone;
 #else // !TARGET_OS_TV
     default:
       return std::nullopt;
