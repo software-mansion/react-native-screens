@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.core.net.toUri
@@ -29,11 +30,8 @@ class TabScreenViewManager :
 
     override fun getName() = REACT_CLASS
 
-    var context: ThemedReactContext? = null
-
     override fun createViewInstance(reactContext: ThemedReactContext): TabScreen {
         Log.d(REACT_CLASS, "createViewInstance")
-        context = reactContext
         return TabScreen(reactContext)
     }
 
@@ -203,14 +201,14 @@ class TabScreenViewManager :
         val uri = value?.getString("uri")
         if (uri != null) {
             runBlocking {
-                val drawable = loadImage(context!!, uri)
+                val drawable = loadImage(view.context, uri)
                 view.icon = drawable
             }
         }
     }
 
     suspend fun loadImage(
-        context: ThemedReactContext,
+        context: Context,
         uri: String,
     ): Drawable =
         withContext(Dispatchers.IO) {
