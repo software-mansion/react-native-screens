@@ -21,6 +21,7 @@ namespace react = facebook::react;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
   bool _needsSplitViewAppearanceUpdate;
+  bool _needsSplitViewSecondaryScreenNavBarUpdate;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -41,6 +42,7 @@ namespace react = facebook::react;
 
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _needsSplitViewAppearanceUpdate = false;
+  _needsSplitViewSecondaryScreenNavBarUpdate = false;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -105,6 +107,7 @@ namespace react = facebook::react;
   [self setupController];
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
   [self requestSplitViewHostControllerForAppearanceUpdate];
+  [self requestSplitViewSecondaryScreenNavBarForAppearanceUpdate];
   [self reactAddControllerToClosestParent:_controller];
 }
 
@@ -212,11 +215,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldComponentProps.showSecondaryToggleButton != newComponentProps.showSecondaryToggleButton) {
     _needsSplitViewAppearanceUpdate = true;
+    _needsSplitViewSecondaryScreenNavBarUpdate = true;
     _showSecondaryToggleButton = newComponentProps.showSecondaryToggleButton;
-
-    if (_isShowSecondaryToggleButtonSet) {
-      RCTLogWarn(@"[RNScreens] changing showSecondaryToggleButton dynamically is currently unsupported");
-    }
   }
 
   if (oldComponentProps.showInspector != newComponentProps.showInspector) {
@@ -310,6 +310,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [self requestSplitViewHostControllerForAppearanceUpdate];
+  [self requestSplitViewSecondaryScreenNavBarForAppearanceUpdate];
   [super finalizeUpdates:updateMask];
 }
 
@@ -318,6 +319,14 @@ RNS_IGNORE_SUPER_CALL_END
   if (_needsSplitViewAppearanceUpdate && _controller != nil) {
     _needsSplitViewAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
+  }
+}
+
+- (void)requestSplitViewSecondaryScreenNavBarForAppearanceUpdate
+{
+  if (_needsSplitViewSecondaryScreenNavBarUpdate && _controller != nil) {
+    _needsSplitViewSecondaryScreenNavBarUpdate = false;
+    [_controller setNeedsSecondaryScreenNavBarUpdate];
   }
 }
 

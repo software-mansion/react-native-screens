@@ -5,6 +5,7 @@ import UIKit
 public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
   private var needsAppearanceUpdate = false
+  private var needsSecondaryScreenNavBarAppearanceUpdate = false
 
   private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
     return splitViewHostComponentView.reactEventEmitter()
@@ -47,6 +48,16 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   @objc
   public func setNeedsAppearanceUpdate() {
     needsAppearanceUpdate = true
+  }
+
+  /// We noticed a bug on the pure-native component, which is blocking dynamic updates for showsSecondaryOnlyButton.
+  /// Toggling this flag doesn't refresh the component and is updated after triggerig some other interaction, like changing layout.
+  /// We noticed that we can forcefully refresh navigation bar from UINavigationController level by toggling setNavigationBarHidden.
+  /// After some testing, it looks well and I haven't noticed any flicker - missing button is appearing naturally.
+  /// Please note that this is a hack rather than a solution so feel free to remove this code in case of any problems and treat the bug with toggling button as a platform's issue.
+  @objc
+  public func setNeedsSecondaryScreenNavBarUpdate() {
+    needsSecondaryScreenNavBarAppearanceUpdate = true
   }
 
   // MARK: Updating
@@ -95,11 +106,39 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     }
   }
 
+  func updateSplitViewSecondaryScreenNavBarAppearanceIfNeeded() {
+    if needsSecondaryScreenNavBarAppearanceUpdate {
+      updateSplitViewSecondaryScreenNavBarAppearance()
+    }
+  }
+
   func updateSplitViewAppearance() {
     needsAppearanceUpdate = false
 
     splitViewAppearanceCoordinator.updateAppearance(
       ofSplitView: self.splitViewHostComponentView, with: self)
+  }
+
+  func updateSplitViewSecondaryScreenNavBarAppearance() {
+    needsSecondaryScreenNavBarAppearanceUpdate = false
+
+    refreshSecondaryNavBar()
+  }
+
+  /// This function is handling the logic related to the issue described next to `setNeedsSecondaryScreenNavBarUpdate` method which explains the purpose why we need to have another signal.
+  private func refreshSecondaryNavBar() {
+    let secondaryViewController = viewController(for: .secondary)
+    assert(
+      secondaryViewController != nil,
+      "[RNScreens] Failed to refresh secondary nav bar. Secondary view controller is nil.")
+    assert(
+      secondaryViewController is UINavigationController,
+      "[RNScreens] Expected UINavigationController but got \(type(of: secondaryViewController))")
+    let navigationController = secondaryViewController as! UINavigationController
+
+    /// The assumption is that it should come in a single batch and it won't cause any delays in rendering the content.
+    navigationController.setNavigationBarHidden(true, animated: false)
+    navigationController.setNavigationBarHidden(false, animated: false)
   }
 
   // MARK: Helpers
@@ -144,6 +183,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
     updateSplitViewAppearanceIfNeeded()
+    updateSplitViewSecondaryScreenNavBarAppearanceIfNeeded()
     validateSplitViewHierarchy()
   }
 
@@ -272,7 +312,7 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
 
         // `didHide` for modal is called on finger down for dismiss, what is problematic, because we can cancel dismissing modal.
         // In this scenario, the modal inspector might receive an invalid state and will deviate from the JS value.
-        // Therefore, for event emissions, we need to ensure that the view was detached from the view hierarchy, by checking its window. 
+        // Therefore, for event emissions, we need to ensure that the view was detached from the view hierarchy, by checking its window.
         if let inspectorViewController = viewController(for: .inspector) {
           if inspectorViewController.view.window == nil {
             reactEventEmitter.emitOnHideInspector()
