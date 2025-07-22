@@ -99,6 +99,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemTitleFontFamily='monospace'
       tabBarItemTitleFontStyle='italic'
       tabBarItemTitleFontWeight="700"
+      tabBarItemLabelVisibilityMode="auto"
 
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs

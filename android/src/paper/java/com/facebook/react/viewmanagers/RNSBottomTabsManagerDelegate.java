@@ -72,6 +72,9 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
       case "tabBarItemRippleColor":
         mViewManager.setTabBarItemRippleColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
+      case "tabBarItemLabelVisibilityMode":
+        mViewManager.setTabBarItemLabelVisibilityMode(view, (String) value);
+        break;
       case "controlNavigationStateInJS":
         mViewManager.setControlNavigationStateInJS(view, value == null ? false : (boolean) value);
         break;

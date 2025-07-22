@@ -174,6 +174,10 @@ class TabsHost(
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
+    var tabBarItemLabelVisibilityMode: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
     private fun <T> updateNavigationMenuIfNeeded(
         oldValue: T,
         newValue: T,
@@ -188,7 +192,6 @@ class TabsHost(
 
     init {
         orientation = VERTICAL
-        bottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
         addView(contentView)
         addView(bottomNavigationView)
 
@@ -315,6 +318,19 @@ class TabsHost(
                 ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_secondary_container)
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
+
+        // LabelVisibilityMode
+        // From docs: can be one of LABEL_VISIBILITY_AUTO, LABEL_VISIBILITY_SELECTED, LABEL_VISIBILITY_LABELED, or LABEL_VISIBILITY_UNLABELED
+
+        val visibilityMode =
+            when (tabBarItemLabelVisibilityMode) {
+                "selected" -> NavigationBarView.LABEL_VISIBILITY_SELECTED
+                "labeled" -> NavigationBarView.LABEL_VISIBILITY_LABELED
+                "unlabeled" -> NavigationBarView.LABEL_VISIBILITY_UNLABELED
+                else -> NavigationBarView.LABEL_VISIBILITY_AUTO
+            }
+
+        bottomNavigationView.labelVisibilityMode = visibilityMode
 
         // Ripple color
         val rippleColor =
@@ -492,6 +508,11 @@ class TabsHost(
                     layoutCallback,
                 )
         }
+    }
+
+    override fun requestLayout() {
+        super.requestLayout()
+        refreshLayout()
     }
 
     private fun forceSubtreeMeasureAndLayoutPass() {
