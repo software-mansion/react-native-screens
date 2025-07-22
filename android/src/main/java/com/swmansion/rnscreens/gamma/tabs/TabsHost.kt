@@ -22,7 +22,6 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.BuildConfig
-import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
@@ -343,27 +342,7 @@ class TabsHost(
                 ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary_container)
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activityIndicatorColor)
 
-        // First clean the menu, then populate it
-        bottomNavigationView.menu.clear()
-
-        tabScreenFragments.forEachIndexed { index, fragment ->
-            Log.d(TAG, "Add menu item: $index")
-            val item =
-                bottomNavigationView.menu.add(
-                    Menu.NONE,
-                    index,
-                    Menu.NONE,
-                    fragment.tabScreen.tabTitle,
-                )
-
-            // Icon
-            item.icon = fragment.tabScreen.icon
-
-            // Badge
-            updateBadgeAppearance(index, fragment.tabScreen)
-        }
-
-        // Update font styles
+        updateMenuItems(bottomNavigationView.menu)
         updateFontStyles()
 
         bottomNavigationView.selectedItemId =
@@ -372,6 +351,19 @@ class TabsHost(
         post {
             refreshLayout()
             Log.d(TAG, "BottomNavigationView request layout")
+        }
+    }
+
+    @SuppressLint("UseKtx") // The lint is incorrect here. `size` is a regular function, not a getter.
+    private fun updateMenuItems(menu: Menu) {
+        if (menu.size() != tabScreenFragments.size) {
+            // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
+            menu.clear()
+        }
+        tabScreenFragments.forEachIndexed { index, fragment ->
+            val menuItem = menu.getOrCreateMenuItem(index, fragment.tabScreen)
+            check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
+            updateMenuItemOfTabScreen(menuItem, fragment.tabScreen)
         }
     }
 
@@ -552,3 +544,8 @@ class TabsHost(
         const val TAG = "TabsHost"
     }
 }
+
+private fun Menu.getOrCreateMenuItem(
+    index: Int,
+    tabScreen: TabScreen,
+): MenuItem = this.findItem(index) ?: this.add(Menu.NONE, index, Menu.NONE, tabScreen.tabTitle)
