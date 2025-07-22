@@ -23,9 +23,6 @@ interface NativeProps extends ViewProps {
   onDidDisappear?: DirectEventHandler<GenericEmptyEvent>;
 }
 
-export default codegenNativeComponent<NativeProps>(
-  'RNSSplitViewScreen',
-  {
-    interfaceOnly: true,
-  },
-);
+export default codegenNativeComponent<NativeProps>('RNSSplitViewScreen', {
+  interfaceOnly: true,
+});
