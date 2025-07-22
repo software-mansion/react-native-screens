@@ -87,12 +87,11 @@ namespace react = facebook::react;
   return numberOfColumns;
 }
 
-- (void)setupControllerIfNeeded
+- (void)setupController
 {
   // Controller needs to know about the number of reactSubviews before its initialization to pass proper number of
-  // columns to the constructor. Therefore, we must delay it's creation until updating Host's props.
-  // At this point, children screens are already attached to the Host component, therefore, we may create SplitView
-  // controller.
+  // columns to the constructor. Therefore, we must delay it's creation until attaching it to window.
+  // At this point, children are already attached to the Host component, therefore, we may create SplitView controller.
   if (_controller == nil) {
     int numberOfColumns = [self getNumberOfColumns];
 
@@ -103,8 +102,9 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
+  [self setupController];
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
-
+  [self requestSplitViewHostControllerForAppearanceUpdate];
   [self reactAddControllerToClosestParent:_controller];
 }
 
@@ -309,13 +309,16 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
-  if (_needsSplitViewAppearanceUpdate) {
-    [self setupControllerIfNeeded];
+  [self requestSplitViewHostControllerForAppearanceUpdate];
+  [super finalizeUpdates:updateMask];
+}
 
+- (void)requestSplitViewHostControllerForAppearanceUpdate
+{
+  if (_needsSplitViewAppearanceUpdate && _controller != nil) {
     _needsSplitViewAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
   }
-  [super finalizeUpdates:updateMask];
 }
 
 #pragma mark - RCTMountingTransactionObserving
