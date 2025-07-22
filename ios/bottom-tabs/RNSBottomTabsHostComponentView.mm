@@ -261,7 +261,7 @@ namespace react = facebook::react;
         newComponentProps.tabBarItemTitlePositionAdjustment);
     _needsTabBarAppearanceUpdate = YES;
   }
-  
+
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
@@ -474,6 +474,23 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
   [self invalidateTabBarAppearance];
+}
+
+// This is a Paper-only setter method that will be called by the mounting code.
+// It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
+- (void)setTabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior:(RNSTabBarMinimizeBehavior)tabBarMinimizeBehavior
+{
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+  if (@available(iOS 26.0, *)) {
+    _tabBarMinimizeBehavior =
+        rnscreens::conversion::UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(tabBarMinimizeBehavior);
+    _controller.tabBarMinimizeBehavior = _tabBarMinimizeBehavior;
+  } else
+#endif // Check for iOS >= 26
+    if (tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAutomatic) {
+      RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
+    }
 }
 
 - (void)setOnNativeFocusChange:(RCTDirectEventBlock)onNativeFocusChange

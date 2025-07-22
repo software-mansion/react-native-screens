@@ -129,3 +129,12 @@ typedef NS_ENUM(NSInteger, RNSBottomTabsIconType) {
   RNSBottomTabsIconTypeTemplate,
   RNSBottomTabsIconTypeSfSymbol,
 };
+
+#if !RCT_NEW_ARCH_ENABLED
+typedef NS_ENUM(NSInteger, RNSTabBarMinimizeBehavior) {
+  RNSTabBarMinimizeBehaviorAutomatic,
+  RNSTabBarMinimizeBehaviorNever,
+  RNSTabBarMinimizeBehaviorOnScrollDown,
+  RNSTabBarMinimizeBehaviorOnScrollUp,
+};
+#endif
