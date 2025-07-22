@@ -194,7 +194,7 @@ export interface BottomTabsScreenProps {
    *   from provided resource,
    * - an object with `templateSource` - will attempt to use image
    *   from provided resource as template (color of the image will
-   *   depend on tabBarIconColor, tintColor and tab bar item state).
+   *   depend on props related to icon color and tab bar item's state).
    *
    * If no `selectedIcon` is provided, it will also be used as `selectedIcon`.
    *
@@ -219,7 +219,7 @@ export interface BottomTabsScreenProps {
    * when tab screen is selected. Impacts also title text color.
    *
    * On iOS 26, it only applies to selected tab bar item. Other items
-   * are dark or light depending on the tab bar.
+   * are dark or light depending on the theme of the tab bar.
    *
    * Is overriden by `tabBarItemTitleFontColor` (for title text color).
    * Overrides `tabBarTintColor`.
@@ -248,9 +248,7 @@ export interface BottomTabsScreenProps {
    *   tab screen and repeated selection is detected, ScrollView will
    *   be scrolled to top.
    *
-   * Important notes:
-   * - `popToRoot` has priority over `scrollToTop`,
-   * - for nested Stack, `scrollToTop` works only on root screen.
+   * `popToRoot` has priority over `scrollToTop`,
    *
    * @default All special effects are enabled by default.
    *
@@ -272,7 +270,7 @@ export interface BottomTabsScreenProps {
    * set to `never` instead of UIKit-default (which is `automatic`). This
    * prevents ScrollViews from respecting navigation bar insets.
    * When this prop is set to `true`, `automatic` behavior is reverted for
-   * ScrollViews in first descendant chain from tab screen.
+   * first ScrollView in first descendant chain from tab screen.
    *
    * @default Defaults to `true`.
    *
