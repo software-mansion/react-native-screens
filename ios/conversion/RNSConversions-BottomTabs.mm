@@ -132,7 +132,7 @@ RNSExtendedBlurEffectStyle RNSExtendedBlurEffectStyleFromRNSBottomTabsTabBarBlur
       return RNSExtendedBlurEffectStyleNone;
 #else // !TARGET_OS_TV
     default:
-      return std::nullopt;
+      return RNSExtendedBlurEffectStyleNone;
 #endif
   }
 }
@@ -220,7 +220,7 @@ RNSExtendedBlurEffectStyle RNSExtendedBlurEffectStyleFromRNSBottomTabsScreenTabB
       return RNSExtendedBlurEffectStyleNone;
 #else // !TARGET_OS_TV
     default:
-      return std::nullopt;
+      return RNSExtendedBlurEffectStyleNone;
 #endif
   }
 }
