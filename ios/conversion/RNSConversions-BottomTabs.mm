@@ -59,6 +59,9 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle
       return {UIBlurEffectStyleSystemThickMaterialDark};
     case RNSBlurEffectStyleSystemChromeMaterialDark:
       return {UIBlurEffectStyleSystemChromeMaterialDark};
+    default:
+      RCTLogError(@"[RNScreens] unsupported blur effect style");
+      return std::nullopt;
 #else // !TARGET_OS_TV
     default:
       return std::nullopt;
@@ -122,6 +125,9 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsTabBa
       return {UIBlurEffectStyleSystemThickMaterialDark};
     case SystemChromeMaterialDark:
       return {UIBlurEffectStyleSystemChromeMaterialDark};
+    default:
+      RCTLogError(@"[RNScreens] unsupported blur effect style");
+      return std::nullopt;
 #else // !TARGET_OS_TV
     default:
       return std::nullopt;
@@ -190,6 +196,9 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScree
       return {UIBlurEffectStyleSystemThickMaterialDark};
     case SystemChromeMaterialDark:
       return {UIBlurEffectStyleSystemChromeMaterialDark};
+    default:
+      RCTLogError(@"[RNScreens] unsupported blur effect style");
+      return std::nullopt;
 #else // !TARGET_OS_TV
     default:
       return std::nullopt;
