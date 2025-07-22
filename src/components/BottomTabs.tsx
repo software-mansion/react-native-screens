@@ -72,6 +72,15 @@ export interface BottomTabsProps extends ViewProps {
    * @platform ios
    */
   tabBarTintColor?: ColorValue;
+
+  /**
+   * Specifies minimize behavior for the tab bar. Available since
+   * iOS 26.
+   *
+   * @default Defaults to `automatic`.
+   *
+   * @platform ios
+   */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
 
   // Control
