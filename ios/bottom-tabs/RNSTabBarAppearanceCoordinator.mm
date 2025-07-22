@@ -100,27 +100,27 @@
     tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
-    
+
     // Normal icon
     if (screenView.iconImageSource != nil) {
       [self loadImageFrom:screenView.iconImageSource
           withImageLoader:imageLoader
                asTemplate:isTemplate
           completionBlock:^(UIImage *image) {
-                   tabBarItem.image = image;
-                 }];
+            tabBarItem.image = image;
+          }];
     } else {
       tabBarItem.image = nil;
     }
-    
+
     // Selected icon
     if (screenView.selectedIconImageSource != nil) {
       [self loadImageFrom:screenView.selectedIconImageSource
           withImageLoader:imageLoader
                asTemplate:isTemplate
           completionBlock:^(UIImage *image) {
-                   tabBarItem.selectedImage = image;
-                 }];
+            tabBarItem.selectedImage = image;
+          }];
     } else {
       tabBarItem.selectedImage = nil;
     }
@@ -136,7 +136,7 @@
 {
   RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
   RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
-  
+
   [imageLoader loadImageWithURLRequest:imageSource.request
       size:imageSource.size
       scale:imageSource.scale
