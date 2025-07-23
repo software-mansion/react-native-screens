@@ -267,6 +267,8 @@ class ScreenStack(
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()
         }
+
+        newTop?.screen?.let { it.isBeingActivated = false }
     }
 
     // only top visible screen should be accessible
