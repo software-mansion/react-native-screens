@@ -1,20 +1,11 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import type { ViewProps } from 'react-native';
 import SplitViewHostNativeComponent from '../../fabric/gamma/SplitViewHostNativeComponent';
 import type {
-  NativeProps,
   SplitViewDisplayMode,
+  SplitViewHostProps,
   SplitViewSplitBehavior,
-} from '../../fabric/gamma/SplitViewHostNativeComponent';
-
-export type SplitViewNativeProps = NativeProps & {
-  // Overrides
-};
-
-export type SplitViewHostProps = {
-  children?: ViewProps['children'];
-} & SplitViewNativeProps;
+} from './SplitViewHost.types';
 
 // According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
 // Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.

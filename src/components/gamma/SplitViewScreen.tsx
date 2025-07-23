@@ -1,17 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import type { ViewProps } from 'react-native';
 import SplitViewScreenNativeComponent from '../../fabric/gamma/SplitViewScreenNativeComponent';
-
-type SplitViewScreenProps = {
-  children?: ViewProps['children'];
-
-  // Events
-  onWillAppear?: () => void;
-  onDidAppear?: () => void;
-  onWillDisappear?: () => void;
-  onDidDisappear?: () => void;
-};
+import { SplitViewScreenProps } from './SplitViewScreen.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

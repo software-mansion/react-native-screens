@@ -12,20 +12,13 @@ import type {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
-export type SplitViewDisplayModeButtonVisibility =
-  | 'always'
-  | 'automatic'
-  | 'never';
+type SplitViewDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
 
-export type SplitViewSplitBehavior =
-  | 'automatic'
-  | 'displace'
-  | 'overlay'
-  | 'tile';
+type SplitViewSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
 
-export type SplitViewPrimaryEdge = 'leading' | 'trailing';
+type SplitViewPrimaryEdge = 'leading' | 'trailing';
 
-export type SplitViewDisplayMode =
+type SplitViewDisplayMode =
   | 'automatic'
   | 'secondaryOnly'
   | 'oneBesideSecondary'
@@ -50,7 +43,7 @@ interface ColumnMetrics {
   preferredInspectorColumnWidthOrFraction?: WithDefault<Float, -1.0>;
 }
 
-export interface NativeProps extends ViewProps {
+interface NativeProps extends ViewProps {
   // Appearance
 
   preferredDisplayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
