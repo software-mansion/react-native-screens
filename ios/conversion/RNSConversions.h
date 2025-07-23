@@ -63,14 +63,14 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
 
 #pragma mark SplitViewHost props
 
-UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(
-    react::RNSSplitViewHostSplitBehavior behavior);
+UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
+    react::RNSSplitViewHostPreferredSplitBehavior behavior);
 
 UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
     react::RNSSplitViewHostPrimaryEdge primaryEdge);
 
-UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
-    react::RNSSplitViewHostDisplayMode displayMode);
+UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
+    react::RNSSplitViewHostPreferredDisplayMode displayMode);
 
 UISplitViewControllerDisplayModeButtonVisibility
 SplitViewDisplayModeButtonVisibilityFromHostProp(

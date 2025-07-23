@@ -4,10 +4,10 @@ namespace rnscreens::conversion {
 
 #pragma mark SplitViewHost props
 
-UISplitViewControllerSplitBehavior SplitViewSplitBehaviorFromHostProp(
-    facebook::react::RNSSplitViewHostSplitBehavior splitBehavior)
+UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
+    facebook::react::RNSSplitViewHostPreferredSplitBehavior splitBehavior)
 {
-  using enum facebook::react::RNSSplitViewHostSplitBehavior;
+  using enum facebook::react::RNSSplitViewHostPreferredSplitBehavior;
 
   switch (splitBehavior) {
     case Displace:
@@ -36,10 +36,10 @@ UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
   }
 }
 
-UISplitViewControllerDisplayMode SplitViewDisplayModeFromHostProp(
-    facebook::react::RNSSplitViewHostDisplayMode displayMode)
+UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
+    facebook::react::RNSSplitViewHostPreferredDisplayMode displayMode)
 {
-  using enum facebook::react::RNSSplitViewHostDisplayMode;
+  using enum facebook::react::RNSSplitViewHostPreferredDisplayMode;
 
   switch (displayMode) {
     case SecondaryOnly:

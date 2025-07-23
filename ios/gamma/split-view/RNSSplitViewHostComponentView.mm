@@ -51,9 +51,9 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSSplitViewHostProps>();
   _props = defaultProps;
 
-  _splitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
+  _preferredSplitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
   _primaryEdge = UISplitViewControllerPrimaryEdgeLeading;
-  _displayMode = UISplitViewControllerDisplayModeAutomatic;
+  _preferredDisplayMode = UISplitViewControllerDisplayModeAutomatic;
   _displayModeButtonVisibility = UISplitViewControllerDisplayModeButtonVisibilityAutomatic;
   _presentsWithGesture = true;
   _showSecondaryToggleButton = false;
@@ -193,9 +193,10 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(props);
 
-  if (oldComponentProps.splitBehavior != newComponentProps.splitBehavior) {
+  if (oldComponentProps.preferredSplitBehavior != newComponentProps.preferredSplitBehavior) {
     _needsSplitViewAppearanceUpdate = true;
-    _splitBehavior = rnscreens::conversion::SplitViewSplitBehaviorFromHostProp(newComponentProps.splitBehavior);
+    _preferredSplitBehavior =
+        rnscreens::conversion::SplitViewPreferredSplitBehaviorFromHostProp(newComponentProps.preferredSplitBehavior);
   }
 
   if (oldComponentProps.primaryEdge != newComponentProps.primaryEdge) {
@@ -203,9 +204,10 @@ RNS_IGNORE_SUPER_CALL_END
     _primaryEdge = rnscreens::conversion::SplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
   }
 
-  if (oldComponentProps.displayMode != newComponentProps.displayMode) {
+  if (oldComponentProps.preferredDisplayMode != newComponentProps.preferredDisplayMode) {
     _needsSplitViewAppearanceUpdate = true;
-    _displayMode = rnscreens::conversion::SplitViewDisplayModeFromHostProp(newComponentProps.displayMode);
+    _preferredDisplayMode =
+        rnscreens::conversion::SplitViewPreferredDisplayModeFromHostProp(newComponentProps.preferredDisplayMode);
   }
 
   if (oldComponentProps.presentsWithGesture != newComponentProps.presentsWithGesture) {
