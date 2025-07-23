@@ -7,7 +7,7 @@ import BottomTabsNativeComponent, {
   type NativeFocusChangeEvent,
   type TabBarItemLabelVisibilityMode,
   type NativeProps as BottomTabsNativeComponentProps,
-} from '../fabric/BottomTabsNativeComponent';
+} from '../../fabric/BottomTabsNativeComponent';
 import {
   type ColorValue,
   findNodeHandle,
@@ -16,7 +16,7 @@ import {
   TextStyle,
   type ViewProps,
 } from 'react-native';
-import featureFlags from '../flags';
+import featureFlags from '../../flags';
 
 export interface BottomTabsProps extends ViewProps {
   // Events
@@ -34,7 +34,6 @@ export interface BottomTabsProps extends ViewProps {
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: BlurEffect; // defaults to 'none'
-  tabBarTintColor?: ColorValue;
 
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   tabBarItemTitleFontSize?: TextStyle['fontSize'];

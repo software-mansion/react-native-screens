@@ -5,7 +5,7 @@ import BottomTabsScreenNativeComponent, {
   type BlurEffect,
   type IconType,
   type NativeProps,
-} from '../fabric/BottomTabsScreenNativeComponent';
+} from '../../fabric/BottomTabsScreenNativeComponent';
 import {
   type ColorValue,
   type ImageSourcePropType,
@@ -16,8 +16,8 @@ import {
   findNodeHandle,
 } from 'react-native';
 import { Freeze } from 'react-freeze';
-import { freezeEnabled } from '../core';
-import { featureFlags } from '../flags';
+import { freezeEnabled } from '../../core';
+import { featureFlags } from '../../flags';
 
 export type EmptyObject = Record<string, never>;
 export type BottomTabsScreenEventHandler<T> = (
