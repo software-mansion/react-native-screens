@@ -139,9 +139,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     if needsAppearanceUpdate {
       updateSplitViewAppearance()
     }
-  }
-
-  func updateSplitViewSecondaryScreenNavBarAppearanceIfNeeded() {
     if needsSecondaryScreenNavBarAppearanceUpdate {
       updateSplitViewSecondaryScreenNavBarAppearance()
     }
@@ -259,7 +256,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
     updateSplitViewAppearanceIfNeeded()
-    updateSplitViewSecondaryScreenNavBarAppearanceIfNeeded()
     validateSplitViewHierarchy()
   }
 

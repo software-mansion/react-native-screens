@@ -111,7 +111,6 @@ static const CGFloat epsilon = 1e-6;
   [self setupController];
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
   [self requestSplitViewHostControllerForAppearanceUpdate];
-  [self requestSplitViewSecondaryScreenNavBarForAppearanceUpdate];
   [self reactAddControllerToClosestParent:_controller];
 }
 
@@ -322,7 +321,6 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [self requestSplitViewHostControllerForAppearanceUpdate];
-  [self requestSplitViewSecondaryScreenNavBarForAppearanceUpdate];
   [super finalizeUpdates:updateMask];
 }
 
@@ -332,14 +330,12 @@ RNS_IGNORE_SUPER_CALL_END
     _needsSplitViewAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
   }
+
   if (_needsSplitViewDisplayModeUpdate && _controller != nil) {
     _needsSplitViewDisplayModeUpdate = false;
     [_controller setNeedsDisplayModeUpdate];
   }
-}
 
-- (void)requestSplitViewSecondaryScreenNavBarForAppearanceUpdate
-{
   if (_needsSplitViewSecondaryScreenNavBarUpdate && _controller != nil) {
     _needsSplitViewSecondaryScreenNavBarUpdate = false;
     [_controller setNeedsSecondaryScreenNavBarUpdate];
