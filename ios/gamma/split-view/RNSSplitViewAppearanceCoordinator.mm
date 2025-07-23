@@ -19,9 +19,7 @@
   controller.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton;
 
   // Step 2 - props with dedicated flags for updates
-  if ([controller consumeDisplayModeUpdateIfNeeded]) {
-    controller.preferredDisplayMode = splitView.preferredDisplayMode;
-  }
+  [controller updatePreferredDisplayModeIfNeeded];
 
   // Step 3 - manipulating columns
   // Step 3.1 - validating column constraints

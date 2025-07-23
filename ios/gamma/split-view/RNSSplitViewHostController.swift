@@ -81,10 +81,11 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   }
 
   @objc
-  public func consumeDisplayModeUpdateIfNeeded() -> Bool {
-    guard _needsDisplayModeUpdate else { return false }
-    _needsDisplayModeUpdate = false
-    return true
+  public func updatePreferredDisplayModeIfNeeded() {
+      if(_needsDisplayModeUpdate) {
+          _needsDisplayModeUpdate = false
+          preferredDisplayMode = self.splitViewHostComponentView.preferredDisplayMode
+      }
   }
 
   // MARK: Updating
