@@ -27,7 +27,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private let maxNumberOfInspectors: Int = 1
 
   ///
-  /// @brief Initializes the SplitView host controller.
+  /// @brief Initializes the SplitView host controller with provided style.
+  ///
+  /// The style for the SplitView component can be passed only in the initialization method and cannot be changed dynamically.
   ///
   /// @param splitViewHostComponentView The view managed by this controller.
   /// @param numberOfColumns Expected number of visible columns.
@@ -45,34 +47,22 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     delegate = self
   }
 
-  ///
-  /// @brief Unavailable, only for satisfying the compiler.
-  ///
   required init?(coder aDecoder: NSCoder) {
     return nil
   }
 
   // MARK: Signals
 
-  ///
-  /// @brief Marks child view controllers for an update.
-  ///
   @objc
   public func setNeedsUpdateOfChildViewControllers() {
     needsChildViewControllersUpdate = true
   }
 
-  ///
-  /// @brief Marks the component view as needing update.
-  ///
   @objc
   public func setNeedsAppearanceUpdate() {
     needsAppearanceUpdate = true
   }
 
-  ///
-  /// @brief Marks the secondary component's UINavigationBar as needing update.
-  ///
   @objc
   public func setNeedsSecondaryScreenNavBarUpdate() {
     // We noticed a bug on the pure-native component, which is blocking dynamic updates for showsSecondaryOnlyButton.
@@ -85,9 +75,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   // MARK: Updating
 
-  ///
-  /// @brief Updates child view controllers if marked for update
-  ///
   @objc
   public func updateChildViewControllersIfNeeded() {
     if needsChildViewControllersUpdate {
@@ -98,7 +85,8 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   /// @brief Creates and attaches the SplitView child controllers based on the current React subviews.
   ///
-  /// It validates constraints for SplitView hierarchy and it will crash after recognizing an invalid state, e. g. dynamically changed number of columns or number of columns that isn't between defined bounds.
+  /// It validates constraints for SplitView hierarchy and it will crash after recognizing an invalid state,
+  /// e. g. dynamically changed number of columns or number of columns that isn't between defined bounds.
   /// If SplitView constraints are met, it attaches SplitViewScreen representatives to SplitViewHost component.
   ///
   @objc
@@ -132,27 +120,18 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     needsChildViewControllersUpdate = false
   }
 
-  ///
-  /// @brief Triggers appearance update if it was requested.
-  ///
   func updateSplitViewAppearanceIfNeeded() {
     if needsAppearanceUpdate {
       updateSplitViewAppearance()
     }
   }
 
-  ///
-  /// @brief Triggers update on UINavigationController for the secondary column if it was requested.
-  ///
   func updateSplitViewSecondaryScreenNavBarAppearanceIfNeeded() {
     if needsSecondaryScreenNavBarAppearanceUpdate {
       updateSplitViewSecondaryScreenNavBarAppearance()
     }
   }
 
-  ///
-  /// @brief Requests RNSSplitViewAppearanceCoordinator to apply appearance updates.
-  ///
   func updateSplitViewAppearance() {
     needsAppearanceUpdate = false
 
@@ -171,6 +150,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   ///
   /// @brief Triggering appearance updates on secondary column's UINavigationBar component
+  ///
+  /// It validates that the secondary VC is valid UINavigationController and it updates the navbar
+  /// state by toggling it's visibility, what should be performed in a single batch of updates.
   ///
   private func refreshSecondaryNavBar() {
     let secondaryViewController = viewController(for: .secondary)
@@ -211,7 +193,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   /// @brief Filters the given subviews array by a specific column type.
   ///
-  /// Iterates over the provided subview array and returns only the elements that match
+  /// Iterates over the provided subviews array and returns only the elements that match
   /// the specified RNSSplitViewScreenColumnType (e.g., .column, .inspector).
   ///
   /// @param type The target RNSSplitViewScreenColumnType to filter for.
@@ -228,7 +210,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   ///
   /// @brief Shows or hides the inspector screen.
-  /// @remarks Available only on iOS 26 or higher.
+  /// @remarks Inspector column is only available for iOS 26 or higher.
   ///
   /// @param showInspector Determines whether the inspector column should be visible.
   ///
@@ -256,7 +238,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   /// @brief Called after mounting transaction.
   ///
-  /// Updates children and props, checks if the hierarchy is valid.
+  /// Updates children and the appearance, checks if the hierarchy is valid after applying updates.
   ///
   @objc
   public func reactMountingTransactionDidMount() {
@@ -269,7 +251,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   // MARK: Validators
 
   ///
-  /// @brief Validates that child structure meets required constraints.
+  /// @brief Validates that child structure meets required constraints defined for columns and the inspector.
   ///
   func validateSplitViewHierarchy() {
     let columns = filterSubviews(
@@ -356,7 +338,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
   ///
   /// @brief Notifies that an origin of parent RNSSplitViewNavigationController frame has changed.
   ///
-  /// It notifies children controllers for the layout update.
+  /// It iterates over children controllers and notifies them for the layout update.
   ///
   /// @param splitViewNavCtrl The navigation controller whose frame origin changed.
   ///
@@ -377,7 +359,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 
     ///
     /// @brief Sets up the inspector column if available.
-    /// @remarks Available only on iOS 26 or higher.
+    /// @remarks Inspector columns is available only on iOS 26 or higher.
     ///
     /// Attaches a view controller for the inspector column.
     ///
@@ -397,7 +379,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 
     ///
     /// @brief Shows the inspector column when available.
-    /// @remarks Available only on iOS 26 or higher.
+    /// @remarks Inspector columns is available only on iOS 26 or higher.
     ///
     /// Uses the UISplitViewController's new API introduced in iOS 26 to show the inspector column.
     ///
@@ -409,7 +391,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 
     ///
     /// @brief Hides the inspector column when available.
-    /// @remarks Available only on iOS 26 or higher.
+    /// @remarks Inspector columns is available only on iOS 26 or higher.
     ///
     /// Uses the UISplitViewController's new API introduced in iOS 26 to hide the inspector column.
     ///
@@ -423,20 +405,10 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 
 extension RNSSplitViewHostController: UISplitViewControllerDelegate {
 
-  ///
-  /// @brief Called when SplitView has collapsed onto a single column.
-  ///
-  /// @param svc The split view controller that collapsed its interface.
-  ///
   public func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
     reactEventEmitter.emitOnCollapse()
   }
 
-  ///
-  /// @brief Called when split view interface has expanded from a single column into multiple columns.
-  ///
-  /// @param svc The split view controller that expanded its interface.
-  ///
   public func splitViewControllerDidExpand(_ svc: UISplitViewController) {
     reactEventEmitter.emitOnExpand()
   }

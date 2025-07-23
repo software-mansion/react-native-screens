@@ -5,9 +5,6 @@ import UIKit
 ///
 /// The subscriber will be notified when the view's origin changes.
 protocol RNSSplitViewNavigationControllerViewFrameObserver: AnyObject {
-  /// @brief Called when the origin of RNSSplitViewNavigationController's view frame changes.
-  ///
-  /// @param splitViewNavCtrl The RNSSplitViewNavigationController whose view frame origin has changed.
   func splitViewNavCtrlViewDidChangeFrameOrigin(
     _ splitViewNavCtrl: RNSSplitViewNavigationController)
 }
@@ -27,7 +24,7 @@ public class RNSSplitViewNavigationController: UINavigationController {
   ///
   /// @brief Called after the view controller’s view has been loaded.
   ///
-  /// Sets up a frame-origin Key-Value Observer to monitor view position changes and propagate them via delegate.
+  /// Sets up a frame-origin Key-Value Observer to monitor view position changes and propagate them via delegate to RNSSplitViewHostController.
   ///
   override public func viewDidLoad() {
     super.viewDidLoad()
@@ -43,9 +40,6 @@ public class RNSSplitViewNavigationController: UINavigationController {
     }
   }
 
-  ///
-  /// @brief Notifies the observer about the origin change.
-  ///
   private func onViewOriginChange() {
     viewFrameOriginChangeObserver?.splitViewNavCtrlViewDidChangeFrameOrigin(self)
   }

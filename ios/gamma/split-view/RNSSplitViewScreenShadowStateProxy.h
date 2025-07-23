@@ -59,12 +59,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSSplitViewScreenShadowStateProxy ()
 
-/**
- * @brief Sets a reference to the ShadowNode state to be updated when native layout changes occur.
- *
- * @param state The new state instance.
- * @param oldState The previous state instance.
- */
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState;
 
 @end

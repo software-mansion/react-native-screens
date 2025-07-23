@@ -17,18 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSSplitViewScreenComponentView : RNSReactBaseView
 
-/**
- * @brief Getter for the internal RNSSplitViewScreenController that manages SplitView component.
- *
- * @return A non-null instance of RNSSplitViewScreenController.
- */
 @property (nonatomic, strong, readonly, nonnull) RNSSplitViewScreenController *controller;
-
-/**
- * @brief The parent SplitView associated with this screen.
- *
- * @return An instance of RNSSplitViewHostComponentView.
- */
 @property (nonatomic, weak, readwrite, nullable) RNSSplitViewHostComponentView *splitViewHost;
 
 @end
@@ -43,6 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @brief Getter for the proxy object that interfaces with the Shadow Tree state for this screen.
+ *
+ * The ShadowStateProxy is the object that's responsible for sending layout updates coming from the Host tree to the
+ * ShadowTree.
  *
  * @return A pointer to a RNSSplitViewScreenShadowStateProxy instance.
  */

@@ -59,11 +59,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSSplitViewScreenComponentEventEmitter ()
 
-/**
- * @brief Sets the underlying C++ event emitter used for dispatching events to React.
- *
- * @param emitter A shared pointer to a RNSSplitViewScreenEventEmitter instance.
- */
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitViewScreenEventEmitter> &)emitter;
 
 @end

@@ -9,44 +9,31 @@ import UIKit
 @objc
 public class RNSSplitViewScreenController: UIViewController {
 
-  ///
-  /// @brief The associated React Native component view managed by this controller.
-  ///
   let splitViewScreenComponentView: RNSSplitViewScreenComponentView
 
-  ///
-  /// @brief Proxy that updates the layout state of the corresponding ShadowNode.
-  ///
   private var shadowStateProxy: RNSSplitViewScreenShadowStateProxy {
     return splitViewScreenComponentView.shadowStateProxy()
   }
 
-  ///
-  /// @brief The event emitter for sending lifecycle events to the React tree.
-  ///
   private var reactEventEmitter: RNSSplitViewScreenComponentEventEmitter {
     return splitViewScreenComponentView.reactEventEmitter()
   }
 
-  ///
-  /// @brief Initializes the controller with the associated view.
-  ///
-  /// @param splitViewScreenComponentView The RNSSplitViewScreenComponentView linked to this controller.
-  ///
   @objc public required init(splitViewScreenComponentView: RNSSplitViewScreenComponentView) {
     self.splitViewScreenComponentView = splitViewScreenComponentView
     super.init(nibName: nil, bundle: nil)
   }
 
-  ///
-  /// @brief Unavailable, only for satisfying the compiler.
-  ///
   required init?(coder aDecoder: NSCoder) {
     return nil
   }
 
   ///
   /// @brief Searching for the SplitViewHost controller
+  ///
+  /// It checks whether the parent controller is our host controller.
+  /// If we're outside the structure, e. g. for inspector represented as a modal,
+  /// we're searching for that controller using a reference that Screen keeps for Host component view.
   ///
   /// @return If found - a RNSSplitViewHostController instance, otherwise nil.
   ///
@@ -76,9 +63,6 @@ public class RNSSplitViewScreenController: UIViewController {
 
   // MARK: Signals
 
-  ///
-  /// @brief Requests the host split view controller to mark its child view controllers for update.
-  ///
   @objc
   public func setNeedsLifecycleStateUpdate() {
     findSplitViewHostController()?.setNeedsUpdateOfChildViewControllers()
@@ -90,6 +74,8 @@ public class RNSSplitViewScreenController: UIViewController {
   /// @brief Handles frame layout changes and updates Shadow Tree accordingly.
   ///
   /// Requests for the ShadowNode updates through the shadow state proxy.
+  /// Differentiates cases when we're in the Host hierarchy to calculate frame relatively
+  /// to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
   ///
   @objc
   public override func viewDidLayoutSubviews() {
@@ -114,11 +100,6 @@ public class RNSSplitViewScreenController: UIViewController {
         ofComponent: splitViewScreenComponentView
       )
     }
-
-    //      TODO: to be removed - only for testing purposes for inspector column
-    //    if #available(iOS 26.0, ///) {
-    //      findSplitViewHostController()?.show(.inspector)
-    //    }
   }
 
   ///
@@ -133,30 +114,18 @@ public class RNSSplitViewScreenController: UIViewController {
 
   // MARK: Events
 
-  ///
-  /// @brief Emits React event before the view becomes visible.
-  ///
   public override func viewWillAppear(_ animated: Bool) {
     reactEventEmitter.emitOnWillAppear()
   }
 
-  ///
-  /// @brief Emits React event after the view has became visible.
-  ///
   public override func viewDidAppear(_ animated: Bool) {
     reactEventEmitter.emitOnDidAppear()
   }
 
-  ///
-  /// @brief Emits React event before the view is removed.
-  ///
   public override func viewWillDisappear(_ animated: Bool) {
     reactEventEmitter.emitOnWillDisappear()
   }
 
-  ///
-  /// @brief Emits React event after the view has been removed.
-  ///
   public override func viewDidDisappear(_ animated: Bool) {
     reactEventEmitter.emitOnDidDisappear()
   }
