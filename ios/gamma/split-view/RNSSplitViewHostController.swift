@@ -98,7 +98,8 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   /// @brief Creates and attaches the SplitView child controllers based on the current React subviews.
   ///
-  /// It validates constraints for SplitView hierarchy, then attaches SplitViewScreen representatives to SplitViewHost component.
+  /// It validates constraints for SplitView hierarchy and it will crash after recognizing an invalid state, e. g. dynamically changed number of columns or number of columns that isn't between defined bounds.
+  /// If SplitView constraints are met, it attaches SplitViewScreen representatives to SplitViewHost component.
   ///
   @objc
   public func updateChildViewControllers() {
