@@ -12,6 +12,11 @@ import type {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
+type DisplayModeWillChangeEvent = {
+  currentDisplayMode: string;
+  nextDisplayMode: string;
+};
+
 type SplitViewDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
 
 type SplitViewSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
@@ -64,6 +69,7 @@ interface NativeProps extends ViewProps {
   // Custom events
 
   onCollapse?: DirectEventHandler<GenericEmptyEvent>;
+  onDisplayModeWillChange?: DirectEventHandler<DisplayModeWillChangeEvent>;
   onExpand?: DirectEventHandler<GenericEmptyEvent>;
   onInspectorHide?: DirectEventHandler<GenericEmptyEvent>;
 }
