@@ -83,7 +83,7 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
 #endif
-  _tabBarBlurEffect = nil;
+  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
   _tabBarBackgroundColor = nil;
   _tabBarTintColor = nil;
 
@@ -210,7 +210,7 @@ namespace react = facebook::react;
   if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarBlurEffect =
-        rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
+        rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
   }
 
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
@@ -414,11 +414,9 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateTabBarAppearance];
 }
 
-// This is a Paper-only setter method that will be called by the mounting code.
-// It allows us to store UIBlurEffect in the component while accepting a custom enum as input from JS.
-- (void)setTabBarBlurEffectFromRNSBlurEffectStyle:(RNSBlurEffectStyle)tabBarBlurEffect
+- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
 {
-  _tabBarBlurEffect = rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(tabBarBlurEffect);
+  _tabBarBlurEffect = tabBarBlurEffect;
   [self invalidateTabBarAppearance];
 }
 

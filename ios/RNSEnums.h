@@ -78,8 +78,10 @@ typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {
   RNSSplitViewScreenColumnTypeInspector,
 };
 
-// Redefinition of UIBlurEffectStyle. We need to represent additional case of `None`.
+// Redefinition of UIBlurEffectStyle. We need to represent additional cases of `None` and `SystemDefault`.
 typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
+  /// Default blur effect should be used
+  RNSBlurEffectStyleSystemDefault = -2,
   /// No blur effect should be visible
   RNSBlurEffectStyleNone = -1,
   RNSBlurEffectStyleExtraLight = UIBlurEffectStyleExtraLight,

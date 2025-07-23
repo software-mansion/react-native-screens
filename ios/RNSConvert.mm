@@ -1,4 +1,5 @@
 #import "RNSConvert.h"
+#import <React/RCTLog.h>
 
 #ifndef RCT_NEW_ARCH_ENABLED
 #import <React/RCTAssert.h>
@@ -195,7 +196,6 @@
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect
 {
   using enum react::RNSScreenStackHeaderConfigBlurEffect;
-#if !TARGET_OS_TV
   switch (blurEffect) {
     case None:
       return RNSBlurEffectStyleNone;
@@ -209,6 +209,7 @@
       return RNSBlurEffectStyleRegular;
     case Prominent:
       return RNSBlurEffectStyleProminent;
+#if !TARGET_OS_TV
     case SystemUltraThinMaterial:
       return RNSBlurEffectStyleSystemUltraThinMaterial;
     case SystemThinMaterial:
@@ -239,23 +240,13 @@
       return RNSBlurEffectStyleSystemThickMaterialDark;
     case SystemChromeMaterialDark:
       return RNSBlurEffectStyleSystemChromeMaterialDark;
-  }
-#endif
-
-  switch (blurEffect) {
-    case None:
+    default:
+      RCTLogError(@"[RNScreens] unsupported blur effect style");
       return RNSBlurEffectStyleNone;
-    case Light:
-      return RNSBlurEffectStyleLight;
-    case Dark:
-      return RNSBlurEffectStyleDark;
-    case Regular:
-      return RNSBlurEffectStyleRegular;
-    case Prominent:
-      return RNSBlurEffectStyleProminent;
-    case ExtraLight:
+#else // !TARGET_OS_TV
     default:
       return RNSBlurEffectStyleNone;
+#endif // !TARGET_OS_TV
   }
 }
 
@@ -264,14 +255,15 @@
 + (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-  react_native_assert(blurEffect != RNSBlurEffectStyleNone);
+  react_native_assert(blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleSystemDefault);
 #else
   RCTAssert(
-      blurEffect != RNSBlurEffectStyleNone, @"RNSBlurEffectStyleNone variant is not convertible to UIBlurEffectStyle");
+      blurEffect != RNSBlurEffectStyleNone && blurEffect != RNSBlurEffectStyleSystemDefault,
+      @"RNSBlurEffectStyleNone and RNSBlurEffectStyleSystemDefault variants are not convertible to UIBlurEffectStyle");
 #endif // RCT_NEW_ARCH_ENABLED
 
   // Cast safety: RNSBlurEffectStyle is defined in such way that its values map 1:1 with
-  // UIBlurEffectStyle, except RNSBlurEffectStyleNone which is excluded above.
+  // UIBlurEffectStyle, except RNSBlurEffectStyleNone and RNSBlurEffectStyleSystemDefault which are excluded above.
   return (UIBlurEffectStyle)blurEffect;
 }
 

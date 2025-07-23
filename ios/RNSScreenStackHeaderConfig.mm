@@ -453,11 +453,18 @@ RNS_IGNORE_SUPER_CALL_END
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  if (config.blurEffect != RNSBlurEffectStyleNone) {
-    appearance.backgroundEffect =
-        [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
-  } else {
-    appearance.backgroundEffect = nil;
+  switch (config.blurEffect) {
+    case RNSBlurEffectStyleNone:
+      appearance.backgroundEffect = nil;
+      break;
+
+    case RNSBlurEffectStyleSystemDefault:
+      RCTLogError(@"[RNScreens] ScreenStack does not support RNSBlurEffectStyleSystemDefault.");
+      break;
+
+    default:
+      appearance.backgroundEffect =
+          [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
   }
 
   if (config.hideShadow) {

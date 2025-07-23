@@ -47,6 +47,7 @@
     }
 
     // Inherit general properties from host
+    // TODO: don't inherit properties from host
     UITabBarAppearance *tabAppearance = [[UITabBarAppearance alloc] initWithBarAppearance:appearance];
 
     [self configureTabBarAppearance:tabAppearance fromAppearanceProvider:tabScreenCtrl.tabScreenComponentView];
@@ -72,8 +73,22 @@
     appearance.backgroundColor = appearanceProvider.tabBarBackgroundColor;
   }
 
-  if (appearanceProvider.tabBarBlurEffect != nil) {
-    appearance.backgroundEffect = appearanceProvider.tabBarBlurEffect;
+  switch (appearanceProvider.tabBarBlurEffect) {
+    case RNSBlurEffectStyleNone:
+      appearance.backgroundEffect = nil;
+      break;
+
+    case RNSBlurEffectStyleSystemDefault:
+      // Initialized appearance already has default blur effect.
+
+      // This won't work as expected with current inheriting appearance logic:
+      // screen will not revert to default but inherit blur from host
+      // TODO: remove appearance inheritance
+      break;
+
+    default:
+      appearance.backgroundEffect =
+          rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(appearanceProvider.tabBarBlurEffect);
   }
 }
 
@@ -100,27 +115,27 @@
     tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
-    
+
     // Normal icon
     if (screenView.iconImageSource != nil) {
       [self loadImageFrom:screenView.iconImageSource
           withImageLoader:imageLoader
                asTemplate:isTemplate
           completionBlock:^(UIImage *image) {
-                   tabBarItem.image = image;
-                 }];
+            tabBarItem.image = image;
+          }];
     } else {
       tabBarItem.image = nil;
     }
-    
+
     // Selected icon
     if (screenView.selectedIconImageSource != nil) {
       [self loadImageFrom:screenView.selectedIconImageSource
           withImageLoader:imageLoader
                asTemplate:isTemplate
           completionBlock:^(UIImage *image) {
-                   tabBarItem.selectedImage = image;
-                 }];
+            tabBarItem.selectedImage = image;
+          }];
     } else {
       tabBarItem.selectedImage = nil;
     }
@@ -136,7 +151,7 @@
 {
   RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
   RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
-  
+
   [imageLoader loadImageWithURLRequest:imageSource.request
       size:imageSource.size
       scale:imageSource.scale

@@ -23,10 +23,7 @@ RCT_EXPORT_MODULE(RNSBottomTabsManager)
 #pragma mark - LEGACY Props
 
 RCT_EXPORT_VIEW_PROPERTY(tabBarBackgroundColor, UIColor);
-
-// This remapping allows us to store UIBlurEffect in the component while accepting a custom enum as input from JS.
-RCT_REMAP_VIEW_PROPERTY(tabBarBlurEffect, tabBarBlurEffectFromRNSBlurEffectStyle, RNSBlurEffectStyle);
-
+RCT_EXPORT_VIEW_PROPERTY(tabBarBlurEffect, RNSBlurEffectStyle);
 RCT_EXPORT_VIEW_PROPERTY(tabBarTintColor, UIColor);
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontFamily, NSString);
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontSize, NSNumber);
