@@ -76,27 +76,6 @@ UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisib
   }
 }
 
-std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode)
-{
-  switch (displayMode) {
-    case UISplitViewControllerDisplayModeSecondaryOnly:
-      return "secondaryOnly";
-    case UISplitViewControllerDisplayModeOneBesideSecondary:
-      return "oneBesideSecondary";
-    case UISplitViewControllerDisplayModeOneOverSecondary:
-      return "oneOverSecondary";
-    case UISplitViewControllerDisplayModeTwoBesideSecondary:
-      return "twoBesideSecondary";
-    case UISplitViewControllerDisplayModeTwoOverSecondary:
-      return "twoOverSecondary";
-    case UISplitViewControllerDisplayModeTwoDisplaceSecondary:
-      return "twoDisplaceSecondary";
-    case UISplitViewControllerDisplayModeAutomatic:
-    default:
-      return "automatic";
-  }
-}
-
 #pragma mark SplitViewScreen props
 
 RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
