@@ -449,7 +449,7 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
     _ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode
   ) {
     if self.displayMode != displayMode {
-      reactEventEmitter.emit(onDisplayModeWillChange: self.displayMode, displayMode)
+      reactEventEmitter.emitOnDisplayModeWillChange(from: self.displayMode, to: displayMode)
     }
   }
 }

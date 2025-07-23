@@ -18,8 +18,8 @@
   }
 }
 
-- (BOOL)emitOnDisplayModeWillChange:(UISplitViewControllerDisplayMode)
-                 currentDisplayMode:(UISplitViewControllerDisplayMode)nextDisplayMode
+- (BOOL)emitOnDisplayModeWillChangeFrom:(UISplitViewControllerDisplayMode)currentDisplayMode
+                                     to:(UISplitViewControllerDisplayMode)nextDisplayMode
 {
   if (_reactEventEmitter != nullptr) {
     _reactEventEmitter->onDisplayModeWillChange(

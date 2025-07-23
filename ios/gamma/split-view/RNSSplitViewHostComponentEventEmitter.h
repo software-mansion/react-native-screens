@@ -25,8 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)emitOnCollapse;
 
-- (BOOL)emitOnDisplayModeWillChange:(UISplitViewControllerDisplayMode)
-                 currentDisplayMode:(UISplitViewControllerDisplayMode)nextDisplayMode;
+- (BOOL)emitOnDisplayModeWillChangeFrom:(UISplitViewControllerDisplayMode)currentDisplayMode
+                                     to:(UISplitViewControllerDisplayMode)nextDisplayMode;
 /**
  * @brief Emits the onExpand event to notify associated component instance that the SplitView has expanded.
  *
