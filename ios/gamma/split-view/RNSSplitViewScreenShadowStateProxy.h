@@ -10,13 +10,45 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSSplitViewScreenComponentView;
 
+/**
+ * @class RNSSplitViewScreenShadowStateProxy
+ * @brief Manages communication between native UIView layout and associated React Native ShadowNode state.
+ *
+ * This proxy enables RNSSplitViewScreenComponentView to propagate visual and layout-level state
+ * back to the Shadow Tree via RNSSplitViewScreenShadowNode.
+ */
 @interface RNSSplitViewScreenShadowStateProxy : NSObject
 
+/**
+ * @brief Triggers a shadow state update for the given SplitViewScreen component.
+ *
+ * Internally uses the component’s frame in UIWindow coordinates to update the Shadow Tree state.
+ *
+ * @param screenComponentView An instance of RNSSplitViewScreenComponentView whose state should be updated.
+ */
 - (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView;
 
+/**
+ * @brief Triggers a shadow state update for the given SplitViewScreen component in the context of a given ancestor
+ * view.
+ *
+ * Converts the split view screen's local frame to coordinates of the specified ancestor view
+ * before applying the update to the Shadow Tree. If the ancestor haven't been defined frame is calculated relatively to
+ * the UIWindow.
+ *
+ * @param screenComponentView An instance of RNSSplitViewScreenComponentView whose state should be updated.
+ * @param ancestorView An optional UIView in whose coordinate space the frame should be computed.
+ */
 - (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView
              inContextOfAncestorView:(UIView *_Nullable)ancestorView;
 
+/**
+ * @brief Send an update to ShadowNode state with given layout metrics.
+ *
+ * Updates size and origin in the ShadowNode state, if changed.
+ *
+ * @param frame A CGRect defining the component's layout metrics.
+ */
 - (void)updateShadowStateWithFrame:(CGRect)frame;
 
 @end

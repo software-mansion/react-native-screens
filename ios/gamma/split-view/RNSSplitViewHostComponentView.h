@@ -7,6 +7,13 @@ NS_ASSUME_NONNULL_BEGIN
 @class RNSSplitViewHostController;
 @class RNSSplitViewScreenComponentView;
 
+/**
+ * @class RNSSplitViewHostComponentView
+ * @brief A view component representing top-level native component for SplitView.
+ *
+ * Responsible for managing multi-column layouts via associated native UISplitViewController.
+ * Manages updates to the layout properties, column configuration, and event emission.
+ */
 @interface RNSSplitViewHostComponentView : RNSReactBaseView
 
 - (nonnull NSMutableArray<RNSSplitViewScreenComponentView *> *)reactSubviews;
@@ -17,6 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Props
 
+/**
+ * @category Props
+ * @brief Definitions for React Native props.
+ */
 @interface RNSSplitViewHostComponentView ()
 
 @property (nonatomic, readonly) UISplitViewControllerSplitBehavior preferredSplitBehavior;
@@ -47,11 +58,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Events
 
+/**
+ * @category Events
+ * @brief APIs related to event emission to React Native.
+ */
 @interface RNSSplitViewHostComponentView ()
 
-/**
- * Use returned object to emit appropriate React Events to Element Tree.
- */
 - (nonnull RNSSplitViewHostComponentEventEmitter *)reactEventEmitter;
 
 @end
