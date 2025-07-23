@@ -41,9 +41,9 @@ export interface SplitViewColumnMetrics {
   /**
    * @summary Preferred width for the primary sidebar.
    *
-   * Specifies the preferred width (in points) for the primary column in the SplitView layout, typically representing the leftmost sidebar.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the primary column in the SplitView layout, typically representing the leftmost sidebar.
    */
-  preferredPrimaryColumnWidth?: number;
+  preferredPrimaryColumnWidthOrFraction?: number;
   /**
    * @summary Minimum width for the intermediate sidebar.
    *
@@ -59,9 +59,9 @@ export interface SplitViewColumnMetrics {
   /**
    * @summary Preferred width for the intermediate sidebar.
    *
-   * Specifies the preferred width (in points) for the supplementary column in the SplitView layout, typically representing the intermediate sidebar.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the supplementary column in the SplitView layout, typically representing the intermediate sidebar.
    */
-  preferredSupplementaryColumnWidth?: number;
+  preferredSupplementaryColumnWidthOrFraction?: number;
   /**
    * @summary Minimum width for the secondary component.
    *
@@ -73,11 +73,11 @@ export interface SplitViewColumnMetrics {
   /**
    * @summary Preferred width for the secondary component.
    *
-   * Specifies the preferred width (in points) for the secondary column in the SplitView layout, typically for the view with the main content.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the secondary column in the SplitView layout, typically for the view with the main content.
    * 
    * @supported iOS 26 or higher
    */
-  preferredSecondaryColumnWidth?: number;
+  preferredSecondaryColumnWidthOrFraction?: number;
   /**
    * @summary Minimum width for the inspector component.
    *
@@ -97,11 +97,11 @@ export interface SplitViewColumnMetrics {
   /**
    * @summary Preferred width for the inspector component.
    *
-   * Specifies the preferred width (in points) for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
    * 
    * @supported iOS 26 or higher
    */
-  preferredInspectorColumnWidth?: number;
+  preferredInspectorColumnWidthOrFraction?: number;
 }
 export interface SplitViewHostProps extends ViewProps {
   children?: React.ReactNode;
