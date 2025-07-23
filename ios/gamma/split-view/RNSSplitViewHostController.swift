@@ -75,11 +75,11 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   @objc
   public func setNeedsSecondaryScreenNavBarUpdate() {
-    /// We noticed a bug on the pure-native component, which is blocking dynamic updates for showsSecondaryOnlyButton.
-    /// Toggling this flag doesn't refresh the component and is updated after triggerig some other interaction, like changing layout.
-    /// We noticed that we can forcefully refresh navigation bar from UINavigationController level by toggling setNavigationBarHidden.
-    /// After some testing, it looks well and I haven't noticed any flicker - missing button is appearing naturally.
-    /// Please note that this is a hack rather than a solution so feel free to remove this code in case of any problems and treat the bug with toggling button as a platform's issue.
+    // We noticed a bug on the pure-native component, which is blocking dynamic updates for showsSecondaryOnlyButton.
+    // Toggling this flag doesn't refresh the component and is updated after triggerig some other interaction, like changing layout.
+    // We noticed that we can forcefully refresh navigation bar from UINavigationController level by toggling setNavigationBarHidden.
+    // After some testing, it looks well and I haven't noticed any flicker - missing button is appearing naturally.
+    // Please note that this is a hack rather than a solution so feel free to remove this code in case of any problems and treat the bug with toggling button as a platform's issue.
     needsSecondaryScreenNavBarAppearanceUpdate = true
   }
 
