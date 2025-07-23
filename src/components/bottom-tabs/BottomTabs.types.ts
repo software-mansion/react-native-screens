@@ -46,8 +46,7 @@ export type TabBarMinimizeBehavior =
   | 'onScrollUp';
 
 export interface BottomTabsProps extends ViewProps {
-  // Events
-
+  // #region Events
   /**
    * A callback that gets invoked when user requests change of focused tab screen.
    *
@@ -56,11 +55,9 @@ export interface BottomTabsProps extends ViewProps {
   onNativeFocusChange?: (
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
   ) => void;
+  // #endregion
 
-  // Tab Bar Appearance
-  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: BlurEffect; // defaults to 'none'
 
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
@@ -86,13 +83,13 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
 
   // iOS-only appearance
-
+  tabBarBlurEffect?: BlurEffect; // defaults to 'none'
   /**
    * The color used for selected tab's text and icon color.
    * Starting from iOS 26, it also impacts glow of Liquid Glass tab
    * selection view.
    *
-   * tabBarItemTitleFontColor and tabBarItemIconColor defined on
+   * `tabBarItemTitleFontColor` and `tabBarItemIconColor` defined on
    * BottomTabsScreen component override this color.
    *
    * @platform ios
