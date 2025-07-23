@@ -27,7 +27,7 @@
          .nextDisplayMode = rnscreens::conversion::UISplitViewControllerDisplayModeToString(nextDisplayMode)});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnExpand event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnDisplayModeWillChange event emission due to nullish emitter");
     return NO;
   }
 }
