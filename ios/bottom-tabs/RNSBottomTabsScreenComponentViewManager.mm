@@ -45,6 +45,8 @@ RCT_EXPORT_VIEW_PROPERTY(shouldUseRepeatedTabSelectionScrollToTopSpecialEffect, 
 
 RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitlePositionAdjustment, UIOffset);
 
+RCT_EXPORT_VIEW_PROPERTY(overrideScrollViewContentInsetAdjustmentBehavior, BOOL);
+
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDidAppear, RCTDirectEventBlock);
