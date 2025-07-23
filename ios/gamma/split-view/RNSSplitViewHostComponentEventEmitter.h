@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @brief Emits the onHideInspector event to notify that the inspector column is being hidden.
  *
- * Call this method when a user dismisses an inspector modal or hides it programmatically 
+ * Call this method when a user dismisses an inspector modal or hides it programmatically
  * to notify React for synchronize the state based on this event.
  *
  * @return true if the event was emitted successfully, false otherwise.
