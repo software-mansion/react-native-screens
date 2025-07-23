@@ -18,11 +18,8 @@
   controller.primaryEdge = splitView.primaryEdge;
   controller.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton;
 
-  // Step 2 - props with dedicated flags for updates
-  [controller updatePreferredDisplayModeIfNeeded];
-
-  // Step 3 - manipulating columns
-  // Step 3.1 - validating column constraints
+  // Step 2 - manipulating columns
+  // Step 2.1 - validating column constraints
   [self validateColumnConstraintsWithMinWidth:splitView.minimumPrimaryColumnWidth
                                      maxWidth:splitView.maximumPrimaryColumnWidth];
   [self validateColumnConstraintsWithMinWidth:splitView.minimumSupplementaryColumnWidth
@@ -36,7 +33,7 @@
   }
 #endif
 
-  // Step 3.2 - applying updates to columns
+  // Step 2.2 - applying updates to columns
   if (splitView.minimumPrimaryColumnWidth >= 0) {
     controller.minimumPrimaryColumnWidth = splitView.minimumPrimaryColumnWidth;
   }
@@ -97,7 +94,7 @@
   }
 #endif
 
-  // Step 3.3 - manipulating with inspector column
+  // Step 2.3 - manipulating with inspector column
   [controller toggleSplitViewInspector:splitView.showInspector];
 }
 

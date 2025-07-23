@@ -12,7 +12,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsAppearanceUpdate = false
   private var needsSecondaryScreenNavBarAppearanceUpdate = false
 
-  private var _needsDisplayModeUpdate = false
+  private var needsDisplayModeUpdate = false
 
   private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
     return splitViewHostComponentView.reactEventEmitter()
@@ -77,15 +77,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   @objc
   public func setNeedsDisplayModeUpdate() {
-    _needsDisplayModeUpdate = true
-  }
-
-  @objc
-  public func updatePreferredDisplayModeIfNeeded() {
-      if(_needsDisplayModeUpdate) {
-          _needsDisplayModeUpdate = false
-          preferredDisplayMode = self.splitViewHostComponentView.preferredDisplayMode
-      }
+    needsDisplayModeUpdate = true
   }
 
   // MARK: Updating
@@ -142,6 +134,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     if needsSecondaryScreenNavBarAppearanceUpdate {
       updateSplitViewSecondaryScreenNavBarAppearance()
     }
+    if needsDisplayModeUpdate {
+      updatePreferredDisplayMode()
+    }
   }
 
   func updateSplitViewAppearance() {
@@ -158,6 +153,12 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     needsSecondaryScreenNavBarAppearanceUpdate = false
 
     refreshSecondaryNavBar()
+  }
+
+  func updatePreferredDisplayMode() {
+    needsDisplayModeUpdate = false
+
+    preferredDisplayMode = self.splitViewHostComponentView.preferredDisplayMode
   }
 
   ///
