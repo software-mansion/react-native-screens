@@ -7,5 +7,5 @@ enableFreeze(true);
 
 export default function App() {
   // return <Example />;
-  return <Test.TestSplitView />;
+  return <Test.TestBottomTabs />;
 }
