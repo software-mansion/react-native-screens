@@ -12,12 +12,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsAppearanceUpdate = false
   private var needsSecondaryScreenNavBarAppearanceUpdate = false
 
-  @objc
-  public var needsDisplayModeUpdate: Bool {
-    get { _needsDisplayModeUpdate }
-    set { _needsDisplayModeUpdate = newValue }
-  }
-
   private var _needsDisplayModeUpdate = false
 
   private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
@@ -83,13 +77,13 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   @objc
   public func setNeedsDisplayModeUpdate() {
-    needsDisplayModeUpdate = true
+    _needsDisplayModeUpdate = true
   }
 
   @objc
   public func consumeDisplayModeUpdateIfNeeded() -> Bool {
-    guard needsDisplayModeUpdate else { return false }
-    needsDisplayModeUpdate = false
+    guard _needsDisplayModeUpdate else { return false }
+    _needsDisplayModeUpdate = false
     return true
   }
 
