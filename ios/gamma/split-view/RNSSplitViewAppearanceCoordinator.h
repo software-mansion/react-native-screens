@@ -4,7 +4,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @class RNSSplitViewAppearanceCoordinator
- * @brief Responsible for batching updates for appearance.
+ * @brief Responsible for batching updates for appearance & applying them in appropriate order.
  *
  * It synchronizes React properties with UISplitViewController instance.
  */
