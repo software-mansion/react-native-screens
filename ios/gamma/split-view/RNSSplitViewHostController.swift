@@ -404,7 +404,6 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 #endif
 
 extension RNSSplitViewHostController: UISplitViewControllerDelegate {
-
   public func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
     reactEventEmitter.emitOnCollapse()
   }

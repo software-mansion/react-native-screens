@@ -8,7 +8,6 @@ import UIKit
 /// Shadow Tree, emits React lifecycle events, and interacts with the SplitViewHost hierarchy.
 @objc
 public class RNSSplitViewScreenController: UIViewController {
-
   let splitViewScreenComponentView: RNSSplitViewScreenComponentView
 
   private var shadowStateProxy: RNSSplitViewScreenShadowStateProxy {
