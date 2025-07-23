@@ -4,6 +4,7 @@ import type { ViewProps } from 'react-native';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type {
   DirectEventHandler,
+  Float,
   Int32,
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
@@ -36,17 +37,17 @@ export type SplitViewDisplayMode =
 interface ColumnMetrics {
   minimumPrimaryColumnWidth?: WithDefault<Int32, -1>;
   maximumPrimaryColumnWidth?: WithDefault<Int32, -1>;
-  preferredPrimaryColumnWidth?: WithDefault<Int32, -1>;
+  preferredPrimaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
   minimumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
   maximumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
-  preferredSupplementaryColumnWidth?: WithDefault<Int32, -1>;
+  preferredSupplementaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
 
   // iOS 26 only
   minimumSecondaryColumnWidth?: WithDefault<Int32, -1>;
-  preferredSecondaryColumnWidth?: WithDefault<Int32, -1>;
+  preferredSecondaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
   minimumInspectorColumnWidth?: WithDefault<Int32, -1>;
   maximumInspectorColumnWidth?: WithDefault<Int32, -1>;
-  preferredInspectorColumnWidth?: WithDefault<Int32, -1>;
+  preferredInspectorColumnWidthOrFraction?: WithDefault<Float, -1.0>;
 }
 
 export interface NativeProps extends ViewProps {
