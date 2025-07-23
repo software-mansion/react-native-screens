@@ -57,9 +57,8 @@ export interface BottomTabsProps extends ViewProps {
   ) => void;
   // #endregion
 
+  // #region Common appearance
   tabBarBackgroundColor?: ColorValue;
-
-  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
@@ -68,12 +67,11 @@ export interface BottomTabsProps extends ViewProps {
     horizontal?: number;
     vertical?: number;
   };
-
   tabBarItemIconColor?: ColorValue;
-
   tabBarItemBadgeBackgroundColor?: ColorValue;
+  // #endregion
 
-  // Additional for Android
+  // #region Android-specific appearance
   tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
   tabBarItemTitleFontColorActive?: TextStyle['color'];
   tabBarItemIconColorActive?: ColorValue;
@@ -81,8 +79,9 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemActiveIndicatorEnabled?: boolean;
   tabBarItemRippleColor?: ColorValue;
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
+  // #endregion
 
-  // iOS-only appearance
+  // #region iOS-only appearance
   tabBarBlurEffect?: BlurEffect; // defaults to 'none'
   /**
    * The color used for selected tab's text and icon color.
@@ -106,11 +105,12 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 26 or higher
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+  // #endregion
 
-  // Control
+  // #region Control
+  // #endregion
 
-  // Experimental support
-
+  // #region Experimental support
   /**
    * Experimental prop for changing container control.
    *
@@ -130,4 +130,5 @@ export interface BottomTabsProps extends ViewProps {
    * @platform android, ios
    */
   experimentalControlNavigationStateInJS?: boolean;
+  // #endregion
 }
