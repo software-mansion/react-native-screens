@@ -16,19 +16,20 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitViewHostComponentEventEmitter : NSObject
 
 /**
- * @brief Emits the onCollapse event to notify React Native that the SplitView has collapsed.
+ * @brief Emits the onCollapse event to notify associated component instance that the SplitView has collapsed.
  *
- * This event is triggered when the SplitView collapses to a single column due to
- * size constraints or user interaction.
+ * Call this method when the SplitView collapses to a single column e.g. due to
+ * size constraints or user interaction to notify React realm of this event.
  *
  * @return true if the event was successfully emitted, false otherwise.
  */
 - (BOOL)emitOnCollapse;
 
 /**
- * @brief Emits the onExpand event to notify React Native that the SplitView has expanded.
+ * @brief Emits the onExpand event to notify associated component instance that the SplitView has expanded.
  *
- * This event is triggered when a SplitView is transitioning from the collapsed state to the multi-column display.
+ * Call this method when a SplitView is transitioning from the collapsed state to the multi-column display
+ * to notify React realm of this event.
  *
  * @return true if the event was successfully emitted, false otherwise.
  */
@@ -37,7 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @brief Emits the onHideInspector event to notify that the inspector column is being hidden.
  *
- * This event is triggered when a user dismisses an inspector modal or hides it programmatically.
+ * Call this method when a user dismisses an inspector modal or hides it programmatically 
+ * to notify React for synchronize the state based on this event.
  *
  * @return true if the event was emitted successfully, false otherwise.
  */
