@@ -5,6 +5,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, Text, View, ScrollView } from 'react-native';
+import Colors from '../shared/styling/Colors';
 
 type StackRouteParamList = {
   First: undefined;
@@ -78,14 +79,14 @@ function Modal({ navigation }: StackNavigationProp) {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0.2, 0.2, 0.4, 0.3)'
+    backgroundColor: Colors.NavyLightTransparent
   }}>
     <Button onPress={() => navigation.pop()} title='Go Back'/>
   </View>)
 }
 
 function Replacement({ navigation }: StackNavigationProp) {
-  return (<View style={{ backgroundColor: '#505050' }}>
+  return (<View style={{ backgroundColor: Colors.NavyLight60 }}>
     <Text style={{ fontSize: 20, color: 'white' }}>Replacement</Text>
     <Button onPress={() => navigation.pop()} title='Pop'/>
   </View>)

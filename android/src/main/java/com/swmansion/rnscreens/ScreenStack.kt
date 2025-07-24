@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -149,6 +150,7 @@ class ScreenStack(
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
 
+        // We don't count preloaded screen as "already in stack"
         val newTopAlreadyInStack = stack.contains(newTop) && !preloadedWrappers.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
 
@@ -263,6 +265,13 @@ class ScreenStack(
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
+
+            // All screens that were displayed at some point in time should, confusingly,
+            // have state set to ON_TOP == 2, and the ones that were preloaded should have state INACTIVE == 0
+            // There could be special cases that I didn't know of at the time of writing,
+            // and the list could contain some other inactive screens that were not being preloaded
+            // but we are only really interested in and check the INACTIVE screens that are above
+            // newTop screen, which ARE the preloaded ones
             preloadedWrappers = screenWrappers
                 .asSequence()
                 .filter { it.screen.activityState == Screen.ActivityState.INACTIVE }
