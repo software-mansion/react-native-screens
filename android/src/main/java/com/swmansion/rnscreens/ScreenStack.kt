@@ -22,6 +22,7 @@ class ScreenStack(
 ) : ScreenContainer(context) {
     private val stack = ArrayList<ScreenStackFragmentWrapper>()
     private val dismissedWrappers: MutableSet<ScreenStackFragmentWrapper> = HashSet()
+    private var preloadedWrappers: List<ScreenFragmentWrapper> = ArrayList()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
@@ -148,8 +149,7 @@ class ScreenStack(
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
 
-        val newTopWasPreloaded = newTop?.screen?.isBeingActivated ?: false
-        val newTopAlreadyInStack = stack.contains(newTop) && !newTopWasPreloaded
+        val newTopAlreadyInStack = stack.contains(newTop) && !preloadedWrappers.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
 
         if (newTop != null && !newTopAlreadyInStack) {
@@ -263,12 +263,14 @@ class ScreenStack(
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
+            preloadedWrappers = screenWrappers
+                .asSequence()
+                .filter { it.screen.activityState == Screen.ActivityState.INACTIVE }
+                .toList()
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()
         }
-
-        newTop?.screen?.let { it.isBeingActivated = false }
     }
 
     // only top visible screen should be accessible
