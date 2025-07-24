@@ -9,7 +9,7 @@ export type NativeFocusChangeEvent = {
   tabKey: string;
 };
 
-export type BlurEffect =
+export type BottomTabsBlurEffect =
   | 'none'
   | 'systemDefault'
   | 'extraLight'
@@ -147,7 +147,7 @@ export interface BottomTabsProps extends ViewProps {
    * @platform ios
    * @supported iOS 18 or lower
    */
-  tabBarBlurEffect?: BlurEffect;
+  tabBarBlurEffect?: BottomTabsBlurEffect;
   /**
    * @summary Specifies title offset of every tab item in the tab bar.
    *

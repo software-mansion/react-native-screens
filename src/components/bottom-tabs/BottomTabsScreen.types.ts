@@ -36,7 +36,7 @@ export interface TemplateIcon {
 export type Icon = SFIcon | ImageIcon | TemplateIcon;
 
 // iOS-specific
-export type BlurEffect =
+export type BottomTabsScreenBlurEffect =
   | 'none'
   | 'systemDefault'
   | 'extraLight'
@@ -147,7 +147,7 @@ export interface BottomTabsScreenProps {
    * @platform ios
    * @supported iOS 18 or lower
    */
-  tabBarBlurEffect?: BlurEffect;
+  tabBarBlurEffect?: BottomTabsScreenBlurEffect;
   /**
    * @summary Specifies title font family of every tab item in the tab bar
    * when tab screen is selected.

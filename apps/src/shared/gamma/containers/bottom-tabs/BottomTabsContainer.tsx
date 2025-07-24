@@ -1,10 +1,13 @@
 import React from 'react';
-import ConfigWrapperContext from './ConfigWrapperContext';
-import { BottomTabs, BottomTabsScreen } from 'react-native-screens';
-import { Colors } from '../../../styling/Colors';
-import type { NativeFocusChangeEvent } from '../../../../../../src/components/bottom-tabs/BottomTabs.types';
-import type { BottomTabsScreenProps } from '../../../../../../src/components/bottom-tabs/BottomTabsScreen.types';
 import type { NativeSyntheticEvent } from 'react-native';
+import {
+  BottomTabs,
+  BottomTabsScreen,
+  BottomTabsScreenProps,
+  NativeFocusChangeEvent,
+} from 'react-native-screens';
+import { Colors } from '../../../styling/Colors';
+import ConfigWrapperContext from './ConfigWrapperContext';
 
 export interface TabConfiguration {
   tabScreenProps: BottomTabsScreenProps;
