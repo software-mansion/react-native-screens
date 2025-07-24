@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
@@ -303,6 +304,7 @@ class Screen(
     }
 
     fun setActivityState(activityState: ActivityState) {
+        Log.d("RNScreens", "Activity state updated to %s".format(activityState.toString()))
         if (activityState == this.activityState) {
             return
         }
