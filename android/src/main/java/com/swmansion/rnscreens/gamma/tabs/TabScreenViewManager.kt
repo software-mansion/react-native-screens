@@ -1,6 +1,10 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.Log
+import androidx.core.net.toUri
+import com.bumptech.glide.Glide
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -14,6 +18,9 @@ import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 @ReactModule(name = TabScreenViewManager.REACT_CLASS)
 class TabScreenViewManager :
@@ -186,6 +193,33 @@ class TabScreenViewManager :
     ) {
         view.iconResourceName = value
     }
+
+    @ReactProp("iconResource")
+    override fun setIconResource(
+        view: TabScreen,
+        value: ReadableMap?,
+    ) {
+        val uri = value?.getString("uri")
+        if (uri != null) {
+            runBlocking {
+                val drawable = loadImage(view.context, uri)
+                view.icon = drawable
+            }
+        }
+    }
+
+    suspend fun loadImage(
+        context: Context,
+        uri: String,
+    ): Drawable =
+        withContext(Dispatchers.IO) {
+            Glide
+                .with(context)
+                .asDrawable()
+                .load(uri.toUri())
+                .submit()
+                .get()
+        }
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
