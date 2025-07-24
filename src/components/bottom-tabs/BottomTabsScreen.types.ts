@@ -22,6 +22,7 @@ export interface SFIcon {
   sfSymbolName: string;
 }
 
+// iOS-specific
 export interface ImageIcon {
   imageSource: ImageSourcePropType;
 }
@@ -34,6 +35,7 @@ export interface TemplateIcon {
 // iOS-specific: SFSymbol, image as a template usage
 export type Icon = SFIcon | ImageIcon | TemplateIcon;
 
+// iOS-specific
 export type BlurEffect =
   | 'none'
   | 'systemDefault'

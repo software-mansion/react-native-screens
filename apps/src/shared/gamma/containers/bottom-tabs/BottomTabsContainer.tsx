@@ -2,9 +2,9 @@ import React from 'react';
 import ConfigWrapperContext from './ConfigWrapperContext';
 import { BottomTabs, BottomTabsScreen } from 'react-native-screens';
 import { Colors } from '../../../styling/Colors';
-import type { BottomTabsScreenProps } from 'react-native-screens/components/BottomTabsScreen';
+import type { NativeFocusChangeEvent } from '../../../../../../src/components/bottom-tabs/BottomTabs.types';
+import type { BottomTabsScreenProps } from '../../../../../../src/components/bottom-tabs/BottomTabsScreen.types';
 import type { NativeSyntheticEvent } from 'react-native';
-import type { NativeFocusChangeEvent } from 'react-native-screens/fabric/BottomTabsNativeComponent';
 
 export interface TabConfiguration {
   tabScreenProps: BottomTabsScreenProps;
@@ -100,7 +100,6 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemTitleFontStyle="italic"
       tabBarItemTitleFontWeight="700"
       tabBarItemLabelVisibilityMode="auto"
-
       tabBarMinimizeBehavior="onScrollDown"
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
