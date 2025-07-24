@@ -65,7 +65,7 @@ export interface BottomTabsScreenProps {
   /**
    * @summary Defines what should be rendered when tab screen is frozen.
    *
-   * @see {@link https://github.com/software-mansion/react-freeze} for more information about `react-freeze`.
+   * @see {@link https://github.com/software-mansion/react-freeze|`react-freeze`'s GitHub repository} for more information about `react-freeze`.
    *
    * @platform android, ios
    */
@@ -133,13 +133,14 @@ export interface BottomTabsScreenProps {
    *
    * Since iOS 26, it does not affect the tab bar.
    *
-   * Can be:
-   * - `none` - disables blur effect,
-   * - `systemDefault` - uses UIKit's default tab bar blur effect,
-   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`.
+   * The following values are currently supported:
+   *
+   * - `none` - disables blur effect
+   * - `systemDefault` - uses UIKit's default tab bar blur effect
+   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`
    *
    * Complete list of possible blur effect styles is available in the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style}
+   * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style|UIBlurEffect.Style}
    *
    * @default systemDefault
    *

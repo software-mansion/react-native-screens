@@ -133,13 +133,14 @@ export interface BottomTabsProps extends ViewProps {
    *
    * Since iOS 26, it does not affect the tab bar.
    *
-   * Can be:
-   * - `none` - disables blur effect,
-   * - `systemDefault` - uses UIKit's default tab bar blur effect,
-   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`.
+   * The following values are currently supported:
+   *
+   * - `none` - disables blur effect
+   * - `systemDefault` - uses UIKit's default tab bar blur effect
+   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`
    *
    * Complete list of possible blur effect styles is available in the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style}
+   * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style|UIBlurEffect.Style}
    *
    * @default systemDefault
    *
@@ -180,6 +181,18 @@ export interface BottomTabsProps extends ViewProps {
   /**
    * Specifies minimize behavior for the tab bar. Available since
    * iOS 26.
+   *
+   * The following values are currently supported:
+   *
+   * - `automatic` - resolves to the system default minimize behavior
+   * - `never` - the tab bar does not minimize
+   * - `onScrollDown` - the tab bar minimizes when scrolling down and
+   *   expands when scrolling back up
+   * - `onScrollUp` - the tab bar minimizes when scrolling up and expands
+   *   when scrolling back down
+   *
+   * The supported values correspond to the official UIKit documentaion:
+   * @see {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/minimizebehavior|UITabBarController.MinimizeBehavior}
    *
    * @default Defaults to `automatic`.
    *
