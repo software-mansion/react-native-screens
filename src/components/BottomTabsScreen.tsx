@@ -9,6 +9,7 @@ import BottomTabsScreenNativeComponent, {
 import {
   type ColorValue,
   type ImageSourcePropType,
+  Image,
   type NativeSyntheticEvent,
   StyleSheet,
   TextStyle,
@@ -202,6 +203,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
         {rest.children}
       </Freeze>
+      <Image source={require('./icon_fill.png')} />
     </BottomTabsScreenNativeComponent>
   );
 }

@@ -75,7 +75,7 @@ class TabScreen(
             onMenuItemAttributesChange()
         }
     }
-
+    
     override fun onAttachedToWindow() {
         Log.d(TAG, "TabScreen [$id] attached to window")
         super.onAttachedToWindow()
