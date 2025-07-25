@@ -109,12 +109,12 @@ export interface BottomTabsScreenProps {
    * @platform android, ios
    */
   badgeValue?: string;
-  // #endregion
+  // #endregion General
 
   // #region Android-only appearance
   iconResourceName?: string;
   tabBarItemBadgeTextColor?: ColorValue;
-  // #endregion
+  // #endregion Android-only appearance
 
   // #region iOS-only appearance
   /**
@@ -286,7 +286,7 @@ export interface BottomTabsScreenProps {
    * @platform ios
    */
   overrideScrollViewContentInsetAdjustmentBehavior?: boolean;
-  // #endregion
+  // #endregion iOS-only appearance
 
   // #region Events
   /**
@@ -317,5 +317,5 @@ export interface BottomTabsScreenProps {
    * @platform android, ios
    */
   onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
-  // #endregion
+  // #endregion Events
 }

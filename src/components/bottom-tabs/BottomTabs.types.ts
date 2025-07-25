@@ -9,6 +9,7 @@ export type NativeFocusChangeEvent = {
   tabKey: string;
 };
 
+// iOS-specific
 export type BottomTabsBlurEffect =
   | 'none'
   | 'systemDefault'
@@ -33,12 +34,14 @@ export type BottomTabsBlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+// Android-specific
 export type TabBarItemLabelVisibilityMode =
   | 'auto'
   | 'selected'
   | 'labeled'
   | 'unlabeled';
 
+// iOS-specific
 export type TabBarMinimizeBehavior =
   | 'automatic'
   | 'never'
@@ -55,7 +58,7 @@ export interface BottomTabsProps extends ViewProps {
   onNativeFocusChange?: (
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
   ) => void;
-  // #endregion
+  // #endregion Events
 
   // #region Common appearance
   /**
@@ -113,7 +116,7 @@ export interface BottomTabsProps extends ViewProps {
    * @platform android, ios
    */
   tabBarItemIconColor?: ColorValue;
-  // #endregion
+  // #endregion Common appearance
 
   // #region Android-only appearance
   tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
@@ -123,7 +126,7 @@ export interface BottomTabsProps extends ViewProps {
   tabBarItemActiveIndicatorEnabled?: boolean;
   tabBarItemRippleColor?: ColorValue;
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
-  // #endregion
+  // #endregion Android-only appearance
 
   // #region iOS-only appearance
   /**
@@ -200,10 +203,7 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 26 or higher
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
-  // #endregion
-
-  // #region Control
-  // #endregion
+  // #endregion iOS-only appearance
 
   // #region Experimental support
   /**
@@ -225,5 +225,5 @@ export interface BottomTabsProps extends ViewProps {
    * @platform android, ios
    */
   experimentalControlNavigationStateInJS?: boolean;
-  // #endregion
+  // #endregion Experimental support
 }
