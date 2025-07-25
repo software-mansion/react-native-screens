@@ -9,10 +9,8 @@ import UIKit
 @objc
 public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
-  private var needsAppearanceUpdate = false
-  private var needsSecondaryScreenNavBarAppearanceUpdate = false
 
-  private var needsDisplayModeUpdate = false
+  private var splitViewAppearanceUpdater = RNSSplitViewAppearanceUpdater()
 
   private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
     return splitViewHostComponentView.reactEventEmitter()
@@ -62,7 +60,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   @objc
   public func setNeedsAppearanceUpdate() {
-    needsAppearanceUpdate = true
+    splitViewAppearanceUpdater.needs(.generalUpdate)
   }
 
   @objc
@@ -72,12 +70,12 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     // We noticed that we can forcefully refresh navigation bar from UINavigationController level by toggling setNavigationBarHidden.
     // After some testing, it looks well and I haven't noticed any flicker - missing button is appearing naturally.
     // Please note that this is a hack rather than a solution so feel free to remove this code in case of any problems and treat the bug with toggling button as a platform's issue.
-    needsSecondaryScreenNavBarAppearanceUpdate = true
+    splitViewAppearanceUpdater.needs(.secondaryScreenNavBarUpdate)
   }
 
   @objc
   public func setNeedsDisplayModeUpdate() {
-    needsDisplayModeUpdate = true
+    splitViewAppearanceUpdater.needs(.displayModeUpdate)
   }
 
   // MARK: Updating
@@ -128,37 +126,24 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   }
 
   func updateSplitViewAppearanceIfNeeded() {
-    if needsAppearanceUpdate {
-      updateSplitViewAppearance()
-    }
-    if needsSecondaryScreenNavBarAppearanceUpdate {
-      updateSplitViewSecondaryScreenNavBarAppearance()
-    }
-    if needsDisplayModeUpdate {
-      updatePreferredDisplayMode()
-    }
-  }
-
-  func updateSplitViewAppearance() {
-    needsAppearanceUpdate = false
-
-    splitViewAppearanceCoordinator.updateAppearance(
+    splitViewAppearanceCoordinator.updateAppearanceIfNeeded(
       ofSplitView: self.splitViewHostComponentView, with: self)
   }
 
-  ///
-  /// @brief Consumes and refreshes secondary NavBar appearance
-  ///
-  func updateSplitViewSecondaryScreenNavBarAppearance() {
-    needsSecondaryScreenNavBarAppearanceUpdate = false
-
-    refreshSecondaryNavBar()
+  @objc
+  public func updateSplitViewAppearance(_ updateCallback: () -> Void) {
+    splitViewAppearanceUpdater.updateIfNeeded(.generalUpdate, updateCallback)
   }
 
-  func updatePreferredDisplayMode() {
-    needsDisplayModeUpdate = false
+  @objc
+  public func updateSplitViewNavBar() {
+    splitViewAppearanceUpdater.updateIfNeeded(
+      .secondaryScreenNavBarUpdate, refreshSecondaryNavBar)
+  }
 
-    preferredDisplayMode = self.splitViewHostComponentView.preferredDisplayMode
+  @objc
+  public func updateSplitViewDisplayMode(_ updateCallback: () -> Void) {
+    splitViewAppearanceUpdater.updateIfNeeded(.displayModeUpdate, updateCallback)
   }
 
   ///

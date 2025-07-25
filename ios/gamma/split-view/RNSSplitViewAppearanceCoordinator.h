@@ -2,6 +2,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSSplitViewAppearanceUpdater;
+
 /**
  * @class RNSSplitViewAppearanceCoordinator
  * @brief Responsible for batching updates for appearance & applying them in appropriate order.
@@ -17,10 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
  * extension for UISplitViewController).
  *
  * @param splitView The split view component view associated with the native component, containing updated properties.
- * @param controller The native controller responsible for rendering the split view and applying visual changes.
+ * @param splitViewController The native controller responsible for rendering the split view and applying visual
+ * changes.
  */
-- (void)updateAppearanceOfSplitView:(RNSSplitViewHostComponentView *_Nonnull)splitView
-                     withController:(RNSSplitViewHostController *_Nonnull)controller;
+- (void)updateAppearanceIfNeededOfSplitView:(RNSSplitViewHostComponentView *_Nonnull)splitView
+                             withController:(RNSSplitViewHostController *_Nonnull)splitViewController;
 
 @end
 
