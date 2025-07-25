@@ -13,6 +13,9 @@ namespace react = facebook::react;
 
 static const CGFloat epsilon = 1e-6;
 
+#define HAS_COLUMN_METRIC_CHANGED(OLD, NEW, PROPERTY_NAME, EPSILON) \
+  (fabs((OLD).columnMetrics.PROPERTY_NAME - (NEW).columnMetrics.PROPERTY_NAME) > (EPSILON))
+
 @interface RNSSplitViewHostComponentView () <RCTMountingTransactionObserving>
 @end
 
@@ -236,40 +239,33 @@ RNS_IGNORE_SUPER_CALL_END
         newComponentProps.displayModeButtonVisibility);
   }
 
-  if (oldComponentProps.columnMetrics.minimumPrimaryColumnWidth !=
-      newComponentProps.columnMetrics.minimumPrimaryColumnWidth) {
+  if (HAS_COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumPrimaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumPrimaryColumnWidth = newComponentProps.columnMetrics.minimumPrimaryColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.maximumPrimaryColumnWidth !=
-      newComponentProps.columnMetrics.maximumPrimaryColumnWidth) {
+  if (HAS_COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumPrimaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _maximumPrimaryColumnWidth = newComponentProps.columnMetrics.maximumPrimaryColumnWidth;
   }
 
-  if (fabs(
-          oldComponentProps.columnMetrics.preferredPrimaryColumnWidthOrFraction -
-          newComponentProps.columnMetrics.preferredPrimaryColumnWidthOrFraction) > epsilon) {
+  if (HAS_COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredPrimaryColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _preferredPrimaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredPrimaryColumnWidthOrFraction;
   }
 
-  if (oldComponentProps.columnMetrics.minimumSupplementaryColumnWidth !=
-      newComponentProps.columnMetrics.minimumSupplementaryColumnWidth) {
+  if (HAS_COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSupplementaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumSupplementaryColumnWidth = newComponentProps.columnMetrics.minimumSupplementaryColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.maximumSupplementaryColumnWidth !=
-      newComponentProps.columnMetrics.maximumSupplementaryColumnWidth) {
+  if (HAS_COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumSupplementaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _maximumSupplementaryColumnWidth = newComponentProps.columnMetrics.maximumSupplementaryColumnWidth;
   }
 
-  if (fabs(
-          oldComponentProps.columnMetrics.preferredSupplementaryColumnWidthOrFraction -
-          newComponentProps.columnMetrics.preferredSupplementaryColumnWidthOrFraction) > epsilon) {
+  if (HAS_COLUMN_METRIC_CHANGED(
+          oldComponentProps, newComponentProps, preferredSupplementaryColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _preferredSupplementaryColumnWidthOrFraction =
         newComponentProps.columnMetrics.preferredSupplementaryColumnWidthOrFraction;
@@ -277,34 +273,29 @@ RNS_IGNORE_SUPER_CALL_END
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-  if (oldComponentProps.columnMetrics.minimumSecondaryColumnWidth !=
-      newComponentProps.columnMetrics.minimumSecondaryColumnWidth) {
+  if (HAS_COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSecondaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumSecondaryColumnWidth = newComponentProps.columnMetrics.minimumSecondaryColumnWidth;
   }
 
-  if (fabs(
-          oldComponentProps.columnMetrics.preferredSecondaryColumnWidthOrFraction -
-          newComponentProps.columnMetrics.preferredSecondaryColumnWidthOrFraction) > epsilon) {
+  if (HAS_COLUMN_METRIC_CHANGED(
+          oldComponentProps, newComponentProps, preferredSecondaryColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _preferredSecondaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredSecondaryColumnWidthOrFraction;
   }
 
-  if (oldComponentProps.columnMetrics.minimumInspectorColumnWidth !=
-      newComponentProps.columnMetrics.minimumInspectorColumnWidth) {
+  if (HAS_COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumInspectorColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumInspectorColumnWidth = newComponentProps.columnMetrics.minimumInspectorColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.maximumInspectorColumnWidth !=
-      newComponentProps.columnMetrics.maximumInspectorColumnWidth) {
+  if (HAS_COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumInspectorColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _maximumInspectorColumnWidth = newComponentProps.columnMetrics.maximumInspectorColumnWidth;
   }
 
-  if (fabs(
-          oldComponentProps.columnMetrics.preferredInspectorColumnWidthOrFraction -
-          newComponentProps.columnMetrics.preferredInspectorColumnWidthOrFraction) > epsilon) {
+  if (HAS_COLUMN_METRIC_CHANGED(
+          oldComponentProps, newComponentProps, preferredInspectorColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _preferredInspectorColumnWidthOrFraction = newComponentProps.columnMetrics.preferredInspectorColumnWidthOrFraction;
   }
@@ -381,3 +372,5 @@ Class<RCTComponentViewProtocol> RNSSplitViewHostCls(void)
 {
   return RNSSplitViewHostComponentView.class;
 }
+
+#undef HAS_COLUMN_METRIC_CHANGED

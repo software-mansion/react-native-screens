@@ -33,18 +33,18 @@ type SplitViewDisplayMode =
   | 'twoDisplaceSecondary';
 
 interface ColumnMetrics {
-  minimumPrimaryColumnWidth?: WithDefault<Int32, -1>;
-  maximumPrimaryColumnWidth?: WithDefault<Int32, -1>;
+  minimumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
+  maximumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
   preferredPrimaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
-  minimumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
-  maximumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
+  minimumSupplementaryColumnWidth?: WithDefault<Float, -1.0>;
+  maximumSupplementaryColumnWidth?: WithDefault<Float, -1.0>;
   preferredSupplementaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
 
   // iOS 26 only
-  minimumSecondaryColumnWidth?: WithDefault<Int32, -1>;
+  minimumSecondaryColumnWidth?: WithDefault<Float, -1.0>;
   preferredSecondaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
-  minimumInspectorColumnWidth?: WithDefault<Int32, -1>;
-  maximumInspectorColumnWidth?: WithDefault<Int32, -1>;
+  minimumInspectorColumnWidth?: WithDefault<Float, -1.0>;
+  maximumInspectorColumnWidth?: WithDefault<Float, -1.0>;
   preferredInspectorColumnWidthOrFraction?: WithDefault<Float, -1.0>;
 }
 
