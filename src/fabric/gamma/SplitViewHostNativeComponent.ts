@@ -5,7 +5,6 @@ import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNati
 import type {
   DirectEventHandler,
   Float,
-  Int32,
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
