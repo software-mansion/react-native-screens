@@ -335,8 +335,13 @@ class ScreenStackHeaderConfig(
 
                 else -> {}
             }
-            view.layoutParams = params
-            toolbar.addView(view)
+            if (view.parent === toolbar) {
+                view.layoutParams = params
+            } else {
+                (view.parent as? ViewGroup)?.removeView(view)
+                view.layoutParams = params
+                toolbar.addView(view)
+            }
             i++
         }
     }
