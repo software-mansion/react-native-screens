@@ -19,13 +19,13 @@ class RNSSplitViewAppearanceApplicator {
   ) {
     precondition(
       splitView != nil,
-      "[RNScreens] Attempt to update appearance of uninitialized splitView host component")
+      "[RNScreens] Attempt to update appearance with uninitialized SplitView component")
     precondition(
       splitViewController != nil,
-      "[RNScreens] Attempt to update appearance of uninitialized splitView controller")
+      "[RNScreens] Attempt to update appearance of uninitialized SplitView controller")
     precondition(
       appearanceCoordinator != nil,
-      "[RNScreens] Attempt to update appearance of uninitialized splitView controller")
+      "[RNScreens] Attempt to update appearance with uninitialized appearance coordinator")
 
     appearanceCoordinator!.updateIfNeeded(.generalUpdate) { [weak self] in
       guard let self = self
