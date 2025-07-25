@@ -17,47 +17,41 @@ class RNSSplitViewAppearanceUpdater {
     _ splitView: RNSSplitViewHostComponentView?, _ splitViewController: RNSSplitViewHostController?,
     _ appearanceCoordinator: RNSSplitViewAppearanceCoordinator?
   ) {
-    assert(
+    precondition(
       splitView != nil,
       "[RNScreens] Attempt to update appearance of uninitialized splitView host component")
-    assert(
+    precondition(
       splitViewController != nil,
       "[RNScreens] Attempt to update appearance of uninitialized splitView controller")
-    assert(
+    precondition(
       appearanceCoordinator != nil,
       "[RNScreens] Attempt to update appearance of uninitialized splitView controller")
 
     appearanceCoordinator!.updateIfNeeded(.generalUpdate) { [weak self] in
-      guard let self = self,
-        let splitView = splitView,
-        let splitViewController = splitViewController
+      guard let self = self
       else {
         return
       }
 
-      self.updateSplitViewConfiguration(for: splitView, withController: splitViewController)
+      self.updateSplitViewConfiguration(for: splitView!, withController: splitViewController!)
     }
 
     appearanceCoordinator!.updateIfNeeded(.secondaryScreenNavBarUpdate) { [weak self] in
-      guard let self = self,
-        let splitView = splitView,
-        let splitViewController = splitViewController
+      guard let self = self
       else {
         return
       }
 
-      splitViewController.refreshSecondaryNavBar()
+      splitViewController!.refreshSecondaryNavBar()
     }
 
     appearanceCoordinator!.updateIfNeeded(.displayModeUpdate) { [weak self] in
-      guard let self = self,
-        let splitView = splitView,
-        let splitViewController = splitViewController
+      guard let self = self
       else {
         return
       }
 
-      self.updateSplitViewDisplayMode(for: splitView, withController: splitViewController)
+      self.updateSplitViewDisplayMode(for: splitView!, withController: splitViewController!)
     }
   }
 
