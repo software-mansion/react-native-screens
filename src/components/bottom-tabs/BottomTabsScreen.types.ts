@@ -95,7 +95,7 @@ export interface BottomTabsScreenProps {
 
   // #region General
   /**
-   * @summary Title of the tab screen, displayed in the tab bar.
+   * @summary Title of the tab screen, displayed in the tab bar item.
    *
    * @platform android, ios
    */
@@ -103,8 +103,12 @@ export interface BottomTabsScreenProps {
   /**
    * @summary Specifies content of tab bar item badge.
    *
-   * @todo Describe prop behavior on Android.
    * On iOS, badge is displayed as regular string.
+   *
+   * On Android the value is interpreted as follows:
+   * - displays the value as a number, when the string can be parsed to integer
+   * - displays "small dot" badge, when the string is empty
+   * - displays the value as a text, otherwise
    *
    * @platform android, ios
    */
@@ -112,7 +116,19 @@ export interface BottomTabsScreenProps {
   // #endregion General
 
   // #region Android-only appearance
+  /**
+   * @summary Specifies the icon for the tab bar item.
+   *
+   * It takes the string that represents resource name. First it checks the drawable resources in app scope, then it falls back to the android scope.
+   *
+   * @platform android
+   */
   iconResourceName?: string;
+  /**
+   * @summary Specifies the color of the text in the badge.
+   *
+   * @platform android
+   */
   tabBarItemBadgeTextColor?: ColorValue;
   // #endregion Android-only appearance
 

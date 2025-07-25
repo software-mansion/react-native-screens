@@ -148,6 +148,11 @@ class TabsHostViewManager :
         view.tabBarItemIconColor = value
     }
 
+    override fun setTabBarMinimizeBehavior(
+        view: TabsHost,
+        value: String?,
+    ) = Unit
+
     // Android additional
 
     @ReactProp(name = "tabBarItemTitleFontColorActive", customType = "Color")
@@ -197,11 +202,6 @@ class TabsHostViewManager :
     ) {
         view.tabBarItemRippleColor = value
     }
-
-    override fun setTabBarMinimizeBehavior(
-        view: TabsHost,
-        value: String?,
-    ) = Unit
 
     @ReactProp(name = "tabBarItemLabelVisibilityMode")
     override fun setTabBarItemLabelVisibilityMode(
