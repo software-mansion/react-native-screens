@@ -112,6 +112,14 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSSplitViewScreenComponentDescriptor>();
 }
 
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  if (![_controller isTransitioning]) {
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+  }
+}
+
 + (BOOL)shouldBeRecycled
 {
   // There won't be tens of instances of this component usually & it's easier for now.
