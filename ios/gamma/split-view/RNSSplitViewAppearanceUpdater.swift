@@ -89,11 +89,13 @@ class RNSSplitViewAppearanceUpdater {
       minWidth: splitView.minimumSupplementaryColumnWidth,
       maxWidth: splitView.maximumSupplementaryColumnWidth)
 
-    if #available(iOS 26.0, *) {
-      validateColumnConstraints(
-        minWidth: splitView.minimumInspectorColumnWidth,
-        maxWidth: splitView.maximumInspectorColumnWidth)
-    }
+    #if compiler(>=6.2)
+      if #available(iOS 26.0, *) {
+        validateColumnConstraints(
+          minWidth: splitView.minimumInspectorColumnWidth,
+          maxWidth: splitView.maximumInspectorColumnWidth)
+      }
+    #endif
 
     // Step 2.2 - applying updates to columns
     if splitView.minimumPrimaryColumnWidth >= 0 {
@@ -134,39 +136,41 @@ class RNSSplitViewAppearanceUpdater {
         splitView.preferredSupplementaryColumnWidthOrFraction
     }
 
-    if #available(iOS 26.0, *) {
-      if splitView.minimumSecondaryColumnWidth >= 0 {
-        splitViewController.minimumSecondaryColumnWidth = splitView.minimumSecondaryColumnWidth
-      }
+    #if compiler(>=6.2)
+      if #available(iOS 26.0, *) {
+        if splitView.minimumSecondaryColumnWidth >= 0 {
+          splitViewController.minimumSecondaryColumnWidth = splitView.minimumSecondaryColumnWidth
+        }
 
-      if splitView.preferredSecondaryColumnWidthOrFraction >= 0
-        && splitView.preferredSecondaryColumnWidthOrFraction < 1
-      {
-        splitViewController.preferredSecondaryColumnWidthFraction =
-          splitView.preferredSecondaryColumnWidthOrFraction
-      } else if splitView.preferredSecondaryColumnWidthOrFraction >= 1 {
-        splitViewController.preferredSecondaryColumnWidth =
-          splitView.preferredSecondaryColumnWidthOrFraction
-      }
+        if splitView.preferredSecondaryColumnWidthOrFraction >= 0
+          && splitView.preferredSecondaryColumnWidthOrFraction < 1
+        {
+          splitViewController.preferredSecondaryColumnWidthFraction =
+            splitView.preferredSecondaryColumnWidthOrFraction
+        } else if splitView.preferredSecondaryColumnWidthOrFraction >= 1 {
+          splitViewController.preferredSecondaryColumnWidth =
+            splitView.preferredSecondaryColumnWidthOrFraction
+        }
 
-      if splitView.minimumInspectorColumnWidth >= 0 {
-        splitViewController.minimumInspectorColumnWidth = splitView.minimumInspectorColumnWidth
-      }
+        if splitView.minimumInspectorColumnWidth >= 0 {
+          splitViewController.minimumInspectorColumnWidth = splitView.minimumInspectorColumnWidth
+        }
 
-      if splitView.maximumInspectorColumnWidth >= 0 {
-        splitViewController.maximumInspectorColumnWidth = splitView.maximumInspectorColumnWidth
-      }
+        if splitView.maximumInspectorColumnWidth >= 0 {
+          splitViewController.maximumInspectorColumnWidth = splitView.maximumInspectorColumnWidth
+        }
 
-      if splitView.preferredInspectorColumnWidthOrFraction >= 0
-        && splitView.preferredInspectorColumnWidthOrFraction < 1
-      {
-        splitViewController.preferredInspectorColumnWidthFraction =
-          splitView.preferredInspectorColumnWidthOrFraction
-      } else if splitView.preferredInspectorColumnWidthOrFraction >= 1 {
-        splitViewController.preferredInspectorColumnWidth =
-          splitView.preferredInspectorColumnWidthOrFraction
+        if splitView.preferredInspectorColumnWidthOrFraction >= 0
+          && splitView.preferredInspectorColumnWidthOrFraction < 1
+        {
+          splitViewController.preferredInspectorColumnWidthFraction =
+            splitView.preferredInspectorColumnWidthOrFraction
+        } else if splitView.preferredInspectorColumnWidthOrFraction >= 1 {
+          splitViewController.preferredInspectorColumnWidth =
+            splitView.preferredInspectorColumnWidthOrFraction
+        }
       }
-    }
+    #endif
 
     // Step 2.3 - manipulating with inspector column
     splitViewController.toggleSplitViewInspector(splitView.showInspector)
