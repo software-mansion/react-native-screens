@@ -1,4 +1,5 @@
 #import <React/RCTImageSource.h>
+#import "RCTConversions.h"
 #import "RNSBottomTabsScreenEventEmitter.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
@@ -49,17 +50,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) NSString *tabKey;
 @property (nonatomic, nullable) NSString *badgeValue;
 
-@property (nonatomic, strong, nullable) UIColor *tabBarBackgroundColor;
-@property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
-
-@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontFamily;
-@property (nonatomic, strong, nullable) NSNumber *tabBarItemTitleFontSize;
-@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontWeight;
-@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontStyle;
-@property (nonatomic, strong, nullable) UIColor *tabBarItemTitleFontColor;
-@property (nonatomic) UIOffset tabBarItemTitlePositionAdjustment;
-
-@property (nonatomic, strong, nullable) UIColor *tabBarItemIconColor;
+//@property (nonatomic, strong, nullable) UIColor *tabBarBackgroundColor;
+//@property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
+//
+//@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontFamily;
+//@property (nonatomic, strong, nullable) NSNumber *tabBarItemTitleFontSize;
+//@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontWeight;
+//@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontStyle;
+//@property (nonatomic, strong, nullable) UIColor *tabBarItemTitleFontColor;
+//@property (nonatomic) UIOffset tabBarItemTitlePositionAdjustment;
+//
+//@property (nonatomic, strong, nullable) UIColor *tabBarItemIconColor;
 
 @property (nonatomic, readonly) RNSBottomTabsIconType iconType;
 
@@ -69,7 +70,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
 @property (nonatomic, strong, readonly, nullable) NSString *selectedIconSfSymbolName;
 
-@property (nonatomic, nullable) UIColor *tabBarItemBadgeBackgroundColor;
+//@property (nonatomic, nullable) UIColor *tabBarItemBadgeBackgroundColor;
+@property (nonatomic, strong, readonly, nullable) UITabBarAppearance *tabBarStandardAppearance;
+@property (nonatomic, strong, readonly, nullable) UITabBarAppearance *tabBarScrollEdgeAppearance;
 
 @property (nonatomic, nullable) NSString *title;
 

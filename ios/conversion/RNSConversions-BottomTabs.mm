@@ -12,6 +12,68 @@ UIBlurEffect *RNSUIBlurEffectFromOptionalUIBlurEffectStyle(std::optional<UIBlurE
   return nil;
 }
 
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString)
+{
+  if ([blurEffectString isEqualToString:@"none"] || [blurEffectString isEqualToString:@"systemDefault"]) {
+    return std::nullopt;
+  } else if ([blurEffectString isEqualToString:@"extraLight"]) {
+    return {UIBlurEffectStyleExtraLight};
+  } else if ([blurEffectString isEqualToString:@"light"]) {
+    return {UIBlurEffectStyleLight};
+  } else if ([blurEffectString isEqualToString:@"dark"]) {
+    return {UIBlurEffectStyleDark};
+  } else if ([blurEffectString isEqualToString:@"regular"]) {
+    return {UIBlurEffectStyleRegular};
+  } else if ([blurEffectString isEqualToString:@"prominent"]) {
+    return {UIBlurEffectStyleProminent};
+  }
+#if !TARGET_OS_TV
+  else if ([blurEffectString isEqualToString:@"systemUltraThinMaterial"]) {
+    return {UIBlurEffectStyleSystemUltraThinMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemThinMaterial"]) {
+    return {UIBlurEffectStyleSystemThinMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemMaterial"]) {
+    return {UIBlurEffectStyleSystemMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemThickMaterial"]) {
+    return {UIBlurEffectStyleSystemThickMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemChromeMaterial"]) {
+    return {UIBlurEffectStyleSystemChromeMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemUltraThinMaterialLight"]) {
+    return {UIBlurEffectStyleSystemUltraThinMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemThinMaterialLight"]) {
+    return {UIBlurEffectStyleSystemThinMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemMaterialLight"]) {
+    return {UIBlurEffectStyleSystemMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemThickMaterialLight"]) {
+    return {UIBlurEffectStyleSystemThickMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemChromeMaterialLight"]) {
+    return {UIBlurEffectStyleSystemChromeMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemUltraThinMaterialDark"]) {
+    return {UIBlurEffectStyleSystemUltraThinMaterialDark};
+  } else if ([blurEffectString isEqualToString:@"systemThinMaterialDark"]) {
+    return {UIBlurEffectStyleSystemThinMaterialDark};
+  } else if ([blurEffectString isEqualToString:@"systemMaterialDark"]) {
+    return {UIBlurEffectStyleSystemMaterialDark};
+  } else if ([blurEffectString isEqualToString:@"systemThickMaterialDark"]) {
+    return {UIBlurEffectStyleSystemThickMaterialDark};
+  } else if ([blurEffectString isEqualToString:@"systemChromeMaterialDark"]) {
+    return {UIBlurEffectStyleSystemChromeMaterialDark};
+  }
+#endif // !TARGET_OS_TV
+  else {
+#if !TARGET_OS_TV
+    RCTLogError(@"[RNScreens] unsupported blur effect style");
+#endif // !TARGET_OS_TV
+    return std::nullopt;
+  }
+}
+
+UIBlurEffect *RNSUIBlurEffectFromString(NSString *blurEffectString)
+{
+  std::optional<UIBlurEffectStyle> maybeStyle = RNSMaybeUIBlurEffectStyleFromString(blurEffectString);
+  return RNSUIBlurEffectFromOptionalUIBlurEffectStyle(maybeStyle);
+}
+
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect)
 {
   switch (blurEffect) {

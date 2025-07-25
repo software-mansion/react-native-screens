@@ -16,25 +16,11 @@
     return;
   }
 
-  // Step 1 - start with default appearance
-  UITabBarAppearance *appearance = [[UITabBarAppearance alloc] init];
-
-  // Step 2 - general settings
-  if (hostComponentView != nil) {
-    [self configureTabBarAppearance:appearance fromAppearanceProvider:hostComponentView];
-
-    [self configureTabBarItemAppearance:appearance.stackedLayoutAppearance withTabsHost:hostComponentView];
-    [self configureTabBarItemAppearance:appearance.compactInlineLayoutAppearance withTabsHost:hostComponentView];
-    [self configureTabBarItemAppearance:appearance.inlineLayoutAppearance withTabsHost:hostComponentView];
-  }
-
-  // Step 3 - apply general settings to the tab bar
-  tabBar.standardAppearance = appearance;
-  tabBar.scrollEdgeAppearance = appearance;
+  //  tabBar.standardAppearance = hostComponentView.tabBarStandardAppearance;
+  //  tabBar.scrollEdgeAppearance = hostComponentView.tabBarScrollEdgeAppearance;
 
   tabBar.tintColor = hostComponentView.tabBarTintColor;
 
-  // Step 4 - build the appearance object for each tab & apply it
   if (tabScreenCtrls == nil) {
     return;
   }
@@ -46,60 +32,17 @@
       continue;
     }
 
-    // Inherit general properties from host
-    // TODO: don't inherit properties from host
-    UITabBarAppearance *tabAppearance = [[UITabBarAppearance alloc] initWithBarAppearance:appearance];
-
-    [self configureTabBarAppearance:tabAppearance fromAppearanceProvider:tabScreenCtrl.tabScreenComponentView];
-
-    [self configureTabBarItemAppearance:tabAppearance.compactInlineLayoutAppearance
-                 forTabScreenController:tabScreenCtrl
-                  withHostComponentView:hostComponentView];
-    [self configureTabBarItemAppearance:tabAppearance.inlineLayoutAppearance
-                 forTabScreenController:tabScreenCtrl
-                  withHostComponentView:hostComponentView];
-    [self configureTabBarItemAppearance:tabAppearance.stackedLayoutAppearance
-                 forTabScreenController:tabScreenCtrl
-                  withHostComponentView:hostComponentView];
-
-    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearance:tabAppearance imageLoader:imageLoader];
-  }
-}
-
-- (void)configureTabBarAppearance:(nonnull UITabBarAppearance *)appearance
-           fromAppearanceProvider:(id<RNSTabBarAppearanceProvider>)appearanceProvider
-{
-  if (appearanceProvider.tabBarBackgroundColor != nil) {
-    appearance.backgroundColor = appearanceProvider.tabBarBackgroundColor;
-  }
-
-  switch (appearanceProvider.tabBarBlurEffect) {
-    case RNSBlurEffectStyleNone:
-      appearance.backgroundEffect = nil;
-      break;
-
-    case RNSBlurEffectStyleSystemDefault:
-      // Initialized appearance already has default blur effect.
-
-      // This won't work as expected with current inheriting appearance logic:
-      // screen will not revert to default but inherit blur from host
-      // TODO: remove appearance inheritance
-      break;
-
-    default:
-      appearance.backgroundEffect =
-          rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(appearanceProvider.tabBarBlurEffect);
+    [self configureTabBarItemForTabScreenController:tabScreenCtrl imageLoader:imageLoader];
   }
 }
 
 - (void)configureTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
-                                   withAppearance:(nonnull UITabBarAppearance *)tabAppearance
                                       imageLoader:(nullable RCTImageLoader *)imageLoader
 {
   UITabBarItem *tabBarItem = tabScreenCtrl.tabBarItem;
 
-  tabBarItem.standardAppearance = tabAppearance;
-  tabBarItem.scrollEdgeAppearance = tabAppearance;
+  tabBarItem.standardAppearance = tabScreenCtrl.tabScreenComponentView.tabBarStandardAppearance;
+  tabBarItem.scrollEdgeAppearance = tabScreenCtrl.tabScreenComponentView.tabBarScrollEdgeAppearance;
 
   [self setIconsForTabBarItem:tabBarItem
                fromScreenView:tabScreenCtrl.tabScreenComponentView
@@ -172,95 +115,105 @@
       }];
 }
 
-- (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance
-                         withTabsHost:(nonnull RNSBottomTabsHostComponentView *)hostComponent
++ (void)configureTabBarAppearance:(UITabBarAppearance *)tabBarAppearance fromFolly:(id)appearanceProps
 {
-  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
-
-  if (hostComponent.tabBarItemTitleFontSize != nil || hostComponent.tabBarItemTitleFontFamily != nil ||
-      hostComponent.tabBarItemTitleFontWeight != nil || hostComponent.tabBarItemTitleFontStyle != nil) {
-    titleTextAttributes[NSFontAttributeName] = [RCTFont updateFont:nil
-                                                        withFamily:hostComponent.tabBarItemTitleFontFamily
-                                                              size:hostComponent.tabBarItemTitleFontSize
-                                                            weight:hostComponent.tabBarItemTitleFontWeight
-                                                             style:hostComponent.tabBarItemTitleFontStyle
-                                                           variant:nil
-                                                   scaleMultiplier:1.0];
+  if (appearanceProps[@"tabBarBackgroundColor"] != nil) {
+    tabBarAppearance.backgroundColor = [RCTConvert UIColor:appearanceProps[@"tabBarBackgroundColor"]];
   }
 
-  if (hostComponent.tabBarItemTitleFontColor != nil) {
-    titleTextAttributes[NSForegroundColorAttributeName] = hostComponent.tabBarItemTitleFontColor;
+  if (appearanceProps[@"tabBarBlurEffect"] != nil) {
+    NSString *blurEffectString = [appearanceProps[@"tabBarBlurEffect"] isKindOfClass:[NSString class]]
+        ? appearanceProps[@"tabBarBlurEffect"]
+        : @"none";
+
+    if (![blurEffectString isEqualToString:@"systemDefault"]) {
+      tabBarAppearance.backgroundEffect = rnscreens::conversion::RNSUIBlurEffectFromString(blurEffectString);
+    }
   }
 
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal
-                    withAppearanceProvider:hostComponent
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected
-                    withAppearanceProvider:hostComponent
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused
-                    withAppearanceProvider:hostComponent
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled
-                    withAppearanceProvider:hostComponent
-                   withTitleTextAttributes:titleTextAttributes];
+  // Inheritance behavior
+  if (appearanceProps[@"stacked"] != nil) {
+    [self configureTabBarItemAppearance:tabBarAppearance.stackedLayoutAppearance fromFolly:appearanceProps[@"stacked"]];
+    [self configureTabBarItemAppearance:tabBarAppearance.inlineLayoutAppearance fromFolly:appearanceProps[@"stacked"]];
+    [self configureTabBarItemAppearance:tabBarAppearance.compactInlineLayoutAppearance
+                              fromFolly:appearanceProps[@"stacked"]];
+  }
+
+  if (appearanceProps[@"inline"] != nil) {
+    [self configureTabBarItemAppearance:tabBarAppearance.inlineLayoutAppearance fromFolly:appearanceProps[@"inline"]];
+    [self configureTabBarItemAppearance:tabBarAppearance.compactInlineLayoutAppearance
+                              fromFolly:appearanceProps[@"inline"]];
+  }
+
+  if (appearanceProps[@"compactInline"] != nil) {
+    [self configureTabBarItemAppearance:tabBarAppearance.compactInlineLayoutAppearance
+                              fromFolly:appearanceProps[@"compactInline"]];
+  }
 }
 
-- (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance
-               forTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
-                withHostComponentView:(nonnull RNSBottomTabsHostComponentView *)tabsHostComponent
++ (void)configureTabBarItemAppearance:(UITabBarItemAppearance *)tabBarItemAppearance fromFolly:(id)itemAppearanceProps
 {
-  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
-
-  if (tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontSize != nil ||
-      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontFamily != nil ||
-      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontWeight != nil ||
-      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontStyle != nil) {
-    titleTextAttributes[NSFontAttributeName] =
-        [RCTFont updateFont:nil
-                 withFamily:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontFamily
-                       size:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontSize
-                     weight:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontWeight
-                      style:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontStyle
-                    variant:nil
-            scaleMultiplier:1.0];
+  // Inheritance behavior
+  if (itemAppearanceProps[@"normal"] != nil) {
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal fromFolly:itemAppearanceProps[@"normal"]];
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected fromFolly:itemAppearanceProps[@"normal"]];
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused fromFolly:itemAppearanceProps[@"normal"]];
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled fromFolly:itemAppearanceProps[@"normal"]];
   }
 
-  if (tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontColor != nil) {
-    titleTextAttributes[NSForegroundColorAttributeName] = tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontColor;
+  if (itemAppearanceProps[@"selected"] != nil) {
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected fromFolly:itemAppearanceProps[@"selected"]];
   }
 
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal
-                    withAppearanceProvider:tabScreenCtrl.tabScreenComponentView
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected
-                    withAppearanceProvider:tabScreenCtrl.tabScreenComponentView
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused
-                    withAppearanceProvider:tabScreenCtrl.tabScreenComponentView
-                   withTitleTextAttributes:titleTextAttributes];
-  [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled
-                    withAppearanceProvider:tabScreenCtrl.tabScreenComponentView
-                   withTitleTextAttributes:titleTextAttributes];
+  if (itemAppearanceProps[@"focused"] != nil) {
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused fromFolly:itemAppearanceProps[@"focused"]];
+  }
+
+  if (itemAppearanceProps[@"disabled"] != nil) {
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled fromFolly:itemAppearanceProps[@"disabled"]];
+  }
 }
 
-- (void)configureTabBarItemStateAppearance:(nonnull UITabBarItemStateAppearance *)tabBarItemStateAppearance
-                    withAppearanceProvider:(id<RNSTabBarAppearanceProvider>)appearanceProvider
-                   withTitleTextAttributes:(nonnull NSDictionary<NSAttributedStringKey, id> *)titleTextAttributes
++ (void)configureTabBarItemStateAppearance:(UITabBarItemStateAppearance *)tabBarItemStateAppearance
+                                 fromFolly:(id)itemStateAppearanceProps
 {
-  if (appearanceProvider.tabBarItemBadgeBackgroundColor != nil) {
-    tabBarItemStateAppearance.badgeBackgroundColor = appearanceProvider.tabBarItemBadgeBackgroundColor;
+  // TODO: handle color properly
+  //  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
+  //  if (itemStateAppearanceProps[@"tabBarItemTitleFontFamily"] != nil ||
+  //      itemStateAppearanceProps[@"tabBarItemTitleFontSize"] != nil ||
+  //      itemStateAppearanceProps[@"tabBarItemTitleFontWeight"] != nil ||
+  //      itemStateAppearanceProps[@"tabBarItemTitleFontStyle"] != nil) {
+  //
+  //    titleTextAttributes[NSFontAttributeName] =
+  //    [RCTFont updateFont:nil
+  //             withFamily:itemStateAppearanceProps[@"tabBarItemTitleFontFamily"]
+  //                   size:itemStateAppearanceProps[@"tabBarItemTitleFontSize"]
+  //                 weight:itemStateAppearanceProps[@"tabBarItemTitleFontWeight"]
+  //                  style:itemStateAppearanceProps[@"tabBarItemTitleFontStyle"]
+  //                variant:nil
+  //        scaleMultiplier:1.0];
+  //  }
+  //
+  //  if (itemStateAppearanceProps[@"tabBarItemTitleFontColor"] != nil) {
+  //    titleTextAttributes[NSForegroundColorAttributeName] = [RCTConvert
+  //    UIColor:itemStateAppearanceProps[@"tabBarItemTitleFontColor"]];
+  //  }
+  //
+  //  if (titleTextAttributes != nil) {
+  //    tabBarItemStateAppearance.titleTextAttributes = titleTextAttributes;
+  //  }
+
+  if (itemStateAppearanceProps[@"tabBarItemBadgeBackgroundColor"] != nil) {
+    tabBarItemStateAppearance.badgeBackgroundColor =
+        [RCTConvert UIColor:itemStateAppearanceProps[@"tabBarItemBadgeBackgroundColor"]];
   }
 
-  if ([titleTextAttributes count] > 0) {
-    tabBarItemStateAppearance.titleTextAttributes = titleTextAttributes;
+  if (itemStateAppearanceProps[@"tabBarItemIconColor"] != nil) {
+    tabBarItemStateAppearance.iconColor = [RCTConvert UIColor:itemStateAppearanceProps[@"tabBarItemIconColor"]];
   }
 
-  if (appearanceProvider.tabBarItemIconColor != nil) {
-    tabBarItemStateAppearance.iconColor = appearanceProvider.tabBarItemIconColor;
-  }
-
-  tabBarItemStateAppearance.titlePositionAdjustment = appearanceProvider.tabBarItemTitlePositionAdjustment;
+  // TODO: correctly handle titlePositionAdjustment (1. convert, 2. (0,0) case)
+  //  tabBarItemStateAppearance.titlePositionAdjustment = itemStateAppearanceProps[@"titlePositionAdjustment"];
 }
 
 @end

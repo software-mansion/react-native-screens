@@ -11,6 +11,7 @@ import {
 
 // @ts-ignore: ImageSource type has been recently added: https://github.com/facebook/react-native/pull/51969
 import type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
+import { UnsafeMixed } from './codegenUtils';
 
 // iOS-specific: SFSymbol, image as a template usage
 export type IconType = 'image' | 'template' | 'sfSymbol';
@@ -22,6 +23,38 @@ type LifecycleStateChangeEvent = Readonly<{
   previousState: Int32;
   newState: Int32;
 }>;
+
+type ItemStateAppearance = {
+  tabBarItemTitleFontFamily?: string;
+  tabBarItemTitleFontSize?: Float;
+  tabBarItemTitleFontWeight?: string;
+  tabBarItemTitleFontStyle?: string;
+  tabBarItemTitleFontColor?: ColorValue;
+  tabBarItemTitlePositionAdjustment?: {
+    horizontal?: Float;
+    vertical?: Float;
+  };
+
+  tabBarItemIconColor?: ColorValue;
+
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+};
+
+type ItemAppearance = {
+  normal?: ItemStateAppearance;
+  selected?: ItemStateAppearance;
+  focused?: ItemStateAppearance;
+  disabled?: ItemStateAppearance;
+};
+
+type Appearance = {
+  stacked?: ItemAppearance;
+  inline?: ItemAppearance;
+  compactInline?: ItemAppearance;
+
+  tabBarBackgroundColor?: ColorValue;
+  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
+};
 
 type BlurEffect =
   | 'none'
@@ -58,6 +91,9 @@ export interface NativeProps extends ViewProps {
   // Control
   isFocused?: boolean;
   tabKey: string;
+
+  standardAppearance?: UnsafeMixed<Appearance>;
+  scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
   // Tab Bar Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
