@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
             tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
                      imageLoader:(nullable RCTImageLoader *)imageLoader;
 
++ (void)configureTabBarAppearance:(UITabBarAppearance *)tabBarAppearance fromFolly:(id)appearanceProps;
 @end
 
 NS_ASSUME_NONNULL_END

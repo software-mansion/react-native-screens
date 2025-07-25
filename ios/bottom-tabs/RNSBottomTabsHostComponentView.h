@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Props
 
-@interface RNSBottomTabsHostComponentView () <RNSTabBarAppearanceProvider>
+@interface RNSBottomTabsHostComponentView ()
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
 @property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;

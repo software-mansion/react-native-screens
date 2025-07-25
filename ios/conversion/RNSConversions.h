@@ -9,24 +9,23 @@ namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
-std::optional<UIBlurEffectStyle>
-RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString);
 
-UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(
-    RNSBlurEffectStyle blurEffect);
+UIBlurEffect *RNSUIBlurEffectFromString(NSString *blurEffectString);
 
-RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
-    react::RNSBottomTabsTabBarBlurEffect blurEffect);
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
+
+UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
+
+RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(react::RNSBottomTabsTabBarBlurEffect blurEffect);
 
 UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
-    react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct
-        titlePositionAdjustment);
+    react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct titlePositionAdjustment);
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
 API_AVAILABLE(ios(26.0))
-UITabBarMinimizeBehavior
-UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
+UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
     react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior);
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -37,19 +36,16 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 
 #endif // Check for iOS >= 26
 
-std::optional<UIBlurEffectStyle>
-RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
 
 RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
 
 UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
-    react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct
-        titlePositionAdjustment);
+    react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct titlePositionAdjustment);
 
-RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(
-    react::RNSBottomTabsScreenIconType iconType);
+RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
@@ -60,24 +56,19 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
 UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
     react::RNSSplitViewHostPreferredSplitBehavior behavior);
 
-UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
-    react::RNSSplitViewHostPrimaryEdge primaryEdge);
+UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(react::RNSSplitViewHostPrimaryEdge primaryEdge);
 
 UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
     react::RNSSplitViewHostPreferredDisplayMode displayMode);
 
-UISplitViewControllerDisplayModeButtonVisibility
-SplitViewDisplayModeButtonVisibilityFromHostProp(
-    react::RNSSplitViewHostDisplayModeButtonVisibility
-        displayModeButtonVisibility);
+UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
+    react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility);
 
-std::string UISplitViewControllerDisplayModeToString(
-    UISplitViewControllerDisplayMode displayMode);
+std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode);
 
 #pragma mark SplitViewScreen props
 
-RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
-    react::RNSSplitViewScreenColumnType columnType);
+RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(react::RNSSplitViewScreenColumnType columnType);
 
 }; // namespace rnscreens::conversion
 
