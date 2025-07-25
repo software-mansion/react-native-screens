@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 
-const SplitViewScreen = View;
+const Column = View;
+const Inspector = View;
 
-export default SplitViewScreen;
+export default { Column, Inspector };
