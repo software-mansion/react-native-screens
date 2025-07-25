@@ -118,14 +118,6 @@ void RNSScreenShadowNode::appendChild(const ShadowNode::Shared &child) {
 void RNSScreenShadowNode::layout(facebook::react::LayoutContext layoutContext) {
   YogaLayoutableShadowNode::layout(layoutContext);
 
-  std::printf(
-      "ScreenSN [%d] layout {{%.2lf, %.2lf}, {%.2lf, %.2lf}}\n",
-      getTag(),
-      layoutMetrics_.frame.origin.x,
-      layoutMetrics_.frame.origin.y,
-      layoutMetrics_.frame.size.width,
-      layoutMetrics_.frame.size.height);
-
 #ifdef ANDROID
   applyFrameCorrections();
 #endif // ANDROID
