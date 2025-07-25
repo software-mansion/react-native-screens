@@ -1,6 +1,6 @@
 import React from 'react';
 import { enableFreeze } from 'react-native-screens';
-import Example from './Example';
+// import Example from './Example';
 import * as Test from './src/tests';
 
 enableFreeze(true);

@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -150,7 +149,8 @@ class ScreenStack(
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
 
-        // We don't count preloaded screen as "already in stack"
+        // We don't count preloaded screen as "already in stack" up until it appears with state == ON_TOP
+        // See https://github.com/software-mansion/react-native-screens/pull/3062
         val newTopAlreadyInStack = stack.contains(newTop) && !preloadedWrappers.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
 
