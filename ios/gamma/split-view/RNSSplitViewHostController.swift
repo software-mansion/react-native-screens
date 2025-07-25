@@ -10,14 +10,14 @@ import UIKit
 public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
 
-  private var splitViewAppearanceUpdater = RNSSplitViewAppearanceUpdater()
+  private var splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
+  private var splitViewAppearanceUpdater: RNSSplitViewAppearanceUpdater
 
   private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
     return splitViewHostComponentView.reactEventEmitter()
   }
 
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
-  private let splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
 
   /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation, because SplitView doesn't support changing number of columns dynamically.
   private let fixedColumnsCount: Int
@@ -40,6 +40,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ) {
     self.splitViewHostComponentView = splitViewHostComponentView
     self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
+    self.splitViewAppearanceUpdater = RNSSplitViewAppearanceUpdater()
     self.fixedColumnsCount = numberOfColumns
 
     super.init(style: RNSSplitViewHostController.styleByNumberOfColumns(numberOfColumns))
@@ -60,7 +61,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   @objc
   public func setNeedsAppearanceUpdate() {
-    splitViewAppearanceUpdater.needs(.generalUpdate)
+    splitViewAppearanceCoordinator.needs(.generalUpdate)
   }
 
   @objc
@@ -70,12 +71,12 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     // We noticed that we can forcefully refresh navigation bar from UINavigationController level by toggling setNavigationBarHidden.
     // After some testing, it looks well and I haven't noticed any flicker - missing button is appearing naturally.
     // Please note that this is a hack rather than a solution so feel free to remove this code in case of any problems and treat the bug with toggling button as a platform's issue.
-    splitViewAppearanceUpdater.needs(.secondaryScreenNavBarUpdate)
+    splitViewAppearanceCoordinator.needs(.secondaryScreenNavBarUpdate)
   }
 
   @objc
   public func setNeedsDisplayModeUpdate() {
-    splitViewAppearanceUpdater.needs(.displayModeUpdate)
+    splitViewAppearanceCoordinator.needs(.displayModeUpdate)
   }
 
   // MARK: Updating
@@ -126,24 +127,8 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   }
 
   func updateSplitViewAppearanceIfNeeded() {
-    splitViewAppearanceCoordinator.updateAppearanceIfNeeded(
-      ofSplitView: self.splitViewHostComponentView, with: self)
-  }
-
-  @objc
-  public func updateSplitViewAppearance(_ updateCallback: () -> Void) {
-    splitViewAppearanceUpdater.updateIfNeeded(.generalUpdate, updateCallback)
-  }
-
-  @objc
-  public func updateSplitViewNavBar() {
-    splitViewAppearanceUpdater.updateIfNeeded(
-      .secondaryScreenNavBarUpdate, refreshSecondaryNavBar)
-  }
-
-  @objc
-  public func updateSplitViewDisplayMode(_ updateCallback: () -> Void) {
-    splitViewAppearanceUpdater.updateIfNeeded(.displayModeUpdate, updateCallback)
+    splitViewAppearanceUpdater.updateAppearanceIfNeeded(
+      self.splitViewHostComponentView, self, self.splitViewAppearanceCoordinator)
   }
 
   ///
@@ -152,7 +137,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   /// It validates that the secondary VC is valid UINavigationController and it updates the navbar
   /// state by toggling it's visibility, what should be performed in a single batch of updates.
   ///
-  private func refreshSecondaryNavBar() {
+  public func refreshSecondaryNavBar() {
     let secondaryViewController = viewController(for: .secondary)
     assert(
       secondaryViewController != nil,

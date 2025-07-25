@@ -63,19 +63,19 @@ static const CGFloat epsilon = 1e-6;
   _showSecondaryToggleButton = false;
   _showInspector = false;
 
-  _minimumPrimaryColumnWidth = -1;
-  _maximumPrimaryColumnWidth = -1;
+  _minimumPrimaryColumnWidth = -1.0;
+  _maximumPrimaryColumnWidth = -1.0;
   _preferredPrimaryColumnWidthOrFraction = -1.0;
-  _minimumSupplementaryColumnWidth = -1;
-  _maximumSupplementaryColumnWidth = -1;
+  _minimumSupplementaryColumnWidth = -1.0;
+  _maximumSupplementaryColumnWidth = -1.0;
   _preferredSupplementaryColumnWidthOrFraction = -1.0;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-  _minimumSecondaryColumnWidth = -1;
+  _minimumSecondaryColumnWidth = -1.0;
   _preferredSecondaryColumnWidthOrFraction = -1.0;
-  _minimumInspectorColumnWidth = -1;
-  _maximumInspectorColumnWidth = -1;
+  _minimumInspectorColumnWidth = -1.0;
+  _maximumInspectorColumnWidth = -1.0;
   _preferredInspectorColumnWidthOrFraction = -1.0;
 #endif
 

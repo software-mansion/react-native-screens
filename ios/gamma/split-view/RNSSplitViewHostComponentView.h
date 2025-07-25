@@ -38,19 +38,19 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL showSecondaryToggleButton;
 @property (nonatomic, readonly) BOOL showInspector;
 
-@property (nonatomic, readonly) int minimumPrimaryColumnWidth;
-@property (nonatomic, readonly) int maximumPrimaryColumnWidth;
+@property (nonatomic, readonly) double minimumPrimaryColumnWidth;
+@property (nonatomic, readonly) double maximumPrimaryColumnWidth;
 @property (nonatomic, readonly) double preferredPrimaryColumnWidthOrFraction;
-@property (nonatomic, readonly) int minimumSupplementaryColumnWidth;
-@property (nonatomic, readonly) int maximumSupplementaryColumnWidth;
+@property (nonatomic, readonly) double minimumSupplementaryColumnWidth;
+@property (nonatomic, readonly) double maximumSupplementaryColumnWidth;
 @property (nonatomic, readonly) double preferredSupplementaryColumnWidthOrFraction;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-@property (nonatomic, readonly) int minimumSecondaryColumnWidth;
+@property (nonatomic, readonly) double minimumSecondaryColumnWidth;
 @property (nonatomic, readonly) double preferredSecondaryColumnWidthOrFraction;
-@property (nonatomic, readonly) int minimumInspectorColumnWidth;
-@property (nonatomic, readonly) int maximumInspectorColumnWidth;
+@property (nonatomic, readonly) double minimumInspectorColumnWidth;
+@property (nonatomic, readonly) double maximumInspectorColumnWidth;
 @property (nonatomic, readonly) double preferredInspectorColumnWidthOrFraction;
 #endif
 
