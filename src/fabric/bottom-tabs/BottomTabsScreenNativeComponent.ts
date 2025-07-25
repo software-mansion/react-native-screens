@@ -16,14 +16,14 @@ import type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
 export type IconType = 'image' | 'template' | 'sfSymbol';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type GenericEmptyEvent = Readonly<{}>;
+type GenericEmptyEvent = Readonly<{}>;
 
-export type LifecycleStateChangeEvent = Readonly<{
+type LifecycleStateChangeEvent = Readonly<{
   previousState: Int32;
   newState: Int32;
 }>;
 
-export type BlurEffect =
+type BlurEffect =
   | 'none'
   | 'systemDefault'
   | 'extraLight'

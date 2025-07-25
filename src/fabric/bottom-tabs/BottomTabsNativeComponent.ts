@@ -15,11 +15,11 @@ import type {
 //   backgroundColor?: ColorValue;
 // };
 
-export type NativeFocusChangeEvent = {
+type NativeFocusChangeEvent = {
   tabKey: string;
 };
 
-export type BlurEffect =
+type BlurEffect =
   | 'none'
   | 'systemDefault'
   | 'extraLight'
@@ -43,13 +43,13 @@ export type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-export type TabBarItemLabelVisibilityMode =
+type TabBarItemLabelVisibilityMode =
   | 'auto'
   | 'selected'
   | 'labeled'
   | 'unlabeled';
 
-export type TabBarMinimizeBehavior =
+type TabBarMinimizeBehavior =
   | 'automatic'
   | 'never'
   | 'onScrollDown'
