@@ -3,7 +3,7 @@
 ///
 /// This class is synchronizing UISplitViewController configuration props which are affecting the SplitView appearance with props passed to RNSSplitViewHostComponentView from the ElementTree.
 ///
-class RNSSplitViewAppearanceUpdater {
+class RNSSplitViewAppearanceApplicator {
   ///
   /// @brief Function responsible for applying all updates to SplitView in correct order
   ///

@@ -11,7 +11,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var needsChildViewControllersUpdate = false
 
   private var splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
-  private var splitViewAppearanceUpdater: RNSSplitViewAppearanceUpdater
+  private var splitViewAppearanceApplicator: RNSSplitViewAppearanceApplicator
 
   private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
     return splitViewHostComponentView.reactEventEmitter()
@@ -40,7 +40,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ) {
     self.splitViewHostComponentView = splitViewHostComponentView
     self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
-    self.splitViewAppearanceUpdater = RNSSplitViewAppearanceUpdater()
+    self.splitViewAppearanceApplicator = RNSSplitViewAppearanceApplicator()
     self.fixedColumnsCount = numberOfColumns
 
     super.init(style: RNSSplitViewHostController.styleByNumberOfColumns(numberOfColumns))
@@ -127,7 +127,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   }
 
   func updateSplitViewAppearanceIfNeeded() {
-    splitViewAppearanceUpdater.updateAppearanceIfNeeded(
+    splitViewAppearanceApplicator.updateAppearanceIfNeeded(
       self.splitViewHostComponentView, self, self.splitViewAppearanceCoordinator)
   }
 
