@@ -62,40 +62,40 @@ export interface BottomTabsProps extends ViewProps {
 
   // #region Common appearance
   /**
-   * @summary Specifies background color of the entire tab bar.
+   * @summary Specifies the background color for the entire tab bar.
    *
-   * Since iOS 26, it does not affect the tab bar.
+   * This property does not affect the tab bar starting from iOS 26.
    *
    * @platform android, ios
    * @supported iOS 18 or lower
    */
   tabBarBackgroundColor?: ColorValue;
   /**
-   * @summary Specifies title font family of every tab item in the tab bar.
+   * @summary Specifies the font family used for the title of each tab bar item.
    *
    * @platform android, ios
    */
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   /**
-   * @summary Specifies title font size of every tab item in the tab bar.
+   * @summary Specifies the font size used for the title of each tab bar item.
    *
    * @platform android, ios
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
   /**
-   * @summary Specifies title font weight of every tab item in the tab bar.
+   * @summary Specifies the font weight used for the title of each tab bar item.
    *
    * @platform android, ios
    */
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
   /**
-   * @summary Specifies title font style of every tab item in the tab bar.
+   * @summary Specifies the font style used for the title of each tab bar item.
    *
    * @platform android, ios
    */
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
   /**
-   * @summary Specifies title font color of every tab item in the tab bar.
+   * @summary Specifies the font color used for the title of each tab bar item.
    *
    * On iOS, overrides color defined in `tabBarTintColor` and `tabBarItemIconColor`.
    *
@@ -103,11 +103,11 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarItemTitleFontColor?: TextStyle['color'];
   /**
-   * @summary Specifies color of the icons for every tab item in the tab bar.
+   * @summary Specifies the icon color for each tab bar item.
    *
-   * On iOS, impacts also title text color.
+   * On iOS, this also impacts the title text color.
    *
-   * On iOS 26, it only applies to selected tab bar item. Other items
+   * Starting from iOS 26, it only applies to selected tab bar item. Other items
    * adopt a dark or light appearance depending on the theme of the tab bar.
    *
    * On iOS, it is overriden by `tabBarItemTitleFontColor` (for title text color)
@@ -130,11 +130,11 @@ export interface BottomTabsProps extends ViewProps {
 
   // #region iOS-only appearance
   /**
-   * @summary Specifies blur effect applied to tab bar.
+   * @summary Specifies the blur effect applied to the tab bar.
    *
    * Works with backgroundColor's alpha < 1.
    *
-   * Since iOS 26, it does not affect the tab bar.
+   * This property does not affect the tab bar starting from iOS 26.
    *
    * The following values are currently supported:
    *
@@ -152,10 +152,10 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarBlurEffect?: BottomTabsBlurEffect;
   /**
-   * @summary Specifies title offset of every tab item in the tab bar.
+   * @summary Specifies the title offset for each tab bar item.
    *
    * Depending on the iOS version and the device's interface orientation,
-   * this setting may affect the appearance of the text, badge and icon.
+   * this setting may affect the alignment of the text, badge and icon.
    *
    * @platform ios
    */
@@ -164,14 +164,14 @@ export interface BottomTabsProps extends ViewProps {
     vertical?: number;
   };
   /**
-   * @summary Specifies background color of badges for every tab item
-   * in the tab bar.
+   * @summary Specifies the background color of badges for each tab bar item.
    *
    * @platform ios
    */
   tabBarItemBadgeBackgroundColor?: ColorValue;
   /**
-   * The color used for selected tab's text and icon color.
+   * @summary Specifies the color used for selected tab's text and icon color.
+   *
    * Starting from iOS 26, it also impacts glow of Liquid Glass tab
    * selection view.
    *
@@ -182,8 +182,9 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarTintColor?: ColorValue;
   /**
-   * Specifies minimize behavior for the tab bar. Available since
-   * iOS 26.
+   * @summary Specifies the minimize behavior for the tab bar.
+   *
+   * Available starting from iOS 26.
    *
    * The following values are currently supported:
    *
@@ -207,7 +208,7 @@ export interface BottomTabsProps extends ViewProps {
 
   // #region Experimental support
   /**
-   * Experimental prop for changing container control.
+   * @summary Experimental prop for changing container control.
    *
    * If set to true, tab screen changes need to be handled by JS using
    * onNativeFocusChange callback (controlled/programatically-driven).
