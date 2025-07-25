@@ -1,9 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.annotation.SuppressLint
 import android.util.Log
 import android.view.Choreographer
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -92,8 +90,6 @@ class TabsHost(
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         }
 
-    private val appearanceCoordinator = TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, this)
-
     private val contentView: FrameLayout =
         FrameLayout(reactContext).apply {
             layoutParams =
@@ -116,6 +112,8 @@ class TabsHost(
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
 
     private var isLayoutEnqueued: Boolean = false
+
+    private val appearanceCoordinator = TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
 
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
@@ -289,9 +287,7 @@ class TabsHost(
     private fun updateBottomNavigationViewAppearance() {
         Log.w(TAG, "updateBottomNavigationViewAppearance")
 
-        appearanceCoordinator.updateTabAppearance()
-
-        updateMenuItems(bottomNavigationView.menu)
+        appearanceCoordinator.updateTabAppearance(this)
 
         bottomNavigationView.selectedItemId =
             checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
@@ -299,19 +295,6 @@ class TabsHost(
         post {
             refreshLayout()
             Log.d(TAG, "BottomNavigationView request layout")
-        }
-    }
-
-    @SuppressLint("UseKtx") // The lint is incorrect here. `size` is a regular function, not a getter.
-    private fun updateMenuItems(menu: Menu) {
-        if (menu.size() != tabScreenFragments.size) {
-            // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
-            menu.clear()
-        }
-        tabScreenFragments.forEachIndexed { index, fragment ->
-            val menuItem = menu.getOrCreateMenuItem(index, fragment.tabScreen)
-            check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
-            appearanceCoordinator.updateMenuItemAppearance(menuItem, fragment.tabScreen)
         }
     }
 
@@ -396,8 +379,3 @@ class TabsHost(
         const val TAG = "TabsHost"
     }
 }
-
-private fun Menu.getOrCreateMenuItem(
-    index: Int,
-    tabScreen: TabScreen,
-): MenuItem = this.findItem(index) ?: this.add(Menu.NONE, index, Menu.NONE, tabScreen.tabTitle)

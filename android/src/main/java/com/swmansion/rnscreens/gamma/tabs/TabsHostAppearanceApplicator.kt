@@ -18,9 +18,8 @@ import com.google.android.material.navigation.NavigationBarView
 class TabsHostAppearanceApplicator(
     private val context: ContextThemeWrapper,
     private val bottomNavigationView: BottomNavigationView,
-    private val tabsHost: TabsHost
 ) {
-    fun updateSharedAppearance() {
+    fun updateSharedAppearance(tabsHost: TabsHost) {
         bottomNavigationView.isVisible = true
         bottomNavigationView.setBackgroundColor(
             tabsHost.tabBarBackgroundColor
@@ -81,7 +80,9 @@ class TabsHostAppearanceApplicator(
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
     }
 
-    fun updateFontStyles() {
+    fun updateFontStyles(
+        tabsHost: TabsHost
+    ) {
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
         for (menuItem in bottomNavigationMenuView.children) {
