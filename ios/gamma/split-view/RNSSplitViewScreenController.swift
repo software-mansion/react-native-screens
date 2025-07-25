@@ -18,6 +18,13 @@ public class RNSSplitViewScreenController: UIViewController {
     return splitViewScreenComponentView.reactEventEmitter()
   }
 
+  private var displayLink: CADisplayLink?
+  private var transitioningToSize: CGSize?
+  private var animationFrame: CGRect?
+
+  @objc
+  public var isTransitioning: Bool = false
+
   @objc public required init(splitViewScreenComponentView: RNSSplitViewScreenComponentView) {
     self.splitViewScreenComponentView = splitViewScreenComponentView
     super.init(nibName: nil, bundle: nil)
@@ -70,15 +77,61 @@ public class RNSSplitViewScreenController: UIViewController {
   // MARK: Layout
 
   ///
+  /// @brief This method is overridden to extract the value to which we're transitioning and attach the DisplayLink to track frame updates on the presentation layer.
+  ///
+  public override func viewWillTransition(
+    to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator
+  ) {
+    super.viewWillTransition(to: size, with: coordinator)
+
+    transitioningToSize = size
+    isTransitioning = true
+
+    if displayLink == nil {
+      displayLink = CADisplayLink(target: self, selector: #selector(checkTransitionProgress))
+      displayLink?.add(to: .main, forMode: .common)
+    }
+  }
+
+  ///
+  /// @brief This method is responsible for tracking animation frames and requests layout which will synchronize ShadowNode size with the animation frame size.
+  ///
+  @objc
+  private func checkTransitionProgress() {
+    guard let targetSize = transitioningToSize else { return }
+
+    if let currentFrame = view.layer.presentation()?.frame {
+      let currentSize = currentFrame.size
+      let epsilon: CGFloat = 0.5
+
+      if abs(currentSize.width - targetSize.width) < epsilon
+        && abs(currentSize.height - targetSize.height) < epsilon
+      {
+        displayLink?.invalidate()
+        displayLink = nil
+        transitioningToSize = nil
+      }
+      animationFrame = currentFrame
+      view.setNeedsLayout()
+      view.layoutIfNeeded()
+    }
+  }
+
+  @objc
+  public override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+
+    updateShadowTreeState()
+  }
+
+  ///
   /// @brief Handles frame layout changes and updates Shadow Tree accordingly.
   ///
   /// Requests for the ShadowNode updates through the shadow state proxy.
   /// Differentiates cases when we're in the Host hierarchy to calculate frame relatively
   /// to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
   ///
-  @objc
-  public override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
+  private func updateShadowTreeState() {
     // For modals, which are presented outside the SplitViewHost subtree (and RN hierarchy),
     // we're attaching our touch handler adn we don't need to apply any offset corrections,
     // because it's positioned relatively to our RNSSplitViewScreenComponentView
@@ -90,10 +143,19 @@ public class RNSSplitViewScreenController: UIViewController {
         "[RNScreens] Expected to find RNSSplitViewHost component for RNSSplitViewScreen component"
       )
 
-      shadowStateProxy.updateShadowState(
-        ofComponent: splitViewScreenComponentView,
-        inContextOfAncestorView: ancestorView!
-      )
+      if let currentAnimationFrame = animationFrame {
+        let localOrigin = splitViewScreenComponentView.convert(
+          splitViewScreenComponentView.frame.origin, to: ancestorView)
+        let convertedFrame = CGRect(origin: localOrigin, size: currentAnimationFrame.size)
+
+        shadowStateProxy.updateShadowState(withFrame: convertedFrame)
+        animationFrame = nil
+      } else if transitioningToSize == nil {
+        shadowStateProxy.updateShadowState(
+          ofComponent: splitViewScreenComponentView,
+          inContextOfAncestorView: ancestorView!
+        )
+      }
     } else {
       shadowStateProxy.updateShadowState(
         ofComponent: splitViewScreenComponentView
