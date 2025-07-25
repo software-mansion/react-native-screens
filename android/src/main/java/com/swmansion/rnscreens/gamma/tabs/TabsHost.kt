@@ -1,31 +1,19 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import android.util.Log
-import android.util.TypedValue
 import android.view.Choreographer
-import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.view.children
-import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
-import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.modules.core.ReactChoreographer
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import kotlin.properties.Delegates
 
-@SuppressLint("PrivateResource") // We want to use variables from material design for default values
 class TabsHost(
     val reactContext: ThemedReactContext,
 ) : LinearLayout(reactContext),
@@ -124,6 +112,8 @@ class TabsHost(
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
 
     private var isLayoutEnqueued: Boolean = false
+
+    private val appearanceCoordinator = TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
 
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
@@ -288,7 +278,7 @@ class TabsHost(
 
     override fun onMenuItemAttributesChange(tabScreen: TabScreen) {
         getMenuItemForTabScreen(tabScreen)?.let { menuItem ->
-            updateMenuItemOfTabScreen(menuItem, tabScreen)
+            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabScreen)
         }
     }
 
@@ -297,59 +287,7 @@ class TabsHost(
     private fun updateBottomNavigationViewAppearance() {
         Log.w(TAG, "updateBottomNavigationViewAppearance")
 
-        bottomNavigationView.isVisible = true
-        bottomNavigationView.setBackgroundColor(
-            tabBarBackgroundColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_surface_container),
-        )
-
-        val states = arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked))
-
-        // Font color
-        val fontInactiveColor =
-            tabBarItemTitleFontColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
-        val fontActiveColor =
-            tabBarItemTitleFontColorActive ?: tabBarItemTitleFontColor
-                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary)
-        val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
-        bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
-
-        // Icon color
-        val iconInactiveColor =
-            tabBarItemIconColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
-        val iconActiveColor =
-            tabBarItemIconColorActive ?: tabBarItemIconColor
-                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_secondary_container)
-        val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
-        bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
-
-        // LabelVisibilityMode
-        // From docs: can be one of LABEL_VISIBILITY_AUTO, LABEL_VISIBILITY_SELECTED, LABEL_VISIBILITY_LABELED, or LABEL_VISIBILITY_UNLABELED
-
-        val visibilityMode =
-            when (tabBarItemLabelVisibilityMode) {
-                "selected" -> NavigationBarView.LABEL_VISIBILITY_SELECTED
-                "labeled" -> NavigationBarView.LABEL_VISIBILITY_LABELED
-                "unlabeled" -> NavigationBarView.LABEL_VISIBILITY_UNLABELED
-                else -> NavigationBarView.LABEL_VISIBILITY_AUTO
-            }
-
-        bottomNavigationView.labelVisibilityMode = visibilityMode
-
-        // Ripple color
-        val rippleColor =
-            tabBarItemRippleColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_navigation_item_ripple_color)
-        bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
-
-        // Active Indicator
-        val activeIndicatorColor =
-            tabBarItemActiveIndicatorColor
-                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary_container)
-
-        bottomNavigationView.isItemActiveIndicatorEnabled = isTabBarItemActiveIndicatorEnabled
-        bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
-
-        updateMenuItems(bottomNavigationView.menu)
-        updateFontStyles()
+        appearanceCoordinator.updateTabAppearance(this)
 
         bottomNavigationView.selectedItemId =
             checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
@@ -358,104 +296,6 @@ class TabsHost(
             refreshLayout()
             Log.d(TAG, "BottomNavigationView request layout")
         }
-    }
-
-    @SuppressLint("UseKtx") // The lint is incorrect here. `size` is a regular function, not a getter.
-    private fun updateMenuItems(menu: Menu) {
-        if (menu.size() != tabScreenFragments.size) {
-            // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
-            menu.clear()
-        }
-        tabScreenFragments.forEachIndexed { index, fragment ->
-            val menuItem = menu.getOrCreateMenuItem(index, fragment.tabScreen)
-            check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
-            updateMenuItemOfTabScreen(menuItem, fragment.tabScreen)
-        }
-    }
-
-    private fun updateFontStyles() {
-        val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
-
-        for (menuItem in bottomNavigationMenuView.children) {
-            val largeLabel =
-                menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_large_label_view)
-            val smallLabel =
-                menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
-
-            val isFontStyleItalic = tabBarItemTitleFontStyle == "italic"
-
-            // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
-            // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
-            // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
-            val fontWeight = if (tabBarItemTitleFontWeight == "bold") 700 else tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
-
-            val fontFamily =
-                ReactFontManager.getInstance().getTypeface(
-                    tabBarItemTitleFontFamily ?: "",
-                    fontWeight,
-                    isFontStyleItalic,
-                    reactContext.assets,
-                )
-
-            /*
-                Short explanation about computations we're doing below.
-                R.dimen, has defined value in SP, getDimension converts it to pixels, and by default
-                TextView.setTextSize accepts SP, so the size is multiplied by density twice. Thus we need
-                to convert both values to pixels and make sure that setTextSizes is about that.
-                The Text tag in RN uses SP or DP based on `allowFontScaling` prop. For now we're going
-                with SP, if there will be a need for skipping scale, the we should introduce similar
-                `allowFontScaling` prop.
-             */
-            val smallFontSize =
-                tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
-                    ?: wrappedContext.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
-            val largeFontSize =
-                tabBarItemTitleFontSizeActive?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
-                    ?: wrappedContext.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
-
-            // Inactive
-            smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, smallFontSize)
-            smallLabel.typeface = fontFamily
-
-            // Active
-            largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, largeFontSize)
-            largeLabel.typeface = fontFamily
-        }
-    }
-
-    private fun updateBadgeAppearance(
-        menuItemIndex: Int,
-        tabScreen: TabScreen,
-    ) {
-        val badgeValue = tabScreen.badgeValue
-
-        if (badgeValue == null) {
-            val badge = bottomNavigationView.getBadge(menuItemIndex)
-            badge?.isVisible = false
-
-            return
-        }
-
-        val badgeValueNumber = badgeValue.toIntOrNull()
-
-        val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
-        badge.isVisible = true
-
-        badge.clearText()
-        badge.clearNumber()
-
-        if (badgeValueNumber != null) {
-            badge.number = badgeValueNumber
-        } else if (badgeValue != "") {
-            badge.text = badgeValue
-        }
-
-        // Styling
-        badge.badgeTextColor =
-            tabScreen.tabBarItemBadgeTextColor ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
-        badge.backgroundColor =
-            tabScreen.tabBarItemBadgeBackgroundColor
-                ?: wrappedContext.getColor(com.google.android.material.R.color.m3_sys_color_light_error)
     }
 
     private fun updateSelectedTab() {
@@ -529,17 +369,6 @@ class TabsHost(
             bottomNavigationView.menu.findItem(index)
         }
 
-    private fun updateMenuItemOfTabScreen(
-        menuItem: MenuItem,
-        tabScreen: TabScreen,
-    ) {
-        menuItem.title = tabScreen.tabTitle
-        menuItem.icon = tabScreen.icon
-
-        // Badge
-        updateBadgeAppearance(bottomNavigationView.menu.children.indexOf(menuItem), tabScreen)
-    }
-
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
         check(id != NO_ID) { "[RNScreens] TabsHost must have its tag set when registering event emitters" }
@@ -550,8 +379,3 @@ class TabsHost(
         const val TAG = "TabsHost"
     }
 }
-
-private fun Menu.getOrCreateMenuItem(
-    index: Int,
-    tabScreen: TabScreen,
-): MenuItem = this.findItem(index) ?: this.add(Menu.NONE, index, Menu.NONE, tabScreen.tabTitle)
