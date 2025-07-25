@@ -76,6 +76,9 @@ public class RNSSplitViewScreenController: UIViewController {
 
   // MARK: Layout
 
+  ///
+  /// @brief This method is overridden to extract the value to which we're transitioning and attach the DisplayLink to track frame updates on the presentation layer.
+  ///
   public override func viewWillTransition(
     to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator
   ) {
@@ -90,7 +93,11 @@ public class RNSSplitViewScreenController: UIViewController {
     }
   }
 
-  @objc private func checkTransitionProgress() {
+  ///
+  /// @brief This method is responsible for tracking animation frames and requests layout which will synchronize ShadowNode size with the animation frame size.
+  ///
+  @objc
+  private func checkTransitionProgress() {
     guard let targetSize = transitioningToSize else { return }
 
     if let currentFrame = view.layer.presentation()?.frame {
@@ -110,13 +117,6 @@ public class RNSSplitViewScreenController: UIViewController {
     }
   }
 
-  ///
-  /// @brief Handles frame layout changes and updates Shadow Tree accordingly.
-  ///
-  /// Requests for the ShadowNode updates through the shadow state proxy.
-  /// Differentiates cases when we're in the Host hierarchy to calculate frame relatively
-  /// to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
-  ///
   @objc
   public override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
@@ -124,6 +124,13 @@ public class RNSSplitViewScreenController: UIViewController {
     updateShadowTreeState()
   }
 
+  ///
+  /// @brief Handles frame layout changes and updates Shadow Tree accordingly.
+  ///
+  /// Requests for the ShadowNode updates through the shadow state proxy.
+  /// Differentiates cases when we're in the Host hierarchy to calculate frame relatively
+  /// to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
+  ///
   private func updateShadowTreeState() {
     // For modals, which are presented outside the SplitViewHost subtree (and RN hierarchy),
     // we're attaching our touch handler adn we don't need to apply any offset corrections,
