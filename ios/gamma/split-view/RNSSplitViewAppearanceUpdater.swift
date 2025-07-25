@@ -1,4 +1,18 @@
+///
+/// @brief - Class responsible for applying all upcoming updates to SplitView.
+///
+/// This class is synchronizing UISplitViewController configuration props which are affecting the SplitView appearance with props passed to RNSSplitViewHostComponentView from the ElementTree.
+///
 class RNSSplitViewAppearanceUpdater {
+  ///
+  /// @brief Function responsible for applying all updates to SplitView in correct order
+  ///
+  /// It requests calling proper callbacks with batched SplitView updates on the AppearanceCoordinator object
+  ///
+  /// @param splitView The view representing JS component which is sending updates.
+  /// @param splitViewController The controller associated with the native JS component which receives updates and manages the native layer.
+  /// @param appearanceCoordinator The coordinator which is checking whether the update needs to be applied and if so, it executes the callback passed by this class.
+  ///
   public func updateAppearanceIfNeeded(
     _ splitView: RNSSplitViewHostComponentView?, _ splitViewController: RNSSplitViewHostController?,
     _ appearanceCoordinator: RNSSplitViewAppearanceCoordinator?
@@ -47,6 +61,14 @@ class RNSSplitViewAppearanceUpdater {
     }
   }
 
+  ///
+  /// @brief Function that applies all basic updates.
+  ///
+  /// It calls all setters on RNSSplitViewHostController that doesn't require any custom logic and conditions to be met.
+  ///
+  /// @param splitView The view representing JS component which is sending updates.
+  /// @param splitViewController The controller associated with the native JS component which receives updates and manages the native layer.
+  ///
   private func updateSplitViewConfiguration(
     for splitView: RNSSplitViewHostComponentView,
     withController splitViewController: RNSSplitViewHostController
@@ -150,6 +172,16 @@ class RNSSplitViewAppearanceUpdater {
     splitViewController.toggleSplitViewInspector(splitView.showInspector)
   }
 
+  ///
+  /// @brief Function that updates `preferredDisplayMode` property on SplitView.
+  ///
+  /// `preferredDisplayMode` needs to have a dedicated flag to prevent updates from the JS, when other props updates the appearance.
+  /// It is crucial in the case, when `preferredDisplayMode` has changed due to some transition that was executed natively, e. g. after showing/hiding a column by a swipe.
+  /// In that case, any prop update incoming, would reset `preferredDisplayMode` to the state from JS, what doesn't look good.
+  ///
+  /// @param splitView The view representing JS component which is sending updates.
+  /// @param splitViewController The controller associated with the native JS component which receives updates and manages the native layer.
+  ///
   func updateSplitViewDisplayMode(
     for splitView: RNSSplitViewHostComponentView,
     withController splitViewController: RNSSplitViewHostController

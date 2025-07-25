@@ -1,5 +1,9 @@
-/// @brief - A class that manages the actions to take after invalidating appearance flags.
-
+///
+/// @brief - A class that is responsible for coordinating SplitViewHost appearance updates.
+///
+/// It collects flags for SplitView appearance update actions and invalidates them.
+/// It's also responsible for executing callbacks when the action is requested.
+///
 final class RNSSplitViewAppearanceCoordinator {
   var updateFlags: RNSSplitViewAppearanceUpdateFlags = []
 
