@@ -1,4 +1,3 @@
-#if !RCT_NEW_ARCH_ENABLED
 #import "RCTConvert+RNSBottomTabs.h"
 
 @implementation RCTConvert (RNSBottomTabs)
@@ -9,6 +8,7 @@
   return UIOffsetMake([json[@"horizontal"] floatValue], [json[@"vertical"] floatValue]);
 }
 
+#if !RCT_NEW_ARCH_ENABLED
 RCT_ENUM_CONVERTER(
     RNSBottomTabsIconType,
     (@{
@@ -29,7 +29,6 @@ RCT_ENUM_CONVERTER(
     }),
     RNSTabBarMinimizeBehaviorAutomatic,
     integerValue)
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
-
-#endif // !RCT_NEW_ARCH_ENABLED
