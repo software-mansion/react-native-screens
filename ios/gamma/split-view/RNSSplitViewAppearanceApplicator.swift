@@ -13,45 +13,36 @@ class RNSSplitViewAppearanceApplicator {
   /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
   /// @param appearanceCoordinator The coordinator which is checking whether the update needs to be applied and if so, it executes the callback passed by this class.
   ///
-  public func updateAppearanceIfNeeded(
-    _ splitView: RNSSplitViewHostComponentView?, _ splitViewController: RNSSplitViewHostController?,
-    _ appearanceCoordinator: RNSSplitViewAppearanceCoordinator?
-  ) {
-    precondition(
-      splitView != nil,
-      "[RNScreens] Attempt to update appearance with uninitialized SplitView component")
-    precondition(
-      splitViewController != nil,
-      "[RNScreens] Attempt to update appearance of uninitialized SplitView controller")
-    precondition(
-      appearanceCoordinator != nil,
-      "[RNScreens] Attempt to update appearance with uninitialized appearance coordinator")
-
-    appearanceCoordinator!.updateIfNeeded(.generalUpdate) { [weak self] in
+    public func updateAppearanceIfNeeded(
+      _ splitView: RNSSplitViewHostComponentView,
+      _ splitViewController: RNSSplitViewHostController,
+      _ appearanceCoordinator: RNSSplitViewAppearanceCoordinator
+    ) {
+    appearanceCoordinator.updateIfNeeded(.generalUpdate) { [weak self] in
       guard let self = self
       else {
         return
       }
 
-      self.updateSplitViewConfiguration(for: splitView!, withController: splitViewController!)
+      self.updateSplitViewConfiguration(for: splitView, withController: splitViewController)
     }
 
-    appearanceCoordinator!.updateIfNeeded(.secondaryScreenNavBarUpdate) { [weak self] in
+    appearanceCoordinator.updateIfNeeded(.secondaryScreenNavBarUpdate) { [weak self] in
       guard let self = self
       else {
         return
       }
 
-      splitViewController!.refreshSecondaryNavBar()
+      splitViewController.refreshSecondaryNavBar()
     }
 
-    appearanceCoordinator!.updateIfNeeded(.displayModeUpdate) { [weak self] in
+    appearanceCoordinator.updateIfNeeded(.displayModeUpdate) { [weak self] in
       guard let self = self
       else {
         return
       }
 
-      self.updateSplitViewDisplayMode(for: splitView!, withController: splitViewController!)
+      self.updateSplitViewDisplayMode(for: splitView, withController: splitViewController)
     }
   }
 
