@@ -20,7 +20,7 @@ public class RNSSplitViewScreenController: UIViewController {
 
   private var displayLink: CADisplayLink?
   private var transitioningToSize: CGSize?
-  private var animationFrame: CGRect?
+  private var lastAnimationFrame: CGRect?
   let viewResizeThreshold: CGFloat = 0.5
 
   @objc
@@ -87,6 +87,7 @@ public class RNSSplitViewScreenController: UIViewController {
   ) {
     super.viewWillTransition(to: size, with: coordinator)
 
+    lastAnimationFrame = nil
     transitioningToSize = size
     isTransitioning = true
 
@@ -105,7 +106,8 @@ public class RNSSplitViewScreenController: UIViewController {
     guard let targetSize = transitioningToSize else { return }
 
     if let currentFrame = view.layer.presentation()?.frame {
-      let currentSize = currentFrame.size
+        print("\(self.view.tag) frame \(currentFrame)")
+        let currentSize = currentFrame.size
       if abs(currentSize.width - targetSize.width) < viewResizeThreshold
         && abs(currentSize.height - targetSize.height) < viewResizeThreshold
       {
@@ -117,10 +119,10 @@ public class RNSSplitViewScreenController: UIViewController {
       // In that situation, we'll be sending new frames continously, as the previous condition is always false.
       // Ideally, we should have an opposite to `viewWillTransition` e.g. `viewDidTransition`,
       // but so far there's no API for that.
-      if let lastFrame = animationFrame, CGRectEqualToRect(currentFrame, lastFrame) {
+      if let lastFrame = lastAnimationFrame, CGRectEqualToRect(currentFrame, lastFrame) {
         stopAnimation()
       }
-      animationFrame = currentFrame
+      lastAnimationFrame = currentFrame
       updateShadowTreeState()
     }
   }
@@ -158,7 +160,7 @@ public class RNSSplitViewScreenController: UIViewController {
         "[RNScreens] Expected to find RNSSplitViewHost component for RNSSplitViewScreen component"
       )
 
-      if let currentAnimationFrame = animationFrame {
+      if let currentAnimationFrame = lastAnimationFrame {
         let localOrigin = splitViewScreenComponentView.convert(
           splitViewScreenComponentView.frame.origin, to: ancestorView)
         let convertedFrame = CGRect(origin: localOrigin, size: currentAnimationFrame.size)
