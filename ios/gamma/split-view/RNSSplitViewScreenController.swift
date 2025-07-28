@@ -121,8 +121,7 @@ public class RNSSplitViewScreenController: UIViewController {
         stopAnimation()
       }
       animationFrame = currentFrame
-      view.setNeedsLayout()
-      view.layoutIfNeeded()
+      updateShadowTreeState()
     }
   }
 
