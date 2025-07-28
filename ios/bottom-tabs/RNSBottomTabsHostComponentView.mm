@@ -30,7 +30,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSBottomTabsHostComponentView {
-  RNSTabBarController *_controller;
+  RNSTabBarController *_Nonnull _controller;
   RNSTabBarControllerDelegate *_controllerDelegate;
 
   RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
@@ -61,6 +61,12 @@ namespace react = facebook::react;
   return self;
 }
 #endif // !RCT_NEW_ARCH_ENABLED
+
+- (nonnull RNSTabBarController *)controller
+{
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
+  return _controller;
+}
 
 - (void)initState
 {
