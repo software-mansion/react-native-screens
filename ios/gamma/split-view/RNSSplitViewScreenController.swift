@@ -21,6 +21,7 @@ public class RNSSplitViewScreenController: UIViewController {
   private var displayLink: CADisplayLink?
   private var transitioningToSize: CGSize?
   private var animationFrame: CGRect?
+  let viewWidthEpsilon: CGFloat = 0.5
 
   @objc
   public var isTransitioning: Bool = false
@@ -105,10 +106,9 @@ public class RNSSplitViewScreenController: UIViewController {
 
     if let currentFrame = view.layer.presentation()?.frame {
       let currentSize = currentFrame.size
-      let epsilon: CGFloat = 0.5
 
-      if abs(currentSize.width - targetSize.width) < epsilon
-        && abs(currentSize.height - targetSize.height) < epsilon
+      if abs(currentSize.width - targetSize.width) < viewWidthEpsilon
+        && abs(currentSize.height - targetSize.height) < viewWidthEpsilon
       {
         displayLink?.invalidate()
         displayLink = nil
