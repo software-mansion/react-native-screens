@@ -168,7 +168,7 @@ export interface BottomTabsProps extends ViewProps {
   /**
    * @summary Specifies the label visibility mode - when the labels of each item bar should be visible.
    *
-   * The fallowing values are available:
+   * The following values are available:
    * - `auto` - android's `LABEL_VISIBILITY_AUTO` -  the label behaves as “labeled” when there are 3 items or less, or “selected” when there are 4 items or more
    * - `selected` - android's `LABEL_VISIBILITY_SELECTED` - the label is only shown on the selected navigation item
    * - `labeled` - android's `LABEL_VISIBILITY_LABELED` - the label is shown on all navigation items
