@@ -149,7 +149,7 @@ class ScreenStack(
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
 
-        // We don't count preloaded screen as "already in stack" up until it appears with state == ON_TOP
+        // We don't count preloaded screen as "already in stack" until it appears with state == ON_TOP
         // See https://github.com/software-mansion/react-native-screens/pull/3062
         val newTopAlreadyInStack = stack.contains(newTop) && !preloadedWrappers.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
@@ -272,10 +272,11 @@ class ScreenStack(
             // and the list could contain some other inactive screens that were not being preloaded
             // but we are only really interested in and check the INACTIVE screens that are above
             // newTop screen, which ARE the preloaded ones
-            preloadedWrappers = screenWrappers
-                .asSequence()
-                .filter { it.screen.activityState == Screen.ActivityState.INACTIVE }
-                .toList()
+            preloadedWrappers =
+                screenWrappers
+                    .asSequence()
+                    .filter { it.screen.activityState == Screen.ActivityState.INACTIVE }
+                    .toList()
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()
