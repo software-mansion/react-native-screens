@@ -1,6 +1,7 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
+#import "RCTConvert+RNSBottomTabs.h"
 #import "RNSConversions.h"
 #import "RNSTabBarAppearanceProvider.h"
 #import "RNSTabsScreenViewController.h"
@@ -201,8 +202,10 @@
     tabBarItemStateAppearance.iconColor = [RCTConvert UIColor:itemStateAppearanceProps[@"tabBarItemIconColor"]];
   }
 
-  // TODO: correctly handle titlePositionAdjustment (1. convert, 2. (0,0) case)
-  //    tabBarItemStateAppearance.titlePositionAdjustment = itemStateAppearanceProps[@"titlePositionAdjustment"];
+  if (itemStateAppearanceProps[@"tabBarTitlePositionAdjustment"] != nil) {
+    tabBarItemStateAppearance.titlePositionAdjustment =
+        [RCTConvert UIOffset:itemStateAppearanceProps[@"tabBarTitlePositionAdjustment"]];
+  }
 }
 
 @end
