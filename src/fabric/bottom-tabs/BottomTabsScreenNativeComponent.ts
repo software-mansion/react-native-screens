@@ -92,6 +92,7 @@ export interface NativeProps extends ViewProps {
   isFocused?: boolean;
   tabKey: string;
 
+  // iOS-specific
   standardAppearance?: UnsafeMixed<Appearance>;
   scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
