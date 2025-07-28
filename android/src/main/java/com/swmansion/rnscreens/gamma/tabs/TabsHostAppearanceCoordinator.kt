@@ -3,10 +3,14 @@ package com.swmansion.rnscreens.gamma.tabs
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.ContextThemeWrapper
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.size
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class TabsHostAppearanceCoordinator(context: ContextThemeWrapper, private val bottomNavigationView: BottomNavigationView, private val tabScreenFragments: MutableList<TabScreenFragment>) {
+class TabsHostAppearanceCoordinator(
+    context: ContextThemeWrapper,
+    private val bottomNavigationView: BottomNavigationView,
+    private val tabScreenFragments: MutableList<TabScreenFragment>,
+) {
     private val appearanceApplicator = TabsHostAppearanceApplicator(context, bottomNavigationView)
 
     fun updateTabAppearance(tabsHost: TabsHost) {

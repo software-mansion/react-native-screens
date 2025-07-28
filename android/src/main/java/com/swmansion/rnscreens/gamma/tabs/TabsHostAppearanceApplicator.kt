@@ -26,10 +26,11 @@ class TabsHostAppearanceApplicator(
                 ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_surface_container),
         )
 
-        val states = arrayOf(
-            intArrayOf(-android.R.attr.state_checked),
-            intArrayOf(android.R.attr.state_checked)
-        )
+        val states =
+            arrayOf(
+                intArrayOf(-android.R.attr.state_checked),
+                intArrayOf(android.R.attr.state_checked),
+            )
 
         // Font color
         val fontInactiveColor =
@@ -37,7 +38,7 @@ class TabsHostAppearanceApplicator(
                 ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
         val fontActiveColor =
             tabsHost.tabBarItemTitleFontColorActive ?: tabsHost.tabBarItemTitleFontColor
-            ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary)
+                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary)
         val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
 
@@ -47,7 +48,7 @@ class TabsHostAppearanceApplicator(
                 ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
         val iconActiveColor =
             tabsHost.tabBarItemIconColorActive ?: tabsHost.tabBarItemIconColor
-            ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_on_secondary_container)
+                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_on_secondary_container)
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
@@ -80,9 +81,7 @@ class TabsHostAppearanceApplicator(
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
     }
 
-    fun updateFontStyles(
-        tabsHost: TabsHost
-    ) {
+    fun updateFontStyles(tabsHost: TabsHost) {
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
         for (menuItem in bottomNavigationMenuView.children) {
@@ -96,7 +95,14 @@ class TabsHostAppearanceApplicator(
             // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
             // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
             // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
-            val fontWeight = if (tabsHost.tabBarItemTitleFontWeight == "bold") 700 else tabsHost.tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
+            val fontWeight =
+                if (tabsHost.tabBarItemTitleFontWeight ==
+                    "bold"
+                ) {
+                    700
+                } else {
+                    tabsHost.tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
+                }
 
             val fontFamily =
                 ReactFontManager.getInstance().getTypeface(
@@ -138,7 +144,6 @@ class TabsHostAppearanceApplicator(
     ) {
         menuItem.title = tabScreen.tabTitle
         menuItem.icon = tabScreen.icon
-
     }
 
     fun updateBadgeAppearance(
