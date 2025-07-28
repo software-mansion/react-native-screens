@@ -131,18 +131,12 @@
     }
   }
 
-  // Inheritance behavior
   if (appearanceProps[@"stacked"] != nil) {
     [self configureTabBarItemAppearance:tabBarAppearance.stackedLayoutAppearance fromFolly:appearanceProps[@"stacked"]];
-    [self configureTabBarItemAppearance:tabBarAppearance.inlineLayoutAppearance fromFolly:appearanceProps[@"stacked"]];
-    [self configureTabBarItemAppearance:tabBarAppearance.compactInlineLayoutAppearance
-                              fromFolly:appearanceProps[@"stacked"]];
   }
 
   if (appearanceProps[@"inline"] != nil) {
     [self configureTabBarItemAppearance:tabBarAppearance.inlineLayoutAppearance fromFolly:appearanceProps[@"inline"]];
-    [self configureTabBarItemAppearance:tabBarAppearance.compactInlineLayoutAppearance
-                              fromFolly:appearanceProps[@"inline"]];
   }
 
   if (appearanceProps[@"compactInline"] != nil) {
@@ -153,12 +147,8 @@
 
 + (void)configureTabBarItemAppearance:(UITabBarItemAppearance *)tabBarItemAppearance fromFolly:(id)itemAppearanceProps
 {
-  // Inheritance behavior
   if (itemAppearanceProps[@"normal"] != nil) {
     [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal fromFolly:itemAppearanceProps[@"normal"]];
-    [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected fromFolly:itemAppearanceProps[@"normal"]];
-    [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused fromFolly:itemAppearanceProps[@"normal"]];
-    [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled fromFolly:itemAppearanceProps[@"normal"]];
   }
 
   if (itemAppearanceProps[@"selected"] != nil) {
