@@ -77,10 +77,12 @@ public class RNSSplitViewScreenController: UIViewController {
   // MARK: Layout
 
   ///
-  /// @brief This method is overridden to extract the value to which we're transitioning and attach the DisplayLink to track frame updates on the presentation layer.
+  /// @brief This method is overridden to extract the value to which we're transitioning
+  /// and attach the DisplayLink to track frame updates on the presentation layer.
   ///
   public override func viewWillTransition(
-    to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator
+    to size: CGSize,
+    with coordinator: any UIViewControllerTransitionCoordinator
   ) {
     super.viewWillTransition(to: size, with: coordinator)
 
@@ -94,7 +96,8 @@ public class RNSSplitViewScreenController: UIViewController {
   }
 
   ///
-  /// @brief This method is responsible for tracking animation frames and requests layout which will synchronize ShadowNode size with the animation frame size.
+  /// @brief This method is responsible for tracking animation frames and requests layout
+  /// which will synchronize ShadowNode size with the animation frame size.
   ///
   @objc
   private func checkTransitionProgress() {
