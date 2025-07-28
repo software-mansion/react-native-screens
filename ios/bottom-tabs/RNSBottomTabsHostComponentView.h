@@ -8,6 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomTabsScreenComponentView;
+@class RNSTabBarController;
 @class RCTImageLoader;
 
 /**
@@ -23,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
 #endif // !RCT_NEW_ARCH_ENABLED
+
+@property (nonatomic, nonnull, strong, readonly) RNSTabBarController *controller;
 
 @end
 
