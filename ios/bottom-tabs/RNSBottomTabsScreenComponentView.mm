@@ -73,19 +73,6 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
-  //  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
-  //  _tabBarBackgroundColor = nil;
-  //
-  //  _tabBarItemTitleFontFamily = nil;
-  //  _tabBarItemTitleFontSize = nil;
-  //  _tabBarItemTitleFontWeight = nil;
-  //  _tabBarItemTitleFontStyle = nil;
-  //  _tabBarItemTitleFontColor = nil;
-  //  _tabBarItemTitlePositionAdjustment = UIOffsetMake(0.0, 0.0);
-  //
-  //  _tabBarItemIconColor = nil;
-  //
-  //  _tabBarItemBadgeBackgroundColor = nil;
 
   _tabBarStandardAppearance = nil;
   _tabBarScrollEdgeAppearance = nil;
@@ -354,60 +341,6 @@ RNS_IGNORE_SUPER_CALL_END
   _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
   _controller.tabBarItem.badgeValue = _badgeValue;
 }
-
-//- (void)setTabBarBackgroundColor:(UIColor *)tabBarBackgroundColor
-//{
-//  _tabBarBackgroundColor = tabBarBackgroundColor;
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
-//
-//- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
-//{
-//  _tabBarBlurEffect = tabBarBlurEffect;
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
-//
-//- (void)setTabBarItemTitleFontFamily:(NSString *)tabBarItemTitleFontFamily
-//{
-//  _tabBarItemTitleFontFamily = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontFamily];
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
-//
-//- (void)setTabBarItemTitleFontSize:(NSNumber *)tabBarItemTitleFontSize
-//{
-//  _tabBarItemTitleFontSize = tabBarItemTitleFontSize;
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
-//
-//- (void)setTabBarItemTitleFontWeight:(NSString *)tabBarItemTitleFontWeight
-//{
-//  _tabBarItemTitleFontWeight = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontWeight];
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
-//
-//- (void)setTabBarItemTitleFontStyle:(NSString *)tabBarItemTitleFontStyle
-//{
-//  _tabBarItemTitleFontStyle = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontStyle];
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
-//
-//- (void)setTabBarItemTitleFontColor:(UIColor *)tabBarItemTitleFontColor
-//{
-//  _tabBarItemTitleFontColor = tabBarItemTitleFontColor;
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
-//
-//- (void)setTabBarItemIconColor:(UIColor *)tabBarItemIconColor
-//{
-//  _tabBarItemIconColor = tabBarItemIconColor;
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
-//
-//- (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
-//{
-//  _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
-//  _tabItemNeedsAppearanceUpdate = YES;
-//}
 
 - (void)setIconType:(RNSBottomTabsIconType)iconType
 {
