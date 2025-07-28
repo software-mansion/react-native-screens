@@ -178,21 +178,29 @@ RNS_IGNORE_SUPER_CALL_END
     _controller.tabBarItem.badgeValue = _badgeValue;
   }
 
-  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance ||
-      _tabBarStandardAppearance == nil) {
-    _tabBarStandardAppearance = [UITabBarAppearance new];
-    [RNSTabBarAppearanceCoordinator
-        configureTabBarAppearance:_tabBarStandardAppearance
-                        fromFolly:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
+  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
+    if (newComponentProps.standardAppearance.type() != folly::dynamic::NULLT) {
+      _tabBarStandardAppearance = [UITabBarAppearance new];
+      [RNSTabBarAppearanceCoordinator
+          configureTabBarAppearance:_tabBarStandardAppearance
+                          fromFolly:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
+    } else {
+      _tabBarStandardAppearance = nil;
+    }
+
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance ||
-      newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
-    _tabBarScrollEdgeAppearance = [[UITabBarAppearance alloc] initWithBarAppearance:_tabBarStandardAppearance];
-    [RNSTabBarAppearanceCoordinator
-        configureTabBarAppearance:_tabBarScrollEdgeAppearance
-                        fromFolly:RNSConvertFollyDynamicToId(newComponentProps.scrollEdgeAppearance)];
+  if (newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
+    if (newComponentProps.scrollEdgeAppearance.type() != folly::dynamic::NULLT) {
+      _tabBarScrollEdgeAppearance = [UITabBarAppearance new];
+      [RNSTabBarAppearanceCoordinator
+          configureTabBarAppearance:_tabBarScrollEdgeAppearance
+                          fromFolly:RNSConvertFollyDynamicToId(newComponentProps.scrollEdgeAppearance)];
+    } else {
+      _tabBarScrollEdgeAppearance = nil;
+    }
+
     tabItemNeedsAppearanceUpdate = YES;
   }
 
