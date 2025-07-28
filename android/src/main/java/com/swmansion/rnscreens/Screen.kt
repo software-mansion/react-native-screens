@@ -33,13 +33,15 @@ import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
+import com.swmansion.rnscreens.gamma.common.FragmentProviding
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
     val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
-    ScreenContentWrapper.OnLayoutCallback {
-    val fragment: Fragment?
+    ScreenContentWrapper.OnLayoutCallback,
+    FragmentProviding {
+    override val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
     val sheetBehavior: BottomSheetBehavior<Screen>?

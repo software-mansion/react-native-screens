@@ -176,26 +176,27 @@ open class ScreenContainer(
     private fun setupFragmentManager() {
         var parent: ViewParent = this
         // We traverse view hierarchy up until we find screen parent or a root view
-        while (!(parent is ReactRootView || parent is Screen || parent is FragmentProviding) &&
+        while (!(parent is ReactRootView || parent is FragmentProviding) &&
             parent.parent != null
         ) {
             parent = parent.parent
         }
-        // If parent is of type Screen it means we are inside a nested fragment structure.
+        // If parent is of type FragmentProviding it means we are inside a nested fragment structure.
         // Otherwise we expect to connect directly with root view and get root fragment manager
-        if (parent is Screen) {
-            checkNotNull(
-                parent.fragmentWrapper?.let { fragmentWrapper ->
-                    parentScreenWrapper = fragmentWrapper
-                    fragmentWrapper.addChildScreenContainer(this)
-                    setFragmentManager(fragmentWrapper.fragment.childFragmentManager)
-                },
-            ) { "Parent Screen does not have its Fragment attached" }
-        } else if (parent is FragmentProviding) {
-            // TODO: We're missing parent-child relationship here between old container & new one
+        if (parent is FragmentProviding) {
+            if (parent is Screen) {
+                checkNotNull(
+                    parent.fragmentWrapper?.let { fragmentWrapper ->
+                        parentScreenWrapper = fragmentWrapper
+                        fragmentWrapper.addChildScreenContainer(this)
+                    },
+                ) { "Parent Screen does not have its Fragment attached" }
+            }  else {
+              // TODO: We're missing parent-child relationship here between old container & new one
+            }
             val fragmentManager =
                 checkNotNull(
-                    parent.getFragment(),
+                    parent.fragment,
                 ) { "[RNScreens] Parent $parent returned nullish fragment" }.childFragmentManager
             setFragmentManager(fragmentManager)
         } else {

@@ -29,6 +29,9 @@ class TabScreen(
 
     internal lateinit var eventEmitter: TabScreenEventEmitter
 
+    override val fragment: Fragment?
+        get() = tabScreenDelegate.get()?.getFragmentForTabScreen(this)
+
     var tabKey: String? = null
         set(value) {
             field =
@@ -92,8 +95,6 @@ class TabScreen(
     internal fun setTabScreenDelegate(delegate: TabScreenDelegate?) {
         tabScreenDelegate = WeakReference(delegate)
     }
-
-    override fun getFragment(): Fragment? = tabScreenDelegate.get()?.getFragmentForTabScreen(this)
 
     private fun onTabFocusChangedFromJS() {
         tabScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
