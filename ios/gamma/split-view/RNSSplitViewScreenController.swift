@@ -19,15 +19,13 @@ public class RNSSplitViewScreenController: UIViewController {
   }
 
   private var displayLink: CADisplayLink?
-  private var transitioningToSize: CGSize?
   private var lastAnimationFrame: CGRect?
-  let viewResizeThreshold: CGFloat = 0.5
-
-  @objc
-  public var isTransitioning: Bool = false
+  private var transitionInProgress: Bool
 
   @objc public required init(splitViewScreenComponentView: RNSSplitViewScreenComponentView) {
     self.splitViewScreenComponentView = splitViewScreenComponentView
+    self.transitionInProgress = false
+
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -68,6 +66,18 @@ public class RNSSplitViewScreenController: UIViewController {
     return self.splitViewController is RNSSplitViewHostController
   }
 
+  ///
+  /// @brief Determines whether an SplitView animated transition is currently running
+  ///
+  /// Used to differentiate favor frames from the presentation layer over view's frame .
+  ///
+  /// @return true if the transition is running, false otherwise.
+  ///
+  @objc
+  public func isTransitionInProgress() -> Bool {
+    return transitionInProgress
+  }
+
   // MARK: Signals
 
   @objc
@@ -87,14 +97,33 @@ public class RNSSplitViewScreenController: UIViewController {
   ) {
     super.viewWillTransition(to: size, with: coordinator)
 
-    lastAnimationFrame = nil
-    transitioningToSize = size
-    isTransitioning = true
+    transitionInProgress = true
 
-    if displayLink == nil {
-      displayLink = CADisplayLink(target: self, selector: #selector(trackTransitionProgress))
-      displayLink?.add(to: .main, forMode: .common)
-    }
+    coordinator.animate(
+      alongsideTransition: { [weak self] context in
+        guard let self = self else { return }
+        if self.displayLink == nil {
+          self.displayLink = CADisplayLink(
+            target: self, selector: #selector(trackTransitionProgress))
+          self.displayLink?.add(to: .main, forMode: .common)
+        }
+      },
+      completion: { [weak self] context in
+        guard let self = self else { return }
+        self.stopAnimation()
+        // After the animation completion, ensure that ShadowTree state
+        // is calculated relatively to the ancestor's frame by requesting
+        // the state update.
+        self.updateShadowTreeState()
+      })
+  }
+
+  private func stopAnimation() {
+    lastAnimationFrame = nil
+    transitionInProgress = false
+
+    displayLink?.invalidate()
+    displayLink = nil
   }
 
   ///
@@ -103,34 +132,10 @@ public class RNSSplitViewScreenController: UIViewController {
   ///
   @objc
   private func trackTransitionProgress() {
-    guard let targetSize = transitioningToSize else { return }
-
     if let currentFrame = view.layer.presentation()?.frame {
-        let currentSize = currentFrame.size
-      if abs(currentSize.width - targetSize.width) < viewResizeThreshold
-        && abs(currentSize.height - targetSize.height) < viewResizeThreshold
-      {
-        stopAnimation()
-      }
-
-      // Tracking only abs with some arbitrary epsilon might not be sufficient.
-      // In the worst case, when the animation is targeting value X, it may stop at X + 0.5.
-      // In that situation, we'll be sending new frames continously, as the previous condition is always false.
-      // Ideally, we should have an opposite to `viewWillTransition` e.g. `viewDidTransition`,
-      // but so far there's no API for that.
-      if let lastFrame = lastAnimationFrame, CGRectEqualToRect(currentFrame, lastFrame) {
-        stopAnimation()
-      }
       lastAnimationFrame = currentFrame
       updateShadowTreeState()
     }
-  }
-
-  private func stopAnimation() {
-    displayLink?.invalidate()
-    displayLink = nil
-    transitioningToSize = nil
-    isTransitioning = false
   }
 
   @objc
@@ -147,39 +152,67 @@ public class RNSSplitViewScreenController: UIViewController {
   /// Differentiates cases when we're in the Host hierarchy to calculate frame relatively
   /// to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
   ///
+  /// Prefers to apply dynamic updates from the presentation layer if the transition is in progress.
+  ///
   private func updateShadowTreeState() {
     // For modals, which are presented outside the SplitViewHost subtree (and RN hierarchy),
-    // we're attaching our touch handler adn we don't need to apply any offset corrections,
+    // we're attaching our touch handler and we don't need to apply any offset corrections,
     // because it's positioned relatively to our RNSSplitViewScreenComponentView
-    if isInSplitViewHostSubtree() {
-      let ancestorView = findSplitViewHostController()?.view
-
-      assert(
-        ancestorView != nil,
-        "[RNScreens] Expected to find RNSSplitViewHost component for RNSSplitViewScreen component"
-      )
-
-      if let currentAnimationFrame = lastAnimationFrame {
-        let localOrigin = splitViewScreenComponentView.convert(
-          splitViewScreenComponentView.frame.origin, to: ancestorView)
-        let convertedFrame = CGRect(origin: localOrigin, size: currentAnimationFrame.size)
-
-        shadowStateProxy.updateShadowState(withFrame: convertedFrame)
-      } else if transitioningToSize == nil {
-        shadowStateProxy.updateShadowState(
-          ofComponent: splitViewScreenComponentView,
-          inContextOfAncestorView: ancestorView!
-        )
-      }
-    } else {
-      shadowStateProxy.updateShadowState(
-        ofComponent: splitViewScreenComponentView
-      )
+    if !isInSplitViewHostSubtree() {
+      shadowStateProxy.updateShadowState(ofComponent: splitViewScreenComponentView)
+      return
     }
+
+    let ancestorView = findSplitViewHostController()?.view
+    assert(
+      ancestorView != nil,
+      "[RNScreens] Expected to find RNSSplitViewHost component for RNSSplitViewScreen component"
+    )
+
+    // If the animation is currently running, we prefer to apply dynamic updates,
+    // based on the results from the presentation layer
+    // which is read from `trackTransitionProgress` method.
+    if let currentSize = lastAnimationFrame?.size {
+      applyTransitioningShadowState(
+        size: currentSize,
+        ancestorView: ancestorView!
+      )
+      return
+    }
+
+    // There might be the case, when transition is about to start and in the meantime,
+    // sth else is triggering frame update relatively to the parent. As we know
+    // that dynamic updates from the presentation layer are coming, we're blocking this
+    // to prevent interrupting with the frames that are less important for us.
+    // This works fine, because after the animation completion, we're sending the last update
+    // which is compatible with the frame which would be calculated relatively to the ancestor here.
+    if !isTransitionInProgress() {
+      applyStaticShadowStateRelativeToAncestor(ancestorView!)
+    }
+  }
+
+  private func applyTransitioningShadowState(size: CGSize, ancestorView: UIView) {
+    let localOrigin = splitViewScreenComponentView.convert(
+      splitViewScreenComponentView.frame.origin,
+      to: ancestorView
+    )
+    let convertedFrame = CGRect(origin: localOrigin, size: size)
+    shadowStateProxy.updateShadowState(withFrame: convertedFrame)
+  }
+
+  private func applyStaticShadowStateRelativeToAncestor(_ ancestorView: UIView) {
+    shadowStateProxy.updateShadowState(
+      ofComponent: splitViewScreenComponentView,
+      inContextOfAncestorView: ancestorView
+    )
   }
 
   ///
   /// @brief Request ShadowNode state update when the SplitView screen frame origin has changed.
+  ///
+  /// If there's a transition in progress, this function is ignored as we prefer to apply updates
+  /// that are dynamically coming from the presentation layer, rather than reading the frame, because
+  /// view's frame is set to the target value at the begining of the transition.
   ///
   /// @param splitViewController The UISplitViewController whose layout positioning changed, represented by RNSSplitViewHostController.
   ///
@@ -187,7 +220,7 @@ public class RNSSplitViewScreenController: UIViewController {
     // During the transition, we're listening for the animation
     // frame updates on the presentation layer and we're
     // treating these updates as the source of truth
-    if !isTransitioning {
+    if !isTransitionInProgress() {
       shadowStateProxy.updateShadowState(
         ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view
       )
