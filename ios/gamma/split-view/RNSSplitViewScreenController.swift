@@ -183,8 +183,14 @@ public class RNSSplitViewScreenController: UIViewController {
   /// @param splitViewController The UISplitViewController whose layout positioning changed, represented by RNSSplitViewHostController.
   ///
   func columnPositioningDidChangeIn(splitViewController: UISplitViewController) {
-    shadowStateProxy.updateShadowState(
-      ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view)
+    // During the transition, we're listening for the animation
+    // frame updates on the presentation layer and we're
+    // treating these updates as the source of truth
+    if !isTransitioning {
+      shadowStateProxy.updateShadowState(
+        ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view
+      )
+    }
   }
 
   // MARK: Events
