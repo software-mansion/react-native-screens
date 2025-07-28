@@ -10,7 +10,7 @@ class RNSSplitViewAppearanceApplicator {
   /// It requests calling proper callbacks with batched SplitView updates on the AppearanceCoordinator object
   ///
   /// @param splitView The view representing JS component which is sending updates.
-  /// @param splitViewController The controller associated with the native JS component which receives updates and manages the native layer.
+  /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
   /// @param appearanceCoordinator The coordinator which is checking whether the update needs to be applied and if so, it executes the callback passed by this class.
   ///
   public func updateAppearanceIfNeeded(
@@ -61,7 +61,7 @@ class RNSSplitViewAppearanceApplicator {
   /// It calls all setters on RNSSplitViewHostController that doesn't require any custom logic and conditions to be met.
   ///
   /// @param splitView The view representing JS component which is sending updates.
-  /// @param splitViewController The controller associated with the native JS component which receives updates and manages the native layer.
+  /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
   ///
   private func updateSplitViewConfiguration(
     for splitView: RNSSplitViewHostComponentView,
@@ -178,7 +178,7 @@ class RNSSplitViewAppearanceApplicator {
   /// In that case, any prop update incoming, would reset `preferredDisplayMode` to the state from JS, what doesn't look good.
   ///
   /// @param splitView The view representing JS component which is sending updates.
-  /// @param splitViewController The controller associated with the native JS component which receives updates and manages the native layer.
+  /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
   ///
   func updateSplitViewDisplayMode(
     for splitView: RNSSplitViewHostComponentView,
