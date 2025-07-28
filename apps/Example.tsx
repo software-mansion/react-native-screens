@@ -168,8 +168,10 @@ const tests = isTestSectionEnabled()
         return -1;
       } else if (testNumber1 !== testNumber2) {
         return testNumber1 - testNumber2;
+      } else if ((spec1?.case as string) < (spec2?.case as string)) {
+        return -1;
       } else {
-        return (spec1?.case as string) < (spec2?.case as string) ? 0 : 1
+        return (spec1?.case as string) > (spec2?.case as string) ? 1 : 0;
       }
     })
   : [];
