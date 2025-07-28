@@ -178,66 +178,8 @@ RNS_IGNORE_SUPER_CALL_END
     _controller.tabBarItem.badgeValue = _badgeValue;
   }
 
-  //  if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
-  //    _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
-  //    // Note that this will prevent default color from being set.
-  //    // TODO: support default color by setting nil here.
-  //    NSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _tabBarItemBadgeBackgroundColor);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-  //
-  //  if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
-  //    _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-
-  //  if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
-  //    _tabBarBlurEffect = rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
-  //        newComponentProps.tabBarBlurEffect);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-
-  //  if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
-  //    _tabBarItemTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontFamily);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-  //
-  //  if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
-  //    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-  //
-  //  if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
-  //    _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-  //
-  //  if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
-  //    _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-  //
-  //  if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
-  //    _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-  //
-  //  if (newComponentProps.tabBarItemTitlePositionAdjustment.horizontal !=
-  //          oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
-  //      newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
-  //          oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
-  //    _tabBarItemTitlePositionAdjustment =
-  //        rnscreens::conversion::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
-  //            newComponentProps.tabBarItemTitlePositionAdjustment);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-
-  //  if (newComponentProps.tabBarItemIconColor != oldComponentProps.tabBarItemIconColor) {
-  //    _tabBarItemIconColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemIconColor);
-  //    tabItemNeedsAppearanceUpdate = YES;
-  //  }
-
-  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
+  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance ||
+      _tabBarStandardAppearance == nil) {
     _tabBarStandardAppearance = [UITabBarAppearance new];
     [RNSTabBarAppearanceCoordinator
         configureTabBarAppearance:_tabBarStandardAppearance

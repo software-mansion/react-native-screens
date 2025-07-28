@@ -1,5 +1,5 @@
 import React from 'react';
-import type { NativeSyntheticEvent } from 'react-native';
+import { processColor, type NativeSyntheticEvent } from 'react-native';
 import {
   BottomTabs,
   BottomTabsScreen,
@@ -104,6 +104,12 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemTitleFontWeight="700"
       tabBarItemLabelVisibilityMode="auto"
       tabBarMinimizeBehavior="onScrollDown"
+      standardAppearance={{
+        tabBarBackgroundColor: processColor('blue'),
+      }}
+      scrollEdgeAppearance={{
+        tabBarBackgroundColor: processColor('blue'),
+      }}
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }>

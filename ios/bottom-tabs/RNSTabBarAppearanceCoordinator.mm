@@ -16,8 +16,8 @@
     return;
   }
 
-  //  tabBar.standardAppearance = hostComponentView.tabBarStandardAppearance;
-  //  tabBar.scrollEdgeAppearance = hostComponentView.tabBarScrollEdgeAppearance;
+  tabBar.standardAppearance = hostComponentView.tabBarStandardAppearance;
+  tabBar.scrollEdgeAppearance = hostComponentView.tabBarScrollEdgeAppearance;
 
   tabBar.tintColor = hostComponentView.tabBarTintColor;
 

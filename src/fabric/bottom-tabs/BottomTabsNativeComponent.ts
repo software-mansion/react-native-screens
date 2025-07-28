@@ -7,6 +7,7 @@ import type {
   Float,
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
+import { UnsafeMixed } from './codegenUtils';
 
 // TODO: Report issue on RN repo, that nesting color value inside a struct does not work.
 // Generated code is ok, but the value is not passed down correctly - whatever color is set
@@ -55,12 +56,46 @@ type TabBarMinimizeBehavior =
   | 'onScrollDown'
   | 'onScrollUp';
 
+type ItemStateAppearance = {
+  tabBarItemTitleFontFamily?: string;
+  tabBarItemTitleFontSize?: Float;
+  tabBarItemTitleFontWeight?: string;
+  tabBarItemTitleFontStyle?: string;
+  tabBarItemTitleFontColor?: ColorValue;
+  tabBarItemTitlePositionAdjustment?: {
+    horizontal?: Float;
+    vertical?: Float;
+  };
+
+  tabBarItemIconColor?: ColorValue;
+
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+};
+
+type ItemAppearance = {
+  normal?: ItemStateAppearance;
+  selected?: ItemStateAppearance;
+  focused?: ItemStateAppearance;
+  disabled?: ItemStateAppearance;
+};
+
+type Appearance = {
+  stacked?: ItemAppearance;
+  inline?: ItemAppearance;
+  compactInline?: ItemAppearance;
+
+  tabBarBackgroundColor?: ColorValue;
+  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
+};
+
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
 
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+
+  // Android
   tabBarBackgroundColor?: ColorValue;
   tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
   tabBarTintColor?: ColorValue;
@@ -78,8 +113,6 @@ export interface NativeProps extends ViewProps {
   tabBarItemIconColor?: ColorValue;
 
   tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // Android
   tabBarItemTitleFontColorActive?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemTitleFontSizeActive?: Float;
@@ -93,6 +126,8 @@ export interface NativeProps extends ViewProps {
 
   // iOS-specific
   tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
+  standardAppearance?: UnsafeMixed<Appearance>;
+  scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
   // Control
 

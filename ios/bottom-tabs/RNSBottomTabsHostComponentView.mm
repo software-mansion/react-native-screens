@@ -16,6 +16,7 @@
 #import "RNSConversions.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
+#import "RNSFabricConversions.h"
 #import "RNSTabBarController.h"
 #import "RNSTabBarControllerDelegate.h"
 
@@ -89,20 +90,9 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
 #endif
-  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
-  _tabBarBackgroundColor = nil;
   _tabBarTintColor = nil;
-
-  _tabBarItemTitleFontFamily = nil;
-  _tabBarItemTitleFontSize = nil;
-  _tabBarItemTitleFontWeight = nil;
-  _tabBarItemTitleFontStyle = nil;
-  _tabBarItemTitleFontColor = nil;
-  _tabBarItemTitlePositionAdjustment = UIOffsetMake(0.0, 0.0);
-
-  _tabBarItemIconColor = nil;
-
-  _tabBarItemBadgeBackgroundColor = nil;
+  _tabBarStandardAppearance = nil;
+  _tabBarScrollEdgeAppearance = nil;
 }
 
 #pragma mark - UIView methods
@@ -229,63 +219,26 @@ namespace react = facebook::react;
     _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
   }
 
-  if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
-    _needsTabBarAppearanceUpdate = YES;
-    _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
-  }
-
-  if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
-    _needsTabBarAppearanceUpdate = YES;
-    _tabBarBlurEffect =
-        rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
-  }
-
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
   }
 
-  if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
-    _tabBarItemTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontFamily);
+  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance ||
+      _tabBarStandardAppearance == nil) {
+    _tabBarStandardAppearance = [UITabBarAppearance new];
+    [RNSTabBarAppearanceCoordinator
+        configureTabBarAppearance:_tabBarStandardAppearance
+                        fromFolly:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
     _needsTabBarAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
-    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
-    _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
-    _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
-    _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemIconColor != oldComponentProps.tabBarItemIconColor) {
-    _tabBarItemIconColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemIconColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
-    _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitlePositionAdjustment.horizontal !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
-      newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
-    _tabBarItemTitlePositionAdjustment = rnscreens::conversion::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
-        newComponentProps.tabBarItemTitlePositionAdjustment);
+  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance ||
+      newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
+    _tabBarScrollEdgeAppearance = [[UITabBarAppearance alloc] initWithBarAppearance:_tabBarStandardAppearance];
+    [RNSTabBarAppearanceCoordinator
+        configureTabBarAppearance:_tabBarScrollEdgeAppearance
+                        fromFolly:RNSConvertFollyDynamicToId(newComponentProps.scrollEdgeAppearance)];
     _needsTabBarAppearanceUpdate = YES;
   }
 
