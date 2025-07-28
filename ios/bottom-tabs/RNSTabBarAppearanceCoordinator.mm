@@ -167,31 +167,30 @@
 + (void)configureTabBarItemStateAppearance:(UITabBarItemStateAppearance *)tabBarItemStateAppearance
                                  fromFolly:(id)itemStateAppearanceProps
 {
-  // TODO: handle color properly
-  //  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
-  //  if (itemStateAppearanceProps[@"tabBarItemTitleFontFamily"] != nil ||
-  //      itemStateAppearanceProps[@"tabBarItemTitleFontSize"] != nil ||
-  //      itemStateAppearanceProps[@"tabBarItemTitleFontWeight"] != nil ||
-  //      itemStateAppearanceProps[@"tabBarItemTitleFontStyle"] != nil) {
-  //
-  //    titleTextAttributes[NSFontAttributeName] =
-  //    [RCTFont updateFont:nil
-  //             withFamily:itemStateAppearanceProps[@"tabBarItemTitleFontFamily"]
-  //                   size:itemStateAppearanceProps[@"tabBarItemTitleFontSize"]
-  //                 weight:itemStateAppearanceProps[@"tabBarItemTitleFontWeight"]
-  //                  style:itemStateAppearanceProps[@"tabBarItemTitleFontStyle"]
-  //                variant:nil
-  //        scaleMultiplier:1.0];
-  //  }
-  //
-  //  if (itemStateAppearanceProps[@"tabBarItemTitleFontColor"] != nil) {
-  //    titleTextAttributes[NSForegroundColorAttributeName] = [RCTConvert
-  //    UIColor:itemStateAppearanceProps[@"tabBarItemTitleFontColor"]];
-  //  }
-  //
-  //  if (titleTextAttributes != nil) {
-  //    tabBarItemStateAppearance.titleTextAttributes = titleTextAttributes;
-  //  }
+  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
+
+  if (itemStateAppearanceProps[@"tabBarItemTitleFontFamily"] != nil ||
+      itemStateAppearanceProps[@"tabBarItemTitleFontSize"] != nil ||
+      itemStateAppearanceProps[@"tabBarItemTitleFontWeight"] != nil ||
+      itemStateAppearanceProps[@"tabBarItemTitleFontStyle"] != nil) {
+    titleTextAttributes[NSFontAttributeName] =
+        [RCTFont updateFont:nil
+                 withFamily:itemStateAppearanceProps[@"tabBarItemTitleFontFamily"]
+                       size:itemStateAppearanceProps[@"tabBarItemTitleFontSize"]
+                     weight:itemStateAppearanceProps[@"tabBarItemTitleFontWeight"]
+                      style:itemStateAppearanceProps[@"tabBarItemTitleFontStyle"]
+                    variant:nil
+            scaleMultiplier:1.0];
+  }
+
+  if (itemStateAppearanceProps[@"tabBarItemTitleFontColor"] != nil) {
+    titleTextAttributes[NSForegroundColorAttributeName] =
+        [RCTConvert UIColor:itemStateAppearanceProps[@"tabBarItemTitleFontColor"]];
+  }
+
+  if ([titleTextAttributes count] > 0) {
+    tabBarItemStateAppearance.titleTextAttributes = titleTextAttributes;
+  }
 
   if (itemStateAppearanceProps[@"tabBarItemBadgeBackgroundColor"] != nil) {
     tabBarItemStateAppearance.badgeBackgroundColor =
@@ -203,7 +202,7 @@
   }
 
   // TODO: correctly handle titlePositionAdjustment (1. convert, 2. (0,0) case)
-  //  tabBarItemStateAppearance.titlePositionAdjustment = itemStateAppearanceProps[@"titlePositionAdjustment"];
+  //    tabBarItemStateAppearance.titlePositionAdjustment = itemStateAppearanceProps[@"titlePositionAdjustment"];
 }
 
 @end
