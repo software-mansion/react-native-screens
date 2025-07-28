@@ -106,7 +106,6 @@ public class RNSSplitViewScreenController: UIViewController {
     guard let targetSize = transitioningToSize else { return }
 
     if let currentFrame = view.layer.presentation()?.frame {
-        print("\(self.view.tag) frame \(currentFrame)")
         let currentSize = currentFrame.size
       if abs(currentSize.width - targetSize.width) < viewResizeThreshold
         && abs(currentSize.height - targetSize.height) < viewResizeThreshold
