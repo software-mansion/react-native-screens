@@ -91,7 +91,7 @@ public class RNSSplitViewScreenController: UIViewController {
     isTransitioning = true
 
     if displayLink == nil {
-      displayLink = CADisplayLink(target: self, selector: #selector(checkTransitionProgress))
+      displayLink = CADisplayLink(target: self, selector: #selector(trackTransitionProgress))
       displayLink?.add(to: .main, forMode: .common)
     }
   }
@@ -101,7 +101,7 @@ public class RNSSplitViewScreenController: UIViewController {
   /// which will synchronize ShadowNode size with the animation frame size.
   ///
   @objc
-  private func checkTransitionProgress() {
+  private func trackTransitionProgress() {
     guard let targetSize = transitioningToSize else { return }
 
     if let currentFrame = view.layer.presentation()?.frame {
