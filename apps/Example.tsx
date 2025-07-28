@@ -149,12 +149,16 @@ if (isTestSectionEnabled()) {
 const screens = Object.keys(SCREENS);
 const examples = screens.filter(name => SCREENS[name].type === 'example');
 const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
+const issueRegex = /Test(?<issue>\d+)(?<case>.*)/
 const tests = isTestSectionEnabled()
   ? screens
     .filter(name => SCREENS[name].type === 'test')
     .sort((name1, name2) => {
-      const testNumber1 = Number(name1.substring(4));
-      const testNumber2 = Number(name2.substring(4));
+      const spec1 = issueRegex.exec(name1)?.groups
+      const spec2 = issueRegex.exec(name2)?.groups
+
+      const testNumber1 = parseInt(spec1?.issue as string)
+      const testNumber2 = parseInt(spec2?.issue as string)
 
       if (Number.isNaN(testNumber1) && Number.isNaN(testNumber2)) {
         return 0;
@@ -162,8 +166,12 @@ const tests = isTestSectionEnabled()
         return 1;
       } else if (Number.isNaN(testNumber2)) {
         return -1;
-      } else {
+      } else if (testNumber1 !== testNumber2) {
         return testNumber1 - testNumber2;
+      } else if ((spec1?.case as string) < (spec2?.case as string)) {
+        return -1;
+      } else {
+        return (spec1?.case as string) > (spec2?.case as string) ? 1 : 0;
       }
     })
   : [];
