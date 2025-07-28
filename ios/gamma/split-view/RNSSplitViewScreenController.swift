@@ -106,18 +106,31 @@ public class RNSSplitViewScreenController: UIViewController {
 
     if let currentFrame = view.layer.presentation()?.frame {
       let currentSize = currentFrame.size
-
       if abs(currentSize.width - targetSize.width) < viewWidthEpsilon
         && abs(currentSize.height - targetSize.height) < viewWidthEpsilon
       {
-        displayLink?.invalidate()
-        displayLink = nil
-        transitioningToSize = nil
+        stopAnimation()
+      }
+
+      // Tracking only abs with some arbitrary epsilon might not be sufficient.
+      // In the worst case, when the animation is targeting value X, it may stop at X + 0.5.
+      // In that situation, we'll be sending new frames continously, as the previous condition is always false.
+      // Ideally, we should have an opposite to `viewWillTransition` e.g. `viewDidTransition`,
+      // but so far there's no API for that.
+      if let lastFrame = animationFrame, CGRectEqualToRect(currentFrame, lastFrame) {
+        stopAnimation()
       }
       animationFrame = currentFrame
       view.setNeedsLayout()
       view.layoutIfNeeded()
     }
+  }
+
+  private func stopAnimation() {
+    displayLink?.invalidate()
+    displayLink = nil
+    transitioningToSize = nil
+    isTransitioning = false
   }
 
   @objc
@@ -152,7 +165,6 @@ public class RNSSplitViewScreenController: UIViewController {
         let convertedFrame = CGRect(origin: localOrigin, size: currentAnimationFrame.size)
 
         shadowStateProxy.updateShadowState(withFrame: convertedFrame)
-        animationFrame = nil
       } else if transitioningToSize == nil {
         shadowStateProxy.updateShadowState(
           ofComponent: splitViewScreenComponentView,
