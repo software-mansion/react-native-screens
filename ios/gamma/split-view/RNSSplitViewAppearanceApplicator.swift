@@ -13,11 +13,11 @@ class RNSSplitViewAppearanceApplicator {
   /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
   /// @param appearanceCoordinator The coordinator which is checking whether the update needs to be applied and if so, it executes the callback passed by this class.
   ///
-    public func updateAppearanceIfNeeded(
-      _ splitView: RNSSplitViewHostComponentView,
-      _ splitViewController: RNSSplitViewHostController,
-      _ appearanceCoordinator: RNSSplitViewAppearanceCoordinator
-    ) {
+  public func updateAppearanceIfNeeded(
+    _ splitView: RNSSplitViewHostComponentView,
+    _ splitViewController: RNSSplitViewHostController,
+    _ appearanceCoordinator: RNSSplitViewAppearanceCoordinator
+  ) {
     appearanceCoordinator.updateIfNeeded(.generalUpdate) { [weak self] in
       guard let self = self
       else {

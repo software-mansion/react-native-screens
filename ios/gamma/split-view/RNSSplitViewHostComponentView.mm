@@ -278,8 +278,7 @@ RNS_IGNORE_SUPER_CALL_END
     _minimumSecondaryColumnWidth = newComponentProps.columnMetrics.minimumSecondaryColumnWidth;
   }
 
-  if (COLUMN_METRIC_CHANGED(
-          oldComponentProps, newComponentProps, preferredSecondaryColumnWidthOrFraction, epsilon)) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredSecondaryColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _preferredSecondaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredSecondaryColumnWidthOrFraction;
   }
@@ -294,8 +293,7 @@ RNS_IGNORE_SUPER_CALL_END
     _maximumInspectorColumnWidth = newComponentProps.columnMetrics.maximumInspectorColumnWidth;
   }
 
-  if (COLUMN_METRIC_CHANGED(
-          oldComponentProps, newComponentProps, preferredInspectorColumnWidthOrFraction, epsilon)) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredInspectorColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _preferredInspectorColumnWidthOrFraction = newComponentProps.columnMetrics.preferredInspectorColumnWidthOrFraction;
   }
