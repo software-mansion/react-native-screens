@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native/ReactCommon/react/debug/react_native_assert.h b/node_modules/react-native/ReactCommon/react/debug/react_native_assert.h
+index 1d399d4..8f2e7c1 100644
+--- a/node_modules/react-native/ReactCommon/react/debug/react_native_assert.h
++++ b/node_modules/react-native/ReactCommon/react/debug/react_native_assert.h
+@@ -54,6 +54,8 @@ void react_native_assert_fail(
+ #include <glog/logging.h>
+ #include <cassert>
+ 
++using namespace google;
++
+ // For all platforms, but iOS+Xcode especially: flush logs because some might be
+ // lost on iOS if an assert is hit right after this. If you are trying to debug
+ // something actively and have added lots of LOG statements to track down an

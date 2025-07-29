@@ -20,6 +20,7 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import <utility>
 #endif
 #import <React/RCTBridge.h>
 #import <React/RCTFont.h>
