@@ -79,6 +79,8 @@ export interface BottomTabsProps extends ViewProps {
   /**
    * @summary Specifies the font size used for the title of each tab bar item.
    *
+   * On Android, the size is represented in scale-independent pixels (sp).
+   *
    * @platform android, ios
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
@@ -110,7 +112,7 @@ export interface BottomTabsProps extends ViewProps {
    * Starting from iOS 26, it only applies to selected tab bar item. Other items
    * adopt a dark or light appearance depending on the theme of the tab bar.
    *
-   * On iOS, it is overriden by `tabBarItemTitleFontColor` (for title text color)
+   * On iOS, it is overridden by `tabBarItemTitleFontColor` (for title text color)
    * and it overrides `tabBarTintColor`.
    *
    * @platform android, ios
@@ -119,12 +121,67 @@ export interface BottomTabsProps extends ViewProps {
   // #endregion Common appearance
 
   // #region Android-only appearance
+  /**
+   * @summary Specifies the font size used for the title of each tab bar item in active state.
+   *
+   * The size is represented in scale-independent pixels (sp).
+   *
+   * @platform android
+   */
   tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
+  /**
+   * @summary Specifies the font color used for the title of each tab bar item in active state.
+   *
+   * If not provided, `tabBarItemTitleFontColor` is used.
+   *
+   * @platform android
+   */
   tabBarItemTitleFontColorActive?: TextStyle['color'];
+  /**
+   * @summary Specifies the icon color for each tab bar item in active state.
+   *
+   * If not provided, `tabBarItemIconColor` is used.
+   *
+   * @platform android
+   */
   tabBarItemIconColorActive?: ColorValue;
+  /**
+   * @summary Specifies the background color of the active indicator.
+   *
+   * @platform android
+   */
   tabBarItemActiveIndicatorColor?: ColorValue;
+  /**
+   * @summary Specifies if the active indicator should be used.
+   *
+   * @default true
+   *
+   * @platform android
+   */
   tabBarItemActiveIndicatorEnabled?: boolean;
+  /**
+   * @summary Specifies the color of each tab bar item's ripple effect.
+   *
+   * @platform android
+   */
   tabBarItemRippleColor?: ColorValue;
+  /**
+   * @summary Specifies the label visibility mode.
+   *
+   * The label visibility mode defines when the labels of each item bar should be displayed.
+   *
+   * The following values are available:
+   * - `auto` - the label behaves as in “labeled” mode when there are 3 items or less, or as in “selected” mode when there are 4 items or more
+   * - `selected` - the label is only shown on the selected navigation item
+   * - `labeled` - the label is shown on all navigation items
+   * - `unlabeled` - the label is hidden for all navigation items
+   *
+   * The supported values correspond to the official Material Components documentation:
+   * @see {@link https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md#making-navigation-bar-accessible|Material Components documentation}
+   *
+   * @default auto
+   * @platform android
+   */
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
   // #endregion Android-only appearance
 
@@ -195,7 +252,7 @@ export interface BottomTabsProps extends ViewProps {
    * - `onScrollUp` - the tab bar minimizes when scrolling up and expands
    *   when scrolling back down
    *
-   * The supported values correspond to the official UIKit documentaion:
+   * The supported values correspond to the official UIKit documentation:
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/minimizebehavior|UITabBarController.MinimizeBehavior}
    *
    * @default Defaults to `automatic`.
