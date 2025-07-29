@@ -190,7 +190,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
-    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
+    CGFloat fontSize = newComponentProps.tabBarItemTitleFontSize;
+    _tabBarItemTitleFontSize = fontSize != 0.0 ? [NSNumber numberWithFloat:fontSize] : nil;
     tabItemNeedsAppearanceUpdate = YES;
   }
 
