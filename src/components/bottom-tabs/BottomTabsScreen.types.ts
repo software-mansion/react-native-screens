@@ -105,10 +105,10 @@ export interface BottomTabsScreenProps {
    *
    * On iOS, badge is displayed as regular string.
    *
-   * On Android the value is interpreted as follows:
-   * - displays the value as a number, when the string can be parsed to integer
-   * - displays "small dot" badge, when the string is empty
-   * - displays the value as a text, otherwise
+   * On Android, the value is interpreted in the following order:
+   * - if the string can be parsed to integer, displays the value as a number;
+   * - otherwise if the string is empty, displays "small dot" badge;
+   * - otherwise, displays the value as a text.
    *
    * @platform android, ios
    */
@@ -119,7 +119,9 @@ export interface BottomTabsScreenProps {
   /**
    * @summary Specifies the icon for the tab bar item.
    *
-   * It takes the string that represents resource name. First it checks the drawable resources in app scope, then it falls back to the android scope.
+   * Accepts a string corresponding to the resource name. Initially searches within
+   * the app's drawable resources. If no matching resource is found, it defaults to
+   * searching within the Android's drawable resources.
    *
    * @platform android
    */
@@ -251,7 +253,7 @@ export interface BottomTabsScreenProps {
    * Starting from iOS 26, it only applies to selected tab bar item. Other items
    * adopt a dark or light appearance depending on the theme of the tab bar.
    *
-   * Is overriden by `tabBarItemTitleFontColor` (for title text color).
+   * Is overridden by `tabBarItemTitleFontColor` (for title text color).
    * Overrides `tabBarTintColor`.
    *
    * @platform ios
@@ -290,7 +292,7 @@ export interface BottomTabsScreenProps {
   };
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
-   * in first descendant chain from tab screen should be overriden back from `never`
+   * in first descendant chain from tab screen should be overridden back from `never`
    * to `automatic`.
    *
    * By default, `react-native`'s ScrollView has `contentInsetAdjustmentBehavior`

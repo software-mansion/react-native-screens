@@ -166,17 +166,21 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarItemRippleColor?: ColorValue;
   /**
-   * @summary Specifies the label visibility mode - when the labels of each item bar should be visible.
+   * @summary Specifies the label visibility mode.
+   *
+   * The label visibility mode defines when the labels of each item bar should be displayed.
    *
    * The following values are available:
-   * - `auto` - android's `LABEL_VISIBILITY_AUTO` -  the label behaves as “labeled” when there are 3 items or less, or “selected” when there are 4 items or more
-   * - `selected` - android's `LABEL_VISIBILITY_SELECTED` - the label is only shown on the selected navigation item
-   * - `labeled` - android's `LABEL_VISIBILITY_LABELED` - the label is shown on all navigation items
-   * - `unlabeled` - android's `LABEL_VISIBILITY_UNLABELED` - the label is hidden for all navigation items
+   * - `auto` - the label behaves as in “labeled” mode when there are 3 items or less, or as in “selected” mode when there are 4 items or more
+   * - `selected` - the label is only shown on the selected navigation item
+   * - `labeled` - the label is shown on all navigation items
+   * - `unlabeled` - the label is hidden for all navigation items
+   *
+   * The supported values correspond to the official Material Components documentation:
+   * @see {@link https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md#making-navigation-bar-accessible|Material Components documentation}
    *
    * @default auto
    * @platform android
-   * @see {@link https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md#making-navigation-bar-accessible}
    */
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
   // #endregion Android-only appearance
