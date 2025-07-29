@@ -62,7 +62,7 @@
                  forTabScreenController:tabScreenCtrl
                   withHostComponentView:hostComponentView];
 
-    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearace:tabAppearance imageLoader:imageLoader];
+    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearance:tabAppearance imageLoader:imageLoader];
   }
 }
 
@@ -93,7 +93,7 @@
 }
 
 - (void)configureTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
-                                    withAppearace:(nonnull UITabBarAppearance *)tabAppearance
+                                   withAppearance:(nonnull UITabBarAppearance *)tabAppearance
                                       imageLoader:(nullable RCTImageLoader *)imageLoader
 {
   UITabBarItem *tabBarItem = tabScreenCtrl.tabBarItem;
