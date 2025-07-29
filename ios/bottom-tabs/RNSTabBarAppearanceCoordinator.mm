@@ -175,10 +175,10 @@
 - (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance
                          withTabsHost:(nonnull RNSBottomTabsHostComponentView *)hostComponent
 {
-  NSMutableDictionary *titleTextAttributes = nil;
+  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
 
-  if (hostComponent.tabBarItemTitleFontSize != nil) {
-    titleTextAttributes = [[NSMutableDictionary alloc] init];
+  if (hostComponent.tabBarItemTitleFontSize != nil || hostComponent.tabBarItemTitleFontFamily != nil ||
+      hostComponent.tabBarItemTitleFontWeight != nil || hostComponent.tabBarItemTitleFontStyle != nil) {
     titleTextAttributes[NSFontAttributeName] = [RCTFont updateFont:nil
                                                         withFamily:hostComponent.tabBarItemTitleFontFamily
                                                               size:hostComponent.tabBarItemTitleFontSize
@@ -186,6 +186,9 @@
                                                              style:hostComponent.tabBarItemTitleFontStyle
                                                            variant:nil
                                                    scaleMultiplier:1.0];
+  }
+
+  if (hostComponent.tabBarItemTitleFontColor != nil) {
     titleTextAttributes[NSForegroundColorAttributeName] = hostComponent.tabBarItemTitleFontColor;
   }
 
@@ -207,10 +210,12 @@
                forTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
                 withHostComponentView:(nonnull RNSBottomTabsHostComponentView *)tabsHostComponent
 {
-  NSMutableDictionary *titleTextAttributes = nil;
+  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
 
-  if (tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontSize != nil) {
-    titleTextAttributes = [[NSMutableDictionary alloc] init];
+  if (tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontSize != nil ||
+      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontFamily != nil ||
+      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontWeight != nil ||
+      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontStyle != nil) {
     titleTextAttributes[NSFontAttributeName] =
         [RCTFont updateFont:nil
                  withFamily:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontFamily
@@ -219,6 +224,9 @@
                       style:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontStyle
                     variant:nil
             scaleMultiplier:1.0];
+  }
+
+  if (tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontColor != nil) {
     titleTextAttributes[NSForegroundColorAttributeName] = tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontColor;
   }
 
@@ -238,13 +246,13 @@
 
 - (void)configureTabBarItemStateAppearance:(nonnull UITabBarItemStateAppearance *)tabBarItemStateAppearance
                     withAppearanceProvider:(id<RNSTabBarAppearanceProvider>)appearanceProvider
-                   withTitleTextAttributes:(nullable NSDictionary<NSAttributedStringKey, id> *)titleTextAttributes
+                   withTitleTextAttributes:(nonnull NSDictionary<NSAttributedStringKey, id> *)titleTextAttributes
 {
   if (appearanceProvider.tabBarItemBadgeBackgroundColor != nil) {
     tabBarItemStateAppearance.badgeBackgroundColor = appearanceProvider.tabBarItemBadgeBackgroundColor;
   }
 
-  if (titleTextAttributes != nil) {
+  if ([titleTextAttributes count] > 0) {
     tabBarItemStateAppearance.titleTextAttributes = titleTextAttributes;
   }
 
