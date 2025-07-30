@@ -100,6 +100,14 @@ namespace react = facebook::react;
   _selectedIconSfSymbolName = nil;
 }
 
+- (void)invalidate
+{
+  // Controller keeps the strong reference to the component via the `.view` property.
+  // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
+  // when we want to destroy the component.
+  _controller = nil;
+}
+
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (nullable RNSBottomTabsHostComponentView *)reactSuperview
 {

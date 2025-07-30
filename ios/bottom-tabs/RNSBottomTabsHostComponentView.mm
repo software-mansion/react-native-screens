@@ -107,6 +107,13 @@ namespace react = facebook::react;
 
 #pragma mark - UIView methods
 
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (newWindow == nil) {
+    [self invalidate];
+  }
+}
+
 - (void)didMoveToWindow
 {
   [self reactAddControllerToClosestParent:_controller];
@@ -131,6 +138,17 @@ namespace react = facebook::react;
       parentView = (UIView *)parentView.reactSuperview;
     }
     return;
+  }
+}
+
+- (void)invalidate
+{
+  // We assume that bottom tabs host is removed from view hierarchy **only** when
+  // whole component is destroyed & therefore we do the necessary cleanup here.
+  // If at some point that statement does not hold anymore, this cleanup
+  // should be moved to a different place.
+  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
+    [subview invalidate];
   }
 }
 
