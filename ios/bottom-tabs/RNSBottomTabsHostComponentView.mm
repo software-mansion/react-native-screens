@@ -116,12 +116,14 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
-  [self reactAddControllerToClosestParent:_controller];
+  if ([self window] != nil) {
+    [self reactAddControllerToClosestParent:_controller];
 
 #if !RCT_NEW_ARCH_ENABLED
-  // This is required on legacy architecture to prevent a bug with doubled size of UIViewControllerWrapperView.
-  _controller.view.frame = self.bounds;
+    // This is required on legacy architecture to prevent a bug with doubled size of UIViewControllerWrapperView.
+    _controller.view.frame = self.bounds;
 #endif // !RCT_NEW_ARCH_ENABLED
+  }
 }
 
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller
