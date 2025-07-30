@@ -169,7 +169,7 @@ public class RNSSplitViewScreenController: UIViewController {
       "[RNScreens] Expected to find RNSSplitViewHost component for RNSSplitViewScreen component"
     )
 
-    // If the animation is currently running, we prefer to apply dynamic updates,
+    // If the resize animation is currently running, we prefer to apply dynamic updates,
     // based on the results from the presentation layer
     // which is read from `trackTransitionProgress` method.
     if let currentSize = lastAnimationFrame?.size {
