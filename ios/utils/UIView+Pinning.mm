@@ -4,7 +4,7 @@
 
 - (void)pinToView:(UIView *)view
         fromEdges:(UIRectEdge)edges
-       withHeight:(NSNumber *)height
+       withHeight:(CGFloat *)height
       constraints:(void (^)(
                       NSLayoutConstraint *top,
                       NSLayoutConstraint *bottom,
@@ -41,7 +41,7 @@
   }
 
   if (height != nil) {
-    heightConstraint = [self.heightAnchor constraintEqualToConstant:height.floatValue];
+    heightConstraint = [self.heightAnchor constraintEqualToConstant:*height];
     heightConstraint.active = YES;
   }
 

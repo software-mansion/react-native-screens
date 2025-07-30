@@ -4,7 +4,7 @@
 
 - (void)pinToView:(UIView *_Nullable)view
         fromEdges:(UIRectEdge)edges
-       withHeight:(nullable NSNumber *)height
+       withHeight:(nullable CGFloat *)height
       constraints:(void (^_Nullable)(
                       NSLayoutConstraint *_Nullable top,
                       NSLayoutConstraint *_Nullable bottom,

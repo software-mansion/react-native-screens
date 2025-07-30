@@ -15,6 +15,7 @@
   NSLayoutConstraint *_heightConstraint;
   NSLayoutConstraint *_bottomConstraint;
   RNSScreenView *_screenView;
+  CGFloat _footerHeight;
 }
 
 - (void)dealloc
@@ -29,7 +30,7 @@
     _screenView = (RNSScreenView *)self.superview;
     [self pinToView:_screenView.controller.view
           fromEdges:UIRectEdgeLeft | UIRectEdgeRight | UIRectEdgeBottom
-         withHeight:@0
+         withHeight:&_footerHeight
         constraints:^(
             NSLayoutConstraint *top,
             NSLayoutConstraint *bottom,
@@ -111,7 +112,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
            oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
 {
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
-  _heightConstraint.constant = frame.size.height;
+  _footerHeight = frame.size.height;
 }
 RNS_IGNORE_SUPER_CALL_END
 
