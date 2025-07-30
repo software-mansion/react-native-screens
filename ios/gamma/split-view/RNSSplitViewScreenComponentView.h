@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @brief A function responsible for requesting a cleanup in the SplitViewScreen component.
  *
- * Should be called before the component when the component is about to be deleted.
+ * Should be called when the component is about to be deleted.
  */
 - (void)invalidate;
 
