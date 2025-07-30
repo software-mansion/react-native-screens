@@ -12,9 +12,16 @@
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenFooter {
+#if !RCT_NEW_ARCH_ENABLED
+  // on Paper, didMoveToSuperview is called first before reactSetFrame
+  // so we store the constraint first before updating.
   NSLayoutConstraint *_heightConstraint;
+#endif
   NSLayoutConstraint *_bottomConstraint;
   RNSScreenView *_screenView;
+
+  // on Fabric, this value is provided initially since updateLayoutMetrics
+  // is called first before didMoveToSuperview.
   CGFloat _footerHeight;
 }
 
@@ -37,7 +44,10 @@
             NSLayoutConstraint *left,
             NSLayoutConstraint *right,
             NSLayoutConstraint *height) {
+
+#if !RCT_NEW_ARCH_ENABLED
           self->_heightConstraint = height;
+#endif
           self->_bottomConstraint = bottom;
         }];
 
