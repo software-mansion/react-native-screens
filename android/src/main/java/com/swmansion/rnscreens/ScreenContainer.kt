@@ -195,7 +195,7 @@ open class ScreenContainer(
             // TODO: We're missing parent-child relationship here between old container & new one
             val fragmentManager =
                 checkNotNull(
-                    parent.getFragment(),
+                    parent.getAssociatedFragment(),
                 ) { "[RNScreens] Parent $parent returned nullish fragment" }.childFragmentManager
             setFragmentManager(fragmentManager)
         } else {

@@ -23,7 +23,7 @@ object FragmentManagerHelper {
         // If parent adheres to FragmentProviding interface it means we are inside a nested fragment structure.
         // Otherwise we expect to connect directly with root view and get root fragment manager
         if (parent is FragmentProviding) {
-            return checkNotNull(parent.getFragment()) {
+            return checkNotNull(parent.getAssociatedFragment()) {
                 "[RNScreens] Parent fragment providing view $parent returned nullish fragment"
             }.childFragmentManager
         } else {
