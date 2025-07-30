@@ -26,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) RNSBottomTabsHostComponentView *reactSuperview;
 
+/**
+ * @brief A function responsible for requesting a cleanup in the BottomTabsScreen component.
+ *
+ * Should be called when the component is about to be deleted.
+ */
+- (void)invalidate;
+
 @end
 
 #pragma mark - Props

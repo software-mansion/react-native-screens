@@ -107,14 +107,23 @@ namespace react = facebook::react;
 
 #pragma mark - UIView methods
 
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (newWindow == nil) {
+    [self invalidate];
+  }
+}
+
 - (void)didMoveToWindow
 {
-  [self reactAddControllerToClosestParent:_controller];
+  if ([self window] != nil) {
+    [self reactAddControllerToClosestParent:_controller];
 
 #if !RCT_NEW_ARCH_ENABLED
-  // This is required on legacy architecture to prevent a bug with doubled size of UIViewControllerWrapperView.
-  _controller.view.frame = self.bounds;
+    // This is required on legacy architecture to prevent a bug with doubled size of UIViewControllerWrapperView.
+    _controller.view.frame = self.bounds;
 #endif // !RCT_NEW_ARCH_ENABLED
+  }
 }
 
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller
@@ -132,6 +141,18 @@ namespace react = facebook::react;
     }
     return;
   }
+}
+
+- (void)invalidate
+{
+  // We assume that bottom tabs host is removed from view hierarchy **only** when
+  // whole component is destroyed & therefore we do the necessary cleanup here.
+  // If at some point that statement does not hold anymore, this cleanup
+  // should be moved to a different place.
+  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
+    [subview invalidate];
+  }
+  _controller = nil;
 }
 
 #pragma mark - RNSScreenContainerDelegate
