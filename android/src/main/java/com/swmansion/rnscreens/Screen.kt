@@ -33,12 +33,14 @@ import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
+import com.swmansion.rnscreens.gamma.common.FragmentProviding
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
     val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
-    ScreenContentWrapper.OnLayoutCallback {
+    ScreenContentWrapper.OnLayoutCallback,
+    FragmentProviding {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
@@ -119,6 +121,8 @@ class Screen(
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
     }
+
+    override fun getAssociatedFragment(): Fragment? = fragment
 
     /**
      * ScreenContentWrapper notifies us here on it's layout. It is essential for implementing
