@@ -2,30 +2,22 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
 import { Colors } from '../../shared/styling/Colors';
+import { TestBottomTabs, TestScreenStack } from '..';
+import { SplitViewBaseConfig } from './helpers/types';
 
-const SplitViewBaseApp = () => {
+const SplitViewBaseApp = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
   return (
-    <SplitViewHost 
-      columnMetrics={{preferredSupplementaryColumnWidth: 250}} 
-      displayMode='twoBesideSecondary' 
-      primaryEdge='leading' 
-      presentsWithGesture={false} 
-      splitBehavior='tile'
-    >
+    <SplitViewHost {...splitViewBaseConfig}>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.RedDark100 }]}>
+        <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Primary column</Text>
         </View>
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.YellowDark100 }]}>
-          <Text style={styles.text}>Supplementary column</Text>
-        </View>
+        <TestBottomTabs />
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.White }]}>
-          <Text style={styles.text}>Secondary column</Text>
-        </View>
+        <TestScreenStack />
       </SplitViewScreen.Column>
     </SplitViewHost>
   );

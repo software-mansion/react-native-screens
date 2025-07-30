@@ -1194,18 +1194,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 
-- (void)setFrame:(CGRect)frame
-{
-  NSLog(@"ScreenView [%ld] setFrame: %@", self.tag, NSStringFromCGRect(frame));
-  [super setFrame:frame];
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-  NSLog(@"ScreenView [%ld] setBounds: %@", self.tag, NSStringFromCGRect(bounds));
-  [super setBounds:bounds];
-}
-
 #pragma mark - RNSScrollViewBehaviorOverriding
 
 - (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior

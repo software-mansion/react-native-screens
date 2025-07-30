@@ -10,7 +10,7 @@ import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNati
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
-export type SplitViewScreenColumnType = 'column' | 'inspector';
+type SplitViewScreenColumnType = 'column' | 'inspector';
 
 interface NativeProps extends ViewProps {
   // Config

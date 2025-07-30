@@ -453,11 +453,18 @@ RNS_IGNORE_SUPER_CALL_END
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  if (config.blurEffect != RNSBlurEffectStyleNone) {
-    appearance.backgroundEffect =
-        [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
-  } else {
-    appearance.backgroundEffect = nil;
+  switch (config.blurEffect) {
+    case RNSBlurEffectStyleNone:
+      appearance.backgroundEffect = nil;
+      break;
+
+    case RNSBlurEffectStyleSystemDefault:
+      RCTLogError(@"[RNScreens] ScreenStack does not support RNSBlurEffectStyleSystemDefault.");
+      break;
+
+    default:
+      appearance.backgroundEffect =
+          [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
   }
 
   if (config.hideShadow) {
@@ -1180,40 +1187,6 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @implementation RCTConvert (RNSScreenStackHeader)
 
-+ (NSMutableDictionary *)blurEffectsForIOSVersion
-{
-  NSMutableDictionary *blurEffects = [NSMutableDictionary new];
-  [blurEffects addEntriesFromDictionary:@{
-    @"none" : @(RNSBlurEffectStyleNone),
-    @"extraLight" : @(RNSBlurEffectStyleExtraLight),
-    @"light" : @(RNSBlurEffectStyleLight),
-    @"dark" : @(RNSBlurEffectStyleDark),
-    @"regular" : @(RNSBlurEffectStyleRegular),
-    @"prominent" : @(RNSBlurEffectStyleProminent),
-  }];
-
-#if !TARGET_OS_TV
-  [blurEffects addEntriesFromDictionary:@{
-    @"systemUltraThinMaterial" : @(RNSBlurEffectStyleSystemUltraThinMaterial),
-    @"systemThinMaterial" : @(RNSBlurEffectStyleSystemThinMaterial),
-    @"systemMaterial" : @(RNSBlurEffectStyleSystemMaterial),
-    @"systemThickMaterial" : @(RNSBlurEffectStyleSystemThickMaterial),
-    @"systemChromeMaterial" : @(RNSBlurEffectStyleSystemChromeMaterial),
-    @"systemUltraThinMaterialLight" : @(RNSBlurEffectStyleSystemUltraThinMaterialLight),
-    @"systemThinMaterialLight" : @(RNSBlurEffectStyleSystemThinMaterialLight),
-    @"systemMaterialLight" : @(RNSBlurEffectStyleSystemMaterialLight),
-    @"systemThickMaterialLight" : @(RNSBlurEffectStyleSystemThickMaterialLight),
-    @"systemChromeMaterialLight" : @(RNSBlurEffectStyleSystemChromeMaterialLight),
-    @"systemUltraThinMaterialDark" : @(RNSBlurEffectStyleSystemUltraThinMaterialDark),
-    @"systemThinMaterialDark" : @(RNSBlurEffectStyleSystemThinMaterialDark),
-    @"systemMaterialDark" : @(RNSBlurEffectStyleSystemMaterialDark),
-    @"systemThickMaterialDark" : @(RNSBlurEffectStyleSystemThickMaterialDark),
-    @"systemChromeMaterialDark" : @(RNSBlurEffectStyleSystemChromeMaterialDark),
-  }];
-#endif
-  return blurEffects;
-}
-
 RCT_ENUM_CONVERTER(
     UISemanticContentAttribute,
     (@{
@@ -1232,7 +1205,5 @@ RCT_ENUM_CONVERTER(
     }),
     UINavigationItemBackButtonDisplayModeDefault,
     integerValue)
-
-RCT_ENUM_CONVERTER(RNSBlurEffectStyle, ([self blurEffectsForIOSVersion]), RNSBlurEffectStyleNone, integerValue)
 
 @end

@@ -1,20 +1,11 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import type { ViewProps } from 'react-native';
 import SplitViewHostNativeComponent from '../../fabric/gamma/SplitViewHostNativeComponent';
 import type {
-  NativeProps,
   SplitViewDisplayMode,
+  SplitViewHostProps,
   SplitViewSplitBehavior,
-} from '../../fabric/gamma/SplitViewHostNativeComponent';
-
-export type SplitViewNativeProps = NativeProps & {
-  // Overrides
-};
-
-type SplitViewHostProps = {
-  children?: ViewProps['children'];
-} & SplitViewNativeProps;
+} from './SplitViewHost.types';
 
 // According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
 // Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
@@ -47,26 +38,26 @@ const isValidDisplayModeForSplitBehavior = (
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function SplitViewHost(props: SplitViewHostProps) {
-  const { displayMode, splitBehavior } = props;
+  const { preferredDisplayMode, preferredSplitBehavior } = props;
 
   React.useEffect(() => {
-    if (displayMode && splitBehavior) {
+    if (preferredDisplayMode && preferredSplitBehavior) {
       const isValid = isValidDisplayModeForSplitBehavior(
-        displayMode,
-        splitBehavior,
+        preferredDisplayMode,
+        preferredSplitBehavior,
       );
       if (!isValid) {
         const validDisplayModes =
-          displayModeForSplitViewCompatibilityMap[splitBehavior];
+          displayModeForSplitViewCompatibilityMap[preferredSplitBehavior];
         console.warn(
-          `Invalid display mode "${displayMode}" for split behavior "${splitBehavior}".` +
-            `\nValid modes for "${splitBehavior}" are: ${validDisplayModes.join(
+          `Invalid display mode "${preferredDisplayMode}" for split behavior "${preferredSplitBehavior}".` +
+            `\nValid modes for "${preferredSplitBehavior}" are: ${validDisplayModes.join(
               ', ',
             )}.`,
         );
       }
     }
-  }, [displayMode, splitBehavior]);
+  }, [preferredDisplayMode, preferredSplitBehavior]);
 
   return (
     <SplitViewHostNativeComponent {...props} style={styles.container}>

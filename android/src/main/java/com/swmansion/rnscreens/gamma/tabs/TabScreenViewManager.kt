@@ -144,6 +144,7 @@ class TabScreenViewManager :
         view.tabKey = value
     }
 
+    @ReactProp(name = "badgeValue")
     override fun setBadgeValue(
         view: TabScreen,
         value: String?,
@@ -166,7 +167,7 @@ class TabScreenViewManager :
 
     override fun setOverrideScrollViewContentInsetAdjustmentBehavior(
         view: TabScreen,
-        value: Boolean
+        value: Boolean,
     ) = Unit
 
     // Android specific

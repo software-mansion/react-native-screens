@@ -30,7 +30,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSBottomTabsHostComponentView {
-  RNSTabBarController *_controller;
+  RNSTabBarController *_Nonnull _controller;
   RNSTabBarControllerDelegate *_controllerDelegate;
 
   RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
@@ -62,6 +62,12 @@ namespace react = facebook::react;
 }
 #endif // !RCT_NEW_ARCH_ENABLED
 
+- (nonnull RNSTabBarController *)controller
+{
+  RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
+  return _controller;
+}
+
 - (void)initState
 {
   [self resetProps];
@@ -83,7 +89,7 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
 #endif
-  _tabBarBlurEffect = nil;
+  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
   _tabBarBackgroundColor = nil;
   _tabBarTintColor = nil;
 
@@ -101,14 +107,23 @@ namespace react = facebook::react;
 
 #pragma mark - UIView methods
 
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (newWindow == nil) {
+    [self invalidate];
+  }
+}
+
 - (void)didMoveToWindow
 {
-  [self reactAddControllerToClosestParent:_controller];
+  if ([self window] != nil) {
+    [self reactAddControllerToClosestParent:_controller];
 
 #if !RCT_NEW_ARCH_ENABLED
-  // This is required on legacy architecture to prevent a bug with doubled size of UIViewControllerWrapperView.
-  _controller.view.frame = self.bounds;
+    // This is required on legacy architecture to prevent a bug with doubled size of UIViewControllerWrapperView.
+    _controller.view.frame = self.bounds;
 #endif // !RCT_NEW_ARCH_ENABLED
+  }
 }
 
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller
@@ -126,6 +141,18 @@ namespace react = facebook::react;
     }
     return;
   }
+}
+
+- (void)invalidate
+{
+  // We assume that bottom tabs host is removed from view hierarchy **only** when
+  // whole component is destroyed & therefore we do the necessary cleanup here.
+  // If at some point that statement does not hold anymore, this cleanup
+  // should be moved to a different place.
+  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
+    [subview invalidate];
+  }
+  _controller = nil;
 }
 
 #pragma mark - RNSScreenContainerDelegate
@@ -210,7 +237,7 @@ namespace react = facebook::react;
   if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarBlurEffect =
-        rnscreens::conversion::RNSUIBlurEffectFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
+        rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
   }
 
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
@@ -260,6 +287,20 @@ namespace react = facebook::react;
     _tabBarItemTitlePositionAdjustment = rnscreens::conversion::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
         newComponentProps.tabBarItemTitlePositionAdjustment);
     _needsTabBarAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+    if (@available(iOS 26.0, *)) {
+      _tabBarMinimizeBehavior = rnscreens::conversion::UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
+          newComponentProps.tabBarMinimizeBehavior);
+      _controller.tabBarMinimizeBehavior = _tabBarMinimizeBehavior;
+    } else
+#endif // Check for iOS >= 26
+      if (newComponentProps.tabBarMinimizeBehavior != react::RNSBottomTabsTabBarMinimizeBehavior::Automatic) {
+        RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
+      }
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
@@ -400,7 +441,7 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateTabBarAppearance];
 }
 
-- (void)setTabBarBlurEffect:(UIBlurEffect *_Nullable)tabBarBlurEffect
+- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
 {
   _tabBarBlurEffect = tabBarBlurEffect;
   [self invalidateTabBarAppearance];
@@ -458,6 +499,23 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
   [self invalidateTabBarAppearance];
+}
+
+// This is a Paper-only setter method that will be called by the mounting code.
+// It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
+- (void)setTabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior:(RNSTabBarMinimizeBehavior)tabBarMinimizeBehavior
+{
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+  if (@available(iOS 26.0, *)) {
+    _tabBarMinimizeBehavior =
+        rnscreens::conversion::UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(tabBarMinimizeBehavior);
+    _controller.tabBarMinimizeBehavior = _tabBarMinimizeBehavior;
+  } else
+#endif // Check for iOS >= 26
+    if (tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAutomatic) {
+      RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
+    }
 }
 
 - (void)setOnNativeFocusChange:(RCTDirectEventBlock)onNativeFocusChange

@@ -93,7 +93,7 @@ class TabScreen(
         tabScreenDelegate = WeakReference(delegate)
     }
 
-    override fun getFragment(): Fragment? = tabScreenDelegate.get()?.getFragmentForTabScreen(this)
+    override fun getAssociatedFragment(): Fragment? = tabScreenDelegate.get()?.getFragmentForTabScreen(this)
 
     private fun onTabFocusChangedFromJS() {
         tabScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)

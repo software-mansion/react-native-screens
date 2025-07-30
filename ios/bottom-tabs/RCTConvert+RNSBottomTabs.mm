@@ -19,6 +19,17 @@ RCT_ENUM_CONVERTER(
     RNSBottomTabsIconTypeSfSymbol,
     integerValue)
 
+RCT_ENUM_CONVERTER(
+    RNSTabBarMinimizeBehavior,
+    (@{
+      @"automatic" : @(RNSTabBarMinimizeBehaviorAutomatic),
+      @"never" : @(RNSTabBarMinimizeBehaviorNever),
+      @"onScrollDown" : @(RNSTabBarMinimizeBehaviorOnScrollDown),
+      @"onScrollUp" : @(RNSTabBarMinimizeBehaviorOnScrollUp),
+    }),
+    RNSTabBarMinimizeBehaviorAutomatic,
+    integerValue)
+
 @end
 
 #endif // !RCT_NEW_ARCH_ENABLED

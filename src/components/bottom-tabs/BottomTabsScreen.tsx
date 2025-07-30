@@ -1,102 +1,24 @@
 'use client';
 
 import React from 'react';
-import BottomTabsScreenNativeComponent, {
-  BlurEffect,
-  type IconType,
-  type NativeProps,
-} from '../fabric/BottomTabsScreenNativeComponent';
+import { Freeze } from 'react-freeze';
 import {
-  type ColorValue,
+  StyleSheet,
+  findNodeHandle,
   type ImageSourcePropType,
   type NativeSyntheticEvent,
-  StyleSheet,
-  TextStyle,
-  type ViewProps,
-  findNodeHandle,
 } from 'react-native';
-import { Freeze } from 'react-freeze';
-import { freezeEnabled } from '../core';
-import { featureFlags } from '../flags';
-
-export type EmptyObject = Record<string, never>;
-export type BottomTabsScreenEventHandler<T> = (
-  event: NativeSyntheticEvent<T>,
-) => void;
-
-// iOS-specific: SFSymbol usage
-export interface SFIcon {
-  sfSymbolName: string;
-}
-
-export interface ImageIcon {
-  imageSource: ImageSourcePropType;
-}
-
-// iOS-specific: image as a template usage
-export interface TemplateIcon {
-  templateSource: ImageSourcePropType;
-}
-
-// iOS-specific: SFSymbol, image as a template usage
-export type Icon = SFIcon | ImageIcon | TemplateIcon;
-
-export interface BottomTabsScreenProps {
-  children?: ViewProps['children'];
-  placeholder?: React.ReactNode | undefined;
-
-  // Control
-
-  // Works only in 'controlled' mode. Otherwise this prop indicates only initally selected tab.
-  isFocused?: boolean;
-  tabKey: string;
-
-  // Tab Bar Appearance
-  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
-  tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: BlurEffect; // defaults to 'none'
-
-  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
-  tabBarItemTitleFontSize?: TextStyle['fontSize'];
-  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
-  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
-  tabBarItemTitleFontColor?: TextStyle['color'];
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: number;
-    vertical?: number;
-  };
-
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // General
-  title?: string;
-
-  // Android specific
-  iconResourceName?: string;
-  tabBarItemBadgeTextColor?: ColorValue;
-
-  icon?: Icon;
-  selectedIcon?: Icon;
-
-  badgeValue?: string;
-
-  specialEffects?: {
-    repeatedTabSelection?: {
-      popToRoot?: boolean;
-      scrollToTop?: boolean;
-    };
-  };
-
-  overrideScrollViewContentInsetAdjustmentBehavior?: boolean; // defaults to true
-
-  // Events
-  onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
-  onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;
-  onWillDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
-  onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
-}
+import { freezeEnabled } from '../../core';
+import BottomTabsScreenNativeComponent, {
+  type IconType,
+  type NativeProps,
+} from '../../fabric/bottom-tabs/BottomTabsScreenNativeComponent';
+import { featureFlags } from '../../flags';
+import type {
+  BottomTabsScreenProps,
+  EmptyObject,
+  Icon,
+} from './BottomTabsScreen.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

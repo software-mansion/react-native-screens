@@ -11,6 +11,11 @@
 
 namespace react = facebook::react;
 
+static const CGFloat epsilon = 1e-6;
+
+#define COLUMN_METRIC_CHANGED(OLD, NEW, PROPERTY_NAME, EPSILON) \
+  (fabs((OLD).columnMetrics.PROPERTY_NAME - (NEW).columnMetrics.PROPERTY_NAME) > (EPSILON))
+
 @interface RNSSplitViewHostComponentView () <RCTMountingTransactionObserving>
 @end
 
@@ -21,6 +26,8 @@ namespace react = facebook::react;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
   bool _needsSplitViewAppearanceUpdate;
+  bool _needsSplitViewSecondaryScreenNavBarUpdate;
+  bool _needsSplitViewDisplayModeUpdate;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -41,6 +48,8 @@ namespace react = facebook::react;
 
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _needsSplitViewAppearanceUpdate = false;
+  _needsSplitViewSecondaryScreenNavBarUpdate = false;
+  _needsSplitViewDisplayModeUpdate = false;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -49,28 +58,28 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSSplitViewHostProps>();
   _props = defaultProps;
 
-  _splitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
+  _preferredSplitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
   _primaryEdge = UISplitViewControllerPrimaryEdgeLeading;
-  _displayMode = UISplitViewControllerDisplayModeAutomatic;
+  _preferredDisplayMode = UISplitViewControllerDisplayModeAutomatic;
   _displayModeButtonVisibility = UISplitViewControllerDisplayModeButtonVisibilityAutomatic;
   _presentsWithGesture = true;
   _showSecondaryToggleButton = false;
   _showInspector = false;
 
-  _minimumPrimaryColumnWidth = -1;
-  _maximumPrimaryColumnWidth = -1;
-  _preferredPrimaryColumnWidth = -1;
-  _minimumSupplementaryColumnWidth = -1;
-  _maximumSupplementaryColumnWidth = -1;
-  _preferredSupplementaryColumnWidth = -1;
+  _minimumPrimaryColumnWidth = -1.0;
+  _maximumPrimaryColumnWidth = -1.0;
+  _preferredPrimaryColumnWidthOrFraction = -1.0;
+  _minimumSupplementaryColumnWidth = -1.0;
+  _maximumSupplementaryColumnWidth = -1.0;
+  _preferredSupplementaryColumnWidthOrFraction = -1.0;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-  _minimumSecondaryColumnWidth = -1;
-  _preferredSecondaryColumnWidth = -1;
-  _minimumInspectorColumnWidth = -1;
-  _maximumInspectorColumnWidth = -1;
-  _preferredInspectorColumnWidth = -1;
+  _minimumSecondaryColumnWidth = -1.0;
+  _preferredSecondaryColumnWidthOrFraction = -1.0;
+  _minimumInspectorColumnWidth = -1.0;
+  _maximumInspectorColumnWidth = -1.0;
+  _preferredInspectorColumnWidthOrFraction = -1.0;
 #endif
 
   _isShowSecondaryToggleButtonSet = false;
@@ -100,11 +109,18 @@ namespace react = facebook::react;
   }
 }
 
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (newWindow == nil) {
+    [self invalidate];
+  }
+}
+
 - (void)didMoveToWindow
 {
   [self setupController];
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
-
+  [self requestSplitViewHostControllerForAppearanceUpdate];
   [self reactAddControllerToClosestParent:_controller];
 }
 
@@ -122,6 +138,17 @@ namespace react = facebook::react;
       parentView = (UIView *)parentView.reactSuperview;
     }
     return;
+  }
+}
+
+- (void)invalidate
+{
+  // We assume that split host is removed from view hierarchy **only** when
+  // whole component is destroyed & therefore we do the necessary cleanup here.
+  // If at some point that statement does not hold anymore, this cleanup
+  // should be moved to a different place.
+  for (RNSSplitViewScreenComponentView *subview in _reactSubviews) {
+    [subview invalidate];
   }
 }
 
@@ -190,9 +217,10 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(props);
 
-  if (oldComponentProps.splitBehavior != newComponentProps.splitBehavior) {
+  if (oldComponentProps.preferredSplitBehavior != newComponentProps.preferredSplitBehavior) {
     _needsSplitViewAppearanceUpdate = true;
-    _splitBehavior = rnscreens::conversion::SplitViewSplitBehaviorFromHostProp(newComponentProps.splitBehavior);
+    _preferredSplitBehavior =
+        rnscreens::conversion::SplitViewPreferredSplitBehaviorFromHostProp(newComponentProps.preferredSplitBehavior);
   }
 
   if (oldComponentProps.primaryEdge != newComponentProps.primaryEdge) {
@@ -200,9 +228,11 @@ RNS_IGNORE_SUPER_CALL_END
     _primaryEdge = rnscreens::conversion::SplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
   }
 
-  if (oldComponentProps.displayMode != newComponentProps.displayMode) {
+  if (oldComponentProps.preferredDisplayMode != newComponentProps.preferredDisplayMode) {
     _needsSplitViewAppearanceUpdate = true;
-    _displayMode = rnscreens::conversion::SplitViewDisplayModeFromHostProp(newComponentProps.displayMode);
+    _needsSplitViewDisplayModeUpdate = true;
+    _preferredDisplayMode =
+        rnscreens::conversion::SplitViewPreferredDisplayModeFromHostProp(newComponentProps.preferredDisplayMode);
   }
 
   if (oldComponentProps.presentsWithGesture != newComponentProps.presentsWithGesture) {
@@ -212,11 +242,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldComponentProps.showSecondaryToggleButton != newComponentProps.showSecondaryToggleButton) {
     _needsSplitViewAppearanceUpdate = true;
+    _needsSplitViewSecondaryScreenNavBarUpdate = true;
     _showSecondaryToggleButton = newComponentProps.showSecondaryToggleButton;
-
-    if (_isShowSecondaryToggleButtonSet) {
-      RCTLogWarn(@"[RNScreens] changing showSecondaryToggleButton dynamically is currently unsupported");
-    }
   }
 
   if (oldComponentProps.showInspector != newComponentProps.showInspector) {
@@ -230,72 +257,63 @@ RNS_IGNORE_SUPER_CALL_END
         newComponentProps.displayModeButtonVisibility);
   }
 
-  if (oldComponentProps.columnMetrics.minimumPrimaryColumnWidth !=
-      newComponentProps.columnMetrics.minimumPrimaryColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumPrimaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumPrimaryColumnWidth = newComponentProps.columnMetrics.minimumPrimaryColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.maximumPrimaryColumnWidth !=
-      newComponentProps.columnMetrics.maximumPrimaryColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumPrimaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _maximumPrimaryColumnWidth = newComponentProps.columnMetrics.maximumPrimaryColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.preferredPrimaryColumnWidth !=
-      newComponentProps.columnMetrics.preferredPrimaryColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredPrimaryColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
-    _preferredPrimaryColumnWidth = newComponentProps.columnMetrics.preferredPrimaryColumnWidth;
+    _preferredPrimaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredPrimaryColumnWidthOrFraction;
   }
 
-  if (oldComponentProps.columnMetrics.minimumSupplementaryColumnWidth !=
-      newComponentProps.columnMetrics.minimumSupplementaryColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSupplementaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumSupplementaryColumnWidth = newComponentProps.columnMetrics.minimumSupplementaryColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.maximumSupplementaryColumnWidth !=
-      newComponentProps.columnMetrics.maximumSupplementaryColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumSupplementaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _maximumSupplementaryColumnWidth = newComponentProps.columnMetrics.maximumSupplementaryColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.preferredSupplementaryColumnWidth !=
-      newComponentProps.columnMetrics.preferredSupplementaryColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(
+          oldComponentProps, newComponentProps, preferredSupplementaryColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
-    _preferredSupplementaryColumnWidth = newComponentProps.columnMetrics.preferredSupplementaryColumnWidth;
+    _preferredSupplementaryColumnWidthOrFraction =
+        newComponentProps.columnMetrics.preferredSupplementaryColumnWidthOrFraction;
   }
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-  if (oldComponentProps.columnMetrics.minimumSecondaryColumnWidth !=
-      newComponentProps.columnMetrics.minimumSecondaryColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSecondaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumSecondaryColumnWidth = newComponentProps.columnMetrics.minimumSecondaryColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.preferredSecondaryColumnWidth !=
-      newComponentProps.columnMetrics.preferredSecondaryColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredSecondaryColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
-    _preferredSecondaryColumnWidth = newComponentProps.columnMetrics.preferredSecondaryColumnWidth;
+    _preferredSecondaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredSecondaryColumnWidthOrFraction;
   }
 
-  if (oldComponentProps.columnMetrics.minimumInspectorColumnWidth !=
-      newComponentProps.columnMetrics.minimumInspectorColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumInspectorColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumInspectorColumnWidth = newComponentProps.columnMetrics.minimumInspectorColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.maximumInspectorColumnWidth !=
-      newComponentProps.columnMetrics.maximumInspectorColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumInspectorColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _maximumInspectorColumnWidth = newComponentProps.columnMetrics.maximumInspectorColumnWidth;
   }
 
-  if (oldComponentProps.columnMetrics.preferredInspectorColumnWidth !=
-      newComponentProps.columnMetrics.preferredInspectorColumnWidth) {
+  if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredInspectorColumnWidthOrFraction, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
-    _preferredInspectorColumnWidth = newComponentProps.columnMetrics.preferredInspectorColumnWidth;
+    _preferredInspectorColumnWidthOrFraction = newComponentProps.columnMetrics.preferredInspectorColumnWidthOrFraction;
   }
 #endif
 
@@ -309,11 +327,26 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
-  if (_needsSplitViewAppearanceUpdate) {
+  [self requestSplitViewHostControllerForAppearanceUpdate];
+  [super finalizeUpdates:updateMask];
+}
+
+- (void)requestSplitViewHostControllerForAppearanceUpdate
+{
+  if (_needsSplitViewAppearanceUpdate && _controller != nil) {
     _needsSplitViewAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
   }
-  [super finalizeUpdates:updateMask];
+
+  if (_needsSplitViewDisplayModeUpdate && _controller != nil) {
+    _needsSplitViewDisplayModeUpdate = false;
+    [_controller setNeedsDisplayModeUpdate];
+  }
+
+  if (_needsSplitViewSecondaryScreenNavBarUpdate && _controller != nil) {
+    _needsSplitViewSecondaryScreenNavBarUpdate = false;
+    [_controller setNeedsSecondaryScreenNavBarUpdate];
+  }
 }
 
 #pragma mark - RCTMountingTransactionObserving
@@ -355,3 +388,5 @@ Class<RCTComponentViewProtocol> RNSSplitViewHostCls(void)
 {
   return RNSSplitViewHostComponentView.class;
 }
+
+#undef COLUMN_METRIC_CHANGED

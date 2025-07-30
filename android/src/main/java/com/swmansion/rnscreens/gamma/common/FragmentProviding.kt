@@ -7,5 +7,5 @@ import androidx.fragment.app.Fragment
  * can be used to retrieve child fragment manager for nesting operations.
  */
 interface FragmentProviding {
-    fun getFragment(): Fragment?
+    fun getAssociatedFragment(): Fragment?
 }

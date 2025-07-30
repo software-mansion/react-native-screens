@@ -26,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) RNSBottomTabsHostComponentView *reactSuperview;
 
+/**
+ * @brief A function responsible for requesting a cleanup in the BottomTabsScreen component.
+ *
+ * Should be called when the component is about to be deleted.
+ */
+- (void)invalidate;
+
 @end
 
 #pragma mark - Props
@@ -43,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) NSString *badgeValue;
 
 @property (nonatomic, strong, nullable) UIColor *tabBarBackgroundColor;
-@property (nonatomic, strong, nullable) UIBlurEffect *tabBarBlurEffect;
+@property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
 
 @property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontFamily;
 @property (nonatomic, strong, nullable) NSNumber *tabBarItemTitleFontSize;

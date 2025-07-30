@@ -15,12 +15,13 @@ import type {
 //   backgroundColor?: ColorValue;
 // };
 
-export type NativeFocusChangeEvent = {
+type NativeFocusChangeEvent = {
   tabKey: string;
 };
 
-export type BlurEffect =
+type BlurEffect =
   | 'none'
+  | 'systemDefault'
   | 'extraLight'
   | 'light'
   | 'dark'
@@ -42,6 +43,18 @@ export type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+type TabBarItemLabelVisibilityMode =
+  | 'auto'
+  | 'selected'
+  | 'labeled'
+  | 'unlabeled';
+
+type TabBarMinimizeBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
@@ -49,7 +62,7 @@ export interface NativeProps extends ViewProps {
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
   tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'none'>;
+  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
   tabBarTintColor?: ColorValue;
 
   tabBarItemTitleFontFamily?: string;
@@ -70,8 +83,16 @@ export interface NativeProps extends ViewProps {
   tabBarItemTitleFontColorActive?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemTitleFontSizeActive?: Float;
-  tabBarItemActivityIndicatorColor?: ColorValue;
+  tabBarItemActiveIndicatorColor?: ColorValue;
+  tabBarItemActiveIndicatorEnabled?: WithDefault<boolean, true>;
   tabBarItemRippleColor?: ColorValue;
+  tabBarItemLabelVisibilityMode?: WithDefault<
+    TabBarItemLabelVisibilityMode,
+    'auto'
+  >;
+
+  // iOS-specific
+  tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
 
   // Control
 

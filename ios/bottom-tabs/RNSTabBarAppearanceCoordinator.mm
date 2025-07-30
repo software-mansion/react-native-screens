@@ -47,6 +47,7 @@
     }
 
     // Inherit general properties from host
+    // TODO: don't inherit properties from host
     UITabBarAppearance *tabAppearance = [[UITabBarAppearance alloc] initWithBarAppearance:appearance];
 
     [self configureTabBarAppearance:tabAppearance fromAppearanceProvider:tabScreenCtrl.tabScreenComponentView];
@@ -61,7 +62,7 @@
                  forTabScreenController:tabScreenCtrl
                   withHostComponentView:hostComponentView];
 
-    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearace:tabAppearance imageLoader:imageLoader];
+    [self configureTabBarItemForTabScreenController:tabScreenCtrl withAppearance:tabAppearance imageLoader:imageLoader];
   }
 }
 
@@ -72,13 +73,27 @@
     appearance.backgroundColor = appearanceProvider.tabBarBackgroundColor;
   }
 
-  if (appearanceProvider.tabBarBlurEffect != nil) {
-    appearance.backgroundEffect = appearanceProvider.tabBarBlurEffect;
+  switch (appearanceProvider.tabBarBlurEffect) {
+    case RNSBlurEffectStyleNone:
+      appearance.backgroundEffect = nil;
+      break;
+
+    case RNSBlurEffectStyleSystemDefault:
+      // Initialized appearance already has default blur effect.
+
+      // This won't work as expected with current inheriting appearance logic:
+      // screen will not revert to default but inherit blur from host
+      // TODO: remove appearance inheritance
+      break;
+
+    default:
+      appearance.backgroundEffect =
+          rnscreens::conversion::RNSUIBlurEffectFromRNSBlurEffectStyle(appearanceProvider.tabBarBlurEffect);
   }
 }
 
 - (void)configureTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
-                                    withAppearace:(nonnull UITabBarAppearance *)tabAppearance
+                                   withAppearance:(nonnull UITabBarAppearance *)tabAppearance
                                       imageLoader:(nullable RCTImageLoader *)imageLoader
 {
   UITabBarItem *tabBarItem = tabScreenCtrl.tabBarItem;
@@ -160,10 +175,10 @@
 - (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance
                          withTabsHost:(nonnull RNSBottomTabsHostComponentView *)hostComponent
 {
-  NSMutableDictionary *titleTextAttributes = nil;
+  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
 
-  if (hostComponent.tabBarItemTitleFontSize != nil) {
-    titleTextAttributes = [[NSMutableDictionary alloc] init];
+  if (hostComponent.tabBarItemTitleFontSize != nil || hostComponent.tabBarItemTitleFontFamily != nil ||
+      hostComponent.tabBarItemTitleFontWeight != nil || hostComponent.tabBarItemTitleFontStyle != nil) {
     titleTextAttributes[NSFontAttributeName] = [RCTFont updateFont:nil
                                                         withFamily:hostComponent.tabBarItemTitleFontFamily
                                                               size:hostComponent.tabBarItemTitleFontSize
@@ -171,6 +186,9 @@
                                                              style:hostComponent.tabBarItemTitleFontStyle
                                                            variant:nil
                                                    scaleMultiplier:1.0];
+  }
+
+  if (hostComponent.tabBarItemTitleFontColor != nil) {
     titleTextAttributes[NSForegroundColorAttributeName] = hostComponent.tabBarItemTitleFontColor;
   }
 
@@ -192,10 +210,12 @@
                forTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
                 withHostComponentView:(nonnull RNSBottomTabsHostComponentView *)tabsHostComponent
 {
-  NSMutableDictionary *titleTextAttributes = nil;
+  NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
 
-  if (tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontSize != nil) {
-    titleTextAttributes = [[NSMutableDictionary alloc] init];
+  if (tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontSize != nil ||
+      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontFamily != nil ||
+      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontWeight != nil ||
+      tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontStyle != nil) {
     titleTextAttributes[NSFontAttributeName] =
         [RCTFont updateFont:nil
                  withFamily:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontFamily
@@ -204,6 +224,9 @@
                       style:tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontStyle
                     variant:nil
             scaleMultiplier:1.0];
+  }
+
+  if (tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontColor != nil) {
     titleTextAttributes[NSForegroundColorAttributeName] = tabScreenCtrl.tabScreenComponentView.tabBarItemTitleFontColor;
   }
 
@@ -223,13 +246,13 @@
 
 - (void)configureTabBarItemStateAppearance:(nonnull UITabBarItemStateAppearance *)tabBarItemStateAppearance
                     withAppearanceProvider:(id<RNSTabBarAppearanceProvider>)appearanceProvider
-                   withTitleTextAttributes:(nullable NSDictionary<NSAttributedStringKey, id> *)titleTextAttributes
+                   withTitleTextAttributes:(nonnull NSDictionary<NSAttributedStringKey, id> *)titleTextAttributes
 {
   if (appearanceProvider.tabBarItemBadgeBackgroundColor != nil) {
     tabBarItemStateAppearance.badgeBackgroundColor = appearanceProvider.tabBarItemBadgeBackgroundColor;
   }
 
-  if (titleTextAttributes != nil) {
+  if ([titleTextAttributes count] > 0) {
     tabBarItemStateAppearance.titleTextAttributes = titleTextAttributes;
   }
 

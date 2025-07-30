@@ -1,59 +1,19 @@
 'use client';
 
 import React from 'react';
-import BottomTabsNativeComponent, {
-  BlurEffect,
-  NativeFocusChangeEvent,
-  type NativeProps as BottomTabsNativeComponentProps,
-} from '../fabric/BottomTabsNativeComponent';
 import {
-  type ColorValue,
+  StyleSheet,
   findNodeHandle,
   type NativeSyntheticEvent,
-  StyleSheet,
-  TextStyle,
-  type ViewProps,
 } from 'react-native';
-import featureFlags from '../flags';
-
-export interface BottomTabsProps extends ViewProps {
-  // Events
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
-  ) => void;
-
-  // Tab Bar Appearance
-  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
-  tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: BlurEffect; // defaults to 'none'
-  tabBarTintColor?: ColorValue;
-
-  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
-  tabBarItemTitleFontSize?: TextStyle['fontSize'];
-  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
-  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
-  tabBarItemTitleFontColor?: TextStyle['color'];
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: number;
-    vertical?: number;
-  };
-
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // Additional for Android
-  tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
-  tabBarItemTitleFontColorActive?: TextStyle['color'];
-  tabBarItemIconColorActive?: ColorValue;
-  tabBarItemActivityIndicatorColor?: ColorValue;
-  tabBarItemRippleColor?: ColorValue;
-
-  // Control
-
-  // Experimental support
-  experimentalControlNavigationStateInJS?: boolean; // defaults to `false`
-}
+import BottomTabsNativeComponent, {
+  type NativeProps as BottomTabsNativeComponentProps,
+} from '../../fabric/bottom-tabs/BottomTabsNativeComponent';
+import featureFlags from '../../flags';
+import type {
+  BottomTabsProps,
+  NativeFocusChangeEvent,
+} from './BottomTabs.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

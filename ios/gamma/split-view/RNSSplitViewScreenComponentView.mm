@@ -81,6 +81,14 @@ namespace react = facebook::react;
   _columnType = RNSSplitViewScreenColumnTypeColumn;
 }
 
+- (void)invalidate
+{
+  // Controller keeps the strong reference to the component via the `.view` property.
+  // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
+  // when we want to destroy the component.
+  _controller = nil;
+}
+
 #pragma mark - ShadowTreeState
 
 - (nonnull RNSSplitViewScreenShadowStateProxy *)shadowStateProxy

@@ -10,15 +10,45 @@ namespace react = facebook::react;
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * These methods can be called to send an appropriate event to ElementTree.
- * Returned value denotes whether the event has been successfully dispatched to React event pipeline.
- * The returned value of `true` does not mean, that the event has been successfully delivered.
+ * @class RNSSplitViewScreenComponentEventEmitter
+ * @brief Responsible for emitting events from the native SplitViewScreen (column) to the React Element Tree.
  */
 @interface RNSSplitViewScreenComponentEventEmitter : NSObject
 
+/**
+ * @brief Emits the onWillAppear event to notify React Native.
+ *
+ * This event is triggered when the SplitView column will be added to the native hierarchy.
+ *
+ * @return true if the event was successfully emitted, false otherwise.
+ */
 - (BOOL)emitOnWillAppear;
+
+/**
+ * @brief Emits the onDidAppear event to notify React Native.
+ *
+ * This event is triggered when the SplitView column was added to the native hierarchy.
+ *
+ * @return true if the event was successfully emitted, false otherwise.
+ */
 - (BOOL)emitOnDidAppear;
+
+/**
+ * @brief Emits the onWillDisappear event to notify React Native.
+ *
+ * This event is triggered when the SplitView column will be removed from the native hierarchy.
+ *
+ * @return true if the event was successfully emitted, false otherwise.
+ */
 - (BOOL)emitOnWillDisappear;
+
+/**
+ * @brief Emits the onDidDisappear event to notify React Native.
+ *
+ * This event is triggered when the SplitView column was removed from the native hierarchy.
+ *
+ * @return true if the event was successfully emitted, false otherwise.
+ */
 - (BOOL)emitOnDidDisappear;
 
 @end

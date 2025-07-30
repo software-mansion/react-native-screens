@@ -8,6 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomTabsScreenComponentView;
+@class RNSTabBarController;
 @class RCTImageLoader;
 
 /**
@@ -24,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
 #endif // !RCT_NEW_ARCH_ENABLED
 
+@property (nonatomic, nonnull, strong, readonly) RNSTabBarController *controller;
+
 @end
 
 #pragma mark - Props
@@ -31,7 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSBottomTabsHostComponentView () <RNSTabBarAppearanceProvider>
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
-@property (nonatomic, strong, readonly, nullable) UIBlurEffect *tabBarBlurEffect;
+@property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
+
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 
 @property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontFamily;
@@ -46,6 +50,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+@property (nonatomic, readonly) UITabBarMinimizeBehavior tabBarMinimizeBehavior API_AVAILABLE(ios(26.0));
+#endif // Check for iOS >= 26
 
 @end
 

@@ -1,10 +1,13 @@
 import React from 'react';
-import ConfigWrapperContext from './ConfigWrapperContext';
-import { BottomTabs, BottomTabsScreen } from 'react-native-screens';
-import { Colors } from '../../../styling/Colors';
-import type { BottomTabsScreenProps } from 'react-native-screens/components/BottomTabsScreen';
 import type { NativeSyntheticEvent } from 'react-native';
-import type { NativeFocusChangeEvent } from 'react-native-screens/fabric/BottomTabsNativeComponent';
+import {
+  BottomTabs,
+  BottomTabsScreen,
+  BottomTabsScreenProps,
+  NativeFocusChangeEvent,
+} from 'react-native-screens';
+import { Colors } from '../../../styling/Colors';
+import ConfigWrapperContext from './ConfigWrapperContext';
 
 export interface TabConfiguration {
   tabScreenProps: BottomTabsScreenProps;
@@ -84,9 +87,9 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
   return (
     <BottomTabs
       onNativeFocusChange={onNativeFocusChangeCallback}
-
       tabBarBackgroundColor={Colors.NavyLight100}
-      tabBarItemActivityIndicatorColor={Colors.GreenLight40}
+      tabBarItemActiveIndicatorColor={Colors.GreenLight40}
+      tabBarItemActiveIndicatorEnabled={true}
       tabBarTintColor={Colors.YellowLight100}
       tabBarItemBadgeBackgroundColor={Colors.GreenDark100}
       tabBarItemIconColor={Colors.BlueLight100}
@@ -96,10 +99,11 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemTitleFontSize={10}
       tabBarItemTitleFontSizeActive={15}
       tabBarItemRippleColor={Colors.WhiteTransparentDark}
-      tabBarItemTitleFontFamily='monospace'
-      tabBarItemTitleFontStyle='italic'
+      tabBarItemTitleFontFamily="monospace"
+      tabBarItemTitleFontStyle="italic"
       tabBarItemTitleFontWeight="700"
-
+      tabBarItemLabelVisibilityMode="auto"
+      tabBarMinimizeBehavior="onScrollDown"
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }>

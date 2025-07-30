@@ -176,7 +176,7 @@ open class ScreenContainer(
     private fun setupFragmentManager() {
         var parent: ViewParent = this
         // We traverse view hierarchy up until we find screen parent or a root view
-        while (!(parent is ReactRootView || parent is Screen || parent is FragmentProviding) &&
+        while (!(parent is ReactRootView || parent is FragmentProviding) &&
             parent.parent != null
         ) {
             parent = parent.parent
@@ -195,7 +195,7 @@ open class ScreenContainer(
             // TODO: We're missing parent-child relationship here between old container & new one
             val fragmentManager =
                 checkNotNull(
-                    parent.getFragment(),
+                    parent.getAssociatedFragment(),
                 ) { "[RNScreens] Parent $parent returned nullish fragment" }.childFragmentManager
             setFragmentManager(fragmentManager)
         } else {

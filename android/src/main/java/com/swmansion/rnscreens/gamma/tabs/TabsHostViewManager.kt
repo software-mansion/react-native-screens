@@ -98,6 +98,7 @@ class TabsHostViewManager :
         value: Boolean,
     ) = Unit
 
+    @ReactProp(name = "tabBarItemTitleFontFamily")
     override fun setTabBarItemTitleFontFamily(
         view: TabsHost,
         value: String?,
@@ -105,6 +106,7 @@ class TabsHostViewManager :
         view.tabBarItemTitleFontFamily = value
     }
 
+    @ReactProp(name = "tabBarItemTitleFontWeight")
     override fun setTabBarItemTitleFontWeight(
         view: TabsHost,
         value: String?,
@@ -112,6 +114,7 @@ class TabsHostViewManager :
         view.tabBarItemTitleFontWeight = value
     }
 
+    @ReactProp(name = "tabBarItemTitleFontStyle")
     override fun setTabBarItemTitleFontStyle(
         view: TabsHost,
         value: String?,
@@ -145,6 +148,11 @@ class TabsHostViewManager :
         view.tabBarItemIconColor = value
     }
 
+    override fun setTabBarMinimizeBehavior(
+        view: TabsHost,
+        value: String?,
+    ) = Unit
+
     // Android additional
 
     @ReactProp(name = "tabBarItemTitleFontColorActive", customType = "Color")
@@ -155,12 +163,20 @@ class TabsHostViewManager :
         view.tabBarItemTitleFontColorActive = value
     }
 
-    @ReactProp(name = "tabBarItemActivityIndicatorColor", customType = "Color")
-    override fun setTabBarItemActivityIndicatorColor(
+    @ReactProp(name = "tabBarItemActiveIndicatorColor", customType = "Color")
+    override fun setTabBarItemActiveIndicatorColor(
         view: TabsHost,
         value: Int?,
     ) {
-        view.tabBarItemActivityIndicatorColor = value
+        view.tabBarItemActiveIndicatorColor = value
+    }
+
+    @ReactProp(name = "tabBarItemActiveIndicatorEnabled")
+    override fun setTabBarItemActiveIndicatorEnabled(
+        view: TabsHost,
+        value: Boolean,
+    ) {
+        view.isTabBarItemActiveIndicatorEnabled = value
     }
 
     @ReactProp(name = "tabBarItemIconColorActive", customType = "Color")
@@ -185,6 +201,14 @@ class TabsHostViewManager :
         value: Int?,
     ) {
         view.tabBarItemRippleColor = value
+    }
+
+    @ReactProp(name = "tabBarItemLabelVisibilityMode")
+    override fun setTabBarItemLabelVisibilityMode(
+        view: TabsHost,
+        value: String?,
+    ) {
+        view.tabBarItemLabelVisibilityMode = value
     }
 
     companion object {
