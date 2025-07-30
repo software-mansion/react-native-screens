@@ -112,13 +112,7 @@ static const CGFloat epsilon = 1e-6;
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
   if (newWindow == nil) {
-    // We assume that split host is removed from view hierarchy **only** when 
-    // whole component is destroyed & therefore we do the necessary cleanup here. 
-    // If at some point that statement does not hold anymore, this cleanup 
-    // should be moved to a different place.
-    for (RNSSplitViewScreenComponentView *subview in _reactSubviews) {
-      [subview invalidate];
-    }
+    [self invalidate];
   }
 }
 
@@ -144,6 +138,17 @@ static const CGFloat epsilon = 1e-6;
       parentView = (UIView *)parentView.reactSuperview;
     }
     return;
+  }
+}
+
+- (void)invalidate
+{
+  // We assume that split host is removed from view hierarchy **only** when
+  // whole component is destroyed & therefore we do the necessary cleanup here.
+  // If at some point that statement does not hold anymore, this cleanup
+  // should be moved to a different place.
+  for (RNSSplitViewScreenComponentView *subview in _reactSubviews) {
+    [subview invalidate];
   }
 }
 
