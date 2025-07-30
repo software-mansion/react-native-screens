@@ -150,6 +150,7 @@ namespace react = facebook::react;
   for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
     [subview invalidate];
   }
+  _controller = nil;
 }
 
 #pragma mark - RNSScreenContainerDelegate
