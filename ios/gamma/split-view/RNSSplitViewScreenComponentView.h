@@ -20,6 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nonnull) RNSSplitViewScreenController *controller;
 @property (nonatomic, weak, readwrite, nullable) RNSSplitViewHostComponentView *splitViewHost;
 
+/**
+ * @brief A function responsible for requesting a cleanup in the SplitViewScreen component.
+ *
+ * Should be called before the component when the component is about to be deleted.
+ */
+- (void)invalidate;
+
 @end
 
 #pragma mark - ShadowTreeState

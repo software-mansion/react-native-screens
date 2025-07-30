@@ -109,6 +109,15 @@ static const CGFloat epsilon = 1e-6;
   }
 }
 
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (newWindow == nil) {
+    for (RNSSplitViewScreenComponentView *subview in _reactSubviews) {
+      [subview invalidate];
+    }
+  }
+}
+
 - (void)didMoveToWindow
 {
   [self setupController];
