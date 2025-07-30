@@ -1,5 +1,11 @@
-import React from 'react';
-import { ScrollView, StyleSheet, View, ImageBackground } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  ImageBackground,
+  Text,
+} from 'react-native';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -81,11 +87,30 @@ interface PushScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Push'>;
 }
 
-const PushScreen = ({ navigation }: PushScreenProps) => (
-  <View style={styles.container}>
-    <FormScreenContent navigation={navigation} />
-  </View>
-);
+// const PushScreen = ({ navigation }: PushScreenProps) => (
+//   <View style={styles.container}>
+//     <FormScreenContent navigation={navigation} />
+//   </View>
+// );
+
+function PushScreen({ navigation }: PushScreenProps) {
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCounter(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text>{counter}</Text>
+      <FormScreenContent navigation={navigation} />
+    </View>
+  );
+}
 
 interface FormScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'FormSheet'>;
