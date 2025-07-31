@@ -30,9 +30,9 @@
 #import "RNSScrollViewFinder.h"
 #import "RNSTabsScreenViewController.h"
 #import "UIScrollView+RNScreens.h"
-#import "RNSDismissibleModalProtocol.h"
 #import "UIView+RNSUtility.h"
 #import "utils/UINavigationBar+RNSUtility.h"
+#import "integrations/RNSDismissibleModalProtocol.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
