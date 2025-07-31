@@ -13,7 +13,7 @@ jobs:
   lint-js:
     runs-on: ubuntu-latest
     concurrency:
-      group: install-and-lint-${{ github.ref }}
+      group: install-and-lint-${{ github.job }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -32,7 +32,7 @@ jobs:
   lint-ios:
     runs-on: macos-15
     concurrency:
-      group: install-and-lint-${{ github.ref }}
+      group: install-and-lint-${{ github.job }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -42,10 +42,17 @@ jobs:
   lint-android:
     runs-on: ubuntu-latest
     concurrency:
-      group: install-and-lint-${{ github.ref }}
+      group: install-and-lint-${{ github.job }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Install node dependencies
+        run: yarn
       - name: Lint
         run: yarn lint-android
