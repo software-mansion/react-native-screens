@@ -41,20 +41,23 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
 
   @objc
   public func updateChildViewControllers() {
-    precondition(needsChildViewControllersUpdate, "[RNScreens] Child view controllers must be invalidated when update is forced!")
-    
-    let currentSubviews = screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
-    
-    let visibleViews = currentSubviews.filter {
-      $0.lifecycleState != RNSScreenStackLifecycleState.popped
-    }
-    
-    let visibleViewControllers = visibleViews.map { $0.controller }
-    setViewControllers(visibleViewControllers, animated: true)
-    
-    
-    needsChildViewControllersUpdate = false;
+    precondition(
+        needsChildViewControllersUpdate,
+        "[RNScreens] Child view controller must be invalidated when update is forced!")
+
+      let activeControllers = sourceAllViewControllers()
+        .filter { screenCtrl in screenCtrl.screenStackComponentView.maxLifecycleState == .attached }
+
+      setViewControllers(activeControllers, animated: true)
+
+      needsChildViewControllersUpdate = false
   }
+  
+  private func sourceAllViewControllers() -> [RNSStackScreenController] {
+     let screenStackComponents =
+       screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
+     return screenStackComponents.lazy.map(\.controller)
+   }
   
   @objc
   public func updateNavigationBarAppearanceIfNeeded() {

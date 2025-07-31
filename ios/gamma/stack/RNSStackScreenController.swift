@@ -4,6 +4,10 @@ public class RNSStackScreenController: UIViewController {
   public var navigationAppearance: RNSStackNavigationAppearance?
   public var needsNavigationBarAppearanceUpdate: Bool = false
   
+  private var reactEventEmitter: RNSStackScreenComponentEventEmitter {
+    return screenStackComponentView.reactEventEmitter()
+  }
+  
   @objc public required init(componentView: RNSStackScreenComponentView) {
     self.screenStackComponentView = componentView
     super.init(nibName: nil, bundle: nil)

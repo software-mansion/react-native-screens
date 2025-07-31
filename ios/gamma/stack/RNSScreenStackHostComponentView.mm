@@ -88,7 +88,6 @@ RNS_IGNORE_SUPER_CALL_END
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
   [_reactSubviews insertObject:childScreen atIndex:index];
-  childScreen.stackHost = self;
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
 
