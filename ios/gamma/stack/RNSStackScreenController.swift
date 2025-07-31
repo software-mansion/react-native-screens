@@ -28,19 +28,33 @@ public class RNSStackScreenController: UIViewController {
 
      return nil
   }
+  
+  
+  @objc func requestNavigationBarAppearanceUpdate() {
+    let stackController = findStackController()
+    
+    if (stackController != nil && needsNavigationBarAppearanceUpdate) {
+      // We're not clearing the flag, as it will be cleared after appearance update by host
+      stackController?.setNeedsNavigationBarAppearanceUpdate()
+    }
+  }
 
   // MARK: Signals
-
+  @objc
+  public func didMoveToWindow() {
+    requestNavigationBarAppearanceUpdate()
+  }
+  
   @objc
   public func setNeedsLifecycleStateUpdate() {
     findStackController()?.setNeedsUpdateOfChildViewControllers()
   }
   
   @objc
-  public func needsNavigationBarAppearanceUpdate(_ navigationAppearance: RNSStackNavigationAppearance) {
+  public func setNeedsNavigationBarAppearanceUpdate(_ navigationAppearance: RNSStackNavigationAppearance) {
     self.navigationAppearance = navigationAppearance
     needsNavigationBarAppearanceUpdate = true
-    findStackController()?.setNeedsNavigationBarAppearanceUpdate();
+    requestNavigationBarAppearanceUpdate()
   }
   
   @objc

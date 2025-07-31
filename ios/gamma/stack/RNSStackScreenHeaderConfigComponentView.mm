@@ -14,7 +14,7 @@
 
 namespace react = facebook::react;
 
-@interface RNSStackScreenHeaderConfigComponentView () <RCTMountingTransactionObserving>
+@interface RNSStackScreenHeaderConfigComponentView ()
 @end
 
 @implementation RNSStackScreenHeaderConfigComponentView {
@@ -39,11 +39,37 @@ namespace react = facebook::react;
 {
   static const auto defaultProps = std::make_shared<const react::RNSScreenStackProps>();
   _props = defaultProps;
-  
+
   // flags
   _needsNavigationBarAppearanceUpdate = NO;
   // navigation item props
   _title = nil;
+}
+
+- (nullable RNSStackScreenComponentView *)findParent
+{
+  return static_cast<RNSStackScreenComponentView *>(self.superview);
+}
+
+- (void)requestNavigationBarAppearanceUpdate
+{
+  auto parent = [self findParent];
+
+  if (_needsNavigationBarAppearanceUpdate && parent != nil) {
+    _needsNavigationBarAppearanceUpdate = NO;
+
+    auto stackNavigationProps = [[RNSStackNavigationAppearance alloc] init];
+
+    stackNavigationProps.title = _title;
+
+    RNSStackScreenController *stackScreenController = parent.controller;
+    [stackScreenController setNeedsNavigationBarAppearanceUpdate:stackNavigationProps];
+  }
+}
+
+- (void)didMoveToWindow
+{
+  [self requestNavigationBarAppearanceUpdate];
 }
 
 #pragma mark - RCTViewComponentViewProtocol
@@ -63,33 +89,13 @@ namespace react = facebook::react;
     _needsNavigationBarAppearanceUpdate = YES;
   }
 
-
   [super updateProps:props oldProps:oldProps];
 }
 
-#pragma mark - RCTMountingTransactionObserving
-
-- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
-                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
- // noop
-}
-
-- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
-               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  if (_needsNavigationBarAppearanceUpdate) {
-    _needsNavigationBarAppearanceUpdate = NO;
-    
-    auto stackNavigationProps = [[RNSStackNavigationAppearance alloc] init];
-    
-    stackNavigationProps.title = _title;
-    
-    RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class], @"[RNScreens] Screen header config must be child of a screen");
-    auto *stackScreen = static_cast<RNSStackScreenComponentView *>(self.superview);
-    RNSStackScreenController *stackScreenController = stackScreen.controller;
-    [stackScreenController needsNavigationBarAppearanceUpdate:stackNavigationProps];
-  }
+  [super finalizeUpdates:updateMask];
+  [self requestNavigationBarAppearanceUpdate];
 }
 
 @end

@@ -60,6 +60,11 @@ namespace react = facebook::react;
   _controller.view = self;
 }
 
+- (void)didMoveToWindow
+{
+  [_controller didMoveToWindow];
+}
+
 #pragma mark - Events
 
 - (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter
