@@ -57,6 +57,28 @@ namespace react = facebook::react;
 
 @implementation RNSNavigationController
 
+- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
+{
+  // To prevent popping multiple screens when back button is pressed repeatedly,
+  // We allow for pop operation to proceed only if no transition is in progress,
+  // which we check indirectly by checking if transitionCoordinator is set
+
+  UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
+  if (button != nil) {
+    button.userInteractionEnabled = false;
+  }
+
+  return self.transitionCoordinator == nil;
+}
+
+- (void)navigationBar:(UINavigationBar *)navigationBar didPopItem:(UINavigationItem *)item
+{
+  UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
+  if (button != nil) {
+    button.userInteractionEnabled = true;
+  }
+}
+
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
