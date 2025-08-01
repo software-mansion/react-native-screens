@@ -177,6 +177,9 @@ export interface BottomTabsScreenProps {
    * @summary Specifies the font size used for the title of each tab bar item
    * when tab screen is selected.
    *
+   * The value of `0.0` is equivalent to `undefined`, reverting the font size
+   * to the system default.
+   *
    * @platform ios
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
