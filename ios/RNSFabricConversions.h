@@ -1,3 +1,4 @@
+#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
 #import <folly/dynamic.h>
 
 // copied from FollyConvert.mm
@@ -41,3 +42,4 @@ static id RNSConvertFollyDynamicToId(const folly::dynamic &dyn)
     }
   }
 }
+#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
