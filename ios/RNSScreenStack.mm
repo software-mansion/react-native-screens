@@ -57,6 +57,14 @@ namespace react = facebook::react;
 
 @implementation RNSNavigationController
 
+- (void)viewDidLoad
+{
+  [super viewDidLoad];
+  if (@available(iOS 26, *)) {
+    self.interactiveContentPopGestureRecognizer.enabled = false;
+  }
+}
+
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
 {
   // To prevent popping multiple screens when back button is pressed repeatedly,
