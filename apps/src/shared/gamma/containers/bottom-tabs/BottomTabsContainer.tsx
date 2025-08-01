@@ -1,5 +1,5 @@
 import React from 'react';
-import type { NativeSyntheticEvent } from 'react-native';
+import { processColor, type NativeSyntheticEvent } from 'react-native';
 import {
   BottomTabs,
   BottomTabsScreen,
@@ -91,7 +91,6 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemActiveIndicatorColor={Colors.GreenLight40}
       tabBarItemActiveIndicatorEnabled={true}
       tabBarTintColor={Colors.YellowLight100}
-      tabBarItemBadgeBackgroundColor={Colors.GreenDark100}
       tabBarItemIconColor={Colors.BlueLight100}
       tabBarItemTitleFontColor={Colors.BlueLight40}
       tabBarItemIconColorActive={Colors.GreenLight100}

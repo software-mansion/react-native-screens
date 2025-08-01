@@ -15,11 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabBarAppearanceCoordinator : NSObject
 
 /**
- * Constructs the tab bar appearance from the ground up, basing on information contained in provided params (mostly
- * react props), and then applies it to the tab bar and respective tab bar items.
- *
- * Current implementation configures all tab bar styles & state (stacked, inline, normal, focused, selected, disabled,
- * etc.) with the same appearance.
+ * Applies the tab bar appearance props to the tab bar and respective tab bar items, basing on information contained in
+ * provided params.
  *
  * TODO: Do not take references to component view & controllers here. Put the tab bar appearance properites in single
  * type & only take it here.
@@ -28,6 +25,24 @@ NS_ASSUME_NONNULL_BEGIN
            withHostComponentView:(nullable RNSBottomTabsHostComponentView *)hostComponentView
             tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
                      imageLoader:(nullable RCTImageLoader *)imageLoader;
+
+/**
+ * Configures UITabBarAppearance object using appearance props provided in the param.
+ *
+ * `appearanceProps` should be an NSDictionary with hierarchical structure that corresponds to UIKit's
+ * UITabBarAppearance object:
+ * - `appearanceProps` can contain:
+ *   - `stacked`, `inline` and `compactInline` keys that map to dictionaries corresponding to UIKit's
+ * UITabBarItemAppearance objects (`itemAppearanceProps`),
+ *   - entries that correspond to other props from UITabBarItemAppearance (UIBarAppearance) object, e.g.
+ * `backgroundColor`,
+ * - `itemAppearanceProps` can contain `normal`, `selected`, `disabled`, `focused` keys that map to dictionaries
+ * corresponding to UIKit's UITabBarItemStateAppearance objects (`itemStateAppearanceProps`),
+ * - `itemStateAppearanceProps` can contain entries that correspond to props from UITabBarItemStateAppearance object,
+ * e.g. `tabBarItemIconColor`.
+ */
++ (void)configureTabBarAppearance:(nonnull UITabBarAppearance *)tabBarAppearance
+              fromAppearanceProps:(nonnull NSDictionary *)appearanceProps;
 
 @end
 

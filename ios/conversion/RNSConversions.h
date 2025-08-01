@@ -9,47 +9,30 @@ namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
-std::optional<UIBlurEffectStyle>
-RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString);
 
-UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(
-    RNSBlurEffectStyle blurEffect);
+UIBlurEffect *RNSUIBlurEffectFromString(NSString *blurEffectString);
 
-RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
-    react::RNSBottomTabsTabBarBlurEffect blurEffect);
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
 
-UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
-    react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct
-        titlePositionAdjustment);
+UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-API_AVAILABLE(ios(26.0))
-UITabBarMinimizeBehavior
-UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
-    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior);
 
-#if !RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
+    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior);
+#else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
     RNSTabBarMinimizeBehavior tabBarMinimizeBehavior);
-#endif // !RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 #endif // Check for iOS >= 26
 
-std::optional<UIBlurEffectStyle>
-RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
-    react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
-
-RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
-    react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
-
-UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
-    react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct
-        titlePositionAdjustment);
-
-RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(
-    react::RNSBottomTabsScreenIconType iconType);
+RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
@@ -60,24 +43,19 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
 UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
     react::RNSSplitViewHostPreferredSplitBehavior behavior);
 
-UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
-    react::RNSSplitViewHostPrimaryEdge primaryEdge);
+UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(react::RNSSplitViewHostPrimaryEdge primaryEdge);
 
 UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
     react::RNSSplitViewHostPreferredDisplayMode displayMode);
 
-UISplitViewControllerDisplayModeButtonVisibility
-SplitViewDisplayModeButtonVisibilityFromHostProp(
-    react::RNSSplitViewHostDisplayModeButtonVisibility
-        displayModeButtonVisibility);
+UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
+    react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility);
 
-std::string UISplitViewControllerDisplayModeToString(
-    UISplitViewControllerDisplayMode displayMode);
+std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode);
 
 #pragma mark SplitViewScreen props
 
-RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
-    react::RNSSplitViewScreenColumnType columnType);
+RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(react::RNSSplitViewScreenColumnType columnType);
 
 }; // namespace rnscreens::conversion
 

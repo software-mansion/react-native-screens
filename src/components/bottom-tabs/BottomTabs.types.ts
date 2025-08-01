@@ -9,31 +9,6 @@ export type NativeFocusChangeEvent = {
   tabKey: string;
 };
 
-// iOS-specific
-export type BottomTabsBlurEffect =
-  | 'none'
-  | 'systemDefault'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
-
 // Android-specific
 export type TabBarItemLabelVisibilityMode =
   | 'auto'
@@ -60,67 +35,27 @@ export interface BottomTabsProps extends ViewProps {
   ) => void;
   // #endregion Events
 
-  // #region Common appearance
+  // #region Android-only appearance
   /**
    * @summary Specifies the background color for the entire tab bar.
    *
-   * This property does not affect the tab bar starting from iOS 26.
-   *
-   * @platform android, ios
-   * @supported iOS 18 or lower
+   * @platform android
    */
   tabBarBackgroundColor?: ColorValue;
   /**
    * @summary Specifies the font family used for the title of each tab bar item.
    *
-   * @platform android, ios
+   * @platform android
    */
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   /**
    * @summary Specifies the font size used for the title of each tab bar item.
    *
-   * On Android, the size is represented in scale-independent pixels (sp).
+   * The size is represented in scale-independent pixels (sp).
    *
-   * @platform android, ios
+   * @platform android
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
-  /**
-   * @summary Specifies the font weight used for the title of each tab bar item.
-   *
-   * @platform android, ios
-   */
-  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
-  /**
-   * @summary Specifies the font style used for the title of each tab bar item.
-   *
-   * @platform android, ios
-   */
-  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
-  /**
-   * @summary Specifies the font color used for the title of each tab bar item.
-   *
-   * On iOS, overrides color defined in `tabBarTintColor` and `tabBarItemIconColor`.
-   *
-   * @platform android, ios
-   */
-  tabBarItemTitleFontColor?: TextStyle['color'];
-  /**
-   * @summary Specifies the icon color for each tab bar item.
-   *
-   * On iOS, this also impacts the title text color.
-   *
-   * Starting from iOS 26, it only applies to selected tab bar item. Other items
-   * adopt a dark or light appearance depending on the theme of the tab bar.
-   *
-   * On iOS, it is overridden by `tabBarItemTitleFontColor` (for title text color)
-   * and it overrides `tabBarTintColor`.
-   *
-   * @platform android, ios
-   */
-  tabBarItemIconColor?: ColorValue;
-  // #endregion Common appearance
-
-  // #region Android-only appearance
   /**
    * @summary Specifies the font size used for the title of each tab bar item in active state.
    *
@@ -130,6 +65,24 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
   /**
+   * @summary Specifies the font weight used for the title of each tab bar item.
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
+  /**
+   * @summary Specifies the font style used for the title of each tab bar item.
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+  /**
+   * @summary Specifies the font color used for the title of each tab bar item.
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontColor?: TextStyle['color'];
+  /**
    * @summary Specifies the font color used for the title of each tab bar item in active state.
    *
    * If not provided, `tabBarItemTitleFontColor` is used.
@@ -137,6 +90,12 @@ export interface BottomTabsProps extends ViewProps {
    * @platform android
    */
   tabBarItemTitleFontColorActive?: TextStyle['color'];
+  /**
+   * @summary Specifies the icon color for each tab bar item.
+   *
+   * @platform android
+   */
+  tabBarItemIconColor?: ColorValue;
   /**
    * @summary Specifies the icon color for each tab bar item in active state.
    *
@@ -186,46 +145,6 @@ export interface BottomTabsProps extends ViewProps {
   // #endregion Android-only appearance
 
   // #region iOS-only appearance
-  /**
-   * @summary Specifies the blur effect applied to the tab bar.
-   *
-   * Works with backgroundColor's alpha < 1.
-   *
-   * This property does not affect the tab bar starting from iOS 26.
-   *
-   * The following values are currently supported:
-   *
-   * - `none` - disables blur effect
-   * - `systemDefault` - uses UIKit's default tab bar blur effect
-   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`
-   *
-   * Complete list of possible blur effect styles is available in the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style|UIBlurEffect.Style}
-   *
-   * @default systemDefault
-   *
-   * @platform ios
-   * @supported iOS 18 or lower
-   */
-  tabBarBlurEffect?: BottomTabsBlurEffect;
-  /**
-   * @summary Specifies the title offset for each tab bar item.
-   *
-   * Depending on the iOS version and the device's interface orientation,
-   * this setting may affect the alignment of the text, badge and icon.
-   *
-   * @platform ios
-   */
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: number;
-    vertical?: number;
-  };
-  /**
-   * @summary Specifies the background color of badges for each tab bar item.
-   *
-   * @platform ios
-   */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
   /**
    * @summary Specifies the color used for selected tab's text and icon color.
    *
