@@ -10,35 +10,56 @@ on:
       - main-labs
   workflow_dispatch:
 jobs:
-  install-and-lint:
+  lint-js:
     runs-on: ubuntu-latest
     concurrency:
-      group: install-and-lint-${{ github.ref }}
+      group: install-and-lint-js-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
-      
-      - name: Setup Swift
-        uses: swift-actions/setup-swift@v2
-
       - name: Install node dependencies
         run: yarn
-
-      - name: Format code
-        run: |
-          yarn format
-
-      - name: Run linter
-        run: |
-          yarn lint
-
+      - name: Lint
+        run: yarn lint-js
       - name: Check types
-        run: |
-          yarn check-types
+        run: yarn check-types
+  lint-ios:
+    runs-on: macos-15
+    concurrency:
+      group: install-and-lint-ios-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Install node dependencies
+        run: yarn
+      - name: Lint Swift
+        run: yarn lint-swift
+  lint-android:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: install-and-lint-android-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Install node dependencies
+        run: yarn
+      - name: Lint
+        run: yarn lint-android

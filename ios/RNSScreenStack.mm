@@ -32,6 +32,7 @@
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
 #import "utils/UINavigationBar+RNSUtility.h"
+#import "integrations/RNSDismissibleModalProtocol.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -569,58 +570,66 @@ RNS_IGNORE_SUPER_CALL_END
 
   UIViewController *firstModalToBeDismissed = changeRootController.presentedViewController;
 
-  if (firstModalToBeDismissed != nil) {
-    const BOOL firstModalToBeDismissedIsOwned = [firstModalToBeDismissed isKindOfClass:RNSScreen.class];
-    const BOOL firstModalToBeDismissedIsOwnedByThisStack =
-        firstModalToBeDismissedIsOwned && [_presentedModals containsObject:firstModalToBeDismissed];
+  // This check is for external modals that are not owned by this stack. They can prevent the dismissal of the modal by
+  // extending RNSDismissibleModalProtocol and returning NO from isDismissible method.
+  if (![firstModalToBeDismissed conformsToProtocol:@protocol(RNSDismissibleModalProtocol)] ||
+      [(id<RNSDismissibleModalProtocol>)firstModalToBeDismissed isDismissible]) {
+    if (firstModalToBeDismissed != nil) {
+      const BOOL firstModalToBeDismissedIsOwned = [firstModalToBeDismissed isKindOfClass:RNSScreen.class];
+      const BOOL firstModalToBeDismissedIsOwnedByThisStack =
+          firstModalToBeDismissedIsOwned && [_presentedModals containsObject:firstModalToBeDismissed];
 
-    if (firstModalToBeDismissedIsOwnedByThisStack || !firstModalToBeDismissedIsOwned) {
-      // We dismiss every VC that was presented by changeRootController VC or its descendant.
-      // After the series of dismissals is completed we run completion block in which
-      // we present modals on top of changeRootController (which may be the this stack VC)
-      //
-      // There also might the second case, where the firstModalToBeDismissed is foreign.
-      // See: https://github.com/software-mansion/react-native-screens/issues/2048
-      // For now, to mitigate the issue, we also decide to trigger its dismissal before
-      // starting the presentation chain down below in finish() callback.
-      if (!firstModalToBeDismissed.isBeingDismissed) {
-        // If the modal is owned we let it control whether the dismissal is animated or not. For foreign controllers
-        // we just assume animation.
-        const BOOL firstModalToBeDismissedPrefersAnimation = firstModalToBeDismissedIsOwned
-            ? static_cast<RNSScreen *>(firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone
-            : YES;
-        [changeRootController dismissViewControllerAnimated:firstModalToBeDismissedPrefersAnimation completion:finish];
-      } else {
-        // We need to wait for its dismissal and then run our presentation code.
-        // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
-        // immediately present another owned one. Dismissal of the foreign one will be triggered by foreign controller.
-        [[firstModalToBeDismissed transitionCoordinator]
-            animateAlongsideTransition:nil
-                            completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
-                              finish();
-                            }];
+      if (firstModalToBeDismissedIsOwnedByThisStack || !firstModalToBeDismissedIsOwned) {
+        // We dismiss every VC that was presented by changeRootController VC or its descendant.
+        // After the series of dismissals is completed we run completion block in which
+        // we present modals on top of changeRootController (which may be the this stack VC)
+        //
+        // There also might the second case, where the firstModalToBeDismissed is foreign.
+        // See: https://github.com/software-mansion/react-native-screens/issues/2048
+        // For now, to mitigate the issue, we also decide to trigger its dismissal before
+        // starting the presentation chain down below in finish() callback.
+        if (!firstModalToBeDismissed.isBeingDismissed) {
+          // If the modal is owned we let it control whether the dismissal is animated or not. For foreign controllers
+          // we just assume animation.
+          const BOOL firstModalToBeDismissedPrefersAnimation = firstModalToBeDismissedIsOwned
+              ? static_cast<RNSScreen *>(firstModalToBeDismissed).screenView.stackAnimation !=
+                  RNSScreenStackAnimationNone
+              : YES;
+          [changeRootController dismissViewControllerAnimated:firstModalToBeDismissedPrefersAnimation
+                                                   completion:finish];
+        } else {
+          // We need to wait for its dismissal and then run our presentation code.
+          // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
+          // immediately present another owned one. Dismissal of the foreign one will be triggered by foreign
+          // controller.
+          [[firstModalToBeDismissed transitionCoordinator]
+              animateAlongsideTransition:nil
+                              completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
+                                finish();
+                              }];
+        }
+        return;
       }
-      return;
     }
-  }
 
-  // changeRootController does not have presentedViewController but it does not mean that no modals are in presentation;
-  // modals could be presented by another stack (nested / outer), third-party view controller or they could be using
-  // UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in the last case
-  // for some reason system asks top-level (react root) vc to present instead of our stack, despite the fact that
-  // `definesPresentationContext` returns `YES` for UINavigationController.
-  // So we first need to find top-level controller manually:
-  UIViewController *reactRootVc = [self findReactRootViewController];
-  UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
+    // changeRootController does not have presentedViewController but it does not mean that no modals are in
+    // presentation; modals could be presented by another stack (nested / outer), third-party view controller or they
+    // could be using UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in
+    // the last case for some reason system asks top-level (react root) vc to present instead of our stack, despite the
+    // fact that `definesPresentationContext` returns `YES` for UINavigationController. So we first need to find
+    // top-level controller manually:
+    UIViewController *reactRootVc = [self findReactRootViewController];
+    UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
 
-  if (topMostVc != reactRootVc) {
-    changeRootController = topMostVc;
+    if (topMostVc != reactRootVc) {
+      changeRootController = topMostVc;
 
-    // Here we handle just the simplest case where the top level VC was dismissed. In any more complex
-    // scenario we will still have problems, see: https://github.com/software-mansion/react-native-screens/issues/1813
-    if ([_presentedModals containsObject:topMostVc] && ![controllers containsObject:topMostVc]) {
-      [changeRootController dismissViewControllerAnimated:YES completion:finish];
-      return;
+      // Here we handle just the simplest case where the top level VC was dismissed. In any more complex
+      // scenario we will still have problems, see: https://github.com/software-mansion/react-native-screens/issues/1813
+      if ([_presentedModals containsObject:topMostVc] && ![controllers containsObject:topMostVc]) {
+        [changeRootController dismissViewControllerAnimated:YES completion:finish];
+        return;
+      }
     }
   }
 
