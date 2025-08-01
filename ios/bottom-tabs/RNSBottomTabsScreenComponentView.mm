@@ -74,7 +74,7 @@ namespace react = facebook::react;
   _badgeValue = nil;
   _title = nil;
 
-  _tabBarStandardAppearance = nil;
+  _tabBarStandardAppearance = [UITabBarAppearance new];
   _tabBarScrollEdgeAppearance = nil;
 
   _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
@@ -166,15 +166,12 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
+    _tabBarStandardAppearance = [UITabBarAppearance new];
     if (newComponentProps.standardAppearance.type() != folly::dynamic::NULLT) {
-      _tabBarStandardAppearance = [UITabBarAppearance new];
       [RNSTabBarAppearanceCoordinator
           configureTabBarAppearance:_tabBarStandardAppearance
-                          fromFolly:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
-    } else {
-      _tabBarStandardAppearance = nil;
+                fromAppearanceProps:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
     }
-
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -183,7 +180,7 @@ RNS_IGNORE_SUPER_CALL_END
       _tabBarScrollEdgeAppearance = [UITabBarAppearance new];
       [RNSTabBarAppearanceCoordinator
           configureTabBarAppearance:_tabBarScrollEdgeAppearance
-                          fromFolly:RNSConvertFollyDynamicToId(newComponentProps.scrollEdgeAppearance)];
+                fromAppearanceProps:RNSConvertFollyDynamicToId(newComponentProps.scrollEdgeAppearance)];
     } else {
       _tabBarScrollEdgeAppearance = nil;
     }

@@ -3,7 +3,6 @@
 #import <React/RCTImageLoader.h>
 #import "RCTConvert+RNSBottomTabs.h"
 #import "RNSConversions.h"
-#import "RNSTabBarAppearanceProvider.h"
 #import "RNSTabsScreenViewController.h"
 
 @implementation RNSTabBarAppearanceCoordinator
@@ -17,15 +16,14 @@
     return;
   }
 
-  tabBar.standardAppearance = hostComponentView.tabBarStandardAppearance;
-  tabBar.scrollEdgeAppearance = hostComponentView.tabBarScrollEdgeAppearance;
-
+  // Step 1 - configure host-specific appearance
   tabBar.tintColor = hostComponentView.tabBarTintColor;
 
   if (tabScreenCtrls == nil) {
     return;
   }
 
+  // Step 2 - configure screen-specific appearance
   for (RNSTabsScreenViewController *tabScreenCtrl in tabScreenCtrls) {
     if (tabScreenCtrl == nil) {
       // It should not be null here, something went wrong.
@@ -116,7 +114,7 @@
       }];
 }
 
-+ (void)configureTabBarAppearance:(UITabBarAppearance *)tabBarAppearance fromFolly:(id)appearanceProps
++ (void)configureTabBarAppearance:(UITabBarAppearance *)tabBarAppearance fromAppearanceProps:(id)appearanceProps
 {
   if (appearanceProps[@"tabBarBackgroundColor"] != nil) {
     tabBarAppearance.backgroundColor = [RCTConvert UIColor:appearanceProps[@"tabBarBackgroundColor"]];
@@ -133,40 +131,47 @@
   }
 
   if (appearanceProps[@"stacked"] != nil) {
-    [self configureTabBarItemAppearance:tabBarAppearance.stackedLayoutAppearance fromFolly:appearanceProps[@"stacked"]];
+    [self configureTabBarItemAppearance:tabBarAppearance.stackedLayoutAppearance
+                fromItemAppearanceProps:appearanceProps[@"stacked"]];
   }
 
   if (appearanceProps[@"inline"] != nil) {
-    [self configureTabBarItemAppearance:tabBarAppearance.inlineLayoutAppearance fromFolly:appearanceProps[@"inline"]];
+    [self configureTabBarItemAppearance:tabBarAppearance.inlineLayoutAppearance
+                fromItemAppearanceProps:appearanceProps[@"inline"]];
   }
 
   if (appearanceProps[@"compactInline"] != nil) {
     [self configureTabBarItemAppearance:tabBarAppearance.compactInlineLayoutAppearance
-                              fromFolly:appearanceProps[@"compactInline"]];
+                fromItemAppearanceProps:appearanceProps[@"compactInline"]];
   }
 }
 
-+ (void)configureTabBarItemAppearance:(UITabBarItemAppearance *)tabBarItemAppearance fromFolly:(id)itemAppearanceProps
++ (void)configureTabBarItemAppearance:(UITabBarItemAppearance *)tabBarItemAppearance
+              fromItemAppearanceProps:(id)itemAppearanceProps
 {
   if (itemAppearanceProps[@"normal"] != nil) {
-    [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal fromFolly:itemAppearanceProps[@"normal"]];
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal
+                fromItemStateAppearanceProps:itemAppearanceProps[@"normal"]];
   }
 
   if (itemAppearanceProps[@"selected"] != nil) {
-    [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected fromFolly:itemAppearanceProps[@"selected"]];
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected
+                fromItemStateAppearanceProps:itemAppearanceProps[@"selected"]];
   }
 
   if (itemAppearanceProps[@"focused"] != nil) {
-    [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused fromFolly:itemAppearanceProps[@"focused"]];
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused
+                fromItemStateAppearanceProps:itemAppearanceProps[@"focused"]];
   }
 
   if (itemAppearanceProps[@"disabled"] != nil) {
-    [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled fromFolly:itemAppearanceProps[@"disabled"]];
+    [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled
+                fromItemStateAppearanceProps:itemAppearanceProps[@"disabled"]];
   }
 }
 
 + (void)configureTabBarItemStateAppearance:(UITabBarItemStateAppearance *)tabBarItemStateAppearance
-                                 fromFolly:(id)itemStateAppearanceProps
+              fromItemStateAppearanceProps:(id)itemStateAppearanceProps
 {
   NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
 

@@ -91,8 +91,6 @@ namespace react = facebook::react;
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
-  _tabBarStandardAppearance = nil;
-  _tabBarScrollEdgeAppearance = nil;
 }
 
 #pragma mark - UIView methods
@@ -222,32 +220,6 @@ namespace react = facebook::react;
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
-  }
-
-  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
-    if (newComponentProps.standardAppearance.type() != folly::dynamic::NULLT) {
-      _tabBarStandardAppearance = [UITabBarAppearance new];
-      [RNSTabBarAppearanceCoordinator
-          configureTabBarAppearance:_tabBarStandardAppearance
-                          fromFolly:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
-    } else {
-      _tabBarStandardAppearance = nil;
-    }
-
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
-    if (newComponentProps.scrollEdgeAppearance.type() != folly::dynamic::NULLT) {
-      _tabBarScrollEdgeAppearance = [UITabBarAppearance new];
-      [RNSTabBarAppearanceCoordinator
-          configureTabBarAppearance:_tabBarScrollEdgeAppearance
-                          fromFolly:RNSConvertFollyDynamicToId(newComponentProps.scrollEdgeAppearance)];
-    } else {
-      _tabBarScrollEdgeAppearance = nil;
-    }
-
-    _needsTabBarAppearanceUpdate = YES;
   }
 
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {

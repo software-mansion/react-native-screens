@@ -4,7 +4,6 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScrollViewBehaviorOverriding.h"
-#import "RNSTabBarAppearanceProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Properties set on component in JavaScript.
  */
-@interface RNSBottomTabsScreenComponentView () <RNSTabBarAppearanceProvider, RNSScrollViewBehaviorOverriding>
+@interface RNSBottomTabsScreenComponentView () <RNSScrollViewBehaviorOverriding>
 
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.
