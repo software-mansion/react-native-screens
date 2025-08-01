@@ -10,7 +10,6 @@ import {
   type TabConfiguration,
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
-import { processColor } from 'react-native';
 
 enableFreeze(true);
 
@@ -21,10 +20,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
         tabBarBlurEffect: 'systemChromeMaterial',
         stacked: {
           normal: {
-            tabBarItemIconColor: processColor('red'),
+            tabBarItemIconColor: 'red',
           },
           selected: {
-            tabBarItemIconColor: processColor('green'),
+            tabBarItemIconColor: 'green',
           },
         },
       },
