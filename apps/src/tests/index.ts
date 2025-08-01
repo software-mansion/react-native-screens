@@ -138,6 +138,7 @@ export { default as Test2855 } from './Test2855';
 export { default as Test2877 } from './Test2877'; // [E2E created](iOS): issue is related to formSheet on iOS
 export { default as Test2895 } from './Test2895';
 export { default as Test2899 } from './Test2899';
+export { default as Test2933 } from './Test2933';
 export { default as Test2926 } from './Test2926'; // [E2E created](iOS): PR related to iOS search bar
 export { default as Test2949 } from './Test2949'; // [E2E skipped]: can't check system bars styles
 export { default as Test2963 } from './Test2963'; // [E2E created](iOS): issue related to iOS
