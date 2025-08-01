@@ -56,6 +56,8 @@ namespace react = facebook::react;
 
 @implementation RNSNavigationController
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
 - (void)viewDidLoad
 {
   [super viewDidLoad];
@@ -63,6 +65,7 @@ namespace react = facebook::react;
     self.interactiveContentPopGestureRecognizer.enabled = false;
   }
 }
+#endif
 
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
 {
