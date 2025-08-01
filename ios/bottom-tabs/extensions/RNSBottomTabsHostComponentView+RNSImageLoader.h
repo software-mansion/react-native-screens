@@ -12,7 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSBottomTabsHostComponentView (RNSImageLoader)
 
-- (nullable RCTImageLoader *)retrieveImageLoaderFromState:(facebook::react::RNSBottomTabsShadowNode::ConcreteState::Shared)state;
+- (nullable RCTImageLoader *)retrieveImageLoaderFromState:
+    (facebook::react::RNSBottomTabsShadowNode::ConcreteState::Shared)state;
 
 @end
 
