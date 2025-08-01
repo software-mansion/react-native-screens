@@ -74,8 +74,8 @@ namespace react = facebook::react;
   _badgeValue = nil;
   _title = nil;
 
-  _tabBarStandardAppearance = [UITabBarAppearance new];
-  _tabBarScrollEdgeAppearance = nil;
+  _standardAppearance = [UITabBarAppearance new];
+  _scrollEdgeAppearance = nil;
 
   _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
   _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
@@ -166,10 +166,10 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
-    _tabBarStandardAppearance = [UITabBarAppearance new];
+    _standardAppearance = [UITabBarAppearance new];
     if (newComponentProps.standardAppearance.type() == folly::dynamic::OBJECT) {
       [RNSTabBarAppearanceCoordinator
-          configureTabBarAppearance:_tabBarStandardAppearance
+          configureTabBarAppearance:_standardAppearance
                 fromAppearanceProps:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
     }
     tabItemNeedsAppearanceUpdate = YES;
@@ -177,14 +177,13 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
     if (newComponentProps.scrollEdgeAppearance.type() == folly::dynamic::OBJECT) {
-      _tabBarScrollEdgeAppearance = [UITabBarAppearance new];
+      _scrollEdgeAppearance = [UITabBarAppearance new];
       [RNSTabBarAppearanceCoordinator
-          configureTabBarAppearance:_tabBarScrollEdgeAppearance
+          configureTabBarAppearance:_scrollEdgeAppearance
                 fromAppearanceProps:RNSConvertFollyDynamicToId(newComponentProps.scrollEdgeAppearance)];
     } else {
-      _tabBarScrollEdgeAppearance = nil;
+      _scrollEdgeAppearance = nil;
     }
-
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -380,6 +379,28 @@ RNS_IGNORE_SUPER_CALL_END
 
   // _isOverrideScrollViewContentInsetAdjustmentBehaviorSet flag is set in didSetProps to handle a case
   // when the prop is undefined in JS and default value is used instead of calling this setter.
+}
+
+- (void)setStandardAppearance:(NSDictionary *)standardAppearanceProps
+{
+  _standardAppearance = [UITabBarAppearance new];
+  if (standardAppearanceProps != nil) {
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
+                                          fromAppearanceProps:standardAppearanceProps];
+  }
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setScrollEdgeAppearance:(NSDictionary *)scrollEdgeAppearanceProps
+{
+  if (scrollEdgeAppearanceProps != nil) {
+    _scrollEdgeAppearance = [UITabBarAppearance new];
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_scrollEdgeAppearance
+                                          fromAppearanceProps:scrollEdgeAppearanceProps];
+  } else {
+    _scrollEdgeAppearance = nil;
+  }
+  _tabItemNeedsAppearanceUpdate = YES;
 }
 
 - (void)setOnWillAppear:(RCTDirectEventBlock)onWillAppear

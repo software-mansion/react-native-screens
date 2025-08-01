@@ -368,69 +368,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 // Paper will call property setters
 
-- (void)setTabBarBackgroundColor:(UIColor *_Nullable)tabBarBackgroundColor
-{
-  _tabBarBackgroundColor = tabBarBackgroundColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
-{
-  _tabBarBlurEffect = tabBarBlurEffect;
-  [self invalidateTabBarAppearance];
-}
-
 - (void)setTabBarTintColor:(UIColor *_Nullable)tabBarTintColor
 {
   _tabBarTintColor = tabBarTintColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontFamily:(NSString *_Nullable)tabBarItemTitleFontFamily
-{
-  _tabBarItemTitleFontFamily = tabBarItemTitleFontFamily;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontSize:(NSNumber *_Nullable)tabBarItemTitleFontSize
-{
-  _tabBarItemTitleFontSize = tabBarItemTitleFontSize;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontWeight:(NSString *_Nullable)tabBarItemTitleFontWeight
-{
-  _tabBarItemTitleFontWeight = tabBarItemTitleFontWeight;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontStyle:(NSString *_Nullable)tabBarItemTitleFontStyle
-{
-  _tabBarItemTitleFontStyle = tabBarItemTitleFontStyle;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontColor:(UIColor *_Nullable)tabBarItemTitleFontColor
-{
-  _tabBarItemTitleFontColor = tabBarItemTitleFontColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemIconColor:(UIColor *_Nullable)tabBarItemIconColor
-{
-  _tabBarItemIconColor = tabBarItemIconColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemBadgeBackgroundColor:(UIColor *_Nullable)tabBarItemBadgeBackgroundColor
-{
-  _tabBarItemBadgeBackgroundColor = tabBarItemBadgeBackgroundColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
-{
-  _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
   [self invalidateTabBarAppearance];
 }
 

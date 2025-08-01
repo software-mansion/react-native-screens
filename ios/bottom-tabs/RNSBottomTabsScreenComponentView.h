@@ -57,8 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
 @property (nonatomic, strong, readonly, nullable) NSString *selectedIconSfSymbolName;
 
-@property (nonatomic, strong, readonly, nullable) UITabBarAppearance *tabBarStandardAppearance;
-@property (nonatomic, strong, readonly, nullable) UITabBarAppearance *tabBarScrollEdgeAppearance;
+@property (nonatomic, strong, readonly, nullable) UITabBarAppearance *standardAppearance;
+@property (nonatomic, strong, readonly, nullable) UITabBarAppearance *scrollEdgeAppearance;
 
 @property (nonatomic, nullable) NSString *title;
 

@@ -40,8 +40,8 @@
 {
   UITabBarItem *tabBarItem = tabScreenCtrl.tabBarItem;
 
-  tabBarItem.standardAppearance = tabScreenCtrl.tabScreenComponentView.tabBarStandardAppearance;
-  tabBarItem.scrollEdgeAppearance = tabScreenCtrl.tabScreenComponentView.tabBarScrollEdgeAppearance;
+  tabBarItem.standardAppearance = tabScreenCtrl.tabScreenComponentView.standardAppearance;
+  tabBarItem.scrollEdgeAppearance = tabScreenCtrl.tabScreenComponentView.scrollEdgeAppearance;
 
   [self setIconsForTabBarItem:tabBarItem
                fromScreenView:tabScreenCtrl.tabScreenComponentView
