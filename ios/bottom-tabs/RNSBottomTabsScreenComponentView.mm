@@ -159,7 +159,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
     _tabBarStandardAppearance = [UITabBarAppearance new];
-    if (newComponentProps.standardAppearance.type() != folly::dynamic::NULLT) {
+    if (newComponentProps.standardAppearance.type() == folly::dynamic::OBJECT) {
       [RNSTabBarAppearanceCoordinator
           configureTabBarAppearance:_tabBarStandardAppearance
                 fromAppearanceProps:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
@@ -168,7 +168,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
-    if (newComponentProps.scrollEdgeAppearance.type() != folly::dynamic::NULLT) {
+    if (newComponentProps.scrollEdgeAppearance.type() == folly::dynamic::OBJECT) {
       _tabBarScrollEdgeAppearance = [UITabBarAppearance new];
       [RNSTabBarAppearanceCoordinator
           configureTabBarAppearance:_tabBarScrollEdgeAppearance

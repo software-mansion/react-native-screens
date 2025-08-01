@@ -41,7 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
  * - `itemStateAppearanceProps` can contain entries that correspond to props from UITabBarItemStateAppearance object,
  * e.g. `tabBarItemIconColor`.
  */
-+ (void)configureTabBarAppearance:(UITabBarAppearance *)tabBarAppearance fromAppearanceProps:(id)appearanceProps;
++ (void)configureTabBarAppearance:(nonnull UITabBarAppearance *)tabBarAppearance
+              fromAppearanceProps:(nonnull NSDictionary *)appearanceProps;
 
 @end
 
