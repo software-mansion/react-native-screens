@@ -1,10 +1,6 @@
-// https://github.com/software-mansion/react-native-svg/blob/be06e84ec4809a8071f18f9824ffbe61424ee80d/apple/Utils/RNSVGFabricConversions.h
-#import <React/RCTConversions.h>
-#import <React/RCTFabricComponentsPlugins.h>
-
 #import <folly/dynamic.h>
 
-// copied from RCTFollyConvert
+// copied from FollyConvert.mm
 static id RNSConvertFollyDynamicToId(const folly::dynamic &dyn)
 {
   // I could imagine an implementation which avoids copies by wrapping the
