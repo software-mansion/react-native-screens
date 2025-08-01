@@ -114,7 +114,8 @@
       }];
 }
 
-+ (void)configureTabBarAppearance:(UITabBarAppearance *)tabBarAppearance fromAppearanceProps:(id)appearanceProps
++ (void)configureTabBarAppearance:(nonnull UITabBarAppearance *)tabBarAppearance
+              fromAppearanceProps:(nonnull NSDictionary *)appearanceProps
 {
   if (appearanceProps[@"tabBarBackgroundColor"] != nil) {
     tabBarAppearance.backgroundColor = [RCTConvert UIColor:appearanceProps[@"tabBarBackgroundColor"]];
@@ -130,48 +131,51 @@
     }
   }
 
-  if (appearanceProps[@"stacked"] != nil) {
+  if (appearanceProps[@"stacked"] != nil && [appearanceProps[@"stacked"] isKindOfClass:[NSDictionary class]]) {
     [self configureTabBarItemAppearance:tabBarAppearance.stackedLayoutAppearance
                 fromItemAppearanceProps:appearanceProps[@"stacked"]];
   }
 
-  if (appearanceProps[@"inline"] != nil) {
+  if (appearanceProps[@"inline"] != nil && [appearanceProps[@"inline"] isKindOfClass:[NSDictionary class]]) {
     [self configureTabBarItemAppearance:tabBarAppearance.inlineLayoutAppearance
                 fromItemAppearanceProps:appearanceProps[@"inline"]];
   }
 
-  if (appearanceProps[@"compactInline"] != nil) {
+  if (appearanceProps[@"compactInline"] != nil &&
+      [appearanceProps[@"compactInline"] isKindOfClass:[NSDictionary class]]) {
     [self configureTabBarItemAppearance:tabBarAppearance.compactInlineLayoutAppearance
                 fromItemAppearanceProps:appearanceProps[@"compactInline"]];
   }
 }
 
-+ (void)configureTabBarItemAppearance:(UITabBarItemAppearance *)tabBarItemAppearance
-              fromItemAppearanceProps:(id)itemAppearanceProps
++ (void)configureTabBarItemAppearance:(nonnull UITabBarItemAppearance *)tabBarItemAppearance
+              fromItemAppearanceProps:(nonnull NSDictionary *)itemAppearanceProps
 {
-  if (itemAppearanceProps[@"normal"] != nil) {
+  if (itemAppearanceProps[@"normal"] != nil && [itemAppearanceProps[@"normal"] isKindOfClass:[NSDictionary class]]) {
     [self configureTabBarItemStateAppearance:tabBarItemAppearance.normal
                 fromItemStateAppearanceProps:itemAppearanceProps[@"normal"]];
   }
 
-  if (itemAppearanceProps[@"selected"] != nil) {
+  if (itemAppearanceProps[@"selected"] != nil &&
+      [itemAppearanceProps[@"selected"] isKindOfClass:[NSDictionary class]]) {
     [self configureTabBarItemStateAppearance:tabBarItemAppearance.selected
                 fromItemStateAppearanceProps:itemAppearanceProps[@"selected"]];
   }
 
-  if (itemAppearanceProps[@"focused"] != nil) {
+  if (itemAppearanceProps[@"focused"] != nil && [itemAppearanceProps[@"focused"] isKindOfClass:[NSDictionary class]]) {
     [self configureTabBarItemStateAppearance:tabBarItemAppearance.focused
                 fromItemStateAppearanceProps:itemAppearanceProps[@"focused"]];
   }
 
-  if (itemAppearanceProps[@"disabled"] != nil) {
+  if (itemAppearanceProps[@"disabled"] != nil &&
+      [itemAppearanceProps[@"disabled"] isKindOfClass:[NSDictionary class]]) {
     [self configureTabBarItemStateAppearance:tabBarItemAppearance.disabled
                 fromItemStateAppearanceProps:itemAppearanceProps[@"disabled"]];
   }
 }
 
-+ (void)configureTabBarItemStateAppearance:(UITabBarItemStateAppearance *)tabBarItemStateAppearance
-              fromItemStateAppearanceProps:(id)itemStateAppearanceProps
++ (void)configureTabBarItemStateAppearance:(nonnull UITabBarItemStateAppearance *)tabBarItemStateAppearance
+              fromItemStateAppearanceProps:(nonnull NSDictionary *)itemStateAppearanceProps
 {
   NSMutableDictionary *titleTextAttributes = [[NSMutableDictionary alloc] init];
 
