@@ -100,6 +100,7 @@ export interface NativeProps extends ViewProps {
   // Android-specific
   iconResourceName?: string;
   tabBarItemBadgeTextColor?: ColorValue;
+  tabBarItemBadgeBackgroundColor?: ColorValue;
 
   // iOS-specific
   standardAppearance?: UnsafeMixed<Appearance>;
