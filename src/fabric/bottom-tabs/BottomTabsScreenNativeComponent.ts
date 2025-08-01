@@ -34,9 +34,7 @@ type ItemStateAppearance = {
     horizontal?: Float;
     vertical?: Float;
   };
-
   tabBarItemIconColor?: ColorValue;
-
   tabBarItemBadgeBackgroundColor?: ColorValue;
 };
 
@@ -92,37 +90,21 @@ export interface NativeProps extends ViewProps {
   isFocused?: boolean;
   tabKey: string;
 
+  // General
+  title?: string | undefined | null;
+  badgeValue?: string;
+
+  // Tab Bar Appearance
+  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+
+  // Android-specific
+  iconResourceName?: string;
+  tabBarItemBadgeTextColor?: ColorValue;
+
   // iOS-specific
   standardAppearance?: UnsafeMixed<Appearance>;
   scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
-  // Tab Bar Appearance
-  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
-  tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
-
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
-  tabBarItemTitleFontColor?: ColorValue;
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: Float;
-    vertical?: Float;
-  };
-
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // General
-  title?: string | undefined | null;
-
-  // Android-specific image handling
-  iconResourceName?: string;
-  tabBarItemBadgeTextColor?: ColorValue;
-
-  // iOS-specific: SFSymbol usage
   iconType?: WithDefault<IconType, 'sfSymbol'>;
 
   iconImageSource?: ImageSource;
@@ -130,8 +112,6 @@ export interface NativeProps extends ViewProps {
 
   selectedIconImageSource?: ImageSource;
   selectedIconSfSymbolName?: string;
-
-  badgeValue?: string;
 
   specialEffects?: {
     repeatedTabSelection?: {
