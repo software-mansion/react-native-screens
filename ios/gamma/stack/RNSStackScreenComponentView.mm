@@ -1,4 +1,6 @@
 #import "RNSStackScreenComponentView.h"
+#import "RNSStackScreenHeaderConfigComponentView.h"
+
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
