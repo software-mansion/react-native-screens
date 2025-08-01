@@ -57,6 +57,14 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
   /**
+   * @summary Specifies the font size used for the title of each tab bar item in active state.
+   *
+   * The size is represented in scale-independent pixels (sp).
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
+  /**
    * @summary Specifies the font weight used for the title of each tab bar item.
    *
    * @platform android
@@ -75,20 +83,6 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarItemTitleFontColor?: TextStyle['color'];
   /**
-   * @summary Specifies the icon color for each tab bar item.
-   *
-   * @platform android
-   */
-  tabBarItemIconColor?: ColorValue;
-  /**
-   * @summary Specifies the font size used for the title of each tab bar item in active state.
-   *
-   * The size is represented in scale-independent pixels (sp).
-   *
-   * @platform android
-   */
-  tabBarItemTitleFontSizeActive?: TextStyle['fontSize'];
-  /**
    * @summary Specifies the font color used for the title of each tab bar item in active state.
    *
    * If not provided, `tabBarItemTitleFontColor` is used.
@@ -96,6 +90,12 @@ export interface BottomTabsProps extends ViewProps {
    * @platform android
    */
   tabBarItemTitleFontColorActive?: TextStyle['color'];
+  /**
+   * @summary Specifies the icon color for each tab bar item.
+   *
+   * @platform android
+   */
+  tabBarItemIconColor?: ColorValue;
   /**
    * @summary Specifies the icon color for each tab bar item in active state.
    *

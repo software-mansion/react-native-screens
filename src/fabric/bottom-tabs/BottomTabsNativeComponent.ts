@@ -7,7 +7,6 @@ import type {
   Float,
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
-import { UnsafeMixed } from './codegenUtils';
 
 // TODO: Report issue on RN repo, that nesting color value inside a struct does not work.
 // Generated code is ok, but the value is not passed down correctly - whatever color is set
@@ -19,30 +18,6 @@ import { UnsafeMixed } from './codegenUtils';
 type NativeFocusChangeEvent = {
   tabKey: string;
 };
-
-type BlurEffect =
-  | 'none'
-  | 'systemDefault'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
 
 type TabBarItemLabelVisibilityMode =
   | 'auto'
@@ -56,38 +31,6 @@ type TabBarMinimizeBehavior =
   | 'onScrollDown'
   | 'onScrollUp';
 
-type ItemStateAppearance = {
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
-  tabBarItemTitleFontColor?: ColorValue;
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: Float;
-    vertical?: Float;
-  };
-
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-};
-
-type ItemAppearance = {
-  normal?: ItemStateAppearance;
-  selected?: ItemStateAppearance;
-  focused?: ItemStateAppearance;
-  disabled?: ItemStateAppearance;
-};
-
-type Appearance = {
-  stacked?: ItemAppearance;
-  inline?: ItemAppearance;
-  compactInline?: ItemAppearance;
-
-  tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
-};
-
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
@@ -95,27 +38,17 @@ export interface NativeProps extends ViewProps {
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
 
-  // Android
+  // Android-specific
   tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
-  tabBarTintColor?: ColorValue;
-
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: Float;
+  tabBarItemTitleFontSizeActive?: Float;
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
   tabBarItemTitleFontColor?: ColorValue;
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: Float;
-    vertical?: Float;
-  };
-
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
   tabBarItemTitleFontColorActive?: ColorValue;
+  tabBarItemIconColor?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
-  tabBarItemTitleFontSizeActive?: Float;
   tabBarItemActiveIndicatorColor?: ColorValue;
   tabBarItemActiveIndicatorEnabled?: WithDefault<boolean, true>;
   tabBarItemRippleColor?: ColorValue;
@@ -125,9 +58,8 @@ export interface NativeProps extends ViewProps {
   >;
 
   // iOS-specific
+  tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
-  standardAppearance?: UnsafeMixed<Appearance>;
-  scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
   // Control
 
