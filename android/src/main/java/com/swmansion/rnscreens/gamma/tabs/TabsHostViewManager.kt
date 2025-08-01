@@ -75,11 +75,6 @@ class TabsHostViewManager :
         view.tabBarBackgroundColor = value
     }
 
-    override fun setTabBarBlurEffect(
-        view: TabsHost?,
-        value: String?,
-    ) = Unit
-
     override fun setTabBarTintColor(
         view: TabsHost,
         value: Int?,
@@ -129,16 +124,6 @@ class TabsHostViewManager :
     ) {
         view.tabBarItemTitleFontColor = value
     }
-
-    override fun setTabBarItemBadgeBackgroundColor(
-        view: TabsHost,
-        value: Int?,
-    ) = Unit
-
-    override fun setTabBarItemTitlePositionAdjustment(
-        view: TabsHost?,
-        value: ReadableMap?,
-    ) = Unit
 
     @ReactProp(name = "tabBarItemIconColor", customType = "Color")
     override fun setTabBarItemIconColor(
