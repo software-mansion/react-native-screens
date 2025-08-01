@@ -1,7 +1,7 @@
 'use client';
 
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ColorValue, ViewProps } from 'react-native';
+import type { ColorValue, ProcessedColorValue, ViewProps } from 'react-native';
 import {
   DirectEventHandler,
   Float,
@@ -24,33 +24,33 @@ type LifecycleStateChangeEvent = Readonly<{
   newState: Int32;
 }>;
 
-type ItemStateAppearance = {
+export type ItemStateAppearance = {
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: Float;
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
-  tabBarItemTitleFontColor?: ColorValue;
+  tabBarItemTitleFontColor?: ProcessedColorValue | null;
   tabBarItemTitlePositionAdjustment?: {
     horizontal?: Float;
     vertical?: Float;
   };
-  tabBarItemIconColor?: ColorValue;
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+  tabBarItemIconColor?: ProcessedColorValue | null;
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
 };
 
-type ItemAppearance = {
+export type ItemAppearance = {
   normal?: ItemStateAppearance;
   selected?: ItemStateAppearance;
   focused?: ItemStateAppearance;
   disabled?: ItemStateAppearance;
 };
 
-type Appearance = {
+export type Appearance = {
   stacked?: ItemAppearance;
   inline?: ItemAppearance;
   compactInline?: ItemAppearance;
 
-  tabBarBackgroundColor?: ColorValue;
+  tabBarBackgroundColor?: ProcessedColorValue | null;
   tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
 };
 
