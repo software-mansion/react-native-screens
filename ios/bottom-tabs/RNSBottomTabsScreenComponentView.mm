@@ -2,7 +2,6 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
-#import "RNSFabricConversions.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
@@ -14,6 +13,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RNSFabricConversions.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #if RCT_NEW_ARCH_ENABLED

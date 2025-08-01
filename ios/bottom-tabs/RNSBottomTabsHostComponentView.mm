@@ -16,7 +16,6 @@
 #import "RNSConversions.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
-#import "RNSFabricConversions.h"
 #import "RNSTabBarController.h"
 #import "RNSTabBarControllerDelegate.h"
 
