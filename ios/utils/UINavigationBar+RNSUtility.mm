@@ -4,7 +4,7 @@
 
 - (nullable UIView *)rnscreens_findContentView
 {
-  static Class ContentViewClass;
+  Class ContentViewClass;
   if (@available(iOS 26.0, *)) {
     ContentViewClass = NSClassFromString(@"UIKit.NavigationBarContentView");
   } else {
@@ -51,7 +51,7 @@
 
 - (nullable UIView *)rnscreens_findBackButtonWrapperView
 {
-  UIView *contentView = self.rnscreens_findContentView;
+  UIView *contentView = [self rnscreens_findContentView];
 
   return [UINavigationBar rnscreens_findNestedBackButtonWrapperInView:contentView];
 }

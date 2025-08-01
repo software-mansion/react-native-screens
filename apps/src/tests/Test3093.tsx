@@ -5,6 +5,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, Text, View, ScrollView } from 'react-native';
+import Colors from '../shared/styling/Colors';
 
 type StackRouteParamList = {
   Screen1: undefined;
@@ -26,7 +27,7 @@ function makeScreen(route: keyof StackRouteParamList, navigateTo?: keyof StackRo
     return (
       <ScrollView contentInsetAdjustmentBehavior='automatic'>
         <Text>{route}</Text>
-        { navigateTo != null && <Button title={"Go to " + navigateTo} onPress={() => navigation.navigate(navigateTo)} /> }
+        { navigateTo != undefined && <Button title={"Go to " + navigateTo} onPress={() => navigation.navigate(navigateTo)} /> }
       </ScrollView>
     )
   }
@@ -37,7 +38,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
         headerStyle: {
-          backgroundColor: 'purple'
+          backgroundColor: Colors.PurpleDark120
         }
       }}>
       <Stack.Group>
