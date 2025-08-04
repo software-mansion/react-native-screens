@@ -211,9 +211,9 @@
     tabBarItemStateAppearance.iconColor = [RCTConvert UIColor:itemStateAppearanceProps[@"tabBarItemIconColor"]];
   }
 
-  if (itemStateAppearanceProps[@"tabBarTitlePositionAdjustment"] != nil) {
+  if (itemStateAppearanceProps[@"tabBarItemTitlePositionAdjustment"] != nil) {
     tabBarItemStateAppearance.titlePositionAdjustment =
-        [RCTConvert UIOffset:itemStateAppearanceProps[@"tabBarTitlePositionAdjustment"]];
+        [RCTConvert UIOffset:itemStateAppearanceProps[@"tabBarItemTitlePositionAdjustment"]];
   }
 }
 
