@@ -288,20 +288,6 @@ export interface BottomTabsScreenProps {
   badgeValue?: string;
   // #endregion General
 
-  // #region Common appearance
-  /**
-   * @summary Specifies the background color for the badge.
-   *
-   * On Android, it applies to the badge inside the tab bar item.
-   *
-   * On iOS, it applies to each badge for every tab bar item when tab screen
-   * is selected.
-   *
-   * @platform android, ios
-   */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-  // #endregion Common appearance
-
   // #region Android-only appearance
   /**
    * @summary Specifies the icon for the tab bar item.
