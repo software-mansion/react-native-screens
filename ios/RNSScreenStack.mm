@@ -61,29 +61,35 @@ namespace react = facebook::react;
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
 {
-  // To prevent popping multiple screens when back button is pressed repeatedly,
-  // We allow for pop operation to proceed only if no transition is in progress,
-  // which we check indirectly by checking if transitionCoordinator is set.
-  // If it's not, we are safe to proceed.
-  if (self.transitionCoordinator == nil) {
-    // We still need to disable interactions for back button so click effects are not applied,
-    // and there is unfortunately no better place for it currently
-    UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
-    if (button != nil) {
-      button.userInteractionEnabled = false;
+  if (@available(iOS 26, *)) {
+    // To prevent popping multiple screens when back button is pressed repeatedly,
+    // We allow for pop operation to proceed only if no transition is in progress,
+    // which we check indirectly by checking if transitionCoordinator is set.
+    // If it's not, we are safe to proceed.
+    if (self.transitionCoordinator == nil) {
+      // We still need to disable interactions for back button so click effects are not applied,
+      // and there is unfortunately no better place for it currently
+      UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
+      if (button != nil) {
+        button.userInteractionEnabled = false;
+      }
+
+      return true;
     }
 
-    return true;
+    return false;
   }
 
-  return false;
+  return true;
 }
 
 - (void)navigationBar:(UINavigationBar *)navigationBar didPopItem:(UINavigationItem *)item
 {
-  UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
-  if (button != nil) {
-    button.userInteractionEnabled = true;
+  if (@available(iOS 26, *)) {
+    UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
+    if (button != nil) {
+      button.userInteractionEnabled = true;
+    }
   }
 }
 #endif // Check for iOS >= 26
