@@ -5,9 +5,20 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
+#if RCT_NEW_ARCH_ENABLED
+#import <folly/dynamic.h>
+#endif // RCT_NEW_ARCH_ENABLED
+
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
+
+#if RCT_NEW_ARCH_ENABLED
+
+// copied from FollyConvert.mm
+id RNSConvertFollyDynamicToId(const folly::dynamic &dyn);
+
+#endif // RCT_NEW_ARCH_ENABLED
 
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString);
 

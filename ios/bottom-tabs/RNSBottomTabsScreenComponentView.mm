@@ -13,7 +13,6 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import "RNSFabricConversions.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #if RCT_NEW_ARCH_ENABLED
@@ -168,9 +167,9 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
     _standardAppearance = [UITabBarAppearance new];
     if (newComponentProps.standardAppearance.type() == folly::dynamic::OBJECT) {
-      [RNSTabBarAppearanceCoordinator
-          configureTabBarAppearance:_standardAppearance
-                fromAppearanceProps:RNSConvertFollyDynamicToId(newComponentProps.standardAppearance)];
+      [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
+                                            fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                                    newComponentProps.standardAppearance)];
     }
     tabItemNeedsAppearanceUpdate = YES;
   }
@@ -178,9 +177,9 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
     if (newComponentProps.scrollEdgeAppearance.type() == folly::dynamic::OBJECT) {
       _scrollEdgeAppearance = [UITabBarAppearance new];
-      [RNSTabBarAppearanceCoordinator
-          configureTabBarAppearance:_scrollEdgeAppearance
-                fromAppearanceProps:RNSConvertFollyDynamicToId(newComponentProps.scrollEdgeAppearance)];
+      [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_scrollEdgeAppearance
+                                            fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                                    newComponentProps.scrollEdgeAppearance)];
     } else {
       _scrollEdgeAppearance = nil;
     }

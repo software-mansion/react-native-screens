@@ -1,8 +1,9 @@
-#if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
-#import <folly/dynamic.h>
+#import "RNSConversions.h"
+
+namespace rnscreens::conversion {
 
 // copied from FollyConvert.mm
-static id RNSConvertFollyDynamicToId(const folly::dynamic &dyn)
+id RNSConvertFollyDynamicToId(const folly::dynamic &dyn)
 {
   // I could imagine an implementation which avoids copies by wrapping the
   // dynamic in a derived class of NSDictionary.  We can do that if profiling
@@ -42,4 +43,5 @@ static id RNSConvertFollyDynamicToId(const folly::dynamic &dyn)
     }
   }
 }
-#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
+
+}; // namespace rnscreens::conversion
