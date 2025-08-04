@@ -1,6 +1,9 @@
 #import <React/RCTConvert.h>
 #import <UIKit/UIKit.h>
+
+#if !RCT_NEW_ARCH_ENABLED
 #import "RNSEnums.h"
+#endif // !RCT_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
 
