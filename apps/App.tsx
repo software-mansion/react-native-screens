@@ -7,5 +7,5 @@ enableFreeze(true);
 
 export default function App() {
   // return <Example />;
-  return <Test.Test3093 />;
+  return <Test.TestBottomTabs />;
 }
