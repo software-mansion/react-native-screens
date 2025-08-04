@@ -3,6 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
+#import "RNSStackNavigatorFinder.h"
 
 #import "Swift-Bridging.h"
 
@@ -87,6 +88,32 @@ namespace react = facebook::react;
   // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
   // when we want to destroy the component.
   _controller = nil;
+}
+
+#pragma mark - Layout
+
+///
+/// This override **should be considered as a workaround** for which I made some assumptions:
+/// 1. All parents of views with associated `UINavigationController` should have the same width as the SplitView column
+/// 2. I'm greedily aligning all native components which are extending `UINavigationController` - is covers both old and
+/// new stack implementations, however, it will have an impact on any other native component which will be extending
+/// from the same class.
+///
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+
+  auto navigationControllers = [RNSStackNavigatorFinder findAllStackNavigatorControllersFrom:_controller];
+  for (UINavigationController *navigationController in navigationControllers) {
+    UIView *superview = navigationController.view.superview;
+    if (superview) {
+      // Only width needs to be aligned with the parent to guarantee smooth transitions, e.g. for header inside the
+      // stack.
+      CGRect originalFrame = superview.frame;
+      superview.frame =
+          CGRectMake(originalFrame.origin.x, originalFrame.origin.y, self.frame.size.width, originalFrame.size.height);
+    }
+  }
 }
 
 #pragma mark - ShadowTreeState
