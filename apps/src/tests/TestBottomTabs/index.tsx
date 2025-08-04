@@ -10,6 +10,7 @@ import {
   type TabConfiguration,
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
+import Colors from '../../shared/styling/Colors';
 
 enableFreeze(true);
 
@@ -17,7 +18,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       standardAppearance: {
-        tabBarBlurEffect: 'systemChromeMaterial',
+        tabBarBackgroundColor: Colors.NavyLight100,
         stacked: {
           normal: {
             tabBarItemIconColor: 'red',
@@ -26,6 +27,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
             tabBarItemIconColor: 'green',
           },
         },
+      },
+      scrollEdgeAppearance: {
+        tabBarBackgroundColor: Colors.NavyLight100,
       },
       tabKey: 'Tab1',
       title: 'Tab1',
@@ -44,13 +48,30 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       badgeValue: 'NEW',
+      scrollEdgeAppearance: {
+        tabBarBackgroundColor: Colors.NavyDark140,
+        stacked: {
+          normal: {
+            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+            tabBarItemTitleFontSize: 20,
+            tabBarItemTitleFontStyle: 'italic',
+            tabBarItemTitleFontColor: Colors.RedDark120,
+            tabBarItemTitleFontWeight: 'bold',
+            tabBarItemTitleFontFamily: 'Baskerville',
+            tabBarItemTitlePositionAdjustment: {
+              vertical: 8,
+            },
+            tabBarItemIconColor: Colors.RedDark120,
+          },
+        },
+      },
+      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       icon: {
         templateSource: require('../../../assets/variableIcons/icon.png'),
       },
       selectedIcon: {
         templateSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
-      // tabBarItemIconColor: Colors.RedDark120,
       iconResourceName: 'sym_call_missed', // Android specific
       title: 'Tab2',
     },
@@ -60,6 +81,15 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab3',
       badgeValue: '2137',
+      tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+      tabBarItemBadgeTextColor: Colors.RedDark120,
+      standardAppearance: {
+        stacked: {
+          normal: {
+            tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+          },
+        },
+      },
       icon: {
         imageSource: require('../../../assets/variableIcons/icon.png'),
       },

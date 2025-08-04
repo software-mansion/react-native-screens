@@ -1,5 +1,5 @@
 import React from 'react';
-import { processColor, type NativeSyntheticEvent } from 'react-native';
+import type { NativeSyntheticEvent } from 'react-native';
 import {
   BottomTabs,
   BottomTabsScreen,
