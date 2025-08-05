@@ -47,7 +47,7 @@ type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-export type Orientation =
+type Orientation =
   | 'inherit'
   | 'all'
   | 'allButUpsideDown'
@@ -90,6 +90,8 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
+
+  // Currently iOS-only
   orientation?: WithDefault<Orientation, 'inherit'>;
 
   // Android-specific image handling
