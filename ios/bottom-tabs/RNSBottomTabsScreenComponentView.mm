@@ -163,7 +163,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.orientation != oldComponentProps.orientation) {
-    _orientation = rnscreens::conversion::RNSOrientationFromRNSBottomTabsScreenOrientation(newComponentProps.orientation);
+    _orientation =
+        rnscreens::conversion::RNSOrientationFromRNSBottomTabsScreenOrientation(newComponentProps.orientation);
     tabScreenOrientationNeedsUpdate = YES;
   }
 
@@ -501,7 +502,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setOrientation:(RNSOrientation)orientation
 {
   _orientation = orientation;
-  _tabItemNeedsAppearanceUpdate = YES;
+  _tabScreenOrientationNeedsUpdate = YES;
 }
 
 - (void)setOnWillAppear:(RCTDirectEventBlock)onWillAppear
