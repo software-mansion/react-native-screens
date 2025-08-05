@@ -1658,7 +1658,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    [self.screenView updateBounds];
+    if (@available(iOS 15.0, *)) {
+      // This is causing flickering content when sheet is being dragged.
+      if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
+        [self.screenView updateBounds];
+      }
+    } else {
+      [self.screenView updateBounds];
+    }
 #else
     if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
       _lastViewFrame = self.screenView.frame;
