@@ -670,6 +670,12 @@ RNS_IGNORE_SUPER_CALL_END
             navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
 #endif /* Check for iOS 16.0 */
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+          if (@available(iOS 26.0, *)) {
+            navitem.searchBarPlacementAllowsToolbarIntegration = NO;
+          }
+#endif /* Check for iOS 26.0 */
 #endif /* !TARGET_OS_TV */
         }
         break;
