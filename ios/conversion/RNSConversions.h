@@ -58,11 +58,13 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
 RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(
     react::RNSBottomTabsScreenOrientation orientation);
 
+#if !TARGET_OS_TV
 UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(
     RNSOrientation orientation);
 
 RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(
     UIInterfaceOrientationMask orientationMask);
+#endif // !TARGET_OS_TV
 
 #pragma mark SplitViewHost props
 

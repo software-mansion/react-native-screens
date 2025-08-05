@@ -3,6 +3,7 @@
 
 namespace rnscreens::conversion {
 
+#if !TARGET_OS_TV
 UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrientation orientation)
 {
   switch (orientation) {
@@ -29,7 +30,8 @@ UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrien
   }
 }
 
-RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask) {
+RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask)
+{
   switch (orientationMask) {
     case UIInterfaceOrientationMaskAll:
       return RNSOrientationAll;
@@ -50,5 +52,6 @@ RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientati
       return RNSOrientationInherit;
   }
 }
+#endif // !TARGET_OS_TV
 
 }; // namespace rnscreens::conversion
