@@ -206,15 +206,15 @@ export default function BarButtonItemsExample() {
           title: 'Icon SharesBackground',
           headerRightBarButtonItems: [
             {
-              image: require('../assets/search_black.png'),
+              image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
             },
             {
-              image: require('../assets/search_black.png'),
+              image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
             },
             {
-              image: require('../assets/search_black.png'),
+              image: require('../../assets/search_black.png'),
               sharesBackground: false,
               onPress: () => Alert.alert('Icon with sharesBackground false pressed'),
             },
@@ -242,14 +242,14 @@ export default function BarButtonItemsExample() {
           title: 'Icon Buttons With Spacing',
           headerRightBarButtonItems: [
             {
-              image: require('../assets/search_black.png'),
+              image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('First icon pressed'),
             },
             {
               spacing: 100,
             },
             {
-              image: require('../assets/search_white.png'),
+              image: require('../../assets/search_white.png'),
               onPress: () => Alert.alert('Second icon pressed'),
             },
           ],
@@ -267,7 +267,7 @@ export default function BarButtonItemsExample() {
               onPress: () => Alert.alert('Tinted pressed'),
             },
             {
-              image: require('../assets/search_black.png'),
+              image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Tinted icon pressed'),
             },
           ],
@@ -285,7 +285,7 @@ export default function BarButtonItemsExample() {
               onPress: () => Alert.alert('Done text pressed'),
             },
             {
-              image: require('../assets/search_black.png'),
+              image: require('../../assets/search_black.png'),
               style: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
             },
