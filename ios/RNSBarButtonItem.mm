@@ -79,15 +79,11 @@ static char RNSBarButtonItemIdKey;
     if (width) {
       self.width = [width doubleValue];
     }
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
-    if (@available(iOS 15.0, *)) {
-      NSNumber *changesSelectionAsPrimaryActionNum = dict[@"changesSelectionAsPrimaryAction"];
-      if (changesSelectionAsPrimaryActionNum != nil) {
-        self.changesSelectionAsPrimaryAction = [changesSelectionAsPrimaryActionNum boolValue];
-      }
+    
+    NSNumber *changesSelectionAsPrimaryActionNum = dict[@"changesSelectionAsPrimaryAction"];
+    if (changesSelectionAsPrimaryActionNum != nil) {
+      self.changesSelectionAsPrimaryAction = [changesSelectionAsPrimaryActionNum boolValue];
     }
-#endif
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
@@ -160,14 +156,10 @@ static char RNSBarButtonItemIdKey;
       self.accessibilityHint = dict[@"accessibilityHint"];
     }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
-    if (@available(iOS 14.0, *)) {
-      NSDictionary *menu = dict[@"menu"];
-      if (menu) {
-        self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction];
-      }
+    NSDictionary *menu = dict[@"menu"];
+    if (menu) {
+      self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction];
     }
-#endif
 
     NSString *buttonId = dict[@"buttonId"];
     if (buttonId && action) {
@@ -180,7 +172,6 @@ static char RNSBarButtonItemIdKey;
   return self;
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000
 + (UIMenu *)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
 {
   if (@available(iOS 14.0, *)) {
@@ -237,7 +228,6 @@ static char RNSBarButtonItemIdKey;
   }
   return nil;
 }
-#endif
 
 - (void)handleBarButtonItemPress:(UIBarButtonItem *)item
 {
