@@ -1,0 +1,7 @@
+#import "RNSStackScreenHeaderConfigComponentViewManager.h"
+
+@implementation RNSStackScreenHeaderConfigComponentViewManager
+
+RCT_EXPORT_MODULE(RNSStackScreenHeaderConfigComponentViewManager)
+
+@end
