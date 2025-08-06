@@ -2,14 +2,13 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
-#import "RNSInvalidateManager.h"
+#import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTImageSource.h>
-#import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -19,12 +18,6 @@
 #if RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
-
-@interface RNSBottomTabsScreenComponentView ()
-#if RCT_NEW_ARCH_ENABLED
-    <RCTMountingTransactionObserving>
-#endif // RCT_NEW_ARCH_ENABLED
-@end
 
 #pragma mark - View implementation
 
@@ -118,55 +111,11 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-- (void)willMoveToWindow:(UIWindow *)newWindow
-{
-  if (newWindow == nil) {
-    [[RNSInvalidateManager sharedManager] flushInvalidViews];
-  }
-}
-
 #pragma mark - RNSInvalidateControllerProtocol
 
 - (void)invalidateController
 {
   _controller = nil;
-}
-
-#pragma mark - RCTMountingTransactionObserving
-
-- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
-                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  for (const auto &mutation : transaction.getMutations()) {
-    if (mutation.type == react::ShadowViewMutation::Delete) {
-      UIView<RNSInvalidateControllerProtocol> *_Nullable toBeRemovedChild =
-          [self uiviewForReactTag:mutation.oldChildShadowView.tag];
-      if (toBeRemovedChild != nil) {
-        if (toBeRemovedChild.window == nil) {
-          [toBeRemovedChild invalidateController];
-        } else {
-          [[RNSInvalidateManager sharedManager] markForInvalidation:toBeRemovedChild];
-        }
-      }
-    }
-  }
-}
-
-- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
-               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  // NO-OP
-}
-
-#pragma mark - RCTMountingTransactionObserving helpers
-
-- (nullable UIView<RNSInvalidateControllerProtocol> *)uiviewForReactTag:(react::Tag)tag
-{
-  UIView *targetView = [self viewWithTag:tag];
-  if ([targetView conformsToProtocol:@protocol(RNSInvalidateControllerProtocol)]) {
-    return targetView;
-  }
-  return nil;
 }
 
 #pragma mark - Events
