@@ -1,6 +1,7 @@
 #import "RNSBottomTabsHostComponentViewManager.h"
 #import "RNSBottomTabsHostEventEmitter.h"
 #import "RNSEnums.h"
+#import "RNSInvalidateControllerProtocol.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
 #import "RNSTabBarAppearanceProvider.h"
@@ -19,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSBottomTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate>
+@interface RNSBottomTabsHostComponentView
+    : RNSReactBaseView <RNSScreenContainerDelegate, RNSInvalidateControllerProtocol>
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
