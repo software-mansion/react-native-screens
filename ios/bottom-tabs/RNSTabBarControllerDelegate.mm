@@ -32,7 +32,7 @@
   if (!repeatedSelectionHandledNatively) {
     [tabBarCtrl.tabsHostComponentView
         emitOnNativeFocusChangeRequestSelectedTabScreen:tabScreenCtrl.tabScreenComponentView];
-      
+
     // TODO: handle overrideScrollViewBehaviorInFirstDescendantChainIfNeeded for natively-driven tabs
     return ![self shouldPreventNativeTabChangeWithinTabBarController:tabBarCtrl];
   }
