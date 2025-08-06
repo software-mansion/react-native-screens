@@ -16,7 +16,7 @@
 #import "RNSConversions.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
-#import "RNSInvalidateManager.h"
+#import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSTabBarController.h"
 #import "RNSTabBarControllerDelegate.h"
 
@@ -111,7 +111,7 @@ namespace react = facebook::react;
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
   if (newWindow == nil) {
-    [[RNSInvalidateManager sharedManager] flushInvalidViews];
+    [[RNSInvalidatedComponentsRegistry invalidatedComponentsRegistry] flushInvalidViews];
   }
 }
 
@@ -350,16 +350,12 @@ namespace react = facebook::react;
   [_controller reactMountingTransactionWillMount];
 
   for (const auto &mutation : transaction.getMutations()) {
-    if (mutation.type == react::ShadowViewMutation::Delete) {
-      UIView<RNSInvalidateControllerProtocol> *_Nullable toBeRemovedChild =
-          [self uiviewForReactTag:mutation.oldChildShadowView.tag];
-      if (toBeRemovedChild != nil) {
-        if (toBeRemovedChild.window == nil) {
-          [toBeRemovedChild invalidateController];
-        } else {
-          [[RNSInvalidateManager sharedManager] markForInvalidation:toBeRemovedChild];
-        }
+    if ([self shouldInvalidateOnMutation:mutation]) {
+      for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
+        [self invalidateViewIfDetached:childView];
       }
+
+      [self invalidateViewIfDetached:self];
     }
   }
 }
@@ -373,15 +369,27 @@ namespace react = facebook::react;
   [_controller reactMountingTransactionDidMount];
 }
 
-#pragma mark - RCTMountingTransactionObserving helpers
+#pragma mark - RCTMountingTransactionObserving Helpers
 
-- (nullable UIView<RNSInvalidateControllerProtocol> *)uiviewForReactTag:(react::Tag)tag
+- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
 {
-  UIView *targetView = [self viewWithTag:tag];
-  if ([targetView conformsToProtocol:@protocol(RNSInvalidateControllerProtocol)]) {
-    return targetView;
+  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
+}
+
+- (void)invalidateViewIfDetached:(UIView *)view
+{
+  RCTAssert(
+      [view conformsToProtocol:@protocol(RNSInvalidateControllerProtocol)],
+      @"[RNScreens] View of type: %@ doesn't conform to RNSInvalidateControllerProtocol",
+      view.class);
+
+  UIView<RNSInvalidateControllerProtocol> *invalidationTarget = (UIView<RNSInvalidateControllerProtocol> *)view;
+
+  if (invalidationTarget.window == nil) {
+    [invalidationTarget invalidateController];
+  } else {
+    [[RNSInvalidatedComponentsRegistry invalidatedComponentsRegistry] pushForInvalidation:invalidationTarget];
   }
-  return nil;
 }
 
 #else
