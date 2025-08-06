@@ -16,6 +16,7 @@
 #import "RNSConversions.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
+#import "RNSInvalidateManager.h"
 #import "RNSTabBarController.h"
 #import "RNSTabBarControllerDelegate.h"
 
@@ -110,7 +111,7 @@ namespace react = facebook::react;
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
   if (newWindow == nil) {
-    [self invalidate];
+    [[RNSInvalidateManager sharedManager] flushInvalidViews];
   }
 }
 
@@ -143,18 +144,6 @@ namespace react = facebook::react;
   }
 }
 
-- (void)invalidate
-{
-  // We assume that bottom tabs host is removed from view hierarchy **only** when
-  // whole component is destroyed & therefore we do the necessary cleanup here.
-  // If at some point that statement does not hold anymore, this cleanup
-  // should be moved to a different place.
-  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
-    [subview invalidate];
-  }
-  _controller = nil;
-}
-
 #pragma mark - RNSScreenContainerDelegate
 
 - (void)updateContainer
@@ -173,6 +162,13 @@ namespace react = facebook::react;
 - (void)markChildUpdated
 {
   [self updateContainer];
+}
+
+#pragma mark - RNSInvalidateControllerProtocol
+
+- (void)invalidateController
+{
+  _controller = nil;
 }
 
 #pragma mark - React events
@@ -352,6 +348,20 @@ namespace react = facebook::react;
 {
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   [_controller reactMountingTransactionWillMount];
+
+  for (const auto &mutation : transaction.getMutations()) {
+    if (mutation.type == react::ShadowViewMutation::Delete) {
+      UIView<RNSInvalidateControllerProtocol> *_Nullable toBeRemovedChild =
+          [self uiviewForReactTag:mutation.oldChildShadowView.tag];
+      if (toBeRemovedChild != nil) {
+        if (toBeRemovedChild.window == nil) {
+          [toBeRemovedChild invalidateController];
+        } else {
+          [[RNSInvalidateManager sharedManager] markForInvalidation:toBeRemovedChild];
+        }
+      }
+    }
+  }
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -361,6 +371,17 @@ namespace react = facebook::react;
     [self updateContainer];
   }
   [_controller reactMountingTransactionDidMount];
+}
+
+#pragma mark - RCTMountingTransactionObserving helpers
+
+- (nullable UIView<RNSInvalidateControllerProtocol> *)uiviewForReactTag:(react::Tag)tag
+{
+  UIView *targetView = [self viewWithTag:tag];
+  if ([targetView conformsToProtocol:@protocol(RNSInvalidateControllerProtocol)]) {
+    return targetView;
+  }
+  return nil;
 }
 
 #else
