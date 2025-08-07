@@ -14,9 +14,9 @@ Point RNSScreenShadowNode::getContentOriginOffset(
   return stateData.contentOffset;
 }
 
-std::optional<std::reference_wrapper<const ShadowNode::Shared>>
+std::optional<std::reference_wrapper<const std::shared_ptr<const ShadowNode>>>
 findHeaderConfigChild(const YogaLayoutableShadowNode &screenShadowNode) {
-  for (const ShadowNode::Shared &child : screenShadowNode.getChildren()) {
+  for (const std::shared_ptr<const ShadowNode> &child : screenShadowNode.getChildren()) {
     if (std::strcmp(child->getComponentName(), "RNSScreenStackHeaderConfig") ==
         0) {
       return {std::cref(child)};
@@ -81,7 +81,7 @@ std::optional<float> findHeaderHeight(
 }
 #endif // ANDROID
 
-void RNSScreenShadowNode::appendChild(const ShadowNode::Shared &child) {
+void RNSScreenShadowNode::appendChild(const std::shared_ptr<const ShadowNode> &child) {
   YogaLayoutableShadowNode::appendChild(child);
 #ifdef ANDROID
   const auto &stateData = getStateData();
