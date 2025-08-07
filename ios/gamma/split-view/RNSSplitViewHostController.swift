@@ -1,13 +1,30 @@
 import Foundation
 import UIKit
 
+// This one is fixing non-visible `RNSOrientationProviding` protocol
+// `RNScreens-Swift.h` - doesn't contain that missing symbol
+protocol DummyProtocol : RNSOrientationProviding {}
+
 /// @class RNSSplitViewHostController
 /// @brief A controller associated with the RN native component representing SplitView host.
 ///
 /// Manages a collection of RNSSplitViewScreenComponentView instances,
 /// synchronizes appearance settings with props, observes component lifecycle, and emits events.
 @objc
-public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
+public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving
+//,
+//DummyProtocol
+//RNSOrientationProviding
+{
+  // RNSOrientation - is passed to `RNScreens-Swift.h`, but the symbol is not recognized
+  // comment out to make it compile
+    // public func evaluateOrientation() -> RNSOrientation {
+    //     return .all
+    // }
+
+  // RNSOrientation - RNSOrientation isn't passed to `RNScreens-Swift.h`, RNSOrientation is visible by Swift
+    let orientation: RNSOrientation = .all
+    
   private var needsChildViewControllersUpdate = false
 
   private var splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
