@@ -28,14 +28,16 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 #import "RNSScrollViewFinder.h"
-#import "RNSSplitViewScreenComponentView.h"
 #import "RNSTabsScreenViewController.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
 #import "integrations/RNSDismissibleModalProtocol.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
+#if RNS_GAMMA_ENABLED
+#import "RNSSplitViewScreenComponentView.h"
 #import "Swift-Bridging.h"
+#endif // RNS_GAMMA_ENABLED
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -150,9 +152,11 @@ namespace react = facebook::react;
         static_cast<RNSTabsScreenViewController *>(self.parentViewController);
     [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
   }
+#if RNS_GAMMA_ENABLED
   if (parent == nil) {
     [self unregisterFromSplitView];
   }
+#endif // RNS_GAMMA_ENABLED
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
@@ -162,7 +166,9 @@ namespace react = facebook::react;
     RNSTabsScreenViewController *parentTabsScreenVC = static_cast<RNSTabsScreenViewController *>(parent);
     [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
   }
+#if RNS_GAMMA_ENABLED
   [self registerForSplitView];
+#endif // RNS_GAMMA_ENABLED
 }
 
 - (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
@@ -226,6 +232,7 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFrameCorrectionProvider3097
 
+#if RNS_GAMMA_ENABLED
 - (void)registerForSplitView
 {
   if (auto splitViewScreenController = [self findClosestSplitViewScreenController]) {
@@ -263,6 +270,7 @@ namespace react = facebook::react;
 
   return nil;
 }
+#endif // RNS_GAMMA_ENABLED
 
 @end
 
