@@ -49,6 +49,7 @@ const modules = [
   '@react-navigation/native',
   '@react-navigation/stack',
   'react-native-reanimated',
+  'react-native-worklets',
   'react-native-safe-area-context',
   'react-native-gesture-handler',
   ...Object.keys(libPackage.peerDependencies),
