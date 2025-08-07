@@ -1,3 +1,5 @@
+#if RNS_GAMMA_ENABLED
+
 #import <Foundation/Foundation.h>
 
 #import "RNSSplitViewHostComponentView.h"
@@ -29,3 +31,5 @@
 - (void)unregisterFromSplitView;
 
 @end
+
+#endif // RNS_GAMMA_ENABLED

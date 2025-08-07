@@ -1,3 +1,5 @@
+#if RNS_GAMMA_ENABLED
+
 #import <Foundation/Foundation.h>
 #import "RNSFrameCorrectionProvider3097.h"
 #import "RNSSplitViewScreenComponentView.h"
@@ -19,3 +21,5 @@
      inContextOfSplitViewColumn:(RNSSplitViewScreenComponentView *)splitViewScreen;
 
 @end
+
+#endif // RNS_GAMMA_ENABLED
