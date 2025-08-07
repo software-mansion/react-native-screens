@@ -28,11 +28,14 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 #import "RNSScrollViewFinder.h"
+#import "RNSSplitViewScreenComponentView.h"
 #import "RNSTabsScreenViewController.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
 #import "integrations/RNSDismissibleModalProtocol.h"
 #import "utils/UINavigationBar+RNSUtility.h"
+
+#import "Swift-Bridging.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -147,6 +150,9 @@ namespace react = facebook::react;
         static_cast<RNSTabsScreenViewController *>(self.parentViewController);
     [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
   }
+  if (parent == nil) {
+    [self unregisterFromSplitView];
+  }
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
@@ -156,6 +162,7 @@ namespace react = facebook::react;
     RNSTabsScreenViewController *parentTabsScreenVC = static_cast<RNSTabsScreenViewController *>(parent);
     [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
   }
+  [self registerForSplitView];
 }
 
 - (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
@@ -216,6 +223,46 @@ namespace react = facebook::react;
   }
 }
 #endif // Check for iOS >= 26
+
+#pragma mark - RNSFrameCorrectionProvider3097
+
+- (void)registerForSplitView
+{
+  if (auto splitViewScreenController = [self findClosestSplitViewScreenController]) {
+    auto splitViewControllerView = [splitViewScreenController view];
+    if ([splitViewControllerView isKindOfClass:[RNSSplitViewScreenComponentView class]]) {
+      auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
+      // We need to apply an udpate for the parent of the view which `RNSNavigationController` is describing
+      [splitViewScreen registerForFrameUpdates:self.view.superview];
+    }
+  }
+}
+
+- (void)unregisterFromSplitView
+{
+  if (auto splitViewScreenController = [self findClosestSplitViewScreenController]) {
+    auto splitViewControllerView = [splitViewScreenController view];
+    if ([splitViewControllerView isKindOfClass:[RNSSplitViewScreenComponentView class]]) {
+      auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
+      // We need to apply an udpate for the parent of the view which `RNSNavigationController` is describing
+      [splitViewScreen unregisterFromFrameUpdates:self.view.superview];
+    }
+  }
+}
+
+- (RNSSplitViewScreenController *_Nullable)findClosestSplitViewScreenController
+{
+  auto parent = [self parentViewController];
+  while (parent) {
+    if ([parent isKindOfClass:[RNSSplitViewScreenController class]]) {
+      auto splitViewScreenController = (RNSSplitViewScreenController *)parent;
+      return splitViewScreenController;
+    }
+    parent = [parent parentViewController];
+  }
+
+  return nil;
+}
 
 @end
 

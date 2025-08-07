@@ -6,12 +6,15 @@
 #endif
 
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
+#import "RNSFrameCorrectionProvider3097.h"
 #import "RNSScreenContainer.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSNavigationController
-    : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting>
+@interface RNSNavigationController : UINavigationController <
+                                         RNSViewControllerDelegate,
+                                         RNSBottomTabsSpecialEffectsSupporting,
+                                         RNSFrameCorrectionProvider3097>
 
 @end
 
