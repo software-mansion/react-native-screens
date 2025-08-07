@@ -1,7 +1,7 @@
 #import <React/RCTImageSource.h>
 #import "RNSBottomTabsScreenEventEmitter.h"
 #import "RNSEnums.h"
-#import "RNSInvalidateControllerProtocol.h"
+#import "RNSViewControllerInvalidating.h"
 #import "RNSReactBaseView.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabBarAppearanceProvider.h"
@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSBottomTabsScreenComponentView : RNSReactBaseView <RNSInvalidateControllerProtocol>
+@interface RNSBottomTabsScreenComponentView : RNSReactBaseView <RNSViewControllerInvalidating>
 
 /**
  * View controller responsible for managing tab represented by this component view.

@@ -1,7 +1,7 @@
 #import "RNSInvalidatedComponentsRegistry.h"
 
 @interface RNSInvalidatedComponentsRegistry ()
-@property (nonatomic, strong) NSMutableSet<UIView<RNSInvalidateControllerProtocol> *> *invalidViews;
+@property (nonatomic, strong) NSMutableSet<UIView<RNSViewControllerInvalidating> *> *invalidViews;
 @end
 
 @implementation RNSInvalidatedComponentsRegistry
@@ -24,14 +24,14 @@
   return self;
 }
 
-- (void)pushForInvalidation:(UIView<RNSInvalidateControllerProtocol> *)view
+- (void)pushForInvalidation:(UIView<RNSViewControllerInvalidating> *)view
 {
   [_invalidViews addObject:view];
 }
 
 - (void)flushInvalidViews
 {
-  for (id<RNSInvalidateControllerProtocol> view in _invalidViews) {
+  for (id<RNSViewControllerInvalidating> view in _invalidViews) {
     [view invalidateController];
   }
   [_invalidViews removeAllObjects];
