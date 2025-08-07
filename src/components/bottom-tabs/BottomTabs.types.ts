@@ -81,6 +81,9 @@ export interface BottomTabsProps extends ViewProps {
    *
    * On Android, the size is represented in scale-independent pixels (sp).
    *
+   * On iOS, the value of `0.0` is equivalent to `undefined`, reverting the
+   * font size to the system default.
+   *
    * @platform android, ios
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
