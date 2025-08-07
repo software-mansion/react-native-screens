@@ -113,7 +113,7 @@
     "react-dom": "^19.1.0",
     "react-native": "0.80.1",
     "react-native-builder-bob": "^0.23.2",
-    "react-native-gesture-handler": "^2.28.0",
+    "react-native-gesture-handler": "~2.25.0",
     "react-native-reanimated": "^4.0.1",
     "react-native-safe-area-context": "5.1.0",
     "react-native-windows": "^0.64.8",
