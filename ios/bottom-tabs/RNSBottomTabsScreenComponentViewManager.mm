@@ -21,6 +21,7 @@ RCT_EXPORT_VIEW_PROPERTY(tabKey, NSString);
 
 RCT_REMAP_VIEW_PROPERTY(isFocused, isSelectedScreen, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(title, NSString);
+RCT_EXPORT_VIEW_PROPERTY(orientation, RNSOrientation);
 RCT_EXPORT_VIEW_PROPERTY(badgeValue, NSString);
 RCT_EXPORT_VIEW_PROPERTY(tabBarBackgroundColor, UIColor);
 RCT_EXPORT_VIEW_PROPERTY(tabBarBlurEffect, RNSBlurEffectStyle);

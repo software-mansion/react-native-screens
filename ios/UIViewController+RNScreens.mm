@@ -1,5 +1,8 @@
 #import "RNSScreenContainer.h"
 #import "UIViewController+RNScreens.h"
+#import "RNSOrientationProviding.h"
+#import "RNSEnums.h"
+#import "RNSConversions.h"
 
 #import <objc/runtime.h>
 
@@ -27,14 +30,33 @@
 
 - (UIInterfaceOrientationMask)reactNativeScreensSupportedInterfaceOrientations
 {
-  UIViewController *childVC = [self findChildRNSScreensViewController];
-  return childVC ? childVC.supportedInterfaceOrientations : [self reactNativeScreensSupportedInterfaceOrientations];
+  id<RNSOrientationProviding> childOrientationProvidingVC = [self findChildRNSOrientationProvidingViewController];
+  
+  if (childOrientationProvidingVC != nil) {
+    RNSOrientation orientation = [childOrientationProvidingVC evaluateOrientation];
+    if (orientation == RNSOrientationInherit) {
+      return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:self.view.window];
+    }
+    
+    return rnscreens::conversion::UIInterfaceOrientationMaskFromRNSOrientation(orientation);
+  }
+  
+  return [self reactNativeScreensSupportedInterfaceOrientations];
 }
 
 - (UIViewController *)reactNativeScreensChildViewControllerForHomeIndicatorAutoHidden
 {
   UIViewController *childVC = [self findChildRNSScreensViewController];
   return childVC ?: [self reactNativeScreensChildViewControllerForHomeIndicatorAutoHidden];
+}
+
+- (id<RNSOrientationProviding>)findChildRNSOrientationProvidingViewController
+{
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  if ([lastViewController respondsToSelector:@selector(evaluateOrientation)]) {
+    return static_cast<id<RNSOrientationProviding>>(lastViewController);
+  }
+  return nil;
 }
 
 - (UIViewController *)findChildRNSScreensViewController

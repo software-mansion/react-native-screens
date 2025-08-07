@@ -33,6 +33,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSTabBarController.h"
 #import "RNSScrollViewHelper.h"
+#import "RNSConversions.h"
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
@@ -1173,11 +1174,11 @@ RNS_IGNORE_SUPER_CALL_END
   // RNSScreenView does not have a property to control this behavior.
   // It looks for parent that conforms to RNSScrollViewBehaviorOverriding to determine
   // if it should override ScrollView's behavior.
-  
+
   // As this method is called when RNSScreen willMoveToParentViewController
   // and view does not have superView yet, we need to use reactSuperViews.
   UIView *parent = [self reactSuperview];
-  
+
   while (parent != nil) {
     if ([parent respondsToSelector:@selector(shouldOverrideScrollViewContentInsetAdjustmentBehavior)]) {
       id<RNSScrollViewBehaviorOverriding> overrideProvider = static_cast<id<RNSScrollViewBehaviorOverriding>>(parent);
@@ -1185,7 +1186,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
     parent = [parent reactSuperview];
   }
-  
+
   return NO;
 }
 
@@ -1980,6 +1981,26 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   [super presentViewController:viewControllerToPresent animated:flag completion:completion];
 }
+
+#pragma mark - RNSOrientationProviding
+
+#if !TARGET_OS_TV
+
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.childViewControllers.lastObject respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> child = static_cast<id<RNSOrientationProviding>>(self.childViewControllers.lastObject);
+    RNSOrientation childOrientation = [child evaluateOrientation];
+    
+    if (childOrientation != RNSOrientationInherit) {
+      return childOrientation;
+    }
+  }
+
+  return rnscreens::conversion::RNSOrientationFromUIInterfaceOrientationMask([self supportedInterfaceOrientations]);
+}
+
+#endif // !TARGET_OS_TV
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific

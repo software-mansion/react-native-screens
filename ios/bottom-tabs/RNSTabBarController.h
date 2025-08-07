@@ -2,6 +2,10 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabsScreenViewController.h"
 
+#if !TARGET_OS_TV
+#import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSReactTransactionObserving
@@ -21,7 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
  * i.e. if you made changes through one of signals method, unless you flush them immediately (not needed atm), they will
  * be executed only after react finishes the transaction (from within transaction execution block).
  */
+#if !TARGET_OS_TV
+@interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving, RNSOrientationProviding>
+#else // !TARGET_OS_TV
 @interface RNSTabBarController : UITabBarController <RNSReactTransactionObserving>
+#endif // !TARGET_OS_TV
 
 - (instancetype)initWithTabsHostComponentView:(nullable RNSBottomTabsHostComponentView *)tabsHostComponentView;
 
@@ -58,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Find out which tab bar controller is currently focused & select it.
  *
- * This method does nothing if the update has not been previoulsy requested.
+ * This method does nothing if the update has not been previously requested.
  * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
  * appropriate invalidation signal & let the controller decide when to flush the updates.
  */
@@ -75,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Updates the tab bar appearance basing on configuration sources (host view, tab screens).
  *
- * This method does nothing if the update has not been previoulsy requested.
+ * This method does nothing if the update has not been previously requested.
  * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
  * appropriate invalidation signal & let the controller decide when to flush the updates.
  */
@@ -89,6 +97,23 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateTabBarAppearance;
 
+/**
+ * Updates the interface orientation based on selected tab screen and its children.
+ *
+ * This method does nothing if the update has not been previously requested.
+ * If needed, the requested update is performed immediately. If you do not need this, consider just raising an
+ * appropriate invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateOrientationIfNeeded;
+
+/**
+ * Updates the interface orientation based on selected tab screen and its children.
+ *
+ * The requested update is performed immediately. If you do not need this, consider just raising an appropriate
+ * invalidation signal & let the controller decide when to flush the updates.
+ */
+- (void)updateOrientation;
+
 @end
 
 #pragma mark - Signals
@@ -101,7 +126,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
- * udpated.
+ * updated.
  *
  * This also automatically raises `needsReactChildrenUpdate` flag, no need to call it manually.
  */
@@ -109,7 +134,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
- * udpated.
+ * updated.
  *
  * Do not raise this signal only when focused state of the tab has changed - use `needsSelectedTabUpdate` instead.
  */
@@ -117,7 +142,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
- * udpated.
+ * updated.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfSelectedTab;
 
@@ -126,6 +151,11 @@ NS_ASSUME_NONNULL_BEGIN
  * update.
  */
 @property (nonatomic, readwrite) bool needsUpdateOfTabBarAppearance;
+
+/**
+ * Tell the controller that some configuration regarding interface orientation has changed & it requires update.
+ */
+@property (nonatomic, readwrite) bool needsOrientationUpdate;
 
 @end
 

@@ -140,3 +140,14 @@ typedef NS_ENUM(NSInteger, RNSTabBarMinimizeBehavior) {
   RNSTabBarMinimizeBehaviorOnScrollUp,
 };
 #endif
+
+typedef NS_ENUM(NSInteger, RNSOrientation) {
+  RNSOrientationInherit,
+  RNSOrientationAll,
+  RNSOrientationAllButUpsideDown,
+  RNSOrientationPortrait,
+  RNSOrientationPortraitUpsideDown,
+  RNSOrientationLandscape,
+  RNSOrientationLandscapeLeft,
+  RNSOrientationLandscapeRight,
+};
