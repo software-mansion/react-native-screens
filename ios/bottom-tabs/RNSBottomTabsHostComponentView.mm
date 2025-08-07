@@ -164,7 +164,7 @@ namespace react = facebook::react;
   [self updateContainer];
 }
 
-#pragma mark - RNSInvalidateControllerProtocol
+#pragma mark - RNSViewControllerInvalidating
 
 - (void)invalidateController
 {
@@ -379,11 +379,11 @@ namespace react = facebook::react;
 - (void)invalidateViewIfDetached:(UIView *)view
 {
   RCTAssert(
-      [view conformsToProtocol:@protocol(RNSInvalidateControllerProtocol)],
-      @"[RNScreens] View of type: %@ doesn't conform to RNSInvalidateControllerProtocol",
+      [view conformsToProtocol:@protocol(RNSViewControllerInvalidating)],
+      @"[RNScreens] View of type: %@ doesn't conform to RNSViewControllerInvalidating",
       view.class);
 
-  UIView<RNSInvalidateControllerProtocol> *invalidationTarget = (UIView<RNSInvalidateControllerProtocol> *)view;
+  UIView<RNSViewControllerInvalidating> *invalidationTarget = (UIView<RNSViewControllerInvalidating> *)view;
 
   if (invalidationTarget.window == nil) {
     [invalidationTarget invalidateController];

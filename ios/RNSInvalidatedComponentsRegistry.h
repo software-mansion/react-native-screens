@@ -1,11 +1,11 @@
 #import <UIKit/UIKit.h>
-#import "RNSInvalidateControllerProtocol.h"
+#import "RNSViewControllerInvalidating.h"
 
 @interface RNSInvalidatedComponentsRegistry : NSObject
 
 + (instancetype)invalidatedComponentsRegistry;
 
-- (void)pushForInvalidation:(UIView<RNSInvalidateControllerProtocol> *)view;
+- (void)pushForInvalidation:(UIView<RNSViewControllerInvalidating> *)view;
 - (void)flushInvalidViews;
 
 @end

@@ -111,7 +111,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-#pragma mark - RNSInvalidateControllerProtocol
+#pragma mark - RNSViewControllerInvalidating
 
 - (void)invalidateController
 {
