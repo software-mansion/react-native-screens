@@ -1,7 +1,7 @@
 #import "RNSBottomTabsHostComponentViewManager.h"
 #import "RNSBottomTabsHostEventEmitter.h"
 #import "RNSEnums.h"
-#import "RNSInvalidateControllerProtocol.h"
+#import "RNSViewControllerInvalidating.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
 #import "RNSTabBarAppearanceProvider.h"
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 3. two way communication channel with React (commands & events)
  */
 @interface RNSBottomTabsHostComponentView
-    : RNSReactBaseView <RNSScreenContainerDelegate, RNSInvalidateControllerProtocol>
+    : RNSReactBaseView <RNSScreenContainerDelegate, RNSViewControllerInvalidating>
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
