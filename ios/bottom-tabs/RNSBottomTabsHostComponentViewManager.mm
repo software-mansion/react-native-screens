@@ -22,20 +22,7 @@ RCT_EXPORT_MODULE(RNSBottomTabsManager)
 
 #pragma mark - LEGACY Props
 
-RCT_EXPORT_VIEW_PROPERTY(tabBarBackgroundColor, UIColor);
-RCT_EXPORT_VIEW_PROPERTY(tabBarBlurEffect, RNSBlurEffectStyle);
 RCT_EXPORT_VIEW_PROPERTY(tabBarTintColor, UIColor);
-RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontFamily, NSString);
-RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontSize, NSNumber);
-RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontWeight, NSString);
-RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontStyle, NSString);
-RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitleFontColor, UIColor);
-
-RCT_EXPORT_VIEW_PROPERTY(tabBarItemIconColor, UIColor);
-RCT_EXPORT_VIEW_PROPERTY(tabBarItemBadgeBackgroundColor, UIColor);
-
-RCT_EXPORT_VIEW_PROPERTY(tabBarItemTitlePositionAdjustment, UIOffset);
-
 // This remapping allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input
 // from JS.
 RCT_REMAP_VIEW_PROPERTY(

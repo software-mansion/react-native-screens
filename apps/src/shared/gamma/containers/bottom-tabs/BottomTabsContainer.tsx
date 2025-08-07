@@ -91,7 +91,6 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemActiveIndicatorColor={Colors.GreenLight40}
       tabBarItemActiveIndicatorEnabled={true}
       tabBarTintColor={Colors.YellowLight100}
-      tabBarItemBadgeBackgroundColor={Colors.GreenDark100}
       tabBarItemIconColor={Colors.BlueLight100}
       tabBarItemTitleFontColor={Colors.BlueLight40}
       tabBarItemIconColorActive={Colors.GreenLight100}

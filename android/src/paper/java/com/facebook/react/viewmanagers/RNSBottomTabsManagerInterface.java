@@ -11,28 +11,24 @@ package com.facebook.react.viewmanagers;
 
 import android.view.View;
 import androidx.annotation.Nullable;
-import com.facebook.react.bridge.ReadableMap;
 
 
 public interface RNSBottomTabsManagerInterface<T extends View>  {
   void setTabBarBackgroundColor(T view, @Nullable Integer value);
-  void setTabBarBlurEffect(T view, @Nullable String value);
-  void setTabBarTintColor(T view, @Nullable Integer value);
   void setTabBarItemTitleFontFamily(T view, @Nullable String value);
   void setTabBarItemTitleFontSize(T view, float value);
+  void setTabBarItemTitleFontSizeActive(T view, float value);
   void setTabBarItemTitleFontWeight(T view, @Nullable String value);
   void setTabBarItemTitleFontStyle(T view, @Nullable String value);
   void setTabBarItemTitleFontColor(T view, @Nullable Integer value);
-  void setTabBarItemTitlePositionAdjustment(T view, @Nullable ReadableMap value);
-  void setTabBarItemIconColor(T view, @Nullable Integer value);
-  void setTabBarItemBadgeBackgroundColor(T view, @Nullable Integer value);
   void setTabBarItemTitleFontColorActive(T view, @Nullable Integer value);
+  void setTabBarItemIconColor(T view, @Nullable Integer value);
   void setTabBarItemIconColorActive(T view, @Nullable Integer value);
-  void setTabBarItemTitleFontSizeActive(T view, float value);
   void setTabBarItemActiveIndicatorColor(T view, @Nullable Integer value);
   void setTabBarItemActiveIndicatorEnabled(T view, boolean value);
   void setTabBarItemRippleColor(T view, @Nullable Integer value);
   void setTabBarItemLabelVisibilityMode(T view, @Nullable String value);
+  void setTabBarTintColor(T view, @Nullable Integer value);
   void setTabBarMinimizeBehavior(T view, @Nullable String value);
   void setControlNavigationStateInJS(T view, boolean value);
 }
