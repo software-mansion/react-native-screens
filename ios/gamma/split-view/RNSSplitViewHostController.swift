@@ -8,7 +8,7 @@ import UIKit
 /// synchronizes appearance settings with props, observes component lifecycle, and emits events.
 @objc
 public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving,
-  RNSSplitViewHostOrientationProviding
+  RNSOrientationProvidingSwift
 {
   private var needsChildViewControllersUpdate = false
 
@@ -237,7 +237,13 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     validateSplitViewHierarchy()
   }
 
-  public func convertToSwiftEnum(_ orientation: RNSOrientation) -> RNSOrientationSwift {
+  // MARK: RNSSplitViewHostOrientationProviding
+  @objc
+  public func evaluateOrientation() -> RNSOrientationSwift {
+    return convertToSwiftEnum(splitViewHostComponentView.orientation)
+  }
+
+  func convertToSwiftEnum(_ orientation: RNSOrientation) -> RNSOrientationSwift {
     switch orientation {
     case RNSOrientation.inherit:
       return .inherit
@@ -258,11 +264,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     @unknown default:
       return .inherit
     }
-  }
-
-  // MARK: RNSSplitViewHostOrientationProviding
-  public func evaluateOrientation() -> RNSOrientationSwift {
-    return convertToSwiftEnum(splitViewHostComponentView.orientation)
   }
 
   // MARK: Validators
