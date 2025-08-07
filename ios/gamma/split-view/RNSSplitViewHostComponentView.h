@@ -54,6 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) double preferredInspectorColumnWidthOrFraction;
 #endif
 
+@property (nonatomic, readonly) RNSOrientation orientation;
+
 @end
 
 #pragma mark - Events
