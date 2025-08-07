@@ -3,7 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
-#import "RNSStackNavigatorFinder.h"
+#import "RNSFrameCorrector3097.h"
 
 #import "Swift-Bridging.h"
 
@@ -14,6 +14,7 @@ namespace react = facebook::react;
   RNSSplitViewScreenController *_Nullable _controller;
   RNSSplitViewScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
+  NSMutableSet<UIView *> *_viewsForFrameUpdate;
 }
 
 - (RNSSplitViewScreenController *)controller
@@ -41,6 +42,8 @@ namespace react = facebook::react;
 
   _reactEventEmitter = [RNSSplitViewScreenComponentEventEmitter new];
   _shadowStateProxy = [RNSSplitViewScreenShadowStateProxy new];
+
+  _viewsForFrameUpdate = [NSMutableSet set];
 }
 
 - (void)setupController
@@ -90,6 +93,16 @@ namespace react = facebook::react;
   _controller = nil;
 }
 
+- (void)registerForFrameUpdates:(UIView *)view
+{
+  [_viewsForFrameUpdate addObject:view];
+}
+
+- (void)unregisterFromFrameUpdates:(UIView *)view
+{
+  [_viewsForFrameUpdate removeObject:view];
+}
+
 #pragma mark - Layout
 
 ///
@@ -103,16 +116,8 @@ namespace react = facebook::react;
 {
   [super layoutSubviews];
 
-  auto navigationControllers = [RNSStackNavigatorFinder findAllStackNavigatorControllersFrom:_controller];
-  for (UINavigationController *navigationController in navigationControllers) {
-    UIView *superview = navigationController.view.superview;
-    if (superview) {
-      // Only width needs to be aligned with the parent to guarantee smooth transitions, e.g. for header inside the
-      // stack.
-      CGRect originalFrame = superview.frame;
-      superview.frame =
-          CGRectMake(originalFrame.origin.x, originalFrame.origin.y, self.frame.size.width, originalFrame.size.height);
-    }
+  for (UIView *view in _viewsForFrameUpdate) {
+    [RNSFrameCorrector3097 applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
   }
 }
 
