@@ -1,5 +1,3 @@
-#if RNS_GAMMA_ENABLED
-
 #import "RNSFrameCorrector3097.h"
 
 @implementation RNSFrameCorrector3097
@@ -13,5 +11,3 @@
 }
 
 @end
-
-#endif // RNS_GAMMA_ENABLED

@@ -34,7 +34,7 @@
 #import "integrations/RNSDismissibleModalProtocol.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
-#if RNS_GAMMA_ENABLED
+#ifdef RNS_GAMMA_ENABLED
 #import "RNSSplitViewScreenComponentView.h"
 #import "Swift-Bridging.h"
 #endif // RNS_GAMMA_ENABLED
@@ -152,7 +152,7 @@ namespace react = facebook::react;
         static_cast<RNSTabsScreenViewController *>(self.parentViewController);
     [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
   }
-#if RNS_GAMMA_ENABLED
+#ifdef RNS_GAMMA_ENABLED
   if (parent == nil) {
     [self unregisterFromSplitView];
   }
@@ -166,7 +166,7 @@ namespace react = facebook::react;
     RNSTabsScreenViewController *parentTabsScreenVC = static_cast<RNSTabsScreenViewController *>(parent);
     [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
   }
-#if RNS_GAMMA_ENABLED
+#ifdef RNS_GAMMA_ENABLED
   [self registerForSplitView];
 #endif // RNS_GAMMA_ENABLED
 }
@@ -232,7 +232,7 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFrameCorrectionProvider3097
 
-#if RNS_GAMMA_ENABLED
+#ifdef RNS_GAMMA_ENABLED
 - (void)registerForSplitView
 {
   if (auto splitViewScreenController = [self findClosestSplitViewScreenController]) {
