@@ -1,5 +1,3 @@
-import Foundation
-
 @objc
 public enum RNSOrientationSwift: Int {
   case inherit
@@ -10,9 +8,4 @@ public enum RNSOrientationSwift: Int {
   case landscape
   case landscapeLeft
   case landscapeRight
-}
-
-@objc
-public protocol RNSSplitViewHostOrientationProviding {
-  func evaluateOrientation() -> RNSOrientationSwift
 }
