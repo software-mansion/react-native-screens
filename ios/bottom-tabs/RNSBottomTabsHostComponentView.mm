@@ -10,6 +10,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSBottomTabsComponentDescriptor.h>
 #import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
+#import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSBottomTabsScreenComponentView.h"
@@ -170,6 +171,13 @@ namespace react = facebook::react;
 {
   _controller = nil;
 }
+
+#if RCT_NEW_ARCH_ENABLED
+- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
+{
+  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
+}
+#endif // RCT_NEW_ARCH_ENABLED
 
 #pragma mark - React events
 
@@ -352,10 +360,10 @@ namespace react = facebook::react;
   for (const auto &mutation : transaction.getMutations()) {
     if ([self shouldInvalidateOnMutation:mutation]) {
       for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
-        [self invalidateViewIfDetached:childView];
+        [RNSViewControllerInvalidator invalidateViewIfDetached:childView];
       }
 
-      [self invalidateViewIfDetached:self];
+      [RNSViewControllerInvalidator invalidateViewIfDetached:self];
     }
   }
 }
@@ -367,29 +375,6 @@ namespace react = facebook::react;
     [self updateContainer];
   }
   [_controller reactMountingTransactionDidMount];
-}
-
-#pragma mark - RCTMountingTransactionObserving Helpers
-
-- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
-{
-  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
-}
-
-- (void)invalidateViewIfDetached:(UIView *)view
-{
-  RCTAssert(
-      [view conformsToProtocol:@protocol(RNSViewControllerInvalidating)],
-      @"[RNScreens] View of type: %@ doesn't conform to RNSViewControllerInvalidating",
-      view.class);
-
-  UIView<RNSViewControllerInvalidating> *invalidationTarget = (UIView<RNSViewControllerInvalidating> *)view;
-
-  if (invalidationTarget.window == nil) {
-    [invalidationTarget invalidateController];
-  } else {
-    [[RNSInvalidatedComponentsRegistry invalidatedComponentsRegistry] pushForInvalidation:invalidationTarget];
-  }
 }
 
 #else
