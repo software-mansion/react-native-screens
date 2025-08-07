@@ -847,6 +847,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (NSArray<UIBarButtonItem *> *)barButtonItemsFromDictionaries:(NSArray<NSDictionary<NSString *, id> *> *)dicts
 {
+  if (dicts.count == 0) {
+    return @[];
+  }
   NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count * 2 - 1];
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
