@@ -61,9 +61,14 @@
   }
 
   RCTAssert(
-      [parent isKindOfClass:RNSTabBarController.class],
+      [parent isKindOfClass:RNSTabBarController.class] || [parent isKindOfClass:UINavigationController.class],
       @"[RNScreens] TabScreenViewController added to parent of unexpected type: %@",
       parent.class);
+
+  if([parent isKindOfClass:UINavigationController.class]){
+    // Hide the navigation bar for the more controller
+    [(UINavigationController*)parent setNavigationBarHidden:YES animated:YES];
+  }
 
   RNSTabBarController *tabBarCtrl = [self findTabBarController];
 
