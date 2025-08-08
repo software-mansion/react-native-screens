@@ -11,9 +11,6 @@ export const SplitViewWithNativeStackGestures = ({
   return (
     <SplitViewHost {...splitViewBaseConfig}>
       <SplitViewScreen.Column>
-        <NativeStackNavigatorComponent />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             gestureEnabled: true,
@@ -22,6 +19,22 @@ export const SplitViewWithNativeStackGestures = ({
             gestureEnabled: true,
           }}
           customScreenThreeNavigationOptions={{
+            gestureEnabled: false,
+          }}
+        />
+      </SplitViewScreen.Column>
+      <SplitViewScreen.Column>
+        <NativeStackNavigatorComponent
+          customScreenOneNavigationOptions={{
+            fullScreenGestureEnabled: true,
+            gestureEnabled: true,
+          }}
+          customScreenTwoNavigationOptions={{
+            fullScreenGestureEnabled: true,
+            gestureEnabled: true,
+          }}
+          customScreenThreeNavigationOptions={{
+            fullScreenGestureEnabled: true,
             gestureEnabled: false,
           }}
         />
