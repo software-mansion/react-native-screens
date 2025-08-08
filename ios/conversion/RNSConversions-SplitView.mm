@@ -97,6 +97,31 @@ std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDispla
   }
 }
 
+RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitViewHostOrientation orientation)
+{
+  using enum facebook::react::RNSSplitViewHostOrientation;
+
+  switch (orientation) {
+    case All:
+      return RNSOrientationAll;
+    case AllButUpsideDown:
+      return RNSOrientationAllButUpsideDown;
+    case Portrait:
+      return RNSOrientationPortrait;
+    case PortraitUpsideDown:
+      return RNSOrientationPortraitUpsideDown;
+    case Landscape:
+      return RNSOrientationLandscape;
+    case LandscapeLeft:
+      return RNSOrientationLandscapeLeft;
+    case LandscapeRight:
+      return RNSOrientationLandscapeRight;
+    case Inherit:
+    default:
+      return RNSOrientationInherit;
+  }
+}
+
 #pragma mark SplitViewScreen props
 
 RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
