@@ -31,8 +31,8 @@
 #import "RNSTabsScreenViewController.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
-#import "utils/UINavigationBar+RNSUtility.h"
 #import "integrations/RNSDismissibleModalProtocol.h"
+#import "utils/UINavigationBar+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -86,6 +86,10 @@ namespace react = facebook::react;
 - (void)navigationBar:(UINavigationBar *)navigationBar didPopItem:(UINavigationItem *)item
 {
   if (@available(iOS 26, *)) {
+    // Reset interactions on back button -> see navigationBar:shouldPopItem
+    // IMPORTANT: This reset won't execute when preventNativeDismiss is on.
+    // However, on iOS 26, unlike in previous versions, the back button instance changes
+    // when handling preventNativeDismiss and userIteractionEnabled is reset
     UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
     if (button != nil) {
       button.userInteractionEnabled = true;
