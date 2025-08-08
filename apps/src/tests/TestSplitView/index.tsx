@@ -1,6 +1,7 @@
 import React from 'react';
 
 import SplitViewBaseApp from './SplitViewBaseApp';
+import SplitViewOrientation from './SplitViewOrientation';
 import {
   SplitViewWithNestedStack,
   SplitViewWithNativeStackBase,
