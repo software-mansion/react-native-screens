@@ -2,10 +2,18 @@
 
 @implementation UINavigationBar (RNSUtility)
 
++ (Class)rnscreens_getBackButtonRuntimeClass
+{
+  if (@available(iOS 26.0, *)) {
+    return NSClassFromString(@"UIKit.NavigationBarContentView"); // Sampled from iOS 26 Beta (iPhone 16)
+  }
+
+  return NSClassFromString(@"_UINavigationBarContentView"); // Sampled from iOS 17.5 (iPhone 15 Pro)
+}
+
 - (nullable UIView *)rnscreens_findContentView
 {
-  // Class names taken from iOS 17.5, tested on iPhone 15 Pro
-  static Class ContentViewClass = NSClassFromString(@"_UINavigationBarContentView");
+  static Class ContentViewClass = [UINavigationBar rnscreens_getBackButtonRuntimeClass];
 
   // Fast path
   if (self.subviews.count > 1 && [self.subviews[1] isKindOfClass:ContentViewClass]) {
@@ -21,24 +29,35 @@
   return nil;
 }
 
-- (nullable UIView *)rnscreens_findBackButtonWrapperView
+- (nullable UIView *)rnscreens_findNestedBackButtonWrapperInView:(nullable UIView *)view
 {
-  // Class names taken from iOS 17.5, tested on iPhone 15 Pro
-  static Class BarButtonViewClass = NSClassFromString(@"_UIButtonBarButton");
-
-  UIView *contentView = self.rnscreens_findContentView;
-
-  if (contentView == nil) {
+  if (view == nil) {
     return nil;
   }
 
-  for (UIView *subview in contentView.subviews) {
+  static Class BarButtonViewClass = NSClassFromString(@"_UIButtonBarButton");
+
+  UIView *foundView = nil;
+
+  for (UIView *subview in view.subviews) {
     if ([subview isKindOfClass:BarButtonViewClass]) {
       return subview;
+    }
+
+    foundView = [self rnscreens_findNestedBackButtonWrapperInView:subview];
+    if (foundView != nil) {
+      return foundView;
     }
   }
 
   return nil;
+}
+
+- (nullable UIView *)rnscreens_findBackButtonWrapperView
+{
+  UIView *contentView = [self rnscreens_findContentView];
+
+  return [self rnscreens_findNestedBackButtonWrapperInView:contentView];
 }
 
 @end
