@@ -102,8 +102,6 @@ RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitView
   using enum facebook::react::RNSSplitViewHostOrientation;
 
   switch (orientation) {
-    case Inherit:
-      return RNSOrientationInherit;
     case All:
       return RNSOrientationAll;
     case AllButUpsideDown:
@@ -118,6 +116,9 @@ RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitView
       return RNSOrientationLandscapeLeft;
     case LandscapeRight:
       return RNSOrientationLandscapeRight;
+    case Inherit:
+    default:
+      return RNSOrientationInherit;
   }
 }
 
