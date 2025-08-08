@@ -8,7 +8,13 @@
 - (BOOL)tabBarController:(UITabBarController *)tabBarController
     shouldSelectViewController:(UIViewController *)viewController
 {
-  // TODO: This will crash with "More" view controller.
+#if !TARGET_OS_TV
+  // When the moreNavigationController is selected, we want to show it
+  // TODO: this solution only works for uncontrolled mode. Add support for controlled mode as well.
+  if (viewController == tabBarController.moreNavigationController) {
+    return YES;
+  }
+#endif // !TARGET_OS_TV
   RCTAssert(
       [tabBarController isKindOfClass:RNSTabBarController.class],
       @"[RNScreens] Unexpected type of controller: %@",
@@ -44,6 +50,14 @@
 - (void)tabBarController:(UITabBarController *)tabBarController
     didSelectViewController:(UIViewController *)viewController
 {
+#if !TARGET_OS_TV
+  // When the moreNavigationController is selected, we want to show it
+  if (viewController == tabBarController.moreNavigationController) {
+    // Hide the navigation bar for the more controller
+    [tabBarController.moreNavigationController setNavigationBarHidden:YES animated:NO];
+    return;
+  }
+#endif // !TARGET_OS_TV
   RCTAssert(
       [tabBarController isKindOfClass:RNSTabBarController.class],
       @"[RNScreens] Unexpected type of controller: %@",
