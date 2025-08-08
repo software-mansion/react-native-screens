@@ -89,7 +89,9 @@ namespace react = facebook::react;
     // Reset interactions on back button -> see navigationBar:shouldPopItem
     // IMPORTANT: This reset won't execute when preventNativeDismiss is on.
     // However, on iOS 26, unlike in previous versions, the back button instance changes
-    // when handling preventNativeDismiss and userIteractionEnabled is reset
+    // when handling preventNativeDismiss and userIteractionEnabled is reset.
+    // The instance also changes when regular screen pop happens, but in that case
+    // the value of userInteractionEnabled is carried on, and we reset it here.
     UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
     if (button != nil) {
       button.userInteractionEnabled = true;
