@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
 import { Colors } from '../../shared/styling/Colors';
-import { TestBottomTabs, TestScreenStack } from '..';
 import { SplitViewBaseConfig } from './helpers/types';
 
 const SplitViewOrientation = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
