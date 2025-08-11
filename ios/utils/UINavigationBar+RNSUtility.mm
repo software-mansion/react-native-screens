@@ -41,4 +41,44 @@
   return nil;
 }
 
+- (NSDirectionalEdgeInsets)rnscreens_sumTitleControlDirectionalMargins
+{
+  NSDirectionalEdgeInsets totalMargins = NSDirectionalEdgeInsetsMake(0, 0, 0, 0);
+  UIView *titleControl = RNScreensFindTitleControlInView(self);
+
+  if (!titleControl) {
+    NSLog(@"[RNScreens] _UINavigationBarTitleControl not found under the UINavigationBar hierarchy");
+    return totalMargins;
+  }
+
+  UIView *currentView = titleControl.superview;
+  while (currentView && currentView != self) {
+    NSDirectionalEdgeInsets margins = currentView.directionalLayoutMargins;
+    totalMargins.top += margins.top;
+    totalMargins.leading += margins.leading;
+    totalMargins.bottom += margins.bottom;
+    totalMargins.trailing += margins.trailing;
+    currentView = currentView.superview;
+  }
+  return totalMargins;
+}
+
+static UIView *RNScreensFindTitleControlInView(UIView *view)
+{
+  static Class UINavBarTitleControlClass = NSClassFromString(@"_UINavigationBarTitleControl");
+
+  if ([view isKindOfClass:UINavBarTitleControlClass]) {
+    return view;
+  }
+
+  for (UIView *subview in view.subviews) {
+    UIView *result = RNScreensFindTitleControlInView(subview);
+    if (result) {
+      return result;
+    }
+  }
+
+  return nil;
+}
+
 @end

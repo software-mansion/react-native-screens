@@ -254,7 +254,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
   NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
-  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
+  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar rnscreens_sumTitleControlDirectionalMargins];
 
   BOOL isDisplayingBackButton = [self shouldBackButtonBeVisibleInNavigationBar:navigationBar];
 
@@ -673,7 +673,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
           if (@available(iOS 26.0, *)) {
-            // Workaround for missing search bar on root stack screen. 
+            // Workaround for missing search bar on root stack screen.
             // See: https://github.com/software-mansion/react-native-screens/pull/3098
             navitem.searchBarPlacementAllowsToolbarIntegration = NO;
           }

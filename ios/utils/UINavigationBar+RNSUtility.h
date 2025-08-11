@@ -32,6 +32,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable UIView *)rnscreens_findBackButtonWrapperView;
 
+/**
+ * @brief Responsible for calculating the cumulative directional layout margins the will be applied to the title in the
+ * header.
+ *
+ * The method depends on private UIKit internals, such as the presence of `_UINavigationBarTitleControll`
+ * If the title control is not found in the UINavigationBar view hierarchy, the method logs a warning
+ * and returns zeroed margins.
+ *
+ * Tested to work reliably on iOS 26.0, 18.5.
+ *
+ * @returns NSDirectionalEdgeInsets containing the combined layout margins from the title control
+ * up to its ancestor navigation bar.
+ */
+- (NSDirectionalEdgeInsets)rnscreens_sumTitleControlDirectionalMargins;
+
 @end
 
 NS_ASSUME_NONNULL_END
