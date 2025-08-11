@@ -298,6 +298,12 @@ export interface BottomTabsScreenProps {
     };
   };
   /**
+   * @summary Enables per-screen control over React Suspense with react-freeze. Pass `false` to opt out.
+   *
+   * @default true
+   */
+  freezeContents?: boolean;
+  /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
    * to `automatic`.

@@ -44,12 +44,14 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     onWillDisappear,
     onDidDisappear,
     isFocused = false,
+    freezeContents,
     icon,
     selectedIcon,
     ...rest
   } = props;
 
-  let shouldFreeze = freezeEnabled();
+  let shouldFreeze =
+    freezeEnabled() && (freezeContents === undefined ? true : freezeContents);
 
   if (featureFlags.experiment.controlledBottomTabs) {
     // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
