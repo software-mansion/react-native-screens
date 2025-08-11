@@ -79,22 +79,6 @@ namespace react = facebook::react;
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
 
-    // Temporary workaround for iOS 26 to prevent RNSScreen from rendering partially behind
-    // the navigation bar. This is a native UIKit bug in iOS 26, related to edgesForExtendedLayout.
-    if (@available(iOS 26, *)) {
-      if (!self.navigationBar.isHidden && self.navigationBar.frame.origin.y >= 0) {
-        // We want to calculate the origin of RNSScreenView relative to UINavigationBar
-        CGRect screenRelativeToNavigationBar = [screenController.screenView convertRect:CGRectZero
-                                                                                 toView:self.navigationBar];
-        // If RNSScreenView overlaps with UINavigationBar, calculate and set correct frame
-        if (self.navigationBar.frame.size.height - screenRelativeToNavigationBar.origin.y > 0.5) {
-          CGRect correctedFrame = screenController.screenView.frame;
-          correctedFrame.origin.y = self.navigationBar.frame.origin.y + self.navigationBar.frame.size.height;
-          screenController.screenView.frame = correctedFrame;
-        }
-      }
-    }
-
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
         (screenController.presentedViewController != nil &&
          ![screenController.presentedViewController isBeingDismissed]);

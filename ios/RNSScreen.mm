@@ -487,9 +487,33 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     [super addSubview:view];
+
+    if ([view isKindOfClass:[RNSScreenContentWrapper class]]) {
+      RNSScreenContentWrapper *contentWrapperView = static_cast<RNSScreenContentWrapper *>(view);
+      [self applyConstraintsToContentWrapper:contentWrapperView];
+    }
   } else {
     ((RNSScreenStackHeaderConfig *)view).screenView = self;
   }
+}
+
+- (void)insertSubview:(UIView *)view atIndex:(NSInteger)index
+{
+  [super insertSubview:view atIndex:index];
+
+  if ([view isKindOfClass:[RNSScreenContentWrapper class]]) {
+    RNSScreenContentWrapper *contentWrapperView = static_cast<RNSScreenContentWrapper *>(view);
+    [self applyConstraintsToContentWrapper:contentWrapperView];
+  }
+}
+
+- (void)applyConstraintsToContentWrapper:(RNSScreenContentWrapper *)contentWrapperView
+{
+  contentWrapperView.translatesAutoresizingMaskIntoConstraints = NO;
+  [contentWrapperView.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor].active = YES;
+  [contentWrapperView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
+  [contentWrapperView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+  [contentWrapperView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
 }
 
 - (void)notifyDismissedWithCount:(int)dismissCount
