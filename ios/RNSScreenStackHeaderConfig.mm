@@ -264,7 +264,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
   NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
-  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
+  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar rnscreens_sumTitleControlDirectionalMargins];
 
   BOOL isDisplayingBackButton = [self shouldBackButtonBeVisibleInNavigationBar:navigationBar];
 
