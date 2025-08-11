@@ -36,7 +36,8 @@ type SplitViewOrientation =
   | 'all'
   | 'allButUpsideDown'
   | 'portrait'
-  | 'portraitUpsideDown'
+  | 'portraitUp'
+  | 'portraitDown'
   | 'landscape'
   | 'landscapeLeft'
   | 'landscapeRight';

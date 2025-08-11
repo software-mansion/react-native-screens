@@ -253,8 +253,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
       return .allButUpsideDown
     case RNSOrientation.portrait:
       return .portrait
-    case RNSOrientation.portraitUpsideDown:
-      return .portraitUpsideDown
+    case RNSOrientation.portraitUp:
+      return .portraitUp
+    case RNSOrientation.portraitDown:
+      return .portraitDown
     case RNSOrientation.landscape:
       return .landscape
     case RNSOrientation.landscapeLeft:

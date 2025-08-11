@@ -6,7 +6,8 @@ public enum RNSOrientationSwift: Int {
   case all
   case allButUpsideDown
   case portrait
-  case portraitUpsideDown
+  case portraitUp
+  case portraitDown
   case landscape
   case landscapeLeft
   case landscapeRight

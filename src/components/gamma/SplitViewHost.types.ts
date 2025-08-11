@@ -35,7 +35,8 @@ export type SplitViewHostOrientation =
   | 'all'
   | 'allButUpsideDown'
   | 'portrait'
-  | 'portraitUpsideDown'
+  | 'portraitUp'
+  | 'portraitDown'
   | 'landscape'
   | 'landscapeLeft'
   | 'landscapeRight';
@@ -194,8 +195,12 @@ export interface SplitViewHostProps extends ViewProps {
    * - `all` - tab screen supports all orientations,
    * - `allButUpsideDown` - tab screen supports all but the upside-down
    *   portrait interface orientation,
-   * - `portrait` - tab screen supports a portrait interface orientation,
-   * - `portraitUpsideDown` - tab screen supports an upside-down portrait
+   * - `portrait` - tab screen supports both portrait-up and portrait-down
+   *   interface orientations,
+   * - 'portraitUp' - tab screen supports a portrait-up interface
+   *   orientation,
+   * - `portraitDown` - tab screen supports a portrait-down interface
+   *   orientation,
    *   interface orientation,
    * - `landscape` - tab screen supports both landscape-left and
    *   landscape-right interface orientations,

@@ -102,22 +102,26 @@ RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitView
   using enum facebook::react::RNSSplitViewHostOrientation;
 
   switch (orientation) {
+    case Inherit:
+      return RNSOrientationInherit;
     case All:
       return RNSOrientationAll;
     case AllButUpsideDown:
       return RNSOrientationAllButUpsideDown;
     case Portrait:
       return RNSOrientationPortrait;
-    case PortraitUpsideDown:
-      return RNSOrientationPortraitUpsideDown;
+    case PortraitUp:
+      return RNSOrientationPortraitUp;
+    case PortraitDown:
+      return RNSOrientationPortraitDown;
     case Landscape:
       return RNSOrientationLandscape;
     case LandscapeLeft:
       return RNSOrientationLandscapeLeft;
     case LandscapeRight:
       return RNSOrientationLandscapeRight;
-    case Inherit:
     default:
+      RCTLogError(@"[RNScreens] unsupported orientation");
       return RNSOrientationInherit;
   }
 }
