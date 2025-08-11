@@ -298,6 +298,12 @@ export interface BottomTabsScreenProps {
     };
   };
   /**
+   * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
+   *
+   * @default `undefined`
+   */
+  freezeContents?: boolean;
+  /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
    * to `automatic`.
