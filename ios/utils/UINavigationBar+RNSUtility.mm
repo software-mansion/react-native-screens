@@ -89,7 +89,7 @@
 {
   NSDirectionalEdgeInsets totalMargins = NSDirectionalEdgeInsetsMake(0, 0, 0, 0);
 
-  if (!sourceView) {
+  if (sourceView == nil) {
     RCTLogWarn(@"[RNScreens] _UINavigationBarTitleControl not found under the UINavigationBar hierarchy");
     return totalMargins;
   }
