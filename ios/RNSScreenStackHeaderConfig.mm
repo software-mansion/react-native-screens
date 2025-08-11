@@ -266,7 +266,8 @@ RNS_IGNORE_SUPER_CALL_END
   NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
   NSDirectionalEdgeInsets navBarContentMargins;
   if (@available(iOS 26.0, *)) {
-    navBarContentMargins = [navigationBar rnscreens_sumTitleControlDirectionalMargins];
+    UIView *titleControl = [UINavigationBar findTitleControlInView:navigationBar];
+    navBarContentMargins = [navigationBar rnscreens_computeTotalEdgeInsetsForView:titleControl];
   } else {
     navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
   }
