@@ -287,11 +287,10 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
   return iconImageSource;
 }
 
-RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(
-    react::RNSBottomTabsScreenOrientation orientation)
+RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottomTabsScreenOrientation orientation)
 {
   using enum facebook::react::RNSBottomTabsScreenOrientation;
-  
+
   switch (orientation) {
     case Inherit:
       return RNSOrientationInherit;
@@ -309,6 +308,9 @@ RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(
       return RNSOrientationLandscapeLeft;
     case LandscapeRight:
       return RNSOrientationLandscapeRight;
+    default:
+      RCTLogError(@"[RNScreens] unsupported orientation");
+      return RNSOrientationInherit;
   }
 }
 

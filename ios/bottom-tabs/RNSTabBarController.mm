@@ -58,6 +58,10 @@
 - (void)setNeedsUpdateOfSelectedTab:(bool)needsSelectedTabUpdate
 {
   _needsUpdateOfSelectedTab = needsSelectedTabUpdate;
+
+  if (needsSelectedTabUpdate) {
+    _needsOrientationUpdate = true;
+  }
 #if !RCT_NEW_ARCH_ENABLED
   [self scheduleControllerUpdateIfNeeded];
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -77,7 +81,6 @@
 #if !RCT_NEW_ARCH_ENABLED
   [self scheduleControllerUpdateIfNeeded];
 #endif // !RCT_NEW_ARCH_ENABLED
-
 }
 
 #pragma mark-- RNSReactTransactionObserving
@@ -152,7 +155,6 @@
 
   [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   [self setSelectedViewController:selectedViewController];
-  [self updateOrientation];
 }
 
 - (void)updateTabBarAppearanceIfNeeded
@@ -224,6 +226,7 @@
 
 - (void)updateOrientation
 {
+  _needsOrientationUpdate = false;
   [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
 }
 
