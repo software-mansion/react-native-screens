@@ -1,5 +1,7 @@
 #import "UINavigationBar+RNSUtility.h"
 
+#import <React/RCTLog.h>
+
 @implementation UINavigationBar (RNSUtility)
 
 - (nullable UIView *)rnscreens_findContentView
@@ -89,7 +91,7 @@
   UIView *titleControl = [UINavigationBar findTitleControlInView:self];
 
   if (!titleControl) {
-    NSLog(@"[RNScreens] _UINavigationBarTitleControl not found under the UINavigationBar hierarchy");
+    RCTLogWarn(@"[RNScreens] _UINavigationBarTitleControl not found under the UINavigationBar hierarchy");
     return totalMargins;
   }
 
