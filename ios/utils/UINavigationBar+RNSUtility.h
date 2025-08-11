@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Tested to work reliably on iOS 18.0, 17.5, 15.5.
  *
- * @returns `_UINavigationBarContentView` view mounted directly under the navigation bar itself
+ * @return `_UINavigationBarContentView` view mounted directly under the navigation bar itself
  */
 - (nullable UIView *)rnscreens_findContentView;
 
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Tested to work reliably on iOS 18.0, 17.5, 15.5.
  *
- * @returns `_UIButtonBarButton` view, if present and mounted in anticipated place;
+ * @return `_UIButtonBarButton` view, if present and mounted in anticipated place;
  *                      if the back button is not present, this method returns `nil`.
  */
 - (nullable UIView *)rnscreens_findBackButtonWrapperView;
@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Tested to work reliably on iOS 26.0, 18.5.
  *
  * @param sourceView The UIView from which to begin traversing up towards the navigation bar.
- * @returns NSDirectionalEdgeInsets containing the combined layout margins from the title control
+ * @return `NSDirectionalEdgeInsets` containing the combined layout margins from the title control
  * up to its ancestor navigation bar. Excluding the layout margins of both the:
  * - source view - because we're positioning relatively to this view
  * - `UINavigationBar` - because we're calculating it inside computeEdgeInsetsOfNavigationBar explicitly
@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Tested to work reliably on iOS 26.0, 18.5.
  *
  * @param view The root UIView from which to begin searching the view hierarchy.
- * @return A UIView instance representing the `_UINavigationBarTitleControl` or `nil`.
+ * @return `UIView` instance representing the `_UINavigationBarTitleControl` or `nil`.
  */
 + (UIView *)findTitleControlInView:(UIView *)view;
 
