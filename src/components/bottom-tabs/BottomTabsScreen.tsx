@@ -129,11 +129,9 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 function shouldFreezeScreen(
   nativeViewVisible: boolean,
   screenFocused: boolean,
-  freezeOverride?: boolean,
+  freezeOverride: boolean | undefined,
 ) {
-  const shouldFreeze = freezeEnabled();
-
-  if (!shouldFreeze) {
+  if (!freezeEnabled()) {
     return false;
   }
 
@@ -143,10 +141,10 @@ function shouldFreezeScreen(
 
   if (featureFlags.experiment.controlledBottomTabs) {
     // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
-    return shouldFreeze && !nativeViewVisible && !screenFocused;
+    return !nativeViewVisible && !screenFocused;
   }
 
-  return shouldFreeze && !nativeViewVisible;
+  return !nativeViewVisible;
 }
 
 function parseIconToNativeProps(icon: Icon | undefined): {
