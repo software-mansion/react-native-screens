@@ -1,6 +1,6 @@
-#import "./RNSUIBarButtonItem.h"
+#import "./RNSBarBackButtonItem.h"
 
-@implementation RNSUIBarButtonItem
+@implementation RNSBarBackButtonItem
 
 - (void)setMenuHidden:(BOOL)menuHidden
 {

@@ -25,12 +25,12 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
+#import "RNSBarBackButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
-#import "RNSUIBarButtonItem.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -673,7 +673,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
           if (@available(iOS 26.0, *)) {
-            // Workaround for missing search bar on root stack screen. 
+            // Workaround for missing search bar on root stack screen.
             // See: https://github.com/software-mansion/react-native-screens/pull/3098
             navitem.searchBarPlacementAllowsToolbarIntegration = NO;
           }
@@ -746,10 +746,10 @@ RNS_IGNORE_SUPER_CALL_END
   prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
 
   if (config.isBackTitleVisible) {
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
-                                                                                style:UIBarButtonItemStylePlain
-                                                                               target:nil
-                                                                               action:nil];
+    RNSBarBackButtonItem *backBarButtonItem = [[RNSBarBackButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                                    style:UIBarButtonItemStylePlain
+                                                                                   target:nil
+                                                                                   action:nil];
     auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
