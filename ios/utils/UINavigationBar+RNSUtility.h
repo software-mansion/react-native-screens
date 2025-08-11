@@ -44,7 +44,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param sourceView The UIView from which to begin traversing up towards the navigation bar.
  * @returns NSDirectionalEdgeInsets containing the combined layout margins from the title control
- * up to its ancestor navigation bar.
+ * up to its ancestor navigation bar. Excluding the layout margins of both the:
+ * - source view - because we're positioning relatively to this view
+ * - `UINavigationBar` - because we're calculating it inside computeEdgeInsetsOfNavigationBar explicitly
  */
 - (NSDirectionalEdgeInsets)rnscreens_computeTotalEdgeInsetsForView:(nullable UIView *)sourceView;
 
