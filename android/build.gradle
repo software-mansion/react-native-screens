@@ -204,6 +204,13 @@ android {
             } else {
                 srcDirs += "src/versioned/pointerevents/latest"
             }
+
+            // Edge-to-edge detection
+            if (REACT_NATIVE_MINOR_VERSION <= 80) {
+                srcDirs += "src/versioned/edge-to-edge/80"
+            } else {
+                srcDirs += "src/versioned/edge-to-edge/latest"
+            }
         }
         res {
             if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
