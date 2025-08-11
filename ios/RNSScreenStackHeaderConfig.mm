@@ -25,7 +25,7 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
-#import "RNSBarBackButtonItem.h"
+#import "RNSBackBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
@@ -746,7 +746,7 @@ RNS_IGNORE_SUPER_CALL_END
   prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
 
   if (config.isBackTitleVisible) {
-    RNSBarBackButtonItem *backBarButtonItem = [[RNSBarBackButtonItem alloc] initWithTitle:resolvedBackTitle
+    RNSBackBarButtonItem *backBarButtonItem = [[RNSBackBarButtonItem alloc] initWithTitle:resolvedBackTitle
                                                                                     style:UIBarButtonItemStylePlain
                                                                                    target:nil
                                                                                    action:nil];

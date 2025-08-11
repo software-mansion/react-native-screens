@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-@interface RNSBarBackButtonItem : UIBarButtonItem
+@interface RNSBackBarButtonItem : UIBarButtonItem
 
 @property (nonatomic) BOOL menuHidden;
 
