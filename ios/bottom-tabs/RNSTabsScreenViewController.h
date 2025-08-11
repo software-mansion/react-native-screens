@@ -8,10 +8,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if !TARGET_OS_TV
-@interface RNSTabsScreenViewController : UIViewController <RNSOrientationProviding>
-#else // !TARGET_OS_TV
 @interface RNSTabsScreenViewController : UIViewController
+#if !TARGET_OS_TV
+                                         <RNSOrientationProviding>
 #endif // !TARGET_OS_TV
 
 @property (nonatomic, strong, readonly, nullable) RNSBottomTabsScreenComponentView *tabScreenComponentView;
@@ -33,8 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)tabScreenOrientationHasChanged;
 
 /**
-* Tell the controller that the tab item related to this controller has been selected again after being presented.
-* Returns boolean indicating whether the action has been handled.
+ * Tell the controller that the tab item related to this controller has been selected again after being presented.
+ * Returns boolean indicating whether the action has been handled.
  */
 - (bool)tabScreenSelectedRepeatedly;
 

@@ -14,11 +14,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface RNSNavigationController : UINavigationController <
+                                         RNSViewControllerDelegate,
+                                         RNSBottomTabsSpecialEffectsSupporting,
 #if !TARGET_OS_TV
-@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting, RNSOrientationProviding>
-#else // !TARGET_OS_TV
-@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting>
+                                         RNSOrientationProviding
 #endif // !TARGET_OS_TV
+                                         >
 
 @end
 

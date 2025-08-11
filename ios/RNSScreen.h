@@ -37,11 +37,12 @@ namespace react = facebook::react;
 
 @class RNSScreenView;
 
+@interface RNSScreen : UIViewController <
+                           RNSViewControllerDelegate,
 #if !TARGET_OS_TV
-@interface RNSScreen : UIViewController <RNSViewControllerDelegate, RNSOrientationProviding>
-#else // !TARGET_OS_TV
-@interface RNSScreen : UIViewController <RNSViewControllerDelegate>
+                           RNSOrientationProviding
 #endif // !TARGET_OS_TV
+                           >
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (BOOL)hasNestedStack;
