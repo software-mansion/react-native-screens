@@ -66,7 +66,8 @@ export type BottomTabsScreenOrientation =
   | 'all'
   | 'allButUpsideDown'
   | 'portrait'
-  | 'portraitUpsideDown'
+  | 'portraitUp'
+  | 'portraitDown'
   | 'landscape'
   | 'landscapeLeft'
   | 'landscapeRight';
@@ -150,9 +151,12 @@ export interface BottomTabsScreenProps {
    * - `all` - tab screen supports all orientations,
    * - `allButUpsideDown` - tab screen supports all but the upside-down
    *   portrait interface orientation,
-   * - `portrait` - tab screen supports a portrait interface orientation,
-   * - `portraitUpsideDown` - tab screen supports an upside-down portrait
-   *   interface orientation,
+   * - `portrait` - tab screen supports both portrait-up and portrait-down
+   *   interface orientations,
+   * - 'portraitUp' - tab screen supports a portrait-up interface
+   *   orientation,
+   * - `portraitDown` - tab screen supports a portrait-down interface
+   *   orientation,
    * - `landscape` - tab screen supports both landscape-left and
    *   landscape-right interface orientations,
    * - `landscapeLeft` - tab screen supports landscape-left interface
@@ -160,8 +164,8 @@ export interface BottomTabsScreenProps {
    * - `landscapeRight` - tab screen supports landscape-right interface
    *   orientaion.
    *
-   * The supported values (apart from `inherit`) correspond to the official
-   * UIKit documentation:
+   * The supported values (apart from `inherit`, `portrait`, `portraitUp`,
+   * `portraitDown`) correspond to the official UIKit documentation:
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask|UIInterfaceOrientationMask}
    *

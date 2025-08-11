@@ -300,8 +300,10 @@ RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottom
       return RNSOrientationAllButUpsideDown;
     case Portrait:
       return RNSOrientationPortrait;
-    case PortraitUpsideDown:
-      return RNSOrientationPortraitUpsideDown;
+    case PortraitUp:
+      return RNSOrientationPortraitUp;
+    case PortraitDown:
+      return RNSOrientationPortraitDown;
     case Landscape:
       return RNSOrientationLandscape;
     case LandscapeLeft:

@@ -52,7 +52,8 @@ type Orientation =
   | 'all'
   | 'allButUpsideDown'
   | 'portrait'
-  | 'portraitUpsideDown'
+  | 'portraitUp'
+  | 'portraitDown'
   | 'landscape'
   | 'landscapeLeft'
   | 'landscapeRight';

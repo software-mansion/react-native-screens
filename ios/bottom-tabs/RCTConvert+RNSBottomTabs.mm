@@ -31,19 +31,20 @@ RCT_ENUM_CONVERTER(
     integerValue)
 
 RCT_ENUM_CONVERTER(
-  RNSOrientation,
-  (@{
-    @"inherit": @(RNSOrientationInherit),
-    @"all": @(RNSOrientationAll),
-    @"allButUpsideDown": @(RNSOrientationAllButUpsideDown),
-    @"portrait": @(RNSOrientationPortrait),
-    @"portraitUpsideDown": @(RNSOrientationPortraitUpsideDown),
-    @"landscape": @(RNSOrientationLandscape),
-    @"landscapeLeft": @(RNSOrientationLandscapeLeft),
-    @"landscapeRight": @(RNSOrientationLandscapeRight),
-  }),
-  RNSOrientationInherit,
-  integerValue)
+    RNSOrientation,
+    (@{
+      @"inherit" : @(RNSOrientationInherit),
+      @"all" : @(RNSOrientationAll),
+      @"allButUpsideDown" : @(RNSOrientationAllButUpsideDown),
+      @"portrait" : @(RNSOrientationPortrait),
+      @"portraitUp" : @(RNSOrientationPortraitUp),
+      @"portraitDown" : @(RNSOrientationPortraitDown),
+      @"landscape" : @(RNSOrientationLandscape),
+      @"landscapeLeft" : @(RNSOrientationLandscapeLeft),
+      @"landscapeRight" : @(RNSOrientationLandscapeRight),
+    }),
+    RNSOrientationInherit,
+    integerValue)
 
 @end
 

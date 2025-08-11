@@ -12,8 +12,10 @@ UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrien
     case RNSOrientationAllButUpsideDown:
       return UIInterfaceOrientationMaskAllButUpsideDown;
     case RNSOrientationPortrait:
+      return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+    case RNSOrientationPortraitUp:
       return UIInterfaceOrientationMaskPortrait;
-    case RNSOrientationPortraitUpsideDown:
+    case RNSOrientationPortraitDown:
       return UIInterfaceOrientationMaskPortraitUpsideDown;
     case RNSOrientationLandscape:
       return UIInterfaceOrientationMaskLandscape;
@@ -44,8 +46,10 @@ RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientati
     case UIInterfaceOrientationLandscapeRight:
       return RNSOrientationLandscapeRight;
     case UIInterfaceOrientationMaskPortraitUpsideDown:
-      return RNSOrientationPortraitUpsideDown;
+      return RNSOrientationPortraitDown;
     case UIInterfaceOrientationMaskPortrait:
+      return RNSOrientationPortraitUp;
+    case UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown:
       return RNSOrientationPortrait;
     default:
       RCTLogError(@"[RNScreens] Unsupported orientation mask");
