@@ -50,15 +50,11 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     ...rest
   } = props;
 
-  let shouldFreeze =
-    freezeEnabled() && (freezeContents === undefined ? true : freezeContents);
-
-  if (featureFlags.experiment.controlledBottomTabs) {
-    // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
-    shouldFreeze = shouldFreeze && !nativeViewIsVisible && !isFocused;
-  } else {
-    shouldFreeze = shouldFreeze && !nativeViewIsVisible;
-  }
+  const shouldFreeze = shouldFreezeScreen(
+    nativeViewIsVisible,
+    isFocused,
+    freezeContents,
+  );
 
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
@@ -128,6 +124,29 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       </Freeze>
     </BottomTabsScreenNativeComponent>
   );
+}
+
+function shouldFreezeScreen(
+  nativeViewVisible: boolean,
+  screenFocused: boolean,
+  freezeOverride?: boolean,
+) {
+  const shouldFreeze = freezeEnabled();
+
+  if (!shouldFreeze) {
+    return false;
+  }
+
+  if (freezeOverride !== undefined) {
+    return freezeOverride;
+  }
+
+  if (featureFlags.experiment.controlledBottomTabs) {
+    // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
+    return shouldFreeze && !nativeViewVisible && !screenFocused;
+  }
+
+  return shouldFreeze && !nativeViewVisible;
 }
 
 function parseIconToNativeProps(icon: Icon | undefined): {

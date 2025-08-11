@@ -298,9 +298,9 @@ export interface BottomTabsScreenProps {
     };
   };
   /**
-   * @summary Enables per-screen control over React Suspense with react-freeze. Pass `false` to never freeze the screen.
+   * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
    *
-   * @default true
+   * @default `undefined`
    */
   freezeContents?: boolean;
   /**
