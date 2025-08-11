@@ -43,17 +43,16 @@
   return nil;
 }
 
-- (NSDirectionalEdgeInsets)rnscreens_sumTitleControlDirectionalMargins
+- (NSDirectionalEdgeInsets)rnscreens_computeTotalEdgeInsetsForView:(nullable UIView *)sourceView
 {
   NSDirectionalEdgeInsets totalMargins = NSDirectionalEdgeInsetsMake(0, 0, 0, 0);
-  UIView *titleControl = [UINavigationBar findTitleControlInView:self];
 
-  if (!titleControl) {
+  if (!sourceView) {
     RCTLogWarn(@"[RNScreens] _UINavigationBarTitleControl not found under the UINavigationBar hierarchy");
     return totalMargins;
   }
 
-  UIView *currentView = titleControl.superview;
+  UIView *currentView = sourceView.superview;
   while (currentView && currentView != self) {
     NSDirectionalEdgeInsets margins = currentView.directionalLayoutMargins;
     totalMargins.top += margins.top;
