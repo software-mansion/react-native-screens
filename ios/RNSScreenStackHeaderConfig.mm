@@ -264,7 +264,12 @@ RNS_IGNORE_SUPER_CALL_END
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
   NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
-  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar rnscreens_sumTitleControlDirectionalMargins];
+  NSDirectionalEdgeInsets navBarContentMargins;
+  if (@available(iOS 26.0, *)) {
+    navBarContentMargins = [navigationBar rnscreens_sumTitleControlDirectionalMargins];
+  } else {
+    navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
+  }
 
   BOOL isDisplayingBackButton = [self shouldBackButtonBeVisibleInNavigationBar:navigationBar];
 
