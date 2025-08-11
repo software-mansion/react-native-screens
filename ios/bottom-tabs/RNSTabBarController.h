@@ -26,8 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
  * be executed only after react finishes the transaction (from within transaction execution block).
  */
 @interface RNSTabBarController : UITabBarController <
-                                     RNSReactTransactionObserving,
+                                     RNSReactTransactionObserving
 #if !TARGET_OS_TV
+                                     ,
                                      RNSOrientationProviding
 #endif // !TARGET_OS_TV
                                      >

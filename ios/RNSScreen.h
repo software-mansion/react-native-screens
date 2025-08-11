@@ -38,8 +38,9 @@ namespace react = facebook::react;
 @class RNSScreenView;
 
 @interface RNSScreen : UIViewController <
-                           RNSViewControllerDelegate,
+                           RNSViewControllerDelegate
 #if !TARGET_OS_TV
+                           ,
                            RNSOrientationProviding
 #endif // !TARGET_OS_TV
                            >
