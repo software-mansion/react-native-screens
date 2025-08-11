@@ -95,7 +95,7 @@
   }
 
   UIView *currentView = sourceView.superview;
-  while (currentView && currentView != self) {
+  while (currentView != nil && currentView != self) {
     NSDirectionalEdgeInsets margins = currentView.directionalLayoutMargins;
     totalMargins.top += margins.top;
     totalMargins.leading += margins.leading;
