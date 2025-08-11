@@ -298,7 +298,7 @@ export interface BottomTabsScreenProps {
     };
   };
   /**
-   * @summary Enables per-screen control over React Suspense with react-freeze. Pass `false` to opt out.
+   * @summary Enables per-screen control over React Suspense with react-freeze. Pass `false` to never freeze the screen.
    *
    * @default true
    */
