@@ -2,7 +2,7 @@
 
 @implementation UINavigationBar (RNSUtility)
 
-+ (Class)rnscreens_getBackButtonRuntimeClass
++ (Class)rnscreens_getContentViewRuntimeClass
 {
   if (@available(iOS 26.0, *)) {
     return NSClassFromString(@"UIKit.NavigationBarContentView"); // Sampled from iOS 26 Beta (iPhone 16)
@@ -13,7 +13,7 @@
 
 - (nullable UIView *)rnscreens_findContentView
 {
-  static Class ContentViewClass = [UINavigationBar rnscreens_getBackButtonRuntimeClass];
+  static Class ContentViewClass = [UINavigationBar rnscreens_getContentViewRuntimeClass];
 
   // Fast path
   if (self.subviews.count > 1 && [self.subviews[1] isKindOfClass:ContentViewClass]) {
