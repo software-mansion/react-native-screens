@@ -12,6 +12,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
+import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
 import kotlin.properties.Delegates
 
 class TabsHost(
@@ -100,7 +101,7 @@ class TabsHost(
                     ).apply {
                         weight = 1f
                     }
-            id = generateViewId()
+            id = ViewIdGenerator.generateViewId()
         }
 
     internal lateinit var eventEmitter: TabsHostEventEmitter
