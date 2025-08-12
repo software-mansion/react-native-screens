@@ -72,6 +72,8 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
+
+  // necessary for 3111 workaround
   NSArray<NSLayoutConstraint *> *_safeAreaConstraints;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;

@@ -30,20 +30,6 @@ type StackNavigationProp = NavigationProp<RouteParamList>;
 
 const Stack = createNativeStackNavigator<RouteParamList>();
 
-export function LongText() {
-  return (
-    <Text>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sed egestas
-      felis. Proin laoreet eros a tellus elementum, quis euismod enim gravida.
-      Morbi at arcu commodo, condimentum purus a, congue sapien. Nunc luctus
-      molestie enim ut mattis. Pellentesque sollicitudin, arcu nec sodales
-      gravida, tortor mauris dignissim urna, nec venenatis nibh ex ut odio.
-      Donec rhoncus arcu eu pulvinar cursus. Sed id ullamcorper erat. Proin
-      mollis a mi vitae posuere. Integer a pretium tellus, vel faucibus metus.
-    </Text>
-  );
-}
-
 function Screen1({ navigation }: StackNavigationProp) {
   return (
     <View style={{ padding: 10 }}>
