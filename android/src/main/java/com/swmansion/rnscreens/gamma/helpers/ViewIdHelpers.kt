@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.gamma.helpers
 
 import androidx.annotation.UiThread
-import com.swmansion.rnscreens.BuildConfig
 
 interface ViewIdProviding {
     fun generateViewId(): Int
@@ -45,7 +44,7 @@ private class NewArchAwareViewIdGenerator : ViewIdProviding {
 }
 
 @UiThread
-object ViewIdGenerator: ViewIdProviding {
+object ViewIdGenerator : ViewIdProviding {
     /**
      * Set this field to customize view ids utilized by the library.
      */
