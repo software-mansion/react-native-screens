@@ -29,7 +29,7 @@ interface ViewIdProviding {
  */
 @UiThread
 private class NewArchAwareViewIdGenerator : ViewIdProviding {
-    var nextId: Int = if (BuildConfig.REACT_NATIVE_VERSION_MINOR >= 81 && BuildConfig.IS_NEW_ARCH_ENABLED) 3 else 13
+    var nextId: Int = if (BuildConfig.REACT_NATIVE_VERSION_MINOR >= 81 && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) 3 else 13
 
     override fun generateViewId(): Int = nextId.also { progressViewId() }
 
