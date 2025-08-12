@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { enableFreeze } from 'react-native-screens';
+import { enableFreeze, internalEnableDetailedBottomTabsLogging } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -13,6 +13,7 @@ import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../shared/styling/Colors';
 
 enableFreeze(true);
+internalEnableDetailedBottomTabsLogging();
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
