@@ -36,6 +36,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
+    'import/no-duplicates': 'warn', // Avoid issues in native component specs since 0.81
   },
 
   overrides: [
