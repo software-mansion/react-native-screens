@@ -29,6 +29,7 @@
 #import "RNSBackBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
+#import "RNSModalScreen.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
@@ -71,6 +72,7 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
+  NSArray<NSLayoutConstraint *> *_safeAreaConstraints;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
 
@@ -559,13 +561,52 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
+  // Workaround 3111 for UIKit edgesForExtendedLayout bug on iOS 26 in modal
+  // More information: https://github.com/software-mansion/react-native-screens/pull/3111
+  RNSScreenContentWrapper *contentWrapper = nil;
+
+  // We want to use safeAreaLayoutGuide only in modal with RNSScreenContentWrapper as child
+  if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]] &&
+      [navctr.parentViewController.view isKindOfClass:[RNSModalScreen class]]) {
+    contentWrapper = static_cast<RNSScreenContentWrapper *>(vc.view.subviews[0]);
+  }
+
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
     // the screen underneath navigation controllers
     vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
+
+    // Part of 3111 workaround
+    if (contentWrapper != nil) {
+      // Use auto-layout
+      contentWrapper.translatesAutoresizingMaskIntoConstraints = NO;
+
+      // Deactivate old constraints to prevent BAD_ACCESS crash when reopening modal
+      for (NSLayoutConstraint *constraint : config->_safeAreaConstraints) {
+        constraint.active = NO;
+      }
+      config->_safeAreaConstraints = @[
+        [contentWrapper.topAnchor constraintEqualToAnchor:vc.view.safeAreaLayoutGuide.topAnchor],
+        [contentWrapper.bottomAnchor constraintEqualToAnchor:vc.view.bottomAnchor],
+        [contentWrapper.leadingAnchor constraintEqualToAnchor:vc.view.leadingAnchor],
+        [contentWrapper.trailingAnchor constraintEqualToAnchor:vc.view.trailingAnchor]
+      ];
+      for (NSLayoutConstraint *constraint : config->_safeAreaConstraints) {
+        constraint.active = YES;
+      }
+    }
   } else {
     // system default is UIRectEdgeAll
     vc.edgesForExtendedLayout = UIRectEdgeAll;
+
+    // Part of 3111 workaround
+    if (contentWrapper != nil) {
+      for (NSLayoutConstraint *constraint : config->_safeAreaConstraints) {
+        constraint.active = NO;
+      }
+      config->_safeAreaConstraints = nil;
+      contentWrapper.translatesAutoresizingMaskIntoConstraints = YES;
+    }
   }
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];

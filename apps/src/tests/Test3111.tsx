@@ -8,10 +8,18 @@ import { Button, View, Text, ScrollView } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 
 type RouteParamList = {
-  Screen1: undefined;
-  Screen2: undefined;
-  Screen3: undefined;
-  Screen4: undefined;
+  Main: undefined;
+  PushWithoutHeader: undefined;
+  PushWithTransparentHeader: undefined;
+  ModalWithView: undefined;
+  ModalWithViewAndNoHeader: undefined;
+  ModalWithViewAndTransparentHeader: undefined;
+  ModalWithScrollView: undefined;
+  ModalWithScrollViewAndNoHeader: undefined;
+  ModalWithScrollViewAndTransparentHeader: undefined;
+  ModalWithScrollViewBehaviorAutomatic: undefined;
+  ModalWithScrollViewBehaviorAutomaticAndNoHeader: undefined;
+  ModalWithScrollViewBehaviorAutomaticAndTransparentHeader: undefined;
 };
 
 type NavigationProp<ParamList extends ParamListBase> = {
@@ -38,20 +46,69 @@ export function LongText() {
 
 function Screen1({ navigation }: StackNavigationProp) {
   return (
-    <View>
+    <View style={{ padding: 10 }}>
+      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Push</Text>
       <Button
-        title="Go to screen 2"
-        onPress={() => navigation.push('Screen2')}
+        title="WithoutHeader"
+        onPress={() => navigation.push('PushWithoutHeader')}
       />
       <Button
-        title="Go to screen 3"
-        onPress={() => navigation.push('Screen3')}
+        title="TransparentHeader"
+        onPress={() => navigation.push('PushWithTransparentHeader')}
+      />
+      <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}>
+        Modal + View
+      </Text>
+      <Button title="Normal" onPress={() => navigation.push('ModalWithView')} />
+      <Button
+        title="WithoutHeader"
+        onPress={() => navigation.push('ModalWithViewAndNoHeader')}
       />
       <Button
-        title="Go to screen 4"
-        onPress={() => navigation.push('Screen4')}
+        title="TransparentHeader"
+        onPress={() => navigation.push('ModalWithViewAndTransparentHeader')}
       />
-      <LongText />
+      <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}>
+        Modal + ScrollView
+      </Text>
+      <Button
+        title="Normal"
+        onPress={() => navigation.push('ModalWithScrollView')}
+      />
+      <Button
+        title="WithoutHeader"
+        onPress={() => navigation.push('ModalWithScrollViewAndNoHeader')}
+      />
+      <Button
+        title="TransparentHeader"
+        onPress={() =>
+          navigation.push('ModalWithScrollViewAndTransparentHeader')
+        }
+      />
+      <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}>
+        Modal + ScrollView
+      </Text>
+      <Text style={{ fontStyle: 'italic' }}>
+        with contentInsetAdjustmentBehavior='automatic'
+      </Text>
+      <Button
+        title="Normal"
+        onPress={() => navigation.push('ModalWithScrollViewBehaviorAutomatic')}
+      />
+      <Button
+        title="WithoutHeader"
+        onPress={() =>
+          navigation.push('ModalWithScrollViewBehaviorAutomaticAndNoHeader')
+        }
+      />
+      <Button
+        title="TransparentHeader"
+        onPress={() =>
+          navigation.push(
+            'ModalWithScrollViewBehaviorAutomaticAndTransparentHeader',
+          )
+        }
+      />
     </View>
   );
 }
@@ -133,32 +190,88 @@ export default function App() {
             </PressableWithFeedback>
           ),
         }}>
+        <Stack.Screen name="Main" component={Screen1} />
         <Stack.Screen
-          name="Screen1"
-          component={Screen1}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Screen2"
+          name="PushWithoutHeader"
           component={Screen2}
-          options={
-            {
-              // presentation: 'modal',
-            }
-          }
+          options={{
+            headerShown: false,
+          }}
         />
         <Stack.Screen
-          name="Screen3"
+          name="PushWithTransparentHeader"
+          component={Screen2}
+          options={{
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="ModalWithView"
+          component={Screen2}
+          options={{
+            presentation: 'modal',
+          }}
+        />
+        <Stack.Screen
+          name="ModalWithViewAndNoHeader"
+          component={Screen2}
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ModalWithViewAndTransparentHeader"
+          component={Screen2}
+          options={{
+            presentation: 'modal',
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="ModalWithScrollView"
           component={Screen3}
           options={{
             presentation: 'modal',
           }}
         />
         <Stack.Screen
-          name="Screen4"
+          name="ModalWithScrollViewAndNoHeader"
+          component={Screen3}
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ModalWithScrollViewAndTransparentHeader"
+          component={Screen3}
+          options={{
+            presentation: 'modal',
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="ModalWithScrollViewBehaviorAutomatic"
           component={Screen4}
           options={{
             presentation: 'modal',
+          }}
+        />
+        <Stack.Screen
+          name="ModalWithScrollViewBehaviorAutomaticAndNoHeader"
+          component={Screen4}
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ModalWithScrollViewBehaviorAutomaticAndTransparentHeader"
+          component={Screen4}
+          options={{
+            presentation: 'modal',
+            headerTransparent: true,
           }}
         />
       </Stack.Navigator>
