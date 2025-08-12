@@ -97,7 +97,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       {props.tabConfigs.map(tabConfig => {
         const tabKey = tabConfig.tabScreenProps.tabKey;
         const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
-        const Component = tabConfig.component;
+        const ContentComponent = tabConfig.component;
         console.info(
           `BottomTabsContainer map to component -> ${tabKey} ${
             isFocused ? '(focused)' : ''
@@ -110,7 +110,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
-            <Component/>
+            <ContentComponent/>
           </BottomTabsScreen>
         );
       })}
