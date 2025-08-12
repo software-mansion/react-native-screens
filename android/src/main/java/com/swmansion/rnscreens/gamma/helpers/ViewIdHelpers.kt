@@ -18,7 +18,8 @@ interface ViewIdProviding {
  *
  * Up to the time of writing this (RN 0.81.0-rc.5) every version incremented tag version by 2,
  * starting from `(ReactSurfaceView.tag + 1)`, therefore all tags were even. We start generating all
- * odd numbers from `(ReactSurfaceView.tag + 2)`, except valid root view tags, which are 1, 11, 21, etc.
+ * odd numbers from 3, except valid root view tags, which are 1, 11, 21, etc. This should work no matter
+ * exact RN version.
  *
  * Reference:
  *
@@ -29,7 +30,7 @@ interface ViewIdProviding {
  */
 @UiThread
 private class NewArchAwareViewIdGenerator : ViewIdProviding {
-    private var nextId: Int = if (BuildConfig.REACT_NATIVE_VERSION_MINOR >= 81 && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) 3 else 13
+    private var nextId: Int = 3
 
     override fun generateViewId(): Int = nextId.also { progressViewId() }
 

@@ -127,7 +127,6 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
-        buildConfigField "int", "REACT_NATIVE_VERSION_MINOR", REACT_NATIVE_MINOR_VERSION.toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
