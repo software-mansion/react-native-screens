@@ -713,11 +713,11 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.title = config.title;
 
   // Set leftBarButtonItems if provided
-  if (config.headerLeftBarButtonItems) {
+  if (config.headerLeftBarButtonItems.count > 0) {
     navitem.leftBarButtonItems = [config barButtonItemsFromDictionaries:config.headerLeftBarButtonItems];
   }
   // Set rightBarButtonItems if provided
-  if (config.headerRightBarButtonItems) {
+  if (config.headerRightBarButtonItems.count > 0) {
     navitem.rightBarButtonItems = [config barButtonItemsFromDictionaries:config.headerRightBarButtonItems];
   }
 
