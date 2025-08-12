@@ -29,7 +29,7 @@ interface ViewIdProviding {
  */
 @UiThread
 private class NewArchAwareViewIdGenerator : ViewIdProviding {
-    var nextId: Int = if (BuildConfig.REACT_NATIVE_VERSION_MINOR >= 81 && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) 3 else 13
+    private var nextId: Int = if (BuildConfig.REACT_NATIVE_VERSION_MINOR >= 81 && BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) 3 else 13
 
     override fun generateViewId(): Int = nextId.also { progressViewId() }
 
@@ -49,7 +49,7 @@ object ViewIdGenerator: ViewIdProviding {
      * Set this field to customize view ids utilized by the library.
      */
     var externalGenerator: ViewIdProviding? = null
-    val defaultGenerator: ViewIdProviding = NewArchAwareViewIdGenerator()
+    private val defaultGenerator: ViewIdProviding = NewArchAwareViewIdGenerator()
 
     override fun generateViewId(): Int {
         externalGenerator?.let { return it.generateViewId() }
