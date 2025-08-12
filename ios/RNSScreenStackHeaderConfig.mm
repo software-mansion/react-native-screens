@@ -110,6 +110,7 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
     _translucent = NO;
     _addedReactSubviewsInCurrentTransaction = false;
     _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
+    _safeAreaConstraints = nil;
     [self initProps];
   }
   return self;
