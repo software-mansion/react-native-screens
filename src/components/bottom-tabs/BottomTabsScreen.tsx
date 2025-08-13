@@ -19,6 +19,7 @@ import type {
   EmptyObject,
   Icon,
 } from './BottomTabsScreen.types';
+import { bottomTabsDebugLog } from '../../private/logging';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -58,7 +59,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      console.log(
+      bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
       );
       setNativeViewIsVisible(true);
@@ -69,7 +70,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const onDidAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      console.log(
+      bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onDidAppear received`,
       );
       onDidAppear?.(event);
@@ -79,7 +80,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const onWillDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      console.log(
+      bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onWillDisappear received`,
       );
       onWillDisappear?.(event);
@@ -89,7 +90,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const onDidDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      console.log(
+      bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
       );
       setNativeViewIsVisible(false);
@@ -98,7 +99,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     [onDidDisappear],
   );
 
-  console.info(
+  bottomTabsDebugLog(
     `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
       rest.tabKey
     } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,

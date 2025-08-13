@@ -11,8 +11,10 @@ import {
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../shared/styling/Colors';
+import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
 
 enableFreeze(true);
+internalEnableDetailedBottomTabsLogging();
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
