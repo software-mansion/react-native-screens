@@ -567,8 +567,10 @@ RNS_IGNORE_SUPER_CALL_END
   // Workaround 3111 for UIKit edgesForExtendedLayout bug on iOS 26
   // More information: https://github.com/software-mansion/react-native-screens/pull/3111
   RNSScreenContentWrapper *contentWrapper = nil;
-  if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]]) {
-    contentWrapper = static_cast<RNSScreenContentWrapper *>(vc.view.subviews[0]);
+  if (@available(iOS 26, *)) {
+    if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]]) {
+      contentWrapper = static_cast<RNSScreenContentWrapper *>(vc.view.subviews[0]);
+    }
   }
 
   if (!shouldHide && !config.translucent) {
@@ -581,19 +583,15 @@ RNS_IGNORE_SUPER_CALL_END
       // Use auto-layout
       contentWrapper.translatesAutoresizingMaskIntoConstraints = NO;
 
-      // Deactivate old constraints to prevent BAD_ACCESS crash when reopening modal
-      for (NSLayoutConstraint *constraint : config->_safeAreaConstraints) {
-        constraint.active = NO;
+      if (config->_safeAreaConstraints == nil) {
+        config->_safeAreaConstraints = @[
+          [contentWrapper.topAnchor constraintEqualToAnchor:vc.view.safeAreaLayoutGuide.topAnchor],
+          [contentWrapper.bottomAnchor constraintEqualToAnchor:vc.view.bottomAnchor],
+          [contentWrapper.leadingAnchor constraintEqualToAnchor:vc.view.leadingAnchor],
+          [contentWrapper.trailingAnchor constraintEqualToAnchor:vc.view.trailingAnchor]
+        ];
       }
-      config->_safeAreaConstraints = @[
-        [contentWrapper.topAnchor constraintEqualToAnchor:vc.view.safeAreaLayoutGuide.topAnchor],
-        [contentWrapper.bottomAnchor constraintEqualToAnchor:vc.view.bottomAnchor],
-        [contentWrapper.leadingAnchor constraintEqualToAnchor:vc.view.leadingAnchor],
-        [contentWrapper.trailingAnchor constraintEqualToAnchor:vc.view.trailingAnchor]
-      ];
-      for (NSLayoutConstraint *constraint : config->_safeAreaConstraints) {
-        constraint.active = YES;
-      }
+      [NSLayoutConstraint activateConstraints:config->_safeAreaConstraints];
     }
   } else {
     // system default is UIRectEdgeAll
@@ -601,9 +599,7 @@ RNS_IGNORE_SUPER_CALL_END
 
     // Part of 3111 workaround
     if (contentWrapper != nil) {
-      for (NSLayoutConstraint *constraint : config->_safeAreaConstraints) {
-        constraint.active = NO;
-      }
+      [NSLayoutConstraint deactivateConstraints:config->_safeAreaConstraints];
       config->_safeAreaConstraints = nil;
       contentWrapper.translatesAutoresizingMaskIntoConstraints = YES;
     }
@@ -999,6 +995,10 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
+
+  // Part of 3111 workaround
+  [NSLayoutConstraint deactivateConstraints:_safeAreaConstraints];
+  _safeAreaConstraints = nil;
 
 #ifdef RCT_NEW_ARCH_ENABLED
   _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
