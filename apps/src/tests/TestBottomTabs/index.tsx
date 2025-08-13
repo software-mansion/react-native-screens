@@ -28,7 +28,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       iconResourceName: 'sym_call_incoming', // Android specific
     },
-    contentViewRenderFn: Tab1,
+    component: Tab1,
   },
   {
     tabScreenProps: {
@@ -54,7 +54,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       iconResourceName: 'sym_call_missed', // Android specific
       title: 'Tab2',
     },
-    contentViewRenderFn: Tab2,
+    component: Tab2,
   },
   {
     tabScreenProps: {
@@ -71,7 +71,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       iconResourceName: 'sym_action_email', // Android specific
       title: 'Tab3',
     },
-    contentViewRenderFn: Tab3,
+    component: Tab3,
   },
   {
     tabScreenProps: {
@@ -86,7 +86,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab4',
       badgeValue: '',
     },
-    contentViewRenderFn: Tab4,
+    component: Tab4,
   },
 ];
 

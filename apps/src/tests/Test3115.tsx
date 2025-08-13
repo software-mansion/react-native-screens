@@ -54,7 +54,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       iconResourceName: 'sunny',
     },
-    contentViewRenderFn: makeTab('Tab 1'),
+    component: makeTab('Tab 1'),
   },
   {
     tabScreenProps: {
@@ -65,7 +65,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       iconResourceName: 'mode_cool',
     },
-    contentViewRenderFn: makeTab('Tab 2'),
+    component: makeTab('Tab 2'),
   },
 ];
 
