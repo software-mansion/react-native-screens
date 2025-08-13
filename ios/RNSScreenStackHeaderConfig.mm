@@ -1001,10 +1001,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)onPressHeaderBarButtonItemHandler:(NSString *)buttonId
-{
-}
-
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   switch (resizeMode) {
