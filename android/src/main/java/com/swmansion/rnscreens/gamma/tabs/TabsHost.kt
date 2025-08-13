@@ -239,8 +239,8 @@ class TabsHost(
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
-        tabScreenFragments.removeAt(index).also {
-            it.tabScreen.setTabScreenDelegate(null)
+        tabScreenFragments.removeAt(index).also { fragment ->
+            fragment.tabScreen.setTabScreenDelegate(null)
             containerUpdateCoordinator.let {
                 it.invalidateAll()
                 it.postContainerUpdateIfNeeded()
