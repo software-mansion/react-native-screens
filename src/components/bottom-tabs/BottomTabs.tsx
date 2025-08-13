@@ -14,7 +14,7 @@ import type {
   BottomTabsProps,
   NativeFocusChangeEvent,
 } from './BottomTabs.types';
-import { bottomTabsDebugLog } from './logging';
+import { bottomTabsDebugLog } from '../../private/logging';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
