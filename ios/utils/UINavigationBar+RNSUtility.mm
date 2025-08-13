@@ -4,8 +4,7 @@
 
 - (nullable UIView *)rnscreens_findContentView
 {
-  // Class names taken from iOS 17.5, tested on iPhone 15 Pro
-  static Class ContentViewClass = NSClassFromString(@"_UINavigationBarContentView");
+  static Class ContentViewClass = [UINavigationBar rnscreens_getContentViewRuntimeClass];
 
   // Fast path
   if (self.subviews.count > 1 && [self.subviews[1] isKindOfClass:ContentViewClass]) {
@@ -23,22 +22,65 @@
 
 - (nullable UIView *)rnscreens_findBackButtonWrapperView
 {
-  // Class names taken from iOS 17.5, tested on iPhone 15 Pro
+  UIView *contentView = [self rnscreens_findContentView];
+
+  return [self rnscreens_findDescendantBackButtonWrapperFromView:contentView];
+}
+
+- (nullable UIView *)rnscreens_findDescendantBackButtonWrapperFromView:(nullable UIView *)view
+{
   static Class BarButtonViewClass = NSClassFromString(@"_UIButtonBarButton");
 
-  UIView *contentView = self.rnscreens_findContentView;
+  if (@available(iOS 26.0, *)) {
+    return [self rnscreens_ios26_findDescendantBackButtonWrapper:BarButtonViewClass fromView:view];
+  } else {
+    return [self rnscreens_ios15_findDescendantBackButtonWrapper:BarButtonViewClass fromView:view];
+  }
+}
 
-  if (contentView == nil) {
+- (nullable UIView *)rnscreens_ios26_findDescendantBackButtonWrapper:(Class)BarButtonViewClass
+                                                            fromView:(nullable UIView *)view
+{
+  if (view == nil) {
     return nil;
   }
 
-  for (UIView *subview in contentView.subviews) {
+  if ([view isKindOfClass:BarButtonViewClass]) {
+    return view;
+  }
+
+  UIView *maybeButtonWrapperView = nil;
+  for (UIView *subview in view.subviews) {
+    maybeButtonWrapperView = [self rnscreens_ios26_findDescendantBackButtonWrapper:BarButtonViewClass fromView:subview];
+    if (maybeButtonWrapperView != nil) {
+      return maybeButtonWrapperView;
+    }
+  }
+  return nil;
+}
+
+- (nullable UIView *)rnscreens_ios15_findDescendantBackButtonWrapper:(Class)BarButtonViewClass
+                                                            fromView:(nullable UIView *)view
+{
+  if (view == nil) {
+    return nil;
+  }
+
+  for (UIView *subview in view.subviews) {
     if ([subview isKindOfClass:BarButtonViewClass]) {
       return subview;
     }
   }
-
   return nil;
+}
+
++ (Class)rnscreens_getContentViewRuntimeClass
+{
+  if (@available(iOS 26.0, *)) {
+    return NSClassFromString(@"UIKit.NavigationBarContentView"); // Sampled from iOS 26 Beta (iPhone 16)
+  }
+
+  return NSClassFromString(@"_UINavigationBarContentView"); // Sampled from iOS 17.5 (iPhone 15 Pro)
 }
 
 @end
