@@ -31,11 +31,11 @@
 
 - (nullable UIView *)rnscreens_findNestedBackButtonWrapperInView:(nullable UIView *)view
 {
+  static Class BarButtonViewClass = NSClassFromString(@"_UIButtonBarButton");
+
   if (view == nil) {
     return nil;
   }
-
-  static Class BarButtonViewClass = NSClassFromString(@"_UIButtonBarButton");
 
   UIView *foundView = nil;
 
