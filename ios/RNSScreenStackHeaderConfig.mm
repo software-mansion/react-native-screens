@@ -564,13 +564,10 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
-  // Workaround 3111 for UIKit edgesForExtendedLayout bug on iOS 26 in modal
+  // Workaround 3111 for UIKit edgesForExtendedLayout bug on iOS 26
   // More information: https://github.com/software-mansion/react-native-screens/pull/3111
   RNSScreenContentWrapper *contentWrapper = nil;
-
-  // We want to use safeAreaLayoutGuide only in modal with RNSScreenContentWrapper as child
-  if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]] &&
-      [navctr.parentViewController.view isKindOfClass:[RNSModalScreen class]]) {
+  if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]]) {
     contentWrapper = static_cast<RNSScreenContentWrapper *>(vc.view.subviews[0]);
   }
 
