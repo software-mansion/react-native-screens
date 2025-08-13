@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { enableFreeze, internalEnableDetailedBottomTabsLogging } from 'react-native-screens';
+import { enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -11,6 +11,7 @@ import {
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../shared/styling/Colors';
+import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
 
 enableFreeze(true);
 internalEnableDetailedBottomTabsLogging();
