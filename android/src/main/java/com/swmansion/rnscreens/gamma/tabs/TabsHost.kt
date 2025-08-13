@@ -272,7 +272,7 @@ class TabsHost(
         isFocused: Boolean,
     ) {
         containerUpdateCoordinator.let {
-            it.invalidateSelectedTab()
+            it.invalidateAll()
             it.postContainerUpdateIfNeeded()
         }
     }
