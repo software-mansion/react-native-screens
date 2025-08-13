@@ -57,49 +57,6 @@ namespace react = facebook::react;
 
 @implementation RNSNavigationController
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
-{
-  if (@available(iOS 26, *)) {
-    // To prevent popping multiple screens when back button is pressed repeatedly,
-    // We allow for pop operation to proceed only if no transition is in progress,
-    // which we check indirectly by checking if transitionCoordinator is set.
-    // If it's not, we are safe to proceed.
-    if (self.transitionCoordinator == nil) {
-      // We still need to disable interactions for back button so click effects are not applied,
-      // and there is unfortunately no better place for it currently
-      UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
-      if (button != nil) {
-        button.userInteractionEnabled = false;
-      }
-
-      return true;
-    }
-
-    return false;
-  }
-
-  return true;
-}
-
-- (void)navigationBar:(UINavigationBar *)navigationBar didPopItem:(UINavigationItem *)item
-{
-  if (@available(iOS 26, *)) {
-    // Reset interactions on back button -> see navigationBar:shouldPopItem
-    // IMPORTANT: This reset won't execute when preventNativeDismiss is on.
-    // However, on iOS 26, unlike in previous versions, the back button instance changes
-    // when handling preventNativeDismiss and userIteractionEnabled is reset.
-    // The instance also changes when regular screen pop happens, but in that case
-    // the value of userInteractionEnabled is carried on, and we reset it here.
-    UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
-    if (button != nil) {
-      button.userInteractionEnabled = true;
-    }
-  }
-}
-#endif // Check for iOS >= 26
-
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
@@ -214,6 +171,51 @@ namespace react = facebook::react;
 
   return false;
 }
+
+#pragma mark - UINavigationBarDelegate
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
+{
+  if (@available(iOS 26, *)) {
+    // To prevent popping multiple screens when back button is pressed repeatedly,
+    // We allow for pop operation to proceed only if no transition is in progress,
+    // which we check indirectly by checking if transitionCoordinator is set.
+    // If it's not, we are safe to proceed.
+    if (self.transitionCoordinator == nil) {
+      // We still need to disable interactions for back button so click effects are not applied,
+      // and there is unfortunately no better place for it currently
+      UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
+      if (button != nil) {
+        button.userInteractionEnabled = false;
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  return true;
+}
+
+- (void)navigationBar:(UINavigationBar *)navigationBar didPopItem:(UINavigationItem *)item
+{
+  if (@available(iOS 26, *)) {
+    // Reset interactions on back button -> see navigationBar:shouldPopItem
+    // IMPORTANT: This reset won't execute when preventNativeDismiss is on.
+    // However, on iOS 26, unlike in previous versions, the back button instance changes
+    // when handling preventNativeDismiss and userIteractionEnabled is reset.
+    // The instance also changes when regular screen pop happens, but in that case
+    // the value of userInteractionEnabled is carried on, and we reset it here.
+    UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
+    if (button != nil) {
+      button.userInteractionEnabled = true;
+    }
+  }
+}
+#endif // Check for iOS >= 26
 
 @end
 
