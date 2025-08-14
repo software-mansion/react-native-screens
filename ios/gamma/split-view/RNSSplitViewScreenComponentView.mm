@@ -3,6 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
+#import "RNSFrameCorrector.h"
 
 #import "Swift-Bridging.h"
 
@@ -13,6 +14,7 @@ namespace react = facebook::react;
   RNSSplitViewScreenController *_Nullable _controller;
   RNSSplitViewScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
+  NSMutableSet<UIView *> *_viewsForFrameUpdate;
 }
 
 - (RNSSplitViewScreenController *)controller
@@ -40,6 +42,8 @@ namespace react = facebook::react;
 
   _reactEventEmitter = [RNSSplitViewScreenComponentEventEmitter new];
   _shadowStateProxy = [RNSSplitViewScreenShadowStateProxy new];
+
+  _viewsForFrameUpdate = [NSMutableSet set];
 }
 
 - (void)setupController
@@ -87,6 +91,34 @@ namespace react = facebook::react;
   // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
   // when we want to destroy the component.
   _controller = nil;
+}
+
+- (void)registerForFrameUpdates:(UIView *)view
+{
+  [_viewsForFrameUpdate addObject:view];
+}
+
+- (void)unregisterFromFrameUpdates:(UIView *)view
+{
+  [_viewsForFrameUpdate removeObject:view];
+}
+
+#pragma mark - Layout
+
+///
+/// This override **should be considered as a workaround** for which I made some assumptions:
+/// 1. All parents of views with associated `UINavigationController` should have the same width as the SplitView column
+/// 2. I'm greedily aligning all native components which are extending `UINavigationController` - is covers both old and
+/// new stack implementations, however, it will have an impact on any other native component which will be extending
+/// from the same class.
+///
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+
+  for (UIView *view in _viewsForFrameUpdate) {
+    [RNSFrameCorrector applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
+  }
 }
 
 #pragma mark - ShadowTreeState

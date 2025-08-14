@@ -34,6 +34,11 @@
 #import "integrations/RNSDismissibleModalProtocol.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
+#ifdef RNS_GAMMA_ENABLED
+#import "RNSSplitViewScreenComponentView.h"
+#import "Swift-Bridging.h"
+#endif // RNS_GAMMA_ENABLED
+
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -147,6 +152,11 @@ namespace react = facebook::react;
         static_cast<RNSTabsScreenViewController *>(self.parentViewController);
     [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
   }
+#ifdef RNS_GAMMA_ENABLED
+  if (parent == nil) {
+    [self unregisterFromSplitView];
+  }
+#endif // RNS_GAMMA_ENABLED
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
@@ -156,6 +166,9 @@ namespace react = facebook::react;
     RNSTabsScreenViewController *parentTabsScreenVC = static_cast<RNSTabsScreenViewController *>(parent);
     [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
   }
+#ifdef RNS_GAMMA_ENABLED
+  [self registerForSplitView];
+#endif // RNS_GAMMA_ENABLED
 }
 
 - (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
@@ -216,6 +229,50 @@ namespace react = facebook::react;
   }
 }
 #endif // Check for iOS >= 26
+
+#pragma mark - RNSFrameCorrectionProvider
+
+#ifdef RNS_GAMMA_ENABLED
+- (void)registerForSplitView
+{
+  if (auto splitViewScreenController = [self findClosestSplitViewScreenController]) {
+    auto splitViewControllerView = [splitViewScreenController view];
+    RCTAssert(
+        [splitViewControllerView isKindOfClass:[RNSSplitViewScreenComponentView class]],
+        @"[RNScreens] splitViewControllerView must be type of RNSSplitViewScreenComponentView");
+    auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
+    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
+    [splitViewScreen registerForFrameUpdates:self.view.superview];
+  }
+}
+
+- (void)unregisterFromSplitView
+{
+  if (auto splitViewScreenController = [self findClosestSplitViewScreenController]) {
+    auto splitViewControllerView = [splitViewScreenController view];
+    RCTAssert(
+        [splitViewControllerView isKindOfClass:[RNSSplitViewScreenComponentView class]],
+        @"[RNScreens] splitViewControllerView must be type of RNSSplitViewScreenComponentView");
+    auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
+    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
+    [splitViewScreen unregisterFromFrameUpdates:self.view.superview];
+  }
+}
+
+- (RNSSplitViewScreenController *_Nullable)findClosestSplitViewScreenController
+{
+  auto parent = [self parentViewController];
+  while (parent) {
+    if ([parent isKindOfClass:[RNSSplitViewScreenController class]]) {
+      auto splitViewScreenController = (RNSSplitViewScreenController *)parent;
+      return splitViewScreenController;
+    }
+    parent = [parent parentViewController];
+  }
+
+  return nil;
+}
+#endif // RNS_GAMMA_ENABLED
 
 @end
 
