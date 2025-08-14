@@ -20,9 +20,9 @@ class JSI_EXPORT RNSScreenState final {
  public:
   using Shared = std::shared_ptr<const RNSScreenState>;
 
-  RNSScreenState(){};
+  RNSScreenState() {};
   RNSScreenState(Size frameSize_, Point contentOffset_)
-      : frameSize(frameSize_), contentOffset(contentOffset_){};
+      : frameSize(frameSize_), contentOffset(contentOffset_) {};
 
 #ifdef ANDROID
   RNSScreenState(RNSScreenState const &previousState, folly::dynamic data)

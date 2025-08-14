@@ -22,7 +22,7 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
   RNSScreenStackHeaderSubviewState() = default;
 
   RNSScreenStackHeaderSubviewState(Size frameSize_, Point contentOffset_)
-      : frameSize(frameSize_), contentOffset(contentOffset_){};
+      : frameSize(frameSize_), contentOffset(contentOffset_) {};
 
 #ifdef ANDROID
   RNSScreenStackHeaderSubviewState(
