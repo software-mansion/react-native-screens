@@ -89,7 +89,7 @@ export default function BarButtonItemsExample() {
           title: 'Icon Button',
           headerRightBarButtonItems: [
             {
-              image: require('../assets/search_black.png'),
+              image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
