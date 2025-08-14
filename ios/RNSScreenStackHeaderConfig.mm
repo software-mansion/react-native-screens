@@ -29,7 +29,6 @@
 #import "RNSBackBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
-#import "RNSModalScreen.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
