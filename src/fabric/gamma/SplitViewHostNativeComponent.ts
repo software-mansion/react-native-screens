@@ -31,6 +31,17 @@ type SplitViewDisplayMode =
   | 'twoOverSecondary'
   | 'twoDisplaceSecondary';
 
+type SplitViewOrientation =
+  | 'inherit'
+  | 'all'
+  | 'allButUpsideDown'
+  | 'portrait'
+  | 'portraitUp'
+  | 'portraitDown'
+  | 'landscape'
+  | 'landscapeLeft'
+  | 'landscapeRight';
+
 interface ColumnMetrics {
   minimumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
   maximumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
@@ -59,6 +70,7 @@ interface NativeProps extends ViewProps {
     'automatic'
   >;
   columnMetrics?: ColumnMetrics;
+  orientation?: WithDefault<SplitViewOrientation, 'inherit'>;
 
   // Interactions
 

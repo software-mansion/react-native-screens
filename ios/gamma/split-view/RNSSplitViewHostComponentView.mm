@@ -28,6 +28,7 @@ static const CGFloat epsilon = 1e-6;
   bool _needsSplitViewAppearanceUpdate;
   bool _needsSplitViewSecondaryScreenNavBarUpdate;
   bool _needsSplitViewDisplayModeUpdate;
+  bool _needsSplitViewOrientationUpdate;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -50,6 +51,7 @@ static const CGFloat epsilon = 1e-6;
   _needsSplitViewAppearanceUpdate = false;
   _needsSplitViewSecondaryScreenNavBarUpdate = false;
   _needsSplitViewDisplayModeUpdate = false;
+  _needsSplitViewOrientationUpdate = false;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -81,6 +83,8 @@ static const CGFloat epsilon = 1e-6;
   _maximumInspectorColumnWidth = -1.0;
   _preferredInspectorColumnWidthOrFraction = -1.0;
 #endif
+
+  _orientation = RNSOrientationInherit;
 
   _isShowSecondaryToggleButtonSet = false;
 }
@@ -317,6 +321,11 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif
 
+  if (oldComponentProps.orientation != newComponentProps.orientation) {
+    _needsSplitViewOrientationUpdate = true;
+    _orientation = rnscreens::conversion::RNSOrientationFromRNSSplitViewHostOrientation(newComponentProps.orientation);
+  }
+
   // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
   // This allows us to identify any subsequent changes to this prop,
   // enabling us to warn users that dynamic changes are not supported.
@@ -346,6 +355,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (_needsSplitViewSecondaryScreenNavBarUpdate && _controller != nil) {
     _needsSplitViewSecondaryScreenNavBarUpdate = false;
     [_controller setNeedsSecondaryScreenNavBarUpdate];
+  }
+
+  if (_needsSplitViewOrientationUpdate && _controller != nil) {
+    _needsSplitViewOrientationUpdate = false;
+    [_controller setNeedsOrientationUpdate];
   }
 }
 
