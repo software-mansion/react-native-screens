@@ -394,7 +394,7 @@ export interface BottomTabsScreenProps {
    * If this property is `undefined`, UIKit uses `standardAppearance`, modified to
    * have a transparent background.
    *
-   * @platfom ios
+   * @platform ios
    */
   scrollEdgeAppearance?: BottomTabsScreenAppearance;
   /**

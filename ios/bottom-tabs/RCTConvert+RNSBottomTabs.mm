@@ -29,7 +29,6 @@ RCT_ENUM_CONVERTER(
     }),
     RNSTabBarMinimizeBehaviorAutomatic,
     integerValue)
-#endif // !RCT_NEW_ARCH_ENABLED
 
 RCT_ENUM_CONVERTER(
     RNSOrientation,
@@ -46,5 +45,6 @@ RCT_ENUM_CONVERTER(
     }),
     RNSOrientationInherit,
     integerValue)
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
