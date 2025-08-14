@@ -4,6 +4,7 @@
 #import <React/RCTImageComponentView.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
+#import <ReactCommon/TurboModuleUtils.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -27,6 +28,7 @@
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 #import "RNSBackBarButtonItem.h"
+#import "RNSBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
@@ -661,6 +663,8 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
+  navitem.leftBarButtonItems = nil;
+  navitem.rightBarButtonItems = nil;
   navitem.titleView = nil;
 
 #if !TARGET_OS_TV
@@ -738,6 +742,15 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
+
+  // Set leftBarButtonItems if provided
+  if (config.headerLeftBarButtonItems.count > 0) {
+    navitem.leftBarButtonItems = [config barButtonItemsFromDictionaries:config.headerLeftBarButtonItems];
+  }
+  // Set rightBarButtonItems if provided
+  if (config.headerRightBarButtonItems.count > 0) {
+    navitem.rightBarButtonItems = [config barButtonItemsFromDictionaries:config.headerRightBarButtonItems];
+  }
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
@@ -851,6 +864,59 @@ RNS_IGNORE_SUPER_CALL_END
     [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
         setSemanticContentAttribute:self.direction];
   }
+}
+
+- (NSArray<UIBarButtonItem *> *)barButtonItemsFromDictionaries:(NSArray<NSDictionary<NSString *, id> *> *)dicts
+{
+  if (dicts.count == 0) {
+    return @[];
+  }
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count * 2 - 1];
+  for (NSUInteger i = 0; i < dicts.count; i++) {
+    NSDictionary *dict = dicts[i];
+    if (dict[@"buttonId"] || dict[@"menu"]) {
+      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict
+          action:^(NSString *buttonId) {
+#ifdef RCT_NEW_ARCH_ENABLED
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && buttonId) {
+              eventEmitter->onPressHeaderBarButtonItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
+                      .buttonId = std::string([buttonId UTF8String])});
+            }
+#else
+            if (self.onPressHeaderBarButtonItem && buttonId) {
+              self.onPressHeaderBarButtonItem(@{@"buttonId" : buttonId});
+            }
+#endif
+          }
+          menuAction:^(NSString *menuId) {
+#ifdef RCT_NEW_ARCH_ENABLED
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && menuId) {
+              eventEmitter->onPressHeaderBarButtonMenuItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
+                      .menuId = std::string([menuId UTF8String])});
+            }
+#else
+            if (self.onPressHeaderBarButtonMenuItem && menuId) {
+              self.onPressHeaderBarButtonMenuItem(@{@"menuId" : menuId});
+            }
+#endif
+          }];
+      [items addObject:item];
+    } else if (dict[@"spacing"]) {
+      UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                                  target:nil
+                                                                                  action:nil];
+      NSNumber *spacingValue = dict[@"spacing"];
+      fixedSpace.width = [spacingValue doubleValue];
+      [items addObject:fixedSpace];
+    }
+  }
+  return items;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -1087,6 +1153,30 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
 
+  if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {
+    const auto &vec = newScreenProps.headerLeftBarButtonItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _headerLeftBarButtonItems = array;
+  }
+
+  if (newScreenProps.headerRightBarButtonItems != oldScreenProps.headerRightBarButtonItems) {
+    const auto &vec = newScreenProps.headerRightBarButtonItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _headerRightBarButtonItems = array;
+  }
+
   [self updateViewControllerIfNeeded];
 
   if (needsNavigationControllerLayout) {
@@ -1140,6 +1230,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 }
 
 #endif
+
 @end
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1195,6 +1286,10 @@ RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(headerRightBarButtonItems, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonItem, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonMenuItem, RCTDirectEventBlock);
 
 @end
 
