@@ -73,7 +73,12 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 
-  // necessary for 3111 workaround
+  // Workaround for UIKit edgesForExtendedLayout bug on iOS 26.
+  // On iOS 26, there is additional offset for UINavigationBar that is not
+  // accounted for when using edgesForExtendedLayout. That's why we additionaly
+  // use safeAreaLayoutGuide when header is visible. When bug gets fixed, we can
+  // get rid of all code related to this workaround.
+  // More information: https://github.com/software-mansion/react-native-screens/pull/3111
   NSArray<NSLayoutConstraint *> *_safeAreaConstraints;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
@@ -564,8 +569,7 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
-  // Workaround 3111 for UIKit edgesForExtendedLayout bug on iOS 26
-  // More information: https://github.com/software-mansion/react-native-screens/pull/3111
+  // See comment above _safeAreaConstraints declaration for reason why this is necessary.
   RNSScreenContentWrapper *contentWrapper = nil;
   if (@available(iOS 26, *)) {
     if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]]) {
@@ -578,7 +582,7 @@ RNS_IGNORE_SUPER_CALL_END
     // the screen underneath navigation controllers
     vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
 
-    // Part of 3111 workaround
+    // See comment above _safeAreaConstraints declaration for reason why this is necessary.
     if (contentWrapper != nil) {
       // Use auto-layout
       contentWrapper.translatesAutoresizingMaskIntoConstraints = NO;
@@ -597,7 +601,7 @@ RNS_IGNORE_SUPER_CALL_END
     // system default is UIRectEdgeAll
     vc.edgesForExtendedLayout = UIRectEdgeAll;
 
-    // Part of 3111 workaround
+    // See comment above _safeAreaConstraints declaration for reason why this is necessary.
     if (contentWrapper != nil) {
       [NSLayoutConstraint deactivateConstraints:config->_safeAreaConstraints];
       config->_safeAreaConstraints = nil;
