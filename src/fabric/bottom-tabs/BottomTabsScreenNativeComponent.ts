@@ -47,6 +47,17 @@ type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+type Orientation =
+  | 'inherit'
+  | 'all'
+  | 'allButUpsideDown'
+  | 'portrait'
+  | 'portraitUp'
+  | 'portraitDown'
+  | 'landscape'
+  | 'landscapeLeft'
+  | 'landscapeRight';
+
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
@@ -80,6 +91,9 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
+
+  // Currently iOS-only
+  orientation?: WithDefault<Orientation, 'inherit'>;
 
   // Android-specific image handling
   iconResourceName?: string;

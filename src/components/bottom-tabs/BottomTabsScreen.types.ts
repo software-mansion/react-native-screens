@@ -60,6 +60,18 @@ export type BottomTabsScreenBlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+// Currently iOS-only
+export type BottomTabsScreenOrientation =
+  | 'inherit'
+  | 'all'
+  | 'allButUpsideDown'
+  | 'portrait'
+  | 'portraitUp'
+  | 'portraitDown'
+  | 'landscape'
+  | 'landscapeLeft'
+  | 'landscapeRight';
+
 export interface BottomTabsScreenProps {
   children?: ViewProps['children'];
   /**
@@ -113,6 +125,55 @@ export interface BottomTabsScreenProps {
    * @platform android, ios
    */
   badgeValue?: string;
+  /**
+   * @summary Specifies supported orientations for the tab screen.
+   *
+   * Procedure for determining supported orientations:
+   * 1. Traversal initiates from the root component and moves to the
+   *    deepest child possible.
+   * 2. Components are queried for their supported orientations:
+   *    - if `orientation` is explicitly set (e.g., `portrait`,
+   *      `landscape`), it is immediately used,
+   *    - if `orientation` is set to `inherit`, the parent component
+   *      is queried.
+   *
+   * Note that:
+   * - some components (like `SplitViewHost`) may choose not to query
+   *   its child components,
+   * - Stack v4 implementation **ALWAYS** returns some supported
+   *   orientations (`allButUpsideDown` by default), overriding
+   *   orientation from tab screen.
+   *
+   * The following values are currently supported:
+   *
+   * - `inherit` - tab screen supports the same orientations as parent
+   *   component,
+   * - `all` - tab screen supports all orientations,
+   * - `allButUpsideDown` - tab screen supports all but the upside-down
+   *   portrait interface orientation,
+   * - `portrait` - tab screen supports both portrait-up and portrait-down
+   *   interface orientations,
+   * - 'portraitUp' - tab screen supports a portrait-up interface
+   *   orientation,
+   * - `portraitDown` - tab screen supports a portrait-down interface
+   *   orientation,
+   * - `landscape` - tab screen supports both landscape-left and
+   *   landscape-right interface orientations,
+   * - `landscapeLeft` - tab screen supports landscape-left interface
+   *   orientaion,
+   * - `landscapeRight` - tab screen supports landscape-right interface
+   *   orientaion.
+   *
+   * The supported values (apart from `inherit`, `portrait`, `portraitUp`,
+   * `portraitDown`) correspond to the official UIKit documentation:
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask|UIInterfaceOrientationMask}
+   *
+   * @default inherit
+   *
+   * @platform ios
+   */
+  orientation?: BottomTabsScreenOrientation;
   // #endregion General
 
   // #region Common appearance

@@ -48,6 +48,8 @@
     return ![self shouldPreventNativeTabChangeWithinTabBarController:tabBarCtrl];
   }
 
+  // TODO: handle enforcing orientation with natively-driven tabs
+
   // As we're selecting the same controller, returning both true and false works here.
   return true;
 }

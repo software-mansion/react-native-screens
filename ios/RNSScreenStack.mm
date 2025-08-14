@@ -105,6 +105,20 @@ namespace react = facebook::react;
   return [self topViewController].supportedInterfaceOrientations;
 }
 
+#if !TARGET_OS_TV
+
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.topViewController respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> top = static_cast<id<RNSOrientationProviding>>(self.topViewController);
+    return [top evaluateOrientation];
+  }
+
+  return RNSOrientationInherit;
+}
+
+#endif // !TARGET_OS_TV
+
 - (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
 {
   return [self topViewController];
