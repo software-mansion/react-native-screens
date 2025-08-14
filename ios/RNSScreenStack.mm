@@ -78,7 +78,6 @@ namespace react = facebook::react;
   [super viewDidLayoutSubviews];
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
-
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
         (screenController.presentedViewController != nil &&
          ![screenController.presentedViewController isBeingDismissed]);
