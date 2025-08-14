@@ -109,9 +109,10 @@ void RNSScreenShadowNode::appendChild(
 
       screenShadowNode.setPadding({0, 0, 0, headerHeight});
       screenShadowNode.setHeaderHeight(headerHeight);
-      screenShadowNode.getFrameCorrectionModes().set(FrameCorrectionModes::Mode(
-          FrameCorrectionModes::Mode::FrameHeightCorrection |
-          FrameCorrectionModes::Mode::FrameOriginCorrection));
+      screenShadowNode.getFrameCorrectionModes().set(
+          FrameCorrectionModes::Mode(
+              FrameCorrectionModes::Mode::FrameHeightCorrection |
+              FrameCorrectionModes::Mode::FrameOriginCorrection));
     }
   }
 #endif // ANDROID

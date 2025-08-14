@@ -28,12 +28,14 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewState final {
   RNSScreenStackHeaderSubviewState(
       RNSScreenStackHeaderSubviewState const &previousState,
       folly::dynamic data)
-      : frameSize(Size{
-            (Float)data["frameWidth"].getDouble(),
-            (Float)data["frameHeight"].getDouble()}),
-        contentOffset(Point{
-            (Float)data["contentOffsetX"].getDouble(),
-            (Float)data["contentOffsetY"].getDouble()}) {}
+      : frameSize(
+            Size{
+                (Float)data["frameWidth"].getDouble(),
+                (Float)data["frameHeight"].getDouble()}),
+        contentOffset(
+            Point{
+                (Float)data["contentOffsetX"].getDouble(),
+                (Float)data["contentOffsetY"].getDouble()}) {}
 #endif // ANDROID
 
 #ifdef ANDROID
