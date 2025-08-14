@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import android.util.Log
+import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -47,40 +48,14 @@ class TabScreenViewManager :
     }
 
     // These should be ignored or another component, dedicated for Android should be used
-
-    override fun setTabBarBackgroundColor(
+    override fun setStandardAppearance(
         view: TabScreen,
-        value: Int?,
+        value: Dynamic,
     ) = Unit
 
-    override fun setTabBarBlurEffect(
+    override fun setScrollEdgeAppearance(
         view: TabScreen,
-        value: String?,
-    ) = Unit
-
-    override fun setTabBarItemTitleFontFamily(
-        view: TabScreen,
-        value: String?,
-    ) = Unit
-
-    override fun setTabBarItemTitleFontSize(
-        view: TabScreen,
-        value: Float,
-    ) = Unit
-
-    override fun setTabBarItemTitleFontWeight(
-        view: TabScreen,
-        value: String?,
-    ) = Unit
-
-    override fun setTabBarItemTitleFontStyle(
-        view: TabScreen,
-        value: String?,
-    ) = Unit
-
-    override fun setTabBarItemTitleFontColor(
-        view: TabScreen,
-        value: Int?,
+        value: Dynamic,
     ) = Unit
 
     @ReactProp(name = "tabBarItemBadgeBackgroundColor", customType = "Color")
@@ -90,16 +65,6 @@ class TabScreenViewManager :
     ) {
         view.tabBarItemBadgeBackgroundColor = value
     }
-
-    override fun setTabBarItemTitlePositionAdjustment(
-        view: TabScreen?,
-        value: ReadableMap?,
-    ) = Unit
-
-    override fun setTabBarItemIconColor(
-        view: TabScreen?,
-        value: Int?,
-    ) = Unit
 
     override fun setIconType(
         view: TabScreen?,

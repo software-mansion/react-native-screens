@@ -12,7 +12,6 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ColorPropConverter;
-import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
@@ -27,17 +26,14 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
       case "tabBarBackgroundColor":
         mViewManager.setTabBarBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
-      case "tabBarBlurEffect":
-        mViewManager.setTabBarBlurEffect(view, (String) value);
-        break;
-      case "tabBarTintColor":
-        mViewManager.setTabBarTintColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
       case "tabBarItemTitleFontFamily":
         mViewManager.setTabBarItemTitleFontFamily(view, value == null ? null : (String) value);
         break;
       case "tabBarItemTitleFontSize":
         mViewManager.setTabBarItemTitleFontSize(view, value == null ? 0f : ((Double) value).floatValue());
+        break;
+      case "tabBarItemTitleFontSizeActive":
+        mViewManager.setTabBarItemTitleFontSizeActive(view, value == null ? 0f : ((Double) value).floatValue());
         break;
       case "tabBarItemTitleFontWeight":
         mViewManager.setTabBarItemTitleFontWeight(view, value == null ? null : (String) value);
@@ -48,23 +44,14 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
       case "tabBarItemTitleFontColor":
         mViewManager.setTabBarItemTitleFontColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
-      case "tabBarItemTitlePositionAdjustment":
-        mViewManager.setTabBarItemTitlePositionAdjustment(view, (ReadableMap) value);
+      case "tabBarItemTitleFontColorActive":
+        mViewManager.setTabBarItemTitleFontColorActive(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
       case "tabBarItemIconColor":
         mViewManager.setTabBarItemIconColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
-      case "tabBarItemBadgeBackgroundColor":
-        mViewManager.setTabBarItemBadgeBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemTitleFontColorActive":
-        mViewManager.setTabBarItemTitleFontColorActive(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
       case "tabBarItemIconColorActive":
         mViewManager.setTabBarItemIconColorActive(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemTitleFontSizeActive":
-        mViewManager.setTabBarItemTitleFontSizeActive(view, value == null ? 0f : ((Double) value).floatValue());
         break;
       case "tabBarItemActiveIndicatorColor":
         mViewManager.setTabBarItemActiveIndicatorColor(view, ColorPropConverter.getColor(value, view.getContext()));
@@ -77,6 +64,9 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
         break;
       case "tabBarItemLabelVisibilityMode":
         mViewManager.setTabBarItemLabelVisibilityMode(view, (String) value);
+        break;
+      case "tabBarTintColor":
+        mViewManager.setTabBarTintColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
       case "tabBarMinimizeBehavior":
         mViewManager.setTabBarMinimizeBehavior(view, (String) value);
