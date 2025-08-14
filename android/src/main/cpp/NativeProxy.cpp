@@ -48,7 +48,7 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
 }
 
 void NativeProxy::invalidateNative() {
-    javaPart_ = nullptr;
+  javaPart_ = nullptr;
 }
 
 } // namespace rnscreens

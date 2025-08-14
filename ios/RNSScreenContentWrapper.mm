@@ -189,6 +189,11 @@ Class<RCTComponentViewProtocol> RNSScreenContentWrapperCls(void)
 {
   [super load];
 }
+
++ (BOOL)shouldBeRecycled
+{
+  return NO;
+}
 #endif // RCT_NEW_ARCH_ENABLED
 
 @end

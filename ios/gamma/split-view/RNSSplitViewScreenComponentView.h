@@ -1,4 +1,5 @@
 #import "RNSEnums.h"
+#import "RNSFrameCorrectionProvider.h"
 #import "RNSReactBaseView.h"
 #import "RNSSplitViewScreenComponentEventEmitter.h"
 #import "RNSSplitViewScreenShadowStateProxy.h"
@@ -26,6 +27,20 @@ NS_ASSUME_NONNULL_BEGIN
  * Should be called when the component is about to be deleted.
  */
 - (void)invalidate;
+
+/**
+ * @brief Adds UIView that needs frame correction when SplitViewScreen calculates a layout
+ *
+ * @param view - UIView which subscribes for SplitViewScreen layout updates
+ */
+- (void)registerForFrameUpdates:(UIView *)view;
+
+/**
+ * @brief Removes UIView that doesn't need frame correction no longer
+ *
+ * @param view - UIView which unsubscribes for SplitViewScreen layout updates
+ */
+- (void)unregisterFromFrameUpdates:(UIView *)view;
 
 @end
 

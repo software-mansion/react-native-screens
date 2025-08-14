@@ -37,6 +37,9 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "badgeValue":
         mViewManager.setBadgeValue(view, value == null ? null : (String) value);
         break;
+      case "orientation":
+        mViewManager.setOrientation(view, (String) value);
+        break;
       case "iconResourceName":
         mViewManager.setIconResourceName(view, value == null ? null : (String) value);
         break;

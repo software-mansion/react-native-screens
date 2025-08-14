@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if !RCT_NEW_ARCH_ENABLED
 + (RNSBottomTabsIconType)RNSBottomTabsIconType:(nonnull id)json;
++ (RNSOrientation)RNSOrientation:(nonnull id)json;
 #endif // !RCT_NEW_ARCH_ENABLED
 
 @end

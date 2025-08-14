@@ -2,9 +2,16 @@
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
 
+#if !TARGET_OS_TV
+#import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsScreenViewController : UIViewController
+#if !TARGET_OS_TV
+                                         <RNSOrientationProviding>
+#endif // !TARGET_OS_TV
 
 @property (nonatomic, strong, readonly, nullable) RNSBottomTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSBottomTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
@@ -18,6 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Tell the controller that the tab screen it owns has got its react-props related to appearance changed.
  */
 - (void)tabItemAppearanceHasChanged;
+
+/**
+ * Tell the controller that the tab screen it owns has got its react-props-orientation changed.
+ */
+- (void)tabScreenOrientationHasChanged;
 
 /**
  * Tell the controller that the tab item related to this controller has been selected again after being presented.

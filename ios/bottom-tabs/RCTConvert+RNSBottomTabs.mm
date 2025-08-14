@@ -31,4 +31,20 @@ RCT_ENUM_CONVERTER(
     integerValue)
 #endif // !RCT_NEW_ARCH_ENABLED
 
+RCT_ENUM_CONVERTER(
+    RNSOrientation,
+    (@{
+      @"inherit" : @(RNSOrientationInherit),
+      @"all" : @(RNSOrientationAll),
+      @"allButUpsideDown" : @(RNSOrientationAllButUpsideDown),
+      @"portrait" : @(RNSOrientationPortrait),
+      @"portraitUp" : @(RNSOrientationPortraitUp),
+      @"portraitDown" : @(RNSOrientationPortraitDown),
+      @"landscape" : @(RNSOrientationLandscape),
+      @"landscapeLeft" : @(RNSOrientationLandscapeLeft),
+      @"landscapeRight" : @(RNSOrientationLandscapeRight),
+    }),
+    RNSOrientationInherit,
+    integerValue)
+
 @end

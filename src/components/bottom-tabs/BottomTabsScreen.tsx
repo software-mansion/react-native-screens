@@ -26,6 +26,7 @@ import type {
   EmptyObject,
   Icon,
 } from './BottomTabsScreen.types';
+import { bottomTabsDebugLog } from '../../private/logging';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -51,6 +52,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     onWillDisappear,
     onDidDisappear,
     isFocused = false,
+    freezeContents,
     icon,
     selectedIcon,
     standardAppearance,
@@ -58,18 +60,15 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     ...rest
   } = props;
 
-  let shouldFreeze = freezeEnabled();
-
-  if (featureFlags.experiment.controlledBottomTabs) {
-    // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
-    shouldFreeze = shouldFreeze && !nativeViewIsVisible && !isFocused;
-  } else {
-    shouldFreeze = shouldFreeze && !nativeViewIsVisible;
-  }
+  const shouldFreeze = shouldFreezeScreen(
+    nativeViewIsVisible,
+    isFocused,
+    freezeContents,
+  );
 
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      console.log(
+      bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
       );
       setNativeViewIsVisible(true);
@@ -80,7 +79,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const onDidAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      console.log(
+      bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onDidAppear received`,
       );
       onDidAppear?.(event);
@@ -90,7 +89,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const onWillDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      console.log(
+      bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onWillDisappear received`,
       );
       onWillDisappear?.(event);
@@ -100,7 +99,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const onDidDisappearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
-      console.log(
+      bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
       );
       setNativeViewIsVisible(false);
@@ -109,7 +108,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     [onDidDisappear],
   );
 
-  console.info(
+  bottomTabsDebugLog(
     `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
       rest.tabKey
     } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
@@ -195,6 +194,27 @@ function mapItemStateAppearanceToNativeProp(
         ? String(tabBarItemTitleFontWeight)
         : undefined,
   };
+}
+
+function shouldFreezeScreen(
+  nativeViewVisible: boolean,
+  screenFocused: boolean,
+  freezeOverride: boolean | undefined,
+) {
+  if (!freezeEnabled()) {
+    return false;
+  }
+
+  if (freezeOverride !== undefined) {
+    return freezeOverride;
+  }
+
+  if (featureFlags.experiment.controlledBottomTabs) {
+    // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
+    return !nativeViewVisible && !screenFocused;
+  }
+
+  return !nativeViewVisible;
 }
 
 function parseIconToNativeProps(icon: Icon | undefined): {

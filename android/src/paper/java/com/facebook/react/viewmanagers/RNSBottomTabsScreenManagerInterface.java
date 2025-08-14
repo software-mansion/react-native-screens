@@ -20,6 +20,7 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
   void setTabKey(T view, @Nullable String value);
   void setTitle(T view, @Nullable String value);
   void setBadgeValue(T view, @Nullable String value);
+  void setOrientation(T view, @Nullable String value);
   void setIconResourceName(T view, @Nullable String value);
   void setTabBarItemBadgeTextColor(T view, @Nullable Integer value);
   void setTabBarItemBadgeBackgroundColor(T view, @Nullable Integer value);

@@ -31,6 +31,7 @@ namespace react = facebook::react;
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
+  BOOL _tabScreenOrientationNeedsUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
@@ -57,6 +58,7 @@ namespace react = facebook::react;
 
 #if !RCT_NEW_ARCH_ENABLED
   _tabItemNeedsAppearanceUpdate = NO;
+  _tabScreenOrientationNeedsUpdate = NO;
 #endif
 
   // This is a temporary workaround to avoid UIScrollEdgeEffect glitch
@@ -72,6 +74,7 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
+  _orientation = RNSOrientationInherit;
 
   _standardAppearance = [UITabBarAppearance new];
   _scrollEdgeAppearance = nil;
@@ -143,10 +146,17 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSBottomTabsScreenProps>(props);
 
   bool tabItemNeedsAppearanceUpdate{false};
+  bool tabScreenOrientationNeedsUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
     _controller.title = _title;
+  }
+
+  if (newComponentProps.orientation != oldComponentProps.orientation) {
+    _orientation =
+        rnscreens::conversion::RNSOrientationFromRNSBottomTabsScreenOrientation(newComponentProps.orientation);
+    tabScreenOrientationNeedsUpdate = YES;
   }
 
   if (newComponentProps.tabKey != oldComponentProps.tabKey) {
@@ -245,6 +255,10 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller tabItemAppearanceHasChanged];
   }
 
+  if (tabScreenOrientationNeedsUpdate) {
+    [_controller tabScreenOrientationHasChanged];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -306,6 +320,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (_tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
     _tabItemNeedsAppearanceUpdate = NO;
+  }
+
+  if (_tabScreenOrientationNeedsUpdate) {
+    [_controller tabScreenOrientationHasChanged];
+    _tabScreenOrientationNeedsUpdate = NO;
   }
 }
 
@@ -400,6 +419,12 @@ RNS_IGNORE_SUPER_CALL_END
     _scrollEdgeAppearance = nil;
   }
   _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setOrientation:(RNSOrientation)orientation
+{
+  _orientation = orientation;
+  _tabScreenOrientationNeedsUpdate = YES;
 }
 
 - (void)setOnWillAppear:(RCTDirectEventBlock)onWillAppear

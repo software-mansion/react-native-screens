@@ -1,6 +1,6 @@
 'use client';
 
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import {codegenNativeComponent} from 'react-native';
 import type { ColorValue, ProcessedColorValue, ViewProps } from 'react-native';
 import {
   DirectEventHandler,
@@ -10,7 +10,7 @@ import {
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 // @ts-ignore: ImageSource type has been recently added: https://github.com/facebook/react-native/pull/51969
-import type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
+import type {ImageSource} from 'react-native';
 import { UnsafeMixed } from './codegenUtils';
 
 // iOS-specific: SFSymbol, image as a template usage
@@ -78,6 +78,17 @@ type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+type Orientation =
+  | 'inherit'
+  | 'all'
+  | 'allButUpsideDown'
+  | 'portrait'
+  | 'portraitUp'
+  | 'portraitDown'
+  | 'landscape'
+  | 'landscapeLeft'
+  | 'landscapeRight';
+
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
@@ -94,10 +105,10 @@ export interface NativeProps extends ViewProps {
   title?: string | undefined | null;
   badgeValue?: string;
 
-  // Tab Bar Appearance
-  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
+  // Currently iOS-only
+  orientation?: WithDefault<Orientation, 'inherit'>;
 
-  // Android-specific
+  // Android-specific image handling
   iconResourceName?: string;
   tabBarItemBadgeTextColor?: ColorValue;
   tabBarItemBadgeBackgroundColor?: ColorValue;

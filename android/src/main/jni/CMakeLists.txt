@@ -68,18 +68,23 @@ else()
   )
 endif()
 
-target_compile_options(
-  ${LIB_TARGET_NAME}
-  PRIVATE
-  -DLOG_TAG=\"ReactNative\"
-  -fexceptions
-  -frtti
-  -std=c++20
-  -Wall
-)
+if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 80)
+  target_compile_reactnative_options(${LIB_TARGET_NAME} PRIVATE)
+else()
+  target_compile_options(
+    ${LIB_TARGET_NAME}
+    PRIVATE
+    -DLOG_TAG=\"ReactNative\"
+    -fexceptions
+    -frtti
+    -std=c++20
+    -Wall
+  )
+endif()
 
 target_include_directories(
  ${CMAKE_PROJECT_NAME}
  PUBLIC
  ${CMAKE_CURRENT_SOURCE_DIR}
 )
+

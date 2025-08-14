@@ -1,6 +1,7 @@
 #import "RNSTabBarController.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
+#import "RNSScreenWindowTraits.h"
 
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
@@ -57,6 +58,10 @@
 - (void)setNeedsUpdateOfSelectedTab:(bool)needsSelectedTabUpdate
 {
   _needsUpdateOfSelectedTab = needsSelectedTabUpdate;
+
+  if (needsSelectedTabUpdate) {
+    _needsOrientationUpdate = true;
+  }
 #if !RCT_NEW_ARCH_ENABLED
   [self scheduleControllerUpdateIfNeeded];
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -65,6 +70,14 @@
 - (void)setNeedsUpdateOfTabBarAppearance:(bool)needsUpdateOfTabBarAppearance
 {
   _needsUpdateOfTabBarAppearance = needsUpdateOfTabBarAppearance;
+#if !RCT_NEW_ARCH_ENABLED
+  [self scheduleControllerUpdateIfNeeded];
+#endif // !RCT_NEW_ARCH_ENABLED
+}
+
+- (void)setNeedsOrientationUpdate:(bool)needsOrientationUpdate
+{
+  _needsOrientationUpdate = needsOrientationUpdate;
 #if !RCT_NEW_ARCH_ENABLED
   [self scheduleControllerUpdateIfNeeded];
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -83,6 +96,7 @@
   [self updateReactChildrenControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
+  [self updateOrientationIfNeeded];
 }
 
 #pragma mark-- Signals related
@@ -202,5 +216,34 @@
 }
 
 #endif // !RCT_NEW_ARCH_ENABLED
+
+- (void)updateOrientationIfNeeded
+{
+  if (_needsOrientationUpdate) {
+    [self updateOrientation];
+  }
+}
+
+- (void)updateOrientation
+{
+  _needsOrientationUpdate = false;
+  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
+}
+
+#pragma mark - RNSOrientationProviding
+
+#if !TARGET_OS_TV
+
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.selectedViewController respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> selected = static_cast<id<RNSOrientationProviding>>(self.selectedViewController);
+    return [selected evaluateOrientation];
+  }
+
+  return RNSOrientationInherit;
+}
+
+#endif // !TARGET_OS_TV
 
 @end
