@@ -241,7 +241,7 @@ namespace react = facebook::react;
         [splitViewControllerView isKindOfClass:[RNSSplitViewScreenComponentView class]],
         @"[RNScreens] splitViewControllerView must be type of RNSSplitViewScreenComponentView");
     auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
-    // We need to apply an udpate for the parent of the view which `RNSNavigationController` is describing
+    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
     [splitViewScreen registerForFrameUpdates:self.view.superview];
   }
 }
@@ -254,7 +254,7 @@ namespace react = facebook::react;
         [splitViewControllerView isKindOfClass:[RNSSplitViewScreenComponentView class]],
         @"[RNScreens] splitViewControllerView must be type of RNSSplitViewScreenComponentView");
     auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
-    // We need to apply an udpate for the parent of the view which `RNSNavigationController` is describing
+    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
     [splitViewScreen unregisterFromFrameUpdates:self.view.superview];
   }
 }
