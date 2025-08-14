@@ -999,7 +999,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   [super prepareForRecycle];
   _initialPropsSet = NO;
 
-  // Part of 3111 workaround
+  // See comment above _safeAreaConstraints declaration for reason why this is necessary.
   [NSLayoutConstraint deactivateConstraints:_safeAreaConstraints];
   _safeAreaConstraints = nil;
 
