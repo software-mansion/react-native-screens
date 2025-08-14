@@ -1,5 +1,5 @@
 #import "RNSEnums.h"
-#import "RNSFrameCorrectionProvider3097.h"
+#import "RNSFrameCorrectionProvider.h"
 #import "RNSReactBaseView.h"
 #import "RNSSplitViewScreenComponentEventEmitter.h"
 #import "RNSSplitViewScreenShadowStateProxy.h"

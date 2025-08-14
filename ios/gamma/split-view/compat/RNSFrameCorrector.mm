@@ -1,6 +1,6 @@
-#import "RNSFrameCorrector3097.h"
+#import "RNSFrameCorrector.h"
 
-@implementation RNSFrameCorrector3097
+@implementation RNSFrameCorrector
 
 + (void)applyFrameCorrectionFor:(UIView *)view
      inContextOfSplitViewColumn:(RNSSplitViewScreenComponentView *)splitViewScreen

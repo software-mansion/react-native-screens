@@ -3,7 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
-#import "RNSFrameCorrector3097.h"
+#import "RNSFrameCorrector.h"
 
 #import "Swift-Bridging.h"
 
@@ -117,7 +117,7 @@ namespace react = facebook::react;
   [super layoutSubviews];
 
   for (UIView *view in _viewsForFrameUpdate) {
-    [RNSFrameCorrector3097 applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
+    [RNSFrameCorrector applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
   }
 }
 

@@ -3,12 +3,15 @@
 #import "RNSSplitViewHostComponentView.h"
 
 /**
- * @protocol RNSFrameCorrectionProvider3097
+ * @protocol RNSFrameCorrectionProvider
  * @brief Temporal solution for registering view for being notified when the split view layout is changed
+ *
+ * @remarks - It's a workaround until we have synchronous updates:
+ * https://github.com/software-mansion/react-native-screens-labs/issues/374
  *
  * It resolves problems with jumping content in the SplitView, until we'd have synchronous updates.
  */
-@protocol RNSFrameCorrectionProvider3097 <NSObject>
+@protocol RNSFrameCorrectionProvider <NSObject>
 
 /**
  * @brief Responsible for adding `view` to the SplitView set for observing views that need to adapt layout on SplitView

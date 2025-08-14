@@ -9,7 +9,7 @@
 #import "RNSScreenContainer.h"
 
 #ifdef RNS_GAMMA_ENABLED
-#import "RNSFrameCorrectionProvider3097.h"
+#import "RNSFrameCorrectionProvider.h"
 #endif // RNS_GAMMA_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
                                          RNSBottomTabsSpecialEffectsSupporting
 #ifdef RNS_GAMMA_ENABLED
                                          ,
-                                         RNSFrameCorrectionProvider3097
+                                         RNSFrameCorrectionProvider
 #endif // RNS_GAMMA_ENABLED
                                          >
 

@@ -230,7 +230,7 @@ namespace react = facebook::react;
 }
 #endif // Check for iOS >= 26
 
-#pragma mark - RNSFrameCorrectionProvider3097
+#pragma mark - RNSFrameCorrectionProvider
 
 #ifdef RNS_GAMMA_ENABLED
 - (void)registerForSplitView
