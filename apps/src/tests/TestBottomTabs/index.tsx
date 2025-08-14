@@ -19,19 +19,17 @@ internalEnableDetailedBottomTabsLogging();
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
-      standardAppearance: {
+      scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyLight100,
         stacked: {
           normal: {
-            tabBarItemIconColor: 'red',
+            tabBarItemIconColor: Colors.NavyLight60,
           },
           selected: {
-            tabBarItemIconColor: 'green',
+            tabBarItemIconColor: Colors.NavyLight20,
+            tabBarItemTitleFontColor: Colors.NavyLight20,
           },
         },
-      },
-      scrollEdgeAppearance: {
-        tabBarBackgroundColor: Colors.NavyLight100,
       },
       tabKey: 'Tab1',
       title: 'Tab1',
@@ -62,6 +60,34 @@ const TAB_CONFIGS: TabConfiguration[] = [
             tabBarItemTitleFontFamily: 'Baskerville',
             tabBarItemTitlePositionAdjustment: {
               vertical: 8,
+            },
+            tabBarItemIconColor: Colors.RedDark120,
+          },
+        },
+        inline: {
+          normal: {
+            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+            tabBarItemTitleFontSize: 20,
+            tabBarItemTitleFontStyle: 'italic',
+            tabBarItemTitleFontColor: Colors.RedDark120,
+            tabBarItemTitleFontWeight: 'bold',
+            tabBarItemTitleFontFamily: 'Baskerville',
+            tabBarItemTitlePositionAdjustment: {
+              vertical: 4,
+            },
+            tabBarItemIconColor: Colors.RedDark120,
+          },
+        },
+        compactInline: {
+          normal: {
+            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+            tabBarItemTitleFontSize: 20,
+            tabBarItemTitleFontStyle: 'italic',
+            tabBarItemTitleFontColor: Colors.RedDark120,
+            tabBarItemTitleFontWeight: 'bold',
+            tabBarItemTitleFontFamily: 'Baskerville',
+            tabBarItemTitlePositionAdjustment: {
+              vertical: 4,
             },
             tabBarItemIconColor: Colors.RedDark120,
           },
