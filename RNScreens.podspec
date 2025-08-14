@@ -47,7 +47,8 @@ Pod::Spec.new do |s|
     # with 0.81. We can not expect users to patch the react-native sources, thus 
     # we can not have Swift code in stable package. 
     s.pod_target_xcconfig = {
-      'DEFINES_MODULE' => 'YES'
+      'DEFINES_MODULE' => 'YES',
+      'OTHER_CPLUSPLUSFLAGS' => '-DRNS_GAMMA_ENABLED=1'
     }
   end
 

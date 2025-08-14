@@ -3,6 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
+#import "RNSFrameCorrector.h"
 
 #import "Swift-Bridging.h"
 
@@ -13,6 +14,7 @@ namespace react = facebook::react;
   RNSSplitViewScreenController *_Nullable _controller;
   RNSSplitViewScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
+  NSMutableSet<UIView *> *_viewsForFrameUpdate;
 }
 
 - (RNSSplitViewScreenController *)controller
@@ -40,6 +42,8 @@ namespace react = facebook::react;
 
   _reactEventEmitter = [RNSSplitViewScreenComponentEventEmitter new];
   _shadowStateProxy = [RNSSplitViewScreenShadowStateProxy new];
+
+  _viewsForFrameUpdate = [NSMutableSet set];
 }
 
 - (void)setupController
@@ -89,6 +93,34 @@ namespace react = facebook::react;
   _controller = nil;
 }
 
+- (void)registerForFrameUpdates:(UIView *)view
+{
+  [_viewsForFrameUpdate addObject:view];
+}
+
+- (void)unregisterFromFrameUpdates:(UIView *)view
+{
+  [_viewsForFrameUpdate removeObject:view];
+}
+
+#pragma mark - Layout
+
+///
+/// This override **should be considered as a workaround** for which I made some assumptions:
+/// 1. All parents of views with associated `UINavigationController` should have the same width as the SplitView column
+/// 2. I'm greedily aligning all native components which are extending `UINavigationController` - is covers both old and
+/// new stack implementations, however, it will have an impact on any other native component which will be extending
+/// from the same class.
+///
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+
+  for (UIView *view in _viewsForFrameUpdate) {
+    [RNSFrameCorrector applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
+  }
+}
+
 #pragma mark - ShadowTreeState
 
 - (nonnull RNSSplitViewScreenShadowStateProxy *)shadowStateProxy
@@ -110,6 +142,24 @@ namespace react = facebook::react;
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSSplitViewScreenComponentDescriptor>();
+}
+
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  // We're tracking presentation layer updates in the RNSSplitViewScreen.
+  // There's a problem with SplitView that it sets the frame to the end value of the animation right after the animation
+  // begins. Because of that, the size of our component is desynchronizing easily and we're blocking a communication
+  // between native and shadow layout for a while until the transition ends. For the following case when we want to make
+  // a transition from width A to B:
+  // 1. size 'A' is set on ShadowNode
+  // 2. animation for the transition starts
+  // 3. `setFrame` is called with the width 'B'
+  // 4. in the same time, we want to track updates and treat intermediate value A' indicated from the presentation layer
+  // as our source of truth
+  if (![_controller isTransitionInProgress]) {
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+  }
 }
 
 + (BOOL)shouldBeRecycled

@@ -11,8 +11,10 @@ import {
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import Colors from '../../shared/styling/Colors';
+import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
 
 enableFreeze(true);
+internalEnableDetailedBottomTabsLogging();
 
 const TAB_CONFIGS: TabConfiguration[] = [
   {
@@ -28,7 +30,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       iconResourceName: 'sym_call_incoming', // Android specific
     },
-    contentViewRenderFn: Tab1,
+    component: Tab1,
   },
   {
     tabScreenProps: {
@@ -55,7 +57,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab2',
       orientation: 'landscape',
     },
-    contentViewRenderFn: Tab2,
+    component: Tab2,
   },
   {
     tabScreenProps: {
@@ -73,7 +75,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab3',
       orientation: 'portrait',
     },
-    contentViewRenderFn: Tab3,
+    component: Tab3,
   },
   {
     tabScreenProps: {
@@ -89,7 +91,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       badgeValue: '',
       orientation: 'portrait',
     },
-    contentViewRenderFn: Tab4,
+    component: Tab4,
   },
 ];
 

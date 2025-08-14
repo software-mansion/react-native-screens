@@ -28,12 +28,12 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 
+#import "RNSConversions.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
-#import "RNSTabBarController.h"
 #import "RNSScrollViewHelper.h"
-#import "RNSConversions.h"
+#import "RNSTabBarController.h"
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
@@ -710,8 +710,9 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
-            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+        ->onTransitionProgress(
+            react::RNSScreenEventEmitter::OnTransitionProgress{
+                .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
                                                                    reactTag:[NSNumber numberWithInt:self.tag]
@@ -730,10 +731,11 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 }
 
+#if !RCT_NEW_ARCH_ENABLED
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
-  // We need to call both "cancel" and "reset" here because RN's gesture recognizer
-  // does not handle the scenario when it gets cancelled by other top
+  // On Paper, we need to call both "cancel" and "reset" here because RN's gesture
+  // recognizer does not handle the scenario when it gets cancelled by other top
   // level gesture recognizer. In this case by the modal dismiss gesture.
   // Because of that, at the moment when this method gets called the React's
   // gesture recognizer is already in FAILED state but cancel events never gets
@@ -742,14 +744,10 @@ RNS_IGNORE_SUPER_CALL_END
   // pulling down starting at some touchable item. Without "reset" the touchable
   // will never go back from highlighted state even when the modal start sliding
   // down.
-#ifdef RCT_NEW_ARCH_ENABLED
-  [_touchHandler setEnabled:NO];
-  [_touchHandler setEnabled:YES];
-#else
   [_touchHandler cancel];
-#endif
   [_touchHandler reset];
 }
+#endif // !RCT_NEW_ARCH_ENABLED
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
@@ -1991,7 +1989,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([self.childViewControllers.lastObject respondsToSelector:@selector(evaluateOrientation)]) {
     id<RNSOrientationProviding> child = static_cast<id<RNSOrientationProviding>>(self.childViewControllers.lastObject);
     RNSOrientation childOrientation = [child evaluateOrientation];
-    
+
     if (childOrientation != RNSOrientationInherit) {
       return childOrientation;
     }

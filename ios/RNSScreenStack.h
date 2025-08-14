@@ -12,6 +12,10 @@
 #import "RNSOrientationProviding.h"
 #endif // !TARGET_OS_TV
 
+#ifdef RNS_GAMMA_ENABLED
+#import "RNSFrameCorrectionProvider.h"
+#endif // RNS_GAMMA_ENABLED
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSNavigationController : UINavigationController <
@@ -21,6 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
                                          ,
                                          RNSOrientationProviding
 #endif // !TARGET_OS_TV
+#ifdef RNS_GAMMA_ENABLED
+                                         ,
+                                         RNSFrameCorrectionProvider
+#endif // RNS_GAMMA_ENABLED
                                          >
 
 @end

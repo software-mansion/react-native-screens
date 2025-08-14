@@ -22,7 +22,7 @@ RNScreensTurboModule::RNScreensTurboModule(
   disableSwipeBackForTopScreen_ = disableSwipeBackForTopScreen;
 }
 
-RNScreensTurboModule::~RNScreensTurboModule(){};
+RNScreensTurboModule::~RNScreensTurboModule() {};
 
 jsi::Value RNScreensTurboModule::get(
     jsi::Runtime &rt,
@@ -43,7 +43,7 @@ jsi::Value RNScreensTurboModule::get(
 void RNScreensTurboModule::set(
     jsi::Runtime &,
     const jsi::PropNameID &,
-    const jsi::Value &){};
+    const jsi::Value &) {};
 
 std::vector<jsi::PropNameID> RNScreensTurboModule::getPropertyNames(
     jsi::Runtime &rt) {

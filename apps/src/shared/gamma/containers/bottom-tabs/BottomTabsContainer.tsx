@@ -11,7 +11,7 @@ import ConfigWrapperContext from './ConfigWrapperContext';
 
 export interface TabConfiguration {
   tabScreenProps: BottomTabsScreenProps;
-  contentViewRenderFn?: (selectNextTab?: () => void) => React.ReactNode;
+  component: React.ComponentType;
 }
 
 export interface BottomTabsContainerProps {
@@ -21,8 +21,6 @@ export interface BottomTabsContainerProps {
 export function BottomTabsContainer(props: BottomTabsContainerProps) {
   // Currently assumes controlled bottom tabs
   console.info('BottomTabsContainer render');
-
-  const totalTabCount = props.tabConfigs.length;
 
   const [focusedTabKey, setFocusedTabKey] = React.useState<string>(() => {
     console.log('BottomTabsContainer focusedStateKey initial state computed');
@@ -42,17 +40,6 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
     // Default to first tab
     return props.tabConfigs[0].tabScreenProps.tabKey;
   });
-
-  const selectNextTab = React.useCallback(() => {
-    setFocusedTabKey(currentTabKey => {
-      const tabNumberAsString = currentTabKey.slice(3);
-      const tabNumber = Number.parseInt(tabNumberAsString, 10);
-      const tabIndex = tabNumber - 1; // tabs are numbered starting from 1
-      const nextTabIndex = (tabIndex + 1) % totalTabCount;
-      const nextTabKey = `Tab${nextTabIndex + 1}`;
-      return nextTabKey;
-    });
-  }, [totalTabCount]);
 
   const configWrapper = React.useContext(ConfigWrapperContext);
 
@@ -110,18 +97,20 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       {props.tabConfigs.map(tabConfig => {
         const tabKey = tabConfig.tabScreenProps.tabKey;
         const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
+        const ContentComponent = tabConfig.component;
         console.info(
           `BottomTabsContainer map to component -> ${tabKey} ${
             isFocused ? '(focused)' : ''
           }`,
         );
+
         return (
           <BottomTabsScreen
             key={tabKey}
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
-            {tabConfig.contentViewRenderFn?.(selectNextTab)}
+            <ContentComponent/>
           </BottomTabsScreen>
         );
       })}
