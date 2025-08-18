@@ -18,6 +18,7 @@
 #import "RNSDefines.h"
 #import "RNSTabBarController.h"
 #import "RNSTabBarControllerDelegate.h"
+#import "RNSLog.h"
 
 namespace react = facebook::react;
 
@@ -165,7 +166,7 @@ namespace react = facebook::react;
     [tabControllers addObject:childView.controller];
   }
 
-  NSLog(@"updateContainer: tabControllers: %@", tabControllers);
+  RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
 
   [_controller childViewControllersHaveChangedTo:tabControllers];
 }

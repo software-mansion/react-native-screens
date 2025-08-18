@@ -4,6 +4,7 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 gamma_project_enabled = ENV['RNS_GAMMA_ENABLED'] == '1'
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+debug_logging = ENV['RNS_DEBUG_LOGGING'] == '1'
 
 source_files_exts = new_arch_enabled ? '{h,m,mm,cpp,swift}' : '{h,m,mm,swift}'
 source_files = ["ios/**/*.#{source_files_exts}"]
@@ -15,6 +16,14 @@ end
 min_supported_ios_version = new_arch_enabled ? "15.1" : "15.1"
 min_supported_tvos_version = "15.1"
 min_supported_visionos_version = "1.0"
+
+cpp_flags = ""
+if debug_logging
+  cpp_flags << " -DRNS_DEBUG_LOGGING=1"
+end
+if gamma_project_enabled
+  cpp_flags << " -DRNS_GAMMA_ENABLED=1"
+end
 
 Pod::Spec.new do |s|
   s.name         = "RNScreens"
@@ -48,7 +57,11 @@ Pod::Spec.new do |s|
     # we can not have Swift code in stable package. 
     s.pod_target_xcconfig = {
       'DEFINES_MODULE' => 'YES',
-      'OTHER_CPLUSPLUSFLAGS' => '-DRNS_GAMMA_ENABLED=1'
+      'OTHER_CPLUSPLUSFLAGS' => cpp_flags
+    }
+  else
+    s.pod_target_xcconfig = {
+      'OTHER_CPLUSPLUSFLAGS' => cpp_flags
     }
   end
 
