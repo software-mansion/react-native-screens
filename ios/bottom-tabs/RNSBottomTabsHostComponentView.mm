@@ -10,6 +10,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSBottomTabsComponentDescriptor.h>
 #import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
+#import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
@@ -17,7 +18,6 @@
 #import "RNSConversions.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
-#import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSTabBarController.h"
 #import "RNSTabBarControllerDelegate.h"
 
@@ -190,7 +190,7 @@ namespace react = facebook::react;
 }
 #else
 
-#pragma mark - Paper specific
+#pragma mark - RCTInvalidating
 
 - (void)invalidate
 {

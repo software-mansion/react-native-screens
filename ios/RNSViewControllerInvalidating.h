@@ -5,6 +5,7 @@
 @protocol RNSViewControllerInvalidating
 
 - (void)invalidateController;
+
 - (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation;
 
 @end

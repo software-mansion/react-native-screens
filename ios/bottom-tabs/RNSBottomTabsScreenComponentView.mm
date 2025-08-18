@@ -110,9 +110,10 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
+#ifdef RCT_NEW_ARCH_ENABLED
+
 #pragma mark - RNSViewControllerInvalidating
 
-#ifdef RCT_NEW_ARCH_ENABLED
 - (void)invalidateController
 {
   _controller = nil;
@@ -120,7 +121,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #else
 
-#pragma mark - Paper specific
+#pragma mark - RCTInvalidating
 
 - (void)invalidate
 {
