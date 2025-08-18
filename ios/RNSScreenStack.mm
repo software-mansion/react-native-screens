@@ -1227,7 +1227,7 @@ RNS_IGNORE_SUPER_CALL_END
 // Be careful when adding another type of gesture recognizer.
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePressOrTouchEvent:(NSObject *)event
 {
-  if ([self isMidTransition]) {
+  if ([self isTransitionInProgress]) {
     return NO;
   }
 
@@ -1266,7 +1266,7 @@ RNS_IGNORE_SUPER_CALL_END
   return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:touch];
 }
 
-- (BOOL)isMidTransition
+- (BOOL)isTransitionInProgress
 {
   if (@available(iOS 26, *)) {
     if (_controller.transitionCoordinator != nil) {
