@@ -57,6 +57,27 @@ namespace react = facebook::react;
 
 @implementation RNSNavigationController
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+- (void)viewDidLoad
+{
+  // iOS 26 introduces new gesture recognizer which replaces our RNSPanGestureRecognizer.
+  // The problem is that we are not able to handle it here for various reasons:
+  // - the new recognizer comes with its own delegate and our current approach is to wire
+  //   all recognizers to RNSScreenStackView; to be 100% sure we don't break the logic,
+  //   we would have to decorate its delegate and call it after our code, which would
+  //   break other recognizers that the stack view is the delegate for
+  // - when RNSScreenStackView.setupGestureHandler method is called, the recognizer hasn't been
+  //   loaded yet and there is no other place to configure in a not "hacky" way
+  // - the official docs warn us to not use it for anything other than "setting up failure requirements with it"
+  // - we expose fullScreenGestureEnabled prop to enable/disable the feature,
+  //   so we need control over the delegate
+  if (@available(iOS 26.0, *)) {
+    self.interactiveContentPopGestureRecognizer.enabled = false;
+  }
+}
+#endif // iOS 26
+
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
