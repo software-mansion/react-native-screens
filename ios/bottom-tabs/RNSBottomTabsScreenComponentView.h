@@ -1,10 +1,10 @@
 #import <React/RCTImageSource.h>
 #import "RNSBottomTabsScreenEventEmitter.h"
 #import "RNSEnums.h"
-#import "RNSViewControllerInvalidating.h"
 #import "RNSReactBaseView.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabBarAppearanceProvider.h"
+#import "RNSViewControllerInvalidating.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
