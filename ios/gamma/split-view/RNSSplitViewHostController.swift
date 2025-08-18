@@ -7,7 +7,9 @@ import UIKit
 /// Manages a collection of RNSSplitViewScreenComponentView instances,
 /// synchronizes appearance settings with props, observes component lifecycle, and emits events.
 @objc
-public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving {
+public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving,
+  RNSOrientationProvidingSwift
+{
   private var needsChildViewControllersUpdate = false
 
   private var splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
@@ -77,6 +79,11 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   @objc
   public func setNeedsDisplayModeUpdate() {
     splitViewAppearanceCoordinator.needs(.displayModeUpdate)
+  }
+
+  @objc
+  public func setNeedsOrientationUpdate() {
+    splitViewAppearanceCoordinator.needs(.orientationUpdate)
   }
 
   // MARK: Updating
@@ -228,6 +235,37 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     updateChildViewControllersIfNeeded()
     updateSplitViewAppearanceIfNeeded()
     validateSplitViewHierarchy()
+  }
+
+  // MARK: RNSSplitViewHostOrientationProviding
+  @objc
+  public func evaluateOrientation() -> RNSOrientationSwift {
+    return convertToSwiftEnum(splitViewHostComponentView.orientation)
+  }
+
+  func convertToSwiftEnum(_ orientation: RNSOrientation) -> RNSOrientationSwift {
+    switch orientation {
+    case RNSOrientation.inherit:
+      return .inherit
+    case RNSOrientation.all:
+      return .all
+    case RNSOrientation.allButUpsideDown:
+      return .allButUpsideDown
+    case RNSOrientation.portrait:
+      return .portrait
+    case RNSOrientation.portraitUp:
+      return .portraitUp
+    case RNSOrientation.portraitDown:
+      return .portraitDown
+    case RNSOrientation.landscape:
+      return .landscape
+    case RNSOrientation.landscapeLeft:
+      return .landscapeLeft
+    case RNSOrientation.landscapeRight:
+      return .landscapeRight
+    @unknown default:
+      return .inherit
+    }
   }
 
   // MARK: Validators

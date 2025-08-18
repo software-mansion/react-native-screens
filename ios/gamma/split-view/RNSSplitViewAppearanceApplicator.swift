@@ -44,6 +44,10 @@ class RNSSplitViewAppearanceApplicator {
 
       self.updateSplitViewDisplayMode(for: splitView, withController: splitViewController)
     }
+
+    appearanceCoordinator.updateIfNeeded(.orientationUpdate) { [] in
+      RNSScreenWindowTraits.enforceDesiredDeviceOrientation()
+    }
   }
 
   ///

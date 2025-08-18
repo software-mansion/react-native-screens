@@ -20,17 +20,18 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import <utility>
 #endif
 #import <React/RCTBridge.h>
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
+#import "RNSBackBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
-#import "RNSUIBarButtonItem.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -70,6 +71,14 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
+
+  // Workaround for UIKit edgesForExtendedLayout bug on iOS 26.
+  // On iOS 26, there is additional offset for UINavigationBar that is not
+  // accounted for when using edgesForExtendedLayout. That's why we additionaly
+  // use safeAreaLayoutGuide when header is visible. When bug gets fixed, we can
+  // get rid of all code related to this workaround.
+  // More information: https://github.com/software-mansion/react-native-screens/pull/3111
+  NSArray<NSLayoutConstraint *> *_safeAreaConstraints;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
 
@@ -105,6 +114,7 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
     _translucent = NO;
     _addedReactSubviewsInCurrentTransaction = false;
     _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
+    _safeAreaConstraints = nil;
     [self initProps];
   }
   return self;
@@ -558,13 +568,44 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
+  // See comment above _safeAreaConstraints declaration for reason why this is necessary.
+  RNSScreenContentWrapper *contentWrapper = nil;
+  if (@available(iOS 26, *)) {
+    if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]]) {
+      contentWrapper = static_cast<RNSScreenContentWrapper *>(vc.view.subviews[0]);
+    }
+  }
+
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
     // the screen underneath navigation controllers
     vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
+
+    // See comment above _safeAreaConstraints declaration for reason why this is necessary.
+    if (contentWrapper != nil) {
+      // Use auto-layout
+      contentWrapper.translatesAutoresizingMaskIntoConstraints = NO;
+
+      if (config->_safeAreaConstraints == nil) {
+        config->_safeAreaConstraints = @[
+          [contentWrapper.topAnchor constraintEqualToAnchor:vc.view.safeAreaLayoutGuide.topAnchor],
+          [contentWrapper.bottomAnchor constraintEqualToAnchor:vc.view.bottomAnchor],
+          [contentWrapper.leadingAnchor constraintEqualToAnchor:vc.view.leadingAnchor],
+          [contentWrapper.trailingAnchor constraintEqualToAnchor:vc.view.trailingAnchor]
+        ];
+      }
+      [NSLayoutConstraint activateConstraints:config->_safeAreaConstraints];
+    }
   } else {
     // system default is UIRectEdgeAll
     vc.edgesForExtendedLayout = UIRectEdgeAll;
+
+    // See comment above _safeAreaConstraints declaration for reason why this is necessary.
+    if (contentWrapper != nil) {
+      [NSLayoutConstraint deactivateConstraints:config->_safeAreaConstraints];
+      config->_safeAreaConstraints = nil;
+      contentWrapper.translatesAutoresizingMaskIntoConstraints = YES;
+    }
   }
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
@@ -670,6 +711,14 @@ RNS_IGNORE_SUPER_CALL_END
             navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
 #endif /* Check for iOS 16.0 */
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+          if (@available(iOS 26.0, *)) {
+            // Workaround for missing search bar on root stack screen.
+            // See: https://github.com/software-mansion/react-native-screens/pull/3098
+            navitem.searchBarPlacementAllowsToolbarIntegration = NO;
+          }
+#endif /* Check for iOS 26.0 */
 #endif /* !TARGET_OS_TV */
         }
         break;
@@ -738,10 +787,10 @@ RNS_IGNORE_SUPER_CALL_END
   prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
 
   if (config.isBackTitleVisible) {
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
-                                                                                style:UIBarButtonItemStylePlain
-                                                                               target:nil
-                                                                               action:nil];
+    RNSBackBarButtonItem *backBarButtonItem = [[RNSBackBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                                    style:UIBarButtonItemStylePlain
+                                                                                   target:nil
+                                                                                   action:nil];
     auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
@@ -949,6 +998,10 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
+
+  // See comment above _safeAreaConstraints declaration for reason why this is necessary.
+  [NSLayoutConstraint deactivateConstraints:_safeAreaConstraints];
+  _safeAreaConstraints = nil;
 
 #ifdef RCT_NEW_ARCH_ENABLED
   _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});

@@ -18,7 +18,7 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.swmansion.rnscreens.Screen.WindowTraits
-import com.swmansion.rnscreens.utils.EdgeToEdgePackageDetector
+import com.swmansion.rnscreens.utils.EdgeToEdgeDetector
 
 object ScreenWindowTraits {
     // Methods concerning statusBar management were taken from `react-native`'s status bar module:
@@ -155,7 +155,7 @@ object ScreenWindowTraits {
         activity: Activity?,
         context: ReactContext?,
     ) {
-        if (activity == null || context == null || EdgeToEdgePackageDetector.ENABLED) {
+        if (activity == null || context == null || EdgeToEdgeDetector.ENABLED) {
             return
         }
         val screenForTranslucent = findScreenForTrait(screen, WindowTraits.TRANSLUCENT)
@@ -231,7 +231,7 @@ object ScreenWindowTraits {
         screen: Screen,
         activity: Activity?,
     ) {
-        if (activity == null || EdgeToEdgePackageDetector.ENABLED) {
+        if (activity == null || EdgeToEdgeDetector.ENABLED) {
             return
         }
 

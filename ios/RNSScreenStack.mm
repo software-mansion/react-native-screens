@@ -31,8 +31,13 @@
 #import "RNSTabsScreenViewController.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
-#import "utils/UINavigationBar+RNSUtility.h"
 #import "integrations/RNSDismissibleModalProtocol.h"
+#import "utils/UINavigationBar+RNSUtility.h"
+
+#ifdef RNS_GAMMA_ENABLED
+#import "RNSSplitViewScreenComponentView.h"
+#import "Swift-Bridging.h"
+#endif // RNS_GAMMA_ENABLED
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -100,6 +105,20 @@ namespace react = facebook::react;
   return [self topViewController].supportedInterfaceOrientations;
 }
 
+#if !TARGET_OS_TV
+
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.topViewController respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> top = static_cast<id<RNSOrientationProviding>>(self.topViewController);
+    return [top evaluateOrientation];
+  }
+
+  return RNSOrientationInherit;
+}
+
+#endif // !TARGET_OS_TV
+
 - (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
 {
   return [self topViewController];
@@ -147,6 +166,11 @@ namespace react = facebook::react;
         static_cast<RNSTabsScreenViewController *>(self.parentViewController);
     [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
   }
+#ifdef RNS_GAMMA_ENABLED
+  if (parent == nil) {
+    [self unregisterFromSplitView];
+  }
+#endif // RNS_GAMMA_ENABLED
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
@@ -156,6 +180,9 @@ namespace react = facebook::react;
     RNSTabsScreenViewController *parentTabsScreenVC = static_cast<RNSTabsScreenViewController *>(parent);
     [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
   }
+#ifdef RNS_GAMMA_ENABLED
+  [self registerForSplitView];
+#endif // RNS_GAMMA_ENABLED
 }
 
 - (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
@@ -171,6 +198,95 @@ namespace react = facebook::react;
 
   return false;
 }
+
+#pragma mark - UINavigationBarDelegate
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
+{
+  if (@available(iOS 26, *)) {
+    // To prevent popping multiple screens when back button is pressed repeatedly,
+    // We allow for pop operation to proceed only if no transition is in progress,
+    // which we check indirectly by checking if transitionCoordinator is set.
+    // If it's not, we are safe to proceed.
+    if (self.transitionCoordinator == nil) {
+      // We still need to disable interactions for back button so click effects are not applied,
+      // and there is unfortunately no better place for it currently
+      UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
+      if (button != nil) {
+        button.userInteractionEnabled = false;
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  return true;
+}
+
+- (void)navigationBar:(UINavigationBar *)navigationBar didPopItem:(UINavigationItem *)item
+{
+  if (@available(iOS 26, *)) {
+    // Reset interactions on back button -> see navigationBar:shouldPopItem
+    // IMPORTANT: This reset won't execute when preventNativeDismiss is on.
+    // However, on iOS 26, unlike in previous versions, the back button instance changes
+    // when handling preventNativeDismiss and userIteractionEnabled is reset.
+    // The instance also changes when regular screen pop happens, but in that case
+    // the value of userInteractionEnabled is carried on, and we reset it here.
+    UIView *button = [navigationBar rnscreens_findBackButtonWrapperView];
+    if (button != nil) {
+      button.userInteractionEnabled = true;
+    }
+  }
+}
+#endif // Check for iOS >= 26
+
+#pragma mark - RNSFrameCorrectionProvider
+
+#ifdef RNS_GAMMA_ENABLED
+- (void)registerForSplitView
+{
+  if (auto splitViewScreenController = [self findClosestSplitViewScreenController]) {
+    auto splitViewControllerView = [splitViewScreenController view];
+    RCTAssert(
+        [splitViewControllerView isKindOfClass:[RNSSplitViewScreenComponentView class]],
+        @"[RNScreens] splitViewControllerView must be type of RNSSplitViewScreenComponentView");
+    auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
+    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
+    [splitViewScreen registerForFrameUpdates:self.view.superview];
+  }
+}
+
+- (void)unregisterFromSplitView
+{
+  if (auto splitViewScreenController = [self findClosestSplitViewScreenController]) {
+    auto splitViewControllerView = [splitViewScreenController view];
+    RCTAssert(
+        [splitViewControllerView isKindOfClass:[RNSSplitViewScreenComponentView class]],
+        @"[RNScreens] splitViewControllerView must be type of RNSSplitViewScreenComponentView");
+    auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
+    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
+    [splitViewScreen unregisterFromFrameUpdates:self.view.superview];
+  }
+}
+
+- (RNSSplitViewScreenController *_Nullable)findClosestSplitViewScreenController
+{
+  auto parent = [self parentViewController];
+  while (parent) {
+    if ([parent isKindOfClass:[RNSSplitViewScreenController class]]) {
+      auto splitViewScreenController = (RNSSplitViewScreenController *)parent;
+      return splitViewScreenController;
+    }
+    parent = [parent parentViewController];
+  }
+
+  return nil;
+}
+#endif // RNS_GAMMA_ENABLED
 
 @end
 

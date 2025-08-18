@@ -14,12 +14,13 @@ import type {
   BottomTabsProps,
   NativeFocusChangeEvent,
 } from './BottomTabs.types';
+import { bottomTabsDebugLog } from '../../private/logging';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function BottomTabs(props: BottomTabsProps) {
-  console.info(`BottomTabs render`);
+  bottomTabsDebugLog(`BottomTabs render`);
 
   const {
     onNativeFocusChange,
@@ -43,7 +44,7 @@ function BottomTabs(props: BottomTabsProps) {
 
   const onNativeFocusChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
-      console.log(
+      bottomTabsDebugLog(
         `BottomTabs [${
           componentNodeHandle.current ?? -1
         }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,

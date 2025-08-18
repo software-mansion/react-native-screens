@@ -29,6 +29,7 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 
+#import "RNSConversions.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
@@ -757,10 +758,11 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 }
 
+#if !RCT_NEW_ARCH_ENABLED
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
-  // We need to call both "cancel" and "reset" here because RN's gesture recognizer
-  // does not handle the scenario when it gets cancelled by other top
+  // On Paper, we need to call both "cancel" and "reset" here because RN's gesture
+  // recognizer does not handle the scenario when it gets cancelled by other top
   // level gesture recognizer. In this case by the modal dismiss gesture.
   // Because of that, at the moment when this method gets called the React's
   // gesture recognizer is already in FAILED state but cancel events never gets
@@ -769,14 +771,10 @@ RNS_IGNORE_SUPER_CALL_END
   // pulling down starting at some touchable item. Without "reset" the touchable
   // will never go back from highlighted state even when the modal start sliding
   // down.
-#ifdef RCT_NEW_ARCH_ENABLED
-  [_touchHandler setEnabled:NO];
-  [_touchHandler setEnabled:YES];
-#else
   [_touchHandler cancel];
-#endif
   [_touchHandler reset];
 }
+#endif // !RCT_NEW_ARCH_ENABLED
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
@@ -2126,6 +2124,26 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   [super presentViewController:viewControllerToPresent animated:flag completion:completion];
 }
+
+#pragma mark - RNSOrientationProviding
+
+#if !TARGET_OS_TV
+
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.childViewControllers.lastObject respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> child = static_cast<id<RNSOrientationProviding>>(self.childViewControllers.lastObject);
+    RNSOrientation childOrientation = [child evaluateOrientation];
+
+    if (childOrientation != RNSOrientationInherit) {
+      return childOrientation;
+    }
+  }
+
+  return rnscreens::conversion::RNSOrientationFromUIInterfaceOrientationMask([self supportedInterfaceOrientations]);
+}
+
+#endif // !TARGET_OS_TV
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific

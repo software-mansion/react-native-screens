@@ -8,10 +8,28 @@
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
 
+#if !TARGET_OS_TV
+#import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
+
+#ifdef RNS_GAMMA_ENABLED
+#import "RNSFrameCorrectionProvider.h"
+#endif // RNS_GAMMA_ENABLED
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSNavigationController
-    : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting>
+@interface RNSNavigationController : UINavigationController <
+                                         RNSViewControllerDelegate,
+                                         RNSBottomTabsSpecialEffectsSupporting
+#if !TARGET_OS_TV
+                                         ,
+                                         RNSOrientationProviding
+#endif // !TARGET_OS_TV
+#ifdef RNS_GAMMA_ENABLED
+                                         ,
+                                         RNSFrameCorrectionProvider
+#endif // RNS_GAMMA_ENABLED
+                                         >
 
 @end
 

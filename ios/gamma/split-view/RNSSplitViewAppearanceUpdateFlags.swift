@@ -7,4 +7,5 @@ struct RNSSplitViewAppearanceUpdateFlags: OptionSet {
   static let generalUpdate = RNSSplitViewAppearanceUpdateFlags(rawValue: 1 << 0)
   static let secondaryScreenNavBarUpdate = RNSSplitViewAppearanceUpdateFlags(rawValue: 1 << 1)
   static let displayModeUpdate = RNSSplitViewAppearanceUpdateFlags(rawValue: 1 << 2)
+  static let orientationUpdate = RNSSplitViewAppearanceUpdateFlags(rawValue: 1 << 3)
 }
