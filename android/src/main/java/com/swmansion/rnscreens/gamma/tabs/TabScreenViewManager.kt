@@ -1,24 +1,12 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import android.content.Context
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
-import androidx.core.net.toUri
 import coil3.ImageLoader
 import coil3.asDrawable
 import coil3.request.ImageRequest
 import coil3.svg.SvgDecoder
-import com.bumptech.glide.Glide
-import com.facebook.common.executors.CallerThreadExecutor
-import com.facebook.common.references.CloseableReference
-import com.facebook.datasource.BaseDataSubscriber
-import com.facebook.datasource.DataSource
-import com.facebook.datasource.DataSubscriber
-import com.facebook.drawee.backends.pipeline.Fresco
-import com.facebook.imagepipeline.image.CloseableBitmap
-import com.facebook.imagepipeline.image.CloseableImage
-import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -231,60 +219,12 @@ class TabScreenViewManager :
     ) {
         val uri = value?.getString("uri")
 
-        /*
-            This works, but the first icon is loaded to early, and it don't respect icon color
-            We should be able to handle the first problem using controller from fresco or something
-            similar to listen for finish event. The seccond thing is probably about the difference
-            BitmapDrawable vs RootDrawable, not sure how to resolve that. Tried converting to bitmap and
-            back to BitmapDrawable without luck.
-         */
-
-//        if (uri != null) {
-//            val draweeView = SimpleDraweeView(context)
-//            draweeView.setImageURI(uri)
-//            view.icon = draweeView.drawable
-//        }
-
-        // Works fine lib (coil3) around 160kb in final bundle
         if (uri != null) {
             loadUsingCoil(view.context, uri) {
                 view.icon = it
             }
         }
-
-        // Works fine lib (glide) around 270kb in final bundle
-//        if (uri != null) {
-//            runBlocking {
-//                val drawable = loadGlideImage(view.context, uri)
-//                view.icon = drawable
-//            }
-//        }
-
-    /*
-        When you debug you can see that the drawable is properly downloaded, but it's not visible
-        My guess is that fresco may clear it automatically
-        Additionaly active indicator seems to be broken I have no idea why
-     */
-
-//        if (uri != null) {
-//            loadUsingFresco(uri) {
-//                view.icon = it
-//            }
-//        }
     }
-
-    suspend fun loadGlideImage(
-        context: Context,
-        uri: String,
-    ): Drawable =
-        withContext(Dispatchers.IO) {
-            Glide
-                .with(context)
-                .asDrawable()
-                .load(uri.toUri())
-                .submit()
-                .get()
-        }
 
     fun loadUsingCoil(
         context: Context,
@@ -308,41 +248,6 @@ class TabScreenViewManager :
                 ).build()
 
         imageLoader?.enqueue(request)
-    }
-
-    fun loadUsingFresco(
-        uri: String,
-        onLoad: (img: Drawable) -> Unit,
-    ) {
-        val request =
-            ImageRequestBuilder
-                .newBuilderWithSource(uri.toUri())
-                .build()
-        val imagePipeline = Fresco.getImagePipeline()
-        val dataSource =
-            imagePipeline.fetchDecodedImage(request, null)
-        val dataSubscriber: DataSubscriber<CloseableReference<CloseableImage>> =
-            object : BaseDataSubscriber<CloseableReference<CloseableImage>>() {
-                override fun onNewResultImpl(dataSource: DataSource<CloseableReference<CloseableImage>>) {
-                    if (!dataSource.isFinished) {
-                        return
-                    }
-                    val ref = dataSource.result!!.get()
-                    if (ref is CloseableBitmap) {
-                        val bitmap = ref.underlyingBitmap
-                        val bitmapDrawable = BitmapDrawable(context!!.resources, bitmap)
-                        onLoad(bitmapDrawable)
-                    } else {
-                        println("NOPE")
-                    }
-                }
-
-                override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>>) {
-                    TODO("Not yet implemented")
-                }
-            }
-
-        dataSource.subscribe(dataSubscriber, CallerThreadExecutor.getInstance())
     }
 
     companion object {
