@@ -5,19 +5,12 @@
 
 @implementation RNSViewControllerInvalidator
 
-+ (void)invalidateViewIfDetached:(UIView *)view
++ (void)invalidateViewIfDetached:(UIView<RNSViewControllerInvalidating> *)view
 {
-  RCTAssert(
-      [view conformsToProtocol:@protocol(RNSViewControllerInvalidating)],
-      @"[RNScreens] View of type: %@ doesn't conform to RNSViewControllerInvalidating",
-      view.class);
-
-  UIView<RNSViewControllerInvalidating> *invalidationTarget = (UIView<RNSViewControllerInvalidating> *)view;
-
-  if (invalidationTarget.window == nil) {
-    [invalidationTarget invalidateController];
+  if (view.window == nil) {
+    [view invalidateController];
   } else {
-    [[RNSInvalidatedComponentsRegistry invalidatedComponentsRegistry] pushForInvalidation:invalidationTarget];
+    [[RNSInvalidatedComponentsRegistry invalidatedComponentsRegistry] pushForInvalidation:view];
   }
 }
 
