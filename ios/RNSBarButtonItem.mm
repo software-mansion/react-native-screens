@@ -29,15 +29,17 @@ static char RNSBarButtonItemIdKey;
       NSString *fontWeight = titleStyle[@"fontWeight"];
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       if (fontFamily || fontWeight) {
+        NSNumber *resolvedFontSize = fontSize ? fontSize : [NSNumber numberWithFloat:[UIFont labelFontSize]];
         attrs[NSFontAttributeName] = [RCTFont updateFont:nil
                                               withFamily:fontFamily
-                                                    size:fontSize
+                                                    size:resolvedFontSize
                                                   weight:fontWeight
                                                    style:nil
                                                  variant:nil
                                          scaleMultiplier:1.0];
       } else {
-        attrs[NSFontAttributeName] = [UIFont systemFontOfSize:[fontSize floatValue]];
+        CGFloat resolvedFontSize = fontSize ? [fontSize floatValue] : [UIFont labelFontSize];
+        attrs[NSFontAttributeName] = [UIFont systemFontOfSize:resolvedFontSize];
       }
       id titleColor = titleStyle[@"color"];
       if (titleColor) {
