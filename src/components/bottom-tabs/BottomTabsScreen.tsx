@@ -3,6 +3,7 @@
 import React from 'react';
 import { Freeze } from 'react-freeze';
 import {
+  Image,
   StyleSheet,
   findNodeHandle,
   type ImageSourcePropType,
@@ -48,6 +49,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     freezeContents,
     icon,
     selectedIcon,
+    iconResource,
     ...rest
   } = props;
 
@@ -107,6 +109,11 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
+  let parsedIconResource;
+  if(iconResource) {
+    parsedIconResource = Image.resolveAssetSource(iconResource);
+  }
+
   return (
     <BottomTabsScreenNativeComponent
       collapsable={false}
@@ -116,6 +123,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
+      iconResource={parsedIconResource || iconResource}
       {...iconProps}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
