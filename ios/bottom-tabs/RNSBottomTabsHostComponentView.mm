@@ -169,6 +169,8 @@ namespace react = facebook::react;
   [self updateContainer];
 }
 
+#if RCT_NEW_ARCH_ENABLED
+
 #pragma mark - RNSViewControllerInvalidating
 
 - (void)invalidateController
@@ -176,12 +178,27 @@ namespace react = facebook::react;
   _controller = nil;
 }
 
-#if RCT_NEW_ARCH_ENABLED
 - (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
 {
   return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
 }
-#endif // RCT_NEW_ARCH_ENABLED
+#else
+
+#pragma mark - Paper specific
+
+- (void)invalidate
+{
+  // We assume that bottom tabs host is removed from view hierarchy **only** when
+  // whole component is destroyed & therefore we do the necessary cleanup here.
+  // If at some point that statement does not hold anymore, this cleanup
+  // should be moved to a different place.
+  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
+    [subview invalidate];
+  }
+  _controller = nil;
+}
+
+#endif
 
 #pragma mark - React events
 
