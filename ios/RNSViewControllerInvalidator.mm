@@ -5,12 +5,13 @@
 
 @implementation RNSViewControllerInvalidator
 
-+ (void)invalidateViewIfDetached:(UIView<RNSViewControllerInvalidating> *)view
++ (void)invalidateViewIfDetached:(UIView<RNSViewControllerInvalidating> *_Nonnull)view
+                     forRegistry:(RNSInvalidatedComponentsRegistry *_Nonnull)registry
 {
   if (view.window == nil) {
     [view invalidateController];
   } else {
-    [[RNSInvalidatedComponentsRegistry invalidatedComponentsRegistry] pushForInvalidation:view];
+    [registry pushForInvalidation:view];
   }
 }
 

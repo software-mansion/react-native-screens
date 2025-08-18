@@ -39,6 +39,8 @@ namespace react = facebook::react;
 
   RCTImageLoader *_Nullable _imageLoader;
 
+  RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
+
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
   NSMutableArray<RNSBottomTabsScreenComponentView *> *_reactSubviews;
@@ -81,6 +83,8 @@ namespace react = facebook::react;
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSBottomTabsHostEventEmitter new];
 
+  _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
+
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   _needsTabBarAppearanceUpdate = NO;
 }
@@ -112,7 +116,7 @@ namespace react = facebook::react;
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
   if (newWindow == nil) {
-    [[RNSInvalidatedComponentsRegistry invalidatedComponentsRegistry] flushInvalidViews];
+    [_invalidatedComponentsRegistry flushInvalidViews];
   }
 }
 
@@ -360,10 +364,10 @@ namespace react = facebook::react;
   for (const auto &mutation : transaction.getMutations()) {
     if ([self shouldInvalidateOnMutation:mutation]) {
       for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
-        [RNSViewControllerInvalidator invalidateViewIfDetached:childView];
+        [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
       }
 
-      [RNSViewControllerInvalidator invalidateViewIfDetached:self];
+      [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
     }
   }
 }

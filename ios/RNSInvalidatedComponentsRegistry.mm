@@ -6,16 +6,6 @@
 
 @implementation RNSInvalidatedComponentsRegistry
 
-+ (instancetype)invalidatedComponentsRegistry
-{
-  static RNSInvalidatedComponentsRegistry *sharedInstance = nil;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    sharedInstance = [[RNSInvalidatedComponentsRegistry alloc] init];
-  });
-  return sharedInstance;
-}
-
 - (instancetype)init
 {
   if (self = [super init]) {

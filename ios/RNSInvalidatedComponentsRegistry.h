@@ -3,8 +3,6 @@
 
 @interface RNSInvalidatedComponentsRegistry : NSObject
 
-+ (instancetype)invalidatedComponentsRegistry;
-
 - (void)pushForInvalidation:(UIView<RNSViewControllerInvalidating> *)view;
 - (void)flushInvalidViews;
 
