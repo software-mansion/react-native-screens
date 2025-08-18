@@ -123,6 +123,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
+      // I'm keeping iconResource as a fallback if `Image.resolveAssetSource` has failed for some reason.
       iconResource={parsedIconResource || iconResource}
       {...iconProps}
       // @ts-ignore - This is debug only anyway
