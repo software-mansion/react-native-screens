@@ -9,6 +9,7 @@ const Stack = createNativeStackNavigator();
 const demoScreens = [
   { name: 'PlainButtonDemo', title: 'Plain Button' },
   { name: 'IconButtonDemo', title: 'Icon Button' },
+  { name: 'SystemIconButtonDemo', title: 'System Icon Button' },
   { name: 'MenuButtonDemo', title: 'Menu Button' },
   { name: 'BadgeButtonDemo', title: 'Badge Button' },
   { name: 'DisabledButtonDemo', title: 'Disabled Button' },
@@ -90,6 +91,19 @@ export default function BarButtonItemsExample() {
           headerRightBarButtonItems: [
             {
               image: require('../../assets/search_black.png'),
+              onPress: () => Alert.alert('Icon pressed'),
+            },
+          ],
+        }}
+      />
+      <Stack.Screen
+        name="SystemIconButtonDemo"
+        component={IconButtonDemo}
+        options={{
+          title: 'System image Button',
+          headerRightBarButtonItems: [
+            {
+              systemImage: "square.and.arrow.up",
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
