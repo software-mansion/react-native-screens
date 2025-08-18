@@ -21,6 +21,10 @@ static char RNSBarButtonItemIdKey;
     if (imageObj) {
       self.image = [RCTConvert UIImage:imageObj];
     }
+    NSString *systemImage = dict[@"systemImage"];
+    if (systemImage) {
+      self.image = [UIImage systemImageNamed:systemImage];
+    }
 
     NSDictionary *titleStyle = dict[@"titleStyle"];
     if (titleStyle) {
