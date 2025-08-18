@@ -2,7 +2,6 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
-#import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
 
