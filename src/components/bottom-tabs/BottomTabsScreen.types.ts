@@ -203,7 +203,7 @@ export interface BottomTabsScreenProps {
   iconResourceName?: string;
   /**
    * @summary Specifies the icon for the tab bar item.
-   * 
+   *
    * Accepts a path to the external image asset. As for now, it respects an image from local assets
    * and passed by `source.uri` property.
    *

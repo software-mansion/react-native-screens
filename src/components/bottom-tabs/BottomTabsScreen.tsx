@@ -110,7 +110,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
   let parsedIconResource;
-  if(iconResource) {
+  if (iconResource) {
     parsedIconResource = Image.resolveAssetSource(iconResource);
   }
 

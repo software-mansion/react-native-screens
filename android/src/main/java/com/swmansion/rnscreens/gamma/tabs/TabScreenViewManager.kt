@@ -21,8 +21,6 @@ import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
 import com.swmansion.rnscreens.utils.RNSLog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @ReactModule(name = TabScreenViewManager.REACT_CLASS)
 class TabScreenViewManager :
@@ -226,7 +224,7 @@ class TabScreenViewManager :
         }
     }
 
-    fun loadUsingCoil(
+    private fun loadUsingCoil(
         context: Context,
         uri: String,
         onLoad: (img: Drawable) -> Unit,
@@ -240,10 +238,10 @@ class TabScreenViewManager :
                     onLoad(stateDrawable)
                 }.listener(
                     onError = { _, result ->
-                        Log.e("RCTTabView", "Error loading image: $uri", result.throwable)
+                        Log.e("[RNScreens]", "Error loading image: $uri", result.throwable)
                     },
                     onCancel = {
-                        Log.w("Cancel", "WTF?")
+                        Log.w("[RNScreens]", "Image loading request: $uri has been cancelled")
                     },
                 ).build()
 
