@@ -1,3 +1,5 @@
+#ifdef RCT_NEW_ARCH_ENABLED
+
 #import "RNSInvalidatedComponentsRegistry.h"
 
 @interface RNSInvalidatedComponentsRegistry ()
@@ -28,3 +30,5 @@
 }
 
 @end
+
+#endif // RCT_NEW_ARCH_ENABLED

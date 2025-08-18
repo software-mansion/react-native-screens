@@ -1,3 +1,5 @@
+#ifdef RCT_NEW_ARCH_ENABLED
+
 #import <UIKit/UIKit.h>
 
 #import "RNSInvalidatedComponentsRegistry.h"
@@ -9,3 +11,5 @@
                      forRegistry:(RNSInvalidatedComponentsRegistry *_Nonnull)registry;
 
 @end
+
+#endif // RCT_NEW_ARCH_ENABLED

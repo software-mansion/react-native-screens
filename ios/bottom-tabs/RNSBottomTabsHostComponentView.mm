@@ -39,7 +39,9 @@ namespace react = facebook::react;
 
   RCTImageLoader *_Nullable _imageLoader;
 
+#if RCT_NEW_ARCH_ENABLED
   RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
+#endif // RCT_NEW_ARCH_ENABLED
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -83,7 +85,9 @@ namespace react = facebook::react;
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSBottomTabsHostEventEmitter new];
 
+#if RCT_NEW_ARCH_ENABLED
   _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
+#endif // RCT_NEW_ARCH_ENABLED
 
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   _needsTabBarAppearanceUpdate = NO;
@@ -115,9 +119,11 @@ namespace react = facebook::react;
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
+#if RCT_NEW_ARCH_ENABLED
   if (newWindow == nil) {
     [_invalidatedComponentsRegistry flushInvalidViews];
   }
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)didMoveToWindow
@@ -378,6 +384,7 @@ namespace react = facebook::react;
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   [_controller reactMountingTransactionWillMount];
 
+#if RCT_NEW_ARCH_ENABLED
   for (const auto &mutation : transaction.getMutations()) {
     if ([self shouldInvalidateOnMutation:mutation]) {
       for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
@@ -387,6 +394,7 @@ namespace react = facebook::react;
       [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
     }
   }
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction

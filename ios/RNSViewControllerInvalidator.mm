@@ -1,3 +1,5 @@
+#ifdef RCT_NEW_ARCH_ENABLED
+
 #import "RNSViewControllerInvalidator.h"
 #import <React/RCTAssert.h>
 #import "RNSInvalidatedComponentsRegistry.h"
@@ -16,3 +18,5 @@
 }
 
 @end
+
+#endif // RCT_NEW_ARCH_ENABLED

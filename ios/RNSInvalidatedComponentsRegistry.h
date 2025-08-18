@@ -1,3 +1,5 @@
+#ifdef RCT_NEW_ARCH_ENABLED
+
 #import <UIKit/UIKit.h>
 #import "RNSViewControllerInvalidating.h"
 
@@ -7,3 +9,5 @@
 - (void)flushInvalidViews;
 
 @end
+
+#endif // RCT_NEW_ARCH_ENABLED
