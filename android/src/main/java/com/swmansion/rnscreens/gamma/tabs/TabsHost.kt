@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.util.Log
 import android.view.Choreographer
 import android.view.MenuItem
 import android.widget.FrameLayout
@@ -13,6 +12,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
 
 class TabsHost(
@@ -190,14 +190,14 @@ class TabsHost(
         addView(bottomNavigationView)
 
         bottomNavigationView.addOnLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            Log.d(
+            RNSLog.d(
                 TAG,
                 "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}",
             )
         }
 
         bottomNavigationView.setOnItemSelectedListener { item ->
-            Log.d(TAG, "Item selected $item")
+            RNSLog.d(TAG, "Item selected $item")
             val fragment = getFragmentForMenuItemId(item.itemId)
             val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
             eventEmitter.emitOnNativeFocusChange(tabKey)
@@ -206,7 +206,7 @@ class TabsHost(
     }
 
     override fun onAttachedToWindow() {
-        Log.d(TAG, "TabsHost [$id] attached to window")
+        RNSLog.d(TAG, "TabsHost [$id] attached to window")
         super.onAttachedToWindow()
         fragmentManager =
             checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
@@ -286,7 +286,7 @@ class TabsHost(
     override fun getFragmentForTabScreen(tabScreen: TabScreen): TabScreenFragment? = tabScreenFragments.find { it.tabScreen === tabScreen }
 
     private fun updateBottomNavigationViewAppearance() {
-        Log.w(TAG, "updateBottomNavigationViewAppearance")
+        RNSLog.d(TAG, "updateBottomNavigationViewAppearance")
 
         appearanceCoordinator.updateTabAppearance(this)
 
@@ -295,7 +295,7 @@ class TabsHost(
 
         post {
             refreshLayout()
-            Log.d(TAG, "BottomNavigationView request layout")
+            RNSLog.d(TAG, "BottomNavigationView request layout")
         }
     }
 

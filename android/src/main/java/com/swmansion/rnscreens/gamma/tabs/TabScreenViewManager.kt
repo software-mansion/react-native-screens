@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.util.Log
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -14,6 +13,7 @@ import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
+import com.swmansion.rnscreens.utils.RNSLog
 
 @ReactModule(name = TabScreenViewManager.REACT_CLASS)
 class TabScreenViewManager :
@@ -24,7 +24,7 @@ class TabScreenViewManager :
     override fun getName() = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext): TabScreen {
-        Log.d(REACT_CLASS, "createViewInstance")
+        RNSLog.d(REACT_CLASS, "createViewInstance")
         return TabScreen(reactContext)
     }
 
@@ -132,7 +132,7 @@ class TabScreenViewManager :
         view: TabScreen,
         value: Boolean,
     ) {
-        Log.d(REACT_CLASS, "TabScreen [${view.id}] setIsFocused $value")
+        RNSLog.d(REACT_CLASS, "TabScreen [${view.id}] setIsFocused $value")
         view.isFocusedTab = value
     }
 
