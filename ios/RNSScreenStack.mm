@@ -73,7 +73,7 @@ namespace react = facebook::react;
   // - we expose fullScreenGestureEnabled prop to enable/disable the feature,
   //   so we need control over the delegate
   if (@available(iOS 26.0, *)) {
-    self.interactiveContentPopGestureRecognizer.enabled = false;
+    self.interactiveContentPopGestureRecognizer.enabled = NO;
   }
 }
 #endif // iOS 26
