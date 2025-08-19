@@ -176,11 +176,9 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
     _standardAppearance = [UITabBarAppearance new];
-    if (newComponentProps.standardAppearance.type() == folly::dynamic::OBJECT) {
-      [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
-                                            fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
-                                                                    newComponentProps.standardAppearance)];
-    }
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
+                                          fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                                  newComponentProps.standardAppearance)];
     tabItemNeedsAppearanceUpdate = YES;
   }
 
