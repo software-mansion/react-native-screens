@@ -1,6 +1,6 @@
 'use client';
 
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import { codegenNativeComponent } from 'react-native';
 import type { ColorValue, ViewProps } from 'react-native';
 import {
   DirectEventHandler,
@@ -10,7 +10,7 @@ import {
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 // @ts-ignore: ImageSource type has been recently added: https://github.com/facebook/react-native/pull/51969
-import type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
+import type { ImageSource } from 'react-native';
 
 // iOS-specific: SFSymbol, image as a template usage
 export type IconType = 'image' | 'template' | 'sfSymbol';
