@@ -1,6 +1,6 @@
 // NOTE: The full native feature set (style, image, menu, etc.) is available, but the TS types in src/types.tsx need to be updated to match. This example uses only the currently typed props (title, icon, onPress, enabled).
 import React from 'react';
-import { View, Alert, Button, Text, Platform } from 'react-native';
+import { View, Alert, Button, Text, Platform, TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -22,6 +22,8 @@ const demoScreens = [
   { name: 'HeaderTintColorDemo', title: 'Header Tint Color' },
   { name: 'DoneStyleButtonDemo', title: 'Done Style Button' },
   { name: 'AdvancedMenuButtonDemo', title: 'Advanced Menu Button' },
+  { name: 'ReactNodeButtonDemo', title: 'React Node Button' },
+  { name: "BackButtonVisibleDemo", title: "Back Button Visible" },
 ];
 
 const MainScreen = ({ navigation }: any) => (
@@ -61,6 +63,8 @@ const IconButtonsWithSpacingDemo = DemoScreenContent;
 const HeaderTintColorDemo = DemoScreenContent;
 const DoneStyleButtonDemo = DemoScreenContent;
 const AdvancedMenuButtonDemo = DemoScreenContent;
+const ReactNodeButtonDemo = DemoScreenContent;
+const BackButtonVisibleDemo = DemoScreenContent;
 
 export default function BarButtonItemsExample() {
   return (
@@ -75,8 +79,7 @@ export default function BarButtonItemsExample() {
         component={PlainButtonDemo}
         options={{
           title: 'Plain Button',
-          headerRightBarButtonItems: [
-            {
+          headerRightItems: [{
               title: 'Info',
               onPress: () => Alert.alert('Info pressed'),
             },
@@ -88,7 +91,7 @@ export default function BarButtonItemsExample() {
         component={IconButtonDemo}
         options={{
           title: 'Icon Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon pressed'),
@@ -101,7 +104,7 @@ export default function BarButtonItemsExample() {
         component={IconButtonDemo}
         options={{
           title: 'System image Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               systemImage: "square.and.arrow.up",
               onPress: () => Alert.alert('Icon pressed'),
@@ -114,7 +117,7 @@ export default function BarButtonItemsExample() {
         component={MenuButtonDemo}
         options={{
           title: 'Menu Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Menu',
               menu: {
@@ -138,7 +141,7 @@ export default function BarButtonItemsExample() {
         component={BadgeButtonDemo}
         options={{
           title: 'Badge Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Badge',
               badge: {
@@ -156,7 +159,7 @@ export default function BarButtonItemsExample() {
         component={DisabledButtonDemo}
         options={{
           title: 'Disabled Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Disabled',
               enabled: false,
@@ -170,7 +173,7 @@ export default function BarButtonItemsExample() {
         component={CustomColorButtonDemo}
         options={{
           title: 'Custom Color Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Purple',
               tintColor: 'purple',
@@ -184,7 +187,7 @@ export default function BarButtonItemsExample() {
         component={ProminentStyleButtonDemo}
         options={{
           title: 'Prominent Style Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Prominent',
               style: 'prominent',
@@ -199,7 +202,7 @@ export default function BarButtonItemsExample() {
         component={TitleStyleButtonDemo}
         options={{
           title: 'Title Style Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Styled',
               titleStyle: {
@@ -218,7 +221,7 @@ export default function BarButtonItemsExample() {
         component={IconSharesBgButtonDemo}
         options={{
           title: 'Icon SharesBackground',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
@@ -240,7 +243,7 @@ export default function BarButtonItemsExample() {
         component={TextButtonWithWidthDemo}
         options={{
           title: 'Text Button With Width',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Wide',
               width: 100,
@@ -254,7 +257,7 @@ export default function BarButtonItemsExample() {
         component={IconButtonsWithSpacingDemo}
         options={{
           title: 'Icon Buttons With Spacing',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('First icon pressed'),
@@ -275,7 +278,7 @@ export default function BarButtonItemsExample() {
         options={{
           title: 'Header Tint Color',
           headerTintColor: 'red',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Tinted',
               onPress: () => Alert.alert('Tinted pressed'),
@@ -292,7 +295,7 @@ export default function BarButtonItemsExample() {
         component={DoneStyleButtonDemo}
         options={{
           title: 'Done Style Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Done',
               style: 'done',
@@ -311,7 +314,7 @@ export default function BarButtonItemsExample() {
         component={AdvancedMenuButtonDemo}
         options={{
           title: 'Advanced Menu Button',
-          headerRightBarButtonItems: [
+          headerRightItems: [
             {
               title: 'Menu',
               menu: {
@@ -355,6 +358,42 @@ export default function BarButtonItemsExample() {
           ],
         }}
       />
+      <Stack.Screen name="ReactNodeButtonDemo"
+        component={ReactNodeButtonDemo}
+        options={{
+          title: 'React Node Button',
+          headerBackVisible: true,
+          headerRightItems: [
+            // eslint-disable-next-line react/no-unstable-nested-components
+            () => <TouchableOpacity onPress={() => Alert.alert('React Node 1 pressed')}>
+              <Text style={{ color: 'blue' }}>React Node 1</Text>
+            </TouchableOpacity>,
+            {
+              title: "Native",
+              onPress: () => Alert.alert('Native button pressed'),
+            },
+            // eslint-disable-next-line react/no-unstable-nested-components
+            () => <TouchableOpacity onPress={() => Alert.alert('React Node 2 pressed')}>
+              <Text style={{ color: 'red' }}>React Node 2</Text>
+            </TouchableOpacity>,
+
+          ],
+        }} />
+      <Stack.Screen name="BackButtonVisibleDemo"
+        component={BackButtonVisibleDemo}
+        options={{
+          title: 'Back Button Visible',
+          headerBackVisible: true,
+          headerLeftItems: [
+            () => <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
+                <Text style={{ color: 'blue' }}>React Node</Text>
+              </TouchableOpacity>,
+            {
+              title: "Native",
+              onPress: () => Alert.alert('Native button pressed'),
+            },
+          ],
+        }} />
     </Stack.Navigator>
   );
 }
