@@ -90,7 +90,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         sfSymbolName: 'rectangle.stack.fill',
       },
       // iconResourceName: 'sym_action_chat', // Android specific
-      iconResource: require('../../../assets/variableIcons/icon.png'),
+      iconResource: require('../../../assets/svg/cart.svg'),
       title: 'Tab4',
       badgeValue: '',
       orientation: 'portrait',
