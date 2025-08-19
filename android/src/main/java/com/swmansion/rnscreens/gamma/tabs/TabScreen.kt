@@ -1,12 +1,12 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
+import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -77,7 +77,7 @@ class TabScreen(
     }
 
     override fun onAttachedToWindow() {
-        Log.d(TAG, "TabScreen [$id] attached to window")
+        RNSLog.d(TAG, "TabScreen [$id] attached to window")
         super.onAttachedToWindow()
     }
 

@@ -4,6 +4,7 @@
 #import "RNSDefines.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
+#import "RNSLog.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -187,7 +188,7 @@ RNS_IGNORE_SUPER_CALL_END
     _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
     // Note that this will prevent default color from being set.
     // TODO: support default color by setting nil here.
-    NSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _tabBarItemBadgeBackgroundColor);
+    RNSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _tabBarItemBadgeBackgroundColor);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -311,7 +312,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {
-  NSLog(
+  RNSLog(
       @"TabScreen [%ld] updateLayoutMetrics: %@", self.tag, NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)));
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
 }
@@ -325,13 +326,13 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  NSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
+  RNSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
   [super mountChildComponentView:childComponentView index:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  NSLog(@"TabScreen [%ld] unmount [%ld] from %ld", self.tag, childComponentView.tag, index);
+  RNSLog(@"TabScreen [%ld] unmount [%ld] from %ld", self.tag, childComponentView.tag, index);
   [super unmountChildComponentView:childComponentView index:index];
 }
 

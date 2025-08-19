@@ -38,6 +38,10 @@ def isNewArchitectureEnabled() {
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
 
+def areDebugLogsEnabled() {
+    return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
+}
+
 def resolveReactNativeDirectory() {
     def userDefinedRnDirPath = safeAppExtGet("REACT_NATIVE_NODE_MODULES_DIR", null)
     if (userDefinedRnDirPath != null) {
@@ -127,6 +131,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
+        buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
