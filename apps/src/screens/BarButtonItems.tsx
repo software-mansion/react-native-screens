@@ -79,7 +79,8 @@ export default function BarButtonItemsExample() {
         component={PlainButtonDemo}
         options={{
           title: 'Plain Button',
-          headerRightItems: [{
+          headerRightItems: [
+            {
               title: 'Info',
               onPress: () => Alert.alert('Info pressed'),
             },
