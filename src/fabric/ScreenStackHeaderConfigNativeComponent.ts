@@ -1,6 +1,6 @@
 'use client';
 
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import { codegenNativeComponent } from 'react-native';
 import type { ViewProps, ColorValue } from 'react-native';
 import type {
   Int32,
