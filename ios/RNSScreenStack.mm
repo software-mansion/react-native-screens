@@ -1227,8 +1227,12 @@ RNS_IGNORE_SUPER_CALL_END
 // Be careful when adding another type of gesture recognizer.
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePressOrTouchEvent:(NSObject *)event
 {
-  if ([self isTransitionInProgress]) {
-    return NO;
+  if (@available(iOS 26, *)) {
+    // in iOS 26, you can swipe to pop screen before the previous one finished transitioning;
+    // this prevents from registering the second gesture
+    if ([self isTransitionInProgress]) {
+      return NO;
+    }
   }
 
   RNSScreenView *topScreen = _reactSubviews.lastObject;
@@ -1268,10 +1272,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (BOOL)isTransitionInProgress
 {
-  if (@available(iOS 26, *)) {
-    if (_controller.transitionCoordinator != nil) {
-      return YES;
-    }
+  if (_controller.transitionCoordinator != nil) {
+    return YES;
   }
 
   return NO;
