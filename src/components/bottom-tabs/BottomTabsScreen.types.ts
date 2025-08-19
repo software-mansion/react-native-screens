@@ -156,13 +156,13 @@ export interface BottomTabsScreenItemAppearance {
    */
   selected?: BottomTabsScreenItemStateAppearance;
   /**
-   * Specifies the tab bar item appearance when it's disabled.
+   * Specifies the tab bar item appearance when it's focused.
    *
    * @platform ios
    */
   focused?: BottomTabsScreenItemStateAppearance;
   /**
-   * Specifies the tab bar item appearance when it's focused.
+   * Specifies the tab bar item appearance when it's disabled.
    *
    * @platform ios
    */
