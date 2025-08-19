@@ -112,6 +112,11 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
   let parsedIconResource;
   if (iconResource) {
     parsedIconResource = Image.resolveAssetSource(iconResource);
+    if (!parsedIconResource) {
+      console.error(
+        '[RNScreens] failed to resolve an asset for bottom tab icon',
+      );
+    }
   }
 
   return (
@@ -124,7 +129,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
       // I'm keeping iconResource as a fallback if `Image.resolveAssetSource` has failed for some reason.
-      iconResource={parsedIconResource || iconResource}
+      iconResource={parsedIconResource || undefined}
       {...iconProps}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
