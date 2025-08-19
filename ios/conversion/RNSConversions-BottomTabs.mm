@@ -62,7 +62,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *b
 #endif // !TARGET_OS_TV
   else {
 #if !TARGET_OS_TV
-    RCTLogError(@"[RNScreens] unsupported blur effect style");
+    RCTLogError(@"[RNScreens] Unsupported blur effect style: %@", blurEffectString);
 #endif // !TARGET_OS_TV
     return std::nullopt;
   }
