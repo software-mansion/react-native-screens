@@ -97,6 +97,7 @@ export interface NativeProps extends ViewProps {
 
   // Android-specific image handling
   iconResourceName?: string;
+  iconResource?: ImageSource;
   tabBarItemBadgeTextColor?: ColorValue;
 
   // iOS-specific: SFSymbol usage
