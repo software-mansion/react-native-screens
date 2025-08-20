@@ -4,7 +4,7 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import { Button, Text, ScrollView } from 'react-native';
+import { Button, Text, View, ScrollView } from 'react-native';
 import Colors from '../shared/styling/Colors';
 
 type StackRouteParamList = {
@@ -37,7 +37,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
-        fullScreenGestureEnabled: true,
         headerStyle: {
           backgroundColor: Colors.PurpleDark120
         }
