@@ -5,6 +5,12 @@
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabBarAppearanceProvider.h"
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSViewControllerInvalidating.h"
+#else
+#import <React/RCTInvalidating.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomTabsHostComponentView;
@@ -14,7 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSBottomTabsScreenComponentView : RNSReactBaseView
+@interface RNSBottomTabsScreenComponentView : RNSReactBaseView <
+#ifdef RCT_NEW_ARCH_ENABLED
+                                                  RNSViewControllerInvalidating
+#else
+                                                  RCTInvalidating
+#endif
+                                                  >
 
 /**
  * View controller responsible for managing tab represented by this component view.
@@ -25,13 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
  * If not null, the bottom tabs host view that this tab component view belongs to.
  */
 @property (nonatomic, weak, nullable) RNSBottomTabsHostComponentView *reactSuperview;
-
-/**
- * @brief A function responsible for requesting a cleanup in the BottomTabsScreen component.
- *
- * Should be called when the component is about to be deleted.
- */
-- (void)invalidate;
 
 @end
 

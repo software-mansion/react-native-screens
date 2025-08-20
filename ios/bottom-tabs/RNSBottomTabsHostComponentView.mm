@@ -10,6 +10,8 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSBottomTabsComponentDescriptor.h>
 #import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
+#import "RNSInvalidatedComponentsRegistry.h"
+#import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSBottomTabsScreenComponentView.h"
@@ -37,6 +39,10 @@ namespace react = facebook::react;
   RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
   RCTImageLoader *_Nullable _imageLoader;
+
+#if RCT_NEW_ARCH_ENABLED
+  RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
+#endif // RCT_NEW_ARCH_ENABLED
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -80,6 +86,10 @@ namespace react = facebook::react;
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSBottomTabsHostEventEmitter new];
 
+#if RCT_NEW_ARCH_ENABLED
+  _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
+#endif // RCT_NEW_ARCH_ENABLED
+
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   _needsTabBarAppearanceUpdate = NO;
 }
@@ -110,9 +120,11 @@ namespace react = facebook::react;
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
+#if RCT_NEW_ARCH_ENABLED
   if (newWindow == nil) {
-    [self invalidate];
+    [_invalidatedComponentsRegistry flushInvalidViews];
   }
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)didMoveToWindow
@@ -144,18 +156,6 @@ namespace react = facebook::react;
   }
 }
 
-- (void)invalidate
-{
-  // We assume that bottom tabs host is removed from view hierarchy **only** when
-  // whole component is destroyed & therefore we do the necessary cleanup here.
-  // If at some point that statement does not hold anymore, this cleanup
-  // should be moved to a different place.
-  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
-    [subview invalidate];
-  }
-  _controller = nil;
-}
-
 #pragma mark - RNSScreenContainerDelegate
 
 - (void)updateContainer
@@ -175,6 +175,37 @@ namespace react = facebook::react;
 {
   [self updateContainer];
 }
+
+#if RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RNSViewControllerInvalidating
+
+- (void)invalidateController
+{
+  _controller = nil;
+}
+
+- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
+{
+  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
+}
+#else
+
+#pragma mark - RCTInvalidating
+
+- (void)invalidate
+{
+  // We assume that bottom tabs host is removed from view hierarchy **only** when
+  // whole component is destroyed & therefore we do the necessary cleanup here.
+  // If at some point that statement does not hold anymore, this cleanup
+  // should be moved to a different place.
+  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
+    [subview invalidate];
+  }
+  _controller = nil;
+}
+
+#endif
 
 #pragma mark - React events
 
@@ -353,6 +384,18 @@ namespace react = facebook::react;
 {
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   [_controller reactMountingTransactionWillMount];
+
+#if RCT_NEW_ARCH_ENABLED
+  for (const auto &mutation : transaction.getMutations()) {
+    if ([self shouldInvalidateOnMutation:mutation]) {
+      for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
+        [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
+      }
+
+      [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
+    }
+  }
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction

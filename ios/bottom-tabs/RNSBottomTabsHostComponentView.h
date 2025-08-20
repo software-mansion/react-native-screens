@@ -5,6 +5,12 @@
 #import "RNSScreenContainer.h"
 #import "RNSTabBarAppearanceProvider.h"
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSViewControllerInvalidating.h"
+#else
+#import <React/RCTInvalidating.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomTabsScreenComponentView;
@@ -19,7 +25,14 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSBottomTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate>
+@interface RNSBottomTabsHostComponentView : RNSReactBaseView <
+                                                RNSScreenContainerDelegate,
+#ifdef RCT_NEW_ARCH_ENABLED
+                                                RNSViewControllerInvalidating
+#else
+                                                RCTInvalidating
+#endif
+                                                >
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
