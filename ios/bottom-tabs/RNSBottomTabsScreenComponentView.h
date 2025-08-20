@@ -84,6 +84,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
+@property (nonatomic) RNSBottomTabsScreenRole role;
+
 @end
 
 #pragma mark - Events

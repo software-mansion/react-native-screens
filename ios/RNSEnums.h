@@ -154,3 +154,20 @@ typedef NS_ENUM(NSInteger, RNSOrientation) {
   RNSOrientationLandscapeLeft,
   RNSOrientationLandscapeRight,
 };
+
+typedef NS_ENUM(NSInteger, RNSBottomTabsScreenRole) {
+  RNSBottomTabsScreenRoleNone,
+  RNSBottomTabsScreenRoleBookmarks,
+  RNSBottomTabsScreenRoleContacts,
+  RNSBottomTabsScreenRoleDownloads,
+  RNSBottomTabsScreenRoleFavorites,
+  RNSBottomTabsScreenRoleFeatured,
+  RNSBottomTabsScreenRoleHistory,
+  RNSBottomTabsScreenRoleMore,
+  RNSBottomTabsScreenRoleMostRecent,
+  RNSBottomTabsScreenRoleMostViewed,
+  RNSBottomTabsScreenRoleRecents,
+  RNSBottomTabsScreenRoleSearch,
+  RNSBottomTabsScreenRoleTopRated
+};
+  

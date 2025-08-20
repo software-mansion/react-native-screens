@@ -58,6 +58,21 @@ type Orientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
+type Role =
+  | 'none'
+  | 'bookmarks'
+  | 'contacts'
+  | 'downloads'
+  | 'favorites'
+  | 'featured'
+  | 'history'
+  | 'more'
+  | 'mostRecent'
+  | 'mostViewed'
+  | 'recents'
+  | 'search'
+  | 'topRated';
+
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
@@ -110,6 +125,8 @@ export interface NativeProps extends ViewProps {
   selectedIconSfSymbolName?: string;
 
   badgeValue?: string;
+  // iOS-specific
+  role?: WithDefault<Role, 'none'>;
 
   specialEffects?: {
     repeatedTabSelection?: {

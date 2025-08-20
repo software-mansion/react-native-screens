@@ -316,4 +316,79 @@ RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottom
   }
 }
 
+RNSBottomTabsScreenRole RNSBottomTabsScreenRoleFromRNSBottomTabsScreenRole(react::RNSBottomTabsScreenRole role)
+{
+  using enum facebook::react::RNSBottomTabsScreenRole;
+
+  switch (role) {
+    case None:
+      return RNSBottomTabsScreenRoleNone;
+    case Bookmarks:
+      return RNSBottomTabsScreenRoleBookmarks;
+    case Contacts:
+      return RNSBottomTabsScreenRoleContacts;
+    case Downloads:
+      return RNSBottomTabsScreenRoleDownloads;
+    case Favorites:
+      return RNSBottomTabsScreenRoleFavorites;
+    case Featured:
+      return RNSBottomTabsScreenRoleFeatured;
+    case History:
+      return RNSBottomTabsScreenRoleHistory;
+    case More:
+      return RNSBottomTabsScreenRoleMore;
+    case MostRecent:
+      return RNSBottomTabsScreenRoleMostRecent;
+    case MostViewed:
+      return RNSBottomTabsScreenRoleMostViewed;
+    case Recents:
+      return RNSBottomTabsScreenRoleRecents;
+    case Search:
+      return RNSBottomTabsScreenRoleSearch;
+    case TopRated:
+      return RNSBottomTabsScreenRoleTopRated;
+    default:
+      RCTLogError(@"[RNScreens] unsupported bottom tabs screen role");
+      return RNSBottomTabsScreenRoleNone;
+  }
+}
+
+UITabBarSystemItem RNSBottomTabsScreenRoleToUITabBarSystemItem(RNSBottomTabsScreenRole role)
+{
+  RCTAssert(
+      role != RNSBottomTabsScreenRoleNone,
+      @"Attempt to convert bottom tabs role none to UITabBarSystemItem");
+  switch (role) {
+    case RNSBottomTabsScreenRoleBookmarks:
+      return UITabBarSystemItemBookmarks;
+    case RNSBottomTabsScreenRoleContacts:
+      return UITabBarSystemItemContacts;
+    case RNSBottomTabsScreenRoleDownloads:
+      return UITabBarSystemItemDownloads;
+    case RNSBottomTabsScreenRoleFavorites:
+      return UITabBarSystemItemFavorites;
+    case RNSBottomTabsScreenRoleFeatured:
+      return UITabBarSystemItemFeatured;
+    case RNSBottomTabsScreenRoleHistory:
+      return UITabBarSystemItemHistory;
+    case RNSBottomTabsScreenRoleMore:
+      return UITabBarSystemItemMore;
+    case RNSBottomTabsScreenRoleMostRecent:
+      return UITabBarSystemItemMostRecent;
+    case RNSBottomTabsScreenRoleMostViewed:
+      return UITabBarSystemItemMostViewed;
+    case RNSBottomTabsScreenRoleRecents:
+      return UITabBarSystemItemRecents;
+    case RNSBottomTabsScreenRoleSearch:
+      return UITabBarSystemItemSearch;
+    case RNSBottomTabsScreenRoleTopRated:
+      return UITabBarSystemItemTopRated;
+  }
+  RCTAssert(
+      true,
+      @"Attempt to convert unknown bottom tabs screen role to UITabBarSystemItem [%d]",
+      role);
+  return UITabBarSystemItemSearch;
+}
+
 }; // namespace rnscreens::conversion
