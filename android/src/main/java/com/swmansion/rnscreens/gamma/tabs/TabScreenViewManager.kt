@@ -247,6 +247,11 @@ class TabScreenViewManager :
 
         imageLoader?.enqueue(request)
     }
+    
+    override fun setSystemItem(
+        view: TabScreen,
+        value: String?,
+    ) = Unit
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
