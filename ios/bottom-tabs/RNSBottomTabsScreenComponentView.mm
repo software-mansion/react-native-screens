@@ -104,7 +104,7 @@ namespace react = facebook::react;
   _selectedIconImageSource = nil;
   _selectedIconSfSymbolName = nil;
 
-  _role = RNSBottomTabsScreenRoleNone;
+  _role = RNSBottomTabsScreenSystemItemNone;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -147,14 +147,14 @@ RNS_IGNORE_SUPER_CALL_END
   return static_cast<RNSTabBarController *>(_controller.tabBarController);
 }
 
-- (void)setRoleBasedOnRNSBottomTabsScreenRole:(RNSBottomTabsScreenRole)role
+- (void)setRoleBasedOnRNSBottomTabsScreenSystemItem:(RNSBottomTabsScreenSystemItem)role
 {
   _role = role;
-  if(_role != RNSBottomTabsScreenRoleNone) {
+  if(_role != RNSBottomTabsScreenSystemItemNone) {
     if(_baseTabBarItem == nil){
       _baseTabBarItem = _controller.tabBarItem;
     }
-    UITabBarSystemItem systemItem = rnscreens::conversion::RNSBottomTabsScreenRoleToUITabBarSystemItem(_role);
+    UITabBarSystemItem systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_role);
     _controller.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
   }
   else if(_baseTabBarItem != nil){
@@ -213,6 +213,9 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
     _controller.tabBarItem.badgeValue = _badgeValue;
+    if(_baseTabBarItem != nil) {
+      _baseTabBarItem.badgeValue = _badgeValue;
+    }
   }
 
   if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
@@ -324,9 +327,9 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
 
-  if (newComponentProps.role != oldComponentProps.role) {
-    [self setRoleBasedOnRNSBottomTabsScreenRole:rnscreens::conversion::RNSBottomTabsScreenRoleFromRNSBottomTabsScreenRole(
-        newComponentProps.role)];
+  if (newComponentProps.systemItem != oldComponentProps.systemItem) {
+    [self setRoleBasedOnRNSBottomTabsScreenSystemItem:rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+        newComponentProps.systemItem)];
   }
 
   // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
@@ -538,9 +541,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 // This is a Paper-only setter method that will be called by the mounting code.
 // It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
-- (void)setRole:(RNSBottomTabsScreenRole)role
+- (void)setRole:(RNSBottomTabsScreenSystemItem)role
 {
-  [self setRoleBasedOnRNSBottomTabsScreenRole:role];
+  [self setRoleBasedOnRNSBottomTabsScreenSystemItem:role];
 }
 
 - (void)setOrientation:(RNSOrientation)orientation

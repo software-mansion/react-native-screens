@@ -60,7 +60,7 @@ export type BottomTabsScreenBlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-export type BottomTabsRole =
+export type BottomTabsSystemItem =
   | 'bookmarks'
   | 'contacts'
   | 'downloads'
@@ -346,7 +346,7 @@ export interface BottomTabsScreenProps {
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
    * @platform ios
    */
-  role?: BottomTabsRole;
+  systemItem?: BottomTabsSystemItem;
   /**
    * @summary Specifies the icon color for each tab bar item when tab screen
    * is selected.

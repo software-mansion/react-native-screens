@@ -58,7 +58,7 @@ type Orientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
-type Role =
+type SystemItem =
   | 'none'
   | 'bookmarks'
   | 'contacts'
@@ -126,7 +126,7 @@ export interface NativeProps extends ViewProps {
 
   badgeValue?: string;
   // iOS-specific
-  role?: WithDefault<Role, 'none'>;
+  systemItem?: WithDefault<SystemItem, 'none'>;
 
   specialEffects?: {
     repeatedTabSelection?: {

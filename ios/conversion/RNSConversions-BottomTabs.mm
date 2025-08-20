@@ -316,72 +316,72 @@ RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottom
   }
 }
 
-RNSBottomTabsScreenRole RNSBottomTabsScreenRoleFromRNSBottomTabsScreenRole(react::RNSBottomTabsScreenRole role)
+RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(react::RNSBottomTabsScreenSystemItem role)
 {
-  using enum facebook::react::RNSBottomTabsScreenRole;
+  using enum facebook::react::RNSBottomTabsScreenSystemItem;
 
   switch (role) {
     case None:
-      return RNSBottomTabsScreenRoleNone;
+      return RNSBottomTabsScreenSystemItemNone;
     case Bookmarks:
-      return RNSBottomTabsScreenRoleBookmarks;
+      return RNSBottomTabsScreenSystemItemBookmarks;
     case Contacts:
-      return RNSBottomTabsScreenRoleContacts;
+      return RNSBottomTabsScreenSystemItemContacts;
     case Downloads:
-      return RNSBottomTabsScreenRoleDownloads;
+      return RNSBottomTabsScreenSystemItemDownloads;
     case Favorites:
-      return RNSBottomTabsScreenRoleFavorites;
+      return RNSBottomTabsScreenSystemItemFavorites;
     case Featured:
-      return RNSBottomTabsScreenRoleFeatured;
+      return RNSBottomTabsScreenSystemItemFeatured;
     case History:
-      return RNSBottomTabsScreenRoleHistory;
+      return RNSBottomTabsScreenSystemItemHistory;
     case More:
-      return RNSBottomTabsScreenRoleMore;
+      return RNSBottomTabsScreenSystemItemMore;
     case MostRecent:
-      return RNSBottomTabsScreenRoleMostRecent;
+      return RNSBottomTabsScreenSystemItemMostRecent;
     case MostViewed:
-      return RNSBottomTabsScreenRoleMostViewed;
+      return RNSBottomTabsScreenSystemItemMostViewed;
     case Recents:
-      return RNSBottomTabsScreenRoleRecents;
+      return RNSBottomTabsScreenSystemItemRecents;
     case Search:
-      return RNSBottomTabsScreenRoleSearch;
+      return RNSBottomTabsScreenSystemItemSearch;
     case TopRated:
-      return RNSBottomTabsScreenRoleTopRated;
+      return RNSBottomTabsScreenSystemItemTopRated;
     default:
       RCTLogError(@"[RNScreens] unsupported bottom tabs screen role");
-      return RNSBottomTabsScreenRoleNone;
+      return RNSBottomTabsScreenSystemItemNone;
   }
 }
 
-UITabBarSystemItem RNSBottomTabsScreenRoleToUITabBarSystemItem(RNSBottomTabsScreenRole role)
+UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTabsScreenSystemItem role)
 {
   RCTAssert(
-      role != RNSBottomTabsScreenRoleNone,
+      role != RNSBottomTabsScreenSystemItemNone,
       @"Attempt to convert bottom tabs role none to UITabBarSystemItem");
   switch (role) {
-    case RNSBottomTabsScreenRoleBookmarks:
+    case RNSBottomTabsScreenSystemItemBookmarks:
       return UITabBarSystemItemBookmarks;
-    case RNSBottomTabsScreenRoleContacts:
+    case RNSBottomTabsScreenSystemItemContacts:
       return UITabBarSystemItemContacts;
-    case RNSBottomTabsScreenRoleDownloads:
+    case RNSBottomTabsScreenSystemItemDownloads:
       return UITabBarSystemItemDownloads;
-    case RNSBottomTabsScreenRoleFavorites:
+    case RNSBottomTabsScreenSystemItemFavorites:
       return UITabBarSystemItemFavorites;
-    case RNSBottomTabsScreenRoleFeatured:
+    case RNSBottomTabsScreenSystemItemFeatured:
       return UITabBarSystemItemFeatured;
-    case RNSBottomTabsScreenRoleHistory:
+    case RNSBottomTabsScreenSystemItemHistory:
       return UITabBarSystemItemHistory;
-    case RNSBottomTabsScreenRoleMore:
+    case RNSBottomTabsScreenSystemItemMore:
       return UITabBarSystemItemMore;
-    case RNSBottomTabsScreenRoleMostRecent:
+    case RNSBottomTabsScreenSystemItemMostRecent:
       return UITabBarSystemItemMostRecent;
-    case RNSBottomTabsScreenRoleMostViewed:
+    case RNSBottomTabsScreenSystemItemMostViewed:
       return UITabBarSystemItemMostViewed;
-    case RNSBottomTabsScreenRoleRecents:
+    case RNSBottomTabsScreenSystemItemRecents:
       return UITabBarSystemItemRecents;
-    case RNSBottomTabsScreenRoleSearch:
+    case RNSBottomTabsScreenSystemItemSearch:
       return UITabBarSystemItemSearch;
-    case RNSBottomTabsScreenRoleTopRated:
+    case RNSBottomTabsScreenSystemItemTopRated:
       return UITabBarSystemItemTopRated;
   }
   RCTAssert(

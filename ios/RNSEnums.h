@@ -155,19 +155,19 @@ typedef NS_ENUM(NSInteger, RNSOrientation) {
   RNSOrientationLandscapeRight,
 };
 
-typedef NS_ENUM(NSInteger, RNSBottomTabsScreenRole) {
-  RNSBottomTabsScreenRoleNone,
-  RNSBottomTabsScreenRoleBookmarks,
-  RNSBottomTabsScreenRoleContacts,
-  RNSBottomTabsScreenRoleDownloads,
-  RNSBottomTabsScreenRoleFavorites,
-  RNSBottomTabsScreenRoleFeatured,
-  RNSBottomTabsScreenRoleHistory,
-  RNSBottomTabsScreenRoleMore,
-  RNSBottomTabsScreenRoleMostRecent,
-  RNSBottomTabsScreenRoleMostViewed,
-  RNSBottomTabsScreenRoleRecents,
-  RNSBottomTabsScreenRoleSearch,
-  RNSBottomTabsScreenRoleTopRated
+typedef NS_ENUM(NSInteger, RNSBottomTabsScreenSystemItem) {
+  RNSBottomTabsScreenSystemItemNone,
+  RNSBottomTabsScreenSystemItemBookmarks,
+  RNSBottomTabsScreenSystemItemContacts,
+  RNSBottomTabsScreenSystemItemDownloads,
+  RNSBottomTabsScreenSystemItemFavorites,
+  RNSBottomTabsScreenSystemItemFeatured,
+  RNSBottomTabsScreenSystemItemHistory,
+  RNSBottomTabsScreenSystemItemMore,
+  RNSBottomTabsScreenSystemItemMostRecent,
+  RNSBottomTabsScreenSystemItemMostViewed,
+  RNSBottomTabsScreenSystemItemRecents,
+  RNSBottomTabsScreenSystemItemSearch,
+  RNSBottomTabsScreenSystemItemTopRated
 };
   

@@ -47,23 +47,23 @@ RCT_ENUM_CONVERTER(
     integerValue)
 
 RCT_ENUM_CONVERTER(
-    RNSBottomTabsScreenRole,
+    RNSBottomTabsScreenSystemItem,
     (@{
-      @"none" : @(RNSBottomTabsScreenRoleNone),
-      @"bookmarks" : @(RNSBottomTabsScreenRoleBookmarks),
-      @"contacts" : @(RNSBottomTabsScreenRoleContacts),
-      @"downloads" : @(RNSBottomTabsScreenRoleDownloads),
-      @"favorites" : @(RNSBottomTabsScreenRoleFavorites),
-      @"featured" : @(RNSBottomTabsScreenRoleFeatured),
-      @"history" : @(RNSBottomTabsScreenRoleHistory),
-      @"more" : @(RNSBottomTabsScreenRoleMore),
-      @"mostRecent" : @(RNSBottomTabsScreenRoleMostRecent),
-      @"mostViewed" : @(RNSBottomTabsScreenRoleMostViewed),
-      @"recents" : @(RNSBottomTabsScreenRoleRecents),
-      @"search" : @(RNSBottomTabsScreenRoleSearch),
-      @"topRated" : @(RNSBottomTabsScreenRoleTopRated),
+      @"none" : @(RNSBottomTabsScreenSystemItemNone),
+      @"bookmarks" : @(RNSBottomTabsScreenSystemItemBookmarks),
+      @"contacts" : @(RNSBottomTabsScreenSystemItemContacts),
+      @"downloads" : @(RNSBottomTabsScreenSystemItemDownloads),
+      @"favorites" : @(RNSBottomTabsScreenSystemItemFavorites),
+      @"featured" : @(RNSBottomTabsScreenSystemItemFeatured),
+      @"history" : @(RNSBottomTabsScreenSystemItemHistory),
+      @"more" : @(RNSBottomTabsScreenSystemItemMore),
+      @"mostRecent" : @(RNSBottomTabsScreenSystemItemMostRecent),
+      @"mostViewed" : @(RNSBottomTabsScreenSystemItemMostViewed),
+      @"recents" : @(RNSBottomTabsScreenSystemItemRecents),
+      @"search" : @(RNSBottomTabsScreenSystemItemSearch),
+      @"topRated" : @(RNSBottomTabsScreenSystemItemTopRated),
     }),
-    RNSBottomTabsScreenRoleNone,
+    RNSBottomTabsScreenSystemItemNone,
     integerValue)
 
 @end
