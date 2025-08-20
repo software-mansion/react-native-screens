@@ -316,7 +316,8 @@ RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottom
   }
 }
 
-RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(react::RNSBottomTabsScreenSystemItem systemItem)
+RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+    react::RNSBottomTabsScreenSystemItem systemItem)
 {
   using enum facebook::react::RNSBottomTabsScreenSystemItem;
 
@@ -384,10 +385,7 @@ UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTa
     case RNSBottomTabsScreenSystemItemTopRated:
       return UITabBarSystemItemTopRated;
   }
-  RCTAssert(
-      true,
-      @"Attempt to convert unknown bottom tabs screen systemItem to UITabBarSystemItem [%d]",
-      systemItem);
+  RCTAssert(true, @"Attempt to convert unknown bottom tabs screen systemItem to UITabBarSystemItem [%d]", systemItem);
   return UITabBarSystemItemSearch;
 }
 

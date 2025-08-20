@@ -1,8 +1,8 @@
 #import "RNSTabBarController.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
-#import "RNSScreenWindowTraits.h"
 #import "RNSLog.h"
+#import "RNSScreenWindowTraits.h"
 
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;

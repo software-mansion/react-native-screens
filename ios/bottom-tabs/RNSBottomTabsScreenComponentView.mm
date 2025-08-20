@@ -2,9 +2,9 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
-#import "RNSLog.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -150,14 +150,14 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setSystemItemBasedOnRNSBottomTabsScreenSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
 {
   _systemItem = systemItem;
-  if(_systemItem != RNSBottomTabsScreenSystemItemNone) {
-    if(_baseTabBarItem == nil){
+  if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
+    if (_baseTabBarItem == nil) {
       _baseTabBarItem = _controller.tabBarItem;
     }
-    UITabBarSystemItem systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+    UITabBarSystemItem systemItem =
+        rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
     _controller.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
-  }
-  else if(_baseTabBarItem != nil){
+  } else if (_baseTabBarItem != nil) {
     _controller.tabBarItem = _baseTabBarItem;
     _baseTabBarItem = nil;
   }
@@ -213,7 +213,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
     _controller.tabBarItem.badgeValue = _badgeValue;
-    if(_baseTabBarItem != nil) {
+    if (_baseTabBarItem != nil) {
       _baseTabBarItem.badgeValue = _badgeValue;
     }
   }
@@ -328,8 +328,9 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.systemItem != oldComponentProps.systemItem) {
-    [self setSystemItemBasedOnRNSBottomTabsScreenSystemItem:rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
-        newComponentProps.systemItem)];
+    [self setSystemItemBasedOnRNSBottomTabsScreenSystemItem:
+              rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+                  newComponentProps.systemItem)];
   }
 
   // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop

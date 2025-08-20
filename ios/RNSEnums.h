@@ -170,4 +170,3 @@ typedef NS_ENUM(NSInteger, RNSBottomTabsScreenSystemItem) {
   RNSBottomTabsScreenSystemItemSearch,
   RNSBottomTabsScreenSystemItemTopRated
 };
-  

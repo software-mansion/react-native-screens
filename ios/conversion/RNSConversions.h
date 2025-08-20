@@ -44,7 +44,8 @@ RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
 RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
 
-RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+RNSBottomTabsScreenSystemItem
+RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
     react::RNSBottomTabsScreenSystemItem systemItem);
 
 UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(

@@ -1,8 +1,8 @@
 #import "RNSTabsScreenViewController.h"
+#import "RNSLog.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
-#import "RNSLog.h"
 
 @implementation RNSTabsScreenViewController
 
