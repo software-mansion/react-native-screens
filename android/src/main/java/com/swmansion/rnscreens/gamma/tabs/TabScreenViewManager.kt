@@ -210,6 +210,11 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
+    override fun setSystemItem(
+        view: TabScreen,
+        value: String?,
+    ) = Unit
+
     @ReactProp("iconResource")
     override fun setIconResource(
         view: TabScreen,
@@ -218,40 +223,83 @@ class TabScreenViewManager :
         val uri = value?.getString("uri")
 
         if (uri != null) {
-            loadUsingCoil(view.context, uri) {
-                view.icon = it
+            val context = view.context
+            val source = resolveSource(context, uri)
+
+            if (source != null) {
+                loadUsingCoil(context, source) {
+                    view.icon = it
+                }
             }
         }
     }
 
     private fun loadUsingCoil(
         context: Context,
-        uri: String,
+        source: RNSImageSource,
         onLoad: (img: Drawable) -> Unit,
     ) {
+        val data =
+            when (source) {
+                is RNSImageSource.DrawableRes -> source.resId
+                is RNSImageSource.UriString -> source.uri
+            }
+
         val request =
             ImageRequest
                 .Builder(context)
-                .data(uri)
+                .data(data)
                 .target { drawable ->
                     val stateDrawable = drawable.asDrawable(context.resources)
                     onLoad(stateDrawable)
                 }.listener(
                     onError = { _, result ->
-                        Log.e("[RNScreens]", "Error loading image: $uri", result.throwable)
+                        Log.e("[RNScreens]", "Error loading image: $data", result.throwable)
                     },
                     onCancel = {
-                        Log.w("[RNScreens]", "Image loading request: $uri has been cancelled")
+                        Log.w("[RNScreens]", "Image loading request cancelled: $data")
                     },
                 ).build()
 
         imageLoader?.enqueue(request)
     }
 
-    override fun setSystemItem(
-        view: TabScreen,
-        value: String?,
-    ) = Unit
+    private fun resolveSource(
+        context: Context,
+        uri: String,
+    ): RNSImageSource? {
+        // In release builds, assets are coming with bundle and we need to work with resource id.
+        // In debug, metro is responsible for handling assets via http.
+        // At the moment, we're supporting images (drawable) and SVG icons (raw).
+        // For any other type, we may consider adding a support in the future if needed.
+        if (uri.startsWith("_")) {
+            val drawableResId = context.resources.getIdentifier(uri, "drawable", context.packageName)
+            if (drawableResId != 0) {
+                return RNSImageSource.DrawableRes(drawableResId)
+            }
+
+            val rawResId = context.resources.getIdentifier(uri, "raw", context.packageName)
+            if (rawResId != 0) {
+                return RNSImageSource.DrawableRes(rawResId)
+            }
+
+            Log.e("[RNScreens]", "Resource not found in drawable or raw: $uri")
+            return null
+        }
+
+        // If asset isn't included in android source directories and we're loading it from given path.
+        return RNSImageSource.UriString(uri)
+    }
+
+    private sealed class RNSImageSource {
+        data class DrawableRes(
+            val resId: Int,
+        ) : RNSImageSource()
+
+        data class UriString(
+            val uri: String,
+        ) : RNSImageSource()
+    }
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
