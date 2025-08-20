@@ -45,7 +45,6 @@ RCT_ENUM_CONVERTER(
     }),
     RNSOrientationInherit,
     integerValue)
-#endif // !RCT_NEW_ARCH_ENABLED
 
 RCT_ENUM_CONVERTER(
     RNSBottomTabsScreenSystemItem,
@@ -66,5 +65,7 @@ RCT_ENUM_CONVERTER(
     }),
     RNSBottomTabsScreenSystemItemNone,
     integerValue)
+
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
