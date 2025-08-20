@@ -247,7 +247,7 @@ class TabScreenViewManager :
 
         imageLoader?.enqueue(request)
     }
-    
+
     override fun setSystemItem(
         view: TabScreen,
         value: String?,
