@@ -1454,6 +1454,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
+  if (@available(iOS 26, *)) {
+    // In iOS 26, as soon as another screen appears in transition, it is interactable
+    // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
+    // Because nested stack exist, we need to find a common top view for the whole app
+    [self findReactRootViewController].view.userInteractionEnabled = false;
+  }
   [super viewWillAppear:animated];
   if (!_isSwiping) {
     [self.screenView notifyWillAppear];
@@ -1518,6 +1524,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions, see viewWillAppear
+    [self findReactRootViewController].view.userInteractionEnabled = true;
+  }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
     // we are going forward or dismissing without swipe
@@ -1587,6 +1597,18 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
 #endif
   }
+}
+
+- (UIViewController *)findReactRootViewController
+{
+  UIView *parent = self.view;
+  while (parent) {
+    parent = parent.reactSuperview;
+    if (parent.isReactRootView) {
+      return parent.reactViewController;
+    }
+  }
+  return nil;
 }
 
 - (BOOL)isModalWithHeader
