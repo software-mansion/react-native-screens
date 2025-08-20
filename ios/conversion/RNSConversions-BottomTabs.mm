@@ -316,11 +316,11 @@ RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottom
   }
 }
 
-RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(react::RNSBottomTabsScreenSystemItem role)
+RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(react::RNSBottomTabsScreenSystemItem systemItem)
 {
   using enum facebook::react::RNSBottomTabsScreenSystemItem;
 
-  switch (role) {
+  switch (systemItem) {
     case None:
       return RNSBottomTabsScreenSystemItemNone;
     case Bookmarks:
@@ -348,17 +348,17 @@ RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTab
     case TopRated:
       return RNSBottomTabsScreenSystemItemTopRated;
     default:
-      RCTLogError(@"[RNScreens] unsupported bottom tabs screen role");
+      RCTLogError(@"[RNScreens] unsupported bottom tabs screen systemItem");
       return RNSBottomTabsScreenSystemItemNone;
   }
 }
 
-UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTabsScreenSystemItem role)
+UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTabsScreenSystemItem systemItem)
 {
   RCTAssert(
-      role != RNSBottomTabsScreenSystemItemNone,
-      @"Attempt to convert bottom tabs role none to UITabBarSystemItem");
-  switch (role) {
+      systemItem != RNSBottomTabsScreenSystemItemNone,
+      @"Attempt to convert bottom tabs systemItem none to UITabBarSystemItem");
+  switch (systemItem) {
     case RNSBottomTabsScreenSystemItemBookmarks:
       return UITabBarSystemItemBookmarks;
     case RNSBottomTabsScreenSystemItemContacts:
@@ -386,8 +386,8 @@ UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTa
   }
   RCTAssert(
       true,
-      @"Attempt to convert unknown bottom tabs screen role to UITabBarSystemItem [%d]",
-      role);
+      @"Attempt to convert unknown bottom tabs screen systemItem to UITabBarSystemItem [%d]",
+      systemItem);
   return UITabBarSystemItemSearch;
 }
 

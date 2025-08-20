@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
-@property (nonatomic) RNSBottomTabsScreenSystemItem role;
+@property (nonatomic) RNSBottomTabsScreenSystemItem systemItem;
 
 @end
 

@@ -45,10 +45,10 @@ RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
     react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
 
 RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
-    react::RNSBottomTabsScreenSystemItem role);
+    react::RNSBottomTabsScreenSystemItem systemItem);
 
 UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(
-    RNSBottomTabsScreenSystemItem role);
+    RNSBottomTabsScreenSystemItem systemItem);
 
 UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
     react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct

@@ -104,7 +104,7 @@ namespace react = facebook::react;
   _selectedIconImageSource = nil;
   _selectedIconSfSymbolName = nil;
 
-  _role = RNSBottomTabsScreenSystemItemNone;
+  _systemItem = RNSBottomTabsScreenSystemItemNone;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -147,14 +147,14 @@ RNS_IGNORE_SUPER_CALL_END
   return static_cast<RNSTabBarController *>(_controller.tabBarController);
 }
 
-- (void)setRoleBasedOnRNSBottomTabsScreenSystemItem:(RNSBottomTabsScreenSystemItem)role
+- (void)setSystemItemBasedOnRNSBottomTabsScreenSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
 {
-  _role = role;
-  if(_role != RNSBottomTabsScreenSystemItemNone) {
+  _systemItem = systemItem;
+  if(_systemItem != RNSBottomTabsScreenSystemItemNone) {
     if(_baseTabBarItem == nil){
       _baseTabBarItem = _controller.tabBarItem;
     }
-    UITabBarSystemItem systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_role);
+    UITabBarSystemItem systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
     _controller.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
   }
   else if(_baseTabBarItem != nil){
@@ -328,7 +328,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.systemItem != oldComponentProps.systemItem) {
-    [self setRoleBasedOnRNSBottomTabsScreenSystemItem:rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+    [self setSystemItemBasedOnRNSBottomTabsScreenSystemItem:rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
         newComponentProps.systemItem)];
   }
 
@@ -541,9 +541,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 // This is a Paper-only setter method that will be called by the mounting code.
 // It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
-- (void)setRole:(RNSBottomTabsScreenSystemItem)role
+- (void)setSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
 {
-  [self setRoleBasedOnRNSBottomTabsScreenSystemItem:role];
+  [self setSystemItemBasedOnRNSBottomTabsScreenSystemItem:systemItem];
 }
 
 - (void)setOrientation:(RNSOrientation)orientation
