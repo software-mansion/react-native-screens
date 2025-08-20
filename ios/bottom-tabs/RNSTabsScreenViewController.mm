@@ -1,4 +1,5 @@
 #import "RNSTabsScreenViewController.h"
+#import "RNSLog.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
@@ -17,7 +18,7 @@
 
 - (void)tabScreenFocusHasChanged
 {
-  NSLog(
+  RNSLog(
       @"TabScreen [%ld] changed focus: %d",
       self.tabScreenComponentView.tag,
       self.tabScreenComponentView.isSelectedScreen);
@@ -59,7 +60,7 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  NSLog(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenComponentView.tag, parent);
+  RNSLog(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenComponentView.tag, parent);
 
   if (parent == nil) {
     return;

@@ -3,6 +3,7 @@
 import React from 'react';
 import { Freeze } from 'react-freeze';
 import {
+  Image,
   StyleSheet,
   findNodeHandle,
   processColor,
@@ -54,6 +55,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     isFocused = false,
     freezeContents,
     icon,
+    iconResource,
     selectedIcon,
     standardAppearance,
     scrollEdgeAppearance,
@@ -116,6 +118,16 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
+  let parsedIconResource;
+  if (iconResource) {
+    parsedIconResource = Image.resolveAssetSource(iconResource);
+    if (!parsedIconResource) {
+      console.error(
+        '[RNScreens] failed to resolve an asset for bottom tab icon',
+      );
+    }
+  }
+
   return (
     <BottomTabsScreenNativeComponent
       collapsable={false}
@@ -125,6 +137,11 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
+      // I'm keeping undefined as a fallback if `Image.resolveAssetSource` has failed for some reason.
+      // It won't render any icon, but it will prevent from crashing on the native side which is expecting
+      // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
+      // double as a value.
+      iconResource={parsedIconResource || undefined}
       {...iconProps}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}

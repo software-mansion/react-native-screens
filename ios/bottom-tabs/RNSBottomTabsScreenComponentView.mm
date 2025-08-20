@@ -2,6 +2,7 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
@@ -94,20 +95,32 @@ namespace react = facebook::react;
   _selectedIconSfSymbolName = nil;
 }
 
-- (void)invalidate
-{
-  // Controller keeps the strong reference to the component via the `.view` property.
-  // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
-  // when we want to destroy the component.
-  _controller = nil;
-}
-
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (nullable RNSBottomTabsHostComponentView *)reactSuperview
 {
   return _reactSuperview;
 }
 RNS_IGNORE_SUPER_CALL_END
+
+#ifdef RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RNSViewControllerInvalidating
+
+- (void)invalidateController
+{
+  _controller = nil;
+}
+
+#else
+
+#pragma mark - RCTInvalidating
+
+- (void)invalidate
+{
+  _controller = nil;
+}
+
+#endif
 
 #pragma mark - Events
 
@@ -263,7 +276,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {
-  NSLog(
+  RNSLog(
       @"TabScreen [%ld] updateLayoutMetrics: %@", self.tag, NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)));
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
 }
@@ -277,13 +290,13 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  NSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
+  RNSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
   [super mountChildComponentView:childComponentView index:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  NSLog(@"TabScreen [%ld] unmount [%ld] from %ld", self.tag, childComponentView.tag, index);
+  RNSLog(@"TabScreen [%ld] unmount [%ld] from %ld", self.tag, childComponentView.tag, index);
   [super unmountChildComponentView:childComponentView index:index];
 }
 

@@ -1,6 +1,12 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.Log
+import coil3.ImageLoader
+import coil3.asDrawable
+import coil3.request.ImageRequest
+import coil3.svg.SvgDecoder
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
@@ -15,6 +21,7 @@ import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
+import com.swmansion.rnscreens.utils.RNSLog
 
 @ReactModule(name = TabScreenViewManager.REACT_CLASS)
 class TabScreenViewManager :
@@ -24,8 +31,19 @@ class TabScreenViewManager :
 
     override fun getName() = REACT_CLASS
 
+    var imageLoader: ImageLoader? = null
+
+    var context: ThemedReactContext? = null
+
     override fun createViewInstance(reactContext: ThemedReactContext): TabScreen {
-        Log.d(REACT_CLASS, "createViewInstance")
+        imageLoader =
+            ImageLoader
+                .Builder(reactContext)
+                .components {
+                    add(SvgDecoder.Factory())
+                }.build()
+        context = reactContext
+        RNSLog.d(REACT_CLASS, "createViewInstance")
         return TabScreen(reactContext)
     }
 
@@ -97,7 +115,7 @@ class TabScreenViewManager :
         view: TabScreen,
         value: Boolean,
     ) {
-        Log.d(REACT_CLASS, "TabScreen [${view.id}] setIsFocused $value")
+        RNSLog.d(REACT_CLASS, "TabScreen [${view.id}] setIsFocused $value")
         view.isFocusedTab = value
     }
 
@@ -156,6 +174,44 @@ class TabScreenViewManager :
         view: TabScreen,
         value: String?,
     ) = Unit
+
+    @ReactProp("iconResource")
+    override fun setIconResource(
+        view: TabScreen,
+        value: ReadableMap?,
+    ) {
+        val uri = value?.getString("uri")
+
+        if (uri != null) {
+            loadUsingCoil(view.context, uri) {
+                view.icon = it
+            }
+        }
+    }
+
+    private fun loadUsingCoil(
+        context: Context,
+        uri: String,
+        onLoad: (img: Drawable) -> Unit,
+    ) {
+        val request =
+            ImageRequest
+                .Builder(context)
+                .data(uri)
+                .target { drawable ->
+                    val stateDrawable = drawable.asDrawable(context.resources)
+                    onLoad(stateDrawable)
+                }.listener(
+                    onError = { _, result ->
+                        Log.e("[RNScreens]", "Error loading image: $uri", result.throwable)
+                    },
+                    onCancel = {
+                        Log.w("[RNScreens]", "Image loading request: $uri has been cancelled")
+                    },
+                ).build()
+
+        imageLoader?.enqueue(request)
+    }
 
     companion object {
         const val REACT_CLASS = "RNSBottomTabsScreen"
