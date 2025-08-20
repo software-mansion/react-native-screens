@@ -93,6 +93,9 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "badgeValue":
         mViewManager.setBadgeValue(view, value == null ? null : (String) value);
         break;
+      case "systemItem":
+        mViewManager.setSystemItem(view, (String) value);
+        break;
       case "specialEffects":
         mViewManager.setSpecialEffects(view, (ReadableMap) value);
         break;
