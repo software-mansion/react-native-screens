@@ -246,4 +246,77 @@ RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottom
   }
 }
 
+RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+    react::RNSBottomTabsScreenSystemItem systemItem)
+{
+  using enum facebook::react::RNSBottomTabsScreenSystemItem;
+
+  switch (systemItem) {
+    case None:
+      return RNSBottomTabsScreenSystemItemNone;
+    case Bookmarks:
+      return RNSBottomTabsScreenSystemItemBookmarks;
+    case Contacts:
+      return RNSBottomTabsScreenSystemItemContacts;
+    case Downloads:
+      return RNSBottomTabsScreenSystemItemDownloads;
+    case Favorites:
+      return RNSBottomTabsScreenSystemItemFavorites;
+    case Featured:
+      return RNSBottomTabsScreenSystemItemFeatured;
+    case History:
+      return RNSBottomTabsScreenSystemItemHistory;
+    case More:
+      return RNSBottomTabsScreenSystemItemMore;
+    case MostRecent:
+      return RNSBottomTabsScreenSystemItemMostRecent;
+    case MostViewed:
+      return RNSBottomTabsScreenSystemItemMostViewed;
+    case Recents:
+      return RNSBottomTabsScreenSystemItemRecents;
+    case Search:
+      return RNSBottomTabsScreenSystemItemSearch;
+    case TopRated:
+      return RNSBottomTabsScreenSystemItemTopRated;
+    default:
+      RCTLogError(@"[RNScreens] unsupported bottom tabs screen systemItem");
+      return RNSBottomTabsScreenSystemItemNone;
+  }
+}
+
+UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTabsScreenSystemItem systemItem)
+{
+  RCTAssert(
+      systemItem != RNSBottomTabsScreenSystemItemNone,
+      @"Attempt to convert bottom tabs systemItem none to UITabBarSystemItem");
+  switch (systemItem) {
+    case RNSBottomTabsScreenSystemItemBookmarks:
+      return UITabBarSystemItemBookmarks;
+    case RNSBottomTabsScreenSystemItemContacts:
+      return UITabBarSystemItemContacts;
+    case RNSBottomTabsScreenSystemItemDownloads:
+      return UITabBarSystemItemDownloads;
+    case RNSBottomTabsScreenSystemItemFavorites:
+      return UITabBarSystemItemFavorites;
+    case RNSBottomTabsScreenSystemItemFeatured:
+      return UITabBarSystemItemFeatured;
+    case RNSBottomTabsScreenSystemItemHistory:
+      return UITabBarSystemItemHistory;
+    case RNSBottomTabsScreenSystemItemMore:
+      return UITabBarSystemItemMore;
+    case RNSBottomTabsScreenSystemItemMostRecent:
+      return UITabBarSystemItemMostRecent;
+    case RNSBottomTabsScreenSystemItemMostViewed:
+      return UITabBarSystemItemMostViewed;
+    case RNSBottomTabsScreenSystemItemRecents:
+      return UITabBarSystemItemRecents;
+    case RNSBottomTabsScreenSystemItemSearch:
+      return UITabBarSystemItemSearch;
+    case RNSBottomTabsScreenSystemItemTopRated:
+      return UITabBarSystemItemTopRated;
+  }
+  RCTAssert(true, @"Attempt to convert unknown bottom tabs screen systemItem to UITabBarSystemItem [%d]", systemItem);
+  return UITabBarSystemItemSearch;
+}
+
 }; // namespace rnscreens::conversion

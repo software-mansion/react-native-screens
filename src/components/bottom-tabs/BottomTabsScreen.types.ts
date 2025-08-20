@@ -60,6 +60,20 @@ export type BottomTabsScreenBlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+export type BottomTabsSystemItem =
+  | 'bookmarks'
+  | 'contacts'
+  | 'downloads'
+  | 'favorites'
+  | 'featured'
+  | 'history'
+  | 'more'
+  | 'mostRecent'
+  | 'mostViewed'
+  | 'recents'
+  | 'search'
+  | 'topRated';
+
 // Currently iOS-only
 export type BottomTabsScreenOrientation =
   | 'inherit'
@@ -434,6 +448,18 @@ export interface BottomTabsScreenProps {
    * @platform ios
    */
   selectedIcon?: Icon;
+  /**
+   * @summary System-provided tab bar item with predefined icon and title
+   *
+   * Uses Apple's built-in tab bar items (e.g., bookmarks, contacts, downloads) with
+   * standard iOS styling and localized titles. Custom `icon` or `selectedIcon`
+   * properties will override the system icon, but the system-defined title cannot
+   * be customized.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
+   * @platform ios
+   */
+  systemItem?: BottomTabsSystemItem;
   /**
    * @summary Specifies which special effects (also known as microinteractions)
    * are enabled for the tab screen.

@@ -130,6 +130,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
       // iconResourceName: 'sym_action_email', // Android specific
       iconResource: require('../../../assets/variableIcons/icon_fill.png'),
       title: 'Tab3',
+      // systemItem: 'search', // iOS specific
+      // systemItem: 'contacts', // iOS specific
+      // systemItem: 'history', // iOS specific
       orientation: 'portrait',
     },
     component: Tab3,
@@ -146,6 +149,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       // iconResourceName: 'sym_action_chat', // Android specific
       iconResource: require('../../../assets/svg/cart.svg'),
       title: 'Tab4',
+      // systemItem: 'search', // iOS specific
       badgeValue: '',
       orientation: 'portrait',
     },

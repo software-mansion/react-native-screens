@@ -92,6 +92,21 @@ type Orientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
+type SystemItem =
+  | 'none'
+  | 'bookmarks'
+  | 'contacts'
+  | 'downloads'
+  | 'favorites'
+  | 'featured'
+  | 'history'
+  | 'more'
+  | 'mostRecent'
+  | 'mostViewed'
+  | 'recents'
+  | 'search'
+  | 'topRated';
+
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
@@ -128,6 +143,8 @@ export interface NativeProps extends ViewProps {
 
   selectedIconImageSource?: ImageSource;
   selectedIconSfSymbolName?: string;
+
+  systemItem?: WithDefault<SystemItem, 'none'>;
 
   specialEffects?: {
     repeatedTabSelection?: {

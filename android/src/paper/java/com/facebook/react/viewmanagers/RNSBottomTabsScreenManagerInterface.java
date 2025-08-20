@@ -32,6 +32,7 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
   void setIconSfSymbolName(T view, @Nullable String value);
   void setSelectedIconImageSource(T view, @Nullable ReadableMap value);
   void setSelectedIconSfSymbolName(T view, @Nullable String value);
+  void setSystemItem(T view, @Nullable String value);
   void setSpecialEffects(T view, @Nullable ReadableMap value);
   void setOverrideScrollViewContentInsetAdjustmentBehavior(T view, boolean value);
 }
