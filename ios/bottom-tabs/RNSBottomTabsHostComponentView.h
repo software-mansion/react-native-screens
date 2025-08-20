@@ -3,7 +3,6 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
-#import "RNSTabBarAppearanceProvider.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "RNSViewControllerInvalidating.h"
@@ -44,23 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Props
 
-@interface RNSBottomTabsHostComponentView () <RNSTabBarAppearanceProvider>
-
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
-@property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
+@interface RNSBottomTabsHostComponentView ()
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
-
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontFamily;
-@property (nonatomic, strong, readonly, nullable) NSNumber *tabBarItemTitleFontSize;
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontWeight;
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontStyle;
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemTitleFontColor;
-@property (nonatomic, readonly) UIOffset tabBarItemTitlePositionAdjustment;
-
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemIconColor;
-
-@property (nonatomic, readonly, nullable) UIColor *tabBarItemBadgeBackgroundColor;
 
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 

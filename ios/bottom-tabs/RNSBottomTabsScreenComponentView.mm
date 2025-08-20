@@ -4,6 +4,7 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSScrollViewHelper.h"
+#import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
 
 #if RCT_NEW_ARCH_ENABLED
@@ -75,20 +76,10 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
-  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
   _orientation = RNSOrientationInherit;
-  _tabBarBackgroundColor = nil;
 
-  _tabBarItemTitleFontFamily = nil;
-  _tabBarItemTitleFontSize = nil;
-  _tabBarItemTitleFontWeight = nil;
-  _tabBarItemTitleFontStyle = nil;
-  _tabBarItemTitleFontColor = nil;
-  _tabBarItemTitlePositionAdjustment = UIOffsetMake(0.0, 0.0);
-
-  _tabBarItemIconColor = nil;
-
-  _tabBarItemBadgeBackgroundColor = nil;
+  _standardAppearance = [UITabBarAppearance new];
+  _scrollEdgeAppearance = nil;
 
   _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
   _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
@@ -218,62 +209,23 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
 
-  if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
-    _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
-    // Note that this will prevent default color from being set.
-    // TODO: support default color by setting nil here.
-    RNSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _tabBarItemBadgeBackgroundColor);
+  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
+    _standardAppearance = [UITabBarAppearance new];
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
+                                          fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                                  newComponentProps.standardAppearance)];
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
-    _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
-    _tabBarBlurEffect = rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
-        newComponentProps.tabBarBlurEffect);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
-    _tabBarItemTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontFamily);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
-    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
-    _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
-    _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
-    _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitlePositionAdjustment.horizontal !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
-      newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
-    _tabBarItemTitlePositionAdjustment =
-        rnscreens::conversion::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
-            newComponentProps.tabBarItemTitlePositionAdjustment);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemIconColor != oldComponentProps.tabBarItemIconColor) {
-    _tabBarItemIconColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemIconColor);
+  if (newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
+    if (newComponentProps.scrollEdgeAppearance.type() == folly::dynamic::OBJECT) {
+      _scrollEdgeAppearance = [UITabBarAppearance new];
+      [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_scrollEdgeAppearance
+                                            fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                                    newComponentProps.scrollEdgeAppearance)];
+    } else {
+      _scrollEdgeAppearance = nil;
+    }
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -443,60 +395,6 @@ RNS_IGNORE_SUPER_CALL_END
   _controller.tabBarItem.badgeValue = _badgeValue;
 }
 
-- (void)setTabBarBackgroundColor:(UIColor *)tabBarBackgroundColor
-{
-  _tabBarBackgroundColor = tabBarBackgroundColor;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
-{
-  _tabBarBlurEffect = tabBarBlurEffect;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontFamily:(NSString *)tabBarItemTitleFontFamily
-{
-  _tabBarItemTitleFontFamily = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontFamily];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontSize:(NSNumber *)tabBarItemTitleFontSize
-{
-  _tabBarItemTitleFontSize = tabBarItemTitleFontSize;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontWeight:(NSString *)tabBarItemTitleFontWeight
-{
-  _tabBarItemTitleFontWeight = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontWeight];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontStyle:(NSString *)tabBarItemTitleFontStyle
-{
-  _tabBarItemTitleFontStyle = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontStyle];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontColor:(UIColor *)tabBarItemTitleFontColor
-{
-  _tabBarItemTitleFontColor = tabBarItemTitleFontColor;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemIconColor:(UIColor *)tabBarItemIconColor
-{
-  _tabBarItemIconColor = tabBarItemIconColor;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
-{
-  _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
 - (void)setIconType:(RNSBottomTabsIconType)iconType
 {
   _iconType = iconType;
@@ -538,6 +436,28 @@ RNS_IGNORE_SUPER_CALL_END
 
   // _isOverrideScrollViewContentInsetAdjustmentBehaviorSet flag is set in didSetProps to handle a case
   // when the prop is undefined in JS and default value is used instead of calling this setter.
+}
+
+- (void)setStandardAppearance:(NSDictionary *)standardAppearanceProps
+{
+  _standardAppearance = [UITabBarAppearance new];
+  if (standardAppearanceProps != nil) {
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
+                                          fromAppearanceProps:standardAppearanceProps];
+  }
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setScrollEdgeAppearance:(NSDictionary *)scrollEdgeAppearanceProps
+{
+  if (scrollEdgeAppearanceProps != nil) {
+    _scrollEdgeAppearance = [UITabBarAppearance new];
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_scrollEdgeAppearance
+                                          fromAppearanceProps:scrollEdgeAppearanceProps];
+  } else {
+    _scrollEdgeAppearance = nil;
+  }
+  _tabItemNeedsAppearanceUpdate = YES;
 }
 
 // This is a Paper-only setter method that will be called by the mounting code.

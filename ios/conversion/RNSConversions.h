@@ -5,72 +5,61 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
+#if RCT_NEW_ARCH_ENABLED
+#import <folly/dynamic.h>
+#endif // RCT_NEW_ARCH_ENABLED
+
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
-std::optional<UIBlurEffectStyle>
-RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
+#if RCT_NEW_ARCH_ENABLED
 
-UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(
-    RNSBlurEffectStyle blurEffect);
+// copied from FollyConvert.mm
+id RNSConvertFollyDynamicToId(const folly::dynamic &dyn);
 
-RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(
-    react::RNSBottomTabsTabBarBlurEffect blurEffect);
+#endif // RCT_NEW_ARCH_ENABLED
 
-UIOffset RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
-    react::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct
-        titlePositionAdjustment);
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString);
+
+UIBlurEffect *RNSUIBlurEffectFromString(NSString *blurEffectString);
+
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
+
+UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
-API_AVAILABLE(ios(26.0))
-UITabBarMinimizeBehavior
-UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
-    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior);
 
-#if !RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
+    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior);
+#else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
     RNSTabBarMinimizeBehavior tabBarMinimizeBehavior);
-#endif // !RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 #endif // Check for iOS >= 26
 
-std::optional<UIBlurEffectStyle>
-RNSMaybeUIBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
-    react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
+RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
 
-RNSBlurEffectStyle RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
-    react::RNSBottomTabsScreenTabBarBlurEffect blurEffect);
-
-RNSBottomTabsScreenSystemItem
-RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
     react::RNSBottomTabsScreenSystemItem systemItem);
 
-UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(
-    RNSBottomTabsScreenSystemItem systemItem);
-
-UIOffset RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
-    react::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct
-        titlePositionAdjustment);
-
-RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(
-    react::RNSBottomTabsScreenIconType iconType);
+UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTabsScreenSystemItem systemItem);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
     RNSBottomTabsIconType iconType);
 
-RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(
-    react::RNSBottomTabsScreenOrientation orientation);
+RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottomTabsScreenOrientation orientation);
 
 #if !TARGET_OS_TV
-UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(
-    RNSOrientation orientation);
+UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrientation orientation);
 
-RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(
-    UIInterfaceOrientationMask orientationMask);
+RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask);
 #endif // !TARGET_OS_TV
 
 #pragma mark SplitViewHost props
@@ -78,27 +67,21 @@ RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(
 UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
     react::RNSSplitViewHostPreferredSplitBehavior behavior);
 
-UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
-    react::RNSSplitViewHostPrimaryEdge primaryEdge);
+UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(react::RNSSplitViewHostPrimaryEdge primaryEdge);
 
 UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
     react::RNSSplitViewHostPreferredDisplayMode displayMode);
 
-UISplitViewControllerDisplayModeButtonVisibility
-SplitViewDisplayModeButtonVisibilityFromHostProp(
-    react::RNSSplitViewHostDisplayModeButtonVisibility
-        displayModeButtonVisibility);
+UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
+    react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility);
 
-std::string UISplitViewControllerDisplayModeToString(
-    UISplitViewControllerDisplayMode displayMode);
+std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode);
 
-RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(
-    react::RNSSplitViewHostOrientation orientation);
+RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitViewHostOrientation orientation);
 
 #pragma mark SplitViewScreen props
 
-RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
-    react::RNSSplitViewScreenColumnType columnType);
+RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(react::RNSSplitViewScreenColumnType columnType);
 
 }; // namespace rnscreens::conversion
 

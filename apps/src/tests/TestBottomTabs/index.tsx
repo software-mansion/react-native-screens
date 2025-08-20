@@ -19,6 +19,18 @@ internalEnableDetailedBottomTabsLogging();
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
+      scrollEdgeAppearance: {
+        tabBarBackgroundColor: Colors.NavyLight100,
+        stacked: {
+          normal: {
+            tabBarItemIconColor: Colors.NavyLight60,
+          },
+          selected: {
+            tabBarItemIconColor: Colors.NavyLight20,
+            tabBarItemTitleFontColor: Colors.NavyLight20,
+          },
+        },
+      },
       tabKey: 'Tab1',
       title: 'Tab1',
       isFocused: true,
@@ -37,24 +49,59 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       badgeValue: 'NEW',
-      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
-      tabBarBackgroundColor: Colors.NavyDark140,
-      tabBarItemTitleFontSize: 20,
-      tabBarItemTitleFontStyle: 'italic',
-      tabBarItemTitleFontColor: Colors.RedDark120,
-      tabBarItemTitleFontWeight: 'bold',
-      tabBarItemTitleFontFamily: 'Baskerville',
-      tabBarItemTitlePositionAdjustment: {
-        vertical: 8,
+      scrollEdgeAppearance: {
+        tabBarBackgroundColor: Colors.NavyDark140,
+        stacked: {
+          normal: {
+            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+            tabBarItemTitleFontSize: 20,
+            tabBarItemTitleFontStyle: 'italic',
+            tabBarItemTitleFontColor: Colors.RedDark120,
+            tabBarItemTitleFontWeight: 'bold',
+            tabBarItemTitleFontFamily: 'Baskerville',
+            tabBarItemTitlePositionAdjustment: {
+              vertical: 8,
+            },
+            tabBarItemIconColor: Colors.RedDark120,
+          },
+        },
+        inline: {
+          normal: {
+            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+            tabBarItemTitleFontSize: 20,
+            tabBarItemTitleFontStyle: 'italic',
+            tabBarItemTitleFontColor: Colors.RedDark120,
+            tabBarItemTitleFontWeight: 'bold',
+            tabBarItemTitleFontFamily: 'Baskerville',
+            tabBarItemTitlePositionAdjustment: {
+              vertical: 4,
+            },
+            tabBarItemIconColor: Colors.RedDark120,
+          },
+        },
+        compactInline: {
+          normal: {
+            tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+            tabBarItemTitleFontSize: 20,
+            tabBarItemTitleFontStyle: 'italic',
+            tabBarItemTitleFontColor: Colors.RedDark120,
+            tabBarItemTitleFontWeight: 'bold',
+            tabBarItemTitleFontFamily: 'Baskerville',
+            tabBarItemTitlePositionAdjustment: {
+              vertical: 4,
+            },
+            tabBarItemIconColor: Colors.RedDark120,
+          },
+        },
       },
+      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       icon: {
         templateSource: require('../../../assets/variableIcons/icon.png'),
       },
       selectedIcon: {
         templateSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
-      tabBarItemIconColor: Colors.RedDark120,
-      // iconResourceName: 'sym_call_missed', // Android specific
+      iconResourceName: 'sym_call_missed', // Android specific
       iconResource: require('../../../assets/variableIcons/icon.png'),
       title: 'Tab2',
       orientation: 'landscape',
@@ -67,6 +114,13 @@ const TAB_CONFIGS: TabConfiguration[] = [
       badgeValue: '2137',
       tabBarItemBadgeBackgroundColor: Colors.RedDark40,
       tabBarItemBadgeTextColor: Colors.RedDark120,
+      standardAppearance: {
+        stacked: {
+          normal: {
+            tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+          },
+        },
+      },
       icon: {
         imageSource: require('../../../assets/variableIcons/icon.png'),
       },

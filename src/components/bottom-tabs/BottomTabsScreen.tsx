@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   findNodeHandle,
+  processColor,
   type ImageSourcePropType,
   type NativeSyntheticEvent,
 } from 'react-native';
@@ -13,9 +14,15 @@ import { freezeEnabled } from '../../core';
 import BottomTabsScreenNativeComponent, {
   type IconType,
   type NativeProps,
+  type Appearance,
+  type ItemAppearance,
+  type ItemStateAppearance,
 } from '../../fabric/bottom-tabs/BottomTabsScreenNativeComponent';
 import { featureFlags } from '../../flags';
 import type {
+  BottomTabsScreenAppearance,
+  BottomTabsScreenItemAppearance,
+  BottomTabsScreenItemStateAppearance,
   BottomTabsScreenProps,
   EmptyObject,
   Icon,
@@ -48,8 +55,10 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     isFocused = false,
     freezeContents,
     icon,
-    selectedIcon,
     iconResource,
+    selectedIcon,
+    standardAppearance,
+    scrollEdgeAppearance,
     ...rest
   } = props;
 
@@ -134,6 +143,8 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       // double as a value.
       iconResource={parsedIconResource || undefined}
       {...iconProps}
+      standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
+      scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       {...rest}>
@@ -142,6 +153,64 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       </Freeze>
     </BottomTabsScreenNativeComponent>
   );
+}
+
+function mapAppearanceToNativeProp(
+  appearance?: BottomTabsScreenAppearance,
+): Appearance | undefined {
+  if (!appearance) return undefined;
+
+  const { stacked, inline, compactInline, tabBarBackgroundColor } = appearance;
+
+  return {
+    ...appearance,
+    stacked: mapItemAppearanceToNativeProp(stacked),
+    inline: mapItemAppearanceToNativeProp(inline),
+    compactInline: mapItemAppearanceToNativeProp(compactInline),
+    tabBarBackgroundColor: processColor(tabBarBackgroundColor),
+  };
+}
+
+function mapItemAppearanceToNativeProp(
+  itemAppearance?: BottomTabsScreenItemAppearance,
+): ItemAppearance | undefined {
+  if (!itemAppearance) return undefined;
+
+  const { normal, selected, focused, disabled } = itemAppearance;
+
+  return {
+    ...itemAppearance,
+    normal: mapItemStateAppearanceToNativeProp(normal),
+    selected: mapItemStateAppearanceToNativeProp(selected),
+    focused: mapItemStateAppearanceToNativeProp(focused),
+    disabled: mapItemStateAppearanceToNativeProp(disabled),
+  };
+}
+
+function mapItemStateAppearanceToNativeProp(
+  itemStateAppearance?: BottomTabsScreenItemStateAppearance,
+): ItemStateAppearance | undefined {
+  if (!itemStateAppearance) return undefined;
+
+  const {
+    tabBarItemTitleFontColor,
+    tabBarItemIconColor,
+    tabBarItemBadgeBackgroundColor,
+    tabBarItemTitleFontWeight,
+  } = itemStateAppearance;
+
+  return {
+    ...itemStateAppearance,
+    tabBarItemTitleFontColor: processColor(tabBarItemTitleFontColor),
+    tabBarItemIconColor: processColor(tabBarItemIconColor),
+    tabBarItemBadgeBackgroundColor: processColor(
+      tabBarItemBadgeBackgroundColor,
+    ),
+    tabBarItemTitleFontWeight:
+      tabBarItemTitleFontWeight !== undefined
+        ? String(tabBarItemTitleFontWeight)
+        : undefined,
+  };
 }
 
 function shouldFreezeScreen(

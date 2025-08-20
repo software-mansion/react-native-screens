@@ -100,20 +100,7 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
 #endif
-  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
-  _tabBarBackgroundColor = nil;
   _tabBarTintColor = nil;
-
-  _tabBarItemTitleFontFamily = nil;
-  _tabBarItemTitleFontSize = nil;
-  _tabBarItemTitleFontWeight = nil;
-  _tabBarItemTitleFontStyle = nil;
-  _tabBarItemTitleFontColor = nil;
-  _tabBarItemTitlePositionAdjustment = UIOffsetMake(0.0, 0.0);
-
-  _tabBarItemIconColor = nil;
-
-  _tabBarItemBadgeBackgroundColor = nil;
 }
 
 #pragma mark - UIView methods
@@ -261,64 +248,9 @@ namespace react = facebook::react;
     _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
   }
 
-  if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
-    _needsTabBarAppearanceUpdate = YES;
-    _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
-  }
-
-  if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
-    _needsTabBarAppearanceUpdate = YES;
-    _tabBarBlurEffect =
-        rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
-  }
-
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
-  }
-
-  if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
-    _tabBarItemTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontFamily);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
-    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
-    _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
-    _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
-    _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemIconColor != oldComponentProps.tabBarItemIconColor) {
-    _tabBarItemIconColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemIconColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
-    _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitlePositionAdjustment.horizontal !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
-      newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
-    _tabBarItemTitlePositionAdjustment = rnscreens::conversion::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
-        newComponentProps.tabBarItemTitlePositionAdjustment);
-    _needsTabBarAppearanceUpdate = YES;
   }
 
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
@@ -479,69 +411,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 // Paper will call property setters
 
-- (void)setTabBarBackgroundColor:(UIColor *_Nullable)tabBarBackgroundColor
-{
-  _tabBarBackgroundColor = tabBarBackgroundColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
-{
-  _tabBarBlurEffect = tabBarBlurEffect;
-  [self invalidateTabBarAppearance];
-}
-
 - (void)setTabBarTintColor:(UIColor *_Nullable)tabBarTintColor
 {
   _tabBarTintColor = tabBarTintColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontFamily:(NSString *_Nullable)tabBarItemTitleFontFamily
-{
-  _tabBarItemTitleFontFamily = tabBarItemTitleFontFamily;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontSize:(NSNumber *_Nullable)tabBarItemTitleFontSize
-{
-  _tabBarItemTitleFontSize = tabBarItemTitleFontSize;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontWeight:(NSString *_Nullable)tabBarItemTitleFontWeight
-{
-  _tabBarItemTitleFontWeight = tabBarItemTitleFontWeight;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontStyle:(NSString *_Nullable)tabBarItemTitleFontStyle
-{
-  _tabBarItemTitleFontStyle = tabBarItemTitleFontStyle;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontColor:(UIColor *_Nullable)tabBarItemTitleFontColor
-{
-  _tabBarItemTitleFontColor = tabBarItemTitleFontColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemIconColor:(UIColor *_Nullable)tabBarItemIconColor
-{
-  _tabBarItemIconColor = tabBarItemIconColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemBadgeBackgroundColor:(UIColor *_Nullable)tabBarItemBadgeBackgroundColor
-{
-  _tabBarItemBadgeBackgroundColor = tabBarItemBadgeBackgroundColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
-{
-  _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
   [self invalidateTabBarAppearance];
 }
 
