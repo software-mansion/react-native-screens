@@ -2,9 +2,9 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
-#import "RNSLog.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -33,6 +33,7 @@ namespace react = facebook::react;
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
+  UITabBarItem *_baseTabBarItem;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -102,6 +103,8 @@ namespace react = facebook::react;
 
   _selectedIconImageSource = nil;
   _selectedIconSfSymbolName = nil;
+
+  _systemItem = RNSBottomTabsScreenSystemItemNone;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -142,6 +145,22 @@ RNS_IGNORE_SUPER_CALL_END
 - (nullable RNSTabBarController *)findTabBarController
 {
   return static_cast<RNSTabBarController *>(_controller.tabBarController);
+}
+
+- (void)setSystemItemBasedOnRNSBottomTabsScreenSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
+{
+  _systemItem = systemItem;
+  if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
+    if (_baseTabBarItem == nil) {
+      _baseTabBarItem = _controller.tabBarItem;
+    }
+    UITabBarSystemItem systemItem =
+        rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+    _controller.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
+  } else if (_baseTabBarItem != nil) {
+    _controller.tabBarItem = _baseTabBarItem;
+    _baseTabBarItem = nil;
+  }
 }
 
 #pragma mark - RNSScrollViewBehaviorOverriding
@@ -194,6 +213,9 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
     _controller.tabBarItem.badgeValue = _badgeValue;
+    if (_baseTabBarItem != nil) {
+      _baseTabBarItem.badgeValue = _badgeValue;
+    }
   }
 
   if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
@@ -303,6 +325,12 @@ RNS_IGNORE_SUPER_CALL_END
       RCTLogWarn(
           @"[RNScreens] changing overrideScrollViewContentInsetAdjustmentBehavior dynamically is currently unsupported");
     }
+  }
+
+  if (newComponentProps.systemItem != oldComponentProps.systemItem) {
+    [self setSystemItemBasedOnRNSBottomTabsScreenSystemItem:
+              rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+                  newComponentProps.systemItem)];
   }
 
   // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
@@ -510,6 +538,13 @@ RNS_IGNORE_SUPER_CALL_END
 
   // _isOverrideScrollViewContentInsetAdjustmentBehaviorSet flag is set in didSetProps to handle a case
   // when the prop is undefined in JS and default value is used instead of calling this setter.
+}
+
+// This is a Paper-only setter method that will be called by the mounting code.
+// It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
+- (void)setSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
+{
+  [self setSystemItemBasedOnRNSBottomTabsScreenSystemItem:systemItem];
 }
 
 - (void)setOrientation:(RNSOrientation)orientation

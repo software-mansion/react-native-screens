@@ -46,6 +46,26 @@ RCT_ENUM_CONVERTER(
     RNSOrientationInherit,
     integerValue)
 
+RCT_ENUM_CONVERTER(
+    RNSBottomTabsScreenSystemItem,
+    (@{
+      @"none" : @(RNSBottomTabsScreenSystemItemNone),
+      @"bookmarks" : @(RNSBottomTabsScreenSystemItemBookmarks),
+      @"contacts" : @(RNSBottomTabsScreenSystemItemContacts),
+      @"downloads" : @(RNSBottomTabsScreenSystemItemDownloads),
+      @"favorites" : @(RNSBottomTabsScreenSystemItemFavorites),
+      @"featured" : @(RNSBottomTabsScreenSystemItemFeatured),
+      @"history" : @(RNSBottomTabsScreenSystemItemHistory),
+      @"more" : @(RNSBottomTabsScreenSystemItemMore),
+      @"mostRecent" : @(RNSBottomTabsScreenSystemItemMostRecent),
+      @"mostViewed" : @(RNSBottomTabsScreenSystemItemMostViewed),
+      @"recents" : @(RNSBottomTabsScreenSystemItemRecents),
+      @"search" : @(RNSBottomTabsScreenSystemItemSearch),
+      @"topRated" : @(RNSBottomTabsScreenSystemItemTopRated),
+    }),
+    RNSBottomTabsScreenSystemItemNone,
+    integerValue)
+
 @end
 
 #endif // !RCT_NEW_ARCH_ENABLED

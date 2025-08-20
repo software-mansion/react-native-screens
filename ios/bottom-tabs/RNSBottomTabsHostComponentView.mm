@@ -18,9 +18,9 @@
 #import "RNSConversions.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSTabBarController.h"
 #import "RNSTabBarControllerDelegate.h"
-#import "RNSLog.h"
 
 namespace react = facebook::react;
 
