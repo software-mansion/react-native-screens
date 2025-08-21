@@ -21,9 +21,9 @@ static char RNSBarButtonItemIdKey;
     if (imageObj) {
       self.image = [RCTConvert UIImage:imageObj];
     }
-    NSString *systemImage = dict[@"systemImage"];
-    if (systemImage) {
-      self.image = [UIImage systemImageNamed:systemImage];
+    NSString *sfSymbolName = dict[@"sfSymbolName"];
+    if (sfSymbolName) {
+      self.image = [UIImage systemImageNamed:sfSymbolName];
     }
 
     NSDictionary *titleStyle = dict[@"titleStyle"];
@@ -187,9 +187,9 @@ static char RNSBarButtonItemIdKey;
       NSString *menuId = item[@"menuId"];
       if (menuId) {
         NSString *title = item[@"title"];
-        NSString *systemImage = item[@"systemImage"];
+        NSString *sfSymbolName = item[@"sfSymbolName"];
         UIAction *actionElement = [UIAction actionWithTitle:title
-                                                      image:systemImage ? [UIImage systemImageNamed:systemImage] : nil
+                                                      image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                                                  identifier:nil
                                                     handler:^(__kindof UIAction *_Nonnull a) {
                                                       menuAction(menuId);

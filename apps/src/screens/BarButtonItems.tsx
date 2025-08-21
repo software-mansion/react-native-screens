@@ -107,7 +107,7 @@ export default function BarButtonItemsExample() {
           title: 'System image Button',
           headerRightItems: [
             {
-              systemImage: "square.and.arrow.up",
+              sfSymbolName: "square.and.arrow.up",
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -323,7 +323,7 @@ export default function BarButtonItemsExample() {
                 items: [
                   {
                     title: 'Action 1',
-                    systemImage: 'star',
+                    sfSymbolName: 'star',
                     state: 'on',
                     attributes: 'destructive',
                     discoverabilityTitle: 'Favorite',
@@ -331,7 +331,7 @@ export default function BarButtonItemsExample() {
                   },
                   {
                     title: 'Action 2',
-                    systemImage: 'square.and.arrow.up',
+                    sfSymbolName: 'square.and.arrow.up',
                     state: 'off',
                     attributes: 'disabled',
                     discoverabilityTitle: 'Disabled Action',
