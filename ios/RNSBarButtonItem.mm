@@ -180,59 +180,56 @@ static char RNSBarButtonItemIdKey;
 
 + (UIMenu *)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
 {
-  if (@available(iOS 14.0, *)) {
-    NSArray *items = dict[@"items"];
-    NSMutableArray<UIMenuElement *> *elements = [NSMutableArray new];
-    if (items.count > 0) {
-      for (NSDictionary *item in items) {
-        NSString *menuId = item[@"menuId"];
-        if (menuId) {
-          NSString *title = item[@"title"];
-          NSString *systemImage = item[@"systemImage"];
-          UIAction *actionElement = [UIAction actionWithTitle:title
-                                                        image:systemImage ? [UIImage systemImageNamed:systemImage] : nil
-                                                   identifier:nil
-                                                      handler:^(__kindof UIAction *_Nonnull a) {
-                                                        menuAction(menuId);
-                                                      }];
-          NSString *state = item[@"state"];
-          if ([state isEqualToString:@"on"]) {
-            actionElement.state = UIMenuElementStateOn;
-          } else if ([state isEqualToString:@"off"]) {
-            actionElement.state = UIMenuElementStateOff;
-          } else if ([state isEqualToString:@"mixed"]) {
-            actionElement.state = UIMenuElementStateMixed;
-          }
+  NSArray *items = dict[@"items"];
+  NSMutableArray<UIMenuElement *> *elements = [NSMutableArray new];
+  if (items.count > 0) {
+    for (NSDictionary *item in items) {
+      NSString *menuId = item[@"menuId"];
+      if (menuId) {
+        NSString *title = item[@"title"];
+        NSString *systemImage = item[@"systemImage"];
+        UIAction *actionElement = [UIAction actionWithTitle:title
+                                                      image:systemImage ? [UIImage systemImageNamed:systemImage] : nil
+                                                 identifier:nil
+                                                    handler:^(__kindof UIAction *_Nonnull a) {
+                                                      menuAction(menuId);
+                                                    }];
+        NSString *state = item[@"state"];
+        if ([state isEqualToString:@"on"]) {
+          actionElement.state = UIMenuElementStateOn;
+        } else if ([state isEqualToString:@"off"]) {
+          actionElement.state = UIMenuElementStateOff;
+        } else if ([state isEqualToString:@"mixed"]) {
+          actionElement.state = UIMenuElementStateMixed;
+        }
 
-          NSString *attributes = item[@"attributes"];
-          if ([attributes isEqualToString:@"destructive"]) {
-            actionElement.attributes = UIMenuElementAttributesDestructive;
-          } else if ([attributes isEqualToString:@"disabled"]) {
-            actionElement.attributes = UIMenuElementAttributesDisabled;
-          } else if ([attributes isEqualToString:@"hidden"]) {
-            actionElement.attributes = UIMenuElementAttributesHidden;
-          }
+        NSString *attributes = item[@"attributes"];
+        if ([attributes isEqualToString:@"destructive"]) {
+          actionElement.attributes = UIMenuElementAttributesDestructive;
+        } else if ([attributes isEqualToString:@"disabled"]) {
+          actionElement.attributes = UIMenuElementAttributesDisabled;
+        } else if ([attributes isEqualToString:@"hidden"]) {
+          actionElement.attributes = UIMenuElementAttributesHidden;
+        }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-          else if (@available(iOS 16.0, *)) {
-            if ([attributes isEqualToString:@"keepsMenuPresented"]) {
-              actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
-            }
+  __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+        else if (@available(iOS 16.0, *)) {
+          if ([attributes isEqualToString:@"keepsMenuPresented"]) {
+            actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
           }
+        }
 #endif
-          [elements addObject:actionElement];
-        } else {
-          UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
-          if (childMenu) {
-            [elements addObject:childMenu];
-          }
+        [elements addObject:actionElement];
+      } else {
+        UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
+        if (childMenu) {
+          [elements addObject:childMenu];
         }
       }
     }
-    NSString *title = dict[@"title"];
-    return [UIMenu menuWithTitle:title children:elements];
   }
-  return nil;
+  NSString *title = dict[@"title"];
+  return [UIMenu menuWithTitle:title children:elements];
 }
 
 - (void)handleBarButtonItemPress:(UIBarButtonItem *)item
