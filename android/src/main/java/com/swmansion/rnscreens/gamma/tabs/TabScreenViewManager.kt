@@ -180,7 +180,7 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
-    @ReactProp("iconResource")
+    @ReactProp(name = "iconResource")
     override fun setIconResource(
         view: TabScreen,
         value: ReadableMap?,
