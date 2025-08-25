@@ -53,8 +53,21 @@
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
   if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
-    tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
-    tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    if (screenView.iconSfSymbolName != nil) {
+      tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+    } else if (screenView.systemItem == RNSBottomTabsScreenSystemItemNone) {
+      // We don't want to override systemItem's icon if no custom icon is provided.
+      // There is unhandled edge case: if you use systemItem, set custom icon and then remove custom icon -> we won't
+      // restore systemItem's icon.
+      tabBarItem.image = nil;
+    }
+
+    if (screenView.selectedIconSfSymbolName != nil) {
+      tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    } else if (screenView.systemItem == RNSBottomTabsScreenSystemItemNone) {
+      // We don't want to override systemItem's icon if no custom icon is provided.
+      tabBarItem.selectedImage = nil;
+    }
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
 

@@ -34,7 +34,6 @@ namespace react = facebook::react;
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
-  UITabBarItem *_baseTabBarItem;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -138,22 +137,6 @@ RNS_IGNORE_SUPER_CALL_END
   return static_cast<RNSTabBarController *>(_controller.tabBarController);
 }
 
-- (void)setSystemItemBasedOnRNSBottomTabsScreenSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
-{
-  _systemItem = systemItem;
-  if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
-    if (_baseTabBarItem == nil) {
-      _baseTabBarItem = _controller.tabBarItem;
-    }
-    UITabBarSystemItem systemItem =
-        rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
-    _controller.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
-  } else if (_baseTabBarItem != nil) {
-    _controller.tabBarItem = _baseTabBarItem;
-    _baseTabBarItem = nil;
-  }
-}
-
 #pragma mark - RNSScrollViewBehaviorOverriding
 
 - (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
@@ -179,6 +162,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
+  bool tabBarItemNeedsUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
@@ -203,10 +187,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
-    _controller.tabBarItem.badgeValue = _badgeValue;
-    if (_baseTabBarItem != nil) {
-      _baseTabBarItem.badgeValue = _badgeValue;
-    }
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
@@ -232,28 +213,33 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.iconType != oldComponentProps.iconType) {
     _iconType = rnscreens::conversion::RNSBottomTabsIconTypeFromIcon(newComponentProps.iconType);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.iconImageSource != oldComponentProps.iconImageSource) {
     _iconImageSource =
         rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconImageSource, _iconType);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.iconSfSymbolName != oldComponentProps.iconSfSymbolName) {
     _iconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
     _selectedIconImageSource = rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(
         &newComponentProps.selectedIconImageSource, _iconType);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
     _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
@@ -279,16 +265,35 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
 
-  if (newComponentProps.systemItem != oldComponentProps.systemItem) {
-    [self setSystemItemBasedOnRNSBottomTabsScreenSystemItem:
-              rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
-                  newComponentProps.systemItem)];
-  }
-
   // This flag is set to YES when overrideScrollViewContentInsetAdjustmentBehavior prop
   // is assigned for the first time. This allows us to identify any subsequent changes to this prop,
   // enabling us to warn users that dynamic changes are not supported.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
+
+  if (newComponentProps.systemItem != oldComponentProps.systemItem) {
+    _systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+        newComponentProps.systemItem);
+    tabBarItemNeedsUpdate = YES;
+  }
+
+  if (tabBarItemNeedsUpdate) {
+    UITabBarItem *tabBarItem = nil;
+    if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
+      UITabBarSystemItem systemItem =
+          rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+      tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
+    } else {
+      tabBarItem = [[UITabBarItem alloc] init];
+      tabBarItem.title = _title;
+    }
+
+    tabBarItem.badgeValue = _badgeValue;
+
+    _controller.tabBarItem = tabBarItem;
+
+    // Force appearance update to make sure correct image for tab bar item is used
+    tabItemNeedsAppearanceUpdate = YES;
+  }
 
   if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
