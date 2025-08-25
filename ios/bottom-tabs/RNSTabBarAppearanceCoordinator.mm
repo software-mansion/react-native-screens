@@ -53,8 +53,11 @@
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
   if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
-    tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
-    tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    // We don't want to set the icon to undefined when system item is used. Otherwise the system icon will be reset.
+    if (screenView.systemItem == RNSBottomTabsScreenSystemItemNone || screenView.iconSfSymbolName != nil) {
+      tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+      tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    }
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
 
