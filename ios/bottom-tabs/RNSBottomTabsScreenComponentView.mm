@@ -33,6 +33,7 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
+  BOOL _tabBarItemNeedsUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
@@ -60,6 +61,7 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   _tabItemNeedsAppearanceUpdate = NO;
   _tabScreenOrientationNeedsUpdate = NO;
+  _tabBarItemNeedsUpdate = NO;
 #endif
 
   // This is a temporary workaround to avoid UIScrollEdgeEffect glitch
@@ -149,6 +151,25 @@ RNS_IGNORE_SUPER_CALL_END
   if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
     [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
   }
+}
+
+#pragma mark - Prop update utils
+
+- (void)updateTabBarItem
+{
+  UITabBarItem *tabBarItem = nil;
+  if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
+    UITabBarSystemItem systemItem =
+        rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+    tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
+  } else {
+    tabBarItem = [[UITabBarItem alloc] init];
+    tabBarItem.title = _title;
+  }
+
+  tabBarItem.badgeValue = _badgeValue;
+
+  _controller.tabBarItem = tabBarItem;
 }
 
 #if RCT_NEW_ARCH_ENABLED
@@ -277,19 +298,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (tabBarItemNeedsUpdate) {
-    UITabBarItem *tabBarItem = nil;
-    if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
-      UITabBarSystemItem systemItem =
-          rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
-      tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
-    } else {
-      tabBarItem = [[UITabBarItem alloc] init];
-      tabBarItem.title = _title;
-    }
-
-    tabBarItem.badgeValue = _badgeValue;
-
-    _controller.tabBarItem = tabBarItem;
+    [self updateTabBarItem];
 
     // Force appearance update to make sure correct image for tab bar item is used
     tabItemNeedsAppearanceUpdate = YES;
@@ -361,6 +370,14 @@ RNS_IGNORE_SUPER_CALL_END
   // didSetProps will always be called because tabKey prop is required.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
+  if (_tabBarItemNeedsUpdate) {
+    [self updateTabBarItem];
+    _tabBarItemNeedsUpdate = NO;
+
+    // Force appearance update to make sure correct image for tab bar item is used
+    _tabItemNeedsAppearanceUpdate = YES;
+  }
+
   if (_tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
     _tabItemNeedsAppearanceUpdate = NO;
@@ -397,37 +414,42 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setBadgeValue:(NSString *)badgeValue
 {
   _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
-  _controller.tabBarItem.badgeValue = _badgeValue;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setIconType:(RNSBottomTabsIconType)iconType
 {
   _iconType = iconType;
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setIconImageSource:(RCTImageSource *)iconImageSource
 {
   _iconImageSource = iconImageSource;
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setIconSfSymbolName:(NSString *)iconSfSymbolName
 {
   _iconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setSelectedIconImageSource:(RCTImageSource *)selectedIconImageSource
 {
   _selectedIconImageSource = selectedIconImageSource;
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setSelectedIconSfSymbolName:(NSString *)selectedIconSfSymbolName
 {
   _selectedIconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setOverrideScrollViewContentInsetAdjustmentBehavior:(BOOL)overrideScrollViewContentInsetAdjustmentBehavior
@@ -469,7 +491,8 @@ RNS_IGNORE_SUPER_CALL_END
 // It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
 - (void)setSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
 {
-  [self setSystemItemBasedOnRNSBottomTabsScreenSystemItem:systemItem];
+  _systemItem = systemItem;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setOrientation:(RNSOrientation)orientation
