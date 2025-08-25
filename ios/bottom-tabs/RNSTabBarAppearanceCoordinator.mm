@@ -57,8 +57,6 @@
       tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
     } else if (screenView.systemItem == RNSBottomTabsScreenSystemItemNone) {
       // We don't want to override systemItem's icon if no custom icon is provided.
-      // There is unhandled edge case: if you use systemItem, set custom icon and then remove custom icon -> we won't
-      // restore systemItem's icon.
       tabBarItem.image = nil;
     }
 
