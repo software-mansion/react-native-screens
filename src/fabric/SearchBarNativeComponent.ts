@@ -28,12 +28,14 @@ export interface NativeProps extends ViewProps {
   onSearchBlur?: DirectEventHandler<SearchBarEvent> | null;
   onSearchButtonPress?: DirectEventHandler<SearchButtonPressedEvent> | null;
   onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
+  onBookmarkButtonPress?: DirectEventHandler<SearchBarEvent> | null;
   onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
   hideWhenScrolling?: boolean;
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
   placement?: WithDefault<SearchBarPlacement, 'stacked'>;
   obscureBackground?: boolean;
+  showBookmarkButton?: boolean;
   hideNavigationBar?: boolean;
   cancelButtonText?: string;
   // TODO: implement these on iOS

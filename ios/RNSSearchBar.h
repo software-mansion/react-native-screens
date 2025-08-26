@@ -31,6 +31,7 @@
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onChangeText;
 @property (nonatomic, copy) RCTDirectEventBlock onCancelButtonPress;
+@property (nonatomic, copy) RCTDirectEventBlock onBookmarkButtonPress;
 @property (nonatomic, copy) RCTDirectEventBlock onSearchButtonPress;
 @property (nonatomic, copy) RCTDirectEventBlock onSearchFocus;
 @property (nonatomic, copy) RCTDirectEventBlock onSearchBlur;
