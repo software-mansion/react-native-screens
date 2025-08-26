@@ -562,8 +562,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   NSUInteger currentIndex = [navctr.viewControllers indexOfObject:vc];
-  UINavigationItem *prevItem =
-      currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
+  UIViewController *prevVC = currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1] : nil;
+  UINavigationItem *prevItem = currentIndex > 0 ? prevVC.navigationItem : nil;
 
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
@@ -618,7 +618,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
 #if !TARGET_OS_TV
-  [config configureBackItem:prevItem];
+  [config configureBackItem:prevItem withPrevVC:prevVC];
 
   if (config.largeTitle) {
     navctr.navigationBar.prefersLargeTitles = YES;
@@ -770,7 +770,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)configureBackItem:(nullable UINavigationItem *)prevItem API_UNAVAILABLE(tvos)
+- (void)configureBackItem:(nullable UINavigationItem *)prevItem
+               withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
 {
 #if !TARGET_OS_TV
   if (prevItem == nil) {
@@ -781,6 +782,15 @@ RNS_IGNORE_SUPER_CALL_END
 
   const auto isBackTitleBlank = [NSString rnscreens_isBlankOrNull:config.backTitle] == YES;
   NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+
+  // If previous screen controller was recreated (e.g. when you go back to tab with stack that has multiple screens),
+  // its navigationItem may not have any information from screen's headerConfig, including the title.
+  // If this is the case, we attempt to extract the title from previous screen's config directly.
+  if (resolvedBackTitle == nil && [prevVC isKindOfClass:[RNSScreen class]]) {
+    RNSScreen *prevScreen = static_cast<RNSScreen *>(prevVC);
+    resolvedBackTitle = prevScreen.screenView.findHeaderConfig.title;
+  }
+
   prevItem.backButtonTitle = resolvedBackTitle;
   // This has any effect only in case the `backBarButtonItem` is not set.
   // We apply it before we configure the back item, because it might get overriden.
