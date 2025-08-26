@@ -53,8 +53,13 @@
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
   if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
-    tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
-    tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    if (screenView.iconSfSymbolName != nil) {
+      tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+    }
+
+    if (screenView.selectedIconSfSymbolName != nil) {
+      tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    }
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
 

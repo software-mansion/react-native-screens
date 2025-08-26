@@ -149,8 +149,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
       // iconResourceName: 'sym_action_chat', // Android specific
       iconResource: require('../../../assets/svg/cart.svg'),
       title: 'Tab4',
-      // systemItem: 'search', // iOS specific
-      badgeValue: '',
+      systemItem: 'search', // iOS specific
+      badgeValue: '123',
       orientation: 'portrait',
     },
     component: Tab4,
