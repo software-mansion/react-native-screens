@@ -411,6 +411,11 @@ namespace react = facebook::react;
   RCTRNSSearchBarHandleCommand(self, commandName, args);
 }
 
++ (BOOL)shouldBeRecycled
+{
+  return NO;
+}
+
 #else
 #endif // RCT_NEW_ARCH_ENABLED
 
