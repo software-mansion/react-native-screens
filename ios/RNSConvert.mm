@@ -181,6 +181,12 @@
       return RNSSearchBarPlacementAutomatic;
     case Inline:
       return RNSSearchBarPlacementInline;
+    case Integrated:
+      return RNSSearchBarPlacementIntegrated;
+    case IntegratedButton:
+      return RNSSearchBarPlacementIntegratedButton;
+    case IntegratedCentered:
+      return RNSSearchBarPlacementIntegratedCentered;
   }
 }
 
