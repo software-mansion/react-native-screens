@@ -232,6 +232,35 @@ namespace react = facebook::react;
       return UINavigationItemSearchBarPlacementAutomatic;
     case RNSSearchBarPlacementInline:
       return UINavigationItemSearchBarPlacementInline;
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+    case RNSSearchBarPlacementIntegrated:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegrated;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+    case RNSSearchBarPlacementIntegratedButton:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegratedButton;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+    case RNSSearchBarPlacementIntegratedCentered:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegratedCentered;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+#else // Check for iOS >= 26
+    case RNSSearchBarPlacementIntegrated:
+    case RNSSearchBarPlacementIntegratedButton:
+    case RNSSearchBarPlacementIntegratedCentered:
+      return UINavigationItemSearchBarPlacementInline;
+#endif // Check for iOS >= 26
+    default:
+      RCTLogError(@"[RNScreens] unsupported search bar placement");
+      return UINavigationItemSearchBarPlacementStacked;
   }
 }
 #endif // Check for iOS >= 16 && !TARGET_OS_TV
@@ -480,6 +509,9 @@ RCT_ENUM_CONVERTER(
       @"automatic" : @(RNSSearchBarPlacementAutomatic),
       @"inline" : @(RNSSearchBarPlacementInline),
       @"stacked" : @(RNSSearchBarPlacementStacked),
+      @"integrated" : @(RNSSearchBarPlacementIntegrated),
+      @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
+      @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
     }),
     RNSSearchBarPlacementStacked,
     integerValue)

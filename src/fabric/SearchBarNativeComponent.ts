@@ -19,7 +19,13 @@ export type ChangeTextEvent = Readonly<{
   text?: string;
 }>;
 
-type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+type SearchBarPlacement =
+  | 'automatic'
+  | 'inline' // deprecated
+  | 'stacked'
+  | 'integrated'
+  | 'integratedButton'
+  | 'integratedCentered';
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
