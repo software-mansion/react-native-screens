@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.content.res.Configuration
 import android.view.Choreographer
 import android.view.MenuItem
 import android.widget.FrameLayout
@@ -180,6 +181,21 @@ class TabsHost(
             containerUpdateCoordinator.let {
                 it.invalidateNavigationMenu()
                 it.postContainerUpdateIfNeeded()
+            }
+        }
+    }
+
+    private var previousNightMode: Int? = null
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+
+        newConfig?.let {
+            val currentNightMode = it.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            if (currentNightMode != previousNightMode) {
+                // update the appearance when user toggles between dark/light mode
+                appearanceCoordinator.updateTabAppearance(this)
+                previousNightMode = currentNightMode
             }
         }
     }
