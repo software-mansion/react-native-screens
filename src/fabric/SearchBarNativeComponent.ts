@@ -39,6 +39,7 @@ export interface NativeProps extends ViewProps {
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
   placement?: WithDefault<SearchBarPlacement, 'stacked'>;
+  allowToolbarIntegration?: WithDefault<boolean, true>;
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;
   cancelButtonText?: string;

@@ -850,6 +850,19 @@ export interface SearchBarProps {
    */
   placement?: SearchBarPlacement;
   /**
+   * Indicates whether the system can place the search bar among other toolbar items on iPhone.
+   *
+   * Set this prop to `false` to prevent the search bar from appearing in the toolbar when
+   * `placement` is `integrated`, `integratedButton` or `integratedCentered`.
+   *
+   * Defaults to `true`.
+   * When `placement` is set to `stacked`, this property's value will be overridden with `false`
+   * to circumvent a UIKit native bug that prevents the search bar from appearing on the root screen.
+   *
+   * @platform iOS (>= 26.0)
+   */
+  allowToolbarIntegration?: boolean;
+  /**
    * The search field text color
    */
   textColor?: ColorValue;

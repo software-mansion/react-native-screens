@@ -68,6 +68,7 @@ namespace react = facebook::react;
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
   _placement = RNSSearchBarPlacementStacked;
+  _allowToolbarIntegration = YES;
 }
 
 - (void)emitOnFocusEvent
@@ -393,6 +394,10 @@ namespace react = facebook::react;
     self.placement = [RNSConvert RNSScreenSearchBarPlacementFromCppEquivalent:newScreenProps.placement];
   }
 
+  if (oldScreenProps.allowToolbarIntegration != newScreenProps.allowToolbarIntegration) {
+    self.allowToolbarIntegration = newScreenProps.allowToolbarIntegration;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -440,6 +445,7 @@ RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
+RCT_EXPORT_VIEW_PROPERTY(allowToolbarIntegration, BOOL)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTDirectEventBlock)
