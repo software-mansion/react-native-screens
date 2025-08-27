@@ -21,14 +21,14 @@ class TabsHostAppearanceApplicator(
 ) {
     private fun resolveColorAttr(attr: Int): Int {
         val typedValue = TypedValue()
-        context.theme.resolveAttribute(attr, typedValue, true);
+        context.theme.resolveAttribute(attr, typedValue, true)
         return typedValue.data
     }
 
     fun updateSharedAppearance(tabsHost: TabsHost) {
         bottomNavigationView.isVisible = true
         val colorSurfaceContainer = resolveColorAttr(com.google.android.material.R.attr.colorSurfaceContainer)
-        bottomNavigationView.setBackgroundColor( tabsHost.tabBarBackgroundColor ?: colorSurfaceContainer)
+        bottomNavigationView.setBackgroundColor(tabsHost.tabBarBackgroundColor ?: colorSurfaceContainer)
 
         val states =
             arrayOf(
@@ -38,10 +38,10 @@ class TabsHostAppearanceApplicator(
 
         // Font color
         val colorSurfaceVariant = resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
-        val fontInactiveColor = tabsHost.tabBarItemTitleFontColor ?: colorSurfaceVariant;
+        val fontInactiveColor = tabsHost.tabBarItemTitleFontColor ?: colorSurfaceVariant
 
         val colorSecondary = resolveColorAttr(com.google.android.material.R.attr.colorSecondary)
-        val fontActiveColor = tabsHost.tabBarItemTitleFontColorActive ?: tabsHost.tabBarItemTitleFontColor ?: colorSecondary;
+        val fontActiveColor = tabsHost.tabBarItemTitleFontColorActive ?: tabsHost.tabBarItemTitleFontColor ?: colorSecondary
 
         val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
