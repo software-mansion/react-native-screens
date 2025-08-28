@@ -1,270 +1,44 @@
+import {
+  NavigationContainer,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import React, {
   createContext,
   ReactNode,
   useContext,
-  useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
-import {
-  NavigationContainer,
-  ParamListBase,
-  RouteProp,
-} from '@react-navigation/native';
-import {
-  NativeStackNavigationOptions,
-  NativeStackNavigationProp,
-  createNativeStackNavigator,
-} from '@react-navigation/native-stack';
 import { Button, ScrollView, Text, View } from 'react-native';
 import { SearchBarPlacement, SearchBarProps } from 'react-native-screens';
 import { ListItem, SettingsPicker, SettingsSwitch } from '../shared';
-import ConfigWrapperContext, {
-  Configuration,
-  DEFAULT_GLOBAL_CONFIGURATION,
-} from '../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+import { CenteredLayoutView } from '../shared/CenteredLayoutView';
 import {
   BottomTabsContainer,
   TabConfiguration,
 } from '../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import { CenteredLayoutView } from '../shared/CenteredLayoutView';
-
-type MainRouteParamList = {
-  Home: undefined;
-  Stack: undefined;
-  StackAndTabs: undefined;
-};
+import ConfigWrapperContext, {
+  Configuration,
+  DEFAULT_GLOBAL_CONFIGURATION,
+} from '../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 
 type NavigationProp<ParamList extends ParamListBase> = {
   navigation: NativeStackNavigationProp<ParamList>;
-  route: RouteProp<ParamList>;
 };
-
-type MainStackNavigationProp = NavigationProp<MainRouteParamList>;
-
-const MainStack = createNativeStackNavigator<MainRouteParamList>();
-
-const SEARCH_BAR_CONFIGURATIONS: Record<string, NativeStackNavigationOptions> =
-  {
-    AUTOMATIC: {
-      headerSearchBarOptions: {
-        placement: 'automatic',
-      },
-    },
-    INLINE: {
-      headerSearchBarOptions: {
-        placement: 'inline',
-      },
-    },
-    STACKED: {
-      headerSearchBarOptions: {
-        placement: 'stacked',
-      },
-    },
-    INTEGRATED: {
-      headerSearchBarOptions: {
-        placement: 'integrated',
-      },
-    },
-    INTEGRATED_BUTTON: {
-      headerSearchBarOptions: {
-        placement: 'integratedButton',
-      },
-    },
-    INTEGRATED_CENTER: {
-      headerSearchBarOptions: {
-        placement: 'integratedCentered',
-      },
-    },
-  };
-
-type ExamplesRouteParamList = {
-  Menu: undefined;
-  Test: {
-    headerSearchBarOptions: SearchBarProps | undefined;
-    allowToolbarIntegration: boolean;
-  };
-};
-
-type ExamplesStackNavigationProp = NavigationProp<ExamplesRouteParamList>;
-
-const ExamplesStack = createNativeStackNavigator<ExamplesRouteParamList>();
-
-function Menu({ navigation }: ExamplesStackNavigationProp) {
-  const [allowToolbarIntegration, setAllowToolbarIntegration] = useState(true);
-  return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{
-        flex: 1,
-        justifyContent: 'center',
-        gap: 10,
-      }}>
-      <SettingsSwitch
-        label="allowToolbarIntegration"
-        value={allowToolbarIntegration}
-        onValueChange={value => setAllowToolbarIntegration(value)}
-      />
-      {Object.keys(SEARCH_BAR_CONFIGURATIONS).map(key => (
-        <Button
-          title={key}
-          key={key}
-          onPress={() =>
-            navigation.push('Test', {
-              headerSearchBarOptions:
-                SEARCH_BAR_CONFIGURATIONS[key].headerSearchBarOptions,
-              allowToolbarIntegration: allowToolbarIntegration,
-            })
-          }
-        />
-      ))}
-    </ScrollView>
-  );
-}
-
-function Test({ navigation, route }: ExamplesStackNavigationProp) {
-  const [search, setSearch] = useState('');
-  const { searchBarConfig } = useSearchBarConfig();
-
-  const places = [
-    '🏝️ Desert Island',
-    '🏞️ National Park',
-    '⛰️ Mountain',
-    '🏰 Castle',
-    '🗽 Statue of Liberty',
-    '🌉 Bridge at Night',
-    '🏦 Bank',
-    '🏛️ Classical Building',
-    '🏟️ Stadium',
-    '🏪 Convenience Store',
-    '🏫 School',
-    '⛲ Fountain',
-    '🌄 Sunrise Over Mountains',
-    '🌆 Cityscape at Dusk',
-    '🎡 Ferris Wheel',
-  ];
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerSearchBarOptions: {
-        ...(route.params?.headerSearchBarOptions ??
-          searchBarConfig.headerSearchBarOptions ?? {
-            placement: 'integrated',
-          }),
-        allowToolbarIntegration:
-          route.params?.allowToolbarIntegration ??
-          searchBarConfig.allowToolbarIntegration ??
-          true,
-        onChangeText: event => setSearch(event.nativeEvent.text),
-      },
-    });
-  }, [
-    navigation,
-    route.params?.allowToolbarIntegration,
-    route.params?.headerSearchBarOptions,
-    search,
-    searchBarConfig.allowToolbarIntegration,
-    searchBarConfig.headerSearchBarOptions,
-  ]);
-
-  return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      keyboardDismissMode="on-drag">
-      {places
-        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
-        .map(place => (
-          <ListItem
-            key={place}
-            title={place}
-            onPress={() => navigation.goBack()}
-          />
-        ))}
-    </ScrollView>
-  );
-}
-
-function ExamplesStackComponent({ showMenu = true }: { showMenu?: boolean }) {
-  return (
-    <ExamplesStack.Navigator>
-      {showMenu && <ExamplesStack.Screen name="Menu" component={Menu} />}
-      <ExamplesStack.Screen
-        name="Test"
-        component={Test}
-        options={{
-          headerLargeTitle: true,
-          headerTransparent: true,
-          headerBackButtonDisplayMode: 'minimal',
-        }}
-      />
-    </ExamplesStack.Navigator>
-  );
-}
-
-function AnotherTab() {
-  return (
-    <CenteredLayoutView>
-      <Text>Another tab.</Text>
-    </CenteredLayoutView>
-  );
-}
-
-function MainTab() {
-  const { setSearchBarConfig } = useSearchBarConfig();
-
-  const [placement, setPlacement] = useState<SearchBarPlacement>('automatic');
-  const [allowToolbarIntegration, setAllowToolbarIntegration] = useState(true);
-  const [useSystemItem, setUseSystemItem] = useState(true);
-
-  useEffect(() => {
-    setSearchBarConfig({
-      useSystemItem: useSystemItem,
-      headerSearchBarOptions: {
-        placement: placement,
-      },
-      allowToolbarIntegration: allowToolbarIntegration,
-    });
-  }, [placement, allowToolbarIntegration, setSearchBarConfig, useSystemItem]);
-
-  return (
-    <CenteredLayoutView>
-      <SettingsSwitch
-        label="allowToolbarIntegration"
-        value={allowToolbarIntegration}
-        onValueChange={value => setAllowToolbarIntegration(value)}
-      />
-      <SettingsPicker<SearchBarPlacement>
-        label="placement"
-        value={placement}
-        onValueChange={value => setPlacement(value)}
-        items={[
-          'automatic',
-          'inline',
-          'stacked',
-          'integrated',
-          'integratedButton',
-          'integratedCentered',
-        ]}
-      />
-      <SettingsSwitch
-        label="use systemItem"
-        value={useSystemItem}
-        onValueChange={value => setUseSystemItem(value)}
-      />
-    </CenteredLayoutView>
-  );
-}
 
 type SearchBarConfig = {
-  headerSearchBarOptions: SearchBarProps | undefined;
+  placement: SearchBarProps['placement'];
   allowToolbarIntegration: boolean;
   useSystemItem: boolean;
 };
 
 const defaultSearchBarConfig: SearchBarConfig = {
-  headerSearchBarOptions: {
-    placement: 'integrated',
-  },
+  placement: 'integrated',
   allowToolbarIntegration: true,
   useSystemItem: true,
 };
@@ -293,62 +67,15 @@ export const SearchBarConfigProvider: React.FC<{
   );
 };
 
-function TabsStackComponent() {
-  const [config, setConfig] = React.useState<Configuration>(
-    DEFAULT_GLOBAL_CONFIGURATION,
-  );
+type MainRouteParamList = {
+  Home: undefined;
+  Stack: undefined;
+  StackAndTabs: undefined;
+};
 
-  return (
-    <ConfigWrapperContext.Provider
-      value={{
-        config,
-        setConfig,
-      }}>
-      <SearchBarConfigProvider>
-        <TabsStackComponentContent />
-      </SearchBarConfigProvider>
-    </ConfigWrapperContext.Provider>
-  );
-}
+type MainStackNavigationProp = NavigationProp<MainRouteParamList>;
 
-function TabsStackComponentContent() {
-  const { searchBarConfig } = useSearchBarConfig();
-
-  const TAB_CONFIGS: TabConfiguration[] = [
-    {
-      tabScreenProps: {
-        tabKey: 'main',
-        title: 'Main',
-        icon: {
-          sfSymbolName: 'house',
-        },
-      },
-      component: MainTab,
-    },
-    {
-      tabScreenProps: {
-        tabKey: 'another',
-        title: 'Another',
-        icon: {
-          sfSymbolName: 'ellipsis',
-        },
-      },
-      component: AnotherTab,
-    },
-    {
-      tabScreenProps: {
-        tabKey: 'examples',
-        title: 'Search',
-        icon: {
-          sfSymbolName: 'magnifyingglass',
-        },
-        systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
-      },
-      component: () => ExamplesStackComponent({ showMenu: false }),
-    },
-  ];
-  return <BottomTabsContainer tabConfigs={TAB_CONFIGS} />;
-}
+const MainStack = createNativeStackNavigator<MainRouteParamList>();
 
 function Home({ navigation }: MainStackNavigationProp) {
   return (
@@ -372,19 +99,208 @@ function Home({ navigation }: MainStackNavigationProp) {
 export default function App() {
   return (
     <NavigationContainer>
-      <MainStack.Navigator>
-        <MainStack.Screen name="Home" component={Home} />
-        <MainStack.Screen
-          name="Stack"
-          component={ExamplesStackComponent}
-          options={{ headerShown: false }}
-        />
-        <MainStack.Screen
-          name="StackAndTabs"
-          component={TabsStackComponent}
-          options={{ headerShown: false }}
-        />
-      </MainStack.Navigator>
+      <SearchBarConfigProvider>
+        <MainStack.Navigator>
+          <MainStack.Screen name="Home" component={Home} />
+          <MainStack.Screen
+            name="Stack"
+            component={ExamplesStackComponent}
+            options={{ headerShown: false }}
+          />
+          <MainStack.Screen
+            name="StackAndTabs"
+            component={TabsStackComponent}
+            options={{ headerShown: false }}
+          />
+        </MainStack.Navigator>
+      </SearchBarConfigProvider>
     </NavigationContainer>
+  );
+}
+
+type ExamplesRouteParamList = {
+  Menu: undefined;
+  Test: undefined;
+};
+
+type ExamplesStackNavigationProp = NavigationProp<ExamplesRouteParamList>;
+
+const ExamplesStack = createNativeStackNavigator<ExamplesRouteParamList>();
+
+function ExamplesStackComponent({ showMenu = true }: { showMenu?: boolean }) {
+  return (
+    <ExamplesStack.Navigator>
+      {showMenu && <ExamplesStack.Screen name="Menu" component={Menu} />}
+      <ExamplesStack.Screen
+        name="Test"
+        component={Test}
+        options={{
+          headerLargeTitle: true,
+          headerTransparent: true,
+          headerBackButtonDisplayMode: 'minimal',
+        }}
+      />
+    </ExamplesStack.Navigator>
+  );
+}
+
+function Test({ navigation }: ExamplesStackNavigationProp) {
+  const [search, setSearch] = useState('');
+  const { searchBarConfig } = useSearchBarConfig();
+
+  const places = [
+    '🏝️ Desert Island',
+    '🏞️ National Park',
+    '⛰️ Mountain',
+    '🏰 Castle',
+    '🗽 Statue of Liberty',
+    '🌉 Bridge at Night',
+    '🏦 Bank',
+    '🏛️ Classical Building',
+    '🏟️ Stadium',
+    '🏪 Convenience Store',
+    '🏫 School',
+    '⛲ Fountain',
+    '🌄 Sunrise Over Mountains',
+    '🌆 Cityscape at Dusk',
+    '🎡 Ferris Wheel',
+  ];
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerSearchBarOptions: {
+        placement: searchBarConfig.placement ?? 'automatic',
+        allowToolbarIntegration: searchBarConfig.allowToolbarIntegration,
+        onChangeText: event => setSearch(event.nativeEvent.text),
+      },
+    });
+  }, [navigation, search, searchBarConfig]);
+
+  return (
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      keyboardDismissMode="on-drag">
+      {places
+        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+        .map(place => (
+          <ListItem
+            key={place}
+            title={place}
+            onPress={() => navigation.goBack()}
+          />
+        ))}
+    </ScrollView>
+  );
+}
+
+function TabsStackComponent() {
+  const [config, setConfig] = React.useState<Configuration>(
+    DEFAULT_GLOBAL_CONFIGURATION,
+  );
+  const { searchBarConfig } = useSearchBarConfig();
+
+  const TAB_CONFIGS: TabConfiguration[] = [
+    {
+      tabScreenProps: {
+        tabKey: 'main',
+        title: 'Main',
+        icon: {
+          sfSymbolName: 'house',
+        },
+      },
+      component: () => Menu({ tabsMode: true }),
+    },
+    {
+      tabScreenProps: {
+        tabKey: 'another',
+        title: 'Another',
+        icon: {
+          sfSymbolName: 'ellipsis',
+        },
+      },
+      component: AnotherTab,
+    },
+    {
+      tabScreenProps: {
+        tabKey: 'examples',
+        title: 'Search',
+        icon: {
+          sfSymbolName: 'magnifyingglass',
+        },
+        systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
+      },
+      component: () => ExamplesStackComponent({ showMenu: false }),
+    },
+  ];
+
+  return (
+    <ConfigWrapperContext.Provider
+      value={{
+        config,
+        setConfig,
+      }}>
+      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+    </ConfigWrapperContext.Provider>
+  );
+}
+
+function AnotherTab() {
+  return (
+    <CenteredLayoutView>
+      <Text>Another tab</Text>
+    </CenteredLayoutView>
+  );
+}
+
+function Menu({ tabsMode = false }: { tabsMode?: boolean }) {
+  const { searchBarConfig, setSearchBarConfig } = useSearchBarConfig();
+  const navigation = useNavigation<ExamplesStackNavigationProp['navigation']>();
+
+  return (
+    <CenteredLayoutView>
+      <SettingsSwitch
+        label="allowToolbarIntegration"
+        value={searchBarConfig.allowToolbarIntegration}
+        onValueChange={value =>
+          setSearchBarConfig({
+            ...searchBarConfig,
+            allowToolbarIntegration: value,
+          })
+        }
+      />
+      <SettingsPicker<SearchBarPlacement>
+        label="placement"
+        value={searchBarConfig.placement ?? 'automatic'}
+        onValueChange={value =>
+          setSearchBarConfig({
+            ...searchBarConfig,
+            placement: value,
+          })
+        }
+        items={[
+          'automatic',
+          'inline',
+          'stacked',
+          'integrated',
+          'integratedButton',
+          'integratedCentered',
+        ]}
+      />
+      {tabsMode && (
+        <SettingsSwitch
+          label="use systemItem"
+          value={searchBarConfig.useSystemItem}
+          onValueChange={value =>
+            setSearchBarConfig({
+              ...searchBarConfig,
+              useSystemItem: value,
+            })
+          }
+        />
+      )}
+      {!tabsMode && (
+        <Button title="Go to screen" onPress={() => navigation.push('Test')} />
+      )}
+    </CenteredLayoutView>
   );
 }
