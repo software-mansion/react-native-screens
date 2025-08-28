@@ -27,8 +27,10 @@ class TabsHostAppearanceApplicator(
 
     fun updateSharedAppearance(tabsHost: TabsHost) {
         bottomNavigationView.isVisible = true
-        val colorSurfaceContainer = resolveColorAttr(com.google.android.material.R.attr.colorSurfaceContainer)
-        bottomNavigationView.setBackgroundColor(tabsHost.tabBarBackgroundColor ?: colorSurfaceContainer)
+        bottomNavigationView.setBackgroundColor(
+            tabsHost.tabBarBackgroundColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorSurfaceContainer),
+        )
 
         val states =
             arrayOf(
@@ -37,21 +39,27 @@ class TabsHostAppearanceApplicator(
             )
 
         // Font color
-        val colorSurfaceVariant = resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
-        val fontInactiveColor = tabsHost.tabBarItemTitleFontColor ?: colorSurfaceVariant
+        val fontInactiveColor =
+            tabsHost.tabBarItemTitleFontColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
 
-        val colorSecondary = resolveColorAttr(com.google.android.material.R.attr.colorSecondary)
-        val fontActiveColor = tabsHost.tabBarItemTitleFontColorActive ?: tabsHost.tabBarItemTitleFontColor ?: colorSecondary
+        val fontActiveColor =
+            tabsHost.tabBarItemTitleFontColorActive
+                ?: tabsHost.tabBarItemTitleFontColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorSecondary)
 
         val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
 
         // Icon color
-        val colorOnSurfaceVariant = resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
-        val iconInactiveColor = tabsHost.tabBarItemIconColor ?: colorOnSurfaceVariant
+        val iconInactiveColor =
+            tabsHost.tabBarItemIconColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
 
-        val colorOnSecondaryContainer = resolveColorAttr(com.google.android.material.R.attr.colorOnSecondaryContainer)
-        val iconActiveColor = tabsHost.tabBarItemIconColorActive ?: tabsHost.tabBarItemIconColor ?: colorOnSecondaryContainer
+        val iconActiveColor =
+            tabsHost.tabBarItemIconColorActive
+                ?: tabsHost.tabBarItemIconColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSecondaryContainer)
 
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
@@ -70,13 +78,15 @@ class TabsHostAppearanceApplicator(
         bottomNavigationView.labelVisibilityMode = visibilityMode
 
         // Ripple color
-        val colorNavigationItemRipple = resolveColorAttr(com.google.android.material.R.attr.itemRippleColor)
-        val rippleColor = tabsHost.tabBarItemRippleColor ?: colorNavigationItemRipple
+        val rippleColor =
+            tabsHost.tabBarItemRippleColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.itemRippleColor)
         bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
 
         // Active Indicator
-        val colorSecondaryContainer = resolveColorAttr(com.google.android.material.R.attr.colorSecondaryContainer)
-        val activeIndicatorColor = tabsHost.tabBarItemActiveIndicatorColor ?: colorSecondaryContainer
+        val activeIndicatorColor =
+            tabsHost.tabBarItemActiveIndicatorColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorSecondaryContainer)
 
         bottomNavigationView.isItemActiveIndicatorEnabled =
             tabsHost.isTabBarItemActiveIndicatorEnabled
@@ -177,10 +187,12 @@ class TabsHostAppearanceApplicator(
         }
 
         // Styling
-        val colorOnError = resolveColorAttr(com.google.android.material.R.attr.colorOnError)
-        badge.badgeTextColor = tabScreen.tabBarItemBadgeTextColor ?: colorOnError
+        badge.badgeTextColor =
+            tabScreen.tabBarItemBadgeTextColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
 
-        val colorError = resolveColorAttr(com.google.android.material.R.attr.colorError)
-        badge.backgroundColor = tabScreen.tabBarItemBadgeBackgroundColor ?: colorError
+        badge.backgroundColor =
+            tabScreen.tabBarItemBadgeBackgroundColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorError)
     }
 }
