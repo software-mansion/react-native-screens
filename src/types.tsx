@@ -742,6 +742,8 @@ export interface SearchBarProps {
   /**
    * The text to be used instead of default `Cancel` button text
    *
+   * @deprecated Starting from iOS 26, cancel button does not have any text.
+   *
    * @platform ios
    */
   cancelButtonText?: string;
