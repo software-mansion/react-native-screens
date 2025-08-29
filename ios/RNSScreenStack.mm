@@ -272,7 +272,7 @@ namespace react = facebook::react;
 #ifdef RNS_GAMMA_ENABLED
 - (void)maybeRegisterForSplitViewFrameCorrectionWorkaround
 {
-  if (auto frameCorrectionProvider = [self findAncestorSplitViewScreenController]) {
+  if (auto frameCorrectionProvider = [self findAncestorFrameCorrectionProvider]) {
     // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
     [frameCorrectionProvider registerForFrameCorrection:self.view.superview];
   }
@@ -280,13 +280,13 @@ namespace react = facebook::react;
 
 - (void)maybeUnregisterFromSplitViewFrameCorrectionWorkaround
 {
-  if (auto frameCorrectionProvider = [self findAncestorSplitViewScreenController]) {
+  if (auto frameCorrectionProvider = [self findAncestorFrameCorrectionProvider]) {
     // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
     [frameCorrectionProvider unregisterFromFrameCorrection:self.view.superview];
   }
 }
 
-- (id<RNSFrameCorrectionProvider>)findAncestorSplitViewScreenController
+- (id<RNSFrameCorrectionProvider>)findAncestorFrameCorrectionProvider
 {
   auto parent = [self parentViewController];
   while (parent != nil) {
