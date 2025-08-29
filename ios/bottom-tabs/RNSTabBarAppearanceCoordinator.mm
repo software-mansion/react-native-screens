@@ -131,6 +131,10 @@
     }
   }
 
+  if (appearanceProps[@"tabBarShadowColor"] != nil) {
+    tabBarAppearance.shadowColor = [RCTConvert UIColor:appearanceProps[@"tabBarShadowColor"]];
+  }
+
   if ([appearanceProps[@"stacked"] isKindOfClass:[NSDictionary class]]) {
     [self configureTabBarItemAppearance:tabBarAppearance.stackedLayoutAppearance
                 fromItemAppearanceProps:appearanceProps[@"stacked"]];
