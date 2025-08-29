@@ -15,8 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Responsible for a lifecycle management, layout, and event emission for a single screen; used as a child
  * of RNSSplitViewHostComponentView.
+ *
+ * Implements `RNSFrameCorrectionProvider` as a workaround for issue described in
+ * https://github.com/software-mansion/react-native-screens/pull/3097
  */
-@interface RNSSplitViewScreenComponentView : RNSReactBaseView
+@interface RNSSplitViewScreenComponentView : RNSReactBaseView <RNSFrameCorrectionProvider>
 
 @property (nonatomic, strong, readonly, nonnull) RNSSplitViewScreenController *controller;
 @property (nonatomic, weak, readwrite, nullable) RNSSplitViewHostComponentView *splitViewHost;
@@ -27,20 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Should be called when the component is about to be deleted.
  */
 - (void)invalidate;
-
-/**
- * @brief Adds UIView that needs frame correction when SplitViewScreen calculates a layout
- *
- * @param view - UIView which subscribes for SplitViewScreen layout updates
- */
-- (void)registerForFrameCorrection:(UIView *)view;
-
-/**
- * @brief Removes UIView that doesn't need frame correction no longer
- *
- * @param view - UIView which unsubscribes for SplitViewScreen layout updates
- */
-- (void)unregisterFromFrameCorrection:(UIView *)view;
 
 @end
 
