@@ -157,7 +157,7 @@ namespace react = facebook::react;
   // 3. `setFrame` is called with the width 'B'
   // 4. in the same time, we want to track updates and treat intermediate value A' indicated from the presentation layer
   // as our source of truth
-  if (![_controller isTransitionInProgress]) {
+  if (![_controller isViewSizeTransitionInProgress]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
 }
