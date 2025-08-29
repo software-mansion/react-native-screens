@@ -100,7 +100,7 @@ export type GestureResponseDistanceType = {
 
 export type SearchBarPlacement =
   | 'automatic'
-  | 'inline' // deprecated
+  | 'inline' // deprecated starting from iOS 26
   | 'stacked'
   | 'integrated'
   | 'integratedButton'
@@ -830,7 +830,7 @@ export interface SearchBarProps {
    * * `integratedButton` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
    *   the inactive search bar is always shown as a button even when space permits a search field
    * * `integratedCentered` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
-   *   in the regular width on iPad, the search bar is ceneterd in the navigation bar. Only
+   *   in the regular width on iPad, the search bar is centered in the navigation bar. Only
    *   respected in special cases, described in UIKit documentation
    *
    * There is also legacy & **deprecated** prop value available:
@@ -852,10 +852,10 @@ export interface SearchBarProps {
    */
   placement?: SearchBarPlacement;
   /**
-   * Indicates whether the system can place the search bar among other toolbar items on iPhone.
+   * Indicates whether the system can place the search bar among toolbar items on iPhone.
    *
    * Set this prop to `false` to prevent the search bar from appearing in the toolbar when
-   * `placement` is `integrated`, `integratedButton` or `integratedCentered`.
+   * `placement` is `automatic`, `integrated`, `integratedButton` or `integratedCentered`.
    *
    * Defaults to `true`.
    *

@@ -413,6 +413,9 @@ namespace react = facebook::react;
 
 + (BOOL)shouldBeRecycled
 {
+  // Recycling RNSSearchBar causes multiple bugs on iOS 26+, resulting in search bar
+  // not appearing at all.
+  // Details: https://github.com/software-mansion/react-native-screens/pull/3168
   return NO;
 }
 
