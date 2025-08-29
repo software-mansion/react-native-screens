@@ -17,7 +17,7 @@ public class RNSSplitViewScreenController: UIViewController {
   private var reactEventEmitter: RNSSplitViewScreenComponentEventEmitter {
     return splitViewScreenComponentView.reactEventEmitter()
   }
-  
+
   private var viewSizeTransitionState: ViewSizeTransitionState? = nil
 
   @objc public required init(splitViewScreenComponentView: RNSSplitViewScreenComponentView) {
@@ -99,9 +99,10 @@ public class RNSSplitViewScreenController: UIViewController {
       alongsideTransition: { [weak self] context in
         guard let self = self else { return }
         guard let viewSizeTransitionState = self.viewSizeTransitionState else { return }
-        
+
         if viewSizeTransitionState.displayLink == nil {
-          viewSizeTransitionState.setupDisplayLink(forTarget: self, selector: #selector(trackTransitionProgress))
+          viewSizeTransitionState.setupDisplayLink(
+            forTarget: self, selector: #selector(trackTransitionProgress))
         }
       },
       completion: { [weak self] context in
@@ -165,11 +166,15 @@ public class RNSSplitViewScreenController: UIViewController {
     // If the resize animation is currently running, we prefer to apply dynamic updates,
     // based on the results from the presentation layer
     // which is read from `trackTransitionProgress` method.
-    if let lastViewPresentationFrame = viewSizeTransitionState?.lastViewPresentationFrame, !lastViewPresentationFrame.isNull {
-      shadowStateProxy.updateShadowState(ofComponent: splitViewScreenComponentView, withFrame: lastViewPresentationFrame, inContextOfAncestorView: ancestorView!)
+    if let lastViewPresentationFrame = viewSizeTransitionState?.lastViewPresentationFrame,
+      !lastViewPresentationFrame.isNull
+    {
+      shadowStateProxy.updateShadowState(
+        ofComponent: splitViewScreenComponentView, withFrame: lastViewPresentationFrame,
+        inContextOfAncestorView: ancestorView!)
       return
     }
-    
+
     // There might be the case, when transition is about to start and in the meantime,
     // sth else is triggering frame update relatively to the parent. As we know
     // that dynamic updates from the presentation layer are coming, we're blocking this
@@ -177,7 +182,8 @@ public class RNSSplitViewScreenController: UIViewController {
     // This works fine, because after the animation completion, we're sending the last update
     // which is compatible with the frame which would be calculated relatively to the ancestor here.
     if !isViewSizeTransitionInProgress() {
-      shadowStateProxy.updateShadowState(ofComponent: splitViewScreenComponentView, inContextOfAncestorView: ancestorView)
+      shadowStateProxy.updateShadowState(
+        ofComponent: splitViewScreenComponentView, inContextOfAncestorView: ancestorView)
     }
   }
 
@@ -223,16 +229,16 @@ public class RNSSplitViewScreenController: UIViewController {
 private class ViewSizeTransitionState {
   public var displayLink: CADisplayLink?
   public var lastViewPresentationFrame: CGRect = CGRect.null
-  
+
   public func setupDisplayLink(forTarget target: Any, selector sel: Selector) {
-    if (displayLink != nil) {
+    if displayLink != nil {
       displayLink?.invalidate()
     }
-    
+
     displayLink = CADisplayLink(target: target, selector: sel)
     displayLink!.add(to: .main, forMode: .common)
   }
-  
+
   public func invalidate() {
     displayLink?.invalidate()
     displayLink = nil
