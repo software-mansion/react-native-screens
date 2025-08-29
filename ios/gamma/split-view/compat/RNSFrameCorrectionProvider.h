@@ -27,7 +27,7 @@
  * SplitView layout update.
  *
  * As for now, it should find a proper `RNSSplitViewScreenComponentView` and use
- * `RNSSplitViewScreenComponentView::unregisterFromFrameUpdates`.
+ * `RNSSplitViewScreenComponentView::unregisterFromFrameCorrection`.
  */
 - (void)unregisterFromSplitView;
 

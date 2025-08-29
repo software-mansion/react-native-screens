@@ -277,7 +277,7 @@ namespace react = facebook::react;
         @"[RNScreens] splitViewControllerView must be type of RNSSplitViewScreenComponentView");
     auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
     // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
-    [splitViewScreen registerForFrameUpdates:self.view.superview];
+    [splitViewScreen registerForFrameCorrection:self.view.superview];
   }
 }
 
@@ -290,7 +290,7 @@ namespace react = facebook::react;
         @"[RNScreens] splitViewControllerView must be type of RNSSplitViewScreenComponentView");
     auto splitViewScreen = (RNSSplitViewScreenComponentView *)splitViewControllerView;
     // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
-    [splitViewScreen unregisterFromFrameUpdates:self.view.superview];
+    [splitViewScreen unregisterFromFrameCorrection:self.view.superview];
   }
 }
 

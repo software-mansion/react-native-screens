@@ -33,14 +33,14 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param view - UIView which subscribes for SplitViewScreen layout updates
  */
-- (void)registerForFrameUpdates:(UIView *)view;
+- (void)registerForFrameCorrection:(UIView *)view;
 
 /**
  * @brief Removes UIView that doesn't need frame correction no longer
  *
  * @param view - UIView which unsubscribes for SplitViewScreen layout updates
  */
-- (void)unregisterFromFrameUpdates:(UIView *)view;
+- (void)unregisterFromFrameCorrection:(UIView *)view;
 
 @end
 

@@ -93,12 +93,12 @@ namespace react = facebook::react;
   _controller = nil;
 }
 
-- (void)registerForFrameUpdates:(UIView *)view
+- (void)registerForFrameCorrection:(UIView *)view
 {
   [_viewsForFrameUpdate addObject:view];
 }
 
-- (void)unregisterFromFrameUpdates:(UIView *)view
+- (void)unregisterFromFrameCorrection:(UIView *)view
 {
   [_viewsForFrameUpdate removeObject:view];
 }
