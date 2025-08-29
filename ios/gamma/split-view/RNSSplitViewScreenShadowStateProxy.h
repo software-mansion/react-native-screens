@@ -43,6 +43,21 @@ NS_ASSUME_NONNULL_BEGIN
              inContextOfAncestorView:(UIView *_Nullable)ancestorView;
 
 /**
+ * @brief Send an update to ShadowNode state with given frame if needed.
+ *
+ * Converts the frame to coordinates of the specified ancestor view,
+ * before applying the update to the Shadow Tree.
+ *
+ * @param screenComponentView an instance of RNSSplitViewScreenComponentView whose state should be updated,
+ * @param frame frame to update the shadow state with; it must be in coordinate system of `screenComponentView`,
+ * @param ancestorView coordinate-system provider view, relative to which the frame should be converted before sending
+ * the update.
+ */
+- (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView
+                           withFrame:(CGRect)frame
+             inContextOfAncestorView:(nonnull UIView *)ancestorView;
+
+/**
  * @brief Send an update to ShadowNode state with given layout metrics.
  *
  * Updates size and origin in the ShadowNode state, if changed.
