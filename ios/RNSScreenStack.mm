@@ -202,7 +202,9 @@ namespace react = facebook::react;
     [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
   }
 #ifdef RNS_GAMMA_ENABLED
-  [self maybeRegisterForSplitViewFrameCorrectionWorkaround];
+  if (parent != nil) {
+    [self maybeRegisterForSplitViewFrameCorrectionWorkaround];
+  }
 #endif // RNS_GAMMA_ENABLED
 }
 
