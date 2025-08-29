@@ -7,6 +7,7 @@ import type {
   Int32,
   WithDefault,
   DirectEventHandler,
+  UnsafeMixed,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 type DirectionType = 'rtl' | 'ltr';
@@ -15,6 +16,9 @@ type DirectionType = 'rtl' | 'ltr';
 type OnAttachedEvent = Readonly<{}>;
 // eslint-disable-next-line @typescript-eslint/ban-types
 type OnDetachedEvent = Readonly<{}>;
+
+type OnPressHeaderBarButtonItemEvent = Readonly<{ buttonId: string }>;
+type OnPressHeaderBarButtonMenuItemEvent = Readonly<{ menuId: string }>;
 
 type BackButtonDisplayMode = 'minimal' | 'default' | 'generic';
 
@@ -73,6 +77,10 @@ export interface NativeProps extends ViewProps {
   blurEffect?: WithDefault<BlurEffect, 'none'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean;
+  headerLeftBarButtonItems?: UnsafeMixed[];
+  headerRightBarButtonItems?: UnsafeMixed[];
+  onPressHeaderBarButtonItem?: DirectEventHandler<OnPressHeaderBarButtonItemEvent>;
+  onPressHeaderBarButtonMenuItem?: DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>(
