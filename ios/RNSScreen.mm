@@ -922,7 +922,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0)
 - (NSInteger)detentIndexFromDetentIdentifier:(UISheetPresentationControllerDetentIdentifier)identifier
     API_AVAILABLE(ios(15.0))
 {
@@ -957,7 +956,6 @@ RNS_IGNORE_SUPER_CALL_END
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
 }
-#endif // iOS 15 check
 
 /**
  * Updates settings for sheet presentation controller.
@@ -971,7 +969,6 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0)
   int firstDimmedDetentIndex = _sheetAllowedDetents.count;
 
   // Whether we use system (iOS 15) detents or custom (iOS 16+).
@@ -1104,7 +1101,6 @@ RNS_IGNORE_SUPER_CALL_END
   // out.
   [self->_contentWrapperBox.contentWrapper triggerDelegateUpdate];
 #endif // RCT_NEW_ARCH_ENABLED
-#endif // Check for iOS >= 15
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
