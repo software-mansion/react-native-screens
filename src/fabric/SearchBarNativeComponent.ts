@@ -21,7 +21,7 @@ export type ChangeTextEvent = Readonly<{
 
 type SearchBarPlacement =
   | 'automatic'
-  | 'inline' // deprecated
+  | 'inline' // deprecated starting from iOS 26
   | 'stacked'
   | 'integrated'
   | 'integratedButton'
