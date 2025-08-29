@@ -712,7 +712,13 @@ RNS_IGNORE_SUPER_CALL_END
 #endif /* Check for iOS 16.0 */
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
           if (@available(iOS 26.0, *)) {
-            navitem.searchBarPlacementAllowsToolbarIntegration = searchBar.allowToolbarIntegration;
+            if (navitem.preferredSearchBarPlacement != UINavigationItemSearchBarPlacementStacked) {
+              navitem.searchBarPlacementAllowsToolbarIntegration = searchBar.allowToolbarIntegration;
+            } else {
+              // Workaround for missing search bar on root stack screen.
+              // More details: https://github.com/software-mansion/react-native-screens/pull/3168
+              navitem.searchBarPlacementAllowsToolbarIntegration = NO;
+            }
           }
 #endif /* Check for iOS 26.0 */
 #endif /* !TARGET_OS_TV */

@@ -858,6 +858,8 @@ export interface SearchBarProps {
    * `placement` is `automatic`, `integrated`, `integratedButton` or `integratedCentered`.
    *
    * Defaults to `true`.
+   * When `placement` is set to `stacked`, this property's value will be overridden with `false`
+   * to circumvent a UIKit native bug that prevents the search bar from appearing on the root screen.
    *
    * @platform iOS (>= 26.0)
    */
