@@ -1461,6 +1461,24 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _initialView = (RNSScreenView *)view;
     _zoomTransitionSource = nil;
     __weak RNSScreen *weakSelf = self;
+
+    UIZoomTransitionOptions *zoomOptions = [UIZoomTransitionOptions new];
+    zoomOptions.alignmentRectProvider = ^CGRect(UIZoomTransitionAlignmentRectContext *context) {
+      RNSScreen *strongSelf = weakSelf;
+      if (strongSelf == nil) {
+        RCTLogError(@"[RNScreens] Nullish self");
+        return CGRectNull;
+      }
+
+      NSLog(@"AlignmentRectProvider called");
+
+      //      UIView *navCtrlView = strongSelf.navigationController.view;
+      //      CGRect frame = [strongSelf->_zoomTransitionSource convertRect:strongSelf->_zoomTransitionSource.frame
+      //      toView:navCtrlView];
+
+      return context.sourceView.frame;
+    };
+
     self.preferredTransition = [UIViewControllerTransition
            zoomWithOptions:nil
         sourceViewProvider:^UIView *(UIZoomTransitionSourceViewProviderContext *context) {
@@ -1475,9 +1493,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
             assert(false);
           }
 
-          NSLog(@"Source\n%@\nZoomed\n%@", context.sourceViewController, context.zoomedViewController);
+          NSLog(
+              @"Source\n%@\nZoomed\n%@\nSource\n%@",
+              context.sourceViewController,
+              context.zoomedViewController,
+              strongSelf->_zoomTransitionSource);
 
-          return strongSelf->_zoomTransitionSource;
+          RNSScreen *sourceScreen = static_cast<RNSScreen *>(context.sourceViewController);
+          return sourceScreen->_zoomTransitionSource;
         }];
 #endif
   }

@@ -35,7 +35,7 @@ namespace react = facebook::react;
     RCTLogError(@"Nullish screen controller");
   }
 
-  //  screenController
+  [screenController registerForZoomTransition:self];
 }
 
 #pragma mark - RCTViewComponentViewProtocol
