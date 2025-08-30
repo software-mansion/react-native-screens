@@ -160,7 +160,13 @@ function mapAppearanceToNativeProp(
 ): Appearance | undefined {
   if (!appearance) return undefined;
 
-  const { stacked, inline, compactInline, tabBarBackgroundColor } = appearance;
+  const {
+    stacked,
+    inline,
+    compactInline,
+    tabBarBackgroundColor,
+    tabBarShadowColor,
+  } = appearance;
 
   return {
     ...appearance,
@@ -168,6 +174,7 @@ function mapAppearanceToNativeProp(
     inline: mapItemAppearanceToNativeProp(inline),
     compactInline: mapItemAppearanceToNativeProp(compactInline),
     tabBarBackgroundColor: processColor(tabBarBackgroundColor),
+    tabBarShadowColor: processColor(tabBarShadowColor),
   };
 }
 

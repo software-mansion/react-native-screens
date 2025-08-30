@@ -55,6 +55,7 @@ export type Appearance = {
   compactInline?: ItemAppearance;
 
   tabBarBackgroundColor?: ProcessedColorValue | null;
+  tabBarShadowColor?: ProcessedColorValue | null;
   tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
 };
 

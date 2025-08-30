@@ -153,6 +153,15 @@ export interface BottomTabsScreenAppearance {
    * @supported iOS 18 or lower
    */
   tabBarBlurEffect?: BottomTabsScreenBlurEffect;
+  /**
+   * @summary Specifies the shadow color for the tab bar when tab screen is selected.
+   *
+   * This property does not affect the tab bar starting from iOS 26.
+   *
+   * @platform ios
+   * @supported iOS 18 or lower
+   */
+  tabBarShadowColor?: ColorValue;
 }
 
 // iOS-specific

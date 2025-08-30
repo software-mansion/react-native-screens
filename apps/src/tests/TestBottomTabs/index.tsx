@@ -121,6 +121,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
           },
         },
       },
+      scrollEdgeAppearance: {
+        tabBarShadowColor: 'red',
+        tabBarBackgroundColor: 'transparent',
+        tabBarBlurEffect: 'none',
+      },
       icon: {
         imageSource: require('../../../assets/variableIcons/icon.png'),
       },
