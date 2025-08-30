@@ -19,11 +19,17 @@ class TabsHostAppearanceApplicator(
     private val context: ContextThemeWrapper,
     private val bottomNavigationView: BottomNavigationView,
 ) {
+    private fun resolveColorAttr(attr: Int): Int {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(attr, typedValue, true)
+        return typedValue.data
+    }
+
     fun updateSharedAppearance(tabsHost: TabsHost) {
         bottomNavigationView.isVisible = true
         bottomNavigationView.setBackgroundColor(
             tabsHost.tabBarBackgroundColor
-                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_surface_container),
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorSurfaceContainer),
         )
 
         val states =
@@ -35,20 +41,26 @@ class TabsHostAppearanceApplicator(
         // Font color
         val fontInactiveColor =
             tabsHost.tabBarItemTitleFontColor
-                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
+
         val fontActiveColor =
-            tabsHost.tabBarItemTitleFontColorActive ?: tabsHost.tabBarItemTitleFontColor
-                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary)
+            tabsHost.tabBarItemTitleFontColorActive
+                ?: tabsHost.tabBarItemTitleFontColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorSecondary)
+
         val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
 
         // Icon color
         val iconInactiveColor =
             tabsHost.tabBarItemIconColor
-                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_on_surface_variant)
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
+
         val iconActiveColor =
-            tabsHost.tabBarItemIconColorActive ?: tabsHost.tabBarItemIconColor
-                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_on_secondary_container)
+            tabsHost.tabBarItemIconColorActive
+                ?: tabsHost.tabBarItemIconColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSecondaryContainer)
+
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
@@ -68,13 +80,13 @@ class TabsHostAppearanceApplicator(
         // Ripple color
         val rippleColor =
             tabsHost.tabBarItemRippleColor
-                ?: context.getColor(com.google.android.material.R.color.m3_navigation_item_ripple_color)
+                ?: resolveColorAttr(com.google.android.material.R.attr.itemRippleColor)
         bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
 
         // Active Indicator
         val activeIndicatorColor =
             tabsHost.tabBarItemActiveIndicatorColor
-                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_secondary_container)
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorSecondaryContainer)
 
         bottomNavigationView.isItemActiveIndicatorEnabled =
             tabsHost.isTabBarItemActiveIndicatorEnabled
@@ -176,9 +188,11 @@ class TabsHostAppearanceApplicator(
 
         // Styling
         badge.badgeTextColor =
-            tabScreen.tabBarItemBadgeTextColor ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_on_error)
+            tabScreen.tabBarItemBadgeTextColor
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
+
         badge.backgroundColor =
             tabScreen.tabBarItemBadgeBackgroundColor
-                ?: context.getColor(com.google.android.material.R.color.m3_sys_color_light_error)
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorError)
     }
 }
