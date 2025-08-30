@@ -29,7 +29,7 @@ function AppStack() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name='Home' component={Home} />
-        <Stack.Screen name='Second' component={Second} />
+        <Stack.Screen name='Second' component={Second} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   )
@@ -51,6 +51,7 @@ function Home({ navigation }: StackRouteProp) {
 function Second({ navigation }: StackRouteProp) {
   return (
     <View style={{ flex: 1, width: '100%', height: '100%', backgroundColor: Colors.PurpleLight60 }}>
+      <Rectangle width={64} height={128} color={Colors.RedLight60} />
       <Button title="Go back" onPress={() => navigation.popTo('Home')} />
     </View>
   )
