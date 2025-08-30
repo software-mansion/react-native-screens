@@ -35,7 +35,7 @@ Please note that the override code should not be placed inside `MainActivityDele
 
 ```java
 import android.os.Bundle;
-import com.swmansion.rnscreens.RNScreensFragmentFactory;
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory;
 
 public class MainActivity extends ReactActivity {
 
@@ -61,7 +61,7 @@ public class MainActivity extends ReactActivity {
 
 ```kotlin
 import android.os.Bundle;
-import com.swmansion.rnscreens.RNScreensFragmentFactory;
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory;
 
 class MainActivity: ReactActivity() {
 
