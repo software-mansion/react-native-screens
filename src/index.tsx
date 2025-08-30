@@ -71,3 +71,4 @@ export {
 } from './components/gamma/StackScreen';
 export { default as SplitViewHost } from './components/gamma/SplitViewHost';
 export { default as SplitViewScreen } from './components/gamma/SplitViewScreen';
+export { default as ZoomTransitionSource } from './components/ZoomTransitionSource';
