@@ -23,6 +23,8 @@ type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
+type SearchShowAsAction = 'default' | 'always' | 'collapse';
+
 export interface NativeProps extends ViewProps {
   onSearchFocus?: DirectEventHandler<SearchBarEvent> | null;
   onSearchBlur?: DirectEventHandler<SearchBarEvent> | null;
@@ -43,6 +45,7 @@ export interface NativeProps extends ViewProps {
 
   // Android only
   disableBackButtonOverride?: boolean;
+  showAsAction?: WithDefault<SearchShowAsAction, 'default'>
   // TODO: consider creating enum here
   inputType?: string;
   onClose?: DirectEventHandler<SearchBarEvent> | null;
