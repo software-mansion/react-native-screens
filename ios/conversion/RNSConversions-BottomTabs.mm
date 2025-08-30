@@ -1,6 +1,7 @@
 #import <React/RCTConversions.h>
 #import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
 #import "RNSConversions.h"
+#import "RNSDefines.h"
 
 namespace rnscreens::conversion {
 
@@ -137,8 +138,7 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
   return RNSUIBlurEffectFromOptionalUIBlurEffectStyle(maybeStyle);
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))

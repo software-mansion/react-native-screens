@@ -1,4 +1,5 @@
 #import "./RNSBackBarButtonItem.h"
+#import "RNSDefines.h"
 
 @implementation RNSBackBarButtonItem
 
@@ -7,8 +8,6 @@
   _menuHidden = menuHidden;
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
 - (void)setMenu:(UIMenu *)menu
 {
   if (@available(iOS 14.0, *)) {
@@ -17,6 +16,5 @@
     }
   }
 }
-#endif
 
 @end

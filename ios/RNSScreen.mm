@@ -255,8 +255,7 @@ RNS_IGNORE_SUPER_CALL_END
   switch (stackPresentation) {
     case RNSScreenStackPresentationModal:
       _controller.modalPresentationStyle = UIModalPresentationAutomatic;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_17_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_17_0 && !TARGET_OS_TV
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0) && !TARGET_OS_TV
       if (@available(iOS 18.0, *)) {
         UISheetPresentationController *sheetController = _controller.sheetPresentationController;
         if (sheetController != nil) {
@@ -266,7 +265,7 @@ RNS_IGNORE_SUPER_CALL_END
               @"[RNScreens] sheetPresentationController is null when attempting to set prefersPageSizing for modal");
         }
       }
-#endif
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0) && !TARGET_OS_TV
       break;
 
     case RNSScreenStackPresentationPageSheet:
@@ -457,8 +456,7 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-#if !TARGET_OS_TV && !TARGET_OS_VISION && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (@available(iOS 16.0, *)) {
     UISheetPresentationController *sheetController = _controller.sheetPresentationController;
     if (sheetController == nil) {
@@ -473,7 +471,7 @@ RNS_IGNORE_SUPER_CALL_END
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
     }
   }
-#endif // Check for iOS >= 16 && !TARGET_OS_TV
+#endif // Check for iOS >= 16 && !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 - (void)addSubview:(UIView *)view
@@ -924,14 +922,11 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
 - (NSInteger)detentIndexFromDetentIdentifier:(UISheetPresentationControllerDetentIdentifier)identifier
     API_AVAILABLE(ios(15.0))
 {
   // We first check if we are running on iOS 16+ as the API is different
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (_sheetAllowedDetents.count > 0) {
     // We should be running on custom detents in this case, thus identifier should be a stringified number.
     return identifier.integerValue;
@@ -961,7 +956,6 @@ RNS_IGNORE_SUPER_CALL_END
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
 }
-#endif // iOS 15 check
 
 /**
  * Updates settings for sheet presentation controller.
@@ -975,8 +969,6 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   int firstDimmedDetentIndex = _sheetAllowedDetents.count;
 
   // Whether we use system (iOS 15) detents or custom (iOS 16+).
@@ -990,8 +982,7 @@ RNS_IGNORE_SUPER_CALL_END
       return;
     }
     sheet.delegate = self;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
     if (@available(iOS 16.0, *)) {
       if (_sheetAllowedDetents.count > 0) {
         if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
@@ -1052,8 +1043,7 @@ RNS_IGNORE_SUPER_CALL_END
     // Handle initial detent on the first update.
     if (!_sheetHasInitialDetentSet) {
       if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
         if (@available(iOS 16.0, *)) {
           UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
           [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
@@ -1111,11 +1101,9 @@ RNS_IGNORE_SUPER_CALL_END
   // out.
   [self->_contentWrapperBox.contentWrapper triggerDelegateUpdate];
 #endif // RCT_NEW_ARCH_ENABLED
-#endif // Check for iOS >= 15
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
 
 /**
  * Creates array of detent objects based on provided `values` & `resolver`. Since we need to name the detents to be able

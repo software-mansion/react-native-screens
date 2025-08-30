@@ -705,14 +705,12 @@ RNS_IGNORE_SUPER_CALL_END
           searchBarPresent = true;
           navitem.searchController = searchBar.controller;
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
           if (@available(iOS 16.0, *)) {
             navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
 #endif /* Check for iOS 16.0 */
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
           if (@available(iOS 26.0, *)) {
             // Workaround for missing search bar on root stack screen.
             // See: https://github.com/software-mansion/react-native-screens/pull/3098

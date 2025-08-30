@@ -1,5 +1,6 @@
 #import "RNSBottomTabsHostComponentViewManager.h"
 #import "RNSBottomTabsHostEventEmitter.h"
+#import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
@@ -49,8 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 @property (nonatomic, readonly) UITabBarMinimizeBehavior tabBarMinimizeBehavior API_AVAILABLE(ios(26.0));
 #endif // Check for iOS >= 26
 

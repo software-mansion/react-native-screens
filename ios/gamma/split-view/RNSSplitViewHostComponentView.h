@@ -1,3 +1,4 @@
+#import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSSplitViewHostComponentEventEmitter.h"
@@ -45,14 +46,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) double maximumSupplementaryColumnWidth;
 @property (nonatomic, readonly) double preferredSupplementaryColumnWidthOrFraction;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 @property (nonatomic, readonly) double minimumSecondaryColumnWidth;
 @property (nonatomic, readonly) double preferredSecondaryColumnWidthOrFraction;
 @property (nonatomic, readonly) double minimumInspectorColumnWidth;
 @property (nonatomic, readonly) double maximumInspectorColumnWidth;
 @property (nonatomic, readonly) double preferredInspectorColumnWidthOrFraction;
-#endif
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 @property (nonatomic, readonly) RNSOrientation orientation;
 

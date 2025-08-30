@@ -75,14 +75,13 @@ static const CGFloat epsilon = 1e-6;
   _maximumSupplementaryColumnWidth = -1.0;
   _preferredSupplementaryColumnWidthOrFraction = -1.0;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   _minimumSecondaryColumnWidth = -1.0;
   _preferredSecondaryColumnWidthOrFraction = -1.0;
   _minimumInspectorColumnWidth = -1.0;
   _maximumInspectorColumnWidth = -1.0;
   _preferredInspectorColumnWidthOrFraction = -1.0;
-#endif
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   _orientation = RNSOrientationInherit;
 
@@ -293,8 +292,7 @@ RNS_IGNORE_SUPER_CALL_END
         newComponentProps.columnMetrics.preferredSupplementaryColumnWidthOrFraction;
   }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSecondaryColumnWidth, epsilon)) {
     _needsSplitViewAppearanceUpdate = true;
     _minimumSecondaryColumnWidth = newComponentProps.columnMetrics.minimumSecondaryColumnWidth;
@@ -319,7 +317,7 @@ RNS_IGNORE_SUPER_CALL_END
     _needsSplitViewAppearanceUpdate = true;
     _preferredInspectorColumnWidthOrFraction = newComponentProps.columnMetrics.preferredInspectorColumnWidthOrFraction;
   }
-#endif
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   if (oldComponentProps.orientation != newComponentProps.orientation) {
     _needsSplitViewOrientationUpdate = true;
