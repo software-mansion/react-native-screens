@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens
+package com.swmansion.rnscreens.fragment.restoration
 
 import android.os.Bundle
 import android.view.LayoutInflater
