@@ -19,7 +19,13 @@ export type ChangeTextEvent = Readonly<{
   text?: string;
 }>;
 
-type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+type SearchBarPlacement =
+  | 'automatic'
+  | 'inline' // deprecated starting from iOS 26
+  | 'stacked'
+  | 'integrated'
+  | 'integratedButton'
+  | 'integratedCentered';
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
@@ -33,6 +39,7 @@ export interface NativeProps extends ViewProps {
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
   placement?: WithDefault<SearchBarPlacement, 'stacked'>;
+  allowToolbarIntegration?: WithDefault<boolean, true>;
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;
   cancelButtonText?: string;

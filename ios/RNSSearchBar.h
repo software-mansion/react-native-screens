@@ -19,6 +19,8 @@
 
 @property (nonatomic) BOOL hideWhenScrolling;
 @property (nonatomic) RNSSearchBarPlacement placement;
+@property (nonatomic) BOOL allowToolbarIntegration;
+
 @property (nonatomic, retain) UISearchController *controller;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
