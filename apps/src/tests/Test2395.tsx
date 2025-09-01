@@ -48,7 +48,9 @@ export default function App() {
           name="Second"
           component={Second}
           options={{
-            headerSearchBarOptions: {},
+            headerSearchBarOptions: {
+              placement: 'stacked',
+            },
           }}
         />
       </Stack.Navigator>

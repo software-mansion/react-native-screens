@@ -16,11 +16,13 @@ export const SplitViewWithNativeStackSearchBar = ({
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             headerSearchBarOptions: {
-              autoCapitalize: "words",
+              autoCapitalize: 'words',
               autoFocus: true,
               barTintColor: Colors.GreenLight100,
               tintColor: Colors.RedDark100,
-            }
+              placement: 'stacked',
+              hideWhenScrolling: false,
+            },
           }}
         />
       </SplitViewScreen.Column>
@@ -28,13 +30,17 @@ export const SplitViewWithNativeStackSearchBar = ({
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             headerSearchBarOptions: {
-              hideNavigationBar: true
-            }
+              hideNavigationBar: true,
+              placement: 'stacked',
+              hideWhenScrolling: false,
+            },
           }}
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
-              hideNavigationBar: false
-            }
+              placement: 'stacked',
+              hideWhenScrolling: false,
+              hideNavigationBar: false,
+            },
           }}
         />
       </SplitViewScreen.Column>
@@ -42,8 +48,9 @@ export const SplitViewWithNativeStackSearchBar = ({
         <NativeStackNavigatorComponent
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
-              hideWhenScrolling: false
-            }
+              placement: 'stacked',
+              hideWhenScrolling: false,
+            },
           }}
           CustomScreenTwo={ScrollViewWithText}
         />

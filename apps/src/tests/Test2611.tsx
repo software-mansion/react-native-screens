@@ -9,10 +9,13 @@ function HomeScreen() {
   const margin = useHeaderHeight();
 
   return (
-    <ScrollView style={{
-      marginTop: margin,
-    }}>
-      <Text style={{textAlign: "center"}}>focus and then cancel to see if position updates</Text>
+    <ScrollView
+      style={{
+        marginTop: margin,
+      }}>
+      <Text style={{ textAlign: 'center' }}>
+        focus and then cancel to see if position updates
+      </Text>
     </ScrollView>
   );
 }
@@ -20,10 +23,17 @@ function HomeScreen() {
 function RootStack() {
   return (
     <Stack.Navigator>
-     <Stack.Screen name="InitialScreen" component={HomeScreen} options={{
-       headerSearchBarOptions: {},
-     }} />
-   </Stack.Navigator>
+      <Stack.Screen
+        name="InitialScreen"
+        component={HomeScreen}
+        options={{
+          headerSearchBarOptions: {
+            placement: 'stacked',
+            hideWhenScrolling: false,
+          },
+        }}
+      />
+    </Stack.Navigator>
   );
 }
 

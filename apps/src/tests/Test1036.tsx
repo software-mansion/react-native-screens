@@ -16,6 +16,7 @@ const App = () => {
         screenOptions={{
           headerTitle: 'Title',
           headerSearchBarOptions: {
+            placement: 'stacked',
             onCancelButtonPress: () => {
               console.log('cancel button press');
             },

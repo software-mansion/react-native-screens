@@ -145,6 +145,7 @@ function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
+    placement: 'stacked',
     onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       console.warn(`Text changed to ${e.nativeEvent.text}`),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),

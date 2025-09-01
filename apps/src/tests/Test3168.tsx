@@ -135,8 +135,8 @@ function ExamplesStackComponent({ showMenu = true }: { showMenu?: boolean }) {
         name="Test"
         component={Test}
         options={{
-          headerLargeTitle: true,
-          headerTransparent: true,
+          // headerLargeTitle: true,
+          // headerTransparent: true,
           headerBackButtonDisplayMode: 'minimal',
         }}
       />

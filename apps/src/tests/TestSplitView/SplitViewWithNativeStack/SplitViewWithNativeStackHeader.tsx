@@ -59,6 +59,8 @@ export const SplitViewWithNativeStackHeader = ({ splitViewBaseConfig }: { splitV
           customScreenOneNavigationOptions={{ headerTintColor: Colors.RedDark100, headerTitle: "Custom header title" }}
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
+              placement: 'stacked',
+              hideWhenScrolling: false,
               onCancelButtonPress: () => {
                 console.log('cancel button press');
               },

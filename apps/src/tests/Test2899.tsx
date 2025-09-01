@@ -14,19 +14,24 @@ function Home() {
 }
 
 function HeaderRight() {
-  return (
-    <Rectangle width={128} height={36} color={'darkblue'} />
-  );
+  return <Rectangle width={128} height={36} color={'darkblue'} />;
 }
 
 function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} options={{
-          headerRight: HeaderRight,
-          headerSearchBarOptions: {},
-        }} />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{
+            headerRight: HeaderRight,
+            headerSearchBarOptions: {
+              placement: 'stacked',
+              hideWhenScrolling: false,
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

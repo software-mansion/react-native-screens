@@ -50,7 +50,9 @@ function First({
   // React.useLayoutEffect(() => {
   React.useEffect(() => {
     navigation.setOptions({
-      headerSearchBarOptions: {},
+      headerSearchBarOptions: {
+        placement: 'stacked',
+      },
     });
   }, [navigation]);
 

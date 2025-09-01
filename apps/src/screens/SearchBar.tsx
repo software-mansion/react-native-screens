@@ -62,6 +62,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         hideNavigationBar,
         autoCapitalize,
         placeholder,
+        placement: 'stacked',
         inputType,
         onChangeText: event => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
@@ -232,6 +233,7 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
     navigation.setOptions({
       headerSearchBarOptions: {
         placeholder: 'Interesting places...',
+        placement: 'stacked',
         onChangeText: event => setSearch(event.nativeEvent.text),
         obscureBackground: false,
         autoCapitalize: 'none',

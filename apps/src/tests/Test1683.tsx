@@ -46,7 +46,9 @@ const Navigator = () => {
           name="Home"
           component={HomeScreen}
           options={{
-            headerSearchBarOptions: {},
+            headerSearchBarOptions: {
+              placement: 'stacked',
+            },
             // statusBarStyle: 'light',
           }}
         />

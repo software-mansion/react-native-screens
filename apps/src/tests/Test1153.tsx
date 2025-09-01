@@ -23,6 +23,7 @@ export default function App() {
               headerTransparent: true,
               headerSearchBarOptions: {
                 placeholder: 'Interesting places...',
+                placement: 'stacked',
                 obscureBackground: false,
                 hideWhenScrolling: false,
               },
