@@ -180,7 +180,8 @@
         "RNSScreenStack": "RNSScreenStackView",
         "RNSSearchBar": "RNSSearchBar",
         "RNSSplitViewHost": "RNSSplitViewHostComponentView",
-        "RNSSplitViewScreen": "RNSSplitViewScreenComponentView"
+        "RNSSplitViewScreen": "RNSSplitViewScreenComponentView",
+        "RNSZoomTransitionSource": "RNSZoomTransitionSourceComponentView"
       },
       "components": {
         "RNSFullWindowOverlay": {
@@ -233,6 +234,9 @@
         },
         "RNSSplitViewScreen": {
           "className": "RNSSplitViewScreenComponentView"
+        },
+        "RNSZoomTransitionSource": {
+          "className": "RNSZoomTransitionSourceComponentView"
         }
       }
     }
