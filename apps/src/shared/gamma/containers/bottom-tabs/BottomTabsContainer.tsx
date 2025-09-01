@@ -5,6 +5,7 @@ import {
   BottomTabsScreen,
   BottomTabsScreenProps,
   NativeFocusChangeEvent,
+  TabSafeAreaView,
 } from 'react-native-screens';
 import { Colors } from '../../../styling/Colors';
 import ConfigWrapperContext from './ConfigWrapperContext';
@@ -98,8 +99,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
         const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
         const ContentComponent = tabConfig.component;
         console.info(
-          `BottomTabsContainer map to component -> ${tabKey} ${
-            isFocused ? '(focused)' : ''
+          `BottomTabsContainer map to component -> ${tabKey} ${isFocused ? '(focused)' : ''
           }`,
         );
 
@@ -109,7 +109,9 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
-            <ContentComponent/>
+            <TabSafeAreaView style={{ flex: 1 }}>
+              <ContentComponent />
+            </TabSafeAreaView>
           </BottomTabsScreen>
         );
       })}
