@@ -38,7 +38,7 @@ export interface NativeProps extends ViewProps {
   hideWhenScrolling?: WithDefault<boolean, true>;
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
-  placement?: WithDefault<SearchBarPlacement, 'stacked'>;
+  placement?: WithDefault<SearchBarPlacement, 'automatic'>;
   allowToolbarIntegration?: WithDefault<boolean, true>;
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;

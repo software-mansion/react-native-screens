@@ -67,7 +67,7 @@ namespace react = facebook::react;
 
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
-  _placement = RNSSearchBarPlacementStacked;
+  _placement = RNSSearchBarPlacementAutomatic;
   _allowToolbarIntegration = YES;
 }
 
@@ -528,7 +528,7 @@ RCT_ENUM_CONVERTER(
       @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
       @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
     }),
-    RNSSearchBarPlacementStacked,
+    RNSSearchBarPlacementAutomatic,
     integerValue)
 
 @end
