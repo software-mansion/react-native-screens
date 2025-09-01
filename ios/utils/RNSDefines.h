@@ -41,6 +41,7 @@
 #endif
 
 #pragma mark - SDK availability utility
+
 #define RNS_IPHONE_OS_VERSION_AVAILABLE(v)                              \
   (defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_##v) && \
    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_##v)
