@@ -1716,18 +1716,25 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   if (self.transitionCoordinator != nil) {
     _fakeView.alpha = 0.0;
+
+    auto animation = ^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+      [[context containerView] addSubview:self->_fakeView];
+      self->_fakeView.alpha = 1.0;
+      self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+      [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    };
+
+    if (!self.transitionCoordinator.isAnimated) {
+      animation = nil;
+    }
+
     [self.transitionCoordinator
-        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [[context containerView] addSubview:self->_fakeView];
-          self->_fakeView.alpha = 1.0;
-          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        }
-        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self->_animationTimer setPaused:YES];
-          [self->_animationTimer invalidate];
-          [self->_fakeView removeFromSuperview];
-        }];
+        animateAlongsideTransition:animation
+                        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                          [self->_animationTimer setPaused:YES];
+                          [self->_animationTimer invalidate];
+                          [self->_fakeView removeFromSuperview];
+                        }];
   }
 }
 
