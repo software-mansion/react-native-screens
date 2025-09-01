@@ -263,7 +263,7 @@ namespace react = facebook::react;
   UINavigationController *_controller;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
   BOOL _invalidated;
-  BOOL _isFullWidthSwipingWithPanGesture;
+  BOOL _isFullWidthSwipingWithPanGesture; // used only for content swipe with RNSPanGestureRecognizer
   RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
@@ -458,9 +458,12 @@ RNS_IGNORE_SUPER_CALL_END
         [self addSubview:controller.view];
 #if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
         if (@available(iOS 26, *)) {
           _controller.interactiveContentPopGestureRecognizer.delegate = self;
         }
+#endif // Check for iOS >= 26.0
 #endif
         [controller didMoveToParentViewController:parentView.reactViewController];
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
@@ -906,29 +909,35 @@ RNS_IGNORE_SUPER_CALL_END
   }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
+  BOOL isCustomAnimation =
+      topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
+
+  // On iOS < 26, we have a custom full screen swipe recognizer that functions similarily
+  // to interactiveContentPopGestureRecognizer introduced in iOS 26. We use our implementation for old iOS versions.
+  BOOL usePanGestureRecognizerAsContentPopGestureRecognizer = true;
+  if (@available(iOS 26, *)) {
+    // On iOS 26, we want to switch to the native one, but we are unable to handle custom animations
+    // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation in this one
+    // case
+    usePanGestureRecognizerAsContentPopGestureRecognizer = isCustomAnimation;
+  }
+
 #if TARGET_OS_TV || TARGET_OS_VISION
   [self cancelTouchesInParent];
   return YES;
 #else
-  if (@available(iOS 26, *)) {
-    // do nothing
-    // RNSPanGestureRecognizer is not needed anymore, it's been replaced
-    // by native interactiveContentPopGestureRecognizer and enabled by default
-  } else {
-    // RNSPanGestureRecognizer will receive events iff topScreen.fullScreenSwipeEnabled == YES;
-    // Events are filtered in gestureRecognizer:shouldReceivePressOrTouchEvent: method
-    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-      if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
-        _isFullWidthSwipingWithPanGesture = YES;
-        [self cancelTouchesInParent];
-        return YES;
-      }
-      return NO;
+  if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
+      usePanGestureRecognizerAsContentPopGestureRecognizer) {
+    if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
+      _isFullWidthSwipingWithPanGesture = YES;
+      [self cancelTouchesInParent];
+      return YES;
     }
+    return NO;
   }
 
   // Now we're dealing with RNSScreenEdgeGestureRecognizer (or _UIParallaxTransitionPanGestureRecognizer)
-  if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
+  if (isCustomAnimation) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       UIRectEdge edges = ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges;
       BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
@@ -973,17 +982,13 @@ RNS_IGNORE_SUPER_CALL_END
   rightEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:rightEdgeSwipeGestureRecognizer];
 
-  if (@available(iOS 26, *)) {
-    // do nothing
-    // RNSPanGestureRecognizer is not needed anymore, it's been replaced
-    // by native interactiveContentPopGestureRecognizer and enabled by default
-  } else {
-    // gesture recognizer for full width swipe gesture
-    RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self
-                                                                                      action:@selector(handleSwipe:)];
-    panRecognizer.delegate = self;
-    [self addGestureRecognizer:panRecognizer];
-  }
+  // Starting from iOS 26, RNSPanGestureRecognizer has been mostly replaced by native
+  // interactiveContentPopGestureRecognizer. It still needs to handle custom dismiss animations,
+  // which we are not able to handle with the latter.
+  RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(handleSwipe:)];
+  panRecognizer.delegate = self;
+  [self addGestureRecognizer:panRecognizer];
 }
 
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
@@ -1176,14 +1181,6 @@ RNS_IGNORE_SUPER_CALL_END
 // Be careful when adding another type of gesture recognizer.
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePressOrTouchEvent:(NSObject *)event
 {
-  if (@available(iOS 26, *)) {
-    // in iOS 26, you can swipe to pop screen before the previous one finished transitioning;
-    // this prevents from registering the second gesture
-    if ([self isTransitionInProgress]) {
-      return NO;
-    }
-  }
-
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
   for (RNSScreenView *s in _reactSubviews.reverseObjectEnumerator) {
@@ -1200,10 +1197,16 @@ RNS_IGNORE_SUPER_CALL_END
     return NO;
   }
 
+  BOOL isCustomAnimation =
+      topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
+
   if (@available(iOS 26, *)) {
-    // do nothing
-    // RNSPanGestureRecognizer is not needed anymore, it's been replaced
-    // by native interactiveContentPopGestureRecognizer and enabled by default
+    // On iOS 26, fullScreenSwipeEnabled takes no effect, and depending on whether custom animations are on,
+    // we select either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer
+    if (([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] && !isCustomAnimation) ||
+        (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer && isCustomAnimation)) {
+      return NO;
+    }
   } else {
     // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
@@ -1225,35 +1228,20 @@ RNS_IGNORE_SUPER_CALL_END
   return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:touch];
 }
 
-- (BOOL)isTransitionInProgress
-{
-  if (_controller.transitionCoordinator != nil) {
-    return YES;
-  }
-
-  return NO;
-}
-
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  if (@available(iOS 26, *)) {
-    // do nothing
-    // RNSPanGestureRecognizer is not needed anymore, it's been replaced
-    // by native interactiveContentPopGestureRecognizer and enabled by default
-  } else {
-    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
-        [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
-      RNSPanGestureRecognizer *panGestureRecognizer = (RNSPanGestureRecognizer *)gestureRecognizer;
-      BOOL isBackGesture = [panGestureRecognizer translationInView:panGestureRecognizer.view].x > 0 &&
-          _controller.viewControllers.count > 1;
+  if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
+      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
+    RNSPanGestureRecognizer *panGestureRecognizer = (RNSPanGestureRecognizer *)gestureRecognizer;
+    BOOL isBackGesture = [panGestureRecognizer translationInView:panGestureRecognizer.view].x > 0 &&
+        _controller.viewControllers.count > 1;
 
-      if (gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
-        return NO;
-      }
-
-      return YES;
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
+      return NO;
     }
+
+    return YES;
   }
 
   return NO;
