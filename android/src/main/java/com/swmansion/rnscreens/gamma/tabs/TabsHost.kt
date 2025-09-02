@@ -85,10 +85,11 @@ class TabsHost(
 
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
 
-    private val wrappedContext = ContextThemeWrapper(
-        reactContext,
-        com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar
-    )
+    private val wrappedContext =
+        ContextThemeWrapper(
+            reactContext,
+            com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
+        )
 
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(wrappedContext).apply {
@@ -290,10 +291,12 @@ class TabsHost(
         }
     }
 
-    override fun getFragmentForTabScreen(tabScreen: TabScreen): TabScreenFragment? =
-        tabScreenFragments.find { it.tabScreen === tabScreen }
+    override fun getFragmentForTabScreen(tabScreen: TabScreen): TabScreenFragment? = tabScreenFragments.find { it.tabScreen === tabScreen }
 
-    override fun onFragmentConfigurationChange(tabScreen: TabScreen, config: Configuration) {
+    override fun onFragmentConfigurationChange(
+        tabScreen: TabScreen,
+        config: Configuration,
+    ) {
         this.onConfigurationChanged(config)
     }
 
@@ -387,9 +390,7 @@ class TabsHost(
             appearanceCoordinator.updateTabAppearance(this)
             lastAppliedUiMode = uiMode
         }
-
     }
-
 
     private fun forceSubtreeMeasureAndLayoutPass() {
         measure(
@@ -400,8 +401,7 @@ class TabsHost(
         layout(left, top, right, bottom)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? =
-        tabScreenFragments.getOrNull(itemId)
+    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? = tabScreenFragments.getOrNull(itemId)
 
     private fun getSelectedTabScreenFragmentId(): Int? {
         if (tabScreenFragments.isEmpty()) {
@@ -411,7 +411,9 @@ class TabsHost(
     }
 
     private fun getMenuItemForTabScreen(tabScreen: TabScreen): MenuItem? =
-        tabScreenFragments.indexOfFirst { it.tabScreen === tabScreen }.takeIf { it != -1 }
+        tabScreenFragments
+            .indexOfFirst { it.tabScreen === tabScreen }
+            .takeIf { it != -1 }
             ?.let { index ->
                 bottomNavigationView.menu.findItem(index)
             }

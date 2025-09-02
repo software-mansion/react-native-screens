@@ -15,7 +15,10 @@ internal interface TabScreenDelegate {
      * **If a fragment is associated with the tab screen**, notify the delegate that the fragment
      * got configuration update.
      */
-    fun onFragmentConfigurationChange(tabScreen: TabScreen, config: Configuration)
+    fun onFragmentConfigurationChange(
+        tabScreen: TabScreen,
+        config: Configuration,
+    )
 
     /**
      * This returns fragment **if one is associated with given tab screen**.
