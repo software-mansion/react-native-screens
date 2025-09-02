@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,5 +34,12 @@ class TabScreenFragment(
     override fun onStop() {
         tabScreen.eventEmitter.emitOnDidDisappear()
         super.onStop()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Handle theme change through RN's Appearance.setColorScheme
+        tabScreen.onFragmentConfigurationChange(this, newConfig)
     }
 }
