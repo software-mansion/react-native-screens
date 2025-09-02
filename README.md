@@ -35,6 +35,7 @@ Please note that the override code should not be placed inside `MainActivityDele
 
 ```java
 import android.os.Bundle;
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory;
 
 public class MainActivity extends ReactActivity {
 
@@ -43,7 +44,8 @@ public class MainActivity extends ReactActivity {
     //react-native-screens override
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(null);
+        getSupportFragmentManager().setFragmentFactory(new RNScreensFragmentFactory());
+        super.onCreate(savedInstanceState);
     }
 
     public static class MainActivityDelegate extends ReactActivityDelegate {
@@ -59,6 +61,7 @@ public class MainActivity extends ReactActivity {
 
 ```kotlin
 import android.os.Bundle;
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory;
 
 class MainActivity: ReactActivity() {
 
@@ -66,6 +69,7 @@ class MainActivity: ReactActivity() {
 
     //react-native-screens override
     override fun onCreate(savedInstanceState: Bundle?) {
+      supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
       super.onCreate(null);
     }
 }

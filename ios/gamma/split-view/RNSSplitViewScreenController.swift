@@ -18,14 +18,10 @@ public class RNSSplitViewScreenController: UIViewController {
     return splitViewScreenComponentView.reactEventEmitter()
   }
 
-  private var displayLink: CADisplayLink?
-  private var lastAnimationFrame: CGRect?
-  private var transitionInProgress: Bool
+  private var viewSizeTransitionState: ViewSizeTransitionState? = nil
 
   @objc public required init(splitViewScreenComponentView: RNSSplitViewScreenComponentView) {
     self.splitViewScreenComponentView = splitViewScreenComponentView
-    self.transitionInProgress = false
-
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -74,8 +70,8 @@ public class RNSSplitViewScreenController: UIViewController {
   /// @return true if the transition is running, false otherwise.
   ///
   @objc
-  public func isTransitionInProgress() -> Bool {
-    return transitionInProgress
+  public func isViewSizeTransitionInProgress() -> Bool {
+    return viewSizeTransitionState != nil
   }
 
   // MARK: Signals
@@ -97,20 +93,21 @@ public class RNSSplitViewScreenController: UIViewController {
   ) {
     super.viewWillTransition(to: size, with: coordinator)
 
-    transitionInProgress = true
+    viewSizeTransitionState = ViewSizeTransitionState()
 
     coordinator.animate(
       alongsideTransition: { [weak self] context in
         guard let self = self else { return }
-        if self.displayLink == nil {
-          self.displayLink = CADisplayLink(
-            target: self, selector: #selector(trackTransitionProgress))
-          self.displayLink?.add(to: .main, forMode: .common)
+        guard let viewSizeTransitionState = self.viewSizeTransitionState else { return }
+
+        if viewSizeTransitionState.displayLink == nil {
+          viewSizeTransitionState.setupDisplayLink(
+            forTarget: self, selector: #selector(trackTransitionProgress))
         }
       },
       completion: { [weak self] context in
         guard let self = self else { return }
-        self.stopAnimation()
+        self.cleanupViewSizeTransitionState()
         // After the animation completion, ensure that ShadowTree state
         // is calculated relatively to the ancestor's frame by requesting
         // the state update.
@@ -118,12 +115,9 @@ public class RNSSplitViewScreenController: UIViewController {
       })
   }
 
-  private func stopAnimation() {
-    lastAnimationFrame = nil
-    transitionInProgress = false
-
-    displayLink?.invalidate()
-    displayLink = nil
+  private func cleanupViewSizeTransitionState() {
+    viewSizeTransitionState?.invalidate()
+    viewSizeTransitionState = nil
   }
 
   ///
@@ -133,7 +127,7 @@ public class RNSSplitViewScreenController: UIViewController {
   @objc
   private func trackTransitionProgress() {
     if let currentFrame = view.layer.presentation()?.frame {
-      lastAnimationFrame = currentFrame
+      viewSizeTransitionState?.lastViewPresentationFrame = currentFrame
       updateShadowTreeState()
     }
   }
@@ -172,11 +166,12 @@ public class RNSSplitViewScreenController: UIViewController {
     // If the resize animation is currently running, we prefer to apply dynamic updates,
     // based on the results from the presentation layer
     // which is read from `trackTransitionProgress` method.
-    if let currentSize = lastAnimationFrame?.size {
-      applyTransitioningShadowState(
-        size: currentSize,
-        ancestorView: ancestorView!
-      )
+    if let lastViewPresentationFrame = viewSizeTransitionState?.lastViewPresentationFrame,
+      !lastViewPresentationFrame.isNull
+    {
+      shadowStateProxy.updateShadowState(
+        ofComponent: splitViewScreenComponentView, withFrame: lastViewPresentationFrame,
+        inContextOfAncestorView: ancestorView!)
       return
     }
 
@@ -186,25 +181,10 @@ public class RNSSplitViewScreenController: UIViewController {
     // to prevent interrupting with the frames that are less important for us.
     // This works fine, because after the animation completion, we're sending the last update
     // which is compatible with the frame which would be calculated relatively to the ancestor here.
-    if !isTransitionInProgress() {
-      applyStaticShadowStateRelativeToAncestor(ancestorView!)
+    if !isViewSizeTransitionInProgress() {
+      shadowStateProxy.updateShadowState(
+        ofComponent: splitViewScreenComponentView, inContextOfAncestorView: ancestorView)
     }
-  }
-
-  private func applyTransitioningShadowState(size: CGSize, ancestorView: UIView) {
-    let localOrigin = splitViewScreenComponentView.convert(
-      splitViewScreenComponentView.frame.origin,
-      to: ancestorView
-    )
-    let convertedFrame = CGRect(origin: localOrigin, size: size)
-    shadowStateProxy.updateShadowState(withFrame: convertedFrame)
-  }
-
-  private func applyStaticShadowStateRelativeToAncestor(_ ancestorView: UIView) {
-    shadowStateProxy.updateShadowState(
-      ofComponent: splitViewScreenComponentView,
-      inContextOfAncestorView: ancestorView
-    )
   }
 
   ///
@@ -220,7 +200,7 @@ public class RNSSplitViewScreenController: UIViewController {
     // During the transition, we're listening for the animation
     // frame updates on the presentation layer and we're
     // treating these updates as the source of truth
-    if !isTransitionInProgress() {
+    if !isViewSizeTransitionInProgress() {
       shadowStateProxy.updateShadowState(
         ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view
       )
@@ -243,5 +223,25 @@ public class RNSSplitViewScreenController: UIViewController {
 
   public override func viewDidDisappear(_ animated: Bool) {
     reactEventEmitter.emitOnDidDisappear()
+  }
+}
+
+private class ViewSizeTransitionState {
+  public var displayLink: CADisplayLink?
+  public var lastViewPresentationFrame: CGRect = CGRect.null
+
+  public func setupDisplayLink(forTarget target: Any, selector sel: Selector) {
+    if displayLink != nil {
+      displayLink?.invalidate()
+    }
+
+    displayLink = CADisplayLink(target: target, selector: sel)
+    displayLink!.add(to: .main, forMode: .common)
+  }
+
+  public func invalidate() {
+    displayLink?.invalidate()
+    displayLink = nil
+    lastViewPresentationFrame = CGRect.null
   }
 }
