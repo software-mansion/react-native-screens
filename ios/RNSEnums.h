@@ -71,6 +71,9 @@ typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
   RNSSearchBarPlacementAutomatic,
   RNSSearchBarPlacementInline,
   RNSSearchBarPlacementStacked,
+  RNSSearchBarPlacementIntegrated,
+  RNSSearchBarPlacementIntegratedButton,
+  RNSSearchBarPlacementIntegratedCentered,
 };
 
 typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {

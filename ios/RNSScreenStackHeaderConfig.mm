@@ -712,9 +712,21 @@ RNS_IGNORE_SUPER_CALL_END
 #endif /* Check for iOS 16.0 */
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
           if (@available(iOS 26.0, *)) {
-            // Workaround for missing search bar on root stack screen.
-            // See: https://github.com/software-mansion/react-native-screens/pull/3098
-            navitem.searchBarPlacementAllowsToolbarIntegration = NO;
+            // On iOS 26 beta 6, we observe that search bar is buggy if we change the configuration
+            // of search bar multiple times. Sometimes, when `stacked` search bar is enabled for root screen,
+            // it does not show up. It's because we're calling *this* method 2 additional times before
+            // UIKit does, in order to handle some other bugs. Only for the third time, UIKit "wants" to
+            // integrate the search bar - we suspect that this final "reconfiguration" causes the bug.
+            // Setting searchBarPlacementAllowsToolbarIntegration to NO fixes the issue without changing
+            // older stack logic and shouldn't impact users negatively - if user wants `stacked` placement,
+            // the search bar should not be integrated anyway. We should monitor if workaround is still
+            // necessary in next iOS versions and remove it when the bug gets fixed.
+            // More details: https://github.com/software-mansion/react-native-screens/pull/3168
+            if (navitem.preferredSearchBarPlacement != UINavigationItemSearchBarPlacementStacked) {
+              navitem.searchBarPlacementAllowsToolbarIntegration = searchBar.allowToolbarIntegration;
+            } else {
+              navitem.searchBarPlacementAllowsToolbarIntegration = NO;
+            }
           }
 #endif /* Check for iOS 26.0 */
 #endif /* !TARGET_OS_TV */
