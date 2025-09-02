@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -107,6 +108,19 @@ class TabScreen(
         // When this is called from View Manager the view tag is already set
         check(id != NO_ID) { "[RNScreens] TabScreen must have its tag set when registering event emitters" }
         eventEmitter = TabScreenEventEmitter(reactContext, id)
+    }
+
+    /**
+     * Notify the view that it's associated fragment got its config updated.
+     *
+     * There are cases where the fragment will receive configuration change, but it's view will not,
+     * e.g. theme update from JS via Appearance.setColorScheme.
+     */
+    internal fun onFragmentConfigurationChange(
+        fragment: TabScreenFragment,
+        config: Configuration,
+    ) {
+        tabScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
     }
 
     companion object {
