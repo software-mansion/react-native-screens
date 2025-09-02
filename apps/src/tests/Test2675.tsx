@@ -95,6 +95,8 @@ export default function App() {
             //headerRight: HeaderRight,
             headerSearchBarOptions: {
               placeholder: 'Search...',
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
               placement: 'stacked',
               hideWhenScrolling: false,
               onChangeText: event => {
@@ -112,6 +114,8 @@ export default function App() {
             headerTitle: HeaderTitle,
             headerSearchBarOptions: {
               placeholder: 'Search...',
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
               placement: 'stacked',
               hideWhenScrolling: false,
               onChangeText: event => {

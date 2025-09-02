@@ -49,6 +49,8 @@ export default function App() {
           component={Second}
           options={{
             headerSearchBarOptions: {
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
               placement: 'stacked',
             },
           }}

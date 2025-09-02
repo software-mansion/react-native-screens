@@ -38,6 +38,8 @@ function Home({ navigation }: StackNavigationProp) {
     if (searchEnabled) {
       navigation.setOptions({
         headerSearchBarOptions: {
+          // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+          // to preserve test's original search bar configuration.
           placement: 'stacked',
           hideWhenScrolling: false,
           onChangeText: event => setSearchQuery(event.nativeEvent.text),

@@ -20,6 +20,8 @@ export const SplitViewWithNativeStackSearchBar = ({
               autoFocus: true,
               barTintColor: Colors.GreenLight100,
               tintColor: Colors.RedDark100,
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
               placement: 'stacked',
               hideWhenScrolling: false,
             },
@@ -31,12 +33,16 @@ export const SplitViewWithNativeStackSearchBar = ({
           customScreenOneNavigationOptions={{
             headerSearchBarOptions: {
               hideNavigationBar: true,
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
               placement: 'stacked',
               hideWhenScrolling: false,
             },
           }}
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
               placement: 'stacked',
               hideWhenScrolling: false,
               hideNavigationBar: false,
@@ -48,6 +54,8 @@ export const SplitViewWithNativeStackSearchBar = ({
         <NativeStackNavigatorComponent
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
               placement: 'stacked',
               hideWhenScrolling: false,
             },
