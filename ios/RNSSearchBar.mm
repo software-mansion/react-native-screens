@@ -233,8 +233,7 @@ namespace react = facebook::react;
       return UINavigationItemSearchBarPlacementAutomatic;
     case RNSSearchBarPlacementInline:
       return UINavigationItemSearchBarPlacementInline;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     case RNSSearchBarPlacementIntegrated:
       if (@available(iOS 26, *)) {
         return UINavigationItemSearchBarPlacementIntegrated;
