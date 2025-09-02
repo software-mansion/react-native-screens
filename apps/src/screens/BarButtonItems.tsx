@@ -226,14 +226,21 @@ export default function BarButtonItemsExample() {
             {
               image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
+              sharesBackground: true,
             },
             {
               image: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
+              sharesBackground: true,
             },
             {
               image: require('../../assets/search_black.png'),
+              onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: false,
+            },
+            {
+              image: require('../../assets/search_black.png'),
+              hidesSharedBackground: true,
               onPress: () => Alert.alert('Icon with sharesBackground false pressed'),
             },
           ],
@@ -365,19 +372,24 @@ export default function BarButtonItemsExample() {
           title: 'React Node Button',
           headerBackVisible: true,
           headerRightItems: [
-            // eslint-disable-next-line react/no-unstable-nested-components
-            () => <TouchableOpacity onPress={() => Alert.alert('React Node 1 pressed')}>
-              <Text style={{ color: 'blue' }}>React Node 1</Text>
-            </TouchableOpacity>,
+            {
+              // eslint-disable-next-line react/no-unstable-nested-components
+              customView: () => <TouchableOpacity onPress={() => Alert.alert('React Node 1 pressed')}>
+                <Text style={{ color: 'blue' }}>React Node 1</Text>
+              </TouchableOpacity>, 
+              hidesSharedBackground: true
+            },
             {
               title: "Native",
               onPress: () => Alert.alert('Native button pressed'),
+              sharesBackground: true,
             },
-            // eslint-disable-next-line react/no-unstable-nested-components
-            () => <TouchableOpacity onPress={() => Alert.alert('React Node 2 pressed')}>
-              <Text style={{ color: 'red' }}>React Node 2</Text>
-            </TouchableOpacity>,
-
+            {
+              // eslint-disable-next-line react/no-unstable-nested-components
+              customView: () => <TouchableOpacity onPress={() => Alert.alert('React Node 2 pressed')}>
+                <Text style={{ color: 'red' }}>React Node 2</Text>
+              </TouchableOpacity>
+            },
           ],
         }} />
       <Stack.Screen name="BackButtonVisibleDemo"
@@ -386,9 +398,9 @@ export default function BarButtonItemsExample() {
           title: 'Back Button Visible',
           headerBackVisible: true,
           headerLeftItems: [
-            () => <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
+            {customView: () => <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
                 <Text style={{ color: 'blue' }}>React Node</Text>
-              </TouchableOpacity>,
+              </TouchableOpacity>},
             {
               title: "Native",
               onPress: () => Alert.alert('Native button pressed'),

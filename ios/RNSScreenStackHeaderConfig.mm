@@ -713,14 +713,16 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
-  
+
   // Set leftBarButtonItems if provided
   if (config.headerLeftBarButtonItems.count > 0) {
-    navitem.leftBarButtonItems = [config barButtonItemsFromDictionaries:config.headerLeftBarButtonItems withCurrentItems:navitem.leftBarButtonItems];
+    navitem.leftBarButtonItems = [config barButtonItemsFromDictionaries:config.headerLeftBarButtonItems
+                                                       withCurrentItems:navitem.leftBarButtonItems];
   }
   // Set rightBarButtonItems if provided
   if (config.headerRightBarButtonItems.count > 0) {
-    navitem.rightBarButtonItems = [config barButtonItemsFromDictionaries:config.headerRightBarButtonItems withCurrentItems:navitem.rightBarButtonItems];
+    navitem.rightBarButtonItems = [config barButtonItemsFromDictionaries:config.headerRightBarButtonItems
+                                                        withCurrentItems:navitem.rightBarButtonItems];
   }
 
   if (animated && vc.transitionCoordinator != nil &&
@@ -847,47 +849,48 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (NSArray<UIBarButtonItem *> *)barButtonItemsFromDictionaries:(NSArray<NSDictionary<NSString *, id> *> *)dicts withCurrentItems:(NSArray<UIBarButtonItem *>*)currentItems
+- (NSArray<UIBarButtonItem *> *)barButtonItemsFromDictionaries:(NSArray<NSDictionary<NSString *, id> *> *)dicts
+                                              withCurrentItems:(NSArray<UIBarButtonItem *> *)currentItems
 {
   if (dicts.count == 0) {
     return currentItems;
   }
-  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity: dicts.count + currentItems.count];
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count + currentItems.count];
   [items addObjectsFromArray:currentItems];
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
     if (dict[@"buttonId"] || dict[@"menu"]) {
       RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict
-                                                                     action:^(NSString *buttonId) {
+          action:^(NSString *buttonId) {
 #ifdef RCT_NEW_ARCH_ENABLED
-        auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
-                                                                                                                    self->_eventEmitter);
-        if (eventEmitter && buttonId) {
-          eventEmitter->onPressHeaderBarButtonItem(
-                                                   facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
-                                                     .buttonId = std::string([buttonId UTF8String])});
-        }
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && buttonId) {
+              eventEmitter->onPressHeaderBarButtonItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
+                      .buttonId = std::string([buttonId UTF8String])});
+            }
 #else
-        if (self.onPressHeaderBarButtonItem && buttonId) {
-          self.onPressHeaderBarButtonItem(@{@"buttonId" : buttonId});
-        }
+            if (self.onPressHeaderBarButtonItem && buttonId) {
+              self.onPressHeaderBarButtonItem(@{@"buttonId" : buttonId});
+            }
 #endif
-      }
-                                                                 menuAction:^(NSString *menuId) {
+          }
+          menuAction:^(NSString *menuId) {
 #ifdef RCT_NEW_ARCH_ENABLED
-        auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
-                                                                                                                    self->_eventEmitter);
-        if (eventEmitter && menuId) {
-          eventEmitter->onPressHeaderBarButtonMenuItem(
-                                                       facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
-                                                         .menuId = std::string([menuId UTF8String])});
-        }
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && menuId) {
+              eventEmitter->onPressHeaderBarButtonMenuItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
+                      .menuId = std::string([menuId UTF8String])});
+            }
 #else
-        if (self.onPressHeaderBarButtonMenuItem && menuId) {
-          self.onPressHeaderBarButtonMenuItem(@{@"menuId" : menuId});
-        }
+            if (self.onPressHeaderBarButtonMenuItem && menuId) {
+              self.onPressHeaderBarButtonMenuItem(@{@"menuId" : menuId});
+            }
 #endif
-      }];
+          }];
       NSNumber *insertIndex = dict[@"index"];
       if (insertIndex.integerValue < items.count) {
         [items insertObject:item atIndex:[insertIndex integerValue]];
@@ -905,6 +908,14 @@ RNS_IGNORE_SUPER_CALL_END
         [items insertObject:fixedSpace atIndex:[insertIndex integerValue]];
       } else {
         [items addObject:fixedSpace];
+      }
+    } else if (dict[@"isSubview"]) {
+      NSNumber *index = dict[@"index"];
+      if (index.integerValue < items.count) {
+        if (@available(iOS 26.0, *)) {
+          NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
+          [[items objectAtIndex:index.integerValue] setHidesSharedBackground:hidesSharedBackgroundNum.boolValue];
+        }
       }
     }
   }
