@@ -62,8 +62,7 @@ namespace react = facebook::react;
 
 @implementation RNSNavigationController
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (void)viewDidLoad
 {
   // iOS 26 introduces new gesture recognizer which replaces our RNSPanGestureRecognizer.
@@ -222,8 +221,7 @@ namespace react = facebook::react;
 
 #pragma mark - UINavigationBarDelegate
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
 {
   if (@available(iOS 26, *)) {

@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RNSDefines.h"
 #import "RNSSearchBar.h"
 
 #import <React/RCTBridge.h>
@@ -220,8 +221,7 @@ namespace react = facebook::react;
 #endif
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0 && !TARGET_OS_TV
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
 - (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))
     API_UNAVAILABLE(tvos, watchos)
 {
