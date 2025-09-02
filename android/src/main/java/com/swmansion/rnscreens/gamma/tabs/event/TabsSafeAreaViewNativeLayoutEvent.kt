@@ -8,8 +8,7 @@ import com.swmansion.rnscreens.gamma.common.NamingAwareEventType
 class TabsSafeAreaViewNativeLayoutEvent(surfaceId: Int, viewId: Int, val tabBarHeight: Int) : Event<TabsSafeAreaViewNativeLayoutEvent>(surfaceId, viewId) {
     override fun getEventName() = EVENT_HANE
 
-    // All events for a given view can be coalesced.
-    override fun getCoalescingKey(): Short = 0
+    override fun getCoalescingKey(): Short = tabBarHeight.toShort() // if this fails something went seriously wrong anyway
 
     override fun getEventData(): WritableMap? =
         Arguments.createMap().apply {

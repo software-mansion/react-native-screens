@@ -91,7 +91,7 @@ class TabsHost(
             com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
-    private val bottomNavigationView: BottomNavigationView =
+    internal val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(wrappedContext).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         }
@@ -199,7 +199,7 @@ class TabsHost(
 
         bottomNavigationView.addOnLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             RNSLog.d(
-                TAG,
+                "[RNScreens]",
                 "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}",
             )
         }
