@@ -109,7 +109,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
-            <TabSafeAreaView style={{ flex: 1 }}>
+            <TabSafeAreaView>
               <ContentComponent />
             </TabSafeAreaView>
           </BottomTabsScreen>
