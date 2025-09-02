@@ -68,6 +68,7 @@ namespace react = facebook::react;
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
   _placement = RNSSearchBarPlacementAutomatic;
+
   _allowToolbarIntegration = YES;
 }
 
