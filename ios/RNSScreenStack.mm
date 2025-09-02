@@ -1209,6 +1209,8 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL isCustomAnimation =
       topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
   if (@available(iOS 26, *)) {
     // On iOS 26, fullScreenSwipeEnabled takes no effect, and depending on whether custom animations are on,
     // we select either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer
@@ -1222,6 +1224,12 @@ RNS_IGNORE_SUPER_CALL_END
       return topScreen.fullScreenSwipeEnabled;
     }
   }
+#else // check for iOS >= 26
+  // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
+  if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    return topScreen.fullScreenSwipeEnabled;
+  }
+#endif // check for iOS >= 26
 
   // RNSScreenEdgeGestureRecognizer || _UIParallaxTransitionPanGestureRecognizer
   return YES;
