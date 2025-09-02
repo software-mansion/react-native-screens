@@ -742,7 +742,8 @@ export interface SearchBarProps {
   /**
    * The text to be used instead of default `Cancel` button text
    *
-   * @deprecated Starting from iOS 26, cancel button does not have any text.
+   * @deprecated Starting from iOS 26, cancel button does not have any text,
+   * therefore this prop has no longer any effect.
    *
    * @platform ios
    */
@@ -852,7 +853,7 @@ export interface SearchBarProps {
    */
   placement?: SearchBarPlacement;
   /**
-   * Indicates whether the system can place the search bar among toolbar items on iPhone.
+   * Indicates whether the system can place the search bar among other toolbar items on iPhone.
    *
    * Set this prop to `false` to prevent the search bar from appearing in the toolbar when
    * `placement` is `automatic`, `integrated`, `integratedButton` or `integratedCentered`.
