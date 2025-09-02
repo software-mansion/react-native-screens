@@ -912,12 +912,8 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL isCustomAnimation =
       topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
 
-  // On iOS < 26, we have a custom full screen swipe recognizer that functions similarily
-  // to interactiveContentPopGestureRecognizer introduced in iOS 26. We use our implementation for old iOS versions.
   BOOL usePanGestureRecognizerAsContentPopGestureRecognizer = true;
   if (@available(iOS 26, *)) {
-    // On iOS 26, we want to switch to the native one, but we are unable to handle custom animations
-    // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation in this one
     // case
     usePanGestureRecognizerAsContentPopGestureRecognizer = isCustomAnimation;
   }
@@ -926,14 +922,27 @@ RNS_IGNORE_SUPER_CALL_END
   [self cancelTouchesInParent];
   return YES;
 #else
-  if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
-      usePanGestureRecognizerAsContentPopGestureRecognizer) {
-    if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
-      _isFullWidthSwipingWithPanGesture = YES;
-      [self cancelTouchesInParent];
-      return YES;
+
+  if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    // On iOS < 26, we have a custom full screen swipe recognizer that functions similarily
+    // to interactiveContentPopGestureRecognizer introduced in iOS 26.
+    // On iOS >= 26, we want to use the native one, but we are unable to handle custom animations
+    // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation in this one
+    if (@available(iOS 26, *)) {
+      if (isCustomAnimation) {
+        _isFullWidthSwipingWithPanGesture = YES;
+        [self cancelTouchesInParent];
+        return YES;
+      }
+      return NO;
+    } else {
+      if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
+        _isFullWidthSwipingWithPanGesture = YES;
+        [self cancelTouchesInParent];
+        return YES;
+      }
+      return NO;
     }
-    return NO;
   }
 
   // Now we're dealing with RNSScreenEdgeGestureRecognizer (or _UIParallaxTransitionPanGestureRecognizer)

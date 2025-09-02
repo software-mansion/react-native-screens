@@ -70,6 +70,7 @@ When set to `false` the back swipe gesture will be disabled. The default value i
 #### `gestureResponseDistance` (iOS only)
 
 Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage:
+IMPORTANT: Starting from iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
 
 ```tsx
 gestureResponseDistance: {
