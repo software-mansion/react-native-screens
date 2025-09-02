@@ -912,12 +912,6 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL isCustomAnimation =
       topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
 
-  BOOL usePanGestureRecognizerAsContentPopGestureRecognizer = true;
-  if (@available(iOS 26, *)) {
-    // case
-    usePanGestureRecognizerAsContentPopGestureRecognizer = isCustomAnimation;
-  }
-
 #if TARGET_OS_TV || TARGET_OS_VISION
   [self cancelTouchesInParent];
   return YES;

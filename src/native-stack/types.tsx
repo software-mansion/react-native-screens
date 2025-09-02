@@ -160,8 +160,6 @@ export type NativeStackNavigationOptions = {
    * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
    * Defaults to `false`.
    *
-   * IMPORTANT: Starting from iOS 26, full screen swipe to dismiss is the native behavior, and this prop is ignored.
-   *
    * @platform ios
    */
   fullScreenSwipeEnabled?: boolean;

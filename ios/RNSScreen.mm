@@ -1457,7 +1457,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (@available(iOS 26, *)) {
     // In iOS 26, as soon as another screen appears in transition, it is interactable
     // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
-    // Because nested stack exist, we need to find a common top view for the whole app
+    // Disabling interactions for parent navigation controller won't be enough in case of nested stack;
+    // we need to find a common top view for the whole app
     [self findReactRootViewController].view.userInteractionEnabled = false;
   }
   [super viewWillAppear:animated];
