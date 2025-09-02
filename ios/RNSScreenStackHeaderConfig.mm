@@ -1010,6 +1010,13 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 
   // See comment above _safeAreaConstraints declaration for reason why this is necessary.
+  if (_safeAreaConstraints.count > 0 &&
+      [_safeAreaConstraints[0].firstItem isKindOfClass:[RNSScreenContentWrapper class]]) {
+    RNSScreenContentWrapper *contentWrapper = static_cast<RNSScreenContentWrapper *>(_safeAreaConstraints[0].firstItem);
+
+    // Disable auto-layout
+    contentWrapper.translatesAutoresizingMaskIntoConstraints = YES;
+  }
   [NSLayoutConstraint deactivateConstraints:_safeAreaConstraints];
   _safeAreaConstraints = nil;
 
