@@ -3,8 +3,10 @@
 import React from 'react';
 import { Freeze } from 'react-freeze';
 import {
+  Image,
   StyleSheet,
   findNodeHandle,
+  processColor,
   type ImageSourcePropType,
   type NativeSyntheticEvent,
 } from 'react-native';
@@ -12,9 +14,15 @@ import { freezeEnabled } from '../../core';
 import BottomTabsScreenNativeComponent, {
   type IconType,
   type NativeProps,
+  type Appearance,
+  type ItemAppearance,
+  type ItemStateAppearance,
 } from '../../fabric/bottom-tabs/BottomTabsScreenNativeComponent';
 import { featureFlags } from '../../flags';
 import type {
+  BottomTabsScreenAppearance,
+  BottomTabsScreenItemAppearance,
+  BottomTabsScreenItemStateAppearance,
   BottomTabsScreenProps,
   EmptyObject,
   Icon,
@@ -47,7 +55,10 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     isFocused = false,
     freezeContents,
     icon,
+    iconResource,
     selectedIcon,
+    standardAppearance,
+    scrollEdgeAppearance,
     ...rest
   } = props;
 
@@ -107,6 +118,16 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
+  let parsedIconResource;
+  if (iconResource) {
+    parsedIconResource = Image.resolveAssetSource(iconResource);
+    if (!parsedIconResource) {
+      console.error(
+        '[RNScreens] failed to resolve an asset for bottom tab icon',
+      );
+    }
+  }
+
   return (
     <BottomTabsScreenNativeComponent
       collapsable={false}
@@ -116,7 +137,14 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
+      // I'm keeping undefined as a fallback if `Image.resolveAssetSource` has failed for some reason.
+      // It won't render any icon, but it will prevent from crashing on the native side which is expecting
+      // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
+      // double as a value.
+      iconResource={parsedIconResource || undefined}
       {...iconProps}
+      standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
+      scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       {...rest}>
@@ -125,6 +153,71 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       </Freeze>
     </BottomTabsScreenNativeComponent>
   );
+}
+
+function mapAppearanceToNativeProp(
+  appearance?: BottomTabsScreenAppearance,
+): Appearance | undefined {
+  if (!appearance) return undefined;
+
+  const {
+    stacked,
+    inline,
+    compactInline,
+    tabBarBackgroundColor,
+    tabBarShadowColor,
+  } = appearance;
+
+  return {
+    ...appearance,
+    stacked: mapItemAppearanceToNativeProp(stacked),
+    inline: mapItemAppearanceToNativeProp(inline),
+    compactInline: mapItemAppearanceToNativeProp(compactInline),
+    tabBarBackgroundColor: processColor(tabBarBackgroundColor),
+    tabBarShadowColor: processColor(tabBarShadowColor),
+  };
+}
+
+function mapItemAppearanceToNativeProp(
+  itemAppearance?: BottomTabsScreenItemAppearance,
+): ItemAppearance | undefined {
+  if (!itemAppearance) return undefined;
+
+  const { normal, selected, focused, disabled } = itemAppearance;
+
+  return {
+    ...itemAppearance,
+    normal: mapItemStateAppearanceToNativeProp(normal),
+    selected: mapItemStateAppearanceToNativeProp(selected),
+    focused: mapItemStateAppearanceToNativeProp(focused),
+    disabled: mapItemStateAppearanceToNativeProp(disabled),
+  };
+}
+
+function mapItemStateAppearanceToNativeProp(
+  itemStateAppearance?: BottomTabsScreenItemStateAppearance,
+): ItemStateAppearance | undefined {
+  if (!itemStateAppearance) return undefined;
+
+  const {
+    tabBarItemTitleFontColor,
+    tabBarItemIconColor,
+    tabBarItemBadgeBackgroundColor,
+    tabBarItemTitleFontWeight,
+  } = itemStateAppearance;
+
+  return {
+    ...itemStateAppearance,
+    tabBarItemTitleFontColor: processColor(tabBarItemTitleFontColor),
+    tabBarItemIconColor: processColor(tabBarItemIconColor),
+    tabBarItemBadgeBackgroundColor: processColor(
+      tabBarItemBadgeBackgroundColor,
+    ),
+    tabBarItemTitleFontWeight:
+      tabBarItemTitleFontWeight !== undefined
+        ? String(tabBarItemTitleFontWeight)
+        : undefined,
+  };
 }
 
 function shouldFreezeScreen(

@@ -1,5 +1,6 @@
 'use client';
 
+// eslint-disable-next-line @react-native/no-deep-imports
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { ColorValue, ViewProps } from 'react-native';
 import type {
@@ -19,30 +20,6 @@ type NativeFocusChangeEvent = {
   tabKey: string;
 };
 
-type BlurEffect =
-  | 'none'
-  | 'systemDefault'
-  | 'extraLight'
-  | 'light'
-  | 'dark'
-  | 'regular'
-  | 'prominent'
-  | 'systemUltraThinMaterial'
-  | 'systemThinMaterial'
-  | 'systemMaterial'
-  | 'systemThickMaterial'
-  | 'systemChromeMaterial'
-  | 'systemUltraThinMaterialLight'
-  | 'systemThinMaterialLight'
-  | 'systemMaterialLight'
-  | 'systemThickMaterialLight'
-  | 'systemChromeMaterialLight'
-  | 'systemUltraThinMaterialDark'
-  | 'systemThinMaterialDark'
-  | 'systemMaterialDark'
-  | 'systemThickMaterialDark'
-  | 'systemChromeMaterialDark';
-
 type TabBarItemLabelVisibilityMode =
   | 'auto'
   | 'selected'
@@ -61,28 +38,18 @@ export interface NativeProps extends ViewProps {
 
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
-  tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
-  tabBarTintColor?: ColorValue;
 
+  // Android-specific
+  tabBarBackgroundColor?: ColorValue;
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: Float;
+  tabBarItemTitleFontSizeActive?: Float;
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
   tabBarItemTitleFontColor?: ColorValue;
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: Float;
-    vertical?: Float;
-  };
-
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
-  // Android
   tabBarItemTitleFontColorActive?: ColorValue;
+  tabBarItemIconColor?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
-  tabBarItemTitleFontSizeActive?: Float;
   tabBarItemActiveIndicatorColor?: ColorValue;
   tabBarItemActiveIndicatorEnabled?: WithDefault<boolean, true>;
   tabBarItemRippleColor?: ColorValue;
@@ -92,6 +59,7 @@ export interface NativeProps extends ViewProps {
   >;
 
   // iOS-specific
+  tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
 
   // Control

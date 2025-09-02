@@ -2,7 +2,9 @@
 #import "NSString+RNSUtility.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSScrollViewHelper.h"
+#import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
 
 #if RCT_NEW_ARCH_ENABLED
@@ -31,6 +33,7 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
+  BOOL _tabBarItemNeedsUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
@@ -58,6 +61,7 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   _tabItemNeedsAppearanceUpdate = NO;
   _tabScreenOrientationNeedsUpdate = NO;
+  _tabBarItemNeedsUpdate = NO;
 #endif
 
   // This is a temporary workaround to avoid UIScrollEdgeEffect glitch
@@ -73,20 +77,10 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
-  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
   _orientation = RNSOrientationInherit;
-  _tabBarBackgroundColor = nil;
 
-  _tabBarItemTitleFontFamily = nil;
-  _tabBarItemTitleFontSize = nil;
-  _tabBarItemTitleFontWeight = nil;
-  _tabBarItemTitleFontStyle = nil;
-  _tabBarItemTitleFontColor = nil;
-  _tabBarItemTitlePositionAdjustment = UIOffsetMake(0.0, 0.0);
-
-  _tabBarItemIconColor = nil;
-
-  _tabBarItemBadgeBackgroundColor = nil;
+  _standardAppearance = [UITabBarAppearance new];
+  _scrollEdgeAppearance = nil;
 
   _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
   _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
@@ -101,14 +95,8 @@ namespace react = facebook::react;
 
   _selectedIconImageSource = nil;
   _selectedIconSfSymbolName = nil;
-}
 
-- (void)invalidate
-{
-  // Controller keeps the strong reference to the component via the `.view` property.
-  // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
-  // when we want to destroy the component.
-  _controller = nil;
+  _systemItem = RNSBottomTabsScreenSystemItemNone;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -117,6 +105,26 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   return _reactSuperview;
 }
 RNS_IGNORE_SUPER_CALL_END
+
+#ifdef RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RNSViewControllerInvalidating
+
+- (void)invalidateController
+{
+  _controller = nil;
+}
+
+#else
+
+#pragma mark - RCTInvalidating
+
+- (void)invalidate
+{
+  _controller = nil;
+}
+
+#endif
 
 #pragma mark - Events
 
@@ -145,6 +153,25 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+#pragma mark - Prop update utils
+
+- (void)updateTabBarItem
+{
+  UITabBarItem *tabBarItem = nil;
+  if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
+    UITabBarSystemItem systemItem =
+        rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+    tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
+  } else {
+    tabBarItem = [[UITabBarItem alloc] init];
+    tabBarItem.title = _title;
+  }
+
+  tabBarItem.badgeValue = _badgeValue;
+
+  _controller.tabBarItem = tabBarItem;
+}
+
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - RCTViewComponentViewProtocol
 
@@ -156,6 +183,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
+  bool tabBarItemNeedsUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
@@ -180,93 +208,59 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
-    _controller.tabBarItem.badgeValue = _badgeValue;
+    tabBarItemNeedsUpdate = YES;
   }
 
-  if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
-    _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
-    // Note that this will prevent default color from being set.
-    // TODO: support default color by setting nil here.
-    NSLog(@"TabsScreen [%ld] update badgeColor to %@", self.tag, _tabBarItemBadgeBackgroundColor);
+  if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
+    _standardAppearance = [UITabBarAppearance new];
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
+                                          fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                                  newComponentProps.standardAppearance)];
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
-    _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
-    _tabBarBlurEffect = rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsScreenTabBarBlurEffect(
-        newComponentProps.tabBarBlurEffect);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
-    _tabBarItemTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontFamily);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
-    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
-    _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
-    _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
-    _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitlePositionAdjustment.horizontal !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
-      newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
-    _tabBarItemTitlePositionAdjustment =
-        rnscreens::conversion::RNSBottomTabsScreenTabBarItemTitlePositionAdjustmentStruct(
-            newComponentProps.tabBarItemTitlePositionAdjustment);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemIconColor != oldComponentProps.tabBarItemIconColor) {
-    _tabBarItemIconColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemIconColor);
+  if (newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
+    if (newComponentProps.scrollEdgeAppearance.type() == folly::dynamic::OBJECT) {
+      _scrollEdgeAppearance = [UITabBarAppearance new];
+      [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_scrollEdgeAppearance
+                                            fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                                    newComponentProps.scrollEdgeAppearance)];
+    } else {
+      _scrollEdgeAppearance = nil;
+    }
     tabItemNeedsAppearanceUpdate = YES;
   }
 
   if (newComponentProps.iconType != oldComponentProps.iconType) {
     _iconType = rnscreens::conversion::RNSBottomTabsIconTypeFromIcon(newComponentProps.iconType);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.iconImageSource != oldComponentProps.iconImageSource) {
     _iconImageSource =
         rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconImageSource, _iconType);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.iconSfSymbolName != oldComponentProps.iconSfSymbolName) {
     _iconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
     _selectedIconImageSource = rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(
         &newComponentProps.selectedIconImageSource, _iconType);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
     _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
@@ -297,6 +291,19 @@ RNS_IGNORE_SUPER_CALL_END
   // enabling us to warn users that dynamic changes are not supported.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
+  if (newComponentProps.systemItem != oldComponentProps.systemItem) {
+    _systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
+        newComponentProps.systemItem);
+    tabBarItemNeedsUpdate = YES;
+  }
+
+  if (tabBarItemNeedsUpdate) {
+    [self updateTabBarItem];
+
+    // Force appearance update to make sure correct image for tab bar item is used
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
   if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
   }
@@ -311,7 +318,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {
-  NSLog(
+  RNSLog(
       @"TabScreen [%ld] updateLayoutMetrics: %@", self.tag, NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)));
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
 }
@@ -325,13 +332,13 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  NSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
+  RNSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
   [super mountChildComponentView:childComponentView index:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  NSLog(@"TabScreen [%ld] unmount [%ld] from %ld", self.tag, childComponentView.tag, index);
+  RNSLog(@"TabScreen [%ld] unmount [%ld] from %ld", self.tag, childComponentView.tag, index);
   [super unmountChildComponentView:childComponentView index:index];
 }
 
@@ -362,6 +369,14 @@ RNS_IGNORE_SUPER_CALL_END
   // Therefore we set the flag in didSetProps to make sure to handle this case as well.
   // didSetProps will always be called because tabKey prop is required.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
+
+  if (_tabBarItemNeedsUpdate) {
+    [self updateTabBarItem];
+    _tabBarItemNeedsUpdate = NO;
+
+    // Force appearance update to make sure correct image for tab bar item is used
+    _tabItemNeedsAppearanceUpdate = YES;
+  }
 
   if (_tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
@@ -399,91 +414,42 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setBadgeValue:(NSString *)badgeValue
 {
   _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
-  _controller.tabBarItem.badgeValue = _badgeValue;
-}
-
-- (void)setTabBarBackgroundColor:(UIColor *)tabBarBackgroundColor
-{
-  _tabBarBackgroundColor = tabBarBackgroundColor;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
-{
-  _tabBarBlurEffect = tabBarBlurEffect;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontFamily:(NSString *)tabBarItemTitleFontFamily
-{
-  _tabBarItemTitleFontFamily = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontFamily];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontSize:(NSNumber *)tabBarItemTitleFontSize
-{
-  _tabBarItemTitleFontSize = tabBarItemTitleFontSize;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontWeight:(NSString *)tabBarItemTitleFontWeight
-{
-  _tabBarItemTitleFontWeight = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontWeight];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontStyle:(NSString *)tabBarItemTitleFontStyle
-{
-  _tabBarItemTitleFontStyle = [NSString rnscreens_stringOrNilIfEmpty:tabBarItemTitleFontStyle];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitleFontColor:(UIColor *)tabBarItemTitleFontColor
-{
-  _tabBarItemTitleFontColor = tabBarItemTitleFontColor;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemIconColor:(UIColor *)tabBarItemIconColor
-{
-  _tabBarItemIconColor = tabBarItemIconColor;
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
-{
-  _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
-  _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setIconType:(RNSBottomTabsIconType)iconType
 {
   _iconType = iconType;
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setIconImageSource:(RCTImageSource *)iconImageSource
 {
   _iconImageSource = iconImageSource;
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setIconSfSymbolName:(NSString *)iconSfSymbolName
 {
   _iconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setSelectedIconImageSource:(RCTImageSource *)selectedIconImageSource
 {
   _selectedIconImageSource = selectedIconImageSource;
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setSelectedIconSfSymbolName:(NSString *)selectedIconSfSymbolName
 {
   _selectedIconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setOverrideScrollViewContentInsetAdjustmentBehavior:(BOOL)overrideScrollViewContentInsetAdjustmentBehavior
@@ -497,6 +463,36 @@ RNS_IGNORE_SUPER_CALL_END
 
   // _isOverrideScrollViewContentInsetAdjustmentBehaviorSet flag is set in didSetProps to handle a case
   // when the prop is undefined in JS and default value is used instead of calling this setter.
+}
+
+- (void)setStandardAppearance:(NSDictionary *)standardAppearanceProps
+{
+  _standardAppearance = [UITabBarAppearance new];
+  if (standardAppearanceProps != nil) {
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
+                                          fromAppearanceProps:standardAppearanceProps];
+  }
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setScrollEdgeAppearance:(NSDictionary *)scrollEdgeAppearanceProps
+{
+  if (scrollEdgeAppearanceProps != nil) {
+    _scrollEdgeAppearance = [UITabBarAppearance new];
+    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_scrollEdgeAppearance
+                                          fromAppearanceProps:scrollEdgeAppearanceProps];
+  } else {
+    _scrollEdgeAppearance = nil;
+  }
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+// This is a Paper-only setter method that will be called by the mounting code.
+// It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
+- (void)setSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
+{
+  _systemItem = systemItem;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setOrientation:(RNSOrientation)orientation

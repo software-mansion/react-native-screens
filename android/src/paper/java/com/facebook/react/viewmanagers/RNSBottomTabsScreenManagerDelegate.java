@@ -12,6 +12,7 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ColorPropConverter;
+import com.facebook.react.bridge.DynamicFromObject;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
@@ -30,38 +31,11 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "tabKey":
         mViewManager.setTabKey(view, value == null ? null : (String) value);
         break;
-      case "tabBarBackgroundColor":
-        mViewManager.setTabBarBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarBlurEffect":
-        mViewManager.setTabBarBlurEffect(view, (String) value);
-        break;
-      case "tabBarItemTitleFontFamily":
-        mViewManager.setTabBarItemTitleFontFamily(view, value == null ? null : (String) value);
-        break;
-      case "tabBarItemTitleFontSize":
-        mViewManager.setTabBarItemTitleFontSize(view, value == null ? 0f : ((Double) value).floatValue());
-        break;
-      case "tabBarItemTitleFontWeight":
-        mViewManager.setTabBarItemTitleFontWeight(view, value == null ? null : (String) value);
-        break;
-      case "tabBarItemTitleFontStyle":
-        mViewManager.setTabBarItemTitleFontStyle(view, value == null ? null : (String) value);
-        break;
-      case "tabBarItemTitleFontColor":
-        mViewManager.setTabBarItemTitleFontColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemTitlePositionAdjustment":
-        mViewManager.setTabBarItemTitlePositionAdjustment(view, (ReadableMap) value);
-        break;
-      case "tabBarItemIconColor":
-        mViewManager.setTabBarItemIconColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemBadgeBackgroundColor":
-        mViewManager.setTabBarItemBadgeBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
       case "title":
         mViewManager.setTitle(view, value == null ? null : (String) value);
+        break;
+      case "badgeValue":
+        mViewManager.setBadgeValue(view, value == null ? null : (String) value);
         break;
       case "orientation":
         mViewManager.setOrientation(view, (String) value);
@@ -69,8 +43,20 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "iconResourceName":
         mViewManager.setIconResourceName(view, value == null ? null : (String) value);
         break;
+      case "iconResource":
+        mViewManager.setIconResource(view, (ReadableMap) value);
+        break;
       case "tabBarItemBadgeTextColor":
         mViewManager.setTabBarItemBadgeTextColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
+      case "tabBarItemBadgeBackgroundColor":
+        mViewManager.setTabBarItemBadgeBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
+      case "standardAppearance":
+        mViewManager.setStandardAppearance(view, new DynamicFromObject(value));
+        break;
+      case "scrollEdgeAppearance":
+        mViewManager.setScrollEdgeAppearance(view, new DynamicFromObject(value));
         break;
       case "iconType":
         mViewManager.setIconType(view, (String) value);
@@ -87,8 +73,8 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "selectedIconSfSymbolName":
         mViewManager.setSelectedIconSfSymbolName(view, value == null ? null : (String) value);
         break;
-      case "badgeValue":
-        mViewManager.setBadgeValue(view, value == null ? null : (String) value);
+      case "systemItem":
+        mViewManager.setSystemItem(view, (String) value);
         break;
       case "specialEffects":
         mViewManager.setSpecialEffects(view, (ReadableMap) value);

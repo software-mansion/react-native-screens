@@ -1,9 +1,15 @@
 #import "RNSBottomTabsHostComponentViewManager.h"
 #import "RNSBottomTabsHostEventEmitter.h"
+#import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
-#import "RNSTabBarAppearanceProvider.h"
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSViewControllerInvalidating.h"
+#else
+#import <React/RCTInvalidating.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +25,14 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSBottomTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate>
+@interface RNSBottomTabsHostComponentView : RNSReactBaseView <
+                                                RNSScreenContainerDelegate,
+#ifdef RCT_NEW_ARCH_ENABLED
+                                                RNSViewControllerInvalidating
+#else
+                                                RCTInvalidating
+#endif
+                                                >
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;
@@ -31,28 +44,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Props
 
-@interface RNSBottomTabsHostComponentView () <RNSTabBarAppearanceProvider>
-
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarBackgroundColor;
-@property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
+@interface RNSBottomTabsHostComponentView ()
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontFamily;
-@property (nonatomic, strong, readonly, nullable) NSNumber *tabBarItemTitleFontSize;
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontWeight;
-@property (nonatomic, strong, readonly, nullable) NSString *tabBarItemTitleFontStyle;
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemTitleFontColor;
-@property (nonatomic, readonly) UIOffset tabBarItemTitlePositionAdjustment;
-
-@property (nonatomic, strong, readonly, nullable) UIColor *tabBarItemIconColor;
-
-@property (nonatomic, readonly, nullable) UIColor *tabBarItemBadgeBackgroundColor;
-
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 @property (nonatomic, readonly) UITabBarMinimizeBehavior tabBarMinimizeBehavior API_AVAILABLE(ios(26.0));
 #endif // Check for iOS >= 26
 

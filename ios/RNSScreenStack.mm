@@ -62,6 +62,26 @@ namespace react = facebook::react;
 
 @implementation RNSNavigationController
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (void)viewDidLoad
+{
+  // iOS 26 introduces new gesture recognizer which replaces our RNSPanGestureRecognizer.
+  // The problem is that we are not able to handle it here for various reasons:
+  // - the new recognizer comes with its own delegate and our current approach is to wire
+  //   all recognizers to RNSScreenStackView; to be 100% sure we don't break the logic,
+  //   we would have to decorate its delegate and call it after our code, which would
+  //   break other recognizers that the stack view is the delegate for
+  // - when RNSScreenStackView.setupGestureHandler method is called, the recognizer hasn't been
+  //   loaded yet and there is no other place to configure in a not "hacky" way
+  // - the official docs warn us to not use it for anything other than "setting up failure requirements with it"
+  // - we expose fullScreenGestureEnabled prop to enable/disable the feature,
+  //   so we need control over the delegate
+  if (@available(iOS 26.0, *)) {
+    self.interactiveContentPopGestureRecognizer.enabled = NO;
+  }
+}
+#endif // iOS 26
+
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
@@ -201,8 +221,7 @@ namespace react = facebook::react;
 
 #pragma mark - UINavigationBarDelegate
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
 {
   if (@available(iOS 26, *)) {
@@ -1206,6 +1225,14 @@ RNS_IGNORE_SUPER_CALL_END
 // Be careful when adding another type of gesture recognizer.
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePressOrTouchEvent:(NSObject *)event
 {
+  if (@available(iOS 26, *)) {
+    // in iOS 26, you can swipe to pop screen before the previous one finished transitioning;
+    // this prevents from registering the second gesture
+    if ([self isTransitionInProgress]) {
+      return NO;
+    }
+  }
+
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
   for (RNSScreenView *s in _reactSubviews.reverseObjectEnumerator) {
@@ -1239,6 +1266,15 @@ RNS_IGNORE_SUPER_CALL_END
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
 {
   return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:touch];
+}
+
+- (BOOL)isTransitionInProgress
+{
+  if (_controller.transitionCoordinator != nil) {
+    return YES;
+  }
+
+  return NO;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer

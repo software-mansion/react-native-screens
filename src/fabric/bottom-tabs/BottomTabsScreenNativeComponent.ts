@@ -1,7 +1,13 @@
 'use client';
 
-import {codegenNativeComponent} from 'react-native';
-import type { ColorValue, ViewProps } from 'react-native';
+// eslint-disable-next-line @react-native/no-deep-imports
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import type {
+  ColorValue,
+  ImageSource,
+  ProcessedColorValue,
+  ViewProps,
+} from 'react-native';
 import {
   DirectEventHandler,
   Float,
@@ -9,8 +15,7 @@ import {
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
-// @ts-ignore: ImageSource type has been recently added: https://github.com/facebook/react-native/pull/51969
-import type {ImageSource} from 'react-native';
+import { UnsafeMixed } from './codegenUtils';
 
 // iOS-specific: SFSymbol, image as a template usage
 export type IconType = 'image' | 'template' | 'sfSymbol';
@@ -22,6 +27,37 @@ type LifecycleStateChangeEvent = Readonly<{
   previousState: Int32;
   newState: Int32;
 }>;
+
+export type ItemStateAppearance = {
+  tabBarItemTitleFontFamily?: string;
+  tabBarItemTitleFontSize?: Float;
+  tabBarItemTitleFontWeight?: string;
+  tabBarItemTitleFontStyle?: string;
+  tabBarItemTitleFontColor?: ProcessedColorValue | null;
+  tabBarItemTitlePositionAdjustment?: {
+    horizontal?: Float;
+    vertical?: Float;
+  };
+  tabBarItemIconColor?: ProcessedColorValue | null;
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
+};
+
+export type ItemAppearance = {
+  normal?: ItemStateAppearance;
+  selected?: ItemStateAppearance;
+  focused?: ItemStateAppearance;
+  disabled?: ItemStateAppearance;
+};
+
+export type Appearance = {
+  stacked?: ItemAppearance;
+  inline?: ItemAppearance;
+  compactInline?: ItemAppearance;
+
+  tabBarBackgroundColor?: ProcessedColorValue | null;
+  tabBarShadowColor?: ProcessedColorValue | null;
+  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
+};
 
 type BlurEffect =
   | 'none'
@@ -58,6 +94,21 @@ type Orientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
+type SystemItem =
+  | 'none'
+  | 'bookmarks'
+  | 'contacts'
+  | 'downloads'
+  | 'favorites'
+  | 'featured'
+  | 'history'
+  | 'more'
+  | 'mostRecent'
+  | 'mostViewed'
+  | 'recents'
+  | 'search'
+  | 'topRated';
+
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
@@ -70,36 +121,23 @@ export interface NativeProps extends ViewProps {
   isFocused?: boolean;
   tabKey: string;
 
-  // Tab Bar Appearance
-  // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
-  tabBarBackgroundColor?: ColorValue;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
-
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
-  tabBarItemTitleFontColor?: ColorValue;
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: Float;
-    vertical?: Float;
-  };
-
-  tabBarItemIconColor?: ColorValue;
-
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-
   // General
   title?: string | undefined | null;
+  badgeValue?: string;
 
   // Currently iOS-only
   orientation?: WithDefault<Orientation, 'inherit'>;
 
   // Android-specific image handling
   iconResourceName?: string;
+  iconResource?: ImageSource;
   tabBarItemBadgeTextColor?: ColorValue;
+  tabBarItemBadgeBackgroundColor?: ColorValue;
 
-  // iOS-specific: SFSymbol usage
+  // iOS-specific
+  standardAppearance?: UnsafeMixed<Appearance>;
+  scrollEdgeAppearance?: UnsafeMixed<Appearance>;
+
   iconType?: WithDefault<IconType, 'sfSymbol'>;
 
   iconImageSource?: ImageSource;
@@ -108,7 +146,7 @@ export interface NativeProps extends ViewProps {
   selectedIconImageSource?: ImageSource;
   selectedIconSfSymbolName?: string;
 
-  badgeValue?: string;
+  systemItem?: WithDefault<SystemItem, 'none'>;
 
   specialEffects?: {
     repeatedTabSelection?: {

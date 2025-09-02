@@ -3,7 +3,12 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScrollViewBehaviorOverriding.h"
-#import "RNSTabBarAppearanceProvider.h"
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSViewControllerInvalidating.h"
+#else
+#import <React/RCTInvalidating.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,7 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSBottomTabsScreenComponentView : RNSReactBaseView
+@interface RNSBottomTabsScreenComponentView : RNSReactBaseView <
+#ifdef RCT_NEW_ARCH_ENABLED
+                                                  RNSViewControllerInvalidating
+#else
+                                                  RCTInvalidating
+#endif
+                                                  >
 
 /**
  * View controller responsible for managing tab represented by this component view.
@@ -26,13 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) RNSBottomTabsHostComponentView *reactSuperview;
 
-/**
- * @brief A function responsible for requesting a cleanup in the BottomTabsScreen component.
- *
- * Should be called when the component is about to be deleted.
- */
-- (void)invalidate;
-
 @end
 
 #pragma mark - Props
@@ -40,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Properties set on component in JavaScript.
  */
-@interface RNSBottomTabsScreenComponentView () <RNSTabBarAppearanceProvider, RNSScrollViewBehaviorOverriding>
+@interface RNSBottomTabsScreenComponentView () <RNSScrollViewBehaviorOverriding>
 
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.
@@ -48,18 +52,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL isSelectedScreen;
 @property (nonatomic, nullable) NSString *tabKey;
 @property (nonatomic, nullable) NSString *badgeValue;
-
-@property (nonatomic, strong, nullable) UIColor *tabBarBackgroundColor;
-@property (nonatomic, readonly) RNSBlurEffectStyle tabBarBlurEffect;
-
-@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontFamily;
-@property (nonatomic, strong, nullable) NSNumber *tabBarItemTitleFontSize;
-@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontWeight;
-@property (nonatomic, strong, nullable) NSString *tabBarItemTitleFontStyle;
-@property (nonatomic, strong, nullable) UIColor *tabBarItemTitleFontColor;
-@property (nonatomic) UIOffset tabBarItemTitlePositionAdjustment;
-
-@property (nonatomic, strong, nullable) UIColor *tabBarItemIconColor;
 
 @property (nonatomic, readonly) RNSBottomTabsIconType iconType;
 
@@ -69,7 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
 @property (nonatomic, strong, readonly, nullable) NSString *selectedIconSfSymbolName;
 
-@property (nonatomic, nullable) UIColor *tabBarItemBadgeBackgroundColor;
+@property (nonatomic, strong, readonly, nullable) UITabBarAppearance *standardAppearance;
+@property (nonatomic, strong, readonly, nullable) UITabBarAppearance *scrollEdgeAppearance;
 
 @property (nonatomic, nullable) NSString *title;
 @property (nonatomic, readonly) RNSOrientation orientation;
@@ -78,6 +71,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
+
+@property (nonatomic) RNSBottomTabsScreenSystemItem systemItem;
 
 @end
 

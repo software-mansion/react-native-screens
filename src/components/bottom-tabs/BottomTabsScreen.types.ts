@@ -60,6 +60,20 @@ export type BottomTabsScreenBlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+export type BottomTabsSystemItem =
+  | 'bookmarks'
+  | 'contacts'
+  | 'downloads'
+  | 'favorites'
+  | 'featured'
+  | 'history'
+  | 'more'
+  | 'mostRecent'
+  | 'mostViewed'
+  | 'recents'
+  | 'search'
+  | 'topRated';
+
 // Currently iOS-only
 export type BottomTabsScreenOrientation =
   | 'inherit'
@@ -71,6 +85,188 @@ export type BottomTabsScreenOrientation =
   | 'landscape'
   | 'landscapeLeft'
   | 'landscapeRight';
+
+// iOS-specific
+export interface BottomTabsScreenAppearance {
+  /**
+   * @summary Specifies the appearance of tab bar items when they are in stacked layout.
+   *
+   * Tab bar items in stacked layout have the icon above the title.
+   * Stacked layout is used e.g. on the iPhone in portrait orientation.
+   *
+   * @platform ios
+   */
+  stacked?: BottomTabsScreenItemAppearance;
+  /**
+   * @summary Specifies the appearance of tab bar items when they are in inline layout.
+   *
+   * Tab bar items in inline layout have the icon next to the title.
+   * Inline layout is used in regular-width environments, e.g. in landscape orientation on the iPhone 16 Pro Max.
+   *
+   * Complete list of size classes for iOS and iPadOS devices is available in Apple's Human Interface Guidelines:
+   * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#iOS-iPadOS-device-size-classes|HIG: Device size classes}
+   *
+   * @platform ios
+   */
+  inline?: BottomTabsScreenItemAppearance;
+  /**
+   * @summary Specifies the appearance of tab bar items when they are in compact inline layout.
+   *
+   * Tab bar items in compact inline layout have the icon next to the title.
+   * Compact inline layout is used in compact-width environments, e.g. in landscape orientation on the iPhone 16 Pro.
+   *
+   * Complete list of size classes for iOS and iPadOS devices is available in Apple's Human Interface Guidelines:
+   * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#iOS-iPadOS-device-size-classes|HIG: Device size classes}
+   *
+   * @platform ios
+   */
+  compactInline?: BottomTabsScreenItemAppearance;
+
+  /**
+   * @summary Specifies the background color for the entire tab bar when tab screen is selected.
+   *
+   * This property does not affect the tab bar starting from iOS 26.
+   *
+   * @platform ios
+   * @supported iOS 18 or lower
+   */
+  tabBarBackgroundColor?: ColorValue;
+  /**
+   * @summary Specifies the blur effect applied to the tab bar when tab screen is selected.
+   *
+   * Works with backgroundColor's alpha < 1.
+   *
+   * This property does not affect the tab bar starting from iOS 26.
+   *
+   * The following values are currently supported:
+   *
+   * - `none` - disables blur effect
+   * - `systemDefault` - uses UIKit's default tab bar blur effect
+   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`
+   *
+   * Complete list of possible blur effect styles is available in the official UIKit documentation:
+   * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style|UIBlurEffect.Style}
+   *
+   * @default systemDefault
+   *
+   * @platform ios
+   * @supported iOS 18 or lower
+   */
+  tabBarBlurEffect?: BottomTabsScreenBlurEffect;
+  /**
+   * @summary Specifies the shadow color for the tab bar when tab screen is selected.
+   *
+   * This property does not affect the tab bar starting from iOS 26.
+   *
+   * @platform ios
+   * @supported iOS 18 or lower
+   */
+  tabBarShadowColor?: ColorValue;
+}
+
+// iOS-specific
+export interface BottomTabsScreenItemAppearance {
+  /**
+   * Specifies the tab bar item appearance when it's enabled, unselected, and not the focused item.
+   *
+   * @platform ios
+   */
+  normal?: BottomTabsScreenItemStateAppearance;
+  /**
+   * Specifies the tab bar item appearance when it's selected.
+   *
+   * @platform ios
+   */
+  selected?: BottomTabsScreenItemStateAppearance;
+  /**
+   * Specifies the tab bar item appearance when it's focused.
+   *
+   * @platform ios
+   */
+  focused?: BottomTabsScreenItemStateAppearance;
+  /**
+   * Specifies the tab bar item appearance when it's disabled.
+   *
+   * @platform ios
+   */
+  disabled?: BottomTabsScreenItemStateAppearance;
+}
+
+// iOS-specific
+export interface BottomTabsScreenItemStateAppearance {
+  /**
+   * @summary Specifies the font family used for the title of each tab bar item
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
+  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
+  /**
+   * @summary Specifies the font size used for the title of each tab bar item
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
+  tabBarItemTitleFontSize?: TextStyle['fontSize'];
+  /**
+   * @summary Specifies the font weight used for the title of each tab bar item
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
+  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
+  /**
+   * @summary Specifies the font style used for the title of each tab bar item
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
+  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+  /**
+   * @summary Specifies the font color used for the title of each tab bar item
+   * when tab screen is selected.
+   *
+   * Overrides the color defined in `tabBarTintColor` and `tabBarItemIconColor`.
+   *
+   * @platform ios
+   */
+  tabBarItemTitleFontColor?: TextStyle['color'];
+  /**
+   * @summary Specifies the title offset for each tab bar item when tab screen
+   * is selected.
+   *
+   * Depending on the iOS version and the device's interface orientation,
+   * this setting may affect the alignment of the text, badge and icon.
+   *
+   * @platform ios
+   */
+  tabBarItemTitlePositionAdjustment?: {
+    horizontal?: number;
+    vertical?: number;
+  };
+  /**
+   * @summary Specifies the icon color for each tab bar item when tab screen
+   * is selected.
+   *
+   * This also impacts the title text color.
+   *
+   * Starting from iOS 26, it only applies to selected tab bar item. Other items
+   * adopt a dark or light appearance depending on the theme of the tab bar.
+   *
+   * Is overridden by `tabBarItemTitleFontColor` (for title text color).
+   * Overrides `tabBarTintColor`.
+   *
+   * @platform ios
+   */
+  tabBarItemIconColor?: ColorValue;
+  /**
+   * @summary Specifies the background color of badges for each tab bar item
+   * when tab screen is selected.
+   *
+   * @platform ios
+   */
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+}
 
 export interface BottomTabsScreenProps {
   children?: ViewProps['children'];
@@ -176,20 +372,6 @@ export interface BottomTabsScreenProps {
   orientation?: BottomTabsScreenOrientation;
   // #endregion General
 
-  // #region Common appearance
-  /**
-   * @summary Specifies the background color for the badge.
-   *
-   * On Android, it applies to the badge inside the tab bar item.
-   *
-   * On iOS, it applies to each badge for every tab bar item when tab screen
-   * is selected.
-   *
-   * @platform android, ios
-   */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-  // #endregion Common appearance
-
   // #region Android-only appearance
   /**
    * @summary Specifies the icon for the tab bar item.
@@ -202,95 +384,51 @@ export interface BottomTabsScreenProps {
    */
   iconResourceName?: string;
   /**
+   * @summary Specifies the icon for the tab bar item.
+   *
+   * Accepts a path to the external image asset. As for now, it respects an image from local assets
+   * and passed by `source.uri` property.
+   *
+   * @platform android
+   */
+  iconResource?: ImageSourcePropType;
+  /**
    * @summary Specifies the color of the text in the badge.
    *
    * @platform android
    */
   tabBarItemBadgeTextColor?: ColorValue;
+  /**
+   * @summary Specifies the background color of the badge.
+   *
+   * @platform android
+   */
+  tabBarItemBadgeBackgroundColor?: ColorValue;
   // #endregion Android-only appearance
 
   // #region iOS-only appearance
   /**
-   * @summary Specifies the background color for the entire tab bar when tab screen is selected.
+   * @summary Specifies the standard tab bar appearance.
    *
-   * This property does not affect the tab bar starting from iOS 26.
-   *
-   * @platform android, ios
-   * @supported iOS 18 or lower
-   */
-  tabBarBackgroundColor?: ColorValue;
-  /**
-   * @summary Specifies the blur effect applied to the tab bar when tab screen is selected.
-   *
-   * Works with backgroundColor's alpha < 1.
-   *
-   * This property does not affect the tab bar starting from iOS 26.
-   *
-   * The following values are currently supported:
-   *
-   * - `none` - disables blur effect
-   * - `systemDefault` - uses UIKit's default tab bar blur effect
-   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`
-   *
-   * Complete list of possible blur effect styles is available in the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style|UIBlurEffect.Style}
-   *
-   * @default systemDefault
-   *
-   * @platform ios
-   * @supported iOS 18 or lower
-   */
-  tabBarBlurEffect?: BottomTabsScreenBlurEffect;
-  /**
-   * @summary Specifies the font family used for the title of each tab bar item
-   * when tab screen is selected.
+   * Allows to customize the appearance depending on the tab bar item layout (stacked,
+   * inline, compact inline) and state (normal, selected, focused, disabled).
    *
    * @platform ios
    */
-  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
+  standardAppearance?: BottomTabsScreenAppearance;
   /**
-   * @summary Specifies the font size used for the title of each tab bar item
-   * when tab screen is selected.
+   * @summary Specifies the tab bar appearace when edge of scrollable content aligns
+   * with the edge of the tab bar.
+   *
+   * Allows to customize the appearance depending on the tab bar item layout (stacked,
+   * inline, compact inline) and state (normal, selected, focused, disabled).
+   *
+   * If this property is `undefined`, UIKit uses `standardAppearance`, modified to
+   * have a transparent background.
    *
    * @platform ios
    */
-  tabBarItemTitleFontSize?: TextStyle['fontSize'];
-  /**
-   * @summary Specifies the font weight used for the title of each tab bar item
-   * when tab screen is selected.
-   *
-   * @platform ios
-   */
-  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
-  /**
-   * @summary Specifies the font style used for the title of each tab bar item
-   * when tab screen is selected.
-   *
-   * @platform ios
-   */
-  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
-  /**
-   * @summary Specifies the font color used for the title of each tab bar item
-   * when tab screen is selected.
-   *
-   * Overrides the color defined in `tabBarTintColor` and `tabBarItemIconColor`.
-   *
-   * @platform ios
-   */
-  tabBarItemTitleFontColor?: TextStyle['color'];
-  /**
-   * @summary Specifies the title offset for each tab bar item when tab screen
-   * is selected.
-   *
-   * Depending on the iOS version and the device's interface orientation,
-   * this setting may affect the alignment of the text, badge and icon.
-   *
-   * @platform ios
-   */
-  tabBarItemTitlePositionAdjustment?: {
-    horizontal?: number;
-    vertical?: number;
-  };
+  scrollEdgeAppearance?: BottomTabsScreenAppearance;
   /**
    * @summary Specifies the icon for the tab bar item.
    *
@@ -320,20 +458,17 @@ export interface BottomTabsScreenProps {
    */
   selectedIcon?: Icon;
   /**
-   * @summary Specifies the icon color for each tab bar item when tab screen
-   * is selected.
+   * @summary System-provided tab bar item with predefined icon and title
    *
-   * This also impacts the title text color.
+   * Uses Apple's built-in tab bar items (e.g., bookmarks, contacts, downloads) with
+   * standard iOS styling and localized titles. Custom `icon` or `selectedIcon`
+   * properties will override the system icon, but the system-defined title cannot
+   * be customized.
    *
-   * Starting from iOS 26, it only applies to selected tab bar item. Other items
-   * adopt a dark or light appearance depending on the theme of the tab bar.
-   *
-   * Is overridden by `tabBarItemTitleFontColor` (for title text color).
-   * Overrides `tabBarTintColor`.
-   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
    * @platform ios
    */
-  tabBarItemIconColor?: ColorValue;
+  systemItem?: BottomTabsSystemItem;
   /**
    * @summary Specifies which special effects (also known as microinteractions)
    * are enabled for the tab screen.

@@ -260,7 +260,7 @@ For iOS:
 - `modal` will use:
    *  on iOS 18 and later [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc). However, since the iOS 18 changed the default behaviour from `UIModalPresentationPageSheet` to `UIModalPresentationFormSheet` (it looks vastly different on regular size classes devices, e.g. iPad), for the sake of backward compatibility, we keep the default behaviour from before iOS 18. *This might change in future major release of `react-native-screens`.
    *  on iOS 13 and later [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc)
-   * on iOS 12 and earlier will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc). 
+   * on iOS 12 and earlier will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc).
 - `fullScreenModal` will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc)
 - `formSheet` will use [`UIModalPresentationFormSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationformsheet?language=objc)
 - `pageSheet` will use [`UIModalPresentationPageSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/pagesheet?language=objc)
@@ -463,7 +463,7 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `autoFocus` - If `true` automatically focuses search bar when screen is appearing. (Android only)
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
 - `tintColor` - The color for the cursor caret and cancel button text. (iOS only)
-- `cancelButtonText` - The text to be used instead of default `Cancel` button text. (iOS only)
+- `cancelButtonText` - The text to be used instead of default `Cancel` button text. Has no effect starting from iOS 26. **Deprecated**. (iOS only)
 - `disableBackButtonOverride` - Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true`. (Android only)
 - `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`. (iOS only)
 - `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`. (iOS only)
@@ -478,6 +478,7 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
 - `placement` - Placement of the search bar in the navigation bar. (iOS only)
+- `allowToolbarIntegration` - Indicates whether the system can place the search bar among other toolbar items on iPhone. (iOS only)
 - `textColor` - The search field text color.
 - `hintTextColor` - The search hint text color. (Android only)
 - `headerIconColor` - The search and close icon color shown in the header. (Android only)

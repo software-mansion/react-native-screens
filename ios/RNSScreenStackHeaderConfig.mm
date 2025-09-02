@@ -562,8 +562,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   NSUInteger currentIndex = [navctr.viewControllers indexOfObject:vc];
-  UINavigationItem *prevItem =
-      currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
+  UIViewController *prevVC = currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1] : nil;
+  UINavigationItem *prevItem = currentIndex > 0 ? prevVC.navigationItem : nil;
 
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
@@ -618,7 +618,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
 #if !TARGET_OS_TV
-  [config configureBackItem:prevItem];
+  [config configureBackItem:prevItem withPrevVC:prevVC];
 
   if (config.largeTitle) {
     navctr.navigationBar.prefersLargeTitles = YES;
@@ -705,18 +705,28 @@ RNS_IGNORE_SUPER_CALL_END
           searchBarPresent = true;
           navitem.searchController = searchBar.controller;
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
           if (@available(iOS 16.0, *)) {
             navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
 #endif /* Check for iOS 16.0 */
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
           if (@available(iOS 26.0, *)) {
-            // Workaround for missing search bar on root stack screen.
-            // See: https://github.com/software-mansion/react-native-screens/pull/3098
-            navitem.searchBarPlacementAllowsToolbarIntegration = NO;
+            // On iOS 26 beta 6, we observe that search bar is buggy if we change the configuration
+            // of search bar multiple times. Sometimes, when `stacked` search bar is enabled for root screen,
+            // it does not show up. It's because we're calling *this* method 2 additional times before
+            // UIKit does, in order to handle some other bugs. Only for the third time, UIKit "wants" to
+            // integrate the search bar - we suspect that this final "reconfiguration" causes the bug.
+            // Setting searchBarPlacementAllowsToolbarIntegration to NO fixes the issue without changing
+            // older stack logic and shouldn't impact users negatively - if user wants `stacked` placement,
+            // the search bar should not be integrated anyway. We should monitor if workaround is still
+            // necessary in next iOS versions and remove it when the bug gets fixed.
+            // More details: https://github.com/software-mansion/react-native-screens/pull/3168
+            if (navitem.preferredSearchBarPlacement != UINavigationItemSearchBarPlacementStacked) {
+              navitem.searchBarPlacementAllowsToolbarIntegration = searchBar.allowToolbarIntegration;
+            } else {
+              navitem.searchBarPlacementAllowsToolbarIntegration = NO;
+            }
           }
 #endif /* Check for iOS 26.0 */
 #endif /* !TARGET_OS_TV */
@@ -770,7 +780,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)configureBackItem:(nullable UINavigationItem *)prevItem API_UNAVAILABLE(tvos)
+- (void)configureBackItem:(nullable UINavigationItem *)prevItem
+               withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
 {
 #if !TARGET_OS_TV
   if (prevItem == nil) {
@@ -781,6 +792,15 @@ RNS_IGNORE_SUPER_CALL_END
 
   const auto isBackTitleBlank = [NSString rnscreens_isBlankOrNull:config.backTitle] == YES;
   NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+
+  // If previous screen controller was recreated (e.g. when you go back to tab with stack that has multiple screens),
+  // its navigationItem may not have any information from screen's headerConfig, including the title.
+  // If this is the case, we attempt to extract the title from previous screen's config directly.
+  if (resolvedBackTitle == nil && [prevVC isKindOfClass:[RNSScreen class]]) {
+    RNSScreen *prevScreen = static_cast<RNSScreen *>(prevVC);
+    resolvedBackTitle = prevScreen.screenView.findHeaderConfig.title;
+  }
+
   prevItem.backButtonTitle = resolvedBackTitle;
   // This has any effect only in case the `backBarButtonItem` is not set.
   // We apply it before we configure the back item, because it might get overriden.
@@ -1000,6 +1020,13 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 
   // See comment above _safeAreaConstraints declaration for reason why this is necessary.
+  if (_safeAreaConstraints.count > 0 &&
+      [_safeAreaConstraints[0].firstItem isKindOfClass:[RNSScreenContentWrapper class]]) {
+    RNSScreenContentWrapper *contentWrapper = static_cast<RNSScreenContentWrapper *>(_safeAreaConstraints[0].firstItem);
+
+    // Disable auto-layout
+    contentWrapper.translatesAutoresizingMaskIntoConstraints = YES;
+  }
   [NSLayoutConstraint deactivateConstraints:_safeAreaConstraints];
   _safeAreaConstraints = nil;
 

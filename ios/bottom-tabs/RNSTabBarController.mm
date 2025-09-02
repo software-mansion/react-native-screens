@@ -1,6 +1,7 @@
 #import "RNSTabBarController.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
+#import "RNSLog.h"
 #import "RNSScreenWindowTraits.h"
 
 @implementation RNSTabBarController {
@@ -35,7 +36,7 @@
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
-  NSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
+  RNSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
 }
 
 #pragma mark-- Signals
@@ -87,12 +88,12 @@
 
 - (void)reactMountingTransactionWillMount
 {
-  NSLog(@"TabBarCtrl mountintTransactionWillMount");
+  RNSLog(@"TabBarCtrl mountintTransactionWillMount");
 }
 
 - (void)reactMountingTransactionDidMount
 {
-  NSLog(@"TabBarCtrl mountintTransactionDidMount running updates");
+  RNSLog(@"TabBarCtrl mountintTransactionDidMount running updates");
   [self updateReactChildrenControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
@@ -110,7 +111,7 @@
 
 - (void)updateReactChildrenControllers
 {
-  NSLog(@"TabBarCtrl updateReactChildrenControllers");
+  RNSLog(@"TabBarCtrl updateReactChildrenControllers");
   _needsUpdateOfReactChildrenControllers = false;
 
   if (_tabScreenControllers == nil) {
@@ -130,7 +131,7 @@
 
 - (void)updateSelectedViewController
 {
-  NSLog(@"TabBarCtrl updateSelectedViewController");
+  RNSLog(@"TabBarCtrl updateSelectedViewController");
   _needsUpdateOfSelectedTab = false;
 
 #if !defined(NDEBUG)
@@ -139,7 +140,7 @@
 
   RNSTabsScreenViewController *_Nullable selectedViewController = nil;
   for (RNSTabsScreenViewController *tabViewController in self.viewControllers) {
-    NSLog(
+    RNSLog(
         @"Update Selected View Controller [%ld] isFocused %d",
         tabViewController.tabScreenComponentView.tag,
         tabViewController.tabScreenComponentView.isSelectedScreen);
@@ -151,7 +152,7 @@
 
   RCTAssert(selectedViewController != nil, @"[RNScreens] No selected view controller!");
 
-  NSLog(@"Change selected view controller to: %@", selectedViewController);
+  RNSLog(@"Change selected view controller to: %@", selectedViewController);
 
   [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   [self setSelectedViewController:selectedViewController];
@@ -166,7 +167,7 @@
 
 - (void)updateTabBarAppearance
 {
-  NSLog(@"TabBarCtrl updateTabBarAppearance");
+  RNSLog(@"TabBarCtrl updateTabBarAppearance");
   _needsUpdateOfTabBarAppearance = false;
 
   [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]

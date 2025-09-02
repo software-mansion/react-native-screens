@@ -71,6 +71,9 @@ typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
   RNSSearchBarPlacementAutomatic,
   RNSSearchBarPlacementInline,
   RNSSearchBarPlacementStacked,
+  RNSSearchBarPlacementIntegrated,
+  RNSSearchBarPlacementIntegratedButton,
+  RNSSearchBarPlacementIntegratedCentered,
 };
 
 typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {
@@ -153,4 +156,20 @@ typedef NS_ENUM(NSInteger, RNSOrientation) {
   RNSOrientationLandscape,
   RNSOrientationLandscapeLeft,
   RNSOrientationLandscapeRight,
+};
+
+typedef NS_ENUM(NSInteger, RNSBottomTabsScreenSystemItem) {
+  RNSBottomTabsScreenSystemItemNone,
+  RNSBottomTabsScreenSystemItemBookmarks,
+  RNSBottomTabsScreenSystemItemContacts,
+  RNSBottomTabsScreenSystemItemDownloads,
+  RNSBottomTabsScreenSystemItemFavorites,
+  RNSBottomTabsScreenSystemItemFeatured,
+  RNSBottomTabsScreenSystemItemHistory,
+  RNSBottomTabsScreenSystemItemMore,
+  RNSBottomTabsScreenSystemItemMostRecent,
+  RNSBottomTabsScreenSystemItemMostViewed,
+  RNSBottomTabsScreenSystemItemRecents,
+  RNSBottomTabsScreenSystemItemSearch,
+  RNSBottomTabsScreenSystemItemTopRated
 };

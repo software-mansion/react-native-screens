@@ -196,6 +196,13 @@ class SearchBarManager :
         logNotAvailable("setPlacement")
     }
 
+    override fun setAllowToolbarIntegration(
+        view: SearchBarView,
+        value: Boolean,
+    ) {
+        logNotAvailable("allowToolbarIntegration")
+    }
+
     override fun setHideWhenScrolling(
         view: SearchBarView?,
         value: Boolean,

@@ -10,12 +10,15 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSBottomTabsComponentDescriptor.h>
 #import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
+#import "RNSInvalidatedComponentsRegistry.h"
+#import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSConversions.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSTabBarController.h"
 #import "RNSTabBarControllerDelegate.h"
 
@@ -36,6 +39,10 @@ namespace react = facebook::react;
   RNSBottomTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
   RCTImageLoader *_Nullable _imageLoader;
+
+#if RCT_NEW_ARCH_ENABLED
+  RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
+#endif // RCT_NEW_ARCH_ENABLED
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -79,6 +86,10 @@ namespace react = facebook::react;
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSBottomTabsHostEventEmitter new];
 
+#if RCT_NEW_ARCH_ENABLED
+  _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
+#endif // RCT_NEW_ARCH_ENABLED
+
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   _needsTabBarAppearanceUpdate = NO;
 }
@@ -89,29 +100,18 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSBottomTabsProps>();
   _props = defaultProps;
 #endif
-  _tabBarBlurEffect = RNSBlurEffectStyleSystemDefault;
-  _tabBarBackgroundColor = nil;
   _tabBarTintColor = nil;
-
-  _tabBarItemTitleFontFamily = nil;
-  _tabBarItemTitleFontSize = nil;
-  _tabBarItemTitleFontWeight = nil;
-  _tabBarItemTitleFontStyle = nil;
-  _tabBarItemTitleFontColor = nil;
-  _tabBarItemTitlePositionAdjustment = UIOffsetMake(0.0, 0.0);
-
-  _tabBarItemIconColor = nil;
-
-  _tabBarItemBadgeBackgroundColor = nil;
 }
 
 #pragma mark - UIView methods
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
+#if RCT_NEW_ARCH_ENABLED
   if (newWindow == nil) {
-    [self invalidate];
+    [_invalidatedComponentsRegistry flushInvalidViews];
   }
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)didMoveToWindow
@@ -143,6 +143,43 @@ namespace react = facebook::react;
   }
 }
 
+#pragma mark - RNSScreenContainerDelegate
+
+- (void)updateContainer
+{
+  NSMutableArray<RNSTabsScreenViewController *> *tabControllers =
+      [[NSMutableArray alloc] initWithCapacity:_reactSubviews.count];
+  for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
+    [tabControllers addObject:childView.controller];
+  }
+
+  RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
+
+  [_controller childViewControllersHaveChangedTo:tabControllers];
+}
+
+- (void)markChildUpdated
+{
+  [self updateContainer];
+}
+
+#if RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RNSViewControllerInvalidating
+
+- (void)invalidateController
+{
+  _controller = nil;
+}
+
+- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
+{
+  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
+}
+#else
+
+#pragma mark - RCTInvalidating
+
 - (void)invalidate
 {
   // We assume that bottom tabs host is removed from view hierarchy **only** when
@@ -155,25 +192,7 @@ namespace react = facebook::react;
   _controller = nil;
 }
 
-#pragma mark - RNSScreenContainerDelegate
-
-- (void)updateContainer
-{
-  NSMutableArray<RNSTabsScreenViewController *> *tabControllers =
-      [[NSMutableArray alloc] initWithCapacity:_reactSubviews.count];
-  for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
-    [tabControllers addObject:childView.controller];
-  }
-
-  NSLog(@"updateContainer: tabControllers: %@", tabControllers);
-
-  [_controller childViewControllersHaveChangedTo:tabControllers];
-}
-
-- (void)markChildUpdated
-{
-  [self updateContainer];
-}
+#endif
 
 #pragma mark - React events
 
@@ -229,69 +248,13 @@ namespace react = facebook::react;
     _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
   }
 
-  if (newComponentProps.tabBarBackgroundColor != oldComponentProps.tabBarBackgroundColor) {
-    _needsTabBarAppearanceUpdate = YES;
-    _tabBarBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarBackgroundColor);
-  }
-
-  if (newComponentProps.tabBarBlurEffect != oldComponentProps.tabBarBlurEffect) {
-    _needsTabBarAppearanceUpdate = YES;
-    _tabBarBlurEffect =
-        rnscreens::conversion::RNSBlurEffectStyleFromRNSBottomTabsTabBarBlurEffect(newComponentProps.tabBarBlurEffect);
-  }
-
   if (newComponentProps.tabBarTintColor != oldComponentProps.tabBarTintColor) {
     _needsTabBarAppearanceUpdate = YES;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
   }
 
-  if (newComponentProps.tabBarItemTitleFontFamily != oldComponentProps.tabBarItemTitleFontFamily) {
-    _tabBarItemTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontFamily);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontSize != oldComponentProps.tabBarItemTitleFontSize) {
-    _tabBarItemTitleFontSize = [NSNumber numberWithFloat:newComponentProps.tabBarItemTitleFontSize];
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontWeight != oldComponentProps.tabBarItemTitleFontWeight) {
-    _tabBarItemTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontWeight);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontStyle != oldComponentProps.tabBarItemTitleFontStyle) {
-    _tabBarItemTitleFontStyle = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTitleFontStyle);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitleFontColor != oldComponentProps.tabBarItemTitleFontColor) {
-    _tabBarItemTitleFontColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemTitleFontColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemIconColor != oldComponentProps.tabBarItemIconColor) {
-    _tabBarItemIconColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemIconColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemBadgeBackgroundColor != oldComponentProps.tabBarItemBadgeBackgroundColor) {
-    _tabBarItemBadgeBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.tabBarItemBadgeBackgroundColor);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTitlePositionAdjustment.horizontal !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.horizontal ||
-      newComponentProps.tabBarItemTitlePositionAdjustment.vertical !=
-          oldComponentProps.tabBarItemTitlePositionAdjustment.vertical) {
-    _tabBarItemTitlePositionAdjustment = rnscreens::conversion::RNSBottomTabsTabBarItemTitlePositionAdjustmentStruct(
-        newComponentProps.tabBarItemTitlePositionAdjustment);
-    _needsTabBarAppearanceUpdate = YES;
-  }
-
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
       _tabBarMinimizeBehavior = rnscreens::conversion::UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
           newComponentProps.tabBarMinimizeBehavior);
@@ -352,6 +315,18 @@ namespace react = facebook::react;
 {
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   [_controller reactMountingTransactionWillMount];
+
+#if RCT_NEW_ARCH_ENABLED
+  for (const auto &mutation : transaction.getMutations()) {
+    if ([self shouldInvalidateOnMutation:mutation]) {
+      for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
+        [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
+      }
+
+      [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
+    }
+  }
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -435,69 +410,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 // Paper will call property setters
 
-- (void)setTabBarBackgroundColor:(UIColor *_Nullable)tabBarBackgroundColor
-{
-  _tabBarBackgroundColor = tabBarBackgroundColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarBlurEffect:(RNSBlurEffectStyle)tabBarBlurEffect
-{
-  _tabBarBlurEffect = tabBarBlurEffect;
-  [self invalidateTabBarAppearance];
-}
-
 - (void)setTabBarTintColor:(UIColor *_Nullable)tabBarTintColor
 {
   _tabBarTintColor = tabBarTintColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontFamily:(NSString *_Nullable)tabBarItemTitleFontFamily
-{
-  _tabBarItemTitleFontFamily = tabBarItemTitleFontFamily;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontSize:(NSNumber *_Nullable)tabBarItemTitleFontSize
-{
-  _tabBarItemTitleFontSize = tabBarItemTitleFontSize;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontWeight:(NSString *_Nullable)tabBarItemTitleFontWeight
-{
-  _tabBarItemTitleFontWeight = tabBarItemTitleFontWeight;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontStyle:(NSString *_Nullable)tabBarItemTitleFontStyle
-{
-  _tabBarItemTitleFontStyle = tabBarItemTitleFontStyle;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitleFontColor:(UIColor *_Nullable)tabBarItemTitleFontColor
-{
-  _tabBarItemTitleFontColor = tabBarItemTitleFontColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemIconColor:(UIColor *_Nullable)tabBarItemIconColor
-{
-  _tabBarItemIconColor = tabBarItemIconColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemBadgeBackgroundColor:(UIColor *_Nullable)tabBarItemBadgeBackgroundColor
-{
-  _tabBarItemBadgeBackgroundColor = tabBarItemBadgeBackgroundColor;
-  [self invalidateTabBarAppearance];
-}
-
-- (void)setTabBarItemTitlePositionAdjustment:(UIOffset)tabBarItemTitlePositionAdjustment
-{
-  _tabBarItemTitlePositionAdjustment = tabBarItemTitlePositionAdjustment;
   [self invalidateTabBarAppearance];
 }
 
@@ -505,8 +420,7 @@ RNS_IGNORE_SUPER_CALL_END
 // It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
 - (void)setTabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior:(RNSTabBarMinimizeBehavior)tabBarMinimizeBehavior
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     _tabBarMinimizeBehavior =
         rnscreens::conversion::UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(tabBarMinimizeBehavior);

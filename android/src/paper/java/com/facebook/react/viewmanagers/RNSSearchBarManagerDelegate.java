@@ -36,6 +36,9 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
       case "placement":
         mViewManager.setPlacement(view, (String) value);
         break;
+      case "allowToolbarIntegration":
+        mViewManager.setAllowToolbarIntegration(view, value == null ? true : (boolean) value);
+        break;
       case "obscureBackground":
         mViewManager.setObscureBackground(view, value == null ? false : (boolean) value);
         break;

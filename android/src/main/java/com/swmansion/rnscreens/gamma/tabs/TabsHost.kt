@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.util.Log
+import android.content.res.Configuration
 import android.view.Choreographer
 import android.view.MenuItem
 import android.widget.FrameLayout
@@ -13,6 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
 
 class TabsHost(
@@ -84,7 +85,11 @@ class TabsHost(
 
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
 
-    private val wrappedContext = ContextThemeWrapper(reactContext, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
+    private val wrappedContext =
+        ContextThemeWrapper(
+            reactContext,
+            com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
+        )
 
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(wrappedContext).apply {
@@ -112,9 +117,12 @@ class TabsHost(
 
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
 
+    private var lastAppliedUiMode: Int? = null
+
     private var isLayoutEnqueued: Boolean = false
 
-    private val appearanceCoordinator = TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
+    private val appearanceCoordinator =
+        TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
 
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
@@ -190,14 +198,14 @@ class TabsHost(
         addView(bottomNavigationView)
 
         bottomNavigationView.addOnLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            Log.d(
+            RNSLog.d(
                 TAG,
                 "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}",
             )
         }
 
         bottomNavigationView.setOnItemSelectedListener { item ->
-            Log.d(TAG, "Item selected $item")
+            RNSLog.d(TAG, "Item selected $item")
             val fragment = getFragmentForMenuItemId(item.itemId)
             val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
             eventEmitter.emitOnNativeFocusChange(tabKey)
@@ -206,7 +214,7 @@ class TabsHost(
     }
 
     override fun onAttachedToWindow() {
-        Log.d(TAG, "TabsHost [$id] attached to window")
+        RNSLog.d(TAG, "TabsHost [$id] attached to window")
         super.onAttachedToWindow()
         fragmentManager =
             checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
@@ -285,8 +293,15 @@ class TabsHost(
 
     override fun getFragmentForTabScreen(tabScreen: TabScreen): TabScreenFragment? = tabScreenFragments.find { it.tabScreen === tabScreen }
 
+    override fun onFragmentConfigurationChange(
+        tabScreen: TabScreen,
+        config: Configuration,
+    ) {
+        this.onConfigurationChanged(config)
+    }
+
     private fun updateBottomNavigationViewAppearance() {
-        Log.w(TAG, "updateBottomNavigationViewAppearance")
+        RNSLog.d(TAG, "updateBottomNavigationViewAppearance")
 
         appearanceCoordinator.updateTabAppearance(this)
 
@@ -295,7 +310,7 @@ class TabsHost(
 
         post {
             refreshLayout()
-            Log.d(TAG, "BottomNavigationView request layout")
+            RNSLog.d(TAG, "BottomNavigationView request layout")
         }
     }
 
@@ -347,6 +362,36 @@ class TabsHost(
         refreshLayout()
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+
+        newConfig?.let {
+            applyDayNightUiModeIfNeeded(it.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+        }
+    }
+
+    private fun applyDayNightUiModeIfNeeded(uiMode: Int) {
+        if (uiMode != lastAppliedUiMode) {
+            // update the appearance when user toggles between dark/light mode
+            when (uiMode) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    wrappedContext.setTheme(com.google.android.material.R.style.Theme_Material3_Dark_NoActionBar)
+                }
+
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    wrappedContext.setTheme(com.google.android.material.R.style.Theme_Material3_Light_NoActionBar)
+                }
+
+                else -> {
+                    wrappedContext.setTheme(com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
+                }
+            }
+
+            appearanceCoordinator.updateTabAppearance(this)
+            lastAppliedUiMode = uiMode
+        }
+    }
+
     private fun forceSubtreeMeasureAndLayoutPass() {
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
@@ -366,9 +411,12 @@ class TabsHost(
     }
 
     private fun getMenuItemForTabScreen(tabScreen: TabScreen): MenuItem? =
-        tabScreenFragments.indexOfFirst { it.tabScreen === tabScreen }.takeIf { it != -1 }?.let { index ->
-            bottomNavigationView.menu.findItem(index)
-        }
+        tabScreenFragments
+            .indexOfFirst { it.tabScreen === tabScreen }
+            .takeIf { it != -1 }
+            ?.let { index ->
+                bottomNavigationView.menu.findItem(index)
+            }
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set

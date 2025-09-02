@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.BaseEventEmitter
 import com.swmansion.rnscreens.gamma.tabs.TabScreenEventEmitter.Companion.TAG
@@ -8,6 +7,7 @@ import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
+import com.swmansion.rnscreens.utils.RNSLog
 
 internal class TabScreenEventEmitter(
     reactContext: ReactContext,
@@ -42,5 +42,5 @@ private fun logEventDispatch(
     viewTag: Int,
     eventName: String,
 ) {
-    Log.d(TAG, "TabScreen [$viewTag] emits event: $eventName")
+    RNSLog.d(TAG, "TabScreen [$viewTag] emits event: $eventName")
 }

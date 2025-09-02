@@ -1,12 +1,13 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
+import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -77,7 +78,7 @@ class TabScreen(
     }
 
     override fun onAttachedToWindow() {
-        Log.d(TAG, "TabScreen [$id] attached to window")
+        RNSLog.d(TAG, "TabScreen [$id] attached to window")
         super.onAttachedToWindow()
     }
 
@@ -107,6 +108,19 @@ class TabScreen(
         // When this is called from View Manager the view tag is already set
         check(id != NO_ID) { "[RNScreens] TabScreen must have its tag set when registering event emitters" }
         eventEmitter = TabScreenEventEmitter(reactContext, id)
+    }
+
+    /**
+     * Notify the view that it's associated fragment got its config updated.
+     *
+     * There are cases where the fragment will receive configuration change, but it's view will not,
+     * e.g. theme update from JS via Appearance.setColorScheme.
+     */
+    internal fun onFragmentConfigurationChange(
+        fragment: TabScreenFragment,
+        config: Configuration,
+    ) {
+        tabScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
     }
 
     companion object {
