@@ -844,7 +844,7 @@ export interface SearchBarProps {
    * For iOS versions prior to 26, `integrated`, `integratedButton`, `integratedCentered` are
    * the same as `inline`.
    *
-   * Defaults to `stacked`.
+   * Defaults to `automatic`.
    *
    * Complete list of possible search bar placements is available in the official UIKit documentation:
    * @see {@link https://developer.apple.com/documentation/uikit/uinavigationitem/searchbarplacement-swift.enum|UINavigationItem.SearchBarPlacement}

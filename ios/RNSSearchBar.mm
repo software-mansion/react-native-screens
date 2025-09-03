@@ -67,7 +67,8 @@ namespace react = facebook::react;
 
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
-  _placement = RNSSearchBarPlacementStacked;
+  _placement = RNSSearchBarPlacementAutomatic;
+
   _allowToolbarIntegration = YES;
 }
 
@@ -353,7 +354,9 @@ namespace react = facebook::react;
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(props);
 
-  [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  if (oldScreenProps.hideWhenScrolling != newScreenProps.hideWhenScrolling) {
+    [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  }
 
   if (oldScreenProps.cancelButtonText != newScreenProps.cancelButtonText) {
     [self setCancelButtonText:RCTNSStringFromStringNilIfEmpty(newScreenProps.cancelButtonText)];
@@ -526,7 +529,7 @@ RCT_ENUM_CONVERTER(
       @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
       @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
     }),
-    RNSSearchBarPlacementStacked,
+    RNSSearchBarPlacementAutomatic,
     integerValue)
 
 @end

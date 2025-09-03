@@ -35,10 +35,10 @@ export interface NativeProps extends ViewProps {
   onSearchButtonPress?: DirectEventHandler<SearchButtonPressedEvent> | null;
   onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
   onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
-  hideWhenScrolling?: boolean;
+  hideWhenScrolling?: WithDefault<boolean, true>;
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
-  placement?: WithDefault<SearchBarPlacement, 'stacked'>;
+  placement?: WithDefault<SearchBarPlacement, 'automatic'>;
   allowToolbarIntegration?: WithDefault<boolean, true>;
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;
