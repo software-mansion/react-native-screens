@@ -139,6 +139,18 @@ struct ContentWrapperBox {
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
+- (BOOL)getFullScreenSwipeShadowEnabled
+{
+  if (@available(iOS 26, *)) {
+    // fullScreenSwipeShadow is tied to RNSPanGestureRecognizer, which, on iOS 26, is used only for custom animations,
+    // and replaced with native interactiveContentPopGestureRecognizer for everything else.
+    // We want them to look similar and native-like, so it should default to `YES`.
+    return YES;
+  }
+
+  return _fullScreenSwipeShadowEnabled;
+}
+
 - (UIViewController *)reactViewController
 {
   return _controller;
@@ -1454,6 +1466,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
+  RCTLogInfo(@"viewWillAppear %s", [static_cast<RNSScreenView *>(self.view) screenId].cString);
   if (@available(iOS 26, *)) {
     // In iOS 26, as soon as another screen appears in transition, it is interactable
     // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
@@ -1461,6 +1474,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // we need to find a common top view for the whole app
     [self findReactRootViewController].view.userInteractionEnabled = false;
   }
+
   [super viewWillAppear:animated];
   if (!_isSwiping) {
     [self.screenView notifyWillAppear];
@@ -1525,6 +1539,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  RCTLogInfo(@"viewDidAppear %s", [static_cast<RNSScreenView *>(self.view) screenId].cString);
   if (@available(iOS 26, *)) {
     // Reenable interactions, see viewWillAppear
     [self findReactRootViewController].view.userInteractionEnabled = true;

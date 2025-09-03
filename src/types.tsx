@@ -142,7 +142,7 @@ export interface ScreenProps extends ViewProps {
    * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
    * Defaults to `false`.
    *
-   * IMPORTANT: Starting from iOS 26, full screen swipe to dismiss is the native behavior, and this prop is ignored.
+   * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
    *
    * @platform ios
    */
@@ -153,6 +153,8 @@ export interface ScreenProps extends ViewProps {
    * default iOS shadow. Defaults to `true`.
    *
    * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
+   *
+   * @deprecated since iOS 26, full screen swipe is handled by native recognizer, except for custom animations, where the value is always `true` to best fit native behavior.
    *
    * @platform ios
    */
@@ -165,6 +167,8 @@ export interface ScreenProps extends ViewProps {
   gestureEnabled?: boolean;
   /**
    * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+   *
+   * @deprecated since iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
    *
    * @platform ios
    */
