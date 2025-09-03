@@ -183,8 +183,6 @@ export type NativeStackNavigationOptions = {
   /**
    * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
    *
-   * IMPORTANT: Starting from iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
-   *
    * @platform ios
    */
   gestureResponseDistance?: ScreenProps['gestureResponseDistance'];
