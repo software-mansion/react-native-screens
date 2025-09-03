@@ -458,8 +458,7 @@ RNS_IGNORE_SUPER_CALL_END
         [self addSubview:controller.view];
 #if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
         if (@available(iOS 26, *)) {
           _controller.interactiveContentPopGestureRecognizer.delegate = self;
         }
@@ -1203,8 +1202,7 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL isCustomAnimation =
       topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26, *)) {
     // On iOS 26, fullScreenSwipeEnabled takes no effect, and depending on whether custom animations are on,
     // we select either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer
