@@ -19,6 +19,7 @@
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
+#import "RNSSheetTranslationEvent.h"
 #else
 #import <React/RCTScrollView.h>
 #import <React/RCTTouchHandler.h>
@@ -70,7 +71,6 @@ struct ContentWrapperBox {
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
-  bool _sheetHasInitialDetentSet;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -120,6 +120,7 @@ struct ContentWrapperBox {
   _stackPresentation = RNSScreenStackPresentationPush;
   _stackAnimation = RNSScreenStackAnimationDefault;
   _gestureEnabled = YES;
+  _sheetDismissible = YES;
   _replaceAnimation = RNSScreenReplaceAnimationPop;
   _dismissed = NO;
   _hasStatusBarStyleSet = NO;
@@ -345,8 +346,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setGestureEnabled:(BOOL)gestureEnabled
 {
   _controller.modalInPresentation = !gestureEnabled;
-
   _gestureEnabled = gestureEnabled;
+}
+
+- (void)setSheetDismissible:(BOOL)sheetDismissible
+{
+  _controller.modalInPresentation = !sheetDismissible;
+  _sheetDismissible = sheetDismissible;
 }
 
 - (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
@@ -729,6 +735,27 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 }
 
+- (void)notifySheetTranslation:(double)y
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onSheetTranslation(react::RNSScreenEventEmitter::OnSheetTranslation{.y = y});
+  }
+  RNSSheetTranslationEvent *event =
+      [[RNSSheetTranslationEvent alloc] initWithEventName:@"onSheetTranslation"
+                                                 reactTag:[NSNumber numberWithInt:self.tag]
+                                                        y:y];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
+#else
+  if (self.onSheetTranslation) {
+    self.onSheetTranslation(@{
+      @"y" : @(y),
+    });
+  }
+#endif
+}
+
 #if !RCT_NEW_ARCH_ENABLED
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
@@ -752,6 +779,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (_preventNativeDismiss) {
     return NO;
   }
+
+  if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    return _sheetDismissible;
+  }
+
   return _gestureEnabled;
 }
 
@@ -1040,27 +1072,23 @@ RNS_IGNORE_SUPER_CALL_END
       }
     }
 
-    // Handle initial detent on the first update.
-    if (!_sheetHasInitialDetentSet) {
-      if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+    if (_sheetInitialDetent >= 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-        if (@available(iOS 16.0, *)) {
-          UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
-          [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
-        } else
+      if (@available(iOS 16.0, *)) {
+        UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+        [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+      } else
 #endif // Check for iOS >= 16
-        {
-          if (_sheetInitialDetent < 2) {
-            [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-          } else {
-            RCTLogError(
-                @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
-          }
+      {
+        if (_sheetInitialDetent < 2) {
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        } else {
+          RCTLogError(
+              @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
         }
-      } else if (_sheetInitialDetent != 0) {
-        RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
       }
-      _sheetHasInitialDetentSet = true;
+    } else if (_sheetInitialDetent != 0) {
+      RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
     }
 
     sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
@@ -1297,6 +1325,7 @@ RNS_IGNORE_SUPER_CALL_END
   [self setSheetGrabberVisible:newScreenProps.sheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
+  [self setSheetDismissible:newScreenProps.sheetDismissible];
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
     [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];
@@ -1427,8 +1456,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   CGRect _lastViewFrame;
   RNSScreenView *_initialView;
   UIView *_fakeView;
-  CADisplayLink *_animationTimer;
+  CADisplayLink *_transitionTimer;
   CGFloat _currentAlpha;
+  BOOL _trackingYFromLayout;
+  BOOL _dragging;
+  BOOL _isTransitioning;
   BOOL _closing;
   BOOL _goingForward;
   int _dismissCount;
@@ -1437,6 +1469,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 
 #pragma mark - Common
+
+- (UIView *)presentedView API_AVAILABLE(ios(15.0))
+{
+  return self.sheetPresentationController.presentedView;
+}
 
 - (instancetype)initWithView:(UIView *)view
 {
@@ -1451,10 +1488,31 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return self;
 }
 
+- (void)viewWillLayoutSubviews
+{
+  [super viewWillLayoutSubviews];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0)
+  // We are tracking translation Y on layout.
+  // Note that this doesn't trigger when user is about to close the sheet
+  // so we are going to track it again during transition (see below).
+  if (@available(iOS 15.0, *)) {
+    // Only when not transition and gesture is enabled
+    if (self.presentedView != nil && !_isTransitioning) {
+      _trackingYFromLayout = YES;
+
+      CGFloat sheetY = self.presentedView.frame.origin.y;
+      [self notifySheetTranslation:sheetY];
+    }
+  }
+#endif
+}
+
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+
   if (!_isSwiping) {
     [self.screenView notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
@@ -1476,12 +1534,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _closing = NO;
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
+    [self setupGestureRecognizer];
   }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
+
   // self.navigationController might be null when we are dismissing a modal
   if (!self.transitionCoordinator.isInteractive && self.navigationController != nil) {
     // user might have long pressed ios 14 back button item,
@@ -1514,6 +1574,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
+
+  _trackingYFromLayout = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -1554,6 +1616,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   _isSwiping = NO;
   _shouldNotify = YES;
+  _trackingYFromLayout = NO;
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
   [self traverseForScrollView:self.screenView];
@@ -1579,7 +1643,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    [self.screenView updateBounds];
+    if (@available(iOS 15.0, *)) {
+      // This is causing flickering content when sheet is being dragged.
+      if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
+        [self.screenView updateBounds];
+      }
+    } else {
+      [self.screenView updateBounds];
+    }
 #else
     if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
       _lastViewFrame = self.screenView.frame;
@@ -1709,28 +1780,90 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return nil;
 }
 
+#pragma mark - sheet translation related methods
+
+- (void)setupGestureRecognizer
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0)
+  if (@available(iOS 15.0, *)) {
+    if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
+      return;
+    }
+
+    RNS_REACT_SCROLL_VIEW_COMPONENT *sheetScrollView = [self.screenView tryFindDescendantScrollView];
+
+    if (sheetScrollView != nil) {
+      // apply gesture recognizer to the scrollview if present
+      [sheetScrollView.scrollView.panGestureRecognizer addTarget:self action:@selector(handlePanGesture:)];
+    } else if (self.presentedView != nil) {
+      for (UIGestureRecognizer *recognizer in self.presentedView.gestureRecognizers ?: @[]) {
+        if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+          UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)recognizer;
+          [panGesture addTarget:self action:@selector(handlePanGesture:)];
+        }
+      }
+    }
+  }
+#endif
+}
+
+// track sheet Y when dragging.
+- (void)handlePanGesture:(UIPanGestureRecognizer *)gesture
+{
+  switch (gesture.state) {
+    case UIGestureRecognizerStateBegan: {
+      _dragging = YES;
+      break;
+    }
+    case UIGestureRecognizerStateChanged: {
+      // we only send event when not tracking from layout
+      if (!_trackingYFromLayout) {
+        CGFloat draggedY = self.presentedView.frame.origin.y;
+        [self notifySheetTranslation:draggedY];
+      }
+      break;
+    }
+    case UIGestureRecognizerStateEnded:
+    case UIGestureRecognizerStateCancelled:
+      _dragging = NO;
+      break;
+    default:
+      break;
+  }
+}
+
+- (void)notifySheetTranslation:(double)y
+{
+  if ([self.view isKindOfClass:[RNSScreenView class]]) {
+    [self.screenView notifySheetTranslation:y];
+  }
+}
+
 #pragma mark - transition progress related methods
 
 - (void)setupProgressNotification
 {
   if (self.transitionCoordinator != nil) {
+    _isTransitioning = YES;
     _fakeView.alpha = 0.0;
+
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+          self->_transitionTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleTransition)];
+          [self->_transitionTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self->_animationTimer setPaused:YES];
-          [self->_animationTimer invalidate];
+          [self->_transitionTimer setPaused:YES];
+          [self->_transitionTimer invalidate];
           [self->_fakeView removeFromSuperview];
+          self->_isTransitioning = NO;
         }];
   }
 }
 
-- (void)handleAnimation
+- (void)handleTransition
 {
   if ([[_fakeView layer] presentationLayer] != nil) {
     CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
@@ -1738,6 +1871,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
     }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0)
+    if (@available(iOS 15.0, *)) {
+      if (!_dragging && self.presentedView != nil) {
+        CGFloat sheetY = self.presentedView.layer.presentationLayer.frame.origin.y;
+        [self notifySheetTranslation:sheetY];
+      }
+    }
+#endif
   }
 }
 
@@ -1746,7 +1888,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
     // if the view is already snapshot, there is not sense in sending progress since on JS side
     // the component is already not present
-    [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+    [self.screenView notifyTransitionProgress:progress closing:closing goingForward:goingForward];
   }
 }
 
@@ -2060,6 +2202,7 @@ RCT_EXPORT_VIEW_PROPERTY(onHeaderHeightChange, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onSheetTranslation, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
@@ -2078,6 +2221,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetInitialDetent, NSInteger);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(sheetDismissible, BOOL);
 #endif
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION

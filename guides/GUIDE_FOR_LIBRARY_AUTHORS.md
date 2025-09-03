@@ -177,6 +177,13 @@ There are also legacy & **deprecated** options available:
 
 Defaults to `[1.0]` literal.
 
+### `sheetDismissible`
+
+Whether you can interactively dismiss a sheet.
+Works only when `stackPresentation` is set to `formSheet`.
+
+Defaults to `true`.
+
 ### `sheetExpandsWhenScrolledToEdge` (iOS only)
 
 Whether the sheet should expand to larger detent when scrolling.
