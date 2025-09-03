@@ -1469,9 +1469,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (@available(iOS 26, *)) {
     // In iOS 26, as soon as another screen appears in transition, it is interactable
     // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
-    // Disabling interactions for parent navigation controller won't be enough in case of nested stack;
-    // we need to find a common top view for the whole app
-    [self findReactRootViewController].view.userInteractionEnabled = false;
+    // Disabling interactions for parent navigation controller won't be enough in case of nested stack
+    // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
+    // To be sure, we block interactions on the whole window
+    // We need to get the window instance from parent view because it is not set until the view has appeared
+    self.parentViewController.view.window.userInteractionEnabled = false;
   }
 
   [super viewWillAppear:animated];
@@ -1540,7 +1542,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   if (@available(iOS 26, *)) {
     // Reenable interactions, see viewWillAppear
-    [self findReactRootViewController].view.userInteractionEnabled = true;
+    self.view.window.userInteractionEnabled = true;
   }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
@@ -1611,18 +1613,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
 #endif
   }
-}
-
-- (UIViewController *)findReactRootViewController
-{
-  UIView *parent = self.view;
-  while (parent) {
-    parent = parent.reactSuperview;
-    if (parent.isReactRootView) {
-      return parent.reactViewController;
-    }
-  }
-  return nil;
 }
 
 - (BOOL)isModalWithHeader
