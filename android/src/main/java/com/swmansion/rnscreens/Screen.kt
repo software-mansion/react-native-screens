@@ -34,6 +34,7 @@ import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.utils.RNSLog
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
@@ -184,6 +185,7 @@ class Screen(
             val height = b - t
 
             dispatchShadowStateUpdate(width, height, t)
+            RNSLog.d("Screen", "Screen [$id] $height")
 
             // FormSheet has no header in current model.
             notifyHeaderHeightChange(t)
