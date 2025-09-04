@@ -31,32 +31,7 @@ static char RNSBarButtonItemIdKey;
 
   NSDictionary *titleStyle = dict[@"titleStyle"];
   if (titleStyle) {
-    NSString *fontFamily = titleStyle[@"fontFamily"];
-    NSNumber *fontSize = titleStyle[@"fontSize"];
-    NSString *fontWeight = titleStyle[@"fontWeight"];
-    NSMutableDictionary *attrs = [NSMutableDictionary new];
-    if (fontFamily || fontWeight) {
-      NSNumber *resolvedFontSize = fontSize ? fontSize : [NSNumber numberWithFloat:[UIFont labelFontSize]];
-      attrs[NSFontAttributeName] = [RCTFont updateFont:nil
-                                            withFamily:fontFamily
-                                                  size:resolvedFontSize
-                                                weight:fontWeight
-                                                 style:nil
-                                               variant:nil
-                                       scaleMultiplier:1.0];
-    } else {
-      CGFloat resolvedFontSize = fontSize ? [fontSize floatValue] : [UIFont labelFontSize];
-      attrs[NSFontAttributeName] = [UIFont systemFontOfSize:resolvedFontSize];
-    }
-    id titleColor = titleStyle[@"color"];
-    if (titleColor) {
-      attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:titleColor];
-    }
-    [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
-    [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
-    [self setTitleTextAttributes:attrs forState:UIControlStateDisabled];
-    [self setTitleTextAttributes:attrs forState:UIControlStateSelected];
-    [self setTitleTextAttributes:attrs forState:UIControlStateFocused];
+    [self setTitleStyle:titleStyle];
   }
 
   id tintColorObj = dict[@"tintColor"];
@@ -241,6 +216,36 @@ static char RNSBarButtonItemIdKey;
   if (action && buttonId) {
     action(buttonId);
   }
+}
+
+- (void)setTitleStyle:(NSDictionary *)titleStyle
+{
+  NSString *fontFamily = titleStyle[@"fontFamily"];
+  NSNumber *fontSize = titleStyle[@"fontSize"];
+  NSString *fontWeight = titleStyle[@"fontWeight"];
+  NSMutableDictionary *attrs = [NSMutableDictionary new];
+  if (fontFamily || fontWeight) {
+    NSNumber *resolvedFontSize = fontSize ? fontSize : [NSNumber numberWithFloat:[UIFont labelFontSize]];
+    attrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                          withFamily:fontFamily
+                                                size:resolvedFontSize
+                                              weight:fontWeight
+                                               style:nil
+                                             variant:nil
+                                     scaleMultiplier:1.0];
+  } else {
+    CGFloat resolvedFontSize = fontSize ? [fontSize floatValue] : [UIFont labelFontSize];
+    attrs[NSFontAttributeName] = [UIFont systemFontOfSize:resolvedFontSize];
+  }
+  id titleColor = titleStyle[@"color"];
+  if (titleColor) {
+    attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:titleColor];
+  }
+  [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
+  [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
+  [self setTitleTextAttributes:attrs forState:UIControlStateDisabled];
+  [self setTitleTextAttributes:attrs forState:UIControlStateSelected];
+  [self setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
 @end
