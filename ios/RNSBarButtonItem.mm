@@ -2,6 +2,7 @@
 #import <React/RCTConvert.h>
 #import <React/RCTFont.h>
 #import <objc/runtime.h>
+#import "RNSDefines.h"
 
 static char RNSBarButtonItemActionKey;
 static char RNSBarButtonItemIdKey;
@@ -39,8 +40,7 @@ static char RNSBarButtonItemIdKey;
     self.tintColor = [RCTConvert UIColor:tintColorObj];
   }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (@available(iOS 16.0, *)) {
     NSNumber *hiddenNum = dict[@"hidden"];
     if (hiddenNum != nil) {
@@ -69,8 +69,7 @@ static char RNSBarButtonItemIdKey;
     self.changesSelectionAsPrimaryAction = [changesSelectionAsPrimaryActionNum boolValue];
   }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
     if (hidesSharedBackgroundNum != nil) {
@@ -122,8 +121,7 @@ static char RNSBarButtonItemIdKey;
     if ([style isEqualToString:@"done"]) {
       self.style = UIBarButtonItemStyleDone;
     } else if ([style isEqualToString:@"prominent"]) {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
       if (@available(iOS 26.0, *)) {
         self.style = UIBarButtonItemStyleProminent;
       }
@@ -188,8 +186,7 @@ static char RNSBarButtonItemIdKey;
         } else if ([attributes isEqualToString:@"hidden"]) {
           actionElement.attributes = UIMenuElementAttributesHidden;
         }
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
         else if (@available(iOS 16.0, *)) {
           if ([attributes isEqualToString:@"keepsMenuPresented"]) {
             actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
