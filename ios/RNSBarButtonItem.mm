@@ -203,7 +203,12 @@ static char RNSBarButtonItemIdKey;
     }
   }
   NSString *title = dict[@"title"];
-  return [UIMenu menuWithTitle:title children:elements];
+  NSString *sfSymbolName = dict[@"sfSymbolName"];
+  return [UIMenu menuWithTitle:title
+                         image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
+                    identifier:nil
+                       options:0
+                      children:elements];
 }
 
 - (void)handleBarButtonItemPress:(UIBarButtonItem *)item

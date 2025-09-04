@@ -68,6 +68,8 @@ const BackButtonVisibleDemo = DemoScreenContent;
 
 export default function BarButtonItemsExample() {
   return (
+     
+    // @ts-ignore
     <Stack.Navigator screenOptions={{ headerTransparent: Platform.OS === 'ios' && parseInt(Platform.Version) >= 26 }}>
       <Stack.Screen
         name="Main"
@@ -125,10 +127,12 @@ export default function BarButtonItemsExample() {
                 items: [
                   {
                     title: 'Option 1',
+                    type: "action",
                     onPress: () => Alert.alert('Option 1 pressed'),
                   },
                   {
                     title: 'Option 2',
+                    type: "action",
                     onPress: () => Alert.alert('Option 2 pressed'),
                   },
                 ],
@@ -346,6 +350,7 @@ export default function BarButtonItemsExample() {
                   },
                   {
                     title: 'Submenu',
+                    sfSymbolName: "star",
                     items: [
                       {
                         title: 'Sub Action 1',
@@ -398,9 +403,12 @@ export default function BarButtonItemsExample() {
           title: 'Back Button Visible',
           headerBackVisible: true,
           headerLeftItems: [
-            {customView: () => <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
+            {
+              // eslint-disable-next-line react/no-unstable-nested-components
+              customView: () => <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
                 <Text style={{ color: 'blue' }}>React Node</Text>
-              </TouchableOpacity>},
+              </TouchableOpacity>
+            },
             {
               title: "Native",
               onPress: () => Alert.alert('Native button pressed'),
