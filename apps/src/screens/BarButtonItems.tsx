@@ -335,6 +335,7 @@ export default function BarButtonItemsExample() {
                   {
                     title: 'Action 1',
                     sfSymbolName: 'star',
+                    type: "action",
                     state: 'on',
                     attributes: 'destructive',
                     discoverabilityTitle: 'Favorite',
@@ -343,6 +344,7 @@ export default function BarButtonItemsExample() {
                   {
                     title: 'Action 2',
                     sfSymbolName: 'square.and.arrow.up',
+                    type: "action",
                     state: 'off',
                     attributes: 'disabled',
                     discoverabilityTitle: 'Disabled Action',
@@ -351,16 +353,19 @@ export default function BarButtonItemsExample() {
                   {
                     title: 'Submenu',
                     sfSymbolName: "star",
+                    type: 'submenu',
                     items: [
                       {
                         title: 'Sub Action 1',
                         state: 'mixed',
+                        type: 'action',
                         onPress: () => Alert.alert('Sub Action 1 pressed'),
                         attributes: 'keepsMenuPresented',
                         discoverabilityTitle: 'Sub Action 1',
                       },
                       {
                         title: 'Sub Action 2',
+                        type: 'action',
                         onPress: () => Alert.alert('Sub Action 2 pressed'),
                       },
                     ],
