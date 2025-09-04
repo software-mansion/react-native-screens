@@ -85,33 +85,7 @@ static char RNSBarButtonItemIdKey;
     }
     NSDictionary *badgeObj = dict[@"badge"];
     if (badgeObj != nil) {
-      UIBarButtonItemBadge *badge = [UIBarButtonItemBadge badgeWithString:badgeObj[@"value"]];
-      id colorObj = badgeObj[@"color"];
-      if (colorObj) {
-        badge.foregroundColor = [RCTConvert UIColor:colorObj];
-      }
-      id backgroundColorObj = badgeObj[@"backgroundColor"];
-      if (colorObj) {
-        badge.backgroundColor = [RCTConvert UIColor:backgroundColorObj];
-      }
-      NSDictionary *style = badgeObj[@"style"];
-      if (style) {
-        NSString *fontFamily = style[@"fontFamily"];
-        NSNumber *fontSize = style[@"fontSize"];
-        NSString *fontWeight = style[@"fontWeight"];
-        if (fontSize || fontWeight) {
-          badge.font = [RCTFont updateFont:nil
-                                withFamily:fontFamily
-                                      size:fontSize
-                                    weight:fontWeight
-                                     style:nil
-                                   variant:nil
-                           scaleMultiplier:1.0];
-        } else {
-          badge.font = [UIFont systemFontOfSize:[fontSize floatValue]];
-        }
-      }
-      self.badge = badge;
+      [self createBadge:badgeObj];
     }
   }
 #endif
@@ -249,5 +223,40 @@ static char RNSBarButtonItemIdKey;
   [self setTitleTextAttributes:attrs forState:UIControlStateSelected];
   [self setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (void)createBadge:(NSDictionary *)badgeObj
+{
+  if (@available(iOS 26.0, *)) {
+    UIBarButtonItemBadge *badge = [UIBarButtonItemBadge badgeWithString:badgeObj[@"value"]];
+    id colorObj = badgeObj[@"color"];
+    if (colorObj) {
+      badge.foregroundColor = [RCTConvert UIColor:colorObj];
+    }
+    id backgroundColorObj = badgeObj[@"backgroundColor"];
+    if (colorObj) {
+      badge.backgroundColor = [RCTConvert UIColor:backgroundColorObj];
+    }
+    NSDictionary *style = badgeObj[@"style"];
+    if (style) {
+      NSString *fontFamily = style[@"fontFamily"];
+      NSNumber *fontSize = style[@"fontSize"];
+      NSString *fontWeight = style[@"fontWeight"];
+      if (fontSize || fontWeight) {
+        badge.font = [RCTFont updateFont:nil
+                              withFamily:fontFamily
+                                    size:fontSize
+                                  weight:fontWeight
+                                   style:nil
+                                 variant:nil
+                         scaleMultiplier:1.0];
+      } else {
+        badge.font = [UIFont systemFontOfSize:[fontSize floatValue]];
+      }
+    }
+    self.badge = badge;
+  }
+}
+#endif
 
 @end
