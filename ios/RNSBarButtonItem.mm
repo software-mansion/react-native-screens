@@ -135,39 +135,8 @@ static char RNSBarButtonItemIdKey;
     for (NSDictionary *item in items) {
       NSString *menuId = item[@"menuId"];
       if (menuId) {
-        NSString *title = item[@"title"];
-        NSString *sfSymbolName = item[@"sfSymbolName"];
-        UIAction *actionElement = [UIAction actionWithTitle:title
-                                                      image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
-                                                 identifier:nil
-                                                    handler:^(__kindof UIAction *_Nonnull a) {
-                                                      menuAction(menuId);
-                                                    }];
-        NSString *state = item[@"state"];
-        if ([state isEqualToString:@"on"]) {
-          actionElement.state = UIMenuElementStateOn;
-        } else if ([state isEqualToString:@"off"]) {
-          actionElement.state = UIMenuElementStateOff;
-        } else if ([state isEqualToString:@"mixed"]) {
-          actionElement.state = UIMenuElementStateMixed;
-        }
-
-        NSString *attributes = item[@"attributes"];
-        if ([attributes isEqualToString:@"destructive"]) {
-          actionElement.attributes = UIMenuElementAttributesDestructive;
-        } else if ([attributes isEqualToString:@"disabled"]) {
-          actionElement.attributes = UIMenuElementAttributesDisabled;
-        } else if ([attributes isEqualToString:@"hidden"]) {
-          actionElement.attributes = UIMenuElementAttributesHidden;
-        }
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-        else if (@available(iOS 16.0, *)) {
-          if ([attributes isEqualToString:@"keepsMenuPresented"]) {
-            actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
-          }
-        }
-#endif
-        [elements addObject:actionElement];
+        UIAction *actionItem = [self createActionItem:item menuAction:menuAction];
+        [elements addObject:actionItem];
       } else {
         UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
         if (childMenu) {
@@ -183,6 +152,44 @@ static char RNSBarButtonItemIdKey;
                     identifier:nil
                        options:0
                       children:elements];
+}
+
++ (UIAction *)createActionItem:(NSDictionary *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
+{
+  NSString *menuId = dict[@"menuId"];
+  NSString *title = dict[@"title"];
+  NSString *sfSymbolName = dict[@"sfSymbolName"];
+  UIAction *actionElement = [UIAction actionWithTitle:title
+                                                image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
+                                           identifier:nil
+                                              handler:^(__kindof UIAction *_Nonnull a) {
+                                                menuAction(menuId);
+                                              }];
+  NSString *state = dict[@"state"];
+  if ([state isEqualToString:@"on"]) {
+    actionElement.state = UIMenuElementStateOn;
+  } else if ([state isEqualToString:@"off"]) {
+    actionElement.state = UIMenuElementStateOff;
+  } else if ([state isEqualToString:@"mixed"]) {
+    actionElement.state = UIMenuElementStateMixed;
+  }
+
+  NSString *attributes = dict[@"attributes"];
+  if ([attributes isEqualToString:@"destructive"]) {
+    actionElement.attributes = UIMenuElementAttributesDestructive;
+  } else if ([attributes isEqualToString:@"disabled"]) {
+    actionElement.attributes = UIMenuElementAttributesDisabled;
+  } else if ([attributes isEqualToString:@"hidden"]) {
+    actionElement.attributes = UIMenuElementAttributesHidden;
+  }
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  else if (@available(iOS 16.0, *)) {
+    if ([attributes isEqualToString:@"keepsMenuPresented"]) {
+      actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
+    }
+  }
+#endif
+  return actionElement;
 }
 
 - (void)handleBarButtonItemPress:(UIBarButtonItem *)item
