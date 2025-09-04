@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Tested to work reliably on iOS 18.0, 17.5, 15.5.
  *
- * @returns `_UINavigationBarContentView` view mounted directly under the navigation bar itself
+ * @return `_UINavigationBarContentView` view mounted directly under the navigation bar itself
  */
 - (nullable UIView *)rnscreens_findContentView;
 
@@ -27,10 +27,46 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Tested to work reliably on iOS 18.0, 17.5, 15.5.
  *
- * @returns `_UIButtonBarButton` view, if present and mounted in anticipated place;
+ * @return `_UIButtonBarButton` view, if present and mounted in anticipated place;
  *                      if the back button is not present, this method returns `nil`.
  */
 - (nullable UIView *)rnscreens_findBackButtonWrapperView;
+
+/**
+ * @brief Responsible for calculating the cumulative directional layout margins the will be applied to the title in the
+ * header.
+ *
+ * This method traverses the superview hierarchy, starting from the parent of the specified source view,
+ * and accumulates all `directionalLayoutMargins` until it reaches the `UINavigationBar`.
+ * The resulting insets represent the total margin space between the source view and its navigation container.
+ *
+ * Tested to work reliably on iOS 26.0, 18.5.
+ *
+ * @param sourceView The UIView from which to begin traversing up towards the navigation bar.
+ * @return `NSDirectionalEdgeInsets` containing the combined layout margins from the title control
+ * up to its ancestor navigation bar. Excluding the layout margins of both the:
+ * - source view - because we're positioning relatively to this view
+ * - `UINavigationBar` - because we're calculating it inside computeEdgeInsetsOfNavigationBar explicitly
+ */
+- (NSDirectionalEdgeInsets)rnscreens_computeTotalEdgeInsetsForView:(nullable UIView *)sourceView;
+
+/**
+ * @brief Responsible for searching the view hierarchy to locate the `_UINavigationBarTitleControl` view.
+ *
+ * This method traverses a subtree from given view, to find  `_UINavigationBarTitleControl`.
+ * `_UINavigationBarTitleControl` is a private API. Therefore, this method relies on the
+ * hardcoded class name which may change at any time.
+ *
+ * The method performs a DFS starting from the provided view.
+ * Once a matching title control is found, it is returned immediately. If not found,
+ * the method returns nil.
+ *
+ * Tested to work reliably on iOS 26.0, 18.5.
+ *
+ * @param view The root UIView from which to begin searching the view hierarchy.
+ * @return `UIView` instance representing the `_UINavigationBarTitleControl` or `nil`.
+ */
++ (UIView *)findTitleControlInView:(UIView *)view;
 
 @end
 

@@ -1,5 +1,7 @@
 #import "UINavigationBar+RNSUtility.h"
 
+#import <React/RCTLog.h>
+
 @implementation UINavigationBar (RNSUtility)
 
 - (nullable UIView *)rnscreens_findContentView
@@ -81,6 +83,45 @@
   }
 
   return NSClassFromString(@"_UINavigationBarContentView"); // Sampled from iOS 17.5 (iPhone 15 Pro)
+}
+
+- (NSDirectionalEdgeInsets)rnscreens_computeTotalEdgeInsetsForView:(nullable UIView *)sourceView
+{
+  NSDirectionalEdgeInsets totalMargins = NSDirectionalEdgeInsetsMake(0, 0, 0, 0);
+
+  if (sourceView == nil) {
+    RCTLogWarn(@"[RNScreens] _UINavigationBarTitleControl not found under the UINavigationBar hierarchy");
+    return totalMargins;
+  }
+
+  UIView *currentView = sourceView.superview;
+  while (currentView != nil && currentView != self) {
+    NSDirectionalEdgeInsets margins = currentView.directionalLayoutMargins;
+    totalMargins.top += margins.top;
+    totalMargins.leading += margins.leading;
+    totalMargins.bottom += margins.bottom;
+    totalMargins.trailing += margins.trailing;
+    currentView = currentView.superview;
+  }
+  return totalMargins;
+}
+
++ (UIView *)findTitleControlInView:(UIView *)view
+{
+  static Class UINavBarTitleControlClass = NSClassFromString(@"_UINavigationBarTitleControl");
+
+  if ([view isKindOfClass:UINavBarTitleControlClass]) {
+    return view;
+  }
+
+  for (UIView *subview in view.subviews) {
+    UIView *result = [UINavigationBar findTitleControlInView:subview];
+    if (result) {
+      return result;
+    }
+  }
+
+  return nil;
 }
 
 @end
