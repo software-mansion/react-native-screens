@@ -45,7 +45,7 @@ class ScreenStackHeaderConfig(
     private var isShadowHidden = false
     private var isDestroyed = false
     private var backButtonInCustomView = false
-    var isTopInsetEnabled = true
+    var isTopInsetEnabled = false
         private set
 
     private var tintColor = 0
@@ -396,6 +396,7 @@ class ScreenStackHeaderConfig(
 
     fun setTopInsetEnabled(topInsetEnabled: Boolean) {
         isTopInsetEnabled = topInsetEnabled
+        isTopInsetEnabled = false
     }
 
     fun setBackgroundColor(color: Int?) {
