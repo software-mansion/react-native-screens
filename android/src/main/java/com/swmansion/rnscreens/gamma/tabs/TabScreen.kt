@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.tabs
 
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
@@ -80,6 +81,14 @@ class TabScreen(
     override fun onAttachedToWindow() {
         RNSLog.d(TAG, "TabScreen [$id] attached to window")
         super.onAttachedToWindow()
+    }
+
+    override fun onViewAdded(child: View?) {
+        super.onViewAdded(child)
+    }
+
+    override fun onViewRemoved(child: View?) {
+        super.onViewRemoved(child)
     }
 
     var isFocusedTab: Boolean = false
