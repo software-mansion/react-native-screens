@@ -38,6 +38,7 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
+static constexpr auto DEFAULT_SUBTITLE_FONT_SIZE = @12;
 static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 #if !defined(RCT_NEW_ARCH_ENABLED)
@@ -536,6 +537,36 @@ RNS_IGNORE_SUPER_CALL_END
 
     appearance.largeTitleTextAttributes = largeAttrs;
   }
+  
+  if (@available(iOS 26.0, *)) {
+    if (config.subtitleFontFamily || config.subtitleFontFamily || config.subtitleFontWeight || config.subtitleColor) {
+      NSMutableDictionary *attrs = [NSMutableDictionary new];
+      
+      // Ignore changing header title color on visionOS
+#if !TARGET_OS_VISION
+      if (config.subtitleColor) {
+        attrs[NSForegroundColorAttributeName] = config.subtitleColor;
+      }
+#endif
+      
+      NSString *family = config.subtitleFontFamily ?: nil;
+      NSNumber *size = config.subtitleFontSize ?: DEFAULT_SUBTITLE_FONT_SIZE;
+      NSString *weight = config.subtitleFontWeight ?: nil;
+      if (family || weight) {
+        attrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                              withFamily:config.subtitleFontFamily
+                                                    size:size
+                                                  weight:weight
+                                                   style:nil
+                                                 variant:nil
+                                         scaleMultiplier:1.0];
+      } else {
+        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+      }
+      
+      appearance.subtitleTextAttributes = attrs;
+    }
+  }
 
   UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
   if (backButtonImage) {
@@ -748,6 +779,9 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
+  if (@available(iOS 26.0, *)) {
+    navitem.subtitle = config.subtitle;
+  }
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
@@ -1086,6 +1120,13 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
   _largeTitleBackgroundColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleBackgroundColor);
+  
+  _subtitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.subtitle);
+  if (newScreenProps.subtitleFontFamily != oldScreenProps.subtitleFontFamily) {
+    _subtitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.subtitleFontFamily);
+  }
+  _subtitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.subtitleFontWeight);
+  _subtitleFontSize = [self getFontSizePropValue:newScreenProps.subtitleFontSize];
 
   _backTitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitle);
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
@@ -1107,6 +1148,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   // We could compare color value, but it is more performant to just assign new value
   _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
   _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
+  _subtitleColor = RCTUIColorFromSharedColor(newScreenProps.subtitleColor);
   _color = RCTUIColorFromSharedColor(newScreenProps.color);
   _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
 

@@ -686,6 +686,26 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   titleFontWeight?: string;
   /**
+   * String that can be displayed in the header below title.
+   */
+  subtitle?: string;
+  /**
+   * Allows for setting text color of the subtitle.
+   */
+  subtitleColor?: ColorValue;
+  /**
+   * Customize font family to be used for the subtitle.
+   */
+  subtitleFontFamily?: string;
+  /**
+   * Customize the size of the font to be used for the subtitle.
+   */
+  subtitleFontSize?: number;
+  /**
+   * Customize the weight of the font to be used for the subtitle.
+   */
+  subtitleFontWeight?: string;
+  /**
    * A flag to that lets you opt out of insetting the header. You may want to
    * set this to `false` if you use an opaque status bar. Defaults to `true`.
    * Only supported on Android. Insets are always applied on iOS because the

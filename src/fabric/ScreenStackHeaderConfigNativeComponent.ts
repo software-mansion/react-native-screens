@@ -66,6 +66,11 @@ export interface NativeProps extends ViewProps {
   titleFontSize?: Int32;
   titleFontWeight?: string;
   titleColor?: ColorValue;
+  subtitle?: string;
+  subtitleFontFamily?: string;
+  subtitleFontSize?: Int32;
+  subtitleFontWeight?: string;
+  subtitleColor?: ColorValue;
   disableBackButtonMenu?: boolean;
   backButtonDisplayMode?: WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean;
