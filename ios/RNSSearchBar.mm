@@ -66,6 +66,11 @@ namespace react = facebook::react;
 #endif
 
   _controller.searchBar.delegate = self;
+
+  // Ensure consistent default values on both architectures
+  _controller.hidesNavigationBarDuringPresentation = YES;
+  _controller.obscuresBackgroundDuringPresentation = NO;
+
   _hideWhenScrolling = YES;
   _placement = RNSSearchBarPlacementAutomatic;
 
@@ -149,9 +154,7 @@ namespace react = facebook::react;
 
 - (void)setObscureBackground:(BOOL)obscureBackground
 {
-  if (@available(iOS 9.1, *)) {
-    [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
-  }
+  [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
 }
 
 - (void)setHideNavigationBar:(BOOL)hideNavigationBar
