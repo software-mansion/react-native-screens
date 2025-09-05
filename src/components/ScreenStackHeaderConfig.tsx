@@ -27,6 +27,9 @@ export const ScreenStackHeaderConfig = React.forwardRef<
 >((props, ref) => (
   <ScreenStackHeaderConfigNativeComponent
     {...props}
+    largeSubtitlePresent={
+      props.largeSubtitle !== undefined && props.largeSubtitle !== null
+    }
     ref={ref}
     topInsetEnabled={EDGE_TO_EDGE ? true : props.topInsetEnabled}
     style={styles.headerConfig}
