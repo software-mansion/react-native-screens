@@ -43,6 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) NSNumber *subtitleFontSize;
 @property (nonatomic, retain) NSString *subtitleFontWeight;
 @property (nonatomic, retain) UIColor *subtitleColor;
+@property (nonatomic) BOOL largeSubtitlePresent;
+@property (nonatomic, retain) NSString *largeSubtitle;
+@property (nonatomic, retain) NSString *largeSubtitleFontFamily;
+@property (nonatomic, retain) NSNumber *largeSubtitleFontSize;
+@property (nonatomic, retain) NSString *largeSubtitleFontWeight;
+@property (nonatomic, retain) UIColor *largeSubtitleColor;
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;

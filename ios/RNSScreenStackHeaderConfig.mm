@@ -539,7 +539,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
   
   if (@available(iOS 26.0, *)) {
-    if (config.subtitleFontFamily || config.subtitleFontFamily || config.subtitleFontWeight || config.subtitleColor) {
+    if (config.subtitleFontFamily || config.subtitleFontSize || config.subtitleFontWeight || config.subtitleColor) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       
       // Ignore changing header title color on visionOS
@@ -565,6 +565,34 @@ RNS_IGNORE_SUPER_CALL_END
       }
       
       appearance.subtitleTextAttributes = attrs;
+    }
+    
+    if (config.largeSubtitleFontFamily || config.largeSubtitleFontSize || config.largeSubtitleFontWeight || config.largeSubtitleColor) {
+      NSMutableDictionary *attrs = [NSMutableDictionary new];
+      
+      // Ignore changing header title color on visionOS
+#if !TARGET_OS_VISION
+      if (config.largeSubtitleColor) {
+        attrs[NSForegroundColorAttributeName] = config.largeSubtitleColor;
+      }
+#endif
+      
+      NSString *family = config.largeSubtitleFontFamily ?: nil;
+      NSNumber *size = config.largeSubtitleFontSize ?: DEFAULT_SUBTITLE_FONT_SIZE;
+      NSString *weight = config.largeSubtitleFontWeight ?: nil;
+      if (family || weight) {
+        attrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                              withFamily:config.largeSubtitleFontFamily
+                                                    size:size
+                                                  weight:weight
+                                                   style:nil
+                                                 variant:nil
+                                         scaleMultiplier:1.0];
+      } else {
+        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+      }
+      
+      appearance.largeSubtitleTextAttributes = attrs;
     }
   }
 
@@ -781,6 +809,10 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.title = config.title;
   if (@available(iOS 26.0, *)) {
     navitem.subtitle = config.subtitle;
+    
+    if (config.largeSubtitlePresent) {
+      navitem.largeSubtitle = config.largeSubtitle;
+    }
   }
 
   if (animated && vc.transitionCoordinator != nil &&
@@ -1127,6 +1159,14 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   }
   _subtitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.subtitleFontWeight);
   _subtitleFontSize = [self getFontSizePropValue:newScreenProps.subtitleFontSize];
+  
+  _largeSubtitlePresent = newScreenProps.largeSubtitlePresent;
+  _largeSubtitle = RCTNSStringFromString(newScreenProps.largeSubtitle);
+  if (newScreenProps.largeSubtitleFontFamily != oldScreenProps.largeSubtitleFontFamily) {
+    _largeSubtitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeSubtitleFontFamily);
+  }
+  _largeSubtitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeSubtitleFontWeight);
+  _largeSubtitleFontSize = [self getFontSizePropValue:newScreenProps.largeSubtitleFontSize];
 
   _backTitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitle);
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
@@ -1149,6 +1189,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
   _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
   _subtitleColor = RCTUIColorFromSharedColor(newScreenProps.subtitleColor);
+  _largeSubtitleColor = RCTUIColorFromSharedColor(newScreenProps.largeSubtitleColor);
   _color = RCTUIColorFromSharedColor(newScreenProps.color);
   _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
 
