@@ -855,7 +855,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (dicts.count == 0) {
     return currentItems;
   }
-  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count + currentItems.count];
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count];
   [items addObjectsFromArray:currentItems];
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
@@ -891,30 +891,20 @@ RNS_IGNORE_SUPER_CALL_END
             }
 #endif
           }];
-      NSNumber *insertIndex = dict[@"index"];
-      if (insertIndex.integerValue < items.count) {
-        [items insertObject:item atIndex:[insertIndex integerValue]];
-      } else {
-        [items addObject:item];
-      }
+      [items insertObject:item atIndex:i];
     } else if (dict[@"spacing"]) {
       UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
                                                                                   target:nil
                                                                                   action:nil];
       NSNumber *spacingValue = dict[@"spacing"];
       fixedSpace.width = [spacingValue doubleValue];
-      NSNumber *insertIndex = dict[@"index"];
-      if (insertIndex.integerValue < items.count) {
-        [items insertObject:fixedSpace atIndex:[insertIndex integerValue]];
-      } else {
-        [items addObject:fixedSpace];
-      }
+      [items insertObject:fixedSpace atIndex:i];
     } else if (dict[@"isSubview"]) {
-      NSNumber *index = dict[@"index"];
-      if (index.integerValue < items.count) {
-        if (@available(iOS 26.0, *)) {
-          NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
-          [[items objectAtIndex:index.integerValue] setHidesSharedBackground:hidesSharedBackgroundNum.boolValue];
+      if (@available(iOS 26.0, *)) {
+        NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
+        if (i < items.count) {
+          UIBarButtonItem *item = [items objectAtIndex:i];
+          [item setHidesSharedBackground:hidesSharedBackgroundNum.boolValue];
         }
       }
     }
