@@ -571,9 +571,24 @@ RNS_IGNORE_SUPER_CALL_END
   // See comment above _safeAreaConstraints declaration for reason why this is necessary.
   RNSScreenContentWrapper *contentWrapper = nil;
   if (@available(iOS 26, *)) {
+#if !RCT_NEW_ARCH_ENABLED && !defined(NDEBUG)
+    // On Paper in debug mode, there are some views between RNSScreenView and RNSScreenContentWrapper.
+    UIView *currentView = vc.view;
+    while (currentView != nil) {
+      if ([currentView isKindOfClass:RNSScreenContentWrapper.class]) {
+        contentWrapper = static_cast<RNSScreenContentWrapper *>(currentView);
+        break;
+      } else if ([currentView.subviews count] > 0) {
+        currentView = currentView.subviews[0];
+      } else {
+        break;
+      }
+    }
+#else // !RCT_NEW_ARCH_ENABLED && !defined(NDEBUG)
     if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]]) {
       contentWrapper = static_cast<RNSScreenContentWrapper *>(vc.view.subviews[0]);
     }
+#endif // !RCT_NEW_ARCH_ENABLED && !defined(NDEBUG)
   }
 
   if (!shouldHide && !config.translucent) {
