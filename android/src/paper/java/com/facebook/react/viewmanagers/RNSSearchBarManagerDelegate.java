@@ -43,7 +43,7 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
         mViewManager.setObscureBackground(view, value == null ? false : (boolean) value);
         break;
       case "hideNavigationBar":
-        mViewManager.setHideNavigationBar(view, value == null ? false : (boolean) value);
+        mViewManager.setHideNavigationBar(view, value == null ? true : (boolean) value);
         break;
       case "cancelButtonText":
         mViewManager.setCancelButtonText(view, value == null ? null : (String) value);
