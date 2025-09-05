@@ -315,7 +315,7 @@ export interface ScreenProps extends ViewProps {
    * Describes heights where a sheet can rest.
    * Works only when `presentation` is set to `formSheet`.
    *
-   * Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
+   * Heights should be described as fraction (a number from `[0, 1]`* interval) of screen height / maximum detent height.
    * You can pass an array of ascending values each defining allowed sheet detent. iOS accepts any number of detents,
    * while **Android is limited to three**.
    *
@@ -336,6 +336,8 @@ export interface ScreenProps extends ViewProps {
    * These are provided solely for **temporary** backward compatibility and are destined for removal in future versions.
    *
    * Defaults to `[1.0]`.
+   *
+   * \* on iOS there is additional `9999` value, that allows formsheet to be expanded to full screen. This prop is **unstable** as it's iOS internal value and maybe changed/removed in the future.
    */
   sheetAllowedDetents?: number[] | 'fitToContents' | 'medium' | 'large' | 'all';
   /**

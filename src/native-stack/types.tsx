@@ -388,11 +388,13 @@ export type NativeStackNavigationOptions = {
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * Heights should be described as fraction (a number from [0, 1] interval) of screen height / maximum detent height.
+   * Heights should be described as fraction (a number from [0, 1]* interval) of screen height / maximum detent height.
    *
    * Please note that the array **must** be sorted in ascending order.
    *
    * Defaults to `[1.0]` literal.
+   *
+   * \* on iOS there is additional `9999` value, that allows formsheet to be expanded to full screen. This prop is **unstable** as it's iOS internal value and maybe changed/removed in the future.
    */
   sheetAllowedDetents?: ScreenProps['sheetAllowedDetents'] | 'fitToContents';
   /**
