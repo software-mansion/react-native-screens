@@ -55,12 +55,15 @@ Defaults to `false`. When `enableFreeze()` is run at the top of the application 
 ### `fullScreenSwipeEnabled` (iOS only)
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
+IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
 
 ### `fullScreenSwipeShadowEnabled` (iOS only)
 
 Boolean indicating whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
 doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
 default iOS shadow. Defaults to `true`.
+IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
+to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
 
 ### `gestureEnabled` (iOS only)
 
@@ -69,6 +72,7 @@ When set to `false` the back swipe gesture will be disabled. The default value i
 #### `gestureResponseDistance` (iOS only)
 
 Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage:
+IMPORTANT: Starting from iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
 
 ```tsx
 gestureResponseDistance: {
