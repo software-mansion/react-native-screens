@@ -23,7 +23,8 @@ internal class ScreensCoordinatorLayout(
         PointerEventsBoxNoneImpl(),
     )
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets =
+        super.onApplyWindowInsets(insets)
 
     private val animationListener: Animation.AnimationListener =
         object : Animation.AnimationListener {

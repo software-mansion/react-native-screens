@@ -35,6 +35,7 @@ open class CustomToolbar(
         get() = config.isTopInsetEnabled
 
     private var lastInsets = InsetsCompat.NONE
+    private var laidOutAfterInsetsDispatch = false
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
@@ -53,6 +54,21 @@ open class CustomToolbar(
             }
         }
 
+    private fun requestLayoutInCurrentLoop() {
+        @Suppress("SENSELESS_COMPARISON") // mLayoutCallback can be null here since this method can be called in init
+        if (!isLayoutEnqueued && layoutCallback != null) {
+            isLayoutEnqueued = true
+            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
+            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
+            ReactChoreographer
+                .getInstance()
+                .postFrameCallback(
+                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+                    layoutCallback,
+                )
+        }
+    }
+
     override fun requestLayout() {
         super.requestLayout()
         val softInputMode =
@@ -67,23 +83,13 @@ open class CustomToolbar(
             // the position of each subview, even if Yoga has correctly set their width and height).
             // This is mostly the issue, when windowSoftInputMode is set to adjustPan in AndroidManifest.
             // Thus, we're manually calling the layout **after** the current layout.
-            @Suppress("SENSELESS_COMPARISON") // mLayoutCallback can be null here since this method can be called in init
-            if (!isLayoutEnqueued && layoutCallback != null) {
-                isLayoutEnqueued = true
-                // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
-                // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-                ReactChoreographer
-                    .getInstance()
-                    .postFrameCallback(
-                        ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                        layoutCallback,
-                    )
-            }
+            requestLayoutInCurrentLoop()
         }
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
         val unhandledInsets = super.onApplyWindowInsets(insets)
+        RNSLog.d("Toolbar", "onApplyWindowInsets $unhandledInsets")
 
         // There are few UI modes we could be running in
         //
@@ -145,6 +151,31 @@ open class CustomToolbar(
         return unhandledInsets
     }
 
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+        val initialHeight = measuredHeight
+
+        val effectiveHeight =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                measuredHeight +
+                    rootWindowInsets
+                        .getInsets(
+                            WindowInsets.Type.statusBars(),
+                        ).top
+            } else {
+                TODO("VERSION.SDK_INT < Q")
+            }
+
+        if (lastInsets == InsetsCompat.NONE || !laidOutAfterInsetsDispatch) {
+            setMeasuredDimension(measuredWidth, effectiveHeight)
+            RNSLog.d("Toolbar", "Toolbar: onMeasure initial: $initialHeight effectiveHeight: $effectiveHeight")
+        }
+    }
+
     override fun onLayout(
         hasSizeChanged: Boolean,
         l: Int,
@@ -152,9 +183,12 @@ open class CustomToolbar(
         r: Int,
         b: Int,
     ) {
+        RNSLog.d("Toolbar", "onLayout height=${b - t} insets\n$rootWindowInsets")
         super.onLayout(hasSizeChanged, l, t, r, b)
 
-        RNSLog.d("Toolbar", "onLayout")
+        if (lastInsets != InsetsCompat.NONE) {
+            laidOutAfterInsetsDispatch = true
+        }
 
         config.onNativeToolbarLayout(
             this,
@@ -174,9 +208,10 @@ open class CustomToolbar(
         right: Int,
         bottom: Int,
     ) {
-        requestForceShadowStateUpdateOnLayout()
         RNSLog.d("Toolbar", "Toolbar: applyExactPadding($left, $top, $right, $bottom)")
+        requestForceShadowStateUpdateOnLayout()
         setPadding(left, top, right, bottom)
+        requestLayoutInCurrentLoop()
     }
 
     private fun requestForceShadowStateUpdateOnLayout() {
