@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.utils.InsetsCompat
+import com.swmansion.rnscreens.utils.RNSLog
 import com.swmansion.rnscreens.utils.resolveInsetsOrZero
 import kotlin.math.max
 
@@ -153,6 +154,8 @@ open class CustomToolbar(
     ) {
         super.onLayout(hasSizeChanged, l, t, r, b)
 
+        RNSLog.d("Toolbar", "onLayout")
+
         config.onNativeToolbarLayout(
             this,
             hasSizeChanged || isForceShadowStateUpdateOnLayoutRequested,
@@ -172,10 +175,12 @@ open class CustomToolbar(
         bottom: Int,
     ) {
         requestForceShadowStateUpdateOnLayout()
+        RNSLog.d("Toolbar", "Toolbar: applyExactPadding($left, $top, $right, $bottom)")
         setPadding(left, top, right, bottom)
     }
 
     private fun requestForceShadowStateUpdateOnLayout() {
+        RNSLog.d("Toolbar", "Toolbar: Requesting shadow state update on custom toolbar padding $shouldAvoidDisplayCutout")
         isForceShadowStateUpdateOnLayoutRequested = shouldAvoidDisplayCutout
     }
 }

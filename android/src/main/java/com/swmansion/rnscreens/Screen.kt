@@ -185,7 +185,7 @@ class Screen(
             val height = b - t
 
             dispatchShadowStateUpdate(width, height, t)
-            RNSLog.d("Screen", "Screen [$id] $height")
+            RNSLog.d("Screen", "Screen [$id]: onLayout height=$height")
 
             // FormSheet has no header in current model.
             notifyHeaderHeightChange(t)
