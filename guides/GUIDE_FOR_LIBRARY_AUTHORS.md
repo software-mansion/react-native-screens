@@ -556,6 +556,7 @@ An array of objects describing native bar button items to display on the left or
 - A button with a title, icon, and action
 - A menu with multiple actions
 - A spacing item to adjust layout
+- A object for configuration of the `ScreenStackHeaderRightView` or `ScreenStackHeaderLeftView`
 
 #### The button and menu items supports:
 
@@ -595,11 +596,15 @@ An array of objects describing native bar button items to display on the left or
 
 #### The button with a menu also support: 
 
-menu?: Array<object> — Menu actions for the item.
+`menu?: Array<object>` — Menu actions for the item.
 
 #### The spacing item supports:
 
-spacing?: number — Fixed space between items. The numeric value is only supported on iOS 18-
+`spacing?: number` — Fixed space between items. The numeric value is only supported on iOS 18-
+
+#### The configuration item of the custom views supports:
+
+`hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). 
 
 ### `hidden`
 
