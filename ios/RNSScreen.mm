@@ -603,10 +603,11 @@ RNS_IGNORE_SUPER_CALL_END
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    int index = newDetentIndex;
+    int index = static_cast<int>(newDetentIndex);
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onSheetDetentChanged(
-            react::RNSScreenEventEmitter::OnSheetDetentChanged{.index = index, .isStable = isStable});
+            react::RNSScreenEventEmitter::OnSheetDetentChanged{
+                .index = index, .isStable = static_cast<bool>(isStable)});
   }
 #else
   if (self.onSheetDetentChanged) {
@@ -628,7 +629,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   RNSHeaderHeightChangeEvent *event =
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
-                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                   reactTag:[NSNumber numberWithInteger:self.tag]
                                                headerHeight:headerHeight];
   [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
@@ -713,7 +714,7 @@ RNS_IGNORE_SUPER_CALL_END
                 .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
-                                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                                   reactTag:[NSNumber numberWithInteger:self.tag]
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
@@ -969,7 +970,7 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  int firstDimmedDetentIndex = _sheetAllowedDetents.count;
+  int firstDimmedDetentIndex = static_cast<int>(_sheetAllowedDetents.count);
 
   // Whether we use system (iOS 15) detents or custom (iOS 16+).
   // Custom detents are in use if we are on iOS 16+ and we have at least single detent
@@ -1118,7 +1119,7 @@ RNS_IGNORE_SUPER_CALL_END
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
       [NSMutableArray arrayWithCapacity:values.count];
   [values enumerateObjectsUsingBlock:^(NSNumber *value, NSUInteger index, BOOL *stop) {
-    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithInt:index] stringValue];
+    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithUnsignedInteger:index] stringValue];
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
