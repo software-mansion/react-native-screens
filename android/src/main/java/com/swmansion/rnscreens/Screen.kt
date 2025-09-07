@@ -161,6 +161,11 @@ class Screen(
         wrapper.delegate = this
     }
 
+    internal fun onAddedToContainer(container: ScreenStack) {
+//        this.headerConfig!!.toolbar.setPadding(0, 60, 0, 0)
+        (fragment as ScreenStackFragment).setToolbar(this.headerConfig!!.toolbar)
+    }
+
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
         // do nothing, react native will keep the view hierarchy so no need to serialize/deserialize
         // view's states. The side effect of restoring is that TextInput components would trigger

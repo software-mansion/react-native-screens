@@ -26,6 +26,10 @@ open class CustomToolbar(
     context: Context,
     val config: ScreenStackHeaderConfig,
 ) : Toolbar(context) {
+    init {
+        fitsSystemWindows = true
+    }
+
     // Switch this flag to enable/disable display cutout avoidance.
     // Currently this is controlled by isTopInsetEnabled prop.
     private val shouldAvoidDisplayCutout
@@ -140,40 +144,15 @@ open class CustomToolbar(
 
         if (lastInsets != newInsets) {
             lastInsets = newInsets
-            applyExactPadding(
-                lastInsets.left,
-                lastInsets.top,
-                lastInsets.right,
-                lastInsets.bottom,
-            )
+//            applyExactPadding(
+//                lastInsets.left,
+//                lastInsets.top,
+//                lastInsets.right,
+//                lastInsets.bottom,
+//            )
         }
 
         return unhandledInsets
-    }
-
-    override fun onMeasure(
-        widthMeasureSpec: Int,
-        heightMeasureSpec: Int,
-    ) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
-        val initialHeight = measuredHeight
-
-        val effectiveHeight =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                measuredHeight +
-                    rootWindowInsets
-                        .getInsets(
-                            WindowInsets.Type.statusBars(),
-                        ).top
-            } else {
-                TODO("VERSION.SDK_INT < Q")
-            }
-
-        if (lastInsets == InsetsCompat.NONE || !laidOutAfterInsetsDispatch) {
-            setMeasuredDimension(measuredWidth, effectiveHeight)
-            RNSLog.d("Toolbar", "Toolbar: onMeasure initial: $initialHeight effectiveHeight: $effectiveHeight")
-        }
     }
 
     override fun onLayout(
@@ -197,6 +176,11 @@ open class CustomToolbar(
         isForceShadowStateUpdateOnLayoutRequested = false
     }
 
+//    override fun onAttachedToWindow() {
+//        super.onAttachedToWindow()
+//        dispatchApplyWindowInsets(rootWindowInsets)
+//    }
+
     fun updateContentInsets() {
         contentInsetStartWithNavigation = config.preferredContentInsetStartWithNavigation
         setContentInsetsRelative(config.preferredContentInsetStart, config.preferredContentInsetEnd)
@@ -209,9 +193,9 @@ open class CustomToolbar(
         bottom: Int,
     ) {
         RNSLog.d("Toolbar", "Toolbar: applyExactPadding($left, $top, $right, $bottom)")
-        requestForceShadowStateUpdateOnLayout()
         setPadding(left, top, right, bottom)
-        requestLayoutInCurrentLoop()
+        requestForceShadowStateUpdateOnLayout()
+//        requestLayoutInCurrentLoop()
     }
 
     private fun requestForceShadowStateUpdateOnLayout() {
