@@ -628,14 +628,17 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * @platform ios
    */
-  headerLeftItems?: (HeaderBarButtonItem | HeaderBarButtonItemWithCustomView)[];
+  headerLeftBarButtonItems?: (
+    | HeaderBarButtonItem
+    | HeaderBarButtonItemWithCustomView
+  )[];
   /**
    * Array of iOS native UIBarButtomItem or functions
    * that returns a React Element to the right side of the header.
    *
    * @platform ios
    */
-  headerRightItems?: (
+  headerRightBarButtonItems?: (
     | HeaderBarButtonItem
     | HeaderBarButtonItemWithCustomView
   )[];
@@ -1138,7 +1141,7 @@ export interface HeaderBarButtonItemSpacing {
  * Used to set properties of a custom React Element added
  * as a custom view to a UIBarButtonItem in the header.
  *
- * The index of the item in the `headerLeftItems` or `headerRightItems` array
+ * The index of the item in the `headerLeftBarButtonItems` or `headerRightBarButtonItems` array
  * must be the same as the index of the corresponding React Element in the
  * `children` prop of `ScreenStackHeaderConfig`.
  */
