@@ -7,6 +7,8 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
+  ImageRequireSource,
+  ProcessedColorValue,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 import { ScrollEdgeEffect } from './components/shared/types';
@@ -621,6 +623,23 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backButtonDisplayMode?: BackButtonDisplayMode;
   /**
+   * Array of iOS native UIBarButtomItem or functions
+   * that returns a React Element to the left side of the header.
+   *
+   * @platform ios
+   */
+  headerLeftItems?: (HeaderBarButtonItem | HeaderBarButtonItemWithCustomView)[];
+  /**
+   * Array of iOS native UIBarButtomItem or functions
+   * that returns a React Element to the right side of the header.
+   *
+   * @platform ios
+   */
+  headerRightItems?: (
+    | HeaderBarButtonItem
+    | HeaderBarButtonItemWithCustomView
+  )[];
+  /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
   hidden?: boolean;
@@ -677,6 +696,20 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Callback which is executed when screen header is detached
    */
   onDetached?: () => void;
+  /**
+   * Callback which is executed when a bar button item is pressed.
+   * @param buttonId ID of the button that was pressed
+   */
+  onPressHeaderBarButtonItem?: (
+    e: NativeSyntheticEvent<{ buttonId: string }>,
+  ) => void;
+  /**
+   * Callback which is executed when a bar button item is pressed.
+   * @param buttonId ID of the button that was pressed
+   */
+  onPressHeaderBarButtonMenuItem?: (
+    e: NativeSyntheticEvent<{ menuId: string }>,
+  ) => void;
   /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
@@ -917,6 +950,213 @@ export interface SearchBarProps {
    */
   shouldShowHintSearchIcon?: boolean;
 }
+
+interface SharedHeaderBarButtonItem {
+  /**
+   * Title of the button.
+   */
+  title?: string;
+  /**
+   * Style for the button title.
+   */
+  titleStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    color?: ProcessedColorValue;
+  };
+  /**
+   * Image source for the button
+   */
+  image?: ImageRequireSource;
+  /**
+   * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
+   */
+  sfSymbolName?: string;
+  /**
+   * The style of the item.
+   * "Prominent" only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
+   */
+  style?: 'plain' | 'done' | 'prominent';
+  /**
+   * The tint color to apply to the button item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
+   */
+  tintColor?: ProcessedColorValue;
+  /**
+   * A boolean that determines the visibility of the item.
+   * Only available from iOS 16.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/ishidden
+   */
+  hidden?: boolean;
+  /**
+   * A Boolean value that indicates whether the button is in a enabled state.
+   */
+  enabled?: boolean;
+  /**
+   * The width of the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
+   */
+  width?: number;
+  /**
+   * The set of possible titles to display on the bar button.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/possibletitles
+   */
+  possibleTitles?: string[];
+  /**
+   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+   */
+  hidesSharedBackground?: boolean;
+  /**
+   * A boolean value indicating whether this bar button item can share a background with other items in a navigation bar or a toolbar.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
+   */
+  sharesBackground?: boolean;
+  /**
+   * An identifier used to match bar button items across transitions in a navigation bar or toolbar..
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
+   */
+  identifier?: string;
+  /**
+   * A badge to be rendered on a bar button item.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
+   */
+  badge?: {
+    /**
+     * The text to display in the badge.
+     */
+    value: string;
+    /**
+     * The color of the badge.
+     */
+    color?: ProcessedColorValue;
+    /**
+     * The background color of the badge.
+     */
+    backgroundColor?: ProcessedColorValue;
+    style?: {
+      fontFamily?: string;
+      fontSize?: number;
+      fontWeight?: string;
+    };
+  };
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+}
+
+export interface HeaderBarButtonItemWithAction
+  extends SharedHeaderBarButtonItem {
+  /**
+   * A unique identifier for the button item.
+   * This is required to identify which menu item was selected in `onPress`.
+   */
+  buttonId: string;
+  /**
+   * A Boolean value that indicates whether the button is in a selected state.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
+   */
+  selected?: boolean;
+  /**
+   * A Boolean value that indicates whether the button represents an action or selection.
+   * Only available from iOS 15.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+   */
+  changesSelectionAsPrimaryAction?: boolean;
+}
+
+export interface HeaderBarButtonItemMenuAction {
+  title?: string;
+  type: 'action';
+  /**
+   * A unique identifier for the menu item.
+   * This is required to identify which menu item was selected in `onPress`.
+   */
+  menuId: string;
+  /**
+   * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
+   */
+  sfSymbolName?: string;
+  /**
+   * State of the menu item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
+   */
+  state?: 'on' | 'off' | 'mixed';
+  /**
+   * Style of the menu item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
+   */
+  attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented';
+  /**
+   * Discoverability title of the menu item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
+   */
+  discoverabilityTitle?: string;
+}
+
+export interface HeaderBarButtonItemSubmenu {
+  title?: string;
+  type: 'submenu';
+  /**
+   * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
+   */
+  sfSymbolName?: string;
+  items: HeaderBarButtonItemWithMenu['menu']['items'];
+}
+
+export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
+  menu: {
+    title?: string;
+    items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
+  };
+}
+
+export interface HeaderBarButtonItemSpacing {
+  spacing: number;
+}
+
+/**
+ * Used to set properties of a custom React Element added
+ * as a custom view to a UIBarButtonItem in the header.
+ *
+ * The index of the item in the `headerLeftItems` or `headerRightItems` array
+ * must be the same as the index of the corresponding React Element in the
+ * `children` prop of `ScreenStackHeaderConfig`.
+ */
+export interface HeaderBarButtonItemWithCustomView {
+  isSubview: true;
+  /**
+   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+   */
+  hidesSharedBackground?: boolean;
+}
+
+export type HeaderBarButtonItem =
+  | HeaderBarButtonItemWithAction
+  | HeaderBarButtonItemWithMenu
+  | HeaderBarButtonItemSpacing;
 
 /**
  * Custom Screen Transition
