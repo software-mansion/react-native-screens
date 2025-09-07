@@ -550,6 +550,57 @@ Possible options:
 - `generic` – show given system generic or just icon based on available space
 - `minimal` – show just an icon
 
+### `headerLeftItems / headerRightItems` (iOS only)
+An array of objects describing native bar button items to display on the left or right side of the header. Each item can be:
+
+- A button with a title, icon, and action
+- A menu with multiple actions
+- A spacing item to adjust layout
+
+#### The button and menu items supports:
+
+`title: string` — Title of the button.
+
+`titleStyle?: object` — Style for the button title.
+
+`image?: ImageRequireSource` — Image source for the button icon.
+
+`sfSymbolName?: string` - SF Symbol for the button icon.
+
+`style?: 'Plain' | 'Done' | 'Prominent'` — The style of the item. 'Prominent' only available for iOS 26+.
+
+`tintColor?: ColorValue` — Tint color for the button. Will pick the tint color of the header if not set.
+
+`hidden?: boolean` — Whether the item is hidden (iOS 16+).
+
+`enabled?: boolean` — Whether the item is enabled.
+
+`width?: number` — Width of the item (iOS 18-).
+
+`possibleTitles?: string[]` — Possible titles for the item.
+
+`hidesSharedBackground?: boolean` — Hide shared background (iOS 26+).
+
+`sharesBackground?: boolean` — Share background with other items (iOS 26+).
+
+`identifier?: string` — Identifier for matching items across transitions (iOS 26+).
+
+`badge: object` - Badge configuration for the button (iOS 26+).
+
+#### The button with an action also supports:
+
+`selected?: boolean` — Whether the button is selected.
+
+`changesSelectionAsPrimaryAction?: boolean` — Whether selection changes as a primary action (iOS 15+).
+
+#### The button with a menu also support: 
+
+menu?: Array<object> — Menu actions for the item.
+
+#### The spacing item supports:
+
+spacing?: number — Fixed space between items. The numeric value is only supported on iOS 18-
+
 ### `hidden`
 
 When set to `true` the header will be hidden while the parent `Screen` is on the top of the stack. The default value is `false`.
