@@ -162,7 +162,6 @@ class Screen(
     }
 
     internal fun onAddedToContainer(container: ScreenStack) {
-//        this.headerConfig!!.toolbar.setPadding(0, 60, 0, 0)
         (fragment as ScreenStackFragment).setToolbar(this.headerConfig!!.toolbar)
     }
 
@@ -189,11 +188,11 @@ class Screen(
             val width = r - l
             val height = b - t
 
-//            dispatchShadowStateUpdate(width, height, t)
+            dispatchShadowStateUpdate(width, height, t)
             RNSLog.d("Screen", "Screen [$id]: onLayout height=$height")
 
             // FormSheet has no header in current model.
-//            notifyHeaderHeightChange(t)
+            notifyHeaderHeightChange(t)
         }
     }
 

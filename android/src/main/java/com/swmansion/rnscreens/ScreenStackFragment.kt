@@ -211,7 +211,7 @@ class ScreenStackFragment :
                             AppBarLayout.LayoutParams.MATCH_PARENT,
                             AppBarLayout.LayoutParams.WRAP_CONTENT,
                         )
-                    this.clipToPadding = false
+//                    this.clipToPadding = false
                 }
 
             coordinatorLayout.addView(appBarLayout)
