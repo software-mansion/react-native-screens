@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { View, Text, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -13,6 +13,7 @@ type RootTabParamList = {
 
 type InnerParamList = {
   Inner: undefined;
+  Second: undefined;
 };
 
 type Props = NativeStackScreenProps<InnerParamList, 'Inner'>;
@@ -25,9 +26,22 @@ const options = {
 
 function RegularScreen({ route }: Props) {
   const { name } = route;
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <Text>{`${name} Screen`}</Text>
+      <Button title='Push Second' onPress={() => navigation.navigate('Second')} />
+    </View>
+  );
+}
+
+function SecondScreen({ route }: Props) {
+  const { name } = route;
+  const navigation = useNavigation();
+  return (
+    <View style={styles.container}>
+      <Text>{`${name} Screen`}</Text>
+      <Button title='Go back' onPress={() => navigation.popTo('Inner')} />
     </View>
   );
 }
@@ -37,22 +51,25 @@ function FirstStack() {
   return (
     <Stack.Navigator screenOptions={{ title: 'First', statusBarStyle: 'dark' }}>
       <Stack.Screen name="Inner" component={RegularScreen} />
+      <Stack.Screen name="Second" component={SecondScreen} />
     </Stack.Navigator>
   );
 }
 
 function SecondStack() {
   return (
-    <Stack.Navigator screenOptions={{ title: 'Second' }}>
+    <Stack.Navigator screenOptions={{ title: 'Second', statusBarStyle: 'dark' }}>
       <Stack.Screen name="Inner" component={RegularScreen} />
+      <Stack.Screen name="Second" component={SecondScreen} />
     </Stack.Navigator>
   );
 }
 
 function ThirdStack() {
   return (
-    <Stack.Navigator screenOptions={{ title: 'Third' }}>
+    <Stack.Navigator screenOptions={{ title: 'Third', statusBarStyle: 'dark' }}>
       <Stack.Screen name="Inner" component={RegularScreen} />
+      <Stack.Screen name="Second" component={SecondScreen} />
     </Stack.Navigator>
   );
 }
