@@ -98,7 +98,13 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
-export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+export type SearchBarPlacement =
+  | 'automatic'
+  | 'inline' // deprecated starting from iOS 26
+  | 'stacked'
+  | 'integrated'
+  | 'integratedButton'
+  | 'integratedCentered';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -736,6 +742,9 @@ export interface SearchBarProps {
   /**
    * The text to be used instead of default `Cancel` button text
    *
+   * @deprecated Starting from iOS 26, cancel button does not have any text,
+   * therefore this prop has no longer any effect.
+   *
    * @platform ios
    */
   cancelButtonText?: string;
@@ -816,14 +825,46 @@ export interface SearchBarProps {
    * Supported values:
    *
    * * `automatic` - the search bar is placed according to current layout
-   * * `inline` - the search bar is placed on the trailing edge of navigation bar
    * * `stacked` - the search bar is placed below the other content in navigation bar
+   * * `integrated` - (>= iOS 26) the search bar is placed on the trailing edge of navigation bar. On iPhone,
+   *   it may be integrated into the toolbar
+   * * `integratedButton` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
+   *   the inactive search bar is always shown as a button even when space permits a search field
+   * * `integratedCentered` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
+   *   in the regular width on iPad, the search bar is centered in the navigation bar. Only
+   *   respected in special cases, described in UIKit documentation
    *
-   * Defaults to `stacked`
+   * There is also legacy & **deprecated** prop value available:
+   *
+   *  * `inline` - the search bar is placed on the trailing edge of navigation bar
+   *
+   * Starting from iOS 26, `inline` is the same as `integrated`. It is provided for backward
+   * compatibility and is destined for removal in future versions.
+   *
+   * For iOS versions prior to 26, `integrated`, `integratedButton`, `integratedCentered` are
+   * the same as `inline`.
+   *
+   * Defaults to `automatic`.
+   *
+   * Complete list of possible search bar placements is available in the official UIKit documentation:
+   * @see {@link https://developer.apple.com/documentation/uikit/uinavigationitem/searchbarplacement-swift.enum|UINavigationItem.SearchBarPlacement}
    *
    * @platform iOS (>= 16.0)
    */
   placement?: SearchBarPlacement;
+  /**
+   * Indicates whether the system can place the search bar among other toolbar items on iPhone.
+   *
+   * Set this prop to `false` to prevent the search bar from appearing in the toolbar when
+   * `placement` is `automatic`, `integrated`, `integratedButton` or `integratedCentered`.
+   *
+   * Defaults to `true`.
+   * When `placement` is set to `stacked`, this property's value will be overridden with `false`
+   * to circumvent a UIKit native bug that prevents the search bar from appearing on the root screen.
+   *
+   * @platform iOS (>= 26.0)
+   */
+  allowToolbarIntegration?: boolean;
   /**
    * The search field text color
    */

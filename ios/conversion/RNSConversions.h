@@ -3,6 +3,7 @@
 #if defined(__cplusplus)
 #import <React/RCTImageSource.h>
 #import <react/renderer/components/rnscreens/Props.h>
+#import "RNSDefines.h"
 #import "RNSEnums.h"
 
 #if RCT_NEW_ARCH_ENABLED
@@ -28,8 +29,7 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle
 
 UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_26_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_26_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))

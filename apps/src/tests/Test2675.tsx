@@ -1,16 +1,19 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
 type RouteParams = {
   Home: undefined;
   DynamicHeader: undefined;
-}
+};
 
 type NavigationProps = {
   navigation: NativeStackNavigationProp<RouteParams>;
-}
+};
 
 const Stack = createNativeStackNavigator();
 
@@ -18,7 +21,10 @@ function HomeScreen({ navigation }: NavigationProps) {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-      <Button title="Navigate DynamicHeaderScreen" onPress={() => navigation.navigate('DynamicHeader')} />
+      <Button
+        title="Navigate DynamicHeaderScreen"
+        onPress={() => navigation.navigate('DynamicHeader')}
+      />
     </View>
   );
 }
@@ -89,23 +95,35 @@ export default function App() {
             //headerRight: HeaderRight,
             headerSearchBarOptions: {
               placeholder: 'Search...',
-              onChangeText: (event) => {
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
+              placement: 'stacked',
+              hideWhenScrolling: false,
+              onChangeText: event => {
                 console.log('Search text:', event.nativeEvent.text);
               },
             },
           }}
         />
-        <Stack.Screen name="DynamicHeader" component={DynamicHeaderScreen} options={{
-          statusBarTranslucent: true,
-          statusBarStyle: 'dark',
-          headerTitle: HeaderTitle,
-          headerSearchBarOptions: {
-            placeholder: 'Search...',
-            onChangeText: (event) => {
-              console.log('Search text:', event.nativeEvent.text);
+        <Stack.Screen
+          name="DynamicHeader"
+          component={DynamicHeaderScreen}
+          options={{
+            statusBarTranslucent: true,
+            statusBarStyle: 'dark',
+            headerTitle: HeaderTitle,
+            headerSearchBarOptions: {
+              placeholder: 'Search...',
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
+              placement: 'stacked',
+              hideWhenScrolling: false,
+              onChangeText: event => {
+                console.log('Search text:', event.nativeEvent.text);
+              },
             },
-          },
-        }} />
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -118,4 +136,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-

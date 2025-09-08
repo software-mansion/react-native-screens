@@ -25,7 +25,7 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
       case "hideWhenScrolling":
-        mViewManager.setHideWhenScrolling(view, value == null ? false : (boolean) value);
+        mViewManager.setHideWhenScrolling(view, value == null ? true : (boolean) value);
         break;
       case "autoCapitalize":
         mViewManager.setAutoCapitalize(view, (String) value);
@@ -35,6 +35,9 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
         break;
       case "placement":
         mViewManager.setPlacement(view, (String) value);
+        break;
+      case "allowToolbarIntegration":
+        mViewManager.setAllowToolbarIntegration(view, value == null ? true : (boolean) value);
         break;
       case "obscureBackground":
         mViewManager.setObscureBackground(view, value == null ? false : (boolean) value);

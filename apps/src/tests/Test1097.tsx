@@ -145,6 +145,9 @@ function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
+    // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+    // to preserve test's original search bar configuration.
+    placement: 'stacked',
     onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       console.warn(`Text changed to ${e.nativeEvent.text}`),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),

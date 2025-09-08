@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RNSDefines.h"
 #import "RNSSearchBar.h"
 
 #import <React/RCTBridge.h>
@@ -66,7 +67,9 @@ namespace react = facebook::react;
 
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
-  _placement = RNSSearchBarPlacementStacked;
+  _placement = RNSSearchBarPlacementAutomatic;
+
+  _allowToolbarIntegration = YES;
 }
 
 - (void)emitOnFocusEvent
@@ -220,8 +223,7 @@ namespace react = facebook::react;
 #endif
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0 && !TARGET_OS_TV
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
 - (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))
     API_UNAVAILABLE(tvos, watchos)
 {
@@ -232,6 +234,34 @@ namespace react = facebook::react;
       return UINavigationItemSearchBarPlacementAutomatic;
     case RNSSearchBarPlacementInline:
       return UINavigationItemSearchBarPlacementInline;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    case RNSSearchBarPlacementIntegrated:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegrated;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+    case RNSSearchBarPlacementIntegratedButton:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegratedButton;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+    case RNSSearchBarPlacementIntegratedCentered:
+      if (@available(iOS 26, *)) {
+        return UINavigationItemSearchBarPlacementIntegratedCentered;
+      } else {
+        return UINavigationItemSearchBarPlacementInline;
+      }
+#else // Check for iOS >= 26
+    case RNSSearchBarPlacementIntegrated:
+    case RNSSearchBarPlacementIntegratedButton:
+    case RNSSearchBarPlacementIntegratedCentered:
+      return UINavigationItemSearchBarPlacementInline;
+#endif // Check for iOS >= 26
+    default:
+      RCTLogError(@"[RNScreens] unsupported search bar placement");
+      return UINavigationItemSearchBarPlacementStacked;
   }
 }
 #endif // Check for iOS >= 16 && !TARGET_OS_TV
@@ -324,7 +354,9 @@ namespace react = facebook::react;
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(props);
 
-  [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  if (oldScreenProps.hideWhenScrolling != newScreenProps.hideWhenScrolling) {
+    [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  }
 
   if (oldScreenProps.cancelButtonText != newScreenProps.cancelButtonText) {
     [self setCancelButtonText:RCTNSStringFromStringNilIfEmpty(newScreenProps.cancelButtonText)];
@@ -364,6 +396,10 @@ namespace react = facebook::react;
     self.placement = [RNSConvert RNSScreenSearchBarPlacementFromCppEquivalent:newScreenProps.placement];
   }
 
+  if (oldScreenProps.allowToolbarIntegration != newScreenProps.allowToolbarIntegration) {
+    self.allowToolbarIntegration = newScreenProps.allowToolbarIntegration;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -375,6 +411,14 @@ namespace react = facebook::react;
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
 {
   RCTRNSSearchBarHandleCommand(self, commandName, args);
+}
+
++ (BOOL)shouldBeRecycled
+{
+  // Recycling RNSSearchBar causes multiple bugs on iOS 26+, resulting in search bar
+  // not appearing at all.
+  // Details: https://github.com/software-mansion/react-native-screens/pull/3168
+  return NO;
 }
 
 #else
@@ -411,6 +455,7 @@ RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
+RCT_EXPORT_VIEW_PROPERTY(allowToolbarIntegration, BOOL)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTDirectEventBlock)
@@ -480,8 +525,11 @@ RCT_ENUM_CONVERTER(
       @"automatic" : @(RNSSearchBarPlacementAutomatic),
       @"inline" : @(RNSSearchBarPlacementInline),
       @"stacked" : @(RNSSearchBarPlacementStacked),
+      @"integrated" : @(RNSSearchBarPlacementIntegrated),
+      @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
+      @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
     }),
-    RNSSearchBarPlacementStacked,
+    RNSSearchBarPlacementAutomatic,
     integerValue)
 
 @end
