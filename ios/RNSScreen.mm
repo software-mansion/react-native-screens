@@ -1715,6 +1715,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)setupProgressNotification
 {
   if (self.transitionCoordinator != nil) {
+    if (!self.transitionCoordinator.isAnimated) {
+      return;
+    }
+
     _fakeView.alpha = 0.0;
 
     auto animation = ^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
@@ -1723,10 +1727,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
       [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     };
-
-    if (!self.transitionCoordinator.isAnimated) {
-      animation = nil;
-    }
 
     [self.transitionCoordinator
         animateAlongsideTransition:animation
