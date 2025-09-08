@@ -848,9 +848,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
-- (void)setPropertyForSheet:(UISheetPresentationController *)sheet
-                  withBlock:(void (^)(void))block
-                    animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setPropertyForSheet:(UISheetPresentationController *)sheet withBlock:(void (^)(void))block animate:(BOOL)animate
 {
   if (animate) {
     [sheet animateChanges:block];
@@ -861,7 +859,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setAllowedDetentsForSheet:(UISheetPresentationController *)sheet
                                to:(NSArray<UISheetPresentationControllerDetent *> *)detents
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                          animate:(BOOL)animate
 {
   [self setPropertyForSheet:sheet
                   withBlock:^{
@@ -872,7 +870,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setSelectedDetentForSheet:(UISheetPresentationController *)sheet
                                to:(UISheetPresentationControllerDetentIdentifier)detent
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                          animate:(BOOL)animate
 {
   if (sheet.selectedDetentIdentifier != detent) {
     [self setPropertyForSheet:sheet
@@ -883,9 +881,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setCornerRadiusForSheet:(UISheetPresentationController *)sheet
-                             to:(CGFloat)radius
-                        animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setCornerRadiusForSheet:(UISheetPresentationController *)sheet to:(CGFloat)radius animate:(BOOL)animate
 {
   if (sheet.preferredCornerRadius != radius) {
     [self setPropertyForSheet:sheet
@@ -897,9 +893,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setGrabberVisibleForSheet:(UISheetPresentationController *)sheet
-                               to:(BOOL)visible
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setGrabberVisibleForSheet:(UISheetPresentationController *)sheet to:(BOOL)visible animate:(BOOL)animate
 {
   if (sheet.prefersGrabberVisible != visible) {
     [self setPropertyForSheet:sheet
@@ -912,7 +906,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setLargestUndimmedDetentForSheet:(UISheetPresentationController *)sheet
                                       to:(UISheetPresentationControllerDetentIdentifier)detent
-                                 animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                                 animate:(BOOL)animate
 {
   if (sheet.largestUndimmedDetentIdentifier != detent) {
     [self setPropertyForSheet:sheet
@@ -924,7 +918,6 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (NSInteger)detentIndexFromDetentIdentifier:(UISheetPresentationControllerDetentIdentifier)identifier
-    API_AVAILABLE(ios(15.0))
 {
   // We first check if we are running on iOS 16+ as the API is different
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -952,7 +945,7 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
-    (UISheetPresentationController *)sheetPresentationController API_AVAILABLE(ios(15.0))
+    (UISheetPresentationController *)sheetPresentationController
 {
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
