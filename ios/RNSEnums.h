@@ -91,8 +91,7 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
   RNSBlurEffectStyleLight = UIBlurEffectStyleLight,
   RNSBlurEffectStyleDark = UIBlurEffectStyleDark,
   // TODO: Add support for this variant on tvOS
-  //  RNSBlurEffectStyleExtraDark = UIBlurEffectStyleExtraDark API_AVAILABLE(tvos(10.0)) API_UNAVAILABLE(ios)
-  //  API_UNAVAILABLE(watchos),
+  //  RNSBlurEffectStyleExtraDark = UIBlurEffectStyleExtraDark API_UNAVAILABLE(ios) API_UNAVAILABLE(watchos),
   RNSBlurEffectStyleRegular API_UNAVAILABLE(watchos) = UIBlurEffectStyleRegular,
   RNSBlurEffectStyleProminent API_UNAVAILABLE(watchos) = UIBlurEffectStyleProminent,
   RNSBlurEffectStyleSystemUltraThinMaterial API_UNAVAILABLE(watchos, tvos) = UIBlurEffectStyleSystemUltraThinMaterial,
