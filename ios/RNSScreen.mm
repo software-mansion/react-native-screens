@@ -848,9 +848,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
-- (void)setPropertyForSheet:(UISheetPresentationController *)sheet
-                  withBlock:(void (^)(void))block
-                    animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setPropertyForSheet:(UISheetPresentationController *)sheet withBlock:(void (^)(void))block animate:(BOOL)animate
 {
   if (animate) {
     [sheet animateChanges:block];
@@ -861,7 +859,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setAllowedDetentsForSheet:(UISheetPresentationController *)sheet
                                to:(NSArray<UISheetPresentationControllerDetent *> *)detents
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                          animate:(BOOL)animate
 {
   [self setPropertyForSheet:sheet
                   withBlock:^{
@@ -872,7 +870,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setSelectedDetentForSheet:(UISheetPresentationController *)sheet
                                to:(UISheetPresentationControllerDetentIdentifier)detent
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                          animate:(BOOL)animate
 {
   if (sheet.selectedDetentIdentifier != detent) {
     [self setPropertyForSheet:sheet
@@ -883,9 +881,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setCornerRadiusForSheet:(UISheetPresentationController *)sheet
-                             to:(CGFloat)radius
-                        animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setCornerRadiusForSheet:(UISheetPresentationController *)sheet to:(CGFloat)radius animate:(BOOL)animate
 {
   if (sheet.preferredCornerRadius != radius) {
     [self setPropertyForSheet:sheet
@@ -897,9 +893,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setGrabberVisibleForSheet:(UISheetPresentationController *)sheet
-                               to:(BOOL)visible
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setGrabberVisibleForSheet:(UISheetPresentationController *)sheet to:(BOOL)visible animate:(BOOL)animate
 {
   if (sheet.prefersGrabberVisible != visible) {
     [self setPropertyForSheet:sheet
@@ -912,7 +906,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setLargestUndimmedDetentForSheet:(UISheetPresentationController *)sheet
                                       to:(UISheetPresentationControllerDetentIdentifier)detent
-                                 animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                                 animate:(BOOL)animate
 {
   if (sheet.largestUndimmedDetentIdentifier != detent) {
     [self setPropertyForSheet:sheet
@@ -924,7 +918,6 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (NSInteger)detentIndexFromDetentIdentifier:(UISheetPresentationControllerDetentIdentifier)identifier
-    API_AVAILABLE(ios(15.0))
 {
   // We first check if we are running on iOS 16+ as the API is different
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -952,7 +945,7 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
-    (UISheetPresentationController *)sheetPresentationController API_AVAILABLE(ios(15.0))
+    (UISheetPresentationController *)sheetPresentationController
 {
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
@@ -977,124 +970,118 @@ RNS_IGNORE_SUPER_CALL_END
   // defined in the detents array. In any other case we do use system defined detents.
   bool systemDetentsInUse = false;
 
-  if (@available(iOS 15.0, *)) {
-    UISheetPresentationController *sheet = _controller.sheetPresentationController;
-    if (sheet == nil) {
-      return;
-    }
-    sheet.delegate = self;
+  UISheetPresentationController *sheet = _controller.sheetPresentationController;
+  if (sheet == nil) {
+    return;
+  }
+  sheet.delegate = self;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-    if (@available(iOS 16.0, *)) {
-      if (_sheetAllowedDetents.count > 0) {
-        if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
-          // This is `fitToContents` case, where sheet should be just high to display its contents.
-          // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
-          // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
-          // actual content. The update will be triggered once our child is mounted and laid out by React.
-          // Fabric: no nested stack: in this very moment our children are already mounted & laid out. In the very end
-          // of this method, after all other configuration is applied we trigger content wrapper to send us update on
-          // its frame. Fabric: nested stack: we wait until nested content wrapper registers itself with this view and
-          // then update the dimensions.
-        } else {
-          [self setAllowedDetentsForSheet:sheet
-                                       to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents]
-                                  animate:NO];
-        }
+  if (@available(iOS 16.0, *)) {
+    if (_sheetAllowedDetents.count > 0) {
+      if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
+        // This is `fitToContents` case, where sheet should be just high to display its contents.
+        // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
+        // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
+        // actual content. The update will be triggered once our child is mounted and laid out by React.
+        // Fabric: no nested stack: in this very moment our children are already mounted & laid out. In the very end
+        // of this method, after all other configuration is applied we trigger content wrapper to send us update on
+        // its frame. Fabric: nested stack: we wait until nested content wrapper registers itself with this view and
+        // then update the dimensions.
+      } else {
+        [self setAllowedDetentsForSheet:sheet to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents] animate:NO];
       }
-    } else
+    }
+  } else
 #endif // Check for iOS >= 16
-    {
-      systemDetentsInUse = true;
-      if (_sheetAllowedDetents.count == 0) {
+  {
+    systemDetentsInUse = true;
+    if (_sheetAllowedDetents.count == 0) {
+      [self setAllowedDetentsForSheet:sheet
+                                   to:@[
+                                     UISheetPresentationControllerDetent.mediumDetent,
+                                     UISheetPresentationControllerDetent.largeDetent
+                                   ]
+                              animate:YES];
+    } else if (_sheetAllowedDetents.count >= 2) {
+      float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
+      float secondDetentFraction = _sheetAllowedDetents[1].floatValue;
+      firstDimmedDetentIndex = 2;
+
+      if (firstDetentFraction < secondDetentFraction) {
         [self setAllowedDetentsForSheet:sheet
                                      to:@[
                                        UISheetPresentationControllerDetent.mediumDetent,
                                        UISheetPresentationControllerDetent.largeDetent
                                      ]
                                 animate:YES];
-      } else if (_sheetAllowedDetents.count >= 2) {
-        float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
-        float secondDetentFraction = _sheetAllowedDetents[1].floatValue;
-        firstDimmedDetentIndex = 2;
-
-        if (firstDetentFraction < secondDetentFraction) {
-          [self setAllowedDetentsForSheet:sheet
-                                       to:@[
-                                         UISheetPresentationControllerDetent.mediumDetent,
-                                         UISheetPresentationControllerDetent.largeDetent
-                                       ]
-                                  animate:YES];
-        } else {
-          RCTLogError(@"[RNScreens] The values in sheetAllowedDetents array must be sorted");
-        }
       } else {
-        float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
-        if (firstDetentFraction == SHEET_FIT_TO_CONTENTS) {
-          RCTLogError(@"[RNScreens] Unsupported on iOS versions below 16");
-        } else if (firstDetentFraction < 1.0) {
-          [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
-          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
-        } else {
-          [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.largeDetent ] animate:YES];
-          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-        }
-      }
-    }
-
-    // Handle initial detent on the first update.
-    if (!_sheetHasInitialDetentSet) {
-      if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-        if (@available(iOS 16.0, *)) {
-          UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
-          [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
-        } else
-#endif // Check for iOS >= 16
-        {
-          if (_sheetInitialDetent < 2) {
-            [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-          } else {
-            RCTLogError(
-                @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
-          }
-        }
-      } else if (_sheetInitialDetent != 0) {
-        RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
-      }
-      _sheetHasInitialDetentSet = true;
-    }
-
-    sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
-    [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
-    [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
-
-    // lud - largest undimmed detent
-    // First we try to take value from the prop or default.
-    int ludIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
-    // Rationalize the value in case the user set something that did not make sense.
-    ludIndex = ludIndex >= firstDimmedDetentIndex ? firstDimmedDetentIndex - 1 : ludIndex;
-    if (ludIndex == SHEET_LARGEST_UNDIMMED_DETENT_NONE) {
-      [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
-    } else if (ludIndex >= 0) {
-      if (systemDetentsInUse) {
-        // We're on iOS 15 or do not have custom detents specified by the user.
-        if (firstDimmedDetentIndex == 0 || (firstDimmedDetentIndex == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
-          // There are no detents specified or there is exactly one & it is less than 1.0 we default to medium.
-          [self setLargestUndimmedDetentForSheet:sheet
-                                              to:UISheetPresentationControllerDetentIdentifierMedium
-                                         animate:YES];
-        } else {
-          [self setLargestUndimmedDetentForSheet:sheet
-                                              to:UISheetPresentationControllerDetentIdentifierLarge
-                                         animate:YES];
-        }
-      } else {
-        // We're on iOS 16+ & have custom detents.
-        [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:ludIndex].stringValue animate:YES];
+        RCTLogError(@"[RNScreens] The values in sheetAllowedDetents array must be sorted");
       }
     } else {
-      RCTLogError(@"[RNScreens] Value of sheetLargestUndimmedDetent prop must be >= -1");
+      float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
+      if (firstDetentFraction == SHEET_FIT_TO_CONTENTS) {
+        RCTLogError(@"[RNScreens] Unsupported on iOS versions below 16");
+      } else if (firstDetentFraction < 1.0) {
+        [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
+        [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
+      } else {
+        [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.largeDetent ] animate:YES];
+        [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+      }
     }
+  }
+
+  // Handle initial detent on the first update.
+  if (!_sheetHasInitialDetentSet) {
+    if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+      if (@available(iOS 16.0, *)) {
+        UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+        [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+      } else
+#endif // Check for iOS >= 16
+      {
+        if (_sheetInitialDetent < 2) {
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        } else {
+          RCTLogError(
+              @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
+        }
+      }
+    } else if (_sheetInitialDetent != 0) {
+      RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
+    }
+    _sheetHasInitialDetentSet = true;
+  }
+
+  sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
+  [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
+  [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
+
+  // lud - largest undimmed detent
+  // First we try to take value from the prop or default.
+  int ludIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
+  // Rationalize the value in case the user set something that did not make sense.
+  ludIndex = ludIndex >= firstDimmedDetentIndex ? firstDimmedDetentIndex - 1 : ludIndex;
+  if (ludIndex == SHEET_LARGEST_UNDIMMED_DETENT_NONE) {
+    [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+  } else if (ludIndex >= 0) {
+    if (systemDetentsInUse) {
+      // We're on iOS 15 or do not have custom detents specified by the user.
+      if (firstDimmedDetentIndex == 0 || (firstDimmedDetentIndex == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
+        // There are no detents specified or there is exactly one & it is less than 1.0 we default to medium.
+        [self setLargestUndimmedDetentForSheet:sheet
+                                            to:UISheetPresentationControllerDetentIdentifierMedium
+                                       animate:YES];
+      } else {
+        [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+      }
+    } else {
+      // We're on iOS 16+ & have custom detents.
+      [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:ludIndex].stringValue animate:YES];
+    }
+  } else {
+    RCTLogError(@"[RNScreens] Value of sheetLargestUndimmedDetent prop must be >= -1");
   }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1926,29 +1913,27 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // In that case default iOS header will be shown. To fix this we hide header when the screens that appears has header
   // hidden and search bar was active on previous screen. We need to do it asynchronously, because default header is
   // added after viewWillAppear.
-  if (@available(iOS 13.0, *)) {
-    NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
+  NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
 
-    // we need to check whether reactSubviews array is empty, because on Fabric child nodes are unmounted first ->
-    // reactSubviews array may be empty
-    RNSScreenStackHeaderConfig *config = [self.screenView findHeaderConfig];
-    if (currentIndex > 0 && config != nil) {
-      UINavigationItem *prevNavigationItem =
-          [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
-      BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
+  // we need to check whether reactSubviews array is empty, because on Fabric child nodes are unmounted first ->
+  // reactSubviews array may be empty
+  RNSScreenStackHeaderConfig *config = [self.screenView findHeaderConfig];
+  if (currentIndex > 0 && config != nil) {
+    UINavigationItem *prevNavigationItem =
+        [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
+    BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
 #ifdef RCT_NEW_ARCH_ENABLED
-      BOOL shouldHideHeader = !config.show;
+    BOOL shouldHideHeader = !config.show;
 #else
-      BOOL shouldHideHeader = config.hide;
+    BOOL shouldHideHeader = config.hide;
 #endif
 
-      if (wasSearchBarActive && shouldHideHeader) {
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-          [self.navigationController setNavigationBarHidden:YES animated:NO];
-        });
-      }
+    if (wasSearchBarActive && shouldHideHeader) {
+      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
+      dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+        [self.navigationController setNavigationBarHidden:YES animated:NO];
+      });
     }
   }
 #endif

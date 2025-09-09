@@ -438,8 +438,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-+ (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc
-                                    withConfig:(RNSScreenStackHeaderConfig *)config API_AVAILABLE(ios(13.0))
++ (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 

@@ -10,10 +10,8 @@
 
 - (void)setMenu:(UIMenu *)menu
 {
-  if (@available(iOS 14.0, *)) {
-    if (!_menuHidden) {
-      super.menu = menu;
-    }
+  if (!_menuHidden) {
+    super.menu = menu;
   }
 }
 
