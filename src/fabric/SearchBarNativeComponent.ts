@@ -40,8 +40,8 @@ export interface NativeProps extends ViewProps {
   placeholder?: string;
   placement?: WithDefault<SearchBarPlacement, 'automatic'>;
   allowToolbarIntegration?: WithDefault<boolean, true>;
-  obscureBackground?: boolean;
-  hideNavigationBar?: boolean;
+  obscureBackground?: WithDefault<boolean, false>;
+  hideNavigationBar?: WithDefault<boolean, true>;
   cancelButtonText?: string;
   // TODO: implement these on iOS
   barTintColor?: ColorValue;
