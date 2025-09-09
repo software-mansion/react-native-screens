@@ -1715,19 +1715,30 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)setupProgressNotification
 {
   if (self.transitionCoordinator != nil) {
+    if (!self.transitionCoordinator.isAnimated) {
+      // If the transition is not animated, there is no point to set up animation
+      // and completion callbacks. This helps prevent issues with dismissed modals having
+      // "artifical animation duration" instead of being removed instantly.
+      // See: https://github.com/software-mansion/react-native-screens/pull/3189/
+      return;
+    }
+
     _fakeView.alpha = 0.0;
+
+    auto animation = ^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+      [[context containerView] addSubview:self->_fakeView];
+      self->_fakeView.alpha = 1.0;
+      self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+      [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    };
+
     [self.transitionCoordinator
-        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [[context containerView] addSubview:self->_fakeView];
-          self->_fakeView.alpha = 1.0;
-          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        }
-        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self->_animationTimer setPaused:YES];
-          [self->_animationTimer invalidate];
-          [self->_fakeView removeFromSuperview];
-        }];
+        animateAlongsideTransition:animation
+                        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                          [self->_animationTimer setPaused:YES];
+                          [self->_animationTimer invalidate];
+                          [self->_fakeView removeFromSuperview];
+                        }];
   }
 }
 
