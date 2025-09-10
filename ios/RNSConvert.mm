@@ -133,6 +133,41 @@
   }
 }
 
+#define SWITCH_EDGE_EFFECT(X)              \
+  switch (edgeEffect) {                    \
+    using enum react::X;                   \
+    case Automatic:                        \
+      return RNSScrollEdgeEffectAutomatic; \
+    case Hard:                             \
+      return RNSScrollEdgeEffectHard;      \
+    case Soft:                             \
+      return RNSScrollEdgeEffectSoft;      \
+    case Hidden:                           \
+      return RNSScrollEdgeEffectHidden;    \
+    default:                               \
+      return RNSScrollEdgeEffectAutomatic; \
+  }
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromBottomEdgeCppEquivalent:(react::RNSScreenBottomScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenBottomScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromLeftEdgeCppEquivalent:(react::RNSScreenLeftScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenLeftScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromRightEdgeCppEquivalent:(react::RNSScreenRightScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenRightScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromTopEdgeCppEquivalent:(react::RNSScreenTopScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenTopScrollEdgeEffect);
+}
+
 + (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents
 {
   auto array = [NSMutableArray<NSNumber *> arrayWithCapacity:detents.size()];
