@@ -900,6 +900,7 @@ RNS_IGNORE_SUPER_CALL_END
       fixedSpace.width = [spacingValue doubleValue];
       [items insertObject:fixedSpace atIndex:i];
     } else if (dict[@"isSubview"]) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
       if (@available(iOS 26.0, *)) {
         NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
         if (i < items.count) {
@@ -907,6 +908,7 @@ RNS_IGNORE_SUPER_CALL_END
           [item setHidesSharedBackground:hidesSharedBackgroundNum.boolValue];
         }
       }
+#endif
     }
   }
   return items;
