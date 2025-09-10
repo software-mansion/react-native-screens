@@ -29,6 +29,7 @@
 #import "RNSBackBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
@@ -39,6 +40,8 @@ namespace react = facebook::react;
 
 static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
 static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
+
+static const CGFloat CENTER_SUBVIEW_PADDING = 16.0f;
 
 #if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data
@@ -254,14 +257,65 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
-  NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
-  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
+  NSDirectionalEdgeInsets edgeInsets = NSDirectionalEdgeInsetsZero;
 
   BOOL isDisplayingBackButton = [self shouldBackButtonBeVisibleInNavigationBar:navigationBar];
 
   // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
   UIView *barButtonView = isDisplayingBackButton ? navigationBar.rnscreens_findBackButtonWrapperView : nil;
   CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
+
+  if (@available(iOS 26.0, *)) {
+    edgeInsets = [self calculateEdgeInsets:navigationBar
+                    isDisplayingBackButton:isDisplayingBackButton
+                   platformBackButtonWidth:platformBackButtonWidth];
+  } else {
+    edgeInsets = [self calculateEdgeInsetsLegacy:navigationBar
+                          isDisplayingBackButton:isDisplayingBackButton
+                         platformBackButtonWidth:platformBackButtonWidth];
+  }
+
+  RNSLog(@"Calculated insets: %@", NSStringFromDirectionalEdgeInsets(edgeInsets));
+
+  return edgeInsets;
+}
+
+- (NSDirectionalEdgeInsets)calculateEdgeInsets:(UINavigationBar *)navigationBar
+                        isDisplayingBackButton:(BOOL)isDisplayingBackButton
+                       platformBackButtonWidth:(CGFloat)platformBackButtonWidth
+{
+  NSDirectionalEdgeInsets edgeInsets = NSDirectionalEdgeInsetsZero;
+
+  if (navigationBar.topItem == nil) {
+    RNSLog(@"RNSScreenStackHeaderConfig - no item was presented by Stack");
+    return edgeInsets;
+  }
+
+  UIView *leftButtonView = [[navigationBar.topItem leftBarButtonItem] valueForKey:@"view"];
+  UIView *rightButtonView = [[navigationBar.topItem rightBarButtonItem] valueForKey:@"view"];
+
+  if (leftButtonView != nil) {
+    CGRect leftFrame = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
+    edgeInsets.leading = leftFrame.origin.x + CENTER_SUBVIEW_PADDING;
+    if (isDisplayingBackButton) {
+      edgeInsets.leading += platformBackButtonWidth;
+    }
+  }
+
+  if (rightButtonView != nil) {
+    CGRect rightFrame = [navigationBar convertRect:rightButtonView.bounds fromView:rightButtonView];
+    edgeInsets.trailing = navigationBar.frame.size.width - CGRectGetMaxX(rightFrame) + CENTER_SUBVIEW_PADDING;
+  }
+
+  return edgeInsets;
+}
+
+- (NSDirectionalEdgeInsets)calculateEdgeInsetsLegacy:(UINavigationBar *)navigationBar
+                              isDisplayingBackButton:(BOOL)isDisplayingBackButton
+                             platformBackButtonWidth:(CGFloat)platformBackButtonWidth
+{
+  NSDirectionalEdgeInsets navBarMargins = navigationBar.directionalLayoutMargins;
+  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
 
   const auto edgeInsets = NSDirectionalEdgeInsets{
       .leading =
