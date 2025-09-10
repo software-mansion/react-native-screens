@@ -201,7 +201,7 @@ static char RNSBarButtonItemIdKey;
   }
 }
 
-- (void)setTitleStyle:(NSDictionary *)titleStyle
+- (void)setTitleStyleFromConfig:(NSDictionary *)titleStyle
 {
   NSString *fontFamily = titleStyle[@"fontFamily"];
   NSNumber *fontSize = titleStyle[@"fontSize"];
