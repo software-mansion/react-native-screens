@@ -9,9 +9,9 @@ static char RNSBarButtonItemIdKey;
 
 @implementation RNSBarButtonItem
 
-- (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dict
-                            action:(RNSBarButtonItemAction)action
-                        menuAction:(RNSBarButtonMenuItemAction)menuAction
+- (instancetype)initWithConfig:(NSDictionary<NSString *, id> *)dict
+                        action:(RNSBarButtonItemAction)action
+                    menuAction:(RNSBarButtonMenuItemAction)menuAction
 
 {
   self = [super init];
@@ -32,7 +32,7 @@ static char RNSBarButtonItemIdKey;
 
   NSDictionary *titleStyle = dict[@"titleStyle"];
   if (titleStyle) {
-    [self setTitleStyle:titleStyle];
+    [self setTitleStyleFromConfig:titleStyle];
   }
 
   id tintColorObj = dict[@"tintColor"];
@@ -83,9 +83,9 @@ static char RNSBarButtonItemIdKey;
     if (identifier != nil) {
       self.identifier = identifier;
     }
-    NSDictionary *badgeObj = dict[@"badge"];
-    if (badgeObj != nil) {
-      [self createBadge:badgeObj];
+    NSDictionary *badgeConfig = dict[@"badge"];
+    if (badgeConfig != nil) {
+      [self setBadgeFromConfig:badgeConfig];
     }
   }
 #endif
@@ -135,7 +135,7 @@ static char RNSBarButtonItemIdKey;
     for (NSDictionary *item in items) {
       NSString *menuId = item[@"menuId"];
       if (menuId) {
-        UIAction *actionItem = [self createActionItem:item menuAction:menuAction];
+        UIAction *actionItem = [self createActionItemFromConfig:item menuAction:menuAction];
         [elements addObject:actionItem];
       } else {
         UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
