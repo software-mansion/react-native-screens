@@ -1171,6 +1171,13 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+#pragma mark - RNSSafeAreaProviding
+
+- (UIEdgeInsets)RNS_safeAreaInsets
+{
+  return self.safeAreaInsets;
+}
+
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
