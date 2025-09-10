@@ -154,7 +154,7 @@ static char RNSBarButtonItemIdKey;
                       children:elements];
 }
 
-+ (UIAction *)createActionItem:(NSDictionary *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
++ (UIAction *)createActionItemFromConfig:(NSDictionary *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
 {
   NSString *menuId = dict[@"menuId"];
   NSString *title = dict[@"title"];
