@@ -3,10 +3,11 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSReactBaseView.h"
+#import "RNSSafeAreaProviding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSSafeAreaViewComponentView : RNSReactBaseView
+@interface RNSSafeAreaViewComponentView : RNSReactBaseView <RNSSafeAreaProviding>
 
 @end
 
