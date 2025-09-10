@@ -232,7 +232,7 @@ static char RNSBarButtonItemIdKey;
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-- (void)createBadge:(NSDictionary *)badgeObj
+- (void)setBadgeFromConfig:(NSDictionary *)badgeObj
 {
   if (@available(iOS 26.0, *)) {
     UIBarButtonItemBadge *badge = [UIBarButtonItemBadge badgeWithString:badgeObj[@"value"]];
