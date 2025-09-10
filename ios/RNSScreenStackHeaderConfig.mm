@@ -284,7 +284,10 @@ RNS_IGNORE_SUPER_CALL_END
                         isDisplayingBackButton:(BOOL)isDisplayingBackButton
                        platformBackButtonWidth:(CGFloat)platformBackButtonWidth
 {
-  NSDirectionalEdgeInsets edgeInsets = NSDirectionalEdgeInsetsZero;
+  NSDirectionalEdgeInsets edgeInsets = {
+      .leading = CENTER_SUBVIEW_PADDING,
+      .trailing = CENTER_SUBVIEW_PADDING,
+  };
 
   if (navigationBar.topItem == nil) {
     RNSLog(@"RNSScreenStackHeaderConfig - no item was presented by Stack");
@@ -296,7 +299,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (leftButtonView != nil) {
     CGRect leftFrame = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
-    edgeInsets.leading = leftFrame.origin.x + CENTER_SUBVIEW_PADDING;
+    edgeInsets.leading += CGRectGetMinX(leftFrame);
     if (isDisplayingBackButton) {
       edgeInsets.leading += platformBackButtonWidth;
     }
@@ -304,7 +307,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (rightButtonView != nil) {
     CGRect rightFrame = [navigationBar convertRect:rightButtonView.bounds fromView:rightButtonView];
-    edgeInsets.trailing = navigationBar.frame.size.width - CGRectGetMaxX(rightFrame) + CENTER_SUBVIEW_PADDING;
+    edgeInsets.trailing += navigationBar.frame.size.width - CGRectGetMaxX(rightFrame);
   }
 
   return edgeInsets;
