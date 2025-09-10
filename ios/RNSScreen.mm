@@ -1412,6 +1412,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
+  __weak UIView *_zoomTransitionSource;
   CGRect _lastViewFrame;
   RNSScreenView *_initialView;
   UIView *_fakeView;
@@ -1434,10 +1435,61 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _shouldNotify = YES;
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
+    _zoomTransitionSource = nil;
+    __weak RNSScreen *weakSelf = self;
+
+    UIZoomTransitionOptions *zoomOptions = [UIZoomTransitionOptions new];
+    zoomOptions.alignmentRectProvider = ^CGRect(UIZoomTransitionAlignmentRectContext *context) {
+      RNSScreen *strongSelf = weakSelf;
+      if (strongSelf == nil) {
+        RCTLogError(@"[RNScreens] Nullish self");
+        return CGRectNull;
+      }
+
+      NSLog(@"AlignmentRectProvider called");
+
+      //      UIView *navCtrlView = strongSelf.navigationController.view;
+      //      CGRect frame = [strongSelf->_zoomTransitionSource convertRect:strongSelf->_zoomTransitionSource.frame
+      //      toView:navCtrlView];
+
+      return context.sourceView.frame;
+    };
+
+    self.preferredTransition = [UIViewControllerTransition
+           zoomWithOptions:nil
+        sourceViewProvider:^UIView *(UIZoomTransitionSourceViewProviderContext *context) {
+          RNSScreen *strongSelf = weakSelf;
+          if (strongSelf == nil) {
+            RCTLogError(@"[RNScreens] Nullish self");
+            return nil;
+          }
+
+          if (![context.zoomedViewController isKindOfClass:RNSScreen.class]) {
+            NSLog(@"[RNScreens] Unexpected view controller. Got %@", context.zoomedViewController);
+            assert(false);
+          }
+
+          NSLog(
+              @"Source\n%@\nZoomed\n%@\nSource\n%@",
+              context.sourceViewController,
+              context.zoomedViewController,
+              strongSelf->_zoomTransitionSource);
+
+          RNSScreen *sourceScreen = static_cast<RNSScreen *>(context.sourceViewController);
+          return sourceScreen->_zoomTransitionSource;
+        }];
 #endif
   }
   return self;
 }
+
+#if RNS_GAMMA_ENABLED
+- (void)registerForZoomTransition:(UIView *)zoomSourceView
+{
+  NSLog(@"Registering view %@ for zoom transition", zoomSourceView);
+  self->_zoomTransitionSource = zoomSourceView;
+}
+#endif
 
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated

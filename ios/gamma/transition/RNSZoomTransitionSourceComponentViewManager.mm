@@ -1,0 +1,7 @@
+#import "RNSZoomTransitionSourceComponentViewManager.h"
+
+@implementation RNSZoomTransitionSourceComponentViewManager
+
+RCT_EXPORT_MODULE(RNSZoomTransitionSourceViewManager)
+
+@end

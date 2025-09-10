@@ -55,6 +55,10 @@ namespace react = facebook::react;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
 
+#if RNS_GAMMA_ENABLED
+- (void)registerForZoomTransition:(UIView *)zoomSourceView;
+#endif
+
 @end
 
 @class RNSScreenStackHeaderConfig;
