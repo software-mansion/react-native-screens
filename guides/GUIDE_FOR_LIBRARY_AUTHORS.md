@@ -558,7 +558,7 @@ An array of objects describing native bar button items to display on the left or
 - A spacing item to adjust layout
 - A object for configuration of the `ScreenStackHeaderRightView` or `ScreenStackHeaderLeftView`
 
-#### The button and menu items supports:
+#### The button and menu items support:
 
 `title: string` — Title of the button.
 
