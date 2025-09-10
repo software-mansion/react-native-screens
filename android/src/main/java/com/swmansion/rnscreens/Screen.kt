@@ -34,6 +34,7 @@ import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.utils.RNSLog
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
@@ -160,6 +161,10 @@ class Screen(
         wrapper.delegate = this
     }
 
+    internal fun onAddedToContainer(container: ScreenStack) {
+        (fragment as ScreenStackFragment).setToolbar(this.headerConfig!!.toolbar)
+    }
+
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
         // do nothing, react native will keep the view hierarchy so no need to serialize/deserialize
         // view's states. The side effect of restoring is that TextInput components would trigger
@@ -184,6 +189,7 @@ class Screen(
             val height = b - t
 
             dispatchShadowStateUpdate(width, height, t)
+            RNSLog.d("Screen", "Screen [$id]: onLayout height=$height")
 
             // FormSheet has no header in current model.
             notifyHeaderHeightChange(t)

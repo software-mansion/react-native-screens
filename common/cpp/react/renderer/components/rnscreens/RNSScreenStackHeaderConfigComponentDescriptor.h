@@ -19,31 +19,35 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-    react_native_assert(
-        dynamic_cast<RNSScreenStackHeaderConfigShadowNode *>(&shadowNode));
-    auto &configShadowNode =
-        static_cast<RNSScreenStackHeaderConfigShadowNode &>(shadowNode);
-
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&configShadowNode));
-    auto &layoutableShadowNode =
-        dynamic_cast<YogaLayoutableShadowNode &>(configShadowNode);
-
-    auto state = std::static_pointer_cast<
-        const RNSScreenStackHeaderConfigShadowNode::ConcreteState>(
-        shadowNode.getState());
-    auto stateData = state->getData();
+    //    react_native_assert(
+    //        dynamic_cast<RNSScreenStackHeaderConfigShadowNode
+    //        *>(&shadowNode));
+    //    auto &configShadowNode =
+    //        static_cast<RNSScreenStackHeaderConfigShadowNode &>(shadowNode);
+    //
+    //    react_native_assert(
+    //        dynamic_cast<YogaLayoutableShadowNode *>(&configShadowNode));
+    //    auto &layoutableShadowNode =
+    //        dynamic_cast<YogaLayoutableShadowNode &>(configShadowNode);
+    //
+    //    auto state = std::static_pointer_cast<
+    //        const RNSScreenStackHeaderConfigShadowNode::ConcreteState>(
+    //        shadowNode.getState());
+    //    auto stateData = state->getData();
 
 #ifdef ANDROID
-    if (stateData.frameSize.width != 0) {
-      layoutableShadowNode.setSize({stateData.frameSize.width, YGUndefined});
-      layoutableShadowNode.setPadding({
-          stateData.paddingStart,
-          0,
-          stateData.paddingEnd,
-          0,
-      });
-    }
+//    if (stateData.frameSize.width != 0) {
+//      initialHeaderHeightCandidate = stateData.frameSize.height;
+//      layoutableShadowNode.setSize({stateData.frameSize.width, YGUndefined});
+//      layoutableShadowNode.setPadding({
+//          stateData.paddingStart,
+//          0,
+//          stateData.paddingEnd,
+//          0,
+//      });
+//    } else {
+//      layoutableShadowNode.setSize({YGUndefined, 80.f});
+//    }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       layoutableShadowNode.setSize(stateData.frameSize);
@@ -58,6 +62,9 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
     configShadowNode.setImageLoader(imageLoader);
 #endif // !ANDROID && !NDEBUG
   }
+
+ private:
+  //  mutable Float initialHeaderHeightCandidate{-1.0f};
 };
 
 } // namespace facebook::react
