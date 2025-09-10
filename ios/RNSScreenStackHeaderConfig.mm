@@ -860,7 +860,7 @@ RNS_IGNORE_SUPER_CALL_END
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
     if (dict[@"buttonId"] || dict[@"menu"]) {
-      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithDictionary:dict
+      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithConfig:dict
           action:^(NSString *buttonId) {
 #ifdef RCT_NEW_ARCH_ENABLED
             auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
