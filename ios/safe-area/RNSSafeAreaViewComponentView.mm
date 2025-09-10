@@ -58,11 +58,11 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSSafeAreaViewComponentDescriptor>();
 }
 
-@end
 #else
 #pragma mark - LEGACY RCTComponent protocol
 
 #endif
+@end
 
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure

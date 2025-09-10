@@ -5,8 +5,8 @@
 import React from 'react';
 import { SafeAreaViewProps } from './SafeAreaView.types';
 import SafeAreaViewNativeComponent, {
-  NativeProps,
-} from 'react-native-screens/fabric/safe-area/SafeAreaViewNativeComponent';
+  NativeProps as SafeAreaViewNativeComponentProps,
+} from '../../fabric/safe-area/SafeAreaViewNativeComponent';
 
 function SafeAreaView(props: SafeAreaViewProps) {
   return (
@@ -21,7 +21,7 @@ export default SafeAreaView;
 
 function getNativeEdgesProp(
   edges: SafeAreaViewProps['edges'],
-): NativeProps['edges'] {
+): SafeAreaViewNativeComponentProps['edges'] {
   return {
     top: true,
     bottom: true,
