@@ -17,18 +17,16 @@
  * @brief Responsible for adding `view` to the SplitView set for observing views that need to adapt layout on SplitView
  * layout update.
  *
- * As for now, it should find a proper `RNSSplitViewScreenComponentView` and use
- * `RNSSplitViewScreenComponentView::registerForFrameUpdates`.
+ * @param view - UIView which subscribes for SplitViewScreen layout updates
  */
-- (void)registerForSplitView;
+- (void)registerForFrameCorrection:(nonnull UIView *)view;
 
 /**
  * @brief Responsible for removing `view` from the SplitView set for observing views that need to adapt layout on
  * SplitView layout update.
  *
- * As for now, it should find a proper `RNSSplitViewScreenComponentView` and use
- * `RNSSplitViewScreenComponentView::unregisterFromFrameUpdates`.
+ * @param view - UIView which unsubscribes for SplitViewScreen layout updates
  */
-- (void)unregisterFromSplitView;
+- (void)unregisterFromFrameCorrection:(nonnull UIView *)view;
 
 @end
