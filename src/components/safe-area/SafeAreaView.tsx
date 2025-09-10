@@ -23,10 +23,10 @@ function getNativeEdgesProp(
   edges: SafeAreaViewProps['edges'],
 ): SafeAreaViewNativeComponentProps['edges'] {
   return {
-    top: true,
-    bottom: true,
-    left: true,
-    right: true,
+    top: false,
+    bottom: false,
+    left: false,
+    right: false,
     ...edges,
   };
 }
