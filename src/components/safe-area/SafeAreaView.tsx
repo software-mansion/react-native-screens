@@ -1,0 +1,32 @@
+// Implementation adapted from `react-native-safe-area-context`:
+// https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/src/SafeAreaView.tsx
+'use client';
+
+import React from 'react';
+import { SafeAreaViewProps } from './SafeAreaView.types';
+import SafeAreaViewNativeComponent, {
+  NativeProps,
+} from 'react-native-screens/fabric/safe-area/SafeAreaViewNativeComponent';
+
+function SafeAreaView(props: SafeAreaViewProps) {
+  return (
+    <SafeAreaViewNativeComponent
+      {...props}
+      edges={getNativeEdgesProp(props.edges)}
+    />
+  );
+}
+
+export default SafeAreaView;
+
+function getNativeEdgesProp(
+  edges: SafeAreaViewProps['edges'],
+): NativeProps['edges'] {
+  return {
+    top: true,
+    bottom: true,
+    left: true,
+    right: true,
+    ...edges,
+  };
+}
