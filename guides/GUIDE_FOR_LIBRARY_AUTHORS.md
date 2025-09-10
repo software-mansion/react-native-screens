@@ -545,6 +545,7 @@ Possible options:
 - `minimal` – show just an icon
 
 ### `headerLeftItems` / `headerRightItems` (iOS only)
+
 An array of objects describing native bar button items to display on the left or right side of the header. Each item can be:
 
 - A button with a title, icon, and action
