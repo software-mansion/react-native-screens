@@ -1178,6 +1178,28 @@ RNS_IGNORE_SUPER_CALL_END
   return self.safeAreaInsets;
 }
 
+- (void)invalidateSafeAreaInsets
+{
+  // TODO: limit number of notifications if nothing has changed
+  [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
+}
+
+#pragma mark - RNSSafeAreaProviding related methods
+
+// TODO: register for UIKeyboard notifications
+
+- (void)safeAreaInsetsDidChange
+{
+  [super safeAreaInsetsDidChange];
+  [self invalidateSafeAreaInsets];
+}
+
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+  [self invalidateSafeAreaInsets];
+}
+
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 

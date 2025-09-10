@@ -49,9 +49,18 @@ namespace react = facebook::react;
 
 - (void)didMoveToWindow
 {
+  UIView *previousProviderView = _providerView;
   _providerView = [self findNearestProvider];
 
   [self updateStateIfNecessary];
+
+  if (previousProviderView != _providerView) {
+    [NSNotificationCenter.defaultCenter removeObserver:self name:RNSSafeAreaDidChange object:previousProviderView];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(safeAreaProviderInsetsDidChange:)
+                                               name:RNSSafeAreaDidChange
+                                             object:_providerView];
+  }
 }
 
 - (UIView<RNSSafeAreaProviding> *_Nonnull)findNearestProvider
@@ -64,6 +73,11 @@ namespace react = facebook::react;
     current = current.superview;
   }
   return self;
+}
+
+- (void)safeAreaProviderInsetsDidChange:(NSNotification *)notification
+{
+  [self updateStateIfNecessary];
 }
 
 - (void)updateStateIfNecessary
@@ -137,6 +151,7 @@ BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInse
 {
   [super prepareForRecycle];
 
+  [NSNotificationCenter.defaultCenter removeObserver:self];
   _state.reset();
   _providerView = nil;
   _currentSafeAreaInsets = UIEdgeInsetsZero;
