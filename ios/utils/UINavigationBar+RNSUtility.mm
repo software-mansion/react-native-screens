@@ -1,4 +1,3 @@
-#import "RNSLog.h"
 #import "UINavigationBar+RNSUtility.h"
 
 @implementation UINavigationBar (RNSUtility)
@@ -101,14 +100,11 @@
 {
   Class platterItemViewClass = NSClassFromString(@"_UINavigationBarPlatterView");
   if (!platterItemViewClass) {
-    RNSLog(@"[RNScreens] Class _UINavigationBarPlatterItemView not found.");
     return nil;
   }
 
-  RNSLog(@"[RNScreens] Search for platter from %p", view);
   UIView *platterItemView = [self rnscreens_findSubviewOfClass:platterItemViewClass from:view];
   if (!platterItemView) {
-    RNSLog(@"[RNScreens] No _UINavigationBarPlatterItemView found in UINavigationBar.");
     return nil;
   }
 

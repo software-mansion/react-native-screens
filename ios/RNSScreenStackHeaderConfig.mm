@@ -41,7 +41,7 @@ namespace react = facebook::react;
 static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
 static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
-static const CGFloat DEFAULT_NAVBUTTON_AND_TITLE_SPACING = 16.0f;
+static const CGFloat DEFAULT_NAVBUTTON_AND_TITLE_SPACING = 8.0f;
 
 #if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data

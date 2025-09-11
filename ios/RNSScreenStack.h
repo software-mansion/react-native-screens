@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RNS_GAMMA_ENABLED
                                          >
 
+@property (nonatomic) BOOL shouldPreventHeaderLayoutInfoUpdateOnTransition;
+
 @end
 
 @interface RNSScreenStackView :

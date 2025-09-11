@@ -101,6 +101,21 @@ namespace react = facebook::react;
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+
+  // For iOS26+ we're changing the implementation for edge insets that is heavily based on
+  // navigation bar button items. During the transition, these items might not be positioned
+  // properly, what may result in calculating wrong layout for the header title, which can result in
+  // unmounting the component.
+  if (@available(iOS 26.0, *)) {
+    [self.transitionCoordinator
+        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          self.shouldPreventHeaderLayoutInfoUpdateOnTransition = YES;
+        }
+        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          self.shouldPreventHeaderLayoutInfoUpdateOnTransition = NO;
+        }];
+  }
+
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
@@ -146,6 +161,16 @@ namespace react = facebook::react;
 
 - (void)maybeUpdateHeaderLayoutInfoInShadowTree:(RNSScreen *)screenController
 {
+  // For iOS26+ we're changing the implementation for edge insets that is heavily based on
+  // navigation bar button items. During the transition, these items might not be positioned
+  // properly, what may result in calculating wrong layout for the header title, which can result in
+  // unmounting the component.
+  if (@available(iOS 26.0, *)) {
+    if (self.shouldPreventHeaderLayoutInfoUpdateOnTransition) {
+      return;
+    }
+  }
+
   // This might happen e.g. if there is only native title present in navigation bar.
   if (self.navigationBar.subviews.count < 2) {
     return;
