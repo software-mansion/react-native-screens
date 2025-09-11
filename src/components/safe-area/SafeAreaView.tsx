@@ -12,6 +12,7 @@ function SafeAreaView(props: SafeAreaViewProps) {
   return (
     <SafeAreaViewNativeComponent
       {...props}
+      style={[{ flex: 1 }, props.style]}
       edges={getNativeEdgesProp(props.edges)}
     />
   );
