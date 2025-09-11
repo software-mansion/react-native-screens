@@ -40,7 +40,7 @@ static char RNSBarButtonItemIdKey;
     self.tintColor = [RCTConvert UIColor:tintColorObj];
   }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
   if (@available(iOS 16.0, *)) {
     NSNumber *hiddenNum = dict[@"hidden"];
     if (hiddenNum != nil) {
@@ -49,10 +49,12 @@ static char RNSBarButtonItemIdKey;
   }
 #endif
 
+#if !TARGET_OS_TV
   NSNumber *selectedNum = dict[@"selected"];
   if (selectedNum != nil) {
     self.selected = [selectedNum boolValue];
   }
+#endif
 
   NSNumber *enabledNum = dict[@"enabled"];
   if (enabledNum != nil) {
@@ -64,10 +66,14 @@ static char RNSBarButtonItemIdKey;
     self.width = [width doubleValue];
   }
 
-  NSNumber *changesSelectionAsPrimaryActionNum = dict[@"changesSelectionAsPrimaryAction"];
-  if (changesSelectionAsPrimaryActionNum != nil) {
-    self.changesSelectionAsPrimaryAction = [changesSelectionAsPrimaryActionNum boolValue];
+#if !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
+  if (@available(tvOS 17.0, *)) {
+    NSNumber *changesSelectionAsPrimaryActionNum = dict[@"changesSelectionAsPrimaryAction"];
+    if (changesSelectionAsPrimaryActionNum != nil) {
+      self.changesSelectionAsPrimaryAction = [changesSelectionAsPrimaryActionNum boolValue];
+    }
   }
+#endif
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
@@ -112,10 +118,14 @@ static char RNSBarButtonItemIdKey;
     self.accessibilityHint = dict[@"accessibilityHint"];
   }
 
-  NSDictionary *menu = dict[@"menu"];
-  if (menu) {
-    self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction];
+#if !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
+  if (@available(tvOS 17.0, *)) {
+    NSDictionary *menu = dict[@"menu"];
+    if (menu) {
+      self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction];
+    }
   }
+#endif
 
   NSString *buttonId = dict[@"buttonId"];
   if (buttonId && action) {
@@ -181,14 +191,18 @@ static char RNSBarButtonItemIdKey;
     actionElement.attributes = UIMenuElementAttributesDisabled;
   } else if ([attributes isEqualToString:@"hidden"]) {
     actionElement.attributes = UIMenuElementAttributesHidden;
-  }
+  } else if ([attributes isEqualToString:@"keepsMenuPresented"]) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  else if (@available(iOS 16.0, *)) {
-    if ([attributes isEqualToString:@"keepsMenuPresented"]) {
+    if (@available(iOS 16.0, *)) {
       actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
     }
-  }
 #endif
+#if TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160000
+    if (@available(tvOS 16.0, *)) {
+      actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
+    }
+#endif
+  }
   return actionElement;
 }
 
@@ -206,7 +220,15 @@ static char RNSBarButtonItemIdKey;
   NSString *fontWeight = titleStyle[@"fontWeight"];
   NSMutableDictionary *attrs = [NSMutableDictionary new];
   if (fontFamily || fontWeight) {
-    NSNumber *resolvedFontSize = fontSize ? fontSize : [NSNumber numberWithFloat:[UIFont labelFontSize]];
+    NSNumber *resolvedFontSize = fontSize;
+    if (!resolvedFontSize) {
+#if TARGET_OS_TV
+      resolvedFontSize = [NSNumber numberWithDouble:17.0];
+#else
+      resolvedFontSize = [NSNumber numberWithFloat:[UIFont labelFontSize]];
+#endif
+    }
+
     attrs[NSFontAttributeName] = [RCTFont updateFont:nil
                                           withFamily:fontFamily
                                                 size:resolvedFontSize
@@ -215,7 +237,15 @@ static char RNSBarButtonItemIdKey;
                                              variant:nil
                                      scaleMultiplier:1.0];
   } else {
-    CGFloat resolvedFontSize = fontSize ? [fontSize floatValue] : [UIFont labelFontSize];
+    CGFloat resolvedFontSize = fontSize ? [fontSize floatValue] : 0;
+    if (resolvedFontSize == 0) {
+#if TARGET_OS_TV
+      resolvedFontSize = 17.0;
+#else
+      resolvedFontSize = [UIFont labelFontSize];
+#endif
+    }
+
     attrs[NSFontAttributeName] = [UIFont systemFontOfSize:resolvedFontSize];
   }
   id titleColor = titleStyle[@"color"];
