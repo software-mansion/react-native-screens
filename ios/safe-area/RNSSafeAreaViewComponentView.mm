@@ -10,6 +10,10 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <rnscreens/RNSSafeAreaViewComponentDescriptor.h>
 #import <rnscreens/RNSSafeAreaViewState.h>
+#else
+#import <React/RCTUIManager.h>
+#import "RNSSafeAreaViewEdges.h"
+#import "RNSSafeAreaViewLocalData.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #if RCT_NEW_ARCH_ENABLED
@@ -19,7 +23,12 @@ namespace react = facebook::react;
 #pragma mark - View implementation
 
 @implementation RNSSafeAreaViewComponentView {
+#if RCT_NEW_ARCH_ENABLED
   facebook::react::RNSSafeAreaViewShadowNode::ConcreteState::Shared _state;
+#else
+  __weak RCTBridge *_bridge;
+  RNSSafeAreaViewEdges _edges;
+#endif // RCT_NEW_ARCH_ENABLED
   UIEdgeInsets _currentSafeAreaInsets;
   __weak UIView<RNSSafeAreaProviding> *_Nullable _providerView;
 }
@@ -30,7 +39,6 @@ namespace react = facebook::react;
 {
   [super load];
 }
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -39,12 +47,28 @@ namespace react = facebook::react;
   }
   return self;
 }
+#else
+- (instancetype)initWithBridge:(RCTBridge *)bridge
+{
+  if (self = [super initWithFrame:CGRectZero]) {
+    _bridge = bridge;
+    [self initState];
+  }
+
+  return self;
+}
+
+RCT_NOT_IMPLEMENTED(-(instancetype)initWithCoder : (NSCoder *)decoder)
+RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)initState
 {
 #if RCT_NEW_ARCH_ENABLED
   static const auto defaultProps = std::make_shared<const react::RNSSafeAreaViewProps>();
   _props = defaultProps;
+#else
+  _edges = RNSSafeAreaViewEdgesMake(false, false, false, false);
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
@@ -53,14 +77,18 @@ namespace react = facebook::react;
   UIView *previousProviderView = _providerView;
   _providerView = [self findNearestProvider];
 
-  [self updateStateIfNecessary];
+  [self invalidateSafeAreaInsets];
 
   if (previousProviderView != _providerView) {
-    [NSNotificationCenter.defaultCenter removeObserver:self name:RNSSafeAreaDidChange object:previousProviderView];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(safeAreaProviderInsetsDidChange:)
-                                               name:RNSSafeAreaDidChange
-                                             object:_providerView];
+    if (previousProviderView != nil) {
+      [NSNotificationCenter.defaultCenter removeObserver:self name:RNSSafeAreaDidChange object:previousProviderView];
+    }
+    if (_providerView != nil) {
+      [NSNotificationCenter.defaultCenter addObserver:self
+                                             selector:@selector(safeAreaProviderInsetsDidChange:)
+                                                 name:RNSSafeAreaDidChange
+                                               object:_providerView];
+    }
   }
 }
 
@@ -78,10 +106,10 @@ namespace react = facebook::react;
 
 - (void)safeAreaProviderInsetsDidChange:(NSNotification *)notification
 {
-  [self updateStateIfNecessary];
+  [self invalidateSafeAreaInsets];
 }
 
-- (void)updateStateIfNecessary
+- (void)invalidateSafeAreaInsets
 {
   if (_providerView == nil) {
     return;
@@ -94,9 +122,14 @@ namespace react = facebook::react;
   }
 
   _currentSafeAreaInsets = safeAreaInsets;
+#if RCT_NEW_ARCH_ENABLED
   [self updateState];
+#else
+  [self updateLocalData];
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
+#if RCT_NEW_ARCH_ENABLED
 - (void)updateState
 {
   using facebook::react::RNSSafeAreaViewShadowNode;
@@ -113,18 +146,22 @@ namespace react = facebook::react;
         return std::make_shared<RNSSafeAreaViewShadowNode::ConcreteState::Data const>(newData);
       });
 }
+#else
+- (void)updateLocalData
+{
+  if (_providerView == nil) {
+    return;
+  }
+  RNSSafeAreaViewLocalData *localData = [[RNSSafeAreaViewLocalData alloc] initWithInsets:_currentSafeAreaInsets
+                                                                                   edges:_edges];
+  [_bridge.uiManager setLocalData:localData forView:self];
+}
+#endif // RCT_NEW_ARCH_ENABLED
 
 BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInsets insets2, CGFloat threshold)
 {
   return ABS(insets1.left - insets2.left) <= threshold && ABS(insets1.right - insets2.right) <= threshold &&
       ABS(insets1.top - insets2.top) <= threshold && ABS(insets1.bottom - insets2.bottom) <= threshold;
-}
-
-#pragma mark - RNSSafeAreaProviding
-
-- (UIEdgeInsets)RNS_safeAreaInsets
-{
-  return self.safeAreaInsets;
 }
 
 #if RCT_NEW_ARCH_ENABLED
@@ -159,8 +196,13 @@ BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInse
 }
 
 #else
-#pragma mark - LEGACY RCTComponent protocol
+#pragma mark - Paper props / LEGACY RCTComponent protocol
 
+- (void)setEdges:(RNSSafeAreaViewEdges)edges
+{
+  _edges = edges;
+  [self updateLocalData];
+}
 #endif
 @end
 
