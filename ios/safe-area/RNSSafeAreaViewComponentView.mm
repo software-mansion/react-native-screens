@@ -3,6 +3,7 @@
 #import "RNSSafeAreaViewComponentView.h"
 #import <React/RCTConversions.h>
 #import <React/RCTUtils.h>
+#import "RNSSafeAreaProviding.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -63,7 +64,7 @@ namespace react = facebook::react;
   }
 }
 
-- (UIView<RNSSafeAreaProviding> *_Nonnull)findNearestProvider
+- (UIView<RNSSafeAreaProviding> *_Nullable)findNearestProvider
 {
   UIView *current = self.superview;
   while (current != nil) {
@@ -72,7 +73,7 @@ namespace react = facebook::react;
     }
     current = current.superview;
   }
-  return self;
+  return nil;
 }
 
 - (void)safeAreaProviderInsetsDidChange:(NSNotification *)notification
