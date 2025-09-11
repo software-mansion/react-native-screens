@@ -119,6 +119,8 @@ namespace react = facebook::react;
   for (UIView *view in _viewsForFrameCorrection) {
     [RNSFrameCorrector applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
   }
+
+  [self invalidateSafeAreaInsets];
 }
 
 #pragma mark - ShadowTreeState
@@ -135,6 +137,29 @@ namespace react = facebook::react;
 {
   RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
   return _reactEventEmitter;
+}
+
+#pragma mark - RNSSafeAreaProviding
+
+- (UIEdgeInsets)RNS_safeAreaInsets
+{
+  return self.safeAreaInsets;
+}
+
+- (void)invalidateSafeAreaInsets
+{
+  // TODO: limit number of notifications if nothing has changed
+  [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
+}
+
+#pragma mark - RNSSafeAreaProviding related methods
+
+// TODO: register for UIKeyboard notifications
+
+- (void)safeAreaInsetsDidChange
+{
+  [super safeAreaInsetsDidChange];
+  [self invalidateSafeAreaInsets];
 }
 
 #pragma mark - RCTViewComponentViewProtocol
