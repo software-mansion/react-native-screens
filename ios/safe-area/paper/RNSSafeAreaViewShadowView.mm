@@ -4,7 +4,6 @@
 #import "RNSSafeAreaViewShadowView.h"
 
 #if !RCT_NEW_ARCH_ENABLED
-
 #import <React/RCTAssert.h>
 #include <math.h>
 
@@ -150,5 +149,4 @@ SHADOW_VIEW_MARGIN_PROP(Bottom, BOTTOM);
 SHADOW_VIEW_MARGIN_PROP(Left, LEFT);
 
 @end
-
 #endif // !RCT_NEW_ARCH_ENABLED

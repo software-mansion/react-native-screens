@@ -4,7 +4,6 @@
 #import "RNSSafeAreaViewEdges.h"
 
 #if !RCT_NEW_ARCH_ENABLED
-
 #import <React/RCTConvert.h>
 
 RNSSafeAreaViewEdges RNSSafeAreaViewEdgesMake(BOOL top, BOOL right, BOOL bottom, BOOL left)
@@ -35,5 +34,4 @@ RCT_CUSTOM_CONVERTER(
     RNSSafeAreaViewEdgesMakeString(json[@"top"], json[@"right"], json[@"bottom"], json[@"left"]))
 
 @end
-
 #endif // !RCT_NEW_ARCH_ENABLED

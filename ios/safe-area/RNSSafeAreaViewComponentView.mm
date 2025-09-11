@@ -1,5 +1,7 @@
 // Implementation adapted from `react-native-safe-area-context`:
 // https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/ios/Fabric/RNCSafeAreaViewComponentView.mm
+// https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/ios/RNCSafeAreaView.m
+
 #import "RNSSafeAreaViewComponentView.h"
 #import <React/RCTConversions.h>
 #import <React/RCTUtils.h>

@@ -1,7 +1,7 @@
 // Implementation adapted from `react-native-safe-area-context`:
 // https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/ios/RNCSafeAreaViewLocalData.m
-#if !RCT_NEW_ARCH_ENABLED
 
+#if !RCT_NEW_ARCH_ENABLED
 #import "RNSSafeAreaViewLocalData.h"
 
 @implementation RNSSafeAreaViewLocalData
@@ -17,5 +17,4 @@
 }
 
 @end
-
 #endif // !RCT_NEW_ARCH_ENABLED
