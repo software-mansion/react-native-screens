@@ -9,13 +9,19 @@ import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerInterface
 
 @ReactModule(name = SafeAreaViewManager.REACT_CLASS)
-class SafeAreaViewManager : ViewGroupManager<SafeAreaView>(), RNSSafeAreaViewManagerInterface<SafeAreaView> {
+class SafeAreaViewManager :
+    ViewGroupManager<SafeAreaView>(),
+    RNSSafeAreaViewManagerInterface<SafeAreaView> {
     private val delegate: ViewManagerDelegate<SafeAreaView> = RNSSafeAreaViewManagerDelegate<SafeAreaView, SafeAreaViewManager>(this)
+
     override fun getName() = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext): SafeAreaView = SafeAreaView(reactContext)
 
-    override fun setEdges(view: SafeAreaView, value: ReadableMap?): Unit = Unit
+    override fun setEdges(
+        view: SafeAreaView,
+        value: ReadableMap?,
+    ): Unit = Unit
 
     companion object {
         const val REACT_CLASS = "RNSSafeAreaView"
