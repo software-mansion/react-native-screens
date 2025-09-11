@@ -1,3 +1,4 @@
+#import "RNSLog.h"
 #import "UINavigationBar+RNSUtility.h"
 
 @implementation UINavigationBar (RNSUtility)
@@ -81,6 +82,37 @@
   }
 
   return NSClassFromString(@"_UINavigationBarContentView"); // Sampled from iOS 17.5 (iPhone 15 Pro)
+}
+
+- (nullable UIView *)rnscreens_findSubviewOfClass:(Class)viewClass from:(nullable UIView *)view
+{
+  if (view == nil) {
+    return nil;
+  }
+
+  if ([view isKindOfClass:viewClass]) {
+    return view;
+  }
+
+  return [self rnscreens_findSubviewOfClass:viewClass from:view.superview];
+}
+
+- (nullable UIView *)rnscreens_findNavigationBarPlatterViewFromUIView:(UIView *_Nonnull)view
+{
+  Class platterItemViewClass = NSClassFromString(@"_UINavigationBarPlatterView");
+  if (!platterItemViewClass) {
+    RNSLog(@"[RNScreens] Class _UINavigationBarPlatterItemView not found.");
+    return nil;
+  }
+
+  RNSLog(@"[RNScreens] Search for platter from %p", view);
+  UIView *platterItemView = [self rnscreens_findSubviewOfClass:platterItemViewClass from:view];
+  if (!platterItemView) {
+    RNSLog(@"[RNScreens] No _UINavigationBarPlatterItemView found in UINavigationBar.");
+    return nil;
+  }
+
+  return platterItemView;
 }
 
 @end

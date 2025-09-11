@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable UIView *)rnscreens_findBackButtonWrapperView;
 
+- (nullable UIView *)rnscreens_findNavigationBarPlatterViewFromUIView:(UIView *_Nonnull)view;
+
 @end
 
 NS_ASSUME_NONNULL_END

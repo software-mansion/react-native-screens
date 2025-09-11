@@ -41,7 +41,7 @@ namespace react = facebook::react;
 static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
 static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
-static const CGFloat CENTER_SUBVIEW_PADDING = 16.0f;
+static const CGFloat DEFAULT_NAVBUTTON_AND_TITLE_SPACING = 16.0f;
 
 #if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data
@@ -284,9 +284,11 @@ RNS_IGNORE_SUPER_CALL_END
                         isDisplayingBackButton:(BOOL)isDisplayingBackButton
                        platformBackButtonWidth:(CGFloat)platformBackButtonWidth
 {
+  // UIKit has some spacing between navigation items and title which we cannot easily compute.
+  // The current constant was determined empirically based on testing and visual alignment.
   NSDirectionalEdgeInsets edgeInsets = {
-      .leading = CENTER_SUBVIEW_PADDING,
-      .trailing = CENTER_SUBVIEW_PADDING,
+      .leading = DEFAULT_NAVBUTTON_AND_TITLE_SPACING,
+      .trailing = DEFAULT_NAVBUTTON_AND_TITLE_SPACING,
   };
 
   if (navigationBar.topItem == nil) {
@@ -297,16 +299,55 @@ RNS_IGNORE_SUPER_CALL_END
   UIView *leftButtonView = [[[navigationBar.topItem leftBarButtonItems] lastObject] valueForKey:@"view"];
   UIView *rightButtonView = [[[navigationBar.topItem rightBarButtonItems] lastObject] valueForKey:@"view"];
 
+  // Searching for the rightmost button on the left side
+  // We prefer leftButtons over backButton because of the current positioning
+  // According to the docs:
+  // https://developer.apple.com/documentation/uikit/uinavigationitem/leftbarbuttonitems?language=objc
+  // we should take the lastObject as the rightmost item.
+  // TODO: ensure about RTL support before merging
   if (leftButtonView != nil) {
-    CGRect leftFrame = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
-    edgeInsets.leading += CGRectGetMinX(leftFrame);
+    CGRect leftFrameInNav = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
+    edgeInsets.leading += CGRectGetMinX(leftFrameInNav);
+
+    auto platterItemForLeftButton = [navigationBar rnscreens_findNavigationBarPlatterViewFromUIView:leftButtonView];
+
+    if (platterItemForLeftButton != nil) {
+      CGRect platterFrameInNav = [navigationBar convertRect:platterItemForLeftButton.bounds
+                                                   fromView:platterItemForLeftButton];
+
+      CGFloat leftButtonRight = CGRectGetMaxX(leftFrameInNav);
+      CGFloat platterRight = CGRectGetMaxX(platterFrameInNav);
+
+      CGFloat rightPadding = platterRight - leftButtonRight;
+
+      edgeInsets.leading += rightPadding;
+    }
   } else if (isDisplayingBackButton) {
     edgeInsets.leading += platformBackButtonWidth;
   }
 
+  // Searching for the leftmost button on the right side
+  // According to the docs:
+  // https://developer.apple.com/documentation/uikit/uinavigationitem/rightbarbuttonitems?language=objc
+  // we should take the lastObject as the leftmost item.
+  // TODO: ensure about RTL support before merging
   if (rightButtonView != nil) {
-    CGRect rightFrame = [navigationBar convertRect:rightButtonView.bounds fromView:rightButtonView];
-    edgeInsets.trailing += navigationBar.frame.size.width - CGRectGetMaxX(rightFrame);
+    CGRect rightFrameInNav = [navigationBar convertRect:rightButtonView.bounds fromView:rightButtonView];
+    edgeInsets.trailing += navigationBar.frame.size.width - CGRectGetMaxX(rightFrameInNav);
+
+    auto platterItemForRightButton = [navigationBar rnscreens_findNavigationBarPlatterViewFromUIView:rightButtonView];
+
+    if (platterItemForRightButton != nil) {
+      CGRect platterFrameInNav = [navigationBar convertRect:platterItemForRightButton.bounds
+                                                   fromView:platterItemForRightButton];
+
+      CGFloat rightButtonLeft = CGRectGetMinX(rightFrameInNav);
+      CGFloat platterLeft = CGRectGetMinX(platterFrameInNav);
+
+      CGFloat leftPadding = rightButtonLeft - platterLeft;
+
+      edgeInsets.trailing += leftPadding;
+    }
   }
 
   return edgeInsets;
