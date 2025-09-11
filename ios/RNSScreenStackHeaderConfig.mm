@@ -294,8 +294,8 @@ RNS_IGNORE_SUPER_CALL_END
     return edgeInsets;
   }
 
-  UIView *leftButtonView = [[navigationBar.topItem leftBarButtonItem] valueForKey:@"view"];
-  UIView *rightButtonView = [[navigationBar.topItem rightBarButtonItem] valueForKey:@"view"];
+  UIView *leftButtonView = [[[navigationBar.topItem leftBarButtonItems] lastObject] valueForKey:@"view"];
+  UIView *rightButtonView = [[[navigationBar.topItem rightBarButtonItems] lastObject] valueForKey:@"view"];
 
   if (leftButtonView != nil) {
     CGRect leftFrame = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
