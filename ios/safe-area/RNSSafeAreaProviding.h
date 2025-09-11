@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-NSString *const RNSSafeAreaDidChange = @"RNSSafeAreaDidChange";
+#define RNSSafeAreaDidChange @"RNSSafeAreaDidChange"
 
 @protocol RNSSafeAreaProviding
 
