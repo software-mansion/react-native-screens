@@ -1,5 +1,6 @@
 // Implementation adapted from `react-native-safe-area-context`:
 // https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/ios/Fabric/RNCSafeAreaViewComponentView.h
+// https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/ios/RNCSafeAreaView.h
 
 #import <UIKit/UIKit.h>
 #import "RNSReactBaseView.h"
@@ -17,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 
 @property (nonatomic, assign) RNSSafeAreaViewEdges edges;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
 

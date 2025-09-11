@@ -25,5 +25,4 @@ RCT_EXPORT_MODULE(RNSSafeAreaView)
 RCT_EXPORT_VIEW_PROPERTY(edges, RNSSafeAreaViewEdges)
 
 @end
-
 #endif // !RCT_NEW_ARCH_ENABLED
