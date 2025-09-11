@@ -1,6 +1,7 @@
 #import "RNSEnums.h"
 #import "RNSFrameCorrectionProvider.h"
 #import "RNSReactBaseView.h"
+#import "RNSSafeAreaProviding.h"
 #import "RNSSplitViewScreenComponentEventEmitter.h"
 #import "RNSSplitViewScreenShadowStateProxy.h"
 
@@ -16,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Responsible for a lifecycle management, layout, and event emission for a single screen; used as a child
  * of RNSSplitViewHostComponentView.
  */
-@interface RNSSplitViewScreenComponentView : RNSReactBaseView
+@interface RNSSplitViewScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding>
 
 @property (nonatomic, strong, readonly, nonnull) RNSSplitViewScreenController *controller;
 @property (nonatomic, weak, readwrite, nullable) RNSSplitViewHostComponentView *splitViewHost;
