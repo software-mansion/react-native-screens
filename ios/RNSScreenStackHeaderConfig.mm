@@ -300,9 +300,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (leftButtonView != nil) {
     CGRect leftFrame = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
     edgeInsets.leading += CGRectGetMinX(leftFrame);
-  }
-
-  if (isDisplayingBackButton) {
+  } else if (isDisplayingBackButton) {
     edgeInsets.leading += platformBackButtonWidth;
   }
 
