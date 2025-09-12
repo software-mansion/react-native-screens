@@ -333,12 +333,21 @@ RNS_IGNORE_SUPER_CALL_END
       CGRect platterFrameInNav = [navigationBar convertRect:platterItemForLeftButton.bounds
                                                    fromView:platterItemForLeftButton];
 
-      CGFloat leftButtonRight = CGRectGetMaxX(leftFrameInNav);
-      CGFloat platterRight = CGRectGetMaxX(platterFrameInNav);
+      CGFloat platterPadding = 0.0f;
 
-      CGFloat rightPadding = platterRight - leftButtonRight;
+      if (!isRTL) {
+        CGFloat leftButtonRightEdge = CGRectGetMaxX(leftFrameInNav);
+        CGFloat platterRightEdge = CGRectGetMaxX(platterFrameInNav);
 
-      edgeInsets.leading += rightPadding;
+        platterPadding = platterRightEdge - leftButtonRightEdge;
+      } else {
+        CGFloat leftButtonLeftEdge = CGRectGetMinX(leftFrameInNav);
+        CGFloat platterLeftEdge = CGRectGetMinX(platterFrameInNav);
+
+        platterPadding = leftButtonLeftEdge - platterLeftEdge;
+      }
+
+      edgeInsets.leading += platterPadding;
     }
   } else if (isDisplayingBackButton) {
     edgeInsets.leading += platformBackButtonWidth;
@@ -358,13 +367,21 @@ RNS_IGNORE_SUPER_CALL_END
     if (platterItemForRightButton != nil) {
       CGRect platterFrameInNav = [navigationBar convertRect:platterItemForRightButton.bounds
                                                    fromView:platterItemForRightButton];
+      CGFloat platterPadding = 0.0f;
 
-      CGFloat rightButtonLeft = CGRectGetMinX(rightFrameInNav);
-      CGFloat platterLeft = CGRectGetMinX(platterFrameInNav);
+      if (!isRTL) {
+        CGFloat rightButtonLeftEdge = CGRectGetMinX(rightFrameInNav);
+        CGFloat platterLeftEdge = CGRectGetMinX(platterFrameInNav);
 
-      CGFloat leftPadding = rightButtonLeft - platterLeft;
+        platterPadding = rightButtonLeftEdge - platterLeftEdge;
+      } else {
+        CGFloat rightButtonRightEdge = CGRectGetMaxX(rightFrameInNav);
+        CGFloat platterRightEdge = CGRectGetMaxX(platterFrameInNav);
 
-      edgeInsets.trailing += leftPadding;
+        platterPadding = platterRightEdge - rightButtonRightEdge;
+      }
+
+      edgeInsets.trailing += platterPadding;
     }
   }
 
