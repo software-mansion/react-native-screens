@@ -349,23 +349,29 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
-    [self setBottomScrollEdgeEffect:rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomEdgeCppEquivalent(
-                                        newComponentProps.bottomScrollEdgeEffect)];
+    [self
+        setBottomScrollEdgeEffect:
+            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
+                newComponentProps.bottomScrollEdgeEffect)];
   }
 
   if (newComponentProps.leftScrollEdgeEffect != oldComponentProps.leftScrollEdgeEffect) {
-    [self setLeftScrollEdgeEffect:rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromLeftEdgeCppEquivalent(
-                                      newComponentProps.leftScrollEdgeEffect)];
+    [self setLeftScrollEdgeEffect:
+              rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenLeftScrollEdgeEffectCppEquivalent(
+                  newComponentProps.leftScrollEdgeEffect)];
   }
 
   if (newComponentProps.rightScrollEdgeEffect != oldComponentProps.rightScrollEdgeEffect) {
-    [self setRightScrollEdgeEffect:rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromRightEdgeCppEquivalent(
-                                       newComponentProps.rightScrollEdgeEffect)];
+    [self
+        setRightScrollEdgeEffect:
+            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScrollEdgeEffectCppEquivalent(
+                newComponentProps.rightScrollEdgeEffect)];
   }
 
   if (newComponentProps.topScrollEdgeEffect != oldComponentProps.topScrollEdgeEffect) {
-    [self setTopScrollEdgeEffect:rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromTopEdgeCppEquivalent(
-                                     newComponentProps.topScrollEdgeEffect)];
+    [self setTopScrollEdgeEffect:rnscreens::conversion::
+                                     RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
+                                         newComponentProps.topScrollEdgeEffect)];
   }
 
   [super updateProps:props oldProps:oldProps];

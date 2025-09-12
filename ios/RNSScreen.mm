@@ -1341,26 +1341,23 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newScreenProps.bottomScrollEdgeEffect != oldScreenProps.bottomScrollEdgeEffect) {
-    [self setBottomScrollEdgeEffect:[RNSConvert
-                                        RNSScrollEdgeEffectFromBottomEdgeCppEquivalent:newScreenProps
-                                                                                           .bottomScrollEdgeEffect]];
+    [self setBottomScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+                                                    newScreenProps.bottomScrollEdgeEffect]];
   }
 
   if (newScreenProps.leftScrollEdgeEffect != oldScreenProps.leftScrollEdgeEffect) {
-    [self
-        setLeftScrollEdgeEffect:[RNSConvert
-                                    RNSScrollEdgeEffectFromLeftEdgeCppEquivalent:newScreenProps.leftScrollEdgeEffect]];
+    [self setLeftScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+                                                  newScreenProps.leftScrollEdgeEffect]];
   }
 
   if (newScreenProps.rightScrollEdgeEffect != oldScreenProps.rightScrollEdgeEffect) {
-    [self
-        setRightScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromRightEdgeCppEquivalent:newScreenProps
-                                                                                               .rightScrollEdgeEffect]];
+    [self setRightScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+                                                   newScreenProps.rightScrollEdgeEffect]];
   }
 
   if (newScreenProps.topScrollEdgeEffect != oldScreenProps.topScrollEdgeEffect) {
-    [self setTopScrollEdgeEffect:[RNSConvert
-                                     RNSScrollEdgeEffectFromTopEdgeCppEquivalent:newScreenProps.topScrollEdgeEffect]];
+    [self setTopScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+                                                 newScreenProps.topScrollEdgeEffect]];
   }
 
   [super updateProps:props oldProps:oldProps];

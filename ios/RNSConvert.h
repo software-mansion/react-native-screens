@@ -53,11 +53,14 @@ namespace react = facebook::react;
 
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
 
-+ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromBottomEdgeCppEquivalent:
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
     (react::RNSScreenBottomScrollEdgeEffect)edgeEffect;
-+ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromLeftEdgeCppEquivalent:(react::RNSScreenLeftScrollEdgeEffect)edgeEffect;
-+ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromRightEdgeCppEquivalent:(react::RNSScreenRightScrollEdgeEffect)edgeEffect;
-+ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromTopEdgeCppEquivalent:(react::RNSScreenTopScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenLeftScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenRightScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenTopScrollEdgeEffect)edgeEffect;
 
 #endif // RCT_NEW_ARCH_ENABLED
 
