@@ -5,6 +5,7 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import "ScrollEdgeEffectApplicator.h"
 
 #if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
@@ -65,7 +66,7 @@ namespace react = facebook::react;
 #else
     RCTView
 #endif
-    <RNSScreenContentWrapperDelegate, RNSScrollViewBehaviorOverriding>
+    <RNSScreenContentWrapperDelegate, RNSScrollViewBehaviorOverriding, ScrollEdgeEffectProviding>
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
@@ -79,6 +80,10 @@ namespace react = facebook::react;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+@property (nonatomic) RNSScrollEdgeEffect bottomScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;

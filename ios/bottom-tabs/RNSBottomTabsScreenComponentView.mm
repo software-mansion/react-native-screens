@@ -3,6 +3,7 @@
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
+#import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
@@ -151,6 +152,12 @@ RNS_IGNORE_SUPER_CALL_END
   if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
     [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
   }
+}
+
+- (void)updateScrollEdgeEffects
+{
+  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                   fromProvider:self];
 }
 
 #pragma mark - Prop update utils
@@ -312,8 +319,41 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller tabScreenOrientationHasChanged];
   }
 
+  if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
+    [self
+        setBottomScrollEdgeEffect:
+            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
+                newComponentProps.bottomScrollEdgeEffect)];
+  }
+
+  if (newComponentProps.leftScrollEdgeEffect != oldComponentProps.leftScrollEdgeEffect) {
+    [self setLeftScrollEdgeEffect:
+              rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenLeftScrollEdgeEffectCppEquivalent(
+                  newComponentProps.leftScrollEdgeEffect)];
+  }
+
+  if (newComponentProps.rightScrollEdgeEffect != oldComponentProps.rightScrollEdgeEffect) {
+    [self
+        setRightScrollEdgeEffect:
+            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScrollEdgeEffectCppEquivalent(
+                newComponentProps.rightScrollEdgeEffect)];
+  }
+
+  if (newComponentProps.topScrollEdgeEffect != oldComponentProps.topScrollEdgeEffect) {
+    [self setTopScrollEdgeEffect:rnscreens::conversion::
+                                     RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
+                                         newComponentProps.topScrollEdgeEffect)];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
+
+//- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
+//{
+//  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+//                                   fromProvider:self];
+//  [super finalizeUpdates: updateMask];
+//}
 
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics

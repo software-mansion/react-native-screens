@@ -3,6 +3,7 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import "ScrollEdgeEffectApplicator.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "RNSViewControllerInvalidating.h"
@@ -37,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) RNSBottomTabsHostComponentView *reactSuperview;
 
+- (void)updateScrollEdgeEffects;
+
 @end
 
 #pragma mark - Props
@@ -44,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Properties set on component in JavaScript.
  */
-@interface RNSBottomTabsScreenComponentView () <RNSScrollViewBehaviorOverriding>
+@interface RNSBottomTabsScreenComponentView () <RNSScrollViewBehaviorOverriding, ScrollEdgeEffectProviding>
 
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.
@@ -71,6 +74,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
+
+@property (nonatomic) RNSScrollEdgeEffect bottomScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 
 @property (nonatomic) RNSBottomTabsScreenSystemItem systemItem;
 

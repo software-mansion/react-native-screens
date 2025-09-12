@@ -32,6 +32,7 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
 
@@ -673,6 +674,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)didMoveToWindow
 {
+#ifndef RCT_NEW_ARCH_ENABLED
+  // see finalizeUpdates() for Fabric
+  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                   fromProvider:self];
+#endif
   // For RN touches to work we need to instantiate and connect RCTTouchHandler. This only applies
   // for screens that aren't mounted under RCTRootView e.g., modals that are mounted directly to
   // root application window.
@@ -1316,6 +1322,26 @@ RNS_IGNORE_SUPER_CALL_END
     [self setScreenId:RCTNSStringFromStringNilIfEmpty(newScreenProps.screenId)];
   }
 
+  if (newScreenProps.bottomScrollEdgeEffect != oldScreenProps.bottomScrollEdgeEffect) {
+    [self setBottomScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+                                                    newScreenProps.bottomScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.leftScrollEdgeEffect != oldScreenProps.leftScrollEdgeEffect) {
+    [self setLeftScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+                                                  newScreenProps.leftScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.rightScrollEdgeEffect != oldScreenProps.rightScrollEdgeEffect) {
+    [self setRightScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+                                                   newScreenProps.rightScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.topScrollEdgeEffect != oldScreenProps.topScrollEdgeEffect) {
+    [self setTopScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+                                                 newScreenProps.topScrollEdgeEffect]];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1345,6 +1371,8 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
+  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                   fromProvider:self];
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];
@@ -2050,6 +2078,10 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
+RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
@@ -2201,6 +2233,17 @@ RCT_ENUM_CONVERTER(
       @"all" : @(RNSScreenDetentTypeAll),
     }),
     RNSScreenDetentTypeAll,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSScrollEdgeEffect,
+    (@{
+      @"automatic" : @(RNSScrollEdgeEffectAutomatic),
+      @"hard" : @(RNSScrollEdgeEffectHard),
+      @"soft" : @(RNSScrollEdgeEffectSoft),
+      @"hidden" : @(RNSScrollEdgeEffectHidden),
+    }),
+    RNSScrollEdgeEffectAutomatic,
     integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json

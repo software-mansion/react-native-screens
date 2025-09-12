@@ -38,6 +38,11 @@ RCT_EXPORT_VIEW_PROPERTY(shouldUseRepeatedTabSelectionScrollToTopSpecialEffect, 
 
 RCT_EXPORT_VIEW_PROPERTY(overrideScrollViewContentInsetAdjustmentBehavior, BOOL);
 
+RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
+
 RCT_EXPORT_VIEW_PROPERTY(systemItem, RNSBottomTabsScreenSystemItem);
 
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);

@@ -86,6 +86,8 @@ export type BottomTabsScreenOrientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
+export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+
 // iOS-specific
 export interface BottomTabsScreenAppearance {
   /**
@@ -514,6 +516,22 @@ export interface BottomTabsScreenProps {
    * @platform ios
    */
   overrideScrollViewContentInsetAdjustmentBehavior?: boolean;
+  /**
+   * Configures the scroll edge effect for the ScrollView that is the first descendant of the BottomTabScreen.
+   * Depending on values set, it will blur the scrolling content below certain UI elements (Header Items, SearchBar)
+   * for the specifed edge of the ScrollView.
+   *
+   * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+   * it will use the closest one (*without* merging the other).
+   *
+   * @platform ios
+   */
+  scrollEdgeEffects?: {
+    bottom?: ScrollEdgeEffect;
+    left?: ScrollEdgeEffect;
+    right?: ScrollEdgeEffect;
+    top?: ScrollEdgeEffect;
+  };
   // #endregion iOS-only appearance
 
   // #region Events

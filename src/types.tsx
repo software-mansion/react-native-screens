@@ -106,6 +106,8 @@ export type SearchBarPlacement =
   | 'integratedButton'
   | 'integratedCentered';
 
+export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
@@ -187,6 +189,22 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   nativeBackButtonDismissalEnabled?: boolean;
+  /**
+   * Configures the scroll edge effect for the ScrollView that is the first descendant of the Screen.
+   * Depending on values set, it will blur the scrolling content below certain UI elements (Header Items, SearchBar)
+   * for the specifed edge of the ScrollView.
+   *
+   * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+   * it will use the closest one (*without* merging the other).
+   *
+   * @platform ios
+   */
+  scrollEdgeEffects?: {
+    bottom: ScrollEdgeEffect;
+    left: ScrollEdgeEffect;
+    right: ScrollEdgeEffect;
+    top: ScrollEdgeEffect;
+  };
   /**
    * Sets the navigation bar color. Defaults to initial status bar color.
    *
