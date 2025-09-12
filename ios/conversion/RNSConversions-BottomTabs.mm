@@ -334,25 +334,25 @@ UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTa
       return RNSScrollEdgeEffectAutomatic; \
   }
 
-RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomEdgeCppEquivalent(
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
     react::RNSBottomTabsScreenBottomScrollEdgeEffect edgeEffect)
 {
   SWITCH_EDGE_EFFECT(RNSBottomTabsScreenBottomScrollEdgeEffect);
 }
 
-RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromLeftEdgeCppEquivalent(
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenLeftScrollEdgeEffectCppEquivalent(
     react::RNSBottomTabsScreenLeftScrollEdgeEffect edgeEffect)
 {
   SWITCH_EDGE_EFFECT(RNSBottomTabsScreenLeftScrollEdgeEffect);
 }
 
-RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromRightEdgeCppEquivalent(
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScrollEdgeEffectCppEquivalent(
     react::RNSBottomTabsScreenRightScrollEdgeEffect edgeEffect)
 {
   SWITCH_EDGE_EFFECT(RNSBottomTabsScreenRightScrollEdgeEffect);
 }
 
-RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromTopEdgeCppEquivalent(
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
     react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect)
 {
   SWITCH_EDGE_EFFECT(RNSBottomTabsScreenTopScrollEdgeEffect);

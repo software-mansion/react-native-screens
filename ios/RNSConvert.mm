@@ -148,22 +148,26 @@
       return RNSScrollEdgeEffectAutomatic; \
   }
 
-+ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromBottomEdgeCppEquivalent:(react::RNSScreenBottomScrollEdgeEffect)edgeEffect
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenBottomScrollEdgeEffect)edgeEffect
 {
   SWITCH_EDGE_EFFECT(RNSScreenBottomScrollEdgeEffect);
 }
 
-+ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromLeftEdgeCppEquivalent:(react::RNSScreenLeftScrollEdgeEffect)edgeEffect
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenLeftScrollEdgeEffect)edgeEffect
 {
   SWITCH_EDGE_EFFECT(RNSScreenLeftScrollEdgeEffect);
 }
 
-+ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromRightEdgeCppEquivalent:(react::RNSScreenRightScrollEdgeEffect)edgeEffect
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenRightScrollEdgeEffect)edgeEffect
 {
   SWITCH_EDGE_EFFECT(RNSScreenRightScrollEdgeEffect);
 }
 
-+ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromTopEdgeCppEquivalent:(react::RNSScreenTopScrollEdgeEffect)edgeEffect
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenTopScrollEdgeEffect)edgeEffect
 {
   SWITCH_EDGE_EFFECT(RNSScreenTopScrollEdgeEffect);
 }
