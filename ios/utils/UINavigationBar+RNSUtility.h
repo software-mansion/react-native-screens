@@ -41,12 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * This method relies on internal iOS implementation details (see the implementation)
  * and might need patches specific to future iOS versions, in case the view hierarchy inside
- * the navigation bar changes. It
+ * the navigation bar changes.
  *
  * Tested to work reliably on iOS 26.0.
  *
- * @returns `_UIButtonBarButton` view, if present and mounted in anticipated place;
- *                      if the back button is not present, this method returns `nil`.
+ * @returns `_UINavigationBarPlatterView` view which is the ancestor of `left/rightBarButtonItem`.
  */
 - (nullable UIView *)rnscreens_findNavigationBarPlatterViewFromUIView:(UIView *_Nonnull)view;
 
