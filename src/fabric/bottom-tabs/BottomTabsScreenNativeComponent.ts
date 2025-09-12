@@ -109,6 +109,8 @@ type SystemItem =
   | 'search'
   | 'topRated';
 
+type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
@@ -156,6 +158,11 @@ export interface NativeProps extends ViewProps {
   };
 
   overrideScrollViewContentInsetAdjustmentBehavior?: WithDefault<boolean, true>;
+
+  bottomScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});

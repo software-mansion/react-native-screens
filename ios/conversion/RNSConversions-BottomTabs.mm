@@ -319,4 +319,43 @@ UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTa
   return UITabBarSystemItemSearch;
 }
 
+#define SWITCH_EDGE_EFFECT(X)              \
+  switch (edgeEffect) {                    \
+    using enum react::X;                   \
+    case Automatic:                        \
+      return RNSScrollEdgeEffectAutomatic; \
+    case Hard:                             \
+      return RNSScrollEdgeEffectHard;      \
+    case Soft:                             \
+      return RNSScrollEdgeEffectSoft;      \
+    case Hidden:                           \
+      return RNSScrollEdgeEffectHidden;    \
+    default:                               \
+      return RNSScrollEdgeEffectAutomatic; \
+  }
+
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomEdgeCppEquivalent(
+    react::RNSBottomTabsScreenBottomScrollEdgeEffect edgeEffect)
+{
+  SWITCH_EDGE_EFFECT(RNSBottomTabsScreenBottomScrollEdgeEffect);
+}
+
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromLeftEdgeCppEquivalent(
+    react::RNSBottomTabsScreenLeftScrollEdgeEffect edgeEffect)
+{
+  SWITCH_EDGE_EFFECT(RNSBottomTabsScreenLeftScrollEdgeEffect);
+}
+
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromRightEdgeCppEquivalent(
+    react::RNSBottomTabsScreenRightScrollEdgeEffect edgeEffect)
+{
+  SWITCH_EDGE_EFFECT(RNSBottomTabsScreenRightScrollEdgeEffect);
+}
+
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromTopEdgeCppEquivalent(
+    react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect)
+{
+  SWITCH_EDGE_EFFECT(RNSBottomTabsScreenTopScrollEdgeEffect);
+}
+
 }; // namespace rnscreens::conversion
