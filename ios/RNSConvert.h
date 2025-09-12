@@ -53,6 +53,12 @@ namespace react = facebook::react;
 
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
 
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromBottomEdgeCppEquivalent:
+    (react::RNSScreenBottomScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromLeftEdgeCppEquivalent:(react::RNSScreenLeftScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromRightEdgeCppEquivalent:(react::RNSScreenRightScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromTopEdgeCppEquivalent:(react::RNSScreenTopScrollEdgeEffect)edgeEffect;
+
 #endif // RCT_NEW_ARCH_ENABLED
 
 /// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` or `blurEffect ==

@@ -106,6 +106,8 @@ export type SearchBarPlacement =
   | 'integratedButton'
   | 'integratedCentered';
 
+export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
@@ -187,6 +189,15 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   nativeBackButtonDismissalEnabled?: boolean;
+  /**
+   * TBD
+   */
+  scrollEdgeEffects?: {
+    bottom: ScrollEdgeEffect;
+    left: ScrollEdgeEffect;
+    right: ScrollEdgeEffect;
+    top: ScrollEdgeEffect;
+  };
   /**
    * Sets the navigation bar color. Defaults to initial status bar color.
    *

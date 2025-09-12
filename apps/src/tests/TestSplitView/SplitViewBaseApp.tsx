@@ -2,22 +2,23 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
 import { Colors } from '../../shared/styling/Colors';
-import { TestBottomTabs, TestScreenStack } from '..';
+import { TestBottomTabs, TestFoo, TestScreenStack } from '..';
 import { SplitViewBaseConfig } from './helpers/types';
 
 const SplitViewBaseApp = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
   return (
     <SplitViewHost {...splitViewBaseConfig}>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.White }]}>
+        {/* <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Primary column</Text>
-        </View>
+        </View> */}
+        <TestFoo />
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
-        <TestBottomTabs />
+        <TestFoo />
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
-        <TestScreenStack />
+        <TestFoo />
       </SplitViewScreen.Column>
     </SplitViewHost>
   );

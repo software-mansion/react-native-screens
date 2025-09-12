@@ -33,6 +33,7 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
 
@@ -1339,6 +1340,29 @@ RNS_IGNORE_SUPER_CALL_END
     [self setScreenId:RCTNSStringFromStringNilIfEmpty(newScreenProps.screenId)];
   }
 
+  if (newScreenProps.bottomScrollEdgeEffect != oldScreenProps.bottomScrollEdgeEffect) {
+    [self setBottomScrollEdgeEffect:[RNSConvert
+                                        RNSScrollEdgeEffectFromBottomEdgeCppEquivalent:newScreenProps
+                                                                                           .bottomScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.leftScrollEdgeEffect != oldScreenProps.leftScrollEdgeEffect) {
+    [self
+        setLeftScrollEdgeEffect:[RNSConvert
+                                    RNSScrollEdgeEffectFromLeftEdgeCppEquivalent:newScreenProps.leftScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.rightScrollEdgeEffect != oldScreenProps.rightScrollEdgeEffect) {
+    [self
+        setRightScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromRightEdgeCppEquivalent:newScreenProps
+                                                                                               .rightScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.topScrollEdgeEffect != oldScreenProps.topScrollEdgeEffect) {
+    [self setTopScrollEdgeEffect:[RNSConvert
+                                     RNSScrollEdgeEffectFromTopEdgeCppEquivalent:newScreenProps.topScrollEdgeEffect]];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1368,6 +1392,8 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
+  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                   fromProvider:self];
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];
