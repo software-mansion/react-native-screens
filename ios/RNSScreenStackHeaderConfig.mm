@@ -247,20 +247,20 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navigationBar
+                                               withEdgeInsets:(NSDirectionalEdgeInsets)edgeInsets
 {
   if (!navigationBar) {
     return;
   }
 
-  [self updateShadowStateWithSize:navigationBar.frame.size
-                       edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]];
+  [self updateShadowStateWithSize:navigationBar.frame.size edgeInsets:edgeInsets];
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
     [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
 }
 
 #else
-- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
+- (void)updateHeaderConfigStateWithEdgeInsets:(NSDirectionalEdgeInsets)insets
 {
   if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
     [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];

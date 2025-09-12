@@ -185,13 +185,12 @@ namespace react = facebook::react;
     return;
   }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-  [headerConfig updateHeaderStateInShadowTreeInContextOfNavigationBar:self.navigationBar];
-#else
-
   auto edgeInsets = [headerConfig computeEdgeInsetsOfNavigationBar:self.navigationBar];
 
-  [headerConfig updateHeaderConfigState:edgeInsets];
+#ifdef RCT_NEW_ARCH_ENABLED
+  [headerConfig updateHeaderStateInShadowTreeInContextOfNavigationBar:self.navigationBar withEdgeInsets:edgeInsets];
+#else
+  [headerConfig updateHeaderConfigStateWithEdgeInsets:edgeInsets];
 #endif // RCT_NEW_ARCH_ENABLED
 }
 #endif

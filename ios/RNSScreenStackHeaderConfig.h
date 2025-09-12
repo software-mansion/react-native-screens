@@ -109,13 +109,14 @@ NS_ASSUME_NONNULL_END
  * Updates state of header config shadow node and all subview shadow nodes in context of given UINavigationBar.
  * When `navBar == nil` this method does nothing.
  */
-- (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
+- (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar
+                                               withEdgeInsets:(NSDirectionalEdgeInsets)edgeInsets;
 #else
 /**
  * Allows to send information with insets to the corresponding node in shadow tree.
  * Currently only horizontal insets are send through. Vertical ones are filtered out.
  */
-- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets;
+- (void)updateHeaderConfigStateWithEdgeInsets:(NSDirectionalEdgeInsets)insets;
 #endif
 
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar;
