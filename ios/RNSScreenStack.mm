@@ -103,10 +103,6 @@ namespace react = facebook::react;
   [super viewDidLayoutSubviews];
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  // For iOS26+ we're changing the implementation for edge insets that is heavily based on
-  // navigation bar button items. During the transition, these items might not be positioned
-  // properly, what may result in calculating wrong layout for the header title, which can result in
-  // unmounting the component.
   if (@available(iOS 26.0, *)) {
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
@@ -164,10 +160,6 @@ namespace react = facebook::react;
 - (void)maybeUpdateHeaderLayoutInfoInShadowTree:(RNSScreen *)screenController
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  // For iOS26+ we're changing the implementation for edge insets that is heavily based on
-  // navigation bar button items. During the transition, these items might not be positioned
-  // properly, what may result in calculating wrong layout for the header title, which can result in
-  // unmounting the component.
   if (@available(iOS 26.0, *)) {
     if (self.shouldPreventHeaderLayoutInfoUpdateOnTransition) {
       return;

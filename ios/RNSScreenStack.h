@@ -33,6 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
                                          >
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+// For iOS26+ we're changing the implementation for edge insets that is heavily based on
+// navigation bar button items. During the transition, these items might not be positioned
+// properly, what may result in calculating wrong layout for the header title, which can result in
+// unmounting the component.
 @property (nonatomic) BOOL shouldPreventHeaderLayoutInfoUpdateOnTransition;
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
