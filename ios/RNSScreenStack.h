@@ -6,6 +6,7 @@
 #endif
 
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
+#import "RNSDefines.h"
 #import "RNSScreenContainer.h"
 
 #if !TARGET_OS_TV

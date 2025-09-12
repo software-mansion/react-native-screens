@@ -118,6 +118,8 @@ NS_ASSUME_NONNULL_END
 - (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets;
 #endif
 
+- (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar;
+
 @end
 
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager

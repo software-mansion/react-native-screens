@@ -11,7 +11,6 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
-#import "UINavigationBar+RNSUtility.h"
 #ifndef NDEBUG
 #import <react/utils/ManagedObjectWrapper.h>
 #endif // !NDEBUG
@@ -33,6 +32,7 @@
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
+#import "UINavigationBar+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -259,6 +259,16 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+#else
+- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
+{
+  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
+    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
+    _lastHeaderInsets = std::move(insets);
+  }
+}
+#endif // RCT_NEW_ARCH_ENABLED
+
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
   NSDirectionalEdgeInsets edgeInsets = NSDirectionalEdgeInsetsZero;
@@ -378,16 +388,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   return edgeInsets;
 }
-
-#else
-- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
-{
-  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
-    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
-    _lastHeaderInsets = std::move(insets);
-  }
-}
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type
 {
