@@ -42,6 +42,8 @@ static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
 static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+// UIKit has some spacing between navigation items and title which we cannot easily compute.
+// The current constant was determined empirically based on testing and visual alignment.
 static const CGFloat DEFAULT_NAVBUTTON_AND_TITLE_SPACING = 16.0f;
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
@@ -289,8 +291,6 @@ RNS_IGNORE_SUPER_CALL_END
                         isDisplayingBackButton:(BOOL)isDisplayingBackButton
                        platformBackButtonWidth:(CGFloat)platformBackButtonWidth
 {
-  // UIKit has some spacing between navigation items and title which we cannot easily compute.
-  // The current constant was determined empirically based on testing and visual alignment.
   NSDirectionalEdgeInsets edgeInsets = {
       .leading = DEFAULT_NAVBUTTON_AND_TITLE_SPACING,
       .trailing = DEFAULT_NAVBUTTON_AND_TITLE_SPACING,
