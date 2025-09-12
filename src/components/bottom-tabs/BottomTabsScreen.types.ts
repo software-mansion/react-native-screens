@@ -86,6 +86,8 @@ export type BottomTabsScreenOrientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
+export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+
 // iOS-specific
 export interface BottomTabsScreenAppearance {
   /**
@@ -514,6 +516,15 @@ export interface BottomTabsScreenProps {
    * @platform ios
    */
   overrideScrollViewContentInsetAdjustmentBehavior?: boolean;
+  /**
+   * TBD
+   */
+  scrollEdgeEffects?: {
+    bottom?: ScrollEdgeEffect;
+    left?: ScrollEdgeEffect;
+    right?: ScrollEdgeEffect;
+    top?: ScrollEdgeEffect;
+  };
   // #endregion iOS-only appearance
 
   // #region Events

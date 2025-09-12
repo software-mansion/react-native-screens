@@ -1,10 +1,10 @@
 #import "RNSEnums.h"
 
 @protocol ScrollEdgeEffectProviding
-@property RNSScrollEdgeEffect bottomScrollEdgeEffect;
-@property RNSScrollEdgeEffect leftScrollEdgeEffect;
-@property RNSScrollEdgeEffect rightScrollEdgeEffect;
-@property RNSScrollEdgeEffect topScrollEdgeEffect;
+- (RNSScrollEdgeEffect)bottomScrollEdgeEffect;
+- (RNSScrollEdgeEffect)leftScrollEdgeEffect;
+- (RNSScrollEdgeEffect)rightScrollEdgeEffect;
+- (RNSScrollEdgeEffect)topScrollEdgeEffect;
 @end
 
 @interface ScrollEdgeEffectApplicator : NSObject

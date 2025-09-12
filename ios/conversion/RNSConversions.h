@@ -50,6 +50,15 @@ RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTab
 
 UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTabsScreenSystemItem systemItem);
 
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomEdgeCppEquivalent(
+    react::RNSBottomTabsScreenBottomScrollEdgeEffect edgeEffect);
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromLeftEdgeCppEquivalent(
+    react::RNSBottomTabsScreenLeftScrollEdgeEffect edgeEffect);
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromRightEdgeCppEquivalent(
+    react::RNSBottomTabsScreenRightScrollEdgeEffect edgeEffect);
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromTopEdgeCppEquivalent(
+    react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect);
+
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
     RNSBottomTabsIconType iconType);
