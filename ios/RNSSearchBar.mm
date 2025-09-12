@@ -171,7 +171,7 @@ namespace react = facebook::react;
 
     default:
       if (_isObscureBackgroundSet) {
-        RCTLogWarn(@"[RNScreens] Dynamically restoring obscureBackground to default behavior is unsupported.");
+        RCTLogWarn(@"[RNScreens] Dynamically restoring obscureBackground to default native behavior is unsupported.");
       }
       break;
   }
@@ -192,7 +192,7 @@ namespace react = facebook::react;
 
     default:
       if (_isHideNavigationBarSet) {
-        RCTLogWarn(@"[RNScreens] Dynamically restoring hideNavigationBar to default behavior is unsupported.");
+        RCTLogWarn(@"[RNScreens] Dynamically restoring hideNavigationBar to default native behavior is unsupported.");
       }
       break;
   }
@@ -488,8 +488,8 @@ RCT_EXPORT_MODULE()
 }
 #endif
 
-RCT_EXPORT_VIEW_PROPERTY(obscureBackground, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(obscureBackground, RNSOptionalBoolean)
+RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, RNSOptionalBoolean)
 RCT_EXPORT_VIEW_PROPERTY(hideWhenScrolling, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
 RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
