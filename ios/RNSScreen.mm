@@ -675,6 +675,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)didMoveToWindow
 {
+#ifndef RCT_NEW_ARCH_ENABLED
+  // see finalizeUpdates() for Fabric
+  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                   fromProvider:self];
+#endif
   // For RN touches to work we need to instantiate and connect RCTTouchHandler. This only applies
   // for screens that aren't mounted under RCTRootView e.g., modals that are mounted directly to
   // root application window.
@@ -2096,6 +2101,10 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
+RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
@@ -2247,6 +2256,17 @@ RCT_ENUM_CONVERTER(
       @"all" : @(RNSScreenDetentTypeAll),
     }),
     RNSScreenDetentTypeAll,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSScrollEdgeEffect,
+    (@{
+      @"automatic" : @(RNSScrollEdgeEffectAutomatic),
+      @"hard" : @(RNSScrollEdgeEffectHard),
+      @"soft" : @(RNSScrollEdgeEffectSoft),
+      @"hidden" : @(RNSScrollEdgeEffectHidden),
+    }),
+    RNSScrollEdgeEffectAutomatic,
     integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
