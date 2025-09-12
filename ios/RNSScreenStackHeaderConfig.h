@@ -119,6 +119,22 @@ NS_ASSUME_NONNULL_END
 - (void)updateHeaderConfigStateWithEdgeInsets:(NSDirectionalEdgeInsets)insets;
 #endif
 
+/**
+ * @brief Computes directional edge insets for a given UINavigationBar for positioning the header title content.
+ *
+ * This method is a wrapper over internal implementations to ensure the backward compatibility with iOS versions older
+ * than 26.
+ *
+ * For iOS26 it calculates edgeInsets based on the space between the rightmost button on the left and the leftmost
+ * button on the right. For older OS versions, the behavior remains unchanged and it takes edgeInsets as a sum of the
+ * margins of NavigationBar and its content.
+ *
+ * It determines the appropriate NSDirectionalEdgeInsets for layout
+ * adjustments based on whether a back button is visible in the provided navigation bar.
+ *
+ * @param navigationBar The UINavigationBar instance for which the edge insets are to be calculated.
+ * @return A NSDirectionalEdgeInsets structure representing calculated directional inset values.
+ */
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar;
 
 @end
