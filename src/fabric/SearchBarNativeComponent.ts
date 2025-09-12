@@ -29,6 +29,8 @@ type SearchBarPlacement =
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
+type OptionalBoolean = 'undefined' | 'false' | 'true';
+
 export interface NativeProps extends ViewProps {
   onSearchFocus?: DirectEventHandler<SearchBarEvent> | null;
   onSearchBlur?: DirectEventHandler<SearchBarEvent> | null;
@@ -40,8 +42,8 @@ export interface NativeProps extends ViewProps {
   placeholder?: string;
   placement?: WithDefault<SearchBarPlacement, 'automatic'>;
   allowToolbarIntegration?: WithDefault<boolean, true>;
-  obscureBackground?: WithDefault<boolean, false>;
-  hideNavigationBar?: WithDefault<boolean, true>;
+  obscureBackground?: WithDefault<OptionalBoolean, 'undefined'>;
+  hideNavigationBar?: WithDefault<OptionalBoolean, 'undefined'>;
   cancelButtonText?: string;
   // TODO: implement these on iOS
   barTintColor?: ColorValue;
