@@ -212,14 +212,14 @@ class SearchBarManager :
 
     override fun setObscureBackground(
         view: SearchBarView?,
-        value: Boolean,
+        value: String?,
     ) {
-        logNotAvailable("hideNavigationBar")
+        logNotAvailable("obscureBackground")
     }
 
     override fun setHideNavigationBar(
         view: SearchBarView?,
-        value: Boolean,
+        value: String?,
     ) {
         logNotAvailable("hideNavigationBar")
     }
