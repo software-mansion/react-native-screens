@@ -260,6 +260,7 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #else
+
 - (void)updateHeaderConfigStateWithEdgeInsets:(NSDirectionalEdgeInsets)insets
 {
   if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
