@@ -41,7 +41,9 @@ namespace react = facebook::react;
 static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
 static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 static const CGFloat DEFAULT_NAVBUTTON_AND_TITLE_SPACING = 8.0f;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data
@@ -265,21 +267,24 @@ RNS_IGNORE_SUPER_CALL_END
   UIView *barButtonView = isDisplayingBackButton ? navigationBar.rnscreens_findBackButtonWrapperView : nil;
   CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     edgeInsets = [self calculateEdgeInsets:navigationBar
                     isDisplayingBackButton:isDisplayingBackButton
                    platformBackButtonWidth:platformBackButtonWidth];
   } else {
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     edgeInsets = [self calculateEdgeInsetsLegacy:navigationBar
                           isDisplayingBackButton:isDisplayingBackButton
                          platformBackButtonWidth:platformBackButtonWidth];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   }
-
-  RNSLog(@"Calculated insets: %@", NSStringFromDirectionalEdgeInsets(edgeInsets));
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   return edgeInsets;
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (NSDirectionalEdgeInsets)calculateEdgeInsets:(UINavigationBar *)navigationBar
                         isDisplayingBackButton:(BOOL)isDisplayingBackButton
                        platformBackButtonWidth:(CGFloat)platformBackButtonWidth
@@ -304,6 +309,7 @@ RNS_IGNORE_SUPER_CALL_END
   // According to the docs:
   // https://developer.apple.com/documentation/uikit/uinavigationitem/leftbarbuttonitems?language=objc
   // we should take the lastObject as the rightmost item.
+
   // TODO: ensure about RTL support before merging
   if (leftButtonView != nil) {
     CGRect leftFrameInNav = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
@@ -330,6 +336,7 @@ RNS_IGNORE_SUPER_CALL_END
   // According to the docs:
   // https://developer.apple.com/documentation/uikit/uinavigationitem/rightbarbuttonitems?language=objc
   // we should take the lastObject as the leftmost item.
+
   // TODO: ensure about RTL support before merging
   if (rightButtonView != nil) {
     CGRect rightFrameInNav = [navigationBar convertRect:rightButtonView.bounds fromView:rightButtonView];
@@ -352,6 +359,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   return edgeInsets;
 }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 - (NSDirectionalEdgeInsets)calculateEdgeInsetsLegacy:(UINavigationBar *)navigationBar
                               isDisplayingBackButton:(BOOL)isDisplayingBackButton

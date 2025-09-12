@@ -31,7 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RNS_GAMMA_ENABLED
                                          >
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 @property (nonatomic) BOOL shouldPreventHeaderLayoutInfoUpdateOnTransition;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 @end
 

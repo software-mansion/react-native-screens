@@ -102,6 +102,7 @@ namespace react = facebook::react;
 {
   [super viewDidLayoutSubviews];
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // For iOS26+ we're changing the implementation for edge insets that is heavily based on
   // navigation bar button items. During the transition, these items might not be positioned
   // properly, what may result in calculating wrong layout for the header title, which can result in
@@ -115,6 +116,7 @@ namespace react = facebook::react;
           self.shouldPreventHeaderLayoutInfoUpdateOnTransition = NO;
         }];
   }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
@@ -161,6 +163,7 @@ namespace react = facebook::react;
 
 - (void)maybeUpdateHeaderLayoutInfoInShadowTree:(RNSScreen *)screenController
 {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // For iOS26+ we're changing the implementation for edge insets that is heavily based on
   // navigation bar button items. During the transition, these items might not be positioned
   // properly, what may result in calculating wrong layout for the header title, which can result in
@@ -170,6 +173,7 @@ namespace react = facebook::react;
       return;
     }
   }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   // This might happen e.g. if there is only native title present in navigation bar.
   if (self.navigationBar.subviews.count < 2) {
