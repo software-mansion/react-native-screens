@@ -19,8 +19,8 @@ public interface RNSSearchBarManagerInterface<T extends View>  {
   void setPlaceholder(T view, @Nullable String value);
   void setPlacement(T view, @Nullable String value);
   void setAllowToolbarIntegration(T view, boolean value);
-  void setObscureBackground(T view, boolean value);
-  void setHideNavigationBar(T view, boolean value);
+  void setObscureBackground(T view, @Nullable String value);
+  void setHideNavigationBar(T view, @Nullable String value);
   void setCancelButtonText(T view, @Nullable String value);
   void setBarTintColor(T view, @Nullable Integer value);
   void setTintColor(T view, @Nullable Integer value);

@@ -160,3 +160,9 @@ typedef NS_ENUM(NSInteger, RNSBottomTabsScreenSystemItem) {
   RNSBottomTabsScreenSystemItemSearch,
   RNSBottomTabsScreenSystemItemTopRated
 };
+
+typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
+  RNSOptionalBooleanUndefined,
+  RNSOptionalBooleanTrue,
+  RNSOptionalBooleanFalse
+};
