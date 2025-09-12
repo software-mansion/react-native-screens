@@ -304,16 +304,17 @@ RNS_IGNORE_SUPER_CALL_END
   UIView *leftButtonView = [[[navigationBar.topItem leftBarButtonItems] lastObject] valueForKey:@"view"];
   UIView *rightButtonView = [[[navigationBar.topItem rightBarButtonItems] lastObject] valueForKey:@"view"];
 
+  BOOL isRTL = self.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+
   // Searching for the rightmost button on the left side
   // We prefer leftButtons over backButton because of the current positioning
   // According to the docs:
   // https://developer.apple.com/documentation/uikit/uinavigationitem/leftbarbuttonitems?language=objc
   // we should take the lastObject as the rightmost item.
-
-  // TODO: ensure about RTL support before merging
   if (leftButtonView != nil) {
     CGRect leftFrameInNav = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
-    edgeInsets.leading += CGRectGetMinX(leftFrameInNav);
+    edgeInsets.leading +=
+        isRTL ? navigationBar.frame.size.width - CGRectGetMaxX(leftFrameInNav) : CGRectGetMinX(leftFrameInNav);
 
     auto platterItemForLeftButton = [navigationBar rnscreens_findNavigationBarPlatterViewFromUIView:leftButtonView];
 
@@ -336,11 +337,10 @@ RNS_IGNORE_SUPER_CALL_END
   // According to the docs:
   // https://developer.apple.com/documentation/uikit/uinavigationitem/rightbarbuttonitems?language=objc
   // we should take the lastObject as the leftmost item.
-
-  // TODO: ensure about RTL support before merging
   if (rightButtonView != nil) {
     CGRect rightFrameInNav = [navigationBar convertRect:rightButtonView.bounds fromView:rightButtonView];
-    edgeInsets.trailing += navigationBar.frame.size.width - CGRectGetMaxX(rightFrameInNav);
+    edgeInsets.trailing +=
+        isRTL ? CGRectGetMinX(rightFrameInNav) : navigationBar.frame.size.width - CGRectGetMaxX(rightFrameInNav);
 
     auto platterItemForRightButton = [navigationBar rnscreens_findNavigationBarPlatterViewFromUIView:rightButtonView];
 
@@ -356,6 +356,8 @@ RNS_IGNORE_SUPER_CALL_END
       edgeInsets.trailing += leftPadding;
     }
   }
+
+  RNSLog(@"Calculated insets: %@", NSStringFromDirectionalEdgeInsets(edgeInsets));
 
   return edgeInsets;
 }

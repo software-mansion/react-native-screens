@@ -8,8 +8,8 @@ const homeScreenTitle = 'Screen';
 const secondScreenTitle = 'Details';
 const searchBarScreenTitle = 'SearchBarScreen';
 
-// const titleComponentContent = homeScreenTitle;
-const titleComponentContent = 'ab'.repeat(20);
+const titleComponentContent = homeScreenTitle;
+// const titleComponentContent = 'ab'.repeat(20);
 
 const HeaderLeftSmall = () => (
   <View style={{ width: 40, height: 20, backgroundColor: 'goldenrod' }} />
@@ -47,8 +47,7 @@ const CenterFixedWidthComponent = () => (
 const headerOptions = {
   headerLeft: () => <HeaderLeftSmall />,
   headerRight: () => <HeaderRightTwoRects />,
-  // headerTitle: () => <TitleTextComponent />,
-  headerTitle: () => <CenterFixedWidthComponent />,
+  headerTitle: () => <TitleTextComponent />,
 };
 
 function App() {
