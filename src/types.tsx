@@ -755,7 +755,13 @@ export interface SearchBarProps {
    */
   disableBackButtonOverride?: boolean;
   /**
-   * Indicates whether to hide the navigation bar
+   * Indicates whether to hide the navigation bar.
+   *
+   * If value is `undefined`, uses native behavior:
+   * - on iOS versions prior to 26, value is `true`,
+   * - starting from iOS 26, value is determined by context.
+   *
+   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
    *
    * @platform ios
    */
@@ -766,7 +772,6 @@ export interface SearchBarProps {
    * @platform ios
    */
   hideWhenScrolling?: boolean;
-
   /**
    * Sets type of the input. Defaults to `text`.
    *
@@ -774,7 +779,15 @@ export interface SearchBarProps {
    */
   inputType?: 'text' | 'phone' | 'number' | 'email';
   /**
-   * Indicates whether to obscure the underlying content
+   * Indicates whether to obscure the underlying content.
+   *
+   * If value is `undefined`, uses native behavior:
+   * - on iOS, value is `false`,
+   * - on tvOS, value is `true`.
+   *
+   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
+   *
+   * @platform ios
    */
   obscureBackground?: boolean;
   /**
