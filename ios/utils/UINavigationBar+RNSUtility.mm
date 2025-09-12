@@ -96,6 +96,7 @@
   return [self rnscreens_findSubviewOfClass:viewClass from:view.superview];
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (nullable UIView *)rnscreens_findNavigationBarPlatterViewFromUIView:(UIView *_Nonnull)view
 {
   Class platterItemViewClass = NSClassFromString(@"_UINavigationBarPlatterView");
@@ -110,5 +111,6 @@
 
   return platterItemView;
 }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 @end

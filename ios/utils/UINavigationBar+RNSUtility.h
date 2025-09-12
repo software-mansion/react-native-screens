@@ -1,4 +1,5 @@
 #import <UIKit/UIKit.h>
+#import "RNSDefines.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,7 +33,24 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable UIView *)rnscreens_findBackButtonWrapperView;
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+/**
+ * Aims to find the back button wrapper view of the `UINavigationBarPlatterView`. This is the view that is responsible
+ * for the rounded component rendered over the button.
+ *
+ * This method relies on internal iOS implementation details (see the implementation)
+ * and might need patches specific to future iOS versions, in case the view hierarchy inside
+ * the navigation bar changes. It
+ *
+ * Tested to work reliably on iOS 26.0.
+ *
+ * @returns `_UIButtonBarButton` view, if present and mounted in anticipated place;
+ *                      if the back button is not present, this method returns `nil`.
+ */
 - (nullable UIView *)rnscreens_findNavigationBarPlatterViewFromUIView:(UIView *_Nonnull)view;
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 @end
 
