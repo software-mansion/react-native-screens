@@ -155,22 +155,22 @@ class TabScreenViewManager :
 
     override fun setBottomScrollEdgeEffect(
         view: TabScreen?,
-        value: String?
+        value: String?,
     ) = Unit
 
     override fun setLeftScrollEdgeEffect(
         view: TabScreen?,
-        value: String?
+        value: String?,
     ) = Unit
 
     override fun setRightScrollEdgeEffect(
         view: TabScreen?,
-        value: String?
+        value: String?,
     ) = Unit
 
     override fun setTopScrollEdgeEffect(
         view: TabScreen?,
-        value: String?
+        value: String?,
     ) = Unit
 
     // Android specific
