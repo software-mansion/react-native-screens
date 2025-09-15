@@ -18,6 +18,8 @@ class SafeAreaViewManager :
 
     override fun createViewInstance(reactContext: ThemedReactContext): SafeAreaView = SafeAreaView(reactContext)
 
+    override fun getDelegate() = delegate
+
     override fun setEdges(
         view: SafeAreaView,
         value: ReadableMap?,
