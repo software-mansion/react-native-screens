@@ -22,6 +22,7 @@
 + (void)configureSingleEffect:(UIScrollEdgeEffect *)edgeEffect
                      withEnum:(RNSScrollEdgeEffect)effectEnum API_AVAILABLE(ios(26.0))
 {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26, *)) {
     switch (effectEnum) {
       case RNSScrollEdgeEffectAutomatic:
@@ -42,6 +43,7 @@
         break;
     }
   }
+#endif
 }
 
 @end
