@@ -155,6 +155,7 @@ namespace react = facebook::react;
   }
 #endif
 }
+NS_ENUM(<#... #>)
 
 - (void)setObscureBackground:(RNSOptionalBoolean)obscureBackground
 {

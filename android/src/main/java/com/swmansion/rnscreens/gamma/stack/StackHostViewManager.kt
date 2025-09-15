@@ -23,9 +23,9 @@ class StackHostViewManager : ViewGroupManager<StackHost>(), RNSScreenStackHostMa
         parent.mountReactSubviewAt(child, index)
     }
 
-    override fun removeView(parent: StackHost, child: View) {
-        require(child is StackScreen) { "[RNScreens] Attempt to attach child that is not of type ${StackScreen::javaClass.name}" }
-        parent.unmountReactSubview(child)
+    override fun removeView(parent: StackHost, view: View) {
+        require(view is StackScreen) { "[RNScreens] Attempt to attach child that is not of type ${StackScreen::javaClass.name}" }
+        parent.unmountReactSubview(view)
     }
 
     override fun removeViewAt(parent: StackHost, index: Int) {
