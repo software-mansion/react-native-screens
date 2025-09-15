@@ -161,6 +161,30 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+- (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
+{
+  _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
+  [self findTabBarController].needsUpdateOfSelectedTab = YES;
+}
+
+- (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
+{
+  _leftScrollEdgeEffect = leftScrollEdgeEffect;
+  [self findTabBarController].needsUpdateOfSelectedTab = YES;
+}
+
+- (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
+{
+  _rightScrollEdgeEffect = rightScrollEdgeEffect;
+  [self findTabBarController].needsUpdateOfSelectedTab = YES;
+}
+
+- (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
+{
+  _topScrollEdgeEffect = topScrollEdgeEffect;
+  [self findTabBarController].needsUpdateOfSelectedTab = YES;
+}
+
 - (void)updateScrollEdgeEffects
 {
   [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
