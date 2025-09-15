@@ -675,11 +675,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)didMoveToWindow
 {
-#ifndef RCT_NEW_ARCH_ENABLED
-  // see finalizeUpdates() for Fabric
-  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                   fromProvider:self];
-#endif
   // For RN touches to work we need to instantiate and connect RCTTouchHandler. This only applies
   // for screens that aren't mounted under RCTRootView e.g., modals that are mounted directly to
   // root application window.
@@ -1420,6 +1415,17 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
+
+  BOOL shouldUpdateScrollEffects = NO;
+  for (NSString *propName : changedProps) {
+    shouldUpdateScrollEffects = shouldUpdateScrollEffects || [propName hasSuffix:@"ScrollEdgeEffect"];
+  }
+
+  if (shouldUpdateScrollEffects) {
+    // see finalizeUpdates() for Fabric
+    [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                     fromProvider:self];
+  }
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
     [self updateFormSheetPresentationStyle];
