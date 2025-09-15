@@ -42,8 +42,8 @@ export type PlatformIconAndroid =
   | PlatformIconShared;
 
 export interface PlatformIcon {
-  ios?: PlatformIconIOS;
   android?: PlatformIconAndroid;
+  ios?: PlatformIconIOS;
   shared?: PlatformIconShared;
 }
 
@@ -453,7 +453,7 @@ export interface BottomTabsScreenProps {
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
-   * Supports the same values as `icon` property.
+   * Supports the same values as `icon` property for iOS.
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
