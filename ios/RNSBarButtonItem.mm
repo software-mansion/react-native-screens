@@ -7,7 +7,10 @@
 static char RNSBarButtonItemActionKey;
 static char RNSBarButtonItemIdKey;
 
-@implementation RNSBarButtonItem
+@implementation RNSBarButtonItem {
+  NSString *_buttonId;
+  RNSBarButtonItemAction _itemAction;
+}
 
 - (instancetype)initWithConfig:(NSDictionary<NSString *, id> *)dict
                         action:(RNSBarButtonItemAction)action
@@ -131,8 +134,8 @@ static char RNSBarButtonItemIdKey;
   if (buttonId && action) {
     self.target = self;
     self.action = @selector(handleBarButtonItemPress:);
-    self.itemAction = action;
-    self.buttonId = buttonId;
+    _itemAction = action;
+    _buttonId = buttonId;
   }
   return self;
 }
@@ -208,8 +211,8 @@ static char RNSBarButtonItemIdKey;
 
 - (void)handleBarButtonItemPress:(UIBarButtonItem *)item
 {
-  if (self.itemAction && self.buttonId) {
-    self.itemAction(self.buttonId);
+  if (_itemAction && _buttonId) {
+    _itemAction(_buttonId);
   }
 }
 
