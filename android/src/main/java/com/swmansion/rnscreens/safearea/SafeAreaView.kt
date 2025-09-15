@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.PixelUtil
@@ -16,22 +17,28 @@ import java.lang.ref.WeakReference
 @SuppressLint("ViewConstructor") // Should never be recreated
 class SafeAreaView(
     private val reactContext: ThemedReactContext,
-) : ReactViewGroup(reactContext), OnApplyWindowInsetsListener, ViewTreeObserver.OnPreDrawListener {
+) : ReactViewGroup(reactContext),
+    OnApplyWindowInsetsListener,
+    ViewTreeObserver.OnPreDrawListener {
     private var provider = WeakReference<SafeAreaProvider>(null)
     private var currentInterfaceInsets: EdgeInsets = EdgeInsets.NONE
     private var currentSystemInsets: EdgeInsets = EdgeInsets.NONE
     private var needsInsetsUpdate = false
     private var stateWrapper: StateWrapper? = null
 
-    fun getStateWrapper(): StateWrapper? {
-        return stateWrapper
-    }
+    fun getStateWrapper(): StateWrapper? = stateWrapper
 
     fun setStateWrapper(stateWrapper: StateWrapper?) {
         this.stateWrapper = stateWrapper
     }
 
+    init {
+        ViewCompat.setOnApplyWindowInsetsListener(this, this)
+    }
+
     override fun onAttachedToWindow() {
+        viewTreeObserver.addOnPreDrawListener(this)
+
         val newProvider = findProvider()
         if (newProvider == null) {
             super.onAttachedToWindow()
@@ -51,6 +58,7 @@ class SafeAreaView(
     override fun onDetachedFromWindow() {
         provider.get()?.removeOnInterfaceInsetsChangeListener(this)
 
+        viewTreeObserver.removeOnPreDrawListener(this)
         super.onDetachedFromWindow()
     }
 
@@ -78,7 +86,7 @@ class SafeAreaView(
 
     override fun onApplyWindowInsets(
         view: View,
-        insets: WindowInsetsCompat
+        insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
         val newSystemInsets =
             insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
@@ -88,7 +96,8 @@ class SafeAreaView(
             needsInsetsUpdate = true
         }
 
-        return WindowInsetsCompat.Builder(insets)
+        return WindowInsetsCompat
+            .Builder(insets)
             .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
             .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.NONE)
             .build()

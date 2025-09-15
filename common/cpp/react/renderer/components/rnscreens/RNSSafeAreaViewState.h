@@ -16,7 +16,7 @@ namespace facebook {
 namespace react {
 
 #ifdef ANDROID
-inline EdgeInsets edgeInsetsFromDynamic(const folly::dynamic &value) {
+inline EdgeInsets RNS_edgeInsetsFromDynamic(const folly::dynamic &value) {
   return EdgeInsets{
       .left = (float)value["left"].getDouble(),
       .top = (float)value["top"].getDouble(),
@@ -40,7 +40,7 @@ class JSI_EXPORT RNSSafeAreaViewState final {
   RNSSafeAreaViewState(
       RNSSafeAreaViewState const &previousState,
       folly::dynamic data)
-      : insets(edgeInsetsFromDynamic(data["insets"])) {};
+      : insets(RNS_edgeInsetsFromDynamic(data["insets"])) {};
 #endif
 
   EdgeInsets insets{};
