@@ -1,12 +1,12 @@
 #import "RNSEnums.h"
 
-@protocol ScrollEdgeEffectProviding
+@protocol RNSScrollEdgeEffectProviding
 - (RNSScrollEdgeEffect)bottomScrollEdgeEffect;
 - (RNSScrollEdgeEffect)leftScrollEdgeEffect;
 - (RNSScrollEdgeEffect)rightScrollEdgeEffect;
 - (RNSScrollEdgeEffect)topScrollEdgeEffect;
 @end
 
-@interface ScrollEdgeEffectApplicator : NSObject
-+ (void)applyToScrollView:(UIScrollView *)scrollView fromProvider:(id<ScrollEdgeEffectProviding>)provider;
+@interface RNSScrollEdgeEffectApplicator : NSObject
++ (void)applyToScrollView:(UIScrollView *)scrollView fromProvider:(id<RNSScrollEdgeEffectProviding>)provider;
 @end
