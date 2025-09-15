@@ -5,10 +5,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, Text, View, ScrollView } from 'react-native';
-import {
-  ListItem,
-  SettingsSwitch,
-} from '../shared';
+import { ListItem, SettingsSwitch } from '../shared';
 
 type StackRouteParamList = {
   Home: undefined;
@@ -41,6 +38,10 @@ function Home({ navigation }: StackNavigationProp) {
     if (searchEnabled) {
       navigation.setOptions({
         headerSearchBarOptions: {
+          // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+          // to preserve test's original search bar configuration.
+          placement: 'stacked',
+          hideWhenScrolling: false,
           onChangeText: event => setSearchQuery(event.nativeEvent.text),
         },
       });
@@ -54,7 +55,9 @@ function Home({ navigation }: StackNavigationProp) {
 
   return (
     <View style={[{ flex: 1, gap: 15 }]}>
-      <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={{ marginTop: 15}}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{ marginTop: 15 }}>
         <Button
           title="Open Second"
           onPress={() => navigation.navigate('Second')}

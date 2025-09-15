@@ -3,7 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { View, Text, StyleSheet, Pressable, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-
 const Stack = createNativeStackNavigator();
 
 const titleLength = 24;
@@ -22,8 +21,8 @@ const secondScreenTitle = baseTitle2.repeat(titleLength);
 const searchBarScreenTitle = 'SearchBarScreen';
 
 /**
-  * Small left element
-  */
+ * Small left element
+ */
 function HeaderLeftSmall(): React.JSX.Element {
   return (
     <View style={{ width: 40, height: 20, backgroundColor: 'goldenrod' }} />
@@ -33,16 +32,36 @@ function HeaderLeftSmall(): React.JSX.Element {
 function HeaderRightTwoRects(): React.JSX.Element {
   return (
     <View style={{ flexDirection: 'row' }}>
-      <View style={{ width: 20, height: 20, backgroundColor: 'lightgreen', opacity: 0.8 }} />
-      <View style={{ width: 60, height: 20, backgroundColor: 'lightblue', opacity: 0.8 }} />
+      <View
+        style={{
+          width: 20,
+          height: 20,
+          backgroundColor: 'lightgreen',
+          opacity: 0.8,
+        }}
+      />
+      <View
+        style={{
+          width: 60,
+          height: 20,
+          backgroundColor: 'lightblue',
+          opacity: 0.8,
+        }}
+      />
     </View>
   );
 }
 
-function TitleTextComponent({ length }: { length?: number }): React.JSX.Element {
+function TitleTextComponent({
+  length,
+}: {
+  length?: number;
+}): React.JSX.Element {
   return (
     <View style={{}}>
-      <Text numberOfLines={1} style={{}}>{baseTitle.repeat(length ?? titleLength)}</Text>
+      <Text numberOfLines={1} style={{}}>
+        {baseTitle.repeat(length ?? titleLength)}
+      </Text>
     </View>
   );
 }
@@ -101,6 +120,10 @@ function App() {
             ...headerOptions,
             headerSearchBarOptions: {
               placeholder: 'placeholder',
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
+              placement: 'stacked',
+              hideWhenScrolling: false,
             },
           }}
         />
@@ -110,24 +133,61 @@ function App() {
 }
 
 function Screen({ navigation }: any) {
-
   // Just a reference contents, mimicking the setup with header config & subviews
 
   return (
     <View>
-      <View style={[{ backgroundColor: 'pink', flexDirection: 'row', width: '100%', justifyContent: 'space-between', marginVertical: 10 }]}>
+      <View
+        style={[
+          {
+            backgroundColor: 'pink',
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+          },
+        ]}>
         <View collapsable={false} style={[styles.headerSubviewStyle]}>
-          <View style={{ backgroundColor: 'lightgreen', width: 50, height: 20, opacity: 0.6 }} />
+          <View
+            style={{
+              backgroundColor: 'lightgreen',
+              width: 50,
+              height: 20,
+              opacity: 0.6,
+            }}
+          />
         </View>
-        <View style={[{ backgroundColor: 'goldenrod', flexShrink: 1 }, styles.headerSubviewStyle]}>
-          <Text numberOfLines={1} style={{}}>{baseTitle.repeat(5)}</Text>
+        <View
+          style={[
+            { backgroundColor: 'goldenrod', flexShrink: 1 },
+            styles.headerSubviewStyle,
+          ]}>
+          <Text numberOfLines={1} style={{}}>
+            {baseTitle.repeat(5)}
+          </Text>
         </View>
         <View collapsable={false} style={{}}>
-          <View style={[{ backgroundColor: 'lightblue', width: 80, height: 20, opacity: 0.6 }, styles.headerSubviewStyle]} />
+          <View
+            style={[
+              {
+                backgroundColor: 'lightblue',
+                width: 80,
+                height: 20,
+                opacity: 0.6,
+              },
+              styles.headerSubviewStyle,
+            ]}
+          />
         </View>
       </View>
-      <Button onPress={() => navigation.navigate(secondScreenTitle)} title="Nav Forward" />
-      <Button onPress={() => navigation.navigate(searchBarScreenTitle)} title={searchBarScreenTitle} />
+      <Button
+        onPress={() => navigation.navigate(secondScreenTitle)}
+        title="Nav Forward"
+      />
+      <Button
+        onPress={() => navigation.navigate(searchBarScreenTitle)}
+        title={searchBarScreenTitle}
+      />
     </View>
   );
 }
@@ -179,4 +239,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-

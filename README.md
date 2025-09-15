@@ -70,7 +70,7 @@ class MainActivity: ReactActivity() {
     //react-native-screens override
     override fun onCreate(savedInstanceState: Bundle?) {
       supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
-      super.onCreate(null);
+      super.onCreate(savedInstanceState);
     }
 }
 ```

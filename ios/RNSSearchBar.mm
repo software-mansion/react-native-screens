@@ -66,8 +66,14 @@ namespace react = facebook::react;
 #endif
 
   _controller.searchBar.delegate = self;
+
+  // Ensure consistent default values on both architectures
+  _controller.hidesNavigationBarDuringPresentation = YES;
+  _controller.obscuresBackgroundDuringPresentation = NO;
+
   _hideWhenScrolling = YES;
-  _placement = RNSSearchBarPlacementStacked;
+  _placement = RNSSearchBarPlacementAutomatic;
+
   _allowToolbarIntegration = YES;
 }
 
@@ -148,9 +154,7 @@ namespace react = facebook::react;
 
 - (void)setObscureBackground:(BOOL)obscureBackground
 {
-  if (@available(iOS 9.1, *)) {
-    [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
-  }
+  [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
 }
 
 - (void)setHideNavigationBar:(BOOL)hideNavigationBar
@@ -353,7 +357,9 @@ namespace react = facebook::react;
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(props);
 
-  [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  if (oldScreenProps.hideWhenScrolling != newScreenProps.hideWhenScrolling) {
+    [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  }
 
   if (oldScreenProps.cancelButtonText != newScreenProps.cancelButtonText) {
     [self setCancelButtonText:RCTNSStringFromStringNilIfEmpty(newScreenProps.cancelButtonText)];
@@ -526,7 +532,7 @@ RCT_ENUM_CONVERTER(
       @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
       @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
     }),
-    RNSSearchBarPlacementStacked,
+    RNSSearchBarPlacementAutomatic,
     integerValue)
 
 @end
