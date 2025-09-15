@@ -18,7 +18,7 @@ import {
 import { UnsafeMixed } from './codegenUtils';
 
 // iOS-specific: SFSymbol, image as a template usage
-export type IconType = 'image' | 'template' | 'sfSymbol';
+export type NativeIconType = 'image' | 'template' | 'sfSymbol';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -140,7 +140,7 @@ export interface NativeProps extends ViewProps {
   standardAppearance?: UnsafeMixed<Appearance>;
   scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
-  iconType?: WithDefault<IconType, 'sfSymbol'>;
+  iconType?: WithDefault<NativeIconType, 'sfSymbol'>;
 
   iconImageSource?: ImageSource;
   iconSfSymbolName?: string;
