@@ -64,6 +64,10 @@ object TabsImageLoader {
     }
 
     private fun resolveSource(context: Context, uri: String): RNSImageSource? {
+        // In release builds, assets are coming with bundle and we need to work with resource id.
+        // In debug, metro is responsible for handling assets via http.
+        // At the moment, we're supporting images (drawable) and SVG icons (raw).
+        // For any other type, we may consider adding a support in the future if needed.
         if (uri.startsWith("_")) {
             val drawableResId = context.resources.getIdentifier(uri, "drawable", context.packageName)
             if (drawableResId != 0) {
@@ -76,6 +80,8 @@ object TabsImageLoader {
             Log.e("[RNScreens]", "Resource not found in drawable or raw: $uri")
             return null
         }
+
+        // If asset isn't included in android source directories and we're loading it from given path.
         return RNSImageSource.UriString(uri)
     }
 

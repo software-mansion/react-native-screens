@@ -176,6 +176,8 @@ class TabScreenViewManager :
         if (uri != null) {
             val context = view.context
             TabsImageLoader.load(context, uri) { drawable ->
+                // Scheduling rendering image on the UI thread, because Fresco
+                // is having issues doing it from other threads.
                 Handler(Looper.getMainLooper()).post {
                     view.icon = drawable
                 }
