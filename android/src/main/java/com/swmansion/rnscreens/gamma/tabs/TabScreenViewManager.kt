@@ -2,19 +2,11 @@ package com.swmansion.rnscreens.gamma.tabs
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.net.toUri
-import com.facebook.common.executors.CallerThreadExecutor
-import com.facebook.common.references.CloseableReference
-import com.facebook.datasource.BaseDataSubscriber
-import com.facebook.datasource.DataSource
-import com.facebook.drawee.backends.pipeline.Fresco
-import com.facebook.imagepipeline.image.CloseableImage
-import com.facebook.imagepipeline.image.CloseableStaticBitmap
-import com.facebook.imagepipeline.request.ImageRequestBuilder
+import coil3.ImageLoader
+import coil3.asDrawable
+import coil3.request.ImageRequest
+import coil3.svg.SvgDecoder
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
@@ -39,9 +31,18 @@ class TabScreenViewManager :
 
     override fun getName() = REACT_CLASS
 
+    var imageLoader: ImageLoader? = null
+
     var context: ThemedReactContext? = null
 
     override fun createViewInstance(reactContext: ThemedReactContext): TabScreen {
+        imageLoader =
+            ImageLoader
+                .Builder(reactContext)
+                .components {
+                    add(SvgDecoder.Factory())
+                }.build()
+        context = reactContext
         RNSLog.d(REACT_CLASS, "createViewInstance")
         return TabScreen(reactContext)
     }
@@ -191,63 +192,41 @@ class TabScreenViewManager :
             val source = resolveSource(context, uri)
 
             if (source != null) {
-                loadUsingFresco(context, source) {
-                    Handler(Looper.getMainLooper()).post {
-                        view.icon = it
-                    }
+                loadUsingCoil(context, source) {
+                    view.icon = it
                 }
             }
         }
     }
 
-    private fun loadUsingFresco(
+    private fun loadUsingCoil(
         context: Context,
         source: RNSImageSource,
         onLoad: (img: Drawable) -> Unit,
     ) {
-        val uri =
+        val data =
             when (source) {
-                is RNSImageSource.DrawableRes -> {
-                    "res://${context.packageName}/${source.resId}".toUri()
-                }
-                is RNSImageSource.UriString -> {
-                    source.uri.toUri()
-                }
+                is RNSImageSource.DrawableRes -> source.resId
+                is RNSImageSource.UriString -> source.uri
             }
 
-        val imageRequest =
-            ImageRequestBuilder
-                .newBuilderWithSource(uri)
-                .build()
+        val request =
+            ImageRequest
+                .Builder(context)
+                .data(data)
+                .target { drawable ->
+                    val stateDrawable = drawable.asDrawable(context.resources)
+                    onLoad(stateDrawable)
+                }.listener(
+                    onError = { _, result ->
+                        Log.e("[RNScreens]", "Error loading image: $data", result.throwable)
+                    },
+                    onCancel = {
+                        Log.w("[RNScreens]", "Image loading request cancelled: $data")
+                    },
+                ).build()
 
-        val dataSource = Fresco.getImagePipeline().fetchDecodedImage(imageRequest, context)
-
-        dataSource.subscribe(
-            object : BaseDataSubscriber<CloseableReference<CloseableImage>>() {
-                override fun onNewResultImpl(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
-                    if (!dataSource.isFinished) {
-                        return
-                    }
-
-                    val imageReference = dataSource.result ?: return
-                    val closeableImage = imageReference.get()
-
-                    if (closeableImage is CloseableStaticBitmap) {
-                        val bitmap = closeableImage.underlyingBitmap
-
-                        val drawable = bitmap.toDrawable(context.resources)
-                        onLoad(drawable)
-                    }
-
-                    imageReference.close()
-                }
-
-                override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
-                    Log.e("[RNScreens]", "Error loading image: $uri", dataSource.failureCause)
-                }
-            },
-            CallerThreadExecutor.getInstance(),
-        )
+        imageLoader?.enqueue(request)
     }
 
     private fun resolveSource(
