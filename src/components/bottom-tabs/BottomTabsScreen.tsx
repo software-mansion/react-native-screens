@@ -312,11 +312,11 @@ function parseIconsToNativeProps(
   selectedIconSfSymbolName?: string;
 } {
   const androidNativeProps = parseAndroidIconToNativeProps(
-    icon?.shared || icon?.android,
+    icon?.android || icon?.shared,
   );
 
   const { iconImageSource, iconSfSymbolName, iconType } =
-    parseIOSIconToNativeProps(icon?.shared || icon?.ios);
+    parseIOSIconToNativeProps(icon?.ios || icon?.shared);
   const {
     iconImageSource: selectedIconImageSource,
     iconSfSymbolName: selectedIconSfSymbolName,
