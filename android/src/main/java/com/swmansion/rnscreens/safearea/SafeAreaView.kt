@@ -88,6 +88,7 @@ class SafeAreaView(
         view: View,
         insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
+        // TODO: investigate if we should use insets ignoring visibility
         val newSystemInsets =
             insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
 
@@ -99,6 +100,7 @@ class SafeAreaView(
         return WindowInsetsCompat
             .Builder(insets)
             .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
+//            .setInsetsIgnoringVisibility(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
             .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.NONE)
             .build()
     }
