@@ -605,6 +605,61 @@ An array of objects describing native bar button items to display on the left or
 
 `hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). 
 
+#### Example configuration:
+
+```typescript
+  <Stack.Screen
+    options={{
+      headerRightItems: [
+        {
+          title: 'Text button',
+          onPress: () => Alert.alert('Text pressed'),
+        },
+        {
+          image: require('../../assets/search_black.png'),
+          onPress: () => Alert.alert('Icon pressed'),
+        },
+        {
+          sfSymbolName: "square.and.arrow.up",
+          onPress: () => Alert.alert('SF symbol pressed'),
+        },
+        {
+          title: 'Menu',
+          menu: {
+            items: [
+              {
+                title: 'Option 1',
+                type: "action",
+                onPress: () => Alert.alert('Option 1 pressed'),
+              },
+              {
+                title: 'Option 2',
+                type: "action",
+                onPress: () => Alert.alert('Option 2 pressed'),
+              },
+            ],
+          },
+        },
+        {
+          title: 'Badge',
+          badge: {
+            value: '3',
+            color: 'white',
+            backgroundColor: 'red',
+          },
+          onPress: () => Alert.alert('Badge pressed'),
+        },
+        {
+          title: 'Prominent',
+          style: 'prominent',
+          tintColor: 'green',
+          onPress: () => Alert.alert('Prominent pressed'),
+        },
+      ],
+    }}
+  />
+```
+
 ### `hidden`
 
 When set to `true` the header will be hidden while the parent `Screen` is on the top of the stack. The default value is `false`.
