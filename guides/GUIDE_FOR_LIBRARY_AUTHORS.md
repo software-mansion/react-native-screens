@@ -579,8 +579,6 @@ An array of objects describing native bar button items to display on the left or
 
 `width?: number` — Width of the item (iOS 18-).
 
-`possibleTitles?: string[]` — Possible titles for the item.
-
 `hidesSharedBackground?: boolean` — Hide shared background (iOS 26+).
 
 `sharesBackground?: boolean` — Share background with other items (iOS 26+).
