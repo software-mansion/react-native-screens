@@ -250,15 +250,19 @@ function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
         '[RNScreens] failed to resolve an asset for bottom tab icon',
       );
     }
+
+    return {
+      parsedIconResource,
+    };
+  } else if (icon.type === 'drawableResourceAndroid') {
+    return {
+      drawableName: icon.name,
+    };
+  } else {
+    throw new Error(
+      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResourceAndroid`.',
+    );
   }
-
-  const drawableName =
-    icon.type === 'drawableResourceAndroid' ? icon.name : undefined;
-
-  return {
-    parsedIconResource,
-    drawableName,
-  };
 }
 
 function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
@@ -287,7 +291,7 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
     };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format. You must provide sfSymbolName, imageSource or templateSource.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbolIOS`, `imageSource` or `templateSourceIOS`.',
     );
   }
 }
