@@ -2,6 +2,8 @@ package com.swmansion.rnscreens.safearea
 
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -24,6 +26,15 @@ class SafeAreaViewManager :
         view: SafeAreaView,
         value: ReadableMap?,
     ): Unit = Unit
+
+    override fun updateState(
+        view: SafeAreaView,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?
+    ): Any? {
+        view.setStateWrapper(stateWrapper)
+        return super.updateState(view, props, stateWrapper)
+    }
 
     companion object {
         const val REACT_CLASS = "RNSSafeAreaView"

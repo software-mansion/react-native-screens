@@ -41,6 +41,10 @@ class SafeAreaView(
         newProvider.setOnInterfaceInsetsChangeListener(this)
         provider = WeakReference(newProvider)
 
+        currentInterfaceInsets = newProvider.getInterfaceInsets()
+        needsInsetsUpdate = true
+        updateInsetsIfNeeded()
+
         super.onAttachedToWindow()
     }
 
@@ -65,7 +69,7 @@ class SafeAreaView(
     }
 
     // TODO: make insets relative to window or don't?
-    fun onApplyInterfaceInsets(newInterfaceInsets: EdgeInsets) {
+    fun onInterfaceInsetsChange(newInterfaceInsets: EdgeInsets) {
         if (newInterfaceInsets != currentInterfaceInsets) {
             currentInterfaceInsets = newInterfaceInsets
             needsInsetsUpdate = true
@@ -102,7 +106,6 @@ class SafeAreaView(
     private fun updateInsets() {
         // TODO: handle edges
         val safeAreaInsets = EdgeInsets.max(currentInterfaceInsets, currentSystemInsets)
-
         val stateWrapper = getStateWrapper()
         if (stateWrapper != null) {
             val insets = Arguments.createMap()
