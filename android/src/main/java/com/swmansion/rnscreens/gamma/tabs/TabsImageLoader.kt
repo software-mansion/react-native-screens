@@ -21,25 +21,25 @@ object TabsImageLoader {
         onLoaded: (Drawable) -> Unit,
     ) {
         val source = resolveSource(context, uri) ?: return
-        val finalUri = when (source) {
-            is RNSImageSource.DrawableRes -> {
-                "res://${context.packageName}/${source.resId}".toUri()
+        val finalUri =
+            when (source) {
+                is RNSImageSource.DrawableRes -> {
+                    "res://${context.packageName}/${source.resId}".toUri()
+                }
+                is RNSImageSource.UriString -> {
+                    source.uri.toUri()
+                }
             }
-            is RNSImageSource.UriString -> {
-                source.uri.toUri()
-            }
-        }
 
-        val imageRequest = ImageRequestBuilder
-            .newBuilderWithSource(finalUri)
-            .build()
+        val imageRequest =
+            ImageRequestBuilder
+                .newBuilderWithSource(finalUri)
+                .build()
 
         val dataSource = Fresco.getImagePipeline().fetchDecodedImage(imageRequest, context)
         dataSource.subscribe(
             object : BaseDataSubscriber<CloseableReference<CloseableImage>>() {
-                override fun onNewResultImpl(
-                    dataSource: DataSource<CloseableReference<CloseableImage>?>
-                ) {
+                override fun onNewResultImpl(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
                     if (!dataSource.isFinished) return
                     val imageReference = dataSource.result ?: return
                     val closeableImage = imageReference.get()
@@ -53,17 +53,18 @@ object TabsImageLoader {
                     imageReference.close()
                 }
 
-                override fun onFailureImpl(
-                    dataSource: DataSource<CloseableReference<CloseableImage>?>
-                ) {
+                override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>?>) {
                     Log.e("[RNScreens]", "Error loading image: $uri", dataSource.failureCause)
                 }
             },
-            CallerThreadExecutor.getInstance()
+            CallerThreadExecutor.getInstance(),
         )
     }
 
-    private fun resolveSource(context: Context, uri: String): RNSImageSource? {
+    private fun resolveSource(
+        context: Context,
+        uri: String,
+    ): RNSImageSource? {
         // In release builds, assets are coming with bundle and we need to work with resource id.
         // In debug, metro is responsible for handling assets via http.
         // At the moment, we're supporting images (drawable) and SVG icons (raw).
@@ -86,7 +87,12 @@ object TabsImageLoader {
     }
 
     private sealed class RNSImageSource {
-        data class DrawableRes(val resId: Int) : RNSImageSource()
-        data class UriString(val uri: String) : RNSImageSource()
+        data class DrawableRes(
+            val resId: Int,
+        ) : RNSImageSource()
+
+        data class UriString(
+            val uri: String,
+        ) : RNSImageSource()
     }
 }
