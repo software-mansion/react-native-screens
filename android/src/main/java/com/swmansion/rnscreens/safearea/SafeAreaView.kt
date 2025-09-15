@@ -3,6 +3,7 @@
 package com.swmansion.rnscreens.safearea
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.graphics.Insets
@@ -13,8 +14,16 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.UIManagerHelper.getReactContext
+import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.safearea.paper.SafeAreaViewEdges
+import com.swmansion.rnscreens.safearea.paper.SafeAreaViewLocalData
 import java.lang.ref.WeakReference
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+private const val MAX_WAIT_TIME_NANO = 500000000L // 500ms
 
 @SuppressLint("ViewConstructor") // Should never be recreated
 class SafeAreaView(
@@ -27,6 +36,7 @@ class SafeAreaView(
     private var currentSystemInsets: EdgeInsets = EdgeInsets.NONE
     private var needsInsetsUpdate = false
     private var stateWrapper: StateWrapper? = null
+    private var edges: SafeAreaViewEdges? = null
 
     fun getStateWrapper(): StateWrapper? = stateWrapper
 
@@ -51,8 +61,7 @@ class SafeAreaView(
         provider = WeakReference(newProvider)
 
         currentInterfaceInsets = newProvider.getInterfaceInsets()
-        needsInsetsUpdate = true
-        updateInsetsIfNeeded()
+        updateInsets()
 
         super.onAttachedToWindow()
     }
@@ -78,7 +87,6 @@ class SafeAreaView(
         return providerCandidate as? SafeAreaProvider
     }
 
-    // TODO: make insets relative to window or don't?
     fun onInterfaceInsetsChange(newInterfaceInsets: EdgeInsets) {
         if (newInterfaceInsets != currentInterfaceInsets) {
             currentInterfaceInsets = newInterfaceInsets
@@ -117,7 +125,6 @@ class SafeAreaView(
     }
 
     private fun updateInsets() {
-        // TODO: handle edges
         val safeAreaInsets = EdgeInsets.max(currentInterfaceInsets, currentSystemInsets)
         val stateWrapper = getStateWrapper()
         if (stateWrapper != null) {
@@ -132,8 +139,61 @@ class SafeAreaView(
 
             stateWrapper.updateState(newState)
         } else {
-            // TODO: handle Paper
+            val localData = SafeAreaViewLocalData(insets = safeAreaInsets, edges = edges)
+            val reactContext = getReactContext(this)
+            val uiManager = reactContext.getNativeModule(UIManagerModule::class.java)
+            if (uiManager != null) {
+                uiManager.setViewLocalData(id, localData)
+                // Sadly there doesn't seem to be a way to properly dirty a yoga node from java, so
+                // if we are in the middle of a layout, we need to recompute it. There is also no
+                // way to know whether we are in the middle of a layout so always do it.
+                reactContext.runOnNativeModulesQueueThread {
+                    uiManager.uiImplementation.dispatchViewUpdates(-1)
+                }
+                waitForReactLayout()
+            }
         }
+    }
+
+    private fun waitForReactLayout() {
+        // Block the main thread until the native module thread is finished with
+        // its current tasks. To do this we use the done boolean as a lock and enqueue
+        // a task on the native modules thread. When the task runs we can unblock the
+        // main thread. This should be safe as long as the native modules thread
+        // does not block waiting on the main thread.
+        var done = false
+        val lock = ReentrantLock()
+        val condition = lock.newCondition()
+        val startTime = System.nanoTime()
+        var waitTime = 0L
+        getReactContext(this).runOnNativeModulesQueueThread {
+            lock.withLock {
+                if (!done) {
+                    done = true
+                    condition.signal()
+                }
+            }
+        }
+        lock.withLock {
+            while (!done && waitTime < MAX_WAIT_TIME_NANO) {
+                try {
+                    condition.awaitNanos(MAX_WAIT_TIME_NANO)
+                } catch (ex: InterruptedException) {
+                    // In case of an interrupt just give up waiting.
+                    done = true
+                }
+                waitTime += System.nanoTime() - startTime
+            }
+        }
+        // Timed out waiting.
+        if (waitTime >= MAX_WAIT_TIME_NANO) {
+            Log.w(TAG, "Timed out waiting for layout.")
+        }
+    }
+
+    fun setEdges(edges: SafeAreaViewEdges) {
+        this.edges = edges
+        updateInsets()
     }
 
     override fun onPreDraw(): Boolean {
