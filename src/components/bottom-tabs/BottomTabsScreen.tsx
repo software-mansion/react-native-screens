@@ -234,8 +234,8 @@ function shouldFreezeScreen(
 }
 
 function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
-  iconResource?: ImageResolvedAssetSource;
-  iconResourceName?: string;
+  imageIconResource?: ImageResolvedAssetSource;
+  drawableIconResourceName?: string;
 } {
   if (!icon) {
     return {};
@@ -255,11 +255,11 @@ function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
       // It won't render any icon, but it will prevent from crashing on the native side which is expecting
       // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
       // double as a value.
-      iconResource: parsedIconResource || undefined,
+      imageIconResource: parsedIconResource || undefined,
     };
   } else if (icon.type === 'drawableResourceAndroid') {
     return {
-      iconResourceName: icon.name,
+      drawableIconResourceName: icon.name,
     };
   } else {
     throw new Error(
@@ -303,8 +303,8 @@ function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
   selectedIcon: PlatformIconIOS | undefined,
 ): {
-  iconResource?: ImageResolvedAssetSource;
-  iconResourceName?: string;
+  imageIconResource?: ImageResolvedAssetSource;
+  drawableIconResourceName?: string;
   iconType?: NativeIconType;
   iconImageSource?: ImageSourcePropType;
   iconSfSymbolName?: string;
