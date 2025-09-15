@@ -5,8 +5,8 @@
 #import "RNSSafeAreaProviding.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
+#import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
-#import "ScrollEdgeEffectApplicator.h"
 
 #if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
@@ -67,7 +67,7 @@ namespace react = facebook::react;
 #else
     RCTView
 #endif
-    <RNSScreenContentWrapperDelegate, RNSScrollViewBehaviorOverriding, RNSSafeAreaProviding, ScrollEdgeEffectProviding>
+    <RNSScreenContentWrapperDelegate, RNSScrollViewBehaviorOverriding, RNSSafeAreaProviding, RNSScrollEdgeEffectProviding>
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;

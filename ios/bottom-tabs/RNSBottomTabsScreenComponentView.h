@@ -3,8 +3,8 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
+#import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
-#import "ScrollEdgeEffectApplicator.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "RNSViewControllerInvalidating.h"
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Properties set on component in JavaScript.
  */
-@interface RNSBottomTabsScreenComponentView () <RNSScrollViewBehaviorOverriding, ScrollEdgeEffectProviding>
+@interface RNSBottomTabsScreenComponentView () <RNSScrollViewBehaviorOverriding, RNSScrollEdgeEffectProviding>
 
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.

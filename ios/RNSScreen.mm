@@ -1389,8 +1389,8 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
-  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                   fromProvider:self];
+  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                      fromProvider:self];
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];

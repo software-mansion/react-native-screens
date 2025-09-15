@@ -187,8 +187,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateScrollEdgeEffects
 {
-  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                   fromProvider:self];
+  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                      fromProvider:self];
 }
 
 #pragma mark - Prop update utils

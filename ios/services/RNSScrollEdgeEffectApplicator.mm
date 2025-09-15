@@ -1,20 +1,21 @@
-#import "ScrollEdgeEffectApplicator.h"
+#import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 
-@implementation ScrollEdgeEffectApplicator
+@implementation RNSScrollEdgeEffectApplicator
 
-+ (void)applyToScrollView:(UIScrollView *)scrollView fromProvider:(id<ScrollEdgeEffectProviding>)provider
++ (void)applyToScrollView:(UIScrollView *)scrollView fromProvider:(id<RNSScrollEdgeEffectProviding>)provider
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26, *)) {
-    [ScrollEdgeEffectApplicator configureSingleEffect:scrollView.bottomEdgeEffect
-                                             withEnum:[provider bottomScrollEdgeEffect]];
-    [ScrollEdgeEffectApplicator configureSingleEffect:scrollView.leftEdgeEffect
-                                             withEnum:[provider leftScrollEdgeEffect]];
-    [ScrollEdgeEffectApplicator configureSingleEffect:scrollView.rightEdgeEffect
-                                             withEnum:[provider rightScrollEdgeEffect]];
-    [ScrollEdgeEffectApplicator configureSingleEffect:scrollView.topEdgeEffect withEnum:[provider topScrollEdgeEffect]];
+    [RNSScrollEdgeEffectApplicator configureSingleEffect:scrollView.bottomEdgeEffect
+                                                withEnum:[provider bottomScrollEdgeEffect]];
+    [RNSScrollEdgeEffectApplicator configureSingleEffect:scrollView.leftEdgeEffect
+                                                withEnum:[provider leftScrollEdgeEffect]];
+    [RNSScrollEdgeEffectApplicator configureSingleEffect:scrollView.rightEdgeEffect
+                                                withEnum:[provider rightScrollEdgeEffect]];
+    [RNSScrollEdgeEffectApplicator configureSingleEffect:scrollView.topEdgeEffect
+                                                withEnum:[provider topScrollEdgeEffect]];
   }
 #endif
 }
