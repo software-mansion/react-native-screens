@@ -24,6 +24,8 @@ const demoScreens = [
   { name: 'AdvancedMenuButtonDemo', title: 'Advanced Menu Button' },
   { name: 'ReactNodeButtonDemo', title: 'React Node Button' },
   { name: "BackButtonVisibleDemo", title: "Back Button Visible" },
+  { name: "IdentifierExample", title: "Identifier Example" },
+  { name: "IdentifierExample2", title: "Identifier Example 2" },
 ];
 
 const MainScreen = ({ navigation }: any) => (
@@ -65,6 +67,8 @@ const DoneStyleButtonDemo = DemoScreenContent;
 const AdvancedMenuButtonDemo = DemoScreenContent;
 const ReactNodeButtonDemo = DemoScreenContent;
 const BackButtonVisibleDemo = DemoScreenContent;
+const IdentifierExample = DemoScreenContent;
+const IdentifierExample2 = DemoScreenContent;
 
 export default function BarButtonItemsExample() {
   return (
@@ -417,6 +421,31 @@ export default function BarButtonItemsExample() {
             {
               title: "Native",
               onPress: () => Alert.alert('Native button pressed'),
+            },
+          ],
+        }} />
+      <Stack.Screen name="IdentifierExample"
+        component={IdentifierExample}
+        options={({navigation}) => ({
+          title: 'Identifier Example',
+          headerRightItems: [
+            {
+              title: 'Button',
+              onPress: () => {
+                navigation.navigate('IdentifierExample2');
+              },
+              style: "prominent"
+            },
+          ],
+        })} />
+      <Stack.Screen name="IdentifierExample2"
+        component={IdentifierExample2}
+        options={{
+          title: 'Identifier Example 2',
+          headerRightItems: [           
+            {
+              title: 'Btn',
+              onPress: () => Alert.alert('Button 1 pressed'),
             },
           ],
         }} />
