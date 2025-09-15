@@ -2,15 +2,20 @@
 // https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1
 package com.swmansion.rnscreens.safearea
 
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
+import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerInterface
+import com.swmansion.rnscreens.safearea.paper.SafeAreaViewEdges
+import com.swmansion.rnscreens.safearea.paper.SafeAreaViewShadowNode
 
 @ReactModule(name = SafeAreaViewManager.REACT_CLASS)
 class SafeAreaViewManager :
@@ -24,10 +29,19 @@ class SafeAreaViewManager :
 
     override fun getDelegate() = delegate
 
+    override fun createShadowNodeInstance() = SafeAreaViewShadowNode()
+
+    override fun getShadowNodeClass() = SafeAreaViewShadowNode::class.java
+
+    @ReactProp(name = "edges")
     override fun setEdges(
         view: SafeAreaView,
         value: ReadableMap?,
-    ): Unit = Unit
+    ) {
+        SafeAreaViewEdges.fromProp(value)?.let {
+            view.setEdges(it)
+        }
+    }
 
     override fun updateState(
         view: SafeAreaView,

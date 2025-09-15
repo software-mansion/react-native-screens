@@ -139,7 +139,11 @@ class SafeAreaView(
 
             stateWrapper.updateState(newState)
         } else {
-            val localData = SafeAreaViewLocalData(insets = safeAreaInsets, edges = edges)
+            val localData =
+                SafeAreaViewLocalData(
+                    insets = safeAreaInsets,
+                    edges = edges ?: SafeAreaViewEdges.NONE,
+                )
             val reactContext = getReactContext(this)
             val uiManager = reactContext.getNativeModule(UIManagerModule::class.java)
             if (uiManager != null) {
