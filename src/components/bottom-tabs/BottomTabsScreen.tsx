@@ -130,12 +130,6 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
-      // I'm keeping undefined as a fallback if `Image.resolveAssetSource` has failed for some reason.
-      // It won't render any icon, but it will prevent from crashing on the native side which is expecting
-      // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
-      // double as a value.
-      iconResource={iconProps.parsedIconResource || undefined}
-      iconResourceName={iconProps.drawableName}
       {...iconProps}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
@@ -240,8 +234,8 @@ function shouldFreezeScreen(
 }
 
 function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
-  parsedIconResource?: ImageResolvedAssetSource;
-  drawableName?: string;
+  iconResource?: ImageResolvedAssetSource;
+  iconResourceName?: string;
 } {
   if (!icon) {
     return {};
@@ -257,11 +251,15 @@ function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
     }
 
     return {
-      parsedIconResource,
+      // I'm keeping undefined as a fallback if `Image.resolveAssetSource` has failed for some reason.
+      // It won't render any icon, but it will prevent from crashing on the native side which is expecting
+      // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
+      // double as a value.
+      iconResource: parsedIconResource || undefined,
     };
   } else if (icon.type === 'drawableResourceAndroid') {
     return {
-      drawableName: icon.name,
+      iconResourceName: icon.name,
     };
   } else {
     throw new Error(
@@ -305,15 +303,15 @@ function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
   selectedIcon: PlatformIconIOS | undefined,
 ): {
+  iconResource?: ImageResolvedAssetSource;
+  iconResourceName?: string;
   iconType?: NativeIconType;
   iconImageSource?: ImageSourcePropType;
   iconSfSymbolName?: string;
   selectedIconImageSource?: ImageSourcePropType;
   selectedIconSfSymbolName?: string;
-  drawableName?: string;
-  parsedIconResource?: ImageResolvedAssetSource;
 } {
-  const { drawableName, parsedIconResource } = parseAndroidIconToNativeProps(
+  const androidNativeProps = parseAndroidIconToNativeProps(
     icon?.shared || icon?.android,
   );
 
@@ -339,13 +337,12 @@ function parseIconsToNativeProps(
   }
 
   return {
+    ...androidNativeProps,
     iconType,
     iconImageSource,
     iconSfSymbolName,
     selectedIconImageSource,
     selectedIconSfSymbolName,
-    drawableName,
-    parsedIconResource,
   };
 }
 
