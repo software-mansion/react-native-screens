@@ -347,6 +347,9 @@ export interface BottomTabsScreenProps {
    * - `{ type: 'imageSource', imageSource }`
    *   Uses an image from the provided resource.
    *
+   *   Remarks: `imageSource` type doesn't support SVGs on Android.
+   *   For loading SVGs use `drawableResourceAndroid` type.
+   *
    * iOS-only:
    * - `{ type: 'sfSymbolIOS', name }`
    *   Uses an SF Symbol with the specified name.
@@ -358,6 +361,8 @@ export interface BottomTabsScreenProps {
    * Android-only:
    * - `{ type: 'drawableResourceAndroid', name }`
    *   Uses a drawable resource with the given name.
+   *
+   *   Remarks: Requires passing a drawable to resources via AndroidStudio.
    *
    * If no `selectedIcon` is provided, this icon will also be used
    * as the selected state icon.
