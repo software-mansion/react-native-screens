@@ -569,7 +569,7 @@ An array of objects describing native bar button items to display on the left or
 
 `sfSymbolName?: string` - SF Symbol for the button icon.
 
-`style?: 'Plain' | 'Done' | 'Prominent'` — The style of the item. 'Prominent' only available for iOS 26+.
+`style?: 'plain' | 'done' | 'prominent'` — The style of the item. 'Prominent' only available for iOS 26+.
 
 `tintColor?: ColorValue` — Tint color for the button. Will pick the tint color of the header if not set.
 
