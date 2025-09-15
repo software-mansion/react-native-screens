@@ -172,8 +172,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
           name: 'rectangle.stack',
         },
         android: {
-          type: 'imageSource',
-          imageSource: require('../../../assets/svg/cart.svg'),
+          type: 'drawableResourceAndroid',
+          name: 'custom_home_icon'
         }
       },
       selectedIcon: {
