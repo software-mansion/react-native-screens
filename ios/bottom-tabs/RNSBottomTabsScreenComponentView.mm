@@ -401,13 +401,6 @@ RNS_IGNORE_SUPER_CALL_END
   [super updateProps:props oldProps:oldProps];
 }
 
-//- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
-//{
-//  [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-//                                   fromProvider:self];
-//  [super finalizeUpdates: updateMask];
-//}
-
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {

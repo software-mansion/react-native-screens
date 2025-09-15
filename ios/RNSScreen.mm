@@ -1423,8 +1423,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (shouldUpdateScrollEffects) {
     // see finalizeUpdates() for Fabric
-    [ScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                     fromProvider:self];
+    [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                        fromProvider:self];
   }
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
