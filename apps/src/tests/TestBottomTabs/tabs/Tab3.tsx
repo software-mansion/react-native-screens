@@ -1,9 +1,11 @@
 import PressableWithFeedback from '../../../shared/PressableWithFeedback';
 import React from 'react';
 import { ScrollView, Text } from 'react-native';
+// import { SafeAreaView } from 'react-native-screens/private';
 
 export function Tab3() {
   return (
+    // <SafeAreaView edges={{ top: true, bottom: true }}>
     <ScrollView
       contentContainerStyle={{
         width: '100%',
@@ -23,5 +25,6 @@ export function Tab3() {
         </PressableWithFeedback>
       ))}
     </ScrollView>
+    // </SafeAreaView>
   );
 }
