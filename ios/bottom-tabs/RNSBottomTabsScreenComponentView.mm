@@ -3,6 +3,7 @@
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
+#import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
@@ -30,6 +31,7 @@ namespace react = facebook::react;
 
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
+  BOOL _scrollEdgeEffectsNeedUpdate;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
@@ -84,6 +86,7 @@ namespace react = facebook::react;
 
   _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
   _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
+  _scrollEdgeEffectsNeedUpdate = YES;
 
   _overrideScrollViewContentInsetAdjustmentBehavior = YES;
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
@@ -134,11 +137,6 @@ RNS_IGNORE_SUPER_CALL_END
   return _reactEventEmitter;
 }
 
-- (nullable RNSTabBarController *)findTabBarController
-{
-  return static_cast<RNSTabBarController *>(_controller.tabBarController);
-}
-
 #pragma mark - RNSScrollViewBehaviorOverriding
 
 - (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
@@ -151,6 +149,36 @@ RNS_IGNORE_SUPER_CALL_END
   if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
     [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
   }
+}
+
+- (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
+{
+  _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
+  _scrollEdgeEffectsNeedUpdate = YES;
+}
+
+- (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
+{
+  _leftScrollEdgeEffect = leftScrollEdgeEffect;
+  _scrollEdgeEffectsNeedUpdate = YES;
+}
+
+- (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
+{
+  _rightScrollEdgeEffect = rightScrollEdgeEffect;
+  _scrollEdgeEffectsNeedUpdate = YES;
+}
+
+- (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
+{
+  _topScrollEdgeEffect = topScrollEdgeEffect;
+  _scrollEdgeEffectsNeedUpdate = YES;
+}
+
+- (void)updateScrollEdgeEffects
+{
+  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                      fromProvider:self];
 }
 
 #pragma mark - Prop update utils
@@ -312,6 +340,37 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller tabScreenOrientationHasChanged];
   }
 
+  if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
+    [self
+        setBottomScrollEdgeEffect:
+            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
+                newComponentProps.bottomScrollEdgeEffect)];
+  }
+
+  if (newComponentProps.leftScrollEdgeEffect != oldComponentProps.leftScrollEdgeEffect) {
+    [self setLeftScrollEdgeEffect:
+              rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenLeftScrollEdgeEffectCppEquivalent(
+                  newComponentProps.leftScrollEdgeEffect)];
+  }
+
+  if (newComponentProps.rightScrollEdgeEffect != oldComponentProps.rightScrollEdgeEffect) {
+    [self
+        setRightScrollEdgeEffect:
+            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScrollEdgeEffectCppEquivalent(
+                newComponentProps.rightScrollEdgeEffect)];
+  }
+
+  if (newComponentProps.topScrollEdgeEffect != oldComponentProps.topScrollEdgeEffect) {
+    [self setTopScrollEdgeEffect:rnscreens::conversion::
+                                     RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
+                                         newComponentProps.topScrollEdgeEffect)];
+  }
+
+  if (_scrollEdgeEffectsNeedUpdate) {
+    [self updateScrollEdgeEffects];
+    _scrollEdgeEffectsNeedUpdate = NO;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -386,6 +445,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (_tabScreenOrientationNeedsUpdate) {
     [_controller tabScreenOrientationHasChanged];
     _tabScreenOrientationNeedsUpdate = NO;
+  }
+
+  if (_scrollEdgeEffectsNeedUpdate) {
+    [self updateScrollEdgeEffects];
+    _scrollEdgeEffectsNeedUpdate = NO;
   }
 }
 

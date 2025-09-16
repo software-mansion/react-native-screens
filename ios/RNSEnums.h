@@ -37,6 +37,13 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
   RNSActivityStateOnTop = 2
 };
 
+typedef NS_ENUM(NSInteger, RNSScrollEdgeEffect) {
+  RNSScrollEdgeEffectAutomatic,
+  RNSScrollEdgeEffectHard,
+  RNSScrollEdgeEffectSoft,
+  RNSScrollEdgeEffectHidden,
+};
+
 typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
   RNSStatusBarStyleAuto,
   RNSStatusBarStyleInverted,

@@ -153,6 +153,26 @@ class TabScreenViewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setBottomScrollEdgeEffect(
+        view: TabScreen?,
+        value: String?,
+    ) = Unit
+
+    override fun setLeftScrollEdgeEffect(
+        view: TabScreen?,
+        value: String?,
+    ) = Unit
+
+    override fun setRightScrollEdgeEffect(
+        view: TabScreen?,
+        value: String?,
+    ) = Unit
+
+    override fun setTopScrollEdgeEffect(
+        view: TabScreen?,
+        value: String?,
+    ) = Unit
+
     // Android specific
     @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
     override fun setTabBarItemBadgeTextColor(
