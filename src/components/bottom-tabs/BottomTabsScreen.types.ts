@@ -336,10 +336,10 @@ export interface BottomTabsScreenProps {
   /**
    * @summary Specifies the icon for the tab bar item.
    *
-   * You can define an icon separately for each platform (iOS and Android)
-   * or define a default icon in shared. The shared icon will be used on both
+   * You can define an icon separately for each platform (in `ios` and `android`)
+   * or define a default icon in `shared`. The shared icon will be used on both
    * platforms unless it is overridden by a platform-specific definition
-   * in ios or android.
+   * in `ios` or `android`.
    *
    * Supported values:
    *
@@ -362,10 +362,10 @@ export interface BottomTabsScreenProps {
    * - `{ type: 'drawableResourceAndroid', name }`
    *   Uses a drawable resource with the given name.
    *
-   *   Remarks: Requires passing a drawable to resources via AndroidStudio.
+   *   Remarks: Requires passing a drawable to resources via Android Studio.
    *
-   * If no `selectedIcon` is provided, this icon will also be used
-   * as the selected state icon.
+   * On iOS, if no `selectedIcon` is provided, this icon will also
+   * be used as the selected state icon.
    */
   icon?: PlatformIcon;
   /**

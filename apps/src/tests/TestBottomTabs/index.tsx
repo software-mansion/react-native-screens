@@ -108,7 +108,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         }, 
         android: {
           type: 'drawableResourceAndroid',
-          name: 'sym_call_missed', // Android specific
+          name: 'sym_call_missed',
         }
       },
       selectedIcon: {
