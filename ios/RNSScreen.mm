@@ -1199,6 +1199,12 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+- (void)updateScrollEdgeEffects
+{
+  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                      fromProvider:self];
+}
+
 #pragma mark - RNSSafeAreaProviding
 
 - (UIEdgeInsets)providerSafeAreaInsets
@@ -1416,8 +1422,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super finalizeUpdates:updateMask];
   if (_shouldUpdateScrollEdgeEffects) {
-    [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                        fromProvider:self];
+    [self updateScrollEdgeEffects];
     _shouldUpdateScrollEdgeEffects = NO;
   }
 
@@ -1448,8 +1453,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (_shouldUpdateScrollEdgeEffects) {
     // see finalizeUpdates() for Fabric
-    [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                        fromProvider:self];
+    [self updateScrollEdgeEffects];
     _shouldUpdateScrollEdgeEffects = NO;
   }
 
@@ -1764,6 +1768,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   } else {
     [self.screenView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    [self.screenView updateScrollEdgeEffects];
   }
 }
 

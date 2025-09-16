@@ -32,6 +32,7 @@ namespace react = facebook::react;
 
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
+  BOOL _scrollEdgeEffectsNeedUpdate;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
@@ -86,6 +87,7 @@ namespace react = facebook::react;
 
   _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
   _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
+  _scrollEdgeEffectsNeedUpdate = YES;
 
   _overrideScrollViewContentInsetAdjustmentBehavior = YES;
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
@@ -142,11 +144,6 @@ RNS_IGNORE_SUPER_CALL_END
   return _reactEventEmitter;
 }
 
-- (nullable RNSTabBarController *)findTabBarController
-{
-  return static_cast<RNSTabBarController *>(_controller.tabBarController);
-}
-
 #pragma mark - RNSScrollViewBehaviorOverriding
 
 - (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
@@ -164,25 +161,25 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
 {
   _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
-  [self findTabBarController].needsUpdateOfSelectedTab = YES;
+  _scrollEdgeEffectsNeedUpdate = YES;
 }
 
 - (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
 {
   _leftScrollEdgeEffect = leftScrollEdgeEffect;
-  [self findTabBarController].needsUpdateOfSelectedTab = YES;
+  _scrollEdgeEffectsNeedUpdate = YES;
 }
 
 - (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
 {
   _rightScrollEdgeEffect = rightScrollEdgeEffect;
-  [self findTabBarController].needsUpdateOfSelectedTab = YES;
+  _scrollEdgeEffectsNeedUpdate = YES;
 }
 
 - (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
 {
   _topScrollEdgeEffect = topScrollEdgeEffect;
-  [self findTabBarController].needsUpdateOfSelectedTab = YES;
+  _scrollEdgeEffectsNeedUpdate = YES;
 }
 
 - (void)updateScrollEdgeEffects
@@ -398,6 +395,11 @@ RNS_IGNORE_SUPER_CALL_END
                                          newComponentProps.topScrollEdgeEffect)];
   }
 
+  if (_scrollEdgeEffectsNeedUpdate) {
+    [self updateScrollEdgeEffects];
+    _scrollEdgeEffectsNeedUpdate = NO;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -472,6 +474,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (_tabScreenOrientationNeedsUpdate) {
     [_controller tabScreenOrientationHasChanged];
     _tabScreenOrientationNeedsUpdate = NO;
+  }
+
+  if (_scrollEdgeEffectsNeedUpdate) {
+    [self updateScrollEdgeEffects];
+    _scrollEdgeEffectsNeedUpdate = NO;
   }
 }
 
