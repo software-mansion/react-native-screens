@@ -2,6 +2,7 @@
 // https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1
 package com.swmansion.rnscreens.safearea
 
+import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
@@ -41,6 +42,21 @@ class SafeAreaViewManager :
         SafeAreaViewEdges.fromProp(value)?.let {
             view.setEdges(it)
         }
+    }
+
+    @ReactProp(name = "insetType")
+    override fun setInsetType(
+        view: SafeAreaView,
+        value: String?
+    ) {
+        val insetType = when (value) {
+            null, "all" -> InsetType.ALL
+            "system" -> InsetType.SYSTEM
+            "interface" -> InsetType.INTERFACE
+            else -> throw JSApplicationIllegalArgumentException("Unknown inset type $value")
+        }
+
+        view.setInsetType(insetType)
     }
 
     override fun updateState(

@@ -37,6 +37,7 @@ class SafeAreaView(
     private var needsInsetsUpdate = false
     private var stateWrapper: StateWrapper? = null
     private var edges: SafeAreaViewEdges? = null
+    private var insetType: InsetType = InsetType.ALL
 
     fun getStateWrapper(): StateWrapper? = stateWrapper
 
@@ -90,7 +91,10 @@ class SafeAreaView(
     fun onInterfaceInsetsChange(newInterfaceInsets: EdgeInsets) {
         if (newInterfaceInsets != currentInterfaceInsets) {
             currentInterfaceInsets = newInterfaceInsets
-            needsInsetsUpdate = true
+
+            if (insetType.containsInterface()) {
+                needsInsetsUpdate = true
+            }
         }
     }
 
@@ -104,14 +108,20 @@ class SafeAreaView(
 
         if (newSystemInsets != currentSystemInsets) {
             currentSystemInsets = EdgeInsets.fromInsets(newSystemInsets)
-            needsInsetsUpdate = true
+
+            if (insetType.containsSystem()) {
+                needsInsetsUpdate = true
+            }
         }
 
         return WindowInsetsCompat
-            .Builder(insets)
-            .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
-//            .setInsetsIgnoringVisibility(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
-            .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.NONE)
+            .Builder(insets).apply {
+                if (insetType.containsSystem()) {
+                    setInsets(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
+//                    setInsetsIgnoringVisibility(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
+                    setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.NONE)
+                }
+            }
             .build()
     }
 
@@ -125,7 +135,11 @@ class SafeAreaView(
     }
 
     private fun updateInsets() {
-        val safeAreaInsets = EdgeInsets.max(currentInterfaceInsets, currentSystemInsets)
+        val safeAreaInsets = EdgeInsets.max(
+            if (insetType.containsInterface()) currentInterfaceInsets else EdgeInsets.NONE,
+            if (insetType.containsSystem()) currentSystemInsets else EdgeInsets.NONE
+        )
+
         val stateWrapper = getStateWrapper()
         if (stateWrapper != null) {
             val insets = Arguments.createMap()
@@ -198,6 +212,16 @@ class SafeAreaView(
     fun setEdges(edges: SafeAreaViewEdges) {
         this.edges = edges
         updateInsets()
+    }
+
+    fun setInsetType(insetType: InsetType) {
+        this.insetType = insetType
+        requestApplyInsets()
+
+        // We don't want to call updateInsetsIfNeeded here because system insets don't arrive
+        // immediately after requestApplyInsets. We just set the flag to true to make sure the
+        // update is eventually executed, even if we set insetType to `INTERFACE`.
+        needsInsetsUpdate = true
     }
 
     override fun onPreDraw(): Boolean {
