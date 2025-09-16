@@ -1,12 +1,15 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import android.content.res.Configuration
+import android.os.Build
 import android.view.Choreographer
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
@@ -443,6 +446,26 @@ class TabsHost(
 
     override fun getInterfaceInsets(): EdgeInsets =
         EdgeInsets(0.0f, 0.0f, (bottomNavigationView.bottom - bottomNavigationView.top).toFloat(), 0.0f)
+
+    override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        // On Android versions prior to R, insets dispatch is broken.
+        // In order to mitigate this, we override dispatchApplyWindowInsets with
+        // correct implementation. To simplify it, we skip the call to TabsHost's
+        // onApplyWindowInsets.
+        if (insets?.isConsumed ?: true) {
+            return insets
+        }
+
+        for (child in children) {
+            child.dispatchApplyWindowInsets(insets)
+        }
+
+        return insets
+    }
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
