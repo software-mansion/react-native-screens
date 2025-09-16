@@ -319,19 +319,20 @@ UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTa
   return UITabBarSystemItemSearch;
 }
 
-#define SWITCH_EDGE_EFFECT(X)              \
-  switch (edgeEffect) {                    \
-    using enum react::X;                   \
-    case Automatic:                        \
-      return RNSScrollEdgeEffectAutomatic; \
-    case Hard:                             \
-      return RNSScrollEdgeEffectHard;      \
-    case Soft:                             \
-      return RNSScrollEdgeEffectSoft;      \
-    case Hidden:                           \
-      return RNSScrollEdgeEffectHidden;    \
-    default:                               \
-      return RNSScrollEdgeEffectAutomatic; \
+#define SWITCH_EDGE_EFFECT(X)                              \
+  switch (edgeEffect) {                                    \
+    using enum react::X;                                   \
+    case Automatic:                                        \
+      return RNSScrollEdgeEffectAutomatic;                 \
+    case Hard:                                             \
+      return RNSScrollEdgeEffectHard;                      \
+    case Soft:                                             \
+      return RNSScrollEdgeEffectSoft;                      \
+    case Hidden:                                           \
+      return RNSScrollEdgeEffectHidden;                    \
+    default:                                               \
+      RCTLogError(@"[RNScreens] unsupported edge effect"); \
+      return RNSScrollEdgeEffectAutomatic;                 \
   }
 
 RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
