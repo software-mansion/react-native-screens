@@ -190,14 +190,16 @@ export interface ScreenProps extends ViewProps {
    */
   nativeBackButtonDismissalEnabled?: boolean;
   /**
-   * Configures the scroll edge effect for the ScrollView that is the first descendant of the Screen.
+   * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
    * Depending on values set, it will blur the scrolling content below certain UI elements (Header Items, SearchBar)
    * for the specifed edge of the ScrollView.
    *
    * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
-   * it will use the closest one (*without* merging the other).
+   * the ScrollView will use only the innermost one's config.
    *
    * @platform ios
+   *
+   * @supported iOS 26 or higher
    */
   scrollEdgeEffects?: {
     bottom: ScrollEdgeEffect;
