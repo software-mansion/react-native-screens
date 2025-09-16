@@ -1,4 +1,5 @@
 #import "RNSScrollEdgeEffectApplicator.h"
+#import <React/RCTLog.h>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 
@@ -39,6 +40,9 @@
       case RNSScrollEdgeEffectHidden:
         edgeEffect.hidden = true;
         edgeEffect.style = UIScrollEdgeEffectStyle.automaticStyle;
+        break;
+      default:
+        RCTLogError(@"[RNScreens] unsupported edge effect");
         break;
     }
   }
