@@ -2,10 +2,10 @@ package com.swmansion.rnscreens.gamma.tabs
 
 import android.content.res.Configuration
 import android.view.Choreographer
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
@@ -22,7 +22,7 @@ import kotlin.properties.Delegates
 
 class TabsHost(
     val reactContext: ThemedReactContext,
-) : LinearLayout(reactContext),
+) : FrameLayout(reactContext),
     TabScreenDelegate,
     SafeAreaProvider,
     View.OnLayoutChangeListener {
@@ -99,19 +99,21 @@ class TabsHost(
 
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(wrappedContext).apply {
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            layoutParams =
+                LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT,
+                    Gravity.BOTTOM,
+                )
         }
 
     private val contentView: FrameLayout =
         FrameLayout(reactContext).apply {
             layoutParams =
-                LinearLayout
-                    .LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT,
-                    ).apply {
-                        weight = 1f
-                    }
+                LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT,
+                )
             id = ViewIdGenerator.generateViewId()
         }
 
@@ -201,7 +203,6 @@ class TabsHost(
     }
 
     init {
-        orientation = VERTICAL
         addView(contentView)
         addView(bottomNavigationView)
 
