@@ -8,21 +8,19 @@
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26, *)) {
-    [RNSScrollEdgeEffectApplicator configureSingleEffect:scrollView.bottomEdgeEffect
-                                                withEnum:[provider bottomScrollEdgeEffect]];
-    [RNSScrollEdgeEffectApplicator configureSingleEffect:scrollView.leftEdgeEffect
-                                                withEnum:[provider leftScrollEdgeEffect]];
-    [RNSScrollEdgeEffectApplicator configureSingleEffect:scrollView.rightEdgeEffect
-                                                withEnum:[provider rightScrollEdgeEffect]];
-    [RNSScrollEdgeEffectApplicator configureSingleEffect:scrollView.topEdgeEffect
-                                                withEnum:[provider topScrollEdgeEffect]];
+    [RNSScrollEdgeEffectApplicator configureEffect:scrollView.bottomEdgeEffect
+                                          withEnum:[provider bottomScrollEdgeEffect]];
+    [RNSScrollEdgeEffectApplicator configureEffect:scrollView.leftEdgeEffect withEnum:[provider leftScrollEdgeEffect]];
+    [RNSScrollEdgeEffectApplicator configureEffect:scrollView.rightEdgeEffect
+                                          withEnum:[provider rightScrollEdgeEffect]];
+    [RNSScrollEdgeEffectApplicator configureEffect:scrollView.topEdgeEffect withEnum:[provider topScrollEdgeEffect]];
   }
 #endif
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-+ (void)configureSingleEffect:(UIScrollEdgeEffect *)edgeEffect
-                     withEnum:(RNSScrollEdgeEffect)effectEnum API_AVAILABLE(ios(26.0))
++ (void)configureEffect:(UIScrollEdgeEffect *)edgeEffect
+               withEnum:(RNSScrollEdgeEffect)effectEnum API_AVAILABLE(ios(26.0))
 {
   if (@available(iOS 26, *)) {
     switch (effectEnum) {
