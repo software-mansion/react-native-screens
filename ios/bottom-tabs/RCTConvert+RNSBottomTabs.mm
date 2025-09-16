@@ -66,17 +66,6 @@ RCT_ENUM_CONVERTER(
     RNSBottomTabsScreenSystemItemNone,
     integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSScrollEdgeEffect,
-    (@{
-      @"automatic" : @(RNSScrollEdgeEffectAutomatic),
-      @"hard" : @(RNSScrollEdgeEffectHard),
-      @"soft" : @(RNSScrollEdgeEffectSoft),
-      @"hidden" : @(RNSScrollEdgeEffectHidden),
-    }),
-    RNSScrollEdgeEffectAutomatic,
-    integerValue)
-
 #endif // !RCT_NEW_ARCH_ENABLED
 
 @end

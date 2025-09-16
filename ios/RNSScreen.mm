@@ -2268,17 +2268,6 @@ RCT_ENUM_CONVERTER(
     RNSScreenDetentTypeAll,
     integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSScrollEdgeEffect,
-    (@{
-      @"automatic" : @(RNSScrollEdgeEffectAutomatic),
-      @"hard" : @(RNSScrollEdgeEffectHard),
-      @"soft" : @(RNSScrollEdgeEffectSoft),
-      @"hidden" : @(RNSScrollEdgeEffectHidden),
-    }),
-    RNSScrollEdgeEffectAutomatic,
-    integerValue)
-
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {
   json = [self NSString:json];
