@@ -1,5 +1,5 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
+import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitViewBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
