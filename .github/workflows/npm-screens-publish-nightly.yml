@@ -5,9 +5,6 @@ on:
   schedule:
     - cron: '27 23 * * *' # at 23:27 every day
   workflow_dispatch:
-permissions:
-  id-token: write
-  contents: read
 jobs:
   npm-build:
     if: github.repository == 'software-mansion/react-native-screens'
