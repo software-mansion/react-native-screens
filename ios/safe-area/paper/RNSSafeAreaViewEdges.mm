@@ -1,5 +1,5 @@
 // Implementation adapted from `react-native-safe-area-context`:
-// https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/ios/RNCSafeAreaViewEdges.m
+// https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1
 
 #import "RNSSafeAreaViewEdges.h"
 

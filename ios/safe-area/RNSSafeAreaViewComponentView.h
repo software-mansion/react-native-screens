@@ -1,6 +1,5 @@
 // Implementation adapted from `react-native-safe-area-context`:
-// https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/ios/Fabric/RNCSafeAreaViewComponentView.h
-// https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/ios/RNCSafeAreaView.h
+// https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1
 
 #import <UIKit/UIKit.h>
 #import "RNSReactBaseView.h"
