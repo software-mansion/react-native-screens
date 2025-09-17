@@ -98,7 +98,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
 {
   UIView *current = self.superview;
   while (current != nil) {
-    if ([current respondsToSelector:@selector(RNS_safeAreaInsets)]) {
+    if ([current respondsToSelector:@selector(providerSafeAreaInsets)]) {
       return static_cast<UIView<RNSSafeAreaProviding> *>(current);
     }
     current = current.superview;
@@ -117,7 +117,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
     return;
   }
 
-  UIEdgeInsets safeAreaInsets = _providerView.RNS_safeAreaInsets;
+  UIEdgeInsets safeAreaInsets = _providerView.providerSafeAreaInsets;
 
   if (UIEdgeInsetsEqualToEdgeInsetsWithThreshold(safeAreaInsets, _currentSafeAreaInsets, 1.0 / RCTScreenScale())) {
     return;

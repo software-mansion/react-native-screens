@@ -2,7 +2,7 @@
 
 @protocol RNSSafeAreaProviding
 
-- (UIEdgeInsets)RNS_safeAreaInsets;
+- (UIEdgeInsets)providerSafeAreaInsets;
 - (void)invalidateSafeAreaInsets;
 
 @end

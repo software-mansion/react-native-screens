@@ -142,7 +142,7 @@ namespace react = facebook::react;
 
 #pragma mark - RNSSafeAreaProviding
 
-- (UIEdgeInsets)RNS_safeAreaInsets
+- (UIEdgeInsets)providerSafeAreaInsets
 {
   return self.safeAreaInsets;
 }

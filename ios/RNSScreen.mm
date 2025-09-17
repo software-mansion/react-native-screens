@@ -1174,7 +1174,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - RNSSafeAreaProviding
 
-- (UIEdgeInsets)RNS_safeAreaInsets
+- (UIEdgeInsets)providerSafeAreaInsets
 {
   return self.safeAreaInsets;
 }
