@@ -695,6 +695,7 @@ RNS_IGNORE_SUPER_CALL_END
     // fact that `definesPresentationContext` returns `YES` for UINavigationController. So we first need to find
     // top-level controller manually:
     UIViewController *reactRootVc = [self findReactRootViewController];
+    reactRootVc.view.backgroundColor = [UIColor redColor];
     UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
 
     if (topMostVc != reactRootVc) {
@@ -908,7 +909,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
-  BOOL isCustomAnimation =
+  BOOL customAnimationOnSwipePropSetAndSelectedAnimationIsCustom =
       topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
 
 #if TARGET_OS_TV || TARGET_OS_VISION
@@ -922,7 +923,7 @@ RNS_IGNORE_SUPER_CALL_END
     // On iOS >= 26, we want to use the native one, but we are unable to handle custom animations
     // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation in this one
     if (@available(iOS 26, *)) {
-      if (isCustomAnimation) {
+      if (customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
         _isFullWidthSwipingWithPanGesture = YES;
         [self cancelTouchesInParent];
         return YES;
@@ -939,7 +940,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   // Now we're dealing with RNSScreenEdgeGestureRecognizer (or _UIParallaxTransitionPanGestureRecognizer)
-  if (isCustomAnimation) {
+  if (customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       UIRectEdge edges = ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges;
       BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
@@ -1199,15 +1200,17 @@ RNS_IGNORE_SUPER_CALL_END
     return NO;
   }
 
-  BOOL isCustomAnimation =
+  BOOL customAnimationOnSwipePropSetAndSelectedAnimationIsCustom =
       topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26, *)) {
     // On iOS 26, fullScreenSwipeEnabled takes no effect, and depending on whether custom animations are on,
     // we select either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer
-    if (([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] && !isCustomAnimation) ||
-        (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer && isCustomAnimation)) {
+    if (([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
+         !customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) ||
+        (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
+         customAnimationOnSwipePropSetAndSelectedAnimationIsCustom)) {
       return NO;
     }
   } else {
