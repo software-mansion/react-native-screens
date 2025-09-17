@@ -38,6 +38,7 @@
     "gesture-handler/",
     "reanimated/",
     "private/",
+    "experimental/",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
     "android/src/main/cpp/",
