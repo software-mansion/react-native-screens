@@ -5,3 +5,5 @@
 
 export * from '../components/gamma/SplitViewHost.types';
 export * from '../components/gamma/SplitViewScreen.types';
+export * from '../components/gamma/ScreenStackHost.types';
+export * from '../components/gamma/StackScreen.types';
