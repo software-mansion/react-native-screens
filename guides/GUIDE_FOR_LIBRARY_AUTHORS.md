@@ -563,39 +563,59 @@ An array of objects describing native bar button items to display on the left or
 
 `title: string` — Title of the button.
 
-`titleStyle?: object` — Style for the button title.
+`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button title.
 
 `image?: ImageRequireSource` — Image source for the button icon.
 
 `sfSymbolName?: string` - SF Symbol for the button icon.
 
-`style?: 'plain' | 'done' | 'prominent'` — The style of the item. 'Prominent' only available for iOS 26+.
+`style?: 'plain' | 'done' | 'prominent'` — The style of the item. 'Prominent' only available for iOS 26+. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
 
-`tintColor?: ColorValue` — Tint color for the button. Will pick the tint color of the header if not set.
+`tintColor?: ColorValue` — Tint color for the button. Will pick the tint color of the header if not set. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
 
-`hidden?: boolean` — Whether the item is hidden (iOS 16+).
+`hidden?: boolean` — Whether the item is hidden (iOS 16+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/ishidden
 
 `enabled?: boolean` — Whether the item is enabled.
 
-`width?: number` — Width of the item (iOS 18-).
+`width?: number` — Width of the item (iOS 18-). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
 
-`hidesSharedBackground?: boolean` — Hide shared background (iOS 26+).
+`hidesSharedBackground?: boolean` — Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
 
-`sharesBackground?: boolean` — Share background with other items (iOS 26+).
+`sharesBackground?: boolean` — Share background with other items (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
 
-`identifier?: string` — Identifier for matching items across transitions (iOS 26+).
+`identifier?: string` — Identifier for matching items across transitions (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
 
-`badge: object` - Badge configuration for the button (iOS 26+).
+`badge: { value: string; color?: ColorValue; backgroundColor?: ColorValue; style?: { fontFamily?: string; fontSize?: number; fontWeight?: string; }; }` - Badge configuration for the button (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
 
 #### The button with an action also supports:
 
-`selected?: boolean` — Whether the button is selected.
+`selected?: boolean` — Whether the button is selected. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
 
-`changesSelectionAsPrimaryAction?: boolean` — Whether selection changes as a primary action (iOS 15+).
+`changesSelectionAsPrimaryAction?: boolean` — Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
 
 #### The button with a menu also support: 
 
-`menu?: Array<object>` — Menu actions for the item.
+```
+menu?: {
+  title?: string;
+  items: Array<
+    | {
+      title?: string;
+      type: 'action';
+      sfSymbolName?: string;
+      state?: 'on' | 'off' | 'mixed'; // State of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
+      attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented'; // Style of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
+      discoverabilityTitle?: string; // Discoverability title of the menu item. Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
+    } 
+    | {
+      title?: string;
+      type: 'submenu';
+      sfSymbolName?: string;
+      items: menu['items']; // References itself so you can create inifinte deep menus. So either actions or more submenus
+    }
+  >
+}
+```
 
 #### The spacing item supports:
 
@@ -603,7 +623,7 @@ An array of objects describing native bar button items to display on the left or
 
 #### The configuration item of the custom views supports:
 
-`hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). 
+`hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
 
 #### Example configuration:
 
