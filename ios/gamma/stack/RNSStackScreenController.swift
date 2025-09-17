@@ -1,13 +1,13 @@
-import Foundation
-import UIKit
-
 @objc
 public class RNSStackScreenController: UIViewController {
   let screenStackComponentView: RNSStackScreenComponentView
+  public var navigationAppearance: RNSStackNavigationAppearance?
+  public var needsNavigationBarAppearanceUpdate: Bool = false
+  
   private var reactEventEmitter: RNSStackScreenComponentEventEmitter {
     return screenStackComponentView.reactEventEmitter()
   }
-
+  
   @objc public required init(componentView: RNSStackScreenComponentView) {
     self.screenStackComponentView = componentView
     super.init(nibName: nil, bundle: nil)
@@ -19,23 +19,49 @@ public class RNSStackScreenController: UIViewController {
 
   func findStackController() -> RNSStackController? {
     if let navCtrl = self.navigationController {
-      return navCtrl as? RNSStackController
-    }
+       return navCtrl as? RNSStackController
+     }
 
-    if let stackHost = self.screenStackComponentView.stackHost {
-      return stackHost.stackController
-    }
+     if let stackHost = self.screenStackComponentView.stackHost {
+       return stackHost.stackController
+     }
 
-    return nil
+     return nil
+  }
+  
+  
+  @objc func requestNavigationBarAppearanceUpdate() {
+    let stackController = findStackController()
+    
+    if (stackController != nil && needsNavigationBarAppearanceUpdate) {
+      // We're not clearing the flag, as it will be cleared after appearance update by host
+      stackController?.setNeedsNavigationBarAppearanceUpdate()
+    }
   }
 
   // MARK: Signals
-
+  @objc
+  public func didMoveToWindow() {
+    requestNavigationBarAppearanceUpdate()
+  }
+  
   @objc
   public func setNeedsLifecycleStateUpdate() {
     findStackController()?.setNeedsUpdateOfChildViewControllers()
   }
-
+  
+  @objc
+  public func setNeedsNavigationBarAppearanceUpdate(_ navigationAppearance: RNSStackNavigationAppearance) {
+    self.navigationAppearance = navigationAppearance
+    needsNavigationBarAppearanceUpdate = true
+    requestNavigationBarAppearanceUpdate()
+  }
+  
+  @objc
+  public func navigationBarAppearanceDidUpdate() {
+    needsNavigationBarAppearanceUpdate = false
+  }
+  
   // MARK: Events
 
   public override func viewWillAppear(_ animated: Bool) {

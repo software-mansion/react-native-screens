@@ -65,6 +65,7 @@ export { default as useTransitionProgress } from './useTransitionProgress';
 export { default as BottomTabs } from './components/bottom-tabs/BottomTabs';
 export { default as BottomTabsScreen } from './components/bottom-tabs/BottomTabsScreen';
 export { default as ScreenStackHost } from './components/gamma/ScreenStackHost';
+export { default as StackScreenHeaderConfig} from './components/gamma/StackScreenHeaderConfig';
 export {
   default as StackScreen,
   StackScreenLifecycleState,

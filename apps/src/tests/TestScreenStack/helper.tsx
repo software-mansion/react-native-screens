@@ -2,26 +2,28 @@ import React from 'react';
 import { Button } from 'react-native';
 import { ScreenLayout } from './ScreenLayout';
 import { useStackNavigation } from '../../shared/gamma/containers/stack/StackContainer';
+import { ScreenProps } from 'react-native-screens';
 
-export function generateStackWithNames(screenNames: string[]) {
+export function generateStackWithNames(screens: {name: string; options?: ScreenProps;}[]) {
   const TestComponent = () => {
     const navigation = useStackNavigation();
 
     return (
       <ScreenLayout>
-        {screenNames.map(screenName => (
+        {screens.map(screen => (
           <Button
-            onPress={() => navigation.push(screenName)}
-            title={`Push ${screenName}`}
-            key={screenName}
+            onPress={() => navigation.push(screen.name)}
+            title={`Push ${screen.name}`}
+            key={screen.name}
           />
         ))}
       </ScreenLayout>
     );
   };
 
-  return screenNames.map(screenName => ({
-    name: screenName,
+  return screens.map(screen => ({
+    name: screen.name,
     component: TestComponent,
+    options: screen.options,
   }));
 }

@@ -1,4 +1,6 @@
 #import "RNSStackScreenComponentView.h"
+#import "RNSStackScreenHeaderConfigComponentView.h"
+
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -56,6 +58,11 @@ namespace react = facebook::react;
 {
   _controller = [[RNSStackScreenController alloc] initWithComponentView:self];
   _controller.view = self;
+}
+
+- (void)didMoveToWindow
+{
+  [_controller didMoveToWindow];
 }
 
 #pragma mark - Events

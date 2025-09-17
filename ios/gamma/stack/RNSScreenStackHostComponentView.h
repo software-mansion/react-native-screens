@@ -5,10 +5,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackController;
+
 @interface RNSScreenStackHostComponentView : RNSReactBaseView
 
 @property (nonatomic, nonnull, strong, readonly) RNSStackController *stackController;
-
 - (nonnull NSMutableArray<RNSStackScreenComponentView *> *)reactSubviews;
 
 @end
