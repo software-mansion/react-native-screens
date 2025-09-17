@@ -26,6 +26,7 @@ const demoScreens = [
   { name: "BackButtonVisibleDemo", title: "Back Button Visible" },
   { name: "IdentifierExample", title: "Identifier Example" },
   { name: "IdentifierExample2", title: "Identifier Example 2" },
+  { name: "ExessiveItemsExample", title: "Exessive Items Example" },
 ];
 
 const MainScreen = ({ navigation }: any) => (
@@ -69,6 +70,7 @@ const ReactNodeButtonDemo = DemoScreenContent;
 const BackButtonVisibleDemo = DemoScreenContent;
 const IdentifierExample = DemoScreenContent;
 const IdentifierExample2 = DemoScreenContent;
+const ExessiveItemsExample = DemoScreenContent;
 
 export default function BarButtonItemsExample() {
   return (
@@ -449,6 +451,30 @@ export default function BarButtonItemsExample() {
             },
           ],
         }} />
+      <Stack.Screen name='ExessiveItemsExample'
+        component={ExessiveItemsExample}
+        options={{
+          title: 'Exessive Items Example',
+          headerRightItems: [
+            {
+              title: "Button 1",
+              onPress: () => Alert.alert('Button 1 pressed'),
+            },
+            {
+              title: "Button 2",
+              onPress: () => Alert.alert('Button 2 pressed'),
+            },
+            {
+              title: "Button 3",
+              onPress: () => Alert.alert('Button 3 pressed'),
+            },
+            {
+              title: "Button 4",
+              onPress: () => Alert.alert('Button 4 pressed'),
+            },
+          ]
+        }} />
+
     </Stack.Navigator>
   );
 }
