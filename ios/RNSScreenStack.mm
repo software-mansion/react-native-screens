@@ -695,7 +695,6 @@ RNS_IGNORE_SUPER_CALL_END
     // fact that `definesPresentationContext` returns `YES` for UINavigationController. So we first need to find
     // top-level controller manually:
     UIViewController *reactRootVc = [self findReactRootViewController];
-    reactRootVc.view.backgroundColor = [UIColor redColor];
     UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
 
     if (topMostVc != reactRootVc) {
