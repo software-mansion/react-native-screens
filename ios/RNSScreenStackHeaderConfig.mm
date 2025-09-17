@@ -640,7 +640,7 @@ RNS_IGNORE_SUPER_CALL_END
         NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
         NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
         [mutableItems addObject:buttonItem];
-        navitem.leftBarButtonItems = [mutableItems copy];
+        navitem.leftBarButtonItems = mutableItems;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
@@ -648,7 +648,7 @@ RNS_IGNORE_SUPER_CALL_END
         NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
         NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
         [mutableItems addObject:buttonItem];
-        navitem.rightBarButtonItems = [mutableItems copy];
+        navitem.rightBarButtonItems = mutableItems;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
