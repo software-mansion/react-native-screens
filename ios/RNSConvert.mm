@@ -190,6 +190,34 @@
   }
 }
 
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSSearchBarObscureBackground:
+    (react::RNSSearchBarObscureBackground)obscureBackground
+{
+  switch (obscureBackground) {
+    using enum react::RNSSearchBarObscureBackground;
+    case Undefined:
+      return RNSOptionalBooleanUndefined;
+    case True:
+      return RNSOptionalBooleanTrue;
+    case False:
+      return RNSOptionalBooleanFalse;
+  }
+}
+
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSSearchBarHideNavigationBar:
+    (react::RNSSearchBarHideNavigationBar)hideNavigationBar
+{
+  switch (hideNavigationBar) {
+    using enum react::RNSSearchBarHideNavigationBar;
+    case Undefined:
+      return RNSOptionalBooleanUndefined;
+    case True:
+      return RNSOptionalBooleanTrue;
+    case False:
+      return RNSOptionalBooleanFalse;
+  }
+}
+
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
 {
   NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
