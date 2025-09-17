@@ -13,6 +13,7 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 #pragma mark - View implementation
+
 @implementation RNSSafeAreaViewComponentView {
 }
 
@@ -30,28 +31,10 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSSafeAreaViewProps>();
   _props = defaultProps;
 #endif // RCT_NEW_ARCH_ENABLED
-
-  //  [self resetProps];
 }
-
-//- (void)resetProps
-//{
-//  return;
-//}
 
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - RCTViewComponentViewProtocol
-
-//- (void)updateProps:(const facebook::react::Props::Shared &)props
-//           oldProps:(const facebook::react::Props::Shared &)oldProps
-//{
-//  [super updateProps:props oldProps:oldProps];
-//}
-
-//- (void)prepareForRecycle
-//{
-//  [super prepareForRecycle];
-//}
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {

@@ -7,11 +7,13 @@ import { SafeAreaViewProps } from './SafeAreaView.types';
 import SafeAreaViewNativeComponent, {
   NativeProps as SafeAreaViewNativeComponentProps,
 } from '../../fabric/safe-area/SafeAreaViewNativeComponent';
+import { StyleSheet } from 'react-native';
 
 function SafeAreaView(props: SafeAreaViewProps) {
   return (
     <SafeAreaViewNativeComponent
       {...props}
+      style={[styles.flex, props.style]}
       edges={getNativeEdgesProp(props.edges)}
     />
   );
@@ -30,3 +32,9 @@ function getNativeEdgesProp(
     ...edges,
   };
 }
+
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+});

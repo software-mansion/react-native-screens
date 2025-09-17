@@ -5,6 +5,5 @@ import { ViewProps } from 'react-native';
 export type Edge = 'top' | 'right' | 'bottom' | 'left';
 
 export interface SafeAreaViewProps extends ViewProps {
-  children?: ViewProps['children'];
   edges?: Readonly<Partial<Record<Edge, boolean>>>;
 }
