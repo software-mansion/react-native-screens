@@ -4,6 +4,7 @@
 #import "RNSSafeAreaViewComponentView.h"
 #import <React/RCTConversions.h>
 #import <React/RCTUtils.h>
+#import "RNSNotifications.h"
 #import "RNSSafeAreaProviding.h"
 
 #if RCT_NEW_ARCH_ENABLED

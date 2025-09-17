@@ -29,6 +29,7 @@
 #import <React/RCTUIManagerUtils.h>
 
 #import "RNSConversions.h"
+#import "RNSNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"

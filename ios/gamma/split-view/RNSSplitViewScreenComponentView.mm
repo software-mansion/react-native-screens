@@ -4,6 +4,7 @@
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
 #import "RNSFrameCorrector.h"
+#import "RNSNotifications.h"
 
 #import "Swift-Bridging.h"
 

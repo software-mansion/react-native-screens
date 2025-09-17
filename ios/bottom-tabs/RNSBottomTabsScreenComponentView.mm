@@ -3,6 +3,7 @@
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
+#import "RNSNotifications.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
