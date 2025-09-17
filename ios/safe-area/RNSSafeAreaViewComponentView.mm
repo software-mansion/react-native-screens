@@ -184,7 +184,7 @@ BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInse
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
-  [self updateStateIfNecessary];
+  [self invalidateSafeAreaInsets];
 }
 
 - (void)prepareForRecycle
