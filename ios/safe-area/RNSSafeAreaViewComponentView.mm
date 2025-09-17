@@ -140,13 +140,8 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
     return;
   }
 
-  _state->updateState(
-      [=](RNSSafeAreaViewShadowNode::ConcreteState::Data const &oldData)
-          -> RNSSafeAreaViewShadowNode::ConcreteState::SharedData {
-        auto newData = oldData;
-        newData.insets = RCTEdgeInsetsFromUIEdgeInsets(_currentSafeAreaInsets);
-        return std::make_shared<RNSSafeAreaViewShadowNode::ConcreteState::Data const>(newData);
-      });
+  auto newData = facebook::react::RNSSafeAreaViewState{RCTEdgeInsetsFromUIEdgeInsets(_currentSafeAreaInsets)};
+  _state->updateState(std::move(newData));
 }
 #else
 - (void)updateLocalData

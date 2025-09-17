@@ -36,6 +36,7 @@ class JSI_EXPORT RNSSafeAreaViewState final {
   using Shared = std::shared_ptr<const RNSSafeAreaViewState>;
 
   RNSSafeAreaViewState() {};
+  RNSSafeAreaViewState(EdgeInsets insets_) : insets(insets_) {};
 
 #ifdef ANDROID
   RNSSafeAreaViewState(
