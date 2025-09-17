@@ -6,6 +6,11 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSInvalidatedComponentsRegistry.h"
+#import "RNSViewControllerInvalidator.h"
+#endif // RCT_NEW_ARCH_ENABLED
+
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
@@ -18,6 +23,9 @@ namespace react = facebook::react;
 @implementation RNSStackScreenComponentView {
   RNSStackScreenController *_Nonnull _controller;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
+#ifdef RCT_NEW_ARCH_ENABLED
+  RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
+#endif // RCT_NEW_ARCH_ENABLED
 
   // Flags
   BOOL _needsLifecycleStateUpdate;
@@ -37,6 +45,9 @@ namespace react = facebook::react;
   [self resetProps];
   [self setupController];
 
+#ifdef RCT_NEW_ARCH_ENABLED
+  _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
+#endif // RCT_NEW_ARCH_ENABLED
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
 
   _needsLifecycleStateUpdate = NO;
@@ -115,6 +126,34 @@ namespace react = facebook::react;
   // We could consider enabling it someday though.
   return NO;
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RCTMountingTransactionObserving
+
+- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
+                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  for (const auto &mutation : transaction.getMutations()) {
+    if ([self shouldInvalidateOnMutation:mutation]) {
+      [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
+    }
+  }
+}
+
+#pragma mark - RNSViewControllerInvalidating
+
+- (void)invalidateController
+{
+  _controller = nil;
+}
+
+- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
+{
+  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
+}
+
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
