@@ -862,7 +862,7 @@ RNS_IGNORE_SUPER_CALL_END
     if (dict[@"buttonId"] || dict[@"menu"]) {
       RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithConfig:dict
           action:^(NSString *buttonId) {
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
             auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
                 self->_eventEmitter);
             if (eventEmitter && buttonId) {
@@ -877,7 +877,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
           }
           menuAction:^(NSString *menuId) {
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
             auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
                 self->_eventEmitter);
             if (eventEmitter && menuId) {
