@@ -1,14 +1,13 @@
 import React from 'react';
-import { StackNavigationProp } from '.';
-import { Button, ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 import {
-  StackV4SAVExampleConfig,
-  useStackV4SAVExampleContext,
-} from './StackV4SAVExampleContext';
+  BottomTabsSAVExampleConfig,
+  useBottomTabsSAVExampleContext,
+} from './BottomTabsSAVExampleContext';
 import { SettingsPicker, SettingsSwitch } from '../../../shared';
 
-export default function ConfigScreen({ navigation }: StackNavigationProp) {
-  const { config, setConfig } = useStackV4SAVExampleContext();
+export default function ConfigTab() {
+  const { config, setConfig } = useBottomTabsSAVExampleContext();
 
   return (
     <ScrollView
@@ -43,47 +42,46 @@ export default function ConfigScreen({ navigation }: StackNavigationProp) {
           setConfig({ ...config, safeAreaRightEdge: value })
         }
       />
-      <Text style={styles.title}>Stack configuration</Text>
-      <SettingsSwitch
-        label="headerTransparent"
-        value={config.headerTransparent}
-        onValueChange={value =>
-          setConfig({ ...config, headerTransparent: value })
-        }
-      />
-      <SettingsSwitch
-        label="headerLargeTitle"
-        value={config.headerLargeTitle}
-        onValueChange={value =>
-          setConfig({ ...config, headerLargeTitle: value })
-        }
-      />
-      <SettingsSwitch
-        label="headerShown"
-        value={config.headerShown}
-        onValueChange={value => setConfig({ ...config, headerShown: value })}
-      />
-      <SettingsPicker<StackV4SAVExampleConfig['headerSearchBar']>
-        label="headerSearchBar"
-        value={config.headerSearchBar}
+      <Text style={styles.title}>Tabs configuration</Text>
+      {/* Currently, you need to change tabBarMinimizeBehavior directly in BottomTabsContainer. */}
+      {/*<SettingsPicker<BottomTabsSAVExampleConfig['tabBarMinimizeBehavior']>
+        label="tabBarMinimizeBehavior"
+        value={config.tabBarMinimizeBehavior}
         onValueChange={value =>
           setConfig({
             ...config,
-            headerSearchBar: value,
+            tabBarMinimizeBehavior: value,
+          })
+        }
+        items={['automatic', 'onScrollDown', 'onScrollUp', 'never']}
+      />*/}
+      <SettingsPicker<BottomTabsSAVExampleConfig['tabBarItemSystemItem']>
+        label="tabBarItemSystemItem"
+        value={config.tabBarItemSystemItem}
+        onValueChange={value =>
+          setConfig({
+            ...config,
+            tabBarItemSystemItem: value,
           })
         }
         items={[
           'disabled',
-          'automatic',
-          'inline',
-          'stacked',
-          'integrated',
-          'integratedButton',
-          'integratedCentered',
+          'bookmarks',
+          'contacts',
+          'downloads',
+          'favorites',
+          'featured',
+          'history',
+          'more',
+          'mostRecent',
+          'mostViewed',
+          'recents',
+          'search',
+          'topRated',
         ]}
       />
       <Text style={styles.title}>Content configuration</Text>
-      <SettingsPicker<StackV4SAVExampleConfig['content']>
+      <SettingsPicker<BottomTabsSAVExampleConfig['content']>
         label="content"
         value={config.content}
         onValueChange={value =>
@@ -99,10 +97,6 @@ export default function ConfigScreen({ navigation }: StackNavigationProp) {
           'tabs',
           'stack',
         ]}
-      />
-      <Button
-        title="Push screen"
-        onPress={() => navigation.push('TestScreen')}
       />
     </ScrollView>
   );

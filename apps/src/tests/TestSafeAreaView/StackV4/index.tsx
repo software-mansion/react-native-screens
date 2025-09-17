@@ -60,7 +60,14 @@ export default function StackV4SAVExample({
                 backgroundColor: headerBackgroundColor,
               },
             }}>
-            <Stack.Screen name="ConfigScreen" component={ConfigScreen} />
+            <Stack.Screen
+              name="ConfigScreen"
+              component={ConfigScreen}
+              options={{
+                headerTransparent: true,
+                headerLargeTitle: true,
+              }}
+            />
             <Stack.Screen
               name="TestScreen"
               component={TestScreen}

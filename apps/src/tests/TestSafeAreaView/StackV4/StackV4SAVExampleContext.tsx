@@ -1,21 +1,12 @@
 import { createContext, Dispatch, SetStateAction, useContext } from 'react';
 import { SearchBarPlacement } from 'react-native-screens';
+import { SAVExampleConfig } from '../shared/SAVExampleConfig';
 
-export interface StackV4SAVExampleConfig {
+export interface StackV4SAVExampleConfig extends SAVExampleConfig {
   headerTransparent: boolean;
   headerLargeTitle: boolean;
   headerShown: boolean;
   headerSearchBar: 'disabled' | SearchBarPlacement;
-  content:
-    | 'regularView'
-    | 'scrollViewNever'
-    | 'scrollViewAutomatic'
-    | 'tabs'
-    | 'stack';
-  safeAreaTopEdge: boolean;
-  safeAreaBottomEdge: boolean;
-  safeAreaLeftEdge: boolean;
-  safeAreaRightEdge: boolean;
 }
 
 export interface StackV4SAVExampleContextInterface {
