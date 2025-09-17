@@ -716,13 +716,13 @@ RNS_IGNORE_SUPER_CALL_END
 
   // Set leftBarButtonItems if provided
   if (config.headerLeftBarButtonItems.count > 0) {
-    navitem.leftBarButtonItems = [config barButtonItemsFromDictionaries:config.headerLeftBarButtonItems
-                                                       withCurrentItems:navitem.leftBarButtonItems];
+    navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
+                                                  withCurrentItems:navitem.leftBarButtonItems];
   }
   // Set rightBarButtonItems if provided
   if (config.headerRightBarButtonItems.count > 0) {
-    navitem.rightBarButtonItems = [config barButtonItemsFromDictionaries:config.headerRightBarButtonItems
-                                                        withCurrentItems:navitem.rightBarButtonItems];
+    navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                   withCurrentItems:navitem.rightBarButtonItems];
   }
 
   if (animated && vc.transitionCoordinator != nil &&
@@ -849,8 +849,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (NSArray<UIBarButtonItem *> *)barButtonItemsFromDictionaries:(NSArray<NSDictionary<NSString *, id> *> *)dicts
-                                              withCurrentItems:(NSArray<UIBarButtonItem *> *)currentItems
+- (NSArray<UIBarButtonItem *> *)barButtonItemsFromConfigs:(NSArray<NSDictionary<NSString *, id> *> *)dicts
+                                         withCurrentItems:(NSArray<UIBarButtonItem *> *)currentItems
 {
   if (dicts.count == 0) {
     return currentItems;
