@@ -69,6 +69,17 @@ namespace react = facebook::react;
   _controller.view = self;
 }
 
+#pragma mark - UIView methods
+
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+#if RCT_NEW_ARCH_ENABLED
+  if (newWindow == nil) {
+    [_invalidatedComponentsRegistry flushInvalidViews];
+  }
+#endif // RCT_NEW_ARCH_ENABLED
+}
+
 #pragma mark - Events
 
 - (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter
