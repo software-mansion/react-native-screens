@@ -86,22 +86,21 @@ export default function ConfigColumnTab({
           'stack',
         ]}
       />
-      {index === 4 ||
-        (configColumnIndex === 4 && (
-          <>
-            <Text style={styles.title}>Inspector configuration</Text>
-            <SettingsSwitch
-              label="showInspector"
-              value={config.showInspector}
-              onValueChange={value =>
-                setConfig({
-                  ...config,
-                  showInspector: value,
-                })
-              }
-            />
-          </>
-        ))}
+      {(index === 4 || configColumnIndex === 4) && (
+        <>
+          <Text style={styles.title}>Inspector configuration</Text>
+          <SettingsSwitch
+            label="showInspector"
+            value={config.showInspector}
+            onValueChange={value =>
+              setConfig({
+                ...config,
+                showInspector: value,
+              })
+            }
+          />
+        </>
+      )}
       <Info />
     </ScrollView>
   );
