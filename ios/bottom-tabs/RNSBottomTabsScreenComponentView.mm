@@ -115,6 +115,12 @@ RNS_IGNORE_SUPER_CALL_END
   _controller = nil;
 }
 
+- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
+{
+  // For bottom tabs, Host is responsible for invalidating children.
+  return NO;
+}
+
 #else
 
 #pragma mark - RCTInvalidating
