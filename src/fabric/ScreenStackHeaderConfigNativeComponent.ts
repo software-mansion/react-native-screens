@@ -66,6 +66,17 @@ export interface NativeProps extends ViewProps {
   titleFontSize?: Int32;
   titleFontWeight?: string;
   titleColor?: ColorValue;
+  subtitle?: string;
+  subtitleFontFamily?: string;
+  subtitleFontSize?: Int32;
+  subtitleFontWeight?: string;
+  subtitleColor?: ColorValue;
+  largeSubtitlePresent?: boolean; // Since right now Fabric doesn't generate std::optional in the C++ code we need to have a separate prop to indicate if large subtitle is null or ""
+  largeSubtitle?: string;
+  largeSubtitleFontFamily?: string;
+  largeSubtitleFontSize?: Int32;
+  largeSubtitleFontWeight?: string;
+  largeSubtitleColor?: ColorValue;
   disableBackButtonMenu?: boolean;
   backButtonDisplayMode?: WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean;
