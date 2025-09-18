@@ -891,14 +891,22 @@ RNS_IGNORE_SUPER_CALL_END
             }
 #endif
           }];
-      [items insertObject:item atIndex:i];
+      if (i < items.count) {
+        [items insertObject:item atIndex:i];
+      } else {
+        [items addObject:item];
+      }
     } else if (dict[@"spacing"]) {
-      UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-                                                                                  target:nil
-                                                                                  action:nil];
+      UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                            target:nil
+                                                                            action:nil];
       NSNumber *spacingValue = dict[@"spacing"];
-      fixedSpace.width = [spacingValue doubleValue];
-      [items insertObject:fixedSpace atIndex:i];
+      item.width = [spacingValue doubleValue];
+      if (i < items.count) {
+        [items insertObject:item atIndex:i];
+      } else {
+        [items addObject:item];
+      }
     } else if (dict[@"isSubview"]) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
       if (@available(iOS 26.0, *)) {
@@ -998,12 +1006,26 @@ RNS_IGNORE_SUPER_CALL_END
     // This code should be kept in sync with analogous switch statement in
     // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
     switch (childComponentView.type) {
-      case RNSScreenStackHeaderSubviewTypeLeft:
+      case RNSScreenStackHeaderSubviewTypeLeft: {
+        for (UIBarButtonItem *item in navitem.leftBarButtonItems) {
+          if (item.customView == childComponentView) {
+            item.customView = snapshot;
+          }
+        }
+        break;
+      }
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle:
         navitem.titleView = snapshot;
         break;
-      case RNSScreenStackHeaderSubviewTypeRight:
+      case RNSScreenStackHeaderSubviewTypeRight: {
+        for (UIBarButtonItem *item in navitem.rightBarButtonItems) {
+          if (item.customView == childComponentView) {
+            item.customView = snapshot;
+          }
+        }
+        break;
+      }
       case RNSScreenStackHeaderSubviewTypeSearchBar:
       case RNSScreenStackHeaderSubviewTypeBackButton:
         break;
