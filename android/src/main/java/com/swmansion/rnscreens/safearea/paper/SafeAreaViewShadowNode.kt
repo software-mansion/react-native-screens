@@ -77,10 +77,8 @@ class SafeAreaViewShadowNode : LayoutShadowNode() {
     private fun getEdgeValue(
         edgeMode: Boolean,
         insetValue: Float,
-        edgeValue: Float
-    ): Float {
-        return if (edgeMode) insetValue + edgeValue else edgeValue
-    }
+        edgeValue: Float,
+    ): Float = if (edgeMode) insetValue + edgeValue else edgeValue
 
     override fun onBeforeLayout(nativeViewHierarchyOptimizer: NativeViewHierarchyOptimizer) {
         if (needsUpdate) {
@@ -110,8 +108,13 @@ class SafeAreaViewShadowNode : LayoutShadowNode() {
                 ViewProps.MARGIN_TOP,
                 ViewProps.MARGIN_BOTTOM,
                 ViewProps.MARGIN_LEFT,
-                ViewProps.MARGIN_RIGHT])
-    override fun setMargins(index: Int, margin: Dynamic) {
+                ViewProps.MARGIN_RIGHT,
+            ],
+    )
+    override fun setMargins(
+        index: Int,
+        margin: Dynamic,
+    ) {
         val spacingType = ViewProps.PADDING_MARGIN_SPACING_TYPES[index]
         margins[spacingType] =
             if (margin.type == ReadableType.Number) margin.asDouble().toFloat() else Float.NaN

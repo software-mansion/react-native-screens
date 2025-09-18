@@ -3,10 +3,8 @@
 package com.swmansion.rnscreens.safearea
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
-import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
-import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
@@ -47,14 +45,15 @@ class SafeAreaViewManager :
     @ReactProp(name = "insetType")
     override fun setInsetType(
         view: SafeAreaView,
-        value: String?
+        value: String?,
     ) {
-        val insetType = when (value) {
-            null, "all" -> InsetType.ALL
-            "system" -> InsetType.SYSTEM
-            "interface" -> InsetType.INTERFACE
-            else -> throw JSApplicationIllegalArgumentException("Unknown inset type $value")
-        }
+        val insetType =
+            when (value) {
+                null, "all" -> InsetType.ALL
+                "system" -> InsetType.SYSTEM
+                "interface" -> InsetType.INTERFACE
+                else -> throw JSApplicationIllegalArgumentException("Unknown inset type $value")
+            }
 
         view.setInsetType(insetType)
     }
@@ -62,7 +61,7 @@ class SafeAreaViewManager :
     override fun updateState(
         view: SafeAreaView,
         props: ReactStylesDiffMap?,
-        stateWrapper: StateWrapper?
+        stateWrapper: StateWrapper?,
     ): Any? {
         view.setStateWrapper(stateWrapper)
         return super.updateState(view, props, stateWrapper)

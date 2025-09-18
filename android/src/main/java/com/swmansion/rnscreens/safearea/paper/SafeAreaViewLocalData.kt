@@ -6,5 +6,5 @@ import com.swmansion.rnscreens.safearea.EdgeInsets
 
 data class SafeAreaViewLocalData(
     val insets: EdgeInsets,
-    val edges: SafeAreaViewEdges
+    val edges: SafeAreaViewEdges,
 )

@@ -115,14 +115,14 @@ class SafeAreaView(
         }
 
         return WindowInsetsCompat
-            .Builder(insets).apply {
+            .Builder(insets)
+            .apply {
                 if (insetType.containsSystem()) {
                     setInsets(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
 //                    setInsetsIgnoringVisibility(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
                     setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.NONE)
                 }
-            }
-            .build()
+            }.build()
     }
 
     private fun updateInsetsIfNeeded(): Boolean {
@@ -135,10 +135,11 @@ class SafeAreaView(
     }
 
     private fun updateInsets() {
-        val safeAreaInsets = EdgeInsets.max(
-            if (insetType.containsInterface()) currentInterfaceInsets else EdgeInsets.NONE,
-            if (insetType.containsSystem()) currentSystemInsets else EdgeInsets.NONE
-        )
+        val safeAreaInsets =
+            EdgeInsets.max(
+                if (insetType.containsInterface()) currentInterfaceInsets else EdgeInsets.NONE,
+                if (insetType.containsSystem()) currentSystemInsets else EdgeInsets.NONE,
+            )
 
         val stateWrapper = getStateWrapper()
         if (stateWrapper != null) {

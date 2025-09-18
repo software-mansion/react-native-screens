@@ -11,20 +11,22 @@ data class SafeAreaViewEdges(
     val left: Boolean,
 ) {
     companion object {
-        val NONE: SafeAreaViewEdges = SafeAreaViewEdges(
-            top = false,
-            right = false,
-            bottom = false,
-            left = false
-        )
-
-        fun fromProp(map: ReadableMap?): SafeAreaViewEdges? = map?.let {
+        val NONE: SafeAreaViewEdges =
             SafeAreaViewEdges(
-                top = map.getBoolean("top"),
-                right = map.getBoolean("right"),
-                bottom = map.getBoolean("bottom"),
-                left = map.getBoolean("left"),
+                top = false,
+                right = false,
+                bottom = false,
+                left = false,
             )
-        }
+
+        fun fromProp(map: ReadableMap?): SafeAreaViewEdges? =
+            map?.let {
+                SafeAreaViewEdges(
+                    top = map.getBoolean("top"),
+                    right = map.getBoolean("right"),
+                    bottom = map.getBoolean("bottom"),
+                    left = map.getBoolean("left"),
+                )
+            }
     }
 }
