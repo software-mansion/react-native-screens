@@ -637,17 +637,21 @@ RNS_IGNORE_SUPER_CALL_END
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+#if !TARGET_OS_TV
         if (@available(iOS 26.0, *)) {
           [buttonItem setHidesSharedBackground: config.headerLeftHidesSharedBackground];
         }
+#endif
         navitem.leftBarButtonItem = buttonItem;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+#if !TARGET_OS_TV
         if (@available(iOS 26.0, *)) {
           [buttonItem setHidesSharedBackground: config.headerRightHidesSharedBackground];
         }
+#endif
         navitem.rightBarButtonItem = buttonItem;
         break;
       }
