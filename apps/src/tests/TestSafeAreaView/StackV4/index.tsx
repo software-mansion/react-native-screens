@@ -63,10 +63,12 @@ export default function StackV4SAVExample({
             <Stack.Screen
               name="ConfigScreen"
               component={ConfigScreen}
-              options={{
-                headerTransparent: true,
-                headerLargeTitle: true,
-              }}
+              options={
+                {
+                  // headerTransparent: true,
+                  // headerLargeTitle: true,
+                }
+              }
             />
             <Stack.Screen
               name="TestScreen"

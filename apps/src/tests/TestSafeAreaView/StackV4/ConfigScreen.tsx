@@ -6,6 +6,7 @@ import {
   useStackV4SAVExampleContext,
 } from './StackV4SAVExampleContext';
 import { SettingsPicker, SettingsSwitch } from '../../../shared';
+import Info from '../shared/Info';
 
 export default function ConfigScreen({ navigation }: StackNavigationProp) {
   const { config, setConfig } = useStackV4SAVExampleContext();
@@ -104,6 +105,7 @@ export default function ConfigScreen({ navigation }: StackNavigationProp) {
         title="Push screen"
         onPress={() => navigation.push('TestScreen')}
       />
+      <Info />
     </ScrollView>
   );
 }

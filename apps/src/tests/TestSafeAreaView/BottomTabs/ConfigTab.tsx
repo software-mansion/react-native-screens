@@ -5,6 +5,7 @@ import {
   useBottomTabsSAVExampleContext,
 } from './BottomTabsSAVExampleContext';
 import { SettingsPicker, SettingsSwitch } from '../../../shared';
+import Info from '../shared/Info';
 
 export default function ConfigTab() {
   const { config, setConfig } = useBottomTabsSAVExampleContext();
@@ -98,6 +99,7 @@ export default function ConfigTab() {
           'stack',
         ]}
       />
+      <Info />
     </ScrollView>
   );
 }
