@@ -6,7 +6,10 @@ import {
 } from './SplitViewSAVExampleContext';
 import { NavigationIndependentTree } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
+import {
+  SplitViewHost,
+  SplitViewScreen,
+} from 'react-native-screens/experimental';
 import ConfigColumn from './ConfigColumn';
 import { mapContentStringToComponent } from '../shared';
 import { SafeAreaView } from 'react-native-screens/private';
