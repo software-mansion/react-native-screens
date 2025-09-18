@@ -162,4 +162,4 @@ export { default as TestAnimation } from './TestAnimation';
 export { default as TestBottomTabs } from './TestBottomTabs';
 export { default as TestScreenStack } from './TestScreenStack';
 export { default as TestSplitView } from './TestSplitView';
-export { default as TestSafeAreaView } from './TestSafeAreaView';
+export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
