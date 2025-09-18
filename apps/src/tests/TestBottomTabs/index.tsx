@@ -35,13 +35,19 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab1',
       isFocused: true,
       icon: {
-        sfSymbolName: 'house',
+        ios: {
+          type: 'sfSymbolIOS',
+          name: 'house.fill',
+        }, 
+        android: {
+          type: 'imageSource',
+          imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+        }
       },
       selectedIcon: {
-        sfSymbolName: 'house.fill',
+        type: 'sfSymbolIOS',
+        name: 'house.fill',
       },
-      // iconResourceName: 'sym_call_incoming', // Android specific
-      iconResource: require('../../../assets/variableIcons/icon_fill.png'),
     },
     component: Tab1,
   },
@@ -96,13 +102,19 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       icon: {
-        templateSource: require('../../../assets/variableIcons/icon.png'),
+        ios: {
+          type: 'templateSourceIOS',
+          templateSource: require('../../../assets/variableIcons/icon.png'),
+        }, 
+        android: {
+          type: 'drawableResourceAndroid',
+          name: 'sym_call_missed',
+        }
       },
       selectedIcon: {
+        type: 'templateSourceIOS',
         templateSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
-      iconResourceName: 'sym_call_missed', // Android specific
-      iconResource: require('../../../assets/variableIcons/icon.png'),
       title: 'Tab2',
       orientation: 'landscape',
     },
@@ -127,13 +139,15 @@ const TAB_CONFIGS: TabConfiguration[] = [
         tabBarBlurEffect: 'none',
       },
       icon: {
-        imageSource: require('../../../assets/variableIcons/icon.png'),
+        shared: {
+          type: 'imageSource',
+          imageSource: require('../../../assets/variableIcons/icon.png'),
+        }
       },
       selectedIcon: {
+        type: 'imageSource',
         imageSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
-      // iconResourceName: 'sym_action_email', // Android specific
-      iconResource: require('../../../assets/variableIcons/icon_fill.png'),
       title: 'Tab3',
       // systemItem: 'search', // iOS specific
       // systemItem: 'contacts', // iOS specific
@@ -146,13 +160,19 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab4',
       icon: {
-        sfSymbolName: 'rectangle.stack',
+        ios: {
+          type: 'sfSymbolIOS',
+          name: 'rectangle.stack',
+        },
+        android: {
+          type: 'drawableResourceAndroid',
+          name: 'custom_home_icon'
+        }
       },
       selectedIcon: {
-        sfSymbolName: 'rectangle.stack.fill',
+        type: 'sfSymbolIOS',
+        name: 'rectangle.stack.fill',
       },
-      // iconResourceName: 'sym_action_chat', // Android specific
-      iconResource: require('../../../assets/svg/cart.svg'),
       title: 'Tab4',
       systemItem: 'search', // iOS specific
       badgeValue: '123',

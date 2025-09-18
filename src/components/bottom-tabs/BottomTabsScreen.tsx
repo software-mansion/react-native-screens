@@ -4,6 +4,7 @@ import React from 'react';
 import { Freeze } from 'react-freeze';
 import {
   Image,
+  ImageResolvedAssetSource,
   StyleSheet,
   findNodeHandle,
   processColor,
@@ -12,7 +13,7 @@ import {
 } from 'react-native';
 import { freezeEnabled } from '../../core';
 import BottomTabsScreenNativeComponent, {
-  type IconType,
+  type NativeIconType,
   type NativeProps,
   type Appearance,
   type ItemAppearance,
@@ -25,7 +26,9 @@ import type {
   BottomTabsScreenItemStateAppearance,
   BottomTabsScreenProps,
   EmptyObject,
-  Icon,
+  PlatformIcon,
+  PlatformIconAndroid,
+  PlatformIconIOS,
 } from './BottomTabsScreen.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 
@@ -55,7 +58,6 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     isFocused = false,
     freezeContents,
     icon,
-    iconResource,
     selectedIcon,
     standardAppearance,
     scrollEdgeAppearance,
@@ -118,16 +120,6 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
-  let parsedIconResource;
-  if (iconResource) {
-    parsedIconResource = Image.resolveAssetSource(iconResource);
-    if (!parsedIconResource) {
-      console.error(
-        '[RNScreens] failed to resolve an asset for bottom tab icon',
-      );
-    }
-  }
-
   return (
     <BottomTabsScreenNativeComponent
       collapsable={false}
@@ -137,11 +129,6 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       onWillDisappear={onWillDisappearCallback}
       onDidDisappear={onDidDisappearCallback}
       isFocused={isFocused}
-      // I'm keeping undefined as a fallback if `Image.resolveAssetSource` has failed for some reason.
-      // It won't render any icon, but it will prevent from crashing on the native side which is expecting
-      // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
-      // double as a value.
-      iconResource={parsedIconResource || undefined}
       {...iconProps}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
@@ -241,8 +228,43 @@ function shouldFreezeScreen(
   return !nativeViewVisible;
 }
 
-function parseIconToNativeProps(icon: Icon | undefined): {
-  iconType?: IconType;
+function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
+  imageIconResource?: ImageResolvedAssetSource;
+  drawableIconResourceName?: string;
+} {
+  if (!icon) {
+    return {};
+  }
+
+  let parsedIconResource;
+  if (icon.type === 'imageSource') {
+    parsedIconResource = Image.resolveAssetSource(icon.imageSource);
+    if (!parsedIconResource) {
+      console.error(
+        '[RNScreens] failed to resolve an asset for bottom tab icon',
+      );
+    }
+
+    return {
+      // I'm keeping undefined as a fallback if `Image.resolveAssetSource` has failed for some reason.
+      // It won't render any icon, but it will prevent from crashing on the native side which is expecting
+      // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
+      // double as a value.
+      imageIconResource: parsedIconResource || undefined,
+    };
+  } else if (icon.type === 'drawableResourceAndroid') {
+    return {
+      drawableIconResourceName: icon.name,
+    };
+  } else {
+    throw new Error(
+      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResourceAndroid`.',
+    );
+  }
+}
+
+function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
+  iconType?: NativeIconType;
   iconImageSource?: ImageSourcePropType;
   iconSfSymbolName?: string;
 } {
@@ -250,48 +272,51 @@ function parseIconToNativeProps(icon: Icon | undefined): {
     return {};
   }
 
-  if ('sfSymbolName' in icon) {
-    // iOS-specific: SFSymbol usage
+  if (icon.type === 'sfSymbolIOS') {
     return {
       iconType: 'sfSymbol',
-      iconSfSymbolName: icon.sfSymbolName,
+      iconSfSymbolName: icon.name,
     };
-  } else if ('imageSource' in icon) {
+  } else if (icon.type === 'imageSource') {
     return {
       iconType: 'image',
       iconImageSource: icon.imageSource,
     };
-  } else if ('templateSource' in icon) {
-    // iOS-specifig: image as a template usage
+  } else if (icon.type === 'templateSourceIOS') {
     return {
       iconType: 'template',
       iconImageSource: icon.templateSource,
     };
   } else {
-    // iOS-specific: SFSymbol, image as a template usage
     throw new Error(
-      '[RNScreens] Incorrect icon format. You must provide sfSymbolName, imageSource or templateSource.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbolIOS`, `imageSource` or `templateSourceIOS`.',
     );
   }
 }
 
 function parseIconsToNativeProps(
-  icon: Icon | undefined,
-  selectedIcon: Icon | undefined,
+  icon: PlatformIcon | undefined,
+  selectedIcon: PlatformIconIOS | undefined,
 ): {
-  iconType?: IconType;
+  imageIconResource?: ImageResolvedAssetSource;
+  drawableIconResourceName?: string;
+  iconType?: NativeIconType;
   iconImageSource?: ImageSourcePropType;
   iconSfSymbolName?: string;
   selectedIconImageSource?: ImageSourcePropType;
   selectedIconSfSymbolName?: string;
 } {
+  const androidNativeProps = parseAndroidIconToNativeProps(
+    icon?.android || icon?.shared,
+  );
+
   const { iconImageSource, iconSfSymbolName, iconType } =
-    parseIconToNativeProps(icon);
+    parseIOSIconToNativeProps(icon?.ios || icon?.shared);
   const {
     iconImageSource: selectedIconImageSource,
     iconSfSymbolName: selectedIconSfSymbolName,
     iconType: selectedIconType,
-  } = parseIconToNativeProps(selectedIcon);
+  } = parseIOSIconToNativeProps(selectedIcon);
 
   if (
     iconType !== undefined &&
@@ -307,6 +332,7 @@ function parseIconsToNativeProps(
   }
 
   return {
+    ...androidNativeProps,
     iconType,
     iconImageSource,
     iconSfSymbolName,

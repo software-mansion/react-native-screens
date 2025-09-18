@@ -162,12 +162,12 @@ class TabScreenViewManager :
         view.tabBarItemBadgeTextColor = value
     }
 
-    @ReactProp(name = "iconResourceName")
-    override fun setIconResourceName(
+    @ReactProp(name = "drawableIconResourceName")
+    override fun setDrawableIconResourceName(
         view: TabScreen,
         value: String?,
     ) {
-        view.iconResourceName = value
+        view.drawableIconResourceName = value
     }
 
     override fun setOrientation(
@@ -180,8 +180,8 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
-    @ReactProp(name = "iconResource")
-    override fun setIconResource(
+    @ReactProp(name = "imageIconResource")
+    override fun setImageIconResource(
         view: TabScreen,
         value: ReadableMap?,
     ) {
