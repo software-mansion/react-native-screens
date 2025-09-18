@@ -920,7 +920,9 @@ RNS_IGNORE_SUPER_CALL_END
     // On iOS < 26, we have a custom full screen swipe recognizer that functions similarily
     // to interactiveContentPopGestureRecognizer introduced in iOS 26.
     // On iOS >= 26, we want to use the native one, but we are unable to handle custom animations
-    // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation in this one
+    // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation.
+    // In this case, the old one should behave as close as the new native one, having only the difference
+    // in animation, and without any customization that is exclusive for it (e.g. gestureResponseDistance).
     if (@available(iOS 26, *)) {
       if (customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
         _isFullWidthSwipingWithPanGesture = YES;
