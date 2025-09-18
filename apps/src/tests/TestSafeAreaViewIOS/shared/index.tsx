@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
-import BottomTabsSAVExample from '../BottomTabs';
-import StackV4SAVExample from '../StackV4';
+import BottomTabsSAVExample from '../bottom-tabs';
+import StackV4SAVExample from '../stack-v4';
 import RegularView from './RegularView';
 import ScrollViewAutomatic from './ScrollViewAutomatic';
 import ScrollViewNever from './ScrollViewNever';
