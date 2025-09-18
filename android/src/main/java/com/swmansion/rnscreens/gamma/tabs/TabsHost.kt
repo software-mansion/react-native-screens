@@ -484,7 +484,9 @@ class TabsHost(
         oldRight: Int,
         oldBottom: Int,
     ) {
-        require(view is BottomNavigationView)
+        require(view is BottomNavigationView) {
+            "[RNScreens] TabsHost's onLayoutChange expects BottomNavigationView, received ${if (view != null) view::class.java else "null"} instead"
+        }
 
         val oldHeight = oldBottom - oldTop
         val newHeight = bottom - top
