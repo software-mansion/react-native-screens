@@ -5,7 +5,6 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, ScrollView, Text } from 'react-native';
-// import { SafeAreaView } from 'react-native-screens/private';
 
 type RouteParamList = {
   Screen1: undefined;
@@ -109,10 +108,13 @@ function Screen3({ navigation }: StackNavigationProp) {
 
 export function Tab4() {
   return (
-    // <SafeAreaView edges={{ top: true, bottom: true }}>
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Screen1" component={Screen1} />
+        <Stack.Screen
+          name="Screen1"
+          component={Screen1}
+          options={{ headerTransparent: true, orientation: 'landscape' }}
+        />
         <Stack.Screen
           name="Screen2"
           component={Screen2}
@@ -128,6 +130,5 @@ export function Tab4() {
         />
       </Stack.Navigator>
     </NavigationContainer>
-    // </SafeAreaView>
   );
 }
