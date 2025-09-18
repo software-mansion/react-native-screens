@@ -1,13 +1,20 @@
 import { createContext, Dispatch, SetStateAction, useContext } from 'react';
-import { SAVExampleConfig } from '../shared/SAVExampleConfig';
 import {
   BottomTabsSystemItem,
   TabBarMinimizeBehavior,
 } from 'react-native-screens';
+import { ContentType } from '../shared';
 
-export interface BottomTabsSAVExampleConfig extends SAVExampleConfig {
+export interface BottomTabsSAVExampleConfig {
   tabBarMinimizeBehavior: TabBarMinimizeBehavior;
   tabBarItemSystemItem: 'disabled' | BottomTabsSystemItem;
+
+  safeAreaTopEdge: boolean;
+  safeAreaBottomEdge: boolean;
+  safeAreaLeftEdge: boolean;
+  safeAreaRightEdge: boolean;
+
+  content: ContentType;
 }
 
 export interface BottomTabsSAVExampleContextInterface {

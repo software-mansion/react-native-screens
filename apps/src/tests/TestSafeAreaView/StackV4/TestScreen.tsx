@@ -7,6 +7,7 @@ import BottomTabsSAVExample from '../BottomTabs';
 import StackV4SAVExample, { StackNavigationProp } from '.';
 import { Text } from 'react-native';
 import { SafeAreaView } from 'react-native-screens/private';
+import { mapContentStringToComponent } from '../shared';
 
 export default function TestScreen({ navigation }: StackNavigationProp) {
   const { config } = useStackV4SAVExampleContext();
@@ -25,27 +26,7 @@ export default function TestScreen({ navigation }: StackNavigationProp) {
     });
   }, [config, navigation]);
 
-  let content;
-  switch (config.content) {
-    case 'regularView':
-      content = <RegularView />;
-      break;
-    case 'scrollViewNever':
-      content = <ScrollViewNever />;
-      break;
-    case 'scrollViewAutomatic':
-      content = <ScrollViewAutomatic />;
-      break;
-    case 'tabs':
-      content = <BottomTabsSAVExample />;
-      break;
-    case 'stack':
-      content = <StackV4SAVExample />;
-      break;
-    default:
-      content = <Text>Unknown test case.</Text>;
-      break;
-  }
+  let content = mapContentStringToComponent(config.content);
 
   return (
     <SafeAreaView
