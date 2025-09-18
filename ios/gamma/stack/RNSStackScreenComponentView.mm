@@ -24,7 +24,7 @@ namespace react = facebook::react;
   RNSStackScreenController *_Nonnull _controller;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
 #ifdef RCT_NEW_ARCH_ENABLED
-  RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
+  BOOL _markedForInvalidation;
 #endif // RCT_NEW_ARCH_ENABLED
 
   // Flags
@@ -46,7 +46,7 @@ namespace react = facebook::react;
   [self setupController];
 
 #ifdef RCT_NEW_ARCH_ENABLED
-  _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
+  _markedForInvalidation = NO;
 #endif // RCT_NEW_ARCH_ENABLED
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
 
@@ -75,7 +75,9 @@ namespace react = facebook::react;
 {
 #if RCT_NEW_ARCH_ENABLED
   if (newWindow == nil) {
-    [_invalidatedComponentsRegistry flushInvalidViews];
+    if (_markedForInvalidation) {
+      [self invalidateController];
+    }
   }
 #endif // RCT_NEW_ARCH_ENABLED
 }
@@ -147,7 +149,11 @@ namespace react = facebook::react;
 {
   for (const auto &mutation : transaction.getMutations()) {
     if ([self shouldInvalidateOnMutation:mutation]) {
-      [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
+      if (self.window == nil) {
+        [self invalidateController];
+      } else {
+        _markedForInvalidation = YES;
+      }
     }
   }
 }
