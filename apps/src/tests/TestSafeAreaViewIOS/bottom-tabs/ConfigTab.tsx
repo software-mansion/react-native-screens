@@ -11,9 +11,7 @@ export default function ConfigTab() {
   const { config, setConfig } = useBottomTabsSAVExampleContext();
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ padding: 16, gap: 5 }}>
+    <ScrollView contentContainerStyle={{ padding: 16, gap: 5 }}>
       <Text style={styles.title}>Safe Area configuration</Text>
       <SettingsSwitch
         label="safeAreaTopEdge"
@@ -91,13 +89,7 @@ export default function ConfigTab() {
             content: value,
           })
         }
-        items={[
-          'regularView',
-          'scrollViewNever',
-          'scrollViewAutomatic',
-          'tabs',
-          'stack',
-        ]}
+        items={['regularView', 'scrollViewAutomatic', 'tabs', 'stack']}
       />
       <Info />
     </ScrollView>

@@ -14,7 +14,7 @@ export interface BottomTabsSAVExampleConfig {
   safeAreaLeftEdge: boolean;
   safeAreaRightEdge: boolean;
 
-  content: ContentType;
+  content: Exclude<ContentType, 'scrollViewNever'>;
 }
 
 export interface BottomTabsSAVExampleContextInterface {

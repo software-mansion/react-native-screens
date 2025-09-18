@@ -22,16 +22,16 @@ export default function BottomTabsSAVExample() {
     });
 
   return (
-    <BottomTabsSAVExampleContext.Provider
-      value={{
-        config: exampleConfig,
-        setConfig: setExampleConfig,
-      }}>
-      <NavigationIndependentTree>
-        <NavigationContainer>
+    <NavigationIndependentTree>
+      <NavigationContainer>
+        <BottomTabsSAVExampleContext.Provider
+          value={{
+            config: exampleConfig,
+            setConfig: setExampleConfig,
+          }}>
           <BottomTabsComponent />
-        </NavigationContainer>
-      </NavigationIndependentTree>
-    </BottomTabsSAVExampleContext.Provider>
+        </BottomTabsSAVExampleContext.Provider>
+      </NavigationContainer>
+    </NavigationIndependentTree>
   );
 }

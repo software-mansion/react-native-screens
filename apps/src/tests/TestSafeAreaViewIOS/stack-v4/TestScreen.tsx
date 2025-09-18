@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useStackV4SAVExampleContext } from './StackV4SAVExampleContext';
 import { StackNavigationProp } from '.';
 import { SafeAreaView } from 'react-native-screens/private';
@@ -21,7 +21,10 @@ export default function TestScreen({ navigation }: StackNavigationProp) {
     });
   }, [config, navigation]);
 
-  let content = mapContentStringToComponent(config.content);
+  let content = useMemo(
+    () => mapContentStringToComponent(config.content),
+    [config.content],
+  );
 
   return (
     <SafeAreaView
