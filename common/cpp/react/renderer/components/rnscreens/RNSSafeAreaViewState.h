@@ -15,18 +15,6 @@
 namespace facebook {
 namespace react {
 
-#ifdef ANDROID
-inline EdgeInsets edgeInsetsFromDynamic(const folly::dynamic &value) {
-  return EdgeInsets{
-      .left = (float)value["left"].getDouble(),
-      .top = (float)value["top"].getDouble(),
-      .right = (float)value["right"].getDouble(),
-      .bottom = (float)value["bottom"].getDouble(),
-  };
-}
-
-#endif
-
 /*
  * State for <RNSSafeAreaView> component.
  */
@@ -46,6 +34,14 @@ class JSI_EXPORT RNSSafeAreaViewState final {
   EdgeInsets insets{};
 
 #ifdef ANDROID
+  inline EdgeInsets edgeInsetsFromDynamic(const folly::dynamic &value) {
+    return EdgeInsets{
+        .left = (float)value["left"].getDouble(),
+        .top = (float)value["top"].getDouble(),
+        .right = (float)value["right"].getDouble(),
+        .bottom = (float)value["bottom"].getDouble(),
+    };
+  }
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
