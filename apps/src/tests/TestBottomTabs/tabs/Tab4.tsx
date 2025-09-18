@@ -110,9 +110,24 @@ export function Tab4() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Screen1" component={Screen1} />
-        <Stack.Screen name="Screen2" component={Screen2} />
-        <Stack.Screen name="Screen3" component={Screen3} />
+        <Stack.Screen
+          name="Screen1"
+          component={Screen1}
+          options={{ headerTransparent: true, orientation: 'landscape' }}
+        />
+        <Stack.Screen
+          name="Screen2"
+          component={Screen2}
+          options={{
+            headerLargeTitle: true,
+            orientation: 'default',
+          }}
+        />
+        <Stack.Screen
+          name="Screen3"
+          component={Screen3}
+          options={{ headerTransparent: true }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
