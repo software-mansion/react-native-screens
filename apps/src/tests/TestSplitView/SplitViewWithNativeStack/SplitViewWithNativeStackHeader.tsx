@@ -1,5 +1,5 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
+import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { Image, View } from 'react-native';
 import Colors from '../../../shared/styling/Colors';

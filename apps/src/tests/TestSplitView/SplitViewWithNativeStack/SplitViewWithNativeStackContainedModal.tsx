@@ -1,5 +1,5 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
+import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent, type ScreenOneProps } from '../helpers';
 import { StyleSheet, Text, View } from 'react-native';
 import PressableWithFeedback from '../../../shared/PressableWithFeedback';
@@ -25,7 +25,7 @@ const ScreenTwo = () => (
 )
 
 const ScreenThree = () => (
-  <View style={[styles.container, {backgroundColor: Colors.BlueDark100, opacity: 0.5}]}>
+  <View style={[styles.container, { backgroundColor: Colors.BlueDark100, opacity: 0.5 }]}>
     <Text style={styles.text}>ScreenOne</Text>
   </View>
 )
@@ -65,9 +65,9 @@ const styles = StyleSheet.create({
     fontSize: 24
   },
   pressable: {
-      backgroundColor: Colors.White,
-      borderWidth: 1,
-      borderColor: Colors.BlueDark140
+    backgroundColor: Colors.White,
+    borderWidth: 1,
+    borderColor: Colors.BlueDark140
   }
 })
 

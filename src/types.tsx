@@ -970,6 +970,3 @@ export interface GestureProviderProps extends GestureProps {
 
 export * from './components/bottom-tabs/BottomTabs.types';
 export * from './components/bottom-tabs/BottomTabsScreen.types';
-
-export * from './components/gamma/SplitViewHost.types';
-export * from './components/gamma/SplitViewScreen.types';

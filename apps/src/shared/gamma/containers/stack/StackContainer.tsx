@@ -3,7 +3,7 @@ import {
   ScreenStackHost,
   StackScreen,
   StackScreenLifecycleState,
-} from 'react-native-screens';
+} from 'react-native-screens/experimental';
 import type { StackScreenNativeProps } from 'react-native-screens/components/gamma/StackScreen';
 
 let id = 0;
