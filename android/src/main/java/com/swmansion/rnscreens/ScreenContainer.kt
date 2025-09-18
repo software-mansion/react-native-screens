@@ -106,8 +106,11 @@ open class ScreenContainer(
         screen.fragmentWrapper = fragment
         screenWrappers.add(index, fragment)
         screen.container = this
+        onScreenAdded(screen)
         onScreenChanged()
     }
+
+    open fun onScreenAdded(screen: Screen) = Unit
 
     open fun removeScreenAt(index: Int) {
         screenWrappers[index].screen.container = null

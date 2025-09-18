@@ -312,6 +312,11 @@ class ScreenStack(
         stack.forEach { it.onContainerUpdate() }
     }
 
+    override fun onScreenAdded(screen: Screen) {
+        super.onScreenAdded(screen)
+        screen.onAddedToContainer(this)
+    }
+
     private fun drawAndRelease() {
         // We make a copy of the drawingOps and use it to dispatch draws in order to be sure
         // that we do not modify the original list. There are cases when `op.draw` can call

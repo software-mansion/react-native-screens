@@ -130,12 +130,12 @@ class ScreenStackHeaderConfig(
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
 
         // Note that implementation of the callee differs between architectures.
-        updateHeaderConfigState(
-            toolbar.width,
-            toolbar.height,
-            contentInsetStart,
-            contentInsetEnd,
-        )
+//        updateHeaderConfigState(
+//            toolbar.width,
+//            toolbar.height,
+//            contentInsetStart,
+//            contentInsetEnd,
+//        )
     }
 
     override fun onLayout(
