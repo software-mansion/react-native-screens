@@ -1,25 +1,14 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import StackScreenNativeComponent from '../../fabric/gamma/StackScreenNativeComponent';
-import type { NativeSyntheticEvent, ViewProps } from 'react-native';
-import type { NativeProps } from '../../fabric/gamma/StackScreenNativeComponent';
+import type { NativeSyntheticEvent } from 'react-native';
+import { StackScreenProps } from './StackScreen.types';
 
 export const StackScreenLifecycleState = {
   INITIAL: 0,
   DETACHED: 1,
   ATTACHED: 2,
 } as const;
-
-export type StackScreenNativeProps = NativeProps & {
-  // Overrides
-  maxLifecycleState: (typeof StackScreenLifecycleState)[keyof typeof StackScreenLifecycleState];
-};
-
-type StackScreenProps = {
-  children?: ViewProps['children'];
-  // Custom events
-  onPop?: (screenKey: string) => void;
-} & StackScreenNativeProps;
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
