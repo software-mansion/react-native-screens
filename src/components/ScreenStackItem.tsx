@@ -9,7 +9,11 @@ import {
 import warnOnce from 'warn-once';
 
 import DebugContainer from './DebugContainer';
-import { ScreenProps, ScreenStackHeaderConfigProps } from '../types';
+import {
+  ScreenProps,
+  ScreenStackHeaderConfigProps,
+  StackPresentationTypes,
+} from '../types';
 import { ScreenStackHeaderConfig } from './ScreenStackHeaderConfig';
 import Screen from './Screen';
 import ScreenStack from './ScreenStack';
@@ -24,6 +28,32 @@ type Props = Omit<
   headerConfig?: ScreenStackHeaderConfigProps;
   contentStyle?: StyleProp<ViewStyle>;
 };
+
+function getPositioningStyle(
+  allowedDetents: ScreenProps['sheetAllowedDetents'],
+  presentation?: StackPresentationTypes,
+) {
+  const isIOS = Platform.OS === 'ios';
+
+  if (presentation !== 'formSheet') {
+    return styles.container;
+  }
+
+  if (isIOS) {
+    if (allowedDetents === 'fitToContents') {
+      return styles.absolute;
+    } else {
+      return styles.container;
+    }
+  }
+
+  // Other platforms, tested reliably only on Android
+  if (allowedDetents === 'fitToContents') {
+    return null;
+  }
+
+  return styles.container;
+}
 
 function ScreenStackItem(
   {
@@ -65,19 +95,15 @@ function ScreenStackItem(
     headerHiddenPreviousRef.current = headerConfig?.hidden;
   }, [headerConfig?.hidden, stackPresentation]);
 
+  const debugContainerStyle = getPositioningStyle(
+    sheetAllowedDetents,
+    stackPresentation,
+  );
+
   const content = (
     <>
       <DebugContainer
-        style={[
-          stackPresentation === 'formSheet'
-            ? Platform.OS === 'ios'
-              ? styles.absolute
-              : sheetAllowedDetents === 'fitToContents'
-              ? null
-              : styles.container
-            : styles.container,
-          contentStyle,
-        ]}
+        style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
         {children}
       </DebugContainer>
