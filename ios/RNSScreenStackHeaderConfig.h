@@ -59,6 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UISemanticContentAttribute direction;
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
+@property (nonatomic) BOOL headerLeftHidesSharedBackground;
+@property (nonatomic) BOOL headerRightHidesSharedBackground;
 
 NS_ASSUME_NONNULL_END
 

@@ -65,6 +65,12 @@ const SettingsScreen = ({
   const [headerTransparent, setHeaderTransparent] = useState(false);
   const [headerBlurEffect, setHeaderBlurEffect] =
     useState<BlurEffectTypes>('extraLight');
+  const [headerLeftHidesSharedBackground, setHeaderLeftHidesSharedBackground] =
+    useState(false);
+  const [
+    headerRightHidesSharedBackground,
+    setHeaderRightHidesSharedBackground,
+  ] = useState(false);
 
   const square = (props: { tintColor?: string }) => (
     <Square {...props} color="green" size={20} />
@@ -84,6 +90,8 @@ const SettingsScreen = ({
       headerShadowVisible,
       headerTransparent,
       headerBlurEffect,
+      headerLeftHidesSharedBackground,
+      headerRightHidesSharedBackground,
     });
   }, [
     navigation,
@@ -97,6 +105,8 @@ const SettingsScreen = ({
     headerShadowVisible,
     headerTransparent,
     headerBlurEffect,
+    headerLeftHidesSharedBackground,
+    headerRightHidesSharedBackground,
   ]);
 
   return (
@@ -201,6 +211,16 @@ const SettingsScreen = ({
           'systemChromeMaterialDark',
         ]}
         onValueChange={setHeaderBlurEffect}
+      />
+      <SettingsSwitch
+        label="Header left hides shared background (iOS 26.0+)"
+        value={headerLeftHidesSharedBackground}
+        onValueChange={setHeaderLeftHidesSharedBackground}
+      />
+      <SettingsSwitch
+        label="Header right hides shared background (iOS 26.0+)"
+        value={headerRightHidesSharedBackground}
+        onValueChange={setHeaderRightHidesSharedBackground}
       />
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </ScrollView>

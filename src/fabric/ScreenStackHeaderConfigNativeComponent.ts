@@ -71,6 +71,8 @@ export interface NativeProps extends ViewProps {
   hideBackButton?: boolean;
   backButtonInCustomView?: boolean;
   blurEffect?: WithDefault<BlurEffect, 'none'>;
+  headerLeftHidesSharedBackground?: boolean;
+  headerRightHidesSharedBackground?: boolean;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean;
 }

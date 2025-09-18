@@ -272,9 +272,23 @@ export type NativeStackNavigationOptions = {
    */
   headerLeft?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
+   * Boolean indicating whether the left header button should hide the shared background. Defaults to `false`.
+   * Only supported on iOS 26.0+.
+   *
+   * @platform ios
+   */
+  headerLeftHidesSharedBackground?: boolean;
+  /**
    * Function which returns a React Element to display on the right side of the header.
    */
   headerRight?: (props: { tintColor?: ColorValue }) => React.ReactNode;
+  /**
+   * Boolean indicating whether the right header button should hide the shared background. Defaults to `false`.
+   * Only supported on iOS 26.0+.
+   *
+   * @platform ios
+   */
+  headerRightHidesSharedBackground?: boolean;
   /**
    * Whether to show the header.
    */

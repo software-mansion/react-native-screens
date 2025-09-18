@@ -637,11 +637,17 @@ RNS_IGNORE_SUPER_CALL_END
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        if (@available(iOS 26.0, *)) {
+          [buttonItem setHidesSharedBackground: config.headerLeftHidesSharedBackground];
+        }
         navitem.leftBarButtonItem = buttonItem;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        if (@available(iOS 26.0, *)) {
+          [buttonItem setHidesSharedBackground: config.headerRightHidesSharedBackground];
+        }
         navitem.rightBarButtonItem = buttonItem;
         break;
       }
@@ -1062,6 +1068,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
 
+  _headerLeftHidesSharedBackground = newScreenProps.headerLeftHidesSharedBackground;
+  _headerRightHidesSharedBackground = newScreenProps.headerRightHidesSharedBackground;
+
   [self updateViewControllerIfNeeded];
 
   if (needsNavigationControllerLayout) {
@@ -1170,6 +1179,8 @@ RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(headerLeftHidesSharedBackground, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(headerRightHidesSharedBackground, BOOL)
 
 @end
 

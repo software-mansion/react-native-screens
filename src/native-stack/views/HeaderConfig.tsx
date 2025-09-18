@@ -41,7 +41,9 @@ export default function HeaderConfig({
   headerLargeTitleHideShadow,
   headerLargeTitleStyle = {},
   headerLeft,
+  headerLeftHidesSharedBackground,
   headerRight,
+  headerRightHidesSharedBackground,
   headerShown,
   headerStyle = {},
   headerTintColor,
@@ -127,6 +129,8 @@ export default function HeaderConfig({
       hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}
+      headerLeftHidesSharedBackground={headerLeftHidesSharedBackground}
+      headerRightHidesSharedBackground={headerRightHidesSharedBackground}
       largeTitle={headerLargeTitle}
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}
       largeTitleColor={headerLargeTitleStyle.color}

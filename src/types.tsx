@@ -617,6 +617,20 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   hideBackButton?: boolean;
   /**
+   * Boolean indicating whether the left header button should draw the default glass effect background. Defaults to `false`.
+   * Only supported on iOS 26.0+.
+   *
+   * @platform ios
+   */
+  headerLeftHidesSharedBackground?: boolean;
+  /**
+   * Boolean indicating whether the right header button should draw the default glass effect background. Defaults to `false`.
+   * Only supported on iOS 26.0+.
+   *
+   * @platform ios
+   */
+  headerRightHidesSharedBackground?: boolean;
+  /**
    * Boolean indicating whether to hide the elevation shadow or the bottom border on the header.
    */
   hideShadow?: boolean;
