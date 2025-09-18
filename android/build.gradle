@@ -246,12 +246,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.12.0'
     implementation "androidx.core:core-ktx:1.8.0"
 
-    def COIL_VERSION = "3.0.4"
-    
-    implementation("io.coil-kt.coil3:coil:${COIL_VERSION}")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:${COIL_VERSION}")
-    implementation("io.coil-kt.coil3:coil-svg:${COIL_VERSION}")
-        
     constraints {
         implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1") {
             because("on older React Native versions this dependency conflicts with react-native-screens")
