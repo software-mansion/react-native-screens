@@ -56,22 +56,30 @@ function getPositioningStyle(
 }
 
 type SplitStyleResult = {
-  backgroundColor: ViewStyle['backgroundColor'] | undefined;
-  otherStyles: StyleProp<ViewStyle>;
+  screenStyles: {
+    backgroundColor?: ViewStyle['backgroundColor'];
+  };
+  contentWrapperStyles: StyleProp<ViewStyle>;
 };
 
-export function extractBackgroundColor(
+// TODO: figure out whether other styles, like borders, filters, etc.
+// shouldn't be applied on the Screen level on iOS due to the inset.
+export function extractScreenStyles(
   style: StyleProp<ViewStyle>,
 ): SplitStyleResult {
   const flatStyle = Array.isArray(style)
     ? Object.assign({}, ...style)
     : style ?? {};
 
-  const { backgroundColor, ...otherStyles } = flatStyle as ViewStyle;
+  const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
+
+  const screenStyles = {
+    backgroundColor,
+  };
 
   return {
-    backgroundColor,
-    otherStyles,
+    screenStyles,
+    contentWrapperStyles,
   };
 }
 
@@ -130,10 +138,10 @@ function ScreenStackItem(
     Platform.OS === 'ios' &&
     contentStyle
   ) {
-    const { backgroundColor, otherStyles } =
-      extractBackgroundColor(contentStyle);
-    internalScreenStyle = { backgroundColor };
-    innerContainerStyles = otherStyles;
+    const { screenStyles, contentWrapperStyles } =
+      extractScreenStyles(contentStyle);
+    internalScreenStyle = screenStyles;
+    innerContainerStyles = contentWrapperStyles;
   }
 
   const content = (
