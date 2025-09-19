@@ -49,10 +49,30 @@ function getPositioningStyle(
 
   // Other platforms, tested reliably only on Android
   if (allowedDetents === 'fitToContents') {
-    return null;
+    return {};
   }
 
   return styles.container;
+}
+
+type SplitStyleResult = {
+  backgroundColor: ViewStyle['backgroundColor'] | undefined;
+  otherStyles: StyleProp<ViewStyle>;
+};
+
+export function extractBackgroundColor(
+  style: StyleProp<ViewStyle>,
+): SplitStyleResult {
+  const flatStyle = Array.isArray(style)
+    ? Object.assign({}, ...style)
+    : style ?? {};
+
+  const { backgroundColor, ...otherStyles } = flatStyle as ViewStyle;
+
+  return {
+    backgroundColor,
+    otherStyles,
+  };
 }
 
 function ScreenStackItem(
@@ -100,9 +120,26 @@ function ScreenStackItem(
     stackPresentation,
   );
 
+  // For iOS, we need to extract background color and apply it to Screen
+  // due to the safe area inset at the bottom of ScreenContentWrapper
+  let internalScreenStyle;
+  let innerContainerStyles = contentStyle;
+
+  if (
+    stackPresentation === 'formSheet' &&
+    Platform.OS === 'ios' &&
+    contentStyle
+  ) {
+    const { backgroundColor, otherStyles } =
+      extractBackgroundColor(contentStyle);
+    internalScreenStyle = { backgroundColor };
+    innerContainerStyles = otherStyles;
+  }
+
   const content = (
     <>
       <DebugContainer
+        contentContainerStyle={innerContainerStyles}
         style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
         {children}
@@ -125,18 +162,6 @@ function ScreenStackItem(
       )}
     </>
   );
-
-  // We take backgroundColor from contentStyle and apply it on Screen.
-  // This allows to workaround one issue with truncated
-  // content with formSheet presentation.
-  let internalScreenStyle;
-
-  if (stackPresentation === 'formSheet' && contentStyle) {
-    const flattenContentStyles = StyleSheet.flatten(contentStyle);
-    internalScreenStyle = {
-      backgroundColor: flattenContentStyles?.backgroundColor,
-    };
-  }
 
   return (
     <Screen
