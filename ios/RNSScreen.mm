@@ -1202,7 +1202,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateScrollEdgeEffects
 {
   [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                      fromProvider:self];
+                                      withProvider:self];
 }
 
 #pragma mark - RNSSafeAreaProviding
@@ -1423,7 +1423,6 @@ RNS_IGNORE_SUPER_CALL_END
   [super finalizeUpdates:updateMask];
   if (_shouldUpdateScrollEdgeEffects) {
     [self updateScrollEdgeEffects];
-    _shouldUpdateScrollEdgeEffects = NO;
   }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
