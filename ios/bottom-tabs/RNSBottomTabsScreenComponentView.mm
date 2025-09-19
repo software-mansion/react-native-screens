@@ -31,11 +31,11 @@ namespace react = facebook::react;
 
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
-  BOOL _scrollEdgeEffectsNeedUpdate;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
   BOOL _tabBarItemNeedsUpdate;
+  BOOL _scrollEdgeEffectsNeedUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
@@ -64,6 +64,7 @@ namespace react = facebook::react;
   _tabItemNeedsAppearanceUpdate = NO;
   _tabScreenOrientationNeedsUpdate = NO;
   _tabBarItemNeedsUpdate = NO;
+  _scrollEdgeEffectsNeedUpdate = NO;
 #endif
 
   // This is a temporary workaround to avoid UIScrollEdgeEffect glitch
@@ -86,7 +87,6 @@ namespace react = facebook::react;
 
   _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
   _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
-  _scrollEdgeEffectsNeedUpdate = YES;
 
   _overrideScrollViewContentInsetAdjustmentBehavior = YES;
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = NO;
@@ -137,6 +137,11 @@ RNS_IGNORE_SUPER_CALL_END
   return _reactEventEmitter;
 }
 
+- (nullable RNSTabBarController *)findTabBarController
+{
+  return static_cast<RNSTabBarController *>(_controller.tabBarController);
+}
+
 #pragma mark - RNSScrollViewBehaviorOverriding
 
 - (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
@@ -151,34 +156,10 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
-{
-  _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
-  _scrollEdgeEffectsNeedUpdate = YES;
-}
-
-- (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
-{
-  _leftScrollEdgeEffect = leftScrollEdgeEffect;
-  _scrollEdgeEffectsNeedUpdate = YES;
-}
-
-- (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
-{
-  _rightScrollEdgeEffect = rightScrollEdgeEffect;
-  _scrollEdgeEffectsNeedUpdate = YES;
-}
-
-- (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
-{
-  _topScrollEdgeEffect = topScrollEdgeEffect;
-  _scrollEdgeEffectsNeedUpdate = YES;
-}
-
 - (void)updateScrollEdgeEffects
 {
   [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                      fromProvider:self];
+                                      withProvider:self];
 }
 
 #pragma mark - Prop update utils
@@ -212,6 +193,7 @@ RNS_IGNORE_SUPER_CALL_END
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
   bool tabBarItemNeedsUpdate{false};
+  bool scrollEdgeEffectsNeedUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title) {
     _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
@@ -325,6 +307,36 @@ RNS_IGNORE_SUPER_CALL_END
     tabBarItemNeedsUpdate = YES;
   }
 
+  if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
+    [self
+        setBottomScrollEdgeEffect:
+            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
+                newComponentProps.bottomScrollEdgeEffect)];
+    scrollEdgeEffectsNeedUpdate = YES;
+  }
+
+  if (newComponentProps.leftScrollEdgeEffect != oldComponentProps.leftScrollEdgeEffect) {
+    [self setLeftScrollEdgeEffect:
+              rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenLeftScrollEdgeEffectCppEquivalent(
+                  newComponentProps.leftScrollEdgeEffect)];
+    scrollEdgeEffectsNeedUpdate = YES;
+  }
+
+  if (newComponentProps.rightScrollEdgeEffect != oldComponentProps.rightScrollEdgeEffect) {
+    [self
+        setRightScrollEdgeEffect:
+            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScrollEdgeEffectCppEquivalent(
+                newComponentProps.rightScrollEdgeEffect)];
+    scrollEdgeEffectsNeedUpdate = YES;
+  }
+
+  if (newComponentProps.topScrollEdgeEffect != oldComponentProps.topScrollEdgeEffect) {
+    [self setTopScrollEdgeEffect:rnscreens::conversion::
+                                     RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
+                                         newComponentProps.topScrollEdgeEffect)];
+    scrollEdgeEffectsNeedUpdate = YES;
+  }
+
   if (tabBarItemNeedsUpdate) {
     [self updateTabBarItem];
 
@@ -340,35 +352,9 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller tabScreenOrientationHasChanged];
   }
 
-  if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
-    [self
-        setBottomScrollEdgeEffect:
-            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
-                newComponentProps.bottomScrollEdgeEffect)];
-  }
-
-  if (newComponentProps.leftScrollEdgeEffect != oldComponentProps.leftScrollEdgeEffect) {
-    [self setLeftScrollEdgeEffect:
-              rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenLeftScrollEdgeEffectCppEquivalent(
-                  newComponentProps.leftScrollEdgeEffect)];
-  }
-
-  if (newComponentProps.rightScrollEdgeEffect != oldComponentProps.rightScrollEdgeEffect) {
-    [self
-        setRightScrollEdgeEffect:
-            rnscreens::conversion::RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScrollEdgeEffectCppEquivalent(
-                newComponentProps.rightScrollEdgeEffect)];
-  }
-
-  if (newComponentProps.topScrollEdgeEffect != oldComponentProps.topScrollEdgeEffect) {
-    [self setTopScrollEdgeEffect:rnscreens::conversion::
-                                     RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
-                                         newComponentProps.topScrollEdgeEffect)];
-  }
-
-  if (_scrollEdgeEffectsNeedUpdate) {
+  if (scrollEdgeEffectsNeedUpdate) {
     [self updateScrollEdgeEffects];
-    _scrollEdgeEffectsNeedUpdate = NO;
+    scrollEdgeEffectsNeedUpdate = NO;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -514,6 +500,30 @@ RNS_IGNORE_SUPER_CALL_END
   _selectedIconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
   _tabBarItemNeedsUpdate = YES;
+}
+
+- (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
+{
+  _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
+  _scrollEdgeEffectsNeedUpdate = YES;
+}
+
+- (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
+{
+  _leftScrollEdgeEffect = leftScrollEdgeEffect;
+  _scrollEdgeEffectsNeedUpdate = YES;
+}
+
+- (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
+{
+  _rightScrollEdgeEffect = rightScrollEdgeEffect;
+  _scrollEdgeEffectsNeedUpdate = YES;
+}
+
+- (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
+{
+  _topScrollEdgeEffect = topScrollEdgeEffect;
+  _scrollEdgeEffectsNeedUpdate = YES;
 }
 
 - (void)setOverrideScrollViewContentInsetAdjustmentBehavior:(BOOL)overrideScrollViewContentInsetAdjustmentBehavior

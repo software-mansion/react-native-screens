@@ -359,4 +359,6 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
   SWITCH_EDGE_EFFECT(RNSBottomTabsScreenTopScrollEdgeEffect);
 }
 
+#undef SWITCH_EDGE_EFFECT
+
 }; // namespace rnscreens::conversion
