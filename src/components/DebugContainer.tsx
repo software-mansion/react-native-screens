@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, type ViewProps } from 'react-native';
+import { Platform, StyleProp, ViewStyle, type ViewProps } from 'react-native';
 // @ts-expect-error importing private component
 
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
@@ -7,6 +7,7 @@ import ScreenContentWrapper from './ScreenContentWrapper';
 import { StackPresentationTypes } from '../types';
 
 type ContainerProps = ViewProps & {
+  contentContainerStyle?: StyleProp<ViewStyle>;
   stackPresentation: StackPresentationTypes;
   children: React.ReactNode;
 };
@@ -17,12 +18,16 @@ type ContainerProps = ViewProps & {
  * for detailed explanation.
  */
 let DebugContainer: React.ComponentType<ContainerProps> = props => {
-  return <ScreenContentWrapper {...props} />;
+  const { contentContainerStyle, style, ...rest } = props;
+
+  return (
+    <ScreenContentWrapper {...rest} style={[style, contentContainerStyle]} />
+  );
 };
 
 if (process.env.NODE_ENV !== 'production') {
   DebugContainer = (props: ContainerProps) => {
-    const { stackPresentation, ...rest } = props;
+    const { contentContainerStyle, stackPresentation, style, ...rest } = props;
 
     if (
       Platform.OS === 'ios' &&
@@ -32,12 +37,17 @@ if (process.env.NODE_ENV !== 'production') {
       // This is necessary for LogBox
       return (
         <AppContainer>
-          <ScreenContentWrapper {...rest} />
+          <ScreenContentWrapper
+            {...rest}
+            style={[style, contentContainerStyle]}
+          />
         </AppContainer>
       );
     }
 
-    return <ScreenContentWrapper {...rest} />;
+    return (
+      <ScreenContentWrapper {...rest} style={[style, contentContainerStyle]} />
+    );
   };
 
   DebugContainer.displayName = 'DebugContainer';

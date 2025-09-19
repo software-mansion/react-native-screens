@@ -170,7 +170,12 @@ RNS_IGNORE_SUPER_CALL_END
         ? 0
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
-    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
+#if !TARGET_OS_TV
+    auto size = [self isFormSheet] ? [self adjustedSheetSizeForDetents] : self.bounds.size;
+#else
+    auto size = RCTSizeFromCGSize(self.bounds.size);
+#endif // !TARGET_OS_TV
+    auto newState = react::RNSScreenState{RCTSizeFromCGSize(size), {0, effectiveContentOffsetY}};
     _state->updateState(std::move(newState));
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
@@ -198,6 +203,19 @@ RNS_IGNORE_SUPER_CALL_END
     // height of the sheet.
     [self applyFrameCorrectionForDescendantScrollView];
   }
+}
+
+// If sheetAllowedDetents are enabled, return size as a maximum of detents, otherwise return bounds
+- (CGSize)adjustedSheetSizeForDetents
+{
+  auto size = self.bounds.size;
+  // Detents are passed in ascending order, so we can safely work with the lastObject
+  if ([[_sheetAllowedDetents lastObject] integerValue] != SHEET_FIT_TO_CONTENTS) {
+    auto maxDetent = [[_sheetAllowedDetents lastObject] floatValue];
+    auto windowSize = self.window.bounds.size;
+    size = CGSizeMake(windowSize.width, maxDetent * windowSize.height);
+  }
+  return size;
 }
 
 - (void)applyFrameCorrectionForDescendantScrollView
@@ -839,6 +857,13 @@ RNS_IGNORE_SUPER_CALL_END
   return self.controller.modalPresentationStyle == UIModalPresentationOverFullScreen ||
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
+
+#if !TARGET_OS_TV
+- (BOOL)isFormSheet
+{
+  return self.controller.modalPresentationStyle == UIModalPresentationFormSheet;
+}
+#endif // !TARGET_OS_TV
 
 - (void)invalidate
 {
