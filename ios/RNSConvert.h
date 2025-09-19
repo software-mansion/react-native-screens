@@ -53,6 +53,8 @@ namespace react = facebook::react;
 
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
 
++ (id)idFromFollyDynamic:(const folly::dynamic &)dyn;
+
 #endif // RCT_NEW_ARCH_ENABLED
 
 /// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` or `blurEffect ==

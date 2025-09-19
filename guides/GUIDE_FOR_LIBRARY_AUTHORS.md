@@ -540,6 +540,136 @@ Possible options:
 - `generic` – show given system generic or just icon based on available space
 - `minimal` – show just an icon
 
+### `headerLeftItems` / `headerRightItems` (iOS only)
+
+An array of objects describing native bar button items to display on the left or right side of the header. Each item can be:
+
+- A button with a title, icon, and action
+- A menu with multiple actions
+- A spacing item to adjust layout
+- A object for configuration of the `ScreenStackHeaderRightView` or `ScreenStackHeaderLeftView`
+
+#### The button and menu items support:
+
+`title: string` — Title of the button.
+
+`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button title.
+
+`image?: ImageRequireSource` — Image source for the button icon.
+
+`sfSymbolName?: string` - SF Symbol for the button icon.
+
+`style?: 'plain' | 'done' | 'prominent'` — The style of the item. 'Prominent' only available for iOS 26+. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
+
+`tintColor?: ColorValue` — Tint color for the button. Will pick the tint color of the header if not set. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
+
+`hidden?: boolean` — Whether the item is hidden (iOS 16+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/ishidden
+
+`enabled?: boolean` — Whether the item is enabled.
+
+`width?: number` — Width of the item (iOS 18-). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
+
+`hidesSharedBackground?: boolean` — Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+
+`sharesBackground?: boolean` — Share background with other items (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
+
+`identifier?: string` — Identifier for matching items across transitions (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
+
+`badge: { value: string; color?: ColorValue; backgroundColor?: ColorValue; style?: { fontFamily?: string; fontSize?: number; fontWeight?: string; }; }` - Badge configuration for the button (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
+
+#### The button with an action also supports:
+
+`selected?: boolean` — Whether the button is selected. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
+
+`changesSelectionAsPrimaryAction?: boolean` — Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+
+#### The button with a menu also support: 
+
+```
+menu?: {
+  title?: string;
+  items: Array<
+    | {
+      title?: string;
+      type: 'action';
+      sfSymbolName?: string;
+      state?: 'on' | 'off' | 'mixed'; // State of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
+      attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented'; // Style of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
+      discoverabilityTitle?: string; // Discoverability title of the menu item. Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
+    } 
+    | {
+      title?: string;
+      type: 'submenu';
+      sfSymbolName?: string;
+      items: menu['items']; // References itself so you can create inifinte deep menus. So either actions or more submenus
+    }
+  >
+}
+```
+
+#### The spacing item supports:
+
+`spacing?: number` — Fixed space between items. The numeric value is only supported on iOS 18-
+
+#### The configuration item of the custom views supports:
+
+`hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+
+#### Example configuration:
+
+```typescript
+  <Stack.Screen
+    options={{
+      headerRightItems: [
+        {
+          title: 'Text button',
+          onPress: () => Alert.alert('Text pressed'),
+        },
+        {
+          image: require('../../assets/search_black.png'),
+          onPress: () => Alert.alert('Icon pressed'),
+        },
+        {
+          sfSymbolName: "square.and.arrow.up",
+          onPress: () => Alert.alert('SF symbol pressed'),
+        },
+        {
+          title: 'Menu',
+          menu: {
+            items: [
+              {
+                title: 'Option 1',
+                type: "action",
+                onPress: () => Alert.alert('Option 1 pressed'),
+              },
+              {
+                title: 'Option 2',
+                type: "action",
+                onPress: () => Alert.alert('Option 2 pressed'),
+              },
+            ],
+          },
+        },
+        {
+          title: 'Badge',
+          badge: {
+            value: '3',
+            color: 'white',
+            backgroundColor: 'red',
+          },
+          onPress: () => Alert.alert('Badge pressed'),
+        },
+        {
+          title: 'Prominent',
+          style: 'prominent',
+          tintColor: 'green',
+          onPress: () => Alert.alert('Prominent pressed'),
+        },
+      ],
+    }}
+  />
+```
+
 ### `hidden`
 
 When set to `true` the header will be hidden while the parent `Screen` is on the top of the stack. The default value is `false`.
