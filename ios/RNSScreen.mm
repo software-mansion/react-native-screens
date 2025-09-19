@@ -170,7 +170,11 @@ RNS_IGNORE_SUPER_CALL_END
         ? 0
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
+#if !TARGET_OS_TV
     auto size = [self isFormSheet] ? [self adjustedSheetSizeForDetents] : self.bounds.size;
+#else
+    auto size = RCTSizeFromCGSize(self.bounds.size);
+#endif // !TARGET_OS_TV
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(size), {0, effectiveContentOffsetY}};
     _state->updateState(std::move(newState));
 
@@ -854,10 +858,12 @@ RNS_IGNORE_SUPER_CALL_END
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
+#if !TARGET_OS_TV
 - (BOOL)isFormSheet
 {
   return self.controller.modalPresentationStyle == UIModalPresentationFormSheet;
 }
+#endif // !TARGET_OS_TV
 
 - (void)invalidate
 {
