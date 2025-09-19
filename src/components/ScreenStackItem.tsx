@@ -15,6 +15,8 @@ import Screen from './Screen';
 import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
+import { SafeAreaView } from 'react-native-screens/private';
+import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 
 type Props = Omit<
   ScreenProps,
@@ -65,6 +67,8 @@ function ScreenStackItem(
     headerHiddenPreviousRef.current = headerConfig?.hidden;
   }, [headerConfig?.hidden, stackPresentation]);
 
+  const shouldUseSafeAreaView = Platform.OS === 'ios';
+
   const content = (
     <>
       <DebugContainer
@@ -79,7 +83,13 @@ function ScreenStackItem(
           contentStyle,
         ]}
         stackPresentation={stackPresentation ?? 'push'}>
-        {children}
+        {shouldUseSafeAreaView ? (
+          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+            {children}
+          </SafeAreaView>
+        ) : (
+          children
+        )}
       </DebugContainer>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
@@ -163,6 +173,25 @@ function ScreenStackItem(
 }
 
 export default React.forwardRef(ScreenStackItem);
+
+function getSafeAreaEdges(
+  headerConfig?: ScreenStackHeaderConfigProps,
+): SafeAreaViewProps['edges'] {
+  if (Platform.OS !== 'ios') {
+    return {};
+  }
+
+  let defaultEdges: SafeAreaViewProps['edges'];
+  if (headerConfig?.translucent || headerConfig?.hidden) {
+    defaultEdges = {};
+  } else {
+    defaultEdges = {
+      top: true,
+    };
+  }
+
+  return defaultEdges;
+}
 
 const styles = StyleSheet.create({
   container: {
