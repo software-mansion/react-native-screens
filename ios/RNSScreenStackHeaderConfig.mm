@@ -637,7 +637,7 @@ RNS_IGNORE_SUPER_CALL_END
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-#if !TARGET_OS_TV && compiler(>=6.2)
+#if !TARGET_OS_TV
         if (@available(iOS 26.0, *)) {
           [buttonItem setHidesSharedBackground: config.headerLeftHidesSharedBackground];
         }
@@ -647,7 +647,7 @@ RNS_IGNORE_SUPER_CALL_END
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-#if !TARGET_OS_TV && compiler(>=6.2)
+#if !TARGET_OS_TV
         if (@available(iOS 26.0, *)) {
           [buttonItem setHidesSharedBackground: config.headerRightHidesSharedBackground];
         }
