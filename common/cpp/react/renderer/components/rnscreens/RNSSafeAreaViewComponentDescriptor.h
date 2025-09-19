@@ -1,5 +1,5 @@
 // Implementation adapted from `react-native-safe-area-context`:
-// https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/common/cpp/react/renderer/components/safeareacontext/RNCSafeAreaViewComponentDescriptor.h
+// https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1
 
 #pragma once
 

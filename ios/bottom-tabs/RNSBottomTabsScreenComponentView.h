@@ -2,6 +2,7 @@
 #import "RNSBottomTabsScreenEventEmitter.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
+#import "RNSSafeAreaProviding.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -20,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  * of a particular tab.
  */
 @interface RNSBottomTabsScreenComponentView : RNSReactBaseView <
+                                                  RNSSafeAreaProviding,
 #ifdef RCT_NEW_ARCH_ENABLED
                                                   RNSViewControllerInvalidating
 #else
