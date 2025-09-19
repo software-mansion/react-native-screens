@@ -163,7 +163,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)updateScrollEdgeEffects
+- (void)updateContentScrollViewEdgeEffectsIfExists
 {
   [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
                                       withProvider:self];
@@ -463,7 +463,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (_scrollEdgeEffectsNeedUpdate) {
-    [self updateScrollEdgeEffects];
+    [self updateContentScrollViewEdgeEffectsIfExists];
     _scrollEdgeEffectsNeedUpdate = NO;
   }
 }

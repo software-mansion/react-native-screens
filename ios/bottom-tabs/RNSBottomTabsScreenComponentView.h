@@ -40,7 +40,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) RNSBottomTabsHostComponentView *reactSuperview;
 
-- (void)updateScrollEdgeEffects;
+/**
+ * Updates [scroll edge effects](https://developer.apple.com/documentation/uikit/uiscrolledgeeffect)
+ * on a content ScrollView inside the tab screen, if one exists. It uses ScrollViewFinder to find the ScrollView.
+ */
+- (void)updateContentScrollViewEdgeEffectsIfExists;
 
 @end
 
