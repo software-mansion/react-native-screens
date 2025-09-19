@@ -13,12 +13,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSSafeAreaViewComponentView : RNSReactBaseView
 
+@end
+
+#pragma mark - Paper specific
+
 #if !RCT_NEW_ARCH_ENABLED
+@interface RNSSafeAreaViewComponentView ()
+
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 
 @property (nonatomic, assign) RNSSafeAreaViewEdges edges;
-#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
+#endif // !RCT_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_END

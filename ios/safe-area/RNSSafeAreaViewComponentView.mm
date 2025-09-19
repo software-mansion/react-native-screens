@@ -77,9 +77,13 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
 - (void)didMoveToWindow
 {
   UIView *previousProviderView = _providerView;
-  _providerView = [self findNearestProvider];
 
-  [self invalidateSafeAreaInsets];
+  if (self.window != nil) {
+    _providerView = [self findNearestProvider];
+    [self updateStateIfNeeded];
+  } else {
+    _providerView = nil;
+  }
 
   if (previousProviderView != _providerView) {
     if (previousProviderView != nil) {
@@ -108,10 +112,10 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
 
 - (void)safeAreaProviderInsetsDidChange:(NSNotification *)notification
 {
-  [self invalidateSafeAreaInsets];
+  [self updateStateIfNeeded];
 }
 
-- (void)invalidateSafeAreaInsets
+- (void)updateStateIfNeeded
 {
   if (_providerView == nil) {
     return;
@@ -146,9 +150,6 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
 #else
 - (void)updateLocalData
 {
-  if (_providerView == nil) {
-    return;
-  }
   RNSSafeAreaViewLocalData *localData = [[RNSSafeAreaViewLocalData alloc] initWithInsets:_currentSafeAreaInsets
                                                                                    edges:_edges];
   [_bridge.uiManager setLocalData:localData forView:self];
@@ -179,7 +180,7 @@ BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInse
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
-  [self invalidateSafeAreaInsets];
+  [self updateStateIfNeeded];
 }
 
 - (void)prepareForRecycle

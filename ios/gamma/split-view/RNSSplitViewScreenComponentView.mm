@@ -120,8 +120,6 @@ namespace react = facebook::react;
   for (UIView *view in _viewsForFrameCorrection) {
     [RNSFrameCorrector applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
   }
-
-  [self invalidateSafeAreaInsets];
 }
 
 #pragma mark - ShadowTreeState
@@ -149,7 +147,6 @@ namespace react = facebook::react;
 
 - (void)invalidateSafeAreaInsets
 {
-  // TODO: limit number of notifications if nothing has changed
   [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
 }
 

@@ -182,7 +182,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateSafeAreaInsets
 {
-  // TODO: limit number of notifications if nothing has changed
   [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
 }
 
@@ -193,12 +192,6 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)safeAreaInsetsDidChange
 {
   [super safeAreaInsetsDidChange];
-  [self invalidateSafeAreaInsets];
-}
-
-- (void)layoutSubviews
-{
-  [super layoutSubviews];
   [self invalidateSafeAreaInsets];
 }
 
