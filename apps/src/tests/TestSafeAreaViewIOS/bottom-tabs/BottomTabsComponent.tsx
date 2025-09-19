@@ -37,6 +37,12 @@ export default function BottomTabsComponent() {
           config.tabBarItemSystemItem !== 'disabled'
             ? config.tabBarItemSystemItem
             : undefined,
+        respectedSafeAreaEdges: {
+          top: config.safeAreaTopEdge,
+          bottom: config.safeAreaBottomEdge,
+          left: config.safeAreaLeftEdge,
+          right: config.safeAreaRightEdge,
+        },
       },
       component: TestTab,
     },

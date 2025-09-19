@@ -4,7 +4,9 @@ import React from 'react';
 import { Freeze } from 'react-freeze';
 import {
   Image,
+  Platform,
   StyleSheet,
+  View,
   findNodeHandle,
   processColor,
   type ImageSourcePropType,
@@ -24,10 +26,13 @@ import type {
   BottomTabsScreenItemAppearance,
   BottomTabsScreenItemStateAppearance,
   BottomTabsScreenProps,
+  BottomTabsScreenSafeAreaEdges,
   EmptyObject,
   Icon,
 } from './BottomTabsScreen.types';
 import { bottomTabsDebugLog } from '../../private/logging';
+import { SafeAreaView } from 'react-native-screens/private';
+import { SafeAreaViewProps } from 'react-native-screens/private/types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -60,6 +65,8 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     standardAppearance,
     scrollEdgeAppearance,
     scrollEdgeEffects,
+    respectedSafeAreaEdges,
+    contentStyle,
     ...rest
   } = props;
 
@@ -154,7 +161,11 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       topScrollEdgeEffect={scrollEdgeEffects?.top}
       {...rest}>
       <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
-        {rest.children}
+        <View style={[contentStyle, styles.flex]}>
+          <SafeAreaView edges={getSafeAreaViewEdges(respectedSafeAreaEdges)}>
+            {rest.children}
+          </SafeAreaView>
+        </View>
       </Freeze>
     </BottomTabsScreenNativeComponent>
   );
@@ -246,6 +257,23 @@ function shouldFreezeScreen(
   return !nativeViewVisible;
 }
 
+function getSafeAreaViewEdges(
+  edges?: BottomTabsScreenSafeAreaEdges,
+): SafeAreaViewProps['edges'] {
+  let defaultEdges: SafeAreaViewProps['edges'];
+
+  switch (Platform.OS) {
+    case 'android':
+      defaultEdges = { bottom: true };
+      break;
+    default:
+      defaultEdges = {};
+      break;
+  }
+
+  return { ...defaultEdges, ...edges };
+}
+
 function parseIconToNativeProps(icon: Icon | undefined): {
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
@@ -328,5 +356,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+  },
+  flex: {
+    flex: 1,
   },
 });

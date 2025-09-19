@@ -18,6 +18,13 @@ export type LifecycleStateChangeEvent = Readonly<{
   newState: number;
 }>;
 
+export interface BottomTabsScreenSafeAreaEdges {
+  top?: boolean;
+  bottom?: boolean;
+  left?: boolean;
+  right?: boolean;
+}
+
 // iOS-specific: SFSymbol usage
 export interface SFIcon {
   sfSymbolName: string;
@@ -371,6 +378,23 @@ export interface BottomTabsScreenProps {
    * @platform ios
    */
   orientation?: BottomTabsScreenOrientation;
+
+  /**
+   * @summary Specifies which edges should respect safe area.
+   *
+   * @default
+   * On Android, bottom edge is enabled.
+   * On iOS, all edges are disabled.
+   */
+  respectedSafeAreaEdges?: BottomTabsScreenSafeAreaEdges;
+
+  /**
+   * @summary Specifies styling for enitre screen.
+   *
+   * This allows modification of the style props for the view visible
+   * outside screen's respected safe area.
+   */
+  contentStyle?: ViewProps['style'];
   // #endregion General
 
   // #region Android-only appearance
