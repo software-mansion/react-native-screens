@@ -4,7 +4,7 @@
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
 #import "RNSFrameCorrector.h"
-#import "RNSNotifications.h"
+#import "RNSSafeAreaViewNotifications.h"
 
 #import "Swift-Bridging.h"
 
@@ -145,7 +145,7 @@ namespace react = facebook::react;
   return self.safeAreaInsets;
 }
 
-- (void)invalidateSafeAreaInsets
+- (void)invalidateProviderSafeAreaInsets
 {
   [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
 }
@@ -157,7 +157,7 @@ namespace react = facebook::react;
 - (void)safeAreaInsetsDidChange
 {
   [super safeAreaInsetsDidChange];
-  [self invalidateSafeAreaInsets];
+  [self invalidateProviderSafeAreaInsets];
 }
 
 #pragma mark - RCTViewComponentViewProtocol

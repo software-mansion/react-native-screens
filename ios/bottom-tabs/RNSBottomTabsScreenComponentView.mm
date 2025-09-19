@@ -3,7 +3,7 @@
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
-#import "RNSNotifications.h"
+#import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
@@ -180,7 +180,7 @@ RNS_IGNORE_SUPER_CALL_END
   return self.safeAreaInsets;
 }
 
-- (void)invalidateSafeAreaInsets
+- (void)invalidateProviderSafeAreaInsets
 {
   [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
 }
@@ -192,7 +192,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)safeAreaInsetsDidChange
 {
   [super safeAreaInsetsDidChange];
-  [self invalidateSafeAreaInsets];
+  [self invalidateProviderSafeAreaInsets];
 }
 
 #if RCT_NEW_ARCH_ENABLED

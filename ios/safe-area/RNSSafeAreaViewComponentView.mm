@@ -4,8 +4,8 @@
 #import "RNSSafeAreaViewComponentView.h"
 #import <React/RCTConversions.h>
 #import <React/RCTUtils.h>
-#import "RNSNotifications.h"
 #import "RNSSafeAreaProviding.h"
+#import "RNSSafeAreaViewNotifications.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -21,6 +21,8 @@
 #if RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
+
+static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInsets insets2, CGFloat threshold);
 
 #pragma mark - View implementation
 
@@ -79,7 +81,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
   UIView *previousProviderView = _providerView;
 
   if (self.window != nil) {
-    _providerView = [self findNearestProvider];
+    _providerView = [self findNearestAncestorProvider];
     [self updateStateIfNeeded];
   } else {
     _providerView = nil;
@@ -98,7 +100,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
   }
 }
 
-- (UIView<RNSSafeAreaProviding> *_Nullable)findNearestProvider
+- (UIView<RNSSafeAreaProviding> *_Nullable)findNearestAncestorProvider
 {
   UIView *current = self.superview;
   while (current != nil) {
@@ -156,12 +158,6 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
 }
 #endif // RCT_NEW_ARCH_ENABLED
 
-BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInsets insets2, CGFloat threshold)
-{
-  return ABS(insets1.left - insets2.left) <= threshold && ABS(insets1.right - insets2.right) <= threshold &&
-      ABS(insets1.top - insets2.top) <= threshold && ABS(insets1.bottom - insets2.bottom) <= threshold;
-}
-
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - RCTViewComponentViewProtocol
 
@@ -180,7 +176,10 @@ BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInse
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
-  [self updateStateIfNeeded];
+
+  if (updateMask & RNComponentViewUpdateMaskProps) {
+    [self updateStateIfNeeded];
+  }
 }
 
 - (void)prepareForRecycle
@@ -203,6 +202,14 @@ BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInse
 }
 #endif
 @end
+
+#pragma mark - Utility functions
+
+static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInsets insets2, CGFloat threshold)
+{
+  return ABS(insets1.left - insets2.left) <= threshold && ABS(insets1.right - insets2.right) <= threshold &&
+      ABS(insets1.top - insets2.top) <= threshold && ABS(insets1.bottom - insets2.bottom) <= threshold;
+}
 
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure

@@ -29,7 +29,7 @@
 #import <React/RCTUIManagerUtils.h>
 
 #import "RNSConversions.h"
-#import "RNSNotifications.h"
+#import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
@@ -1179,7 +1179,7 @@ RNS_IGNORE_SUPER_CALL_END
   return self.safeAreaInsets;
 }
 
-- (void)invalidateSafeAreaInsets
+- (void)invalidateProviderSafeAreaInsets
 {
   [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
 }
@@ -1191,7 +1191,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)safeAreaInsetsDidChange
 {
   [super safeAreaInsetsDidChange];
-  [self invalidateSafeAreaInsets];
+  [self invalidateProviderSafeAreaInsets];
 }
 
 #pragma mark - Fabric specific
