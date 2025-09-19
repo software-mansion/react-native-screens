@@ -639,7 +639,10 @@ RNS_IGNORE_SUPER_CALL_END
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
 #if !TARGET_OS_TV
         if (@available(iOS 26.0, *)) {
-          [buttonItem setHidesSharedBackground: config.headerLeftHidesSharedBackground];
+          // Check when building below XCode 26.0
+          if ([buttonItem respondsToSelector:@selector(setHidesSharedBackground:)]) {
+            [buttonItem setHidesSharedBackground: config.headerLeftHidesSharedBackground];
+          }
         }
 #endif
         navitem.leftBarButtonItem = buttonItem;
@@ -649,7 +652,10 @@ RNS_IGNORE_SUPER_CALL_END
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
 #if !TARGET_OS_TV
         if (@available(iOS 26.0, *)) {
-          [buttonItem setHidesSharedBackground: config.headerRightHidesSharedBackground];
+          // Check when building below XCode 26.0
+          if ([buttonItem respondsToSelector:@selector(setHidesSharedBackground:)]) {
+            [buttonItem setHidesSharedBackground: config.headerRightHidesSharedBackground];
+          }
         }
 #endif
         navitem.rightBarButtonItem = buttonItem;
