@@ -180,7 +180,7 @@ RNS_IGNORE_SUPER_CALL_END
   return self.safeAreaInsets;
 }
 
-- (void)invalidateProviderSafeAreaInsets
+- (void)dispatchSafeAreaDidChangeNotification
 {
   [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
 }
@@ -192,7 +192,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)safeAreaInsetsDidChange
 {
   [super safeAreaInsetsDidChange];
-  [self invalidateProviderSafeAreaInsets];
+  [self dispatchSafeAreaDidChangeNotification];
 }
 
 #if RCT_NEW_ARCH_ENABLED

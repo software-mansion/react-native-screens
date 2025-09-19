@@ -145,7 +145,7 @@ namespace react = facebook::react;
   return self.safeAreaInsets;
 }
 
-- (void)invalidateProviderSafeAreaInsets
+- (void)dispatchSafeAreaDidChangeNotification
 {
   [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
 }
@@ -157,7 +157,7 @@ namespace react = facebook::react;
 - (void)safeAreaInsetsDidChange
 {
   [super safeAreaInsetsDidChange];
-  [self invalidateProviderSafeAreaInsets];
+  [self dispatchSafeAreaDidChangeNotification];
 }
 
 #pragma mark - RCTViewComponentViewProtocol

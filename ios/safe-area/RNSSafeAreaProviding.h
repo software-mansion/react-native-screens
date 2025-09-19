@@ -23,6 +23,6 @@
  Implementation of this method should use `NSNotificationCenter` to post notification with `RNSSafeAreaDidChange` name
  defined in `RNSSafeAreaViewNotifications.h`.
  */
-- (void)invalidateProviderSafeAreaInsets;
+- (void)dispatchSafeAreaDidChangeNotification;
 
 @end
