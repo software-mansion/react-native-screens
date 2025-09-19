@@ -690,6 +690,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Callback which is executed when a bar button item is pressed.
    * @param buttonId ID of the button that was pressed
+   *
+   * @platform ios
    */
   onPressHeaderBarButtonItem?: (
     e: NativeSyntheticEvent<{ buttonId: string }>,
@@ -697,6 +699,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Callback which is executed when a bar button item is pressed.
    * @param buttonId ID of the button that was pressed
+   *
+   * @platform ios
    */
   onPressHeaderBarButtonMenuItem?: (
     e: NativeSyntheticEvent<{ menuId: string }>,
