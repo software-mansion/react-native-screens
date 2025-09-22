@@ -1131,6 +1131,8 @@ RNS_IGNORE_SUPER_CALL_END
       [NSMutableArray arrayWithCapacity:values.count];
   self.maxResolvedDetent = 0;
 
+  __weak auto weakSelf = self;
+
   [values enumerateObjectsUsingBlock:^(NSNumber *value, NSUInteger index, BOOL *stop) {
     UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithUnsignedInteger:index] stringValue];
     [customDetents addObject:[UISheetPresentationControllerDetent
@@ -1139,8 +1141,10 @@ RNS_IGNORE_SUPER_CALL_END
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
                                                      CGFloat resolvedDetent = resolver(ctx, value);
 
-                                                     self.maxResolvedDetent =
-                                                         MAX(self.maxResolvedDetent, resolvedDetent);
+                                                     if (auto *strongSelf = weakSelf) {
+                                                       strongSelf.maxResolvedDetent =
+                                                           MAX(self.maxResolvedDetent, resolvedDetent);
+                                                     }
 
                                                      return resolvedDetent;
                                                    }]];
