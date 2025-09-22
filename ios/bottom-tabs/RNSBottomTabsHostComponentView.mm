@@ -210,8 +210,7 @@ namespace react = facebook::react;
   // User selected regular tab with our BottomTabScreenComponentView. We start directly from it.
   // This has the advantage of being able to continue searching even if the TabScreen
   // hasn't been mounted yet (see mountChildComponentView(), _reactSubviews).
-  UIViewController *topViewController = _controller.moreNavigationController.topViewController;
-  return [RNSScrollViewFinder findContentScrollViewWithDelegatingToProvider:topViewController.view];
+  return [RNSScrollViewFinder findContentScrollViewWithDelegatingToProvider:_controller.selectedViewController.view];
 }
 
 #pragma mark - React events
