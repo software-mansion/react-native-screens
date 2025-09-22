@@ -198,12 +198,14 @@ namespace react = facebook::react;
 
 - (UIScrollView *)findContentScrollView
 {
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   if (_controller.selectedViewController == _controller.moreNavigationController) {
     // Logic for More Controller; user is shown the native list of tabs.
     // This we want to keep as-is, we're not styling the ScrollView here,
     // so let's pretend there isn't one
     return NULL;
   }
+#endif // check for build target != tvOS, visionOS
 
   // User selected regular tab with our BottomTabScreenComponentView. We start directly from it.
   // This has the advantage of being able to continue searching even if the TabScreen
