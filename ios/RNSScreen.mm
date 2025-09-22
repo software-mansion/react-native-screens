@@ -155,12 +155,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateBounds
 {
-#if !TARGET_OS_TV
-  auto size = [self isFormSheet] ? [self adjustedSheetSizeForDetents] : self.bounds.size;
-#else
-  auto size = RCTSizeFromCGSize(self.bounds.size);
-#endif // !TARGET_OS_TV
-
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
@@ -176,7 +170,7 @@ RNS_IGNORE_SUPER_CALL_END
         ? 0
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
-    auto newState = react::RNSScreenState{RCTSizeFromCGSize(size), {0, effectiveContentOffsetY}};
+    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
     _state->updateState(std::move(newState));
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
@@ -184,7 +178,7 @@ RNS_IGNORE_SUPER_CALL_END
     [navctr.view setNeedsLayout];
   }
 #else
-  [_bridge.uiManager setSize:size forView:self];
+  [_bridge.uiManager setSize:self.bounds.size forView:self];
 #endif // RCT_NEW_ARCH_ENABLED
 
   if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
@@ -846,14 +840,6 @@ RNS_IGNORE_SUPER_CALL_END
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-#if !TARGET_OS_TV
-- (BOOL)isFormSheet
-{
-  return [self isKindOfClass:RNSModalScreen.class] &&
-      self.controller.modalPresentationStyle == UIModalPresentationFormSheet;
-}
-#endif // !TARGET_OS_TV
-
 - (void)invalidate
 {
   _controller = nil;
@@ -1119,24 +1105,13 @@ RNS_IGNORE_SUPER_CALL_END
 {
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
       [NSMutableArray arrayWithCapacity:values.count];
-  self.maxResolvedDetent = 0;
-
-  __weak auto weakSelf = self;
-
   [values enumerateObjectsUsingBlock:^(NSNumber *value, NSUInteger index, BOOL *stop) {
     UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithUnsignedInteger:index] stringValue];
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     CGFloat resolvedDetent = resolver(ctx, value);
-
-                                                     if (auto *strongSelf = weakSelf) {
-                                                       strongSelf.maxResolvedDetent =
-                                                           MAX(self.maxResolvedDetent, resolvedDetent);
-                                                     }
-
-                                                     return resolvedDetent;
+                                                     return resolver(ctx, value);
                                                    }]];
   }];
   return customDetents;
@@ -1160,21 +1135,6 @@ RNS_IGNORE_SUPER_CALL_END
                  withResolver:^CGFloat(id<UISheetPresentationControllerDetentResolutionContext> ctx, NSNumber *height) {
                    return MIN(ctx.maximumDetentValue, height.floatValue);
                  }];
-}
-
-// If sheetAllowedDetents are enabled, return size as a maximum of detents, otherwise return bounds
-- (CGSize)adjustedSheetSizeForDetents
-{
-  auto size = self.bounds.size;
-  if ([[_sheetAllowedDetents lastObject] integerValue] != SHEET_FIT_TO_CONTENTS) {
-    auto windowSize = self.window.bounds.size;
-
-    // maxResolved detent cares only about the content inside formsheet,
-    // we need to add the bottom inset to allow the content be the same size as the formsheet
-    auto adjustedSheetHeight = self.maxResolvedDetent + self.safeAreaInsets.bottom;
-    size = CGSizeMake(windowSize.width, adjustedSheetHeight);
-  }
-  return size;
 }
 
 #endif // Check for iOS >= 16
