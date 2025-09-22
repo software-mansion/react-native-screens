@@ -99,6 +99,7 @@ namespace react = facebook::react;
 @property (nonatomic) BOOL homeIndicatorHidden;
 
 // Props controlling UISheetPresentationController
+@property (nonatomic, assign) CGFloat maxResolvedDetent;
 @property (nonatomic) NSArray<NSNumber *> *sheetAllowedDetents;
 @property (nonatomic) NSNumber *sheetLargestUndimmedDetent;
 @property (nonatomic) BOOL sheetGrabberVisible;

@@ -209,11 +209,9 @@ RNS_IGNORE_SUPER_CALL_END
 - (CGSize)adjustedSheetSizeForDetents
 {
   auto size = self.bounds.size;
-  // Detents are passed in ascending order, so we can safely work with the lastObject
   if ([[_sheetAllowedDetents lastObject] integerValue] != SHEET_FIT_TO_CONTENTS) {
-    auto maxDetent = [[_sheetAllowedDetents lastObject] floatValue];
     auto windowSize = self.window.bounds.size;
-    size = CGSizeMake(windowSize.width, maxDetent * windowSize.height);
+    size = CGSizeMake(windowSize.width, self.maxResolvedDetent);
   }
   return size;
 }
@@ -861,7 +859,8 @@ RNS_IGNORE_SUPER_CALL_END
 #if !TARGET_OS_TV
 - (BOOL)isFormSheet
 {
-  return self.controller.modalPresentationStyle == UIModalPresentationFormSheet;
+  return [self isKindOfClass:RNSModalScreen.class] &&
+      self.controller.modalPresentationStyle == UIModalPresentationFormSheet;
 }
 #endif // !TARGET_OS_TV
 
@@ -1130,13 +1129,20 @@ RNS_IGNORE_SUPER_CALL_END
 {
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
       [NSMutableArray arrayWithCapacity:values.count];
+  self.maxResolvedDetent = 0;
+
   [values enumerateObjectsUsingBlock:^(NSNumber *value, NSUInteger index, BOOL *stop) {
     UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithUnsignedInteger:index] stringValue];
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     return resolver(ctx, value);
+                                                     CGFloat resolvedDetent = resolver(ctx, value);
+
+                                                     self.maxResolvedDetent =
+                                                         MAX(self.maxResolvedDetent, resolvedDetent);
+
+                                                     return resolvedDetent;
                                                    }]];
   }];
   return customDetents;
