@@ -7,6 +7,7 @@
 
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
+#import "RNSScrollViewFinder.h"
 
 #if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
@@ -27,9 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSScreenStackView :
 #ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView <RNSScreenContainerDelegate>
+    RCTViewComponentView <RNSScreenContainerDelegate, RNSContentScrollViewProviding>
 #else
-    UIView <RNSScreenContainerDelegate, RCTInvalidating>
+    UIView <RNSScreenContainerDelegate, RNSContentScrollViewProviding, RCTInvalidating>
 #endif
 
 - (void)markChildUpdated;

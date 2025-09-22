@@ -1,14 +1,37 @@
 #import "RNSScrollViewFinder.h"
 
+@protocol RNSScrollViewProviding
+- (nullable UIScrollView *)findContentScrollView;
+@end
+
 @implementation RNSScrollViewFinder
 
-+ (UIScrollView *)findScrollViewInFirstDescendantChainFrom:(UIView *)view
++ (UIScrollView *)findContentScrollViewWithFirstDescendantsChain:(UIView *)view
 {
   UIView *currentView = view;
 
   while (currentView != nil) {
     if ([currentView isKindOfClass:UIScrollView.class]) {
       return static_cast<UIScrollView *>(currentView);
+    } else if ([currentView.subviews count] > 0) {
+      currentView = currentView.subviews[0];
+    } else {
+      break;
+    }
+  }
+
+  return nil;
+}
+
++ (nullable UIScrollView *)findContentScrollViewWithDelegatingToProvider:(nullable UIView *)view
+{
+  UIView *currentView = view;
+
+  while (currentView != nil) {
+    if ([currentView isKindOfClass:UIScrollView.class]) {
+      return static_cast<UIScrollView *>(currentView);
+    } else if ([currentView respondsToSelector:@selector(findContentScrollView)]) {
+      return [static_cast<id<RNSScrollViewProviding>>(currentView) findContentScrollView];
     } else if ([currentView.subviews count] > 0) {
       currentView = currentView.subviews[0];
     } else {

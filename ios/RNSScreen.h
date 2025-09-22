@@ -7,6 +7,7 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import "RNSScrollViewFinder.h"
 
 #if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
