@@ -155,6 +155,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateBounds
 {
+#if !TARGET_OS_TV
+  auto size = [self isFormSheet] ? [self adjustedSheetSizeForDetents] : self.bounds.size;
+#else
+  auto size = RCTSizeFromCGSize(self.bounds.size);
+#endif // !TARGET_OS_TV
+
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
@@ -170,11 +176,6 @@ RNS_IGNORE_SUPER_CALL_END
         ? 0
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
-#if !TARGET_OS_TV
-    auto size = [self isFormSheet] ? [self adjustedSheetSizeForDetents] : self.bounds.size;
-#else
-    auto size = RCTSizeFromCGSize(self.bounds.size);
-#endif // !TARGET_OS_TV
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(size), {0, effectiveContentOffsetY}};
     _state->updateState(std::move(newState));
 
@@ -183,7 +184,7 @@ RNS_IGNORE_SUPER_CALL_END
     [navctr.view setNeedsLayout];
   }
 #else
-  [_bridge.uiManager setSize:self.bounds.size forView:self];
+  [_bridge.uiManager setSize:size forView:self];
 #endif // RCT_NEW_ARCH_ENABLED
 
   if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
@@ -203,21 +204,6 @@ RNS_IGNORE_SUPER_CALL_END
     // height of the sheet.
     [self applyFrameCorrectionForDescendantScrollView];
   }
-}
-
-// If sheetAllowedDetents are enabled, return size as a maximum of detents, otherwise return bounds
-- (CGSize)adjustedSheetSizeForDetents
-{
-  auto size = self.bounds.size;
-  if ([[_sheetAllowedDetents lastObject] integerValue] != SHEET_FIT_TO_CONTENTS) {
-    auto windowSize = self.window.bounds.size;
-
-    // maxResolved detent cares only about the content inside formsheet,
-    // we need to add the bottom inset to allow the content be the same size as the formsheet
-    auto adjustedSheetHeight = self.maxResolvedDetent + self.safeAreaInsets.bottom;
-    size = CGSizeMake(windowSize.width, adjustedSheetHeight);
-  }
-  return size;
 }
 
 - (void)applyFrameCorrectionForDescendantScrollView
@@ -1174,6 +1160,21 @@ RNS_IGNORE_SUPER_CALL_END
                  withResolver:^CGFloat(id<UISheetPresentationControllerDetentResolutionContext> ctx, NSNumber *height) {
                    return MIN(ctx.maximumDetentValue, height.floatValue);
                  }];
+}
+
+// If sheetAllowedDetents are enabled, return size as a maximum of detents, otherwise return bounds
+- (CGSize)adjustedSheetSizeForDetents
+{
+  auto size = self.bounds.size;
+  if ([[_sheetAllowedDetents lastObject] integerValue] != SHEET_FIT_TO_CONTENTS) {
+    auto windowSize = self.window.bounds.size;
+
+    // maxResolved detent cares only about the content inside formsheet,
+    // we need to add the bottom inset to allow the content be the same size as the formsheet
+    auto adjustedSheetHeight = self.maxResolvedDetent + self.safeAreaInsets.bottom;
+    size = CGSizeMake(windowSize.width, adjustedSheetHeight);
+  }
+  return size;
 }
 
 #endif // Check for iOS >= 16
