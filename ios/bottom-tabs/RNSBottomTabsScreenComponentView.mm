@@ -382,7 +382,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (scrollEdgeEffectsNeedUpdate) {
-    [self updateScrollEdgeEffects];
+    [self updateContentScrollViewEdgeEffectsIfExists];
     scrollEdgeEffectsNeedUpdate = NO;
   }
 
