@@ -194,6 +194,24 @@ namespace react = facebook::react;
 
 #endif
 
+#pragma mark - RNSContentScrollViewProviding
+
+- (UIScrollView *)findContentScrollView
+{
+  if (_controller.selectedViewController == _controller.moreNavigationController) {
+    // Logic for More Controller; user is shown the native list of tabs.
+    // This we want to keep as-is, we're not styling the ScrollView here,
+    // so let's pretend there isn't one
+    return NULL;
+  }
+
+  // User selected regular tab with our BottomTabScreenComponentView. We start directly from it.
+  // This has the advantage of being able to continue searching even if the TabScreen
+  // hasn't been mounted yet (see mountChildComponentView(), _reactSubviews).
+  UIViewController *topViewController = _controller.moreNavigationController.topViewController;
+  return [RNSScrollViewFinder findContentScrollViewWithDelegatingToProvider:topViewController.view];
+}
+
 #pragma mark - React events
 
 - (nonnull RNSBottomTabsHostEventEmitter *)reactEventEmitter
