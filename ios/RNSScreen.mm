@@ -1199,7 +1199,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)updateContentScrollEdgeEffectsIfExists
+- (void)updateContentScrollViewEdgeEffectsIfExists
 {
   [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
                                       withProvider:self];
@@ -1422,7 +1422,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super finalizeUpdates:updateMask];
   if (_shouldUpdateScrollEdgeEffects) {
-    [self updateContentScrollEdgeEffectsIfExists];
+    [self updateContentScrollViewEdgeEffectsIfExists];
   }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -1452,7 +1452,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (_shouldUpdateScrollEdgeEffects) {
     // see finalizeUpdates() for Fabric
-    [self updateContentScrollEdgeEffectsIfExists];
+    [self updateContentScrollViewEdgeEffectsIfExists];
     _shouldUpdateScrollEdgeEffects = NO;
   }
 
@@ -1767,7 +1767,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   } else {
     [self.screenView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
-    [self.screenView updateContentScrollEdgeEffectsIfExists];
+    [self.screenView updateContentScrollViewEdgeEffectsIfExists];
   }
 }
 
