@@ -241,6 +241,7 @@ export default function App() {
           presentation: 'formSheet',
           sheetAllowedDetents: [0.3, 0.5, 0.8],
           //sheetAllowedDetents: 'fitToContents',
+          headerShown: false,
           contentStyle: {
             backgroundColor: '#ffffff00',
           },
