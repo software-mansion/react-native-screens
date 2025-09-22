@@ -211,7 +211,11 @@ RNS_IGNORE_SUPER_CALL_END
   auto size = self.bounds.size;
   if ([[_sheetAllowedDetents lastObject] integerValue] != SHEET_FIT_TO_CONTENTS) {
     auto windowSize = self.window.bounds.size;
-    size = CGSizeMake(windowSize.width, self.maxResolvedDetent);
+
+    // maxResolved detent cares only about the content inside formsheet,
+    // we need to add the bottom inset to allow the content be the same size as the formsheet
+    auto adjustedSheetHeight = self.maxResolvedDetent + self.safeAreaInsets.bottom;
+    size = CGSizeMake(windowSize.width, adjustedSheetHeight);
   }
   return size;
 }
