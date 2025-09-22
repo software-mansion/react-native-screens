@@ -67,7 +67,10 @@ namespace react = facebook::react;
 #else
     RCTView
 #endif
-    <RNSScreenContentWrapperDelegate, RNSScrollViewBehaviorOverriding, RNSSafeAreaProviding, RNSScrollEdgeEffectProviding>
+    <RNSScreenContentWrapperDelegate,
+     RNSScrollViewBehaviorOverriding,
+     RNSSafeAreaProviding,
+     RNSScrollEdgeEffectProviding>
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
