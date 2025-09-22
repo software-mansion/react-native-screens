@@ -7,7 +7,7 @@ import ScreenContentWrapper from './ScreenContentWrapper';
 import { StackPresentationTypes } from '../types';
 
 type ContainerProps = ViewProps & {
-  contentContainerStyle?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
   stackPresentation: StackPresentationTypes;
   children: React.ReactNode;
 };
@@ -17,17 +17,27 @@ type ContainerProps = ViewProps & {
  * See https://github.com/software-mansion/react-native-screens/pull/1825
  * for detailed explanation.
  */
-let DebugContainer: React.ComponentType<ContainerProps> = props => {
-  const { contentContainerStyle, style, ...rest } = props;
-
+let DebugContainer: React.FC<ContainerProps> = ({
+  contentStyle,
+  style,
+  ...rest
+}) => {
   return (
-    <ScreenContentWrapper {...rest} style={[style, contentContainerStyle]} />
+    <ScreenContentWrapper {...rest} style={style} contentStyle={contentStyle} />
   );
 };
 
 if (process.env.NODE_ENV !== 'production') {
   DebugContainer = (props: ContainerProps) => {
-    const { contentContainerStyle, stackPresentation, style, ...rest } = props;
+    const { contentStyle, stackPresentation, style, ...rest } = props;
+
+    const content = (
+      <ScreenContentWrapper
+        {...rest}
+        style={style}
+        contentStyle={contentStyle}
+      />
+    );
 
     if (
       Platform.OS === 'ios' &&
@@ -35,19 +45,10 @@ if (process.env.NODE_ENV !== 'production') {
       stackPresentation !== 'formSheet'
     ) {
       // This is necessary for LogBox
-      return (
-        <AppContainer>
-          <ScreenContentWrapper
-            {...rest}
-            style={[style, contentContainerStyle]}
-          />
-        </AppContainer>
-      );
+      return <AppContainer>{content}</AppContainer>;
     }
 
-    return (
-      <ScreenContentWrapper {...rest} style={[style, contentContainerStyle]} />
-    );
+    return content;
   };
 
   DebugContainer.displayName = 'DebugContainer';

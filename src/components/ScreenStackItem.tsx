@@ -131,7 +131,6 @@ function ScreenStackItem(
   // For iOS, we need to extract background color and apply it to Screen
   // due to the safe area inset at the bottom of ScreenContentWrapper
   let internalScreenStyle;
-  let innerContainerStyles = contentStyle;
 
   if (
     stackPresentation === 'formSheet' &&
@@ -141,13 +140,13 @@ function ScreenStackItem(
     const { screenStyles, contentWrapperStyles } =
       extractScreenStyles(contentStyle);
     internalScreenStyle = screenStyles;
-    innerContainerStyles = contentWrapperStyles;
+    contentStyle = contentWrapperStyles;
   }
 
   const content = (
     <>
       <DebugContainer
-        contentContainerStyle={innerContainerStyles}
+        contentStyle={contentStyle}
         style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
         {children}

@@ -1,9 +1,39 @@
 import React from 'react';
-import { ViewProps } from 'react-native';
+import {
+  View,
+  ViewStyle,
+  StyleProp,
+  ViewProps,
+  StyleSheet,
+} from 'react-native';
 import ScreenContentWrapperNativeComponent from '../fabric/ScreenContentWrapperNativeComponent';
 
-function ScreenContentWrapper(props: ViewProps) {
-  return <ScreenContentWrapperNativeComponent collapsable={false} {...props} />;
+type Props = ViewProps & {
+  contentStyle?: StyleProp<ViewStyle>;
+  children?: React.ReactNode;
+};
+
+function ScreenContentWrapper({
+  children,
+  contentStyle,
+  style,
+  ...rest
+}: Props) {
+  return (
+    <ScreenContentWrapperNativeComponent
+      {...rest}
+      style={style}
+      collapsable={false}>
+      <View style={[styles.container, contentStyle]}>{children}</View>
+    </ScreenContentWrapperNativeComponent>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+    width: '100%',
+  },
+});
 
 export default ScreenContentWrapper;
