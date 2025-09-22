@@ -173,6 +173,8 @@
   SWITCH_EDGE_EFFECT(RNSScreenTopScrollEdgeEffect);
 }
 
+#undef SWITCH_EDGE_EFFECT
+
 + (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents
 {
   auto array = [NSMutableArray<NSNumber *> arrayWithCapacity:detents.size()];
