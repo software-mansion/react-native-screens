@@ -1,5 +1,6 @@
 // Implementation adapted from `react-native-safe-area-context`:
-// https://github.com/AppAndFlow/react-native-safe-area-context/blob/v5.6.1/common/cpp/react/renderer/components/safeareacontext/RNCSafeAreaViewState.h
+// https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1
+
 #pragma once
 
 #include <react/renderer/components/rnscreens/Props.h>
@@ -35,6 +36,7 @@ class JSI_EXPORT RNSSafeAreaViewState final {
   using Shared = std::shared_ptr<const RNSSafeAreaViewState>;
 
   RNSSafeAreaViewState() {};
+  RNSSafeAreaViewState(EdgeInsets insets_) : insets(insets_) {};
 
 #ifdef ANDROID
   RNSSafeAreaViewState(

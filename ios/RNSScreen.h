@@ -2,6 +2,7 @@
 #import <React/RCTViewManager.h>
 
 #import "RNSEnums.h"
+#import "RNSSafeAreaProviding.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
 #import "RNSScrollViewBehaviorOverriding.h"
@@ -65,7 +66,7 @@ namespace react = facebook::react;
 #else
     RCTView
 #endif
-    <RNSScreenContentWrapperDelegate, RNSScrollViewBehaviorOverriding>
+    <RNSScreenContentWrapperDelegate, RNSScrollViewBehaviorOverriding, RNSSafeAreaProviding>
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;

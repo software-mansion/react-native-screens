@@ -29,6 +29,7 @@
 #import <React/RCTUIManagerUtils.h>
 
 #import "RNSConversions.h"
+#import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
@@ -1169,6 +1170,28 @@ RNS_IGNORE_SUPER_CALL_END
   if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
     [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
   }
+}
+
+#pragma mark - RNSSafeAreaProviding
+
+- (UIEdgeInsets)providerSafeAreaInsets
+{
+  return self.safeAreaInsets;
+}
+
+- (void)dispatchSafeAreaDidChangeNotification
+{
+  [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
+}
+
+#pragma mark - RNSSafeAreaProviding related methods
+
+// TODO: register for UIKeyboard notifications
+
+- (void)safeAreaInsetsDidChange
+{
+  [super safeAreaInsetsDidChange];
+  [self dispatchSafeAreaDidChangeNotification];
 }
 
 #pragma mark - Fabric specific

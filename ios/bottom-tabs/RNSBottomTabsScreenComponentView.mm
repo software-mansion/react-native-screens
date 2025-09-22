@@ -3,6 +3,7 @@
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
+#import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
@@ -176,6 +177,28 @@ RNS_IGNORE_SUPER_CALL_END
   tabBarItem.badgeValue = _badgeValue;
 
   _controller.tabBarItem = tabBarItem;
+}
+
+#pragma mark - RNSSafeAreaProviding
+
+- (UIEdgeInsets)providerSafeAreaInsets
+{
+  return self.safeAreaInsets;
+}
+
+- (void)dispatchSafeAreaDidChangeNotification
+{
+  [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
+}
+
+#pragma mark - RNSSafeAreaProviding related methods
+
+// TODO: register for UIKeyboard notifications
+
+- (void)safeAreaInsetsDidChange
+{
+  [super safeAreaInsetsDidChange];
+  [self dispatchSafeAreaDidChangeNotification];
 }
 
 #if RCT_NEW_ARCH_ENABLED
