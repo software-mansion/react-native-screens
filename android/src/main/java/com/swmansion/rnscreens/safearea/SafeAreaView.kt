@@ -102,7 +102,6 @@ class SafeAreaView(
         view: View,
         insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
-        // TODO: investigate if we should use insets ignoring visibility
         val newSystemInsets =
             insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
 
@@ -118,9 +117,22 @@ class SafeAreaView(
             .Builder(insets)
             .apply {
                 if (insetType.containsSystem()) {
-                    setInsets(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
-//                    setInsetsIgnoringVisibility(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
-                    setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.NONE)
+                    setInsets(
+                        WindowInsetsCompat.Type.systemBars(),
+                        getConsumedInsetsFromSelectedEdges(
+                            insets.getInsets(
+                                WindowInsetsCompat.Type.systemBars(),
+                            ),
+                        ),
+                    )
+                    setInsets(
+                        WindowInsetsCompat.Type.displayCutout(),
+                        getConsumedInsetsFromSelectedEdges(
+                            insets.getInsets(
+                                WindowInsetsCompat.Type.displayCutout(),
+                            ),
+                        ),
+                    )
                 }
             }.build()
     }
@@ -210,9 +222,22 @@ class SafeAreaView(
         }
     }
 
+    private fun getConsumedInsetsFromSelectedEdges(insets: Insets): Insets =
+        Insets.of(
+            if (edges?.left ?: false) 0 else insets.left,
+            if (edges?.top ?: false) 0 else insets.top,
+            if (edges?.right ?: false) 0 else insets.right,
+            if (edges?.bottom ?: false) 0 else insets.bottom,
+        )
+
     fun setEdges(edges: SafeAreaViewEdges) {
         this.edges = edges
-        updateInsets()
+        requestApplyInsets()
+
+        // We don't want to call updateInsetsIfNeeded here because system insets don't arrive
+        // immediately after requestApplyInsets. We just set the flag to true to make sure the
+        // update is eventually executed.
+        needsInsetsUpdate = true
     }
 
     fun setInsetType(insetType: InsetType) {
