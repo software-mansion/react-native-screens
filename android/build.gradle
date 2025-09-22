@@ -137,9 +137,12 @@ android {
         }
         externalNativeBuild {
             cmake {
+                cppFlags "-Wl,-z,max-page-size=16384", "-Wl,-z,common-page-size=16384"
+                cFlags "-Wl,-z,max-page-size=16384", "-Wl,-z,common-page-size=16384"
                 arguments "-DANDROID_STL=c++_shared",
                         "-DRNS_NEW_ARCH_ENABLED=${IS_NEW_ARCHITECTURE_ENABLED}",
-                        "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+                        "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+                        "-DANDROID_MAX_PAGE_SIZE_SUPPORTED=16384"
             }
         }
     }
