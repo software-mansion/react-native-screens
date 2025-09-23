@@ -107,7 +107,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
           templateSource: require('../../../assets/variableIcons/icon.png'),
         }, 
         android: {
-          type: 'drawableResourceAndroid',
+          type: 'drawableResource',
           name: 'sym_call_missed',
         }
       },
@@ -172,7 +172,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
           name: 'rectangle.stack',
         },
         android: {
-          type: 'drawableResourceAndroid',
+          type: 'drawableResource',
           name: 'custom_home_icon'
         }
       },

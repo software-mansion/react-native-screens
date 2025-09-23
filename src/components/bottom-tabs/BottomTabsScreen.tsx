@@ -257,13 +257,13 @@ function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
       // double as a value.
       imageIconResource: parsedIconResource || undefined,
     };
-  } else if (icon.type === 'drawableResourceAndroid') {
+  } else if (icon.type === 'drawableResource') {
     return {
       drawableIconResourceName: icon.name,
     };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResourceAndroid`.',
+      '[RNScreens] Incorrect icon format for Android. You must provide `imageSource` or `drawableResource`.',
     );
   }
 }
