@@ -272,7 +272,7 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
     return {};
   }
 
-  if (icon.type === 'sfSymbolIOS') {
+  if (icon.type === 'sfSymbol') {
     return {
       iconType: 'sfSymbol',
       iconSfSymbolName: icon.name,
@@ -289,7 +289,7 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
     };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbolIOS`, `imageSource` or `templateSourceIOS`.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource` or `templateSourceIOS`.',
     );
   }
 }

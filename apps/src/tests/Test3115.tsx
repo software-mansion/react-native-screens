@@ -51,7 +51,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       freezeContents: false,
       icon: {
         ios: {
-          type: 'sfSymbolIOS',
+          type: 'sfSymbol',
           name: 'sun.max'
         },
         android: {
@@ -68,7 +68,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab 2',
       icon: {
         ios: {
-          type: 'sfSymbolIOS',
+          type: 'sfSymbol',
           name: 'snow'
         },
         android: {
