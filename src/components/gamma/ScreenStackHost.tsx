@@ -1,16 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import type { ViewProps } from 'react-native';
-import type { NativeProps } from '../../fabric/gamma/ScreenStackHostNativeComponent';
 import ScreenStackHostNativeComponent from '../../fabric/gamma/ScreenStackHostNativeComponent';
-
-export type ScreenStackNativeProps = NativeProps & {
-  // Overrides
-};
-
-type ScreenStackHostProps = {
-  children?: ViewProps['children'];
-} & ScreenStackNativeProps;
+import type { ScreenStackHostProps } from './ScreenStackHost.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

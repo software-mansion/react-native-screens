@@ -71,14 +71,6 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
-
-  // Workaround for UIKit edgesForExtendedLayout bug on iOS 26.
-  // On iOS 26, there is additional offset for UINavigationBar that is not
-  // accounted for when using edgesForExtendedLayout. That's why we additionaly
-  // use safeAreaLayoutGuide when header is visible. When bug gets fixed, we can
-  // get rid of all code related to this workaround.
-  // More information: https://github.com/software-mansion/react-native-screens/pull/3111
-  NSArray<NSLayoutConstraint *> *_safeAreaConstraints;
 #ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
 
@@ -114,7 +106,6 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
     _translucent = NO;
     _addedReactSubviewsInCurrentTransaction = false;
     _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});
-    _safeAreaConstraints = nil;
     [self initProps];
   }
   return self;
@@ -438,8 +429,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-+ (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc
-                                    withConfig:(RNSScreenStackHeaderConfig *)config API_AVAILABLE(ios(13.0))
++ (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
@@ -568,44 +558,13 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
-  // See comment above _safeAreaConstraints declaration for reason why this is necessary.
-  RNSScreenContentWrapper *contentWrapper = nil;
-  if (@available(iOS 26, *)) {
-    if (vc.view.subviews.count > 0 && [vc.view.subviews[0] isKindOfClass:[RNSScreenContentWrapper class]]) {
-      contentWrapper = static_cast<RNSScreenContentWrapper *>(vc.view.subviews[0]);
-    }
-  }
-
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
     // the screen underneath navigation controllers
     vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
-
-    // See comment above _safeAreaConstraints declaration for reason why this is necessary.
-    if (contentWrapper != nil) {
-      // Use auto-layout
-      contentWrapper.translatesAutoresizingMaskIntoConstraints = NO;
-
-      if (config->_safeAreaConstraints == nil) {
-        config->_safeAreaConstraints = @[
-          [contentWrapper.topAnchor constraintEqualToAnchor:vc.view.safeAreaLayoutGuide.topAnchor],
-          [contentWrapper.bottomAnchor constraintEqualToAnchor:vc.view.bottomAnchor],
-          [contentWrapper.leadingAnchor constraintEqualToAnchor:vc.view.leadingAnchor],
-          [contentWrapper.trailingAnchor constraintEqualToAnchor:vc.view.trailingAnchor]
-        ];
-      }
-      [NSLayoutConstraint activateConstraints:config->_safeAreaConstraints];
-    }
   } else {
     // system default is UIRectEdgeAll
     vc.edgesForExtendedLayout = UIRectEdgeAll;
-
-    // See comment above _safeAreaConstraints declaration for reason why this is necessary.
-    if (contentWrapper != nil) {
-      [NSLayoutConstraint deactivateConstraints:config->_safeAreaConstraints];
-      config->_safeAreaConstraints = nil;
-      contentWrapper.translatesAutoresizingMaskIntoConstraints = YES;
-    }
   }
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
@@ -1018,17 +977,6 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
-
-  // See comment above _safeAreaConstraints declaration for reason why this is necessary.
-  if (_safeAreaConstraints.count > 0 &&
-      [_safeAreaConstraints[0].firstItem isKindOfClass:[RNSScreenContentWrapper class]]) {
-    RNSScreenContentWrapper *contentWrapper = static_cast<RNSScreenContentWrapper *>(_safeAreaConstraints[0].firstItem);
-
-    // Disable auto-layout
-    contentWrapper.translatesAutoresizingMaskIntoConstraints = YES;
-  }
-  [NSLayoutConstraint deactivateConstraints:_safeAreaConstraints];
-  _safeAreaConstraints = nil;
 
 #ifdef RCT_NEW_ARCH_ENABLED
   _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{});

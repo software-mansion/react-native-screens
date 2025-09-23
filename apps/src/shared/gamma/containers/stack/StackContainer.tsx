@@ -3,8 +3,8 @@ import {
   ScreenStackHost,
   StackScreen,
   StackScreenLifecycleState,
-} from 'react-native-screens';
-import type { StackScreenNativeProps } from 'react-native-screens/components/gamma/StackScreen';
+} from 'react-native-screens/experimental';
+import type { StackScreenProps } from 'react-native-screens/experimental';
 
 let id = 0;
 
@@ -26,7 +26,7 @@ type Path = {
   options?: ScreenProps;
 };
 
-type Screen = Path & StackScreenNativeProps;
+type Screen = Path & StackScreenProps;
 
 export const StackContainerPath = (_: Path) => {
   return null;

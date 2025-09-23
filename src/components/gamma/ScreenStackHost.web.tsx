@@ -1,10 +1,6 @@
 import { View, ViewProps } from 'react-native';
 
-interface NativeProps extends ViewProps {}
-
-export type ScreenStackNativeProps = NativeProps & {
-  // Overrides
-};
+export type ScreenStackNativeProps = ViewProps;
 
 const ScreenStackHost = View;
 

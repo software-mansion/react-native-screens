@@ -326,6 +326,26 @@ open class ScreenViewManager :
         value: String?,
     ) = Unit
 
+    override fun setBottomScrollEdgeEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
+    override fun setLeftScrollEdgeEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
+    override fun setRightScrollEdgeEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
+    override fun setTopScrollEdgeEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
     @ReactProp(name = "sheetAllowedDetents")
     override fun setSheetAllowedDetents(
         view: Screen,

@@ -142,6 +142,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         children,
         isNativeStack,
         gestureResponseDistance,
+        scrollEdgeEffects,
         onGestureCancel,
         style,
         ...props
@@ -260,7 +261,11 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
                     ],
                     { useNativeDriver: true },
                   )
-            }>
+            }
+            bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
+            leftScrollEdgeEffect={scrollEdgeEffects?.left}
+            rightScrollEdgeEffect={scrollEdgeEffects?.right}
+            topScrollEdgeEffect={scrollEdgeEffects?.top}>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (

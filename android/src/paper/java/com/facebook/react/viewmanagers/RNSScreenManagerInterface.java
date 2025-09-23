@@ -49,4 +49,8 @@ public interface RNSScreenManagerInterface<T extends View>  {
   void setNavigationBarTranslucent(T view, boolean value);
   void setNavigationBarHidden(T view, boolean value);
   void setNativeBackButtonDismissalEnabled(T view, boolean value);
+  void setBottomScrollEdgeEffect(T view, @Nullable String value);
+  void setLeftScrollEdgeEffect(T view, @Nullable String value);
+  void setRightScrollEdgeEffect(T view, @Nullable String value);
+  void setTopScrollEdgeEffect(T view, @Nullable String value);
 }

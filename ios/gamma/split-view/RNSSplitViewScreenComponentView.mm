@@ -4,6 +4,7 @@
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
 #import "RNSFrameCorrector.h"
+#import "RNSSafeAreaViewNotifications.h"
 
 #import "Swift-Bridging.h"
 
@@ -14,7 +15,7 @@ namespace react = facebook::react;
   RNSSplitViewScreenController *_Nullable _controller;
   RNSSplitViewScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
-  NSMutableSet<UIView *> *_viewsForFrameUpdate;
+  NSMutableSet<UIView *> *_viewsForFrameCorrection;
 }
 
 - (RNSSplitViewScreenController *)controller
@@ -43,7 +44,7 @@ namespace react = facebook::react;
   _reactEventEmitter = [RNSSplitViewScreenComponentEventEmitter new];
   _shadowStateProxy = [RNSSplitViewScreenShadowStateProxy new];
 
-  _viewsForFrameUpdate = [NSMutableSet set];
+  _viewsForFrameCorrection = [NSMutableSet set];
 }
 
 - (void)setupController
@@ -93,14 +94,14 @@ namespace react = facebook::react;
   _controller = nil;
 }
 
-- (void)registerForFrameUpdates:(UIView *)view
+- (void)registerForFrameCorrection:(UIView *)view
 {
-  [_viewsForFrameUpdate addObject:view];
+  [_viewsForFrameCorrection addObject:view];
 }
 
-- (void)unregisterFromFrameUpdates:(UIView *)view
+- (void)unregisterFromFrameCorrection:(UIView *)view
 {
-  [_viewsForFrameUpdate removeObject:view];
+  [_viewsForFrameCorrection removeObject:view];
 }
 
 #pragma mark - Layout
@@ -116,7 +117,7 @@ namespace react = facebook::react;
 {
   [super layoutSubviews];
 
-  for (UIView *view in _viewsForFrameUpdate) {
+  for (UIView *view in _viewsForFrameCorrection) {
     [RNSFrameCorrector applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
   }
 }
@@ -135,6 +136,28 @@ namespace react = facebook::react;
 {
   RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
   return _reactEventEmitter;
+}
+
+#pragma mark - RNSSafeAreaProviding
+
+- (UIEdgeInsets)providerSafeAreaInsets
+{
+  return self.safeAreaInsets;
+}
+
+- (void)dispatchSafeAreaDidChangeNotification
+{
+  [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
+}
+
+#pragma mark - RNSSafeAreaProviding related methods
+
+// TODO: register for UIKeyboard notifications
+
+- (void)safeAreaInsetsDidChange
+{
+  [super safeAreaInsetsDidChange];
+  [self dispatchSafeAreaDidChangeNotification];
 }
 
 #pragma mark - RCTViewComponentViewProtocol

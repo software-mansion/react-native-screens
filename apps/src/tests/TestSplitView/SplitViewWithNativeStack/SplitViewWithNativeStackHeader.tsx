@@ -1,5 +1,5 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
+import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { Image, View } from 'react-native';
 import Colors from '../../../shared/styling/Colors';
@@ -7,13 +7,19 @@ import { SplitViewBaseConfig } from '../helpers/types';
 
 const HeaderLeft = () => (
   <View style={{ width: 36, height: 36, backgroundColor: Colors.RedDark100 }} />
-)
+);
 
 const HeaderRight = () => (
-  <View style={{ width: 36, height: 36, backgroundColor: Colors.GreenDark100 }} />
-)
+  <View
+    style={{ width: 36, height: 36, backgroundColor: Colors.GreenDark100 }}
+  />
+);
 
-export const SplitViewWithNativeStackHeader = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+export const SplitViewWithNativeStackHeader = ({
+  splitViewBaseConfig,
+}: {
+  splitViewBaseConfig: SplitViewBaseConfig;
+}) => {
   return (
     <SplitViewHost {...splitViewBaseConfig}>
       <SplitViewScreen.Column>
@@ -36,7 +42,7 @@ export const SplitViewWithNativeStackHeader = ({ splitViewBaseConfig }: { splitV
           }}
           customScreenThreeNavigationOptions={{
             headerShown: true,
-            headerBackImageSource: require('../../../../assets/backButton.png')
+            headerBackImageSource: require('../../../../assets/backButton.png'),
           }}
         />
       </SplitViewScreen.Column>
@@ -45,20 +51,31 @@ export const SplitViewWithNativeStackHeader = ({ splitViewBaseConfig }: { splitV
           customScreenOneNavigationOptions={{ headerTransparent: true }}
           customScreenTwoNavigationOptions={{
             headerTransparent: true,
-            headerBlurEffect: 'systemMaterialDark'
+            headerBlurEffect: 'systemMaterialDark',
           }}
           customScreenThreeNavigationOptions={{
             headerBackground: () => (
-              <Image src='https://fastly.picsum.photos/id/483/400/200.jpg?hmac=wfMEmBoegvtws3gjbDFsepcn5zWMyq94Q3ZeKWRQn9I' width={400} height={200} />
+              <Image
+                src="https://fastly.picsum.photos/id/483/400/200.jpg?hmac=wfMEmBoegvtws3gjbDFsepcn5zWMyq94Q3ZeKWRQn9I"
+                width={400}
+                height={200}
+              />
             ),
           }}
         />
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
         <NativeStackNavigatorComponent
-          customScreenOneNavigationOptions={{ headerTintColor: Colors.RedDark100, headerTitle: "Custom header title" }}
+          customScreenOneNavigationOptions={{
+            headerTintColor: Colors.RedDark100,
+            headerTitle: 'Custom header title',
+          }}
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
+              placement: 'stacked',
+              hideWhenScrolling: false,
               onCancelButtonPress: () => {
                 console.log('cancel button press');
               },
@@ -72,4 +89,4 @@ export const SplitViewWithNativeStackHeader = ({ splitViewBaseConfig }: { splitV
       </SplitViewScreen.Column>
     </SplitViewHost>
   );
-}
+};

@@ -10,3 +10,17 @@ export function executeNativeBackPress() {
   BackHandler.exitApp();
   return true;
 }
+
+type OptionalBoolean = 'undefined' | 'false' | 'true';
+export function parseBooleanToOptionalBooleanNativeProp(
+  prop: boolean | undefined,
+): OptionalBoolean {
+  switch (prop) {
+    case undefined:
+      return 'undefined';
+    case true:
+      return 'true';
+    case false:
+      return 'false';
+  }
+}

@@ -23,6 +23,9 @@ export default function App() {
               headerTransparent: true,
               headerSearchBarOptions: {
                 placeholder: 'Interesting places...',
+                // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+                // to preserve test's original search bar configuration.
+                placement: 'stacked',
                 obscureBackground: false,
                 hideWhenScrolling: false,
               },

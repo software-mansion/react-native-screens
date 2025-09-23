@@ -226,6 +226,18 @@ public class RNSSplitViewScreenController: UIViewController {
   }
 }
 
+extension RNSSplitViewScreenController: RNSFrameCorrectionProvider {
+  @objc
+  public func register(forFrameCorrection view: UIView) {
+    self.splitViewScreenComponentView.register(forFrameCorrection: view)
+  }
+
+  @objc
+  public func unregister(fromFrameCorrection view: UIView) {
+    self.splitViewScreenComponentView.unregister(fromFrameCorrection: view)
+  }
+}
+
 private class ViewSizeTransitionState {
   public var displayLink: CADisplayLink?
   public var lastViewPresentationFrame: CGRect = CGRect.null

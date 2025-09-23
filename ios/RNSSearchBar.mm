@@ -24,6 +24,11 @@ namespace react = facebook::react;
   __weak RCTBridge *_bridge;
   UISearchController *_controller;
   UIColor *_textColor;
+
+  // We use those booleans to log a warning if user attempts to restore
+  // default behavior after setting explicit value for the prop.
+  BOOL _isObscureBackgroundSet;
+  BOOL _isHideNavigationBarSet;
 }
 
 @synthesize controller = _controller;
@@ -66,8 +71,13 @@ namespace react = facebook::react;
 #endif
 
   _controller.searchBar.delegate = self;
+
+  _isObscureBackgroundSet = NO;
+  _isHideNavigationBarSet = NO;
+
   _hideWhenScrolling = YES;
-  _placement = RNSSearchBarPlacementStacked;
+  _placement = RNSSearchBarPlacementAutomatic;
+
   _allowToolbarIntegration = YES;
 }
 
@@ -146,16 +156,46 @@ namespace react = facebook::react;
 #endif
 }
 
-- (void)setObscureBackground:(BOOL)obscureBackground
+- (void)setObscureBackground:(RNSOptionalBoolean)obscureBackground
 {
-  if (@available(iOS 9.1, *)) {
-    [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
+  switch (obscureBackground) {
+    case RNSOptionalBooleanTrue:
+      [_controller setObscuresBackgroundDuringPresentation:YES];
+      _isObscureBackgroundSet = YES;
+      break;
+
+    case RNSOptionalBooleanFalse:
+      [_controller setObscuresBackgroundDuringPresentation:NO];
+      _isObscureBackgroundSet = YES;
+      break;
+
+    default:
+      if (_isObscureBackgroundSet) {
+        RCTLogWarn(@"[RNScreens] Dynamically restoring obscureBackground to default native behavior is unsupported.");
+      }
+      break;
   }
 }
 
-- (void)setHideNavigationBar:(BOOL)hideNavigationBar
+- (void)setHideNavigationBar:(RNSOptionalBoolean)hideNavigationBar
 {
-  [_controller setHidesNavigationBarDuringPresentation:hideNavigationBar];
+  switch (hideNavigationBar) {
+    case RNSOptionalBooleanTrue:
+      [_controller setHidesNavigationBarDuringPresentation:YES];
+      _isHideNavigationBarSet = YES;
+      break;
+
+    case RNSOptionalBooleanFalse:
+      [_controller setHidesNavigationBarDuringPresentation:NO];
+      _isHideNavigationBarSet = YES;
+      break;
+
+    default:
+      if (_isHideNavigationBarSet) {
+        RCTLogWarn(@"[RNScreens] Dynamically restoring hideNavigationBar to default native behavior is unsupported.");
+      }
+      break;
+  }
 }
 
 - (void)setHideWhenScrolling:(BOOL)hideWhenScrolling
@@ -353,18 +393,24 @@ namespace react = facebook::react;
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(props);
 
-  [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  if (oldScreenProps.hideWhenScrolling != newScreenProps.hideWhenScrolling) {
+    [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+  }
 
   if (oldScreenProps.cancelButtonText != newScreenProps.cancelButtonText) {
     [self setCancelButtonText:RCTNSStringFromStringNilIfEmpty(newScreenProps.cancelButtonText)];
   }
 
   if (oldScreenProps.obscureBackground != newScreenProps.obscureBackground) {
-    [self setObscureBackground:newScreenProps.obscureBackground];
+    [self
+        setObscureBackground:[RNSConvert
+                                 RNSOptionalBooleanFromRNSSearchBarObscureBackground:newScreenProps.obscureBackground]];
   }
 
   if (oldScreenProps.hideNavigationBar != newScreenProps.hideNavigationBar) {
-    [self setHideNavigationBar:newScreenProps.hideNavigationBar];
+    [self
+        setHideNavigationBar:[RNSConvert
+                                 RNSOptionalBooleanFromRNSSearchBarHideNavigationBar:newScreenProps.hideNavigationBar]];
   }
 
   if (oldScreenProps.placeholder != newScreenProps.placeholder) {
@@ -442,8 +488,8 @@ RCT_EXPORT_MODULE()
 }
 #endif
 
-RCT_EXPORT_VIEW_PROPERTY(obscureBackground, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(obscureBackground, RNSOptionalBoolean)
+RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, RNSOptionalBoolean)
 RCT_EXPORT_VIEW_PROPERTY(hideWhenScrolling, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
 RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
@@ -526,7 +572,7 @@ RCT_ENUM_CONVERTER(
       @"integratedButton" : @(RNSSearchBarPlacementIntegratedButton),
       @"integratedCentered" : @(RNSSearchBarPlacementIntegratedCentered),
     }),
-    RNSSearchBarPlacementStacked,
+    RNSSearchBarPlacementAutomatic,
     integerValue)
 
 @end

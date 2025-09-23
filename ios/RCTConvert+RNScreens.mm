@@ -43,6 +43,27 @@
 
 RCT_ENUM_CONVERTER(RNSBlurEffectStyle, ([self blurEffectsForIOSVersion]), RNSBlurEffectStyleSystemDefault, integerValue)
 
+RCT_ENUM_CONVERTER(
+    RNSOptionalBoolean,
+    (@{
+      @"undefined" : @(RNSOptionalBooleanUndefined),
+      @"true" : @(RNSOptionalBooleanTrue),
+      @"false" : @(RNSOptionalBooleanFalse),
+    }),
+    RNSOptionalBooleanUndefined,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSScrollEdgeEffect,
+    (@{
+      @"automatic" : @(RNSScrollEdgeEffectAutomatic),
+      @"hard" : @(RNSScrollEdgeEffectHard),
+      @"soft" : @(RNSScrollEdgeEffectSoft),
+      @"hidden" : @(RNSScrollEdgeEffectHidden),
+    }),
+    RNSScrollEdgeEffectAutomatic,
+    integerValue)
+
 @end
 
 #endif // !RCT_NEW_ARCH_ENABLED

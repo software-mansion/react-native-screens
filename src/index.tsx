@@ -65,10 +65,3 @@ export { default as useSheetTranslation } from './useSheetTranslation';
  */
 export { default as BottomTabs } from './components/bottom-tabs/BottomTabs';
 export { default as BottomTabsScreen } from './components/bottom-tabs/BottomTabsScreen';
-export { default as ScreenStackHost } from './components/gamma/ScreenStackHost';
-export {
-  default as StackScreen,
-  StackScreenLifecycleState,
-} from './components/gamma/StackScreen';
-export { default as SplitViewHost } from './components/gamma/SplitViewHost';
-export { default as SplitViewScreen } from './components/gamma/SplitViewScreen';

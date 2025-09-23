@@ -2,7 +2,10 @@
 
 import React from 'react';
 import { SearchBarCommands, SearchBarProps } from '../types';
-import { isSearchBarAvailableForCurrentPlatform } from '../utils';
+import {
+  parseBooleanToOptionalBooleanNativeProp,
+  isSearchBarAvailableForCurrentPlatform,
+} from '../utils';
 import { View } from 'react-native';
 
 // Native components
@@ -89,6 +92,12 @@ function SearchBar(
     <NativeSearchBar
       ref={searchBarRef}
       {...props}
+      obscureBackground={parseBooleanToOptionalBooleanNativeProp(
+        props.obscureBackground,
+      )}
+      hideNavigationBar={parseBooleanToOptionalBooleanNativeProp(
+        props.hideNavigationBar,
+      )}
       onSearchFocus={props.onFocus as DirectEventHandler<SearchBarEvent>}
       onSearchBlur={props.onBlur as DirectEventHandler<SearchBarEvent>}
       onSearchButtonPress={

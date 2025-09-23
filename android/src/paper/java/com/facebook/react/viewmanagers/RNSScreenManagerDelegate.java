@@ -124,6 +124,18 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
       case "nativeBackButtonDismissalEnabled":
         mViewManager.setNativeBackButtonDismissalEnabled(view, value == null ? false : (boolean) value);
         break;
+      case "bottomScrollEdgeEffect":
+        mViewManager.setBottomScrollEdgeEffect(view, (String) value);
+        break;
+      case "leftScrollEdgeEffect":
+        mViewManager.setLeftScrollEdgeEffect(view, (String) value);
+        break;
+      case "rightScrollEdgeEffect":
+        mViewManager.setRightScrollEdgeEffect(view, (String) value);
+        break;
+      case "topScrollEdgeEffect":
+        mViewManager.setTopScrollEdgeEffect(view, (String) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }

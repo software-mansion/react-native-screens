@@ -55,12 +55,15 @@ Defaults to `false`. When `enableFreeze()` is run at the top of the application 
 ### `fullScreenSwipeEnabled` (iOS only)
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
+IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
 
 ### `fullScreenSwipeShadowEnabled` (iOS only)
 
 Boolean indicating whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
 doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
 default iOS shadow. Defaults to `true`.
+IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
+to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
 
 ### `gestureEnabled` (iOS only)
 
@@ -69,6 +72,7 @@ When set to `false` the back swipe gesture will be disabled. The default value i
 #### `gestureResponseDistance` (iOS only)
 
 Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage:
+IMPORTANT: Starting from iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
 
 ```tsx
 gestureResponseDistance: {
@@ -318,8 +322,7 @@ When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAni
 ### `transitionDuration` (iOS only)
 
 Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
-
-The duration of `default` and `flip` transitions isn't customizable.
+For screens with `default` and `flip` transitions, and, as of now, for screens with `presentation` set to `modal`, `formSheet`, `pageSheet` (regardless of transition), the duration isn't customizable.
 
 ### `useTransitionProgress`
 
@@ -465,10 +468,10 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `tintColor` - The color for the cursor caret and cancel button text. (iOS only)
 - `cancelButtonText` - The text to be used instead of default `Cancel` button text. Has no effect starting from iOS 26. **Deprecated**. (iOS only)
 - `disableBackButtonOverride` - Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true`. (Android only)
-- `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`. (iOS only)
+- `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to native behavior. (iOS only)
 - `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`. (iOS only)
 - `inputType` - Specifies type of input and keyboard for search bar. Can be one of `'text'`, `'phone'`, `'number'`, `'email'`. Defaults to `'text'`. (Android only)
-- `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`. (iOS only)
+- `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to native behavior. (iOS only)
 - `onBlur` - A callback that gets called when search bar has lost focus.
 - `onChangeText` - A callback that gets called when the text changes. It receives the current text value of the search bar.
 - `onCancelButtonPress` - A callback that gets called when the cancel button is pressed.

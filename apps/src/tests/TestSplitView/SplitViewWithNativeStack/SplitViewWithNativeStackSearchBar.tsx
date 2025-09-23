@@ -1,5 +1,5 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens';
+import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitViewBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
@@ -16,11 +16,15 @@ export const SplitViewWithNativeStackSearchBar = ({
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             headerSearchBarOptions: {
-              autoCapitalize: "words",
+              autoCapitalize: 'words',
               autoFocus: true,
               barTintColor: Colors.GreenLight100,
               tintColor: Colors.RedDark100,
-            }
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
+              placement: 'stacked',
+              hideWhenScrolling: false,
+            },
           }}
         />
       </SplitViewScreen.Column>
@@ -28,13 +32,21 @@ export const SplitViewWithNativeStackSearchBar = ({
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             headerSearchBarOptions: {
-              hideNavigationBar: true
-            }
+              hideNavigationBar: true,
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
+              placement: 'stacked',
+              hideWhenScrolling: false,
+            },
           }}
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
-              hideNavigationBar: false
-            }
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
+              placement: 'stacked',
+              hideWhenScrolling: false,
+              hideNavigationBar: false,
+            },
           }}
         />
       </SplitViewScreen.Column>
@@ -42,8 +54,11 @@ export const SplitViewWithNativeStackSearchBar = ({
         <NativeStackNavigatorComponent
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
-              hideWhenScrolling: false
-            }
+              // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+              // to preserve test's original search bar configuration.
+              placement: 'stacked',
+              hideWhenScrolling: false,
+            },
           }}
           CustomScreenTwo={ScrollViewWithText}
         />
