@@ -9,6 +9,7 @@ import {
   ColorValue,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
+import { ScrollEdgeEffect } from './components/bottom-tabs/BottomTabsScreen.types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -105,8 +106,6 @@ export type SearchBarPlacement =
   | 'integrated'
   | 'integratedButton'
   | 'integratedCentered';
-
-export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
