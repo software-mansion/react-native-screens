@@ -890,7 +890,12 @@ RNS_IGNORE_SUPER_CALL_END
               self.onPressHeaderBarButtonMenuItem(@{@"menuId" : menuId});
             }
 #endif
-          }];
+          }
+#if RCT_NEW_ARCH_ENABLED
+          imageLoader:imageLoader];
+#else
+          imageLoader:_bridge.imageLoader];
+#endif
       if (i < items.count) {
         [items insertObject:item atIndex:i];
       } else {
