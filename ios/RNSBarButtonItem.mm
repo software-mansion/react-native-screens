@@ -1,11 +1,9 @@
 #import "RNSBarButtonItem.h"
 #import <React/RCTConvert.h>
 #import <React/RCTFont.h>
+#import <React/RCTImageSource.h>
 #import <objc/runtime.h>
 #import "RNSDefines.h"
-
-static char RNSBarButtonItemActionKey;
-static char RNSBarButtonItemIdKey;
 
 @implementation RNSBarButtonItem {
   NSString *_buttonId;
@@ -15,7 +13,7 @@ static char RNSBarButtonItemIdKey;
 - (instancetype)initWithConfig:(NSDictionary<NSString *, id> *)dict
                         action:(RNSBarButtonItemAction)action
                     menuAction:(RNSBarButtonMenuItemAction)menuAction
-
+                   imageLoader:(RCTImageLoader *)imageLoader
 {
   self = [super init];
   if (!self) {
@@ -26,7 +24,11 @@ static char RNSBarButtonItemIdKey;
 
   NSDictionary *imageObj = dict[@"image"];
   if (imageObj) {
-    self.image = [RCTConvert UIImage:imageObj];
+    RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageObj];
+    [imageLoader loadImageWithURLRequest:imageSource.request
+                                callback:^(NSError *_Nullable error, UIImage *_Nullable image) {
+                                  self.image = image;
+                                }];
   }
   NSString *sfSymbolName = dict[@"sfSymbolName"];
   if (sfSymbolName) {
