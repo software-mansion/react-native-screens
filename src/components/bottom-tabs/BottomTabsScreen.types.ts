@@ -25,7 +25,7 @@ export type PlatformIconShared = {
 
 export type PlatformIconIOS =
   | {
-      type: 'sfSymbolIOS';
+      type: 'sfSymbol';
       name: string;
     }
   | {
@@ -351,7 +351,7 @@ export interface BottomTabsScreenProps {
    *   For loading SVGs use `drawableResourceAndroid` type.
    *
    * iOS-only:
-   * - `{ type: 'sfSymbolIOS', name }`
+   * - `{ type: 'sfSymbol', name }`
    *   Uses an SF Symbol with the specified name.
    * - `{ type: 'templateSourceIOS', templateSource }`
    *   Uses the provided image as a template image.

@@ -36,7 +36,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       isFocused: true,
       icon: {
         ios: {
-          type: 'sfSymbolIOS',
+          type: 'sfSymbol',
           name: 'house.fill',
         }, 
         android: {
@@ -45,7 +45,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         }
       },
       selectedIcon: {
-        type: 'sfSymbolIOS',
+        type: 'sfSymbol',
         name: 'house.fill',
       },
     },
@@ -168,7 +168,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabKey: 'Tab4',
       icon: {
         ios: {
-          type: 'sfSymbolIOS',
+          type: 'sfSymbol',
           name: 'rectangle.stack',
         },
         android: {
@@ -177,7 +177,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         }
       },
       selectedIcon: {
-        type: 'sfSymbolIOS',
+        type: 'sfSymbol',
         name: 'rectangle.stack.fill',
       },
       title: 'Tab4',
