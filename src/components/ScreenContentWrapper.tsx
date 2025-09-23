@@ -10,7 +10,6 @@ import ScreenContentWrapperNativeComponent from '../fabric/ScreenContentWrapperN
 
 type Props = ViewProps & {
   contentStyle?: StyleProp<ViewStyle>;
-  children?: React.ReactNode;
 };
 
 function ScreenContentWrapper({
