@@ -73,6 +73,7 @@ struct ContentWrapperBox {
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
+  BOOL _shouldUpdateScrollEdgeEffects;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
