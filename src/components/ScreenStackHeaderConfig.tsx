@@ -1,10 +1,15 @@
 'use client';
 
 import React from 'react';
-import { ScreenStackHeaderConfigProps } from '../types';
+import {
+  HeaderBarButtonItemMenuAction,
+  HeaderBarButtonItemWithMenu,
+  ScreenStackHeaderConfigProps,
+} from '../types';
 import {
   Image,
   ImageProps,
+  NativeSyntheticEvent,
   Platform,
   StyleSheet,
   View,
@@ -16,6 +21,8 @@ import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderC
 import ScreenStackHeaderSubviewNativeComponent, {
   type NativeProps as ScreenStackHeaderSubviewNativeProps,
 } from '../fabric/ScreenStackHeaderSubviewNativeComponent';
+import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
+import { isHeaderBarButtonsAvailableForCurrentPlatform } from 'react-native-screens/utils';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
@@ -23,14 +30,91 @@ export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubv
 export const ScreenStackHeaderConfig = React.forwardRef<
   View,
   ScreenStackHeaderConfigProps
->((props, ref) => (
-  <ScreenStackHeaderConfigNativeComponent
-    {...props}
-    ref={ref}
-    style={styles.headerConfig}
-    pointerEvents="box-none"
-  />
-));
+>((props, ref) => {
+  const { screenId, headerLeftItems, headerRightItems } = props;
+
+  const headerLeftBarButtonItems =
+    headerLeftItems && isHeaderBarButtonsAvailableForCurrentPlatform
+      ? prepareHeaderBarButtonItems(headerLeftItems, screenId, 'left')
+      : undefined;
+  const headerRightBarButtonItems =
+    headerRightItems && isHeaderBarButtonsAvailableForCurrentPlatform
+      ? prepareHeaderBarButtonItems(headerRightItems, screenId, 'right')
+      : undefined;
+  const hasHeaderBarButtonItems =
+    isHeaderBarButtonsAvailableForCurrentPlatform &&
+    (headerLeftBarButtonItems?.length || headerRightBarButtonItems?.length);
+
+  // Handle bar button item presses
+  const onPressHeaderBarButtonItem = hasHeaderBarButtonItems
+    ? (event: NativeSyntheticEvent<{ buttonId: string }>) => {
+        const pressedItem = [
+          ...(headerLeftBarButtonItems ?? []),
+          ...(headerRightBarButtonItems ?? []),
+        ].find(
+          item =>
+            item &&
+            'onPress' in item &&
+            item.buttonId === event.nativeEvent.buttonId,
+        );
+        if (pressedItem && 'onPress' in pressedItem && pressedItem.onPress) {
+          pressedItem.onPress();
+        }
+      }
+    : undefined;
+
+  // Handle bar button menu item presses by deep-searching nested menus
+  const onPressHeaderBarButtonMenuItem = hasHeaderBarButtonItems
+    ? (event: NativeSyntheticEvent<{ menuId: string }>) => {
+        // Recursively search menu tree
+        const findInMenu = (
+          menu: HeaderBarButtonItemWithMenu['menu'],
+          menuId: string,
+        ): HeaderBarButtonItemMenuAction | undefined => {
+          for (const item of menu.items) {
+            if ('items' in item) {
+              // submenu: recurse
+              const found = findInMenu(item, menuId);
+              if (found) {
+                return found;
+              }
+            } else if ('menuId' in item && item.menuId === menuId) {
+              return item;
+            }
+          }
+          return undefined;
+        };
+
+        // Check each bar-button item with a menu
+        const allItems = [
+          ...(headerLeftBarButtonItems ?? []),
+          ...(headerRightBarButtonItems ?? []),
+        ];
+        for (const item of allItems) {
+          if (item && 'menu' in item && item.menu) {
+            const action = findInMenu(item.menu, event.nativeEvent.menuId);
+            if (action) {
+              action.onPress();
+              return;
+            }
+          }
+        }
+      }
+    : undefined;
+
+  return (
+    <ScreenStackHeaderConfigNativeComponent
+      {...props}
+      headerLeftBarButtonItems={headerLeftBarButtonItems}
+      headerRightBarButtonItems={headerRightBarButtonItems}
+      onPressHeaderBarButtonItem={onPressHeaderBarButtonItem}
+      onPressHeaderBarButtonMenuItem={onPressHeaderBarButtonMenuItem}
+      ref={ref}
+      style={styles.headerConfig}
+      pointerEvents="box-none"
+    />
+  );
+});
 
 ScreenStackHeaderConfig.displayName = 'ScreenStackHeaderConfig';
 

@@ -557,6 +557,7 @@ export interface ScreenStackProps extends ViewProps, GestureProps {
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
+  screenId: string;
   /**
    * Whether to show the back button with custom left side of the header.
    */
@@ -628,17 +629,14 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * @platform ios
    */
-  headerLeftBarButtonItems?: (
-    | HeaderBarButtonItem
-    | HeaderBarButtonItemWithCustomView
-  )[];
+  headerLeftItems?: (HeaderBarButtonItem | HeaderBarButtonItemWithCustomView)[];
   /**
    * Array of iOS native UIBarButtomItem or functions
    * that returns a React Element to the right side of the header.
    *
    * @platform ios
    */
-  headerRightBarButtonItems?: (
+  headerRightItems?: (
     | HeaderBarButtonItem
     | HeaderBarButtonItemWithCustomView
   )[];
@@ -699,24 +697,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Callback which is executed when screen header is detached
    */
   onDetached?: () => void;
-  /**
-   * Callback which is executed when a bar button item is pressed.
-   * @param buttonId ID of the button that was pressed
-   *
-   * @platform ios
-   */
-  onPressHeaderBarButtonItem?: (
-    e: NativeSyntheticEvent<{ buttonId: string }>,
-  ) => void;
-  /**
-   * Callback which is executed when a bar button item is pressed.
-   * @param buttonId ID of the button that was pressed
-   *
-   * @platform ios
-   */
-  onPressHeaderBarButtonMenuItem?: (
-    e: NativeSyntheticEvent<{ menuId: string }>,
-  ) => void;
   /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
@@ -1062,11 +1042,7 @@ interface SharedHeaderBarButtonItem {
 
 export interface HeaderBarButtonItemWithAction
   extends SharedHeaderBarButtonItem {
-  /**
-   * A unique identifier for the button item.
-   * This is required to identify which menu item was selected in `onPress`.
-   */
-  buttonId: string;
+  onPress: () => void;
   /**
    * A Boolean value that indicates whether the button is in a selected state.
    *
@@ -1083,13 +1059,9 @@ export interface HeaderBarButtonItemWithAction
 }
 
 export interface HeaderBarButtonItemMenuAction {
-  title?: string;
   type: 'action';
-  /**
-   * A unique identifier for the menu item.
-   * This is required to identify which menu item was selected in `onPress`.
-   */
-  menuId: string;
+  title?: string;
+  onPress: () => void;
   /**
    * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
    */
@@ -1115,8 +1087,8 @@ export interface HeaderBarButtonItemMenuAction {
 }
 
 export interface HeaderBarButtonItemSubmenu {
-  title?: string;
   type: 'submenu';
+  title?: string;
   /**
    * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
    */
@@ -1144,7 +1116,7 @@ export interface HeaderBarButtonItemSpacing {
  * `children` prop of `ScreenStackHeaderConfig`.
  */
 export interface HeaderBarButtonItemWithCustomView {
-  isSubview: true;
+  customView: unknown;
   /**
    * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
    * Only available from iOS 26.0 and later.
