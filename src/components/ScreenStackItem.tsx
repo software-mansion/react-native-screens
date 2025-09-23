@@ -67,9 +67,7 @@ type SplitStyleResult = {
 export function extractScreenStyles(
   style: StyleProp<ViewStyle>,
 ): SplitStyleResult {
-  const flatStyle = Array.isArray(style)
-    ? Object.assign({}, ...style)
-    : style ?? {};
+  const flatStyle = StyleSheet.flatten(style);
 
   const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
 
