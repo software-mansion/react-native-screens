@@ -59,6 +59,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     selectedIcon,
     standardAppearance,
     scrollEdgeAppearance,
+    scrollEdgeEffects,
     ...rest
   } = props;
 
@@ -147,6 +148,10 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
+      bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
+      leftScrollEdgeEffect={scrollEdgeEffects?.left}
+      rightScrollEdgeEffect={scrollEdgeEffects?.right}
+      topScrollEdgeEffect={scrollEdgeEffects?.top}
       {...rest}>
       <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
         {rest.children}

@@ -53,6 +53,17 @@ RCT_ENUM_CONVERTER(
     RNSOptionalBooleanUndefined,
     integerValue)
 
+RCT_ENUM_CONVERTER(
+    RNSScrollEdgeEffect,
+    (@{
+      @"automatic" : @(RNSScrollEdgeEffectAutomatic),
+      @"hard" : @(RNSScrollEdgeEffectHard),
+      @"soft" : @(RNSScrollEdgeEffectSoft),
+      @"hidden" : @(RNSScrollEdgeEffectHidden),
+    }),
+    RNSScrollEdgeEffectAutomatic,
+    integerValue)
+
 @end
 
 #endif // !RCT_NEW_ARCH_ENABLED

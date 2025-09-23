@@ -33,6 +33,7 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
 
@@ -72,6 +73,7 @@ struct ContentWrapperBox {
   CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
+  BOOL _shouldUpdateScrollEdgeEffects;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -130,6 +132,7 @@ struct ContentWrapperBox {
   _hasHomeIndicatorHiddenSet = NO;
   _activityState = RNSActivityStateUndefined;
   _fullScreenSwipeShadowEnabled = YES;
+  _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
@@ -439,6 +442,30 @@ RNS_IGNORE_SUPER_CALL_END
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
 }
 #endif
+
+- (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
+}
+
+- (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _leftScrollEdgeEffect = leftScrollEdgeEffect;
+}
+
+- (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _rightScrollEdgeEffect = rightScrollEdgeEffect;
+}
+
+- (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _topScrollEdgeEffect = topScrollEdgeEffect;
+}
 
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (UIView *)reactSuperview
@@ -1213,6 +1240,12 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+- (void)updateContentScrollViewEdgeEffectsIfExists
+{
+  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                      withProvider:self];
+}
+
 #pragma mark - RNSSafeAreaProviding
 
 - (UIEdgeInsets)providerSafeAreaInsets
@@ -1380,6 +1413,26 @@ RNS_IGNORE_SUPER_CALL_END
     [self setScreenId:RCTNSStringFromStringNilIfEmpty(newScreenProps.screenId)];
   }
 
+  if (newScreenProps.bottomScrollEdgeEffect != oldScreenProps.bottomScrollEdgeEffect) {
+    [self setBottomScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+                                                    newScreenProps.bottomScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.leftScrollEdgeEffect != oldScreenProps.leftScrollEdgeEffect) {
+    [self setLeftScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+                                                  newScreenProps.leftScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.rightScrollEdgeEffect != oldScreenProps.rightScrollEdgeEffect) {
+    [self setRightScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+                                                   newScreenProps.rightScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.topScrollEdgeEffect != oldScreenProps.topScrollEdgeEffect) {
+    [self setTopScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+                                                 newScreenProps.topScrollEdgeEffect]];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1409,6 +1462,10 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
+  if (_shouldUpdateScrollEdgeEffects) {
+    [self updateContentScrollViewEdgeEffectsIfExists];
+  }
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];
@@ -1433,6 +1490,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
+
+  if (_shouldUpdateScrollEdgeEffects) {
+    // see finalizeUpdates() for Fabric
+    [self updateContentScrollViewEdgeEffectsIfExists];
+    _shouldUpdateScrollEdgeEffects = NO;
+  }
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
     [self updateFormSheetPresentationStyle];
@@ -1748,6 +1812,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   } else {
     [self.screenView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    [self.screenView updateContentScrollViewEdgeEffectsIfExists];
   }
 }
 
@@ -2118,6 +2183,10 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
+RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);

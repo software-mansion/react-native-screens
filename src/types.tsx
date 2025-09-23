@@ -9,6 +9,7 @@ import {
   ColorValue,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
+import { ScrollEdgeEffect } from './components/shared/types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -194,6 +195,24 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   nativeBackButtonDismissalEnabled?: boolean;
+  /**
+   * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
+   * Depending on values set, it will blur the scrolling content below certain UI elements (Header Items, SearchBar)
+   * for the specifed edge of the ScrollView.
+   *
+   * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+   * the ScrollView will use only the innermost one's config.
+   *
+   * @platform ios
+   *
+   * @supported iOS 26 or higher
+   */
+  scrollEdgeEffects?: {
+    bottom: ScrollEdgeEffect;
+    left: ScrollEdgeEffect;
+    right: ScrollEdgeEffect;
+    top: ScrollEdgeEffect;
+  };
   /**
    * Sets the navigation bar color. Defaults to initial status bar color.
    *
@@ -977,3 +996,4 @@ export interface GestureProviderProps extends GestureProps {
 
 export * from './components/bottom-tabs/BottomTabs.types';
 export * from './components/bottom-tabs/BottomTabsScreen.types';
+export * from './components/shared/types';

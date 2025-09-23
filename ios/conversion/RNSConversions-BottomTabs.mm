@@ -319,4 +319,46 @@ UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTa
   return UITabBarSystemItemSearch;
 }
 
+#define SWITCH_EDGE_EFFECT(X)                              \
+  switch (edgeEffect) {                                    \
+    using enum react::X;                                   \
+    case Automatic:                                        \
+      return RNSScrollEdgeEffectAutomatic;                 \
+    case Hard:                                             \
+      return RNSScrollEdgeEffectHard;                      \
+    case Soft:                                             \
+      return RNSScrollEdgeEffectSoft;                      \
+    case Hidden:                                           \
+      return RNSScrollEdgeEffectHidden;                    \
+    default:                                               \
+      RCTLogError(@"[RNScreens] unsupported edge effect"); \
+      return RNSScrollEdgeEffectAutomatic;                 \
+  }
+
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
+    react::RNSBottomTabsScreenBottomScrollEdgeEffect edgeEffect)
+{
+  SWITCH_EDGE_EFFECT(RNSBottomTabsScreenBottomScrollEdgeEffect);
+}
+
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenLeftScrollEdgeEffectCppEquivalent(
+    react::RNSBottomTabsScreenLeftScrollEdgeEffect edgeEffect)
+{
+  SWITCH_EDGE_EFFECT(RNSBottomTabsScreenLeftScrollEdgeEffect);
+}
+
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScrollEdgeEffectCppEquivalent(
+    react::RNSBottomTabsScreenRightScrollEdgeEffect edgeEffect)
+{
+  SWITCH_EDGE_EFFECT(RNSBottomTabsScreenRightScrollEdgeEffect);
+}
+
+RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
+    react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect)
+{
+  SWITCH_EDGE_EFFECT(RNSBottomTabsScreenTopScrollEdgeEffect);
+}
+
+#undef SWITCH_EDGE_EFFECT
+
 }; // namespace rnscreens::conversion
