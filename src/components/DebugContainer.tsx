@@ -17,24 +17,20 @@ type ContainerProps = ViewProps & {
  * See https://github.com/software-mansion/react-native-screens/pull/1825
  * for detailed explanation.
  */
-let DebugContainer: React.FC<ContainerProps> = props => {
-  return (
-    <ScreenContentWrapper
-      style={[props.style, props.contentStyle]}
-      {...props}
-    />
-  );
+let DebugContainer: React.FC<ContainerProps> = ({
+  contentStyle,
+  style,
+  ...rest
+}) => {
+  return <ScreenContentWrapper style={[style, contentStyle]} {...rest} />;
 };
 
 if (process.env.NODE_ENV !== 'production') {
   DebugContainer = (props: ContainerProps) => {
-    const { stackPresentation, ...rest } = props;
+    const { contentStyle, stackPresentation, style, ...rest } = props;
 
     const content = (
-      <ScreenContentWrapper
-        style={[props.style, props.contentStyle]}
-        {...rest}
-      />
+      <ScreenContentWrapper style={[style, contentStyle]} {...rest} />
     );
 
     if (
