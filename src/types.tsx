@@ -9,7 +9,7 @@ import {
   ColorValue,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
-import { ScrollEdgeEffect } from './components/bottom-tabs/BottomTabsScreen.types';
+import { ScrollEdgeEffect } from './components/shared/types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -989,3 +989,4 @@ export interface GestureProviderProps extends GestureProps {
 
 export * from './components/bottom-tabs/BottomTabs.types';
 export * from './components/bottom-tabs/BottomTabsScreen.types';
+export * from './components/shared/types';

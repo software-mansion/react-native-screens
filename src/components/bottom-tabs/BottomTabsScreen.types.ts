@@ -5,6 +5,7 @@ import type {
   TextStyle,
   ViewProps,
 } from 'react-native';
+import { ScrollEdgeEffect } from '../shared/types';
 
 export type EmptyObject = Record<string, never>;
 
@@ -85,8 +86,6 @@ export type BottomTabsScreenOrientation =
   | 'landscape'
   | 'landscapeLeft'
   | 'landscapeRight';
-
-export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 // iOS-specific
 export interface BottomTabsScreenAppearance {
