@@ -18,14 +18,24 @@ type ContainerProps = ViewProps & {
  * for detailed explanation.
  */
 let DebugContainer: React.FC<ContainerProps> = props => {
-  return <ScreenContentWrapper {...props} />;
+  return (
+    <ScreenContentWrapper
+      style={[props.style, props.contentStyle]}
+      {...props}
+    />
+  );
 };
 
 if (process.env.NODE_ENV !== 'production') {
   DebugContainer = (props: ContainerProps) => {
     const { stackPresentation, ...rest } = props;
 
-    const content = <ScreenContentWrapper {...rest} />;
+    const content = (
+      <ScreenContentWrapper
+        style={[props.style, props.contentStyle]}
+        {...rest}
+      />
+    );
 
     if (
       Platform.OS === 'ios' &&
