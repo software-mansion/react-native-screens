@@ -12,17 +12,9 @@ type Props = ViewProps & {
   contentStyle?: StyleProp<ViewStyle>;
 };
 
-function ScreenContentWrapper({
-  children,
-  contentStyle,
-  style,
-  ...rest
-}: Props) {
+function ScreenContentWrapper({ children, contentStyle, ...rest }: Props) {
   return (
-    <ScreenContentWrapperNativeComponent
-      {...rest}
-      style={style}
-      collapsable={false}>
+    <ScreenContentWrapperNativeComponent {...rest} collapsable={false}>
       <View style={[styles.container, contentStyle]}>{children}</View>
     </ScreenContentWrapperNativeComponent>
   );
