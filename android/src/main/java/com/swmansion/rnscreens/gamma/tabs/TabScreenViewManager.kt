@@ -16,7 +16,7 @@ import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
-import com.swmansion.rnscreens.gamma.tabs.image.TabsImageLoader
+import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.utils.RNSLog
 
 @ReactModule(name = TabScreenViewManager.REACT_CLASS)
@@ -175,7 +175,7 @@ class TabScreenViewManager :
         val uri = value?.getString("uri")
         if (uri != null) {
             val context = view.context
-            TabsImageLoader.load(context, uri) { drawable ->
+            loadTabImage(context, uri) { drawable ->
                 // Since image loading might happen on a background thread
                 // ref. https://frescolib.org/docs/intro-image-pipeline.html
                 // We should schedule rendering the result on the UI thread
