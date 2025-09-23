@@ -5,6 +5,7 @@ import { Freeze } from 'react-freeze';
 import {
   Image,
   ImageResolvedAssetSource,
+  Platform,
   StyleSheet,
   findNodeHandle,
   processColor,
@@ -311,39 +312,49 @@ function parseIconsToNativeProps(
   selectedIconImageSource?: ImageSourcePropType;
   selectedIconSfSymbolName?: string;
 } {
-  const androidNativeProps = parseAndroidIconToNativeProps(
-    icon?.android || icon?.shared,
-  );
-
-  const { iconImageSource, iconSfSymbolName, iconType } =
-    parseIOSIconToNativeProps(icon?.ios || icon?.shared);
-  const {
-    iconImageSource: selectedIconImageSource,
-    iconSfSymbolName: selectedIconSfSymbolName,
-    iconType: selectedIconType,
-  } = parseIOSIconToNativeProps(selectedIcon);
-
-  if (
-    iconType !== undefined &&
-    selectedIconType !== undefined &&
-    iconType !== selectedIconType
-  ) {
-    throw new Error('[RNScreens] icon and selectedIcon must be same type.');
-  } else if (iconType === undefined && selectedIconType !== undefined) {
-    // iOS-specific: UIKit requirement
-    throw new Error(
-      '[RNScreens] To use selectedIcon prop, the icon prop must also be provided.',
+  if (Platform.OS === 'android') {
+    const androidNativeProps = parseAndroidIconToNativeProps(
+      icon?.android || icon?.shared,
     );
+    return {
+      ...androidNativeProps,
+    };
   }
 
-  return {
-    ...androidNativeProps,
-    iconType,
-    iconImageSource,
-    iconSfSymbolName,
-    selectedIconImageSource,
-    selectedIconSfSymbolName,
-  };
+  if (Platform.OS === 'ios') {
+    const { iconImageSource, iconSfSymbolName, iconType } =
+      parseIOSIconToNativeProps(icon?.ios || icon?.shared);
+
+    const {
+      iconImageSource: selectedIconImageSource,
+      iconSfSymbolName: selectedIconSfSymbolName,
+      iconType: selectedIconType,
+    } = parseIOSIconToNativeProps(selectedIcon);
+
+    if (
+      iconType !== undefined &&
+      selectedIconType !== undefined &&
+      iconType !== selectedIconType
+    ) {
+      throw new Error('[RNScreens] icon and selectedIcon must be same type.');
+    } else if (iconType === undefined && selectedIconType !== undefined) {
+      // iOS-specific: UIKit requirement
+      throw new Error(
+        '[RNScreens] To use selectedIcon prop, the icon prop must also be provided.',
+      );
+    }
+
+    return {
+      iconType,
+      iconImageSource,
+      iconSfSymbolName,
+      selectedIconImageSource,
+      selectedIconSfSymbolName,
+    };
+  }
+
+  // Fallback for other platforms
+  return {};
 }
 
 export default BottomTabsScreen;
