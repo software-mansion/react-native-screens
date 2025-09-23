@@ -243,7 +243,7 @@ export default function App() {
           //sheetAllowedDetents: 'fitToContents',
           headerShown: false,
           contentStyle: {
-            backgroundColor: '#ffffff00',
+            backgroundColor: '#ff00ff40',
           },
         }} />
       </Stack.Navigator>
