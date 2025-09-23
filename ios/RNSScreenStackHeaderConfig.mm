@@ -907,7 +907,7 @@ RNS_IGNORE_SUPER_CALL_END
       } else {
         [items addObject:item];
       }
-    } else if (dict[@"isSubview"]) {
+    } else if (dict[@"customView"]) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
       if (@available(iOS 26.0, *)) {
         NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
