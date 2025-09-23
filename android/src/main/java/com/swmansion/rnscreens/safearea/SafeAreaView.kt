@@ -17,6 +17,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper.getReactContext
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.safearea.paper.SafeAreaViewEdges
 import com.swmansion.rnscreens.safearea.paper.SafeAreaViewLocalData
 import java.lang.ref.WeakReference
@@ -154,7 +155,7 @@ class SafeAreaView(
             )
 
         val stateWrapper = getStateWrapper()
-        if (stateWrapper != null) {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && stateWrapper != null) {
             val insets = Arguments.createMap()
             insets.putDouble("top", PixelUtil.toDIPFromPixel(safeAreaInsets.top).toDouble())
             insets.putDouble("right", PixelUtil.toDIPFromPixel(safeAreaInsets.right).toDouble())
@@ -165,7 +166,7 @@ class SafeAreaView(
             newState.putMap("insets", insets)
 
             stateWrapper.updateState(newState)
-        } else {
+        } else if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             val localData =
                 SafeAreaViewLocalData(
                     insets = safeAreaInsets,
