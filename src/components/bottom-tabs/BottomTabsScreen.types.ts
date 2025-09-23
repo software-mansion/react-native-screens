@@ -29,7 +29,7 @@ export type PlatformIconIOS =
       name: string;
     }
   | {
-      type: 'templateSourceIOS';
+      type: 'templateSource';
       templateSource: ImageSourcePropType;
     }
   | PlatformIconShared;
@@ -353,7 +353,7 @@ export interface BottomTabsScreenProps {
    * iOS-only:
    * - `{ type: 'sfSymbol', name }`
    *   Uses an SF Symbol with the specified name.
-   * - `{ type: 'templateSourceIOS', templateSource }`
+   * - `{ type: 'templateSource', templateSource }`
    *   Uses the provided image as a template image.
    *   The icon color will depend on the current state
    *   of the tab bar item and icon color-related props.

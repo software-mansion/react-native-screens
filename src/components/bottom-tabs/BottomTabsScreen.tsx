@@ -287,14 +287,14 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
       iconType: 'image',
       iconImageSource: icon.imageSource,
     };
-  } else if (icon.type === 'templateSourceIOS') {
+  } else if (icon.type === 'templateSource') {
     return {
       iconType: 'template',
       iconImageSource: icon.templateSource,
     };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource` or `templateSourceIOS`.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource` or `templateSource`.',
     );
   }
 }
