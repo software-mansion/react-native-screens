@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { freezeEnabled } from '../../core';
 import BottomTabsScreenNativeComponent, {
-  type NativeIconType,
+  type IconType,
   type NativeProps,
   type Appearance,
   type ItemAppearance,
@@ -269,7 +269,7 @@ function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
 }
 
 function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
-  iconType?: NativeIconType;
+  iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconSfSymbolName?: string;
 } {
@@ -305,7 +305,7 @@ function parseIconsToNativeProps(
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
-  iconType?: NativeIconType;
+  iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconSfSymbolName?: string;
   selectedIconImageSource?: ImageSourcePropType;
