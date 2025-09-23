@@ -158,21 +158,21 @@ function GlossyFormSheet({ navigation }: RouteProps<'GlossyFormSheet'>) {
   return (
     // When using `fitToContents` you can't use flex: 1. It is you who must provide
     // the content size - you can't rely on parent size here.
-    <View style={{ }}>
+    <View>
       <Spacer space={50} />
-        <PressableWithFeedback>
-          <View
-            style={{
-              alignItems: 'center',
-              height: 40,
-              justifyContent: 'center',
-            }}>
-            <Text>Pressable</Text>
-          </View>
-        </PressableWithFeedback>
-        <Spacer space={50} />
-        <Button title="Go back" onPress={() => navigation.goBack()} />
-      </View>
+      <PressableWithFeedback>
+        <View
+          style={{
+            alignItems: 'center',
+            height: 40,
+            justifyContent: 'center',
+          }}>
+          <Text>Pressable</Text>
+        </View>
+      </PressableWithFeedback>
+      <Spacer space={50} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
   );
 }
 
