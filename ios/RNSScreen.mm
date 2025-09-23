@@ -140,6 +140,18 @@ struct ContentWrapperBox {
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
+- (BOOL)getFullScreenSwipeShadowEnabled
+{
+  if (@available(iOS 26, *)) {
+    // fullScreenSwipeShadow is tied to RNSPanGestureRecognizer, which, on iOS 26, is used only for custom animations,
+    // and replaced with native interactiveContentPopGestureRecognizer for everything else.
+    // We want them to look similar and native-like, so it should default to `YES`.
+    return YES;
+  }
+
+  return _fullScreenSwipeShadowEnabled;
+}
+
 - (UIViewController *)reactViewController
 {
   return _controller;
@@ -731,9 +743,27 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 }
 
-#if !RCT_NEW_ARCH_ENABLED
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (@available(iOS 26, *)) {
+    // In iOS 26, as soon as another screen appears in transition, it is interactable
+    // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
+    // Disabling interactions for parent navigation controller won't be enough in case of nested stack
+    // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
+    // To be sure, we block interactions on the whole window.
+    // Note that newWindows is nil when moving from instead of moving to, and Obj-C handles nil correctly
+    newWindow.userInteractionEnabled = false;
+  }
+}
+
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
+  if (@available(iOS 26, *)) {
+    // Disable interactions to disallow multiple modals dismissed at once; see willMoveToWindow
+    presentationController.containerView.window.userInteractionEnabled = false;
+  }
+
+#if !RCT_NEW_ARCH_ENABLED
   // On Paper, we need to call both "cancel" and "reset" here because RN's gesture
   // recognizer does not handle the scenario when it gets cancelled by other top
   // level gesture recognizer. In this case by the modal dismiss gesture.
@@ -746,8 +776,8 @@ RNS_IGNORE_SUPER_CALL_END
   // down.
   [_touchHandler cancel];
   [_touchHandler reset];
-}
 #endif // !RCT_NEW_ARCH_ENABLED
+}
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
@@ -759,6 +789,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions; see presentationControllerWillDismiss
+    presentationController.containerView.window.userInteractionEnabled = true;
+  }
+
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
   // with usePreventRemove API of react-navigation v7.
   [self notifyGestureCancel];
@@ -769,6 +804,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions; see presentationControllerWillDismiss
+    // Dismissed screen doesn't hold a reference to window, but presentingViewController.view does
+    presentationController.presentingViewController.view.window.userInteractionEnabled = true;
+  }
+
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
     [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:) withObject:presentationController];
   }
@@ -1529,6 +1570,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions, see willMoveToWindow
+    self.view.window.userInteractionEnabled = true;
+  }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
     // we are going forward or dismissing without swipe
