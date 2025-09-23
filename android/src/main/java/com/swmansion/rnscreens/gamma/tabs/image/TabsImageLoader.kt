@@ -14,7 +14,7 @@ import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.CloseableStaticBitmap
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 
-fun loadTabImage(
+internal fun loadTabImage(
     context: Context,
     uri: String,
     onLoaded: (Drawable) -> Unit,
