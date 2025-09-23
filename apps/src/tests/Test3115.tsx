@@ -55,7 +55,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
           name: 'sun.max'
         },
         android: {
-          type: 'drawableResourceAndroid',
+          type: 'drawableResource',
           name: 'sunny',
         }
       },
@@ -72,7 +72,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
           name: 'snow'
         },
         android: {
-          type: 'drawableResourceAndroid',
+          type: 'drawableResource',
           name: 'mode_cool',
         }
       },

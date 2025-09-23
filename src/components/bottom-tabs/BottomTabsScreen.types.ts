@@ -35,7 +35,7 @@ export type PlatformIconIOS =
 
 export type PlatformIconAndroid =
   | {
-      type: 'drawableResourceAndroid';
+      type: 'drawableResource';
       name: string;
     }
   | PlatformIconShared;
@@ -347,7 +347,7 @@ export interface BottomTabsScreenProps {
    *   Uses an image from the provided resource.
    *
    *   Remarks: `imageSource` type doesn't support SVGs on Android.
-   *   For loading SVGs use `drawableResourceAndroid` type.
+   *   For loading SVGs use `drawableResource` type.
    *
    * iOS-only:
    * - `{ type: 'sfSymbol', name }`
@@ -358,7 +358,7 @@ export interface BottomTabsScreenProps {
    *   of the tab bar item and icon color-related props.
    *
    * Android-only:
-   * - `{ type: 'drawableResourceAndroid', name }`
+   * - `{ type: 'drawableResource', name }`
    *   Uses a drawable resource with the given name.
    *
    *   Remarks: Requires passing a drawable to resources via Android Studio.
