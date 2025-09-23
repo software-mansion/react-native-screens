@@ -34,6 +34,14 @@ void NativeProxy::registerNatives() {
                 method(javaPart_, tag);
             });
         }
+        
+        for (auto it = coordinatorsWithMountingOverrides_.begin(); it != coordinatorsWithMountingOverrides_.end(); ) {
+            if (it->expired()) {
+                it = coordinatorsWithMountingOverrides_.erase(it);
+            } else {
+                ++it;
+            }
+        }
 
         uiManager->getShadowTreeRegistry().enumerate(
                 [this](const facebook::react::ShadowTree& shadowTree, bool& stop) {
