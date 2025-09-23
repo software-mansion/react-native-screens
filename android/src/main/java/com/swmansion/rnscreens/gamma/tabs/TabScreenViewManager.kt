@@ -16,8 +16,8 @@ import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
+import com.swmansion.rnscreens.gamma.tabs.image.TabsImageLoader
 import com.swmansion.rnscreens.utils.RNSLog
-import com.swmansion.rnscreens.utils.TabsImageLoader
 
 @ReactModule(name = TabScreenViewManager.REACT_CLASS)
 class TabScreenViewManager :

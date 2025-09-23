@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.utils
+package com.swmansion.rnscreens.gamma.tabs.image
 
 import android.content.Context
 import android.graphics.drawable.Drawable
