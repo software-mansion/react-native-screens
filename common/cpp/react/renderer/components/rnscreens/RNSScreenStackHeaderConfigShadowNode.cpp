@@ -7,14 +7,6 @@ extern const char RNSScreenStackHeaderConfigComponentName[] =
 
 void RNSScreenStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
   YogaLayoutableShadowNode::layout(layoutContext);
-  #if defined(ANDROID)
-  // When translucent is set, the content will display under the header.
-  // We do not need to apply the frame corrections described here: https://github.com/software-mansion/react-native-screens/pull/2466
-  auto& stackProps = dynamic_cast<const RNSScreenStackHeaderConfigProps&>(*props_);
-  if (stackProps.translucent) {
-    return;
-  }
-  #endif // !ANDROID 
   applyFrameCorrections();
 }
 
