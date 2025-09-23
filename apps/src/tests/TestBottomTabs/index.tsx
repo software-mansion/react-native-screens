@@ -103,7 +103,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       icon: {
         ios: {
-          type: 'templateSourceIOS',
+          type: 'templateSource',
           templateSource: require('../../../assets/variableIcons/icon.png'),
         }, 
         android: {
@@ -112,7 +112,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         }
       },
       selectedIcon: {
-        type: 'templateSourceIOS',
+        type: 'templateSource',
         templateSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
       title: 'Tab2',
