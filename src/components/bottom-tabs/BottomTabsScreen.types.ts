@@ -5,7 +5,7 @@ import type {
   TextStyle,
   ViewProps,
 } from 'react-native';
-import { ScrollEdgeEffect } from '../shared/types';
+import { SafeAreaEdges, ScrollEdgeEffect } from '../shared/types';
 
 export type EmptyObject = Record<string, never>;
 
@@ -17,13 +17,6 @@ export type LifecycleStateChangeEvent = Readonly<{
   previousState: number;
   newState: number;
 }>;
-
-export interface BottomTabsScreenSafeAreaEdges {
-  top?: boolean;
-  bottom?: boolean;
-  left?: boolean;
-  right?: boolean;
-}
 
 // iOS-specific: SFSymbol usage
 export interface SFIcon {
@@ -386,7 +379,7 @@ export interface BottomTabsScreenProps {
    * On Android, bottom edge is enabled.
    * On iOS, all edges are disabled.
    */
-  respectedSafeAreaEdges?: BottomTabsScreenSafeAreaEdges;
+  respectedSafeAreaEdges?: SafeAreaEdges;
 
   /**
    * @summary Specifies styling for enitre screen.

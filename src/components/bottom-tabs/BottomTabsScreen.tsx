@@ -26,12 +26,12 @@ import type {
   BottomTabsScreenItemAppearance,
   BottomTabsScreenItemStateAppearance,
   BottomTabsScreenProps,
-  BottomTabsScreenSafeAreaEdges,
   EmptyObject,
   Icon,
 } from './BottomTabsScreen.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import { SafeAreaView, SafeAreaViewProps } from 'react-native-screens/private';
+import { SafeAreaEdges } from 'react-native-screens';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -258,7 +258,7 @@ function shouldFreezeScreen(
 }
 
 function getSafeAreaViewEdges(
-  edges?: BottomTabsScreenSafeAreaEdges,
+  edges?: SafeAreaEdges,
 ): SafeAreaViewProps['edges'] {
   let defaultEdges: SafeAreaViewProps['edges'];
 
