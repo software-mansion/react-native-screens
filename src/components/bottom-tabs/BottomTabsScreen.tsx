@@ -30,8 +30,9 @@ import type {
   Icon,
 } from './BottomTabsScreen.types';
 import { bottomTabsDebugLog } from '../../private/logging';
-import { SafeAreaView, SafeAreaViewProps } from 'react-native-screens/private';
-import { SafeAreaEdges } from 'react-native-screens';
+import SafeAreaView from '../safe-area/SafeAreaView';
+import { SafeAreaEdges } from '../shared/types';
+import { SafeAreaViewProps } from '../safe-area/SafeAreaView.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
