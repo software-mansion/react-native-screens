@@ -1202,21 +1202,21 @@ RNS_IGNORE_SUPER_CALL_END
     // either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer,
     // then we allow them to proceed iff full screen swipe is enabled.
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? [topScreen isFullScreenSwipeBackEnabled] : NO;
+      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? [topScreen fullScreenSwipeEnabledBoolean] : NO;
     }
     if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer) {
-      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? NO : [topScreen isFullScreenSwipeBackEnabled];
+      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? NO : [topScreen fullScreenSwipeEnabledBoolean];
     }
   } else {
     // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-      return [topScreen isFullScreenSwipeBackEnabled];
+      return [topScreen fullScreenSwipeEnabledBoolean];
     }
   }
 #else // check for iOS >= 26
   // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
   if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    return [topScreen isFullScreenSwipeBackEnabled];
+    return [topScreen fullScreenSwipeEnabledBoolean];
   }
 #endif // check for iOS >= 26
 

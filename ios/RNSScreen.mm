@@ -891,7 +891,7 @@ RNS_IGNORE_SUPER_CALL_END
   return self.controller.parentViewController == nil && self.controller.presentingViewController != nil;
 }
 
-- (BOOL)isFullScreenSwipeBackEnabled
+- (BOOL)fullScreenSwipeEnabledBoolean
 {
   switch (self.fullScreenSwipeEnabled) {
     case RNSOptionalBooleanTrue:

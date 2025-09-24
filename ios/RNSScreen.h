@@ -164,7 +164,11 @@ namespace react = facebook::react;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
 
-- (BOOL)isFullScreenSwipeBackEnabled;
+/**
+ * Returns a boolean equivalen of fullScreenSwipeEnabled OptionalBoolean, resolves Undefined as `false` for iOS < 26,
+ * `true` otherwise.
+ */
+- (BOOL)fullScreenSwipeEnabledBoolean;
 
 /**
  * Tell `Screen` component that it has been removed from react state and can safely cleanup
