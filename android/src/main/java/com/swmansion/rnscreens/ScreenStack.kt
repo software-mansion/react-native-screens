@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
 import android.view.View
-import androidx.core.view.ViewCompat
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
@@ -326,12 +325,12 @@ class ScreenStack(
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             fragmentWrapper.screen.changeFocusability(
                                 NOT_FOCUSABLE,
-                                FOCUS_BLOCK_DESCENDANTS
+                                FOCUS_BLOCK_DESCENDANTS,
                             )
                         } else {
                             fragmentWrapper.screen.changeFocusabilityCompat(
                                 false,
-                                FOCUS_BLOCK_DESCENDANTS
+                                FOCUS_BLOCK_DESCENDANTS,
                             )
                         }
 
