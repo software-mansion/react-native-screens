@@ -64,9 +64,7 @@ type SplitStyleResult = {
 
 // TODO: figure out whether other styles, like borders, filters, etc.
 // shouldn't be applied on the Screen level on iOS due to the inset.
-export function extractScreenStyles(
-  style: StyleProp<ViewStyle>,
-): SplitStyleResult {
+function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
   const flatStyle = StyleSheet.flatten(style);
 
   const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
