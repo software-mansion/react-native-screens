@@ -444,8 +444,7 @@ class TabsHost(
         }
     }
 
-    override fun getInterfaceInsets(): EdgeInsets =
-        EdgeInsets(0.0f, 0.0f, (bottomNavigationView.bottom - bottomNavigationView.top).toFloat(), 0.0f)
+    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
 
     override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -485,7 +484,7 @@ class TabsHost(
         oldBottom: Int,
     ) {
         require(view is BottomNavigationView) {
-            "[RNScreens] TabsHost's onLayoutChange expects BottomNavigationView, received ${if (view != null) view::class.java else "null"} instead"
+            "[RNScreens] TabsHost's onLayoutChange expects BottomNavigationView, received $view instead"
         }
 
         val oldHeight = oldBottom - oldTop
@@ -493,7 +492,7 @@ class TabsHost(
 
         if (newHeight != oldHeight) {
             interfaceInsetsChangeListener?.apply {
-                this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, newHeight.toFloat(), 0.0f))
+                this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, newHeight.toFloat()))
             }
         }
     }

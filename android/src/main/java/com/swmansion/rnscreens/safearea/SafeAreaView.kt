@@ -33,8 +33,8 @@ class SafeAreaView(
     OnApplyWindowInsetsListener,
     ViewTreeObserver.OnPreDrawListener {
     private var provider = WeakReference<SafeAreaProvider>(null)
-    private var currentInterfaceInsets: EdgeInsets = EdgeInsets.NONE
-    private var currentSystemInsets: EdgeInsets = EdgeInsets.NONE
+    private var currentInterfaceInsets: EdgeInsets = EdgeInsets.ZERO
+    private var currentSystemInsets: EdgeInsets = EdgeInsets.ZERO
     private var needsInsetsUpdate = false
     private var stateWrapper: StateWrapper? = null
     private var edges: SafeAreaViewEdges? = null
@@ -53,7 +53,7 @@ class SafeAreaView(
     override fun onAttachedToWindow() {
         viewTreeObserver.addOnPreDrawListener(this)
 
-        val newProvider = findProvider()
+        val newProvider = findAncestorProvider()
         if (newProvider == null) {
             super.onAttachedToWindow()
             return
@@ -75,7 +75,7 @@ class SafeAreaView(
         super.onDetachedFromWindow()
     }
 
-    private fun findProvider(): SafeAreaProvider? {
+    private fun findAncestorProvider(): SafeAreaProvider? {
         var providerCandidate = this.parent
 
         while (providerCandidate != null) {
@@ -150,17 +150,17 @@ class SafeAreaView(
     private fun updateInsets() {
         val safeAreaInsets =
             EdgeInsets.max(
-                if (insetType.containsInterface()) currentInterfaceInsets else EdgeInsets.NONE,
-                if (insetType.containsSystem()) currentSystemInsets else EdgeInsets.NONE,
+                if (insetType.containsInterface()) currentInterfaceInsets else EdgeInsets.ZERO,
+                if (insetType.containsSystem()) currentSystemInsets else EdgeInsets.ZERO,
             )
 
         val stateWrapper = getStateWrapper()
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && stateWrapper != null) {
             val insets = Arguments.createMap()
+            insets.putDouble("left", PixelUtil.toDIPFromPixel(safeAreaInsets.left).toDouble())
             insets.putDouble("top", PixelUtil.toDIPFromPixel(safeAreaInsets.top).toDouble())
             insets.putDouble("right", PixelUtil.toDIPFromPixel(safeAreaInsets.right).toDouble())
             insets.putDouble("bottom", PixelUtil.toDIPFromPixel(safeAreaInsets.bottom).toDouble())
-            insets.putDouble("left", PixelUtil.toDIPFromPixel(safeAreaInsets.left).toDouble())
 
             val newState = Arguments.createMap()
             newState.putMap("insets", insets)
@@ -170,7 +170,7 @@ class SafeAreaView(
             val localData =
                 SafeAreaViewLocalData(
                     insets = safeAreaInsets,
-                    edges = edges ?: SafeAreaViewEdges.NONE,
+                    edges = edges ?: SafeAreaViewEdges.ZERO,
                 )
             val reactContext = getReactContext(this)
             val uiManager = reactContext.getNativeModule(UIManagerModule::class.java)

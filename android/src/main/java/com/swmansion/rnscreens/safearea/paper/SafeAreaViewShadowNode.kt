@@ -24,16 +24,16 @@ class SafeAreaViewShadowNode : LayoutShadowNode() {
 
     private fun updateInsets() {
         val localData = localData ?: return
+        var left = 0f
         var top = 0f
         var right = 0f
         var bottom = 0f
-        var left = 0f
         val allEdges = margins[Spacing.ALL]
         if (!java.lang.Float.isNaN(allEdges)) {
+            left = allEdges
             top = allEdges
             right = allEdges
             bottom = allEdges
-            left = allEdges
         }
         val verticalEdges = margins[Spacing.VERTICAL]
         if (!java.lang.Float.isNaN(verticalEdges)) {
@@ -42,8 +42,12 @@ class SafeAreaViewShadowNode : LayoutShadowNode() {
         }
         val horizontalEdges = margins[Spacing.HORIZONTAL]
         if (!java.lang.Float.isNaN(horizontalEdges)) {
-            right = horizontalEdges
             left = horizontalEdges
+            right = horizontalEdges
+        }
+        val leftEdge = margins[Spacing.LEFT]
+        if (!java.lang.Float.isNaN(leftEdge)) {
+            left = leftEdge
         }
         val topEdge = margins[Spacing.TOP]
         if (!java.lang.Float.isNaN(topEdge)) {
@@ -57,21 +61,17 @@ class SafeAreaViewShadowNode : LayoutShadowNode() {
         if (!java.lang.Float.isNaN(bottomEdge)) {
             bottom = bottomEdge
         }
-        val leftEdge = margins[Spacing.LEFT]
-        if (!java.lang.Float.isNaN(leftEdge)) {
-            left = leftEdge
-        }
+        left = PixelUtil.toPixelFromDIP(left)
         top = PixelUtil.toPixelFromDIP(top)
         right = PixelUtil.toPixelFromDIP(right)
         bottom = PixelUtil.toPixelFromDIP(bottom)
-        left = PixelUtil.toPixelFromDIP(left)
         val edges = localData.edges
         val insets = localData.insets
 
+        super.setMargin(Spacing.LEFT, getEdgeValue(edges.left, insets.left, left))
         super.setMargin(Spacing.TOP, getEdgeValue(edges.top, insets.top, top))
         super.setMargin(Spacing.RIGHT, getEdgeValue(edges.right, insets.right, right))
         super.setMargin(Spacing.BOTTOM, getEdgeValue(edges.bottom, insets.bottom, bottom))
-        super.setMargin(Spacing.LEFT, getEdgeValue(edges.left, insets.left, left))
     }
 
     private fun getEdgeValue(
