@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.bottomsheet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.view.MotionEvent
 import android.view.ViewGroup
 import com.facebook.react.uimanager.ReactCompoundViewGroup
@@ -31,6 +32,7 @@ internal class DimmingView(
 
     init {
         pointerEventsProxy.pointerEventsImpl = DimmingViewPointerEventsImpl(this)
+        setFocusable(false)
     }
 
     internal val blockGestures
