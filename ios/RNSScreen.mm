@@ -891,6 +891,21 @@ RNS_IGNORE_SUPER_CALL_END
   return self.controller.parentViewController == nil && self.controller.presentingViewController != nil;
 }
 
+- (BOOL)isFullScreenSwipeBackEnabled
+{
+  switch (self.fullScreenSwipeEnabled) {
+    case RNSOptionalBooleanTrue:
+      return YES;
+    case RNSOptionalBooleanFalse:
+      return NO;
+    case RNSOptionalBooleanUndefined:
+      if (@available(iOS 26, *)) {
+        return YES;
+      }
+      return NO;
+  }
+}
+
 - (BOOL)isFullscreenModal
 {
   switch (self.controller.modalPresentationStyle) {
@@ -1333,7 +1348,8 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
-  [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+  [self setFullScreenSwipeEnabled:[RNSConvert RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
+                                                  newScreenProps.fullScreenSwipeEnabled]];
 
   [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
 
@@ -2171,7 +2187,7 @@ RCT_EXPORT_MODULE()
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, RNSOptionalBoolean);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)

@@ -138,6 +138,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         activityState,
         children,
         isNativeStack,
+        fullScreenSwipeEnabled,
         gestureResponseDistance,
         scrollEdgeEffects,
         onGestureCancel,
@@ -220,6 +221,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
             sheetInitialDetent={resolvedSheetInitialDetentIndex}
+            fullScreenSwipeEnabled={
+              fullScreenSwipeEnabled === undefined
+                ? 'undefined'
+                : fullScreenSwipeEnabled
+                ? 'true'
+                : 'false'
+            }
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,

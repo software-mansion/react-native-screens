@@ -72,7 +72,7 @@ namespace react = facebook::react;
      RNSSafeAreaProviding,
      RNSScrollEdgeEffectProviding>
 
-@property (nonatomic) BOOL fullScreenSwipeEnabled;
+@property (nonatomic) RNSOptionalBoolean fullScreenSwipeEnabled;
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;
@@ -163,6 +163,8 @@ namespace react = facebook::react;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
+
+- (BOOL)isFullScreenSwipeBackEnabled;
 
 /**
  * Tell `Screen` component that it has been removed from react state and can safely cleanup
