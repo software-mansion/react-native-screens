@@ -67,6 +67,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     scrollEdgeEffects,
     respectedSafeAreaEdges,
     contentStyle,
+    children,
     ...rest
   } = props;
 
@@ -163,7 +164,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
         <View style={[contentStyle, styles.flex]}>
           <SafeAreaView edges={getSafeAreaViewEdges(respectedSafeAreaEdges)}>
-            {rest.children}
+            {children}
           </SafeAreaView>
         </View>
       </Freeze>
