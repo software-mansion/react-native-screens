@@ -29,56 +29,6 @@ type Props = Omit<
   contentStyle?: StyleProp<ViewStyle>;
 };
 
-function getPositioningStyle(
-  allowedDetents: ScreenProps['sheetAllowedDetents'],
-  presentation?: StackPresentationTypes,
-) {
-  const isIOS = Platform.OS === 'ios';
-
-  if (presentation !== 'formSheet') {
-    return styles.container;
-  }
-
-  if (isIOS) {
-    if (allowedDetents === 'fitToContents') {
-      return styles.absolute;
-    } else {
-      return styles.container;
-    }
-  }
-
-  // Other platforms, tested reliably only on Android
-  if (allowedDetents === 'fitToContents') {
-    return {};
-  }
-
-  return styles.container;
-}
-
-type SplitStyleResult = {
-  screenStyles: {
-    backgroundColor?: ViewStyle['backgroundColor'];
-  };
-  contentWrapperStyles: StyleProp<ViewStyle>;
-};
-
-// TODO: figure out whether other styles, like borders, filters, etc.
-// shouldn't be applied on the Screen level on iOS due to the inset.
-function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
-  const flatStyle = StyleSheet.flatten(style);
-
-  const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
-
-  const screenStyles = {
-    backgroundColor,
-  };
-
-  return {
-    screenStyles,
-    contentWrapperStyles,
-  };
-}
-
 function ScreenStackItem(
   {
     children,
@@ -217,6 +167,56 @@ function ScreenStackItem(
 }
 
 export default React.forwardRef(ScreenStackItem);
+
+function getPositioningStyle(
+  allowedDetents: ScreenProps['sheetAllowedDetents'],
+  presentation?: StackPresentationTypes,
+) {
+  const isIOS = Platform.OS === 'ios';
+
+  if (presentation !== 'formSheet') {
+    return styles.container;
+  }
+
+  if (isIOS) {
+    if (allowedDetents === 'fitToContents') {
+      return styles.absolute;
+    } else {
+      return styles.container;
+    }
+  }
+
+  // Other platforms, tested reliably only on Android
+  if (allowedDetents === 'fitToContents') {
+    return {};
+  }
+
+  return styles.container;
+}
+
+type SplitStyleResult = {
+  screenStyles: {
+    backgroundColor?: ViewStyle['backgroundColor'];
+  };
+  contentWrapperStyles: StyleProp<ViewStyle>;
+};
+
+// TODO: figure out whether other styles, like borders, filters, etc.
+// shouldn't be applied on the Screen level on iOS due to the inset.
+function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
+  const flatStyle = StyleSheet.flatten(style);
+
+  const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
+
+  const screenStyles = {
+    backgroundColor,
+  };
+
+  return {
+    screenStyles,
+    contentWrapperStyles,
+  };
+}
 
 const styles = StyleSheet.create({
   container: {
