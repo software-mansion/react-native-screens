@@ -1,3 +1,7 @@
+// Types
+export * from './types';
+
+// Components
 export {
   internalEnableDetailedBottomTabsLogging,
   bottomTabsDebugLog,
