@@ -33,6 +33,7 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
 #import "RNSTabBarController.h"
 
@@ -72,6 +73,7 @@ struct ContentWrapperBox {
   CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
+  BOOL _shouldUpdateScrollEdgeEffects;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -130,6 +132,7 @@ struct ContentWrapperBox {
   _hasHomeIndicatorHiddenSet = NO;
   _activityState = RNSActivityStateUndefined;
   _fullScreenSwipeShadowEnabled = YES;
+  _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
@@ -138,6 +141,18 @@ struct ContentWrapperBox {
 #ifdef RCT_NEW_ARCH_ENABLED
   _markedForUnmountInCurrentTransaction = NO;
 #endif // RCT_NEW_ARCH_ENABLED
+}
+
+- (BOOL)getFullScreenSwipeShadowEnabled
+{
+  if (@available(iOS 26, *)) {
+    // fullScreenSwipeShadow is tied to RNSPanGestureRecognizer, which, on iOS 26, is used only for custom animations,
+    // and replaced with native interactiveContentPopGestureRecognizer for everything else.
+    // We want them to look similar and native-like, so it should default to `YES`.
+    return YES;
+  }
+
+  return _fullScreenSwipeShadowEnabled;
 }
 
 - (UIViewController *)reactViewController
@@ -427,6 +442,30 @@ RNS_IGNORE_SUPER_CALL_END
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
 }
 #endif
+
+- (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
+}
+
+- (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _leftScrollEdgeEffect = leftScrollEdgeEffect;
+}
+
+- (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _rightScrollEdgeEffect = rightScrollEdgeEffect;
+}
+
+- (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _topScrollEdgeEffect = topScrollEdgeEffect;
+}
 
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (UIView *)reactSuperview
@@ -731,9 +770,27 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 }
 
-#if !RCT_NEW_ARCH_ENABLED
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (@available(iOS 26, *)) {
+    // In iOS 26, as soon as another screen appears in transition, it is interactable
+    // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
+    // Disabling interactions for parent navigation controller won't be enough in case of nested stack
+    // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
+    // To be sure, we block interactions on the whole window.
+    // Note that newWindows is nil when moving from instead of moving to, and Obj-C handles nil correctly
+    newWindow.userInteractionEnabled = false;
+  }
+}
+
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
+  if (@available(iOS 26, *)) {
+    // Disable interactions to disallow multiple modals dismissed at once; see willMoveToWindow
+    presentationController.containerView.window.userInteractionEnabled = false;
+  }
+
+#if !RCT_NEW_ARCH_ENABLED
   // On Paper, we need to call both "cancel" and "reset" here because RN's gesture
   // recognizer does not handle the scenario when it gets cancelled by other top
   // level gesture recognizer. In this case by the modal dismiss gesture.
@@ -746,8 +803,8 @@ RNS_IGNORE_SUPER_CALL_END
   // down.
   [_touchHandler cancel];
   [_touchHandler reset];
-}
 #endif // !RCT_NEW_ARCH_ENABLED
+}
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
@@ -759,6 +816,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions; see presentationControllerWillDismiss
+    presentationController.containerView.window.userInteractionEnabled = true;
+  }
+
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
   // with usePreventRemove API of react-navigation v7.
   [self notifyGestureCancel];
@@ -769,6 +831,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions; see presentationControllerWillDismiss
+    // Dismissed screen doesn't hold a reference to window, but presentingViewController.view does
+    presentationController.presentingViewController.view.window.userInteractionEnabled = true;
+  }
+
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
     [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:) withObject:presentationController];
   }
@@ -1172,6 +1240,12 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+- (void)updateContentScrollViewEdgeEffectsIfExists
+{
+  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                      withProvider:self];
+}
+
 #pragma mark - RNSSafeAreaProviding
 
 - (UIEdgeInsets)providerSafeAreaInsets
@@ -1339,6 +1413,26 @@ RNS_IGNORE_SUPER_CALL_END
     [self setScreenId:RCTNSStringFromStringNilIfEmpty(newScreenProps.screenId)];
   }
 
+  if (newScreenProps.bottomScrollEdgeEffect != oldScreenProps.bottomScrollEdgeEffect) {
+    [self setBottomScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+                                                    newScreenProps.bottomScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.leftScrollEdgeEffect != oldScreenProps.leftScrollEdgeEffect) {
+    [self setLeftScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+                                                  newScreenProps.leftScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.rightScrollEdgeEffect != oldScreenProps.rightScrollEdgeEffect) {
+    [self setRightScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+                                                   newScreenProps.rightScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.topScrollEdgeEffect != oldScreenProps.topScrollEdgeEffect) {
+    [self setTopScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+                                                 newScreenProps.topScrollEdgeEffect]];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1368,6 +1462,10 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
+  if (_shouldUpdateScrollEdgeEffects) {
+    [self updateContentScrollViewEdgeEffectsIfExists];
+  }
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];
@@ -1392,6 +1490,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
+
+  if (_shouldUpdateScrollEdgeEffects) {
+    // see finalizeUpdates() for Fabric
+    [self updateContentScrollViewEdgeEffectsIfExists];
+    _shouldUpdateScrollEdgeEffects = NO;
+  }
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
     [self updateFormSheetPresentationStyle];
@@ -1529,6 +1634,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions, see willMoveToWindow
+    self.view.window.userInteractionEnabled = true;
+  }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
     // we are going forward or dismissing without swipe
@@ -1703,6 +1812,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   } else {
     [self.screenView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    [self.screenView updateContentScrollViewEdgeEffectsIfExists];
   }
 }
 
@@ -2073,6 +2183,10 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
+RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);

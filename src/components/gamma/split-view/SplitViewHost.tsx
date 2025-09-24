@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import SplitViewHostNativeComponent from '../../fabric/gamma/SplitViewHostNativeComponent';
+import SplitViewHostNativeComponent from '../../../fabric/gamma/SplitViewHostNativeComponent';
 import type {
   SplitViewDisplayMode,
   SplitViewHostProps,

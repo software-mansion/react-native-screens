@@ -155,6 +155,7 @@
   RNSLog(@"Change selected view controller to: %@", selectedViewController);
 
   [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+  [selectedViewController.tabScreenComponentView updateContentScrollViewEdgeEffectsIfExists];
   [self setSelectedViewController:selectedViewController];
 }
 

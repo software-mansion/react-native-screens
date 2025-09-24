@@ -133,6 +133,48 @@
   }
 }
 
+#define SWITCH_EDGE_EFFECT(X)                              \
+  switch (edgeEffect) {                                    \
+    using enum react::X;                                   \
+    case Automatic:                                        \
+      return RNSScrollEdgeEffectAutomatic;                 \
+    case Hard:                                             \
+      return RNSScrollEdgeEffectHard;                      \
+    case Soft:                                             \
+      return RNSScrollEdgeEffectSoft;                      \
+    case Hidden:                                           \
+      return RNSScrollEdgeEffectHidden;                    \
+    default:                                               \
+      RCTLogError(@"[RNScreens] unsupported edge effect"); \
+      return RNSScrollEdgeEffectAutomatic;                 \
+  }
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenBottomScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenBottomScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenLeftScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenLeftScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenRightScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenRightScrollEdgeEffect);
+}
+
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenTopScrollEdgeEffect)edgeEffect
+{
+  SWITCH_EDGE_EFFECT(RNSScreenTopScrollEdgeEffect);
+}
+
+#undef SWITCH_EDGE_EFFECT
+
 + (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents
 {
   auto array = [NSMutableArray<NSNumber *> arrayWithCapacity:detents.size()];

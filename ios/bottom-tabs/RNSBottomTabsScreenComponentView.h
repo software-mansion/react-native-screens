@@ -3,6 +3,7 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
+#import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -39,6 +40,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) RNSBottomTabsHostComponentView *reactSuperview;
 
+/**
+ * Updates [scroll edge effects](https://developer.apple.com/documentation/uikit/uiscrolledgeeffect)
+ * on a content ScrollView inside the tab screen, if one exists. It uses ScrollViewFinder to find the ScrollView.
+ */
+- (void)updateContentScrollViewEdgeEffectsIfExists;
+
 @end
 
 #pragma mark - Props
@@ -46,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Properties set on component in JavaScript.
  */
-@interface RNSBottomTabsScreenComponentView () <RNSScrollViewBehaviorOverriding>
+@interface RNSBottomTabsScreenComponentView () <RNSScrollViewBehaviorOverriding, RNSScrollEdgeEffectProviding>
 
 // TODO: All of these properties should be `readonly`. Do this when support for legacy
 // architecture is dropped.
@@ -73,6 +80,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
+
+@property (nonatomic) RNSScrollEdgeEffect bottomScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 
 @property (nonatomic) RNSBottomTabsScreenSystemItem systemItem;
 
