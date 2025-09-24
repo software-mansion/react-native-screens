@@ -130,12 +130,9 @@ class ScreenStackHeaderConfig(
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
 
         // Note that implementation of the callee differs between architectures.
-        // When translucent, send zero frame dimensions to prevent content offset
-        val frameWidth = if (isHeaderTranslucent) 0 else toolbar.width
-        val frameHeight = if (isHeaderTranslucent) 0 else toolbar.height
         updateHeaderConfigState(
-            frameWidth,
-            frameHeight,
+            toolbar.width,
+            toolbar.height,
             contentInsetStart,
             contentInsetEnd,
         )
