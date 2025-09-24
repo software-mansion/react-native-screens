@@ -1,10 +1,11 @@
 // Types
 export * from './types';
 
-// Components
+// Logging
 export {
   internalEnableDetailedBottomTabsLogging,
   bottomTabsDebugLog,
 } from './logging';
 
+// Components
 export { default as SafeAreaView } from '../components/safe-area/SafeAreaView';
