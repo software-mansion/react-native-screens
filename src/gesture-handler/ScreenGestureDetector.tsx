@@ -14,7 +14,7 @@ import {
   makeMutable,
   runOnUI,
 } from 'react-native-reanimated';
-import { getShadowNodeWrapperAndTagFromRef, HostInstance, isFabric } from './fabricUtils';
+import { getShadowNodeWrapperAndTagFromRef, isFabric } from './fabricUtils';
 import { RNScreensTurboModule } from './RNScreensTurboModule';
 import { DefaultEvent, DefaultScreenDimensions } from './defaults';
 import {
