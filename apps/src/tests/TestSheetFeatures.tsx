@@ -1,7 +1,7 @@
 import { NavigationContainer, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, View, useWindowDimensions, StyleSheet, TextInput, Platform, ScrollView } from 'react-native';
+import { Button, View, StyleSheet, TextInput, Platform, ScrollView } from 'react-native';
 import { ReanimatedScreenProvider, useReanimatedSheetTranslation } from 'react-native-screens/reanimated';
 
 import Animated, {

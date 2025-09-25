@@ -162,7 +162,7 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
-- (void)notifySheetTranslation:(double)y;
+- (void)notifySheetTranslation:(double)y transitioning:(BOOL)transitioning;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;

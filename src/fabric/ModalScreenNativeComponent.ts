@@ -26,6 +26,7 @@ type TransitionProgressEvent = Readonly<{
 
 type SheetTranslationEvent = Readonly<{
   y: Double;
+  transitioning: Int32;
 }>;
 
 type HeaderHeightChangeEvent = Readonly<{

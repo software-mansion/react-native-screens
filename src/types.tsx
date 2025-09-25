@@ -94,6 +94,7 @@ export type TransitionProgressEventType = {
 
 export type SheetTranslationEventType = {
   y: number;
+  transitioning: number;
 };
 
 export type GestureResponseDistanceType = {

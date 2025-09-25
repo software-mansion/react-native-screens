@@ -9,7 +9,13 @@ import {
 } from '../types';
 
 // @ts-ignore file to be used only if `react-native-reanimated` available in the project
-import Animated, { useEvent, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  useEvent,
+  useSharedValue,
+  withSpring,
+  WithSpringConfig,
+  withTiming,
+} from 'react-native-reanimated';
 import ReanimatedTransitionProgressContext from './ReanimatedTransitionProgressContext';
 import {
   useSafeAreaFrame,
@@ -19,6 +25,15 @@ import getDefaultHeaderHeight from '../native-stack/utils/getDefaultHeaderHeight
 import getStatusBarHeight from '../native-stack/utils/getStatusBarHeight';
 import ReanimatedHeaderHeightContext from './ReanimatedHeaderHeightContext';
 import ReanimatedSheetTranslationContext from './ReanimatedSheetTranslationContext';
+
+const SPRING_CONFIG: WithSpringConfig = {
+  damping: 500,
+  stiffness: 1000,
+  mass: 3,
+  overshootClamping: true,
+  restDisplacementThreshold: 10,
+  restSpeedThreshold: 10,
+};
 
 const AnimatedScreen = Animated.createAnimatedComponent(
   InnerScreen as unknown as React.ComponentClass,
@@ -88,7 +103,14 @@ const ReanimatedNativeStackScreen = React.forwardRef<
       onSheetTranslationReanimated={useEvent(
         (event: SheetTranslationEventType) => {
           'worklet';
-          translationY.value = event.y;
+          if (event.transitioning) {
+            translationY.value =
+              Platform.OS === 'android'
+                ? withTiming(event.y, { duration: 300 })
+                : withSpring(event.y, SPRING_CONFIG);
+          } else {
+            translationY.value = event.y;
+          }
         },
         [
           // @ts-ignore wrong type

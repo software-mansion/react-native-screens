@@ -776,22 +776,25 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 }
 
-- (void)notifySheetTranslation:(double)y
+- (void)notifySheetTranslation:(double)y transitioning:(BOOL)transitioning
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onSheetTranslation(react::RNSScreenEventEmitter::OnSheetTranslation{.y = y});
+        ->onSheetTranslation(
+            react::RNSScreenEventEmitter::OnSheetTranslation{.y = y, .transitioning = transitioning ? 1 : 0});
   }
   RNSSheetTranslationEvent *event =
       [[RNSSheetTranslationEvent alloc] initWithEventName:@"onSheetTranslation"
-                                                 reactTag:[NSNumber numberWithInt:self.tag]
-                                                        y:y];
+                                                 reactTag:[NSNumber numberWithInteger:self.tag]
+                                                        y:y
+                                            transitioning:transitioning];
   [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onSheetTranslation) {
     self.onSheetTranslation(@{
       @"y" : @(y),
+      @"transitioning" : @(transitioning ? 1 : 0),
     });
   }
 #endif
@@ -1575,6 +1578,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
+  CGFloat _currentY;
   BOOL _trackingYFromLayout;
   BOOL _dragging;
   BOOL _isTransitioning;
@@ -1587,7 +1591,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - Common
 
-- (UIView *)presentedView API_AVAILABLE(ios(15.0))
+- (UIView *)presentedView
 {
   return self.sheetPresentationController.presentedView;
 }
@@ -1609,20 +1613,17 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [super viewWillLayoutSubviews];
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0)
   // We are tracking translation Y on layout.
   // Note that this doesn't trigger when user is about to close the sheet
   // so we are going to track it again during transition (see below).
-  if (@available(iOS 15.0, *)) {
-    // Only when not transition and gesture is enabled
-    if (self.presentedView != nil && !_isTransitioning) {
-      _trackingYFromLayout = YES;
 
-      CGFloat sheetY = self.presentedView.frame.origin.y;
-      [self notifySheetTranslation:sheetY];
-    }
+  // Only when not transition and gesture is enabled
+  if (self.presentedView != nil && !_isTransitioning) {
+    _trackingYFromLayout = YES;
+
+    CGFloat sheetY = self.presentedView.frame.origin.y;
+    [self notifySheetTranslation:sheetY transitioning:NO];
   }
-#endif
 }
 
 // TODO: Find out why this is executed when screen is going out
@@ -1764,12 +1765,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    if (@available(iOS 15.0, *)) {
-      // This is causing flickering content when sheet is being dragged.
-      if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
-        [self.screenView updateBounds];
-      }
-    } else {
+    // This is causing flickering content when sheet is being dragged.
+    if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
       [self.screenView updateBounds];
     }
 #else
@@ -1906,27 +1903,23 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)setupGestureRecognizer
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0)
-  if (@available(iOS 15.0, *)) {
-    if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
-      return;
-    }
+  if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
+    return;
+  }
 
-    RNS_REACT_SCROLL_VIEW_COMPONENT *sheetScrollView = [self.screenView tryFindDescendantScrollView];
+  RNS_REACT_SCROLL_VIEW_COMPONENT *sheetScrollView = [self.screenView tryFindDescendantScrollView];
 
-    if (sheetScrollView != nil) {
-      // apply gesture recognizer to the scrollview if present
-      [sheetScrollView.scrollView.panGestureRecognizer addTarget:self action:@selector(handlePanGesture:)];
-    } else if (self.presentedView != nil) {
-      for (UIGestureRecognizer *recognizer in self.presentedView.gestureRecognizers ?: @[]) {
-        if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-          UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)recognizer;
-          [panGesture addTarget:self action:@selector(handlePanGesture:)];
-        }
+  if (sheetScrollView != nil) {
+    // apply gesture recognizer to the scrollview if present
+    [sheetScrollView.scrollView.panGestureRecognizer addTarget:self action:@selector(handlePanGesture:)];
+  } else if (self.presentedView != nil) {
+    for (UIGestureRecognizer *recognizer in self.presentedView.gestureRecognizers ?: @[]) {
+      if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)recognizer;
+        [panGesture addTarget:self action:@selector(handlePanGesture:)];
       }
     }
   }
-#endif
 }
 
 // track sheet Y when dragging.
@@ -1941,7 +1934,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       // we only send event when not tracking from layout
       if (!_trackingYFromLayout) {
         CGFloat draggedY = self.presentedView.frame.origin.y;
-        [self notifySheetTranslation:draggedY];
+        [self notifySheetTranslation:draggedY transitioning:NO];
       }
       break;
     }
@@ -1954,10 +1947,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
-- (void)notifySheetTranslation:(double)y
+- (void)notifySheetTranslation:(double)y transitioning:(BOOL)transitioning
 {
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
-    [self.screenView notifySheetTranslation:y];
+    [self.screenView notifySheetTranslation:y transitioning:transitioning];
   }
 }
 
@@ -2003,15 +1996,23 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
     }
+  }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0)
-    if (@available(iOS 15.0, *)) {
-      if (!_dragging && self.presentedView != nil) {
-        CGFloat sheetY = self.presentedView.layer.presentationLayer.frame.origin.y;
-        [self notifySheetTranslation:sheetY];
-      }
+  if (!_dragging && self.presentedView != nil) {
+    BOOL transitioning = NO;
+    CGFloat sheetY = self.presentedView.layer.presentationLayer.frame.origin.y;
+
+    // On iOS 26, presentationLayer.frame.origin.y is 0
+    // so we are animating this manullay in JS using the `transitioning` flag.
+    if (@available(iOS 26, *)) {
+      transitioning = YES;
+      sheetY = self.presentedView.frame.origin.y;
     }
-#endif
+
+    if (_currentY != sheetY) {
+      _currentY = sheetY;
+      [self notifySheetTranslation:sheetY transitioning:transitioning];
+    }
   }
 }
 
