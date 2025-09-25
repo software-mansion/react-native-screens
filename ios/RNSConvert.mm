@@ -203,6 +203,7 @@
     using enum react::RNSSearchBarAutoCapitalize;
     case Words:
       return UITextAutocapitalizationTypeWords;
+    case SystemDefault:
     case Sentences:
       return UITextAutocapitalizationTypeSentences;
     case Characters:

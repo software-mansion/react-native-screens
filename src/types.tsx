@@ -746,9 +746,18 @@ export interface SearchBarProps {
   ref?: React.RefObject<SearchBarCommands>;
 
   /**
-   * The auto-capitalization behavior
+   * The auto-capitalization behavior.
+   *
+   * Defaults to `systemDefault`:
+   * - on Android, it is the same as `none`,
+   * - on iOS, it is the same as `sentences`.
    */
-  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  autoCapitalize?:
+    | 'systemDefault'
+    | 'none'
+    | 'words'
+    | 'sentences'
+    | 'characters';
   /**
    * Automatically focuses search bar on mount
    *
