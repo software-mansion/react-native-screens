@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 import { ScrollEdgeEffect } from './components/shared/types';
-import { HostInstance } from './gesture-handler/fabricUtils';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -980,7 +979,7 @@ export type AnimatedScreenTransition = {
   ) => Record<string, unknown>;
 };
 
-export type ScreensRefsHolder = Record<string, React.RefObject<HostInstance>>;
+export type ScreensRefsHolder = Record<string, React.RefObject<View>>;
 
 export interface GestureProps {
   screensRefs?: React.MutableRefObject<ScreensRefsHolder>;

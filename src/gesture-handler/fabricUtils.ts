@@ -1,5 +1,7 @@
 'use strict';
 
+import { View } from "react-native";
+
 /* eslint-disable */
 
 type LocalGlobal = typeof global & Record<string, unknown>;
@@ -14,7 +16,7 @@ export type HostInstance = {
   _viewConfig: Record<string, unknown>;
 };
 
-export function getShadowNodeWrapperAndTagFromRef(ref: HostInstance | null): {
+export function getShadowNodeWrapperAndTagFromRef(ref: View | null): {
   shadowNodeWrapper: any;
   tag: number;
 } {
@@ -24,8 +26,9 @@ export function getShadowNodeWrapperAndTagFromRef(ref: HostInstance | null): {
       tag: -1,
     }
   }
+  const internalRef = ref as unknown as HostInstance;
   return {
-    shadowNodeWrapper: ref.__internalInstanceHandle.stateNode.node,
-    tag: ref.__nativeTag,
+    shadowNodeWrapper: internalRef.__internalInstanceHandle.stateNode.node,
+    tag: internalRef.__nativeTag,
   }
 }
