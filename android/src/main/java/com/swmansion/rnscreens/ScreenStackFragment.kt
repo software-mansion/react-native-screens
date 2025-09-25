@@ -42,6 +42,10 @@ import com.swmansion.rnscreens.utils.resolveBackgroundColor
 
 sealed class KeyboardState
 
+interface KeyboardStateListener {
+    fun onKeyboardStateChanged(state: KeyboardState)
+}
+
 object KeyboardNotVisible : KeyboardState()
 
 object KeyboardDidHide : KeyboardState()
@@ -52,7 +56,8 @@ class KeyboardVisible(
 
 class ScreenStackFragment :
     ScreenFragment,
-    ScreenStackFragmentWrapper {
+    ScreenStackFragmentWrapper,
+    KeyboardStateListener {
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
@@ -62,6 +67,8 @@ class ScreenStackFragment :
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
+
+    private var shouldApplyKeyboardOffset = false
 
     private lateinit var coordinatorLayout: ScreensCoordinatorLayout
 
@@ -254,7 +261,10 @@ class ScreenStackFragment :
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
                     ): WindowInsetsCompat {
                         val keyboardHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-                        screen.translationY = -sheetDelegate.calculateSheetOffsetY(keyboardHeight).toFloat()
+                        if (shouldApplyKeyboardOffset) {
+                            val bottomOffset = sheetDelegate.calculateSheetOffsetY(keyboardHeight).toFloat()
+                            screen.translationY = -bottomOffset
+                        }
                         return insets
                     }
                 },
@@ -490,5 +500,24 @@ class ScreenStackFragment :
             sheetDelegate = SheetDelegate(screen)
         }
         return sheetDelegate!!
+    }
+
+    // KeyboardStateListener overrides
+
+    override fun onKeyboardStateChanged(state: KeyboardState) {
+        shouldApplyKeyboardOffset =
+            when (state) {
+                is KeyboardVisible -> {
+                    true
+                }
+
+                KeyboardDidHide -> {
+                    true
+                }
+
+                KeyboardNotVisible -> {
+                    false
+                }
+            }
     }
 }
