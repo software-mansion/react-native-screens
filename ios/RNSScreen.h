@@ -165,7 +165,7 @@ namespace react = facebook::react;
 - (BOOL)isPresentedAsNativeModal;
 
 /**
- * Returns a boolean equivalen of fullScreenSwipeEnabled OptionalBoolean, resolves Undefined as `false` for iOS < 26,
+ * Returns a boolean equivalent of fullScreenSwipeEnabled OptionalBoolean, resolves Undefined as `false` for iOS < 26,
  * `true` otherwise.
  */
 - (BOOL)fullScreenSwipeEnabledBoolean;

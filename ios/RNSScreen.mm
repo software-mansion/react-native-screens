@@ -131,6 +131,7 @@ struct ContentWrapperBox {
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
   _activityState = RNSActivityStateUndefined;
+  _fullScreenSwipeEnabled = RNSOptionalBooleanUndefined;
   _fullScreenSwipeShadowEnabled = YES;
   _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
