@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint-disable */
+
 type LocalGlobal = typeof global & Record<string, unknown>;
 
 export function isFabric() {
