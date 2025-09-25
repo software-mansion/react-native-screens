@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { View, Button, ScrollView, Text } from "react-native";
 import { ScrollEdgeEffect } from "react-native-screens";
 import { SettingsPicker } from "../shared";
-import { useState } from "react";
+import { Component, useEffect, useMemo, useState } from "react";
 import { BottomTabsContainer } from "../shared/gamma/containers/bottom-tabs/BottomTabsContainer";
 
 interface ScrollEdgeEffects {
@@ -16,13 +16,12 @@ interface ScrollEdgeEffects {
 function ScrollViewTemplate() {
   const emoji = ['😎', '🍏', '👀', '🤖', '👾', '👨‍💻'];
 
-  return (<>
+  return (
     <ScrollView>
       <Text style={{ fontSize: 21 }}>
         {Array.from({ length: 1000 }).map(_ => emoji[Math.floor(Math.random() * emoji.length)])}
       </Text>
     </ScrollView>
-  </>
   );
 }
 
@@ -31,6 +30,8 @@ interface ConfigProps {
   setScrollEdgeEffects: (effects: ScrollEdgeEffects) => void,
   navigating?: boolean
 }
+
+const SCROLL_EDGE_EFFECT_OPTIONS: ScrollEdgeEffect[] = ['automatic', 'hard', 'soft', 'hidden'];
 
 function Config(props: ConfigProps) {
   const { scrollEdgeEffects, setScrollEdgeEffects, navigating = false } = props;
@@ -44,7 +45,7 @@ function Config(props: ConfigProps) {
     <SettingsPicker
       label="bottom"
       value={scrollEdgeEffects.bottom}
-      items={['automatic', 'hard', 'soft', 'hidden']}
+      items={SCROLL_EDGE_EFFECT_OPTIONS}
       onValueChange={value =>
         setScrollEdgeEffects({...scrollEdgeEffects, bottom: value})
       }
@@ -86,7 +87,10 @@ function StackTemplate() {
     right: 'automatic',
   });
 
-  const ConfigComponent = () => <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating />
+  const ConfigComponent = useMemo(
+    () => () => <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating />,
+    [scrollEdgeEffects],
+  );
 
   return <NavigationIndependentTree>
     <NavigationContainer>
@@ -108,9 +112,10 @@ function BottomTabsTemplate() {
     right: 'automatic',
   });
 
-  const ConfigComponent = () => <ScrollView contentInsetAdjustmentBehavior='automatic'>
-    <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} />
-  </ScrollView>
+  const ConfigComponent = useMemo(
+    () => () => <ScrollView><Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating /></ScrollView>,
+    [scrollEdgeEffects],
+  );
 
   return <NavigationIndependentTree>
     <NavigationContainer>
@@ -133,7 +138,10 @@ function StackInStackTemplate() {
     right: 'automatic',
   });
 
-  const ConfigComponent = () => <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating />
+  const ConfigComponent = useMemo(
+    () => () => <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating />,
+    [scrollEdgeEffects],
+  );
 
   return <NavigationContainer>
     <Stack.Navigator screenOptions={{
@@ -153,9 +161,10 @@ function StackInBottomTabsTemplate() {
     right: 'automatic',
   });
 
-  const ConfigComponent = () => <ScrollView contentInsetAdjustmentBehavior='automatic'>
-    <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} />
-  </ScrollView>
+  const ConfigComponent = useMemo(
+    () => () => <ScrollView><Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} /></ScrollView>,
+    [scrollEdgeEffects],
+  );
 
   return <NavigationContainer>
     <BottomTabsContainer
@@ -176,7 +185,10 @@ function BottomTabsInStackTemplate() {
     right: 'automatic',
   });
 
-  const ConfigComponent = () => <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating />
+  const ConfigComponent = useMemo(
+    () => () => <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating />,
+    [scrollEdgeEffects],
+  );
 
   return <NavigationContainer>
       <Stack.Navigator screenOptions={{
