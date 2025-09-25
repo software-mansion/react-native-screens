@@ -157,8 +157,10 @@ export default function BarButtonItemsExample() {
               title: 'Badge',
               badge: {
                 value: '3',
-                color: 'white',
-                backgroundColor: 'red',
+                style: {
+                  color: 'white',
+                  backgroundColor: 'red',
+                }
               },
               onPress: () => Alert.alert('Badge pressed'),
             },
@@ -399,6 +401,7 @@ export default function BarButtonItemsExample() {
               title: "Native",
               onPress: () => Alert.alert('Native button pressed'),
               sharesBackground: true,
+              hidden: true,
             },
             {
               // eslint-disable-next-line react/no-unstable-nested-components

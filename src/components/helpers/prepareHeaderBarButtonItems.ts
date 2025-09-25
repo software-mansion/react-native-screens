@@ -45,8 +45,11 @@ export const prepareHeaderBarButtonItems = (
     const badge = item.badge
       ? {
           ...item.badge,
-          color: processColor(item.badge.color),
-          backgroundColor: processColor(item.badge.backgroundColor),
+          style: {
+            ...item.badge.style,
+            color: processColor(item.badge.style?.color),
+            backgroundColor: processColor(item.badge.style?.backgroundColor),
+          },
         }
       : undefined;
     const processedItem = {
