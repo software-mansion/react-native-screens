@@ -31,26 +31,32 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   View,
   ScreenStackHeaderConfigProps
 >((props, ref) => {
-  const { screenId, headerLeftItems, headerRightItems } = props;
+  const { screenId, headerLeftBarButtonItems, headerRightBarButtonItems } =
+    props;
 
-  const headerLeftBarButtonItems =
-    headerLeftItems && isHeaderBarButtonsAvailableForCurrentPlatform
-      ? prepareHeaderBarButtonItems(headerLeftItems, screenId, 'left')
+  const preparedHeaderLeftBarButtonItems =
+    headerLeftBarButtonItems && isHeaderBarButtonsAvailableForCurrentPlatform
+      ? prepareHeaderBarButtonItems(headerLeftBarButtonItems, screenId, 'left')
       : undefined;
-  const headerRightBarButtonItems =
-    headerRightItems && isHeaderBarButtonsAvailableForCurrentPlatform
-      ? prepareHeaderBarButtonItems(headerRightItems, screenId, 'right')
+  const preparedHeaderRightBarButtonItems =
+    headerRightBarButtonItems && isHeaderBarButtonsAvailableForCurrentPlatform
+      ? prepareHeaderBarButtonItems(
+          headerRightBarButtonItems,
+          screenId,
+          'right',
+        )
       : undefined;
   const hasHeaderBarButtonItems =
     isHeaderBarButtonsAvailableForCurrentPlatform &&
-    (headerLeftBarButtonItems?.length || headerRightBarButtonItems?.length);
+    (preparedHeaderLeftBarButtonItems?.length ||
+      preparedHeaderRightBarButtonItems?.length);
 
   // Handle bar button item presses
   const onPressHeaderBarButtonItem = hasHeaderBarButtonItems
     ? (event: NativeSyntheticEvent<{ buttonId: string }>) => {
         const pressedItem = [
-          ...(headerLeftBarButtonItems ?? []),
-          ...(headerRightBarButtonItems ?? []),
+          ...(preparedHeaderLeftBarButtonItems ?? []),
+          ...(preparedHeaderRightBarButtonItems ?? []),
         ].find(
           item =>
             item &&
@@ -87,8 +93,8 @@ export const ScreenStackHeaderConfig = React.forwardRef<
 
         // Check each bar-button item with a menu
         const allItems = [
-          ...(headerLeftBarButtonItems ?? []),
-          ...(headerRightBarButtonItems ?? []),
+          ...(preparedHeaderLeftBarButtonItems ?? []),
+          ...(preparedHeaderRightBarButtonItems ?? []),
         ];
         for (const item of allItems) {
           if (item && 'menu' in item && item.menu) {
@@ -105,8 +111,8 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   return (
     <ScreenStackHeaderConfigNativeComponent
       {...props}
-      headerLeftBarButtonItems={headerLeftBarButtonItems}
-      headerRightBarButtonItems={headerRightBarButtonItems}
+      headerLeftBarButtonItems={preparedHeaderLeftBarButtonItems}
+      headerRightBarButtonItems={preparedHeaderRightBarButtonItems}
       onPressHeaderBarButtonItem={onPressHeaderBarButtonItem}
       onPressHeaderBarButtonMenuItem={onPressHeaderBarButtonMenuItem}
       ref={ref}

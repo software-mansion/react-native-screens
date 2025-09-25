@@ -454,10 +454,18 @@ The config component is expected to be rendered as a direct child of `<Screen>`.
 
 Along with this component's properties that can be used to customize header behavior, one can also use one of the below component containers to render custom react-native content in different areas of the native header:
 
-- `ScreenStackHeaderCenterView` – the children will render in the center of the native navigation bar.
-- `ScreenStackHeaderRightView` – the children will render on the right-hand side of the navigation bar (or on the left-hand side in case LTR locales are set on the user's device).
-- `ScreenStackHeaderLeftView` – the children will render on the left-hand side of the navigation bar (or on the right-hand side in case LTR locales are set on the user's device).
-- `ScreenStackHeaderSearchBarView` - used for rendering `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
+#### `ScreenStackHeaderCenterView` 
+The children will render in the center of the native navigation bar.
+
+#### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`  
+The children will render on the right-hand or left-hand side of the navigation bar (or on the opposite side in case LTR locales are set on the user's device).
+
+To configure `ScreenStackHeaderRightView` or `ScreenStackHeaderLeftView` use `<BarButtonItemCustomView<` as a child. `<BarButtonItemCustomView>` component that comes from react-native-screens supports these properties:
+
+- `hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+
+#### `ScreenStackHeaderSearchBarView`
+Used for rendering `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
 
 To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
 
@@ -550,14 +558,13 @@ Possible options:
 - `generic` – show given system generic or just icon based on available space
 - `minimal` – show just an icon
 
-### `headerLeftItems` / `headerRightItems` (iOS only)
+### `headerLeftBarButtonItems` / `headerRightBarButtonsItems` (iOS only)
 
 An array of objects describing native bar button items to display on the left or right side of the header. Each item can be:
 
 - A button with a title, icon, and action
 - A menu with multiple actions
 - A spacing item to adjust layout
-- A object for configuration of the `ScreenStackHeaderRightView` or `ScreenStackHeaderLeftView`
 
 #### The button and menu items support:
 
@@ -620,10 +627,6 @@ menu?: {
 #### The spacing item supports:
 
 `spacing?: number` — Fixed space between items. The numeric value is only supported on iOS 18-
-
-#### The configuration item of the custom views supports:
-
-`hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
 
 #### Example configuration:
 

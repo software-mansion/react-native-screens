@@ -29,6 +29,7 @@
 #import <React/RCTImageSource.h>
 #import "RNSBackBarButtonItem.h"
 #import "RNSBarButtonItem.h"
+#import "RNSBarButtonItemCustomView.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
@@ -621,9 +622,10 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.hidesBackButton = config.hideBackButton;
   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
-  navitem.leftBarButtonItems = nil;
-  navitem.rightBarButtonItems = nil;
   navitem.titleView = nil;
+  navitem.leftBarButtonItems = nil;
+
+  navitem.rightBarButtonItems = nil;
 
 #if !TARGET_OS_TV
   // We want to set navitem.searchController to nil only if we are sure
@@ -637,6 +639,11 @@ RNS_IGNORE_SUPER_CALL_END
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        if (subview.subviews.count > 0 && [subview.subviews[0] isKindOfClass:[RNSBarButtonItemCustomView class]]) {
+          RNSBarButtonItemCustomView *customView = subview.subviews[0];
+          [customView setUIBarButtonItem:buttonItem];
+        }
+
         NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
         NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
         [mutableItems addObject:buttonItem];
@@ -645,6 +652,11 @@ RNS_IGNORE_SUPER_CALL_END
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        if (subview.subviews.count > 0 && [subview.subviews[0] isKindOfClass:[RNSBarButtonItemCustomView class]]) {
+          RNSBarButtonItemCustomView *customView = subview.subviews[0];
+          [customView setUIBarButtonItem:buttonItem];
+        }
+
         NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
         NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
         [mutableItems addObject:buttonItem];
@@ -713,17 +725,10 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
-
-  // Set leftBarButtonItems if provided
-  if (config.headerLeftBarButtonItems.count > 0) {
-    navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
-                                                  withCurrentItems:navitem.leftBarButtonItems];
-  }
-  // Set rightBarButtonItems if provided
-  if (config.headerRightBarButtonItems.count > 0) {
-    navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
-                                                   withCurrentItems:navitem.rightBarButtonItems];
-  }
+  navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
+                                                withCurrentItems:navitem.leftBarButtonItems];
+  navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                 withCurrentItems:navitem.rightBarButtonItems];
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
@@ -855,7 +860,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (dicts.count == 0) {
     return currentItems;
   }
-  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:dicts.count];
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:currentItems.count + dicts.count];
   [items addObjectsFromArray:currentItems];
   for (NSUInteger i = 0; i < dicts.count; i++) {
     NSDictionary *dict = dicts[i];
@@ -896,8 +901,9 @@ RNS_IGNORE_SUPER_CALL_END
 #else
           imageLoader:_bridge.imageLoader];
 #endif
-      if (i < items.count) {
-        [items insertObject:item atIndex:i];
+      NSNumber *index = dict[@"index"];
+      if (index.integerValue < items.count) {
+        [items insertObject:item atIndex:index.integerValue];
       } else {
         [items addObject:item];
       }
@@ -907,21 +913,12 @@ RNS_IGNORE_SUPER_CALL_END
                                                                             action:nil];
       NSNumber *spacingValue = dict[@"spacing"];
       item.width = [spacingValue doubleValue];
-      if (i < items.count) {
-        [items insertObject:item atIndex:i];
+      NSNumber *index = dict[@"index"];
+      if (index.integerValue < items.count) {
+        [items insertObject:item atIndex:index.integerValue];
       } else {
         [items addObject:item];
       }
-    } else if (dict[@"customView"]) {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-      if (@available(iOS 26.0, *)) {
-        NSNumber *hidesSharedBackgroundNum = dict[@"hidesSharedBackground"];
-        if (i < items.count) {
-          UIBarButtonItem *item = [items objectAtIndex:i];
-          [item setHidesSharedBackground:hidesSharedBackgroundNum.boolValue];
-        }
-      }
-#endif
     }
   }
   return items;

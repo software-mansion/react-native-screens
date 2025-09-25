@@ -1,7 +1,6 @@
 import { Image, processColor } from 'react-native';
 import {
   HeaderBarButtonItem,
-  HeaderBarButtonItemWithCustomView,
   HeaderBarButtonItemWithMenu,
 } from 'react-native-screens/types';
 
@@ -29,17 +28,11 @@ const prepareMenu = (
 };
 
 export const prepareHeaderBarButtonItems = (
-  barButtonItems: (HeaderBarButtonItem | HeaderBarButtonItemWithCustomView)[],
+  barButtonItems: HeaderBarButtonItem[],
   screenId: string,
   side: 'left' | 'right',
 ) => {
   return barButtonItems?.map((item, index) => {
-    if ('customView' in item) {
-      return {
-        ...item,
-        customView: true,
-      };
-    }
     if ('spacing' in item) {
       return item;
     }
@@ -75,6 +68,6 @@ export const prepareHeaderBarButtonItems = (
         menu: prepareMenu(item.menu, index, screenId, side),
       };
     }
-    return item;
+    return null;
   });
 };
