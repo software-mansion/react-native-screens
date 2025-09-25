@@ -253,7 +253,11 @@ class ScreenStackFragment :
                     override fun onProgress(
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
-                    ): WindowInsetsCompat = insets
+                    ): WindowInsetsCompat {
+                        val keyboardHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                        screen.translationY = -sheetDelegate.calculateSheetOffsetY(keyboardHeight).toFloat()
+                        return insets
+                    }
                 },
             )
         }
