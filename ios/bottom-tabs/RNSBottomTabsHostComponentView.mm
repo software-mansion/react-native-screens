@@ -266,6 +266,26 @@ namespace react = facebook::react;
       }
   }
 
+  if (newComponentProps.tabBarControllerMode != oldComponentProps.tabBarControllerMode) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    if (@available(iOS 18.0, *)) {
+      _tabBarControllerMode = rnscreens::conversion::UITabBarControllerModeFromRNSBottomTabsTabBarControllerMode(
+          newComponentProps.tabBarControllerMode);
+      _controller.mode = _tabBarControllerMode;
+      if (_tabBarControllerMode == UITabBarControllerModeTabSidebar) {
+        // Also show the sidebar on iPad if the device is in landscape mode (default behavior)
+        UIDeviceOrientation current = [[UIDevice currentDevice] orientation];
+        if (UIDeviceOrientationIsLandscape(current) ) {
+          _controller.sidebar.hidden = false;
+        }
+      }
+    } else
+#endif // Check for iOS >= 18
+      if (newComponentProps.tabBarControllerMode != react::RNSBottomTabsTabBarControllerMode::Automatic) {
+        RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
+      }
+  }
+
   // Super call updates _props pointer. We should NOT update it before calling super.
   [super updateProps:props oldProps:oldProps];
 }
@@ -429,6 +449,26 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // Check for iOS >= 26
     if (tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAutomatic) {
       RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
+    }
+}
+
+- (void)setTabBarControllerModeFromRNSTabBarControllerMode:(RNSTabBarControllerMode)tabBarControllerMode
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+  if (@available(iOS 18.0, *)) {
+    _tabBarControllerMode = rnscreens::conversion::UITabBarControllerModeFromRNSTabBarControllerMode(tabBarControllerMode);
+    _controller.mode = _tabBarControllerMode;
+    if (_tabBarControllerMode == UITabBarControllerModeTabSidebar) {
+      // Also show the sidebar on iPad if the device is in landscape mode (default behavior)
+      UIDeviceOrientation current = [[UIDevice currentDevice] orientation];
+      if (UIDeviceOrientationIsLandscape(current) ) {
+        _controller.sidebar.hidden = false;
+      }
+    }
+  } else
+#endif // Check for iOS >= 18
+    if (tabBarControllerMode != RNSTabBarControllerModeAutomatic) {
+      RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
     }
 }
 

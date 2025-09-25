@@ -5,6 +5,7 @@ import {
   BottomTabsScreen,
   BottomTabsScreenProps,
   NativeFocusChangeEvent,
+  TabBarControllerMode,
 } from 'react-native-screens';
 import { Colors } from '../../../styling/Colors';
 import ConfigWrapperContext from './ConfigWrapperContext';
@@ -16,6 +17,7 @@ export interface TabConfiguration {
 
 export interface BottomTabsContainerProps {
   tabConfigs: TabConfiguration[];
+  tabBarControllerMode?: TabBarControllerMode | undefined;
 }
 
 export function BottomTabsContainer(props: BottomTabsContainerProps) {
@@ -90,6 +92,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       tabBarItemTitleFontWeight="700"
       tabBarItemLabelVisibilityMode="auto"
       tabBarMinimizeBehavior="onScrollDown"
+      tabBarControllerMode={props.tabBarControllerMode ?? 'automatic'}
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }>
@@ -109,7 +112,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
-            <ContentComponent/>
+            <ContentComponent />
           </BottomTabsScreen>
         );
       })}
