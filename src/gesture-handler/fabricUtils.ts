@@ -14,7 +14,7 @@ export type HostInstance = {
   _viewConfig: Record<string, unknown>;
 };
 
-export function getShadowNodeWrapperAndTagFromRef(ref?: HostInstance): {
+export function getShadowNodeWrapperAndTagFromRef(ref: HostInstance | null): {
   shadowNodeWrapper: any;
   tag: number;
 } {
