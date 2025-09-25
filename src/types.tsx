@@ -8,7 +8,6 @@ import {
   TextInputFocusEventData,
   ColorValue,
   ImageRequireSource,
-  ProcessedColorValue,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 import { ScrollEdgeEffect } from './components/shared/types';
@@ -970,7 +969,7 @@ interface SharedHeaderBarButtonItem {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: ProcessedColorValue;
+    color?: ColorValue;
   };
   /**
    * Image source for the item
@@ -992,7 +991,7 @@ interface SharedHeaderBarButtonItem {
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
    */
-  tintColor?: ProcessedColorValue;
+  tintColor?: ColorValue;
   /**
    * A boolean that determines the visibility of the item.
    * Only available from iOS 16.0 and later.
@@ -1043,14 +1042,11 @@ interface SharedHeaderBarButtonItem {
      */
     value: string;
     /**
-     * The color of the badge.
+     * Style of the badge.
      */
-    color?: ProcessedColorValue;
-    /**
-     * The background color of the badge.
-     */
-    backgroundColor?: ProcessedColorValue;
     style?: {
+      color?: ColorValue;
+      backgroundColor?: ColorValue;
       fontFamily?: string;
       fontSize?: number;
       fontWeight?: string;

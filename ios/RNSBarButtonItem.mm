@@ -269,16 +269,16 @@
 {
   if (@available(iOS 26.0, *)) {
     UIBarButtonItemBadge *badge = [UIBarButtonItemBadge badgeWithString:badgeObj[@"value"]];
-    id colorObj = badgeObj[@"color"];
-    if (colorObj) {
-      badge.foregroundColor = [RCTConvert UIColor:colorObj];
-    }
-    id backgroundColorObj = badgeObj[@"backgroundColor"];
-    if (colorObj) {
-      badge.backgroundColor = [RCTConvert UIColor:backgroundColorObj];
-    }
     NSDictionary *style = badgeObj[@"style"];
     if (style) {
+      id colorObj = style[@"color"];
+      if (colorObj) {
+        badge.foregroundColor = [RCTConvert UIColor:colorObj];
+      }
+      id backgroundColorObj = style[@"backgroundColor"];
+      if (backgroundColorObj) {
+        badge.backgroundColor = [RCTConvert UIColor:backgroundColorObj];
+      }
       NSString *fontFamily = style[@"fontFamily"];
       NSNumber *fontSize = style[@"fontSize"];
       NSString *fontWeight = style[@"fontWeight"];
@@ -291,7 +291,15 @@
                                  variant:nil
                          scaleMultiplier:1.0];
       } else {
-        badge.font = [UIFont systemFontOfSize:[fontSize floatValue]];
+        CGFloat resolvedFontSize = fontSize ? [fontSize floatValue] : 0;
+        if (resolvedFontSize == 0) {
+#if TARGET_OS_TV
+          resolvedFontSize = 17.0;
+#else
+          resolvedFontSize = [UIFont labelFontSize];
+#endif
+        }
+        badge.font = [UIFont systemFontOfSize:resolvedFontSize];
       }
     }
     self.badge = badge;
