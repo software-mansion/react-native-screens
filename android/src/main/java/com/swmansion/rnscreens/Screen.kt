@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
@@ -469,27 +470,23 @@ class Screen(
             return
         }
         isBeingRemoved = false
-        endTransitionRecursive(this)
+        endViewTransition()
     }
 
-    private fun endTransitionRecursive(parent: ViewGroup) {
-        parent.children.forEach { childView ->
-            parent.endViewTransition(childView)
+    private val inTransitionViews = mutableListOf<Pair<ViewGroup, View>>()
 
-            if (childView is ScreenStackHeaderConfig) {
-                endTransitionRecursive(childView.toolbar)
-            }
-
-            if (childView is ViewGroup) {
-                endTransitionRecursive(childView)
-            }
-        }
-    }
-
+    /**
+     * Called when a screen gets removed. This is to mark all children as in transition,
+     * so they are not removed from the view hierarchy until endRemovalTransition is called.
+     * This is needed for the screen transition animation to work properly (otherwise the children
+     * would instantly disappear from the screen).
+     *
+     * This is copied from react-native-screens BUT it manually keeps track of the views.
+     */
     private fun startTransitionRecursive(parent: ViewGroup?) {
-        parent?.let {
-            for (i in 0 until it.childCount) {
-                val child = it.getChildAt(i)
+        parent?.let { parentView ->
+            for (i in 0 until parentView.childCount) {
+                val child = parentView.getChildAt(i)
 
                 if (parent is SwipeRefreshLayout && child is ImageView) {
                     // SwipeRefreshLayout class which has CircleImageView as a child,
@@ -498,9 +495,14 @@ class Screen(
                     // wrong index if we called `startViewTransition` on the views on new arch.
                     // We add a simple View to bump the number of children to make it work.
                     // TODO: find a better way to handle this scenario
-                    it.addView(View(context), i)
+                    parentView.addView(View(context), i)
                 } else {
-                    child?.let { view -> it.startViewTransition(view) }
+                    child?.let { childView ->
+                        Log.d("HannoDebug", "Screen: startTransitionRecursive for parent: $parentView")
+                        Log.d("HannoDebug", "  ↳ child: $childView")
+                        parentView.startViewTransition(childView)
+                        inTransitionViews.add(Pair(parentView, childView))
+                    }
                 }
 
                 if (child is ScreenStackHeaderConfig) {
@@ -514,6 +516,25 @@ class Screen(
                 }
             }
         }
+    }
+
+    /**
+     * Called when the removal transition is finished. This will clear the transition state
+     * from all children and allow them to be removed from the view hierarchy and their mParent
+     * field to be set to null.
+     */
+    private fun endViewTransition() {
+        // IMPORTANT: Reverse order is needed, inner children first!
+        // Otherwise parents will call dispatchOnDetachedFromWindow on all their children,
+        // which will cause endViewTransition to have no effect on them anymore.
+        for ((parent, child) in inTransitionViews.asReversed()) {
+            Log.d("HannoDebug", "Screen: endViewTransition for parent: $parent")
+            Log.d("HannoDebug", "  ↳ child: $child")
+            // The react-native layer will have called parent.removeView(child) already,
+            // so endViewTransition will finally remove the child from the parent.
+            parent.endViewTransition(child)
+        }
+        inTransitionViews.clear()
     }
 
     // We do not want to perform any action, therefore do not need to override the associated method.

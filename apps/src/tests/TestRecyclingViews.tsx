@@ -5,26 +5,25 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-const CustomView = requireNativeComponent('CustomView');
+let CustomView = requireNativeComponent('CustomView');
 
 function HomeScreen() {
   const navigation = useNavigation();
   return (
     <View
+      collapsable={false}
       style={{
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
       }}>
       <Button title="Go to Details" onPress={() => navigation.navigate('Details')} />
-      {/* {isFocused && ( */}
       <CustomView
         style={{
           width: 100,
           height: 100,
         }}
       />
-      {/* )} */}
     </View>
   );
 }
@@ -33,20 +32,19 @@ function DetailsScreen() {
   const navigation = useNavigation();
   return (
     <View
+      collapsable={false}
       style={{
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
       }}>
       <Button title="Go to Home" onPress={() => navigation.goBack()} />
-      {/* {isFocused && ( */}
       <CustomView
         style={{
           width: 100,
           height: 100,
         }}
       />
-      {/* )} */}
     </View>
   );
 }
