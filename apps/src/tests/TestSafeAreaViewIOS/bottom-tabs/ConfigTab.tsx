@@ -42,8 +42,7 @@ export default function ConfigTab() {
         }
       />
       <Text style={styles.title}>Tabs configuration</Text>
-      {/* Currently, you need to change tabBarMinimizeBehavior directly in BottomTabsContainer. */}
-      {/*<SettingsPicker<BottomTabsSAVExampleConfig['tabBarMinimizeBehavior']>
+      <SettingsPicker<BottomTabsSAVExampleConfig['tabBarMinimizeBehavior']>
         label="tabBarMinimizeBehavior"
         value={config.tabBarMinimizeBehavior}
         onValueChange={value =>
@@ -53,7 +52,7 @@ export default function ConfigTab() {
           })
         }
         items={['automatic', 'onScrollDown', 'onScrollUp', 'never']}
-      />*/}
+      />
       <SettingsPicker<BottomTabsSAVExampleConfig['tabBarItemSystemItem']>
         label="tabBarItemSystemItem"
         value={config.tabBarItemSystemItem}
