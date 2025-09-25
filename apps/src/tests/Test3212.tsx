@@ -113,7 +113,11 @@ function BottomTabsTemplate() {
   });
 
   const ConfigComponent = useMemo(
-    () => () => <ScrollView><Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating /></ScrollView>,
+    () => () => (
+      <ScrollView contentInsetAdjustmentBehavior='automatic'>
+        <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} navigating />
+      </ScrollView>
+    ),
     [scrollEdgeEffects],
   );
 
@@ -162,7 +166,11 @@ function StackInBottomTabsTemplate() {
   });
 
   const ConfigComponent = useMemo(
-    () => () => <ScrollView><Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} /></ScrollView>,
+    () => () => (
+      <ScrollView contentInsetAdjustmentBehavior='automatic'>
+        <Config scrollEdgeEffects={scrollEdgeEffects} setScrollEdgeEffects={setScrollEdgeEffects} />
+      </ScrollView>
+    ),
     [scrollEdgeEffects],
   );
 
