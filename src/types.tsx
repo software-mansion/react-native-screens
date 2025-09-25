@@ -624,15 +624,13 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backButtonDisplayMode?: BackButtonDisplayMode;
   /**
-   * Array of iOS native UIBarButtomItem or functions
-   * that returns a React Element to the left side of the header.
+   * Array of UIBarButtomItems to the left side of the header.
    *
    * @platform ios
    */
   headerLeftBarButtonItems?: HeaderBarButtonItem[];
   /**
-   * Array of iOS native UIBarButtomItem or functions
-   * that returns a React Element to the right side of the header.
+   * Array of UIBarButtomItems to the right side of the header.
    *
    * @platform ios
    */
