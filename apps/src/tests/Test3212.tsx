@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { View, Button, ScrollView, Text } from "react-native";
 import { ScrollEdgeEffect } from "react-native-screens";
 import { SettingsPicker } from "../shared";
-import { Component, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { BottomTabsContainer } from "../shared/gamma/containers/bottom-tabs/BottomTabsContainer";
 
 interface ScrollEdgeEffects {
