@@ -19,6 +19,8 @@ import Screen from './Screen';
 import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
+import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
+import SafeAreaView from './safe-area/SafeAreaView';
 
 type Props = Omit<
   ScreenProps,
@@ -89,13 +91,22 @@ function ScreenStackItem(
     contentStyle = contentWrapperStyles;
   }
 
+  const shouldUseSafeAreaView =
+    Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+
   const content = (
     <>
       <DebugContainer
         contentStyle={contentStyle}
         style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
-        {children}
+        {shouldUseSafeAreaView ? (
+          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+            {children}
+          </SafeAreaView>
+        ) : (
+          children
+        )}
       </DebugContainer>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
@@ -216,6 +227,25 @@ function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
     screenStyles,
     contentWrapperStyles,
   };
+}
+
+function getSafeAreaEdges(
+  headerConfig?: ScreenStackHeaderConfigProps,
+): SafeAreaViewProps['edges'] {
+  if (Platform.OS !== 'ios' || parseInt(Platform.Version, 10) < 26) {
+    return {};
+  }
+
+  let defaultEdges: SafeAreaViewProps['edges'];
+  if (headerConfig?.translucent || headerConfig?.hidden) {
+    defaultEdges = {};
+  } else {
+    defaultEdges = {
+      top: true,
+    };
+  }
+
+  return defaultEdges;
 }
 
 const styles = StyleSheet.create({
