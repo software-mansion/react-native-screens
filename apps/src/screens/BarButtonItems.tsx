@@ -102,7 +102,7 @@ export default function BarButtonItemsExample() {
           title: 'Icon Button',
           headerRightItems: [
             {
-              image: require('../../assets/search_black.png'),
+              imageSource: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -236,22 +236,22 @@ export default function BarButtonItemsExample() {
           title: 'Icon SharesBackground',
           headerRightItems: [
             {
-              image: require('../../assets/search_black.png'),
+              imageSource: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
-              image: require('../../assets/search_black.png'),
+              imageSource: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
-              image: require('../../assets/search_black.png'),
+              imageSource: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: false,
             },
             {
-              image: require('../../assets/search_black.png'),
+              imageSource: require('../../assets/search_black.png'),
               hidesSharedBackground: true,
               onPress: () => Alert.alert('Icon with sharesBackground false pressed'),
             },
@@ -279,14 +279,14 @@ export default function BarButtonItemsExample() {
           title: 'Icon Buttons With Spacing',
           headerRightItems: [
             {
-              image: require('../../assets/search_black.png'),
+              imageSource: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('First icon pressed'),
             },
             {
               spacing: 100,
             },
             {
-              image: require('../../assets/search_white.png'),
+              imageSource: require('../../assets/search_white.png'),
               onPress: () => Alert.alert('Second icon pressed'),
             },
           ],
@@ -304,7 +304,7 @@ export default function BarButtonItemsExample() {
               onPress: () => Alert.alert('Tinted pressed'),
             },
             {
-              image: require('../../assets/search_black.png'),
+              imageSource: require('../../assets/search_black.png'),
               onPress: () => Alert.alert('Tinted icon pressed'),
             },
           ],
@@ -322,7 +322,7 @@ export default function BarButtonItemsExample() {
               onPress: () => Alert.alert('Done text pressed'),
             },
             {
-              image: require('../../assets/search_black.png'),
+              imageSource: require('../../assets/search_black.png'),
               variant: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
             },

@@ -572,7 +572,7 @@ An array of objects describing native bar button items to display on the left or
 
 `labelStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button label.
 
-`image?: ImageRequireSource` — Image source for the button icon.
+`imageSource?: ImageSourcePropType` — Image source for the button icon.
 
 `sfSymbolName?: string` - SF Symbol for the button icon.
 

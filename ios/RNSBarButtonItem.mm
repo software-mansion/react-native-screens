@@ -22,9 +22,9 @@
 
   self.title = dict[@"label"];
 
-  NSDictionary *imageObj = dict[@"image"];
-  if (imageObj) {
-    RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageObj];
+  NSDictionary *imageSourceObj = dict[@"imageSource"];
+  if (imageSourceObj) {
+    RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageSourceObj];
     [imageLoader loadImageWithURLRequest:imageSource.request
                                 callback:^(NSError *_Nullable error, UIImage *_Nullable image) {
                                   dispatch_async(dispatch_get_main_queue(), ^{
