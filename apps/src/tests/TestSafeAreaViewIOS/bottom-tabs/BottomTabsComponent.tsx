@@ -39,6 +39,14 @@ export default function BottomTabsComponent() {
             : undefined,
       },
       component: TestTab,
+      safeAreaConfiguration: {
+        edges: {
+          top: config.safeAreaTopEdge,
+          bottom: config.safeAreaBottomEdge,
+          left: config.safeAreaLeftEdge,
+          right: config.safeAreaRightEdge,
+        },
+      },
     },
   ];
 
