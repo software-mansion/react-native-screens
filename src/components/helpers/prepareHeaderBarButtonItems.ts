@@ -38,8 +38,8 @@ export const prepareHeaderBarButtonItems = (
     }
     const image = item.image ? Image.resolveAssetSource(item.image) : undefined;
 
-    const titleStyle = item.titleStyle
-      ? { ...item.titleStyle, color: processColor(item.titleStyle.color) }
+    const labelStyle = item.labelStyle
+      ? { ...item.labelStyle, color: processColor(item.labelStyle.color) }
       : undefined;
     const tintColor = item.tintColor ? processColor(item.tintColor) : undefined;
     const badge = item.badge
@@ -55,7 +55,7 @@ export const prepareHeaderBarButtonItems = (
     const processedItem = {
       ...item,
       image,
-      titleStyle,
+      labelStyle,
       tintColor,
       badge,
     };

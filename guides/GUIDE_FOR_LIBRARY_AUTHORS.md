@@ -568,9 +568,9 @@ An array of objects describing native bar button items to display on the left or
 
 #### The button and menu items support:
 
-`title: string` — Title of the button.
+`label: string` — Label of the button.
 
-`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button title.
+`labelStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button label.
 
 `image?: ImageRequireSource` — Image source for the button icon.
 
@@ -604,10 +604,10 @@ An array of objects describing native bar button items to display on the left or
 
 ```
 menu?: {
-  title?: string;
+  label?: string;
   items: Array<
     | {
-      title?: string;
+      label?: string;
       type: 'action';
       sfSymbolName?: string;
       state?: 'on' | 'off' | 'mixed'; // State of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
@@ -615,7 +615,7 @@ menu?: {
       discoverabilityTitle?: string; // Discoverability title of the menu item. Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
     } 
     | {
-      title?: string;
+      label?: string;
       type: 'submenu';
       sfSymbolName?: string;
       items: menu['items']; // References itself so you can create inifinte deep menus. So either actions or more submenus
@@ -635,7 +635,7 @@ menu?: {
     options={{
       headerRightItems: [
         {
-          title: 'Text button',
+          label: 'Text button',
           onPress: () => Alert.alert('Text pressed'),
         },
         {
@@ -647,16 +647,16 @@ menu?: {
           onPress: () => Alert.alert('SF symbol pressed'),
         },
         {
-          title: 'Menu',
+          label: 'Menu',
           menu: {
             items: [
               {
-                title: 'Option 1',
+                label: 'Option 1',
                 type: "action",
                 onPress: () => Alert.alert('Option 1 pressed'),
               },
               {
-                title: 'Option 2',
+                label: 'Option 2',
                 type: "action",
                 onPress: () => Alert.alert('Option 2 pressed'),
               },
@@ -664,7 +664,7 @@ menu?: {
           },
         },
         {
-          title: 'Badge',
+          label: 'Badge',
           badge: {
             value: '3',
             color: 'white',
@@ -673,7 +673,7 @@ menu?: {
           onPress: () => Alert.alert('Badge pressed'),
         },
         {
-          title: 'Prominent',
+          label: 'Prominent',
           style: 'prominent',
           tintColor: 'green',
           onPress: () => Alert.alert('Prominent pressed'),
