@@ -107,6 +107,12 @@ const TAB_CONFIGS: TabConfiguration[] = [
       orientation: 'landscape',
     },
     component: Tab2,
+    safeAreaConfiguration: {
+      edges: {
+        top: true,
+        bottom: true,
+      },
+    },
   },
   {
     tabScreenProps: {
