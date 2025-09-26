@@ -237,6 +237,32 @@ class SheetDelegate(
         }
     }
 
+    internal fun calculateSheetOffsetY(keyboardHeight: Int): Int {
+        val containerHeight = tryResolveContainerHeight()
+        check(containerHeight != null) {
+            "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
+        }
+
+        val isFitToContents = screen.isSheetFitToContents()
+
+        if (isFitToContents) {
+            val contentHeight = screen.contentWrapper?.height ?: 0
+            val offsetFromTop = containerHeight - contentHeight
+            return minOf(offsetFromTop, keyboardHeight)
+        }
+
+        val detents = screen.sheetDetents
+        if (detents.isEmpty()) {
+            throw IllegalStateException("[RNScreens] Cannot determine sheet detent - detents list is empty")
+        }
+
+        val detentValue = detents[detents.size - 1].coerceIn(0.0, 1.0)
+        val sheetHeight = (detentValue * containerHeight).toInt()
+        val offsetFromTop = containerHeight - sheetHeight
+
+        return minOf(offsetFromTop, keyboardHeight)
+    }
+
     // This is listener function, not the view's.
     override fun onApplyWindowInsets(
         v: View,
