@@ -31,6 +31,16 @@ RCT_ENUM_CONVERTER(
     integerValue)
 
 RCT_ENUM_CONVERTER(
+    RNSTabBarControllerMode,
+    (@{
+      @"automatic" : @(RNSTabBarControllerModeAutomatic),
+      @"tabBar" : @(RNSTabBarControllerModeTabBar),
+      @"tabSidebar" : @(RNSTabBarControllerModeTabSidebar),
+    }),
+    RNSTabBarControllerModeAutomatic,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
     RNSOrientation,
     (@{
       @"inherit" : @(RNSOrientationInherit),

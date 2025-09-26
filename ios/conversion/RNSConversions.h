@@ -43,6 +43,20 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 
 #endif // Check for iOS >= 26
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(18.0))
+UITabBarControllerMode UITabBarControllerModeFromRNSBottomTabsTabBarControllerMode(
+    react::RNSBottomTabsTabBarControllerMode tabBarControllerMode);
+#else // RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(18.0))
+UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(
+    RNSTabBarControllerMode tabBarControllerMode);
+#endif // RCT_NEW_ARCH_ENABLED
+
+#endif // Check for iOS >= 18
+
 RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
 
 RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(

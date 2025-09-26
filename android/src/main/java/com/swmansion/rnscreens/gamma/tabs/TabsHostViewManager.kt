@@ -137,6 +137,11 @@ class TabsHostViewManager :
         value: String?,
     ) = Unit
 
+    override fun setTabBarControllerMode(
+        view: TabsHost,
+        value: String?,
+    ) = Unit
+
     // Android additional
 
     @ReactProp(name = "tabBarItemTitleFontColorActive", customType = "Color")
