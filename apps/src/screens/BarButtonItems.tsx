@@ -203,7 +203,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: [
             {
               label: 'Prominent',
-              style: 'prominent',
+              variant: 'prominent',
               tintColor: 'green',
               onPress: () => Alert.alert('Prominent pressed'),
             },
@@ -318,12 +318,12 @@ export default function BarButtonItemsExample() {
           headerRightItems: [
             {
               label: 'Done',
-              style: 'done',
+              variant: 'done',
               onPress: () => Alert.alert('Done text pressed'),
             },
             {
               image: require('../../assets/search_black.png'),
-              style: 'done',
+              variant: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
             },
           ],
