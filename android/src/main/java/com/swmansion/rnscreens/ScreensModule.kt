@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.util.Log
 import com.facebook.proguard.annotations.DoNotStrip
+import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.fabric.FabricUIManager
@@ -14,7 +15,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 @ReactModule(name = ScreensModule.NAME)
 class ScreensModule(
     private val reactContext: ReactApplicationContext,
-) : NativeScreensModuleSpec(reactContext) {
+) : NativeScreensModuleSpec(reactContext),
+    LifecycleEventListener {
     private var topScreenId: Int = -1
     private val isActiveTransition = AtomicBoolean(false)
     private var proxy: NativeProxy? = null
@@ -28,6 +30,10 @@ class ScreensModule(
             } else {
                 Log.e("[RNScreens]", "Could not install JSI bindings.")
             }
+
+            proxy = NativeProxy()
+
+            reactContext.addLifecycleEventListener(this)
         } catch (exception: UnsatisfiedLinkError) {
             Log.w("[RNScreens]", "Could not load RNScreens module.")
         }
@@ -40,18 +46,22 @@ class ScreensModule(
     override fun invalidate() {
         super.invalidate()
         proxy?.invalidateNative()
+        proxy = null
         nativeUninstall()
     }
 
     override fun initialize() {
         super.initialize()
+        setupFabric()
+    }
+
+    private fun setupFabric() {
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             val fabricUIManager =
                 UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
-            proxy =
-                NativeProxy().apply {
-                    nativeAddMutationsListener(fabricUIManager)
-                }
+            proxy?.apply {
+                nativeAddMutationsListener(fabricUIManager)
+            }
         }
     }
 
@@ -127,6 +137,20 @@ class ScreensModule(
             isActiveTransition.set(false)
         }
         topScreenId = -1
+    }
+
+    // LifecycleEventListener
+
+    override fun onHostResume() {
+        setupFabric()
+    }
+
+    override fun onHostPause() {
+        // NO-OP
+    }
+
+    override fun onHostDestroy() {
+        // NO-OP
     }
 
     companion object {
