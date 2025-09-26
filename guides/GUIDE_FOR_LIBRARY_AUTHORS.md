@@ -672,7 +672,7 @@ menu?: {
         },
         {
           label: 'Prominent',
-          style: 'prominent',
+          variant: 'prominent',
           tintColor: 'green',
           onPress: () => Alert.alert('Prominent pressed'),
         },
