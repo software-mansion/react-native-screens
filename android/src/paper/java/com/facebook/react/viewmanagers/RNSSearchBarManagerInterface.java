@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 
 public interface RNSSearchBarManagerInterface<T extends View>  {
   void setHideWhenScrolling(T view, boolean value);
+  void setAutoFocus(T view, boolean value);
   void setAutoCapitalize(T view, @Nullable String value);
   void setPlaceholder(T view, @Nullable String value);
   void setPlacement(T view, @Nullable String value);

@@ -55,11 +55,11 @@ class SearchBarManager :
     }
 
     @ReactProp(name = "autoFocus")
-    fun setAutoFocus(
+    override fun setAutoFocus(
         view: SearchBarView,
-        autoFocus: Boolean?,
+        autoFocus: Boolean,
     ) {
-        view.autoFocus = autoFocus ?: false
+        view.autoFocus = autoFocus
     }
 
     @ReactProp(name = "barTintColor", customType = "Color")
