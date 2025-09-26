@@ -20,7 +20,7 @@
     return self;
   }
 
-  self.title = dict[@"title"];
+  self.title = dict[@"label"];
 
   NSDictionary *imageObj = dict[@"image"];
   if (imageObj) {
@@ -35,9 +35,9 @@
     self.image = [UIImage systemImageNamed:sfSymbolName];
   }
 
-  NSDictionary *titleStyle = dict[@"titleStyle"];
-  if (titleStyle) {
-    [self setTitleStyleFromConfig:titleStyle];
+  NSDictionary *labelStyle = dict[@"labelStyle"];
+  if (labelStyle) {
+    [self setLabelStyleFromConfig:labelStyle];
   }
 
   id tintColorObj = dict[@"tintColor"];
@@ -160,9 +160,9 @@
       }
     }
   }
-  NSString *title = dict[@"title"];
+  NSString *label = dict[@"label"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  return [UIMenu menuWithTitle:title
+  return [UIMenu menuWithTitle:label
                          image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                     identifier:nil
                        options:0
@@ -172,14 +172,20 @@
 + (UIAction *)createActionItemFromConfig:(NSDictionary *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
 {
   NSString *menuId = dict[@"menuId"];
-  NSString *title = dict[@"title"];
+  NSString *label = dict[@"label"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  UIAction *actionElement = [UIAction actionWithTitle:title
+  UIAction *actionElement = [UIAction actionWithTitle:label
                                                 image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                                            identifier:nil
                                               handler:^(__kindof UIAction *_Nonnull a) {
                                                 menuAction(menuId);
                                               }];
+
+  NSString *discoverabilityLabel = dict[@"discoverabilityLabel"];
+  if (discoverabilityLabel != nil) {
+    actionElement.discoverabilityTitle = discoverabilityLabel;
+  }
+
   NSString *state = dict[@"state"];
   if ([state isEqualToString:@"on"]) {
     actionElement.state = UIMenuElementStateOn;
@@ -218,11 +224,11 @@
   }
 }
 
-- (void)setTitleStyleFromConfig:(NSDictionary *)titleStyle
+- (void)setLabelStyleFromConfig:(NSDictionary *)labelStyle
 {
-  NSString *fontFamily = titleStyle[@"fontFamily"];
-  NSNumber *fontSize = titleStyle[@"fontSize"];
-  NSString *fontWeight = titleStyle[@"fontWeight"];
+  NSString *fontFamily = labelStyle[@"fontFamily"];
+  NSNumber *fontSize = labelStyle[@"fontSize"];
+  NSString *fontWeight = labelStyle[@"fontWeight"];
   NSMutableDictionary *attrs = [NSMutableDictionary new];
   if (fontFamily || fontWeight) {
     NSNumber *resolvedFontSize = fontSize;
@@ -253,9 +259,9 @@
 
     attrs[NSFontAttributeName] = [UIFont systemFontOfSize:resolvedFontSize];
   }
-  id titleColor = titleStyle[@"color"];
-  if (titleColor) {
-    attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:titleColor];
+  id labelColor = labelStyle[@"color"];
+  if (labelColor) {
+    attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:labelColor];
   }
   [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
   [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];

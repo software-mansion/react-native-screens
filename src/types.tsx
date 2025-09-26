@@ -959,13 +959,13 @@ interface SharedHeaderBarButtonItem {
    */
   index?: number;
   /**
-   * Title of the item.
+   * Label of the item.
    */
-  title?: string;
+  label?: string;
   /**
-   * Style for the item title.
+   * Style for the item label.
    */
-  titleStyle?: {
+  labelStyle?: {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
@@ -1076,7 +1076,7 @@ export interface HeaderBarButtonItemWithAction
 
 export interface HeaderBarButtonItemMenuAction {
   type: 'action';
-  title?: string;
+  label?: string;
   onPress: () => void;
   /**
    * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
@@ -1089,22 +1089,22 @@ export interface HeaderBarButtonItemMenuAction {
    */
   state?: 'on' | 'off' | 'mixed';
   /**
-   * Style of the item.
+   * Attributes of the item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
    */
   attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented';
   /**
-   * Discoverability title of the menu item.
+   * Discoverability label of the menu item.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
    */
-  discoverabilityTitle?: string;
+  discoverabilityLabel?: string;
 }
 
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
-  title?: string;
+  label?: string;
   /**
    * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
    */
@@ -1114,7 +1114,7 @@ export interface HeaderBarButtonItemSubmenu {
 
 export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
   menu: {
-    title?: string;
+    label?: string;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
   };
 }
