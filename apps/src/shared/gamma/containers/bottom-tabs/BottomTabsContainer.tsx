@@ -1,17 +1,20 @@
 import React from 'react';
-import type { NativeSyntheticEvent } from 'react-native';
+import { Platform, type NativeSyntheticEvent } from 'react-native';
 import {
   BottomTabs,
   BottomTabsScreen,
   BottomTabsScreenProps,
   NativeFocusChangeEvent,
 } from 'react-native-screens';
+import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
+import { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
 import { Colors } from '../../../styling/Colors';
 import ConfigWrapperContext from './ConfigWrapperContext';
 
 export interface TabConfiguration {
   tabScreenProps: BottomTabsScreenProps;
   component: React.ComponentType;
+  safeAreaConfiguration?: SafeAreaViewProps;
 }
 
 export interface BottomTabsContainerProps {
@@ -96,7 +99,6 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       {props.tabConfigs.map(tabConfig => {
         const tabKey = tabConfig.tabScreenProps.tabKey;
         const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
-        const ContentComponent = tabConfig.component;
         console.info(
           `BottomTabsContainer map to component -> ${tabKey} ${
             isFocused ? '(focused)' : ''
@@ -109,10 +111,49 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
-            <ContentComponent/>
+            {getContent(tabConfig)}
           </BottomTabsScreen>
         );
       })}
     </BottomTabs>
   );
+}
+
+function getContent(tabConfig: TabConfiguration) {
+  const { safeAreaConfiguration, component: Component } = tabConfig;
+
+  const safeAreaConfigurationWithDefault = getSafeAreaViewEdges(
+    safeAreaConfiguration?.edges,
+  );
+
+  const anySAVEdgeSet = Object.values(safeAreaConfigurationWithDefault).some(
+    edge => edge === true,
+  );
+
+  if (anySAVEdgeSet) {
+    return (
+      <SafeAreaView {...safeAreaConfiguration}>
+        <Component />
+      </SafeAreaView>
+    );
+  }
+
+  return <Component />;
+}
+
+function getSafeAreaViewEdges(
+  edges?: SafeAreaViewProps['edges'],
+): NonNullable<SafeAreaViewProps['edges']> {
+  let defaultEdges: SafeAreaViewProps['edges'];
+
+  switch (Platform.OS) {
+    case 'android':
+      defaultEdges = { bottom: true };
+      break;
+    default:
+      defaultEdges = {};
+      break;
+  }
+
+  return { ...defaultEdges, ...edges };
 }
