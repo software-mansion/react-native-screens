@@ -401,7 +401,6 @@ export default function BarButtonItemsExample() {
               label: "Native",
               onPress: () => Alert.alert('Native button pressed'),
               sharesBackground: true,
-              hidden: true,
             },
             {
               // eslint-disable-next-line react/no-unstable-nested-components
