@@ -36,6 +36,20 @@
   }
 }
 
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
+    (react::RNSScreenFullScreenSwipeEnabled)fullScreenSwipeEnabled
+{
+  switch (fullScreenSwipeEnabled) {
+    using enum react::RNSScreenFullScreenSwipeEnabled;
+    case Undefined:
+      return RNSOptionalBooleanUndefined;
+    case True:
+      return RNSOptionalBooleanTrue;
+    case False:
+      return RNSOptionalBooleanFalse;
+  }
+}
+
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
     (react::RNSScreenStackPresentation)stackPresentation
 {
