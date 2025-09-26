@@ -27,7 +27,9 @@
     RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageObj];
     [imageLoader loadImageWithURLRequest:imageSource.request
                                 callback:^(NSError *_Nullable error, UIImage *_Nullable image) {
-                                  self.image = image;
+                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                    self.image = image;
+                                  });
                                 }];
   }
   NSString *sfSymbolName = dict[@"sfSymbolName"];
