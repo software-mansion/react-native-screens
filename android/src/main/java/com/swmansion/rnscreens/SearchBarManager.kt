@@ -44,7 +44,7 @@ class SearchBarManager :
     ) {
         view.autoCapitalize =
             when (autoCapitalize) {
-                null, "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
+                null, "systemDefault", "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
                 "words" -> SearchBarView.SearchBarAutoCapitalize.WORDS
                 "sentences" -> SearchBarView.SearchBarAutoCapitalize.SENTENCES
                 "characters" -> SearchBarView.SearchBarAutoCapitalize.CHARACTERS
