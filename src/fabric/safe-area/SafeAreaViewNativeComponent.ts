@@ -4,6 +4,9 @@
 // eslint-disable-next-line @react-native/no-deep-imports
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import { ViewProps } from 'react-native';
+import { WithDefault } from 'react-native/Libraries/Types/CodegenTypesNamespace';
+
+type InsetType = 'all' | 'system' | 'interface';
 
 export interface NativeProps extends ViewProps {
   edges?: Readonly<{
@@ -12,6 +15,8 @@ export interface NativeProps extends ViewProps {
     bottom: boolean;
     left: boolean;
   }>;
+  // Android-only
+  insetType?: WithDefault<InsetType, 'all'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSafeAreaView', {

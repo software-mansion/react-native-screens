@@ -26,6 +26,9 @@ public class RNSSafeAreaViewManagerDelegate<T extends View, U extends BaseViewMa
       case "edges":
         mViewManager.setEdges(view, (ReadableMap) value);
         break;
+      case "insetType":
+        mViewManager.setInsetType(view, (String) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }

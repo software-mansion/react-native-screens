@@ -1,11 +1,15 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import android.content.res.Configuration
+import android.os.Build
 import android.view.Choreographer
+import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
+import android.view.WindowInsets
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
@@ -13,13 +17,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.safearea.EdgeInsets
+import com.swmansion.rnscreens.safearea.SafeAreaProvider
+import com.swmansion.rnscreens.safearea.SafeAreaView
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
 
 class TabsHost(
     val reactContext: ThemedReactContext,
-) : LinearLayout(reactContext),
-    TabScreenDelegate {
+) : FrameLayout(reactContext),
+    TabScreenDelegate,
+    SafeAreaProvider,
+    View.OnLayoutChangeListener {
     /**
      * All container updates should go through instance of this class.
      * The semantics are as follows:
@@ -93,19 +102,21 @@ class TabsHost(
 
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(wrappedContext).apply {
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            layoutParams =
+                LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT,
+                    Gravity.BOTTOM,
+                )
         }
 
     private val contentView: FrameLayout =
         FrameLayout(reactContext).apply {
             layoutParams =
-                LinearLayout
-                    .LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT,
-                    ).apply {
-                        weight = 1f
-                    }
+                LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT,
+                )
             id = ViewIdGenerator.generateViewId()
         }
 
@@ -120,6 +131,8 @@ class TabsHost(
     private var lastAppliedUiMode: Int? = null
 
     private var isLayoutEnqueued: Boolean = false
+
+    private var interfaceInsetsChangeListener: SafeAreaView? = null
 
     private val appearanceCoordinator =
         TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
@@ -193,7 +206,6 @@ class TabsHost(
     }
 
     init {
-        orientation = VERTICAL
         addView(contentView)
         addView(bottomNavigationView)
 
@@ -418,10 +430,71 @@ class TabsHost(
                 bottomNavigationView.menu.findItem(index)
             }
 
+    override fun setOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
+        if (interfaceInsetsChangeListener == null) {
+            bottomNavigationView.addOnLayoutChangeListener(this)
+        }
+        interfaceInsetsChangeListener = listener
+    }
+
+    override fun removeOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
+        if (interfaceInsetsChangeListener == listener) {
+            interfaceInsetsChangeListener = null
+            bottomNavigationView.removeOnLayoutChangeListener(this)
+        }
+    }
+
+    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
+
+    override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        // On Android versions prior to R, insets dispatch is broken.
+        // In order to mitigate this, we override dispatchApplyWindowInsets with
+        // correct implementation. To simplify it, we skip the call to TabsHost's
+        // onApplyWindowInsets.
+        if (insets?.isConsumed ?: true) {
+            return insets
+        }
+
+        for (child in children) {
+            child.dispatchApplyWindowInsets(insets)
+        }
+
+        return insets
+    }
+
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
         check(id != NO_ID) { "[RNScreens] TabsHost must have its tag set when registering event emitters" }
         eventEmitter = TabsHostEventEmitter(reactContext, id)
+    }
+
+    override fun onLayoutChange(
+        view: View?,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+        oldLeft: Int,
+        oldTop: Int,
+        oldRight: Int,
+        oldBottom: Int,
+    ) {
+        require(view is BottomNavigationView) {
+            "[RNScreens] TabsHost's onLayoutChange expects BottomNavigationView, received $view instead"
+        }
+
+        val oldHeight = oldBottom - oldTop
+        val newHeight = bottom - top
+
+        if (newHeight != oldHeight) {
+            interfaceInsetsChangeListener?.apply {
+                this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, newHeight.toFloat()))
+            }
+        }
     }
 
     companion object {
