@@ -47,15 +47,6 @@
     self.tintColor = [RCTConvert UIColor:tintColorObj];
   }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
-  if (@available(iOS 16.0, *)) {
-    NSNumber *hiddenNum = dict[@"hidden"];
-    if (hiddenNum != nil) {
-      self.hidden = [hiddenNum boolValue];
-    }
-  }
-#endif
-
 #if !TARGET_OS_TV
   NSNumber *selectedNum = dict[@"selected"];
   if (selectedNum != nil) {

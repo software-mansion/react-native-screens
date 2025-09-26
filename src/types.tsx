@@ -982,13 +982,6 @@ interface SharedHeaderBarButtonItem {
    */
   tintColor?: ColorValue;
   /**
-   * A boolean that determines the visibility of the item.
-   * Only available from iOS 16.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/ishidden
-   */
-  hidden?: boolean;
-  /**
    * A Boolean value that indicates whether the item is in a enabled state.
    */
   enabled?: boolean;

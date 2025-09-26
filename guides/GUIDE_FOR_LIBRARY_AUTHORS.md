@@ -580,8 +580,6 @@ An array of objects describing native bar button items to display on the left or
 
 `tintColor?: ColorValue` — Tint color for the button. Will pick the tint color of the header if not set. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
 
-`hidden?: boolean` — Whether the item is hidden (iOS 16+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/ishidden
-
 `enabled?: boolean` — Whether the item is enabled.
 
 `width?: number` — Width of the item (iOS 18-). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
