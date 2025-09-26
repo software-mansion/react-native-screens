@@ -1,12 +1,14 @@
 package com.swmansion.rnscreens
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -40,6 +42,7 @@ import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
 import kotlin.math.max
+import kotlin.let
 
 sealed class KeyboardState
 
@@ -70,6 +73,10 @@ class ScreenStackFragment :
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
     private var shouldApplyKeyboardOffset = false
+
+    private var fadeInAnimationRunning = false
+
+    private var lastKeyboardInsets: WindowInsetsCompat? = null
 
     private lateinit var coordinatorLayout: ScreensCoordinatorLayout
 
@@ -261,12 +268,14 @@ class ScreenStackFragment :
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
                     ): WindowInsetsCompat {
-                        val keyboardHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-                        if (shouldApplyKeyboardOffset) {
+                        lastKeyboardInsets = insets
+                        if (!fadeInAnimationRunning) {
+                            val keyboardHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
                             val bottomOffset = sheetDelegate.calculateSheetOffsetY(keyboardHeight).toFloat()
+                            Log.d("tomaboro", "3) translationY ${(-bottomOffset)}")
                             screen.translationY = -bottomOffset
                         }
-                        return insets
+                        return lastKeyboardInsets ?: insets
                     }
                 },
             )
@@ -318,7 +327,15 @@ class ScreenStackFragment :
                 ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        animatedValue?.let {
+                            val keyboardCorrection = lastKeyboardInsets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0
+                            var bottomOffset = 0.0f
+                            if (shouldApplyKeyboardOffset) {
+                                bottomOffset =
+                                    (sheetDelegate?.calculateSheetOffsetY(keyboardCorrection)?.toFloat() ?: 0.0) as Float
+                            }
+                            screen.translationY = it - bottomOffset
+                        }
                     }
                 }
 
@@ -330,6 +347,20 @@ class ScreenStackFragment :
                         screen.sheetInitialDetentIndex,
                     )
                 }?.with(alphaAnimator)
+
+            animatorSet.addListener(
+                object : AnimatorListenerAdapter() {
+                    override fun onAnimationStart(animation: Animator) {
+                        super.onAnimationStart(animation)
+                        fadeInAnimationRunning = true
+                    }
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        super.onAnimationEnd(animation)
+                        fadeInAnimationRunning = false
+                    }
+                },
+            )
         } else {
             val alphaAnimator =
                 ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
@@ -342,7 +373,15 @@ class ScreenStackFragment :
                 ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        animatedValue?.let {
+                            val keyboardCorrection = lastKeyboardInsets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0
+                            var bottomOffset = 0.0f
+                            if (shouldApplyKeyboardOffset) {
+                                bottomOffset =
+                                    (sheetDelegate?.calculateSheetOffsetY(keyboardCorrection)?.toFloat() ?: 0.0) as Float
+                            }
+                            screen.translationY = it - bottomOffset
+                        }
                     }
                 }
             animatorSet.play(alphaAnimator).with(slideAnimator)
@@ -357,6 +396,20 @@ class ScreenStackFragment :
                     ScreenAnimationDelegate.AnimationType.EXIT
                 },
             ),
+        )
+
+        animatorSet.addListener(
+            object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    super.onAnimationStart(animation)
+                    fadeInAnimationRunning = true
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    fadeInAnimationRunning = false
+                }
+            },
         )
         return animatorSet
     }
