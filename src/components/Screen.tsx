@@ -172,14 +172,13 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             ...ref.viewConfig.validAttributes.style,
             display: null,
           };
-          setRef(ref);
         } else if (ref?._viewConfig?.validAttributes?.style) {
           ref._viewConfig.validAttributes.style = {
             ...ref._viewConfig.validAttributes.style,
             display: null,
           };
-          setRef(ref);
         }
+        setRef(ref);
       };
 
       const freeze =
