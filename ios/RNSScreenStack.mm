@@ -194,7 +194,7 @@ namespace react = facebook::react;
     return [[self popToRootViewControllerAnimated:true] count] > 0;
   } else if (tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
     UIScrollView *scrollView =
-        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[[self topViewController] view]];
+        [RNSScrollViewFinder findContentScrollViewWithFirstDescendantsChain:[[self topViewController] view]];
     return [scrollView rnscreens_scrollToTop];
   }
 
@@ -489,6 +489,16 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
   return nil;
+}
+
+- (nullable UIScrollView *)findContentScrollView
+{
+  // Look for content ScrollView starting directly from the screen that is on top.
+  // This has the advantage of being able to continue searching even if the Screen
+  // hasn't been mounted yet (due to the operation being delayed with dispatch_async())
+  RNSScreenView *topScreen = _reactSubviews.lastObject;
+
+  return [RNSScrollViewFinder findContentScrollViewWithDelegatingToProvider:topScreen];
 }
 
 - (UIViewController *)lastFromPresentedViewControllerChainStartingFrom:(UIViewController *)vc
