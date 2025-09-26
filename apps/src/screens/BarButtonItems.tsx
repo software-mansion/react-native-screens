@@ -175,7 +175,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: [
             {
               label: 'Disabled',
-              enabled: false,
+              disabled: true,
               onPress: () => Alert.alert('Should not fire'),
             },
           ],

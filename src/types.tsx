@@ -982,9 +982,9 @@ interface SharedHeaderBarButtonItem {
    */
   tintColor?: ColorValue;
   /**
-   * A Boolean value that indicates whether the item is in a enabled state.
+   * A Boolean value that indicates whether the item is in a disabled state.
    */
-  enabled?: boolean;
+  disabled?: boolean;
   /**
    * The width of the item.
    *
