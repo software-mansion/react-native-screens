@@ -38,6 +38,7 @@ export interface NativeProps extends ViewProps {
   onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
   onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
   hideWhenScrolling?: WithDefault<boolean, true>;
+  autoFocus?: WithDefault<boolean, false>;
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
   placement?: WithDefault<SearchBarPlacement, 'automatic'>;

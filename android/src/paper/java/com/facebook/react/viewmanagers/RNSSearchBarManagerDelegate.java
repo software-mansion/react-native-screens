@@ -28,6 +28,9 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
       case "hideWhenScrolling":
         mViewManager.setHideWhenScrolling(view, value == null ? true : (boolean) value);
         break;
+      case "autoFocus":
+        mViewManager.setAutoFocus(view, value == null ? false : (boolean) value);
+        break;
       case "autoCapitalize":
         mViewManager.setAutoCapitalize(view, (String) value);
         break;
