@@ -54,9 +54,9 @@
   }
 #endif
 
-  NSNumber *enabledNum = dict[@"enabled"];
-  if (enabledNum != nil) {
-    self.enabled = [enabledNum boolValue];
+  NSNumber *disabledNum = dict[@"disabled"];
+  if (disabledNum != nil) {
+    self.enabled = ![disabledNum boolValue];
   }
 
   NSNumber *width = dict[@"width"];
