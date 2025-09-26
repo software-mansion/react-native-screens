@@ -103,11 +103,11 @@
   }
 #endif
 
-  NSString *style = dict[@"style"];
-  if (style) {
-    if ([style isEqualToString:@"done"]) {
+  NSString *variant = dict[@"variant"];
+  if (variant) {
+    if ([variant isEqualToString:@"done"]) {
       self.style = UIBarButtonItemStyleDone;
-    } else if ([style isEqualToString:@"prominent"]) {
+    } else if ([variant isEqualToString:@"prominent"]) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
       if (@available(iOS 26.0, *)) {
         self.style = UIBarButtonItemStyleProminent;
