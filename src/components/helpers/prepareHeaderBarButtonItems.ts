@@ -36,7 +36,9 @@ export const prepareHeaderBarButtonItems = (
     if ('spacing' in item) {
       return item;
     }
-    const image = item.image ? Image.resolveAssetSource(item.image) : undefined;
+    const imageSource = item.imageSource
+      ? Image.resolveAssetSource(item.imageSource)
+      : undefined;
 
     const labelStyle = item.labelStyle
       ? { ...item.labelStyle, color: processColor(item.labelStyle.color) }
@@ -54,7 +56,7 @@ export const prepareHeaderBarButtonItems = (
       : undefined;
     const processedItem = {
       ...item,
-      image,
+      imageSource,
       labelStyle,
       tintColor,
       badge,

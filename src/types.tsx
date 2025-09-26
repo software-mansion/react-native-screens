@@ -7,7 +7,7 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
-  ImageRequireSource,
+  ImageSourcePropType,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 import { ScrollEdgeEffect } from './components/shared/types';
@@ -974,7 +974,7 @@ interface SharedHeaderBarButtonItem {
   /**
    * Image source for the item
    */
-  image?: ImageRequireSource;
+  imageSource?: ImageSourcePropType;
   /**
    * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
    */
