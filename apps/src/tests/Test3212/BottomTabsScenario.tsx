@@ -10,7 +10,7 @@ export function BottomTabsScenario() {
   const [config, setConfig] = useState<ScrollEdgeEffects>({ ...SCROLL_EDGE_EFFECT_DEFAULTS });
 
   // Add ScrollView for automatic insets which are missing in BottomTabsScreen
-  const ConfigComponent = useCallback(() => <ScrollView><Config /></ScrollView>, []);
+  const ConfigComponent = useCallback(() => <ScrollView><Config title='BottomTabs / scrollEdgeEffects:' /></ScrollView>, []);
 
   return (
     <NavigationIndependentTree>

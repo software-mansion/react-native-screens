@@ -5,19 +5,20 @@ import { SettingsPicker } from "../../shared";
 import { ScrollEdgeEffect } from "react-native-screens";
 
 interface ConfigProps {
-  navigation?: NavigationProp<{ Test: undefined }>,
+  title: string;
+  navigation?: NavigationProp<{ Test: undefined }>;
 }
 
 const SCROLL_EDGE_EFFECT_OPTIONS: ScrollEdgeEffect[] = ['automatic', 'hard', 'soft', 'hidden'];
 
 function ConfigWithOptionalNavigation(props: ConfigProps) {
-  const { navigation } = props;
+  const { title, navigation } = props;
 
   const { config, setConfig }  = useScrollEdgeEffectsConfigContext();
 
   return (
     <>
-      <Text style={{ margin: 8, fontSize: 24 }}>scrollEdgeEffects:</Text>
+      <Text style={{ margin: 8, fontSize: 18 }}>{title}</Text>
       <SettingsPicker
         label="bottom"
         value={config.bottom}
@@ -55,16 +56,16 @@ function ConfigWithOptionalNavigation(props: ConfigProps) {
   );
 }
 
-export function Config() {
+export function Config(props: Pick<ConfigProps, 'title'>) {
   return (
-    <ConfigWithOptionalNavigation />
+    <ConfigWithOptionalNavigation title={props.title}/>
   );
 }
 
-export function ConfigWithNavigation() {
+export function ConfigWithNavigation(props: Pick<ConfigProps, 'title'>) {
   const navigation: NavigationProp<{ Test: undefined}> = useNavigation();
 
   return (
-    <ConfigWithOptionalNavigation navigation={navigation}/>
+    <ConfigWithOptionalNavigation title={props.title} navigation={navigation}/>
   );
 }
