@@ -45,10 +45,6 @@ import kotlin.let
 
 sealed class KeyboardState
 
-interface KeyboardStateListener {
-    fun onKeyboardStateChanged(state: KeyboardState)
-}
-
 object KeyboardNotVisible : KeyboardState()
 
 object KeyboardDidHide : KeyboardState()
@@ -59,8 +55,7 @@ class KeyboardVisible(
 
 class ScreenStackFragment :
     ScreenFragment,
-    ScreenStackFragmentWrapper,
-    KeyboardStateListener {
+    ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
@@ -70,8 +65,6 @@ class ScreenStackFragment :
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
-
-    private var shouldApplyKeyboardOffset = false
 
     private var fadeAnimationRunning = false
 
@@ -368,12 +361,7 @@ class ScreenStackFragment :
 
     private fun updateScreenTranslation(baseTranslationY: Float) {
         val keyboardCorrection = lastKeyboardBottomOffset ?: 0
-        val bottomOffset =
-            if (shouldApplyKeyboardOffset) {
-                sheetDelegate?.calculateSheetOffsetY(keyboardCorrection)?.toFloat() ?: 0f
-            } else {
-                0f
-            }
+        val bottomOffset = sheetDelegate?.calculateSheetOffsetY(keyboardCorrection)?.toFloat() ?: 0f
 
         screen.translationY = baseTranslationY - bottomOffset
         Log.d("tomaboro", "updateScreenTranslation ${screen.translationY}")
@@ -561,24 +549,5 @@ class ScreenStackFragment :
             sheetDelegate = SheetDelegate(screen)
         }
         return sheetDelegate!!
-    }
-
-    // KeyboardStateListener overrides
-
-    override fun onKeyboardStateChanged(state: KeyboardState) {
-        shouldApplyKeyboardOffset =
-            when (state) {
-                is KeyboardVisible -> {
-                    true
-                }
-
-                KeyboardDidHide -> {
-                    true
-                }
-
-                KeyboardNotVisible -> {
-                    false
-                }
-            }
     }
 }
