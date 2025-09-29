@@ -16,6 +16,7 @@ import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
+@SuppressWarnings("deprecation")
 public class RNSSafeAreaViewManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSSafeAreaViewManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSSafeAreaViewManagerDelegate(U viewManager) {
     super(viewManager);
