@@ -58,6 +58,9 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
       case "textColor":
         mViewManager.setTextColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
+      case "autoFocus":
+        mViewManager.setAutoFocus(view, value == null ? false : (boolean) value);
+        break;
       case "disableBackButtonOverride":
         mViewManager.setDisableBackButtonOverride(view, value == null ? false : (boolean) value);
         break;

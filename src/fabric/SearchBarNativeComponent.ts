@@ -51,6 +51,7 @@ export interface NativeProps extends ViewProps {
   textColor?: ColorValue;
 
   // Android only
+  autoFocus?: WithDefault<boolean, false>;
   disableBackButtonOverride?: boolean;
   // TODO: consider creating enum here
   inputType?: string;
