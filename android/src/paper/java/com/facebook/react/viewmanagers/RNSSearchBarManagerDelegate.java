@@ -28,9 +28,6 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
       case "hideWhenScrolling":
         mViewManager.setHideWhenScrolling(view, value == null ? true : (boolean) value);
         break;
-      case "autoFocus":
-        mViewManager.setAutoFocus(view, value == null ? false : (boolean) value);
-        break;
       case "autoCapitalize":
         mViewManager.setAutoCapitalize(view, (String) value);
         break;
@@ -60,6 +57,9 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
         break;
       case "textColor":
         mViewManager.setTextColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
+      case "autoFocus":
+        mViewManager.setAutoFocus(view, value == null ? false : (boolean) value);
         break;
       case "disableBackButtonOverride":
         mViewManager.setDisableBackButtonOverride(view, value == null ? false : (boolean) value);

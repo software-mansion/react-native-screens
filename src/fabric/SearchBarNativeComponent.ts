@@ -38,7 +38,6 @@ export interface NativeProps extends ViewProps {
   onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
   onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
   hideWhenScrolling?: WithDefault<boolean, true>;
-  autoFocus?: WithDefault<boolean, false>;
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
   placement?: WithDefault<SearchBarPlacement, 'automatic'>;
@@ -52,6 +51,7 @@ export interface NativeProps extends ViewProps {
   textColor?: ColorValue;
 
   // Android only
+  autoFocus?: WithDefault<boolean, false>;
   disableBackButtonOverride?: boolean;
   // TODO: consider creating enum here
   inputType?: string;
