@@ -31,7 +31,9 @@ class ScreensModule(
                 Log.e("[RNScreens]", "Could not install JSI bindings.")
             }
 
-            proxy = NativeProxy()
+            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                proxy = NativeProxy()
+            }
 
             reactContext.addLifecycleEventListener(this)
         } catch (exception: UnsatisfiedLinkError) {
@@ -45,8 +47,10 @@ class ScreensModule(
 
     override fun invalidate() {
         super.invalidate()
-        proxy?.invalidateNative()
-        proxy = null
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            proxy?.invalidateNative()
+            proxy = null
+        }
         nativeUninstall()
     }
 
