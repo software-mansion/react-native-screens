@@ -10,33 +10,10 @@ namespace rnscreens {
 using namespace facebook;
 using namespace facebook::jni;
 
-struct WeakMountingCoordinatorPtrHash {
-  std::size_t operator()(
-      const std::weak_ptr<const facebook::react::MountingCoordinator> &ptr)
-      const {
-    if (auto sp = ptr.lock()) {
-      return std::hash<const void *>()(sp.get());
-    }
-    return 0;
-  }
-};
-
-struct WeakMountingCoordinatorPtrEqual {
-  bool operator()(
-      const std::weak_ptr<const facebook::react::MountingCoordinator> &a,
-      const std::weak_ptr<const facebook::react::MountingCoordinator> &b)
-      const {
-    return a.lock() == b.lock();
-  }
-};
-
 class NativeProxy : public jni::HybridClass<NativeProxy> {
  public:
   std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
-  std::unordered_set<
-      std::weak_ptr<const facebook::react::MountingCoordinator>,
-      WeakMountingCoordinatorPtrHash,
-      WeakMountingCoordinatorPtrEqual>
+  std::vector<std::weak_ptr<const facebook::react::MountingCoordinator>>
       coordinatorsWithMountingOverrides_;
   static auto constexpr kJavaDescriptor =
       "Lcom/swmansion/rnscreens/NativeProxy;";
@@ -55,6 +32,11 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
           fabricUIManager);
 
   void invalidateNative();
+
+  void cleanupExpiredMountingCoordinators();
+  void addMountingCoordinatorIfNeeded(
+      const std::shared_ptr<const facebook::react::MountingCoordinator>
+          &coordinator);
 };
 
 } // namespace rnscreens
