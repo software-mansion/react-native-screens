@@ -30,11 +30,6 @@ class ScreensModule(
             } else {
                 Log.e("[RNScreens]", "Could not install JSI bindings.")
             }
-
-            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                proxy = NativeProxy()
-                reactContext.addLifecycleEventListener(this)
-            }
         } catch (exception: UnsatisfiedLinkError) {
             Log.w("[RNScreens]", "Could not load RNScreens module.")
         }
@@ -49,13 +44,21 @@ class ScreensModule(
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             proxy?.invalidateNative()
             proxy = null
+
+            reactContext.removeLifecycleEventListener(this)
         }
         nativeUninstall()
     }
 
     override fun initialize() {
         super.initialize()
-        setupFabric()
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            proxy = NativeProxy()
+
+            reactContext.addLifecycleEventListener(this)
+
+            setupFabric()
+        }
     }
 
     private fun setupFabric() {
@@ -145,7 +148,9 @@ class ScreensModule(
     // LifecycleEventListener
 
     override fun onHostResume() {
-        setupFabric()
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            setupFabric()
+        }
     }
 
     override fun onHostPause() {
