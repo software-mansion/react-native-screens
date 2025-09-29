@@ -7,7 +7,7 @@ import {
   NativeFocusChangeEvent,
 } from 'react-native-screens';
 import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
-import { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
+import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
 import { Colors } from '../../../styling/Colors';
 import ConfigWrapperContext from './ConfigWrapperContext';
 
