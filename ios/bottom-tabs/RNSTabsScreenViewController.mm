@@ -107,7 +107,7 @@
     return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
   } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
     UIScrollView *scrollView =
-        [RNSScrollViewFinder findContentScrollViewWithFirstDescendantsChain:[self tabScreenComponentView]];
+        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
     return [scrollView rnscreens_scrollToTop];
   }
 

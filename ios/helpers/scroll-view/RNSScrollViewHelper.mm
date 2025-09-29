@@ -5,7 +5,7 @@
 
 + (void)overrideScrollViewBehaviorInFirstDescendantChainFrom:(nullable UIView *)view
 {
-  UIScrollView *scrollView = [RNSScrollViewFinder findContentScrollViewWithFirstDescendantsChain:view];
+  UIScrollView *scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:view];
 
   if ([scrollView contentInsetAdjustmentBehavior] == UIScrollViewContentInsetAdjustmentNever) {
     [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAutomatic];
