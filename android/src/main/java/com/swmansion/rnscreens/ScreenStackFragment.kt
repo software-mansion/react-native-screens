@@ -7,6 +7,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -247,18 +248,34 @@ class ScreenStackFragment :
             )
             coordinatorLayout.layout(0, 0, container.width, container.height)
 
-            ViewCompat.setWindowInsetsAnimationCallback(
-                screen,
-                object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                ViewCompat.setOnApplyWindowInsetsListener(screen) { _, windowInsets ->
+                    handleKeyboardInsetsProgress(windowInsets)
+                    windowInsets
+                }
+            }
+
+            val insetsAnimationCallback =
+                object : WindowInsetsAnimationCompat.Callback(
+                    WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP,
+                ) {
+                    // Replace InsetsAnimationCallback created by BottomSheetBehavior with empty implementation
+                    // to avoid interfering with custom animations.
+                    // See: https://github.com/software-mansion/react-native-screens/pull/2909
                     override fun onProgress(
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
                     ): WindowInsetsCompat {
-                        handleKeyboardInsetsProgress(insets)
+                        // On API 30+, we handle keyboard inset animation progress here.
+                        // On lower APIs, we rely on ViewCompat.setOnApplyWindowInsetsListener instead.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            handleKeyboardInsetsProgress(insets)
+                        }
                         return insets
                     }
-                },
-            )
+                }
+
+            ViewCompat.setWindowInsetsAnimationCallback(screen, insetsAnimationCallback)
         }
 
         return coordinatorLayout
