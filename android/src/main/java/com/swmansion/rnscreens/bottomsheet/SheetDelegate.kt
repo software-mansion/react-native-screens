@@ -16,7 +16,6 @@ import com.swmansion.rnscreens.InsetsObserverProxy
 import com.swmansion.rnscreens.KeyboardDidHide
 import com.swmansion.rnscreens.KeyboardNotVisible
 import com.swmansion.rnscreens.KeyboardState
-import com.swmansion.rnscreens.KeyboardStateListener
 import com.swmansion.rnscreens.KeyboardVisible
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
@@ -288,9 +287,6 @@ class SheetDelegate(
         if (isImeVisible) {
             isKeyboardVisible = true
             keyboardState = KeyboardVisible(imeInset.bottom)
-
-            (stackFragment as? KeyboardStateListener)?.onKeyboardStateChanged(keyboardState)
-
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
@@ -311,14 +307,8 @@ class SheetDelegate(
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardDidHide)
-                    (stackFragment as? KeyboardStateListener)?.onKeyboardStateChanged(
-                        KeyboardDidHide,
-                    )
                 } else if (keyboardState != KeyboardNotVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardNotVisible)
-                    (stackFragment as? KeyboardStateListener)?.onKeyboardStateChanged(
-                        KeyboardNotVisible,
-                    )
                 }
             }
 
