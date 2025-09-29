@@ -158,7 +158,11 @@ class ScreensModule(
     }
 
     override fun onHostDestroy() {
-        // NO-OP
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            proxy?.apply {
+                cleanupExpiredMountingCoordinators()
+            }
+        }
     }
 
     companion object {

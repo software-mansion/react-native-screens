@@ -20,6 +20,9 @@ void NativeProxy::registerNatives() {
        makeNativeMethod(
            "nativeAddMutationsListener",
            NativeProxy::nativeAddMutationsListener),
+      makeNativeMethod(
+           "cleanupExpiredMountingCoordinators",
+           NativeProxy::cleanupExpiredMountingCoordinators),
        makeNativeMethod("invalidateNative", NativeProxy::invalidateNative)});
 }
 
