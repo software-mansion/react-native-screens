@@ -8,7 +8,6 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -364,7 +363,6 @@ class ScreenStackFragment :
         val bottomOffset = sheetDelegate?.calculateSheetOffsetY(keyboardCorrection)?.toFloat() ?: 0f
 
         screen.translationY = baseTranslationY - bottomOffset
-        Log.d("tomaboro", "updateScreenTranslation ${screen.translationY}")
     }
 
     private fun attachCommonListeners(
@@ -392,7 +390,6 @@ class ScreenStackFragment :
 
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    Log.d("tomaboro", "animation ended")
                     fadeAnimationRunning = false
                 }
             },
@@ -403,9 +400,6 @@ class ScreenStackFragment :
         lastKeyboardBottomOffset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
         if (!fadeAnimationRunning) {
             updateScreenTranslation(0f)
-            Log.d("tomaboro", "updateScreenTranslation from onProgress → ${screen.translationY}")
-        } else {
-            Log.d("tomaboro", "Skipped update in onProgress (animation in progress)")
         }
     }
 
