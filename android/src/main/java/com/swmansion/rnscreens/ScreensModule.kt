@@ -153,9 +153,7 @@ class ScreensModule(
         }
     }
 
-    override fun onHostPause() {
-        // NO-OP
-    }
+    override fun onHostPause() = Unit
 
     override fun onHostDestroy() {
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
