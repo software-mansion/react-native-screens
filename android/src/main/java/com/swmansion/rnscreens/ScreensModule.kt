@@ -33,9 +33,8 @@ class ScreensModule(
 
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 proxy = NativeProxy()
+                reactContext.addLifecycleEventListener(this)
             }
-
-            reactContext.addLifecycleEventListener(this)
         } catch (exception: UnsatisfiedLinkError) {
             Log.w("[RNScreens]", "Could not load RNScreens module.")
         }
