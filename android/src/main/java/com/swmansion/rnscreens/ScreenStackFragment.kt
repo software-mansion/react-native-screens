@@ -41,7 +41,6 @@ import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
 import kotlin.math.max
-import kotlin.let
 
 sealed class KeyboardState
 
@@ -353,8 +352,8 @@ class ScreenStackFragment :
     private fun createSlideOutAnimator(): ValueAnimator {
         val endValue = (coordinatorLayout.bottom - screen.top - screen.translationY)
         return ValueAnimator.ofFloat(0f, endValue).apply {
-            addUpdateListener { valueAnimator ->
-                updateScreenTranslation(valueAnimator.animatedValue as Float)
+            addUpdateListener {
+                updateScreenTranslation(it.animatedValue as Float)
             }
         }
     }
@@ -399,6 +398,13 @@ class ScreenStackFragment :
 
     private fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
         lastKeyboardBottomOffset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+        // Prioritize enter/exit animations over direct keyboard inset reactions.
+        // We store the latest keyboard offset in `lastKeyboardBottomOffset`
+        // so that it can always be respected when applying translations in `updateScreenTranslation`.
+        //
+        // This approach allows screen translation to be triggered from two sources, but without messing them together:
+        // - During enter/exit animations, while accounting for the keyboard height.
+        // - While interacting with a TextInput inside the bottom sheet, to handle keyboard show/hide events.
         if (!fadeAnimationRunning) {
             updateScreenTranslation(0f)
         }
