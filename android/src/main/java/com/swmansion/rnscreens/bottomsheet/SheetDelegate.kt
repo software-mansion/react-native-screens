@@ -256,9 +256,7 @@ class SheetDelegate(
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
 
-        val isFitToContents = screen.isSheetFitToContents()
-
-        if (isFitToContents) {
+        if (screen.isSheetFitToContents()) {
             val contentHeight = screen.contentWrapper?.height ?: 0
             val offsetFromTop = containerHeight - contentHeight
             return minOf(offsetFromTop, keyboardHeight)
