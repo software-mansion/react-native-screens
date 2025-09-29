@@ -259,7 +259,7 @@ class ScreenStackFragment :
                 object : WindowInsetsAnimationCompat.Callback(
                     WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP,
                 ) {
-                    // Replace InsetsAnimationCallback created by BottomSheetBehavior with empty implementation
+                    // Replace InsetsAnimationCallback created by BottomSheetBehavior
                     // to avoid interfering with custom animations.
                     // See: https://github.com/software-mansion/react-native-screens/pull/2909
                     override fun onProgress(
