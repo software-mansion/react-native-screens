@@ -184,7 +184,7 @@ class SearchBarManager :
     }
 
     override fun cancelSearch(view: SearchBarView?) {
-        view?.handleFocusJsRequest()
+        view?.handleCancelSearchJsRequest()
     }
 
     // iOS only
