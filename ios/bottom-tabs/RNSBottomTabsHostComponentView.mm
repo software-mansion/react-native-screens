@@ -14,6 +14,7 @@
 #import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSBottomTabsAccessoryComponentView.h"
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSConversions.h"
 #import "RNSConvert.h"
@@ -212,30 +213,43 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  BOOL isValidBottomAccessory = [childComponentView isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
+  BOOL isTabsScreen = [childComponentView isKindOfClass:[RNSBottomTabsScreenComponentView class]];
   RCTAssert(
-      [childComponentView isKindOfClass:RNSBottomTabsScreenComponentView.class],
-      @"BottomTabsView only accepts children of type BottomTabScreen. Attempted to mount %@",
+      isValidBottomAccessory || isTabsScreen,
+      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory at the last index. Attempted to mount %@",
       childComponentView);
 
-  auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
-  childScreen.reactSuperview = self;
+  if (isTabsScreen) {
+    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
+    childScreen.reactSuperview = self;
 
-  [_reactSubviews insertObject:childScreen atIndex:index];
-  _hasModifiedReactSubviewsInCurrentTransaction = YES;
+    // TODO: accessory is also react subview - how to handle this?
+    [_reactSubviews insertObject:childScreen atIndex:index];
+    _hasModifiedReactSubviewsInCurrentTransaction = YES;
+  } else if (isValidBottomAccessory) {
+    // TODO: save reference to accessory
+  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  BOOL isValidBottomAccessory = [childComponentView isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
+  BOOL isTabsScreen = [childComponentView isKindOfClass:[RNSBottomTabsScreenComponentView class]];
   RCTAssert(
-      [childComponentView isKindOfClass:RNSBottomTabsScreenComponentView.class],
-      @"BottomTabsView only accepts children of type BottomTabScreen. Attempted to unmount %@",
+      isValidBottomAccessory || isTabsScreen,
+      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory at the last index. Attempted to unmount %@",
       childComponentView);
 
-  auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
-  childScreen.reactSuperview = nil;
+  if (isTabsScreen) {
+    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
+    childScreen.reactSuperview = nil;
 
-  [_reactSubviews removeObject:childScreen];
-  _hasModifiedReactSubviewsInCurrentTransaction = YES;
+    [_reactSubviews removeObject:childScreen];
+    _hasModifiedReactSubviewsInCurrentTransaction = YES;
+  } else if (isValidBottomAccessory) {
+    // TODO: clear reference to accessory
+  }
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props

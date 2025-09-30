@@ -3,6 +3,8 @@
 import React from 'react';
 import {
   StyleSheet,
+  Text,
+  View,
   findNodeHandle,
   type NativeSyntheticEvent,
 } from 'react-native';
@@ -15,6 +17,7 @@ import type {
   NativeFocusChangeEvent,
 } from './BottomTabs.types';
 import { bottomTabsDebugLog } from '../../private/logging';
+import BottomTabsAccessory from './BottomTabsAccessory';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -63,6 +66,12 @@ function BottomTabs(props: BottomTabsProps) {
       ref={componentNodeRef}
       {...filteredProps}>
       {filteredProps.children}
+      <BottomTabsAccessory>
+        <View
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text>Hello, World!</Text>
+        </View>
+      </BottomTabsAccessory>
     </BottomTabsNativeComponent>
   );
 }
