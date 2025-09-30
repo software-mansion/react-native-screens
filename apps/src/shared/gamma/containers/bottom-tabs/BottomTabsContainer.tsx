@@ -17,8 +17,7 @@ export interface TabConfiguration {
   safeAreaConfiguration?: SafeAreaViewProps;
 }
 
-// Currently assumes controlled bottom tabs
-export type BottomTabsContainerProps = Omit<BottomTabsProps, 'experimentalControlNavigationStateInJS' | 'onNativeFocusChange'> & { tabConfigs: TabConfiguration[]; }
+export type BottomTabsContainerProps = BottomTabsProps & { tabConfigs: TabConfiguration[]; }
 
 export function BottomTabsContainer(props: BottomTabsContainerProps) {
   console.info('BottomTabsContainer render');
@@ -76,11 +75,13 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
 
   return (
     <BottomTabs
-      {...restProps}
+      // Use controlled bottom tabs by default, but allow to overwrite if user wants to
       onNativeFocusChange={onNativeFocusChangeCallback}
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
-      }>
+      }
+      {...restProps}
+      >
       {tabConfigs.map(tabConfig => {
         const tabKey = tabConfig.tabScreenProps.tabKey;
         const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
