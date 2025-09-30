@@ -2,13 +2,13 @@ import React from 'react';
 import { Platform, type NativeSyntheticEvent } from 'react-native';
 import {
   BottomTabs,
+  BottomTabsProps,
   BottomTabsScreen,
   BottomTabsScreenProps,
   NativeFocusChangeEvent,
 } from 'react-native-screens';
 import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
 import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
-import { Colors } from '../../../styling/Colors';
 import ConfigWrapperContext from './ConfigWrapperContext';
 
 export interface TabConfiguration {
@@ -17,13 +17,12 @@ export interface TabConfiguration {
   safeAreaConfiguration?: SafeAreaViewProps;
 }
 
-export interface BottomTabsContainerProps {
-  tabConfigs: TabConfiguration[];
-}
+export type BottomTabsContainerProps = BottomTabsProps & { tabConfigs: TabConfiguration[]; }
 
 export function BottomTabsContainer(props: BottomTabsContainerProps) {
-  // Currently assumes controlled bottom tabs
   console.info('BottomTabsContainer render');
+
+  const { tabConfigs, ...restProps } = props;
 
   const [focusedTabKey, setFocusedTabKey] = React.useState<string>(() => {
     console.log('BottomTabsContainer focusedStateKey initial state computed');
@@ -32,7 +31,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       throw new Error('There must be at least one tab defined');
     }
 
-    const maybeUserRequestedFocusedTab = props.tabConfigs.find(
+    const maybeUserRequestedFocusedTab = tabConfigs.find(
       tabConfig => tabConfig.tabScreenProps.isFocused === true,
     )?.tabScreenProps.tabKey;
 
@@ -41,7 +40,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
     }
 
     // Default to first tab
-    return props.tabConfigs[0].tabScreenProps.tabKey;
+    return tabConfigs[0].tabScreenProps.tabKey;
   });
 
   const configWrapper = React.useContext(ConfigWrapperContext);
@@ -76,27 +75,14 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
 
   return (
     <BottomTabs
+      // Use controlled bottom tabs by default, but allow to overwrite if user wants to
       onNativeFocusChange={onNativeFocusChangeCallback}
-      tabBarBackgroundColor={Colors.NavyLight100}
-      tabBarItemActiveIndicatorColor={Colors.GreenLight40}
-      tabBarItemActiveIndicatorEnabled={true}
-      tabBarTintColor={Colors.YellowLight100}
-      tabBarItemIconColor={Colors.BlueLight100}
-      tabBarItemTitleFontColor={Colors.BlueLight40}
-      tabBarItemIconColorActive={Colors.GreenLight100}
-      tabBarItemTitleFontColorActive={Colors.GreenLight40}
-      tabBarItemTitleFontSize={10}
-      tabBarItemTitleFontSizeActive={15}
-      tabBarItemRippleColor={Colors.WhiteTransparentDark}
-      tabBarItemTitleFontFamily="monospace"
-      tabBarItemTitleFontStyle="italic"
-      tabBarItemTitleFontWeight="700"
-      tabBarItemLabelVisibilityMode="auto"
-      tabBarMinimizeBehavior="onScrollDown"
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
-      }>
-      {props.tabConfigs.map(tabConfig => {
+      }
+      {...restProps}
+      >
+      {tabConfigs.map(tabConfig => {
         const tabKey = tabConfig.tabScreenProps.tabKey;
         const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
         console.info(
