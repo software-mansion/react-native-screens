@@ -5,15 +5,9 @@ import { BottomTabsScenario } from "./BottomTabsScenario";
 import { StackInStackScenario } from "./StackInStackScenario";
 import { StackInBottomTabsScenario } from "./StackInBottomTabsScenario";
 import { BottomTabsInStackScenario } from "./BottomTabsInStackScenario";
-import { enableFreeze } from "react-native-screens";
 
 export default function App() {
   const [environment, setEnvironment] = useState('select');
-
-  // With freeze enabled, the contents of some views are not present,
-  // and the ScrollView can't be found. To make changes to props handling
-  // more visible, we disable freezing.
-  enableFreeze(false);
 
   switch (environment) {
     case 'select':

@@ -18,7 +18,8 @@ export function StackInBottomTabsScenario() {
         <BottomTabsContainer
           tabConfigs={[
             { component: ConfigComponent, tabScreenProps: { tabKey: 'config', title: 'Config' } },
-            { component: StackScenario, tabScreenProps: { tabKey: 'stack', title: 'Stack', scrollEdgeEffects: config } },
+            // Using `freezeContents` for testing purposes, to make the ScrollView searching algorithm's success verifiable
+            { component: StackScenario, tabScreenProps: { tabKey: 'stack', title: 'Stack', freezeContents: false, scrollEdgeEffects: config } },
           ]}
         />
       </NavigationContainer>
