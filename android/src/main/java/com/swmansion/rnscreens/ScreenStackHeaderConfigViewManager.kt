@@ -156,13 +156,12 @@ class ScreenStackHeaderConfigViewManager :
         config.setHideBackButton(hideBackButton)
     }
 
-    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default.")
     @ReactProp(name = "topInsetEnabled")
     override fun setTopInsetEnabled(
         config: ScreenStackHeaderConfig,
         topInsetEnabled: Boolean,
     ) {
-        config.setTopInsetEnabled(topInsetEnabled)
+        logNotAvailable("topInsetEnabled")
     }
 
     @ReactProp(name = "color", customType = "Color")

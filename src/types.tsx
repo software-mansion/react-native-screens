@@ -686,16 +686,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   titleFontWeight?: string;
   /**
-   * A flag to that lets you opt out of insetting the header. You may want to
-   * set this to `false` if you use an opaque status bar. Defaults to `true`.
-   * Only supported on Android. Insets are always applied on iOS because the
-   * header cannot be opaque.
-   *
-   * @platform android
-   *
-   * @deprecated For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
-   *  and it is expected that the edge-to-edge will be enforced in future SDKs - therefore this prop
-   *  loses its relevance and will be removed at some point in the future.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    */
   topInsetEnabled?: boolean;
   /**

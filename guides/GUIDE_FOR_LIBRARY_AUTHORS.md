@@ -590,10 +590,6 @@ Customize the size of the font to be used for the title.
 
 Customize the weight of the font to be used for the title.
 
-### `topInsetEnabled` (Android only)
-
-A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
-
 ### `translucent`
 
 When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.

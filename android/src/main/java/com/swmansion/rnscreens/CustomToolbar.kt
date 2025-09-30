@@ -26,12 +26,10 @@ open class CustomToolbar(
     val config: ScreenStackHeaderConfig,
 ) : Toolbar(context) {
     // Switch this flag to enable/disable display cutout avoidance.
-    // Currently this is controlled by isTopInsetEnabled prop.
-    private val shouldAvoidDisplayCutout
-        get() = config.isTopInsetEnabled
+    // Currently this is hard-coded.
+    private val shouldAvoidDisplayCutout = true
 
-    private val shouldApplyTopInset
-        get() = config.isTopInsetEnabled
+    private val shouldApplyTopInset = true
 
     private var lastInsets = InsetsCompat.NONE
 

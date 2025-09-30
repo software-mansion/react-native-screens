@@ -99,7 +99,7 @@ open class ScreenViewManager :
     }
 
     private fun logNotAvailable(propName: String) {
-        Log.w("[RNScreens]", "$propName prop is not available")
+        Log.w("[RNScreens]", "$propName prop is not available on Android")
     }
 
     @ReactProp(name = "activityState")
