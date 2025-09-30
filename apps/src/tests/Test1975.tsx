@@ -10,7 +10,12 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ statusBarTranslucent: false }}>
+      <Stack.Navigator
+        screenOptions={
+          {
+            // statusBarTranslucent: false // This prop has been deprecated.
+          }
+        }>
         <Stack.Screen
           name="Screen"
           component={Screen}
