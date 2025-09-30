@@ -455,7 +455,7 @@ Along with this component's properties that can be used to customize header beha
 
 To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
 
-- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences` on iOS and `'none'` on Android.
+- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `systemDefault`, `none`, `words`, `sentences`, `characters`. Defaults to `systemDefault` which is the same as `sentences` on iOS and `none` on Android.
 - `autoFocus` - If `true` automatically focuses search bar when screen is appearing. (Android only)
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
 - `tintColor` - The color for the cursor caret and cancel button text. (iOS only)
