@@ -214,25 +214,11 @@ export interface ScreenProps extends ViewProps {
     top: ScrollEdgeEffect;
   };
   /**
-   * Sets the navigation bar color. Defaults to initial status bar color.
-   *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect and is subject to removal in the future.
-   *  For SDK below 35 this works only with specific app setup.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    */
   navigationBarColor?: ColorValue;
   /**
-   * Boolean indicating whether the content should be visible behind the navigation bar. Defaults to `false`.
-   *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
-   *  We expect that in future SDKs this option will be enforced.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    */
   navigationBarTranslucent?: boolean;
   /**
@@ -480,14 +466,7 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarAnimation?: 'none' | 'fade' | 'slide';
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
-   *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect.
-   *  For SDK below 35 this works only with specific app setup.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/reference/android/view/Window#setStatusBarColor(int)
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    */
   statusBarColor?: ColorValue;
   /**
@@ -501,12 +480,7 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
   /**
-   * Sets the translucency of the status bar. Defaults to `false`.
-   *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this point loses relevance.
-   *  It is expected that the edge-to-edge will be enforced in future SDKs: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    */
   statusBarTranslucent?: boolean;
   /**

@@ -1,24 +1,18 @@
 package com.swmansion.rnscreens
 
-import android.animation.ArgbEvaluator
-import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.pm.ActivityInfo
-import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.ViewParent
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.swmansion.rnscreens.Screen.WindowTraits
-import com.swmansion.rnscreens.utils.EdgeToEdgeDetector
 
 object ScreenWindowTraits {
     // Methods concerning statusBar management were taken from `react-native`'s status bar module:
@@ -26,7 +20,6 @@ object ScreenWindowTraits {
     private var didSetOrientation = false
     private var didSetStatusBarAppearance = false
     private var didSetNavigationBarAppearance = false
-    private var defaultStatusBarColor: Int? = null
 
     private var windowInsetsListener =
         object : OnApplyWindowInsetsListener {
@@ -86,46 +79,6 @@ object ScreenWindowTraits {
         activity.requestedOrientation = orientation
     }
 
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect because " +
-            "edge-to-edge is enabled by default and the status bar is always translucent.",
-    )
-    internal fun setColor(
-        screen: Screen,
-        activity: Activity?,
-        context: ReactContext?,
-    ) {
-        if (activity == null || context == null) {
-            return
-        }
-        if (defaultStatusBarColor == null) {
-            defaultStatusBarColor = activity.window.statusBarColor
-        }
-        val screenForColor = findScreenForTrait(screen, WindowTraits.COLOR)
-        val screenForAnimated = findScreenForTrait(screen, WindowTraits.ANIMATED)
-        val color = screenForColor?.statusBarColor ?: defaultStatusBarColor
-        val animated = screenForAnimated?.isStatusBarAnimated ?: false
-
-        UiThreadUtil.runOnUiThread(
-            object : GuardedRunnable(context.exceptionHandler) {
-                override fun runGuarded() {
-                    val window = activity.window
-                    val curColor: Int = window.statusBarColor
-                    val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), curColor, color)
-                    colorAnimation.addUpdateListener { animator ->
-                        window.statusBarColor = animator.animatedValue as Int
-                    }
-                    if (animated) {
-                        colorAnimation.setDuration(300).startDelay = 0
-                    } else {
-                        colorAnimation.setDuration(0).startDelay = 300
-                    }
-                    colorAnimation.start()
-                }
-            },
-        )
-    }
-
     internal fun setStyle(
         screen: Screen,
         activity: Activity?,
@@ -144,38 +97,6 @@ object ScreenWindowTraits {
 
             controller.isAppearanceLightStatusBars = style == "dark"
         }
-    }
-
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect because " +
-            "edge-to-edge is enabled by default and the status bar is always translucent.",
-    )
-    internal fun setTranslucent(
-        screen: Screen,
-        activity: Activity?,
-        context: ReactContext?,
-    ) {
-        if (activity == null || context == null || EdgeToEdgeDetector.ENABLED) {
-            return
-        }
-        val screenForTranslucent = findScreenForTrait(screen, WindowTraits.TRANSLUCENT)
-        val translucent = screenForTranslucent?.isStatusBarTranslucent ?: false
-        UiThreadUtil.runOnUiThread(
-            object : GuardedRunnable(context.exceptionHandler) {
-                override fun runGuarded() {
-                    // If the status bar is translucent hook into the window insets calculations
-                    // and consume all the top insets so no padding will be added under the status bar.
-                    val decorView = activity.window.decorView
-                    if (translucent) {
-                        InsetsObserverProxy.registerOnView(decorView)
-                        InsetsObserverProxy.addOnApplyWindowInsetsListener(windowInsetsListener)
-                    } else {
-                        InsetsObserverProxy.removeOnApplyWindowInsetsListener(windowInsetsListener)
-                    }
-                    ViewCompat.requestApplyInsets(decorView)
-                }
-            },
-        )
     }
 
     internal fun setHidden(
@@ -197,51 +118,6 @@ object ScreenWindowTraits {
                 controller.show(WindowInsetsCompat.Type.statusBars())
             }
         }
-    }
-
-    // Methods concerning navigationBar management were taken from `react-native-navigation`'s repo:
-    // https://github.com/wix/react-native-navigation/blob/9bb70d81700692141a2c505c081c2d86c7f9c66e/lib/android/app/src/main/java/com/reactnativenavigation/utils/SystemUiUtils.kt
-    @Deprecated(
-        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
-    )
-    internal fun setNavigationBarColor(
-        screen: Screen,
-        activity: Activity?,
-    ) {
-        if (activity == null) {
-            return
-        }
-
-        val window = activity.window
-
-        val screenForNavBarColor = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_COLOR)
-        val color = screenForNavBarColor?.navigationBarColor ?: window.navigationBarColor
-
-        UiThreadUtil.runOnUiThread {
-            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars =
-                isColorLight(color)
-        }
-        window.navigationBarColor = color
-    }
-
-    @Deprecated(
-        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
-    )
-    internal fun setNavigationBarTranslucent(
-        screen: Screen,
-        activity: Activity?,
-    ) {
-        if (activity == null || EdgeToEdgeDetector.ENABLED) {
-            return
-        }
-
-        val window = activity.window
-
-        val screenForNavBarTranslucent = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_TRANSLUCENT)
-        val translucent = screenForNavBarTranslucent?.isNavigationBarTranslucent ?: return
-
-        // Following method controls whether to display edge-to-edge content that draws behind the navigation bar
-        WindowCompat.setDecorFitsSystemWindows(window, !translucent)
     }
 
     internal fun setNavigationBarHidden(
@@ -280,14 +156,10 @@ object ScreenWindowTraits {
             setOrientation(screen, activity)
         }
         if (didSetStatusBarAppearance) {
-            setColor(screen, activity, context)
             setStyle(screen, activity, context)
-            setTranslucent(screen, activity, context)
             setHidden(screen, activity)
         }
         if (didSetNavigationBarAppearance) {
-            setNavigationBarColor(screen, activity)
-            setNavigationBarTranslucent(screen, activity)
             setNavigationBarHidden(screen, activity)
         }
     }
@@ -351,19 +223,9 @@ object ScreenWindowTraits {
     ): Boolean =
         when (trait) {
             WindowTraits.ORIENTATION -> screen.screenOrientation != null
-            WindowTraits.COLOR -> screen.statusBarColor != null
             WindowTraits.STYLE -> screen.statusBarStyle != null
-            WindowTraits.TRANSLUCENT -> screen.isStatusBarTranslucent != null
             WindowTraits.HIDDEN -> screen.isStatusBarHidden != null
             WindowTraits.ANIMATED -> screen.isStatusBarAnimated != null
-            WindowTraits.NAVIGATION_BAR_COLOR -> screen.navigationBarColor != null
-            WindowTraits.NAVIGATION_BAR_TRANSLUCENT -> screen.isNavigationBarTranslucent != null
             WindowTraits.NAVIGATION_BAR_HIDDEN -> screen.isNavigationBarHidden != null
         }
-
-    private fun isColorLight(color: Int): Boolean {
-        val darkness: Double =
-            1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
-        return darkness < 0.5
-    }
 }
