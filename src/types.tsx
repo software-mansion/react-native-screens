@@ -699,6 +699,9 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   titleFontWeight?: string;
   /**
    * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
+   *
+   * For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
+   * therefore this prop loses its relevance.
    */
   topInsetEnabled?: boolean;
   /**
