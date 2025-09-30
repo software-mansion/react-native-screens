@@ -20,6 +20,8 @@ class NativeProxy {
 
     external fun nativeAddMutationsListener(fabricUIManager: FabricUIManager)
 
+    external fun cleanupExpiredMountingCoordinators()
+
     external fun invalidateNative()
 
     companion object {

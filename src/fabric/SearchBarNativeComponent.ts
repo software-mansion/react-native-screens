@@ -27,7 +27,12 @@ type SearchBarPlacement =
   | 'integratedButton'
   | 'integratedCentered';
 
-type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
+type AutoCapitalizeType =
+  | 'systemDefault'
+  | 'none'
+  | 'words'
+  | 'sentences'
+  | 'characters';
 
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 
@@ -38,7 +43,7 @@ export interface NativeProps extends ViewProps {
   onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
   onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
   hideWhenScrolling?: WithDefault<boolean, true>;
-  autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
+  autoCapitalize?: WithDefault<AutoCapitalizeType, 'systemDefault'>;
   placeholder?: string;
   placement?: WithDefault<SearchBarPlacement, 'automatic'>;
   allowToolbarIntegration?: WithDefault<boolean, true>;
@@ -51,6 +56,7 @@ export interface NativeProps extends ViewProps {
   textColor?: ColorValue;
 
   // Android only
+  autoFocus?: WithDefault<boolean, false>;
   disableBackButtonOverride?: boolean;
   // TODO: consider creating enum here
   inputType?: string;

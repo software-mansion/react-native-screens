@@ -16,4 +16,5 @@ import com.facebook.react.bridge.ReadableMap;
 
 public interface RNSSafeAreaViewManagerInterface<T extends View>  {
   void setEdges(T view, @Nullable ReadableMap value);
+  void setInsetType(T view, @Nullable String value);
 }

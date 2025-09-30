@@ -11,15 +11,5 @@ export default function TestTab() {
     [config.content],
   );
 
-  return (
-    <SafeAreaView
-      edges={{
-        top: config.safeAreaTopEdge,
-        bottom: config.safeAreaBottomEdge,
-        left: config.safeAreaLeftEdge,
-        right: config.safeAreaRightEdge,
-      }}>
-      {content}
-    </SafeAreaView>
-  );
+  return content;
 }
