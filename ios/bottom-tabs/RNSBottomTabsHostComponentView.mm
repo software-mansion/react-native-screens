@@ -272,13 +272,6 @@ namespace react = facebook::react;
       _tabBarControllerMode = rnscreens::conversion::UITabBarControllerModeFromRNSBottomTabsTabBarControllerMode(
           newComponentProps.tabBarControllerMode);
       _controller.mode = _tabBarControllerMode;
-      if (_tabBarControllerMode == UITabBarControllerModeTabSidebar) {
-        // Also show the sidebar on iPad if the device is in landscape mode (default behavior)
-        UIDeviceOrientation current = [[UIDevice currentDevice] orientation];
-        if (UIDeviceOrientationIsLandscape(current) ) {
-          _controller.sidebar.hidden = false;
-        }
-      }
     } else
 #endif // Check for iOS >= 18
       if (newComponentProps.tabBarControllerMode != react::RNSBottomTabsTabBarControllerMode::Automatic) {
@@ -456,15 +449,9 @@ RNS_IGNORE_SUPER_CALL_END
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
   if (@available(iOS 18.0, *)) {
-    _tabBarControllerMode = rnscreens::conversion::UITabBarControllerModeFromRNSTabBarControllerMode(tabBarControllerMode);
+    _tabBarControllerMode =
+        rnscreens::conversion::UITabBarControllerModeFromRNSTabBarControllerMode(tabBarControllerMode);
     _controller.mode = _tabBarControllerMode;
-    if (_tabBarControllerMode == UITabBarControllerModeTabSidebar) {
-      // Also show the sidebar on iPad if the device is in landscape mode (default behavior)
-      UIDeviceOrientation current = [[UIDevice currentDevice] orientation];
-      if (UIDeviceOrientationIsLandscape(current) ) {
-        _controller.sidebar.hidden = false;
-      }
-    }
   } else
 #endif // Check for iOS >= 18
     if (tabBarControllerMode != RNSTabBarControllerModeAutomatic) {
