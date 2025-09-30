@@ -60,8 +60,8 @@ For iOS prior to 26, swiping with this option results in the same transition ani
 It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation
 is not achievable due to usage of custom recognizer.
 
-For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used, and this prop controls whether it should 
-be enabled or not.
+For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used for all cases except for `customAnimationOnSwipe`,
+however the prop still can be used to controls whether it should be enabled or not.
 
 When not set, it defaults to `false` on iOS < 26 and `true` for iOS >= 26.
 
