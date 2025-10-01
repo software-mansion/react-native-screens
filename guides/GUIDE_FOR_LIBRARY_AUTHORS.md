@@ -100,7 +100,7 @@ Defaults to `false`.
 
 ### `navigationBarColor` (Android only)
 
-This prop has been **removed** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Retained only for backward compatibility.
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the navigation bar color. Defaults to initial status bar color.
 
@@ -110,7 +110,7 @@ Sets the visibility of the navigation bar. Defaults to `false`.
 
 ### `navigationBarTranslucent` (Android only)
 
-This prop has been **removed** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Retained only for backward compatibility.
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the translucency of the navigation bar. Defaults to `false`.
 
@@ -287,7 +287,7 @@ Defaults to `fade` on iOS and `none` on Android.
 
 ### `statusBarColor` (Android only)
 
-This prop has been **removed** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Retained only for backward compatibility.
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
@@ -305,7 +305,7 @@ Defaults to `auto`.
 
 ### `statusBarTranslucent` (Android only)
 
-This prop has been **removed** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Retained only for backward compatibility.
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
@@ -613,6 +613,12 @@ Customize the size of the font to be used for the title.
 ### `titleFontWeight`
 
 Customize the weight of the font to be used for the title.
+
+### `topInsetEnabled` (Android only)
+
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
+
+A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 
 ### `translucent`
 
