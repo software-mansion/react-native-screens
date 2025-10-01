@@ -13367,16 +13367,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-is-edge-to-edge@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "react-native-is-edge-to-edge@npm:1.2.1"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/87d20b900aded7d44c90afb946a7aa03c23a94ca3dd547bdddc2303b85357e4aab22567a57b19f1558d6c8be7058e3dcf34faa1e15182d1604f90974266d9a1d
-  languageName: node
-  linkType: hard
-
 "react-native-reanimated@npm:^3.19.0":
   version: 3.19.1
   resolution: "react-native-reanimated@npm:3.19.1"
@@ -13450,7 +13440,6 @@ __metadata:
     react-native: "npm:0.82.0-rc.4"
     react-native-builder-bob: "npm:^0.23.2"
     react-native-gesture-handler: "npm:^2.28.0"
-    react-native-is-edge-to-edge: "npm:^1.2.1"
     react-native-reanimated: "npm:^3.19.0"
     react-native-safe-area-context: "npm:5.6.0"
     react-native-windows: "npm:^0.64.8"
