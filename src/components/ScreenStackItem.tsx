@@ -9,12 +9,18 @@ import {
 import warnOnce from 'warn-once';
 
 import DebugContainer from './DebugContainer';
-import { ScreenProps, ScreenStackHeaderConfigProps } from '../types';
+import {
+  ScreenProps,
+  ScreenStackHeaderConfigProps,
+  StackPresentationTypes,
+} from '../types';
 import { ScreenStackHeaderConfig } from './ScreenStackHeaderConfig';
 import Screen from './Screen';
 import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
+import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
+import SafeAreaView from './safe-area/SafeAreaView';
 
 type Props = Omit<
   ScreenProps,
@@ -65,21 +71,42 @@ function ScreenStackItem(
     headerHiddenPreviousRef.current = headerConfig?.hidden;
   }, [headerConfig?.hidden, stackPresentation]);
 
+  const debugContainerStyle = getPositioningStyle(
+    sheetAllowedDetents,
+    stackPresentation,
+  );
+
+  // For iOS, we need to extract background color and apply it to Screen
+  // due to the safe area inset at the bottom of ScreenContentWrapper
+  let internalScreenStyle;
+
+  if (
+    stackPresentation === 'formSheet' &&
+    Platform.OS === 'ios' &&
+    contentStyle
+  ) {
+    const { screenStyles, contentWrapperStyles } =
+      extractScreenStyles(contentStyle);
+    internalScreenStyle = screenStyles;
+    contentStyle = contentWrapperStyles;
+  }
+
+  const shouldUseSafeAreaView =
+    Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+
   const content = (
     <>
       <DebugContainer
-        style={[
-          stackPresentation === 'formSheet'
-            ? Platform.OS === 'ios'
-              ? styles.absolute
-              : sheetAllowedDetents === 'fitToContents'
-              ? null
-              : styles.container
-            : styles.container,
-          contentStyle,
-        ]}
+        contentStyle={contentStyle}
+        style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
-        {children}
+        {shouldUseSafeAreaView ? (
+          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+            {children}
+          </SafeAreaView>
+        ) : (
+          children
+        )}
       </DebugContainer>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
@@ -99,18 +126,6 @@ function ScreenStackItem(
       )}
     </>
   );
-
-  // We take backgroundColor from contentStyle and apply it on Screen.
-  // This allows to workaround one issue with truncated
-  // content with formSheet presentation.
-  let internalScreenStyle;
-
-  if (stackPresentation === 'formSheet' && contentStyle) {
-    const flattenContentStyles = StyleSheet.flatten(contentStyle);
-    internalScreenStyle = {
-      backgroundColor: flattenContentStyles?.backgroundColor,
-    };
-  }
 
   return (
     <Screen
@@ -163,6 +178,75 @@ function ScreenStackItem(
 }
 
 export default React.forwardRef(ScreenStackItem);
+
+function getPositioningStyle(
+  allowedDetents: ScreenProps['sheetAllowedDetents'],
+  presentation?: StackPresentationTypes,
+) {
+  const isIOS = Platform.OS === 'ios';
+
+  if (presentation !== 'formSheet') {
+    return styles.container;
+  }
+
+  if (isIOS) {
+    if (allowedDetents === 'fitToContents') {
+      return styles.absolute;
+    } else {
+      return styles.container;
+    }
+  }
+
+  // Other platforms, tested reliably only on Android
+  if (allowedDetents === 'fitToContents') {
+    return {};
+  }
+
+  return styles.container;
+}
+
+type SplitStyleResult = {
+  screenStyles: {
+    backgroundColor?: ViewStyle['backgroundColor'];
+  };
+  contentWrapperStyles: StyleProp<ViewStyle>;
+};
+
+// TODO: figure out whether other styles, like borders, filters, etc.
+// shouldn't be applied on the Screen level on iOS due to the inset.
+function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
+  const flatStyle = StyleSheet.flatten(style);
+
+  const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
+
+  const screenStyles = {
+    backgroundColor,
+  };
+
+  return {
+    screenStyles,
+    contentWrapperStyles,
+  };
+}
+
+function getSafeAreaEdges(
+  headerConfig?: ScreenStackHeaderConfigProps,
+): SafeAreaViewProps['edges'] {
+  if (Platform.OS !== 'ios' || parseInt(Platform.Version, 10) < 26) {
+    return {};
+  }
+
+  let defaultEdges: SafeAreaViewProps['edges'];
+  if (headerConfig?.translucent || headerConfig?.hidden) {
+    defaultEdges = {};
+  } else {
+    defaultEdges = {
+      top: true,
+    };
+  }
+
+  return defaultEdges;
+}
 
 const styles = StyleSheet.create({
   container: {

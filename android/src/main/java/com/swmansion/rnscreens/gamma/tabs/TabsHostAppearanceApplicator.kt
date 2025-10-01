@@ -154,8 +154,13 @@ class TabsHostAppearanceApplicator(
         menuItem: MenuItem,
         tabScreen: TabScreen,
     ) {
-        menuItem.title = tabScreen.tabTitle
-        menuItem.icon = tabScreen.icon
+        if (menuItem.title != tabScreen.tabTitle) {
+            menuItem.title = tabScreen.tabTitle
+        }
+
+        if (menuItem.icon != tabScreen.icon) {
+            menuItem.icon = tabScreen.icon
+        }
     }
 
     fun updateBadgeAppearance(

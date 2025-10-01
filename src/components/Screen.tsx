@@ -23,7 +23,6 @@ import ModalScreenNativeComponent, {
 } from '../fabric/ModalScreenNativeComponent';
 
 import { usePrevious } from './helpers/usePrevious';
-import { EDGE_TO_EDGE, transformEdgeToEdgeProps } from './helpers/edge-to-edge';
 import {
   SHEET_DIMMED_ALWAYS,
   resolveSheetAllowedDetents,
@@ -315,12 +314,7 @@ export const ScreenContext = React.createContext(InnerScreen);
 const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
-  return (
-    <ScreenWrapper
-      {...(EDGE_TO_EDGE ? transformEdgeToEdgeProps(props) : props)}
-      ref={ref}
-    />
-  );
+  return <ScreenWrapper {...props} ref={ref} />;
 });
 
 Screen.displayName = 'Screen';

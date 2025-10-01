@@ -1,26 +1,28 @@
 import React from 'react';
-import type { NativeSyntheticEvent } from 'react-native';
+import { Platform, type NativeSyntheticEvent } from 'react-native';
 import {
   BottomTabs,
+  BottomTabsProps,
   BottomTabsScreen,
   BottomTabsScreenProps,
   NativeFocusChangeEvent,
 } from 'react-native-screens';
-import { Colors } from '../../../styling/Colors';
+import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
+import type { SafeAreaViewProps } from '../../../../../../src/components/safe-area/SafeAreaView.types';
 import ConfigWrapperContext from './ConfigWrapperContext';
 
 export interface TabConfiguration {
   tabScreenProps: BottomTabsScreenProps;
   component: React.ComponentType;
+  safeAreaConfiguration?: SafeAreaViewProps;
 }
 
-export interface BottomTabsContainerProps {
-  tabConfigs: TabConfiguration[];
-}
+export type BottomTabsContainerProps = BottomTabsProps & { tabConfigs: TabConfiguration[]; }
 
 export function BottomTabsContainer(props: BottomTabsContainerProps) {
-  // Currently assumes controlled bottom tabs
   console.info('BottomTabsContainer render');
+
+  const { tabConfigs, ...restProps } = props;
 
   const [focusedTabKey, setFocusedTabKey] = React.useState<string>(() => {
     console.log('BottomTabsContainer focusedStateKey initial state computed');
@@ -29,7 +31,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       throw new Error('There must be at least one tab defined');
     }
 
-    const maybeUserRequestedFocusedTab = props.tabConfigs.find(
+    const maybeUserRequestedFocusedTab = tabConfigs.find(
       tabConfig => tabConfig.tabScreenProps.isFocused === true,
     )?.tabScreenProps.tabKey;
 
@@ -38,7 +40,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
     }
 
     // Default to first tab
-    return props.tabConfigs[0].tabScreenProps.tabKey;
+    return tabConfigs[0].tabScreenProps.tabKey;
   });
 
   const configWrapper = React.useContext(ConfigWrapperContext);
@@ -73,30 +75,16 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
 
   return (
     <BottomTabs
+      // Use controlled bottom tabs by default, but allow to overwrite if user wants to
       onNativeFocusChange={onNativeFocusChangeCallback}
-      tabBarBackgroundColor={Colors.NavyLight100}
-      tabBarItemActiveIndicatorColor={Colors.GreenLight40}
-      tabBarItemActiveIndicatorEnabled={true}
-      tabBarTintColor={Colors.YellowLight100}
-      tabBarItemIconColor={Colors.BlueLight100}
-      tabBarItemTitleFontColor={Colors.BlueLight40}
-      tabBarItemIconColorActive={Colors.GreenLight100}
-      tabBarItemTitleFontColorActive={Colors.GreenLight40}
-      tabBarItemTitleFontSize={10}
-      tabBarItemTitleFontSizeActive={15}
-      tabBarItemRippleColor={Colors.WhiteTransparentDark}
-      tabBarItemTitleFontFamily="monospace"
-      tabBarItemTitleFontStyle="italic"
-      tabBarItemTitleFontWeight="700"
-      tabBarItemLabelVisibilityMode="auto"
-      tabBarMinimizeBehavior="onScrollDown"
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
-      }>
-      {props.tabConfigs.map(tabConfig => {
+      }
+      {...restProps}
+      >
+      {tabConfigs.map(tabConfig => {
         const tabKey = tabConfig.tabScreenProps.tabKey;
         const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;
-        const ContentComponent = tabConfig.component;
         console.info(
           `BottomTabsContainer map to component -> ${tabKey} ${
             isFocused ? '(focused)' : ''
@@ -109,10 +97,49 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
-            <ContentComponent/>
+            {getContent(tabConfig)}
           </BottomTabsScreen>
         );
       })}
     </BottomTabs>
   );
+}
+
+function getContent(tabConfig: TabConfiguration) {
+  const { safeAreaConfiguration, component: Component } = tabConfig;
+
+  const safeAreaConfigurationWithDefault = getSafeAreaViewEdges(
+    safeAreaConfiguration?.edges,
+  );
+
+  const anySAVEdgeSet = Object.values(safeAreaConfigurationWithDefault).some(
+    edge => edge === true,
+  );
+
+  if (anySAVEdgeSet) {
+    return (
+      <SafeAreaView {...safeAreaConfiguration}>
+        <Component />
+      </SafeAreaView>
+    );
+  }
+
+  return <Component />;
+}
+
+function getSafeAreaViewEdges(
+  edges?: SafeAreaViewProps['edges'],
+): NonNullable<SafeAreaViewProps['edges']> {
+  let defaultEdges: SafeAreaViewProps['edges'];
+
+  switch (Platform.OS) {
+    case 'android':
+      defaultEdges = { bottom: true };
+      break;
+    default:
+      defaultEdges = {};
+      break;
+  }
+
+  return { ...defaultEdges, ...edges };
 }

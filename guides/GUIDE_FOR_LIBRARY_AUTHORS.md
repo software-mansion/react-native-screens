@@ -100,13 +100,19 @@ Defaults to `false`.
 
 ### `navigationBarColor` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the navigation bar color. Defaults to initial status bar color.
 
 ### `navigationBarHidden` (Android only)
 
 Sets the visibility of the navigation bar. Defaults to `false`.
+
+### `navigationBarTranslucent` (Android only)
+
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
+
+Sets the translucency of the navigation bar. Defaults to `false`.
 
 ### `onAppear`
 
@@ -288,7 +294,7 @@ Defaults to `fade` on iOS and `none` on Android.
 
 ### `statusBarColor` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
@@ -306,7 +312,7 @@ Defaults to `auto`.
 
 ### `statusBarTranslucent` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
@@ -462,7 +468,7 @@ Along with this component's properties that can be used to customize header beha
 
 To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
 
-- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences` on iOS and `'none'` on Android.
+- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `systemDefault`, `none`, `words`, `sentences`, `characters`. Defaults to `systemDefault` which is the same as `sentences` on iOS and `none` on Android.
 - `autoFocus` - If `true` automatically focuses search bar when screen is appearing. (Android only)
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
 - `tintColor` - The color for the cursor caret and cancel button text. (iOS only)
@@ -616,6 +622,8 @@ Customize the size of the font to be used for the title.
 Customize the weight of the font to be used for the title.
 
 ### `topInsetEnabled` (Android only)
+
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 

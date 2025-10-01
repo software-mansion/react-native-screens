@@ -3,6 +3,7 @@ import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-na
 import React from 'react';
 import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
+import { Spacer } from '../shared';
 
 type ItemData = {
   id: number,
@@ -16,6 +17,7 @@ type RouteParamList = {
   SecondFormSheet: undefined;
   FormSheetWithFlatList: undefined;
   FormSheetWithScrollView: undefined;
+  GlossyFormSheet: undefined;
 };
 
 type RouteProps<RouteName extends keyof RouteParamList> = {
@@ -36,6 +38,7 @@ function Home({ navigation }: RouteProps<'Home'>) {
       <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
       <Button title="Open sheet with FlatList" onPress={() => navigation.navigate('FormSheetWithFlatList')} />
       <Button title="Open sheet with ScrollView" onPress={() => navigation.navigate('FormSheetWithScrollView')} />
+      <Button title="Open glossy form sheet" onPress={() => navigation.navigate('GlossyFormSheet')} />
       <PressableWithFeedback>
         <View style={{ alignItems: 'center', height: 40, justifyContent: 'center' }}>
           <Text>Pressable</Text>
@@ -151,6 +154,28 @@ function FormSheetWithScrollView() {
   );
 }
 
+function GlossyFormSheet({ navigation }: RouteProps<'GlossyFormSheet'>) {
+  return (
+    // When using `fitToContents` you can't use flex: 1. It is you who must provide
+    // the content size - you can't rely on parent size here.
+    <View>
+      <Spacer space={50} />
+      <PressableWithFeedback>
+        <View
+          style={{
+            alignItems: 'center',
+            height: 40,
+            justifyContent: 'center',
+          }}>
+          <Text>Pressable</Text>
+        </View>
+      </PressableWithFeedback>
+      <Spacer space={50} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
+
 // @ts-ignore // uncomment the usage down below if needed
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FormSheetFooter() {
@@ -210,6 +235,15 @@ export default function App() {
           headerShown: false,
           contentStyle: {
             backgroundColor: 'lightblue',
+          },
+        }} />
+        <Stack.Screen name='GlossyFormSheet' component={GlossyFormSheet} options={{
+          presentation: 'formSheet',
+          sheetAllowedDetents: [0.3, 0.5, 0.8],
+          //sheetAllowedDetents: 'fitToContents',
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: '#ff00ff40',
           },
         }} />
       </Stack.Navigator>

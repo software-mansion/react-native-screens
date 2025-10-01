@@ -380,78 +380,6 @@ class Screen(
             fragmentWrapper?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect because " +
-            "edge-to-edge is enabled by default and the status bar is always translucent.",
-    )
-    var isStatusBarTranslucent: Boolean? = null
-        set(statusBarTranslucent) {
-            if (statusBarTranslucent != null) {
-                ScreenWindowTraits.applyDidSetStatusBarAppearance()
-            }
-            field = statusBarTranslucent
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setTranslucent(
-                    this,
-                    it.tryGetActivity(),
-                    it.tryGetContext(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect because " +
-            "edge-to-edge is enabled by default and the status bar is always translucent.",
-    )
-    var statusBarColor: Int? = null
-        set(statusBarColor) {
-            if (statusBarColor != null) {
-                ScreenWindowTraits.applyDidSetStatusBarAppearance()
-            }
-            field = statusBarColor
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setColor(
-                    this,
-                    it.tryGetActivity(),
-                    it.tryGetContext(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
-    )
-    var navigationBarColor: Int? = null
-        set(navigationBarColor) {
-            if (navigationBarColor != null) {
-                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
-            }
-            field = navigationBarColor
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setNavigationBarColor(
-                    this,
-                    it.tryGetActivity(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
-    )
-    var isNavigationBarTranslucent: Boolean? = null
-        set(navigationBarTranslucent) {
-            if (navigationBarTranslucent != null) {
-                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
-            }
-            field = navigationBarTranslucent
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setNavigationBarTranslucent(
-                    this,
-                    it.tryGetActivity(),
-                )
-            }
-        }
-
     var isNavigationBarHidden: Boolean? = null
         set(navigationBarHidden) {
             if (navigationBarHidden != null) {
@@ -673,13 +601,9 @@ class Screen(
 
     enum class WindowTraits {
         ORIENTATION,
-        COLOR,
         STYLE,
-        TRANSLUCENT,
         HIDDEN,
         ANIMATED,
-        NAVIGATION_BAR_COLOR,
-        NAVIGATION_BAR_TRANSLUCENT,
         NAVIGATION_BAR_HIDDEN,
     }
 
