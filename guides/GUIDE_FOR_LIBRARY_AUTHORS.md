@@ -98,9 +98,21 @@ Unfortunately the same behavior is not available on iOS since the behavior of na
 
 Defaults to `false`.
 
+### `navigationBarColor` (Android only)
+
+This prop has been **removed** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Retained only for backward compatibility.
+
+Sets the navigation bar color. Defaults to initial status bar color.
+
 ### `navigationBarHidden` (Android only)
 
 Sets the visibility of the navigation bar. Defaults to `false`.
+
+### `navigationBarTranslucent` (Android only)
+
+This prop has been **removed** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Retained only for backward compatibility.
+
+Sets the translucency of the navigation bar. Defaults to `false`.
 
 ### `onAppear`
 
@@ -273,6 +285,12 @@ Sets the status bar animation (similar to the `StatusBar` component). Requires e
 
 Defaults to `fade` on iOS and `none` on Android.
 
+### `statusBarColor` (Android only)
+
+This prop has been **removed** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Retained only for backward compatibility.
+
+Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+
 ### `statusBarHidden`
 
 When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
@@ -284,6 +302,12 @@ Defaults to `false`.
 Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc)), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
 
 Defaults to `auto`.
+
+### `statusBarTranslucent` (Android only)
+
+This prop has been **removed** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Retained only for backward compatibility.
+
+Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
 ### `swipeDirection` (iOS only)
 
