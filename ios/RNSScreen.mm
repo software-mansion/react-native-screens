@@ -74,6 +74,7 @@ struct ContentWrapperBox {
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
   BOOL _shouldUpdateScrollEdgeEffects;
+  RNSOptionalBoolean _fullScreenSwipeEnabled;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -892,9 +893,9 @@ RNS_IGNORE_SUPER_CALL_END
   return self.controller.parentViewController == nil && self.controller.presentingViewController != nil;
 }
 
-- (BOOL)fullScreenSwipeEnabledBoolean
+- (BOOL)fullScreenSwipeEnabled
 {
-  switch (self.fullScreenSwipeEnabled) {
+  switch (_fullScreenSwipeEnabled) {
     case RNSOptionalBooleanTrue:
       return YES;
     case RNSOptionalBooleanFalse:
@@ -1349,8 +1350,8 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
-  [self setFullScreenSwipeEnabled:[RNSConvert RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
-                                                  newScreenProps.fullScreenSwipeEnabled]];
+  _fullScreenSwipeEnabled =
+      [RNSConvert RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:newScreenProps.fullScreenSwipeEnabled];
 
   [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
 
@@ -1540,6 +1541,11 @@ RNS_IGNORE_SUPER_CALL_END
   // the screen dimensions and we wait for the screen VC to update and then we
   // pass the dimensions to ui view manager to take into account when laying out
   // subviews
+}
+
+- (void)setFullScreenSwipeEnabled:(RNSOptionalBoolean)fullScreenSwipeEnabled
+{
+  _fullScreenSwipeEnabled = fullScreenSwipeEnabled;
 }
 
 #endif
