@@ -25,8 +25,11 @@ open class CustomToolbar(
     context: Context,
     val config: ScreenStackHeaderConfig,
 ) : Toolbar(context) {
-    // Switch this flag to enable/disable display cutout avoidance.
-    // Currently this is hard-coded.
+    // Due to edge-to-edge enforcement starting from Android SDK 35, isTopInsetEnabled prop has been
+    // removed. Previously, shouldAvoidDisplayCutout, shouldApplyTopInset would directly return the
+    // value of isTopInsetEnabled. Now, the values of shouldAvoidDisplayCutout, shouldApplyTopInse
+    // are hard-coded to true (which was the value used previously for isTopInsetEnabled when
+    // edge-to-edge was enabled: https://github.com/software-mansion/react-native-screens/pull/2464/files#diff-bd1164595b04f44490738b8183f84a625c0e7552a4ae70bfefcdf3bca4d37fc7R34).
     private val shouldAvoidDisplayCutout = true
 
     private val shouldApplyTopInset = true
