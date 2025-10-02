@@ -1,5 +1,7 @@
-#import <React/RCTView.h>
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
+#endif
+
 #import <React/RCTViewManager.h>
 
 @interface RNSBarButtonItemCustomView :

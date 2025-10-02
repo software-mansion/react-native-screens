@@ -22,7 +22,7 @@ import ScreenStackHeaderSubviewNativeComponent, {
   type NativeProps as ScreenStackHeaderSubviewNativeProps,
 } from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
-import { isHeaderBarButtonsAvailableForCurrentPlatform } from 'react-native-screens/utils';
+import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
