@@ -15,6 +15,20 @@ class RNSBottomTabsAccessoryComponentDescriptor final
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(
         dynamic_cast<RNSBottomTabsAccessoryShadowNode *>(&shadowNode));
+    auto &bottomTabsAccessoryShadowNode =
+    static_cast<RNSBottomTabsAccessoryShadowNode &>(shadowNode);
+    
+//    bottomTabsAccessoryShadowNode.adjustLayoutWithState();
+//    bottomTabsAccessoryShadowNode.setSize({360, 48});
+    
+    auto state = std::static_pointer_cast<
+        const RNSBottomTabsAccessoryShadowNode::ConcreteState>(
+        shadowNode.getState());
+    auto stateData = state->getData();
+
+    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+      bottomTabsAccessoryShadowNode.setSize(stateData.frameSize);
+    }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }

@@ -229,6 +229,10 @@ namespace react = facebook::react;
     _hasModifiedReactSubviewsInCurrentTransaction = YES;
   } else if (isValidBottomAccessory) {
     // TODO: save reference to accessory
+    UIView *wrapperView = [UIView new];
+    [wrapperView addSubview:childComponentView];
+
+    [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
   }
 }
 
@@ -249,6 +253,7 @@ namespace react = facebook::react;
     _hasModifiedReactSubviewsInCurrentTransaction = YES;
   } else if (isValidBottomAccessory) {
     // TODO: clear reference to accessory
+    [_controller setBottomAccessory:nil animated:YES];
   }
 }
 

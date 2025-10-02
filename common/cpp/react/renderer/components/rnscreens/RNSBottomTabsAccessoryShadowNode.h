@@ -20,7 +20,8 @@ class JSI_EXPORT RNSBottomTabsAccessoryShadowNode final
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
-#pragma mark - Custom interface
+//  void adjustLayoutWithState();
+            Point getContentOriginOffset(bool includeTransform) const override;
 };
 
 } // namespace facebook::react

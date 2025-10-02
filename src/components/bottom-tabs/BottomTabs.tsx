@@ -18,6 +18,7 @@ import type {
 } from './BottomTabs.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import BottomTabsAccessory from './BottomTabsAccessory';
+import PressableWithFeedback from '../../../apps/src/shared/PressableWithFeedback';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -68,8 +69,23 @@ function BottomTabs(props: BottomTabsProps) {
       {filteredProps.children}
       <BottomTabsAccessory>
         <View
-          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Hello, World!</Text>
+          collapsable={false}
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'yellow',
+          }}>
+          <PressableWithFeedback>
+            <Text
+              style={
+                {
+                  // backgroundColor: 'green',
+                }
+              }>
+              Hello, World!
+            </Text>
+          </PressableWithFeedback>
         </View>
       </BottomTabsAccessory>
     </BottomTabsNativeComponent>

@@ -11,7 +11,7 @@ export function Tab3() {
         gap: 15,
         paddingHorizontal: 30,
       }}>
-      {[...Array(30).keys()].map(index => (
+      {[...Array(50).keys()].map(index => (
         <PressableWithFeedback
           key={index + 1}
           onPress={() => console.log(`Pressed #${index + 1}`)}
