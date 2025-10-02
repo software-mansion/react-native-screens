@@ -102,15 +102,16 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   }, [])
 
   return (
-    <ScrollView>
-      <View style={styles.inputWrapper}>
-        <TextInput style={styles.input} placeholder="Trigger keyboard..."/>
-      </View>
-      <View style={{ marginTop: 20 }}>
+    <ScrollView contentContainerStyle={styles.content}>
+      <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Trigger keyboard..."/>
+      <View>
         <Button title="Expand" onPress={() => setCurrentDetentIndex(1)} />
         <Button title="Collapse" onPress={() => setCurrentDetentIndex(0)} />
         <Button title="Dismiss" onPress={() => navigation.goBack()} />
       </View>
+      {Array.from({ length: 40 }, (_, i) => (
+        <View key={i} style={styles.item} />
+      ))}
     </ScrollView>
   );
 }
@@ -152,8 +153,14 @@ const styles = StyleSheet.create({
     borderRadius: 56 / 2,
     backgroundColor: 'white',
   },
-  inputWrapper: {
+  content: {
     padding: 12,
+    gap: 8,
+  },
+  item: {
+    backgroundColor: 'lavender',
+    height: 40,
+    borderRadius: 16,
   },
   input: {
     paddingVertical: 8,
