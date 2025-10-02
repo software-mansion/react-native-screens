@@ -74,7 +74,6 @@ struct ContentWrapperBox {
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
   BOOL _shouldUpdateScrollEdgeEffects;
-  RNSOptionalBoolean _fullScreenSwipeEnabled;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -467,6 +466,21 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _shouldUpdateScrollEdgeEffects = YES;
   _topScrollEdgeEffect = topScrollEdgeEffect;
+}
+
+- (BOOL)isFullScreenSwipeEffectivelyEnabled
+{
+  switch (_fullScreenSwipeEnabled) {
+    case RNSOptionalBooleanTrue:
+      return YES;
+    case RNSOptionalBooleanFalse:
+      return NO;
+    case RNSOptionalBooleanUndefined:
+      if (@available(iOS 26, *)) {
+        return YES;
+      }
+      return NO;
+  }
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -891,21 +905,6 @@ RNS_IGNORE_SUPER_CALL_END
 - (BOOL)isPresentedAsNativeModal
 {
   return self.controller.parentViewController == nil && self.controller.presentingViewController != nil;
-}
-
-- (BOOL)fullScreenSwipeEnabled
-{
-  switch (_fullScreenSwipeEnabled) {
-    case RNSOptionalBooleanTrue:
-      return YES;
-    case RNSOptionalBooleanFalse:
-      return NO;
-    case RNSOptionalBooleanUndefined:
-      if (@available(iOS 26, *)) {
-        return YES;
-      }
-      return NO;
-  }
 }
 
 - (BOOL)isFullscreenModal
@@ -1541,11 +1540,6 @@ RNS_IGNORE_SUPER_CALL_END
   // the screen dimensions and we wait for the screen VC to update and then we
   // pass the dimensions to ui view manager to take into account when laying out
   // subviews
-}
-
-- (void)setFullScreenSwipeEnabled:(RNSOptionalBoolean)fullScreenSwipeEnabled
-{
-  _fullScreenSwipeEnabled = fullScreenSwipeEnabled;
 }
 
 #endif
