@@ -15,6 +15,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaFrame } from 'react-native-safe-area-context';
 
+const FOOTER_HEIGHT = 64;
+
 const SPRING_CONFIG: WithSpringConfig = {
   damping: 500,
   stiffness: 1000,
@@ -57,7 +59,7 @@ function Home({ navigation }: RouteProps<'Home'>) {
 
 function FormSheetFooter() {
   return (
-    <View style={{ height: 64, backgroundColor: 'lavender' }}>
+    <View style={{ height: FOOTER_HEIGHT, backgroundColor: 'lavender' }}>
       <Button title="Just click me" onPress={() => console.log('Footer button clicked')} />
     </View>
   );
@@ -127,7 +129,7 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="FormSheet" component={FormSheet} options={{
               presentation: 'formSheet',
-              sheetAllowedDetents: [0.3, 0.6, 1],
+              sheetAllowedDetents: [0.3, 0.6, 0.9],
               // sheetAllowedDetents: [0.9997],
               // sheetAllowedDetents: 'fitToContents',
               sheetLargestUndimmedDetentIndex: 'none',
@@ -154,8 +156,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   content: {
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingTop: 12,
     gap: 8,
+    paddingBottom: FOOTER_HEIGHT + 12,
   },
   item: {
     backgroundColor: 'lavender',
