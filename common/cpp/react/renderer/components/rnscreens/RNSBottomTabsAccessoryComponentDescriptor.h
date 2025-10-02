@@ -16,11 +16,8 @@ class RNSBottomTabsAccessoryComponentDescriptor final
     react_native_assert(
         dynamic_cast<RNSBottomTabsAccessoryShadowNode *>(&shadowNode));
     auto &bottomTabsAccessoryShadowNode =
-    static_cast<RNSBottomTabsAccessoryShadowNode &>(shadowNode);
-    
-//    bottomTabsAccessoryShadowNode.adjustLayoutWithState();
-//    bottomTabsAccessoryShadowNode.setSize({360, 48});
-    
+        static_cast<RNSBottomTabsAccessoryShadowNode &>(shadowNode);
+
     auto state = std::static_pointer_cast<
         const RNSBottomTabsAccessoryShadowNode::ConcreteState>(
         shadowNode.getState());

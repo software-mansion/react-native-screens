@@ -7,6 +7,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSBottomTabsAccessoryComponentView : RNSReactBaseView
 
+/**
+ * If not null, the bottom accesory's helper that handles synchronization with ShadowNode.
+ */
 @property (nonatomic, strong, readonly, nullable) RNSBottomAccessoryHelper *helper;
 
 /**

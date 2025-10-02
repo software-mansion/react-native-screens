@@ -6,13 +6,13 @@
   RNSBottomTabsAccessoryComponentView *_accessoryView;
 }
 
-- (instancetype)initWithAccessoryView: (RNSBottomTabsAccessoryComponentView *)accessoryView
+- (instancetype)initWithAccessoryView:(RNSBottomTabsAccessoryComponentView *)accessoryView
 {
   if (self = [super init]) {
     _accessoryView = accessoryView;
     [self addSubview:accessoryView];
   }
-  
+
   return self;
 }
 

@@ -158,7 +158,7 @@ namespace react = facebook::react;
       RNSBottomTabsScreenComponentView *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childView);
       [tabControllers addObject:childScreen.controller];
     } else if ([childView isKindOfClass:[RNSBottomTabsAccessoryComponentView class]]) {
-      RCTAssert(bottomAccessory == nil, @"[RNScreens] there can only be one child RNSBottomTabsAccessoryComponentView");
+      RCTAssert(bottomAccessory == nil, @"[RNScreens] There can only be one child RNSBottomTabsAccessoryComponentView");
       bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childView);
     }
   }
@@ -247,14 +247,11 @@ namespace react = facebook::react;
     childScreen.reactSuperview = self;
   } else if (isValidBottomAccessory) {
     auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
-    // TODO: set reactSuperview
+    bottomAccessory.reactSuperview = self;
   }
   
   [_reactSubviews insertObject:childComponentView atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = YES;
-//    UIView *wrapperView = [UIView new];
-//    [wrapperView addSubview:childComponentView];
-//    [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -271,11 +268,11 @@ namespace react = facebook::react;
     childScreen.reactSuperview = nil;
   } else if (isValidBottomAccessory) {
     auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
-    // TODO: clear reactSuperview
+    bottomAccessory.reactSuperview = nil;
   }
+  
   [_reactSubviews removeObject:childComponentView];
   _hasModifiedReactSubviewsInCurrentTransaction = YES;
-//    [_controller setBottomAccessory:nil animated:YES];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
