@@ -57,7 +57,7 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
         mViewManager.setCustomAnimationOnSwipe(view, value == null ? false : (boolean) value);
         break;
       case "fullScreenSwipeEnabled":
-        mViewManager.setFullScreenSwipeEnabled(view, value == null ? false : (boolean) value);
+        mViewManager.setFullScreenSwipeEnabled(view, (String) value);
         break;
       case "fullScreenSwipeShadowEnabled":
         mViewManager.setFullScreenSwipeShadowEnabled(view, value == null ? true : (boolean) value);

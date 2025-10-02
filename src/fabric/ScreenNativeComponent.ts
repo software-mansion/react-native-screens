@@ -74,6 +74,8 @@ type ReplaceAnimation = 'pop' | 'push';
 
 type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
+type OptionalBoolean = 'undefined' | 'false' | 'true';
+
 export interface NativeProps extends ViewProps {
   onAppear?: DirectEventHandler<ScreenEvent>;
   onDisappear?: DirectEventHandler<ScreenEvent>;
@@ -97,7 +99,7 @@ export interface NativeProps extends ViewProps {
   sheetInitialDetent?: WithDefault<Int32, 0>;
   sheetElevation?: WithDefault<Int32, 24>;
   customAnimationOnSwipe?: boolean;
-  fullScreenSwipeEnabled?: boolean;
+  fullScreenSwipeEnabled?: WithDefault<OptionalBoolean, 'undefined'>;
   fullScreenSwipeShadowEnabled?: WithDefault<boolean, true>;
   homeIndicatorHidden?: boolean;
   preventNativeDismiss?: boolean;

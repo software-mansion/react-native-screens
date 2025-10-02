@@ -54,8 +54,16 @@ Defaults to `false`. When `enableFreeze()` is run at the top of the application 
 
 ### `fullScreenSwipeEnabled` (iOS only)
 
-Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
-IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
+Boolean indicating whether the swipe gesture should work on whole screen. The behavior depends on iOS version.
+
+For iOS prior to 26, swiping with this option results in the same transition animation as `simple_push` by default.
+It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation
+is not achievable due to usage of custom recognizer.
+
+For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used for all cases except for `customAnimationOnSwipe`,
+however the prop still can be used to controls whether it should be enabled or not.
+
+When not set, it defaults to `false` on iOS < 26 and `true` for iOS >= 26.
 
 ### `fullScreenSwipeShadowEnabled` (iOS only)
 

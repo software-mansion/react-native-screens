@@ -144,11 +144,16 @@ export interface ScreenProps extends ViewProps {
    */
   freezeOnBlur?: boolean;
   /**
-   * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
-   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
-   * Defaults to `false`.
+   * Boolean indicating whether the swipe gesture should work on whole screen. The behavior depends on iOS version.
    *
-   * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
+   * For iOS prior to 26, swiping with this option results in the same transition animation as `simple_push` by default.
+   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation
+   * is not achievable due to usage of custom recognizer.
+   *
+   * For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used, and this prop controls whether it should
+   * be enabled or not.
+   *
+   * When not set, it defaults to `false` on iOS < 26 and `true` for iOS >= 26.
    *
    * @platform ios
    */
