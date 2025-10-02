@@ -1676,7 +1676,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-
   // self.navigationController might be null when we are dismissing a modal
   if (!self.transitionCoordinator.isInteractive && self.navigationController != nil) {
     // user might have long pressed ios 14 back button item,
@@ -1782,10 +1781,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    // This is causing flickering content when sheet is being dragged.
-    if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
-      [self.screenView updateBounds];
-    }
+    [self.screenView updateBounds];
 #else
     if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
       _lastViewFrame = self.screenView.frame;
@@ -2038,7 +2034,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
     // if the view is already snapshot, there is not sense in sending progress since on JS side
     // the component is already not present
-    [self.screenView notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+    [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
   }
 }
 
