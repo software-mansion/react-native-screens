@@ -28,6 +28,7 @@ import {
   resolveSheetInitialDetentIndex,
   resolveSheetLargestUndimmedDetent,
 } from './helpers/sheet';
+import { parseBooleanToOptionalBooleanNativeProp } from '../utils';
 
 type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(
@@ -137,6 +138,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         activityState,
         children,
         isNativeStack,
+        fullScreenSwipeEnabled,
         gestureResponseDistance,
         scrollEdgeEffects,
         onGestureCancel,
@@ -219,6 +221,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
             sheetInitialDetent={resolvedSheetInitialDetentIndex}
+            fullScreenSwipeEnabled={parseBooleanToOptionalBooleanNativeProp(
+              fullScreenSwipeEnabled,
+            )}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,
