@@ -1781,7 +1781,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    [self.screenView updateBounds];
+    // Update only when screenView is not formSheet.
+    // Fix performance issue while dragging sheet.
+    if (self.screenView.stackPresentation != RNSScreenStackPresentationFormSheet) {
+      [self.screenView updateBounds];
+    }
 #else
     if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
       _lastViewFrame = self.screenView.frame;
