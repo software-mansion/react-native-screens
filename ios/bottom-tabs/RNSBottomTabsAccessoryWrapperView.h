@@ -1,0 +1,17 @@
+#import <UIKit/UIKit.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class RNSBottomTabsAccessoryComponentView;
+@class RNSBottomAccessoryHelper;
+
+API_AVAILABLE(ios(26.0))
+@interface RNSBottomTabsAccessoryWrapperView : UIView
+
+@property (nonatomic, strong, nullable) RNSBottomAccessoryHelper *helper;
+
+- (instancetype)initWithAccessoryView: (RNSBottomTabsAccessoryComponentView *)accessoryView;
+
+@end
+
+NS_ASSUME_NONNULL_END

@@ -1,5 +1,5 @@
 #import "RNSBottomTabsAccessoryComponentView.h"
-#import "RNSBottomAccessoryViewController.h"
+#import "RNSBottomAccessoryHelper.h"
 
 #import <rnscreens/RNSBottomTabsAccessoryComponentDescriptor.h>
 
@@ -8,7 +8,6 @@ namespace react = facebook::react;
 #pragma mark - View implementation
 
 @implementation RNSBottomTabsAccessoryComponentView {
-  RNSBottomAccessoryViewController *_controller;
   RNSBottomTabsHostComponentView *__weak _Nullable _reactSuperview;
 }
 
@@ -22,15 +21,7 @@ namespace react = facebook::react;
 
 - (void)initState
 {
-  _controller = [RNSBottomAccessoryViewController new];
-  _controller.view = self;
-  
   _reactSuperview = nil;
-}
-
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSBottomTabsAccessoryComponentDescriptor>();
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -39,6 +30,16 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   return _reactSuperview;
 }
 RNS_IGNORE_SUPER_CALL_END
+
+//- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+//{
+//  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+//}
+
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return react::concreteComponentDescriptorProvider<react::RNSBottomTabsAccessoryComponentDescriptor>();
+}
 
 @end
 
