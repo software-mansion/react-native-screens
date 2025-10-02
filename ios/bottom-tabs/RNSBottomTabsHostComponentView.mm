@@ -47,7 +47,7 @@ namespace react = facebook::react;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
-  NSMutableArray<RNSBottomTabsScreenComponentView *> *_reactSubviews;
+  NSMutableArray<UIView *> *_reactSubviews;
   BOOL _hasModifiedReactSubviewsInCurrentTransaction;
   BOOL _needsTabBarAppearanceUpdate;
 }
@@ -150,13 +150,34 @@ namespace react = facebook::react;
 {
   NSMutableArray<RNSTabsScreenViewController *> *tabControllers =
       [[NSMutableArray alloc] initWithCapacity:_reactSubviews.count];
-  for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
-    [tabControllers addObject:childView.controller];
+  RNSBottomTabsAccessoryComponentView *bottomAccessory = nil;
+  for (UIView *childView in _reactSubviews) {
+    if ([childView isKindOfClass:[RNSBottomTabsScreenComponentView class]]) {
+      RNSBottomTabsScreenComponentView *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childView);
+      [tabControllers addObject:childScreen.controller];
+    } else if ([childView isKindOfClass:[RNSBottomTabsAccessoryComponentView class]]) {
+      RCTAssert(bottomAccessory == nil, @"[RNScreens] there can only be one child RNSBottomTabsAccessoryComponentView");
+      bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childView);
+    }
   }
 
   RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
 
+  // TODO: they might be the same!
   [_controller childViewControllersHaveChangedTo:tabControllers];
+  
+  // TODO: introduce some abstraction?
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (bottomAccessory != nil) {
+      UIView *wrapperView = [UIView new];
+      [wrapperView addSubview:bottomAccessory];
+      [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
+    } else {
+      [_controller setBottomAccessory:nil animated:YES];
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
 - (void)markChildUpdated
@@ -217,23 +238,22 @@ namespace react = facebook::react;
   BOOL isTabsScreen = [childComponentView isKindOfClass:[RNSBottomTabsScreenComponentView class]];
   RCTAssert(
       isValidBottomAccessory || isTabsScreen,
-      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory at the last index. Attempted to mount %@",
+      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to mount %@",
       childComponentView);
-
+  
   if (isTabsScreen) {
     auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
     childScreen.reactSuperview = self;
-
-    // TODO: accessory is also react subview - how to handle this?
-    [_reactSubviews insertObject:childScreen atIndex:index];
-    _hasModifiedReactSubviewsInCurrentTransaction = YES;
   } else if (isValidBottomAccessory) {
-    // TODO: save reference to accessory
-    UIView *wrapperView = [UIView new];
-    [wrapperView addSubview:childComponentView];
-
-    [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
+    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
+    // TODO: set reactSuperview
   }
+  
+  [_reactSubviews insertObject:childComponentView atIndex:index];
+  _hasModifiedReactSubviewsInCurrentTransaction = YES;
+//    UIView *wrapperView = [UIView new];
+//    [wrapperView addSubview:childComponentView];
+//    [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -242,19 +262,19 @@ namespace react = facebook::react;
   BOOL isTabsScreen = [childComponentView isKindOfClass:[RNSBottomTabsScreenComponentView class]];
   RCTAssert(
       isValidBottomAccessory || isTabsScreen,
-      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory at the last index. Attempted to unmount %@",
+      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to unmount %@",
       childComponentView);
 
   if (isTabsScreen) {
     auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
     childScreen.reactSuperview = nil;
-
-    [_reactSubviews removeObject:childScreen];
-    _hasModifiedReactSubviewsInCurrentTransaction = YES;
   } else if (isValidBottomAccessory) {
-    // TODO: clear reference to accessory
-    [_controller setBottomAccessory:nil animated:YES];
+    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
+    // TODO: clear reactSuperview
   }
+  [_reactSubviews removeObject:childComponentView];
+  _hasModifiedReactSubviewsInCurrentTransaction = YES;
+//    [_controller setBottomAccessory:nil animated:YES];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
