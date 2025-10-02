@@ -371,6 +371,8 @@ class ScreenStackHeaderConfig(
         this.title = title
     }
 
+    fun getTitle() = title
+
     fun setTitleFontFamily(titleFontFamily: String?) {
         this.titleFontFamily = titleFontFamily
     }

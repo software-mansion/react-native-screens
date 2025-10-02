@@ -7,6 +7,7 @@ import android.view.Choreographer
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.Insets
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
@@ -82,9 +83,8 @@ open class CustomToolbar(
         }
     }
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        val unhandledInsets = super.onApplyWindowInsets(insets)
-
+    fun applyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        println("CustomToolbar this=$this")
         // There are few UI modes we could be running in
         //
         // 1. legacy non edge-to-edge mode,
@@ -96,17 +96,10 @@ open class CustomToolbar(
         // We use rootWindowInsets in lieu of insets or unhandledInsets here,
         // because cutout sometimes (only in certain scenarios, e.g. with headerLeft view present)
         // happen to be Insets.ZERO and is not reliable.
-        val rootWindowInsets = rootWindowInsets
         val cutoutInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), rootWindowInsets)
+            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), insets)
         val systemBarInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), rootWindowInsets)
-        val statusBarInsetsStable =
-            resolveInsetsOrZero(
-                WindowInsetsCompat.Type.systemBars(),
-                rootWindowInsets,
-                ignoreVisibility = true,
-            )
+            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), insets)
 
         // This seems to work fine in all tested configurations, because cutout & system bars overlap
         // only in portrait mode & top inset is controlled separately, therefore we don't count
@@ -125,7 +118,7 @@ open class CustomToolbar(
         val verticalInsets =
             InsetsCompat.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) statusBarInsetsStable.top else 0),
+                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
                 0,
                 max(cutoutInsets.bottom, 0),
             )
@@ -142,7 +135,28 @@ open class CustomToolbar(
             )
         }
 
-        return unhandledInsets
+        return insets?.let {
+            WindowInsetsCompat
+                .Builder(WindowInsetsCompat.toWindowInsetsCompat(insets))
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    Insets.of(
+                        systemBarInsets.left - lastInsets.left,
+                        systemBarInsets.top - lastInsets.top,
+                        systemBarInsets.right - lastInsets.right,
+                        systemBarInsets.bottom - lastInsets.bottom,
+                    ),
+                ).setInsets(
+                    WindowInsetsCompat.Type.displayCutout(),
+                    Insets.of(
+                        cutoutInsets.left - lastInsets.left,
+                        cutoutInsets.top - lastInsets.top,
+                        cutoutInsets.right - lastInsets.right,
+                        cutoutInsets.bottom - lastInsets.bottom,
+                    ),
+                ).build()
+                .toWindowInsets()
+        }
     }
 
     override fun onLayout(
