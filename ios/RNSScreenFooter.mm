@@ -121,6 +121,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)updateLayoutMetrics:(react::LayoutMetrics const &)layoutMetrics
            oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
 {
+  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
   _footerHeight = frame.size.height;
 }
