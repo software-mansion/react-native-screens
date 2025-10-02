@@ -35,7 +35,8 @@
   [super didMoveToSuperview];
   if ([self.superview isKindOfClass:RNSScreenView.class]) {
     _screenView = (RNSScreenView *)self.superview;
-    [self pinToView:_screenView.controller.view
+    [self unpin];
+    [self pinToView:_screenView
           fromEdges:UIRectEdgeLeft | UIRectEdgeRight | UIRectEdgeBottom
          withHeight:&_footerHeight
         constraints:^(
@@ -82,7 +83,7 @@
 
     [UIView animateWithDuration:0.3
                      animations:^{
-                       [self->_screenView.controller.view layoutIfNeeded];
+                       [self->_screenView layoutIfNeeded];
                      }];
   }
 }
@@ -93,7 +94,7 @@
 
   [UIView animateWithDuration:0.3
                    animations:^{
-                     [self->_screenView.controller.view layoutIfNeeded];
+                     [self->_screenView layoutIfNeeded];
                    }];
 }
 
