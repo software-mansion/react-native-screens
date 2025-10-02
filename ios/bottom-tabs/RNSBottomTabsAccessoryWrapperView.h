@@ -8,8 +8,6 @@ NS_ASSUME_NONNULL_BEGIN
 API_AVAILABLE(ios(26.0))
 @interface RNSBottomTabsAccessoryWrapperView : UIView
 
-@property (nonatomic, strong, nullable) RNSBottomAccessoryHelper *helper;
-
 - (instancetype)initWithAccessoryView: (RNSBottomTabsAccessoryComponentView *)accessoryView;
 
 @end

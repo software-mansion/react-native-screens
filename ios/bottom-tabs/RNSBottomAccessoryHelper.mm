@@ -1,30 +1,48 @@
 #import "RNSBottomAccessoryHelper.h"
+#import <React/RCTConversions.h>
+#import <React/RCTAssert.h>
+#import <rnscreens/RNSBottomTabsAccessoryShadowNode.h>
+
+namespace react = facebook::react;
 
 @implementation RNSBottomAccessoryHelper {
-  CADisplayLink *_displayLink;    
+  CADisplayLink *_displayLink;
   CGRect _previousFrame;
   CGRect _destinationFrame;
   RNSBottomTabsAccessoryComponentView *_bottomAccessoryView;
-  RNSBottomTabsAccessoryWrapperView *_wrapperView;
+  react::RNSBottomTabsAccessoryShadowNode::ConcreteState::Shared _state;
+  BOOL _initial;
 }
 
-- (instancetype)initWithWrapperView: (RNSBottomTabsAccessoryWrapperView*)wrapperView bottomAccessoryView:(RNSBottomTabsAccessoryComponentView *)bottomAccessoryView
+- (instancetype)initWithBottomAccessoryView:(RNSBottomTabsAccessoryComponentView *)bottomAccessoryView
 {
   if (self = [super init]) {
     _bottomAccessoryView = bottomAccessoryView;
-    _wrapperView = wrapperView;
-    [_bottomAccessoryView registerForTraitChanges:@[[UITraitTabAccessoryEnvironment class]] withHandler:^(__kindof id<UITraitEnvironment>, UITraitCollection *previousTrairCollection){
-//      [self setupDisplayLink];
-    }];
+    _initial = YES;
+    [_bottomAccessoryView
+        registerForTraitChanges:@[ [UITraitTabAccessoryEnvironment class] ]
+                    withHandler:^(__kindof id<UITraitEnvironment>, UITraitCollection *previousTrairCollection){
+                        //      [self setupDisplayLink];
+                    }];
   }
-  
+
   return self;
 }
 
-- (void)setDestinationFrame:(CGRect)destinationFrame
+- (RNSBottomTabsAccessoryWrapperView *)wrapperView {
+  // TODO: message
+  RCTAssert([_bottomAccessoryView.superview isKindOfClass:[RNSBottomTabsAccessoryWrapperView class]], @"");
+  return static_cast<RNSBottomTabsAccessoryWrapperView *>(_bottomAccessoryView.superview);
+}
+
+- (void)notifyTransitionStart
 {
-  if (!CGRectEqualToRect(destinationFrame, _destinationFrame)) {
-    _destinationFrame = destinationFrame;
+  if (_initial) {
+    CGRect frame = CGRectMake(0, 0, self.wrapperView.superview.frame.size.width, self.wrapperView.superview.frame.size.height);
+    [self updateShadowStateWithFrame:frame];
+    _initial = NO;
+  }
+  if (_displayLink == nil && !CGRectEqualToRect(_previousFrame, self.wrapperView.superview.frame)) {
     [self setupDisplayLink];
   }
 }
@@ -36,24 +54,42 @@
   [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
 }
 
-- (void)handleDisplayLink:(CADisplayLink *)sender {
-  CGRect bottomAccessoryFrame = _bottomAccessoryView.superview.layer.presentationLayer.frame;
-  if (!CGRectEqualToRect(bottomAccessoryFrame, _previousFrame)) {
-    // TODO: update
-    NSLog(@"[bottomaccessory] %@", NSStringFromCGRect(bottomAccessoryFrame));
-    _previousFrame = bottomAccessoryFrame;
+- (void)handleDisplayLink:(CADisplayLink *)sender
+{
+  CGRect presentationFrame = self.wrapperView.superview.layer.presentationLayer.frame;
+  if (CGRectEqualToRect(presentationFrame, CGRectZero)) {
+    return;
   }
   
-  if (CGRectEqualToRect(bottomAccessoryFrame, _bottomAccessoryView.superview.frame)) {
+  [self updateShadowStateWithFrame:presentationFrame];
+
+  if (CGRectEqualToRect(presentationFrame, self.wrapperView.superview.frame)) {
     [self invalidateDisplayLink];
   }
 }
 
-- (void)invalidateDisplayLink {
+- (void)updateShadowStateWithFrame:(CGRect)frame
+{
+  if (!CGRectEqualToRect(frame, _previousFrame)) {
+    if (_state != nullptr) {
+      auto newState = react::RNSBottomTabsAccessoryState{
+          RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
+      _state->updateState(std::move(newState));
+      _previousFrame = frame;
+    }
+  }
+}
+
+- (void)invalidateDisplayLink
+{
   NSLog(@"[bottomaccessory] invalidate display link");
   [_displayLink invalidate];
   _displayLink = nil;
-  _previousFrame = CGRectZero;
+}
+
+- (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
+{
+  _state = std::static_pointer_cast<const react::RNSBottomTabsAccessoryShadowNode::ConcreteState>(state);
 }
 
 @end

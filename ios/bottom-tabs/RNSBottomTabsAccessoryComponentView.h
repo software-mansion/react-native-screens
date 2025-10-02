@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSBottomTabsAccessoryComponentView : RNSReactBaseView
 
-@property (nonatomic, strong, nullable) RNSBottomAccessoryHelper *helper;
+@property (nonatomic, strong, readonly, nullable) RNSBottomAccessoryHelper *helper;
 
 /**
  * If not null, the bottom tabs host view that this accessory component view belongs to.

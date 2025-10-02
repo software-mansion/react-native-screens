@@ -8,6 +8,7 @@ namespace react = facebook::react;
 #pragma mark - View implementation
 
 @implementation RNSBottomTabsAccessoryComponentView {
+  RNSBottomAccessoryHelper *_helper;
   RNSBottomTabsHostComponentView *__weak _Nullable _reactSuperview;
 }
 
@@ -21,6 +22,7 @@ namespace react = facebook::react;
 
 - (void)initState
 {
+  _helper = [[RNSBottomAccessoryHelper alloc] initWithBottomAccessoryView:self];
   _reactSuperview = nil;
 }
 
@@ -31,10 +33,16 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-//- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
-//{
-//  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
-//}
+- (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
+{
+  [super updateState:state oldState:oldState];
+  [_helper updateState:state oldState:oldState];
+}
+
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+}
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {

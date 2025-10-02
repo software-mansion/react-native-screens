@@ -173,9 +173,6 @@ namespace react = facebook::react;
   if (@available(iOS 26.0, *)) {
     if (bottomAccessory != nil) {
       RNSBottomTabsAccessoryWrapperView *wrapperView = [[RNSBottomTabsAccessoryWrapperView alloc] initWithAccessoryView:bottomAccessory];
-      RNSBottomAccessoryHelper *helper = [[RNSBottomAccessoryHelper alloc] initWithWrapperView:wrapperView bottomAccessoryView:bottomAccessory];
-      [bottomAccessory setHelper:helper];
-      [wrapperView setHelper:helper];
       [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
     } else {
       [_controller setBottomAccessory:nil animated:YES];

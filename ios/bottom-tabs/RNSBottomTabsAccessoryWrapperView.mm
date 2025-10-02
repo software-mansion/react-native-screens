@@ -2,11 +2,14 @@
 #import "RNSBottomAccessoryHelper.h"
 #import "RNSBottomTabsAccessoryComponentView.h"
 
-@implementation RNSBottomTabsAccessoryWrapperView
+@implementation RNSBottomTabsAccessoryWrapperView {
+  RNSBottomTabsAccessoryComponentView *_accessoryView;
+}
 
 - (instancetype)initWithAccessoryView: (RNSBottomTabsAccessoryComponentView *)accessoryView
 {
   if (self = [super init]) {
+    _accessoryView = accessoryView;
     [self addSubview:accessoryView];
   }
   
@@ -16,7 +19,9 @@
 - (void)setFrame:(CGRect)frame
 {
   [super setFrame:frame];
-  [_helper setDestinationFrame:frame];
+  if (!CGRectEqualToRect(frame, CGRectZero)) {
+    [_accessoryView.helper notifyTransitionStart];
+  }
 }
 
 @end
