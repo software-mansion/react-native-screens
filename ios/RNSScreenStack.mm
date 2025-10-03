@@ -1245,7 +1245,8 @@ RNS_IGNORE_SUPER_CALL_END
     BOOL isBackGesture = [panGestureRecognizer translationInView:panGestureRecognizer.view].x > 0 &&
         _controller.viewControllers.count > 1;
 
-    if (gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
+    if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan ||
+        gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
       return NO;
     }
 
