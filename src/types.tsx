@@ -139,11 +139,16 @@ export interface ScreenProps extends ViewProps {
    */
   freezeOnBlur?: boolean;
   /**
-   * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
-   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
-   * Defaults to `false`.
+   * Boolean indicating whether the swipe gesture should work on whole screen. The behavior depends on iOS version.
    *
-   * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
+   * For iOS prior to 26, swiping with this option results in the same transition animation as `simple_push` by default.
+   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation
+   * is not achievable due to usage of custom recognizer.
+   *
+   * For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used, and this prop controls whether it should
+   * be enabled or not.
+   *
+   * When not set, it defaults to `false` on iOS < 26 and `true` for iOS >= 26.
    *
    * @platform ios
    */
@@ -214,25 +219,17 @@ export interface ScreenProps extends ViewProps {
     top: ScrollEdgeEffect;
   };
   /**
-   * Sets the navigation bar color. Defaults to initial status bar color.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect and is subject to removal in the future.
-   *  For SDK below 35 this works only with specific app setup.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
+   * For all apps targeting Android SDK 35 or above this prop has no effect.
+   * See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
    */
   navigationBarColor?: ColorValue;
   /**
-   * Boolean indicating whether the content should be visible behind the navigation bar. Defaults to `false`.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
-   *  We expect that in future SDKs this option will be enforced.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
+   * For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
+   * See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
    */
   navigationBarTranslucent?: boolean;
   /**
@@ -480,14 +477,10 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarAnimation?: 'none' | 'fade' | 'slide';
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect.
-   *  For SDK below 35 this works only with specific app setup.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/reference/android/view/Window#setStatusBarColor(int)
+   * For all apps targeting Android SDK 35 or above this prop has no effect.
+   * See: https://developer.android.com/reference/android/view/Window#setStatusBarColor(int)
    */
   statusBarColor?: ColorValue;
   /**
@@ -501,12 +494,10 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
   /**
-   * Sets the translucency of the status bar. Defaults to `false`.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this point loses relevance.
-   *  It is expected that the edge-to-edge will be enforced in future SDKs: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
+   * For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this prop loses relevance.
+   * See: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
    */
   statusBarTranslucent?: boolean;
   /**
@@ -712,16 +703,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   titleFontWeight?: string;
   /**
-   * A flag to that lets you opt out of insetting the header. You may want to
-   * set this to `false` if you use an opaque status bar. Defaults to `true`.
-   * Only supported on Android. Insets are always applied on iOS because the
-   * header cannot be opaque.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
-   *  and it is expected that the edge-to-edge will be enforced in future SDKs - therefore this prop
-   *  loses its relevance and will be removed at some point in the future.
+   * For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
+   * therefore this prop loses its relevance.
    */
   topInsetEnabled?: boolean;
   /**

@@ -54,8 +54,16 @@ Defaults to `false`. When `enableFreeze()` is run at the top of the application 
 
 ### `fullScreenSwipeEnabled` (iOS only)
 
-Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
-IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
+Boolean indicating whether the swipe gesture should work on whole screen. The behavior depends on iOS version.
+
+For iOS prior to 26, swiping with this option results in the same transition animation as `simple_push` by default.
+It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation
+is not achievable due to usage of custom recognizer.
+
+For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used for all cases except for `customAnimationOnSwipe`,
+however the prop still can be used to controls whether it should be enabled or not.
+
+When not set, it defaults to `false` on iOS < 26 and `true` for iOS >= 26.
 
 ### `fullScreenSwipeShadowEnabled` (iOS only)
 
@@ -100,13 +108,19 @@ Defaults to `false`.
 
 ### `navigationBarColor` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the navigation bar color. Defaults to initial status bar color.
 
 ### `navigationBarHidden` (Android only)
 
 Sets the visibility of the navigation bar. Defaults to `false`.
+
+### `navigationBarTranslucent` (Android only)
+
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
+
+Sets the translucency of the navigation bar. Defaults to `false`.
 
 ### `onAppear`
 
@@ -281,7 +295,7 @@ Defaults to `fade` on iOS and `none` on Android.
 
 ### `statusBarColor` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
@@ -299,7 +313,7 @@ Defaults to `auto`.
 
 ### `statusBarTranslucent` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
@@ -609,6 +623,8 @@ Customize the size of the font to be used for the title.
 Customize the weight of the font to be used for the title.
 
 ### `topInsetEnabled` (Android only)
+
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 

@@ -22,13 +22,13 @@ import ModalScreenNativeComponent, {
 } from '../fabric/ModalScreenNativeComponent';
 
 import { usePrevious } from './helpers/usePrevious';
-import { EDGE_TO_EDGE, transformEdgeToEdgeProps } from './helpers/edge-to-edge';
 import {
   SHEET_DIMMED_ALWAYS,
   resolveSheetAllowedDetents,
   resolveSheetInitialDetentIndex,
   resolveSheetLargestUndimmedDetent,
 } from './helpers/sheet';
+import { parseBooleanToOptionalBooleanNativeProp } from '../utils';
 
 type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(
@@ -138,6 +138,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         activityState,
         children,
         isNativeStack,
+        fullScreenSwipeEnabled,
         gestureResponseDistance,
         scrollEdgeEffects,
         onGestureCancel,
@@ -220,6 +221,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
             sheetInitialDetent={resolvedSheetInitialDetentIndex}
+            fullScreenSwipeEnabled={parseBooleanToOptionalBooleanNativeProp(
+              fullScreenSwipeEnabled,
+            )}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,
@@ -296,12 +300,7 @@ export const ScreenContext = React.createContext(InnerScreen);
 const Screen = React.forwardRef<View, ScreenProps>((props, ref) => {
   const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
-  return (
-    <ScreenWrapper
-      {...(EDGE_TO_EDGE ? transformEdgeToEdgeProps(props) : props)}
-      ref={ref}
-    />
-  );
+  return <ScreenWrapper {...props} ref={ref} />;
 });
 
 Screen.displayName = 'Screen';

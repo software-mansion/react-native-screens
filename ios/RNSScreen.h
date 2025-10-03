@@ -72,7 +72,13 @@ namespace react = facebook::react;
      RNSSafeAreaProviding,
      RNSScrollEdgeEffectProviding>
 
-@property (nonatomic) BOOL fullScreenSwipeEnabled;
+/**
+ * This is value of the prop as passed by the user. To get effective value see derived property
+ * `isFullScreenSwipeEffectivelyEnabled`
+ */
+@property (nonatomic) RNSOptionalBoolean fullScreenSwipeEnabled;
+@property (nonatomic, readonly, getter=isFullScreenSwipeEffectivelyEnabled) BOOL fullScreenSwipeEffectivelyEnabled;
+
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;

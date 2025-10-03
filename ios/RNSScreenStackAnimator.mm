@@ -88,7 +88,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     if ([screen.reactSuperview isKindOfClass:[RNSScreenStackView class]] &&
         ((RNSScreenStackView *)(screen.reactSuperview)).customAnimation) {
       [self animateWithNoAnimation:transitionContext toVC:toViewController fromVC:fromViewController];
-    } else if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
+    } else if (screen.isFullScreenSwipeEffectivelyEnabled && transitionContext.isInteractive) {
       // we are swiping with full width gesture
       if (screen.customAnimationOnSwipe) {
         [self animateTransitionWithStackAnimation:screen.stackAnimation

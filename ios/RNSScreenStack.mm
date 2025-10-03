@@ -1198,24 +1198,27 @@ RNS_IGNORE_SUPER_CALL_END
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26, *)) {
-    // On iOS 26, fullScreenSwipeEnabled takes no effect, and depending on whether custom animations are on,
-    // we select either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer
-    if (([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
-         !customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) ||
-        (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
-         customAnimationOnSwipePropSetAndSelectedAnimationIsCustom)) {
-      return NO;
+    // On iOS 26, depending on whether custom animations are on, we select
+    // either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer,
+    // then we allow them to proceed iff full screen swipe is enabled.
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? topScreen.isFullScreenSwipeEffectivelyEnabled
+                                                                       : NO;
+    }
+    if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer) {
+      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? NO
+                                                                       : topScreen.isFullScreenSwipeEffectivelyEnabled;
     }
   } else {
     // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-      return topScreen.fullScreenSwipeEnabled;
+      return topScreen.isFullScreenSwipeEffectivelyEnabled;
     }
   }
 #else // check for iOS >= 26
   // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
   if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    return topScreen.fullScreenSwipeEnabled;
+    return topScreen.isFullScreenSwipeEffectivelyEnabled;
   }
 #endif // check for iOS >= 26
 
@@ -1252,12 +1255,37 @@ RNS_IGNORE_SUPER_CALL_END
   return NO;
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  if (@available(iOS 26, *)) {
+    if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
+        [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
+      return YES;
+    }
+  }
+
+  return NO;
+}
+#endif // check for iOS >= 26
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  return (
-      [gestureRecognizer isKindOfClass:[UIScreenEdgePanGestureRecognizer class]] &&
-      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]);
+  BOOL isEdgeSwipeGestureRecognizer = [gestureRecognizer isKindOfClass:[UIScreenEdgePanGestureRecognizer class]];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26, *)) {
+    // `interactiveContentPopGestureRecognizer appears to have the same base class (`UIScrenEdgePanGestureRecognizer`)
+    // as `RNSScreenEdgeGestureRecognizer` but we don't want ScrollView being recognized on condition that the former
+    // fails, but rather the opposite & that the ScrollView recognizer has a higher priority See also
+    // gestureRecognizer:shouldRequireFailureOfGestureRecognizer
+    isEdgeSwipeGestureRecognizer =
+        isEdgeSwipeGestureRecognizer && gestureRecognizer != _controller.interactiveContentPopGestureRecognizer;
+  }
+#endif // check for iOS >= 26
+
+  return isEdgeSwipeGestureRecognizer && [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
 #endif // !TARGET_OS_TV
