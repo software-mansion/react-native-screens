@@ -32,6 +32,11 @@ type TabBarMinimizeBehavior =
   | 'onScrollDown'
   | 'onScrollUp';
 
+type TabBarControllerMode =
+  | 'automatic'
+  | 'tabBar'
+  | 'tabSidebar';
+
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
@@ -61,6 +66,7 @@ export interface NativeProps extends ViewProps {
   // iOS-specific
   tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
+  tabBarControllerMode?: WithDefault<TabBarControllerMode, 'automatic'>;
 
   // Control
 
