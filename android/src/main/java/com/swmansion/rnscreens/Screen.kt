@@ -22,10 +22,10 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.CustomBottomSheetBehavior
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -44,8 +44,8 @@ class Screen(
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
-    val sheetBehavior: BottomSheetBehavior<Screen>?
-        get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
+    val sheetBehavior: CustomBottomSheetBehavior<Screen>?
+        get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? CustomBottomSheetBehavior<Screen>
 
     val reactEventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
@@ -474,6 +474,21 @@ class Screen(
             updateScreenSizeFabric(width, height, top)
         }
     }
+
+//    override fun setOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener?) {
+//        val effectiveListener =
+//            if (usesFormSheetPresentation() && listener != null) {
+//                OnApplyWindowInsetsListener { v, insets ->
+//                    listener.onApplyWindowInsets(v, insets).also {
+//                        parentAsView()?.takeIf { !it.isInLayout }?.requestLayout()
+//                    }
+//                }
+//            } else {
+//                listener
+//            }
+//
+//        super.setOnApplyWindowInsetsListener(effectiveListener)
+//    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
