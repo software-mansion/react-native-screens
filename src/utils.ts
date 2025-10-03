@@ -5,6 +5,9 @@ export const isSearchBarAvailableForCurrentPlatform = [
   'android',
 ].includes(Platform.OS);
 
+export const isHeaderBarButtonsAvailableForCurrentPlatform =
+  Platform.OS === 'ios';
+
 export function executeNativeBackPress() {
   // This function invokes the native back press event
   BackHandler.exitApp();
