@@ -131,8 +131,8 @@ export interface NativeProps extends ViewProps {
   orientation?: WithDefault<Orientation, 'inherit'>;
 
   // Android-specific image handling
-  iconResourceName?: string;
-  iconResource?: ImageSource;
+  drawableIconResourceName?: string;
+  imageIconResource?: ImageSource;
   tabBarItemBadgeTextColor?: ColorValue;
   tabBarItemBadgeBackgroundColor?: ColorValue;
 

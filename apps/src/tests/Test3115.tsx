@@ -50,9 +50,15 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab 1',
       freezeContents: false,
       icon: {
-        sfSymbolName: 'sun.max',
+        ios: {
+          type: 'sfSymbol',
+          name: 'sun.max'
+        },
+        android: {
+          type: 'drawableResource',
+          name: 'sunny',
+        }
       },
-      iconResourceName: 'sunny',
     },
     component: makeTab('Tab 1'),
   },
@@ -61,9 +67,15 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabKey: 'Tab2',
       title: 'Tab 2',
       icon: {
-        sfSymbolName: 'snow',
+        ios: {
+          type: 'sfSymbol',
+          name: 'snow'
+        },
+        android: {
+          type: 'drawableResource',
+          name: 'mode_cool',
+        }
       },
-      iconResourceName: 'mode_cool',
     },
     component: makeTab('Tab 2'),
   },
