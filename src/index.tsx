@@ -58,6 +58,7 @@ export { compatibilityFlags, featureFlags } from './flags';
  * Hooks
  */
 export { default as useTransitionProgress } from './useTransitionProgress';
+export { default as useSheetTranslation } from './useSheetTranslation';
 
 /**
  * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE

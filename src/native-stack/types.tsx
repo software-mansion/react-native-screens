@@ -396,6 +396,13 @@ export type NativeStackNavigationOptions = {
    */
   sheetAllowedDetents?: ScreenProps['sheetAllowedDetents'] | 'fitToContents';
   /**
+   * Whether you can interactively dismiss a sheet.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Defaults to `true`.
+   */
+  sheetDismissible?: boolean;
+  /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *
    * Not dynamic.
