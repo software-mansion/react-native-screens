@@ -9,7 +9,7 @@ on:
       - 'package.json'
       - 'ios/**'
       - 'common/**'
-      - 'TVOSExample/**'
+      - 'FabricExample/**'
   push:
     branches:
       - main
@@ -19,7 +19,7 @@ jobs:
     runs-on: macos-14
     timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: TVOSExample
+      WORKING_DIRECTORY: FabricExample
       RNS_GAMMA_ENABLED: 0
     concurrency:
       group: ios-tv-${{ github.ref }}
@@ -33,7 +33,9 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'yarn'
           cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/yarn.lock
-      - name: Install node dependencies
+      - name: Convert FabricExample for tvOS build
+        run: ./scripts/convert-fabric-example-for-tv.sh
+      - name: Install node dependencies in FabricExample
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
       - name: Install pods
@@ -41,4 +43,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native run-ios --simulator="Apple TV"
+        run: detox build -c tvos.sim.debug

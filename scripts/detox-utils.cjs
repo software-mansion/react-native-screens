@@ -90,12 +90,25 @@ function commonDetoxConfigFactory(applicationName) {
         build:
           `cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${apkBulidArchitecture} && cd ..`,
       },
+      'tvos.debug': {
+        type: 'ios.app',
+        binaryPath:
+          `ios/build/Build/Products/Debug-appletvsimulator/${applicationName}.app`,
+        build:
+          `set -o pipefail && xcodebuild -workspace ios/${applicationName}.xcworkspace -UseNewBuildSystem=YES -scheme ${applicationName} -configuration Debug -sdk appletvsimulator -derivedDataPath ios/build -quiet | xcpretty`,
+      },
     },
     devices: {
       simulator: {
         type: 'ios.simulator',
         device: {
           type: 'iPhone 16 Pro',
+        },
+      },
+      tv_simulator: {
+        type: 'ios.simulator',
+        device: {
+          type: 'Apple TV',
         },
       },
       attached: {
@@ -145,6 +158,10 @@ function commonDetoxConfigFactory(applicationName) {
       'android.release': {
         device: 'emulator',
         app: 'android.release',
+      },
+      'tvos.sim.debug': {
+        device: 'tv_simulator',
+        app: 'tvos.debug'
       },
     },
   }
