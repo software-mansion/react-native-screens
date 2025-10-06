@@ -334,6 +334,11 @@ open class ScreenViewManager :
         value: String?,
     ) = Unit
 
+    override fun setUnstable_synchronousUpdatesEnabled(
+        view: Screen?,
+        value: Boolean
+    ) = Unit
+
     @ReactProp(name = "sheetAllowedDetents")
     override fun setSheetAllowedDetents(
         view: Screen,
