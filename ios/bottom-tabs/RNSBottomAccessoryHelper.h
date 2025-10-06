@@ -16,9 +16,12 @@ API_AVAILABLE(ios(26.0))
 - (instancetype)initWithBottomAccessoryView:(RNSBottomTabsAccessoryComponentView *)bottomAccessoryView;
 
 /**
- * Notifies RNSBottomAccessoryHelper that the bottom accessory will start the transition between states (regular, inline).
+ * Notifies RNSBottomAccessoryHelper that the bottom accessory will start the transition between states (regular,
+ * inline).
  */
 - (void)notifyTransitionStart;
+
+- (void)invalidate;
 
 @end
 

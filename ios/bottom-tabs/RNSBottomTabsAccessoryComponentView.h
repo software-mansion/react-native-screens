@@ -1,11 +1,23 @@
 #import "RNSBottomTabsHostComponentView.h"
 #import "RNSReactBaseView.h"
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSViewControllerInvalidating.h"
+#else
+#import <React/RCTInvalidating.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomAccessoryHelper;
 
-@interface RNSBottomTabsAccessoryComponentView : RNSReactBaseView
+@interface RNSBottomTabsAccessoryComponentView : RNSReactBaseView <
+#ifdef RCT_NEW_ARCH_ENABLED
+                                                     RNSViewControllerInvalidating
+#else
+                                                     RCTInvalidating
+#endif
+                                                     >
 
 /**
  * If not null, the bottom accesory's helper that handles synchronization with ShadowNode.

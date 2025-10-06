@@ -106,4 +106,10 @@ namespace react = facebook::react;
   _state = std::static_pointer_cast<const react::RNSBottomTabsAccessoryShadowNode::ConcreteState>(state);
 }
 
+- (void)invalidate
+{
+  _bottomAccessoryView = nil;
+  [self invalidateDisplayLink];
+}
+
 @end

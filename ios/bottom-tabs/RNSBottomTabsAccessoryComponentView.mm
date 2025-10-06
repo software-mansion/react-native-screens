@@ -38,7 +38,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
 {
   [super updateState:state oldState:oldState];
-  
+
   if (@available(iOS 26, *)) {
     [_helper updateState:state oldState:oldState];
   }
@@ -48,6 +48,41 @@ RNS_IGNORE_SUPER_CALL_END
 {
   return react::concreteComponentDescriptorProvider<react::RNSBottomTabsAccessoryComponentDescriptor>();
 }
+
++ (BOOL)shouldBeRecycled
+{
+  // There won't be tens of instances of this component usually & it's easier for now.
+  // We could consider enabling it someday though.
+  return NO;
+}
+
+#ifdef RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RNSViewControllerInvalidating
+
+- (void)invalidateController
+{
+  [_helper invalidate];
+  _helper = nil;
+}
+
+- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
+{
+  // For bottom tabs, Host is responsible for invalidating children.
+  return NO;
+}
+
+#else
+
+#pragma mark - RCTInvalidating
+
+- (void)invalidate
+{
+  [_helper invalidate];
+  _helper = nil;
+}
+
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 

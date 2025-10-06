@@ -14,9 +14,9 @@
 #import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSBottomAccessoryHelper.h"
 #import "RNSBottomTabsAccessoryComponentView.h"
 #import "RNSBottomTabsAccessoryWrapperView.h"
-#import "RNSBottomAccessoryHelper.h"
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSConversions.h"
 #import "RNSConvert.h"
@@ -167,12 +167,13 @@ namespace react = facebook::react;
 
   // TODO: they might be the same!
   [_controller childViewControllersHaveChangedTo:tabControllers];
-  
+
   // TODO: introduce some abstraction?
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     if (bottomAccessory != nil) {
-      RNSBottomTabsAccessoryWrapperView *wrapperView = [[RNSBottomTabsAccessoryWrapperView alloc] initWithAccessoryView:bottomAccessory];
+      RNSBottomTabsAccessoryWrapperView *wrapperView =
+          [[RNSBottomTabsAccessoryWrapperView alloc] initWithAccessoryView:bottomAccessory];
       [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
     } else {
       [_controller setBottomAccessory:nil animated:YES];
@@ -241,7 +242,7 @@ namespace react = facebook::react;
       isValidBottomAccessory || isTabsScreen,
       @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to mount %@",
       childComponentView);
-  
+
   if (isTabsScreen) {
     auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
     childScreen.reactSuperview = self;
@@ -249,7 +250,7 @@ namespace react = facebook::react;
     auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
     bottomAccessory.reactSuperview = self;
   }
-  
+
   [_reactSubviews insertObject:childComponentView atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = YES;
 }
@@ -270,7 +271,7 @@ namespace react = facebook::react;
     auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
     bottomAccessory.reactSuperview = nil;
   }
-  
+
   [_reactSubviews removeObject:childComponentView];
   _hasModifiedReactSubviewsInCurrentTransaction = YES;
 }
@@ -356,7 +357,7 @@ namespace react = facebook::react;
 #if RCT_NEW_ARCH_ENABLED
   for (const auto &mutation : transaction.getMutations()) {
     if ([self shouldInvalidateOnMutation:mutation]) {
-      for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
+      for (UIView<RNSViewControllerInvalidating> *childView in _reactSubviews) {
         [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
       }
 
