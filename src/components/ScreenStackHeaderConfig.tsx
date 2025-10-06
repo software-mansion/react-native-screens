@@ -26,6 +26,9 @@ import ScreenStackHeaderSubviewNativeComponent, {
 import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
 import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
 
+const SYNCHRONOUS_UPDATES_ENABLED =
+  featureFlags.experiment.unstable_synchronousStateUpdatesEnabled;
+
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
 
@@ -119,9 +122,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
       ref={ref}
       style={styles.headerConfig}
       pointerEvents="box-none"
-      unstable_synchronousUpdatesEnabled={
-        featureFlags.experiment.unstable_synchronousStateUpdatesEnabled
-      }
+      unstable_synchronousUpdatesEnabled={SYNCHRONOUS_UPDATES_ENABLED}
     />
   );
 });
@@ -134,9 +135,7 @@ export const ScreenStackHeaderBackButtonImage = (
   <ScreenStackHeaderSubview
     type="back"
     style={styles.headerSubview}
-    unstable_synchronousUpdatesEnabled={
-      featureFlags.experiment.unstable_synchronousStateUpdatesEnabled
-    }>
+    unstable_synchronousUpdatesEnabled={SYNCHRONOUS_UPDATES_ENABLED}>
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreenStackHeaderSubview>
 );
@@ -150,9 +149,7 @@ export const ScreenStackHeaderRightView = (
     <ScreenStackHeaderSubview
       {...rest}
       type="right"
-      unstable_synchronousUpdatesEnabled={
-        featureFlags.experiment.unstable_synchronousStateUpdatesEnabled
-      }
+      unstable_synchronousUpdatesEnabled={SYNCHRONOUS_UPDATES_ENABLED}
       style={[styles.headerSubview, style]}
     />
   );
@@ -167,9 +164,7 @@ export const ScreenStackHeaderLeftView = (
     <ScreenStackHeaderSubview
       {...rest}
       type="left"
-      unstable_synchronousUpdatesEnabled={
-        featureFlags.experiment.unstable_synchronousStateUpdatesEnabled
-      }
+      unstable_synchronousUpdatesEnabled={SYNCHRONOUS_UPDATES_ENABLED}
       style={[styles.headerSubview, style]}
     />
   );
@@ -182,9 +177,7 @@ export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => {
     <ScreenStackHeaderSubview
       {...rest}
       type="center"
-      unstable_synchronousUpdatesEnabled={
-        featureFlags.experiment.unstable_synchronousStateUpdatesEnabled
-      }
+      unstable_synchronousUpdatesEnabled={SYNCHRONOUS_UPDATES_ENABLED}
       style={[styles.headerSubviewCenter, style]}
     />
   );
@@ -196,9 +189,7 @@ export const ScreenStackHeaderSearchBarView = (
   <ScreenStackHeaderSubview
     {...props}
     type="searchBar"
-    unstable_synchronousUpdatesEnabled={
-      featureFlags.experiment.unstable_synchronousStateUpdatesEnabled
-    }
+    unstable_synchronousUpdatesEnabled={SYNCHRONOUS_UPDATES_ENABLED}
     style={styles.headerSubview}
   />
 );
