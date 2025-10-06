@@ -209,7 +209,7 @@ namespace react = facebook::react;
   // whole component is destroyed & therefore we do the necessary cleanup here.
   // If at some point that statement does not hold anymore, this cleanup
   // should be moved to a different place.
-  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
+  for (UIView<RCTInvalidating> *subview in _reactSubviews) {
     [subview invalidate];
   }
   _controller = nil;
