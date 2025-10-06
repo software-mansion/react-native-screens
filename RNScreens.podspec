@@ -20,7 +20,6 @@ min_supported_visionos_version = "1.0"
 
 rnscreens_cpp_flags = []
 
-rnscreens_cpp_flags << "-DREACT_NATIVE_MINOR_VERSION=#{rnscreens_find_react_native_minor_version()}"
 rnscreens_cpp_flags << "-DRNS_DEBUG_LOGGING=1" if debug_logging
 rnscreens_cpp_flags << "-DRNS_GAMMA_ENABLED=1" if gamma_project_enabled
 
