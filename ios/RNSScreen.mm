@@ -1481,6 +1481,7 @@ RNS_IGNORE_SUPER_CALL_END
   [super finalizeUpdates:updateMask];
   if (_shouldUpdateScrollEdgeEffects) {
     [self updateContentScrollViewEdgeEffectsIfExists];
+    _shouldUpdateScrollEdgeEffects = NO;
   }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
