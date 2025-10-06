@@ -19,7 +19,7 @@ const Stack = createNativeStackNavigator();
 
 const HomeScreen = ({ navigation }: RouteProps) => {
   useEffect(() => {
-    featureFlags.experiment.screenSynchronousStateUpdates = SYNCHRONOUS_STATE_UPDATES_ENABLED
+    featureFlags.experiment.synchronousStateUpdatesEnabled = SYNCHRONOUS_STATE_UPDATES_ENABLED
   }, [])
 
   return (
