@@ -1,5 +1,4 @@
 require "json"
-require_relative './scripts/screens_utils'
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
