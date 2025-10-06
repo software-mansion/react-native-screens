@@ -15,6 +15,7 @@ export type HeaderSubviewTypes =
 
 export interface NativeProps extends ViewProps {
   type?: WithDefault<HeaderSubviewTypes, 'left'>;
+  unstable_synchronousUpdatesEnabled?: WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>(
