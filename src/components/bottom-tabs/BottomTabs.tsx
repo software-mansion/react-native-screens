@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import {
+  Platform,
   StyleSheet,
-  Text,
-  View,
   findNodeHandle,
   type NativeSyntheticEvent,
 } from 'react-native';
@@ -18,7 +17,7 @@ import type {
 } from './BottomTabs.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import BottomTabsAccessory from './BottomTabsAccessory';
-import PressableWithFeedback from '../../../apps/src/shared/PressableWithFeedback';
+import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -30,6 +29,7 @@ function BottomTabs(props: BottomTabsProps) {
     onNativeFocusChange,
     experimentalControlNavigationStateInJS = featureFlags.experiment
       .controlledBottomTabs,
+    bottomAccessory,
     ...filteredProps
   } = props;
 
@@ -58,8 +58,8 @@ function BottomTabs(props: BottomTabsProps) {
     [onNativeFocusChange],
   );
 
-  // temporary
-  const [env, setEnv] = useState<'regular' | 'inline'>('regular');
+  const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
+    useState<BottomTabsAccessoryEnvironment>('regular');
 
   return (
     <BottomTabsNativeComponent
@@ -70,34 +70,14 @@ function BottomTabs(props: BottomTabsProps) {
       ref={componentNodeRef}
       {...filteredProps}>
       {filteredProps.children}
-      <BottomTabsAccessory
-        onEnvironmentChange={event => {
-          console.log('bta', event.nativeEvent);
-          setEnv(event.nativeEvent.environment);
-        }}>
-        <View
-          collapsable={false}
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: 'yellow',
-            padding: 10,
+      {bottomAccessory && Platform.OS === 'ios' && (
+        <BottomTabsAccessory
+          onEnvironmentChange={event => {
+            setBottomAccessoryEnvironment(event.nativeEvent.environment);
           }}>
-          <PressableWithFeedback>
-            <Text
-              style={
-                {
-                  // backgroundColor: 'green',
-                }
-              }>
-              Hello, World!
-            </Text>
-          </PressableWithFeedback>
-          {env === 'regular' && <Text>Hello from the other side</Text>}
-        </View>
-      </BottomTabsAccessory>
+          {bottomAccessory(bottomAccessoryEnvironment)}
+        </BottomTabsAccessory>
+      )}
     </BottomTabsNativeComponent>
   );
 }

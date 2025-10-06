@@ -1,9 +1,15 @@
+import { ReactNode } from 'react';
 import type {
   ColorValue,
   TextStyle,
   NativeSyntheticEvent,
   ViewProps,
 } from 'react-native';
+import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+
+export type BottomAccessoryFn = (
+  environment: BottomTabsAccessoryEnvironment,
+) => ReactNode;
 
 export type NativeFocusChangeEvent = {
   tabKey: string;
@@ -180,6 +186,26 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 26 or higher
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+  /**
+   * @summary Specifies component used as bottom accessory.
+   *
+   * This prop is a function that accepts `environment` as a parameter and returns
+   * the component that will be rendered in the bottom accessory.
+   *
+   * `environment` can be one of the following values:
+   *
+   * - `regular` - the accessory is laid out above the bottom tab bar,
+   * - `inline` - the accessory is laid out inline with the collapsed bottom
+   *   tab bar.
+   *
+   * If this prop is `undefined`, the bottom accessory will not be rendered.
+   *
+   * Available starting from iOS 26.
+   *
+   * @platform iOS
+   * @supported iOS 26 or higher
+   */
+  bottomAccessory?: BottomAccessoryFn;
   // #endregion iOS-only appearance
 
   // #region Experimental support
