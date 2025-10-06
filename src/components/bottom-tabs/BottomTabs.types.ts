@@ -24,10 +24,7 @@ export type TabBarMinimizeBehavior =
   | 'onScrollUp';
 
 // iOS-specific
-export type TabBarControllerMode =
-  | 'automatic'
-  | 'tabBar'
-  | 'tabSidebar';
+export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 export interface BottomTabsProps extends ViewProps {
   // #region Events
@@ -191,7 +188,7 @@ export interface BottomTabsProps extends ViewProps {
    *
    * Available starting from iOS 18.
    * Not supported on tvOS.
-   * 
+   *
    * The following values are currently supported:
    *
    * - `automatic` - the system sets the display mode based on the tab’s content
