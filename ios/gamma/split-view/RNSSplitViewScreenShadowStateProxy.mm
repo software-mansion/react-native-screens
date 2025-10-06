@@ -3,7 +3,7 @@
 
 #import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
-#include <cxxreact/ReactNativeVersion.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <rnscreens/RNSSplitViewScreenShadowNode.h>
 
 namespace react = facebook::react;
