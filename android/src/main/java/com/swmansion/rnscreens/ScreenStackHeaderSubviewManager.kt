@@ -50,11 +50,11 @@ class ScreenStackHeaderSubviewManager :
         Log.w("[RNScreens]", "hidesSharedBackground prop is not available on Android")
     }
 
-    // unstable_synchronousUpdatesEnabled is not available on Android atm, 
+    // unstable_synchronousUpdatesEnabled is not available on Android atm,
     // however we must override their setters
     override fun setUnstable_synchronousUpdatesEnabled(
         view: ScreenStackHeaderSubview?,
-        value: Boolean
+        value: Boolean,
     ) = Unit
 
     override fun updateState(
