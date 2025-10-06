@@ -41,6 +41,11 @@ class ScreenStackHeaderSubviewManager :
             }
     }
 
+    override fun setUnstable_synchronousUpdatesEnabled(
+        view: ScreenStackHeaderSubview?,
+        value: Boolean
+    ) = Unit
+
     override fun updateState(
         view: ScreenStackHeaderSubview,
         props: ReactStylesDiffMap?,

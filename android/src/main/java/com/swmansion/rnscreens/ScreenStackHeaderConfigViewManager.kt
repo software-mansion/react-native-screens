@@ -164,6 +164,11 @@ class ScreenStackHeaderConfigViewManager :
         logNotAvailable("topInsetEnabled")
     }
 
+    override fun setUnstable_synchronousUpdatesEnabled(
+        view: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) = Unit
+
     @ReactProp(name = "color", customType = "Color")
     override fun setColor(
         config: ScreenStackHeaderConfig,
