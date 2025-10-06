@@ -120,7 +120,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
       style={styles.headerConfig}
       pointerEvents="box-none"
       unstable_synchronousUpdatesEnabled={
-        featureFlags.experiment.screenSynchronousStateUpdates
+        featureFlags.experiment.synchronousStateUpdatesEnabled
       }
     />
   );
@@ -135,7 +135,7 @@ export const ScreenStackHeaderBackButtonImage = (
     type="back"
     style={styles.headerSubview}
     unstable_synchronousUpdatesEnabled={
-      featureFlags.experiment.screenSynchronousStateUpdates
+      featureFlags.experiment.synchronousStateUpdatesEnabled
     }>
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreenStackHeaderSubview>
@@ -151,7 +151,7 @@ export const ScreenStackHeaderRightView = (
       {...rest}
       type="right"
       unstable_synchronousUpdatesEnabled={
-        featureFlags.experiment.screenSynchronousStateUpdates
+        featureFlags.experiment.synchronousStateUpdatesEnabled
       }
       style={[styles.headerSubview, style]}
     />
@@ -168,7 +168,7 @@ export const ScreenStackHeaderLeftView = (
       {...rest}
       type="left"
       unstable_synchronousUpdatesEnabled={
-        featureFlags.experiment.screenSynchronousStateUpdates
+        featureFlags.experiment.synchronousStateUpdatesEnabled
       }
       style={[styles.headerSubview, style]}
     />
@@ -183,7 +183,7 @@ export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => {
       {...rest}
       type="center"
       unstable_synchronousUpdatesEnabled={
-        featureFlags.experiment.screenSynchronousStateUpdates
+        featureFlags.experiment.synchronousStateUpdatesEnabled
       }
       style={[styles.headerSubviewCenter, style]}
     />
@@ -197,7 +197,7 @@ export const ScreenStackHeaderSearchBarView = (
     {...props}
     type="searchBar"
     unstable_synchronousUpdatesEnabled={
-      featureFlags.experiment.screenSynchronousStateUpdates
+      featureFlags.experiment.synchronousStateUpdatesEnabled
     }
     style={styles.headerSubview}
   />
