@@ -34,7 +34,7 @@ export const compatibilityFlags = {
 const _featureFlags = {
   experiment: {
     controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
-    screenSynchronousStateUpdates: RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT,
+    synchronousStateUpdatesEnabled: RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT,
   },
   stable: {},
 };
@@ -64,20 +64,20 @@ export const featureFlags = {
       }
       _featureFlags.experiment.controlledBottomTabs = value;
     },
-    get screenSynchronousStateUpdates() {
-      return _featureFlags.experiment.screenSynchronousStateUpdates;
+    get synchronousStateUpdatesEnabled() {
+      return _featureFlags.experiment.synchronousStateUpdatesEnabled;
     },
-    set screenSynchronousStateUpdates(value: boolean) {
+    set synchronousStateUpdatesEnabled(value: boolean) {
       if (
-        value !== _featureFlags.experiment.screenSynchronousStateUpdates &&
-        _featureFlags.experiment.screenSynchronousStateUpdates !==
+        value !== _featureFlags.experiment.synchronousStateUpdatesEnabled &&
+        _featureFlags.experiment.synchronousStateUpdatesEnabled !==
           RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT
       ) {
         console.error(
-          `[RNScreens] screenSynchronousStateUpdates feature flag modified for a second time; this might lead to unexpected effects`,
+          `[RNScreens] synchronousStateUpdatesEnabled feature flag modified for a second time; this might lead to unexpected effects`,
         );
       }
-      _featureFlags.experiment.screenSynchronousStateUpdates = value;
+      _featureFlags.experiment.synchronousStateUpdatesEnabled = value;
     },
   },
   /**
