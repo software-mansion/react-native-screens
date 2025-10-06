@@ -29,6 +29,7 @@ import {
   resolveSheetLargestUndimmedDetent,
 } from './helpers/sheet';
 import { parseBooleanToOptionalBooleanNativeProp } from '../utils';
+import featureFlags from '../flags';
 
 type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(
@@ -263,7 +264,10 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
             leftScrollEdgeEffect={scrollEdgeEffects?.left}
             rightScrollEdgeEffect={scrollEdgeEffects?.right}
-            topScrollEdgeEffect={scrollEdgeEffects?.top}>
+            topScrollEdgeEffect={scrollEdgeEffects?.top}
+            unstable_synchronousUpdatesEnabled={
+              featureFlags.experiment.screenSynchronousStateUpdates
+            }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (

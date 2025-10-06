@@ -4,6 +4,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -99,7 +100,16 @@ namespace react = facebook::react;
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState =
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
-    _state->updateState(std::move(newState));
+    _state->updateState(
+        std::move(newState)
+
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _unstable_synchronousUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                            : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
+
     _lastScheduledFrame = frame;
   }
 }
@@ -140,7 +150,13 @@ namespace react = facebook::react;
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
   [self setHidesSharedBackground:newHeaderSubviewProps.hidesSharedBackground];
+  [self setUnstable_synchronousUpdatesEnabled:newHeaderSubviewProps.unstable_synchronousUpdatesEnabled];
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)setUnstable_synchronousUpdatesEnabled:(BOOL)unstable_synchronousUpdatesEnabled
+{
+  _unstable_synchronousUpdatesEnabled = unstable_synchronousUpdatesEnabled;
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

@@ -16,6 +16,7 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+import featureFlags from '../flags';
 
 // Native components
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
@@ -118,6 +119,9 @@ export const ScreenStackHeaderConfig = React.forwardRef<
       ref={ref}
       style={styles.headerConfig}
       pointerEvents="box-none"
+      unstable_synchronousUpdatesEnabled={
+        featureFlags.experiment.screenSynchronousStateUpdates
+      }
     />
   );
 });
@@ -141,6 +145,9 @@ export const ScreenStackHeaderRightView = (
     <ScreenStackHeaderSubview
       {...rest}
       type="right"
+      unstable_synchronousUpdatesEnabled={
+        featureFlags.experiment.screenSynchronousStateUpdates
+      }
       style={[styles.headerSubview, style]}
     />
   );
@@ -155,6 +162,9 @@ export const ScreenStackHeaderLeftView = (
     <ScreenStackHeaderSubview
       {...rest}
       type="left"
+      unstable_synchronousUpdatesEnabled={
+        featureFlags.experiment.screenSynchronousStateUpdates
+      }
       style={[styles.headerSubview, style]}
     />
   );
@@ -167,6 +177,9 @@ export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => {
     <ScreenStackHeaderSubview
       {...rest}
       type="center"
+      unstable_synchronousUpdatesEnabled={
+        featureFlags.experiment.screenSynchronousStateUpdates
+      }
       style={[styles.headerSubviewCenter, style]}
     />
   );
@@ -178,6 +191,9 @@ export const ScreenStackHeaderSearchBarView = (
   <ScreenStackHeaderSubview
     {...props}
     type="searchBar"
+    unstable_synchronousUpdatesEnabled={
+      featureFlags.experiment.screenSynchronousStateUpdates
+    }
     style={styles.headerSubview}
   />
 );

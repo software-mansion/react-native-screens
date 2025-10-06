@@ -81,6 +81,7 @@ export interface NativeProps extends ViewProps {
   headerRightBarButtonItems?: UnsafeMixed[];
   onPressHeaderBarButtonItem?: DirectEventHandler<OnPressHeaderBarButtonItemEvent>;
   onPressHeaderBarButtonMenuItem?: DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>;
+  unstable_synchronousUpdatesEnabled?: WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>(
