@@ -165,8 +165,7 @@ namespace react = facebook::react;
 
   RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
 
-  // TODO: they might be the same!
-  [_controller childViewControllersHaveChangedTo:tabControllers];
+  [_controller childViewControllersMightHaveChangedTo:tabControllers];
 
   // TODO: introduce some abstraction?
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
