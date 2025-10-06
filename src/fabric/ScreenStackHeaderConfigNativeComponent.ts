@@ -73,6 +73,7 @@ export interface NativeProps extends ViewProps {
   blurEffect?: WithDefault<BlurEffect, 'none'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean;
+  unstable_synchronousUpdatesEnabled?: WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>(

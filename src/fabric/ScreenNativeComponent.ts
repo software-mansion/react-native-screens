@@ -119,6 +119,7 @@ export interface NativeProps extends ViewProps {
   leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  unstable_synchronousUpdatesEnabled?: WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {
