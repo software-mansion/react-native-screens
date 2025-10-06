@@ -102,7 +102,6 @@ namespace react = facebook::react;
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
     _state->updateState(
         std::move(newState)
-
 #if REACT_NATIVE_VERSION_MINOR >= 82
             ,
         _unstable_synchronousUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
