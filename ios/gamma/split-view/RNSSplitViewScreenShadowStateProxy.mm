@@ -44,7 +44,8 @@ namespace react = facebook::react;
 
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState = react::RNSSplitViewScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-    _state->updateState(std::move(newState));
+    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
+
     _lastScheduledFrame = frame;
   }
 }
