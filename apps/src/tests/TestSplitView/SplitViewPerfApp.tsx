@@ -8,14 +8,20 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
+import {
+  SplitViewHost,
+  SplitViewScreen,
+} from 'react-native-screens/experimental';
 import { Colors } from '../../shared/styling/Colors';
 import { SplitViewBaseConfig } from './helpers/types';
 
 const { width } = Dimensions.get('window');
 
 const FlatListColumn = () => {
-  const data = useMemo(() => Array.from({ length: 500 }, (_, i) => `Item ${i + 1}`), []);
+  const data = useMemo(
+    () => Array.from({ length: 500 }, (_, i) => `Item ${i + 1}`),
+    [],
+  );
 
   return (
     <FlatList
@@ -31,7 +37,10 @@ const FlatListColumn = () => {
 };
 
 const ScrollViewColumn = () => {
-  const data = useMemo(() => Array.from({ length: 200 }, (_, i) => `Item ${i + 1}`), []);
+  const data = useMemo(
+    () => Array.from({ length: 200 }, (_, i) => `Item ${i + 1}`),
+    [],
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContentContainer}>
@@ -51,14 +60,15 @@ const GridImageColumn = () => {
         id: `img-${index}`,
         uri: `https://picsum.photos/seed/${index}/200`,
       })),
-    []
+    [],
   );
 
   const numColumns = 2;
   const imageSize = width / (numColumns * 2);
 
   return (
-    <ScrollView contentContainerStyle={[styles.scrollContentContainer, styles.flexRow]}>
+    <ScrollView
+      contentContainerStyle={[styles.scrollContentContainer, styles.flexRow]}>
       {images.map((img, _) => (
         <Image
           key={img.id}
@@ -70,21 +80,28 @@ const GridImageColumn = () => {
   );
 };
 
-const SplitViewPerfApp = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+const SplitViewPerfApp = ({
+  splitViewBaseConfig,
+}: {
+  splitViewBaseConfig: SplitViewBaseConfig;
+}) => {
   return (
     <SplitViewHost {...splitViewBaseConfig}>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.RedLight40 }]}>
+        <View
+          style={[styles.container, { backgroundColor: Colors.RedLight40 }]}>
           <FlatListColumn />
         </View>
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.GreenLight60 }]}>
+        <View
+          style={[styles.container, { backgroundColor: Colors.GreenLight60 }]}>
           <ScrollViewColumn />
         </View>
       </SplitViewScreen.Column>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.NavyLight40 }]}>
+        <View
+          style={[styles.container, { backgroundColor: Colors.NavyLight40 }]}>
           <GridImageColumn />
         </View>
       </SplitViewScreen.Column>
