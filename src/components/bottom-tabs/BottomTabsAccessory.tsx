@@ -1,12 +1,21 @@
 import React from 'react';
-import { ViewProps } from 'react-native';
+import { NativeSyntheticEvent, ViewProps } from 'react-native';
 import BottomTabsAccessoryNativeComponent from '../../fabric/bottom-tabs/BottomTabsAccessoryNativeComponent';
 
-export type BottomTabsAccessoryProps = ViewProps;
+export type EnvironmentChangeEvent = {
+  environment: 'regular' | 'inline';
+};
+
+export type BottomTabsAccessoryProps = ViewProps & {
+  onEnvironmentChange?: (
+    event: NativeSyntheticEvent<EnvironmentChangeEvent>,
+  ) => void;
+};
 
 export default function BottomTabsAccessory(props: BottomTabsAccessoryProps) {
   return (
     <BottomTabsAccessoryNativeComponent
+      {...props}
       collapsable={false}
       style={[
         props.style,

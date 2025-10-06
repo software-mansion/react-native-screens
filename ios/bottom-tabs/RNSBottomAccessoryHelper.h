@@ -25,6 +25,8 @@ API_AVAILABLE(ios(26.0))
 
 @end
 
+#pragma mark - Hidden from Swift
+
 #if defined(__cplusplus)
 
 @interface RNSBottomAccessoryHelper ()

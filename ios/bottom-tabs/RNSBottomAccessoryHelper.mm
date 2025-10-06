@@ -11,6 +11,7 @@ namespace react = facebook::react;
   BOOL _initialStateUpdateSent;
   CADisplayLink *_displayLink;
   CGRect _previousFrame;
+  id<UITraitChangeRegistration> _traitChangeRegistration;
 }
 
 - (instancetype)initWithBottomAccessoryView:(RNSBottomTabsAccessoryComponentView *)bottomAccessoryView
@@ -18,10 +19,13 @@ namespace react = facebook::react;
   if (self = [super init]) {
     _bottomAccessoryView = bottomAccessoryView;
     [self initState];
-    //    [_bottomAccessoryView
-    //        registerForTraitChanges:@[ [UITraitTabAccessoryEnvironment class] ]
-    //                    withHandler:^(__kindof id<UITraitEnvironment>, UITraitCollection *previousTrairCollection){
-    //                    }];
+    _traitChangeRegistration = [_bottomAccessoryView
+        registerForTraitChanges:@[ [UITraitTabAccessoryEnvironment class] ]
+                    withHandler:^(__kindof id<UITraitEnvironment>, UITraitCollection *previousTrairCollection) {
+                      [self->_bottomAccessoryView.reactEventEmitter
+                          emitOnEnvironmentChangeIfNecessary:self->_bottomAccessoryView.traitCollection
+                                                                 .tabAccessoryEnvironment];
+                    }];
   }
 
   return self;
@@ -108,6 +112,8 @@ namespace react = facebook::react;
 
 - (void)invalidate
 {
+  [_bottomAccessoryView unregisterForTraitChanges:_traitChangeRegistration];
+  _traitChangeRegistration = nil;
   _bottomAccessoryView = nil;
   [self invalidateDisplayLink];
 }

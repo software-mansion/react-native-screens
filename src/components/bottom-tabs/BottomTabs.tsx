@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -58,6 +58,9 @@ function BottomTabs(props: BottomTabsProps) {
     [onNativeFocusChange],
   );
 
+  // temporary
+  const [env, setEnv] = useState<'regular' | 'inline'>('regular');
+
   return (
     <BottomTabsNativeComponent
       style={styles.fillParent}
@@ -67,14 +70,20 @@ function BottomTabs(props: BottomTabsProps) {
       ref={componentNodeRef}
       {...filteredProps}>
       {filteredProps.children}
-      <BottomTabsAccessory>
+      <BottomTabsAccessory
+        onEnvironmentChange={event => {
+          console.log('bta', event.nativeEvent);
+          setEnv(event.nativeEvent.environment);
+        }}>
         <View
           collapsable={false}
           style={{
             flex: 1,
+            flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'space-between',
             backgroundColor: 'yellow',
+            padding: 10,
           }}>
           <PressableWithFeedback>
             <Text
@@ -86,6 +95,7 @@ function BottomTabs(props: BottomTabsProps) {
               Hello, World!
             </Text>
           </PressableWithFeedback>
+          {env === 'regular' && <Text>Hello from the other side</Text>}
         </View>
       </BottomTabsAccessory>
     </BottomTabsNativeComponent>

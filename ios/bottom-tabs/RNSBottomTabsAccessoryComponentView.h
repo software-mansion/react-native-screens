@@ -1,3 +1,4 @@
+#import "RNSBottomTabsAccessoryEventEmitter.h"
 #import "RNSBottomTabsHostComponentView.h"
 #import "RNSReactBaseView.h"
 
@@ -28,6 +29,17 @@ NS_ASSUME_NONNULL_BEGIN
  * If not null, the bottom tabs host view that this accessory component view belongs to.
  */
 @property (nonatomic, weak, nullable) RNSBottomTabsHostComponentView *reactSuperview;
+
+@end
+
+#pragma mark - React Events
+
+@interface RNSBottomTabsAccessoryComponentView ()
+
+/**
+ * Use returned object to emit appropriate React Events to Element Tree.
+ */
+- (nonnull RNSBottomTabsAccessoryEventEmitter *)reactEventEmitter;
 
 @end
 

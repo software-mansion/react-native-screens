@@ -10,6 +10,7 @@ namespace react = facebook::react;
 @implementation RNSBottomTabsAccessoryComponentView {
   RNSBottomAccessoryHelper *_helper API_AVAILABLE(ios(26.0));
   RNSBottomTabsHostComponentView *__weak _Nullable _reactSuperview;
+  RNSBottomTabsAccessoryEventEmitter *_Nonnull _reactEventEmitter;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -26,6 +27,7 @@ namespace react = facebook::react;
     _helper = [[RNSBottomAccessoryHelper alloc] initWithBottomAccessoryView:self];
   }
   _reactSuperview = nil;
+  _reactEventEmitter = [RNSBottomTabsAccessoryEventEmitter new];
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -44,6 +46,15 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+
+  const auto &castedEventEmitter =
+      std::static_pointer_cast<const react::RNSBottomTabsAccessoryEventEmitter>(eventEmitter);
+  [_reactEventEmitter updateEventEmitter:castedEventEmitter];
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSBottomTabsAccessoryComponentDescriptor>();
@@ -57,6 +68,14 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
+
+#pragma mark - React events
+
+- (nonnull RNSBottomTabsAccessoryEventEmitter *)reactEventEmitter
+{
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
+}
 
 #pragma mark - RNSViewControllerInvalidating
 
