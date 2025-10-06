@@ -3,7 +3,6 @@
 
 #import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
-#import <cxxreact/ReactNativeVersion.h>
 #import <rnscreens/RNSSplitViewScreenShadowNode.h>
 
 namespace react = facebook::react;
@@ -45,13 +44,7 @@ namespace react = facebook::react;
 
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState = react::RNSSplitViewScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-    _state->updateState(
-        std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-            ,
-        facebook::react::EventQueue::UpdateMode::unstable_Immediate
-#endif
-    );
+    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
 
     _lastScheduledFrame = frame;
   }
