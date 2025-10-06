@@ -21,7 +21,7 @@ namespace react = facebook::react;
     [self initState];
     _traitChangeRegistration = [_bottomAccessoryView
         registerForTraitChanges:@[ [UITraitTabAccessoryEnvironment class] ]
-                    withHandler:^(__kindof id<UITraitEnvironment>, UITraitCollection *previousTrairCollection) {
+                    withHandler:^(__kindof id<UITraitEnvironment>, UITraitCollection *previousTraitCollection) {
                       [self->_bottomAccessoryView.reactEventEmitter
                           emitOnEnvironmentChangeIfNecessary:self->_bottomAccessoryView.traitCollection
                                                                  .tabAccessoryEnvironment];

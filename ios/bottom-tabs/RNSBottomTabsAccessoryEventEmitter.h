@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSBottomTabsAccessoryEventEmitter : NSObject
 
-- (BOOL)emitOnEnvironmentChangeIfNecessary:(UITabAccessoryEnvironment)environment;
+- (BOOL)emitOnEnvironmentChangeIfNecessary:(UITabAccessoryEnvironment)environment API_AVAILABLE(ios(26.0));
 
 @end
 
