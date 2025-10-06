@@ -165,11 +165,6 @@ class ScreenStackHeaderConfigViewManager :
         logNotAvailable("topInsetEnabled")
     }
 
-    override fun setUnstable_synchronousUpdatesEnabled(
-        view: ScreenStackHeaderConfig?,
-        value: Boolean,
-    ) = Unit
-
     @ReactProp(name = "color", customType = "Color")
     override fun setColor(
         config: ScreenStackHeaderConfig,
@@ -209,6 +204,13 @@ class ScreenStackHeaderConfigViewManager :
     ) {
         config.setDirection(direction)
     }
+
+    // unstable_synchronousUpdatesEnabled is not available on Android atm,
+    // however we must override their setters
+    override fun setUnstable_synchronousUpdatesEnabled(
+        config: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) = Unit
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
         hashMapOf(
