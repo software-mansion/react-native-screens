@@ -337,7 +337,7 @@ open class ScreenViewManager :
 
     override fun setUnstable_synchronousUpdatesEnabled(
         view: Screen?,
-        value: Boolean
+        value: Boolean,
     ) = Unit
 
     // END mark: iOS-only
