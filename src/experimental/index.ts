@@ -15,3 +15,4 @@ export {
 } from '../components/gamma/stack/StackScreen';
 export { default as SplitViewHost } from '../components/gamma/split-view/SplitViewHost';
 export { default as SplitViewScreen } from '../components/gamma/split-view/SplitViewScreen';
+export { default as SafeAreaView } from '../components/safe-area/SafeAreaView';
