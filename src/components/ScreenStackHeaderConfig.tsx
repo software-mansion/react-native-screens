@@ -41,7 +41,12 @@ ScreenStackHeaderConfig.displayName = 'ScreenStackHeaderConfig';
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,
 ): JSX.Element => (
-  <ScreenStackHeaderSubview type="back" style={styles.headerSubview}>
+  <ScreenStackHeaderSubview
+    type="back"
+    style={styles.headerSubview}
+    unstable_synchronousUpdatesEnabled={
+      featureFlags.experiment.screenSynchronousStateUpdates
+    }>
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreenStackHeaderSubview>
 );
