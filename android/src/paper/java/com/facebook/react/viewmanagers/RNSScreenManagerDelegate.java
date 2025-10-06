@@ -134,6 +134,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
       case "topScrollEdgeEffect":
         mViewManager.setTopScrollEdgeEffect(view, (String) value);
         break;
+      case "unstable_synchronousUpdatesEnabled":
+        mViewManager.setUnstable_synchronousUpdatesEnabled(view, value == null ? false : (boolean) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }
