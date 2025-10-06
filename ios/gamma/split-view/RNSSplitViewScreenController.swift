@@ -69,7 +69,6 @@ public class RNSSplitViewScreenController: UIViewController {
 
   // MARK: Layout
 
-
   @objc
   public override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
@@ -99,8 +98,8 @@ public class RNSSplitViewScreenController: UIViewController {
       "[RNScreens] Expected to find RNSSplitViewHost component for RNSSplitViewScreen component"
     )
 
-      shadowStateProxy.updateShadowState(
-        ofComponent: splitViewScreenComponentView, inContextOfAncestorView: ancestorView)
+    shadowStateProxy.updateShadowState(
+      ofComponent: splitViewScreenComponentView, inContextOfAncestorView: ancestorView)
   }
 
   ///
@@ -109,9 +108,9 @@ public class RNSSplitViewScreenController: UIViewController {
   /// @param splitViewController The UISplitViewController whose layout positioning changed, represented by RNSSplitViewHostController.
   ///
   func columnPositioningDidChangeIn(splitViewController: UISplitViewController) {
-      shadowStateProxy.updateShadowState(
-        ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view
-      )
+    shadowStateProxy.updateShadowState(
+      ofComponent: splitViewScreenComponentView, inContextOfAncestorView: splitViewController.view
+    )
   }
 
   // MARK: Events
