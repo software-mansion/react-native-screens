@@ -1,10 +1,7 @@
 import React from 'react';
-import {
-  StackContainer,
-  useStackNavigation,
-} from '../../../shared/gamma/containers/stack/StackContainer';
+import { useStackNavigation } from '../../../shared/gamma/containers/stack/StackContainer';
 
-import { Button, StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { GlassButton } from '../components/GlassButton';
 
 export default function HomeScreen() {
