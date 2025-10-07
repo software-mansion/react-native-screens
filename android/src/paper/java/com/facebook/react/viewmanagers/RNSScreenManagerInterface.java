@@ -18,6 +18,7 @@ import com.facebook.react.bridge.ReadableMap;
 public interface RNSScreenManagerInterface<T extends View>  {
   void setScreenId(T view, @Nullable String value);
   void setSheetAllowedDetents(T view, @Nullable ReadableArray value);
+  void setSheetDismissible(T view, boolean value);
   void setSheetLargestUndimmedDetent(T view, int value);
   void setSheetGrabberVisible(T view, boolean value);
   void setSheetCornerRadius(T view, float value);
