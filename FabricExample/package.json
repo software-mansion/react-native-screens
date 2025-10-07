@@ -15,6 +15,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@callstack/liquid-glass": "^0.4.2",
     "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/",
     "@react-navigation/core": "link:../react-navigation/packages/core/",
     "@react-navigation/drawer": "link:../react-navigation/packages/drawer/",

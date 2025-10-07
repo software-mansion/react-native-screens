@@ -1,10 +1,16 @@
 import React from 'react';
 
-import { generateStackWithNames } from './helper';
 import { StackContainer } from '../../shared/gamma/containers/stack/StackContainer';
+import HomeScreen from './screens/HomeScreen';
+import DetailsScreen from './screens/DetailsScreen';
 
 export default function App() {
   return (
-    <StackContainer pathConfigs={generateStackWithNames(['A', 'B', 'C'])} />
+    <StackContainer
+      pathConfigs={[
+        { name: 'home', component: HomeScreen },
+        { name: 'details', component: DetailsScreen },
+      ]}
+    />
   );
 }

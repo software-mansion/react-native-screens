@@ -12,22 +12,20 @@ import {
   SplitViewWithNativeStackHeaderStyles,
   SplitViewWithNativeStackModal,
   SplitViewWithNativeStackPresentation,
-  SplitViewWithNativeStackSheet
+  SplitViewWithNativeStackSheet,
 } from './SplitViewWithNativeStack';
 import { SplitViewBaseConfig } from './helpers/types';
 import { featureFlags } from 'react-native-screens';
 
-featureFlags.experiment.unstable_synchronousStateUpdatesEnabled = true
+featureFlags.experiment.unstable_synchronousStateUpdatesEnabled = true;
 
 const App = () => {
   const splitViewBaseConfig: SplitViewBaseConfig = {
-    preferredDisplayMode: 'twoBesideSecondary',
+    preferredDisplayMode: 'automatic',
     preferredSplitBehavior: 'tile',
-  }
+  };
 
-  return (
-    <SplitViewBaseApp splitViewBaseConfig={splitViewBaseConfig} />
-  );
-}
+  return <SplitViewBaseApp splitViewBaseConfig={splitViewBaseConfig} />;
+};
 
 export default App;
