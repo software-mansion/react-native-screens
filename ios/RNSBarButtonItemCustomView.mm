@@ -50,9 +50,7 @@ namespace react = facebook::react;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     if (_barButtonItem != nil) {
-      dispatch_async(dispatch_get_main_queue(), ^{
-        [self->_barButtonItem setHidesSharedBackground:self->_hidesSharedBackground];
-      });
+      [_barButtonItem setHidesSharedBackground:_hidesSharedBackground];
     }
   }
 #endif
