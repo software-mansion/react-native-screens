@@ -624,7 +624,6 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
   navitem.titleView = nil;
   navitem.leftBarButtonItems = nil;
-
   navitem.rightBarButtonItems = nil;
 
 #if !TARGET_OS_TV
