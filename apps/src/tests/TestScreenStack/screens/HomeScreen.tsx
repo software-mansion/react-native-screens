@@ -20,6 +20,8 @@ import {
   // @ts-ignore its fine
 } from 'lucide-react-native';
 
+const iconColor = 'black';
+
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -27,61 +29,61 @@ export default function HomeScreen() {
       <View style={styles.toolbar}>
         <View style={styles.toolbarContent}>
           <GlassButton>
-            <Save color="white" size={20} />
+            <Save color={iconColor} size={20} />
           </GlassButton>
           <GlassButton>
-            <Undo color="white" size={20} />
+            <Undo color={iconColor} size={20} />
           </GlassButton>
           <GlassButton>
-            <Redo color="white" size={20} />
-          </GlassButton>
-
-          <View style={styles.separator} />
-
-          <GlassButton>
-            <Bold color="white" size={20} />
-          </GlassButton>
-          <GlassButton>
-            <Italic color="white" size={20} />
-          </GlassButton>
-          <GlassButton>
-            <Underline color="white" size={20} />
+            <Redo color={iconColor} size={20} />
           </GlassButton>
 
           <View style={styles.separator} />
 
           <GlassButton>
-            <AlignLeft color="white" size={20} />
+            <Bold color={iconColor} size={20} />
           </GlassButton>
           <GlassButton>
-            <AlignCenter color="white" size={20} />
+            <Italic color={iconColor} size={20} />
           </GlassButton>
           <GlassButton>
-            <AlignRight color="white" size={20} />
-          </GlassButton>
-
-          <View style={styles.separator} />
-
-          <GlassButton>
-            <List color="white" size={20} />
-          </GlassButton>
-          <GlassButton>
-            <ListOrdered color="white" size={20} />
+            <Underline color={iconColor} size={20} />
           </GlassButton>
 
           <View style={styles.separator} />
 
           <GlassButton>
-            <Image color="white" size={20} />
+            <AlignLeft color={iconColor} size={20} />
           </GlassButton>
           <GlassButton>
-            <Link color="white" size={20} />
+            <AlignCenter color={iconColor} size={20} />
+          </GlassButton>
+          <GlassButton>
+            <AlignRight color={iconColor} size={20} />
           </GlassButton>
 
           <View style={styles.separator} />
 
           <GlassButton>
-            <Share2 color="white" size={20} />
+            <List color={iconColor} size={20} />
+          </GlassButton>
+          <GlassButton>
+            <ListOrdered color={iconColor} size={20} />
+          </GlassButton>
+
+          <View style={styles.separator} />
+
+          <GlassButton>
+            <Image color={iconColor} size={20} />
+          </GlassButton>
+          <GlassButton>
+            <Link color={iconColor} size={20} />
+          </GlassButton>
+
+          <View style={styles.separator} />
+
+          <GlassButton>
+            <Share2 color={iconColor} size={20} />
           </GlassButton>
         </View>
       </View>

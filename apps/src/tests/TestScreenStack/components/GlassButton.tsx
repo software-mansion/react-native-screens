@@ -7,9 +7,12 @@ import { Pressable, StyleSheet } from 'react-native';
 
 export function GlassButton({
   children,
+  tintColor = '#fafafaaa',
+  // tintColor = '#ecfeffaa',
   onPress,
 }: {
   children: React.ReactNode;
+  tintColor?: string;
   onPress?: () => void;
 }) {
   return (
@@ -17,8 +20,8 @@ export function GlassButton({
     <LiquidGlassView
       style={styles.container}
       interactive
-      effect="regular"
-      tintColor="#1d4ed8a0">
+      effect="clear"
+      tintColor={tintColor}>
       {children}
     </LiquidGlassView>
     // </Pressable>
@@ -28,6 +31,6 @@ export function GlassButton({
 const styles = StyleSheet.create({
   container: {
     padding: 12,
-    borderRadius: 20,
+    borderRadius: 32,
   },
 });
