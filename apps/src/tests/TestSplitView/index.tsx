@@ -26,7 +26,7 @@ const App = () => {
   }
 
   return (
-    <SplitViewWithNativeStackBase splitViewBaseConfig={splitViewBaseConfig} />
+    <SplitViewBaseApp splitViewBaseConfig={splitViewBaseConfig} />
   );
 }
 
