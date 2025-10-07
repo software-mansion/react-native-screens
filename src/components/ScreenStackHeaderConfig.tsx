@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 1,
+    overflow: 'hidden',
   },
   headerConfig: {
     position: 'absolute',
