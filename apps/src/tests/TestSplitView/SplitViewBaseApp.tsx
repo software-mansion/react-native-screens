@@ -16,7 +16,7 @@ const SplitViewBaseApp = ({
   return (
     <SplitViewHost {...splitViewBaseConfig}>
       <SplitViewScreen.Column>
-        <View style={[styles.container, { backgroundColor: Colors.White }]}>
+        <View style={[styles.container, { backgroundColor: 'transparent' }]}>
           <Text style={styles.text}>Primary column</Text>
         </View>
       </SplitViewScreen.Column>

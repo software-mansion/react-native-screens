@@ -17,6 +17,7 @@ import {
   Share2,
   Undo,
   Redo,
+  // @ts-ignore its fine
 } from 'lucide-react-native';
 
 export default function HomeScreen() {
@@ -24,10 +25,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       {/* Toolbar */}
       <View style={styles.toolbar}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.toolbarContent}>
+        <View style={styles.toolbarContent}>
           <GlassButton>
             <Save color="white" size={20} />
           </GlassButton>
@@ -85,7 +83,7 @@ export default function HomeScreen() {
           <GlassButton>
             <Share2 color="white" size={20} />
           </GlassButton>
-        </ScrollView>
+        </View>
       </View>
 
       {/* Document Area */}
@@ -186,14 +184,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   toolbar: {
-    backgroundColor: '#1e293b',
-    paddingVertical: 12,
+    backgroundColor: '#1e3a8a',
+    // paddingVertical: 16,
+    paddingTop: 32,
+    paddingBottom: 12,
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#334155',
   },
   toolbarContent: {
     gap: 8,
+    flexDirection: 'row',
     alignItems: 'center',
   },
   separator: {

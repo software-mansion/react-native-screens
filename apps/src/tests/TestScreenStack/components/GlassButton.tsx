@@ -13,15 +13,15 @@ export function GlassButton({
   onPress?: () => void;
 }) {
   return (
-    <Pressable onPress={onPress}>
-      <LiquidGlassView
-        style={styles.container}
-        interactive
-        effect="regular"
-        tintColor="#1d4ed8a0">
-        {children}
-      </LiquidGlassView>
-    </Pressable>
+    // <Pressable onPress={onPress}>
+    <LiquidGlassView
+      style={styles.container}
+      interactive
+      effect="regular"
+      tintColor="#1d4ed8a0">
+      {children}
+    </LiquidGlassView>
+    // </Pressable>
   );
 }
 
