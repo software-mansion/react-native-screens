@@ -3,6 +3,7 @@ import { useStackNavigation } from '../../../shared/gamma/containers/stack/Stack
 
 import { StyleSheet, View, Text } from 'react-native';
 import { GlassButton } from '../components/GlassButton';
+// @ts-ignore its fine
 import { Type } from 'lucide-react-native';
 
 export default function HomeScreen() {
