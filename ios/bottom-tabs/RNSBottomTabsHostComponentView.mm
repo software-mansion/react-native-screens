@@ -174,6 +174,7 @@ namespace react = facebook::react;
       RNSBottomTabsAccessoryWrapperView *wrapperView =
           [[RNSBottomTabsAccessoryWrapperView alloc] initWithAccessoryView:bottomAccessory];
       [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
+      [wrapperView registerForAccessoryFrameChanges];
     } else {
       [_controller setBottomAccessory:nil animated:YES];
     }

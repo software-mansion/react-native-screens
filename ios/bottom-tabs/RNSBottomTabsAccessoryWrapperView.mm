@@ -6,6 +6,7 @@
   RNSBottomTabsAccessoryComponentView *_accessoryView;
 }
 
+// TODO: if possible, remove this view completely, use plain UIView
 - (instancetype)initWithAccessoryView:(RNSBottomTabsAccessoryComponentView *)accessoryView
 {
   if (self = [super init]) {
@@ -16,12 +17,9 @@
   return self;
 }
 
-- (void)setFrame:(CGRect)frame
+- (void)registerForAccessoryFrameChanges
 {
-  [super setFrame:frame];
-  if (!CGRectEqualToRect(frame, CGRectZero)) {
-    [_accessoryView.helper notifyTransitionStart];
-  }
+  [_accessoryView.helper registerForAccessoryFrameChanges];
 }
 
 @end

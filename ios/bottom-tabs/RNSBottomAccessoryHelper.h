@@ -16,10 +16,15 @@ API_AVAILABLE(ios(26.0))
 - (instancetype)initWithBottomAccessoryView:(RNSBottomTabsAccessoryComponentView *)bottomAccessoryView;
 
 /**
- * Notifies RNSBottomAccessoryHelper that the bottom accessory will start the transition between states (regular,
- * inline).
+ * Registers KVO for frames of UIKit's bottom accessory wrapper view.
+ * Should be called after setting RNSBottomTabsAccessoryComponentView as a bottom accessory.
  */
-- (void)notifyTransitionStart;
+- (void)registerForAccessoryFrameChanges;
+
+/**
+ * Notifies RNSBottomAccessoryHelper that the bottom accessory's frame has changed.
+ */
+- (void)notifyFrameUpdate;
 
 - (void)invalidate;
 
