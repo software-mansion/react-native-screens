@@ -556,7 +556,6 @@ export interface ScreenStackProps extends ViewProps, GestureProps {
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
-  screenId: string;
   /**
    * Whether to show the back button with custom left side of the header.
    */

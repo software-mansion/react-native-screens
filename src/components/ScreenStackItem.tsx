@@ -119,7 +119,7 @@ function ScreenStackItem(
        * See https://github.com/software-mansion/react-native-screens/pull/1825
        * for detailed explanation.
        */}
-      <ScreenStackHeaderConfig {...headerConfig} screenId={screenId} />
+      <ScreenStackHeaderConfig {...headerConfig} />
       {/* eslint-disable-next-line camelcase */}
       {stackPresentation === 'formSheet' && unstable_sheetFooter && (
         <FooterComponent>{unstable_sheetFooter()}</FooterComponent>

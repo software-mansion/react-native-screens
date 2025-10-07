@@ -7,7 +7,6 @@ import {
 const prepareMenu = (
   menu: HeaderBarButtonItemWithMenu['menu'],
   index: number,
-  screenId: string,
   side: 'left' | 'right',
 ): HeaderBarButtonItemWithMenu['menu'] => {
   return {
@@ -16,12 +15,12 @@ const prepareMenu = (
       if (menuItem.type === 'submenu') {
         return {
           ...menuItem,
-          ...prepareMenu(menuItem, menuIndex, screenId, side),
+          ...prepareMenu(menuItem, menuIndex, side),
         };
       }
       return {
         ...menuItem,
-        menuId: `${menuIndex}-${index}-${screenId}-${side}`,
+        menuId: `${menuIndex}-${index}-${side}`,
       };
     }),
   };
@@ -29,7 +28,6 @@ const prepareMenu = (
 
 export const prepareHeaderBarButtonItems = (
   barButtonItems: HeaderBarButtonItem[],
-  screenId: string,
   side: 'left' | 'right',
 ) => {
   return barButtonItems?.map((item, index) => {
@@ -64,13 +62,13 @@ export const prepareHeaderBarButtonItems = (
     if ('onPress' in item) {
       return {
         ...processedItem,
-        buttonId: `${index}-${screenId}-${side}`,
+        buttonId: `${index}-${side}`,
       };
     }
     if ('menu' in item) {
       return {
         ...processedItem,
-        menu: prepareMenu(item.menu, index, screenId, side),
+        menu: prepareMenu(item.menu, index, side),
       };
     }
     return null;

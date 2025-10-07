@@ -31,20 +31,15 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   View,
   ScreenStackHeaderConfigProps
 >((props, ref) => {
-  const { screenId, headerLeftBarButtonItems, headerRightBarButtonItems } =
-    props;
+  const { headerLeftBarButtonItems, headerRightBarButtonItems } = props;
 
   const preparedHeaderLeftBarButtonItems =
     headerLeftBarButtonItems && isHeaderBarButtonsAvailableForCurrentPlatform
-      ? prepareHeaderBarButtonItems(headerLeftBarButtonItems, screenId, 'left')
+      ? prepareHeaderBarButtonItems(headerLeftBarButtonItems, 'left')
       : undefined;
   const preparedHeaderRightBarButtonItems =
     headerRightBarButtonItems && isHeaderBarButtonsAvailableForCurrentPlatform
-      ? prepareHeaderBarButtonItems(
-          headerRightBarButtonItems,
-          screenId,
-          'right',
-        )
+      ? prepareHeaderBarButtonItems(headerRightBarButtonItems, 'right')
       : undefined;
   const hasHeaderBarButtonItems =
     isHeaderBarButtonsAvailableForCurrentPlatform &&

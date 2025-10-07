@@ -111,7 +111,6 @@ export default function HeaderConfig({
 
   return (
     <ScreenStackHeaderConfig
-      screenId={route.key}
       backButtonInCustomView={backButtonInCustomView}
       backgroundColor={
         headerStyle.backgroundColor ? headerStyle.backgroundColor : colors.card
