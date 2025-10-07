@@ -167,24 +167,6 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSSplitViewScreenComponentDescriptor>();
 }
 
-- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
-           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
-{
-  // We're tracking presentation layer updates in the RNSSplitViewScreen.
-  // There's a problem with SplitView that it sets the frame to the end value of the animation right after the animation
-  // begins. Because of that, the size of our component is desynchronizing easily and we're blocking a communication
-  // between native and shadow layout for a while until the transition ends. For the following case when we want to make
-  // a transition from width A to B:
-  // 1. size 'A' is set on ShadowNode
-  // 2. animation for the transition starts
-  // 3. `setFrame` is called with the width 'B'
-  // 4. in the same time, we want to track updates and treat intermediate value A' indicated from the presentation layer
-  // as our source of truth
-  if (![_controller isViewSizeTransitionInProgress]) {
-    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
-  }
-}
-
 + (BOOL)shouldBeRecycled
 {
   // There won't be tens of instances of this component usually & it's easier for now.
