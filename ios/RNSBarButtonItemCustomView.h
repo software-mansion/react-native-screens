@@ -11,7 +11,7 @@
     UIView
 #endif
 
-- (void)setUIBarButtonItem:(UIBarButtonItem *_Nullable)barButtonItem;
+@property (nonatomic, retain) UIBarButtonItem *barButtonItem;
 
 @end
 

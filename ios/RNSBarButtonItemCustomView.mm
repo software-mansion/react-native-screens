@@ -14,16 +14,34 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSBarButtonItemCustomView {
-  UIBarButtonItem *_barButtonItem;
   BOOL _hidesSharedBackground;
+}
+
+- (instancetype)init
+{
+  if (self = [super init]) {
+    _barButtonItem = [[UIBarButtonItem alloc] init];
+  }
+  return self;
+}
+
+- (void)didMoveToSuperview
+{
+  [super didMoveToSuperview];
+  if (self.superview) {
+    _barButtonItem.customView = self.superview;
+  }
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSBarButtonItemCustomViewProps>(props);
-  _hidesSharedBackground = newComponentProps.hidesSharedBackground;
-  [self configureUIBarButtonItem];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    [_barButtonItem setHidesSharedBackground:newComponentProps.hidesSharedBackground];
+  }
+#endif
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -33,28 +51,15 @@ namespace react = facebook::react;
 }
 #endif
 
-- (void)setUIBarButtonItem:(UIBarButtonItem *)barButtonItem
-{
-  _barButtonItem = barButtonItem;
-  [self configureUIBarButtonItem];
-}
-
 - (void)setHidesSharedBackground:(BOOL)hidesSharedBackground
-{
-  _hidesSharedBackground = hidesSharedBackground;
-  [self configureUIBarButtonItem];
-}
-
-- (void)configureUIBarButtonItem
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
-    if (_barButtonItem != nil) {
-      [_barButtonItem setHidesSharedBackground:_hidesSharedBackground];
-    }
+    [_barButtonItem setHidesSharedBackground:hidesSharedBackground];
   }
 #endif
 }
+
 @end
 
 @implementation RNSBarButtonItemCustomViewManager
