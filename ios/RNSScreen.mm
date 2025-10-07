@@ -12,6 +12,7 @@
 #import <React/RCTRootComponentView.h>
 #import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -188,7 +189,15 @@ RNS_IGNORE_SUPER_CALL_END
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
-    _state->updateState(std::move(newState));
+
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _unstable_synchronousUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                            : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
@@ -466,6 +475,11 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _shouldUpdateScrollEdgeEffects = YES;
   _topScrollEdgeEffect = topScrollEdgeEffect;
+}
+
+- (void)setUnstable_synchronousUpdatesEnabled:(BOOL)unstable_synchronousUpdatesEnabled
+{
+  _unstable_synchronousUpdatesEnabled = unstable_synchronousUpdatesEnabled;
 }
 
 - (BOOL)isFullScreenSwipeEffectivelyEnabled
@@ -1372,6 +1386,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
+  [self setUnstable_synchronousUpdatesEnabled:newScreenProps.unstable_synchronousUpdatesEnabled];
+
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -2205,6 +2221,7 @@ RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(unstable_synchronousUpdatesEnabled, BOOL);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);

@@ -41,6 +41,13 @@ class ScreenStackHeaderSubviewManager :
             }
     }
 
+    // unstable_synchronousUpdatesEnabled is not available on Android atm,
+    // however we must override their setters
+    override fun setUnstable_synchronousUpdatesEnabled(
+        view: ScreenStackHeaderSubview?,
+        value: Boolean,
+    ) = Unit
+
     override fun updateState(
         view: ScreenStackHeaderSubview,
         props: ReactStylesDiffMap?,

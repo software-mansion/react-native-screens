@@ -16,6 +16,9 @@ import {
   SplitViewWithNativeStackSheet
 } from './SplitViewWithNativeStack';
 import { SplitViewBaseConfig } from './helpers/types';
+import { featureFlags } from 'react-native-screens';
+
+featureFlags.experiment.unstable_synchronousStateUpdatesEnabled = true
 
 const App = () => {
   const splitViewBaseConfig: SplitViewBaseConfig = {
@@ -24,7 +27,7 @@ const App = () => {
   }
 
   return (
-    <SplitViewBaseApp splitViewBaseConfig={splitViewBaseConfig} />
+    <SplitViewWithNativeStackBase splitViewBaseConfig={splitViewBaseConfig} />
   );
 }
 
