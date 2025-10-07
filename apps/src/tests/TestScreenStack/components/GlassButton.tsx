@@ -10,11 +10,15 @@ export function GlassButton({
   onPress,
 }: {
   children: React.ReactNode;
-  onPress: () => void;
+  onPress?: () => void;
 }) {
   return (
     <Pressable onPress={onPress}>
-      <LiquidGlassView style={styles.container} interactive effect="regular">
+      <LiquidGlassView
+        style={styles.container}
+        interactive
+        effect="regular"
+        tintColor="#1d4ed8a0">
         {children}
       </LiquidGlassView>
     </Pressable>
@@ -23,7 +27,7 @@ export function GlassButton({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 12,
     borderRadius: 20,
   },
 });

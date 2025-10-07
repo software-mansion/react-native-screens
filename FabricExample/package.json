@@ -24,6 +24,7 @@
     "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/",
     "@react-navigation/routers": "link:../react-navigation/packages/routers/",
     "@react-navigation/stack": "link:../react-navigation/packages/stack/",
+    "lucide-react-native": "^0.545.0",
     "nanoid": "^4.0.2",
     "react": "19.1.1",
     "react-native": "0.82.0-rc.4",
@@ -33,6 +34,7 @@
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "5.6.0",
     "react-native-screens": "link:../",
+    "react-native-svg": "^15.13.0",
     "react-native-worklets": "^0.6.0"
   },
   "resolutions": {
