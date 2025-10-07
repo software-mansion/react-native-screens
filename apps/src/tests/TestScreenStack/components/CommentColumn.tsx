@@ -100,7 +100,7 @@ export function CommentColumn() {
       {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>Add a comment...</Text>
-        <GlassButton tintColor="#1d4ed8">
+        <GlassButton tintColor="#3b82f6">
           <MessageSquare color="white" size={18} />
         </GlassButton>
       </View>
@@ -198,6 +198,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
     alignSelf: 'flex-start',
     backgroundColor: '#22c55e',
+    position: 'absolute',
+    left: 16,
+    top: 5,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -218,7 +221,6 @@ const styles = StyleSheet.create({
   footerText: {
     flex: 1,
     fontSize: 14,
-    // color: '#94a3b8',
-    fontStyle: 'italic',
+    color: '#64748b',
   },
 });
