@@ -4,17 +4,18 @@ import {
   useStackNavigation,
 } from '../../../shared/gamma/containers/stack/StackContainer';
 
-import { Button, StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View, Text } from 'react-native';
+import { GlassButton } from '../components/GlassButton';
 
 export default function HomeScreen() {
   const navigation = useStackNavigation();
   return (
     <View style={styles.container}>
       <View style={{ height: 100, width: 100, backgroundColor: 'red' }}></View>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.push('details')}
-      />
+
+      <GlassButton onPress={() => navigation.push('details')}>
+        <Text>Go to Details</Text>
+      </GlassButton>
     </View>
   );
 }
