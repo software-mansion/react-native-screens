@@ -29,8 +29,8 @@
 #import <React/RCTImageSource.h>
 #import "RNSBackBarButtonItem.h"
 #import "RNSBarButtonItem.h"
-#import "RNSBarButtonItemCustomView.h"
 #import "RNSConvert.h"
+#import "RNSCustomViewBarButtonItem.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
@@ -916,8 +916,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (UIBarButtonItem *)barButtonItemFromSubview:(RNSScreenStackHeaderSubview *)subview
 {
-  if (subview.subviews.count > 0 && [subview.subviews[0] isKindOfClass:[RNSBarButtonItemCustomView class]]) {
-    RNSBarButtonItemCustomView *customView = subview.subviews[0];
+  if (subview.subviews.count > 0 && [subview.subviews[0] isKindOfClass:[RNSCustomViewBarButtonItem class]]) {
+    RNSCustomViewBarButtonItem *customView = subview.subviews[0];
     return customView.barButtonItem;
   }
   return [[UIBarButtonItem alloc] initWithCustomView:subview];

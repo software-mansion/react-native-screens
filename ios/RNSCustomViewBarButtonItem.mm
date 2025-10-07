@@ -1,4 +1,4 @@
-#import "RNSBarButtonItemCustomView.h"
+#import "RNSCustomViewBarButtonItem.h"
 #import "RNSDefines.h"
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -13,7 +13,7 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-@implementation RNSBarButtonItemCustomView {
+@implementation RNSCustomViewBarButtonItem {
   BOOL _hidesSharedBackground;
 }
 
@@ -36,7 +36,7 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSBarButtonItemCustomViewProps>(props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSCustomViewBarButtonItemProps>(props);
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     [_barButtonItem setHidesSharedBackground:newComponentProps.hidesSharedBackground];
@@ -47,7 +47,7 @@ namespace react = facebook::react;
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSBarButtonItemCustomViewComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSCustomViewBarButtonItemComponentDescriptor>();
 }
 #endif
 
@@ -62,7 +62,7 @@ namespace react = facebook::react;
 
 @end
 
-@implementation RNSBarButtonItemCustomViewManager
+@implementation RNSCustomViewBarButtonItemManager
 
 RCT_EXPORT_MODULE()
 
@@ -70,7 +70,7 @@ RCT_EXPORT_MODULE()
 #else
 - (UIView *)view
 {
-  return [RNSBarButtonItemCustomView new];
+  return [RNSCustomViewBarButtonItem new];
 }
 #endif
 

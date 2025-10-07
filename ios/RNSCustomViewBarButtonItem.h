@@ -4,7 +4,7 @@
 
 #import <React/RCTViewManager.h>
 
-@interface RNSBarButtonItemCustomView :
+@interface RNSCustomViewBarButtonItem :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView
 #else
@@ -15,6 +15,6 @@
 
 @end
 
-@interface RNSBarButtonItemCustomViewManager : RCTViewManager
+@interface RNSCustomViewBarButtonItemManager : RCTViewManager
 
 @end

@@ -182,7 +182,7 @@
         "RNSSplitViewHost": "RNSSplitViewHostComponentView",
         "RNSSplitViewScreen": "RNSSplitViewScreenComponentView",
         "RNSSafeAreaView": "RNSSafeAreaViewComponentView",
-        "RNSBarButtonItemCustomView": "RNSBarButtonItemCustomView"
+        "RNSCustomViewBarButtonItem": "RNSCustomViewBarButtonItem"
       },
       "components": {
         "RNSFullWindowOverlay": {
@@ -239,8 +239,8 @@
         "RNSSafeAreaView": {
           "className": "RNSSafeAreaViewComponentView"
         },
-        "RNSBarButtonItemCustomView": {
-          "className": "RNSBarButtonItemCustomView"
+        "RNSCustomViewBarButtonItem": {
+          "className": "RNSCustomViewBarButtonItem"
         }
       }
     }

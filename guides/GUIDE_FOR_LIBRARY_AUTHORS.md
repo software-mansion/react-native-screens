@@ -460,7 +460,7 @@ The children will render in the center of the native navigation bar.
 #### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`  
 The children will render on the right-hand or left-hand side of the navigation bar (or on the opposite side in case LTR locales are set on the user's device).
 
-To configure `ScreenStackHeaderRightView` or `ScreenStackHeaderLeftView` use `<BarButtonItemCustomView>` as a child. `<BarButtonItemCustomView>` component that comes from react-native-screens supports these properties:
+To configure `ScreenStackHeaderRightView` or `ScreenStackHeaderLeftView` use `<CustomViewBarButtonItem>` as a child. `<CustomViewBarButtonItem>` component that comes from react-native-screens supports these properties:
 
 - `hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
 

@@ -931,7 +931,7 @@ export interface SearchBarProps {
   shouldShowHintSearchIcon?: boolean;
 }
 
-export interface BarButtonItemCustomViewProps {
+export interface CustomViewBarButtonItemProps {
   /**
    * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
    * Only available from iOS 26.0 and later.
