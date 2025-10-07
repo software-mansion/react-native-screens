@@ -53,7 +53,7 @@ const ScrollViewColumn = () => {
   );
 };
 
-const GridImageColumn = () => {
+const GridImage = ({ numColumns = 2 }: { numColumns?: number }) => {
   const images = useMemo(
     () =>
       Array.from({ length: 30 }).map((_, index) => ({
@@ -63,7 +63,6 @@ const GridImageColumn = () => {
     [],
   );
 
-  const numColumns = 2;
   const imageSize = width / (numColumns * 2);
 
   return (
@@ -102,7 +101,7 @@ const SplitViewPerfApp = ({
       <SplitViewScreen.Column>
         <View
           style={[styles.container, { backgroundColor: Colors.NavyLight40 }]}>
-          <GridImageColumn />
+          <GridImage />
         </View>
       </SplitViewScreen.Column>
     </SplitViewHost>
