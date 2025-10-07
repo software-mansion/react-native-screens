@@ -48,6 +48,14 @@ const MOCK_COMMENTS: Comment[] = [
     content:
       'Should we add references to support these statistics? It would strengthen the argument.',
   },
+  {
+    id: '6',
+    author: 'Kacper Kapuściak',
+    timestamp: '3 days ago',
+    content:
+      'I agree with the points made here. Adding more visuals could improve understanding.',
+    resolved: true,
+  },
 ];
 
 export function CommentColumn() {
