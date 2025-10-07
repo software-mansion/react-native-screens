@@ -638,12 +638,7 @@ RNS_IGNORE_SUPER_CALL_END
     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        if (subview.subviews.count > 0 && [subview.subviews[0] isKindOfClass:[RNSBarButtonItemCustomView class]]) {
-          RNSBarButtonItemCustomView *customView = subview.subviews[0];
-          [customView setUIBarButtonItem:buttonItem];
-        }
-
+        UIBarButtonItem *buttonItem = [config barButtonItemFromSubview:subview];
         NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
         NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
         [mutableItems addObject:buttonItem];
@@ -651,12 +646,7 @@ RNS_IGNORE_SUPER_CALL_END
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        if (subview.subviews.count > 0 && [subview.subviews[0] isKindOfClass:[RNSBarButtonItemCustomView class]]) {
-          RNSBarButtonItemCustomView *customView = subview.subviews[0];
-          [customView setUIBarButtonItem:buttonItem];
-        }
-
+        UIBarButtonItem *buttonItem = [config barButtonItemFromSubview:subview];
         NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
         NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
         [mutableItems addObject:buttonItem];
@@ -922,6 +912,15 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
   return items;
+}
+
+- (UIBarButtonItem *)barButtonItemFromSubview:(RNSScreenStackHeaderSubview *)subview
+{
+  if (subview.subviews.count > 0 && [subview.subviews[0] isKindOfClass:[RNSBarButtonItemCustomView class]]) {
+    RNSBarButtonItemCustomView *customView = subview.subviews[0];
+    return customView.barButtonItem;
+  }
+  return [[UIBarButtonItem alloc] initWithCustomView:subview];
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
