@@ -296,11 +296,6 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.iconSfSymbolName != oldComponentProps.iconSfSymbolName) {
     _iconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
-
-    // In order to restore the default system item icon, we recreate the tab bar item.
-    if (_iconType == RNSBottomTabsIconTypeSfSymbol && _iconSfSymbolName == nil) {
-      tabBarItemNeedsBaseChange = YES;
-    }
   }
 
   if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
@@ -312,11 +307,6 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
     _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
-
-    // In order to restore the default system item icon, we recreate the tab bar item.
-    if (_iconType == RNSBottomTabsIconTypeSfSymbol && _selectedIconSfSymbolName == nil) {
-      tabBarItemNeedsBaseChange = YES;
-    }
   }
 
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
