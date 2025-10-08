@@ -15,6 +15,7 @@ export type HeaderSubviewTypes =
 
 export interface NativeProps extends ViewProps {
   type?: WithDefault<HeaderSubviewTypes, 'left'>;
+  hidesSharedBackground?: boolean;
 }
 
 export default codegenNativeComponent<NativeProps>(

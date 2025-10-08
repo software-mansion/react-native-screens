@@ -26,6 +26,9 @@ public class RNSScreenStackHeaderSubviewManagerDelegate<T extends View, U extend
       case "type":
         mViewManager.setType(view, (String) value);
         break;
+      case "hidesSharedBackground":
+        mViewManager.setHidesSharedBackground(view, value == null ? false : (boolean) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }
