@@ -172,7 +172,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Prop update utils
 
-- (void)updateTabBarItem
+- (void)changeBaseTabBarItem
 {
   UITabBarItem *tabBarItem = nil;
   if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
@@ -181,12 +181,22 @@ RNS_IGNORE_SUPER_CALL_END
     tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0];
   } else {
     tabBarItem = [[UITabBarItem alloc] init];
+  }
+
+  _controller.tabBarItem = tabBarItem;
+}
+
+- (void)updateTabBarItem
+{
+  UITabBarItem *tabBarItem = _controller.tabBarItem;
+
+  if (![tabBarItem.title isEqualToString:_title]) {
     tabBarItem.title = _title;
   }
 
-  tabBarItem.badgeValue = _badgeValue;
-
-  _controller.tabBarItem = tabBarItem;
+  if (![tabBarItem.badgeValue isEqualToString:_badgeValue]) {
+    tabBarItem.badgeValue = _badgeValue;
+  }
 }
 
 #pragma mark - RNSSafeAreaProviding
@@ -222,6 +232,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
+  bool tabBarItemNeedsBaseChange{false};
   bool tabBarItemNeedsUpdate{false};
   bool scrollEdgeEffectsNeedUpdate{false};
 
@@ -274,33 +285,38 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.iconType != oldComponentProps.iconType) {
     _iconType = rnscreens::conversion::RNSBottomTabsIconTypeFromIcon(newComponentProps.iconType);
     tabItemNeedsAppearanceUpdate = YES;
-    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.iconImageSource != oldComponentProps.iconImageSource) {
     _iconImageSource =
         rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(&newComponentProps.iconImageSource, _iconType);
     tabItemNeedsAppearanceUpdate = YES;
-    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.iconSfSymbolName != oldComponentProps.iconSfSymbolName) {
     _iconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
-    tabBarItemNeedsUpdate = YES;
+
+    // In order to restore the default system item icon, we recreate the tab bar item.
+    if (_iconType == RNSBottomTabsIconTypeSfSymbol && _iconSfSymbolName == nil) {
+      tabBarItemNeedsBaseChange = YES;
+    }
   }
 
   if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
     _selectedIconImageSource = rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(
         &newComponentProps.selectedIconImageSource, _iconType);
     tabItemNeedsAppearanceUpdate = YES;
-    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
     _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
-    tabBarItemNeedsUpdate = YES;
+
+    // In order to restore the default system item icon, we recreate the tab bar item.
+    if (_iconType == RNSBottomTabsIconTypeSfSymbol && _selectedIconSfSymbolName == nil) {
+      tabBarItemNeedsBaseChange = YES;
+    }
   }
 
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
@@ -334,7 +350,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.systemItem != oldComponentProps.systemItem) {
     _systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
         newComponentProps.systemItem);
-    tabBarItemNeedsUpdate = YES;
+    tabBarItemNeedsBaseChange = YES;
   }
 
   if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
@@ -365,6 +381,11 @@ RNS_IGNORE_SUPER_CALL_END
                                      RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
                                          newComponentProps.topScrollEdgeEffect)];
     scrollEdgeEffectsNeedUpdate = YES;
+  }
+
+  if (tabBarItemNeedsBaseChange) {
+    [self changeBaseTabBarItem];
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (tabBarItemNeedsUpdate) {
