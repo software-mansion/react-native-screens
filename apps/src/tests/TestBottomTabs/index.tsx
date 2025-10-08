@@ -11,9 +11,6 @@ import {
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
 import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
-import { Text, View } from 'react-native';
-import PressableWithFeedback from '../../../src/shared/PressableWithFeedback';
-import { BottomTabsAccessoryEnvironment } from '../../../../src/components/bottom-tabs/BottomTabsAccessory.types';
 
 enableFreeze(true);
 internalEnableDetailedBottomTabsLogging();
@@ -80,26 +77,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
 ];
 
-function getBottomAccessory(environment: BottomTabsAccessoryEnvironment) {
-  return (
-    <View
-      collapsable={false}
-      style={{
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'yellow',
-        padding: 10,
-      }}>
-      <PressableWithFeedback>
-        <Text>Hello, World!</Text>
-      </PressableWithFeedback>
-      {environment === 'regular' && <Text>Hello from the other side</Text>}
-    </View>
-  );
-}
-
 function App() {
   const [config, setConfig] = React.useState<Configuration>(
     DEFAULT_GLOBAL_CONFIGURATION,
@@ -114,7 +91,6 @@ function App() {
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
         tabBarMinimizeBehavior="onScrollDown"
-        bottomAccessory={getBottomAccessory}
       />
     </ConfigWrapperContext.Provider>
   );
