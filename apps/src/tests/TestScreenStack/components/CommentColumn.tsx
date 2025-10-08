@@ -119,16 +119,15 @@ export function CommentColumn() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f1f5f9',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingTop: 42,
     paddingBottom: 16,
-    // borderBottomWidth: StyleSheet.hairlineWidth,
-    // borderBottomColor: '#475569',
   },
   headerContent: {
     flexDirection: 'row',
@@ -143,11 +142,10 @@ const styles = StyleSheet.create({
   },
   commentsList: {
     flex: 1,
-    // padding: 16,
     marginHorizontal: 8,
   },
   commentCard: {
-    backgroundColor: '#fffa0',
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
