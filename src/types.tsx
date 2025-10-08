@@ -108,6 +108,24 @@ export type SearchBarPlacement =
   | 'integratedButton'
   | 'integratedCentered';
 
+export type PlatformIconShared = {
+  type: 'imageSource';
+  imageSource: ImageSourcePropType;
+};
+
+export type PlatformIconIOSSfSymbol = {
+  type: 'sfSymbol';
+  name: string;
+};
+
+export type PlatformIconIOS =
+  | PlatformIconIOSSfSymbol
+  | {
+      type: 'templateSource';
+      templateSource: ImageSourcePropType;
+    }
+  | PlatformIconShared;
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
@@ -961,13 +979,9 @@ interface SharedHeaderBarButtonItem {
     color?: ColorValue;
   };
   /**
-   * Image source for the item
+   * Icon for the item
    */
-  imageSource?: ImageSourcePropType;
-  /**
-   * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
-   */
-  sfSymbolName?: string;
+  icon?: PlatformIconIOS;
   /**
    * The variant of the item.
    * "Prominent" only available from iOS 26.0 and later.
@@ -1060,10 +1074,7 @@ export interface HeaderBarButtonItemMenuAction {
   type: 'action';
   label?: string;
   onPress: () => void;
-  /**
-   * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
-   */
-  sfSymbolName?: string;
+  icon?: PlatformIconIOSSfSymbol;
   /**
    * State of the item.
    *
@@ -1087,10 +1098,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   label?: string;
-  /**
-   * Any SF symbol. Explore them here: https://developer.apple.com/sf-symbols/
-   */
-  sfSymbolName?: string;
+  icon?: PlatformIconIOSSfSymbol;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
 }
 

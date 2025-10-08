@@ -12,14 +12,18 @@ const prepareMenu = (
   return {
     ...menu,
     items: menu.items.map((menuItem, menuIndex) => {
+      const sfSymbolName =
+        menuItem.icon?.type === 'sfSymbol' ? menuItem.icon.name : undefined;
       if (menuItem.type === 'submenu') {
         return {
           ...menuItem,
+          sfSymbolName,
           ...prepareMenu(menuItem, menuIndex, side),
         };
       }
       return {
         ...menuItem,
+        sfSymbolName,
         menuId: `${menuIndex}-${index}-${side}`,
       };
     }),
@@ -34,9 +38,12 @@ export const prepareHeaderBarButtonItems = (
     if ('spacing' in item) {
       return item;
     }
-    const imageSource = item.imageSource
-      ? Image.resolveAssetSource(item.imageSource)
-      : undefined;
+    let imageSource;
+    if (item.icon?.type === 'imageSource') {
+      imageSource = Image.resolveAssetSource(item.icon.imageSource);
+    } else if (item.icon?.type === 'templateSource') {
+      imageSource = Image.resolveAssetSource(item.icon.templateSource);
+    }
 
     const labelStyle = item.labelStyle
       ? { ...item.labelStyle, color: processColor(item.labelStyle.color) }
@@ -55,6 +62,7 @@ export const prepareHeaderBarButtonItems = (
     const processedItem = {
       ...item,
       imageSource,
+      sfSymbolName: item.icon?.type === 'sfSymbol' ? item.icon.name : undefined,
       labelStyle,
       tintColor,
       badge,

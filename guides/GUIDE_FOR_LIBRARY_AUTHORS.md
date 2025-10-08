@@ -571,9 +571,7 @@ An array of objects describing native bar button items to display on the left or
 
 `labelStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button label.
 
-`imageSource?: ImageSourcePropType` — Image source for the button icon.
-
-`sfSymbolName?: string` - SF Symbol for the button icon.
+`icon?: PlatformIconIOS` — Icon for the item.
 
 `variant?: 'plain' | 'done' | 'prominent'` — The variant of the item. 'Prominent' only available for iOS 26+. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
 
@@ -606,7 +604,7 @@ menu?: {
     | {
       label?: string;
       type: 'action';
-      sfSymbolName?: string;
+      icon?: PlatformIconIOSSfSymbol;
       state?: 'on' | 'off' | 'mixed'; // State of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
       attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented'; // Style of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
       discoverabilityTitle?: string; // Discoverability title of the menu item. Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
@@ -614,7 +612,7 @@ menu?: {
     | {
       label?: string;
       type: 'submenu';
-      sfSymbolName?: string;
+      icon?: PlatformIconIOSSfSymbol;
       items: menu['items']; // References itself so you can create inifinte deep menus. So either actions or more submenus
     }
   >

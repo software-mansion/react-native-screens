@@ -102,7 +102,10 @@ export default function BarButtonItemsExample() {
           title: 'Icon Button',
           headerRightItems: [
             {
-              imageSource: require('../../assets/search_black.png'),
+              icon: {
+                type: "imageSource", 
+                imageSource: require('../../assets/search_black.png') 
+              },
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -115,7 +118,10 @@ export default function BarButtonItemsExample() {
           title: 'System image Button',
           headerRightItems: [
             {
-              sfSymbolName: "square.and.arrow.up",
+              icon: { 
+                type: "sfSymbol", 
+                name: "square.and.arrow.up" 
+              },
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -236,22 +242,22 @@ export default function BarButtonItemsExample() {
           title: 'Icon SharesBackground',
           headerRightItems: [
             {
-              imageSource: require('../../assets/search_black.png'),
+              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
-              imageSource: require('../../assets/search_black.png'),
+              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
-              imageSource: require('../../assets/search_black.png'),
+              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: false,
             },
             {
-              imageSource: require('../../assets/search_black.png'),
+              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               hidesSharedBackground: true,
               onPress: () => Alert.alert('Icon with sharesBackground false pressed'),
             },
@@ -279,14 +285,14 @@ export default function BarButtonItemsExample() {
           title: 'Icon Buttons With Spacing',
           headerRightItems: [
             {
-              imageSource: require('../../assets/search_black.png'),
+              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('First icon pressed'),
             },
             {
               spacing: 100,
             },
             {
-              imageSource: require('../../assets/search_white.png'),
+              icon: { type: "imageSource", imageSource: require('../../assets/search_white.png') },
               onPress: () => Alert.alert('Second icon pressed'),
             },
           ],
@@ -304,7 +310,7 @@ export default function BarButtonItemsExample() {
               onPress: () => Alert.alert('Tinted pressed'),
             },
             {
-              imageSource: require('../../assets/search_black.png'),
+              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Tinted icon pressed'),
             },
           ],
@@ -322,7 +328,7 @@ export default function BarButtonItemsExample() {
               onPress: () => Alert.alert('Done text pressed'),
             },
             {
-              imageSource: require('../../assets/search_black.png'),
+              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               variant: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
             },
@@ -342,7 +348,7 @@ export default function BarButtonItemsExample() {
                 items: [
                   {
                     label: 'Action 1',
-                    sfSymbolName: 'star',
+                    icon: { type: "sfSymbol", name: 'star' },
                     type: "action",
                     state: 'on',
                     attributes: 'destructive',
@@ -351,7 +357,7 @@ export default function BarButtonItemsExample() {
                   },
                   {
                     label: 'Action 2',
-                    sfSymbolName: 'square.and.arrow.up',
+                    icon: { type: "sfSymbol", name: 'square.and.arrow.up' },
                     type: "action",
                     state: 'off',
                     attributes: 'disabled',
@@ -360,7 +366,7 @@ export default function BarButtonItemsExample() {
                   },
                   {
                     label: 'Submenu',
-                    sfSymbolName: "star",
+                    icon: { type: "sfSymbol", name: "star" },
                     type: 'submenu',
                     items: [
                       {
