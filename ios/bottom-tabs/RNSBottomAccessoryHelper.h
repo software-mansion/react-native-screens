@@ -32,7 +32,7 @@ API_AVAILABLE(ios(26.0))
 
 #pragma mark - Hidden from Swift
 
-#if defined(__cplusplus)
+#if RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 
 @interface RNSBottomAccessoryHelper ()
 
@@ -40,6 +40,6 @@ API_AVAILABLE(ios(26.0))
 
 @end
 
-#endif // defined(__cplusplus)
+#endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END

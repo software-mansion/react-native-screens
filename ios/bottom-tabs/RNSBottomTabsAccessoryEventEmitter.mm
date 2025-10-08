@@ -57,8 +57,18 @@ namespace react = facebook::react;
   }
 #else
   if (self.onEnvironmentChange) {
-    // TODO
-    self.onEnvironmentChange(@{@"environment" : });
+    NSString *environmentString;
+    switch (environment) {
+      case UITabAccessoryEnvironmentRegular:
+        environmentString = @"regular";
+        break;
+      case UITabAccessoryEnvironmentInline:
+        environmentString = @"inline";
+        break;
+      default:
+        return NO;
+    }
+    self.onEnvironmentChange(@{@"environment" : environmentString});
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnEnvironmentChange event emission due to nullish emitter");

@@ -5,6 +5,7 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "RNSViewControllerInvalidating.h"
 #else
+#import <React/RCTBridge.h>
 #import <React/RCTInvalidating.h>
 #endif
 
@@ -19,6 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
                                                      RCTInvalidating
 #endif
                                                      >
+
+#if !RCT_NEW_ARCH_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame bridge:(RCTBridge *)bridge;
+
+@property (nonatomic, weak, readonly, nullable) RCTBridge *bridge;
+#endif // !RCT_NEW_ARCH_ENABLED
 
 /**
  * If not null, the bottom accesory's helper that handles synchronization with ShadowNode.
@@ -40,6 +47,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Use returned object to emit appropriate React Events to Element Tree.
  */
 - (nonnull RNSBottomTabsAccessoryEventEmitter *)reactEventEmitter;
+
+#if !RCT_NEW_ARCH_ENABLED
+#pragma mark - LEGACY Event blocks
+
+@property (nonatomic, copy) RCTDirectEventBlock onEnvironmentChange;
+;
+
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @end
 

@@ -1,7 +1,9 @@
 #import "RNSBottomTabsAccessoryComponentView.h"
 #import "RNSBottomAccessoryHelper.h"
 
+#if RCT_NEW_ARCH_ENABLED
 #import <rnscreens/RNSBottomTabsAccessoryComponentDescriptor.h>
+#endif // RCT_NEW_ARCH_ENABLED
 
 namespace react = facebook::react;
 
@@ -11,6 +13,9 @@ namespace react = facebook::react;
   RNSBottomAccessoryHelper *_helper API_AVAILABLE(ios(26.0));
   RNSBottomTabsHostComponentView *__weak _Nullable _reactSuperview;
   RNSBottomTabsAccessoryEventEmitter *_Nonnull _reactEventEmitter;
+#if !RCT_NEW_ARCH_ENABLED
+  __weak RCTBridge *_bridge;
+#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -20,6 +25,23 @@ namespace react = facebook::react;
   }
   return self;
 }
+
+#if !RCT_NEW_ARCH_ENABLED
+
+- (instancetype)initWithFrame:(CGRect)frame bridge:(RCTBridge *)bridge
+{
+  if (self = [self initWithFrame:frame]) {
+    _bridge = bridge;
+  }
+  return self;
+}
+
+- (RCTBridge *)bridge
+{
+  return _bridge;
+}
+
+#endif // !RCT_NEW_ARCH_ENABLED
 
 - (void)initState
 {
@@ -36,6 +58,10 @@ RNS_IGNORE_SUPER_CALL_BEGIN
   return _reactSuperview;
 }
 RNS_IGNORE_SUPER_CALL_END
+
+#if RCT_NEW_ARCH_ENABLED
+
+#pragma mark - RCTViewComponentViewProtocol
 
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
 {
@@ -67,16 +93,6 @@ RNS_IGNORE_SUPER_CALL_END
   return NO;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-
-#pragma mark - React events
-
-- (nonnull RNSBottomTabsAccessoryEventEmitter *)reactEventEmitter
-{
-  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
-  return _reactEventEmitter;
-}
-
 #pragma mark - RNSViewControllerInvalidating
 
 - (void)invalidateController
@@ -91,7 +107,14 @@ RNS_IGNORE_SUPER_CALL_END
   return NO;
 }
 
-#else
+#else // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - LEGACY architecture implementation
+
+- (void)setOnEnvironmentChange:(RCTDirectEventBlock)onEnvironmentChange
+{
+  [self.reactEventEmitter setOnEnvironmentChange:onEnvironmentChange];
+}
 
 #pragma mark - RCTInvalidating
 
@@ -102,6 +125,14 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - React events
+
+- (nonnull RNSBottomTabsAccessoryEventEmitter *)reactEventEmitter
+{
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
+}
 
 @end
 

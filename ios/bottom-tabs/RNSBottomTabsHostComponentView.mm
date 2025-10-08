@@ -384,28 +384,42 @@ namespace react = facebook::react;
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
 {
+  BOOL isValidBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
+  BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
   RCTAssert(
-      [subview isKindOfClass:RNSBottomTabsScreenComponentView.class],
-      @"BottomTabsView only accepts children of type BottomTabScreen. Attempted to mount %@",
+      isValidBottomAccessory || isTabsScreen,
+      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to mount %@",
       subview);
 
-  auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
-  childScreen.reactSuperview = self;
+  if (isTabsScreen) {
+    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
+    childScreen.reactSuperview = self;
+  } else if (isValidBottomAccessory) {
+    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(subview);
+    bottomAccessory.reactSuperview = self;
+  }
 
-  [_reactSubviews insertObject:childScreen atIndex:index];
+  [_reactSubviews insertObject:subview atIndex:index];
 }
 
 - (void)removeReactSubview:(UIView *)subview
 {
+  BOOL isValidBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
+  BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
   RCTAssert(
-      [subview isKindOfClass:RNSBottomTabsScreenComponentView.class],
-      @"BottomTabsView only accepts children of type BottomTabScreen. Attempted to unmount %@",
+      isValidBottomAccessory || isTabsScreen,
+      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to unmount %@",
       subview);
 
-  auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
-  childScreen.reactSuperview = nil;
+  if (isTabsScreen) {
+    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
+    childScreen.reactSuperview = nil;
+  } else if (isValidBottomAccessory) {
+    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(subview);
+    bottomAccessory.reactSuperview = nil;
+  }
 
-  [_reactSubviews removeObject:childScreen];
+  [_reactSubviews removeObject:subview];
 }
 RNS_IGNORE_SUPER_CALL_END
 
