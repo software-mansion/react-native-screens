@@ -30,7 +30,6 @@
 #import "RNSBackBarButtonItem.h"
 #import "RNSBarButtonItem.h"
 #import "RNSConvert.h"
-#import "RNSCustomViewBarButtonItem.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
