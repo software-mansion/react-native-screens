@@ -35,6 +35,7 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
+  BOOL _tabBarItemNeedsBaseChange;
   BOOL _tabBarItemNeedsUpdate;
   BOOL _scrollEdgeEffectsNeedUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -64,6 +65,7 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   _tabItemNeedsAppearanceUpdate = NO;
   _tabScreenOrientationNeedsUpdate = NO;
+  _tabBarItemNeedsBaseChange = NO;
   _tabBarItemNeedsUpdate = NO;
   _scrollEdgeEffectsNeedUpdate = NO;
 #endif
@@ -456,6 +458,13 @@ RNS_IGNORE_SUPER_CALL_END
   // didSetProps will always be called because tabKey prop is required.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
+  if (_tabBarItemNeedsBaseChange) {
+    [self changeBaseTabBarItem];
+    _tabBarItemNeedsBaseChange = NO;
+
+    _tabBarItemNeedsUpdate = YES;
+  }
+
   if (_tabBarItemNeedsUpdate) {
     [self updateTabBarItem];
     _tabBarItemNeedsUpdate = NO;
@@ -512,35 +521,30 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _iconType = iconType;
   _tabItemNeedsAppearanceUpdate = YES;
-  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setIconImageSource:(RCTImageSource *)iconImageSource
 {
   _iconImageSource = iconImageSource;
   _tabItemNeedsAppearanceUpdate = YES;
-  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setIconSfSymbolName:(NSString *)iconSfSymbolName
 {
   _iconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
-  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setSelectedIconImageSource:(RCTImageSource *)selectedIconImageSource
 {
   _selectedIconImageSource = selectedIconImageSource;
   _tabItemNeedsAppearanceUpdate = YES;
-  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setSelectedIconSfSymbolName:(NSString *)selectedIconSfSymbolName
 {
   _selectedIconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSfSymbolName];
   _tabItemNeedsAppearanceUpdate = YES;
-  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
@@ -607,7 +611,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
 {
   _systemItem = systemItem;
-  _tabBarItemNeedsUpdate = YES;
+  _tabBarItemNeedsBaseChange = YES;
 }
 
 - (void)setOrientation:(RNSOrientation)orientation
