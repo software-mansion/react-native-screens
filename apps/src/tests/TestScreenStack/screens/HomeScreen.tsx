@@ -191,8 +191,8 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     paddingBottom: 12,
     paddingHorizontal: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#334155',
+    // borderBottomWidth: StyleSheet.hairlineWidth,
+    // borderBottomColor: '#334155',
   },
   toolbarContent: {
     gap: 8,

@@ -79,10 +79,6 @@ export function CommentColumn() {
             ]}>
             <View style={styles.commentHeader}>
               <View style={styles.authorSection}>
-                <View style={styles.author}>
-                  <Text style={styles.authorName}>{comment.author}</Text>
-                  <Text style={styles.timestamp}>{comment.timestamp}</Text>
-                </View>
                 <View style={styles.avatar}>
                   <Text style={styles.avatarText}>
                     {comment.author
@@ -90,6 +86,10 @@ export function CommentColumn() {
                       .map(n => n[0])
                       .join('')}
                   </Text>
+                </View>
+                <View style={styles.author}>
+                  <Text style={styles.authorName}>{comment.author}</Text>
+                  <Text style={styles.timestamp}>{comment.timestamp}</Text>
                 </View>
               </View>
             </View>
@@ -149,12 +149,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    borderRightWidth: 3,
-    borderColor: '#3b82f6',
   },
-  commentCardResolved: {
-    borderColor: '#22c55e',
-  },
+  commentCardResolved: {},
   commentHeader: {
     flex: 1,
     flexDirection: 'row',
@@ -205,7 +201,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     backgroundColor: '#22c55e',
     position: 'absolute',
-    left: 16,
+    right: 16,
     top: 5,
     paddingHorizontal: 8,
     paddingVertical: 4,
