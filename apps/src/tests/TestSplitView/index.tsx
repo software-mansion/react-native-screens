@@ -21,8 +21,8 @@ featureFlags.experiment.unstable_synchronousStateUpdatesEnabled = true;
 
 const App = () => {
   const splitViewBaseConfig: SplitViewBaseConfig = {
-    preferredDisplayMode: 'automatic',
-    preferredSplitBehavior: 'tile',
+    preferredSplitBehavior: 'overlay',
+    preferredDisplayMode: 'secondaryOnly',
   };
 
   return <SplitViewBaseApp splitViewBaseConfig={splitViewBaseConfig} />;

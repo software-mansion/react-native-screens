@@ -6,6 +6,7 @@ import {
 import { TestScreenStack } from '..';
 import { SplitViewBaseConfig } from './helpers/types';
 import { CommentColumn } from '../TestScreenStack/components/CommentColumn';
+import { DocumentHistory } from '../TestScreenStack/components/DocumentHistory';
 
 const SplitViewBaseApp = ({
   splitViewBaseConfig,
@@ -14,6 +15,9 @@ const SplitViewBaseApp = ({
 }) => {
   return (
     <SplitViewHost {...splitViewBaseConfig}>
+      <SplitViewScreen.Column>
+        <DocumentHistory />
+      </SplitViewScreen.Column>
       <SplitViewScreen.Column>
         <CommentColumn />
       </SplitViewScreen.Column>

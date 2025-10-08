@@ -197,6 +197,7 @@ const styles = StyleSheet.create({
   toolbarContent: {
     gap: 8,
     flexDirection: 'row',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   separator: {
