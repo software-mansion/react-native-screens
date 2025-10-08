@@ -637,18 +637,16 @@ RNS_IGNORE_SUPER_CALL_END
     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-        UIBarButtonItem *buttonItem = [config barButtonItemFromSubview:subview];
         NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
         NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
-        [mutableItems addObject:buttonItem];
+        [mutableItems addObject:[subview getUIBarButtonItem]];
         navitem.leftBarButtonItems = mutableItems;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
-        UIBarButtonItem *buttonItem = [config barButtonItemFromSubview:subview];
         NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
         NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
-        [mutableItems addObject:buttonItem];
+        [mutableItems addObject:[subview getUIBarButtonItem]];
         navitem.rightBarButtonItems = mutableItems;
         break;
       }
@@ -911,15 +909,6 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
   return items;
-}
-
-- (UIBarButtonItem *)barButtonItemFromSubview:(RNSScreenStackHeaderSubview *)subview
-{
-  if (subview.subviews.count > 0 && [subview.subviews[0] isKindOfClass:[RNSCustomViewBarButtonItem class]]) {
-    RNSCustomViewBarButtonItem *customView = subview.subviews[0];
-    return customView.barButtonItem;
-  }
-  return [[UIBarButtonItem alloc] initWithCustomView:subview];
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN

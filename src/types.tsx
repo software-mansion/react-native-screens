@@ -931,9 +931,10 @@ export interface SearchBarProps {
   shouldShowHintSearchIcon?: boolean;
 }
 
-export interface CustomViewBarButtonItemProps {
+export interface ScreenStackHeaderSubviewProps {
   /**
    * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only applicable to type="right" and type="left" subviews.
    * Only available from iOS 26.0 and later.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground

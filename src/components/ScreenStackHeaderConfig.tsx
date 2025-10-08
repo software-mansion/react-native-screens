@@ -5,6 +5,7 @@ import {
   HeaderBarButtonItemMenuAction,
   HeaderBarButtonItemWithMenu,
   ScreenStackHeaderConfigProps,
+  ScreenStackHeaderSubviewProps,
 } from '../types';
 import {
   Image,
@@ -127,7 +128,9 @@ export const ScreenStackHeaderBackButtonImage = (
   </ScreenStackHeaderSubview>
 );
 
-export const ScreenStackHeaderRightView = (props: ViewProps): JSX.Element => {
+export const ScreenStackHeaderRightView = (
+  props: ScreenStackHeaderSubviewProps & ViewProps,
+): JSX.Element => {
   const { style, ...rest } = props;
 
   return (
@@ -139,7 +142,9 @@ export const ScreenStackHeaderRightView = (props: ViewProps): JSX.Element => {
   );
 };
 
-export const ScreenStackHeaderLeftView = (props: ViewProps): JSX.Element => {
+export const ScreenStackHeaderLeftView = (
+  props: ScreenStackHeaderSubviewProps & ViewProps,
+): JSX.Element => {
   const { style, ...rest } = props;
 
   return (
