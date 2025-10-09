@@ -166,10 +166,13 @@ namespace react = facebook::react;
 
   [_controller childViewControllersMightHaveChangedTo:tabControllers];
 
-  // TODO: introduce some abstraction?
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     if (bottomAccessory != nil) {
+      // We wrap RNSBottomTabsAccessoryComponentView in plain UIView to maintain native
+      // corner radius. RCTViewComponentView overrides it to 0 by default and we're unable
+      // to restore default value in an easy way. By wrapping it in UIView, it is clipped
+      // to default corner radius.
       UIView *wrapperView = [UIView new];
       [wrapperView addSubview:bottomAccessory];
 
@@ -380,9 +383,9 @@ namespace react = facebook::react;
 
 #pragma mark - LEGACY RCTComponent protocol
 
-RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
 {
+  [super insertReactSubview:subview atIndex:index];
   BOOL isValidBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
   BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
   RCTAssert(
@@ -403,6 +406,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 
 - (void)removeReactSubview:(UIView *)subview
 {
+  [super removeReactSubview:subview];
   BOOL isValidBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
   BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
   RCTAssert(
@@ -420,14 +424,14 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 
   [_reactSubviews removeObject:subview];
 }
-RNS_IGNORE_SUPER_CALL_END
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)didUpdateReactSubviews
 {
-  [super didUpdateReactSubviews];
   _hasModifiedReactSubviewsInCurrentTransaction = YES;
   [self invalidateFlagsOnControllerIfNeeded];
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
