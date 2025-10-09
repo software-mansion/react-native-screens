@@ -59,6 +59,21 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
+#pragma mark - UIKit callbacks
+
+- (void)didMoveToWindow
+{
+  if (self.window != nil) {
+    [_helper registerForAccessoryFrameChanges];
+  } else {
+#if RCT_NEW_ARCH_ENABLED
+    [self invalidateController];
+#else // RCT_NEW_ARCH_ENABLED
+    [self invalidate];
+#endif // RCT_NEW_ARCH_ENABLED
+  }
+}
+
 #if RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTViewComponentViewProtocol

@@ -47,6 +47,8 @@ namespace react = facebook::react;
   _previousFrame = CGRectZero;
 }
 
+#pragma mark - Observing environment changes
+
 - (id<UITraitChangeRegistration>)registerForAccessoryEnvironmentChanges
 {
   return [_bottomAccessoryView
@@ -58,12 +60,11 @@ namespace react = facebook::react;
                   }];
 }
 
+#pragma mark - Observing frame changes
+
 - (void)registerForAccessoryFrameChanges
 {
-  [self.wrapperView.superview addObserver:self
-                               forKeyPath:@"center"
-                                  options:NSKeyValueObservingOptionInitial
-                                  context:nil];
+  [self.nativeWrapperView addObserver:self forKeyPath:@"center" options:NSKeyValueObservingOptionInitial context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -74,34 +75,33 @@ namespace react = facebook::react;
   [self notifyFrameUpdate];
 }
 
-- (RNSBottomTabsAccessoryWrapperView *)wrapperView
+- (UIView *)nativeWrapperView
 {
   RCTAssert(
-      [_bottomAccessoryView.superview isKindOfClass:[RNSBottomTabsAccessoryWrapperView class]],
-      @"[RNScreens] RNSBottomTabsAccessoryWrapperView must be the parent of RNSBottomTabsAccessoryCompomentView");
-  return static_cast<RNSBottomTabsAccessoryWrapperView *>(_bottomAccessoryView.superview);
+      _bottomAccessoryView.superview.superview != nil,
+      @"[RNScreens] RNSBottomTabsAccessoryComponentView must be the set as bottom accessory.");
+  return _bottomAccessoryView.superview.superview;
 }
 
 - (void)notifyFrameUpdate
 {
 #if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
   // Make sure that bottom accessory's size is sent to ShadowNode as soon as possible.
-  // We set origin to (0,0) because initially self.wrapperView.superview's origin is incorrect.
+  // We set origin to (0,0) because initially self.nativeWrapperView's origin is incorrect.
   // We want the enable the display link as well so that it takes over later with correct origin.
   if (!_initialStateUpdateSent) {
-    CGRect frame =
-        CGRectMake(0, 0, self.wrapperView.superview.frame.size.width, self.wrapperView.superview.frame.size.height);
+    CGRect frame = CGRectMake(0, 0, self.nativeWrapperView.frame.size.width, self.nativeWrapperView.frame.size.height);
     [self updateShadowStateWithFrame:frame];
     _initialStateUpdateSent = YES;
   }
 
-  if (_displayLink == nil && !CGRectEqualToRect(_previousFrame, self.wrapperView.superview.frame)) {
+  if (_displayLink == nil && !CGRectEqualToRect(_previousFrame, self.nativeWrapperView.frame)) {
     [self setupDisplayLink];
   }
 #else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
-  // We use self.wrapperView.superview because it has both the size and the origin
+  // We use self.nativeWrapperView because it has both the size and the origin
   // that we want to send to the ShadowNode.
-  [self updateShadowStateWithFrame:self.wrapperView.superview.frame];
+  [self updateShadowStateWithFrame:self.nativeWrapperView.frame];
 #endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
 }
 
@@ -114,19 +114,19 @@ namespace react = facebook::react;
 
 - (void)handleDisplayLink:(CADisplayLink *)sender
 {
-  // We use self.wrapperView.superview because it has both the size and the origin
+  // We use self.nativeWrapperView because it has both the size and the origin
   // that we want to send to the ShadowNode.
-  CGRect presentationFrame = self.wrapperView.superview.layer.presentationLayer.frame;
+  CGRect presentationFrame = self.nativeWrapperView.layer.presentationLayer.frame;
   if (CGRectEqualToRect(presentationFrame, CGRectZero)) {
     return;
   }
 
   [self updateShadowStateWithFrame:presentationFrame];
 
-  // self.wrapperView.superview.frame is set to final value at the beginning of the transition.
-  // When frame from presentation layer matches self.wrapperView.superview.frame, it indicates that
+  // self.nativeWrapperView.frame is set to final value at the beginning of the transition.
+  // When frame from presentation layer matches self.nativeWrapperView.frame, it indicates that
   // the transition is over and we can disable the display link.
-  if (CGRectEqualToRect(presentationFrame, self.wrapperView.superview.frame)) {
+  if (CGRectEqualToRect(presentationFrame, self.nativeWrapperView.frame)) {
     [self invalidateDisplayLink];
   }
 }
@@ -137,6 +137,8 @@ namespace react = facebook::react;
   _displayLink = nil;
 }
 #endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+
+#pragma mark - Synchronization with ShadowNode
 
 - (void)updateShadowStateWithFrame:(CGRect)frame
 {
@@ -174,7 +176,9 @@ namespace react = facebook::react;
 {
   [_bottomAccessoryView unregisterForTraitChanges:_traitChangeRegistration];
   _traitChangeRegistration = nil;
-  [self.wrapperView.superview removeObserver:self forKeyPath:@"center"];
+  // Using nativeWrapperView directly here to avoid failing RCTAssert in self.nativeWrapperView.
+  // If we're called from didMoveToWindow, it's not a problem, but I'm not sure if this will always be the case.
+  [_bottomAccessoryView.superview.superview removeObserver:self forKeyPath:@"center"];
   _bottomAccessoryView = nil;
   _previousFrame = CGRectZero;
 #if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82

@@ -16,7 +16,6 @@
 
 #import "RNSBottomAccessoryHelper.h"
 #import "RNSBottomTabsAccessoryComponentView.h"
-#import "RNSBottomTabsAccessoryWrapperView.h"
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSConversions.h"
 #import "RNSConvert.h"
@@ -171,10 +170,10 @@ namespace react = facebook::react;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     if (bottomAccessory != nil) {
-      RNSBottomTabsAccessoryWrapperView *wrapperView =
-          [[RNSBottomTabsAccessoryWrapperView alloc] initWithAccessoryView:bottomAccessory];
+      UIView *wrapperView = [UIView new];
+      [wrapperView addSubview:bottomAccessory];
+
       [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
-      [wrapperView registerForAccessoryFrameChanges];
     } else {
       [_controller setBottomAccessory:nil animated:YES];
     }

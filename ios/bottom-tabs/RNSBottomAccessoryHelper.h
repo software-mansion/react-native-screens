@@ -1,6 +1,5 @@
 #import <UIKit/UIKit.h>
 #import "RNSBottomTabsAccessoryComponentView.h"
-#import "RNSBottomTabsAccessoryWrapperView.h"
 
 #if defined(__cplusplus)
 #import <react/renderer/core/State.h>
@@ -17,14 +16,8 @@ API_AVAILABLE(ios(26.0))
 
 /**
  * Registers KVO for frames of UIKit's bottom accessory wrapper view.
- * Should be called after setting RNSBottomTabsAccessoryComponentView as a bottom accessory.
  */
 - (void)registerForAccessoryFrameChanges;
-
-/**
- * Notifies RNSBottomAccessoryHelper that the bottom accessory's frame has changed.
- */
-- (void)notifyFrameUpdate;
 
 - (void)invalidate;
 
