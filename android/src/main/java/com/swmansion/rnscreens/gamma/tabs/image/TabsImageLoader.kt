@@ -2,6 +2,8 @@ package com.swmansion.rnscreens.gamma.tabs.image
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
@@ -13,8 +15,24 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.CloseableStaticBitmap
 import com.facebook.imagepipeline.request.ImageRequestBuilder
+import com.swmansion.rnscreens.gamma.tabs.TabScreen
 
 internal fun loadTabImage(
+    context: Context,
+    uri: String,
+    view: TabScreen,
+) {
+    // Since image loading might happen on a background thread
+    // ref. https://frescolib.org/docs/intro-image-pipeline.html
+    // We should schedule rendering the result on the UI thread
+    loadTabImageInternal(context, uri) { drawable ->
+        Handler(Looper.getMainLooper()).post {
+            view.icon = drawable
+        }
+    }
+}
+
+private fun loadTabImageInternal(
     context: Context,
     uri: String,
     onLoaded: (Drawable) -> Unit,

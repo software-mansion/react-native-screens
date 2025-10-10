@@ -1,7 +1,5 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.os.Handler
-import android.os.Looper
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
@@ -194,15 +192,7 @@ class TabScreenViewManager :
     ) {
         val uri = value?.getString("uri")
         if (uri != null) {
-            val context = view.context
-            loadTabImage(context, uri) { drawable ->
-                // Since image loading might happen on a background thread
-                // ref. https://frescolib.org/docs/intro-image-pipeline.html
-                // We should schedule rendering the result on the UI thread
-                Handler(Looper.getMainLooper()).post {
-                    view.icon = drawable
-                }
-            }
+            loadTabImage(view.context, uri, view)
         }
     }
 
