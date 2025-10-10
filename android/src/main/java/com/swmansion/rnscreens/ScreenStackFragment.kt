@@ -39,6 +39,7 @@ import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
+import kotlin.math.max
 
 sealed class KeyboardState
 
@@ -367,7 +368,7 @@ class ScreenStackFragment :
     }
 
     private fun attachShapeToScreen(screen: Screen) {
-        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius)
+        val cornerSize = max(PixelUtil.toPixelFromDIP(screen.sheetCornerRadius), 0f)
         val shapeAppearanceModel =
             ShapeAppearanceModel
                 .Builder()
