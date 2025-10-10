@@ -1,4 +1,5 @@
-import React, { Button, ScrollView, Text } from "react-native";
+import React from "react";
+import { Button, ScrollView, Text } from "react-native";
 import { useScrollEdgeEffectsConfigContext } from "./context";
 
 export function ScrollViewTemplate() {
