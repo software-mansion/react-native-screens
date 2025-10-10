@@ -21,7 +21,6 @@ internal fun loadTabImage(
     context: Context,
     uri: String,
     view: TabScreen,
-    onIconLoaded: ((Drawable?) -> Unit)? = null,
 ) {
     // Since image loading might happen on a background thread
     // ref. https://frescolib.org/docs/intro-image-pipeline.html
@@ -29,7 +28,6 @@ internal fun loadTabImage(
     loadTabImageInternal(context, uri) { drawable ->
         Handler(Looper.getMainLooper()).post {
             view.icon = drawable
-            onIconLoaded?.invoke(drawable)
         }
     }
 }
