@@ -62,6 +62,9 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         hideNavigationBar,
         autoCapitalize,
         placeholder,
+        // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+        // to preserve test's original search bar configuration.
+        placement: 'stacked',
         inputType,
         onChangeText: event => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
@@ -232,6 +235,9 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
     navigation.setOptions({
       headerSearchBarOptions: {
         placeholder: 'Interesting places...',
+        // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+        // to preserve test's original search bar configuration.
+        placement: 'stacked',
         onChangeText: event => setSearch(event.nativeEvent.text),
         obscureBackground: false,
         autoCapitalize: 'none',

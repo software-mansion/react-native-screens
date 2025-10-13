@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -45,7 +44,7 @@ class SearchBarManager :
     ) {
         view.autoCapitalize =
             when (autoCapitalize) {
-                null, "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
+                null, "systemDefault", "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
                 "words" -> SearchBarView.SearchBarAutoCapitalize.WORDS
                 "sentences" -> SearchBarView.SearchBarAutoCapitalize.SENTENCES
                 "characters" -> SearchBarView.SearchBarAutoCapitalize.CHARACTERS
@@ -56,11 +55,11 @@ class SearchBarManager :
     }
 
     @ReactProp(name = "autoFocus")
-    fun setAutoFocus(
+    override fun setAutoFocus(
         view: SearchBarView,
-        autoFocus: Boolean?,
+        autoFocus: Boolean,
     ) {
-        view.autoFocus = autoFocus ?: false
+        view.autoFocus = autoFocus
     }
 
     @ReactProp(name = "barTintColor", customType = "Color")
@@ -138,20 +137,14 @@ class SearchBarManager :
         view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? =
-        MapBuilder.of(
-            SearchBarBlurEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onSearchBlur"),
-            SearchBarChangeTextEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onChangeText"),
-            SearchBarCloseEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onClose"),
-            SearchBarFocusEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onSearchFocus"),
-            SearchBarOpenEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onOpen"),
-            SearchBarSearchButtonPressEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onSearchButtonPress"),
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
+        hashMapOf(
+            SearchBarBlurEvent.EVENT_NAME to hashMapOf("registrationName" to "onSearchBlur"),
+            SearchBarChangeTextEvent.EVENT_NAME to hashMapOf("registrationName" to "onChangeText"),
+            SearchBarCloseEvent.EVENT_NAME to hashMapOf("registrationName" to "onClose"),
+            SearchBarFocusEvent.EVENT_NAME to hashMapOf("registrationName" to "onSearchFocus"),
+            SearchBarOpenEvent.EVENT_NAME to hashMapOf("registrationName" to "onOpen"),
+            SearchBarSearchButtonPressEvent.EVENT_NAME to hashMapOf("registrationName" to "onSearchButtonPress"),
         )
 
     companion object {
@@ -191,7 +184,7 @@ class SearchBarManager :
     }
 
     override fun cancelSearch(view: SearchBarView?) {
-        view?.handleFocusJsRequest()
+        view?.handleCancelSearchJsRequest()
     }
 
     // iOS only
@@ -203,6 +196,13 @@ class SearchBarManager :
         logNotAvailable("setPlacement")
     }
 
+    override fun setAllowToolbarIntegration(
+        view: SearchBarView,
+        value: Boolean,
+    ) {
+        logNotAvailable("allowToolbarIntegration")
+    }
+
     override fun setHideWhenScrolling(
         view: SearchBarView?,
         value: Boolean,
@@ -212,14 +212,14 @@ class SearchBarManager :
 
     override fun setObscureBackground(
         view: SearchBarView?,
-        value: Boolean,
+        value: String?,
     ) {
-        logNotAvailable("hideNavigationBar")
+        logNotAvailable("obscureBackground")
     }
 
     override fun setHideNavigationBar(
         view: SearchBarView?,
-        value: Boolean,
+        value: String?,
     ) {
         logNotAvailable("hideNavigationBar")
     }

@@ -15,7 +15,7 @@ const items = [
     },
   },
   {
-    author: 'Ferran Negre Pizzaro',
+    author: 'Ferran Negre',
     company: 'FitHero',
     body: 'I would never build a serious React Native app without it.',
     link: 'https://x.com/ferrannp/status/1826734343571796317',

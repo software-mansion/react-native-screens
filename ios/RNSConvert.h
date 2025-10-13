@@ -18,6 +18,9 @@ namespace react = facebook::react;
 + (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode;
 
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
+    (react::RNSScreenFullScreenSwipeEnabled)fullScreenSwipeEnabled;
+
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
     (react::RNSScreenStackPresentation)stackPresentation;
 
@@ -43,14 +46,29 @@ namespace react = facebook::react;
 
 + (RNSSearchBarPlacement)RNSScreenSearchBarPlacementFromCppEquivalent:(react::RNSSearchBarPlacement)placement;
 
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSSearchBarObscureBackground:
+    (react::RNSSearchBarObscureBackground)obscureBackground;
+
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSSearchBarHideNavigationBar:
+    (react::RNSSearchBarHideNavigationBar)hideNavigationBar;
+
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
 
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
 
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenBottomScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenLeftScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenRightScrollEdgeEffect)edgeEffect;
++ (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+    (react::RNSScreenTopScrollEdgeEffect)edgeEffect;
+
 #endif // RCT_NEW_ARCH_ENABLED
 
-/// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` which has no counter part in the UIKit
-/// type.
+/// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` or `blurEffect ==
+/// RNSBlurEffectStyleSystemDefault` which have no counter parts in the UIKit types.
 + (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect;
 
 @end

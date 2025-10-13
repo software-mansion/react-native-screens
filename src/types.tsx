@@ -9,6 +9,7 @@ import {
   ColorValue,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
+import { ScrollEdgeEffect } from './components/shared/types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -98,7 +99,13 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
-export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+export type SearchBarPlacement =
+  | 'automatic'
+  | 'inline' // deprecated starting from iOS 26
+  | 'stacked'
+  | 'integrated'
+  | 'integratedButton'
+  | 'integratedCentered';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -132,9 +139,16 @@ export interface ScreenProps extends ViewProps {
    */
   freezeOnBlur?: boolean;
   /**
-   * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
-   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
-   * Defaults to `false`.
+   * Boolean indicating whether the swipe gesture should work on whole screen. The behavior depends on iOS version.
+   *
+   * For iOS prior to 26, swiping with this option results in the same transition animation as `simple_push` by default.
+   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation
+   * is not achievable due to usage of custom recognizer.
+   *
+   * For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used, and this prop controls whether it should
+   * be enabled or not.
+   *
+   * When not set, it defaults to `false` on iOS < 26 and `true` for iOS >= 26.
    *
    * @platform ios
    */
@@ -145,6 +159,9 @@ export interface ScreenProps extends ViewProps {
    * default iOS shadow. Defaults to `true`.
    *
    * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
+   *
+   * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
+   * to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
    *
    * @platform ios
    */
@@ -157,6 +174,8 @@ export interface ScreenProps extends ViewProps {
   gestureEnabled?: boolean;
   /**
    * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+   *
+   * @deprecated since iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
    *
    * @platform ios
    */
@@ -182,25 +201,35 @@ export interface ScreenProps extends ViewProps {
    */
   nativeBackButtonDismissalEnabled?: boolean;
   /**
-   * Sets the navigation bar color. Defaults to initial status bar color.
+   * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
+   * Depending on values set, it will blur the scrolling content below certain UI elements (Header Items, SearchBar)
+   * for the specifed edge of the ScrollView.
    *
-   * @platform android
+   * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+   * the ScrollView will use only the innermost one's config.
    *
-   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect and is subject to removal in the future.
-   *  For SDK below 35 this works only with specific app setup.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
+   * @platform ios
+   *
+   * @supported iOS 26 or higher
+   */
+  scrollEdgeEffects?: {
+    bottom: ScrollEdgeEffect;
+    left: ScrollEdgeEffect;
+    right: ScrollEdgeEffect;
+    top: ScrollEdgeEffect;
+  };
+  /**
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
+   *
+   * For all apps targeting Android SDK 35 or above this prop has no effect.
+   * See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
    */
   navigationBarColor?: ColorValue;
   /**
-   * Boolean indicating whether the content should be visible behind the navigation bar. Defaults to `false`.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
-   *  We expect that in future SDKs this option will be enforced.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
+   * For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
+   * See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
    */
   navigationBarTranslucent?: boolean;
   /**
@@ -282,6 +311,16 @@ export interface ScreenProps extends ViewProps {
    * - "pop" – the new screen will perform pop animation.
    */
   replaceAnimation?: ScreenReplaceTypes;
+  /**
+   * A way to identify the screen in native code. This value will be passed down to native side,
+   * where it can be later consulted. Meant for native integration with the library.
+   * This should be unique value across all screen instances, however it is not asserted on native side.
+   *
+   * Empty string translates to `undefined`.
+   *
+   * @platform ios
+   */
+  screenId?: string | undefined;
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
@@ -430,18 +469,18 @@ export interface ScreenProps extends ViewProps {
    */
   stackPresentation?: StackPresentationTypes;
   /**
-   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   * Sets the status bar animation (similar to the `StatusBar` component).
+   * On Android, setting either `fade` or `slide` will set the transition of status bar color. On iOS, this option applies to appereance animation of the status bar.
+   * Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   *
+   * Defaults to `fade` on iOS and `none` on Android.
    */
   statusBarAnimation?: 'none' | 'fade' | 'slide';
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect.
-   *  For SDK below 35 this works only with specific app setup.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/reference/android/view/Window#setStatusBarColor(int)
+   * For all apps targeting Android SDK 35 or above this prop has no effect.
+   * See: https://developer.android.com/reference/android/view/Window#setStatusBarColor(int)
    */
   statusBarColor?: ColorValue;
   /**
@@ -449,16 +488,16 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarHidden?: boolean;
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   * `auto` and `inverted` are supported only on iOS. On Android, they will fallback to `light`.
+   * Defaults to `auto` on iOS and `light` on Android.
    */
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
   /**
-   * Sets the translucency of the status bar. Defaults to `false`.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this point loses relevance.
-   *  It is expected that the edge-to-edge will be enforced in future SDKs: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
+   * For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this prop loses relevance.
+   * See: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
    */
   statusBarTranslucent?: boolean;
   /**
@@ -473,7 +512,7 @@ export interface ScreenProps extends ViewProps {
   swipeDirection?: SwipeDirectionTypes;
   /**
    * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
-   * The duration of `default` and `flip` transitions isn't customizable.
+   * For screens with `default` and `flip` transitions, and, as of now, for screens with `presentation` set to `modal`, `formSheet`, `pageSheet` (regardless of transition), the duration isn't customizable.
    *
    * @platform ios
    */
@@ -664,16 +703,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   titleFontWeight?: string;
   /**
-   * A flag to that lets you opt out of insetting the header. You may want to
-   * set this to `false` if you use an opaque status bar. Defaults to `true`.
-   * Only supported on Android. Insets are always applied on iOS because the
-   * header cannot be opaque.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
-   *  and it is expected that the edge-to-edge will be enforced in future SDKs - therefore this prop
-   *  loses its relevance and will be removed at some point in the future.
+   * For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
+   * therefore this prop loses its relevance.
    */
   topInsetEnabled?: boolean;
   /**
@@ -698,9 +731,18 @@ export interface SearchBarProps {
   ref?: React.RefObject<SearchBarCommands>;
 
   /**
-   * The auto-capitalization behavior
+   * The auto-capitalization behavior.
+   *
+   * Defaults to `systemDefault`:
+   * - on Android, it is the same as `none`,
+   * - on iOS, it is the same as `sentences`.
    */
-  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  autoCapitalize?:
+    | 'systemDefault'
+    | 'none'
+    | 'words'
+    | 'sentences'
+    | 'characters';
   /**
    * Automatically focuses search bar on mount
    *
@@ -720,6 +762,9 @@ export interface SearchBarProps {
   /**
    * The text to be used instead of default `Cancel` button text
    *
+   * @deprecated Starting from iOS 26, cancel button does not have any text,
+   * therefore this prop has no longer any effect.
+   *
    * @platform ios
    */
   cancelButtonText?: string;
@@ -730,7 +775,13 @@ export interface SearchBarProps {
    */
   disableBackButtonOverride?: boolean;
   /**
-   * Indicates whether to hide the navigation bar
+   * Indicates whether to hide the navigation bar.
+   *
+   * If value is `undefined`, uses native behavior:
+   * - on iOS versions prior to 26, value is `true`,
+   * - starting from iOS 26, value is determined by context.
+   *
+   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
    *
    * @platform ios
    */
@@ -741,7 +792,6 @@ export interface SearchBarProps {
    * @platform ios
    */
   hideWhenScrolling?: boolean;
-
   /**
    * Sets type of the input. Defaults to `text`.
    *
@@ -749,7 +799,15 @@ export interface SearchBarProps {
    */
   inputType?: 'text' | 'phone' | 'number' | 'email';
   /**
-   * Indicates whether to obscure the underlying content
+   * Indicates whether to obscure the underlying content.
+   *
+   * If value is `undefined`, uses native behavior:
+   * - on iOS, value is `false`,
+   * - on tvOS, value is `true`.
+   *
+   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
+   *
+   * @platform ios
    */
   obscureBackground?: boolean;
   /**
@@ -800,14 +858,46 @@ export interface SearchBarProps {
    * Supported values:
    *
    * * `automatic` - the search bar is placed according to current layout
-   * * `inline` - the search bar is placed on the trailing edge of navigation bar
    * * `stacked` - the search bar is placed below the other content in navigation bar
+   * * `integrated` - (>= iOS 26) the search bar is placed on the trailing edge of navigation bar. On iPhone,
+   *   it may be integrated into the toolbar
+   * * `integratedButton` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
+   *   the inactive search bar is always shown as a button even when space permits a search field
+   * * `integratedCentered` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
+   *   in the regular width on iPad, the search bar is centered in the navigation bar. Only
+   *   respected in special cases, described in UIKit documentation
    *
-   * Defaults to `stacked`
+   * There is also legacy & **deprecated** prop value available:
+   *
+   *  * `inline` - the search bar is placed on the trailing edge of navigation bar
+   *
+   * Starting from iOS 26, `inline` is the same as `integrated`. It is provided for backward
+   * compatibility and is destined for removal in future versions.
+   *
+   * For iOS versions prior to 26, `integrated`, `integratedButton`, `integratedCentered` are
+   * the same as `inline`.
+   *
+   * Defaults to `automatic`.
+   *
+   * Complete list of possible search bar placements is available in the official UIKit documentation:
+   * @see {@link https://developer.apple.com/documentation/uikit/uinavigationitem/searchbarplacement-swift.enum|UINavigationItem.SearchBarPlacement}
    *
    * @platform iOS (>= 16.0)
    */
   placement?: SearchBarPlacement;
+  /**
+   * Indicates whether the system can place the search bar among other toolbar items on iPhone.
+   *
+   * Set this prop to `false` to prevent the search bar from appearing in the toolbar when
+   * `placement` is `automatic`, `integrated`, `integratedButton` or `integratedCentered`.
+   *
+   * Defaults to `true`.
+   * When `placement` is set to `stacked`, this property's value will be overridden with `false`
+   * to circumvent a UIKit native bug that prevents the search bar from appearing on the root screen.
+   *
+   * @platform iOS (>= 26.0)
+   */
+  allowToolbarIntegration?: boolean;
   /**
    * The search field text color
    */
@@ -897,3 +987,7 @@ export interface GestureProviderProps extends GestureProps {
   children?: React.ReactNode;
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }
+
+export * from './components/bottom-tabs/BottomTabs.types';
+export * from './components/bottom-tabs/BottomTabsScreen.types';
+export * from './components/shared/types';

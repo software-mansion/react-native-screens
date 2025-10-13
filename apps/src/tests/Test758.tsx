@@ -47,6 +47,9 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
+    // Added in https://github.com/software-mansion/react-native-screens/pull/3186
+    // to preserve test's original search bar configuration.
+    placement: 'stacked',
     cancelButtonText: 'Some text',
     onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       setSearch(e.nativeEvent.text),

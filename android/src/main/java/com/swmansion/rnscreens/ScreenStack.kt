@@ -22,6 +22,7 @@ class ScreenStack(
 ) : ScreenContainer(context) {
     private val stack = ArrayList<ScreenStackFragmentWrapper>()
     private val dismissedWrappers: MutableSet<ScreenStackFragmentWrapper> = HashSet()
+    private var preloadedWrappers: List<ScreenFragmentWrapper> = ArrayList()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
@@ -91,6 +92,11 @@ class ScreenStack(
         }
     }
 
+    /**
+     * Integration function. Allows other solutions to retrieve list of screens owned by this stack.
+     */
+    fun getScreenIds(): List<String?> = screenWrappers.map { it.screen.screenId }
+
     private fun dispatchOnFinishTransitioning() {
         val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper
@@ -143,7 +149,9 @@ class ScreenStack(
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
 
-        val newTopAlreadyInStack = stack.contains(newTop)
+        // We don't count preloaded screen as "already in stack" until it appears with state == ON_TOP
+        // See https://github.com/software-mansion/react-native-screens/pull/3062
+        val newTopAlreadyInStack = stack.contains(newTop) && !preloadedWrappers.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
 
         if (newTop != null && !newTopAlreadyInStack) {
@@ -257,6 +265,18 @@ class ScreenStack(
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
+
+            // All screens that were displayed at some point in time should, confusingly,
+            // have state set to ON_TOP == 2, and the ones that were preloaded should have state INACTIVE == 0
+            // There could be special cases that I didn't know of at the time of writing,
+            // and the list could contain some other inactive screens that were not being preloaded
+            // but we are only really interested in and check the INACTIVE screens that are above
+            // newTop screen, which ARE the preloaded ones
+            preloadedWrappers =
+                screenWrappers
+                    .asSequence()
+                    .filter { it.screen.activityState == Screen.ActivityState.INACTIVE }
+                    .toList()
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()

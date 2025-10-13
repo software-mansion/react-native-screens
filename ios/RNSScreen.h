@@ -2,8 +2,15 @@
 #import <React/RCTViewManager.h>
 
 #import "RNSEnums.h"
+#import "RNSSafeAreaProviding.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
+#import "RNSScrollEdgeEffectApplicator.h"
+#import "RNSScrollViewBehaviorOverriding.h"
+
+#if !TARGET_OS_TV
+#import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
@@ -32,8 +39,13 @@ namespace react = facebook::react;
 
 @class RNSScreenView;
 
-@interface RNSScreen : UIViewController <RNSViewControllerDelegate>
-
+@interface RNSScreen : UIViewController <
+                           RNSViewControllerDelegate
+#if !TARGET_OS_TV
+                           ,
+                           RNSOrientationProviding
+#endif // !TARGET_OS_TV
+                           >
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (BOOL)hasNestedStack;
@@ -55,9 +67,18 @@ namespace react = facebook::react;
 #else
     RCTView
 #endif
-    <RNSScreenContentWrapperDelegate>
+    <RNSScreenContentWrapperDelegate,
+     RNSScrollViewBehaviorOverriding,
+     RNSSafeAreaProviding,
+     RNSScrollEdgeEffectProviding>
 
-@property (nonatomic) BOOL fullScreenSwipeEnabled;
+/**
+ * This is value of the prop as passed by the user. To get effective value see derived property
+ * `isFullScreenSwipeEffectivelyEnabled`
+ */
+@property (nonatomic) RNSOptionalBoolean fullScreenSwipeEnabled;
+@property (nonatomic, readonly, getter=isFullScreenSwipeEffectivelyEnabled) BOOL fullScreenSwipeEffectivelyEnabled;
+
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;
@@ -69,6 +90,10 @@ namespace react = facebook::react;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+@property (nonatomic) RNSScrollEdgeEffect bottomScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
@@ -78,6 +103,7 @@ namespace react = facebook::react;
 @property (nonatomic, retain) RNSScreen *controller;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
 @property (nonatomic) int activityState;
+@property (nonatomic, nullable) NSString *screenId;
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 
 #if !TARGET_OS_TV

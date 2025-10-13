@@ -48,7 +48,10 @@ class DimmingViewManager(
     /**
      * Ask the manager whether it will apply non-zero alpha for sheet at given detent index.
      */
-    fun willDimForDetentIndex(screen: Screen, index: Int) = index > screen.sheetLargestUndimmedDetentIndex
+    fun willDimForDetentIndex(
+        screen: Screen,
+        index: Int,
+    ) = index > screen.sheetLargestUndimmedDetentIndex
 
     fun invalidate(behavior: BottomSheetBehavior<Screen>?) {
         dimmingViewCallback?.let { callback -> behavior?.removeBottomSheetCallback(callback) }
@@ -165,7 +168,10 @@ class DimmingViewManager(
             }
         }
 
-    private fun requireBottomSheetCallback(screen: Screen, forceCreation: Boolean = false): BottomSheetCallback {
+    private fun requireBottomSheetCallback(
+        screen: Screen,
+        forceCreation: Boolean = false,
+    ): BottomSheetCallback {
         if (dimmingViewCallback == null || forceCreation) {
             dimmingViewCallback = AnimateDimmingViewCallback(screen, dimmingView, maxAlpha)
         }

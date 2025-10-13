@@ -24,10 +24,10 @@ import kotlin.math.max
 
 class ScreenStackHeaderConfig(
     context: Context,
-    private val pointerEventsImpl: ReactPointerEventsView
-) : FabricEnabledHeaderConfigViewGroup(context), ReactPointerEventsView by pointerEventsImpl {
-
-    constructor(context: Context): this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
+    private val pointerEventsImpl: ReactPointerEventsView,
+) : FabricEnabledHeaderConfigViewGroup(context),
+    ReactPointerEventsView by pointerEventsImpl {
+    constructor(context: Context) : this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
 
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
@@ -45,9 +45,6 @@ class ScreenStackHeaderConfig(
     private var isShadowHidden = false
     private var isDestroyed = false
     private var backButtonInCustomView = false
-    var isTopInsetEnabled = true
-        private set
-
     private var tintColor = 0
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
@@ -392,10 +389,6 @@ class ScreenStackHeaderConfig(
 
     fun setTintColor(color: Int) {
         tintColor = color
-    }
-
-    fun setTopInsetEnabled(topInsetEnabled: Boolean) {
-        isTopInsetEnabled = topInsetEnabled
     }
 
     fun setBackgroundColor(color: Int?) {

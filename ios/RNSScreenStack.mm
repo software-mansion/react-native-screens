@@ -27,9 +27,17 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSScrollViewFinder.h"
+#import "RNSTabsScreenViewController.h"
+#import "UIScrollView+RNScreens.h"
+#import "UIView+RNSUtility.h"
+#import "integrations/RNSDismissibleModalProtocol.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
-#import "UIView+RNSUtility.h"
+#ifdef RNS_GAMMA_ENABLED
+#import "RNSFrameCorrectionProvider.h"
+#import "Swift-Bridging.h"
+#endif // RNS_GAMMA_ENABLED
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -97,6 +105,20 @@ namespace react = facebook::react;
   return [self topViewController].supportedInterfaceOrientations;
 }
 
+#if !TARGET_OS_TV
+
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.topViewController respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> top = static_cast<id<RNSOrientationProviding>>(self.topViewController);
+    return [top evaluateOrientation];
+  }
+
+  return RNSOrientationInherit;
+}
+
+#endif // !TARGET_OS_TV
+
 - (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
 {
   return [self topViewController];
@@ -136,6 +158,83 @@ namespace react = facebook::react;
 }
 #endif
 
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+  [super willMoveToParentViewController:parent];
+  if ([self.parentViewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    RNSTabsScreenViewController *previousParentTabsScreenVC =
+        static_cast<RNSTabsScreenViewController *>(self.parentViewController);
+    [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
+  }
+#ifdef RNS_GAMMA_ENABLED
+  if (parent == nil) {
+    [self maybeUnregisterFromSplitViewFrameCorrectionWorkaround];
+  }
+#endif // RNS_GAMMA_ENABLED
+}
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  [super didMoveToParentViewController:parent];
+  if ([parent isKindOfClass:RNSTabsScreenViewController.class]) {
+    RNSTabsScreenViewController *parentTabsScreenVC = static_cast<RNSTabsScreenViewController *>(parent);
+    [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
+  }
+#ifdef RNS_GAMMA_ENABLED
+  if (parent != nil) {
+    [self maybeRegisterForSplitViewFrameCorrectionWorkaround];
+  }
+#endif // RNS_GAMMA_ENABLED
+}
+
+- (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
+{
+  if ([[self viewControllers] count] > 1 &&
+      tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
+    return [[self popToRootViewControllerAnimated:true] count] > 0;
+  } else if (tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+    UIScrollView *scrollView =
+        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[[self topViewController] view]];
+    return [scrollView rnscreens_scrollToTop];
+  }
+
+  return false;
+}
+
+#pragma mark - RNSFrameCorrectionProvider
+
+#ifdef RNS_GAMMA_ENABLED
+- (void)maybeRegisterForSplitViewFrameCorrectionWorkaround
+{
+  if (auto frameCorrectionProvider = [self findAncestorFrameCorrectionProvider]) {
+    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
+    [frameCorrectionProvider registerForFrameCorrection:self.view.superview];
+  }
+}
+
+- (void)maybeUnregisterFromSplitViewFrameCorrectionWorkaround
+{
+  if (auto frameCorrectionProvider = [self findAncestorFrameCorrectionProvider]) {
+    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
+    [frameCorrectionProvider unregisterFromFrameCorrection:self.view.superview];
+  }
+}
+
+- (id<RNSFrameCorrectionProvider>)findAncestorFrameCorrectionProvider
+{
+  auto parent = [self parentViewController];
+  while (parent != nil) {
+    if ([parent respondsToSelector:@selector(registerForFrameCorrection:)] &&
+        [parent respondsToSelector:@selector(unregisterFromFrameCorrection:)]) {
+      return (id<RNSFrameCorrectionProvider>)parent;
+    }
+    parent = [parent parentViewController];
+  }
+
+  return nil;
+}
+#endif // RNS_GAMMA_ENABLED
+
 @end
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -156,7 +255,7 @@ namespace react = facebook::react;
   UINavigationController *_controller;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
   BOOL _invalidated;
-  BOOL _isFullWidthSwiping;
+  BOOL _isFullWidthSwipingWithPanGesture; // used only for content swipe with RNSPanGestureRecognizer
   RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
@@ -351,6 +450,11 @@ RNS_IGNORE_SUPER_CALL_END
         [self addSubview:controller.view];
 #if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+        if (@available(iOS 26, *)) {
+          _controller.interactiveContentPopGestureRecognizer.delegate = self;
+        }
+#endif // Check for iOS >= 26.0
 #endif
         [controller didMoveToParentViewController:parentView.reactViewController];
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
@@ -534,58 +638,66 @@ RNS_IGNORE_SUPER_CALL_END
 
   UIViewController *firstModalToBeDismissed = changeRootController.presentedViewController;
 
-  if (firstModalToBeDismissed != nil) {
-    const BOOL firstModalToBeDismissedIsOwned = [firstModalToBeDismissed isKindOfClass:RNSScreen.class];
-    const BOOL firstModalToBeDismissedIsOwnedByThisStack =
-        firstModalToBeDismissedIsOwned && [_presentedModals containsObject:firstModalToBeDismissed];
+  // This check is for external modals that are not owned by this stack. They can prevent the dismissal of the modal by
+  // extending RNSDismissibleModalProtocol and returning NO from isDismissible method.
+  if (![firstModalToBeDismissed conformsToProtocol:@protocol(RNSDismissibleModalProtocol)] ||
+      [(id<RNSDismissibleModalProtocol>)firstModalToBeDismissed isDismissible]) {
+    if (firstModalToBeDismissed != nil) {
+      const BOOL firstModalToBeDismissedIsOwned = [firstModalToBeDismissed isKindOfClass:RNSScreen.class];
+      const BOOL firstModalToBeDismissedIsOwnedByThisStack =
+          firstModalToBeDismissedIsOwned && [_presentedModals containsObject:firstModalToBeDismissed];
 
-    if (firstModalToBeDismissedIsOwnedByThisStack || !firstModalToBeDismissedIsOwned) {
-      // We dismiss every VC that was presented by changeRootController VC or its descendant.
-      // After the series of dismissals is completed we run completion block in which
-      // we present modals on top of changeRootController (which may be the this stack VC)
-      //
-      // There also might the second case, where the firstModalToBeDismissed is foreign.
-      // See: https://github.com/software-mansion/react-native-screens/issues/2048
-      // For now, to mitigate the issue, we also decide to trigger its dismissal before
-      // starting the presentation chain down below in finish() callback.
-      if (!firstModalToBeDismissed.isBeingDismissed) {
-        // If the modal is owned we let it control whether the dismissal is animated or not. For foreign controllers
-        // we just assume animation.
-        const BOOL firstModalToBeDismissedPrefersAnimation = firstModalToBeDismissedIsOwned
-            ? static_cast<RNSScreen *>(firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone
-            : YES;
-        [changeRootController dismissViewControllerAnimated:firstModalToBeDismissedPrefersAnimation completion:finish];
-      } else {
-        // We need to wait for its dismissal and then run our presentation code.
-        // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
-        // immediately present another owned one. Dismissal of the foreign one will be triggered by foreign controller.
-        [[firstModalToBeDismissed transitionCoordinator]
-            animateAlongsideTransition:nil
-                            completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
-                              finish();
-                            }];
+      if (firstModalToBeDismissedIsOwnedByThisStack || !firstModalToBeDismissedIsOwned) {
+        // We dismiss every VC that was presented by changeRootController VC or its descendant.
+        // After the series of dismissals is completed we run completion block in which
+        // we present modals on top of changeRootController (which may be the this stack VC)
+        //
+        // There also might the second case, where the firstModalToBeDismissed is foreign.
+        // See: https://github.com/software-mansion/react-native-screens/issues/2048
+        // For now, to mitigate the issue, we also decide to trigger its dismissal before
+        // starting the presentation chain down below in finish() callback.
+        if (!firstModalToBeDismissed.isBeingDismissed) {
+          // If the modal is owned we let it control whether the dismissal is animated or not. For foreign controllers
+          // we just assume animation.
+          const BOOL firstModalToBeDismissedPrefersAnimation = firstModalToBeDismissedIsOwned
+              ? static_cast<RNSScreen *>(firstModalToBeDismissed).screenView.stackAnimation !=
+                  RNSScreenStackAnimationNone
+              : YES;
+          [changeRootController dismissViewControllerAnimated:firstModalToBeDismissedPrefersAnimation
+                                                   completion:finish];
+        } else {
+          // We need to wait for its dismissal and then run our presentation code.
+          // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
+          // immediately present another owned one. Dismissal of the foreign one will be triggered by foreign
+          // controller.
+          [[firstModalToBeDismissed transitionCoordinator]
+              animateAlongsideTransition:nil
+                              completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
+                                finish();
+                              }];
+        }
+        return;
       }
-      return;
     }
-  }
 
-  // changeRootController does not have presentedViewController but it does not mean that no modals are in presentation;
-  // modals could be presented by another stack (nested / outer), third-party view controller or they could be using
-  // UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in the last case
-  // for some reason system asks top-level (react root) vc to present instead of our stack, despite the fact that
-  // `definesPresentationContext` returns `YES` for UINavigationController.
-  // So we first need to find top-level controller manually:
-  UIViewController *reactRootVc = [self findReactRootViewController];
-  UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
+    // changeRootController does not have presentedViewController but it does not mean that no modals are in
+    // presentation; modals could be presented by another stack (nested / outer), third-party view controller or they
+    // could be using UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in
+    // the last case for some reason system asks top-level (react root) vc to present instead of our stack, despite the
+    // fact that `definesPresentationContext` returns `YES` for UINavigationController. So we first need to find
+    // top-level controller manually:
+    UIViewController *reactRootVc = [self findReactRootViewController];
+    UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
 
-  if (topMostVc != reactRootVc) {
-    changeRootController = topMostVc;
+    if (topMostVc != reactRootVc) {
+      changeRootController = topMostVc;
 
-    // Here we handle just the simplest case where the top level VC was dismissed. In any more complex
-    // scenario we will still have problems, see: https://github.com/software-mansion/react-native-screens/issues/1813
-    if ([_presentedModals containsObject:topMostVc] && ![controllers containsObject:topMostVc]) {
-      [changeRootController dismissViewControllerAnimated:YES completion:finish];
-      return;
+      // Here we handle just the simplest case where the top level VC was dismissed. In any more complex
+      // scenario we will still have problems, see: https://github.com/software-mansion/react-native-screens/issues/1813
+      if ([_presentedModals containsObject:topMostVc] && ![controllers containsObject:topMostVc]) {
+        [changeRootController dismissViewControllerAnimated:YES completion:finish];
+        return;
+      }
     }
   }
 
@@ -764,7 +876,7 @@ RNS_IGNORE_SUPER_CALL_END
       // when preventing the native dismiss with back button, we have to return the animator.
       // Also, we need to return the animator when full width swiping even if the animation is not custom,
       // otherwise the screen will be just popped immediately due to no animation
-      ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
+      ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwipingWithPanGesture ||
        [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation] || _customAnimation)) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
@@ -788,23 +900,40 @@ RNS_IGNORE_SUPER_CALL_END
   }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
+  BOOL customAnimationOnSwipePropSetAndSelectedAnimationIsCustom =
+      topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
+
 #if TARGET_OS_TV || TARGET_OS_VISION
   [self cancelTouchesInParent];
   return YES;
 #else
-  // RNSPanGestureRecognizer will receive events iff topScreen.fullScreenSwipeEnabled == YES;
-  // Events are filtered in gestureRecognizer:shouldReceivePressOrTouchEvent: method
+
   if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
-      _isFullWidthSwiping = YES;
-      [self cancelTouchesInParent];
-      return YES;
+    // On iOS < 26, we have a custom full screen swipe recognizer that functions similarily
+    // to interactiveContentPopGestureRecognizer introduced in iOS 26.
+    // On iOS >= 26, we want to use the native one, but we are unable to handle custom animations
+    // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation.
+    // In this case, the old one should behave as close as the new native one, having only the difference
+    // in animation, and without any customization that is exclusive for it (e.g. gestureResponseDistance).
+    if (@available(iOS 26, *)) {
+      if (customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
+        _isFullWidthSwipingWithPanGesture = YES;
+        [self cancelTouchesInParent];
+        return YES;
+      }
+      return NO;
+    } else {
+      if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
+        _isFullWidthSwipingWithPanGesture = YES;
+        [self cancelTouchesInParent];
+        return YES;
+      }
+      return NO;
     }
-    return NO;
   }
 
   // Now we're dealing with RNSScreenEdgeGestureRecognizer (or _UIParallaxTransitionPanGestureRecognizer)
-  if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
+  if (customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       UIRectEdge edges = ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges;
       BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
@@ -849,7 +978,9 @@ RNS_IGNORE_SUPER_CALL_END
   rightEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:rightEdgeSwipeGestureRecognizer];
 
-  // gesture recognizer for full width swipe gesture
+  // Starting from iOS 26, RNSPanGestureRecognizer has been mostly replaced by native
+  // interactiveContentPopGestureRecognizer. It still needs to handle custom dismiss animations,
+  // which we are not able to handle with the latter.
   RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleSwipe:)];
   panRecognizer.delegate = self;
@@ -912,7 +1043,7 @@ RNS_IGNORE_SUPER_CALL_END
         [_interactionController cancelInteractiveTransition];
       }
       _interactionController = nil;
-      _isFullWidthSwiping = NO;
+      _isFullWidthSwipingWithPanGesture = NO;
     }
     default: {
       break;
@@ -1048,15 +1179,48 @@ RNS_IGNORE_SUPER_CALL_END
 {
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
+  for (RNSScreenView *s in _reactSubviews.reverseObjectEnumerator) {
+    // Skip preloaded screens (state=RNSActivityStateInactive) that are on top and not yet navigated to
+    // The "real" top screen is the one with state=RNSActivityStateOnTop
+    if (s.activityState == RNSActivityStateOnTop) {
+      topScreen = s;
+      break;
+    }
+  }
+
   if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
       _controller.viewControllers.count < 2 || [topScreen isModal]) {
     return NO;
   }
 
+  BOOL customAnimationOnSwipePropSetAndSelectedAnimationIsCustom =
+      topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26, *)) {
+    // On iOS 26, depending on whether custom animations are on, we select
+    // either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer,
+    // then we allow them to proceed iff full screen swipe is enabled.
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? topScreen.isFullScreenSwipeEffectivelyEnabled
+                                                                       : NO;
+    }
+    if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer) {
+      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? NO
+                                                                       : topScreen.isFullScreenSwipeEffectivelyEnabled;
+    }
+  } else {
+    // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+      return topScreen.isFullScreenSwipeEffectivelyEnabled;
+    }
+  }
+#else // check for iOS >= 26
   // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
   if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    return topScreen.fullScreenSwipeEnabled;
+    return topScreen.isFullScreenSwipeEffectivelyEnabled;
   }
+#endif // check for iOS >= 26
 
   // RNSScreenEdgeGestureRecognizer || _UIParallaxTransitionPanGestureRecognizer
   return YES;
@@ -1087,15 +1251,41 @@ RNS_IGNORE_SUPER_CALL_END
 
     return YES;
   }
+
   return NO;
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  if (@available(iOS 26, *)) {
+    if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
+        [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
+      return YES;
+    }
+  }
+
+  return NO;
+}
+#endif // check for iOS >= 26
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  return (
-      [gestureRecognizer isKindOfClass:[UIScreenEdgePanGestureRecognizer class]] &&
-      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]);
+  BOOL isEdgeSwipeGestureRecognizer = [gestureRecognizer isKindOfClass:[UIScreenEdgePanGestureRecognizer class]];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26, *)) {
+    // `interactiveContentPopGestureRecognizer appears to have the same base class (`UIScrenEdgePanGestureRecognizer`)
+    // as `RNSScreenEdgeGestureRecognizer` but we don't want ScrollView being recognized on condition that the former
+    // fails, but rather the opposite & that the ScrollView recognizer has a higher priority See also
+    // gestureRecognizer:shouldRequireFailureOfGestureRecognizer
+    isEdgeSwipeGestureRecognizer =
+        isEdgeSwipeGestureRecognizer && gestureRecognizer != _controller.interactiveContentPopGestureRecognizer;
+  }
+#endif // check for iOS >= 26
+
+  return isEdgeSwipeGestureRecognizer && [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
 #endif // !TARGET_OS_TV
@@ -1155,6 +1345,15 @@ RNS_IGNORE_SUPER_CALL_END
     [_interactionController finishInteractiveTransition];
   }
   _interactionController = nil;
+}
+
+- (nonnull NSArray<NSString *> *)screenIds
+{
+  NSMutableArray<NSString *> *ids = [NSMutableArray arrayWithCapacity:_reactSubviews.count];
+  for (RNSScreenView *childScreenView in _reactSubviews) {
+    [ids addObject:childScreenView.screenId];
+  }
+  return ids;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED

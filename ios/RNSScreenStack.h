@@ -5,11 +5,23 @@
 #import <React/RCTViewManager.h>
 #endif
 
+#import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
+
+#if !TARGET_OS_TV
+#import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate>
+@interface RNSNavigationController : UINavigationController <
+                                         RNSViewControllerDelegate,
+                                         RNSBottomTabsSpecialEffectsSupporting
+#if !TARGET_OS_TV
+                                         ,
+                                         RNSOrientationProviding
+#endif // !TARGET_OS_TV
+                                         >
 
 @end
 
@@ -33,6 +45,18 @@ NS_ASSUME_NONNULL_BEGIN
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
 #endif // RCT_NEW_ARCH_ENABLED
+
+@end
+
+#pragma mark-- Integration
+
+@interface RNSScreenStackView ()
+
+/**
+ * \return Arrray with ids of screens owned by this stack. Ids are returned in no particular order. The list might be
+ * empty. The strings inside the list are nullable if the screen has not been assigned an ID.
+ */
+@property (nonatomic, readonly, nonnull) NSArray<NSString *> *screenIds;
 
 @end
 

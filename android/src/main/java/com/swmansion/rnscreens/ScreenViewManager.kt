@@ -1,10 +1,10 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
@@ -96,6 +96,10 @@ open class ScreenViewManager :
     override fun onAfterUpdateTransaction(view: Screen) {
         super.onAfterUpdateTransaction(view)
         view.onFinalizePropsUpdate()
+    }
+
+    private fun logNotAvailable(propName: String) {
+        Log.w("[RNScreens]", "$propName prop is not available on Android")
     }
 
     @ReactProp(name = "activityState")
@@ -192,16 +196,12 @@ open class ScreenViewManager :
         view.isStatusBarAnimated = animated
     }
 
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect. " +
-            "Since the edge-to-edge is enabled by default the color is always translucent.",
-    )
     @ReactProp(name = "statusBarColor", customType = "Color")
     override fun setStatusBarColor(
         view: Screen,
         statusBarColor: Int?,
     ) {
-        view.statusBarColor = statusBarColor
+        logNotAvailable("statusBarColor")
     }
 
     @ReactProp(name = "statusBarStyle")
@@ -212,13 +212,12 @@ open class ScreenViewManager :
         view.statusBarStyle = statusBarStyle
     }
 
-    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default and will be enforced in the future.")
     @ReactProp(name = "statusBarTranslucent")
     override fun setStatusBarTranslucent(
         view: Screen,
         statusBarTranslucent: Boolean,
     ) {
-        view.isStatusBarTranslucent = statusBarTranslucent
+        logNotAvailable("statusBarTranslucent")
     }
 
     @ReactProp(name = "statusBarHidden")
@@ -229,22 +228,20 @@ open class ScreenViewManager :
         view.isStatusBarHidden = statusBarHidden
     }
 
-    @Deprecated("For apps targeting SDK 35 or above this prop has no effect")
     @ReactProp(name = "navigationBarColor", customType = "Color")
     override fun setNavigationBarColor(
         view: Screen,
         navigationBarColor: Int?,
     ) {
-        view.navigationBarColor = navigationBarColor
+        logNotAvailable("navigationBarColor")
     }
 
-    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default")
     @ReactProp(name = "navigationBarTranslucent")
     override fun setNavigationBarTranslucent(
         view: Screen,
         navigationBarTranslucent: Boolean,
     ) {
-        view.isNavigationBarTranslucent = navigationBarTranslucent
+        logNotAvailable("navigationBarTranslucent")
     }
 
     @ReactProp(name = "navigationBarHidden")
@@ -274,7 +271,7 @@ open class ScreenViewManager :
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(
         view: Screen?,
-        value: Boolean,
+        value: String?,
     ) = Unit
 
     override fun setFullScreenSwipeShadowEnabled(
@@ -313,6 +310,26 @@ open class ScreenViewManager :
     ) = Unit
 
     override fun setSwipeDirection(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
+    override fun setBottomScrollEdgeEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
+    override fun setLeftScrollEdgeEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
+    override fun setRightScrollEdgeEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
+    override fun setTopScrollEdgeEffect(
         view: Screen?,
         value: String?,
     ) = Unit
@@ -377,17 +394,24 @@ open class ScreenViewManager :
         view.sheetInitialDetentIndex = value
     }
 
+    override fun setScreenId(
+        view: Screen,
+        value: String?,
+    ) {
+        view.screenId = if (value.isNullOrEmpty()) null else value
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
-            ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
-            ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),
-            ScreenAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onAppear"),
-            ScreenWillDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillDisappear"),
-            ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
-            HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
-            HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
-            ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress"),
-            SheetDetentChangedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onSheetDetentChanged"),
+            ScreenDismissedEvent.EVENT_NAME to hashMapOf("registrationName" to "onDismissed"),
+            ScreenWillAppearEvent.EVENT_NAME to hashMapOf("registrationName" to "onWillAppear"),
+            ScreenAppearEvent.EVENT_NAME to hashMapOf("registrationName" to "onAppear"),
+            ScreenWillDisappearEvent.EVENT_NAME to hashMapOf("registrationName" to "onWillDisappear"),
+            ScreenDisappearEvent.EVENT_NAME to hashMapOf("registrationName" to "onDisappear"),
+            HeaderHeightChangeEvent.EVENT_NAME to hashMapOf("registrationName" to "onHeaderHeightChange"),
+            HeaderBackButtonClickedEvent.EVENT_NAME to hashMapOf("registrationName" to "onHeaderBackButtonClicked"),
+            ScreenTransitionProgressEvent.EVENT_NAME to hashMapOf("registrationName" to "onTransitionProgress"),
+            SheetDetentChangedEvent.EVENT_NAME to hashMapOf("registrationName" to "onSheetDetentChanged"),
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate

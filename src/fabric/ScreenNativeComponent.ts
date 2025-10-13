@@ -1,5 +1,6 @@
 'use client';
 
+// eslint-disable-next-line @react-native/no-deep-imports
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { ViewProps, ColorValue } from 'react-native';
 import type {
@@ -66,6 +67,10 @@ type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
 
+type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+
+type OptionalBoolean = 'undefined' | 'false' | 'true';
+
 export interface NativeProps extends ViewProps {
   onAppear?: DirectEventHandler<ScreenEvent>;
   onDisappear?: DirectEventHandler<ScreenEvent>;
@@ -78,6 +83,7 @@ export interface NativeProps extends ViewProps {
   onGestureCancel?: DirectEventHandler<ScreenEvent>;
   onHeaderBackButtonClicked?: DirectEventHandler<ScreenEvent>;
   onSheetDetentChanged?: DirectEventHandler<SheetDetentChangedEvent>;
+  screenId?: WithDefault<string, ''>;
   sheetAllowedDetents?: number[];
   sheetLargestUndimmedDetent?: WithDefault<Int32, -1>;
   sheetGrabberVisible?: WithDefault<boolean, false>;
@@ -86,7 +92,7 @@ export interface NativeProps extends ViewProps {
   sheetInitialDetent?: WithDefault<Int32, 0>;
   sheetElevation?: WithDefault<Int32, 24>;
   customAnimationOnSwipe?: boolean;
-  fullScreenSwipeEnabled?: boolean;
+  fullScreenSwipeEnabled?: WithDefault<OptionalBoolean, 'undefined'>;
   fullScreenSwipeShadowEnabled?: WithDefault<boolean, true>;
   homeIndicatorHidden?: boolean;
   preventNativeDismiss?: boolean;
@@ -109,6 +115,10 @@ export interface NativeProps extends ViewProps {
   navigationBarTranslucent?: boolean;
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
+  bottomScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {

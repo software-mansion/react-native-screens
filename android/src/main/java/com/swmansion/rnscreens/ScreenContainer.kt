@@ -18,6 +18,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.ActivityState
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.gamma.common.FragmentProviding
 
 open class ScreenContainer(
     context: Context?,
@@ -175,7 +176,7 @@ open class ScreenContainer(
     private fun setupFragmentManager() {
         var parent: ViewParent = this
         // We traverse view hierarchy up until we find screen parent or a root view
-        while (!(parent is ReactRootView || parent is Screen) &&
+        while (!(parent is ReactRootView || parent is FragmentProviding) &&
             parent.parent != null
         ) {
             parent = parent.parent
@@ -190,6 +191,13 @@ open class ScreenContainer(
                     setFragmentManager(fragmentWrapper.fragment.childFragmentManager)
                 },
             ) { "Parent Screen does not have its Fragment attached" }
+        } else if (parent is FragmentProviding) {
+            // TODO: We're missing parent-child relationship here between old container & new one
+            val fragmentManager =
+                checkNotNull(
+                    parent.getAssociatedFragment(),
+                ) { "[RNScreens] Parent $parent returned nullish fragment" }.childFragmentManager
+            setFragmentManager(fragmentManager)
         } else {
             // we expect top level view to be of type ReactRootView, this isn't really necessary but in
             // order to find root view we test if parent is null. This could potentially happen also when

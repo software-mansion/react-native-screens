@@ -33,12 +33,15 @@ import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
+import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
     val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
-    ScreenContentWrapper.OnLayoutCallback {
+    ScreenContentWrapper.OnLayoutCallback,
+    FragmentProviding {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
@@ -59,6 +62,7 @@ class Screen(
     var isGestureEnabled = true
     var screenOrientation: Int? = null
         private set
+    var screenId: String? = null
     var isStatusBarAnimated: Boolean? = null
     var isBeingRemoved = false
 
@@ -118,6 +122,8 @@ class Screen(
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
     }
+
+    override fun getAssociatedFragment(): Fragment? = fragment
 
     /**
      * ScreenContentWrapper notifies us here on it's layout. It is essential for implementing
@@ -364,78 +370,6 @@ class Screen(
             fragmentWrapper?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect because " +
-            "edge-to-edge is enabled by default and the status bar is always translucent.",
-    )
-    var isStatusBarTranslucent: Boolean? = null
-        set(statusBarTranslucent) {
-            if (statusBarTranslucent != null) {
-                ScreenWindowTraits.applyDidSetStatusBarAppearance()
-            }
-            field = statusBarTranslucent
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setTranslucent(
-                    this,
-                    it.tryGetActivity(),
-                    it.tryGetContext(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect because " +
-            "edge-to-edge is enabled by default and the status bar is always translucent.",
-    )
-    var statusBarColor: Int? = null
-        set(statusBarColor) {
-            if (statusBarColor != null) {
-                ScreenWindowTraits.applyDidSetStatusBarAppearance()
-            }
-            field = statusBarColor
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setColor(
-                    this,
-                    it.tryGetActivity(),
-                    it.tryGetContext(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
-    )
-    var navigationBarColor: Int? = null
-        set(navigationBarColor) {
-            if (navigationBarColor != null) {
-                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
-            }
-            field = navigationBarColor
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setNavigationBarColor(
-                    this,
-                    it.tryGetActivity(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
-    )
-    var isNavigationBarTranslucent: Boolean? = null
-        set(navigationBarTranslucent) {
-            if (navigationBarTranslucent != null) {
-                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
-            }
-            field = navigationBarTranslucent
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setNavigationBarTranslucent(
-                    this,
-                    it.tryGetActivity(),
-                )
-            }
-        }
-
     var isNavigationBarHidden: Boolean? = null
         set(navigationBarHidden) {
             if (navigationBarHidden != null) {
@@ -585,7 +519,7 @@ class Screen(
             return
         }
         (background as? MaterialShapeDrawable?)?.let {
-            val resolvedCornerRadius = PixelUtil.toDIPFromPixel(sheetCornerRadius)
+            val resolvedCornerRadius = max(PixelUtil.toDIPFromPixel(sheetCornerRadius), 0f)
             it.shapeAppearanceModel =
                 ShapeAppearanceModel
                     .Builder()
@@ -628,13 +562,9 @@ class Screen(
 
     enum class WindowTraits {
         ORIENTATION,
-        COLOR,
         STYLE,
-        TRANSLUCENT,
         HIDDEN,
         ANIMATED,
-        NAVIGATION_BAR_COLOR,
-        NAVIGATION_BAR_TRANSLUCENT,
         NAVIGATION_BAR_HIDDEN,
     }
 

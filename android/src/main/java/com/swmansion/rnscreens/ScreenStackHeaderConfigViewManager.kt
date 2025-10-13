@@ -4,7 +4,6 @@ import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -157,13 +156,12 @@ class ScreenStackHeaderConfigViewManager :
         config.setHideBackButton(hideBackButton)
     }
 
-    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default.")
     @ReactProp(name = "topInsetEnabled")
     override fun setTopInsetEnabled(
         config: ScreenStackHeaderConfig,
         topInsetEnabled: Boolean,
     ) {
-        config.setTopInsetEnabled(topInsetEnabled)
+        logNotAvailable("topInsetEnabled")
     }
 
     @ReactProp(name = "color", customType = "Color")
@@ -206,12 +204,10 @@ class ScreenStackHeaderConfigViewManager :
         config.setDirection(direction)
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? =
-        MapBuilder.of(
-            HeaderAttachedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onAttached"),
-            HeaderDetachedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDetached"),
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
+        hashMapOf(
+            HeaderAttachedEvent.EVENT_NAME to hashMapOf("registrationName" to "onAttached"),
+            HeaderDetachedEvent.EVENT_NAME to hashMapOf("registrationName" to "onDetached"),
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> = delegate

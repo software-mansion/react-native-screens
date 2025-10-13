@@ -19,9 +19,22 @@ export type ChangeTextEvent = Readonly<{
   text?: string;
 }>;
 
-type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+type SearchBarPlacement =
+  | 'automatic'
+  | 'inline' // deprecated starting from iOS 26
+  | 'stacked'
+  | 'integrated'
+  | 'integratedButton'
+  | 'integratedCentered';
 
-type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
+type AutoCapitalizeType =
+  | 'systemDefault'
+  | 'none'
+  | 'words'
+  | 'sentences'
+  | 'characters';
+
+type OptionalBoolean = 'undefined' | 'false' | 'true';
 
 export interface NativeProps extends ViewProps {
   onSearchFocus?: DirectEventHandler<SearchBarEvent> | null;
@@ -29,12 +42,13 @@ export interface NativeProps extends ViewProps {
   onSearchButtonPress?: DirectEventHandler<SearchButtonPressedEvent> | null;
   onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
   onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
-  hideWhenScrolling?: boolean;
-  autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
+  hideWhenScrolling?: WithDefault<boolean, true>;
+  autoCapitalize?: WithDefault<AutoCapitalizeType, 'systemDefault'>;
   placeholder?: string;
-  placement?: WithDefault<SearchBarPlacement, 'stacked'>;
-  obscureBackground?: boolean;
-  hideNavigationBar?: boolean;
+  placement?: WithDefault<SearchBarPlacement, 'automatic'>;
+  allowToolbarIntegration?: WithDefault<boolean, true>;
+  obscureBackground?: WithDefault<OptionalBoolean, 'undefined'>;
+  hideNavigationBar?: WithDefault<OptionalBoolean, 'undefined'>;
   cancelButtonText?: string;
   // TODO: implement these on iOS
   barTintColor?: ColorValue;
@@ -42,6 +56,7 @@ export interface NativeProps extends ViewProps {
   textColor?: ColorValue;
 
   // Android only
+  autoFocus?: WithDefault<boolean, false>;
   disableBackButtonOverride?: boolean;
   // TODO: consider creating enum here
   inputType?: string;

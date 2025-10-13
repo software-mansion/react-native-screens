@@ -17,6 +17,7 @@ import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
+@SuppressWarnings("deprecation")
 public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSSearchBarManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSSearchBarManagerDelegate(U viewManager) {
     super(viewManager);
@@ -25,7 +26,7 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
       case "hideWhenScrolling":
-        mViewManager.setHideWhenScrolling(view, value == null ? false : (boolean) value);
+        mViewManager.setHideWhenScrolling(view, value == null ? true : (boolean) value);
         break;
       case "autoCapitalize":
         mViewManager.setAutoCapitalize(view, (String) value);
@@ -36,11 +37,14 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
       case "placement":
         mViewManager.setPlacement(view, (String) value);
         break;
+      case "allowToolbarIntegration":
+        mViewManager.setAllowToolbarIntegration(view, value == null ? true : (boolean) value);
+        break;
       case "obscureBackground":
-        mViewManager.setObscureBackground(view, value == null ? false : (boolean) value);
+        mViewManager.setObscureBackground(view, (String) value);
         break;
       case "hideNavigationBar":
-        mViewManager.setHideNavigationBar(view, value == null ? false : (boolean) value);
+        mViewManager.setHideNavigationBar(view, (String) value);
         break;
       case "cancelButtonText":
         mViewManager.setCancelButtonText(view, value == null ? null : (String) value);
@@ -53,6 +57,9 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
         break;
       case "textColor":
         mViewManager.setTextColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
+      case "autoFocus":
+        mViewManager.setAutoFocus(view, value == null ? false : (boolean) value);
         break;
       case "disableBackButtonOverride":
         mViewManager.setDisableBackButtonOverride(view, value == null ? false : (boolean) value);
@@ -75,7 +82,7 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
   }
 
   @Override
-  public void receiveCommand(T view, String commandName, @Nullable ReadableArray args) {
+  public void receiveCommand(T view, String commandName, ReadableArray args) {
     switch (commandName) {
       case "blur":
         mViewManager.blur(view);
