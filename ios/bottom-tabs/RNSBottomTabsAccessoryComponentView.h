@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, readonly, nullable) RNSBottomAccessoryHelper *helper;
 
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 /**
  * If not null, the bottom tabs host view that this accessory component view belongs to.
  */
@@ -46,6 +48,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 #pragma mark - React Events
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 @interface RNSBottomTabsAccessoryComponentView ()
 
@@ -61,8 +65,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #endif // !RCT_NEW_ARCH_ENABLED
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-
 @end
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 NS_ASSUME_NONNULL_END

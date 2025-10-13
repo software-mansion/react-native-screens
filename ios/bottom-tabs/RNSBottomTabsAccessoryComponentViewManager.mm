@@ -13,7 +13,6 @@ RCT_EXPORT_MODULE(RNSBottomTabsAccessoryManager)
 
 #if !RCT_NEW_ARCH_ENABLED
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 - (UIView *)view
 {
   // For Paper, we need to initialize TabsAccessory with bridge
@@ -23,15 +22,6 @@ RCT_EXPORT_MODULE(RNSBottomTabsAccessoryManager)
 #pragma mark - LEGACY Events
 
 RCT_EXPORT_VIEW_PROPERTY(onEnvironmentChange, RCTDirectEventBlock);
-
-#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-
-- (UIView *)view
-{
-  return [RNSBottomTabsAccessoryComponentView new];
-}
-
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 #endif // !RCT_NEW_ARCH_ENABLED
 
