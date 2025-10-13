@@ -1,5 +1,7 @@
 #import "RNSBottomTabsAccessoryEventEmitter.h"
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 #import <React/RCTLog.h>
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -78,3 +80,5 @@ namespace react = facebook::react;
 }
 
 @end
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION

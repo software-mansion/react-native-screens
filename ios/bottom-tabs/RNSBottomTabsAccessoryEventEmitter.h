@@ -1,3 +1,7 @@
+#import <RNSDefines.h>
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -6,7 +10,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 
 namespace react = facebook::react;
-#endif // __cplusplus
+#endif // defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
 
 #if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTComponent.h>
@@ -39,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#endif // __cplusplus
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION

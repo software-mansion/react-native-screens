@@ -1,3 +1,7 @@
+#import <RNSDefines.h>
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 #import <UIKit/UIKit.h>
 #import "RNSBottomTabsAccessoryComponentView.h"
 
@@ -45,3 +49,5 @@ API_AVAILABLE(ios(26.0))
 #endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION

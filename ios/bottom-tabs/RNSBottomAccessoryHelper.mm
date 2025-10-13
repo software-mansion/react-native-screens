@@ -1,4 +1,7 @@
 #import "RNSBottomAccessoryHelper.h"
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 #import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
 #include <cxxreact/ReactNativeVersion.h>
@@ -187,3 +190,5 @@ namespace react = facebook::react;
 }
 
 @end
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION

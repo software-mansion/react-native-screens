@@ -70,14 +70,16 @@ function BottomTabs(props: BottomTabsProps) {
       ref={componentNodeRef}
       {...filteredProps}>
       {filteredProps.children}
-      {bottomAccessory && Platform.OS === 'ios' && (
-        <BottomTabsAccessory
-          onEnvironmentChange={event => {
-            setBottomAccessoryEnvironment(event.nativeEvent.environment);
-          }}>
-          {bottomAccessory(bottomAccessoryEnvironment)}
-        </BottomTabsAccessory>
-      )}
+      {bottomAccessory &&
+        Platform.OS === 'ios' &&
+        parseInt(Platform.Version, 10) >= 26 && (
+          <BottomTabsAccessory
+            onEnvironmentChange={event => {
+              setBottomAccessoryEnvironment(event.nativeEvent.environment);
+            }}>
+            {bottomAccessory(bottomAccessoryEnvironment)}
+          </BottomTabsAccessory>
+        )}
     </BottomTabsNativeComponent>
   );
 }

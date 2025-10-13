@@ -11,7 +11,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 @class RNSBottomAccessoryHelper;
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 @interface RNSBottomTabsAccessoryComponentView : RNSReactBaseView <
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -20,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
                                                      RCTInvalidating
 #endif
                                                      >
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame bridge:(RCTBridge *)bridge;
@@ -52,9 +58,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - LEGACY Event blocks
 
 @property (nonatomic, copy) RCTDirectEventBlock onEnvironmentChange;
-;
 
 #endif // !RCT_NEW_ARCH_ENABLED
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 @end
 
