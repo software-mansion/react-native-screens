@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useStackV4SAVExampleContext } from './StackV4SAVExampleContext';
 import { StackNavigationProp } from '.';
-import { SafeAreaView } from 'react-native-screens/private';
+import { SafeAreaView } from 'react-native-screens/experimental';
 import { mapContentStringToComponent } from '../shared';
 
 export default function TestScreen({ navigation }: StackNavigationProp) {
@@ -15,8 +15,8 @@ export default function TestScreen({ navigation }: StackNavigationProp) {
       headerSearchBarOptions:
         config.headerSearchBar !== 'disabled'
           ? {
-              placement: config.headerSearchBar,
-            }
+            placement: config.headerSearchBar,
+          }
           : undefined,
     });
   }, [config, navigation]);

@@ -68,10 +68,11 @@ namespace react = facebook::react;
   _scrollEdgeEffectsNeedUpdate = NO;
 #endif
 
-  // This is a temporary workaround to avoid UIScrollEdgeEffect glitch
-  // when changing tabs when ScrollView is present.
-  // TODO: don't hardcode color here
-  self.backgroundColor = [UIColor whiteColor];
+  // Prevents incorrect tab bar appearance after tab change on iOS 26.0
+  // TODO: verify if it's still necessary on iOS 26.1
+#if !TARGET_OS_TV
+  self.backgroundColor = [UIColor systemBackgroundColor];
+#endif // !TARGET_OS_TV
 
   [self resetProps];
 }

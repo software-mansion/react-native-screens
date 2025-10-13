@@ -118,6 +118,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab3',
       badgeValue: '2137',
+      scrollEdgeEffects: { bottom: 'hard' },
       tabBarItemBadgeBackgroundColor: Colors.RedDark40,
       tabBarItemBadgeTextColor: Colors.RedDark120,
       standardAppearance: {

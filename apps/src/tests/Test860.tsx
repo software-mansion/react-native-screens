@@ -26,9 +26,9 @@ export default function NativeNavigation() {
             statusBarBackgroundColor: 'rgba(0,0,255,0.25)',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
-            statusBarTranslucent: true,
+            // statusBarTranslucent: true, // This prop has been deprecated.
             statusBarHidden: false,
-            navigationBarColor: 'green',
+            // navigationBarColor: 'green', // This prop has been deprecated.
             navigationBarHidden: false,
           }}
         />
@@ -40,8 +40,8 @@ export default function NativeNavigation() {
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
             statusBarHidden: true,
-            statusBarTranslucent: true,
-            navigationBarColor: 'blue',
+            // statusBarTranslucent: true, // This prop has been deprecated.
+            // navigationBarColor: 'blue', // This prop has been deprecated.
             navigationBarHidden: true,
           }}
         />
@@ -84,7 +84,7 @@ const Inner = () => (
       statusBarBackgroundColor: 'pink',
       statusBarAnimation: 'none',
       statusBarStyle: 'auto',
-      navigationBarColor: 'pink',
+      // navigationBarColor: 'pink', // This prop has been deprecated.
       // headerShown: false,
     }}>
     <InnerStack.Screen name="DeeperHome" component={Home} />
@@ -96,14 +96,17 @@ function Home({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
-  const [statusBarColor, setStatusBarColor] = React.useState('mediumseagreen');
+  // This prop has been deprecated.
+  // const [statusBarColor, setStatusBarColor] = React.useState('mediumseagreen');
   const [statusBarStyle, setStatusBarStyle] =
     React.useState<NativeStackNavigationOptions['statusBarStyle']>('dark');
   const [statusBarHidden, setStatusBarHidden] = React.useState(false);
-  const [statusBarTranslucent, setStatusBarTranslucent] = React.useState(true);
+  // This prop has been deprecated.
+  // const [statusBarTranslucent, setStatusBarTranslucent] = React.useState(true);
   const [statusBarAnimation, setStatusBarAnimation] =
     React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
-  const [navigationBarColor, setNavigationBarColor] = React.useState('green');
+  // This prop has been deprecated.
+  // const [navigationBarColor, setNavigationBarColor] = React.useState('green');
   const [navigationBarHidden, setNavigationBarHidden] = React.useState(false);
 
   return (
@@ -128,6 +131,7 @@ function Home({
           navigation.pop();
         }}
       />
+      {/* This prop has been deprecated.
       <Button
         title="Change status bar color"
         onPress={() => {
@@ -140,7 +144,8 @@ function Home({
               : 'mediumseagreen',
           );
         }}
-      />
+      />*/}
+      {/* This prop has been deprecated.
       <Button
         title="Change status bar color in parent native-stack"
         onPress={() => {
@@ -151,7 +156,7 @@ function Home({
             statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen',
           );
         }}
-      />
+      />*/}
       <Button
         title="Change status bar style"
         onPress={() => {
@@ -170,6 +175,7 @@ function Home({
           setStatusBarHidden(!statusBarHidden);
         }}
       />
+      {/* This prop has been deprecated.
       <Button
         title="Change status bar translucent"
         onPress={() => {
@@ -178,7 +184,7 @@ function Home({
           });
           setStatusBarTranslucent(!statusBarTranslucent);
         }}
-      />
+      />*/}
       <Button
         title="Change status bar animation"
         onPress={() => {
@@ -190,6 +196,7 @@ function Home({
           );
         }}
       />
+      {/* This prop has been deprecated.
       <Button
         title="Change navigation bar color"
         onPress={() => {
@@ -200,7 +207,7 @@ function Home({
             navigationBarColor === 'green' ? 'powderblue' : 'green',
           );
         }}
-      />
+      />*/}
       <Button
         title="Change navigation bar hidden"
         onPress={() => {
@@ -213,7 +220,7 @@ function Home({
       <Text>
         Go to `TabNavigator` and then go to second tab there. Spot the
         difference between dismissing modal with a swipe and with a `Pop to top`
-        button.{' '}
+        button.
       </Text>
     </ScrollView>
   );

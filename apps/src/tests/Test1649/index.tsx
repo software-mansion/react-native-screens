@@ -1,14 +1,8 @@
 import * as React from 'react';
-import {
-  GestureHandlerRootView,
-} from 'react-native-gesture-handler';
-import {
-  NativeSyntheticEvent,
-} from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { NativeSyntheticEvent } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import {
-  createNativeStackNavigator,
-} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import * as jotai from 'jotai';
 
@@ -24,7 +18,6 @@ import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import ModalScreen from './screens/ModalScreen';
 import PushWithScrollView from './screens/PushWithScrollView';
 import Second from './screens/Second';
-
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +35,7 @@ export default function App(): JSX.Element {
               color: 'seagreen',
             },
             headerShown: true,
-            statusBarTranslucent: false,
+            // statusBarTranslucent: false, // This prop has been deprecated.
           }}>
           <Stack.Screen name="First" component={Home} />
           <Stack.Screen
@@ -122,10 +115,9 @@ function NestedStack(): React.JSX.Element {
         headerTitleStyle: {
           color: 'firebrick',
         },
-        statusBarTranslucent: false,
+        // statusBarTranslucent: false, // This prop has been deprecated.
       }}>
       <InnerStack.Screen name="NestedThird" component={Third} />
     </InnerStack.Navigator>
   );
 }
-

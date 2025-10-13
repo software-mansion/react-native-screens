@@ -16,7 +16,6 @@ import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderC
 import ScreenStackHeaderSubviewNativeComponent, {
   type NativeProps as ScreenStackHeaderSubviewNativeProps,
 } from '../fabric/ScreenStackHeaderSubviewNativeComponent';
-import { EDGE_TO_EDGE } from './helpers/edge-to-edge';
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
@@ -28,7 +27,6 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   <ScreenStackHeaderConfigNativeComponent
     {...props}
     ref={ref}
-    topInsetEnabled={EDGE_TO_EDGE ? true : props.topInsetEnabled}
     style={styles.headerConfig}
     pointerEvents="box-none"
   />

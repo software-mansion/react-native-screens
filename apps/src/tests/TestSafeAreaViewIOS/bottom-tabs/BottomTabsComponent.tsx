@@ -60,7 +60,7 @@ export default function BottomTabsComponent() {
         config: tabsConfig,
         setConfig: setTabsConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <BottomTabsContainer tabConfigs={TAB_CONFIGS} tabBarMinimizeBehavior={config.tabBarMinimizeBehavior} />
     </ConfigWrapperContext.Provider>
   );
 }

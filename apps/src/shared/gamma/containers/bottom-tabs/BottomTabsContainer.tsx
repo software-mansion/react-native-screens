@@ -17,7 +17,9 @@ export interface TabConfiguration {
   safeAreaConfiguration?: SafeAreaViewProps;
 }
 
-export type BottomTabsContainerProps = BottomTabsProps & { tabConfigs: TabConfiguration[]; }
+export type BottomTabsContainerProps = BottomTabsProps & {
+  tabConfigs: TabConfiguration[];
+};
 
 export function BottomTabsContainer(props: BottomTabsContainerProps) {
   console.info('BottomTabsContainer render');
@@ -80,8 +82,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }
-      {...restProps}
-      >
+      {...restProps}>
       {tabConfigs.map(tabConfig => {
         const tabKey = tabConfig.tabScreenProps.tabKey;
         const isFocused = tabConfig.tabScreenProps.tabKey === focusedTabKey;

@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
@@ -97,6 +98,10 @@ open class ScreenViewManager :
         view.onFinalizePropsUpdate()
     }
 
+    private fun logNotAvailable(propName: String) {
+        Log.w("[RNScreens]", "$propName prop is not available on Android")
+    }
+
     @ReactProp(name = "activityState")
     fun setActivityState(
         view: Screen,
@@ -191,16 +196,12 @@ open class ScreenViewManager :
         view.isStatusBarAnimated = animated
     }
 
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect. " +
-            "Since the edge-to-edge is enabled by default the color is always translucent.",
-    )
     @ReactProp(name = "statusBarColor", customType = "Color")
     override fun setStatusBarColor(
         view: Screen,
         statusBarColor: Int?,
     ) {
-        view.statusBarColor = statusBarColor
+        logNotAvailable("statusBarColor")
     }
 
     @ReactProp(name = "statusBarStyle")
@@ -211,13 +212,12 @@ open class ScreenViewManager :
         view.statusBarStyle = statusBarStyle
     }
 
-    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default and will be enforced in the future.")
     @ReactProp(name = "statusBarTranslucent")
     override fun setStatusBarTranslucent(
         view: Screen,
         statusBarTranslucent: Boolean,
     ) {
-        view.isStatusBarTranslucent = statusBarTranslucent
+        logNotAvailable("statusBarTranslucent")
     }
 
     @ReactProp(name = "statusBarHidden")
@@ -228,22 +228,20 @@ open class ScreenViewManager :
         view.isStatusBarHidden = statusBarHidden
     }
 
-    @Deprecated("For apps targeting SDK 35 or above this prop has no effect")
     @ReactProp(name = "navigationBarColor", customType = "Color")
     override fun setNavigationBarColor(
         view: Screen,
         navigationBarColor: Int?,
     ) {
-        view.navigationBarColor = navigationBarColor
+        logNotAvailable("navigationBarColor")
     }
 
-    @Deprecated("For apps targeting SDK 35 or above edge-to-edge is enabled by default")
     @ReactProp(name = "navigationBarTranslucent")
     override fun setNavigationBarTranslucent(
         view: Screen,
         navigationBarTranslucent: Boolean,
     ) {
-        view.isNavigationBarTranslucent = navigationBarTranslucent
+        logNotAvailable("navigationBarTranslucent")
     }
 
     @ReactProp(name = "navigationBarHidden")
@@ -273,7 +271,7 @@ open class ScreenViewManager :
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(
         view: Screen?,
-        value: Boolean,
+        value: String?,
     ) = Unit
 
     override fun setFullScreenSwipeShadowEnabled(
