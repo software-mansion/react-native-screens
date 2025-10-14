@@ -30,6 +30,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
+import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -304,7 +305,17 @@ class ScreenStackFragment :
                 ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        animatedValue?.let {
+                            var sheetY = (screen.top + it).toInt()
+
+                            // Height seems to be different when sheet is not `fitToContents`.
+                            if (!screen.isSheetFitToContents()) {
+                                sheetY = minOf(sheetY, screen.height)
+                            }
+
+                            screen.translationY = it
+                            screen.onSheetTranslation(sheetY)
+                        }
                     }
                 }
 
@@ -328,7 +339,10 @@ class ScreenStackFragment :
                 ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        animatedValue?.let {
+                            screen.translationY = it
+                            screen.onSheetTranslation(minOf((screen.top + it).toInt(), screen.height))
+                        }
                     }
                 }
             animatorSet.play(alphaAnimator).with(slideAnimator)

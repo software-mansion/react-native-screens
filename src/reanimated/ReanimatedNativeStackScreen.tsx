@@ -5,10 +5,17 @@ import {
   HeaderHeightChangeEventType,
   ScreenProps,
   TransitionProgressEventType,
+  SheetTranslationEventType,
 } from '../types';
 
 // @ts-ignore file to be used only if `react-native-reanimated` available in the project
-import Animated, { useEvent, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  useEvent,
+  useSharedValue,
+  withSpring,
+  WithSpringConfig,
+  withTiming,
+} from 'react-native-reanimated';
 import ReanimatedTransitionProgressContext from './ReanimatedTransitionProgressContext';
 import {
   useSafeAreaFrame,
@@ -17,6 +24,16 @@ import {
 import getDefaultHeaderHeight from '../native-stack/utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../native-stack/utils/getStatusBarHeight';
 import ReanimatedHeaderHeightContext from './ReanimatedHeaderHeightContext';
+import ReanimatedSheetTranslationContext from './ReanimatedSheetTranslationContext';
+
+const SPRING_CONFIG: WithSpringConfig = {
+  damping: 500,
+  stiffness: 1000,
+  mass: 3,
+  overshootClamping: true,
+  restDisplacementThreshold: 10,
+  restSpeedThreshold: 10,
+};
 
 const AnimatedScreen = Animated.createAnimatedComponent(
   InnerScreen as unknown as React.ComponentClass,
@@ -59,6 +76,8 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   const closing = useSharedValue(0);
   const goingForward = useSharedValue(0);
 
+  const translationY = useSharedValue(dimensions.height);
+
   return (
     <AnimatedScreen
       // @ts-ignore some problems with ref and onTransitionProgressReanimated being "fake" prop for parsing of `useEvent` return value
@@ -81,6 +100,27 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : 'topTransitionProgress',
         ],
       )}
+      onSheetTranslationReanimated={useEvent(
+        (event: SheetTranslationEventType) => {
+          'worklet';
+          if (event.transitioning) {
+            translationY.value =
+              Platform.OS === 'android'
+                ? withTiming(event.y, { duration: 300 })
+                : withSpring(event.y, SPRING_CONFIG);
+          } else {
+            translationY.value = event.y;
+          }
+        },
+        [
+          // @ts-ignore wrong type
+          Platform.OS === 'android'
+            ? 'onSheetTranslation'
+            : ENABLE_FABRIC
+            ? 'onSheetTranslation'
+            : 'topSheetTranslation',
+        ],
+      )}
       onHeaderHeightChangeReanimated={useEvent(
         (event: HeaderHeightChangeEventType) => {
           'worklet';
@@ -99,16 +139,18 @@ const ReanimatedNativeStackScreen = React.forwardRef<
         ],
       )}
       {...rest}>
-      <ReanimatedHeaderHeightContext.Provider value={headerHeight}>
-        <ReanimatedTransitionProgressContext.Provider
-          value={{
-            progress,
-            closing,
-            goingForward,
-          }}>
-          {children}
-        </ReanimatedTransitionProgressContext.Provider>
-      </ReanimatedHeaderHeightContext.Provider>
+      <ReanimatedSheetTranslationContext.Provider value={translationY}>
+        <ReanimatedHeaderHeightContext.Provider value={headerHeight}>
+          <ReanimatedTransitionProgressContext.Provider
+            value={{
+              progress,
+              closing,
+              goingForward,
+            }}>
+            {children}
+          </ReanimatedTransitionProgressContext.Provider>
+        </ReanimatedHeaderHeightContext.Provider>
+      </ReanimatedSheetTranslationContext.Provider>
     </AnimatedScreen>
   );
 });
