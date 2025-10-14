@@ -35,7 +35,7 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
-  BOOL _tabBarItemNeedsBaseChange;
+  BOOL _tabBarItemNeedsRecreation;
   BOOL _tabBarItemNeedsUpdate;
   BOOL _scrollEdgeEffectsNeedUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -65,7 +65,7 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED
   _tabItemNeedsAppearanceUpdate = NO;
   _tabScreenOrientationNeedsUpdate = NO;
-  _tabBarItemNeedsBaseChange = NO;
+  _tabBarItemNeedsRecreation = NO;
   _tabBarItemNeedsUpdate = NO;
   _scrollEdgeEffectsNeedUpdate = NO;
 #endif
@@ -174,7 +174,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Prop update utils
 
-- (void)changeBaseTabBarItem
+- (void)createTabBarItem
 {
   UITabBarItem *tabBarItem = nil;
   if (_systemItem != RNSBottomTabsScreenSystemItemNone) {
@@ -234,7 +234,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
-  bool tabBarItemNeedsBaseChange{false};
+  bool tabBarItemNeedsRecreation{false};
   bool tabBarItemNeedsUpdate{false};
   bool scrollEdgeEffectsNeedUpdate{false};
 
@@ -342,7 +342,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.systemItem != oldComponentProps.systemItem) {
     _systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
         newComponentProps.systemItem);
-    tabBarItemNeedsBaseChange = YES;
+    tabBarItemNeedsRecreation = YES;
   }
 
   if (newComponentProps.bottomScrollEdgeEffect != oldComponentProps.bottomScrollEdgeEffect) {
@@ -375,8 +375,8 @@ RNS_IGNORE_SUPER_CALL_END
     scrollEdgeEffectsNeedUpdate = YES;
   }
 
-  if (tabBarItemNeedsBaseChange) {
-    [self changeBaseTabBarItem];
+  if (tabBarItemNeedsRecreation) {
+    [self createTabBarItem];
     tabBarItemNeedsUpdate = YES;
   }
 
@@ -458,9 +458,9 @@ RNS_IGNORE_SUPER_CALL_END
   // didSetProps will always be called because tabKey prop is required.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
-  if (_tabBarItemNeedsBaseChange) {
-    [self changeBaseTabBarItem];
-    _tabBarItemNeedsBaseChange = NO;
+  if (_tabBarItemNeedsRecreation) {
+    [self createTabBarItem];
+    _tabBarItemNeedsRecreation = NO;
 
     _tabBarItemNeedsUpdate = YES;
   }
@@ -611,7 +611,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setSystemItem:(RNSBottomTabsScreenSystemItem)systemItem
 {
   _systemItem = systemItem;
-  _tabBarItemNeedsBaseChange = YES;
+  _tabBarItemNeedsRecreation = YES;
 }
 
 - (void)setOrientation:(RNSOrientation)orientation
