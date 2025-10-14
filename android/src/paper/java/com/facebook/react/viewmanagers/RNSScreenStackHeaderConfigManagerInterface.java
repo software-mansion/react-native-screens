@@ -42,4 +42,5 @@ public interface RNSScreenStackHeaderConfigManagerInterface<T extends View>  {
   void setBackButtonInCustomView(T view, boolean value);
   void setBlurEffect(T view, @Nullable String value);
   void setTopInsetEnabled(T view, boolean value);
+  void setUnstable_synchronousUpdatesEnabled(T view, boolean value);
 }
