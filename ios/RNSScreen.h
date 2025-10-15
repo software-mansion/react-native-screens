@@ -53,7 +53,7 @@ namespace react = facebook::react;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)setViewToSnapshot;
+- (void)setViewToSnapshotAfterUpdates:(BOOL)afterUpdates;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
 
@@ -130,6 +130,7 @@ namespace react = facebook::react;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
 @property (nonatomic, readonly, getter=isMarkedForUnmountInCurrentTransaction)
     BOOL markedForUnmountInCurrentTransaction;
+@property (nonatomic) BOOL snapshotAfterUpdates;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
