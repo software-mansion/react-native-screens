@@ -165,7 +165,10 @@ namespace react = facebook::react;
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 #endif // RCT_NEW_ARCH_ENABLED
 
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
+- (void)notifyTransitionProgress:(double)progress
+                         closing:(BOOL)closing
+                    goingForward:(BOOL)goingForward
+                         swiping:(BOOL)swiping;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;

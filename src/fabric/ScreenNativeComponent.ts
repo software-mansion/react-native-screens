@@ -22,6 +22,7 @@ type TransitionProgressEvent = Readonly<{
   progress: Double;
   closing: Int32;
   goingForward: Int32;
+  swiping: Int32;
 }>;
 
 type HeaderHeightChangeEvent = Readonly<{
