@@ -10,12 +10,10 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <react/utils/ManagedObjectWrapper.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #import "UINavigationBar+RNSUtility.h"
-#ifndef NDEBUG
-#import <react/utils/ManagedObjectWrapper.h>
-#endif // !NDEBUG
 #else
 #import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
@@ -82,9 +80,7 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   /// Whether a react subview has been added / removed in current transaction. This flag is reset after each react
   /// transaction via RCTMountingTransactionObserving protocol.
   bool _addedReactSubviewsInCurrentTransaction;
-#ifndef NDEBUG
-  RCTImageLoader *imageLoader;
-#endif // !NDEBUG
+  RCTImageLoader *_imageLoader;
 #else
   NSDirectionalEdgeInsets _lastHeaderInsets;
   __weak RCTBridge *_bridge;
@@ -376,7 +372,9 @@ RNS_IGNORE_SUPER_CALL_END
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-#ifndef RCT_NEW_ARCH_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
+        RCTImageLoader *imageLoader = _imageLoader;
+#else
         RCTImageLoader *imageLoader = [_bridge moduleForClass:[RCTImageLoader class]];
 #endif // !RCT_NEW_ARCH_ENABLED
         image = [imageLoader.imageCache
@@ -883,7 +881,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
           }
 #if RCT_NEW_ARCH_ENABLED
-          imageLoader:imageLoader];
+          imageLoader:_imageLoader];
 #else
           imageLoader:_bridge.imageLoader];
 #endif
@@ -1190,11 +1188,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
            oldState:(const facebook::react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderConfigShadowNode::ConcreteState>(state);
-#ifndef NDEBUG
   if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
-    imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+    _imageLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
-#endif // !NDEBUG
 }
 
 #else
