@@ -23,6 +23,8 @@ namespace react = facebook::react;
   react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
   CGRect _lastScheduledFrame;
 #endif
+  // TODO: Refactor this, so that we don't keep reference here at all.
+  // Currently this likely creates retain cycle between subview & the bar button item.
   UIBarButtonItem *_barButtonItem;
   BOOL _hidesSharedBackground;
 }
