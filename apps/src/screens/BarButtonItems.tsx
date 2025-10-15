@@ -31,8 +31,8 @@ const demoScreens = [
 
 const MainScreen = ({ navigation }: any) => (
   <ScrollView contentInsetAdjustmentBehavior="automatic" style={{ flex: 1 }}>
-    <View style={{padding: 8}}>
-      <Text style={{fontSize: 16, fontWeight: 'bold', textAlign: 'center'}}>iOS only</Text>
+    <View style={{ padding: 8 }}>
+      <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>iOS only</Text>
     </View>
     {demoScreens.map((screen) => (
       <Button
@@ -74,7 +74,7 @@ const ExessiveItemsExample = DemoScreenContent;
 
 export default function BarButtonItemsExample() {
   return (
-     
+
     // @ts-ignore
     <Stack.Navigator screenOptions={{ headerTransparent: Platform.OS === 'ios' && parseInt(Platform.Version) >= 26 }}>
       <Stack.Screen
@@ -103,8 +103,8 @@ export default function BarButtonItemsExample() {
           headerRightItems: [
             {
               icon: {
-                type: "imageSource", 
-                imageSource: require('../../assets/search_black.png') 
+                type: "imageSource",
+                imageSource: require('../../assets/search_black.png')
               },
               onPress: () => Alert.alert('Icon pressed'),
             },
@@ -118,9 +118,9 @@ export default function BarButtonItemsExample() {
           title: 'System image Button',
           headerRightItems: [
             {
-              icon: { 
-                type: "sfSymbol", 
-                name: "square.and.arrow.up" 
+              icon: {
+                type: "sfSymbol",
+                name: "square.and.arrow.up"
               },
               onPress: () => Alert.alert('Icon pressed'),
             },
@@ -400,7 +400,7 @@ export default function BarButtonItemsExample() {
               // eslint-disable-next-line react/no-unstable-nested-components
               customView: () => <TouchableOpacity onPress={() => Alert.alert('React Node 1 pressed')}>
                 <Text style={{ color: 'blue' }}>React Node 1</Text>
-              </TouchableOpacity>, 
+              </TouchableOpacity>,
               hidesSharedBackground: true
             },
             {
@@ -436,7 +436,7 @@ export default function BarButtonItemsExample() {
         }} />
       <Stack.Screen name="IdentifierExample"
         component={IdentifierExample}
-        options={({navigation}) => ({
+        options={({ navigation }) => ({
           title: 'Identifier Example',
           headerRightItems: [
             {
@@ -452,7 +452,7 @@ export default function BarButtonItemsExample() {
         component={IdentifierExample2}
         options={{
           title: 'Identifier Example 2',
-          headerRightItems: [           
+          headerRightItems: [
             {
               label: 'Btn',
               onPress: () => Alert.alert('Button 1 pressed'),
