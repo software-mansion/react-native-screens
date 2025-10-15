@@ -31,10 +31,7 @@ RCT_REMAP_VIEW_PROPERTY(
     RNSTabBarMinimizeBehavior);
 // This remapping allows us to store UITabBarControllerMode in the component while accepting a custom enum as input
 // from JS.
-RCT_REMAP_VIEW_PROPERTY(
-    tabBarControllerMode,
-    tabBarControllerModeFromRNSTabBarControllerMode,
-    RNSTabBarControllerMode);
+RCT_REMAP_VIEW_PROPERTY(tabBarControllerMode, tabBarControllerModeFromRNSTabBarControllerMode, RNSTabBarControllerMode);
 
 // TODO: Missing prop
 //@property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;

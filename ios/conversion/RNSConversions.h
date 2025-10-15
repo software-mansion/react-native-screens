@@ -51,8 +51,7 @@ UITabBarControllerMode UITabBarControllerModeFromRNSBottomTabsTabBarControllerMo
     react::RNSBottomTabsTabBarControllerMode tabBarControllerMode);
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
-UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(
-    RNSTabBarControllerMode tabBarControllerMode);
+UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarControllerMode);
 #endif // RCT_NEW_ARCH_ENABLED
 
 #endif // Check for iOS >= 18
