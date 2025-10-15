@@ -55,10 +55,20 @@
   if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
     if (screenView.iconSfSymbolName != nil) {
       tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+    } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
+      // Restore default system item icon
+      UITabBarSystemItem systemItem =
+          rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
+      tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].image;
     }
 
     if (screenView.selectedIconSfSymbolName != nil) {
       tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
+      // Restore default system item icon
+      UITabBarSystemItem systemItem =
+          rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
+      tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].selectedImage;
     }
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;

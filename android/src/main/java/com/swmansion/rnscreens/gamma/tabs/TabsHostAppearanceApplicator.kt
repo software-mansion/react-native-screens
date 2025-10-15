@@ -196,8 +196,9 @@ class TabsHostAppearanceApplicator(
             tabScreen.tabBarItemBadgeTextColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
 
+        // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
         badge.backgroundColor =
             tabScreen.tabBarItemBadgeBackgroundColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorError)
+                ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
     }
 }
