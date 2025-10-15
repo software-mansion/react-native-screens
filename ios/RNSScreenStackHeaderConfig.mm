@@ -12,7 +12,6 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
-#import "UINavigationBar+RNSUtility.h"
 #ifndef NDEBUG
 #import <react/utils/ManagedObjectWrapper.h>
 #endif // !NDEBUG
@@ -31,9 +30,11 @@
 #import "RNSBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
+#import "UINavigationBar+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -41,6 +42,12 @@ namespace react = facebook::react;
 
 static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
 static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+// UIKit has some spacing between navigation items and title which we cannot easily compute.
+// The current constant was determined empirically based on testing and visual alignment.
+static const CGFloat DEFAULT_NAVBUTTON_AND_TITLE_SPACING = 16.0f;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data
@@ -242,28 +249,156 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navigationBar
+                                               withEdgeInsets:(NSDirectionalEdgeInsets)edgeInsets
 {
   if (!navigationBar) {
     return;
   }
 
-  [self updateShadowStateWithSize:navigationBar.frame.size
-                       edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]];
+  [self updateShadowStateWithSize:navigationBar.frame.size edgeInsets:edgeInsets];
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
     [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
 }
 
+#else
+
+- (void)updateHeaderConfigStateWithEdgeInsets:(NSDirectionalEdgeInsets)insets
+{
+  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
+    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
+    _lastHeaderInsets = std::move(insets);
+  }
+}
+#endif // RCT_NEW_ARCH_ENABLED
+
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
-  NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
-  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
+  NSDirectionalEdgeInsets edgeInsets = NSDirectionalEdgeInsetsZero;
 
   BOOL isDisplayingBackButton = [self shouldBackButtonBeVisibleInNavigationBar:navigationBar];
 
   // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
   UIView *barButtonView = isDisplayingBackButton ? navigationBar.rnscreens_findBackButtonWrapperView : nil;
   CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    edgeInsets = [self calculateEdgeInsets:navigationBar
+                    isDisplayingBackButton:isDisplayingBackButton
+                   platformBackButtonWidth:platformBackButtonWidth];
+  } else {
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    edgeInsets = [self calculateEdgeInsetsLegacy:navigationBar
+                          isDisplayingBackButton:isDisplayingBackButton
+                         platformBackButtonWidth:platformBackButtonWidth];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  return edgeInsets;
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (NSDirectionalEdgeInsets)calculateEdgeInsets:(UINavigationBar *)navigationBar
+                        isDisplayingBackButton:(BOOL)isDisplayingBackButton
+                       platformBackButtonWidth:(CGFloat)platformBackButtonWidth
+{
+  NSDirectionalEdgeInsets edgeInsets = {
+      .leading = DEFAULT_NAVBUTTON_AND_TITLE_SPACING,
+      .trailing = DEFAULT_NAVBUTTON_AND_TITLE_SPACING,
+  };
+
+  if (navigationBar.topItem == nil) {
+    RNSLog(@"RNSScreenStackHeaderConfig - no item was presented by Stack");
+    return edgeInsets;
+  }
+
+  UIView *leftButtonView = [[[navigationBar.topItem leftBarButtonItems] lastObject] valueForKey:@"view"];
+  UIView *rightButtonView = [[[navigationBar.topItem rightBarButtonItems] lastObject] valueForKey:@"view"];
+
+  BOOL isRTL = self.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+
+  // Searching for the rightmost button on the left side
+  // We prefer leftButtons over backButton because of the current positioning
+  // According to the docs:
+  // https://developer.apple.com/documentation/uikit/uinavigationitem/leftbarbuttonitems?language=objc
+  // we should take the lastObject as the rightmost item.
+  if (leftButtonView != nil) {
+    CGRect leftFrameInNav = [navigationBar convertRect:leftButtonView.bounds fromView:leftButtonView];
+    edgeInsets.leading +=
+        isRTL ? navigationBar.frame.size.width - CGRectGetMaxX(leftFrameInNav) : CGRectGetMinX(leftFrameInNav);
+
+    auto platterItemForLeftButton = [navigationBar rnscreens_findNavigationBarPlatterViewFromUIView:leftButtonView];
+
+    if (platterItemForLeftButton != nil) {
+      CGRect platterFrameInNav = [navigationBar convertRect:platterItemForLeftButton.bounds
+                                                   fromView:platterItemForLeftButton];
+
+      CGFloat platterPadding = 0.0f;
+
+      if (!isRTL) {
+        CGFloat leftButtonRightEdge = CGRectGetMaxX(leftFrameInNav);
+        CGFloat platterRightEdge = CGRectGetMaxX(platterFrameInNav);
+
+        platterPadding = platterRightEdge - leftButtonRightEdge;
+      } else {
+        CGFloat leftButtonLeftEdge = CGRectGetMinX(leftFrameInNav);
+        CGFloat platterLeftEdge = CGRectGetMinX(platterFrameInNav);
+
+        platterPadding = leftButtonLeftEdge - platterLeftEdge;
+      }
+
+      edgeInsets.leading += platterPadding;
+    }
+  } else if (isDisplayingBackButton) {
+    edgeInsets.leading += platformBackButtonWidth;
+  }
+
+  // Searching for the leftmost button on the right side
+  // According to the docs:
+  // https://developer.apple.com/documentation/uikit/uinavigationitem/rightbarbuttonitems?language=objc
+  // we should take the lastObject as the leftmost item.
+  if (rightButtonView != nil) {
+    CGRect rightFrameInNav = [navigationBar convertRect:rightButtonView.bounds fromView:rightButtonView];
+    edgeInsets.trailing +=
+        isRTL ? CGRectGetMinX(rightFrameInNav) : navigationBar.frame.size.width - CGRectGetMaxX(rightFrameInNav);
+
+    auto platterItemForRightButton = [navigationBar rnscreens_findNavigationBarPlatterViewFromUIView:rightButtonView];
+
+    if (platterItemForRightButton != nil) {
+      CGRect platterFrameInNav = [navigationBar convertRect:platterItemForRightButton.bounds
+                                                   fromView:platterItemForRightButton];
+      CGFloat platterPadding = 0.0f;
+
+      if (!isRTL) {
+        CGFloat rightButtonLeftEdge = CGRectGetMinX(rightFrameInNav);
+        CGFloat platterLeftEdge = CGRectGetMinX(platterFrameInNav);
+
+        platterPadding = rightButtonLeftEdge - platterLeftEdge;
+      } else {
+        CGFloat rightButtonRightEdge = CGRectGetMaxX(rightFrameInNav);
+        CGFloat platterRightEdge = CGRectGetMaxX(platterFrameInNav);
+
+        platterPadding = platterRightEdge - rightButtonRightEdge;
+      }
+
+      edgeInsets.trailing += platterPadding;
+    }
+  }
+
+  RNSLog(@"Calculated insets: %@", NSStringFromDirectionalEdgeInsets(edgeInsets));
+
+  return edgeInsets;
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+- (NSDirectionalEdgeInsets)calculateEdgeInsetsLegacy:(UINavigationBar *)navigationBar
+                              isDisplayingBackButton:(BOOL)isDisplayingBackButton
+                             platformBackButtonWidth:(CGFloat)platformBackButtonWidth
+{
+  NSDirectionalEdgeInsets navBarMargins = navigationBar.directionalLayoutMargins;
+  NSDirectionalEdgeInsets navBarContentMargins = [navigationBar.rnscreens_findContentView directionalLayoutMargins];
 
   const auto edgeInsets = NSDirectionalEdgeInsets{
       .leading =
@@ -273,16 +408,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   return edgeInsets;
 }
-
-#else
-- (void)updateHeaderConfigState:(NSDirectionalEdgeInsets)insets
-{
-  if (_lastHeaderInsets.leading != insets.leading || _lastHeaderInsets.trailing != insets.trailing) {
-    [_bridge.uiManager setLocalData:[[RNSHeaderConfigInsetsPayload alloc] initWithInsets:insets] forView:self];
-    _lastHeaderInsets = std::move(insets);
-  }
-}
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type
 {

@@ -83,4 +83,34 @@
   return NSClassFromString(@"_UINavigationBarContentView"); // Sampled from iOS 17.5 (iPhone 15 Pro)
 }
 
+- (nullable UIView *)rnscreens_findSubviewOfClass:(Class)viewClass from:(nullable UIView *)view
+{
+  if (view == nil) {
+    return nil;
+  }
+
+  if ([view isKindOfClass:viewClass]) {
+    return view;
+  }
+
+  return [self rnscreens_findSubviewOfClass:viewClass from:view.superview];
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (nullable UIView *)rnscreens_findNavigationBarPlatterViewFromUIView:(UIView *_Nonnull)view
+{
+  Class platterItemViewClass = NSClassFromString(@"_UINavigationBarPlatterView");
+  if (!platterItemViewClass) {
+    return nil;
+  }
+
+  UIView *platterItemView = [self rnscreens_findSubviewOfClass:platterItemViewClass from:view];
+  if (!platterItemView) {
+    return nil;
+  }
+
+  return platterItemView;
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
 @end

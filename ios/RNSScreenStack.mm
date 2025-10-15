@@ -81,6 +81,19 @@ namespace react = facebook::react;
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    [self.transitionCoordinator
+        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          self.shouldPreventHeaderLayoutInfoUpdateOnTransition = YES;
+        }
+        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          self.shouldPreventHeaderLayoutInfoUpdateOnTransition = NO;
+        }];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
@@ -126,6 +139,14 @@ namespace react = facebook::react;
 
 - (void)maybeUpdateHeaderLayoutInfoInShadowTree:(RNSScreen *)screenController
 {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (self.shouldPreventHeaderLayoutInfoUpdateOnTransition) {
+      return;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
   // This might happen e.g. if there is only native title present in navigation bar.
   if (self.navigationBar.subviews.count < 2) {
     return;
@@ -136,24 +157,12 @@ namespace react = facebook::react;
     return;
   }
 
+  auto edgeInsets = [headerConfig computeEdgeInsetsOfNavigationBar:self.navigationBar];
+
 #ifdef RCT_NEW_ARCH_ENABLED
-  [headerConfig updateHeaderStateInShadowTreeInContextOfNavigationBar:self.navigationBar];
+  [headerConfig updateHeaderStateInShadowTreeInContextOfNavigationBar:self.navigationBar withEdgeInsets:edgeInsets];
 #else
-  NSDirectionalEdgeInsets navBarMargins = [self.navigationBar directionalLayoutMargins];
-  NSDirectionalEdgeInsets navBarContentMargins =
-      [self.navigationBar.rnscreens_findContentView directionalLayoutMargins];
-
-  BOOL isDisplayingBackButton = [headerConfig shouldBackButtonBeVisibleInNavigationBar:self.navigationBar];
-
-  // 44.0 is just "closed eyes default". It is so on device I've tested with, nothing more.
-  UIView *barButtonView = isDisplayingBackButton ? self.navigationBar.rnscreens_findBackButtonWrapperView : nil;
-  CGFloat platformBackButtonWidth = barButtonView != nil ? barButtonView.frame.size.width : 44.0f;
-
-  [headerConfig updateHeaderConfigState:NSDirectionalEdgeInsets{
-                                            .leading = navBarMargins.leading + navBarContentMargins.leading +
-                                                (isDisplayingBackButton ? platformBackButtonWidth : 0),
-                                            .trailing = navBarMargins.trailing + navBarContentMargins.trailing,
-                                        }];
+  [headerConfig updateHeaderConfigStateWithEdgeInsets:edgeInsets];
 #endif // RCT_NEW_ARCH_ENABLED
 }
 #endif
