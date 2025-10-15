@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView withFrame:(CGRect)frame;
 #endif
 
+- (UIBarButtonItem *)getUIBarButtonItem;
+
 @end
 
 @interface RNSScreenStackHeaderSubviewManager : RCTViewManager
