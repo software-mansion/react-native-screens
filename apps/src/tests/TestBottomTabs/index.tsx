@@ -40,7 +40,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       selectedIcon: {
         sfSymbolName: 'house.fill',
       },
-      // iconResourceName: 'sym_call_incoming', // Android specific
+      iconResourceName: 'sym_call_incoming', // Android specific
       iconResource: require('../../../assets/variableIcons/icon_fill.png'),
     },
     component: Tab1,
@@ -104,7 +104,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
       iconResourceName: 'sym_call_missed', // Android specific
       iconResource: require('../../../assets/variableIcons/icon.png'),
       title: 'Tab2',
-      orientation: 'landscape',
     },
     component: Tab2,
     safeAreaConfiguration: {

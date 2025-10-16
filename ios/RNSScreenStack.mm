@@ -895,7 +895,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
+  NSLog(@"GR should begin: %@", gestureRecognizer);
   if (_disableSwipeBack) {
+    NSLog(@"Return: NO");
     return NO;
   }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
@@ -919,15 +921,19 @@ RNS_IGNORE_SUPER_CALL_END
       if (customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
         _isFullWidthSwipingWithPanGesture = YES;
         [self cancelTouchesInParent];
+        NSLog(@"Return: YES");
         return YES;
       }
+      NSLog(@"Return: NO");
       return NO;
     } else {
       if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
         _isFullWidthSwipingWithPanGesture = YES;
         [self cancelTouchesInParent];
+        NSLog(@"Return: YES");
         return YES;
       }
+      NSLog(@"Return: NO");
       return NO;
     }
   }
@@ -945,17 +951,21 @@ RNS_IGNORE_SUPER_CALL_END
           (isRTL && isSlideFromLeft && edges == UIRectEdgeLeft) || (!isRTL && edges == UIRectEdgeLeft);
       if (isCorrectEdge) {
         [self cancelTouchesInParent];
+        NSLog(@"Return: YES");
         return YES;
       }
     }
+    NSLog(@"Return: NO");
     return NO;
   } else {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // it should only recognize with `customAnimationOnSwipe` set
+      NSLog(@"Return: NO");
       return NO;
     }
     // _UIParallaxTransitionPanGestureRecognizer (other...)
     [self cancelTouchesInParent];
+    NSLog(@"Return: YES");
     return YES;
   }
 
@@ -1177,6 +1187,7 @@ RNS_IGNORE_SUPER_CALL_END
 // Be careful when adding another type of gesture recognizer.
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePressOrTouchEvent:(NSObject *)event
 {
+  NSLog(@"GR shouldReceiveEvent %@", gestureRecognizer);
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
   for (RNSScreenView *s in _reactSubviews.reverseObjectEnumerator) {
@@ -1190,6 +1201,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
       _controller.viewControllers.count < 2 || [topScreen isModal]) {
+    NSLog(@"Return NO - early return");
     return NO;
   }
 
@@ -1202,12 +1214,26 @@ RNS_IGNORE_SUPER_CALL_END
     // either interactiveContentPopGestureRecognizer or RNSPanGestureRecognizer,
     // then we allow them to proceed iff full screen swipe is enabled.
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? topScreen.isFullScreenSwipeEffectivelyEnabled
-                                                                       : NO;
+      const BOOL rv = customAnimationOnSwipePropSetAndSelectedAnimationIsCustom
+          ? topScreen.isFullScreenSwipeEffectivelyEnabled
+          : NO;
+      NSLog(@"Return %d - gr custom + fullscreenenabled", rv);
+      return rv;
     }
     if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer) {
-      return customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? NO
-                                                                       : topScreen.isFullScreenSwipeEffectivelyEnabled;
+      const BOOL rv = customAnimationOnSwipePropSetAndSelectedAnimationIsCustom
+          ? NO
+          : topScreen.isFullScreenSwipeEffectivelyEnabled;
+      NSLog(@"Return %d - gr ICPGR + fullscreenenabled", rv);
+      return rv;
+    }
+    if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+      const BOOL rv = customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? YES : NO;
+      return rv;
+    }
+    if (gestureRecognizer == _controller.interactivePopGestureRecognizer) {
+      const BOOL rv = customAnimationOnSwipePropSetAndSelectedAnimationIsCustom ? NO : YES;
+      return rv;
     }
   } else {
     // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
@@ -1223,12 +1249,14 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // check for iOS >= 26
 
   // RNSScreenEdgeGestureRecognizer || _UIParallaxTransitionPanGestureRecognizer
+  NSLog(@"Return YES - fallback");
   return YES;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press;
 {
-  return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:press];
+  const BOOL rv = [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:press];
+  return rv;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
@@ -1239,6 +1267,9 @@ RNS_IGNORE_SUPER_CALL_END
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
+  NSLog(@"GR shouldRecognizeSIMULTANEOUSLY");
+  NSLog(@"First: %@", gestureRecognizer);
+  NSLog(@"Second: %@", otherGestureRecognizer);
   if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
       [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
     RNSPanGestureRecognizer *panGestureRecognizer = (RNSPanGestureRecognizer *)gestureRecognizer;
@@ -1246,12 +1277,15 @@ RNS_IGNORE_SUPER_CALL_END
         _controller.viewControllers.count > 1;
 
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
+      NSLog(@"Return NO - RNSPanGR + Scrollview + began state or back gesture");
       return NO;
     }
 
+    NSLog(@"Return YES - RNSPanGR + Scrollview");
     return YES;
   }
 
+  NSLog(@"Return NO");
   return NO;
 }
 
@@ -1259,13 +1293,18 @@ RNS_IGNORE_SUPER_CALL_END
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
+  NSLog(@"GR shouldRequireFailure");
+  NSLog(@"First: %@", gestureRecognizer);
+  NSLog(@"Second: %@", otherGestureRecognizer);
   if (@available(iOS 26, *)) {
     if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
         [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
+      NSLog(@"Return YES - ICPGR + Scrollview");
       return YES;
     }
   }
 
+  NSLog(@"Return NO");
   return NO;
 }
 #endif // check for iOS >= 26
