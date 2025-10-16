@@ -5,7 +5,7 @@ import type {
   ViewProps,
 } from 'react-native';
 import { ScrollEdgeEffect } from '../shared/types';
-import type { PlatformIcon, PlatformIconIOS } from 'react-native-screens/types';
+import type { PlatformIcon, PlatformIconIOS } from '../../types';
 
 export type EmptyObject = Record<string, never>;
 
