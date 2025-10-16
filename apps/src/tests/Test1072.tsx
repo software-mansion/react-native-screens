@@ -46,8 +46,6 @@ export default function App() {
         <Stack.Navigator
           screenOptions={{
             fullScreenGestureEnabled: true,
-            animation: 'fade_from_bottom',
-            animationMatchesGesture: true,
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />
@@ -84,9 +82,8 @@ function generatePhotos(
 ): JSX.Element[] {
   const startFrom = Math.floor(Math.random() * 20) + 10;
   return Array.from({ length: amount }, (_, index) => {
-    const uri = `https://picsum.photos/id/${
-      startFrom + index
-    }/${width}/${height}`;
+    const uri = `https://picsum.photos/id/${startFrom + index
+      }/${width}/${height}`;
     return <Image style={{ width, height }} key={uri} source={{ uri }} />;
   });
 }
