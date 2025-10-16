@@ -11,7 +11,6 @@ folly::dynamic RNSScreenStackHeaderConfigState::getDynamic() const {
       "paddingEnd", paddingEnd);
 }
 #else // ANDROID
-#ifndef NDEBUG
 void RNSScreenStackHeaderConfigState::setImageLoader(
     std::weak_ptr<void> imageLoader) {
   imageLoader_ = imageLoader;
@@ -21,7 +20,6 @@ std::weak_ptr<void> RNSScreenStackHeaderConfigState::getImageLoader()
     const noexcept {
   return imageLoader_;
 }
-#endif // !NDEBUG
 #endif // ANDROID
 
 } // namespace react

@@ -30,6 +30,7 @@ import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
 import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
+// import BarButtonItems from './src/screens/BarButtonItems';
 
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -127,6 +128,11 @@ const SCREENS: Record<
     component: Gestures,
     type: 'playground',
   },
+  // BarButtonItems: {
+  //   title: 'Bar Button Items',
+  //   component: BarButtonItems,
+  //   type: 'playground',
+  // },
 };
 
 if (isTestSectionEnabled()) {
@@ -180,8 +186,8 @@ type RootStackParamList = {
   Main: undefined;
   Tests: undefined;
 } & {
-    [P in keyof typeof SCREENS]: undefined;
-  };
+  [P in keyof typeof SCREENS]: undefined;
+};
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

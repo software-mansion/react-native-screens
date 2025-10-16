@@ -341,6 +341,34 @@
   }
 }
 
++ (id)idFromFollyDynamic:(const folly::dynamic &)dyn
+{
+  if (dyn.isNull()) {
+    return nil;
+  } else if (dyn.isBool()) {
+    return [NSNumber numberWithBool:dyn.getBool()];
+  } else if (dyn.isInt()) {
+    return [NSNumber numberWithLongLong:dyn.getInt()];
+  } else if (dyn.isDouble()) {
+    return [NSNumber numberWithDouble:dyn.getDouble()];
+  } else if (dyn.isString()) {
+    return [NSString stringWithUTF8String:dyn.getString().c_str()];
+  } else if (dyn.isArray()) {
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:dyn.size()];
+    for (const auto &item : dyn) {
+      [array addObject:[self idFromFollyDynamic:item]];
+    }
+    return array;
+  } else if (dyn.isObject()) {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:dyn.size()];
+    for (const auto &pair : dyn.items()) {
+      dict[@(pair.first.c_str())] = [self idFromFollyDynamic:pair.second];
+    }
+    return dict;
+  }
+  return nil;
+}
+
 #endif // RCT_NEW_ARCH_ENABLED
 
 + (UIBlurEffectStyle)tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:(RNSBlurEffectStyle)blurEffect
