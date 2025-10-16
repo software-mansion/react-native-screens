@@ -27,11 +27,13 @@ import type {
   BottomTabsScreenItemStateAppearance,
   BottomTabsScreenProps,
   EmptyObject,
+} from './BottomTabsScreen.types';
+import { bottomTabsDebugLog } from '../../private/logging';
+import type {
   PlatformIcon,
   PlatformIconAndroid,
   PlatformIconIOS,
-} from './BottomTabsScreen.types';
-import { bottomTabsDebugLog } from '../../private/logging';
+} from 'react-native-screens/types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

@@ -1,11 +1,11 @@
 import type {
   ColorValue,
-  ImageSourcePropType,
   NativeSyntheticEvent,
   TextStyle,
   ViewProps,
 } from 'react-native';
 import { ScrollEdgeEffect } from '../shared/types';
+import type { PlatformIcon, PlatformIconIOS } from 'react-native-screens/types';
 
 export type EmptyObject = Record<string, never>;
 
@@ -17,35 +17,6 @@ export type LifecycleStateChangeEvent = Readonly<{
   previousState: number;
   newState: number;
 }>;
-
-export type PlatformIconShared = {
-  type: 'imageSource';
-  imageSource: ImageSourcePropType;
-};
-
-export type PlatformIconIOS =
-  | {
-      type: 'sfSymbol';
-      name: string;
-    }
-  | {
-      type: 'templateSource';
-      templateSource: ImageSourcePropType;
-    }
-  | PlatformIconShared;
-
-export type PlatformIconAndroid =
-  | {
-      type: 'drawableResource';
-      name: string;
-    }
-  | PlatformIconShared;
-
-export interface PlatformIcon {
-  android?: PlatformIconAndroid;
-  ios?: PlatformIconIOS;
-  shared?: PlatformIconShared;
-}
 
 // iOS-specific
 export type BottomTabsScreenBlurEffect =
