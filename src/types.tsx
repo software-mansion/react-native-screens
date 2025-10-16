@@ -614,10 +614,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backTitleFontSize?: number;
   /**
-   * Whether the back button title should be visible or not. Defaults to `true`.
-   *
-   * When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `disableBackButtonMenu`.
-   * For `backTitle` it works only in back button menu.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
    * @platform ios
    */
