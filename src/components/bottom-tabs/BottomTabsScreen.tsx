@@ -33,7 +33,7 @@ import type {
   PlatformIcon,
   PlatformIconAndroid,
   PlatformIconIOS,
-} from 'react-native-screens/types';
+} from '../../types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
