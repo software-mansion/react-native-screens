@@ -62,10 +62,8 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
     return MapBufferBuilder::EMPTY();
   };
 #else // ANDROID
-#if !defined(NDEBUG)
   void setImageLoader(std::weak_ptr<void> imageLoader);
   std::weak_ptr<void> getImageLoader() const noexcept;
-#endif // !NDEBUG
 #endif // ANDROID
 
   Size frameSize{};
@@ -82,9 +80,9 @@ class JSI_EXPORT RNSScreenStackHeaderConfigState final {
 #pragma mark - Getters
 
  private:
-#if !defined(ANDROID) && !defined(NDEBUG)
+#if !defined(ANDROID)
   std::weak_ptr<void> imageLoader_;
-#endif // !ANDROID && !NDEBUG
+#endif // !ANDROID
 };
 
 } // namespace facebook::react

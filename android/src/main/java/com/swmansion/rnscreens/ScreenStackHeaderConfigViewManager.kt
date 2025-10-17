@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -317,5 +318,19 @@ class ScreenStackHeaderConfigViewManager :
         value: String?,
     ) {
         logNotAvailable("blurEffect")
+    }
+
+    override fun setHeaderLeftBarButtonItems(
+        view: ScreenStackHeaderConfig?,
+        value: ReadableArray?,
+    ) {
+        logNotAvailable("headerLeftBarButtonItems")
+    }
+
+    override fun setHeaderRightBarButtonItems(
+        view: ScreenStackHeaderConfig?,
+        value: ReadableArray?,
+    ) {
+        logNotAvailable("headerRightBarButtonItems")
     }
 }
