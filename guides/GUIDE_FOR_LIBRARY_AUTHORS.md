@@ -575,6 +575,8 @@ An array of objects describing native bar button items to display on the left or
 
 #### The button and menu items support:
 
+`type: 'button' | 'menu'` — Type of the item.
+
 `label: string` — Label of the button.
 
 `labelStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button label.
@@ -607,6 +609,7 @@ An array of objects describing native bar button items to display on the left or
 
 ```
 menu?: {
+  type: 'menu';
   label?: string;
   items: Array<
     | {
@@ -629,6 +632,7 @@ menu?: {
 
 #### The spacing item supports:
 
+`type: 'spacing'` — Type of the item.
 `spacing?: number` — Fixed space between items. The numeric value is only supported on iOS 18-
 
 #### Example configuration:
@@ -638,18 +642,22 @@ menu?: {
     options={{
       headerRightItems: [
         {
+          type: 'button',
           label: 'Text button',
           onPress: () => Alert.alert('Text pressed'),
         },
         {
+          type: 'button',
           image: require('../../assets/search_black.png'),
           onPress: () => Alert.alert('Icon pressed'),
         },
         {
+          type: 'button',
           sfSymbolName: "square.and.arrow.up",
           onPress: () => Alert.alert('SF symbol pressed'),
         },
         {
+          type: 'menu',
           label: 'Menu',
           menu: {
             items: [
@@ -667,6 +675,7 @@ menu?: {
           },
         },
         {
+          type: 'button',
           label: 'Badge',
           badge: {
             value: '3',
@@ -676,6 +685,7 @@ menu?: {
           onPress: () => Alert.alert('Badge pressed'),
         },
         {
+          type: 'button',
           label: 'Prominent',
           variant: 'prominent',
           tintColor: 'green',
