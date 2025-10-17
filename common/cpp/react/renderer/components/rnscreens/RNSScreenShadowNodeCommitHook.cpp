@@ -44,8 +44,6 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
     const RootShadowNode::Shared &oldRootShadowNode,
     const RootShadowNode::Unshared &newRootShadowNode,
     const ShadowTreeCommitOptions &) noexcept {
-  __android_log_print(ANDROID_LOG_INFO, "LAYOUT", "shadowTreeWillCommit");
-
   auto oldRootProps =
       std::static_pointer_cast<const RootProps>(oldRootShadowNode->getProps());
   auto newRootProps =
