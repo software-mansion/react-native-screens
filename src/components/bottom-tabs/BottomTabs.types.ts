@@ -1,9 +1,15 @@
+import { ReactNode } from 'react';
 import type {
   ColorValue,
   TextStyle,
   NativeSyntheticEvent,
   ViewProps,
 } from 'react-native';
+import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+
+export type BottomAccessoryFn = (
+  environment: BottomTabsAccessoryEnvironment,
+) => ReactNode;
 
 export type NativeFocusChangeEvent = {
   tabKey: string;
@@ -24,10 +30,7 @@ export type TabBarMinimizeBehavior =
   | 'onScrollUp';
 
 // iOS-specific
-export type TabBarControllerMode =
-  | 'automatic'
-  | 'tabBar'
-  | 'tabSidebar';
+export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 export interface BottomTabsProps extends ViewProps {
   // #region Events
@@ -187,11 +190,31 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
   /**
+   * @summary Specifies component used as bottom accessory.
+   *
+   * This prop is a function that accepts `environment` as a parameter and returns
+   * the component that will be rendered in the bottom accessory.
+   *
+   * `environment` can be one of the following values:
+   *
+   * - `regular` - the accessory is laid out above the bottom tab bar,
+   * - `inline` - the accessory is laid out inline with the collapsed bottom
+   *   tab bar.
+   *
+   * If this prop is `undefined`, the bottom accessory will not be rendered.
+   *
+   * Available starting from iOS 26.
+   *
+   * @platform iOS
+   * @supported iOS 26 or higher
+   */
+  bottomAccessory?: BottomAccessoryFn;
+  /**
    * @summary Specifies the display mode for the tab bar.
    *
    * Available starting from iOS 18.
    * Not supported on tvOS.
-   * 
+   *
    * The following values are currently supported:
    *
    * - `automatic` - the system sets the display mode based on the tab’s content
