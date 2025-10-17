@@ -6,6 +6,7 @@
 
 #import "RNSConversions.h"
 #import "RNSDefines.h"
+#import "RNSSplitViewHostController.h"
 #import "RNSSplitViewScreenComponentView.h"
 #import "Swift-Bridging.h"
 

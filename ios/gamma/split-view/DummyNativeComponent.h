@@ -1,4 +1,3 @@
-#import <React/RCTViewComponentView.h>
 #import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN

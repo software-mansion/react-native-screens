@@ -5,6 +5,7 @@
 #import "RNSConversions.h"
 #import "RNSFrameCorrector.h"
 #import "RNSSafeAreaViewNotifications.h"
+#import "RNSSplitViewScreenController.h"
 
 #import "Swift-Bridging.h"
 
