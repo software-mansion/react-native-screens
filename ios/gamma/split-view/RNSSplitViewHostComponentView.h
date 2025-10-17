@@ -1,6 +1,6 @@
+#import <React/RCTViewComponentView.h>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
-#import "RNSReactBaseView.h"
 #import "RNSSplitViewHostComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Responsible for managing multi-column layouts via associated native UISplitViewController.
  * Manages updates to the layout properties, column configuration, and event emission.
  */
-@interface RNSSplitViewHostComponentView : RNSReactBaseView
+@interface RNSSplitViewHostComponentView : RCTViewComponentView
 
 - (nonnull NSMutableArray<RNSSplitViewScreenComponentView *> *)reactSubviews;
 

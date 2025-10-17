@@ -36,7 +36,6 @@
 
 #ifdef RNS_GAMMA_ENABLED
 #import "RNSFrameCorrectionProvider.h"
-#import "Swift-Bridging.h"
 #endif // RNS_GAMMA_ENABLED
 
 #ifdef RCT_NEW_ARCH_ENABLED

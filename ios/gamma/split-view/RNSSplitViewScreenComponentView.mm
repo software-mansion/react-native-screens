@@ -7,8 +7,6 @@
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitViewScreenController.h"
 
-#import "Swift-Bridging.h"
-
 namespace react = facebook::react;
 
 @implementation RNSSplitViewScreenComponentView {
