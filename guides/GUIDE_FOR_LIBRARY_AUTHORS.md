@@ -462,10 +462,10 @@ The config component is expected to be rendered as a direct child of `<Screen>`.
 
 Along with this component's properties that can be used to customize header behavior, one can also use one of the below component containers to render custom react-native content in different areas of the native header:
 
-#### `ScreenStackHeaderCenterView` 
+#### `ScreenStackHeaderCenterView`
 The children will render in the center of the native navigation bar.
 
-#### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`  
+#### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`
 The children will render on the right-hand or left-hand side of the navigation bar (or on the opposite side in case LTR locales are set on the user's device). Supports these properties:
 
 - `hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
@@ -523,7 +523,7 @@ Controls the color of the navigation header.
 
 ### `backTitle` (iOS only)
 
-Allows for controlling the string to be rendered next to back button. By default iOS uses the title of the previous screen.
+Allows for controlling the string to be rendered next to back button. For iOS versions prior to 26, the title of the previous screen is used as default.
 
 ### `backTitleFontFamily` (iOS only)
 
@@ -534,6 +534,8 @@ Allows for customizing font family to be used for back button title on iOS.
 Allows for customizing font size to be used for back button title on iOS.
 
 ### `backTitleVisible` (iOS only)
+
+This prop has been **deprecated**. Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Whether the back button title should be visible. Defaults to `true`.
 
@@ -553,17 +555,27 @@ Controls whether the stack should be in `rtl` or `ltr` form.
 
 ### `disableBackButtonMenu` (iOS only)
 
-Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+Boolean indicating whether to show the menu on longPress of the back button.
 
 ### `backButtonDisplayMode` (iOS only)
 
-Enum value indicating display mode of back button. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` and `backTitleVisible=false` is set. The `backTitleVisible` forces `backButtonDisplayMode: minimal` and omits other values. Read more [#2800](https://github.com/software-mansion/react-native-screens/pull/2800). The other props, under the hood, customize `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123).
+Enum value indicating display mode of back button.
 
 Possible options:
 
-- `default` – show given back button previous controller title, system generic or just icon based on available space
-- `generic` – show given system generic or just icon based on available space
+- `default` – show given back button previous controller title, system generic or just icon based on available space and OS version
+- `generic` – show given system generic or just icon based on available space and OS version
 - `minimal` – show just an icon
+
+Starting from iOS 26:
+- the `title` of the previous screen is not used as back button title,
+- `generic` display mode behaves the same as `minimal`.
+
+In order to add text to the back button on iOS 26, use `default` display mode and specify text in `backTitle` property.
+
+On iOS versions prior to 26, using `generic` display mode with `backTitleFontFamily`, `backTitleFontSize`
+or `disableBackButtonMenu` property set is not supported due to limitations in the native platform.
+In such cases, display mode will fallback to `default`.
 
 ### `headerLeftBarButtonItems` / `headerRightBarButtonsItems` (iOS only)
 
@@ -603,7 +615,7 @@ An array of objects describing native bar button items to display on the left or
 
 `changesSelectionAsPrimaryAction?: boolean` — Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
 
-#### The button with a menu also support: 
+#### The button with a menu also support:
 
 ```
 menu?: {
@@ -616,7 +628,7 @@ menu?: {
       state?: 'on' | 'off' | 'mixed'; // State of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
       attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented'; // Style of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
       discoverabilityTitle?: string; // Discoverability title of the menu item. Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
-    } 
+    }
     | {
       label?: string;
       type: 'submenu';
