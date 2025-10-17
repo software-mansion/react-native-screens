@@ -181,7 +181,8 @@
         "RNSSearchBar": "RNSSearchBar",
         "RNSSplitViewHost": "RNSSplitViewHostComponentView",
         "RNSSplitViewScreen": "RNSSplitViewScreenComponentView",
-        "RNSSafeAreaView": "RNSSafeAreaViewComponentView"
+        "RNSSafeAreaView": "RNSSafeAreaViewComponentView",
+        "DummyNativeComponent": "DummyNativeComponent"
       },
       "components": {
         "RNSFullWindowOverlay": {
@@ -216,6 +217,9 @@
         },
         "RNSSearchBar": {
           "className": "RNSSearchBar"
+        },
+        "DummyNativeComponent": {
+          "className": "DummyNativeComponent"
         },
         "RNSStackScreen": {
           "className": "RNSStackScreenComponentView"
