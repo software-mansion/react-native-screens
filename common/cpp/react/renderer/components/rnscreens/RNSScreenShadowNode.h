@@ -38,11 +38,11 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 
   FrameCorrectionModes &getFrameCorrectionModes();
 
+  StateData &getStateDataMutable();
+
  private:
 #ifdef ANDROID
   void applyFrameCorrections();
-
-  StateData &getStateDataMutable();
 #endif // ANDROID
 };
 
