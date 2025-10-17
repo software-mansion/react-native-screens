@@ -1,38 +1,127 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Dimensions, ScrollView, Text, View } from "react-native";
+import React from 'react';
+import type { PropsWithChildren } from 'react';
+import {
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
 
-function ScrollViewTemplate() {
-  const emoji = ['😎', '🍏', '👀', '🤖', '👾', '👨‍💻'];
-  console.log(`ScrollViewRender screen dimensions / width ${Dimensions.get('screen').width} / height ${Dimensions.get('screen').height}`);
-  console.log(`ScrollViewRender window dimensions / width ${Dimensions.get('window').width} / height ${Dimensions.get('window').height}`);
+import { Screen, ScreenStack } from 'react-native-screens';
 
+type SectionProps = PropsWithChildren<{
+  title: string;
+}>;
+
+function Section({ children, title }: SectionProps): React.JSX.Element {
   return (
-    <ScrollView>
-      <Text style={{ fontSize: 21 }}>
-        {Array.from({ length: 50000 }).map(_ => emoji[Math.floor(Math.random() * emoji.length)])}
-      </Text>
-    </ScrollView>
+    <View style={styles.sectionContainer}>
+      <Text>{title}</Text>
+      <Text>{children}</Text>
+    </View>
   );
 }
 
-function Foo() {
-  return (
-    <View style={{ backgroundColor: 'red', flex: 1 }}></View>
-  )
+function floodJsThread() {
+  setInterval(() => {
+    const end = Date.now() + 25;
+    while (Date.now() < end) {
+      // Intentionally do nothing; just burn CPU cycles.
+      Math.sqrt(Math.random());
+    }
+  }, 27);
 }
 
-export default function() {
-  const Stack = createNativeStackNavigator();
+/*
+ * create artificial pressure in the JS thread to show off thep problem.
+ * */
+floodJsThread();
+
+function AppMain(): React.JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  const backgroundStyle = {
+    flex: 1,
+    backgroundColor: 'white',
+  };
+
+  /*
+   * To keep the template simple and small we're adding padding to prevent view
+   * from rendering under the System UI.
+   * For bigger apps the reccomendation is to use `react-native-safe-area-context`:
+   * https://github.com/AppAndFlow/react-native-safe-area-context
+   *
+   * You can read more about it here:
+   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
+   */
+  const safePadding = '5%';
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{
-        autoHideHomeIndicator: true,
-      }}>
-        <Stack.Screen name="Test" component={ScrollViewTemplate}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <View style={backgroundStyle}>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundStyle.backgroundColor}
+      />
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: safePadding,
+          paddingBottom: safePadding,
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}>
+        <Section title="Step One">
+          This test shows how the native layout update triggers a layout shift.
+        </Section>
+        <Section title="Step One">
+          There is a view with a blue background. We don't expect to ever see
+          flashes of the blue background.
+        </Section>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  sectionContainer: {
+    marginTop: 32,
+    paddingHorizontal: 24,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  sectionDescription: {
+    marginTop: 8,
+    fontSize: 18,
+    fontWeight: '400',
+  },
+  highlight: {
+    fontWeight: '700',
+  },
+});
+
+function App() {
+  return (
+    <ScreenStack style={{ flex: 1, backgroundColor: 'red' }}>
+      <Screen
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          backgroundColor: 'blue',
+          padding: 20,
+        }}
+        enabled
+        isNativeStack>
+        <AppMain />
+      </Screen>
+    </ScreenStack>
+  );
+}
+
+export default App;
