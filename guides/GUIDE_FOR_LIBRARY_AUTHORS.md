@@ -462,10 +462,10 @@ The config component is expected to be rendered as a direct child of `<Screen>`.
 
 Along with this component's properties that can be used to customize header behavior, one can also use one of the below component containers to render custom react-native content in different areas of the native header:
 
-#### `ScreenStackHeaderCenterView` 
+#### `ScreenStackHeaderCenterView`
 The children will render in the center of the native navigation bar.
 
-#### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`  
+#### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`
 The children will render on the right-hand or left-hand side of the navigation bar (or on the opposite side in case LTR locales are set on the user's device). Supports these properties:
 
 - `hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
@@ -603,7 +603,7 @@ An array of objects describing native bar button items to display on the left or
 
 `changesSelectionAsPrimaryAction?: boolean` — Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
 
-#### The button with a menu also support: 
+#### The button with a menu also support:
 
 ```
 menu?: {
@@ -614,9 +614,12 @@ menu?: {
       type: 'action';
       icon?: PlatformIconIOSSfSymbol;
       state?: 'on' | 'off' | 'mixed'; // State of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
-      attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented'; // Style of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
+      disabled?: boolean; // Attribute indicating disabled style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
+      destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
+      hidden?: boolean; // Attribute indicating hidden style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
+      keepsMenuPresented?: boolean; // Attribute indicating that the menu remains presented after firing the element’s action instead of dismissing. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
       discoverabilityTitle?: string; // Discoverability title of the menu item. Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
-    } 
+    }
     | {
       label?: string;
       type: 'submenu';

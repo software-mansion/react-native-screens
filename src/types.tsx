@@ -1100,11 +1100,29 @@ export interface HeaderBarButtonItemMenuAction {
    */
   state?: 'on' | 'off' | 'mixed';
   /**
-   * Attributes of the item.
+   * Indicates whether to apply disabled style to the item.
    *
-   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
    */
-  attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented';
+  disabled?: boolean;
+  /**
+   * Indicates whether to apply destructive style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
+   */
+  destructive?: boolean;
+  /**
+   * Indicates whether to apply hidden style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
+   */
+  hidden?: boolean;
+  /**
+   * Indicates whether to keep the menu presented after firing the element’s action.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
+   */
+  keepsMenuPresented?: boolean;
   /**
    * Discoverability label of the menu item.
    *
