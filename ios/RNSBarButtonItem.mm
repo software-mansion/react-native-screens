@@ -188,25 +188,36 @@
     actionElement.state = UIMenuElementStateMixed;
   }
 
-  NSString *attributes = dict[@"attributes"];
-  if ([attributes isEqualToString:@"destructive"]) {
-    actionElement.attributes = UIMenuElementAttributesDestructive;
-  } else if ([attributes isEqualToString:@"disabled"]) {
-    actionElement.attributes = UIMenuElementAttributesDisabled;
-  } else if ([attributes isEqualToString:@"hidden"]) {
-    actionElement.attributes = UIMenuElementAttributesHidden;
-  } else if ([attributes isEqualToString:@"keepsMenuPresented"]) {
+  NSNumber *disabled = dict[@"disabled"];
+  NSNumber *hidden = dict[@"hidden"];
+  NSNumber *destructive = dict[@"destructive"];
+  NSNumber *keepsMenuPresented = dict[@"keepsMenuPresented"];
+
+  if (disabled != nil && [disabled boolValue]) {
+    actionElement.attributes |= UIMenuElementAttributesDisabled;
+  }
+
+  if (hidden != nil && [hidden boolValue]) {
+    actionElement.attributes |= UIMenuElementAttributesHidden;
+  }
+
+  if (destructive != nil && [destructive boolValue]) {
+    actionElement.attributes |= UIMenuElementAttributesDestructive;
+  }
+
+  if (keepsMenuPresented != nil && [keepsMenuPresented boolValue]) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
     if (@available(iOS 16.0, *)) {
-      actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
+      actionElement.attributes |= UIMenuElementAttributesKeepsMenuPresented;
     }
 #endif
 #if TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160000
     if (@available(tvOS 16.0, *)) {
-      actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
+      actionElement.attributes |= UIMenuElementAttributesKeepsMenuPresented;
     }
 #endif
   }
+
   return actionElement;
 }
 
