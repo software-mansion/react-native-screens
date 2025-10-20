@@ -363,6 +363,12 @@ RNS_IGNORE_SUPER_CALL_END
     [self maybeAddToParentAndUpdateContainer];
   }
 #endif
+  if (self.window == nil) {
+    // When hot reload happens that would remove the whole stack, disabling the interaction on a screen out transition
+    // will not be matched with enabling the interactions on another screen's in transition. We need to make sure
+    // that the subtree is interactive again
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
 }
 
 - (void)maybeAddToParentAndUpdateContainer

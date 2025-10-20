@@ -145,6 +145,17 @@ struct ContentWrapperBox {
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
++ (RNSViewInteractionManager *)viewInteractionManagerInstance
+{
+  static RNSViewInteractionManager *manager = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    manager = [[RNSViewInteractionManager alloc] init];
+  });
+
+  return manager;
+}
+
 - (BOOL)getFullScreenSwipeShadowEnabled
 {
   if (@available(iOS 26, *)) {
@@ -804,7 +815,7 @@ RNS_IGNORE_SUPER_CALL_END
     // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
     // To be sure, we block interactions on the whole window.
     // Note that newWindows is nil when moving from instead of moving to, and Obj-C handles nil correctly
-    newWindow.userInteractionEnabled = false;
+    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self];
   }
 }
 
@@ -812,7 +823,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (@available(iOS 26, *)) {
     // Disable interactions to disallow multiple modals dismissed at once; see willMoveToWindow
-    presentationController.containerView.window.userInteractionEnabled = false;
+    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self];
   }
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -843,7 +854,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (@available(iOS 26, *)) {
     // Reenable interactions; see presentationControllerWillDismiss
-    presentationController.containerView.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
 
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
@@ -859,7 +870,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (@available(iOS 26, *)) {
     // Reenable interactions; see presentationControllerWillDismiss
     // Dismissed screen doesn't hold a reference to window, but presentingViewController.view does
-    presentationController.presentingViewController.view.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
 
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
@@ -1665,7 +1676,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   if (@available(iOS 26, *)) {
     // Reenable interactions, see willMoveToWindow
-    self.view.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
@@ -1707,6 +1718,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
   [self traverseForScrollView:self.screenView];
 #endif
+  if (@available(iOS 26, *)) {
+    // Reenable interactions, see willMoveToWindow
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
 }
 
 - (void)viewDidLayoutSubviews

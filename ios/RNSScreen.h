@@ -7,6 +7,7 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import "RNSViewInteractionManager.h";
 
 #if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
@@ -155,6 +156,8 @@ namespace react = facebook::react;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 - (instancetype)initWithFrame:(CGRect)frame;
+
++ (RNSViewInteractionManager *)viewInteractionManagerInstance;
 
 /**
  * Tell `Screen` that it will be unmounted in next transaction.
