@@ -87,8 +87,9 @@ export default function BarButtonItemsExample() {
         component={PlainButtonDemo}
         options={{
           title: 'Plain Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Info',
               onPress: () => Alert.alert('Info pressed'),
             },
@@ -100,12 +101,14 @@ export default function BarButtonItemsExample() {
         component={IconButtonDemo}
         options={{
           title: 'Icon Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               icon: {
                 type: "imageSource",
                 imageSource: require('../../assets/search_black.png')
               },
+              label: "Label",
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -116,12 +119,14 @@ export default function BarButtonItemsExample() {
         component={IconButtonDemo}
         options={{
           title: 'System image Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               icon: {
                 type: "sfSymbol",
                 name: "square.and.arrow.up"
               },
+              label: "Label",
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -132,8 +137,9 @@ export default function BarButtonItemsExample() {
         component={MenuButtonDemo}
         options={{
           title: 'Menu Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "menu",
               label: 'Menu',
               menu: {
                 items: [
@@ -158,8 +164,9 @@ export default function BarButtonItemsExample() {
         component={BadgeButtonDemo}
         options={{
           title: 'Badge Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Badge',
               badge: {
                 value: '3',
@@ -178,8 +185,9 @@ export default function BarButtonItemsExample() {
         component={DisabledButtonDemo}
         options={{
           title: 'Disabled Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Disabled',
               disabled: true,
               onPress: () => Alert.alert('Should not fire'),
@@ -192,8 +200,9 @@ export default function BarButtonItemsExample() {
         component={CustomColorButtonDemo}
         options={{
           title: 'Custom Color Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Purple',
               tintColor: 'purple',
               onPress: () => Alert.alert('Purple pressed'),
@@ -206,8 +215,9 @@ export default function BarButtonItemsExample() {
         component={ProminentStyleButtonDemo}
         options={{
           title: 'Prominent Style Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Prominent',
               variant: 'prominent',
               tintColor: 'green',
@@ -221,8 +231,9 @@ export default function BarButtonItemsExample() {
         component={LabelStyleButtonDemo}
         options={{
           title: 'Label Style Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Styled',
               labelStyle: {
                 fontFamily: 'Georgia',
@@ -240,23 +251,31 @@ export default function BarButtonItemsExample() {
         component={IconSharesBgButtonDemo}
         options={{
           title: 'Icon SharesBackground',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
+              label: "Label",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
+              type: "button",
+              label: "Label",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
+              type: "button",
+              label: "Label",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: false,
             },
             {
+              type: "button",
+              label: "Label",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               hidesSharedBackground: true,
               onPress: () => Alert.alert('Icon with sharesBackground false pressed'),
@@ -269,8 +288,9 @@ export default function BarButtonItemsExample() {
         component={TextButtonWithWidthDemo}
         options={{
           title: 'Text Button With Width',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Wide',
               width: 100,
               onPress: () => Alert.alert('Wide text button pressed'),
@@ -283,15 +303,20 @@ export default function BarButtonItemsExample() {
         component={IconButtonsWithSpacingDemo}
         options={{
           title: 'Icon Buttons With Spacing',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
+              label: "Label",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('First icon pressed'),
             },
             {
+              type: "spacing",
               spacing: 100,
             },
             {
+              type: "button",
+              label: "Label",
               icon: { type: "imageSource", imageSource: require('../../assets/search_white.png') },
               onPress: () => Alert.alert('Second icon pressed'),
             },
@@ -304,12 +329,15 @@ export default function BarButtonItemsExample() {
         options={{
           title: 'Header Tint Color',
           headerTintColor: 'red',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Tinted',
               onPress: () => Alert.alert('Tinted pressed'),
             },
             {
+              type: "button",
+              label: "Label",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Tinted icon pressed'),
             },
@@ -321,13 +349,16 @@ export default function BarButtonItemsExample() {
         component={DoneStyleButtonDemo}
         options={{
           title: 'Done Style Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Done',
               variant: 'done',
               onPress: () => Alert.alert('Done text pressed'),
             },
             {
+              type: "button",
+              label: "DoneIcon",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               variant: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
@@ -340,8 +371,9 @@ export default function BarButtonItemsExample() {
         component={AdvancedMenuButtonDemo}
         options={{
           title: 'Advanced Menu Button',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "menu",
               label: 'Menu',
               menu: {
                 label: 'Context menu',
@@ -395,22 +427,23 @@ export default function BarButtonItemsExample() {
         options={{
           title: 'React Node Button',
           headerBackVisible: true,
-          headerRightItems: [
+          headerRightItems: () => [
             {
-              // eslint-disable-next-line react/no-unstable-nested-components
-              customView: () => <TouchableOpacity onPress={() => Alert.alert('React Node 1 pressed')}>
+              type: "custom",
+              element: <TouchableOpacity onPress={() => Alert.alert('React Node 1 pressed')}>
                 <Text style={{ color: 'blue' }}>React Node 1</Text>
               </TouchableOpacity>,
               hidesSharedBackground: true
             },
             {
+              type: "button",
               label: "Native",
               onPress: () => Alert.alert('Native button pressed'),
               sharesBackground: true,
             },
             {
-              // eslint-disable-next-line react/no-unstable-nested-components
-              customView: () => <TouchableOpacity onPress={() => Alert.alert('React Node 2 pressed')}>
+              type: "custom",
+              element: <TouchableOpacity onPress={() => Alert.alert('React Node 2 pressed')}>
                 <Text style={{ color: 'red' }}>React Node 2</Text>
               </TouchableOpacity>
             },
@@ -421,14 +454,15 @@ export default function BarButtonItemsExample() {
         options={{
           title: 'Back Button Visible',
           headerBackVisible: true,
-          headerLeftItems: [
+          headerLeftItems: () => [
             {
-              // eslint-disable-next-line react/no-unstable-nested-components
-              customView: () => <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
+              type: "custom",
+              element: <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
                 <Text style={{ color: 'blue' }}>React Node</Text>
               </TouchableOpacity>
             },
             {
+              type: "button",
               label: "Native",
               onPress: () => Alert.alert('Native button pressed'),
             },
@@ -438,8 +472,9 @@ export default function BarButtonItemsExample() {
         component={IdentifierExample}
         options={({ navigation }) => ({
           title: 'Identifier Example',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Button',
               onPress: () => {
                 navigation.navigate('IdentifierExample2');
@@ -452,8 +487,9 @@ export default function BarButtonItemsExample() {
         component={IdentifierExample2}
         options={{
           title: 'Identifier Example 2',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: 'Btn',
               onPress: () => Alert.alert('Button 1 pressed'),
             },
@@ -463,20 +499,24 @@ export default function BarButtonItemsExample() {
         component={ExessiveItemsExample}
         options={{
           title: 'Exessive Items Example',
-          headerRightItems: [
+          headerRightItems: () => [
             {
+              type: "button",
               label: "Button 1",
               onPress: () => Alert.alert('Button 1 pressed'),
             },
             {
+              type: "button",
               label: "Button 2",
               onPress: () => Alert.alert('Button 2 pressed'),
             },
             {
+              type: "button",
               label: "Button 3",
               onPress: () => Alert.alert('Button 3 pressed'),
             },
             {
+              type: "button",
               label: "Button 4",
               onPress: () => Alert.alert('Button 4 pressed'),
             },
