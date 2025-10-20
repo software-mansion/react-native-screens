@@ -2139,12 +2139,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
-- (void)setViewToSnapshot
+- (void)setViewToSnapshotAfterUpdates:(BOOL)afterUpdates
 {
   UIView *superView = self.view.superview;
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window != nil) {
-    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:afterUpdates];
     snapshot.frame = self.view.frame;
     [self.view removeFromSuperview];
     self.view = snapshot;
