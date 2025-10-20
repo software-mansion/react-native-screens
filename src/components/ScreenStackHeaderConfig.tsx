@@ -56,10 +56,14 @@ export const ScreenStackHeaderConfig = React.forwardRef<
         ].find(
           item =>
             item &&
-            'onPress' in item &&
+            'buttonId' in item &&
             item.buttonId === event.nativeEvent.buttonId,
         );
-        if (pressedItem && 'onPress' in pressedItem && pressedItem.onPress) {
+        if (
+          pressedItem &&
+          pressedItem.type === 'button' &&
+          pressedItem.onPress
+        ) {
           pressedItem.onPress();
         }
       }
@@ -93,7 +97,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
           ...(preparedHeaderRightBarButtonItems ?? []),
         ];
         for (const item of allItems) {
-          if (item && 'menu' in item && item.menu) {
+          if (item && item.type === 'menu' && item.menu) {
             const action = findInMenu(item.menu, event.nativeEvent.menuId);
             if (action) {
               action.onPress();

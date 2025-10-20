@@ -35,7 +35,7 @@ export const prepareHeaderBarButtonItems = (
   side: 'left' | 'right',
 ) => {
   return barButtonItems?.map((item, index) => {
-    if ('spacing' in item) {
+    if (item.type === 'spacing') {
       return item;
     }
     let imageSource;
@@ -67,13 +67,13 @@ export const prepareHeaderBarButtonItems = (
       tintColor,
       badge,
     };
-    if ('onPress' in item) {
+    if (item.type === 'button') {
       return {
         ...processedItem,
         buttonId: `${index}-${side}`,
       };
     }
-    if ('menu' in item) {
+    if (item.type === 'menu') {
       return {
         ...processedItem,
         menu: prepareMenu(item.menu, index, side),
