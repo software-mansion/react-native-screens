@@ -200,7 +200,7 @@
       itemStateAppearanceProps[@"tabBarItemTitleFontWeight"] != nil ||
       itemStateAppearanceProps[@"tabBarItemTitleFontStyle"] != nil) {
     titleTextAttributes[NSFontAttributeName] =
-        [RCTFont updateFont:nil
+        [RCTFont updateFont:tabBarItemStateAppearance.titleTextAttributes[NSFontAttributeName]
                  withFamily:itemStateAppearanceProps[@"tabBarItemTitleFontFamily"]
                        size:itemStateAppearanceProps[@"tabBarItemTitleFontSize"]
                      weight:itemStateAppearanceProps[@"tabBarItemTitleFontWeight"]
