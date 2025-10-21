@@ -12,7 +12,7 @@ import {
 } from 'react-native-screens/experimental';
 import ConfigColumn from './ConfigColumn';
 import { mapContentStringToComponent } from '../shared';
-import { SafeAreaView } from 'react-native-screens/private';
+import { SafeAreaView } from 'react-native-screens/experimental';
 
 const defaultColumnConfig: ColumnConfig = {
   safeAreaTopEdge: true,

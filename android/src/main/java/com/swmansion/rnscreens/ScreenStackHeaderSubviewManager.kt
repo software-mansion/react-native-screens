@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -39,6 +40,14 @@ class ScreenStackHeaderSubviewManager :
                 "searchBar" -> ScreenStackHeaderSubview.Type.SEARCH_BAR
                 else -> throw JSApplicationIllegalArgumentException("Unknown type $type")
             }
+    }
+
+    @ReactProp(name = "hidesSharedBackground")
+    override fun setHidesSharedBackground(
+        view: ScreenStackHeaderSubview,
+        hidesSharedBackground: Boolean,
+    ) {
+        Log.w("[RNScreens]", "hidesSharedBackground prop is not available on Android")
     }
 
     override fun updateState(

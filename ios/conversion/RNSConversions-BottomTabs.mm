@@ -178,6 +178,45 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 
 #endif // Check for iOS >= 26
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(18.0))
+UITabBarControllerMode UITabBarControllerModeFromRNSBottomTabsTabBarControllerMode(
+    react::RNSBottomTabsTabBarControllerMode tabBarControllerMode)
+{
+  using enum facebook::react::RNSBottomTabsTabBarControllerMode;
+
+  switch (tabBarControllerMode) {
+    case Automatic:
+      return UITabBarControllerModeAutomatic;
+    case TabBar:
+      return UITabBarControllerModeTabBar;
+    case TabSidebar:
+      return UITabBarControllerModeTabSidebar;
+    default:
+      return UITabBarControllerModeAutomatic;
+  }
+}
+#else // RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(18.0))
+UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarDisplayMode)
+{
+  switch (tabBarDisplayMode) {
+    case RNSTabBarControllerModeAutomatic:
+      return UITabBarControllerModeAutomatic;
+    case RNSTabBarControllerModeTabBar:
+      return UITabBarControllerModeTabBar;
+    case RNSTabBarControllerModeTabSidebar:
+      return UITabBarControllerModeTabSidebar;
+    default:
+      return UITabBarControllerModeAutomatic;
+  }
+}
+#endif // RCT_NEW_ARCH_ENABLED
+
+#endif // Check for iOS >= 18
+
 RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType)
 {
   using enum facebook::react::RNSBottomTabsScreenIconType;

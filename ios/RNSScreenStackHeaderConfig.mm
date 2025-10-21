@@ -4,17 +4,16 @@
 #import <React/RCTImageComponentView.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
+#import <ReactCommon/TurboModuleUtils.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <react/utils/ManagedObjectWrapper.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #import "UINavigationBar+RNSUtility.h"
-#ifndef NDEBUG
-#import <react/utils/ManagedObjectWrapper.h>
-#endif // !NDEBUG
 #else
 #import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
@@ -27,6 +26,7 @@
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 #import "RNSBackBarButtonItem.h"
+#import "RNSBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
@@ -80,9 +80,7 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   /// Whether a react subview has been added / removed in current transaction. This flag is reset after each react
   /// transaction via RCTMountingTransactionObserving protocol.
   bool _addedReactSubviewsInCurrentTransaction;
-#ifndef NDEBUG
-  RCTImageLoader *imageLoader;
-#endif // !NDEBUG
+  RCTImageLoader *_imageLoader;
 #else
   NSDirectionalEdgeInsets _lastHeaderInsets;
   __weak RCTBridge *_bridge;
@@ -374,7 +372,9 @@ RNS_IGNORE_SUPER_CALL_END
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-#ifndef RCT_NEW_ARCH_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
+        RCTImageLoader *imageLoader = _imageLoader;
+#else
         RCTImageLoader *imageLoader = [_bridge moduleForClass:[RCTImageLoader class]];
 #endif // !RCT_NEW_ARCH_ENABLED
         image = [imageLoader.imageCache
@@ -617,10 +617,11 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.scrollEdgeAppearance = scrollEdgeAppearance;
 #if !TARGET_OS_TV
   navitem.hidesBackButton = config.hideBackButton;
+  navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
-  navitem.leftBarButtonItem = nil;
-  navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
+  navitem.leftBarButtonItems = nil;
+  navitem.rightBarButtonItems = nil;
 
 #if !TARGET_OS_TV
   // We want to set navitem.searchController to nil only if we are sure
@@ -633,16 +634,17 @@ RNS_IGNORE_SUPER_CALL_END
     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-#if !TARGET_OS_TV
-        navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
-#endif
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.leftBarButtonItem = buttonItem;
+        NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
+        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
+        [mutableItems addObject:[subview getUIBarButtonItem]];
+        navitem.leftBarButtonItems = mutableItems;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.rightBarButtonItem = buttonItem;
+        NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
+        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
+        [mutableItems addObject:[subview getUIBarButtonItem]];
+        navitem.rightBarButtonItems = mutableItems;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
@@ -707,6 +709,10 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
+  navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
+                                                withCurrentItems:navitem.leftBarButtonItems];
+  navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                 withCurrentItems:navitem.rightBarButtonItems];
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
@@ -832,6 +838,76 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+- (NSArray<UIBarButtonItem *> *)barButtonItemsFromConfigs:(NSArray<NSDictionary<NSString *, id> *> *)dicts
+                                         withCurrentItems:(NSArray<UIBarButtonItem *> *)currentItems
+{
+  if (dicts.count == 0) {
+    return currentItems;
+  }
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:currentItems.count + dicts.count];
+  [items addObjectsFromArray:currentItems];
+  for (NSUInteger i = 0; i < dicts.count; i++) {
+    NSDictionary *dict = dicts[i];
+    if (dict[@"buttonId"] || dict[@"menu"]) {
+      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithConfig:dict
+          action:^(NSString *buttonId) {
+#if RCT_NEW_ARCH_ENABLED
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && buttonId) {
+              eventEmitter->onPressHeaderBarButtonItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
+                      .buttonId = std::string([buttonId UTF8String])});
+            }
+#else
+            if (self.onPressHeaderBarButtonItem && buttonId) {
+              self.onPressHeaderBarButtonItem(@{@"buttonId" : buttonId});
+            }
+#endif
+          }
+          menuAction:^(NSString *menuId) {
+#if RCT_NEW_ARCH_ENABLED
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && menuId) {
+              eventEmitter->onPressHeaderBarButtonMenuItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
+                      .menuId = std::string([menuId UTF8String])});
+            }
+#else
+            if (self.onPressHeaderBarButtonMenuItem && menuId) {
+              self.onPressHeaderBarButtonMenuItem(@{@"menuId" : menuId});
+            }
+#endif
+          }
+#if RCT_NEW_ARCH_ENABLED
+          imageLoader:_imageLoader];
+#else
+          imageLoader:_bridge.imageLoader];
+#endif
+      NSNumber *index = dict[@"index"];
+      if (index.integerValue < items.count) {
+        [items insertObject:item atIndex:index.integerValue];
+      } else {
+        [items addObject:item];
+      }
+    } else if (dict[@"spacing"]) {
+      UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                            target:nil
+                                                                            action:nil];
+      NSNumber *spacingValue = dict[@"spacing"];
+      item.width = [spacingValue doubleValue];
+      NSNumber *index = dict[@"index"];
+      if (index.integerValue < items.count) {
+        [items insertObject:item atIndex:index.integerValue];
+      } else {
+        [items addObject:item];
+      }
+    }
+  }
+  return items;
+}
+
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
 {
@@ -916,16 +992,26 @@ RNS_IGNORE_SUPER_CALL_END
     // This code should be kept in sync with analogous switch statement in
     // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
     switch (childComponentView.type) {
-      case RNSScreenStackHeaderSubviewTypeLeft:
-        navitem.leftBarButtonItem.customView = snapshot;
+      case RNSScreenStackHeaderSubviewTypeLeft: {
+        for (UIBarButtonItem *item in navitem.leftBarButtonItems) {
+          if (item.customView == childComponentView) {
+            item.customView = snapshot;
+          }
+        }
         break;
+      }
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle:
         navitem.titleView = snapshot;
         break;
-      case RNSScreenStackHeaderSubviewTypeRight:
-        navitem.rightBarButtonItem.customView = snapshot;
+      case RNSScreenStackHeaderSubviewTypeRight: {
+        for (UIBarButtonItem *item in navitem.rightBarButtonItems) {
+          if (item.customView == childComponentView) {
+            item.customView = snapshot;
+          }
+        }
         break;
+      }
       case RNSScreenStackHeaderSubviewTypeSearchBar:
       case RNSScreenStackHeaderSubviewTypeBackButton:
         break;
@@ -1062,6 +1148,30 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
 
+  if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {
+    const auto &vec = newScreenProps.headerLeftBarButtonItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _headerLeftBarButtonItems = array;
+  }
+
+  if (newScreenProps.headerRightBarButtonItems != oldScreenProps.headerRightBarButtonItems) {
+    const auto &vec = newScreenProps.headerRightBarButtonItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _headerRightBarButtonItems = array;
+  }
+
   [self updateViewControllerIfNeeded];
 
   if (needsNavigationControllerLayout) {
@@ -1078,11 +1188,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
            oldState:(const facebook::react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderConfigShadowNode::ConcreteState>(state);
-#ifndef NDEBUG
   if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
-    imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+    _imageLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
-#endif // !NDEBUG
 }
 
 #else
@@ -1115,6 +1223,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 }
 
 #endif
+
 @end
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1170,6 +1279,10 @@ RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(headerRightBarButtonItems, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonItem, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonMenuItem, RCTDirectEventBlock);
 
 @end
 

@@ -7,6 +7,7 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
+  ImageSourcePropType,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 import { ScrollEdgeEffect } from './components/shared/types';
@@ -111,6 +112,37 @@ export type SearchBarPlacement =
   | 'integrated'
   | 'integratedButton'
   | 'integratedCentered';
+
+export type PlatformIconShared = {
+  type: 'imageSource';
+  imageSource: ImageSourcePropType;
+};
+
+export type PlatformIconIOSSfSymbol = {
+  type: 'sfSymbol';
+  name: string;
+};
+
+export type PlatformIconIOS =
+  | PlatformIconIOSSfSymbol
+  | {
+      type: 'templateSource';
+      templateSource: ImageSourcePropType;
+    }
+  | PlatformIconShared;
+
+export type PlatformIconAndroid =
+  | {
+      type: 'drawableResource';
+      name: string;
+    }
+  | PlatformIconShared;
+
+export interface PlatformIcon {
+  ios?: PlatformIconIOS;
+  android?: PlatformIconAndroid;
+  shared?: PlatformIconShared;
+}
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -644,6 +676,18 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backButtonDisplayMode?: BackButtonDisplayMode;
   /**
+   * Array of UIBarButtomItems to the left side of the header.
+   *
+   * @platform ios
+   */
+  headerLeftBarButtonItems?: HeaderBarButtonItem[];
+  /**
+   * Array of UIBarButtomItems to the right side of the header.
+   *
+   * @platform ios
+   */
+  headerRightBarButtonItems?: HeaderBarButtonItem[];
+  /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
   hidden?: boolean;
@@ -940,6 +984,196 @@ export interface SearchBarProps {
    */
   shouldShowHintSearchIcon?: boolean;
 }
+
+export interface ScreenStackHeaderSubviewProps {
+  /**
+   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only applicable to type="right" and type="left" subviews.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+   */
+  hidesSharedBackground?: boolean;
+}
+
+interface SharedHeaderBarButtonItem {
+  /**
+   * Position of the item in the navigation items array.
+   */
+  index?: number;
+  /**
+   * Title of the item.
+   */
+  title?: string;
+  /**
+   * Style for the item label.
+   */
+  titleStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    color?: ColorValue;
+  };
+  /**
+   * Icon for the item
+   */
+  icon?: PlatformIconIOS;
+  /**
+   * The variant of the item.
+   * "Prominent" only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
+   */
+  variant?: 'plain' | 'done' | 'prominent';
+  /**
+   * The tint color to apply to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
+   */
+  tintColor?: ColorValue;
+  /**
+   * A Boolean value that indicates whether the item is in a disabled state.
+   */
+  disabled?: boolean;
+  /**
+   * The width of the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
+   */
+  width?: number;
+  /**
+   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+   */
+  hidesSharedBackground?: boolean;
+  /**
+   * A boolean value indicating whether this item can share a background with other items in a navigation bar or a toolbar.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
+   */
+  sharesBackground?: boolean;
+  /**
+   * An identifier used to match items across transitions in a navigation bar or toolbar.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
+   */
+  identifier?: string;
+  /**
+   * A badge to be rendered on a item.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
+   */
+  badge?: {
+    /**
+     * The text to display in the badge.
+     */
+    value: string;
+    /**
+     * Style of the badge.
+     */
+    style?: {
+      color?: ColorValue;
+      backgroundColor?: ColorValue;
+      fontFamily?: string;
+      fontSize?: number;
+      fontWeight?: string;
+    };
+  };
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+}
+
+export interface HeaderBarButtonItemWithAction
+  extends SharedHeaderBarButtonItem {
+  type: 'button';
+  onPress: () => void;
+  /**
+   * A Boolean value that indicates whether the item is in a selected state.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
+   */
+  selected?: boolean;
+  /**
+   * A Boolean value that indicates whether the item represents an action or selection.
+   * Only available from iOS 15.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+   */
+  changesSelectionAsPrimaryAction?: boolean;
+}
+
+export interface HeaderBarButtonItemMenuAction {
+  type: 'action';
+  title?: string;
+  onPress: () => void;
+  icon?: PlatformIconIOSSfSymbol;
+  /**
+   * State of the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
+   */
+  state?: 'on' | 'off' | 'mixed';
+  /**
+   * Indicates whether to apply disabled style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
+   */
+  disabled?: boolean;
+  /**
+   * Indicates whether to apply destructive style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
+   */
+  destructive?: boolean;
+  /**
+   * Indicates whether to apply hidden style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
+   */
+  hidden?: boolean;
+  /**
+   * Indicates whether to keep the menu presented after firing the element’s action.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
+   */
+  keepsMenuPresented?: boolean;
+  /**
+   * Discoverability label of the menu item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
+   */
+  discoverabilityLabel?: string;
+}
+
+export interface HeaderBarButtonItemSubmenu {
+  type: 'submenu';
+  title?: string;
+  icon?: PlatformIconIOSSfSymbol;
+  items: HeaderBarButtonItemWithMenu['menu']['items'];
+}
+
+export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
+  type: 'menu';
+  menu: {
+    title?: string;
+    items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
+  };
+}
+
+export interface HeaderBarButtonItemSpacing {
+  type: 'spacing';
+  spacing: number;
+}
+
+export type HeaderBarButtonItem =
+  | HeaderBarButtonItemWithAction
+  | HeaderBarButtonItemWithMenu
+  | HeaderBarButtonItemSpacing;
 
 /**
  * Custom Screen Transition

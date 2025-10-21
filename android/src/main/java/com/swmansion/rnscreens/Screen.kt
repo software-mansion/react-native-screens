@@ -36,6 +36,7 @@ import com.swmansion.rnscreens.events.SheetTranslationEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
@@ -558,7 +559,7 @@ class Screen(
             return
         }
         (background as? MaterialShapeDrawable?)?.let {
-            val resolvedCornerRadius = PixelUtil.toDIPFromPixel(sheetCornerRadius)
+            val resolvedCornerRadius = max(PixelUtil.toDIPFromPixel(sheetCornerRadius), 0f)
             it.shapeAppearanceModel =
                 ShapeAppearanceModel
                     .Builder()
