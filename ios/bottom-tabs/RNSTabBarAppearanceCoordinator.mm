@@ -3,6 +3,7 @@
 #import <React/RCTImageLoader.h>
 #import "RCTConvert+RNSBottomTabs.h"
 #import "RNSConversions.h"
+#import "RNSTabBarController.h"
 #import "RNSTabsScreenViewController.h"
 
 @implementation RNSTabBarAppearanceCoordinator
@@ -18,6 +19,10 @@
 
   // Step 1 - configure host-specific appearance
   tabBar.tintColor = hostComponentView.tabBarTintColor;
+
+  // Set tint color for iPadOS tab bar. This is the official way recommended by Apple:
+  // https://developer.apple.com/forums/thread/761056?answerId=798245022#798245022
+  hostComponentView.controller.view.tintColor = hostComponentView.tabBarTintColor;
 
   if (tabScreenCtrls == nil) {
     return;
