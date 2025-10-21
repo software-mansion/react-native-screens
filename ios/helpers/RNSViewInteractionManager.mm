@@ -21,6 +21,8 @@
 
   if (parent) {
     if (lastRootWithInteractionsDisabled && lastRootWithInteractionsDisabled != parent) {
+      // When one view already has interactions disabled, and we request a different view,
+      // we need to restore the first one
       lastRootWithInteractionsDisabled.userInteractionEnabled = YES;
     }
 
