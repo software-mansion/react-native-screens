@@ -984,13 +984,13 @@ interface SharedHeaderBarButtonItem {
    */
   index?: number;
   /**
-   * Label of the item.
+   * Title of the item.
    */
-  label?: string;
+  title?: string;
   /**
    * Style for the item label.
    */
-  labelStyle?: {
+  titleStyle?: {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
@@ -1091,7 +1091,7 @@ export interface HeaderBarButtonItemWithAction
 
 export interface HeaderBarButtonItemMenuAction {
   type: 'action';
-  label?: string;
+  title?: string;
   onPress: () => void;
   icon?: PlatformIconIOSSfSymbol;
   /**
@@ -1134,7 +1134,7 @@ export interface HeaderBarButtonItemMenuAction {
 
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
-  label?: string;
+  title?: string;
   icon?: PlatformIconIOSSfSymbol;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
 }
@@ -1142,7 +1142,7 @@ export interface HeaderBarButtonItemSubmenu {
 export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
   type: 'menu';
   menu: {
-    label?: string;
+    title?: string;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
   };
 }
