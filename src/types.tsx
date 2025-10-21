@@ -1072,6 +1072,7 @@ interface SharedHeaderBarButtonItem {
 
 export interface HeaderBarButtonItemWithAction
   extends SharedHeaderBarButtonItem {
+  type: 'button';
   onPress: () => void;
   /**
    * A Boolean value that indicates whether the item is in a selected state.
@@ -1139,6 +1140,7 @@ export interface HeaderBarButtonItemSubmenu {
 }
 
 export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
+  type: 'menu';
   menu: {
     label?: string;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
@@ -1146,6 +1148,7 @@ export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
 }
 
 export interface HeaderBarButtonItemSpacing {
+  type: 'spacing';
   spacing: number;
 }
 
