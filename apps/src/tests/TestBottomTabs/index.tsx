@@ -116,7 +116,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
         templateSource: require('../../../assets/variableIcons/icon_fill.png'),
       },
       title: 'Tab2',
-      orientation: 'landscape',
     },
     component: Tab2,
     safeAreaConfiguration: {
@@ -159,7 +158,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
       // systemItem: 'search', // iOS specific
       // systemItem: 'contacts', // iOS specific
       // systemItem: 'history', // iOS specific
-      orientation: 'portrait',
     },
     component: Tab3,
   },
@@ -183,7 +181,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab4',
       systemItem: 'search', // iOS specific
       badgeValue: '123',
-      orientation: 'portrait',
     },
     component: Tab4,
   },
