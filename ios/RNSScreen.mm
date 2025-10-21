@@ -813,9 +813,10 @@ RNS_IGNORE_SUPER_CALL_END
     // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
     // Disabling interactions for parent navigation controller won't be enough in case of nested stack
     // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
-    // To be sure, we block interactions on the whole window.
-    // Note that newWindows is nil when moving from instead of moving to, and Obj-C handles nil correctly
-    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self];
+
+    // Use RNSViewInteractionManager util to find a suitable subtree to disable interations on,
+    // starting from reactSuperview, because on Paper, self is not attached yet.
+    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
   }
 }
 
@@ -823,7 +824,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (@available(iOS 26, *)) {
     // Disable interactions to disallow multiple modals dismissed at once; see willMoveToWindow
-    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self];
+    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
   }
 
 #if !RCT_NEW_ARCH_ENABLED
