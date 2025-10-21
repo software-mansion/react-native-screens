@@ -15,7 +15,7 @@ const demoScreens = [
   { name: 'DisabledButtonDemo', title: 'Disabled Button' },
   { name: 'CustomColorButtonDemo', title: 'Custom Color Button' },
   { name: 'ProminentStyleButtonDemo', title: 'Prominent Style Button' },
-  { name: 'LabelStyleButtonDemo', title: 'Label Style Button' },
+  { name: 'TitleStyleButtonDemo', title: 'Title Style Button' },
   { name: 'IconSharesBgButtonDemo', title: 'Icon SharesBackground' },
   { name: 'TextButtonWithWidthDemo', title: 'Text Button With Width' },
   { name: 'IconButtonsWithSpacingDemo', title: 'Icon Buttons With Spacing' },
@@ -59,7 +59,7 @@ const BadgeButtonDemo = DemoScreenContent;
 const DisabledButtonDemo = DemoScreenContent;
 const CustomColorButtonDemo = DemoScreenContent;
 const ProminentStyleButtonDemo = DemoScreenContent;
-const LabelStyleButtonDemo = DemoScreenContent;
+const TitleStyleButtonDemo = DemoScreenContent;
 const IconSharesBgButtonDemo = DemoScreenContent;
 const TextButtonWithWidthDemo = DemoScreenContent;
 const IconButtonsWithSpacingDemo = DemoScreenContent;
@@ -90,7 +90,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Info',
+              title: 'Info',
               onPress: () => Alert.alert('Info pressed'),
             },
           ],
@@ -108,7 +108,7 @@ export default function BarButtonItemsExample() {
                 type: "imageSource",
                 imageSource: require('../../assets/search_black.png')
               },
-              label: "Label",
+              title: "Title",
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -126,7 +126,7 @@ export default function BarButtonItemsExample() {
                 type: "sfSymbol",
                 name: "square.and.arrow.up"
               },
-              label: "Label",
+              title: "Title",
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -140,16 +140,16 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "menu",
-              label: 'Menu',
+              title: 'Menu',
               menu: {
                 items: [
                   {
-                    label: 'Option 1',
+                    title: 'Option 1',
                     type: "action",
                     onPress: () => Alert.alert('Option 1 pressed'),
                   },
                   {
-                    label: 'Option 2',
+                    title: 'Option 2',
                     type: "action",
                     onPress: () => Alert.alert('Option 2 pressed'),
                   },
@@ -167,7 +167,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Badge',
+              title: 'Badge',
               badge: {
                 value: '3',
                 style: {
@@ -188,7 +188,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Disabled',
+              title: 'Disabled',
               disabled: true,
               onPress: () => Alert.alert('Should not fire'),
             },
@@ -203,7 +203,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Purple',
+              title: 'Purple',
               tintColor: 'purple',
               onPress: () => Alert.alert('Purple pressed'),
             },
@@ -218,7 +218,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Prominent',
+              title: 'Prominent',
               variant: 'prominent',
               tintColor: 'green',
               onPress: () => Alert.alert('Prominent pressed'),
@@ -227,15 +227,15 @@ export default function BarButtonItemsExample() {
         }}
       />
       <Stack.Screen
-        name="LabelStyleButtonDemo"
-        component={LabelStyleButtonDemo}
+        name="TitleStyleButtonDemo"
+        component={TitleStyleButtonDemo}
         options={{
-          title: 'Label Style Button',
+          title: 'Title Style Button',
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Styled',
-              labelStyle: {
+              title: 'Styled',
+              titleStyle: {
                 fontFamily: 'Georgia',
                 fontSize: 18,
                 fontWeight: 'bold',
@@ -254,28 +254,28 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: "Label",
+              title: "Title",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
               type: "button",
-              label: "Label",
+              title: "Title",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
               type: "button",
-              label: "Label",
+              title: "Title",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: false,
             },
             {
               type: "button",
-              label: "Label",
+              title: "Title",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               hidesSharedBackground: true,
               onPress: () => Alert.alert('Icon with sharesBackground false pressed'),
@@ -291,7 +291,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Wide',
+              title: 'Wide',
               width: 100,
               onPress: () => Alert.alert('Wide text button pressed'),
             },
@@ -306,7 +306,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: "Label",
+              title: "Title",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('First icon pressed'),
             },
@@ -316,7 +316,7 @@ export default function BarButtonItemsExample() {
             },
             {
               type: "button",
-              label: "Label",
+              title: "Title",
               icon: { type: "imageSource", imageSource: require('../../assets/search_white.png') },
               onPress: () => Alert.alert('Second icon pressed'),
             },
@@ -332,12 +332,12 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Tinted',
+              title: 'Tinted',
               onPress: () => Alert.alert('Tinted pressed'),
             },
             {
               type: "button",
-              label: "Label",
+              title: "Title",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Tinted icon pressed'),
             },
@@ -352,13 +352,13 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Done',
+              title: 'Done',
               variant: 'done',
               onPress: () => Alert.alert('Done text pressed'),
             },
             {
               type: "button",
-              label: "DoneIcon",
+              title: "DoneIcon",
               icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
               variant: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
@@ -374,12 +374,12 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "menu",
-              label: 'Menu',
+              title: 'Menu',
               menu: {
-                label: 'Context menu',
+                title: 'Context menu',
                 items: [
                   {
-                    label: 'Action 1',
+                    title: 'Action 1',
                     icon: { type: "sfSymbol", name: 'star' },
                     type: "action",
                     state: 'on',
@@ -388,7 +388,7 @@ export default function BarButtonItemsExample() {
                     onPress: () => Alert.alert('Action 1 pressed'),
                   },
                   {
-                    label: 'Action 2',
+                    title: 'Action 2',
                     icon: { type: "sfSymbol", name: 'square.and.arrow.up' },
                     type: "action",
                     state: 'off',
@@ -397,12 +397,12 @@ export default function BarButtonItemsExample() {
                     onPress: () => Alert.alert('Action 2 pressed'),
                   },
                   {
-                    label: 'Submenu',
+                    title: 'Submenu',
                     icon: { type: "sfSymbol", name: "star" },
                     type: 'submenu',
                     items: [
                       {
-                        label: 'Sub Action 1',
+                        title: 'Sub Action 1',
                         state: 'mixed',
                         type: 'action',
                         onPress: () => Alert.alert('Sub Action 1 pressed'),
@@ -411,7 +411,7 @@ export default function BarButtonItemsExample() {
                         discoverabilityLabel: 'Sub Action 1',
                       },
                       {
-                        label: 'Sub Action 2',
+                        title: 'Sub Action 2',
                         type: 'action',
                         onPress: () => Alert.alert('Sub Action 2 pressed'),
                       },
@@ -438,7 +438,7 @@ export default function BarButtonItemsExample() {
             },
             {
               type: "button",
-              label: "Native",
+              title: "Native",
               onPress: () => Alert.alert('Native button pressed'),
               sharesBackground: true,
             },
@@ -464,7 +464,7 @@ export default function BarButtonItemsExample() {
             },
             {
               type: "button",
-              label: "Native",
+              title: "Native",
               onPress: () => Alert.alert('Native button pressed'),
             },
           ],
@@ -476,7 +476,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Button',
+              title: 'Button',
               onPress: () => {
                 navigation.navigate('IdentifierExample2');
               },
@@ -491,7 +491,7 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: 'Btn',
+              title: 'Btn',
               onPress: () => Alert.alert('Button 1 pressed'),
             },
           ],
@@ -503,22 +503,22 @@ export default function BarButtonItemsExample() {
           headerRightItems: () => [
             {
               type: "button",
-              label: "Button 1",
+              title: "Button 1",
               onPress: () => Alert.alert('Button 1 pressed'),
             },
             {
               type: "button",
-              label: "Button 2",
+              title: "Button 2",
               onPress: () => Alert.alert('Button 2 pressed'),
             },
             {
               type: "button",
-              label: "Button 3",
+              title: "Button 3",
               onPress: () => Alert.alert('Button 3 pressed'),
             },
             {
               type: "button",
-              label: "Button 4",
+              title: "Button 4",
               onPress: () => Alert.alert('Button 4 pressed'),
             },
           ]

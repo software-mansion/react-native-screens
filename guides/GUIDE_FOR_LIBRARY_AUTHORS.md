@@ -577,9 +577,9 @@ An array of objects describing native bar button items to display on the left or
 
 `type: 'button' | 'menu'` — Type of the item.
 
-`label: string` — Label of the button.
+`title: string` — Title of the button.
 
-`labelStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button label.
+`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button title.
 
 `icon?: PlatformIconIOS` — Icon for the item.
 

@@ -20,7 +20,7 @@
     return self;
   }
 
-  self.title = dict[@"label"];
+  self.title = dict[@"title"];
 
   NSDictionary *imageSourceObj = dict[@"imageSource"];
   if (imageSourceObj) {
@@ -37,9 +37,9 @@
     self.image = [UIImage systemImageNamed:sfSymbolName];
   }
 
-  NSDictionary *labelStyle = dict[@"labelStyle"];
-  if (labelStyle) {
-    [self setLabelStyleFromConfig:labelStyle];
+  NSDictionary *titleStyle = dict[@"titleStyle"];
+  if (titleStyle) {
+    [self setTitleStyleFromConfig:titleStyle];
   }
 
   id tintColorObj = dict[@"tintColor"];
@@ -153,9 +153,9 @@
       }
     }
   }
-  NSString *label = dict[@"label"];
+  NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  return [UIMenu menuWithTitle:label
+  return [UIMenu menuWithTitle:title
                          image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                     identifier:nil
                        options:0
@@ -165,9 +165,9 @@
 + (UIAction *)createActionItemFromConfig:(NSDictionary *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
 {
   NSString *menuId = dict[@"menuId"];
-  NSString *label = dict[@"label"];
+  NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  UIAction *actionElement = [UIAction actionWithTitle:label
+  UIAction *actionElement = [UIAction actionWithTitle:title
                                                 image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                                            identifier:nil
                                               handler:^(__kindof UIAction *_Nonnull a) {
@@ -228,11 +228,11 @@
   }
 }
 
-- (void)setLabelStyleFromConfig:(NSDictionary *)labelStyle
+- (void)setTitleStyleFromConfig:(NSDictionary *)titleStyle
 {
-  NSString *fontFamily = labelStyle[@"fontFamily"];
-  NSNumber *fontSize = labelStyle[@"fontSize"];
-  NSString *fontWeight = labelStyle[@"fontWeight"];
+  NSString *fontFamily = titleStyle[@"fontFamily"];
+  NSNumber *fontSize = titleStyle[@"fontSize"];
+  NSString *fontWeight = titleStyle[@"fontWeight"];
   NSMutableDictionary *attrs = [NSMutableDictionary new];
   if (fontFamily || fontWeight) {
     NSNumber *resolvedFontSize = fontSize;
@@ -263,9 +263,9 @@
 
     attrs[NSFontAttributeName] = [UIFont systemFontOfSize:resolvedFontSize];
   }
-  id labelColor = labelStyle[@"color"];
-  if (labelColor) {
-    attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:labelColor];
+  id titleColor = titleStyle[@"color"];
+  if (titleColor) {
+    attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:titleColor];
   }
   [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
   [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];

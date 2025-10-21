@@ -45,8 +45,8 @@ export const prepareHeaderBarButtonItems = (
       imageSource = Image.resolveAssetSource(item.icon.templateSource);
     }
 
-    const labelStyle = item.labelStyle
-      ? { ...item.labelStyle, color: processColor(item.labelStyle.color) }
+    const titleStyle = item.titleStyle
+      ? { ...item.titleStyle, color: processColor(item.titleStyle.color) }
       : undefined;
     const tintColor = item.tintColor ? processColor(item.tintColor) : undefined;
     const badge = item.badge
@@ -63,7 +63,7 @@ export const prepareHeaderBarButtonItems = (
       ...item,
       imageSource,
       sfSymbolName: item.icon?.type === 'sfSymbol' ? item.icon.name : undefined,
-      labelStyle,
+      titleStyle,
       tintColor,
       badge,
     };
