@@ -60,6 +60,7 @@ UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
   }
 }
 
+#if !TARGET_OS_TV
 UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp(
     facebook::react::RNSSplitViewHostPrimaryBackgroundStyle primaryBackgroundStyle)
 {
@@ -78,6 +79,7 @@ UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp
       return UISplitViewControllerBackgroundStyleNone;
   }
 }
+#endif // !TARGET_OS_TV
 
 UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
     react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility)
