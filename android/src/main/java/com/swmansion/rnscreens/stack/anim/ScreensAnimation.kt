@@ -12,7 +12,12 @@ internal class ScreensAnimation(
         t: Transformation,
     ) {
         super.applyTransformation(interpolatedTime, t)
-        // interpolated time should be the progress of the current transition
-        mFragment.dispatchTransitionProgressEvent(interpolatedTime, !mFragment.isResumed)
+        // This is called while android is drawing. The event might be intercepted by reanimated
+        // which could trigger a sync mount, which can alter the native view hierarchy, which
+        // could lead to a crash, see: https://github.com/software-mansion/react-native-screens/issues/3321
+        mFragment.view?.post {
+            // interpolated time should be the progress of the current transition
+            mFragment.dispatchTransitionProgressEvent(interpolatedTime, !mFragment.isResumed)
+        }
     }
 }
