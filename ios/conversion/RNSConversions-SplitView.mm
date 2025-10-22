@@ -72,12 +72,10 @@ UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp
       return UISplitViewControllerBackgroundStyleSidebar;
     case SystemDefault:
     default:
-      return
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-          UISplitViewControllerBackgroundStyleSidebar;
-#else
-          UISplitViewControllerBackgroundStyleNone;
-#endif
+      if (@available(iOS 26.0, *)) {
+        return UISplitViewControllerBackgroundStyleSidebar;
+      }
+      return UISplitViewControllerBackgroundStyleNone;
   }
 }
 
