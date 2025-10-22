@@ -270,6 +270,7 @@ export interface SplitViewHostProps extends ViewProps {
   /**
    * @summary Specifies the background style of the primary view controller.
    *
+   * On iOS 18 or lower, we always fall back to `none` which is a system default value. Since iOS 26 the system default value is `sidebar`.
    *
    * The following values are currently supported:
    *
@@ -286,7 +287,6 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @remarks
    * According to the documentation, this property shouldn't have any effect on iOS. However, on iOS 26 the support for this prop was added.
-   * On iOS 18 or lower, we always fall back to `none` which is a system default value.
    */
   primaryBackgroundStyle?: SplitViewPrimaryBackgroundStyle;
   /**
