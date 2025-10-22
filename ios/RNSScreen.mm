@@ -2221,7 +2221,6 @@ RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
-RCT_EXPORT_VIEW_PROPERTY(unstable_synchronousUpdatesEnabled, BOOL);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
