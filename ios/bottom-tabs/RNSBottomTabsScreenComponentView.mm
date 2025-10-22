@@ -84,6 +84,7 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
+  _isTitleUndefined = YES;
   _orientation = RNSOrientationInherit;
 
   _standardAppearance = [UITabBarAppearance new];
@@ -192,8 +193,16 @@ RNS_IGNORE_SUPER_CALL_END
 {
   UITabBarItem *tabBarItem = _controller.tabBarItem;
 
-  if (![tabBarItem.title isEqualToString:_title]) {
-    tabBarItem.title = _title;
+  NSString *evaluatedTitle = _title;
+  if (_title == nil && _systemItem != RNSBottomTabsScreenSystemItemNone) {
+    // Restore default system item title
+    UITabBarSystemItem systemItem =
+        rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+    evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].title;
+  }
+
+  if (![tabBarItem.title isEqualToString:evaluatedTitle]) {
+    tabBarItem.title = evaluatedTitle;
   }
 
   if (![tabBarItem.badgeValue isEqualToString:_badgeValue]) {
@@ -238,9 +247,18 @@ RNS_IGNORE_SUPER_CALL_END
   bool tabBarItemNeedsUpdate{false};
   bool scrollEdgeEffectsNeedUpdate{false};
 
-  if (newComponentProps.title != oldComponentProps.title) {
-    _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
+  if (newComponentProps.title != oldComponentProps.title ||
+      newComponentProps.isTitleUndefined != oldComponentProps.isTitleUndefined) {
+    _isTitleUndefined = newComponentProps.isTitleUndefined;
+
+    if (_isTitleUndefined) {
+      _title = nil;
+    } else {
+      _title = RCTNSStringFromString(newComponentProps.title);
+    }
+
     _controller.title = _title;
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.orientation != oldComponentProps.orientation) {
@@ -508,7 +526,9 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setTitle:(NSString *)title
 {
   _title = title;
+  _isTitleUndefined = title == nil;
   _controller.title = title;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setBadgeValue:(NSString *)badgeValue
