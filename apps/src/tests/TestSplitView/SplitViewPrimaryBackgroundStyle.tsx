@@ -9,6 +9,38 @@ import type { SplitViewPrimaryBackgroundStyle } from 'react-native-screens/exper
 import type { SplitViewBaseConfig } from './helpers/types';
 import { Colors } from '../../shared/styling/Colors';
 
+const ConfigPanel = ({
+  setPrimaryBgStyle,
+}: {
+  setPrimaryBgStyle: (primaryBgStyle: SplitViewPrimaryBackgroundStyle) => void;
+}) => (
+  <View style={styles.configPanel}>
+    <Button
+      title="systemDefault"
+      onPress={() => setPrimaryBgStyle('systemDefault')}
+    />
+    <Button title="none" onPress={() => setPrimaryBgStyle('none')} />
+    <Button title="sidebar" onPress={() => setPrimaryBgStyle('sidebar')} />
+  </View>
+);
+
+const ItemsPanel = () => {
+  const data = useMemo(
+    () => Array.from({ length: 10 }, (_, i) => `Item ${i + 1}`),
+    [],
+  );
+
+  return (
+    <>
+      {data.map((item, idx) => (
+        <View key={idx} style={styles.item}>
+          <Text style={styles.itemText}>{item}</Text>
+        </View>
+      ))}
+    </>
+  );
+};
+
 const SplitViewPrimaryBackgroundStyleApp = ({
   splitViewBaseConfig,
 }: {
@@ -17,29 +49,6 @@ const SplitViewPrimaryBackgroundStyleApp = ({
   const [primaryBgStyle, setPrimaryBgStyle] =
     useState<SplitViewPrimaryBackgroundStyle>('systemDefault');
 
-  const data = useMemo(
-    () => Array.from({ length: 10 }, (_, i) => `Item ${i + 1}`),
-    [],
-  );
-
-  const renderConfigPanel = () => (
-    <View style={styles.configPanel}>
-      <Button
-        title="systemDefault"
-        onPress={() => setPrimaryBgStyle('systemDefault')}
-      />
-      <Button title="none" onPress={() => setPrimaryBgStyle('none')} />
-      <Button title="sidebar" onPress={() => setPrimaryBgStyle('sidebar')} />
-    </View>
-  );
-
-  const renderItems = () =>
-    data.map((item, idx) => (
-      <View key={idx} style={styles.item}>
-        <Text style={styles.itemText}>{item}</Text>
-      </View>
-    ));
-
   return (
     <SplitViewHost
       {...splitViewBaseConfig}
@@ -47,13 +56,12 @@ const SplitViewPrimaryBackgroundStyleApp = ({
       <SplitViewScreen.Column>
         <View style={styles.leftColumn} />
       </SplitViewScreen.Column>
-
       <SplitViewScreen.Column>
-        <SafeAreaView edges={{top: true}}>
-        <ScrollView contentContainerStyle={styles.rightColumn}>
-          {renderConfigPanel()}
-          {renderItems()}
-        </ScrollView>
+        <SafeAreaView edges={{ top: true }}>
+          <ScrollView contentContainerStyle={styles.rightColumn}>
+            <ConfigPanel setPrimaryBgStyle={setPrimaryBgStyle} />
+            <ItemsPanel />
+          </ScrollView>
         </SafeAreaView>
       </SplitViewScreen.Column>
     </SplitViewHost>
