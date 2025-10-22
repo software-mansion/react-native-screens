@@ -106,7 +106,7 @@ export default function BarButtonItemsExample() {
               type: "button",
               icon: {
                 type: "imageSource",
-                imageSource: require('../../assets/search_black.png')
+                imageSource: require('../../assets/variableIcons/icon_fill.png')
               },
               title: "Title",
               onPress: () => Alert.alert('Icon pressed'),
