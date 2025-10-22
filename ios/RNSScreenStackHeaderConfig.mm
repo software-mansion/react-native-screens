@@ -758,6 +758,18 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)configureBackItem:(nullable UINavigationItem *)prevItem
                withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
 {
+  const auto *config = self;
+
+  if (config.backButtonUseModernImplementation) {
+    [self configureModernBackItem:prevItem withPrevVC:prevVC];
+  } else {
+    [self configureLegacyBackItem:prevItem withPrevVC:prevVC];
+  }
+}
+
+- (void)configureModernBackItem:(nullable UINavigationItem *)prevItem
+                     withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
+{
 #if !TARGET_OS_TV
   if (prevItem == nil) {
     return;
@@ -906,6 +918,79 @@ RNS_IGNORE_SUPER_CALL_END
 
   // Make sure that we don't use custom back button
   prevItem.backBarButtonItem = nil;
+}
+
+- (void)configureLegacyBackItem:(nullable UINavigationItem *)prevItem
+                     withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
+{
+#if !TARGET_OS_TV
+  if (prevItem == nil) {
+    return;
+  }
+
+  const auto *config = self;
+
+  const auto isBackTitleBlank = [NSString rnscreens_isBlankOrNull:config.backTitle] == YES;
+  NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+
+  // If previous screen controller was recreated (e.g. when you go back to tab with stack that has multiple screens),
+  // its navigationItem may not have any information from screen's headerConfig, including the title.
+  // If this is the case, we attempt to extract the title from previous screen's config directly.
+  if (resolvedBackTitle == nil && [prevVC isKindOfClass:[RNSScreen class]]) {
+    RNSScreen *prevScreen = static_cast<RNSScreen *>(prevVC);
+    resolvedBackTitle = prevScreen.screenView.findHeaderConfig.title;
+  }
+
+  prevItem.backButtonTitle = resolvedBackTitle;
+  // This has any effect only in case the `backBarButtonItem` is not set.
+  // We apply it before we configure the back item, because it might get overriden.
+  prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
+
+  if (config.isBackTitleVisible) {
+    RNSBackBarButtonItem *backBarButtonItem = [[RNSBackBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                                    style:UIBarButtonItemStylePlain
+                                                                                   target:nil
+                                                                                   action:nil];
+    auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
+    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+
+    if ((config.backTitleFontFamily &&
+         // While being used by react-navigation, the `backTitleFontFamily` will
+         // be set to "System" by default - which is the system default font.
+         // To avoid always considering the font as customized, we need to have an additional check.
+         // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
+         ![config.backTitleFontFamily isEqual:@"System"]) ||
+        config.backTitleFontSize) {
+      shouldUseCustomBackBarButtonItem = YES;
+      NSMutableDictionary *attrs = [NSMutableDictionary new];
+      NSNumber *size = config.backTitleFontSize ?: @17;
+      if (config.backTitleFontFamily) {
+        attrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                              withFamily:config.backTitleFontFamily
+                                                    size:size
+                                                  weight:nil
+                                                   style:nil
+                                                 variant:nil
+                                         scaleMultiplier:1.0];
+      } else {
+        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+      }
+      [RNSScreenStackHeaderConfig setTitleAttibutes:attrs forButton:backBarButtonItem];
+    }
+
+    // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
+    // as assigning one will override the native behavior of automatically shortening
+    // the title to "Back" or hide the back title if there's not enough space.
+    // See: https://github.com/software-mansion/react-native-screens/issues/1589
+    if (shouldUseCustomBackBarButtonItem) {
+      prevItem.backBarButtonItem = backBarButtonItem;
+    }
+  } else {
+    // back button title should be not visible next to back button,
+    // but it should still appear in back menu
+    prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
+  }
+#endif
 }
 
 - (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
@@ -1230,6 +1315,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   }
 
   _backTitleVisible = newScreenProps.backTitleVisible;
+  _backButtonUseModernImplementation = newScreenProps.backButtonUseModernImplementation;
 
   // We cannot compare SharedColor because it is shared value.
   // We could compare color value, but it is more performant to just assign new value
@@ -1374,6 +1460,7 @@ RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
 RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle)
+RCT_EXPORT_VIEW_PROPERTY(backButtonUseModernImplementation, BOOL)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)

@@ -521,7 +521,7 @@ Controls the color of the navigation header.
 
 ### `backTitle` (iOS only)
 
-Allows for controlling the string to be rendered next to back button. For iOS versions prior to 26, the title of the previous screen is used as default.
+Allows for controlling the string to be rendered next to back button. The title of the previous screen is used as default if `backButtonUseModernImplementation` is set to `false` or if `backButtonUseModernImplementation` is set to `true` and iOS version prior to 26 is used.
 
 ### `backTitleFontFamily` (iOS only)
 
@@ -533,7 +533,7 @@ Allows for customizing font size to be used for back button title on iOS.
 
 ### `backTitleVisible` (iOS only)
 
-This prop has been **deprecated**. Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
+This prop has been **deprecated**. Kept only for backward compatibility, is respected only if `backButtonUseModernImplementation` is set to `false`.
 
 Whether the back button title should be visible. Defaults to `true`.
 
@@ -574,6 +574,17 @@ In order to add text to the back button on iOS 26, use `default` display mode an
 On iOS versions prior to 26, using `generic` display mode with `backTitleFontFamily`, `backTitleFontSize`
 or `disableBackButtonMenu` property set is not supported due to limitations in the native platform.
 In such cases, display mode will fallback to `default`.
+
+If `backButtonUseModernImplementation` is set to `false`, this prop is used only when none of: `backTitleFontFamily`,
+`backTitleFontSize`, `disableBackButtonMenu` and `backTitleVisible=false` is set.
+
+### `backButtonUseModernImplementation` (iOS only)
+
+Used for backward compatibility only. Setting this prop to `false` is recommended.
+
+Uses previous implementation of native back button configuration.
+
+Default is `true`.
 
 ### `headerLeftBarButtonItems` / `headerRightBarButtonsItems` (iOS only)
 

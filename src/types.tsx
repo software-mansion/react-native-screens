@@ -614,7 +614,12 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backTitleFontSize?: number;
   /**
-   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
+   * @deprecated This prop is respected only if `backButtonUseModernImplementation` is set to `false`.
+   *
+   * Whether the back button title should be visible or not. Defaults to `true`.
+   *
+   * When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `disableBackButtonMenu`.
+   * For `backTitle` it works only in back button menu.
    *
    * @platform ios
    */
@@ -659,9 +664,22 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * or `disableBackButtonMenu` property set is not supported due to limitations in the native platform.
    * In such cases, display mode will fallback to `default`.
    *
+   * If `backButtonUseModernImplementation` is set to `false`, this prop is used only when none of: `backTitleFontFamily`,
+   * `backTitleFontSize`, `disableBackButtonMenu` and `backTitleVisible=false` is set.
+   *
    * @platform ios
    */
   backButtonDisplayMode?: BackButtonDisplayMode;
+  /**
+   * Setting this prop to `true` is recommended. Prop available for backward compatibility.
+   *
+   * Uses new implementation for native back button configuration.
+   *
+   * @default false
+   *
+   * @platform ios
+   */
+  backButtonUseModernImplementation?: boolean;
   /**
    * Array of UIBarButtomItems to the left side of the header.
    *
