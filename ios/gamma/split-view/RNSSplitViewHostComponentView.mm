@@ -65,11 +65,8 @@ static const CGFloat epsilon = 1e-6;
   _preferredDisplayMode = UISplitViewControllerDisplayModeAutomatic;
   _displayModeButtonVisibility = UISplitViewControllerDisplayModeButtonVisibilityAutomatic;
 #if !TARGET_OS_TV
-  if (@available(iOS 26.0, *)) {
-    _primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
-  } else {
-    _primaryBackgroundStyle = UISplitViewControllerBackgroundStyleNone;
-  }
+  UISplitViewController *tempSplitVC = [[UISplitViewController alloc] init];
+  _primaryBackgroundStyle = tempSplitVC.primaryBackgroundStyle;
 #endif // !TARGET_OS_TV
   _presentsWithGesture = true;
   _showSecondaryToggleButton = false;
