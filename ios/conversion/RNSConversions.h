@@ -94,6 +94,9 @@ UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(react::RNSSpli
 UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
     react::RNSSplitViewHostPreferredDisplayMode displayMode);
 
+UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp(
+    react::RNSSplitViewHostPrimaryBackgroundStyle primaryBackgroundStyle);
+
 UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
     react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility);
 

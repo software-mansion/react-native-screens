@@ -60,6 +60,27 @@ UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
   }
 }
 
+UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp(
+    facebook::react::RNSSplitViewHostPrimaryBackgroundStyle primaryBackgroundStyle)
+{
+  using enum facebook::react::RNSSplitViewHostPrimaryBackgroundStyle;
+
+  switch (primaryBackgroundStyle) {
+    case None:
+      return UISplitViewControllerBackgroundStyleNone;
+    case Sidebar:
+      return UISplitViewControllerBackgroundStyleSidebar;
+    case SystemDefault:
+    default:
+      return
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+          UISplitViewControllerBackgroundStyleSidebar;
+#else
+          UISplitViewControllerBackgroundStyleNone;
+#endif
+  }
+}
+
 UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
     react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility)
 {

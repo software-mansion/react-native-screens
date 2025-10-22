@@ -21,6 +21,11 @@ export type SplitViewSplitBehavior =
 
 export type SplitViewPrimaryEdge = 'leading' | 'trailing';
 
+export type SplitViewPrimaryBackgroundStyle =
+  | 'systemDefault'
+  | 'none'
+  | 'sidebar';
+
 export type SplitViewDisplayMode =
   | 'automatic'
   | 'secondaryOnly'
@@ -262,6 +267,26 @@ export interface SplitViewHostProps extends ViewProps {
    * @default automatic
    */
   preferredSplitBehavior?: SplitViewSplitBehavior;
+  /**
+   * @summary Specifies the background style of the primary view controller.
+   *
+   * According to the documentation, this property shouldn't have any effect on iOS. However, on iOS 26 the support for this prop was added.
+   * On iOS 18 or lower, we always fall back to `none` which is a system default value.
+   *
+   * The following values are currently supported:
+   *
+   * - `systemDefault` - chosen by the OS, the appropriate background style is based on the device preferences
+   * - `none` - a style that has no visual effect on the background appearance of the primary view controller
+   * - `sidebar` - a style that applies a blurred effect to the background of the primary view controller
+   *
+   * The supported values corresponds to the official UIKit documentation:
+   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/backgroundstyle|UISplitViewController.BackgroundStyle}
+   *
+   * @default systemDefault
+   *
+   * @supported iOS 26 or higher
+   */
+  primaryBackgroundStyle?: SplitViewPrimaryBackgroundStyle;
   /**
    * @summary Indicates on which side primary sidebar is placed, affecting the split view layout.
    *

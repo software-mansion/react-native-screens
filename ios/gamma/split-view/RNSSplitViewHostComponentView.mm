@@ -64,6 +64,12 @@ static const CGFloat epsilon = 1e-6;
   _primaryEdge = UISplitViewControllerPrimaryEdgeLeading;
   _preferredDisplayMode = UISplitViewControllerDisplayModeAutomatic;
   _displayModeButtonVisibility = UISplitViewControllerDisplayModeButtonVisibilityAutomatic;
+  _primaryBackgroundStyle =
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+      UISplitViewControllerBackgroundStyleSidebar;
+#else
+      UISplitViewControllerBackgroundStyleNone;
+#endif
   _presentsWithGesture = true;
   _showSecondaryToggleButton = false;
   _showInspector = false;
@@ -236,6 +242,12 @@ RNS_IGNORE_SUPER_CALL_END
     _needsSplitViewDisplayModeUpdate = true;
     _preferredDisplayMode =
         rnscreens::conversion::SplitViewPreferredDisplayModeFromHostProp(newComponentProps.preferredDisplayMode);
+  }
+
+  if (oldComponentProps.primaryBackgroundStyle != newComponentProps.primaryBackgroundStyle) {
+    _needsSplitViewAppearanceUpdate = true;
+    _primaryBackgroundStyle =
+        rnscreens::conversion::SplitViewPrimaryBackgroundStyleFromHostProp(newComponentProps.primaryBackgroundStyle);
   }
 
   if (oldComponentProps.presentsWithGesture != newComponentProps.presentsWithGesture) {
