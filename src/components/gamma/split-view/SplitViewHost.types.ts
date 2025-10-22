@@ -270,8 +270,6 @@ export interface SplitViewHostProps extends ViewProps {
   /**
    * @summary Specifies the background style of the primary view controller.
    *
-   * According to the documentation, this property shouldn't have any effect on iOS. However, on iOS 26 the support for this prop was added.
-   * On iOS 18 or lower, we always fall back to `none` which is a system default value.
    *
    * The following values are currently supported:
    *
@@ -285,6 +283,10 @@ export interface SplitViewHostProps extends ViewProps {
    * @default systemDefault
    *
    * @supported iOS 26 or higher
+   *
+   * @remarks
+   * According to the documentation, this property shouldn't have any effect on iOS. However, on iOS 26 the support for this prop was added.
+   * On iOS 18 or lower, we always fall back to `none` which is a system default value.
    */
   primaryBackgroundStyle?: SplitViewPrimaryBackgroundStyle;
   /**
