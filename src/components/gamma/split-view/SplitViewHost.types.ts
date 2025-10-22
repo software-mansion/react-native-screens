@@ -275,7 +275,7 @@ export interface SplitViewHostProps extends ViewProps {
    * - `none` - a style that has no visual effect on the background appearance of the primary view controller
    * - `sidebar` - a style that applies a blurred effect to the background of the primary view controller
    *
-   * The supported values corresponds to the official UIKit documentation:
+   * The supported values correspond to the official UIKit documentation:
    * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/backgroundstyle|UISplitViewController.BackgroundStyle}
    *
    * @default default
