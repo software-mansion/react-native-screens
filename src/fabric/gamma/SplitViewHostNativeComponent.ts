@@ -43,7 +43,7 @@ type SplitViewOrientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
-type SplitViewPrimaryBackgroundStyle = 'systemDefault' | 'none' | 'sidebar';
+type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
 interface ColumnMetrics {
   minimumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
@@ -76,7 +76,7 @@ interface NativeProps extends ViewProps {
   orientation?: WithDefault<SplitViewOrientation, 'inherit'>;
   primaryBackgroundStyle?: WithDefault<
     SplitViewPrimaryBackgroundStyle,
-    'systemDefault'
+    'default'
   >;
 
   // Interactions

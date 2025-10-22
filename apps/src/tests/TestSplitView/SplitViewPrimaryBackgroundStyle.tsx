@@ -16,8 +16,8 @@ const ConfigPanel = ({
 }) => (
   <View style={styles.configPanel}>
     <Button
-      title="systemDefault"
-      onPress={() => setPrimaryBgStyle('systemDefault')}
+      title="default"
+      onPress={() => setPrimaryBgStyle('default')}
     />
     <Button title="none" onPress={() => setPrimaryBgStyle('none')} />
     <Button title="sidebar" onPress={() => setPrimaryBgStyle('sidebar')} />
@@ -47,7 +47,7 @@ const SplitViewPrimaryBackgroundStyleApp = ({
   splitViewBaseConfig: SplitViewBaseConfig;
 }) => {
   const [primaryBgStyle, setPrimaryBgStyle] =
-    useState<SplitViewPrimaryBackgroundStyle>('systemDefault');
+    useState<SplitViewPrimaryBackgroundStyle>('default');
 
   return (
     <SplitViewHost
