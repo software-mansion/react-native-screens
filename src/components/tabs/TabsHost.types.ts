@@ -206,7 +206,7 @@ export interface TabsHostProps {
    *
    * The following values are currently supported:
    *
-   * - `automatic` - resolves to the system default minimize behavior
+   * - `auto` - resolves to the system default minimize behavior
    * - `never` - the tab bar does not minimize
    * - `onScrollDown` - the tab bar minimizes when scrolling down and
    *   expands when scrolling back up
@@ -260,7 +260,7 @@ export interface TabsHostProps {
    *
    * The following values are currently supported:
    *
-   * - `automatic` - the system sets the display mode based on the tab’s content
+   * - `auto` - the system sets the display mode based on the tab’s content
    * - `tabBar` - the system displays the content only as a tab bar
    * - `tabSidebar` - the tab bar is displayed as a sidebar
    *
