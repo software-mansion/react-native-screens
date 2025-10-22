@@ -1080,13 +1080,6 @@ export interface HeaderBarButtonItemWithAction
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
    */
   selected?: boolean;
-  /**
-   * A Boolean value that indicates whether the item represents an action or selection.
-   * Only available from iOS 15.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
-   */
-  changesSelectionAsPrimaryAction?: boolean;
 }
 
 export interface HeaderBarButtonItemMenuAction {
@@ -1145,6 +1138,13 @@ export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
     title?: string;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
   };
+  /**
+   * A Boolean value that indicates whether the button title should indicate selection or not.
+   * Only available from iOS 15.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+   */
+  changesSelectionAsPrimaryAction?: boolean;
 }
 
 export interface HeaderBarButtonItemSpacing {
