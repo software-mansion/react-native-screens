@@ -133,7 +133,7 @@ typedef NS_ENUM(NSInteger, RNSBottomTabsIconType) {
 
 #if !RCT_NEW_ARCH_ENABLED
 typedef NS_ENUM(NSInteger, RNSTabBarMinimizeBehavior) {
-  RNSTabBarMinimizeBehaviorAutomatic,
+  RNSTabBarMinimizeBehaviorAuto,
   RNSTabBarMinimizeBehaviorNever,
   RNSTabBarMinimizeBehaviorOnScrollDown,
   RNSTabBarMinimizeBehaviorOnScrollUp,
@@ -142,7 +142,7 @@ typedef NS_ENUM(NSInteger, RNSTabBarMinimizeBehavior) {
 
 #if !RCT_NEW_ARCH_ENABLED
 typedef NS_ENUM(NSInteger, RNSTabBarControllerMode) {
-  RNSTabBarControllerModeAutomatic,
+  RNSTabBarControllerModeAuto,
   RNSTabBarControllerModeTabBar,
   RNSTabBarControllerModeTabSidebar,
 };

@@ -22,7 +22,7 @@ RCT_ENUM_CONVERTER(
 RCT_ENUM_CONVERTER(
     RNSTabBarMinimizeBehavior,
     (@{
-      @"automatic" : @(RNSTabBarMinimizeBehaviorAutomatic),
+      @"automatic" : @(RNSTabBarMinimizeBehaviorAuto),
       @"never" : @(RNSTabBarMinimizeBehaviorNever),
       @"onScrollDown" : @(RNSTabBarMinimizeBehaviorOnScrollDown),
       @"onScrollUp" : @(RNSTabBarMinimizeBehaviorOnScrollUp),
@@ -33,7 +33,7 @@ RCT_ENUM_CONVERTER(
 RCT_ENUM_CONVERTER(
     RNSTabBarControllerMode,
     (@{
-      @"automatic" : @(RNSTabBarControllerModeAutomatic),
+      @"automatic" : @(RNSTabBarControllerModeAuto),
       @"tabBar" : @(RNSTabBarControllerModeTabBar),
       @"tabSidebar" : @(RNSTabBarControllerModeTabSidebar),
     }),

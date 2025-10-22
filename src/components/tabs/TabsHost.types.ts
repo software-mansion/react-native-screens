@@ -25,13 +25,13 @@ export type TabBarItemLabelVisibilityMode =
 
 // iOS-specific
 export type TabBarMinimizeBehavior =
-  | 'automatic'
+  | 'auto'
   | 'never'
   | 'onScrollDown'
   | 'onScrollUp';
 
 // iOS-specific
-export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
+export type TabBarControllerMode = 'auto' | 'tabBar' | 'tabSidebar';
 
 export type TabsHostNativeContainerStyleProps = {
   /**
