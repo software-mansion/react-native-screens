@@ -5,10 +5,9 @@
 - (instancetype)init;
 
 /**
- * Given a view, find a nearest parent on which it is safe to disable interactions, when transitioning between screens
- * in stack. When Stack is nested inside BottomTabs, it finds such view that the tabs are still interactive. Otherwise,
- * it will default to UIWindow. Makes sure that at most one view is disabled at any time, re-enabling interactions on
- * previously affected views.
+ * Given a view, traverse its ancestors hierarchy and find a view that supports RNSViewInteractionAware protocol
+ * and can disable interactions for the time of screen transition. Make sure that at most one view is disabled at any
+ * time, re-enabling interactions on previously affected views when necessary.
  */
 - (void)disableInteractionsForSubtreeWith:(UIView *)view;
 
