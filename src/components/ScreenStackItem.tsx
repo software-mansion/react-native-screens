@@ -93,17 +93,24 @@ function ScreenStackItem(
   }
 
   const shouldUseSafeAreaView =
-    Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+    (Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26) ||
+    (Platform.OS === 'android' &&
+      stackPresentation === 'formSheet' &&
+      !disableSafeAreaViewForSheet);
 
   const content = (
     <>
       <DebugContainer
         contentStyle={contentStyle}
-        disableSafeAreaViewForSheet={disableSafeAreaViewForSheet}
         style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
         {shouldUseSafeAreaView ? (
-          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+          <SafeAreaView
+            edges={getSafeAreaEdges(
+              headerConfig,
+              stackPresentation,
+              disableSafeAreaViewForSheet,
+            )}>
             {children}
           </SafeAreaView>
         ) : (
@@ -233,7 +240,17 @@ function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
 
 function getSafeAreaEdges(
   headerConfig?: ScreenStackHeaderConfigProps,
+  stackPresentation?: string,
+  disableSafeAreaViewForSheet?: boolean,
 ): SafeAreaViewProps['edges'] {
+  if (
+    Platform.OS === 'android' &&
+    stackPresentation === 'formSheet' &&
+    !disableSafeAreaViewForSheet
+  ) {
+    return { top: true, bottom: true };
+  }
+
   if (Platform.OS !== 'ios' || parseInt(Platform.Version, 10) < 26) {
     return {};
   }

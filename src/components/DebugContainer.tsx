@@ -8,7 +8,6 @@ import { StackPresentationTypes } from '../types';
 
 type ContainerProps = ViewProps & {
   contentStyle?: StyleProp<ViewStyle>;
-  disableSafeAreaViewForSheet?: boolean;
   stackPresentation: StackPresentationTypes;
   children: React.ReactNode;
 };
@@ -20,44 +19,18 @@ type ContainerProps = ViewProps & {
  */
 let DebugContainer: React.FC<ContainerProps> = ({
   contentStyle,
-  disableSafeAreaViewForSheet,
   style,
-  stackPresentation,
   ...rest
 }) => {
-  return (
-    <ScreenContentWrapper
-      style={[style, contentStyle]}
-      disableSafeAreaViewForSheet={
-        Platform.OS !== 'android' ||
-        stackPresentation !== 'formSheet' ||
-        disableSafeAreaViewForSheet
-      }
-      {...rest}
-    />
-  );
+  return <ScreenContentWrapper style={[style, contentStyle]} {...rest} />;
 };
 
 if (process.env.NODE_ENV !== 'production') {
   DebugContainer = (props: ContainerProps) => {
-    const {
-      contentStyle,
-      style,
-      stackPresentation,
-      disableSafeAreaViewForSheet,
-      ...rest
-    } = props;
+    const { contentStyle, stackPresentation, style, ...rest } = props;
 
     const content = (
-      <ScreenContentWrapper
-        disableSafeAreaViewForSheet={
-          Platform.OS !== 'android' ||
-          stackPresentation !== 'formSheet' ||
-          disableSafeAreaViewForSheet
-        }
-        style={[style, contentStyle]}
-        {...rest}
-      />
+      <ScreenContentWrapper style={[style, contentStyle]} {...rest} />
     );
 
     if (
