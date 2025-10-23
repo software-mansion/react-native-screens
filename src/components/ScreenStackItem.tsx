@@ -34,6 +34,7 @@ type Props = Omit<
 function ScreenStackItem(
   {
     children,
+    disableSafeAreaViewForSheet,
     headerConfig,
     activityState,
     shouldFreeze,
@@ -98,6 +99,7 @@ function ScreenStackItem(
     <>
       <DebugContainer
         contentStyle={contentStyle}
+        disableSafeAreaViewForSheet={disableSafeAreaViewForSheet}
         style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
         {shouldUseSafeAreaView ? (
