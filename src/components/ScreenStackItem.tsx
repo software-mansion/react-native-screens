@@ -246,11 +246,11 @@ function getSafeAreaEdges(
   stackPresentation?: string,
   disableSafeAreaViewForSheet?: boolean,
 ): SafeAreaViewProps['edges'] {
-  if (
+  const isAndroidFormSheet =
     Platform.OS === 'android' &&
     stackPresentation === 'formSheet' &&
-    !disableSafeAreaViewForSheet
-  ) {
+    !disableSafeAreaViewForSheet;
+  if (isAndroidFormSheet) {
     return { top: true, bottom: true };
   }
 
@@ -258,16 +258,9 @@ function getSafeAreaEdges(
     return {};
   }
 
-  let defaultEdges: SafeAreaViewProps['edges'];
-  if (headerConfig?.translucent || headerConfig?.hidden) {
-    defaultEdges = {};
-  } else {
-    defaultEdges = {
-      top: true,
-    };
-  }
+  const isHeaderTransparent = headerConfig?.translucent || headerConfig?.hidden;
 
-  return defaultEdges;
+  return isHeaderTransparent ? {} : { top: true };
 }
 
 const styles = StyleSheet.create({
