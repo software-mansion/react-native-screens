@@ -25,15 +25,14 @@ let DebugContainer: React.FC<ContainerProps> = ({
   stackPresentation,
   ...rest
 }) => {
-  const shouldDisableSafeAreaViewForSheet =
-    disableSafeAreaViewForSheet !== undefined
-      ? disableSafeAreaViewForSheet
-      : stackPresentation !== 'formSheet';
-
   return (
     <ScreenContentWrapper
       style={[style, contentStyle]}
-      disableSafeAreaViewForSheet={shouldDisableSafeAreaViewForSheet}
+      disableSafeAreaViewForSheet={
+        Platform.OS !== 'android' ||
+        stackPresentation !== 'formSheet' ||
+        disableSafeAreaViewForSheet
+      }
       {...rest}
     />
   );
@@ -49,14 +48,13 @@ if (process.env.NODE_ENV !== 'production') {
       ...rest
     } = props;
 
-    const shouldDisableSafeAreaViewForSheet =
-      disableSafeAreaViewForSheet !== undefined
-        ? disableSafeAreaViewForSheet
-        : stackPresentation !== 'formSheet';
-
     const content = (
       <ScreenContentWrapper
-        disableSafeAreaViewForSheet={shouldDisableSafeAreaViewForSheet}
+        disableSafeAreaViewForSheet={
+          Platform.OS !== 'android' ||
+          stackPresentation !== 'formSheet' ||
+          disableSafeAreaViewForSheet
+        }
         style={[style, contentStyle]}
         {...rest}
       />
