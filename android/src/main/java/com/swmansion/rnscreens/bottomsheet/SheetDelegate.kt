@@ -246,6 +246,7 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -253,26 +254,12 @@ class SheetDelegate(
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
-
-            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            return WindowInsetsCompat
-                .Builder(insets)
-                .setInsets(
-                    WindowInsetsCompat.Type.navigationBars(),
-                    Insets.of(
-                        prevInsets.left,
-                        prevInsets.top,
-                        prevInsets.right,
-                        0,
-                    ),
-                ).build()
         } else {
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardDidHide)
                 } else if (keyboardState != KeyboardNotVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardNotVisible)
-                } else {
                 }
             }
 
@@ -280,12 +267,11 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
         return WindowInsetsCompat
             .Builder(insets)
             .setInsets(
                 WindowInsetsCompat.Type.navigationBars(),
-                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, 0),
+                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, prevInsets.bottom),
             ).build()
     }
 
