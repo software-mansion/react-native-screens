@@ -610,14 +610,13 @@ An array of objects describing native bar button items to display on the left or
 
 `selected?: boolean` — Whether the button is selected. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
 
-`changesSelectionAsPrimaryAction?: boolean` — Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
-
 #### The button with a menu also support:
 
 ```
 menu?: {
   type: 'menu';
   label?: string;
+  changesSelectionAsPrimaryAction?: boolean // Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
   items: Array<
     | {
       label?: string;

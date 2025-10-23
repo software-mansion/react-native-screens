@@ -56,6 +56,13 @@ interface ViewConfig extends View {
       };
     };
   };
+  __viewConfig: {
+    validAttributes: {
+      style: {
+        display: boolean | null;
+      };
+    };
+  };
 }
 
 export const InnerScreen = React.forwardRef<View, ScreenProps>(
@@ -179,6 +186,11 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         } else if (ref?._viewConfig?.validAttributes?.style) {
           ref._viewConfig.validAttributes.style = {
             ...ref._viewConfig.validAttributes.style,
+            display: null,
+          };
+        } else if (ref?.__viewConfig?.validAttributes?.style) {
+          ref.__viewConfig.validAttributes.style = {
+            ...ref.__viewConfig.validAttributes.style,
             display: null,
           };
         }
