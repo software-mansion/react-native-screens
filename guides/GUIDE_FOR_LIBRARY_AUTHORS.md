@@ -580,11 +580,11 @@ If `backButtonUseModernImplementation` is set to `false`, this prop is used only
 
 ### `backButtonUseModernImplementation` (iOS only)
 
-Used for backward compatibility only. Setting this prop to `false` is recommended.
+Used for backward compatibility only. Setting this prop to `true` is recommended.
 
-Uses previous implementation of native back button configuration.
+Uses new implementation of native back button configuration.
 
-Default is `true`.
+Default is `false`.
 
 ### `headerLeftBarButtonItems` / `headerRightBarButtonsItems` (iOS only)
 
