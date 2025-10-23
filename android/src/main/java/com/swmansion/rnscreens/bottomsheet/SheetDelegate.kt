@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.bottomsheet
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -246,7 +247,7 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
-        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -267,11 +268,20 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
+        if (screen.isOverflowingStatusBar(prevInsets.top)) {
+            return WindowInsetsCompat
+                .Builder(insets)
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, prevInsets.bottom),
+                ).build()
+        }
+
         return WindowInsetsCompat
             .Builder(insets)
             .setInsets(
-                WindowInsetsCompat.Type.navigationBars(),
-                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, prevInsets.bottom),
+                WindowInsetsCompat.Type.systemBars(),
+                Insets.of(prevInsets.left, 0, prevInsets.right, prevInsets.bottom),
             ).build()
     }
 
