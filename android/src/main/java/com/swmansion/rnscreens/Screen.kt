@@ -530,6 +530,16 @@ class Screen(
         }
     }
 
+    internal fun isOverflowingStatusBar(topInset: Int): Boolean {
+        val availableHeight =
+            container?.height
+                ?: resources?.displayMetrics?.heightPixels
+                ?: 0
+        val maxDetent = sheetDetents.last()
+        val maxSheetHeight = (availableHeight * maxDetent).toInt()
+        return maxSheetHeight >= availableHeight - topInset
+    }
+
     enum class StackPresentation {
         PUSH,
         MODAL,
