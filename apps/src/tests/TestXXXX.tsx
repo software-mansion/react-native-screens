@@ -122,7 +122,7 @@ export default function App() {
           name="FormSheetWithSmallDetent"
           options={{
             ...formSheetBaseOptions,
-            sheetAllowedDetents: [0.1],
+            sheetAllowedDetents: [0.2],
           }}
         />
         <Stack.Screen
