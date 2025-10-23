@@ -7,7 +7,6 @@ import type {
 import { NavigationContainer } from '@react-navigation/native';
 import { Button, Text, View } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
-import { SafeAreaView } from 'react-native-screens/experimental';
 
 type StackParamList = {
   Main: undefined;
@@ -82,26 +81,22 @@ const PressableBase = () => (
 
 const FormSheetBase = () => {
   return (
-    <SafeAreaView edges={{ top: true, bottom: true }}>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'space-between',
-        }}>
-        <PressableBase />
-        <PressableBase />
-      </View>
-    </SafeAreaView>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'space-between',
+      }}>
+      <PressableBase />
+      <PressableBase />
+    </View>
   );
 };
 
 const FormSheetNoFlex = () => {
   return (
-    <SafeAreaView edges={{ top: true, bottom: true }}>
-      <View>
-        <PressableBase />
-      </View>
-    </SafeAreaView>
+    <View>
+      <PressableBase />
+    </View>
   );
 };
 

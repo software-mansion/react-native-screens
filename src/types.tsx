@@ -470,6 +470,10 @@ export interface ScreenProps extends ViewProps {
    */
   sheetInitialDetentIndex?: number | 'last';
   /**
+   * TODO: @tomaboro - add doc
+   */
+  disableSafeAreaViewForSheet?: boolean;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
