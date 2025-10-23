@@ -8,6 +8,7 @@ import { StackPresentationTypes } from '../types';
 
 type ContainerProps = ViewProps & {
   contentStyle?: StyleProp<ViewStyle>;
+  disableSafeAreaViewForSheet?: boolean;
   stackPresentation: StackPresentationTypes;
   children: React.ReactNode;
 };
@@ -19,18 +20,46 @@ type ContainerProps = ViewProps & {
  */
 let DebugContainer: React.FC<ContainerProps> = ({
   contentStyle,
+  disableSafeAreaViewForSheet,
   style,
+  stackPresentation,
   ...rest
 }) => {
-  return <ScreenContentWrapper style={[style, contentStyle]} {...rest} />;
+  const shouldDisableSafeAreaViewForSheet =
+    disableSafeAreaViewForSheet !== undefined
+      ? disableSafeAreaViewForSheet
+      : stackPresentation !== 'formSheet';
+
+  return (
+    <ScreenContentWrapper
+      style={[style, contentStyle]}
+      disableSafeAreaViewForSheet={shouldDisableSafeAreaViewForSheet}
+      {...rest}
+    />
+  );
 };
 
 if (process.env.NODE_ENV !== 'production') {
   DebugContainer = (props: ContainerProps) => {
-    const { contentStyle, stackPresentation, style, ...rest } = props;
+    const {
+      contentStyle,
+      style,
+      stackPresentation,
+      disableSafeAreaViewForSheet,
+      ...rest
+    } = props;
+
+    const shouldDisableSafeAreaViewForSheet =
+      disableSafeAreaViewForSheet !== undefined
+        ? disableSafeAreaViewForSheet
+        : stackPresentation !== 'formSheet';
 
     const content = (
-      <ScreenContentWrapper style={[style, contentStyle]} {...rest} />
+      <ScreenContentWrapper
+        disableSafeAreaViewForSheet={shouldDisableSafeAreaViewForSheet}
+        style={[style, contentStyle]}
+        {...rest}
+      />
     );
 
     if (
