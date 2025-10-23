@@ -327,7 +327,7 @@ RNS_IGNORE_SUPER_CALL_END
   // font customized on the navigation item level, so nothing to do here
 }
 
-+ (void)setTitleAttibutes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
++ (void)setTitleAttributes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
 {
   [button setTitleTextAttributes:attrs forState:UIControlStateNormal];
   [button setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
@@ -898,7 +898,7 @@ RNS_IGNORE_SUPER_CALL_END
   } else {
     attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
   }
-  [RNSScreenStackHeaderConfig setTitleAttibutes:attrs forButton:backBarButtonItem];
+  [RNSScreenStackHeaderConfig setTitleAttributes:attrs forButton:backBarButtonItem];
 }
 
 - (void)configureNativeBackItem:(nonnull UINavigationItem *)prevItem API_UNAVAILABLE(tvos)
@@ -975,7 +975,7 @@ RNS_IGNORE_SUPER_CALL_END
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
-      [RNSScreenStackHeaderConfig setTitleAttibutes:attrs forButton:backBarButtonItem];
+      [RNSScreenStackHeaderConfig setTitleAttributes:attrs forButton:backBarButtonItem];
     }
 
     // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
