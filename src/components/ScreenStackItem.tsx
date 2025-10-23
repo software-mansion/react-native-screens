@@ -34,6 +34,7 @@ type Props = Omit<
 function ScreenStackItem(
   {
     children,
+    disableSafeAreaViewForSheet,
     headerConfig,
     activityState,
     shouldFreeze,
@@ -92,7 +93,10 @@ function ScreenStackItem(
   }
 
   const shouldUseSafeAreaView =
-    Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+    (Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26) ||
+    (Platform.OS === 'android' &&
+      stackPresentation === 'formSheet' &&
+      !disableSafeAreaViewForSheet);
 
   const content = (
     <>
@@ -101,7 +105,12 @@ function ScreenStackItem(
         style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
         {shouldUseSafeAreaView ? (
-          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+          <SafeAreaView
+            edges={getSafeAreaEdges(
+              headerConfig,
+              stackPresentation,
+              disableSafeAreaViewForSheet,
+            )}>
             {children}
           </SafeAreaView>
         ) : (
@@ -231,21 +240,24 @@ function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
 
 function getSafeAreaEdges(
   headerConfig?: ScreenStackHeaderConfigProps,
+  stackPresentation?: string,
+  disableSafeAreaViewForSheet?: boolean,
 ): SafeAreaViewProps['edges'] {
+  const isAndroidFormSheet =
+    Platform.OS === 'android' &&
+    stackPresentation === 'formSheet' &&
+    !disableSafeAreaViewForSheet;
+  if (isAndroidFormSheet) {
+    return { top: true, bottom: true };
+  }
+
   if (Platform.OS !== 'ios' || parseInt(Platform.Version, 10) < 26) {
     return {};
   }
 
-  let defaultEdges: SafeAreaViewProps['edges'];
-  if (headerConfig?.translucent || headerConfig?.hidden) {
-    defaultEdges = {};
-  } else {
-    defaultEdges = {
-      top: true,
-    };
-  }
+  const isHeaderTransparent = headerConfig?.translucent || headerConfig?.hidden;
 
-  return defaultEdges;
+  return isHeaderTransparent ? {} : { top: true };
 }
 
 const styles = StyleSheet.create({

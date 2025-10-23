@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.bottomsheet
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -142,7 +143,7 @@ class SheetDelegate(
                                 } else {
                                     (screen.sheetDetents.first() * containerHeight).toInt()
                                 }
-                            useSingleDetent(height = height)
+                            useSingleDetent(maxAllowedHeight = height)
                         }
 
                     2 ->
@@ -153,7 +154,7 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
                         )
 
                     3 ->
@@ -164,6 +165,7 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
                             halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
@@ -212,19 +214,20 @@ class SheetDelegate(
                 when (screen.sheetDetents.count()) {
                     1 ->
                         behavior.useSingleDetent(
-                            height = (screen.sheetDetents.first() * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
                             forceExpandedState = false,
                         )
 
                     2 ->
                         behavior.useTwoDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
                         )
 
                     3 ->
                         behavior.useThreeDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
                             halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
@@ -244,6 +247,7 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -251,26 +255,12 @@ class SheetDelegate(
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
-
-            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            return WindowInsetsCompat
-                .Builder(insets)
-                .setInsets(
-                    WindowInsetsCompat.Type.navigationBars(),
-                    Insets.of(
-                        prevInsets.left,
-                        prevInsets.top,
-                        prevInsets.right,
-                        0,
-                    ),
-                ).build()
         } else {
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardDidHide)
                 } else if (keyboardState != KeyboardNotVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardNotVisible)
-                } else {
                 }
             }
 
@@ -278,12 +268,20 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+        if (screen.isOverflowingStatusBar(prevInsets.top)) {
+            return WindowInsetsCompat
+                .Builder(insets)
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, prevInsets.bottom),
+                ).build()
+        }
+
         return WindowInsetsCompat
             .Builder(insets)
             .setInsets(
-                WindowInsetsCompat.Type.navigationBars(),
-                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, 0),
+                WindowInsetsCompat.Type.systemBars(),
+                Insets.of(prevInsets.left, 0, prevInsets.right, prevInsets.bottom),
             ).build()
     }
 
