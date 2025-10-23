@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, ViewProps } from 'react-native';
+import { ViewProps } from 'react-native';
 import ScreenContentWrapperNativeComponent from '../fabric/ScreenContentWrapperNativeComponent';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
@@ -12,17 +12,14 @@ function ScreenContentWrapper({
   children,
   ...rest
 }: ScreenContentWrapperProps) {
-  const shouldUseSafeAreaView =
-    Platform.OS === 'android' && !disableSafeAreaViewForSheet;
-
   return (
     <ScreenContentWrapperNativeComponent collapsable={false} {...rest}>
-      {shouldUseSafeAreaView ? (
+      {disableSafeAreaViewForSheet ? (
+        children
+      ) : (
         <SafeAreaView edges={{ top: true, bottom: true }}>
           {children}
         </SafeAreaView>
-      ) : (
-        children
       )}
     </ScreenContentWrapperNativeComponent>
   );
