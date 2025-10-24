@@ -1,6 +1,10 @@
 #import "RNSReactBaseView.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSViewControllerInvalidating.h"
+#endif // RCT_NEW_ARCH_ENABLED
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSStackScreenController;
@@ -13,6 +17,9 @@ typedef NS_ENUM(int, RNSScreenStackLifecycleState) {
 };
 
 @interface RNSStackScreenComponentView : RNSReactBaseView
+#ifdef RCT_NEW_ARCH_ENABLED
+                                         <RNSViewControllerInvalidating>
+#endif // RCT_NEW_ARCH_ENABLED
 
 @property (nonatomic, weak, readwrite, nullable) RNSScreenStackHostComponentView *stackHost;
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
