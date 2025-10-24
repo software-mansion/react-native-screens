@@ -153,11 +153,6 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 }
 
-- (void)setSynchronousShadowStateUpdatesEnabled:(BOOL)synchronousUpdatesEnabled
-{
-  _synchronousShadowStateUpdatesEnabled = synchronousUpdatesEnabled;
-}
-
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderSubviewComponentDescriptor>();

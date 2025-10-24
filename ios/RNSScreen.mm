@@ -477,11 +477,6 @@ RNS_IGNORE_SUPER_CALL_END
   _topScrollEdgeEffect = topScrollEdgeEffect;
 }
 
-- (void)setSynchronousShadowStateUpdatesEnabled:(BOOL)synchronousUpdatesEnabled
-{
-  _synchronousShadowStateUpdatesEnabled = synchronousUpdatesEnabled;
-}
-
 - (BOOL)isFullScreenSwipeEffectivelyEnabled
 {
   switch (_fullScreenSwipeEnabled) {
