@@ -109,6 +109,22 @@ class ScreenStack(
         super.removeScreenAt(index)
     }
 
+    // When there is more then one active screen on stack,
+    // pops the screen, so that only one remains
+    // Returns true when any screen was popped
+    // When there was only one screen on stack returns false
+    fun popToRoot(): Boolean {
+        val rootIndex = screenWrappers.indexOfFirst { it.screen.activityState != Screen.ActivityState.INACTIVE }
+        val lastActiveIndex = screenWrappers.indexOfLast { it.screen.activityState != Screen.ActivityState.INACTIVE }
+        if (rootIndex >= 0 && lastActiveIndex > rootIndex) {
+            for (screenIndex in (rootIndex + 1)..lastActiveIndex) {
+                notifyScreenDetached(screenWrappers[screenIndex].screen)
+            }
+            return true
+        }
+        return false
+    }
+
     override fun removeAllScreens() {
         dismissedWrappers.clear()
         super.removeAllScreens()

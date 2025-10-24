@@ -22,7 +22,7 @@ const Stack = createNativeStackNavigator<RouteParamList>();
 
 export function LongText() {
   return (
-    <Text>
+    <Text style={{fontSize: 16}}>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sed egestas
       felis. Proin laoreet eros a tellus elementum, quis euismod enim gravida.
       Morbi at arcu commodo, condimentum purus a, congue sapien. Nunc luctus
@@ -113,7 +113,7 @@ export function Tab4() {
         <Stack.Screen
           name="Screen1"
           component={Screen1}
-          options={{ headerTransparent: true }}
+          options={{ headerTransparent: false }}
         />
         <Stack.Screen
           name="Screen2"
