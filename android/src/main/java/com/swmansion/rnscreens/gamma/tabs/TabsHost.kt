@@ -15,7 +15,6 @@ import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
-import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
@@ -100,11 +99,8 @@ class TabsHost(
             val selectedTabFragment = this@TabsHost.currentFocusedTab
             if (selectedTabFragment.tabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
                 val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(contentView)
-                val activeScreensCount =
-                    screenStack?.fragments?.count { fragment -> fragment.screen.activityState !== Screen.ActivityState.INACTIVE } ?: 0
-                if (screenStack != null && activeScreensCount > 1) {
-                    // TODO: Pop stack to root
-                    return false
+                if (screenStack != null && screenStack.popToRoot()) {
+                    return true
                 }
             }
             if (selectedTabFragment.tabScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
