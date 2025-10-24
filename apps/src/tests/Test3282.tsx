@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { featureFlags } from 'react-native-screens';
 
-const SYNCHRONOUS_STATE_UPDATES_ENABLED = true;
+featureFlags.experiment.synchronousScreenUpdatesEnabled = true
+featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled = true
+featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled = true
 
 type StackParamList = {
   Home: undefined,
@@ -18,12 +20,6 @@ type RouteProps = {
 const Stack = createNativeStackNavigator();
 
 const HomeScreen = ({ navigation }: RouteProps) => {
-  useEffect(() => {
-    featureFlags.experiment.synchronousScreenUpdatesEnabled = SYNCHRONOUS_STATE_UPDATES_ENABLED
-    featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled = SYNCHRONOUS_STATE_UPDATES_ENABLED
-    featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled = SYNCHRONOUS_STATE_UPDATES_ENABLED
-  }, [])
-
   return (
     <View style={styles.container}>
       <Button
