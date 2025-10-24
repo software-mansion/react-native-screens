@@ -72,8 +72,6 @@ function SplitViewHost(props: SplitViewHostProps) {
     child => child.type === SplitViewScreen.Inspector,
   );
 
-  console.log(`columns-${columns.length}-inspectors-${inspectors.length}`);
-
   return (
     <SplitViewHostNativeComponent
       key={`columns-${columns.length}-inspectors-${inspectors.length}`}
