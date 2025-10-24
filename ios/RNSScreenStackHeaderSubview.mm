@@ -149,7 +149,7 @@ namespace react = facebook::react;
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
   [self setHidesSharedBackground:newHeaderSubviewProps.hidesSharedBackground];
-  [self setSynchronousShadowStateUpdatesEnabled:newHeaderSubviewProps.unstable_synchronousUpdatesEnabled];
+  [self setSynchronousShadowStateUpdatesEnabled:newHeaderSubviewProps.synchronousShadowStateUpdatesEnabled];
   [super updateProps:props oldProps:oldProps];
 }
 

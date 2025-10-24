@@ -1186,7 +1186,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     [self layoutNavigationControllerView];
   }
 
-  _synchronousShadowStateUpdatesEnabled = newScreenProps.unstable_synchronousUpdatesEnabled;
+  _synchronousShadowStateUpdatesEnabled = newScreenProps.synchronousShadowStateUpdatesEnabled;
 
   _initialPropsSet = YES;
   _props = std::static_pointer_cast<react::RNSScreenStackHeaderConfigProps const>(props);

@@ -1381,7 +1381,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
-  [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.unstable_synchronousUpdatesEnabled];
+  [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {

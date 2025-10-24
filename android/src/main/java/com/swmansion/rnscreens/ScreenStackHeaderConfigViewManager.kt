@@ -205,9 +205,9 @@ class ScreenStackHeaderConfigViewManager :
         config.setDirection(direction)
     }
 
-    // unstable_synchronousUpdatesEnabled is not available on Android atm,
+    // synchronousShadowStateUpdatesEnabled is not available on Android atm,
     // however we must override their setters
-    override fun setUnstable_synchronousUpdatesEnabled(
+    override fun setSynchronousShadowStateUpdatesEnabled(
         config: ScreenStackHeaderConfig?,
         value: Boolean,
     ) = Unit

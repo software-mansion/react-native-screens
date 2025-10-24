@@ -335,7 +335,7 @@ open class ScreenViewManager :
         value: String?,
     ) = Unit
 
-    override fun setUnstable_synchronousUpdatesEnabled(
+    override fun setSynchronousShadowStateUpdatesEnabled(
         view: Screen?,
         value: Boolean,
     ) = Unit
