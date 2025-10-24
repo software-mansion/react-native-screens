@@ -1,6 +1,7 @@
 const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = true;
 const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
-const RNS_SYNCHRONOUS_HEADER_STATE_UPDATES_DEFAULT = false;
+const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
+const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
 
 // TODO: Migrate freeze here
 
@@ -37,8 +38,10 @@ const _featureFlags = {
     controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
     synchronousScreenUpdatesEnabled:
       RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
-    synchronousHeaderUpdatesEnabled:
-      RNS_SYNCHRONOUS_HEADER_STATE_UPDATES_DEFAULT,
+    synchronousHeaderConfigUpdatesEnabled:
+      RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
+    synchronousHeaderSubviewUpdatesEnabled:
+      RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
   },
   stable: {},
 };
@@ -75,10 +78,16 @@ const synchronousScreenUpdatesAccessor = createExperimentalFeatureFlagAccessor(
   'synchronousScreenUpdatesEnabled',
   RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
 );
-const synchronousHeaderUpdatesAccessor = createExperimentalFeatureFlagAccessor(
-  'synchronousHeaderUpdatesEnabled',
-  RNS_SYNCHRONOUS_HEADER_STATE_UPDATES_DEFAULT,
-);
+const synchronousHeaderConfigUpdatesAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'synchronousHeaderConfigUpdatesEnabled',
+    RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
+  );
+const synchronousHeaderSubviewUpdatesAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'synchronousHeaderSubviewUpdatesEnabled',
+    RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
+  );
 
 /**
  * Exposes configurable global behaviour of the library.
@@ -102,11 +111,17 @@ export const featureFlags = {
     set synchronousScreenUpdatesEnabled(value: boolean) {
       synchronousScreenUpdatesAccessor.set(value);
     },
-    get synchronousHeaderUpdatesEnabled() {
-      return synchronousHeaderUpdatesAccessor.get();
+    get synchronousHeaderConfigUpdatesEnabled() {
+      return synchronousHeaderConfigUpdatesAccessor.get();
     },
-    set synchronousHeaderUpdatesEnabled(value: boolean) {
-      synchronousHeaderUpdatesAccessor.set(value);
+    set synchronousHeaderConfigUpdatesEnabled(value: boolean) {
+      synchronousHeaderConfigUpdatesAccessor.set(value);
+    },
+    get synchronousHeaderSubviewUpdatesEnabled() {
+      return synchronousHeaderSubviewUpdatesAccessor.get();
+    },
+    set synchronousHeaderSubviewUpdatesEnabled(value: boolean) {
+      synchronousHeaderSubviewUpdatesAccessor.set(value);
     },
   },
   /**

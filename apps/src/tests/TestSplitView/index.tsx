@@ -20,7 +20,8 @@ import { SplitViewBaseConfig } from './helpers/types';
 import { featureFlags } from 'react-native-screens';
 
 featureFlags.experiment.synchronousScreenUpdatesEnabled = true
-featureFlags.experiment.synchronousHeaderUpdatesEnabled = true
+featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled = true
+featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled = true
 
 const App = () => {
   const splitViewBaseConfig: SplitViewBaseConfig = {
