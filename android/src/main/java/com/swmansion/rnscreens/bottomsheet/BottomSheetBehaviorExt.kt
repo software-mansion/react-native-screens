@@ -34,6 +34,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useTwoDetents(
 internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     @BottomSheetBehavior.StableState state: Int? = null,
     firstHeight: Int? = null,
+    thirdHeight: Int? = null,
     halfExpandedRatio: Float? = null,
     expandedOffsetFromTop: Int? = null,
 ): BottomSheetBehavior<T> {
@@ -41,6 +42,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     isFitToContents = false
     state?.let { this.state = state }
     firstHeight?.let { this.peekHeight = firstHeight }
+    thirdHeight?.let { this.maxHeight = thirdHeight }
     halfExpandedRatio?.let { this.halfExpandedRatio = halfExpandedRatio }
     expandedOffsetFromTop?.let { this.expandedOffset = expandedOffsetFromTop }
     return this
