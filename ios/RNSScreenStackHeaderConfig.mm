@@ -238,8 +238,8 @@ RNS_IGNORE_SUPER_CALL_END
         std::move(newState)
 #if REACT_NATIVE_VERSION_MINOR >= 82
             ,
-        _unstable_synchronousUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                            : facebook::react::EventQueue::UpdateMode::Asynchronous
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
 #endif
     );
   }
@@ -1186,7 +1186,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     [self layoutNavigationControllerView];
   }
 
-  _unstable_synchronousUpdatesEnabled = newScreenProps.unstable_synchronousUpdatesEnabled;
+  _synchronousShadowStateUpdatesEnabled = newScreenProps.unstable_synchronousUpdatesEnabled;
 
   _initialPropsSet = YES;
   _props = std::static_pointer_cast<react::RNSScreenStackHeaderConfigProps const>(props);

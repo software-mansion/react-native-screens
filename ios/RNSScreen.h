@@ -94,7 +94,7 @@ namespace react = facebook::react;
 @property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
-@property (nonatomic) BOOL unstable_synchronousUpdatesEnabled;
+@property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;

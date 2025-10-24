@@ -194,8 +194,8 @@ RNS_IGNORE_SUPER_CALL_END
         std::move(newState)
 #if REACT_NATIVE_VERSION_MINOR >= 82
             ,
-        _unstable_synchronousUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                            : facebook::react::EventQueue::UpdateMode::Asynchronous
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
 #endif
     );
 
@@ -477,9 +477,9 @@ RNS_IGNORE_SUPER_CALL_END
   _topScrollEdgeEffect = topScrollEdgeEffect;
 }
 
-- (void)setUnstable_synchronousUpdatesEnabled:(BOOL)unstable_synchronousUpdatesEnabled
+- (void)setSynchronousShadowStateUpdatesEnabled:(BOOL)synchronousUpdatesEnabled
 {
-  _unstable_synchronousUpdatesEnabled = unstable_synchronousUpdatesEnabled;
+  _synchronousShadowStateUpdatesEnabled = synchronousUpdatesEnabled;
 }
 
 - (BOOL)isFullScreenSwipeEffectivelyEnabled
@@ -1386,7 +1386,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
-  [self setUnstable_synchronousUpdatesEnabled:newScreenProps.unstable_synchronousUpdatesEnabled];
+  [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.unstable_synchronousUpdatesEnabled];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {

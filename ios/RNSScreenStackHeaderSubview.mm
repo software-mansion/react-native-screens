@@ -104,8 +104,8 @@ namespace react = facebook::react;
         std::move(newState)
 #if REACT_NATIVE_VERSION_MINOR >= 82
             ,
-        _unstable_synchronousUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                            : facebook::react::EventQueue::UpdateMode::Asynchronous
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
 #endif
     );
 
@@ -149,13 +149,13 @@ namespace react = facebook::react;
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
   [self setHidesSharedBackground:newHeaderSubviewProps.hidesSharedBackground];
-  [self setUnstable_synchronousUpdatesEnabled:newHeaderSubviewProps.unstable_synchronousUpdatesEnabled];
+  [self setSynchronousShadowStateUpdatesEnabled:newHeaderSubviewProps.unstable_synchronousUpdatesEnabled];
   [super updateProps:props oldProps:oldProps];
 }
 
-- (void)setUnstable_synchronousUpdatesEnabled:(BOOL)unstable_synchronousUpdatesEnabled
+- (void)setSynchronousShadowStateUpdatesEnabled:(BOOL)synchronousUpdatesEnabled
 {
-  _unstable_synchronousUpdatesEnabled = unstable_synchronousUpdatesEnabled;
+  _synchronousShadowStateUpdatesEnabled = synchronousUpdatesEnabled;
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
