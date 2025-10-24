@@ -64,7 +64,7 @@ export function Tab4() {
         <Stack.Screen
           name="Screen1"
           component={Screen1}
-          options={{ headerTransparent: true }}
+          options={{ headerTransparent: false }}
         />
         <Stack.Screen
           name="Screen2"

@@ -68,6 +68,9 @@ class TabScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
+    var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
+    var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
+
     private fun <T> updateMenuItemAttributesIfNeeded(
         oldValue: T,
         newValue: T,

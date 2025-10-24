@@ -133,10 +133,28 @@ class TabScreenViewManager :
         value: Boolean,
     ) = Unit
 
+    @ReactProp(name = "specialEffects")
     override fun setSpecialEffects(
         view: TabScreen,
         value: ReadableMap?,
-    ) = Unit
+    ) {
+        var scrollToTop = true
+        var popToRoot = true
+        if (value?.hasKey("repeatedTabSelection") ?: false) {
+            value.getMap("repeatedTabSelection")?.let { repeatedTabSelectionConfig ->
+                if (repeatedTabSelectionConfig.hasKey("scrollToTop")) {
+                    scrollToTop =
+                        repeatedTabSelectionConfig.getBoolean("scrollToTop")
+                }
+                if (repeatedTabSelectionConfig.hasKey("popToRoot")) {
+                    popToRoot =
+                        repeatedTabSelectionConfig.getBoolean("popToRoot")
+                }
+            }
+        }
+        view.shouldUseRepeatedTabSelectionPopToRootSpecialEffect = popToRoot
+        view.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = scrollToTop
+    }
 
     override fun setOverrideScrollViewContentInsetAdjustmentBehavior(
         view: TabScreen,
