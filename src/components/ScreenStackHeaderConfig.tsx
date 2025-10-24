@@ -26,11 +26,6 @@ import ScreenStackHeaderSubviewNativeComponent, {
 import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonItems';
 import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
 
-const HEADER_CONFIG_SYNCHRONOUS_UPDATES_ENABLED =
-  featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled;
-const HEADER_SUBVIEW_SYNCHRONOUS_UPDATES_ENABLED =
-  featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled;
-
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
 
@@ -125,7 +120,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
       style={styles.headerConfig}
       pointerEvents="box-none"
       synchronousShadowStateUpdatesEnabled={
-        HEADER_CONFIG_SYNCHRONOUS_UPDATES_ENABLED
+        featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled
       }
     />
   );
@@ -140,7 +135,7 @@ export const ScreenStackHeaderBackButtonImage = (
     type="back"
     style={styles.headerSubview}
     synchronousShadowStateUpdatesEnabled={
-      HEADER_SUBVIEW_SYNCHRONOUS_UPDATES_ENABLED
+      featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
     }>
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreenStackHeaderSubview>
@@ -156,7 +151,7 @@ export const ScreenStackHeaderRightView = (
       {...rest}
       type="right"
       synchronousShadowStateUpdatesEnabled={
-        HEADER_SUBVIEW_SYNCHRONOUS_UPDATES_ENABLED
+        featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
       }
       style={[styles.headerSubview, style]}
     />
@@ -173,7 +168,7 @@ export const ScreenStackHeaderLeftView = (
       {...rest}
       type="left"
       synchronousShadowStateUpdatesEnabled={
-        HEADER_SUBVIEW_SYNCHRONOUS_UPDATES_ENABLED
+        featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
       }
       style={[styles.headerSubview, style]}
     />
@@ -188,7 +183,7 @@ export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => {
       {...rest}
       type="center"
       synchronousShadowStateUpdatesEnabled={
-        HEADER_SUBVIEW_SYNCHRONOUS_UPDATES_ENABLED
+        featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
       }
       style={[styles.headerSubviewCenter, style]}
     />
@@ -202,7 +197,7 @@ export const ScreenStackHeaderSearchBarView = (
     {...props}
     type="searchBar"
     synchronousShadowStateUpdatesEnabled={
-      HEADER_SUBVIEW_SYNCHRONOUS_UPDATES_ENABLED
+      featureFlags.experiment.synchronousHeaderSubviewUpdatesEnabled
     }
     style={styles.headerSubview}
   />
