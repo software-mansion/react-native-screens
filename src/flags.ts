@@ -1,4 +1,7 @@
 const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = true;
+const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
+const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
+const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
 
 // TODO: Migrate freeze here
 
@@ -33,9 +36,58 @@ export const compatibilityFlags = {
 const _featureFlags = {
   experiment: {
     controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
+    synchronousScreenUpdatesEnabled:
+      RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
+    synchronousHeaderConfigUpdatesEnabled:
+      RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
+    synchronousHeaderSubviewUpdatesEnabled:
+      RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
   },
   stable: {},
 };
+
+type EXPERIMENTAL_FF = keyof typeof _featureFlags.experiment;
+
+const createExperimentalFeatureFlagAccessor = <T extends EXPERIMENTAL_FF>(
+  key: T,
+  defaultValue: (typeof _featureFlags.experiment)[T],
+) => {
+  return {
+    get() {
+      return _featureFlags.experiment[key];
+    },
+    set(value: (typeof _featureFlags.experiment)[T]) {
+      if (
+        value !== _featureFlags.experiment[key] &&
+        _featureFlags.experiment[key] !== defaultValue
+      ) {
+        console.error(
+          `[RNScreens] ${key} feature flag modified for a second time; this might lead to unexpected effects`,
+        );
+      }
+      _featureFlags.experiment[key] = value;
+    },
+  };
+};
+
+const controlledBottomTabsAccessor = createExperimentalFeatureFlagAccessor(
+  'controlledBottomTabs',
+  RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
+);
+const synchronousScreenUpdatesAccessor = createExperimentalFeatureFlagAccessor(
+  'synchronousScreenUpdatesEnabled',
+  RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
+);
+const synchronousHeaderConfigUpdatesAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'synchronousHeaderConfigUpdatesEnabled',
+    RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
+  );
+const synchronousHeaderSubviewUpdatesAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'synchronousHeaderSubviewUpdatesEnabled',
+    RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
+  );
 
 /**
  * Exposes configurable global behaviour of the library.
@@ -48,19 +100,28 @@ export const featureFlags = {
    */
   experiment: {
     get controlledBottomTabs() {
-      return _featureFlags.experiment.controlledBottomTabs;
+      return controlledBottomTabsAccessor.get();
     },
     set controlledBottomTabs(value: boolean) {
-      if (
-        value !== _featureFlags.experiment.controlledBottomTabs &&
-        _featureFlags.experiment.controlledBottomTabs !==
-          RNS_CONTROLLED_BOTTOM_TABS_DEFAULT
-      ) {
-        console.error(
-          `[RNScreens] controlledBottomTabs feature flag modified for a second time; this might lead to unexpected effects`,
-        );
-      }
-      _featureFlags.experiment.controlledBottomTabs = value;
+      controlledBottomTabsAccessor.set(value);
+    },
+    get synchronousScreenUpdatesEnabled() {
+      return synchronousScreenUpdatesAccessor.get();
+    },
+    set synchronousScreenUpdatesEnabled(value: boolean) {
+      synchronousScreenUpdatesAccessor.set(value);
+    },
+    get synchronousHeaderConfigUpdatesEnabled() {
+      return synchronousHeaderConfigUpdatesAccessor.get();
+    },
+    set synchronousHeaderConfigUpdatesEnabled(value: boolean) {
+      synchronousHeaderConfigUpdatesAccessor.set(value);
+    },
+    get synchronousHeaderSubviewUpdatesEnabled() {
+      return synchronousHeaderSubviewUpdatesAccessor.get();
+    },
+    set synchronousHeaderSubviewUpdatesEnabled(value: boolean) {
+      synchronousHeaderSubviewUpdatesAccessor.set(value);
     },
   },
   /**

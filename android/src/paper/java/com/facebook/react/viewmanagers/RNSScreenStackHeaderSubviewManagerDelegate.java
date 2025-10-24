@@ -29,6 +29,9 @@ public class RNSScreenStackHeaderSubviewManagerDelegate<T extends View, U extend
       case "hidesSharedBackground":
         mViewManager.setHidesSharedBackground(view, value == null ? false : (boolean) value);
         break;
+      case "synchronousShadowStateUpdatesEnabled":
+        mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }
