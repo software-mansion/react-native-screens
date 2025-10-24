@@ -188,7 +188,7 @@ UITabBarControllerMode UITabBarControllerModeFromRNSBottomTabsTabBarControllerMo
   using enum facebook::react::RNSBottomTabsTabBarControllerMode;
 
   switch (tabBarControllerMode) {
-    case Automatic:
+    case Auto:
       return UITabBarControllerModeAutomatic;
     case TabBar:
       return UITabBarControllerModeTabBar;
@@ -203,7 +203,7 @@ API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarDisplayMode)
 {
   switch (tabBarDisplayMode) {
-    case RNSTabBarControllerModeAutomatic:
+    case RNSTabBarControllerModeAuto:
       return UITabBarControllerModeAutomatic;
     case RNSTabBarControllerModeTabBar:
       return UITabBarControllerModeTabBar;

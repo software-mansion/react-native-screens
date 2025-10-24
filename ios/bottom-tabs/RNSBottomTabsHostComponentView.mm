@@ -261,7 +261,7 @@ namespace react = facebook::react;
       _controller.tabBarMinimizeBehavior = _tabBarMinimizeBehavior;
     } else
 #endif // Check for iOS >= 26
-      if (newComponentProps.tabBarMinimizeBehavior != react::RNSBottomTabsTabBarMinimizeBehavior::Automatic) {
+      if (newComponentProps.tabBarMinimizeBehavior != react::RNSBottomTabsTabBarMinimizeBehavior::Auto) {
         RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
       }
   }
@@ -274,7 +274,7 @@ namespace react = facebook::react;
       _controller.mode = _tabBarControllerMode;
     } else
 #endif // Check for iOS >= 18
-      if (newComponentProps.tabBarControllerMode != react::RNSBottomTabsTabBarControllerMode::Automatic) {
+      if (newComponentProps.tabBarControllerMode != react::RNSBottomTabsTabBarControllerMode::Auto) {
         RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
       }
   }
@@ -440,7 +440,7 @@ RNS_IGNORE_SUPER_CALL_END
     _controller.tabBarMinimizeBehavior = _tabBarMinimizeBehavior;
   } else
 #endif // Check for iOS >= 26
-    if (tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAutomatic) {
+    if (tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAuto) {
       RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
     }
 }
@@ -454,7 +454,7 @@ RNS_IGNORE_SUPER_CALL_END
     _controller.mode = _tabBarControllerMode;
   } else
 #endif // Check for iOS >= 18
-    if (tabBarControllerMode != RNSTabBarControllerModeAutomatic) {
+    if (tabBarControllerMode != RNSTabBarControllerModeAuto) {
       RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
     }
 }
