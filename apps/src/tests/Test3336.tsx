@@ -7,6 +7,8 @@ import type {
 import { NavigationContainer } from '@react-navigation/native';
 import { Button, Text, View } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
+import { Spacer } from '../shared';
+import Colors from '../shared/styling/Colors';
 
 type StackParamList = {
   Main: undefined;
@@ -64,6 +66,9 @@ const formSheetBaseOptions: NativeStackNavigationOptions = {
   presentation: 'formSheet',
   animation: 'slide_from_bottom',
   headerShown: false,
+  contentStyle: {
+    backgroundColor: Colors.GreenLight100
+  }
 };
 
 const PressableBase = () => (
@@ -95,6 +100,8 @@ const FormSheetBase = () => {
 const FormSheetNoFlex = () => {
   return (
     <View>
+      <PressableBase />
+      <Spacer space={100} />
       <PressableBase />
     </View>
   );
