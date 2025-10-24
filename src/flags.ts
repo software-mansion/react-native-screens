@@ -34,8 +34,7 @@ export const compatibilityFlags = {
 const _featureFlags = {
   experiment: {
     controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
-    unstable_synchronousStateUpdatesEnabled:
-      RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT,
+    synchronousStateUpdatesEnabled: RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT,
   },
   stable: {},
 };
@@ -69,7 +68,7 @@ const controlledBottomTabsAccessor = createExperimentalFeatureFlagAccessor(
   RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
 );
 const synchronousUpdatesAccessor = createExperimentalFeatureFlagAccessor(
-  'unstable_synchronousStateUpdatesEnabled',
+  'synchronousStateUpdatesEnabled',
   RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT,
 );
 
@@ -89,10 +88,10 @@ export const featureFlags = {
     set controlledBottomTabs(value: boolean) {
       controlledBottomTabsAccessor.set(value);
     },
-    get unstable_synchronousStateUpdatesEnabled() {
+    get synchronousStateUpdatesEnabled() {
       return synchronousUpdatesAccessor.get();
     },
-    set unstable_synchronousStateUpdatesEnabled(value: boolean) {
+    set synchronousStateUpdatesEnabled(value: boolean) {
       synchronousUpdatesAccessor.set(value);
     },
   },
