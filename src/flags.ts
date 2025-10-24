@@ -1,5 +1,6 @@
 const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = true;
-const RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT = false;
+const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
+const RNS_SYNCHRONOUS_HEADER_STATE_UPDATES_DEFAULT = false;
 
 // TODO: Migrate freeze here
 
@@ -34,7 +35,10 @@ export const compatibilityFlags = {
 const _featureFlags = {
   experiment: {
     controlledBottomTabs: RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
-    synchronousStateUpdatesEnabled: RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT,
+    synchronousScreenUpdatesEnabled:
+      RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
+    synchronousHeaderUpdatesEnabled:
+      RNS_SYNCHRONOUS_HEADER_STATE_UPDATES_DEFAULT,
   },
   stable: {},
 };
@@ -67,9 +71,13 @@ const controlledBottomTabsAccessor = createExperimentalFeatureFlagAccessor(
   'controlledBottomTabs',
   RNS_CONTROLLED_BOTTOM_TABS_DEFAULT,
 );
-const synchronousUpdatesAccessor = createExperimentalFeatureFlagAccessor(
-  'synchronousStateUpdatesEnabled',
-  RNS_SYNCHRONOUS_STATE_UPDATES_DEFAULT,
+const synchronousScreenUpdatesAccessor = createExperimentalFeatureFlagAccessor(
+  'synchronousScreenUpdatesEnabled',
+  RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT,
+);
+const synchronousHeaderUpdatesAccessor = createExperimentalFeatureFlagAccessor(
+  'synchronousHeaderUpdatesEnabled',
+  RNS_SYNCHRONOUS_HEADER_STATE_UPDATES_DEFAULT,
 );
 
 /**
@@ -88,11 +96,17 @@ export const featureFlags = {
     set controlledBottomTabs(value: boolean) {
       controlledBottomTabsAccessor.set(value);
     },
-    get synchronousStateUpdatesEnabled() {
-      return synchronousUpdatesAccessor.get();
+    get synchronousScreenUpdatesEnabled() {
+      return synchronousScreenUpdatesAccessor.get();
     },
-    set synchronousStateUpdatesEnabled(value: boolean) {
-      synchronousUpdatesAccessor.set(value);
+    set synchronousScreenUpdatesEnabled(value: boolean) {
+      synchronousScreenUpdatesAccessor.set(value);
+    },
+    get synchronousHeaderUpdatesEnabled() {
+      return synchronousHeaderUpdatesAccessor.get();
+    },
+    set synchronousHeaderUpdatesEnabled(value: boolean) {
+      synchronousHeaderUpdatesAccessor.set(value);
     },
   },
   /**

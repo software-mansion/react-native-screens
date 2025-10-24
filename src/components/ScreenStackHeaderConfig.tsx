@@ -27,7 +27,7 @@ import { prepareHeaderBarButtonItems } from './helpers/prepareHeaderBarButtonIte
 import { isHeaderBarButtonsAvailableForCurrentPlatform } from '../utils';
 
 const SYNCHRONOUS_UPDATES_ENABLED =
-  featureFlags.experiment.synchronousStateUpdatesEnabled;
+  featureFlags.experiment.synchronousHeaderUpdatesEnabled;
 
 export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubviewNativeProps> =
   ScreenStackHeaderSubviewNativeComponent;
