@@ -1,6 +1,7 @@
+import React from 'react';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { Button, ScrollView, Text, View } from 'react-native';
+import { Button, ScrollView, Text, View } from 'react-native';
 
 type NavigationParamsList = {
   Home: undefined,
