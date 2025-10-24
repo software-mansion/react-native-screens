@@ -30,7 +30,6 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
-import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -299,6 +298,7 @@ class ScreenStackFragment :
                         animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
                     }
                 }
+
             val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
             val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
             val slideAnimator =
@@ -306,21 +306,21 @@ class ScreenStackFragment :
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
                         animatedValue?.let {
-                            var sheetY = (screen.top + it).toInt()
-
-                            // Height seems to be different when sheet is not `fitToContents`.
-                            if (!screen.isSheetFitToContents()) {
-                                sheetY = minOf(sheetY, screen.height)
-                            }
-
                             screen.translationY = it
-                            screen.onSheetTranslation(sheetY)
                         }
+                    }
+                }
+
+            val translateAnimator =
+                ValueAnimator.ofInt(coordinatorLayout.bottom, screen.top).apply {
+                    addUpdateListener { anim ->
+                        screen.onSheetTranslation(anim.animatedValue as Int)
                     }
                 }
 
             animatorSet
                 .play(slideAnimator)
+                .with(translateAnimator)
                 .takeIf {
                     dimmingDelegate.willDimForDetentIndex(
                         screen,
@@ -335,17 +335,27 @@ class ScreenStackFragment :
                         animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
                     }
                 }
+
             val slideAnimator =
                 ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
                         animatedValue?.let {
                             screen.translationY = it
-                            screen.onSheetTranslation(minOf((screen.top + it).toInt(), screen.height))
                         }
                     }
                 }
-            animatorSet.play(alphaAnimator).with(slideAnimator)
+
+            val translateAnimator =
+                ValueAnimator.ofInt(screen.top, coordinatorLayout.bottom).apply {
+                    addUpdateListener { anim ->
+                        screen.onSheetTranslation(anim.animatedValue as Int)
+                    }
+                }
+            animatorSet
+                .play(alphaAnimator)
+                .with(slideAnimator)
+                .with(translateAnimator)
         }
         animatorSet.addListener(
             ScreenAnimationDelegate(
