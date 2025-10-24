@@ -93,6 +93,11 @@ export type TransitionProgressEventType = {
   goingForward: number;
 };
 
+export type SheetTranslationEventType = {
+  y: number;
+  transitioning: number;
+};
+
 export type GestureResponseDistanceType = {
   start?: number;
   end?: number;
@@ -321,6 +326,12 @@ export interface ScreenProps extends ViewProps {
     e: NativeSyntheticEvent<TransitionProgressEventType>,
   ) => void;
   /**
+   * An internal callback called every frame during Y translation of the sheet. Use only with `formSheet` presentation.
+   */
+  onSheetTranslation?: (
+    e: NativeSyntheticEvent<SheetTranslationEventType>,
+  ) => void;
+  /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
   onWillAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
@@ -393,6 +404,13 @@ export interface ScreenProps extends ViewProps {
    * Defaults to `[1.0]`.
    */
   sheetAllowedDetents?: number[] | 'fitToContents' | 'medium' | 'large' | 'all';
+  /**
+   * Whether you can interactively dismiss a sheet.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Defaults to `true`.
+   */
+  sheetDismissible?: boolean;
   /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *

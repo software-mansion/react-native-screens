@@ -298,18 +298,29 @@ class ScreenStackFragment :
                         animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
                     }
                 }
+
             val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
             val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
             val slideAnimator =
                 ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        animatedValue?.let {
+                            screen.translationY = it
+                        }
+                    }
+                }
+
+            val translateAnimator =
+                ValueAnimator.ofInt(coordinatorLayout.bottom, screen.top).apply {
+                    addUpdateListener { anim ->
+                        screen.onSheetTranslation(anim.animatedValue as Int)
                     }
                 }
 
             animatorSet
                 .play(slideAnimator)
+                .with(translateAnimator)
                 .takeIf {
                     dimmingDelegate.willDimForDetentIndex(
                         screen,
@@ -324,14 +335,27 @@ class ScreenStackFragment :
                         animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
                     }
                 }
+
             val slideAnimator =
                 ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
                     addUpdateListener { anim ->
                         val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { screen.translationY = it }
+                        animatedValue?.let {
+                            screen.translationY = it
+                        }
                     }
                 }
-            animatorSet.play(alphaAnimator).with(slideAnimator)
+
+            val translateAnimator =
+                ValueAnimator.ofInt(screen.top, coordinatorLayout.bottom).apply {
+                    addUpdateListener { anim ->
+                        screen.onSheetTranslation(anim.animatedValue as Int)
+                    }
+                }
+            animatorSet
+                .play(alphaAnimator)
+                .with(slideAnimator)
+                .with(translateAnimator)
         }
         animatorSet.addListener(
             ScreenAnimationDelegate(
