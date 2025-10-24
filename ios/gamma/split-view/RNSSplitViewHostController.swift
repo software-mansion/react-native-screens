@@ -21,9 +21,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   private let splitViewHostComponentView: RNSSplitViewHostComponentView
 
-  /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation, because SplitView doesn't support changing number of columns dynamically.
-  private let fixedColumnsCount: Int
-
   private let minNumberOfColumns: Int = 2
   private let maxNumberOfColumns: Int = 3
   private let maxNumberOfInspectors: Int = 1
@@ -51,7 +48,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     self.splitViewHostComponentView = splitViewHostComponentView
     self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
     self.splitViewAppearanceApplicator = RNSSplitViewAppearanceApplicator()
-    self.fixedColumnsCount = numberOfColumns
 
     super.init(style: RNSSplitViewHostController.styleByNumberOfColumns(numberOfColumns))
 
@@ -300,10 +296,6 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
         && columns.count <= maxNumberOfColumns,
       "[RNScreens] SplitView can only have from \(minNumberOfColumns) to \(maxNumberOfColumns) columns"
     )
-
-    assert(
-      columns.count == fixedColumnsCount,
-      "[RNScreens] SplitView number of columns shouldn't change dynamically")
   }
 
   ///

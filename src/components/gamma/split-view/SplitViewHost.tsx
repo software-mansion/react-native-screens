@@ -6,6 +6,7 @@ import type {
   SplitViewHostProps,
   SplitViewSplitBehavior,
 } from './SplitViewHost.types';
+import SplitViewScreen from './SplitViewScreen';
 
 // According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
 // Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
@@ -59,8 +60,23 @@ function SplitViewHost(props: SplitViewHostProps) {
     }
   }, [preferredDisplayMode, preferredSplitBehavior]);
 
+  const children = React.Children.toArray(props.children);
+
+  const columns = children.filter(
+    // @ts-ignore - type is valid attribute for child
+    child => child.type === SplitViewScreen.Column,
+  );
+
+  const inspectors = children.filter(
+    // @ts-ignore - type is valid attribute for child
+    child => child.type === SplitViewScreen.Inspector,
+  );
+
   return (
-    <SplitViewHostNativeComponent {...props} style={styles.container}>
+    <SplitViewHostNativeComponent
+      key={`columns-${columns.length}-inspectors-${inspectors.length}`}
+      {...props}
+      style={styles.container}>
       {props.children}
     </SplitViewHostNativeComponent>
   );
