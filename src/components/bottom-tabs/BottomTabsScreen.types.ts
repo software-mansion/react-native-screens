@@ -463,12 +463,17 @@ export interface BottomTabsScreenProps {
    * `popToRoot` has priority over `scrollToTop`.
    *
    * @default All special effects are enabled by default.
-   *
-   * @platform ios
    */
   specialEffects?: {
     repeatedTabSelection?: {
+      /**
+       * @default true
+       * @platform ios
+       */
       popToRoot?: boolean;
+      /**
+       * @default true
+       */
       scrollToTop?: boolean;
     };
   };
