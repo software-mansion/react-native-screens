@@ -142,6 +142,7 @@ class Screen(
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents()) {
                 sheetBehavior?.useSingleDetent(height)
+                requestLayout()
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
