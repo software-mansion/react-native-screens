@@ -92,21 +92,10 @@ open class CustomToolbar(
         // 3. edge-to-edge with translucent navigation buttons bar.
         //
         // Additionally we need to gracefully handle possible display cutouts.
-
-        // We use rootWindowInsets in lieu of insets or unhandledInsets here,
-        // because cutout sometimes (only in certain scenarios, e.g. with headerLeft view present)
-        // happen to be Insets.ZERO and is not reliable.
-        val rootWindowInsets = rootWindowInsets
         val cutoutInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), rootWindowInsets)
+            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), unhandledInsets)
         val systemBarInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), rootWindowInsets)
-        val statusBarInsetsStable =
-            resolveInsetsOrZero(
-                WindowInsetsCompat.Type.systemBars(),
-                rootWindowInsets,
-                ignoreVisibility = true,
-            )
+            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), unhandledInsets)
 
         // This seems to work fine in all tested configurations, because cutout & system bars overlap
         // only in portrait mode & top inset is controlled separately, therefore we don't count
@@ -125,7 +114,7 @@ open class CustomToolbar(
         val verticalInsets =
             InsetsCompat.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) statusBarInsetsStable.top else 0),
+                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
                 0,
                 max(cutoutInsets.bottom, 0),
             )
