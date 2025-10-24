@@ -115,7 +115,12 @@ function ScreenStackItem(
               headerConfig,
               stackPresentation,
               disableSafeAreaViewForSheet,
-            )}>
+            )}
+            style={[
+              sheetAllowedDetents === 'fitToContents' && {
+                flex: 0,
+              },
+            ]}>
             {children}
           </SafeAreaView>
         ) : (
