@@ -194,6 +194,7 @@ class TabsHost(
     }
 
     var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+        updateInterfaceInsets()
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
@@ -495,9 +496,15 @@ class TabsHost(
         val newHeight = bottom - top
 
         if (newHeight != oldHeight) {
-            interfaceInsetsChangeListener?.apply {
-                this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, newHeight.toFloat()))
-            }
+            updateInterfaceInsets(newHeight)
+        }
+    }
+
+    private fun updateInterfaceInsets(newHeight: Int? = null) {
+        val height = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
+
+        interfaceInsetsChangeListener?.apply {
+            this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, height.toFloat()))
         }
     }
 
