@@ -19,6 +19,7 @@ import com.swmansion.rnscreens.KeyboardState
 import com.swmansion.rnscreens.KeyboardVisible
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
+import com.swmansion.rnscreens.getSheetMetrics
 
 class SheetDelegate(
     val screen: Screen,
@@ -267,7 +268,16 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val newTopInset = if (screen.isOverflowingStatusBar(prevInsets.top) && !isImeVisible) prevInsets.top else 0
+        val availableHeight = screen.rootView.height
+
+        val metrics = getSheetMetrics(availableHeight, screen.sheetDetents)
+
+        val newTopInset =
+            if (screen.isOverflowingStatusBar(prevInsets.top, metrics) && !isImeVisible)
+                prevInsets.top - (metrics.availableHeight - metrics.maxSheetHeight)
+            else
+                0
+
         val newBottomInset = if (!isImeVisible) prevInsets.bottom else 0
 
         return WindowInsetsCompat
