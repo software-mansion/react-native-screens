@@ -142,10 +142,13 @@ class TabsHostViewManager :
         value: String?,
     ) = Unit
 
+    @ReactProp(name = "tabBarHidden")
     override fun setTabBarHidden(
         view: TabsHost,
         value: Boolean,
-    ) = Unit
+    ) {
+        view.tabBarHidden = value
+    }
 
     // Android additional
 
