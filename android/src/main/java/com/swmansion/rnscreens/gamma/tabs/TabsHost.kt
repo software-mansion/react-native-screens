@@ -193,6 +193,10 @@ class TabsHost(
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
 
+    var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+        updateNavigationMenuIfNeeded(oldValue, newValue)
+    }
+
     private fun <T> updateNavigationMenuIfNeeded(
         oldValue: T,
         newValue: T,
