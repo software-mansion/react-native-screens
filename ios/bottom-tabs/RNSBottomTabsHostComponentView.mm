@@ -438,6 +438,16 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateTabBarAppearance];
 }
 
+- (void)setTabBarHidden:(BOOL)tabBarHidden
+{
+  _tabBarHidden = tabBarHidden;
+  if (@available(iOS 18.0, *)) {
+    [_controller setTabBarHidden:_tabBarHidden animated:NO];
+  } else {
+    _controller.tabBar.hidden = _tabBarHidden;
+  }
+}
+
 // This is a Paper-only setter method that will be called by the mounting code.
 // It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
 - (void)setTabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior:(RNSTabBarMinimizeBehavior)tabBarMinimizeBehavior
