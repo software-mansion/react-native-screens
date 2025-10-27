@@ -83,6 +83,8 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
+
 export type HeaderHeightChangeEventType = {
   headerHeight: number;
 };
@@ -755,6 +757,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean indicating whether the navigation bar is translucent.
    */
   translucent?: boolean;
+  /**
+   *
+   */
+  unstable_overrideUserInterfaceStyle?: UserInterfaceStyle;
 }
 
 export interface SearchBarProps {
