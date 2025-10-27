@@ -12,7 +12,7 @@ const CustomBackgroundComponent = () => (
       uri: 'https://fastly.picsum.photos/id/309/400/800.jpg?hmac=Pjy1rvSFQNX9tqavzeWNpy3dfWBGjLkY0doRN50JXBA',
     }}
     style={{
-      width: '100%',
+      height: '100%',
       aspectRatio: 1
     }}
   />
