@@ -131,15 +131,3 @@ public class RNSSplitViewScreenController: UIViewController {
     reactEventEmitter.emitOnDidDisappear()
   }
 }
-
-extension RNSSplitViewScreenController: RNSFrameCorrectionProvider {
-  @objc
-  public func register(forFrameCorrection view: UIView) {
-    self.splitViewScreenComponentView.register(forFrameCorrection: view)
-  }
-
-  @objc
-  public func unregister(fromFrameCorrection view: UIView) {
-    self.splitViewScreenComponentView.unregister(fromFrameCorrection: view)
-  }
-}

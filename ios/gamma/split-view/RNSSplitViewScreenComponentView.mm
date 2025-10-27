@@ -3,7 +3,6 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
-#import "RNSFrameCorrector.h"
 #import "RNSSafeAreaViewNotifications.h"
 
 #import "Swift-Bridging.h"
@@ -116,10 +115,6 @@ namespace react = facebook::react;
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-
-  for (UIView *view in _viewsForFrameCorrection) {
-    [RNSFrameCorrector applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
-  }
 }
 
 #pragma mark - ShadowTreeState
