@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.util.TypedValue
 import android.view.MenuItem
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
