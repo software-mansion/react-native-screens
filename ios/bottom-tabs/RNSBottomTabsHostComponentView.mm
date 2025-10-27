@@ -256,7 +256,7 @@ namespace react = facebook::react;
   if (newComponentProps.tabBarHidden != oldComponentProps.tabBarHidden) {
     _tabBarHidden = newComponentProps.tabBarHidden;
     if (@available(iOS 18.0, *)) {
-      [_controller setTabBarHidden:_tabBarHidden animated:YES];
+      [_controller setTabBarHidden:_tabBarHidden animated:NO];
     } else {
       _controller.tabBar.hidden = _tabBarHidden;
     }
