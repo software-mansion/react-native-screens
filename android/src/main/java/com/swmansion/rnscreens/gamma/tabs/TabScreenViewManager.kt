@@ -190,6 +190,11 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
+    override fun setUnstable_overrideUserInterfaceStyle(
+        view: TabScreen,
+        value: String?,
+    ) = Unit
+
     @ReactProp(name = "imageIconResource")
     override fun setImageIconResource(
         view: TabScreen,
