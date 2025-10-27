@@ -255,13 +255,12 @@ namespace react = facebook::react;
 
   if (newComponentProps.tabBarHidden != oldComponentProps.tabBarHidden) {
     _tabBarHidden = newComponentProps.tabBarHidden;
-#if TARGET_OS_TV
-    if (@available(tvOS 18.0, *)) {
-#else // TARGET_OS_TV
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
     if (@available(iOS 18.0, *)) {
-#endif // TARGET_OS_TV
       [_controller setTabBarHidden:_tabBarHidden animated:NO];
-    } else {
+    } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    {
       _controller.tabBar.hidden = _tabBarHidden;
     }
   }
@@ -445,9 +444,12 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setTabBarHidden:(BOOL)tabBarHidden
 {
   _tabBarHidden = tabBarHidden;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
   if (@available(iOS 18.0, *)) {
     [_controller setTabBarHidden:_tabBarHidden animated:NO];
-  } else {
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+  {
     _controller.tabBar.hidden = _tabBarHidden;
   }
 }
