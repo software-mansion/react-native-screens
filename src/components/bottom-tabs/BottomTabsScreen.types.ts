@@ -517,7 +517,7 @@ export interface BottomTabsScreenProps {
     top?: ScrollEdgeEffect;
   };
   /**
-   * @summary Allows to override system appearance for the navigation bar.
+   * @summary Allows to override system appearance for the tab bar.
    *
    * Does not support dynamic changes to the prop value for the currently visible screen.
    *
