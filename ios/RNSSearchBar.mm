@@ -491,7 +491,19 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_VIEW_PROPERTY(obscureBackground, RNSOptionalBoolean)
 RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, RNSOptionalBoolean)
 RCT_EXPORT_VIEW_PROPERTY(hideWhenScrolling, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
+
+// We want to use "systemDefault" option which is not in UITextAutocapitalizationType
+// but RCTConvert enum conversion already exists.
+RCT_CUSTOM_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType, RNSSearchBar)
+{
+  RNSSearchBar *searchBarView = static_cast<RNSSearchBar *>(view);
+  if ([json isKindOfClass:[NSString class]] && [static_cast<NSString *>(json) isEqualToString:@"systemDefault"]) {
+    [searchBarView setAutoCapitalize:UITextAutocapitalizationTypeSentences];
+  } else {
+    [searchBarView setAutoCapitalize:[RCTConvert UITextAutocapitalizationType:json]];
+  }
+}
+
 RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)

@@ -21,7 +21,7 @@ export default function App(): JSX.Element {
           component={First}
           options={{
             headerShown: true,
-            statusBarTranslucent: false,
+            // statusBarTranslucent: false, // This prop has been deprecated.
             // headerTitleStyle: {
             //   fontSize: 64,
             // }

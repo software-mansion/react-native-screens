@@ -99,7 +99,12 @@ const headerOptions = {
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ statusBarTranslucent: true }}>
+      <Stack.Navigator
+        screenOptions={
+          {
+            // statusBarTranslucent: true // This prop has been deprecated.
+          }
+        }>
         <Stack.Screen
           name={homeScreenTitle}
           component={Screen}

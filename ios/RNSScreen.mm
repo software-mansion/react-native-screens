@@ -12,6 +12,7 @@
 #import <React/RCTRootComponentView.h>
 #import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -131,6 +132,7 @@ struct ContentWrapperBox {
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
   _activityState = RNSActivityStateUndefined;
+  _fullScreenSwipeEnabled = RNSOptionalBooleanUndefined;
   _fullScreenSwipeShadowEnabled = YES;
   _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
@@ -187,7 +189,15 @@ RNS_IGNORE_SUPER_CALL_END
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
-    _state->updateState(std::move(newState));
+
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
@@ -465,6 +475,21 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _shouldUpdateScrollEdgeEffects = YES;
   _topScrollEdgeEffect = topScrollEdgeEffect;
+}
+
+- (BOOL)isFullScreenSwipeEffectivelyEnabled
+{
+  switch (_fullScreenSwipeEnabled) {
+    case RNSOptionalBooleanTrue:
+      return YES;
+    case RNSOptionalBooleanFalse:
+      return NO;
+    case RNSOptionalBooleanUndefined:
+      if (@available(iOS 26, *)) {
+        return YES;
+      }
+      return NO;
+  }
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -1333,7 +1358,8 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
-  [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+  _fullScreenSwipeEnabled =
+      [RNSConvert RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:newScreenProps.fullScreenSwipeEnabled];
 
   [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
 
@@ -1354,6 +1380,8 @@ RNS_IGNORE_SUPER_CALL_END
   [self setActivityStateOrNil:[NSNumber numberWithFloat:newScreenProps.activityState]];
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
+
+  [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
@@ -1464,6 +1492,7 @@ RNS_IGNORE_SUPER_CALL_END
   [super finalizeUpdates:updateMask];
   if (_shouldUpdateScrollEdgeEffects) {
     [self updateContentScrollViewEdgeEffectsIfExists];
+    _shouldUpdateScrollEdgeEffects = NO;
   }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -2171,7 +2200,7 @@ RCT_EXPORT_MODULE()
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, RNSOptionalBoolean);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)

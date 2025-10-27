@@ -13,6 +13,8 @@ using namespace facebook::jni;
 class NativeProxy : public jni::HybridClass<NativeProxy> {
  public:
   std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
+  std::vector<std::weak_ptr<const facebook::react::MountingCoordinator>>
+      coordinatorsWithMountingOverrides_;
   static auto constexpr kJavaDescriptor =
       "Lcom/swmansion/rnscreens/NativeProxy;";
   static jni::local_ref<jhybriddata> initHybrid(
@@ -30,6 +32,11 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
           fabricUIManager);
 
   void invalidateNative();
+
+  void cleanupExpiredMountingCoordinators();
+  void addMountingCoordinatorIfNeeded(
+      const std::shared_ptr<const facebook::react::MountingCoordinator>
+          &coordinator);
 };
 
 } // namespace rnscreens

@@ -18,6 +18,7 @@ import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
+@SuppressWarnings("deprecation")
 public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSScreenManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSScreenManagerDelegate(U viewManager) {
     super(viewManager);
@@ -53,7 +54,7 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
         mViewManager.setCustomAnimationOnSwipe(view, value == null ? false : (boolean) value);
         break;
       case "fullScreenSwipeEnabled":
-        mViewManager.setFullScreenSwipeEnabled(view, value == null ? false : (boolean) value);
+        mViewManager.setFullScreenSwipeEnabled(view, (String) value);
         break;
       case "fullScreenSwipeShadowEnabled":
         mViewManager.setFullScreenSwipeShadowEnabled(view, value == null ? true : (boolean) value);
@@ -132,6 +133,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
         break;
       case "topScrollEdgeEffect":
         mViewManager.setTopScrollEdgeEffect(view, (String) value);
+        break;
+      case "synchronousShadowStateUpdatesEnabled":
+        mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
         break;
       default:
         super.setProperty(view, propName, value);

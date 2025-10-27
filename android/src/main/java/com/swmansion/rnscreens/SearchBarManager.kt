@@ -44,7 +44,7 @@ class SearchBarManager :
     ) {
         view.autoCapitalize =
             when (autoCapitalize) {
-                null, "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
+                null, "systemDefault", "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
                 "words" -> SearchBarView.SearchBarAutoCapitalize.WORDS
                 "sentences" -> SearchBarView.SearchBarAutoCapitalize.SENTENCES
                 "characters" -> SearchBarView.SearchBarAutoCapitalize.CHARACTERS
@@ -55,11 +55,11 @@ class SearchBarManager :
     }
 
     @ReactProp(name = "autoFocus")
-    fun setAutoFocus(
+    override fun setAutoFocus(
         view: SearchBarView,
-        autoFocus: Boolean?,
+        autoFocus: Boolean,
     ) {
-        view.autoFocus = autoFocus ?: false
+        view.autoFocus = autoFocus
     }
 
     @ReactProp(name = "barTintColor", customType = "Color")
@@ -184,7 +184,7 @@ class SearchBarManager :
     }
 
     override fun cancelSearch(view: SearchBarView?) {
-        view?.handleFocusJsRequest()
+        view?.handleCancelSearchJsRequest()
     }
 
     // iOS only

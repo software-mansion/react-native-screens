@@ -154,8 +154,13 @@ class TabsHostAppearanceApplicator(
         menuItem: MenuItem,
         tabScreen: TabScreen,
     ) {
-        menuItem.title = tabScreen.tabTitle
-        menuItem.icon = tabScreen.icon
+        if (menuItem.title != tabScreen.tabTitle) {
+            menuItem.title = tabScreen.tabTitle
+        }
+
+        if (menuItem.icon != tabScreen.icon) {
+            menuItem.icon = tabScreen.icon
+        }
     }
 
     fun updateBadgeAppearance(
@@ -191,8 +196,9 @@ class TabsHostAppearanceApplicator(
             tabScreen.tabBarItemBadgeTextColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
 
+        // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
         badge.backgroundColor =
             tabScreen.tabBarItemBadgeBackgroundColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorError)
+                ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
     }
 }

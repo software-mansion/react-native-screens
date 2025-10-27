@@ -54,8 +54,16 @@ Defaults to `false`. When `enableFreeze()` is run at the top of the application 
 
 ### `fullScreenSwipeEnabled` (iOS only)
 
-Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
-IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
+Boolean indicating whether the swipe gesture should work on whole screen. The behavior depends on iOS version.
+
+For iOS prior to 26, swiping with this option results in the same transition animation as `simple_push` by default.
+It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation
+is not achievable due to usage of custom recognizer.
+
+For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used for all cases except for `customAnimationOnSwipe`,
+however the prop still can be used to controls whether it should be enabled or not.
+
+When not set, it defaults to `false` on iOS < 26 and `true` for iOS >= 26.
 
 ### `fullScreenSwipeShadowEnabled` (iOS only)
 
@@ -63,7 +71,7 @@ Boolean indicating whether the full screen dismiss gesture has shadow under view
 doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
 default iOS shadow. Defaults to `true`.
 IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
-to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
+to the legacy implementation when handling custom animations, but we assume `true` for shadows.
 
 ### `gestureEnabled` (iOS only)
 
@@ -100,13 +108,19 @@ Defaults to `false`.
 
 ### `navigationBarColor` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the navigation bar color. Defaults to initial status bar color.
 
 ### `navigationBarHidden` (Android only)
 
 Sets the visibility of the navigation bar. Defaults to `false`.
+
+### `navigationBarTranslucent` (Android only)
+
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
+
+Sets the translucency of the navigation bar. Defaults to `false`.
 
 ### `onAppear`
 
@@ -281,7 +295,7 @@ Defaults to `fade` on iOS and `none` on Android.
 
 ### `statusBarColor` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
@@ -299,7 +313,7 @@ Defaults to `auto`.
 
 ### `statusBarTranslucent` (Android only)
 
-This prop is **deprecated**. See [here](https://developer.android.com/about/versions/15/behavior-changes-15#ux).
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
@@ -448,14 +462,21 @@ The config component is expected to be rendered as a direct child of `<Screen>`.
 
 Along with this component's properties that can be used to customize header behavior, one can also use one of the below component containers to render custom react-native content in different areas of the native header:
 
-- `ScreenStackHeaderCenterView` – the children will render in the center of the native navigation bar.
-- `ScreenStackHeaderRightView` – the children will render on the right-hand side of the navigation bar (or on the left-hand side in case LTR locales are set on the user's device).
-- `ScreenStackHeaderLeftView` – the children will render on the left-hand side of the navigation bar (or on the right-hand side in case LTR locales are set on the user's device).
-- `ScreenStackHeaderSearchBarView` - used for rendering `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
+#### `ScreenStackHeaderCenterView`
+The children will render in the center of the native navigation bar.
+
+#### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`
+The children will render on the right-hand or left-hand side of the navigation bar (or on the opposite side in case LTR locales are set on the user's device). Supports these properties:
+
+- `hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+
+#### `ScreenStackHeaderSearchBarView`
+
+Used for rendering `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
 
 To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
 
-- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences` on iOS and `'none'` on Android.
+- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `systemDefault`, `none`, `words`, `sentences`, `characters`. Defaults to `systemDefault` which is the same as `sentences` on iOS and `none` on Android.
 - `autoFocus` - If `true` automatically focuses search bar when screen is appearing. (Android only)
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
 - `tintColor` - The color for the cursor caret and cancel button text. (iOS only)
@@ -544,6 +565,139 @@ Possible options:
 - `generic` – show given system generic or just icon based on available space
 - `minimal` – show just an icon
 
+### `headerLeftBarButtonItems` / `headerRightBarButtonsItems` (iOS only)
+
+An array of objects describing native bar button items to display on the left or right side of the header. Each item can be:
+
+- A button with a title, icon, and action
+- A menu with multiple actions
+- A spacing item to adjust layout
+
+#### The button and menu items support:
+
+`type: 'button' | 'menu'` — Type of the item.
+
+`title: string` — Title of the button.
+
+`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button title.
+
+`icon?: PlatformIconIOS` — Icon for the item.
+
+`variant?: 'plain' | 'done' | 'prominent'` — The variant of the item. 'Prominent' only available for iOS 26+. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
+
+`tintColor?: ColorValue` — Tint color for the button. Will pick the tint color of the header if not set. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
+
+`disabled?: boolean` — Whether the item is disabled.
+
+`width?: number` — Width of the item (iOS 18-). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
+
+`hidesSharedBackground?: boolean` — Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+
+`sharesBackground?: boolean` — Share background with other items (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
+
+`identifier?: string` — Identifier for matching items across transitions (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
+
+`badge: { value: string; color?: ColorValue; backgroundColor?: ColorValue; style?: { fontFamily?: string; fontSize?: number; fontWeight?: string; }; }` - Badge configuration for the button (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
+
+#### The button with an action also supports:
+
+`selected?: boolean` — Whether the button is selected. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
+
+#### The button with a menu also support:
+
+```
+menu?: {
+  type: 'menu';
+  label?: string;
+  changesSelectionAsPrimaryAction?: boolean // Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+  items: Array<
+    | {
+      label?: string;
+      type: 'action';
+      icon?: PlatformIconIOSSfSymbol;
+      state?: 'on' | 'off' | 'mixed'; // State of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
+      disabled?: boolean; // Attribute indicating disabled style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
+      destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
+      hidden?: boolean; // Attribute indicating hidden style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
+      keepsMenuPresented?: boolean; // Attribute indicating that the menu remains presented after firing the element’s action instead of dismissing. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
+      discoverabilityTitle?: string; // Discoverability title of the menu item. Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
+    }
+    | {
+      label?: string;
+      type: 'submenu';
+      icon?: PlatformIconIOSSfSymbol;
+      items: menu['items']; // References itself so you can create inifinte deep menus. So either actions or more submenus
+    }
+  >
+}
+```
+
+#### The spacing item supports:
+
+`type: 'spacing'` — Type of the item.
+`spacing?: number` — Fixed space between items. The numeric value is only supported on iOS 18-
+
+#### Example configuration:
+
+```typescript
+  <Stack.Screen
+    options={{
+      headerRightItems: [
+        {
+          type: 'button',
+          label: 'Text button',
+          onPress: () => Alert.alert('Text pressed'),
+        },
+        {
+          type: 'button',
+          image: require('../../assets/search_black.png'),
+          onPress: () => Alert.alert('Icon pressed'),
+        },
+        {
+          type: 'button',
+          sfSymbolName: "square.and.arrow.up",
+          onPress: () => Alert.alert('SF symbol pressed'),
+        },
+        {
+          type: 'menu',
+          label: 'Menu',
+          menu: {
+            items: [
+              {
+                label: 'Option 1',
+                type: "action",
+                onPress: () => Alert.alert('Option 1 pressed'),
+              },
+              {
+                label: 'Option 2',
+                type: "action",
+                onPress: () => Alert.alert('Option 2 pressed'),
+              },
+            ],
+          },
+        },
+        {
+          type: 'button',
+          label: 'Badge',
+          badge: {
+            value: '3',
+            color: 'white',
+            backgroundColor: 'red',
+          },
+          onPress: () => Alert.alert('Badge pressed'),
+        },
+        {
+          type: 'button',
+          label: 'Prominent',
+          variant: 'prominent',
+          tintColor: 'green',
+          onPress: () => Alert.alert('Prominent pressed'),
+        },
+      ],
+    }}
+  />
+```
+
 ### `hidden`
 
 When set to `true` the header will be hidden while the parent `Screen` is on the top of the stack. The default value is `false`.
@@ -609,6 +763,8 @@ Customize the size of the font to be used for the title.
 Customize the weight of the font to be used for the title.
 
 ### `topInsetEnabled` (Android only)
+
+This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 

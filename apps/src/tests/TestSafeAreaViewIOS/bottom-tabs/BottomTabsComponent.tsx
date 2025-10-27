@@ -39,6 +39,14 @@ export default function BottomTabsComponent() {
             : undefined,
       },
       component: TestTab,
+      safeAreaConfiguration: {
+        edges: {
+          top: config.safeAreaTopEdge,
+          bottom: config.safeAreaBottomEdge,
+          left: config.safeAreaLeftEdge,
+          right: config.safeAreaRightEdge,
+        },
+      },
     },
   ];
 
@@ -52,7 +60,7 @@ export default function BottomTabsComponent() {
         config: tabsConfig,
         setConfig: setTabsConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <BottomTabsContainer tabConfigs={TAB_CONFIGS} tabBarMinimizeBehavior={config.tabBarMinimizeBehavior} />
     </ConfigWrapperContext.Provider>
   );
 }

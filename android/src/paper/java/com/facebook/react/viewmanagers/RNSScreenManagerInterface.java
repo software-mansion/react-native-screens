@@ -25,7 +25,7 @@ public interface RNSScreenManagerInterface<T extends View>  {
   void setSheetInitialDetent(T view, int value);
   void setSheetElevation(T view, int value);
   void setCustomAnimationOnSwipe(T view, boolean value);
-  void setFullScreenSwipeEnabled(T view, boolean value);
+  void setFullScreenSwipeEnabled(T view, @Nullable String value);
   void setFullScreenSwipeShadowEnabled(T view, boolean value);
   void setHomeIndicatorHidden(T view, boolean value);
   void setPreventNativeDismiss(T view, boolean value);
@@ -52,4 +52,5 @@ public interface RNSScreenManagerInterface<T extends View>  {
   void setLeftScrollEdgeEffect(T view, @Nullable String value);
   void setRightScrollEdgeEffect(T view, @Nullable String value);
   void setTopScrollEdgeEffect(T view, @Nullable String value);
+  void setSynchronousShadowStateUpdatesEnabled(T view, boolean value);
 }

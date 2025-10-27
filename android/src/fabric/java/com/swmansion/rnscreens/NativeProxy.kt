@@ -20,6 +20,8 @@ class NativeProxy {
 
     external fun nativeAddMutationsListener(fabricUIManager: FabricUIManager)
 
+    external fun cleanupExpiredMountingCoordinators()
+
     external fun invalidateNative()
 
     companion object {
@@ -61,7 +63,13 @@ class NativeProxy {
 
         val screen = weakScreeRef.get()
         if (screen is Screen) {
-            screen.startRemovalTransition()
+            val isScheduled =
+                screen.post {
+                    screen.startRemovalTransition()
+                }
+            if (!isScheduled) {
+                Log.w("[RNScreens]", "Failed to schedule removal transition start for screen with tag $screenTag")
+            }
         } else {
             Log.w("[RNScreens]", "Reference stored in NativeProxy for tag $screenTag no longer points to valid object.")
         }
