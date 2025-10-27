@@ -193,7 +193,7 @@ export interface ScreenProps extends ViewProps {
    * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
    *
    * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
-   * to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
+   * to the legacy implementation when handling custom animations, but we assume `true` for shadows.
    *
    * @platform ios
    */
