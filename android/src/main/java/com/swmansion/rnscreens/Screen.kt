@@ -531,15 +531,10 @@ class Screen(
         }
     }
 
-    internal fun isOverflowingStatusBar(topInset: Int): Boolean {
-        val availableHeight =
-            container?.height
-                ?: resources?.displayMetrics?.heightPixels
-                ?: 0
-        val maxDetent = sheetDetents.last()
-        val maxSheetHeight = (availableHeight * maxDetent).toInt()
-        return maxSheetHeight >= availableHeight - topInset
-    }
+    fun isOverflowingStatusBar(
+        topInset: Int,
+        metrics: SheetMetrics,
+    ): Boolean = metrics.maxSheetHeight >= metrics.availableHeight - topInset
 
     enum class StackPresentation {
         PUSH,
@@ -587,6 +582,25 @@ class Screen(
          */
         const val SHEET_FIT_TO_CONTENTS = -1.0
     }
+}
+
+data class SheetMetrics(
+    val availableHeight: Int,
+    val maxDetent: Double,
+    val maxSheetHeight: Int,
+)
+
+fun getSheetMetrics(
+    availableHeight: Int,
+    sheetDetents: List<Double>,
+): SheetMetrics {
+    val maxDetent = sheetDetents.lastOrNull() ?: 1.0
+    val maxSheetHeight = (availableHeight * maxDetent).toInt()
+    return SheetMetrics(
+        availableHeight = availableHeight,
+        maxDetent = maxDetent,
+        maxSheetHeight = maxSheetHeight,
+    )
 }
 
 internal fun View.asScreen() = this as Screen
