@@ -758,7 +758,12 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   translucent?: boolean;
   /**
+   * Allows to override system appearance for the navigation bar.
    *
+   * Does not support dynamic changes to the prop value for the currently visible screen.
+   *
+   * @default unspecified
+   * @platform ios
    */
   unstable_overrideUserInterfaceStyle?: UserInterfaceStyle;
 }
