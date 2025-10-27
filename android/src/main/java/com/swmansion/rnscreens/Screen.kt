@@ -591,11 +591,18 @@ data class SheetMetrics(
 )
 
 fun getSheetMetrics(
+    screen: Screen,
     availableHeight: Int,
-    sheetDetents: List<Double>,
+    sheetHeight: Int,
 ): SheetMetrics {
-    val maxDetent = sheetDetents.lastOrNull() ?: 1.0
-    val maxSheetHeight = (availableHeight * maxDetent).toInt()
+    val maxDetent = screen.sheetDetents.lastOrNull() ?: 1.0
+
+    val maxSheetHeight =
+        when {
+            screen.usesFormSheetPresentation() && screen.isSheetFitToContents() -> sheetHeight
+            else -> (availableHeight * maxDetent).toInt()
+        }
+
     return SheetMetrics(
         availableHeight = availableHeight,
         maxDetent = maxDetent,
