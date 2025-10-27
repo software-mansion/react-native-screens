@@ -253,6 +253,15 @@ namespace react = facebook::react;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
   }
 
+  if (newComponentProps.tabBarHidden != oldComponentProps.tabBarHidden) {
+    _tabBarHidden = newComponentProps.tabBarHidden;
+    if (@available(iOS 18.0, *)) {
+      [_controller setTabBarHidden:_tabBarHidden animated:YES];
+    } else {
+      _controller.tabBar.hidden = _tabBarHidden;
+    }
+  }
+
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
