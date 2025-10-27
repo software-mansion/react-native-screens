@@ -401,7 +401,7 @@ class Screen(
         endViewTransition()
     }
 
-    private val inTransitionViews = mutableListOf<Pair<ViewGroup, View>>()
+    private val transitioningViews = mutableListOf<Pair<ViewGroup, View>>()
 
     /**
      * Called when a screen gets removed. This is to mark all children as in transition,
@@ -425,7 +425,7 @@ class Screen(
                 } else {
                     child?.let { childView ->
                         parentView.startViewTransition(childView)
-                        inTransitionViews.add(Pair(parentView, childView))
+                        transitioningViews.add(Pair(parentView, childView))
                     }
                 }
 
@@ -451,10 +451,10 @@ class Screen(
         // IMPORTANT: Reverse order is needed, inner children first!
         // Otherwise parents will call dispatchOnDetachedFromWindow on all their children,
         // which will cause endViewTransition to have no effect on them anymore.
-        inTransitionViews.asReversed().forEach { (parent, child) ->
+        transitioningViews.asReversed().forEach { (parent, child) ->
             parent.endViewTransition(child)
         }
-        inTransitionViews.clear()
+        transitioningViews.clear()
     }
 
     // We do not want to perform any action, therefore do not need to override the associated method.
