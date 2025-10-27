@@ -334,20 +334,14 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        if (screen.isOverflowingStatusBar(prevInsets.top)) {
-            return WindowInsetsCompat
-                .Builder(insets)
-                .setInsets(
-                    WindowInsetsCompat.Type.systemBars(),
-                    Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, prevInsets.bottom),
-                ).build()
-        }
+        val newTopInset = if (screen.isOverflowingStatusBar(prevInsets.top) && !isImeVisible) prevInsets.top else 0
+        val newBottomInset = if (!isImeVisible) prevInsets.bottom else 0
 
         return WindowInsetsCompat
             .Builder(insets)
             .setInsets(
                 WindowInsetsCompat.Type.systemBars(),
-                Insets.of(prevInsets.left, 0, prevInsets.right, prevInsets.bottom),
+                Insets.of(prevInsets.left, newTopInset, prevInsets.right, newBottomInset),
             ).build()
     }
 

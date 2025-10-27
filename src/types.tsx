@@ -475,7 +475,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * TODO: @tomaboro - add doc
    */
-  disableSafeAreaViewForSheet?: boolean;
+  disableSafeAreaView?: boolean;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
