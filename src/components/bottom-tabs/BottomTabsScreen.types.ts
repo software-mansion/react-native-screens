@@ -57,6 +57,11 @@ export type BottomTabsSystemItem =
   | 'search'
   | 'topRated';
 
+export type BottomTabsScreenUserInterfaceStyle =
+  | 'unspecified'
+  | 'light'
+  | 'dark';
+
 // Currently iOS-only
 export type BottomTabsScreenOrientation =
   | 'inherit'
@@ -511,6 +516,10 @@ export interface BottomTabsScreenProps {
     right?: ScrollEdgeEffect;
     top?: ScrollEdgeEffect;
   };
+  /**
+   *
+   */
+  unstable_overrideUserInterfaceStyle?: BottomTabsScreenUserInterfaceStyle;
   // #endregion iOS-only appearance
 
   // #region Events
