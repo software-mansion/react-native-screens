@@ -38,6 +38,15 @@ export interface BottomTabsProps extends ViewProps {
   ) => void;
   // #endregion Events
 
+  // #region General
+  /**
+   * @summary Hides the tab bar.
+   *
+   * @default false
+   */
+  tabBarHidden?: boolean;
+  // #endregion General
+
   // #region Android-only appearance
   /**
    * @summary Specifies the background color for the entire tab bar.
@@ -204,14 +213,6 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode;
-  /**
-   * @summary Hides the tab bar.
-   *
-   * @default false
-   *
-   * @platform ios
-   */
-  tabBarHidden?: boolean;
   // #endregion iOS-only appearance
 
   // #region Experimental support
