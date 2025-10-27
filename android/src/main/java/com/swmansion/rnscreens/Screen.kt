@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
-import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
@@ -409,8 +408,6 @@ class Screen(
      * so they are not removed from the view hierarchy until endRemovalTransition is called.
      * This is needed for the screen transition animation to work properly (otherwise the children
      * would instantly disappear from the screen).
-     *
-     * This is copied from react-native-screens BUT it manually keeps track of the views.
      */
     private fun startTransitionRecursive(parent: ViewGroup?) {
         parent?.let { parentView ->
@@ -427,8 +424,6 @@ class Screen(
                     parentView.addView(View(context), i)
                 } else {
                     child?.let { childView ->
-                        Log.d("HannoDebug", "Screen: startTransitionRecursive for parent: $parentView")
-                        Log.d("HannoDebug", "  ↳ child: $childView")
                         parentView.startViewTransition(childView)
                         inTransitionViews.add(Pair(parentView, childView))
                     }
@@ -456,11 +451,7 @@ class Screen(
         // IMPORTANT: Reverse order is needed, inner children first!
         // Otherwise parents will call dispatchOnDetachedFromWindow on all their children,
         // which will cause endViewTransition to have no effect on them anymore.
-        for ((parent, child) in inTransitionViews.asReversed()) {
-            Log.d("HannoDebug", "Screen: endViewTransition for parent: $parent")
-            Log.d("HannoDebug", "  ↳ child: $child")
-            // The react-native layer will have called parent.removeView(child) already,
-            // so endViewTransition will finally remove the child from the parent.
+        inTransitionViews.asReversed().forEach { (parent, child) ->
             parent.endViewTransition(child)
         }
         inTransitionViews.clear()
