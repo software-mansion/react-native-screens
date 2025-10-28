@@ -326,6 +326,10 @@ class TabsHost(
 
         appearanceCoordinator.updateTabAppearance(this)
 
+        menuItemSelectedViaContainerUpdate = true
+        bottomNavigationView.selectedItemId =
+            checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
+
         post {
             refreshLayout()
             RNSLog.d(TAG, "BottomNavigationView request layout")
@@ -342,10 +346,6 @@ class TabsHost(
         if (newFocusedTab === oldFocusedTab) {
             return
         }
-
-        menuItemSelectedViaContainerUpdate = true
-        bottomNavigationView.selectedItemId =
-            checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
 
         requireFragmentManager
             .beginTransaction()
