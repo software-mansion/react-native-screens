@@ -201,12 +201,22 @@ RNS_IGNORE_SUPER_CALL_END
     evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].title;
   }
 
-  if (![tabBarItem.title isEqualToString:evaluatedTitle]) {
-    tabBarItem.title = evaluatedTitle;
-  }
+  [self updateTabBarItemTitle:evaluatedTitle];
 
   if (![tabBarItem.badgeValue isEqualToString:_badgeValue]) {
     tabBarItem.badgeValue = _badgeValue;
+  }
+}
+
+- (void)updateTabBarItemTitle:(NSString *)newTitle
+{
+  // Setting _controller.title updates also _controller.tabBarItem.title but only if there
+  // is a change to _controller.title. After creating new tabBarItem, _controller.title
+  // remains the same but _controller.tabBarItem.title is nil. For consistency, we always
+  // update both.
+  if (![_controller.tabBarItem.title isEqualToString:newTitle] || ![_controller.title isEqualToString:newTitle]) {
+    _controller.title = newTitle;
+    _controller.tabBarItem.title = newTitle;
   }
 }
 
@@ -257,7 +267,6 @@ RNS_IGNORE_SUPER_CALL_END
       _title = RCTNSStringFromString(newComponentProps.title);
     }
 
-    _controller.title = _title;
     tabBarItemNeedsUpdate = YES;
   }
 
@@ -527,7 +536,6 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _title = title;
   _isTitleUndefined = title == nil;
-  _controller.title = title;
   _tabBarItemNeedsUpdate = YES;
 }
 
