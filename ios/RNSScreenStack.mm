@@ -854,7 +854,7 @@ RNS_IGNORE_SUPER_CALL_END
   [[self rnscreens_findTouchHandlerInAncestorChain] rnscreens_cancelTouches];
 }
 
-- (void)disableInteractions
+- (void)rnscreens_disableInteractions
 {
   // When transitioning between screens, disable interactions on stack subview which wraps the screens
   // and sink all gesture events. This should work for nested stacks and stack inside bottom tabs, inside stack.
@@ -862,7 +862,7 @@ RNS_IGNORE_SUPER_CALL_END
   [self addGestureRecognizer:_sinkEventsPanGestureRecognizer];
 }
 
-- (void)enableInteractions
+- (void)rnscreens_enableInteractions
 {
   self.subviews[0].userInteractionEnabled = YES;
   [self removeGestureRecognizer:_sinkEventsPanGestureRecognizer];
@@ -1240,7 +1240,7 @@ RNS_IGNORE_SUPER_CALL_END
     // It captures all gestures for the time of transition and does nothing, so that in nested stack scenario,
     // the outer most stack does not recognize swipe gestures, otherwise it would dismiss the whole nested stack.
     // For the recognizer to work as described, it should have precedence over all other recognizers.
-    // see also: enableInteractions, disableInteractions
+    // see also: rnscreens_enableInteractions, rnscreens_disableInteractions
     return YES;
   }
 

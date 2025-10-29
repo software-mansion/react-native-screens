@@ -8,7 +8,9 @@
 
 - (instancetype)init
 {
-  lastRootWithInteractionsDisabled = nil;
+  if (self = [super init]) {
+    lastRootWithInteractionsDisabled = nil;
+  }
   return self;
 }
 
@@ -16,7 +18,7 @@
 {
   UIView *current = view;
   while (current && ![current isKindOfClass:UIWindow.class] &&
-         ![current respondsToSelector:@selector(disableInteractions)]) {
+         ![current respondsToSelector:@selector(rnscreens_disableInteractions)]) {
     current = current.superview;
   }
 
@@ -27,8 +29,8 @@
       [self enableInteractionsForLastSubtree];
     }
 
-    if ([current respondsToSelector:@selector(disableInteractions)]) {
-      [static_cast<id<RNSViewInteractionAware>>(current) disableInteractions];
+    if ([current respondsToSelector:@selector(rnscreens_disableInteractions)]) {
+      [static_cast<id<RNSViewInteractionAware>>(current) rnscreens_disableInteractions];
     } else {
       current.userInteractionEnabled = NO;
     }
@@ -40,8 +42,8 @@
 - (void)enableInteractionsForLastSubtree
 {
   if (lastRootWithInteractionsDisabled) {
-    if ([lastRootWithInteractionsDisabled respondsToSelector:@selector(enableInteractions)]) {
-      [static_cast<id<RNSViewInteractionAware>>(lastRootWithInteractionsDisabled) enableInteractions];
+    if ([lastRootWithInteractionsDisabled respondsToSelector:@selector(rnscreens_enableInteractions)]) {
+      [static_cast<id<RNSViewInteractionAware>>(lastRootWithInteractionsDisabled) rnscreens_enableInteractions];
     } else {
       lastRootWithInteractionsDisabled.userInteractionEnabled = YES;
     }

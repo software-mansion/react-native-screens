@@ -2,8 +2,8 @@
 
 @protocol RNSViewInteractionAware
 
-- (void)disableInteractions;
+- (void)rnscreens_disableInteractions;
 
-- (void)enableInteractions;
+- (void)rnscreens_enableInteractions;
 
 @end
