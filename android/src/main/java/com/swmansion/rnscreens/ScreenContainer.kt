@@ -243,6 +243,15 @@ open class ScreenContainer(
         transaction.commitNowAllowingStateLoss()
     }
 
+    fun notifyScreenDetached(screen: Screen) {
+        if (context is ReactContext) {
+            val surfaceId = UIManagerHelper.getSurfaceId(context)
+            UIManagerHelper
+                .getEventDispatcherForReactTag(context as ReactContext, screen.id)
+                ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
+        }
+    }
+
     fun notifyTopDetached() {
         val top = topScreen as Screen
         if (context is ReactContext) {
