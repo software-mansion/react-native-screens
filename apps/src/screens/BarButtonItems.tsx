@@ -87,7 +87,7 @@ export default function BarButtonItemsExample() {
         component={PlainButtonDemo}
         options={{
           title: 'Plain Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Info',
@@ -101,12 +101,12 @@ export default function BarButtonItemsExample() {
         component={IconButtonDemo}
         options={{
           title: 'Icon Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               icon: {
-                type: "imageSource",
-                imageSource: require('../../assets/variableIcons/icon_fill.png')
+                type: "image",
+                source: require('../../assets/variableIcons/icon_fill.png')
               },
               label: "Title",
               onPress: () => Alert.alert('Icon pressed'),
@@ -119,7 +119,7 @@ export default function BarButtonItemsExample() {
         component={IconButtonDemo}
         options={{
           title: 'System image Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               icon: {
@@ -137,7 +137,7 @@ export default function BarButtonItemsExample() {
         component={MenuButtonDemo}
         options={{
           title: 'Menu Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "menu",
               label: 'Menu',
@@ -164,7 +164,7 @@ export default function BarButtonItemsExample() {
         component={BadgeButtonDemo}
         options={{
           title: 'Badge Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Badge',
@@ -185,7 +185,7 @@ export default function BarButtonItemsExample() {
         component={DisabledButtonDemo}
         options={{
           title: 'Disabled Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Disabled',
@@ -200,7 +200,7 @@ export default function BarButtonItemsExample() {
         component={CustomColorButtonDemo}
         options={{
           title: 'Custom Color Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Purple',
@@ -215,7 +215,7 @@ export default function BarButtonItemsExample() {
         component={ProminentStyleButtonDemo}
         options={{
           title: 'Prominent Style Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Prominent',
@@ -231,7 +231,7 @@ export default function BarButtonItemsExample() {
         component={TitleStyleButtonDemo}
         options={{
           title: 'Title Style Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Styled',
@@ -251,32 +251,32 @@ export default function BarButtonItemsExample() {
         component={IconSharesBgButtonDemo}
         options={{
           title: 'Icon SharesBackground',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: "Title",
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              icon: { type: "image", source: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
               type: "button",
               label: "Title",
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              icon: { type: "image", source: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
               type: "button",
               label: "Title",
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              icon: { type: "image", source: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: false,
             },
             {
               type: "button",
               label: "Title",
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              icon: { type: "image", source: require('../../assets/search_black.png') },
               hidesSharedBackground: true,
               onPress: () => Alert.alert('Icon with sharesBackground false pressed'),
             },
@@ -288,7 +288,7 @@ export default function BarButtonItemsExample() {
         component={TextButtonWithWidthDemo}
         options={{
           title: 'Text Button With Width',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Wide',
@@ -303,11 +303,11 @@ export default function BarButtonItemsExample() {
         component={IconButtonsWithSpacingDemo}
         options={{
           title: 'Icon Buttons With Spacing',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: "Title",
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              icon: { type: "image", source: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('First icon pressed'),
             },
             {
@@ -317,7 +317,7 @@ export default function BarButtonItemsExample() {
             {
               type: "button",
               label: "Title",
-              icon: { type: "imageSource", imageSource: require('../../assets/search_white.png') },
+              icon: { type: "image", source: require('../../assets/search_white.png') },
               onPress: () => Alert.alert('Second icon pressed'),
             },
           ],
@@ -329,7 +329,7 @@ export default function BarButtonItemsExample() {
         options={{
           title: 'Header Tint Color',
           headerTintColor: 'red',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Tinted',
@@ -338,7 +338,7 @@ export default function BarButtonItemsExample() {
             {
               type: "button",
               label: "Title",
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              icon: { type: "image", source: require('../../assets/search_black.png') },
               onPress: () => Alert.alert('Tinted icon pressed'),
             },
           ],
@@ -349,7 +349,7 @@ export default function BarButtonItemsExample() {
         component={DoneStyleButtonDemo}
         options={{
           title: 'Done Style Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Done',
@@ -359,7 +359,7 @@ export default function BarButtonItemsExample() {
             {
               type: "button",
               label: "DoneIcon",
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              icon: { type: "image", source: require('../../assets/search_black.png') },
               variant: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
             },
@@ -371,7 +371,7 @@ export default function BarButtonItemsExample() {
         component={AdvancedMenuButtonDemo}
         options={{
           title: 'Advanced Menu Button',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "menu",
               label: 'Menu',
@@ -428,7 +428,7 @@ export default function BarButtonItemsExample() {
         options={{
           title: 'React Node Button',
           headerBackVisible: true,
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "custom",
               element: <TouchableOpacity onPress={() => Alert.alert('React Node 1 pressed')}>
@@ -455,7 +455,7 @@ export default function BarButtonItemsExample() {
         options={{
           title: 'Back Button Visible',
           headerBackVisible: true,
-          headerLeftItems: () => [
+          unstable_headerLeftItems: () => [
             {
               type: "custom",
               element: <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
@@ -473,7 +473,7 @@ export default function BarButtonItemsExample() {
         component={IdentifierExample}
         options={({ navigation }) => ({
           title: 'Identifier Example',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Button',
@@ -488,7 +488,7 @@ export default function BarButtonItemsExample() {
         component={IdentifierExample2}
         options={{
           title: 'Identifier Example 2',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: 'Btn',
@@ -500,7 +500,7 @@ export default function BarButtonItemsExample() {
         component={ExessiveItemsExample}
         options={{
           title: 'Exessive Items Example',
-          headerRightItems: () => [
+          unstable_headerRightItems: () => [
             {
               type: "button",
               label: "Button 1",
