@@ -20,8 +20,7 @@
     return self;
   }
 
-  self.title = dict[@"title"];
-
+  NSString *title = dict[@"title"];
   NSDictionary *imageSourceObj = dict[@"imageSource"];
   NSDictionary *templateSourceObj = dict[@"templateSource"];
 
