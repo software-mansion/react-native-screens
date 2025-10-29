@@ -902,12 +902,15 @@ RNS_IGNORE_SUPER_CALL_END
       // it should only recognize with `customAnimationOnSwipe` set
       return NO;
     }
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26, *)) {
       if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
           ![self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
         return NO;
       }
     }
+#endif // check for iOS >= 26
+
     // _UIParallaxTransitionPanGestureRecognizer (other...)
     [self cancelTouchesInParent];
     return YES;
