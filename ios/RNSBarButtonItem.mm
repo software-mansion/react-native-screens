@@ -20,25 +20,32 @@
     return self;
   }
 
-  self.title = dict[@"title"];
-
+  NSString *title = dict[@"title"];
   NSDictionary *imageSourceObj = dict[@"imageSource"];
   if (imageSourceObj) {
-    RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageSourceObj];
-    [imageLoader loadImageWithURLRequest:imageSource.request
-        size:imageSource.size
-        scale:imageSource.scale
-        clipped:true
-        resizeMode:RCTResizeModeContain
-        progressBlock:^(int64_t progress, int64_t total) {
-        }
-        partialLoadBlock:^(UIImage *_Nonnull image) {
-        }
-        completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
-          dispatch_async(dispatch_get_main_queue(), ^{
-            self.image = image;
-          });
-        }];
+    if (imageSourceObj[@"__packager_asset"]) {
+      self.title = title;
+      self.image = [RCTConvert UIImage:imageSourceObj];
+    } else {
+      RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageSourceObj];
+      [imageLoader loadImageWithURLRequest:imageSource.request
+          size:imageSource.size
+          scale:imageSource.scale
+          clipped:true
+          resizeMode:RCTResizeModeContain
+          progressBlock:^(int64_t progress, int64_t total) {
+          }
+          partialLoadBlock:^(UIImage *_Nonnull image) {
+          }
+          completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+              self.image = image;
+              self.title = title;
+            });
+          }];
+    }
+  } else if (title) {
+    self.title = title;
   }
   NSString *sfSymbolName = dict[@"sfSymbolName"];
   if (sfSymbolName) {
