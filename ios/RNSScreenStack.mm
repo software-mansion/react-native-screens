@@ -1412,7 +1412,7 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
         [screenRef invalidateSelf];
 #else
-          [screenRef invalidate];
+        [screenRef invalidate];
 #endif
       }
       strongSelf->_toBeDeletedScreens.clear();
