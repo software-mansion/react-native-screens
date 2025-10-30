@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.bottomsheet
 
 import com.swmansion.rnscreens.Screen
 
-data class SheetMetrics(
+data class BottomSheetMetrics(
     val availableHeight: Int,
     val maxDetent: Double,
     val maxSheetHeight: Int,
@@ -12,7 +12,7 @@ fun getSheetMetrics(
     screen: Screen,
     availableHeight: Int,
     sheetHeight: Int,
-): SheetMetrics {
+): BottomSheetMetrics {
     val maxDetent = screen.sheetDetents.lastOrNull() ?: 1.0
 
     val maxSheetHeight =
@@ -21,7 +21,7 @@ fun getSheetMetrics(
             else -> (availableHeight * maxDetent).toInt()
         }
 
-    return SheetMetrics(
+    return BottomSheetMetrics(
         availableHeight = availableHeight,
         maxDetent = maxDetent,
         maxSheetHeight = maxSheetHeight,
