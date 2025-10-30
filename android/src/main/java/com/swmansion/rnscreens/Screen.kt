@@ -142,6 +142,8 @@ class Screen(
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents()) {
                 sheetBehavior?.useSingleDetent(height)
+                // During the initial call in `onCreateView`, insets are not yet available,
+                // so we need to request an additional layout pass later to account for them.
                 requestLayout()
             }
 
