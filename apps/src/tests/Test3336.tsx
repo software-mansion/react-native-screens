@@ -5,7 +5,7 @@ import type {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { Button, Text, View, ViewStyle } from 'react-native';
+import { Button, Platform, Text, View, ViewStyle } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 import { Spacer } from '../shared';
 import Colors from '../shared/styling/Colors';
@@ -45,8 +45,8 @@ const EXAMPLES = [
 const Main = ({ navigation, useSafeArea, toggleSafeArea }: MainProps) => {
   return (
     <View style={{ flex: 1, padding: 16 }}>
-      <Text style={{ width: '50%' }}>
-        Use SafeAreaView: {useSafeArea ? 'true' : 'false'}
+      <Text style={{ fontSize: 20, marginVertical: 4 }}>
+        [Android] Use SafeAreaView: {useSafeArea ? 'true' : 'false'}
       </Text>
       <View style={{ marginVertical: 4 }}>
         <Button onPress={toggleSafeArea} title="Toggle SAV" />
@@ -107,7 +107,7 @@ const withOptionalSafeArea =
     safeAreaStyle?: ViewStyle,
   ) =>
   () => {
-    if (useSafeArea) {
+    if (Platform.OS === 'android' && useSafeArea) {
       return (
         <SafeAreaView edges={{ top: true, bottom: true }} style={safeAreaStyle}>
           <Component />
