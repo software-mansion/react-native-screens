@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type {
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { Button, Text, View } from 'react-native';
+import { Button, Text, View, ViewStyle } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 import { Spacer } from '../shared';
 import Colors from '../shared/styling/Colors';
@@ -20,45 +20,45 @@ type StackParamList = {
   FormSheetWithTwoDetents: undefined;
   FormSheetWithThreeDetents: undefined;
   FormSheetWithMaxDetent: undefined;
+  FormSheetOverStatusBar: undefined;
 };
+
+const Stack = createNativeStackNavigator<StackParamList>();
 
 type MainProps = {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+  useSafeArea: boolean;
+  toggleSafeArea: () => void;
 };
 
-const Stack = createNativeStackNavigator();
+const EXAMPLES = [
+  ['Fit to contents', 'FormSheetWithFitToContents'],
+  ['1 small detent', 'FormSheetWithSmallDetent'],
+  ['1 medium detent', 'FormSheetWithMediumDetent'],
+  ['1 large detent', 'FormSheetWithLargeDetent'],
+  ['2 detents', 'FormSheetWithTwoDetents'],
+  ['3 detents', 'FormSheetWithThreeDetents'],
+  ['Max detent', 'FormSheetWithMaxDetent'],
+  ['Partially covered status bar', 'FormSheetOverStatusBar'],
+];
 
-const Main = ({ navigation }: MainProps) => {
+const Main = ({ navigation, useSafeArea, toggleSafeArea }: MainProps) => {
   return (
-    <View style={{ flex: 1 }}>
-      <Button
-        title="Fit to contents"
-        onPress={() => navigation.navigate('FormSheetWithFitToContents')}
-      />
-      <Button
-        title="1 small detent"
-        onPress={() => navigation.navigate('FormSheetWithSmallDetent')}
-      />
-      <Button
-        title="1 medium detent"
-        onPress={() => navigation.navigate('FormSheetWithMediumDetent')}
-      />
-      <Button
-        title="1 large detent"
-        onPress={() => navigation.navigate('FormSheetWithLargeDetent')}
-      />
-      <Button
-        title="2 detents"
-        onPress={() => navigation.navigate('FormSheetWithTwoDetents')}
-      />
-      <Button
-        title="3 detents"
-        onPress={() => navigation.navigate('FormSheetWithThreeDetents')}
-      />
-      <Button
-        title="Max detent"
-        onPress={() => navigation.navigate('FormSheetWithMaxDetent')}
-      />
+    <View style={{ flex: 1, padding: 16 }}>
+      <Text style={{ width: '50%' }}>
+        Use SafeAreaView: {useSafeArea ? 'true' : 'false'}
+      </Text>
+      <View style={{ marginVertical: 4 }}>
+        <Button onPress={toggleSafeArea} title="Toggle SAV" />
+      </View>
+      {EXAMPLES.map(([title, screen]) => (
+        <View key={screen} style={{ marginVertical: 4 }}>
+          <Button
+            title={title}
+            onPress={() => navigation.navigate(screen as keyof StackParamList)}
+          />
+        </View>
+      ))}
     </View>
   );
 };
@@ -68,8 +68,8 @@ const formSheetBaseOptions: NativeStackNavigationOptions = {
   animation: 'slide_from_bottom',
   headerShown: false,
   contentStyle: {
-    backgroundColor: Colors.GreenLight100
-  }
+    backgroundColor: Colors.GreenLight100,
+  },
 };
 
 const PressableBase = () => (
@@ -85,104 +85,120 @@ const PressableBase = () => (
   </PressableWithFeedback>
 );
 
-const FormSheetBase = () => {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'space-between',
-      }}>
-      <PressableBase />
-      <PressableBase />
-    </View>
-  );
-};
+const FormSheetBase = () => (
+  <View style={{ flex: 1, justifyContent: 'space-between' }}>
+    <PressableBase />
+    <PressableBase />
+  </View>
+);
 
-const FormSheetNoFlex = () => {
-  return (
-    <View>
-      <PressableBase />
-      <Spacer space={100} />
-      <PressableBase />
-    </View>
-  );
-};
+const FormSheetNoFlex = () => (
+  <View>
+    <PressableBase />
+    <Spacer space={100} />
+    <PressableBase />
+  </View>
+);
 
-const FormSheetWithSAV = () => (
-  <SafeAreaView edges={{top: true, bottom: true}}>
-    <FormSheetBase />
-  </SafeAreaView>
-)
-
-const FormSheetNoFlexWithSAV = () => (
-  <SafeAreaView edges={{top: true, bottom: true}} style={{flex: 0}}>
-    <FormSheetNoFlex />
-  </SafeAreaView>
-)
+const withOptionalSafeArea =
+  (
+    Component: React.ComponentType,
+    useSafeArea: boolean,
+    safeAreaStyle?: ViewStyle,
+  ) =>
+  () => {
+    if (useSafeArea) {
+      return (
+        <SafeAreaView edges={{ top: true, bottom: true }} style={safeAreaStyle}>
+          <Component />
+        </SafeAreaView>
+      );
+    }
+    return <Component />;
+  };
 
 export default function App() {
+  const [useSafeArea, setUseSafeArea] = useState(true);
+  const toggleSafeArea = () => setUseSafeArea(prev => !prev);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          component={Main}
-          name="main"
+          name="Main"
           options={{ title: 'Main' }}
+          children={({ navigation }) => (
+            <Main
+              navigation={navigation}
+              useSafeArea={useSafeArea}
+              toggleSafeArea={toggleSafeArea}
+            />
+          )}
         />
         <Stack.Screen
-          component={FormSheetNoFlexWithSAV}
           name="FormSheetWithFitToContents"
+          component={withOptionalSafeArea(FormSheetNoFlex, useSafeArea, {
+            flex: 0,
+          })}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: 'fitToContents',
           }}
         />
         <Stack.Screen
-          component={FormSheetWithSAV}
           name="FormSheetWithSmallDetent"
+          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.2],
           }}
         />
         <Stack.Screen
-          component={FormSheetWithSAV}
           name="FormSheetWithMediumDetent"
+          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.5],
           }}
         />
         <Stack.Screen
-          component={FormSheetWithSAV}
           name="FormSheetWithLargeDetent"
+          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.8],
           }}
         />
         <Stack.Screen
-          component={FormSheetWithSAV}
           name="FormSheetWithTwoDetents"
+          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.3, 0.6],
           }}
         />
         <Stack.Screen
-          component={FormSheetWithSAV}
           name="FormSheetWithThreeDetents"
+          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.3, 0.6, 0.9],
           }}
         />
         <Stack.Screen
-          component={FormSheetWithSAV}
           name="FormSheetWithMaxDetent"
+          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [1.0],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetOverStatusBar"
+          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [0.99],
           }}
         />
       </Stack.Navigator>
