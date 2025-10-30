@@ -26,12 +26,12 @@ function Section({ children, title }: SectionProps): React.JSX.Element {
 
 function floodJsThread() {
   setInterval(() => {
-    const end = Date.now() + 25;
+    const end = Date.now() + 10;
     while (Date.now() < end) {
       // Intentionally do nothing; just burn CPU cycles.
       Math.sqrt(Math.random());
     }
-  }, 27);
+  }, 10);
 }
 
 /*

@@ -29,20 +29,10 @@ class RNSScreenComponentDescriptor final
    * orientation.
    */
   mutable std::shared_ptr<RNSScreenShadowNodeCommitHook> commitHook_;
-  /*
-   * The following flag is expected to be set by RNSScreenShadowNodeCommitHook,
-   * when it detects that screen orientation has changed
-   * by comparing width to height of old and new ShadowNode revision.
-   */
-  mutable bool orientationDidChange_ = false;
 #endif // Android specific
 
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
-
-  void setOrientationDidChange() {
-    orientationDidChange_ = true;
-  }
 
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
@@ -64,17 +54,11 @@ class RNSScreenComponentDescriptor final
       // missing from ContextContainer. Instead, we do it here, on the first
       // call to the function. We don't anticipate any orientation changes that
       // we need to respond to prior to this.
-      commitHook_ = std::make_shared<RNSScreenShadowNodeCommitHook>(
-          contextContainer_, const_cast<RNSScreenComponentDescriptor *>(this));
+      commitHook_ =
+          std::make_shared<RNSScreenShadowNodeCommitHook>(contextContainer_);
     }
 
-    if (orientationDidChange_) {
-      orientationDidChange_ = false;
-      screenShadowNode.getStateDataMutable().frameSize = {0, 0};
-      screenShadowNode.getStateDataMutable().contentOffset = {0, 0};
-      layoutableShadowNode.setSize({YGUndefined, YGUndefined});
-    } else if (
-        stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       // When we receive dimensions from JVM side we can remove padding used for
       // correction, and we can stop applying height and offset corrections for
       // the frame.

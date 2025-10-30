@@ -1,6 +1,7 @@
 #pragma once
 
 #include <react/renderer/uimanager/UIManagerCommitHook.h>
+#include "RNSScreenShadowNode.h"
 
 namespace facebook {
 namespace react {
@@ -9,9 +10,7 @@ class RNSScreenComponentDescriptor;
 
 class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
  public:
-  RNSScreenShadowNodeCommitHook(
-      std::shared_ptr<const ContextContainer>,
-      RNSScreenComponentDescriptor *);
+  RNSScreenShadowNodeCommitHook(std::shared_ptr<const ContextContainer>);
 
   RNSScreenShadowNodeCommitHook(const RNSScreenShadowNodeCommitHook &);
 
@@ -29,7 +28,10 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
 
  private:
   std::shared_ptr<const ContextContainer> contextContainer_;
-  RNSScreenComponentDescriptor *screenComponentDescriptor_;
+
+  void findScreenNodes(
+      const ShadowNode *node,
+      std::vector<RNSScreenShadowNode *> *screenNodes);
 
   inline bool isHorizontal_(std::weak_ptr<const RootProps> props) {
     const float width = props.lock().get()->layoutConstraints.maximumSize.width;
