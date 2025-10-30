@@ -23,6 +23,7 @@ import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.events.SheetTranslationEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 open class ScreenViewManager :
@@ -164,6 +165,15 @@ open class ScreenViewManager :
         gestureEnabled: Boolean,
     ) {
         view.isGestureEnabled = gestureEnabled
+    }
+
+    @ReactProp(name = "sheetDismissible", defaultBoolean = true)
+    override fun setSheetDismissible(
+        view: Screen,
+        sheetDismissible: Boolean,
+    ) {
+        view.isSheetDismissible = sheetDismissible
+        view.sheetClosesOnTouchOutside = sheetDismissible
     }
 
     @ReactProp(name = "replaceAnimation")
@@ -420,6 +430,7 @@ open class ScreenViewManager :
             HeaderBackButtonClickedEvent.EVENT_NAME to hashMapOf("registrationName" to "onHeaderBackButtonClicked"),
             ScreenTransitionProgressEvent.EVENT_NAME to hashMapOf("registrationName" to "onTransitionProgress"),
             SheetDetentChangedEvent.EVENT_NAME to hashMapOf("registrationName" to "onSheetDetentChanged"),
+            SheetTranslationEvent.EVENT_NAME to hashMapOf("registrationName" to "onSheetTranslation"),
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate
