@@ -1,4 +1,5 @@
 #include "RNSScreenShadowNodeCommitHook.h"
+#include <android/log.h>
 #include <react/fabric/FabricUIManagerBinding.h>
 #include <react/fabric/JFabricUIManager.h>
 #include <react/renderer/scheduler/Scheduler.h>
