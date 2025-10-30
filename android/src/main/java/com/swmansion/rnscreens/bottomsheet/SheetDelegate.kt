@@ -334,18 +334,22 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
+        // We're taking the metrics of the rootView, not screen to support nested navigators
         val availableHeight = screen.rootView.height
 
-        val metrics = getSheetMetrics(
-            screen = screen,
-            availableHeight = availableHeight,
-            sheetHeight = screen.height
-        )
+        val metrics =
+            getSheetMetrics(
+                screen = screen,
+                availableHeight = availableHeight,
+                sheetHeight = screen.height,
+            )
 
-        val newTopInset = if (screen.isOverflowingStatusBar(prevInsets.top, metrics) && !isImeVisible)
-            prevInsets.top - (metrics.availableHeight - metrics.maxSheetHeight)
-        else
-            0
+        val newTopInset =
+            if (screen.isOverflowingStatusBar(prevInsets.top, metrics) && !isImeVisible) {
+                prevInsets.top - (metrics.availableHeight - metrics.maxSheetHeight)
+            } else {
+                0
+            }
 
         val newBottomInset = if (!isImeVisible) prevInsets.bottom else 0
 
