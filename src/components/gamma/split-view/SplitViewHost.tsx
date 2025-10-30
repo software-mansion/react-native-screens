@@ -74,6 +74,9 @@ function SplitViewHost(props: SplitViewHostProps) {
 
   return (
     <SplitViewHostNativeComponent
+      // UISplitViewController requires the number of columns to be specified at initialization and it cannot be changed dynamically later.
+      // By using a specific key in this form, we can detect changes in the number of React children.
+      // This enables us to fully recreate the SplitView when necessary, ensuring the correct column configuration is always applied.
       key={`columns-${columns.length}-inspectors-${inspectors.length}`}
       {...props}
       style={styles.container}>
