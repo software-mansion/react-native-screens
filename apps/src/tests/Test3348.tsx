@@ -34,7 +34,7 @@ const App = () => {
           contentStyle: {
             padding: 35,
           },
-          backgroundComponent: CustomBackgroundComponent,
+          renderBackground: CustomBackgroundComponent,
         }}>
         <Stack.Screen name="Home" component={HomeScreen} />
       </Stack.Navigator>

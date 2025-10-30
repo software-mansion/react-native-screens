@@ -148,14 +148,6 @@ export interface ScreenProps extends ViewProps {
   shouldFreeze?: boolean;
   children?: React.ReactNode;
   /**
-   * Optional custom React element to be rendered as the background of the screen.
-   *
-   * This component will be rendered behind all foreground screen content.
-   * You can provide any valid React element, such as an ImageBackground,
-   * gradient, or a styled View.
-   */
-  backgroundComponent?: () => React.ReactNode;
-  /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
    *
    * @platform ios
@@ -344,6 +336,14 @@ export interface ScreenProps extends ViewProps {
    */
   preventNativeDismiss?: boolean;
   ref?: React.Ref<View>;
+  /**
+   * Callback returning the custom React element to be rendered as the background of the screen.
+   *
+   * This component will be rendered behind all foreground screen content.
+   * You can provide any valid React element, such as an ImageBackground,
+   * gradient, or a styled View.
+   */
+  renderBackground?: () => React.ReactNode;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:

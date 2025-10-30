@@ -42,10 +42,6 @@ The `ScreenStackItem` component is a convenience wrapper around `Screen` that's 
 
 Below is the list of additional properties that can be used for `ScreenStackItem` component:
 
-### `backgroundComponent`
-
-Custom React element to be rendered as the background of the screen.
-
 ### `customAnimationOnSwipe` (iOS only)
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
@@ -157,6 +153,10 @@ A callback that gets called when the current screen will disappear. This is call
 ### `preventNativeDismiss` (iOS only)
 
 Boolean indicating whether to prevent current screen from being dismissed. Defaults to `false`.
+
+### `renderBackground`
+
+Callback returning the custom React element to be rendered as the background of the screen.
 
 ### `replaceAnimation`
 
