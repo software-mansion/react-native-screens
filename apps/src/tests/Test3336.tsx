@@ -115,7 +115,7 @@ const FormSheetWithSAV = () => (
 )
 
 const FormSheetNoFlexWithSAV = () => (
-  <SafeAreaView edges={{top: true, bottom: true}}>
+  <SafeAreaView edges={{top: true, bottom: true}} style={{flex: 0}}>
     <FormSheetNoFlex />
   </SafeAreaView>
 )
