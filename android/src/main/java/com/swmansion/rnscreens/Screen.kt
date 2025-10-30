@@ -26,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.SheetMetrics
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -584,32 +585,6 @@ class Screen(
          */
         const val SHEET_FIT_TO_CONTENTS = -1.0
     }
-}
-
-data class SheetMetrics(
-    val availableHeight: Int,
-    val maxDetent: Double,
-    val maxSheetHeight: Int,
-)
-
-fun getSheetMetrics(
-    screen: Screen,
-    availableHeight: Int,
-    sheetHeight: Int,
-): SheetMetrics {
-    val maxDetent = screen.sheetDetents.lastOrNull() ?: 1.0
-
-    val maxSheetHeight =
-        when {
-            screen.usesFormSheetPresentation() && screen.isSheetFitToContents() -> sheetHeight
-            else -> (availableHeight * maxDetent).toInt()
-        }
-
-    return SheetMetrics(
-        availableHeight = availableHeight,
-        maxDetent = maxDetent,
-        maxSheetHeight = maxSheetHeight,
-    )
 }
 
 internal fun View.asScreen() = this as Screen

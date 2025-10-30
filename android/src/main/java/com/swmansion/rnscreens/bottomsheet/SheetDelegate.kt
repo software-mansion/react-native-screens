@@ -19,7 +19,6 @@ import com.swmansion.rnscreens.KeyboardState
 import com.swmansion.rnscreens.KeyboardVisible
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
-import com.swmansion.rnscreens.getSheetMetrics
 
 class SheetDelegate(
     val screen: Screen,
