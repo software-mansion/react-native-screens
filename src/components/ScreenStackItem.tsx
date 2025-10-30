@@ -34,7 +34,6 @@ type Props = Omit<
 function ScreenStackItem(
   {
     children,
-    disableSafeAreaView,
     headerConfig,
     activityState,
     shouldFreeze,
@@ -97,13 +96,8 @@ function ScreenStackItem(
     contentStyle = contentWrapperStyles;
   }
 
-  const isIOS26OrHigher =
-    Platform.OS === 'ios' && parseInt(Platform.Version as string, 10) >= 26;
-  const isAndroidFormSheet =
-    Platform.OS === 'android' && stackPresentation === 'formSheet';
-
   const shouldUseSafeAreaView =
-    !disableSafeAreaView && (isIOS26OrHigher || isAndroidFormSheet);
+    Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
 
   const content = (
     <>
@@ -112,17 +106,7 @@ function ScreenStackItem(
         style={debugContainerStyle}
         stackPresentation={stackPresentationWithDefault}>
         {shouldUseSafeAreaView ? (
-          <SafeAreaView
-            edges={getSafeAreaEdges(
-              headerConfig,
-              stackPresentation,
-              disableSafeAreaView,
-            )}
-            style={[
-              sheetAllowedDetents === 'fitToContents' && {
-                flex: 0,
-              },
-            ]}>
+          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
             {children}
           </SafeAreaView>
         ) : (
@@ -250,24 +234,21 @@ function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
 
 function getSafeAreaEdges(
   headerConfig?: ScreenStackHeaderConfigProps,
-  stackPresentation?: string,
-  disableSafeAreaView?: boolean,
 ): SafeAreaViewProps['edges'] {
-  const isAndroidFormSheet =
-    Platform.OS === 'android' &&
-    stackPresentation === 'formSheet' &&
-    !disableSafeAreaView;
-  if (isAndroidFormSheet) {
-    return { top: true, bottom: true };
-  }
-
   if (Platform.OS !== 'ios' || parseInt(Platform.Version, 10) < 26) {
     return {};
   }
 
-  const isHeaderTransparent = headerConfig?.translucent || headerConfig?.hidden;
+  let defaultEdges: SafeAreaViewProps['edges'];
+  if (headerConfig?.translucent || headerConfig?.hidden) {
+    defaultEdges = {};
+  } else {
+    defaultEdges = {
+      top: true,
+    };
+  }
 
-  return isHeaderTransparent ? {} : { top: true };
+  return defaultEdges;
 }
 
 const styles = StyleSheet.create({

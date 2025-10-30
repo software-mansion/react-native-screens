@@ -9,6 +9,7 @@ import { Button, Text, View } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 import { Spacer } from '../shared';
 import Colors from '../shared/styling/Colors';
+import { SafeAreaView } from 'react-native-screens/experimental';
 
 type StackParamList = {
   Main: undefined;
@@ -107,6 +108,18 @@ const FormSheetNoFlex = () => {
   );
 };
 
+const FormSheetWithSAV = () => (
+  <SafeAreaView edges={{top: true, bottom: true}}>
+    <FormSheetBase />
+  </SafeAreaView>
+)
+
+const FormSheetNoFlexWithSAV = () => (
+  <SafeAreaView edges={{top: true, bottom: true}}>
+    <FormSheetNoFlex />
+  </SafeAreaView>
+)
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -117,7 +130,7 @@ export default function App() {
           options={{ title: 'Main' }}
         />
         <Stack.Screen
-          component={FormSheetNoFlex}
+          component={FormSheetNoFlexWithSAV}
           name="FormSheetWithFitToContents"
           options={{
             ...formSheetBaseOptions,
@@ -125,7 +138,7 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          component={FormSheetBase}
+          component={FormSheetWithSAV}
           name="FormSheetWithSmallDetent"
           options={{
             ...formSheetBaseOptions,
@@ -133,7 +146,7 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          component={FormSheetBase}
+          component={FormSheetWithSAV}
           name="FormSheetWithMediumDetent"
           options={{
             ...formSheetBaseOptions,
@@ -141,7 +154,7 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          component={FormSheetBase}
+          component={FormSheetWithSAV}
           name="FormSheetWithLargeDetent"
           options={{
             ...formSheetBaseOptions,
@@ -149,7 +162,7 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          component={FormSheetBase}
+          component={FormSheetWithSAV}
           name="FormSheetWithTwoDetents"
           options={{
             ...formSheetBaseOptions,
@@ -157,7 +170,7 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          component={FormSheetBase}
+          component={FormSheetWithSAV}
           name="FormSheetWithThreeDetents"
           options={{
             ...formSheetBaseOptions,
@@ -165,7 +178,7 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          component={FormSheetBase}
+          component={FormSheetWithSAV}
           name="FormSheetWithMaxDetent"
           options={{
             ...formSheetBaseOptions,

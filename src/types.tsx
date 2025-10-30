@@ -563,19 +563,6 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   unstable_sheetFooter?: () => React.ReactNode;
-  /**
-   * Whether the screen should avoid using SafeAreaView component.
-   *
-   * SafeArea is applied by default in some specific cases:
-   * - on iOS 26 or higher
-   * - on Android when the `presentation` is set to `formSheet`
-   *
-   * If set to true, the content will extend to the edges of the screen, potentially overlapping system UI elements
-   * (e.g. status bar, navigation bar). Useful when custom layout is handled manually.
-   *
-   * Defaults to `false`.
-   */
-  disableSafeAreaView?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {

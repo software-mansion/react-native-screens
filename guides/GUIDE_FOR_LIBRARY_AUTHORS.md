@@ -46,18 +46,6 @@ Below is the list of additional properties that can be used for `ScreenStackItem
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
 
-### `disableSafeAreaView`
-
-Boolean indicating that screen should avoid using RNScreens `SafeAreaView` component.
-
-`SafeArea` is applied by default in some specific cases:
-- on iOS 26 or higher
-- on Android when the `presentation` is set to `formSheet`
-
-If set to `true`, the content will extend to the edges of the screen, potentially overlapping system UI elements (e.g. status bar, navigation bar). Useful when custom layout is handled manually.
-
-Defaults to `false`.
-
 ### `freezeOnBlur`
 
 Whether inactive screens should be suspended from re-rendering.
