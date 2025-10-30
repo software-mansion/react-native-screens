@@ -27,7 +27,6 @@ import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
-import com.swmansion.rnscreens.getSheetMetrics
 
 class SheetDelegate(
     val screen: Screen,
