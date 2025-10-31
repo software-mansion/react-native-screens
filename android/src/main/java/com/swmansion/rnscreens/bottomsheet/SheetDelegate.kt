@@ -211,10 +211,23 @@ class SheetDelegate(
                 behavior.removeBottomSheetCallback(keyboardHandlerCallback)
                 when (screen.sheetDetents.count()) {
                     1 ->
-                        behavior.useSingleDetent(
-                            height = (screen.sheetDetents.first() * containerHeight).toInt(),
-                            forceExpandedState = false,
-                        )
+                        behavior.apply {
+                            val height =
+                                if (screen.isSheetFitToContents()) {
+                                    screen.contentWrapper?.let { contentWrapper ->
+                                        contentWrapper.height.takeIf {
+                                            // subtree might not be laid out, e.g. after fragment reattachment
+                                            // and view recreation, however since it is retained by
+                                            // react-native it has its height cached. We want to use it.
+                                            // Otherwise we would have to trigger RN layout manually.
+                                            contentWrapper.isLaidOutOrHasCachedLayout()
+                                        }
+                                    }
+                                } else {
+                                    (screen.sheetDetents.first() * containerHeight).toInt()
+                                }
+                            useSingleDetent(height = height, forceExpandedState = false)
+                        }
 
                     2 ->
                         behavior.useTwoDetents(
@@ -235,6 +248,30 @@ class SheetDelegate(
                 }
             }
         }
+    }
+
+    internal fun calculateSheetOffsetY(keyboardHeight: Int): Int {
+        val containerHeight = tryResolveContainerHeight()
+        check(containerHeight != null) {
+            "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
+        }
+
+        if (screen.isSheetFitToContents()) {
+            val contentHeight = screen.contentWrapper?.height ?: 0
+            val offsetFromTop = containerHeight - contentHeight
+            return minOf(offsetFromTop, keyboardHeight)
+        }
+
+        val detents = screen.sheetDetents
+        if (detents.isEmpty()) {
+            throw IllegalStateException("[RNScreens] Cannot determine sheet detent - detents list is empty")
+        }
+
+        val detentValue = detents[detents.size - 1].coerceIn(0.0, 1.0)
+        val sheetHeight = (detentValue * containerHeight).toInt()
+        val offsetFromTop = containerHeight - sheetHeight
+
+        return minOf(offsetFromTop, keyboardHeight)
     }
 
     // This is listener function, not the view's.
@@ -270,7 +307,6 @@ class SheetDelegate(
                     this.configureBottomSheetBehaviour(it, KeyboardDidHide)
                 } else if (keyboardState != KeyboardNotVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardNotVisible)
-                } else {
                 }
             }
 
