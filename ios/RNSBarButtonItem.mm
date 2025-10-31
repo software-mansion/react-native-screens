@@ -23,8 +23,16 @@
   self.title = dict[@"title"];
 
   NSDictionary *imageSourceObj = dict[@"imageSource"];
+  NSDictionary *templateSourceObj = dict[@"templateSource"];
+
+  RCTImageSource *imageSource = nil;
   if (imageSourceObj) {
-    RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageSourceObj];
+    imageSource = [RCTConvert RCTImageSource:imageSourceObj];
+  } else if (templateSourceObj) {
+    imageSource = [RCTConvert RCTImageSource:templateSourceObj];
+  }
+
+  if (imageSource) {
     [imageLoader loadImageWithURLRequest:imageSource.request
         size:imageSource.size
         scale:imageSource.scale
@@ -36,7 +44,13 @@
         }
         completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
           dispatch_async(dispatch_get_main_queue(), ^{
-            self.image = image;
+            UIImage *imageWithRenderingMode = nil;
+            if (imageSourceObj) {
+              imageWithRenderingMode = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+            } else if (templateSourceObj) {
+              imageWithRenderingMode = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            }
+            self.image = imageWithRenderingMode;
           });
         }];
   }

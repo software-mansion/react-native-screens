@@ -38,11 +38,11 @@ export const prepareHeaderBarButtonItems = (
     if (item.type === 'spacing') {
       return item;
     }
-    let imageSource;
+    let imageSource, templateSource;
     if (item.icon?.type === 'imageSource') {
       imageSource = Image.resolveAssetSource(item.icon.imageSource);
     } else if (item.icon?.type === 'templateSource') {
-      imageSource = Image.resolveAssetSource(item.icon.templateSource);
+      templateSource = Image.resolveAssetSource(item.icon.templateSource);
     }
 
     const titleStyle = item.titleStyle
@@ -62,6 +62,7 @@ export const prepareHeaderBarButtonItems = (
     const processedItem = {
       ...item,
       imageSource,
+      templateSource,
       sfSymbolName: item.icon?.type === 'sfSymbol' ? item.icon.name : undefined,
       titleStyle,
       tintColor,
