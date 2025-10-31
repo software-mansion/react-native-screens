@@ -1,4 +1,4 @@
-#if RCT_NEW_ARCH_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 
 #import <UIKit/UIKit.h>
 
