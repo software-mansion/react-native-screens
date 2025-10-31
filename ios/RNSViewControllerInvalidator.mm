@@ -13,7 +13,8 @@
                      forRegistry:(RNSInvalidatedComponentsRegistry *_Nonnull)registry
 {
   // Backward compatibility for 0.82 RC or lower
-  if (facebook::react::ReactNativeVersion.Minor <= 81 || facebook::react::ReactNativeVersion.Prerelease != "") {
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
     if (view.window == nil) {
       [view invalidateController];
     } else {

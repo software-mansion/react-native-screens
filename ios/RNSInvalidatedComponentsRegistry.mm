@@ -20,7 +20,8 @@
 - (void)pushForInvalidation:(UIView<RNSViewControllerInvalidating> *)view
 {
   // Backward compatibility for 0.82 RC or lower
-  if (facebook::react::ReactNativeVersion.Minor <= 81 || facebook::react::ReactNativeVersion.Prerelease != "") {
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
     [_invalidViews addObject:view];
   }
 }
@@ -28,7 +29,8 @@
 - (void)flushInvalidViews
 {
   // Backward compatibility for 0.82 RC or lower
-  if (facebook::react::ReactNativeVersion.Minor <= 81 || facebook::react::ReactNativeVersion.Prerelease != "") {
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
     for (id<RNSViewControllerInvalidating> view in _invalidViews) {
       [view invalidateController];
     }
