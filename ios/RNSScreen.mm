@@ -145,6 +145,17 @@ struct ContentWrapperBox {
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
++ (RNSViewInteractionManager *)viewInteractionManagerInstance
+{
+  static RNSViewInteractionManager *manager = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    manager = [[RNSViewInteractionManager alloc] init];
+  });
+
+  return manager;
+}
+
 - (BOOL)getFullScreenSwipeShadowEnabled
 {
   if (@available(iOS 26, *)) {
@@ -802,9 +813,10 @@ RNS_IGNORE_SUPER_CALL_END
     // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
     // Disabling interactions for parent navigation controller won't be enough in case of nested stack
     // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
-    // To be sure, we block interactions on the whole window.
-    // Note that newWindows is nil when moving from instead of moving to, and Obj-C handles nil correctly
-    newWindow.userInteractionEnabled = false;
+
+    // Use RNSViewInteractionManager util to find a suitable subtree to disable interations on,
+    // starting from reactSuperview, because on Paper, self is not attached yet.
+    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
   }
 }
 
@@ -812,7 +824,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (@available(iOS 26, *)) {
     // Disable interactions to disallow multiple modals dismissed at once; see willMoveToWindow
-    presentationController.containerView.window.userInteractionEnabled = false;
+    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
   }
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -843,7 +855,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (@available(iOS 26, *)) {
     // Reenable interactions; see presentationControllerWillDismiss
-    presentationController.containerView.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
 
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
@@ -859,7 +871,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (@available(iOS 26, *)) {
     // Reenable interactions; see presentationControllerWillDismiss
     // Dismissed screen doesn't hold a reference to window, but presentingViewController.view does
-    presentationController.presentingViewController.view.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
 
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
@@ -1672,7 +1684,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   if (@available(iOS 26, *)) {
     // Reenable interactions, see willMoveToWindow
-    self.view.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
@@ -1714,6 +1726,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
   [self traverseForScrollView:self.screenView];
 #endif
+  if (@available(iOS 26, *)) {
+    // Reenable interactions, see willMoveToWindow
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
 }
 
 - (void)viewDidLayoutSubviews
