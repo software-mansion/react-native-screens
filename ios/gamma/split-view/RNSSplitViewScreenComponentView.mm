@@ -155,7 +155,7 @@ namespace react = facebook::react;
   [self dispatchSafeAreaDidChangeNotification];
 }
 
-#pragma mark - RCTViewComponentViewProtocol
+#pragma mark - RCTComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {

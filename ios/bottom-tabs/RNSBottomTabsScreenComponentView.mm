@@ -243,7 +243,7 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #if RCT_NEW_ARCH_ENABLED
-#pragma mark - RCTViewComponentViewProtocol
+#pragma mark - RCTComponentViewProtocol
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
