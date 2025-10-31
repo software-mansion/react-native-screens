@@ -6,9 +6,7 @@
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSViewControllerInvalidating.h"
-#else
+#ifndef RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif
 
@@ -22,10 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
  * of a particular tab.
  */
 @interface RNSBottomTabsScreenComponentView : RNSReactBaseView <
-                                                  RNSSafeAreaProviding,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                                  RNSViewControllerInvalidating
-#else
+                                                  RNSSafeAreaProviding
+#ifndef RCT_NEW_ARCH_ENABLED
+                                                  ,
                                                   RCTInvalidating
 #endif
                                                   >

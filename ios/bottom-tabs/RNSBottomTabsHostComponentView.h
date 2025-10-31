@@ -5,9 +5,7 @@
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSViewControllerInvalidating.h"
-#else
+#ifndef RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif
 
@@ -26,10 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
  * 3. two way communication channel with React (commands & events)
  */
 @interface RNSBottomTabsHostComponentView : RNSReactBaseView <
-                                                RNSScreenContainerDelegate,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                                RNSViewControllerInvalidating
-#else
+                                                RNSScreenContainerDelegate
+#ifndef RCT_NEW_ARCH_ENABLED
+                                                ,
                                                 RCTInvalidating
 #endif
                                                 >
