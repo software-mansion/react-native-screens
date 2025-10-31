@@ -1,5 +1,6 @@
 #import <React/RCTImageSource.h>
 #import "RNSBottomTabsScreenEventEmitter.h"
+#import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
@@ -7,9 +8,23 @@
 #import "RNSScrollViewBehaviorOverriding.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
+#import <cxxreact/ReactNativeVersion.h>
+
+// Starting 0.82.0, we're switching to the new impl based on RCTComponentViewProtocol.
+// Additional runtime check is needed for RCs of 0.82
+#if REACT_NATIVE_VERSION_MINOR <= 82
 #import "RNSViewControllerInvalidating.h"
+#endif // REACT_NATIVE_VERSION_MINOR <= 82
 #else
 #import <React/RCTInvalidating.h>
+#endif // RCT_NEW_ARCH_ENABLED
+
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+#define RNS_BOTTOM_TABS_SCREEN_INVALIDATING_INTERFACE RNSViewControllerInvalidating
+#elif !RCT_NEW_ARCH_ENABLED
+#define RNS_BOTTOM_TABS_SCREEN_INVALIDATING_INTERFACE RCTInvalidating
+#else
+#define RNS_BOTTOM_TABS_SCREEN_INVALIDATING_INTERFACE NSObject
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,14 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSBottomTabsScreenComponentView : RNSReactBaseView <
-                                                  RNSSafeAreaProviding,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                                  RNSViewControllerInvalidating
-#else
-                                                  RCTInvalidating
-#endif
-                                                  >
+@interface RNSBottomTabsScreenComponentView
+    : RNSReactBaseView <RNSSafeAreaProviding, RNS_BOTTOM_TABS_SCREEN_INVALIDATING_INTERFACE>
 
 /**
  * View controller responsible for managing tab represented by this component view.

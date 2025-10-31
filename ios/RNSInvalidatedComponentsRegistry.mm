@@ -1,6 +1,7 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #import "RNSInvalidatedComponentsRegistry.h"
+#import <cxxreact/ReactNativeVersion.h>
 
 @interface RNSInvalidatedComponentsRegistry ()
 @property (nonatomic, strong) NSMutableSet<UIView<RNSViewControllerInvalidating> *> *invalidViews;
@@ -18,15 +19,23 @@
 
 - (void)pushForInvalidation:(UIView<RNSViewControllerInvalidating> *)view
 {
-  [_invalidViews addObject:view];
+  // Backward compatibility for 0.82 RC or lower
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+    [_invalidViews addObject:view];
+  }
 }
 
 - (void)flushInvalidViews
 {
-  for (id<RNSViewControllerInvalidating> view in _invalidViews) {
-    [view invalidateController];
+  // Backward compatibility for 0.82 RC or lower
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+    for (id<RNSViewControllerInvalidating> view in _invalidViews) {
+      [view invalidateController];
+    }
+    [_invalidViews removeAllObjects];
   }
-  [_invalidViews removeAllObjects];
 }
 
 @end

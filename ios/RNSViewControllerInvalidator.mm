@@ -3,6 +3,7 @@
 #import "RNSViewControllerInvalidator.h"
 
 #import <React/RCTAssert.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSViewControllerInvalidating.h"
 
@@ -11,10 +12,14 @@
 + (void)invalidateViewIfDetached:(UIView<RNSViewControllerInvalidating> *_Nonnull)view
                      forRegistry:(RNSInvalidatedComponentsRegistry *_Nonnull)registry
 {
-  if (view.window == nil) {
-    [view invalidateController];
-  } else {
-    [registry pushForInvalidation:view];
+  // Backward compatibility for 0.82 RC or lower
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+    if (view.window == nil) {
+      [view invalidateController];
+    } else {
+      [registry pushForInvalidation:view];
+    }
   }
 }
 

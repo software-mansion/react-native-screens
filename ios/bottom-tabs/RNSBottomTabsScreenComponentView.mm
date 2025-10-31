@@ -114,13 +114,22 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 }
 RNS_IGNORE_SUPER_CALL_END
 
-#ifdef RCT_NEW_ARCH_ENABLED
+- (void)invalidateImpl
+{
+  _controller = nil;
+}
+
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 
 #pragma mark - RNSViewControllerInvalidating
 
 - (void)invalidateController
 {
-  _controller = nil;
+  // Starting from 0.82.0, we're switching to the new implementation
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+    [self invalidateImpl];
+  }
 }
 
 - (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
@@ -129,16 +138,18 @@ RNS_IGNORE_SUPER_CALL_END
   return NO;
 }
 
-#else
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+
+#if !RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTInvalidating
 
 - (void)invalidate
 {
-  _controller = nil;
+  [self invalidateImpl];
 }
 
-#endif
+#endif // !RCT_NEW_ARCH_ENABLED
 
 #pragma mark - Events
 
@@ -468,6 +479,19 @@ RNS_IGNORE_SUPER_CALL_END
   // We could consider enabling it someday though.
   return NO;
 }
+
+#if REACT_NATIVE_VERSION_MINOR >= 82
+
+- (void)invalidate
+{
+  // From 0.82.0, we're using a new invalidate callback
+  if (facebook::react::ReactNativeVersion.Minor >= 83 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease == "")) {
+    [self invalidateImpl];
+  }
+}
+
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
 
 #else
 

@@ -10,8 +10,11 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSBottomTabsComponentDescriptor.h>
 #import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
+
+#if REACT_NATIVE_VERSION_MINOR <= 82
 #import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSViewControllerInvalidator.h"
+#endif // REACT_NATIVE_VERSION_MINOR <= 82
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSBottomTabsScreenComponentView.h"
@@ -40,9 +43,9 @@ namespace react = facebook::react;
 
   RCTImageLoader *_Nullable _imageLoader;
 
-#if RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
   RNSInvalidatedComponentsRegistry *_Nonnull _invalidatedComponentsRegistry;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -86,9 +89,9 @@ namespace react = facebook::react;
   _reactSubviews = [NSMutableArray new];
   _reactEventEmitter = [RNSBottomTabsHostEventEmitter new];
 
-#if RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
   _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   _needsTabBarAppearanceUpdate = NO;
@@ -107,11 +110,20 @@ namespace react = facebook::react;
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
-#if RCT_NEW_ARCH_ENABLED
   if (newWindow == nil) {
-    [_invalidatedComponentsRegistry flushInvalidViews];
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+    // Starting from 0.82.0, we're switching to the new implementation
+    if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+        (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+      [_invalidatedComponentsRegistry flushInvalidViews];
+    }
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
   }
-#endif // RCT_NEW_ARCH_ENABLED
+}
+
+- (void)invalidateImpl
+{
+  _controller = nil;
 }
 
 - (void)didMoveToWindow
@@ -163,21 +175,25 @@ namespace react = facebook::react;
   [self updateContainer];
 }
 
-#if RCT_NEW_ARCH_ENABLED
-
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 #pragma mark - RNSViewControllerInvalidating
 
 - (void)invalidateController
 {
-  _controller = nil;
+  // Starting from 0.82.0, we're switching to the new implementation
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+    [self invalidateImpl];
+  }
 }
 
 - (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
 {
   return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
 }
-#else
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 
+#if !RCT_NEW_ARCH_ENABLED
 #pragma mark - RCTInvalidating
 
 - (void)invalidate
@@ -189,7 +205,7 @@ namespace react = facebook::react;
   for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
     [subview invalidate];
   }
-  _controller = nil;
+  [self invalidateImpl];
 }
 
 #endif
@@ -321,6 +337,19 @@ namespace react = facebook::react;
   return NO;
 }
 
+#if REACT_NATIVE_VERSION_MINOR >= 82
+
+- (void)invalidate
+{
+  // From 0.82.0, we're using a new invalidate callback
+  if (facebook::react::ReactNativeVersion.Minor >= 83 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease == "")) {
+    [self invalidateImpl];
+  }
+}
+
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
+
 #pragma mark - RCTMountingTransactionObserving
 
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
@@ -329,17 +358,21 @@ namespace react = facebook::react;
   _hasModifiedReactSubviewsInCurrentTransaction = NO;
   [_controller reactMountingTransactionWillMount];
 
-#if RCT_NEW_ARCH_ENABLED
-  for (const auto &mutation : transaction.getMutations()) {
-    if ([self shouldInvalidateOnMutation:mutation]) {
-      for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
-        [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
-      }
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+  // From 0.82.0, we're using a new invalidate callback
+  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
+      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+    for (const auto &mutation : transaction.getMutations()) {
+      if ([self shouldInvalidateOnMutation:mutation]) {
+        for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
+          [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
+        }
 
-      [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
+        [RNSViewControllerInvalidator invalidateViewIfDetached:self forRegistry:_invalidatedComponentsRegistry];
+      }
     }
   }
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
