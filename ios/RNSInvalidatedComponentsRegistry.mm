@@ -1,6 +1,7 @@
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+#if RCT_NEW_ARCH_ENABLED
 
 #import "RNSInvalidatedComponentsRegistry.h"
+#import <cxxreact/ReactNativeVersion.h>
 
 @interface RNSInvalidatedComponentsRegistry ()
 @property (nonatomic, strong) NSMutableSet<UIView<RNSViewControllerInvalidating> *> *invalidViews;
@@ -37,4 +38,4 @@
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+#endif // RCT_NEW_ARCH_ENABLED
