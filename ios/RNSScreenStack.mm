@@ -1410,7 +1410,7 @@ RNS_IGNORE_SUPER_CALL_END
       }
       for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
 #ifdef RCT_NEW_ARCH_ENABLED
-        [screenRef invalidateSelf];
+        [screenRef invalidateImpl];
 #else
         [screenRef invalidate];
 #endif

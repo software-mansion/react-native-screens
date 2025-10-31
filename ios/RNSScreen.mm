@@ -934,17 +934,16 @@ RNS_IGNORE_SUPER_CALL_END
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-- (void)invalidateSelf
+- (void)invalidateImpl
 {
   _controller = nil;
   [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
-#else
+
+#ifndef RCT_NEW_ARCH_ENABLED
 - (void)invalidate
 {
-  _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+  [self invalidateImpl];
 }
 #endif
 

@@ -171,13 +171,13 @@ namespace react = facebook::react;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
 
-#ifdef RCT_NEW_ARCH_ENABLED
 /**
  * Tell `Screen` component that it has been removed from react state and can safely cleanup
  * any retained resources.
  */
-- (void)invalidateSelf;
-#else
+- (void)invalidateImpl;
+
+#ifndef RCT_NEW_ARCH_ENABLED
 /**
  * Tell `Screen` component that it has been removed from react state and can safely cleanup
  * any retained resources.
@@ -185,7 +185,7 @@ namespace react = facebook::react;
  * On old architecture this method might be called by RN via `RCTInvalidating` protocol.
  */
 - (void)invalidate;
-#endif
+#endif // !RCT_NEW_ARCH_ENABLED
 
 /**
  * Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
