@@ -60,7 +60,7 @@ void NativeProxy::cleanupExpiredMountingCoordinators() {
           coordinatorsWithMountingOverrides_.begin(),
           coordinatorsWithMountingOverrides_.end(),
           [](const std::weak_ptr<const facebook::react::MountingCoordinator>
-                 &weakPtr) { return weakPtr.lock() == nullptr; }),
+                 &weakPtr) { return weakPtr.expired(); }),
       coordinatorsWithMountingOverrides_.end());
 }
 
