@@ -1,4 +1,4 @@
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 
 #import "RNSInvalidatedComponentsRegistry.h"
 
@@ -18,17 +18,23 @@
 
 - (void)pushForInvalidation:(UIView<RNSViewControllerInvalidating> *)view
 {
-  [_invalidViews addObject:view];
+  // Backward compatibility for 0.82 RC or lower
+  if (facebook::react::ReactNativeVersion.Minor <= 81 || facebook::react::ReactNativeVersion.Prerelease != "") {
+    [_invalidViews addObject:view];
+  }
 }
 
 - (void)flushInvalidViews
 {
-  for (id<RNSViewControllerInvalidating> view in _invalidViews) {
-    [view invalidateController];
+  // Backward compatibility for 0.82 RC or lower
+  if (facebook::react::ReactNativeVersion.Minor <= 81 || facebook::react::ReactNativeVersion.Prerelease != "") {
+    for (id<RNSViewControllerInvalidating> view in _invalidViews) {
+      [view invalidateController];
+    }
+    [_invalidViews removeAllObjects];
   }
-  [_invalidViews removeAllObjects];
 }
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
