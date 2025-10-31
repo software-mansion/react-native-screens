@@ -125,7 +125,10 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateController
 {
-  [self invalidateImpl];
+  // Starting from 0.82.0, we're switching to the new implementation
+  if (facebook::react::ReactNativeVersion.Minor <= 81 || facebook::react::ReactNativeVersion.Prerelease != "") {
+    [self invalidateImpl];
+  }
 }
 
 - (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
@@ -481,7 +484,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)invalidate
 {
   // From 0.82.0, we're using a new invalidate callback
-  if (facebook::react::ReactNativeVersion.Prerelease == "") {
+  if (facebook::react::ReactNativeVersion.Minor >= 83 || facebook::react::ReactNativeVersion.Prerelease == "") {
     [self invalidateImpl];
   }
 }
