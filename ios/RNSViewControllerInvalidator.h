@@ -1,6 +1,4 @@
-#import <cxxreact/ReactNativeVersion.h>
-
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+#if RCT_NEW_ARCH_ENABLED
 
 #import <UIKit/UIKit.h>
 
@@ -14,4 +12,4 @@
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+#endif // RCT_NEW_ARCH_ENABLED

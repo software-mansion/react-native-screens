@@ -1,8 +1,9 @@
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+#if RCT_NEW_ARCH_ENABLED
 
 #import "RNSViewControllerInvalidator.h"
 
 #import <React/RCTAssert.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import "RNSInvalidatedComponentsRegistry.h"
 #import "RNSViewControllerInvalidating.h"
 
@@ -23,4 +24,4 @@
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
+#endif // RCT_NEW_ARCH_ENABLED
