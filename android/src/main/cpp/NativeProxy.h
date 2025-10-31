@@ -4,6 +4,7 @@
 #include <react/fabric/JFabricUIManager.h>
 #include "RNSScreenRemovalListener.h"
 
+#include <mutex>
 #include <string>
 
 namespace rnscreens {
@@ -24,6 +25,8 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
  private:
   friend HybridBase;
   jni::global_ref<NativeProxy::javaobject> javaPart_;
+
+  std::mutex coordinatorsMutex_;
 
   explicit NativeProxy(jni::alias_ref<NativeProxy::javaobject> jThis);
 

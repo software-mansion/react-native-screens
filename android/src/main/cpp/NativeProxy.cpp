@@ -53,18 +53,22 @@ void NativeProxy::nativeAddMutationsListener(
 }
 
 void NativeProxy::cleanupExpiredMountingCoordinators() {
+  std::lock_guard<std::mutex> lock(coordinatorsMutex_);
+
   coordinatorsWithMountingOverrides_.erase(
       std::remove_if(
           coordinatorsWithMountingOverrides_.begin(),
           coordinatorsWithMountingOverrides_.end(),
           [](const std::weak_ptr<const facebook::react::MountingCoordinator>
-                 &weakPtr) { return weakPtr.expired(); }),
+                 &weakPtr) { return weakPtr.lock() == nullptr; }),
       coordinatorsWithMountingOverrides_.end());
 }
 
 void NativeProxy::addMountingCoordinatorIfNeeded(
     const std::shared_ptr<const facebook::react::MountingCoordinator>
         &coordinator) {
+  std::lock_guard<std::mutex> lock(coordinatorsMutex_);
+
   bool wasRegistered = std::ranges::any_of(
       coordinatorsWithMountingOverrides_,
       [&coordinator](
