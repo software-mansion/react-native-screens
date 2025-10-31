@@ -1,6 +1,6 @@
 'use strict';
 
-import { View } from "react-native";
+import { View } from 'react-native';
 
 /* eslint-disable */
 
@@ -24,11 +24,11 @@ export function getShadowNodeWrapperAndTagFromRef(ref: View | null): {
     return {
       shadowNodeWrapper: null,
       tag: -1,
-    }
+    };
   }
   const internalRef = ref as unknown as HostInstance;
   return {
     shadowNodeWrapper: internalRef.__internalInstanceHandle.stateNode.node,
     tag: internalRef.__nativeTag,
-  }
+  };
 }
