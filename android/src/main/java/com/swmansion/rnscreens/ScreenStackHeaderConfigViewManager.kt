@@ -320,6 +320,13 @@ class ScreenStackHeaderConfigViewManager :
         logNotAvailable("backButtonDisplayMode")
     }
 
+    override fun setBackButtonUseModernImplementation(
+        view: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) {
+        logNotAvailable("backButtonUseModernImplementation")
+    }
+
     override fun setBlurEffect(
         view: ScreenStackHeaderConfig?,
         value: String?,
