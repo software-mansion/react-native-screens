@@ -51,7 +51,7 @@ export default function ConfigTab() {
             tabBarMinimizeBehavior: value,
           })
         }
-        items={['automatic', 'onScrollDown', 'onScrollUp', 'never']}
+        items={['auto', 'onScrollDown', 'onScrollUp', 'never']}
       />
       <SettingsPicker<BottomTabsSAVExampleConfig['tabBarItemSystemItem']>
         label="tabBarItemSystemItem"

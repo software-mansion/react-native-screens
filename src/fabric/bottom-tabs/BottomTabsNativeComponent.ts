@@ -26,13 +26,9 @@ type TabBarItemLabelVisibilityMode =
   | 'labeled'
   | 'unlabeled';
 
-type TabBarMinimizeBehavior =
-  | 'automatic'
-  | 'never'
-  | 'onScrollDown'
-  | 'onScrollUp';
+type TabBarMinimizeBehavior = 'auto' | 'never' | 'onScrollDown' | 'onScrollUp';
 
-type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
+type TabBarControllerMode = 'auto' | 'tabBar' | 'tabSidebar';
 
 export interface NativeProps extends ViewProps {
   // Events
@@ -62,8 +58,8 @@ export interface NativeProps extends ViewProps {
 
   // iOS-specific
   tabBarTintColor?: ColorValue;
-  tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
-  tabBarControllerMode?: WithDefault<TabBarControllerMode, 'automatic'>;
+  tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'auto'>;
+  tabBarControllerMode?: WithDefault<TabBarControllerMode, 'auto'>;
 
   // Control
 
