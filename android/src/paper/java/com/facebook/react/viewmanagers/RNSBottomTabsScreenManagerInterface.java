@@ -40,4 +40,5 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
   void setLeftScrollEdgeEffect(T view, @Nullable String value);
   void setRightScrollEdgeEffect(T view, @Nullable String value);
   void setTopScrollEdgeEffect(T view, @Nullable String value);
+  void setUnstable_overrideUserInterfaceStyle(T view, @Nullable String value);
 }

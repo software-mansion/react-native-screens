@@ -275,6 +275,23 @@
   }
 }
 
++ (UIUserInterfaceStyle)UIUserInterfaceStyleFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigUnstable_overrideUserInterfaceStyle)userInterfaceStyle
+{
+  switch (userInterfaceStyle) {
+    using enum react::RNSScreenStackHeaderConfigUnstable_overrideUserInterfaceStyle;
+
+    case Unspecified:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported user interface style");
+  }
+}
+
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
 {
   NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];

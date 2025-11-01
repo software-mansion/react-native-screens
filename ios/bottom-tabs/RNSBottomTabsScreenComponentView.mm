@@ -105,6 +105,8 @@ namespace react = facebook::react;
   _selectedIconSfSymbolName = nil;
 
   _systemItem = RNSBottomTabsScreenSystemItemNone;
+
+  _unstable_userInterfaceStyle = UIUserInterfaceStyleUnspecified;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -400,6 +402,11 @@ RNS_IGNORE_SUPER_CALL_END
                                      RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
                                          newComponentProps.topScrollEdgeEffect)];
     scrollEdgeEffectsNeedUpdate = YES;
+  }
+
+  if (newComponentProps.unstable_overrideUserInterfaceStyle != oldComponentProps.unstable_overrideUserInterfaceStyle) {
+    _unstable_userInterfaceStyle = rnscreens::conversion::UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
+        newComponentProps.unstable_overrideUserInterfaceStyle);
   }
 
   if (tabBarItemNeedsRecreation) {

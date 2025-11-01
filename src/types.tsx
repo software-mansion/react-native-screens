@@ -83,6 +83,8 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
+
 export type HeaderHeightChangeEventType = {
   headerHeight: number;
 };
@@ -757,6 +759,15 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean indicating whether the navigation bar is translucent.
    */
   translucent?: boolean;
+  /**
+   * Allows to override system appearance for the navigation bar.
+   *
+   * Does not support dynamic changes to the prop value for the currently visible screen.
+   *
+   * @default unspecified
+   * @platform ios
+   */
+  unstable_overrideUserInterfaceStyle?: UserInterfaceStyle;
 }
 
 export interface SearchBarProps {

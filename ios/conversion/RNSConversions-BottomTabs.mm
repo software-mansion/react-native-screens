@@ -400,4 +400,20 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
 
 #undef SWITCH_EDGE_EFFECT
 
+UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
+    react::RNSBottomTabsScreenUnstable_overrideUserInterfaceStyle userInterfaceStyle)
+{
+  using enum facebook::react::RNSBottomTabsScreenUnstable_overrideUserInterfaceStyle;
+  switch (userInterfaceStyle) {
+    case Unspecified:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported user interface style");
+  }
+}
+
 }; // namespace rnscreens::conversion

@@ -57,6 +57,11 @@ export type BottomTabsSystemItem =
   | 'search'
   | 'topRated';
 
+export type BottomTabsScreenUserInterfaceStyle =
+  | 'unspecified'
+  | 'light'
+  | 'dark';
+
 // Currently iOS-only
 export type BottomTabsScreenOrientation =
   | 'inherit'
@@ -511,6 +516,15 @@ export interface BottomTabsScreenProps {
     right?: ScrollEdgeEffect;
     top?: ScrollEdgeEffect;
   };
+  /**
+   * @summary Allows to override system appearance for the tab bar.
+   *
+   * Does not support dynamic changes to the prop value for the currently visible screen.
+   *
+   * @default unspecified
+   * @platform ios
+   */
+  unstable_overrideUserInterfaceStyle?: BottomTabsScreenUserInterfaceStyle;
   // #endregion iOS-only appearance
 
   // #region Events
