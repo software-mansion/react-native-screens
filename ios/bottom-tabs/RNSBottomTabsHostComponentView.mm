@@ -253,6 +253,18 @@ namespace react = facebook::react;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
   }
 
+  if (newComponentProps.tabBarHidden != oldComponentProps.tabBarHidden) {
+    _tabBarHidden = newComponentProps.tabBarHidden;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    if (@available(iOS 18.0, *)) {
+      [_controller setTabBarHidden:_tabBarHidden animated:NO];
+    } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    {
+      _controller.tabBar.hidden = _tabBarHidden;
+    }
+  }
+
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
@@ -427,6 +439,19 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _tabBarTintColor = tabBarTintColor;
   [self invalidateTabBarAppearance];
+}
+
+- (void)setTabBarHidden:(BOOL)tabBarHidden
+{
+  _tabBarHidden = tabBarHidden;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+  if (@available(iOS 18.0, *)) {
+    [_controller setTabBarHidden:_tabBarHidden animated:NO];
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+  {
+    _controller.tabBar.hidden = _tabBarHidden;
+  }
 }
 
 // This is a Paper-only setter method that will be called by the mounting code.

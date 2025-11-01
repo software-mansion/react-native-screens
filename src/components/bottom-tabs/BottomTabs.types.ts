@@ -204,6 +204,14 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode;
+  /**
+   * @summary Hides the tab bar.
+   *
+   * @default false
+   *
+   * @platform ios
+   */
+  tabBarHidden?: boolean;
   // #endregion iOS-only appearance
 
   // #region Experimental support

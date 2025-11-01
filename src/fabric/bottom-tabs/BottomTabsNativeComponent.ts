@@ -64,6 +64,7 @@ export interface NativeProps extends ViewProps {
   tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: WithDefault<TabBarControllerMode, 'automatic'>;
+  tabBarHidden?: WithDefault<boolean, false>;
 
   // Control
 
