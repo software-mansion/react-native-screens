@@ -769,14 +769,19 @@ RNS_IGNORE_SUPER_CALL_END
   [_controller notifyFinishTransitioning];
 }
 
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+- (void)notifyTransitionProgress:(double)progress
+                         closing:(BOOL)closing
+                    goingForward:(BOOL)goingForward
+                         swiping:(BOOL)swiping
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(
-            react::RNSScreenEventEmitter::OnTransitionProgress{
-                .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
+            .progress = progress,
+            .closing = closing ? 1 : 0,
+            .goingForward = goingForward ? 1 : 0,
+            .swiping = swiping ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
                                                                    reactTag:[NSNumber numberWithInteger:self.tag]
@@ -1626,7 +1631,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [RNSScreenWindowTraits updateWindowTraits];
   if (_shouldNotify) {
     _closing = NO;
-    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward swiping:_isSwiping];
     [self setupProgressNotification];
   }
 }
@@ -1663,7 +1668,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (_shouldNotify) {
     _closing = YES;
-    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward swiping:_isSwiping];
     [self setupProgressNotification];
   }
 }
@@ -1679,7 +1684,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // we are going forward or dismissing without swipe
     // or successfully swiped back
     [self.screenView notifyAppear];
-    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
+    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward swiping:_isSwiping];
   } else {
     [self.screenView notifyGestureCancel];
   }
@@ -1705,7 +1710,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // same flow as in viewDidAppear
   if (!_isSwiping || _shouldNotify) {
     [self.screenView notifyDisappear];
-    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
+    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward swiping:_isSwiping];
   }
 
   _isSwiping = NO;
@@ -1904,17 +1909,23 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
-      [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
+      [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward swiping:_isSwiping];
     }
   }
 }
 
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+- (void)notifyTransitionProgress:(double)progress
+                         closing:(BOOL)closing
+                    goingForward:(BOOL)goingForward
+                         swiping:(BOOL)swiping
 {
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
     // if the view is already snapshot, there is not sense in sending progress since on JS side
     // the component is already not present
-    [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+    [(RNSScreenView *)self.view notifyTransitionProgress:progress
+                                                 closing:closing
+                                            goingForward:goingForward
+                                                 swiping:swiping];
   }
 }
 
