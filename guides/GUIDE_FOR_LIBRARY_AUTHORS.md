@@ -73,9 +73,12 @@ default iOS shadow. Defaults to `true`.
 IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
 to the legacy implementation when handling custom animations, but we assume `true` for shadows.
 
-### `gestureEnabled` (iOS only)
+### `gestureEnabled`
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
+
+On iOS, this affects both modal presentation and stack navigation gestures.
+On Android, when using `formSheet` presentation, this controls whether the bottom sheet can be dismissed by dragging.
 
 #### `gestureResponseDistance` (iOS only)
 
