@@ -36,6 +36,7 @@ function ScreenStackItem(
     children,
     headerConfig,
     activityState,
+    renderBackground,
     shouldFreeze,
     stackPresentation,
     sheetAllowedDetents,
@@ -100,6 +101,11 @@ function ScreenStackItem(
         contentStyle={contentStyle}
         style={debugContainerStyle}
         stackPresentation={stackPresentation ?? 'push'}>
+        {renderBackground && (
+          <View style={StyleSheet.absoluteFill} pointerEvents="none">
+            {renderBackground()}
+          </View>
+        )}
         {shouldUseSafeAreaView ? (
           <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
             {children}
