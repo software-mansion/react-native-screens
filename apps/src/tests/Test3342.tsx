@@ -77,7 +77,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
             name: 'house',
           },
         },
-        unstable_overrideUserInterfaceStyle: 'light',
+        experimental_overrideUserInterfaceStyle: 'light',
       },
       component: () => TabScreen(stackNavProp),
     },
@@ -125,7 +125,7 @@ export default function App() {
       <Stack.Navigator
         screenOptions={{
           statusBarStyle: 'dark',
-          unstable_overrideUserInterfaceStyle: 'light',
+          experimental_overrideUserInterfaceStyle: 'light',
         }}>
         <Stack.Screen name="Screen1" component={Screen1} />
         <Stack.Screen
