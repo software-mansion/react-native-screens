@@ -9,7 +9,7 @@ import { Button, Platform, Text, View, ViewStyle } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 import { Spacer } from '../shared';
 import Colors from '../shared/styling/Colors';
-import { SafeAreaView } from 'react-native-screens/experimental';
+import { Edge, SafeAreaView } from 'react-native-screens/experimental';
 
 type StackParamList = {
   Main: undefined;
@@ -28,7 +28,10 @@ const Stack = createNativeStackNavigator<StackParamList>();
 type MainProps = {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
   useSafeArea: boolean;
+  edges: Partial<Record<Edge, boolean>>;
   toggleSafeArea: () => void;
+  toggleTopEdge: () => void;
+  toggleBottomEdge: () => void;
 };
 
 const EXAMPLES = [
@@ -42,15 +45,40 @@ const EXAMPLES = [
   ['Partially covered status bar', 'FormSheetOverStatusBar'],
 ];
 
-const Main = ({ navigation, useSafeArea, toggleSafeArea }: MainProps) => {
+const Main = ({
+  navigation,
+  useSafeArea,
+  edges,
+  toggleSafeArea,
+  toggleTopEdge,
+  toggleBottomEdge,
+}: MainProps) => {
   return (
     <View style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 20, marginVertical: 4 }}>
         [Android] Use SafeAreaView: {useSafeArea ? 'true' : 'false'}
       </Text>
+      <Text style={{ fontSize: 20, marginVertical: 4 }}>
+        [Android] Edges, top: {edges.top ? 'enabled' : 'disabled'}, bottom:{' '}
+        {edges.bottom ? 'enabled' : 'disabled'}
+      </Text>
       <View style={{ marginVertical: 4 }}>
         <Button onPress={toggleSafeArea} title="Toggle SAV" />
       </View>
+      <View style={{ marginVertical: 4 }}>
+        <Button onPress={toggleTopEdge} title="Toggle top edge" />
+      </View>
+      <View style={{ marginVertical: 4 }}>
+        <Button onPress={toggleBottomEdge} title="Toggle bottom edge" />
+      </View>
+      <View
+        style={{
+          width: '100%',
+          height: 1,
+          marginVertical: 4,
+          backgroundColor: 'black',
+        }}
+      />
       {EXAMPLES.map(([title, screen]) => (
         <View key={screen} style={{ marginVertical: 4 }}>
           <Button
@@ -104,12 +132,13 @@ const withOptionalSafeArea =
   (
     Component: React.ComponentType,
     useSafeArea: boolean,
+    safeAreaEdges?: Partial<Record<Edge, boolean>>,
     safeAreaStyle?: ViewStyle,
   ) =>
   () => {
     if (Platform.OS === 'android' && useSafeArea) {
       return (
-        <SafeAreaView edges={{ top: true, bottom: true }} style={safeAreaStyle}>
+        <SafeAreaView edges={safeAreaEdges} style={safeAreaStyle}>
           <Component />
         </SafeAreaView>
       );
@@ -119,7 +148,15 @@ const withOptionalSafeArea =
 
 export default function App() {
   const [useSafeArea, setUseSafeArea] = useState(true);
+  const [safeAreaEdges, setSafeAreaEdges] = useState({
+    top: true,
+    bottom: true,
+  });
   const toggleSafeArea = () => setUseSafeArea(prev => !prev);
+  const toggleTopEdge = () =>
+    setSafeAreaEdges(prev => ({ ...prev, top: !prev.top }));
+  const toggleBottomEdge = () =>
+    setSafeAreaEdges(prev => ({ ...prev, bottom: !prev.bottom }));
 
   return (
     <NavigationContainer>
@@ -131,15 +168,23 @@ export default function App() {
             <Main
               navigation={navigation}
               useSafeArea={useSafeArea}
+              edges={safeAreaEdges}
               toggleSafeArea={toggleSafeArea}
+              toggleTopEdge={toggleTopEdge}
+              toggleBottomEdge={toggleBottomEdge}
             />
           )}
         />
         <Stack.Screen
           name="FormSheetWithFitToContents"
-          component={withOptionalSafeArea(FormSheetNoFlex, useSafeArea, {
-            flex: 0,
-          })}
+          component={withOptionalSafeArea(
+            FormSheetNoFlex,
+            useSafeArea,
+            safeAreaEdges,
+            {
+              flex: 0,
+            },
+          )}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: 'fitToContents',
@@ -147,7 +192,11 @@ export default function App() {
         />
         <Stack.Screen
           name="FormSheetWithSmallDetent"
-          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
+          component={withOptionalSafeArea(
+            FormSheetBase,
+            useSafeArea,
+            safeAreaEdges,
+          )}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.2],
@@ -155,7 +204,11 @@ export default function App() {
         />
         <Stack.Screen
           name="FormSheetWithMediumDetent"
-          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
+          component={withOptionalSafeArea(
+            FormSheetBase,
+            useSafeArea,
+            safeAreaEdges,
+          )}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.5],
@@ -163,7 +216,11 @@ export default function App() {
         />
         <Stack.Screen
           name="FormSheetWithLargeDetent"
-          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
+          component={withOptionalSafeArea(
+            FormSheetBase,
+            useSafeArea,
+            safeAreaEdges,
+          )}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.8],
@@ -171,7 +228,11 @@ export default function App() {
         />
         <Stack.Screen
           name="FormSheetWithTwoDetents"
-          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
+          component={withOptionalSafeArea(
+            FormSheetBase,
+            useSafeArea,
+            safeAreaEdges,
+          )}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.3, 0.6],
@@ -179,7 +240,11 @@ export default function App() {
         />
         <Stack.Screen
           name="FormSheetWithThreeDetents"
-          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
+          component={withOptionalSafeArea(
+            FormSheetBase,
+            useSafeArea,
+            safeAreaEdges,
+          )}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.3, 0.6, 0.9],
@@ -187,7 +252,11 @@ export default function App() {
         />
         <Stack.Screen
           name="FormSheetWithMaxDetent"
-          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
+          component={withOptionalSafeArea(
+            FormSheetBase,
+            useSafeArea,
+            safeAreaEdges,
+          )}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [1.0],
@@ -195,7 +264,11 @@ export default function App() {
         />
         <Stack.Screen
           name="FormSheetOverStatusBar"
-          component={withOptionalSafeArea(FormSheetBase, useSafeArea)}
+          component={withOptionalSafeArea(
+            FormSheetBase,
+            useSafeArea,
+            safeAreaEdges,
+          )}
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.99],
