@@ -117,7 +117,14 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
-  _controller = nil;
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+    }
+  });
 }
 
 #if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
