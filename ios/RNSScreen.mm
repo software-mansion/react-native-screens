@@ -946,11 +946,18 @@ RNS_IGNORE_SUPER_CALL_END
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-- (void)invalidate
+- (void)invalidateImpl
 {
   _controller = nil;
   [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
+
+#ifndef RCT_NEW_ARCH_ENABLED
+- (void)invalidate
+{
+  [self invalidateImpl];
+}
+#endif
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 

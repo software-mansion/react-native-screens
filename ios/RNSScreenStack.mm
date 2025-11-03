@@ -1442,7 +1442,11 @@ RNS_IGNORE_SUPER_CALL_END
         return;
       }
       for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
+#ifdef RCT_NEW_ARCH_ENABLED
+        [screenRef invalidateImpl];
+#else
         [screenRef invalidate];
+#endif
       }
       strongSelf->_toBeDeletedScreens.clear();
     });

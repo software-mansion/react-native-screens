@@ -116,13 +116,6 @@ static const CGFloat epsilon = 1e-6;
   }
 }
 
-- (void)willMoveToWindow:(UIWindow *)newWindow
-{
-  if (newWindow == nil) {
-    [self invalidate];
-  }
-}
-
 - (void)didMoveToWindow
 {
   [self setupController];
@@ -148,17 +141,6 @@ static const CGFloat epsilon = 1e-6;
   }
 }
 
-- (void)invalidate
-{
-  // We assume that split host is removed from view hierarchy **only** when
-  // whole component is destroyed & therefore we do the necessary cleanup here.
-  // If at some point that statement does not hold anymore, this cleanup
-  // should be moved to a different place.
-  for (RNSSplitViewScreenComponentView *subview in _reactSubviews) {
-    [subview invalidate];
-  }
-}
-
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (nonnull NSMutableArray<RNSSplitViewScreenComponentView *> *)reactSubviews
 {
@@ -176,7 +158,7 @@ RNS_IGNORE_SUPER_CALL_END
   return _controller;
 }
 
-#pragma mark - RCTViewComponentViewProtocol
+#pragma mark - RCTComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
