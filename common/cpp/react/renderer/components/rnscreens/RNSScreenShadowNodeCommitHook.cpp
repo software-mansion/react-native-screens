@@ -11,12 +11,14 @@ RNSScreenShadowNodeCommitHook::RNSScreenShadowNodeCommitHook(
     std::shared_ptr<const ContextContainer> contextContainer)
     : contextContainer_(contextContainer) {
   if (contextContainer_) {
-    auto fabricUIManager = contextContainer_->at<jni::alias_ref<
-        jni::detail::JTypeFor<JFabricUIManager, jni::JObject, void>::_javaobject
-            *>>("FabricUIManager");
-    auto uiManager =
-        fabricUIManager->getBinding()->getScheduler()->getUIManager();
-    uiManager->registerCommitHook(*this);
+    auto fabricUIManager =
+        contextContainer_
+            ->at<jni::alias_ref<facebook::react::JFabricUIManager::javaobject>>(
+                "FabricUIManager");
+    fabricUIManager->getBinding()
+        ->getScheduler()
+        ->getUIManager()
+        ->registerCommitHook(*this);
   }
 }
 
@@ -27,12 +29,14 @@ RNSScreenShadowNodeCommitHook::RNSScreenShadowNodeCommitHook(
 
 RNSScreenShadowNodeCommitHook::~RNSScreenShadowNodeCommitHook() noexcept {
   if (contextContainer_) {
-    auto fabricUIManager = contextContainer_->at<jni::alias_ref<
-        jni::detail::JTypeFor<JFabricUIManager, jni::JObject, void>::_javaobject
-            *>>("FabricUIManager");
-    auto uiManager =
-        fabricUIManager->getBinding()->getScheduler()->getUIManager();
-    uiManager->unregisterCommitHook(*this);
+    auto fabricUIManager =
+        contextContainer_
+            ->at<jni::alias_ref<facebook::react::JFabricUIManager::javaobject>>(
+                "FabricUIManager");
+    fabricUIManager->getBinding()
+        ->getScheduler()
+        ->getUIManager()
+        ->unregisterCommitHook(*this);
   }
 }
 
@@ -48,13 +52,14 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
 
   const bool wasHorizontal = isHorizontal_(oldRootProps);
   const bool willBeHorizontal = isHorizontal_(newRootProps);
+
   const bool orientationDidChange = (wasHorizontal && !willBeHorizontal) ||
       (!wasHorizontal && willBeHorizontal);
 
   std::shared_ptr<ShadowNode> finalRootShadowNode = newRootShadowNode;
   if (orientationDidChange) {
-    std::vector<RNSScreenShadowNode *> screens;
-    findScreenNodes(newRootShadowNode.get(), &screens);
+    std::vector<std::shared_ptr<const RNSScreenShadowNode>> screens;
+    findScreenNodes(newRootShadowNode, screens);
 
     for (auto screen : screens) {
       const auto rootShadowNodeClone = newRootShadowNode->cloneTree(
@@ -83,15 +88,16 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
 }
 
 void RNSScreenShadowNodeCommitHook::findScreenNodes(
-    const ShadowNode *node,
-    std::vector<RNSScreenShadowNode *> *screenNodes) {
+    const std::shared_ptr<const ShadowNode> &node,
+    std::vector<std::shared_ptr<const RNSScreenShadowNode>> &screenNodes) {
   // TODO: think of sth better than full DFS over shadow tree; maybe, for
   // instance, a screen registry?
   for (auto child : node->getChildren()) {
     if (std::strcmp(node->getComponentName(), "RNSScreen") == 0) {
-      screenNodes->push_back((RNSScreenShadowNode *)node);
+      screenNodes.push_back(
+          std::dynamic_pointer_cast<const RNSScreenShadowNode>(node));
     }
-    findScreenNodes(child.get(), screenNodes);
+    findScreenNodes(child, screenNodes);
   }
 }
 

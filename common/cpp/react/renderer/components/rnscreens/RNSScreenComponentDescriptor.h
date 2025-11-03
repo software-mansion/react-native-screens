@@ -2,6 +2,7 @@
 
 #ifdef ANDROID
 #include <fbjni/fbjni.h>
+#include "RNSScreenShadowNodeCommitHook.h"
 #endif // ANDROID
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/components/rnscreens/Props.h>
@@ -12,7 +13,6 @@
 #include <react/renderer/uimanager/UIManagerCommitHook.h>
 #include <memory>
 #include "RNSScreenShadowNode.h"
-#include "RNSScreenShadowNodeCommitHook.h"
 
 namespace facebook {
 namespace react {
@@ -29,14 +29,14 @@ class RNSScreenComponentDescriptor final
    * orientation.
    */
   mutable std::shared_ptr<RNSScreenShadowNodeCommitHook> commitHook_;
-#endif // Android specific
+#endif // ANDROID
 
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
-    auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
+    auto &screenShadowNode = dynamic_cast<RNSScreenShadowNode &>(shadowNode);
 
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
