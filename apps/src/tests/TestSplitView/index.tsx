@@ -3,6 +3,7 @@ import React from 'react';
 import SplitViewBaseApp from './SplitViewBaseApp';
 import SplitViewOrientation from './SplitViewOrientation';
 import SplitViewPerfApp from './SplitViewPerfApp';
+import SplitViewPrimaryBackgroundStyle from './SplitViewPrimaryBackgroundStyle';
 import {
   SplitViewWithNestedStack,
   SplitViewWithNativeStackBase,

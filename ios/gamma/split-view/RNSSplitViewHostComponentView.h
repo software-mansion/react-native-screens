@@ -35,6 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UISplitViewControllerPrimaryEdge primaryEdge;
 @property (nonatomic, readonly) UISplitViewControllerDisplayMode preferredDisplayMode;
 @property (nonatomic, readonly) UISplitViewControllerDisplayModeButtonVisibility displayModeButtonVisibility;
+#if !TARGET_OS_TV
+@property (nonatomic, readonly) UISplitViewControllerBackgroundStyle primaryBackgroundStyle;
+#endif // !TARGET_OS_TV
 @property (nonatomic, readonly) BOOL presentsWithGesture;
 @property (nonatomic, readonly) BOOL showSecondaryToggleButton;
 @property (nonatomic, readonly) BOOL showInspector;

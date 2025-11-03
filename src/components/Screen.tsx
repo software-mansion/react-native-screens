@@ -29,6 +29,7 @@ import {
   resolveSheetLargestUndimmedDetent,
 } from './helpers/sheet';
 import { parseBooleanToOptionalBooleanNativeProp } from '../utils';
+import featureFlags from '../flags';
 
 type NativeProps = ScreenNativeComponentProps | ModalScreenNativeComponentProps;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(
@@ -49,6 +50,13 @@ interface ViewConfig extends View {
     };
   };
   _viewConfig: {
+    validAttributes: {
+      style: {
+        display: boolean | null;
+      };
+    };
+  };
+  __viewConfig: {
     validAttributes: {
       style: {
         display: boolean | null;
@@ -178,6 +186,11 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             ...ref._viewConfig.validAttributes.style,
             display: null,
           };
+        } else if (ref?.__viewConfig?.validAttributes?.style) {
+          ref.__viewConfig.validAttributes.style = {
+            ...ref.__viewConfig.validAttributes.style,
+            display: null,
+          };
         }
         setRef(ref);
       };
@@ -251,7 +264,10 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
             leftScrollEdgeEffect={scrollEdgeEffects?.left}
             rightScrollEdgeEffect={scrollEdgeEffects?.right}
-            topScrollEdgeEffect={scrollEdgeEffects?.top}>
+            topScrollEdgeEffect={scrollEdgeEffects?.top}
+            synchronousShadowStateUpdatesEnabled={
+              featureFlags.experiment.synchronousScreenUpdatesEnabled
+            }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (

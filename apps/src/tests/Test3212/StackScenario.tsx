@@ -4,13 +4,17 @@ import { ConfigWithNavigation } from "./Config";
 import { NavigationContainer, NavigationIndependentTree } from "@react-navigation/native";
 import { ScrollViewTemplate } from './ScrollViewTemplate';
 import { SCROLL_EDGE_EFFECT_DEFAULTS, ScrollEdgeEffects, ScrollEdgeEffectsConfigContext } from './context';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
+
+function ConfigComponent() {
+  return (
+    <ConfigWithNavigation title='Stack / scrollEdgeEffects:'/>
+  );
+}
 
 export function StackScenario() {
   const Stack = createNativeStackNavigator();
   const [config, setConfig] = useState<ScrollEdgeEffects>({...SCROLL_EDGE_EFFECT_DEFAULTS});
-
-  const ConfigComponent = useCallback(() => <ConfigWithNavigation title='Stack / scrollEdgeEffects:'/>, []);
 
   return (
     <NavigationIndependentTree>

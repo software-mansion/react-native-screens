@@ -50,6 +50,13 @@ class ScreenStackHeaderSubviewManager :
         Log.w("[RNScreens]", "hidesSharedBackground prop is not available on Android")
     }
 
+    // synchronousShadowStateUpdatesEnabled is not available on Android atm,
+    // however we must override their setters
+    override fun setSynchronousShadowStateUpdatesEnabled(
+        view: ScreenStackHeaderSubview?,
+        value: Boolean,
+    ) = Unit
+
     override fun updateState(
         view: ScreenStackHeaderSubview,
         props: ReactStylesDiffMap?,

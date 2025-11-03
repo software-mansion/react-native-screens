@@ -5,6 +5,7 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -233,7 +234,14 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newState != _lastSendState) {
     _lastSendState = newState;
-    _state->updateState(std::move(newState));
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
   }
 }
 
@@ -1177,6 +1185,8 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   if (needsNavigationControllerLayout) {
     [self layoutNavigationControllerView];
   }
+
+  _synchronousShadowStateUpdatesEnabled = newScreenProps.synchronousShadowStateUpdatesEnabled;
 
   _initialPropsSet = YES;
   _props = std::static_pointer_cast<react::RNSScreenStackHeaderConfigProps const>(props);

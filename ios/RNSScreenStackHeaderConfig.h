@@ -65,6 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RCTDirectEventBlock onPressHeaderBarButtonItem;
 @property (nonatomic) RCTDirectEventBlock onPressHeaderBarButtonMenuItem;
 #endif
+@property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
 
 NS_ASSUME_NONNULL_END
 

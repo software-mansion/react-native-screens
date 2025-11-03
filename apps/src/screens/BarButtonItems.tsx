@@ -1,6 +1,13 @@
 // NOTE: The full native feature set (style, image, menu, etc.) is available, but the TS types in src/types.tsx need to be updated to match. This example uses only the currently typed props (title, icon, onPress, enabled).
 import React from 'react';
-import { View, Alert, Button, Text, Platform, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Alert,
+  Button,
+  Text,
+  Platform,
+  TouchableOpacity,
+} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -15,7 +22,7 @@ const demoScreens = [
   { name: 'DisabledButtonDemo', title: 'Disabled Button' },
   { name: 'CustomColorButtonDemo', title: 'Custom Color Button' },
   { name: 'ProminentStyleButtonDemo', title: 'Prominent Style Button' },
-  { name: 'LabelStyleButtonDemo', title: 'Label Style Button' },
+  { name: 'TitleStyleButtonDemo', title: 'Title Style Button' },
   { name: 'IconSharesBgButtonDemo', title: 'Icon SharesBackground' },
   { name: 'TextButtonWithWidthDemo', title: 'Text Button With Width' },
   { name: 'IconButtonsWithSpacingDemo', title: 'Icon Buttons With Spacing' },
@@ -23,18 +30,20 @@ const demoScreens = [
   { name: 'DoneStyleButtonDemo', title: 'Done Style Button' },
   { name: 'AdvancedMenuButtonDemo', title: 'Advanced Menu Button' },
   { name: 'ReactNodeButtonDemo', title: 'React Node Button' },
-  { name: "BackButtonVisibleDemo", title: "Back Button Visible" },
-  { name: "IdentifierExample", title: "Identifier Example" },
-  { name: "IdentifierExample2", title: "Identifier Example 2" },
-  { name: "ExessiveItemsExample", title: "Exessive Items Example" },
+  { name: 'BackButtonVisibleDemo', title: 'Back Button Visible' },
+  { name: 'IdentifierExample', title: 'Identifier Example' },
+  { name: 'IdentifierExample2', title: 'Identifier Example 2' },
+  { name: 'ExessiveItemsExample', title: 'Exessive Items Example' },
 ];
 
 const MainScreen = ({ navigation }: any) => (
   <ScrollView contentInsetAdjustmentBehavior="automatic" style={{ flex: 1 }}>
     <View style={{ padding: 8 }}>
-      <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>iOS only</Text>
+      <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>
+        iOS only
+      </Text>
     </View>
-    {demoScreens.map((screen) => (
+    {demoScreens.map(screen => (
       <Button
         key={screen.name}
         onPress={() => navigation.navigate(screen.name)}
@@ -59,7 +68,7 @@ const BadgeButtonDemo = DemoScreenContent;
 const DisabledButtonDemo = DemoScreenContent;
 const CustomColorButtonDemo = DemoScreenContent;
 const ProminentStyleButtonDemo = DemoScreenContent;
-const LabelStyleButtonDemo = DemoScreenContent;
+const TitleStyleButtonDemo = DemoScreenContent;
 const IconSharesBgButtonDemo = DemoScreenContent;
 const TextButtonWithWidthDemo = DemoScreenContent;
 const IconButtonsWithSpacingDemo = DemoScreenContent;
@@ -74,9 +83,12 @@ const ExessiveItemsExample = DemoScreenContent;
 
 export default function BarButtonItemsExample() {
   return (
-
     // @ts-ignore
-    <Stack.Navigator screenOptions={{ headerTransparent: Platform.OS === 'ios' && parseInt(Platform.Version) >= 26 }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerTransparent:
+          Platform.OS === 'ios' && parseInt(Platform.Version) >= 26,
+      }}>
       <Stack.Screen
         name="Main"
         component={MainScreen}
@@ -87,8 +99,9 @@ export default function BarButtonItemsExample() {
         component={PlainButtonDemo}
         options={{
           title: 'Plain Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Info',
               onPress: () => Alert.alert('Info pressed'),
             },
@@ -100,12 +113,16 @@ export default function BarButtonItemsExample() {
         component={IconButtonDemo}
         options={{
           title: 'Icon Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               icon: {
-                type: "imageSource",
-                imageSource: require('../../assets/search_black.png')
+                type: 'image',
+                source: require('../../assets/variableIcons/icon_fill.png'),
+                tinted: false,
               },
+              tintColor: 'red',
+              label: 'Title',
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -116,12 +133,14 @@ export default function BarButtonItemsExample() {
         component={IconButtonDemo}
         options={{
           title: 'System image Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               icon: {
-                type: "sfSymbol",
-                name: "square.and.arrow.up"
+                type: 'sfSymbol',
+                name: 'square.and.arrow.up',
               },
+              label: 'Title',
               onPress: () => Alert.alert('Icon pressed'),
             },
           ],
@@ -132,19 +151,20 @@ export default function BarButtonItemsExample() {
         component={MenuButtonDemo}
         options={{
           title: 'Menu Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'menu',
               label: 'Menu',
               menu: {
                 items: [
                   {
                     label: 'Option 1',
-                    type: "action",
+                    type: 'action',
                     onPress: () => Alert.alert('Option 1 pressed'),
                   },
                   {
                     label: 'Option 2',
-                    type: "action",
+                    type: 'action',
                     onPress: () => Alert.alert('Option 2 pressed'),
                   },
                 ],
@@ -158,15 +178,16 @@ export default function BarButtonItemsExample() {
         component={BadgeButtonDemo}
         options={{
           title: 'Badge Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Badge',
               badge: {
                 value: '3',
                 style: {
                   color: 'white',
                   backgroundColor: 'red',
-                }
+                },
               },
               onPress: () => Alert.alert('Badge pressed'),
             },
@@ -178,8 +199,9 @@ export default function BarButtonItemsExample() {
         component={DisabledButtonDemo}
         options={{
           title: 'Disabled Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Disabled',
               disabled: true,
               onPress: () => Alert.alert('Should not fire'),
@@ -192,8 +214,9 @@ export default function BarButtonItemsExample() {
         component={CustomColorButtonDemo}
         options={{
           title: 'Custom Color Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Purple',
               tintColor: 'purple',
               onPress: () => Alert.alert('Purple pressed'),
@@ -206,8 +229,9 @@ export default function BarButtonItemsExample() {
         component={ProminentStyleButtonDemo}
         options={{
           title: 'Prominent Style Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Prominent',
               variant: 'prominent',
               tintColor: 'green',
@@ -217,12 +241,13 @@ export default function BarButtonItemsExample() {
         }}
       />
       <Stack.Screen
-        name="LabelStyleButtonDemo"
-        component={LabelStyleButtonDemo}
+        name="TitleStyleButtonDemo"
+        component={TitleStyleButtonDemo}
         options={{
-          title: 'Label Style Button',
-          headerRightItems: [
+          title: 'Title Style Button',
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Styled',
               labelStyle: {
                 fontFamily: 'Georgia',
@@ -240,26 +265,47 @@ export default function BarButtonItemsExample() {
         component={IconSharesBgButtonDemo}
         options={{
           title: 'Icon SharesBackground',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              type: 'button',
+              label: 'Title',
+              icon: {
+                type: 'image',
+                source: require('../../assets/search_black.png'),
+              },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              type: 'button',
+              label: 'Title',
+              icon: {
+                type: 'image',
+                source: require('../../assets/search_black.png'),
+              },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
             },
             {
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              type: 'button',
+              label: 'Title',
+              icon: {
+                type: 'image',
+                source: require('../../assets/search_black.png'),
+              },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: false,
             },
             {
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              type: 'button',
+              label: 'Title',
+              icon: {
+                type: 'image',
+                source: require('../../assets/search_black.png'),
+              },
               hidesSharedBackground: true,
-              onPress: () => Alert.alert('Icon with sharesBackground false pressed'),
+              onPress: () =>
+                Alert.alert('Icon with sharesBackground false pressed'),
             },
           ],
         }}
@@ -269,8 +315,9 @@ export default function BarButtonItemsExample() {
         component={TextButtonWithWidthDemo}
         options={{
           title: 'Text Button With Width',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Wide',
               width: 100,
               onPress: () => Alert.alert('Wide text button pressed'),
@@ -283,16 +330,27 @@ export default function BarButtonItemsExample() {
         component={IconButtonsWithSpacingDemo}
         options={{
           title: 'Icon Buttons With Spacing',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              type: 'button',
+              label: 'Title',
+              icon: {
+                type: 'image',
+                source: require('../../assets/search_black.png'),
+              },
               onPress: () => Alert.alert('First icon pressed'),
             },
             {
+              type: 'spacing',
               spacing: 100,
             },
             {
-              icon: { type: "imageSource", imageSource: require('../../assets/search_white.png') },
+              type: 'button',
+              label: 'Title',
+              icon: {
+                type: 'image',
+                source: require('../../assets/search_white.png'),
+              },
               onPress: () => Alert.alert('Second icon pressed'),
             },
           ],
@@ -304,13 +362,19 @@ export default function BarButtonItemsExample() {
         options={{
           title: 'Header Tint Color',
           headerTintColor: 'red',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Tinted',
               onPress: () => Alert.alert('Tinted pressed'),
             },
             {
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              type: 'button',
+              label: 'Title',
+              icon: {
+                type: 'image',
+                source: require('../../assets/search_black.png'),
+              },
               onPress: () => Alert.alert('Tinted icon pressed'),
             },
           ],
@@ -321,14 +385,20 @@ export default function BarButtonItemsExample() {
         component={DoneStyleButtonDemo}
         options={{
           title: 'Done Style Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Done',
               variant: 'done',
               onPress: () => Alert.alert('Done text pressed'),
             },
             {
-              icon: { type: "imageSource", imageSource: require('../../assets/search_black.png') },
+              type: 'button',
+              label: 'DoneIcon',
+              icon: {
+                type: 'image',
+                source: require('../../assets/search_black.png'),
+              },
               variant: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
             },
@@ -340,33 +410,34 @@ export default function BarButtonItemsExample() {
         component={AdvancedMenuButtonDemo}
         options={{
           title: 'Advanced Menu Button',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'menu',
               label: 'Menu',
               menu: {
                 label: 'Context menu',
                 items: [
                   {
                     label: 'Action 1',
-                    icon: { type: "sfSymbol", name: 'star' },
-                    type: "action",
+                    icon: { type: 'sfSymbol', name: 'star' },
+                    type: 'action',
                     state: 'on',
-                    attributes: 'destructive',
+                    destructive: true,
                     discoverabilityLabel: 'Favorite',
                     onPress: () => Alert.alert('Action 1 pressed'),
                   },
                   {
                     label: 'Action 2',
-                    icon: { type: "sfSymbol", name: 'square.and.arrow.up' },
-                    type: "action",
+                    icon: { type: 'sfSymbol', name: 'square.and.arrow.up' },
+                    type: 'action',
                     state: 'off',
-                    attributes: 'disabled',
+                    disabled: true,
                     discoverabilityLabel: 'Disabled Action',
                     onPress: () => Alert.alert('Action 2 pressed'),
                   },
                   {
                     label: 'Submenu',
-                    icon: { type: "sfSymbol", name: "star" },
+                    icon: { type: 'sfSymbol', name: 'star' },
                     type: 'submenu',
                     items: [
                       {
@@ -374,7 +445,8 @@ export default function BarButtonItemsExample() {
                         state: 'mixed',
                         type: 'action',
                         onPress: () => Alert.alert('Sub Action 1 pressed'),
-                        attributes: 'keepsMenuPresented',
+                        destructive: true,
+                        keepsMenuPresented: true,
                         discoverabilityLabel: 'Sub Action 1',
                       },
                       {
@@ -390,99 +462,125 @@ export default function BarButtonItemsExample() {
           ],
         }}
       />
-      <Stack.Screen name="ReactNodeButtonDemo"
+      <Stack.Screen
+        name="ReactNodeButtonDemo"
         component={ReactNodeButtonDemo}
         options={{
           title: 'React Node Button',
           headerBackVisible: true,
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
-              // eslint-disable-next-line react/no-unstable-nested-components
-              customView: () => <TouchableOpacity onPress={() => Alert.alert('React Node 1 pressed')}>
-                <Text style={{ color: 'blue' }}>React Node 1</Text>
-              </TouchableOpacity>,
-              hidesSharedBackground: true
+              type: 'custom',
+              element: (
+                <TouchableOpacity
+                  onPress={() => Alert.alert('React Node 1 pressed')}>
+                  <Text style={{ color: 'blue' }}>React Node 1</Text>
+                </TouchableOpacity>
+              ),
+              hidesSharedBackground: true,
             },
             {
-              label: "Native",
+              type: 'button',
+              label: 'Native',
               onPress: () => Alert.alert('Native button pressed'),
               sharesBackground: true,
             },
             {
-              // eslint-disable-next-line react/no-unstable-nested-components
-              customView: () => <TouchableOpacity onPress={() => Alert.alert('React Node 2 pressed')}>
-                <Text style={{ color: 'red' }}>React Node 2</Text>
-              </TouchableOpacity>
+              type: 'custom',
+              element: (
+                <TouchableOpacity
+                  onPress={() => Alert.alert('React Node 2 pressed')}>
+                  <Text style={{ color: 'red' }}>React Node 2</Text>
+                </TouchableOpacity>
+              ),
             },
           ],
-        }} />
-      <Stack.Screen name="BackButtonVisibleDemo"
+        }}
+      />
+      <Stack.Screen
+        name="BackButtonVisibleDemo"
         component={BackButtonVisibleDemo}
         options={{
           title: 'Back Button Visible',
           headerBackVisible: true,
-          headerLeftItems: [
+          unstable_headerLeftItems: () => [
             {
-              // eslint-disable-next-line react/no-unstable-nested-components
-              customView: () => <TouchableOpacity onPress={() => Alert.alert('Left React Node')}>
-                <Text style={{ color: 'blue' }}>React Node</Text>
-              </TouchableOpacity>
+              type: 'custom',
+              element: (
+                <TouchableOpacity
+                  onPress={() => Alert.alert('Left React Node')}>
+                  <Text style={{ color: 'blue' }}>React Node</Text>
+                </TouchableOpacity>
+              ),
             },
             {
-              label: "Native",
+              type: 'button',
+              label: 'Native',
               onPress: () => Alert.alert('Native button pressed'),
             },
           ],
-        }} />
-      <Stack.Screen name="IdentifierExample"
+        }}
+      />
+      <Stack.Screen
+        name="IdentifierExample"
         component={IdentifierExample}
         options={({ navigation }) => ({
           title: 'Identifier Example',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Button',
               onPress: () => {
                 navigation.navigate('IdentifierExample2');
               },
-              style: "prominent"
+              style: 'prominent',
             },
           ],
-        })} />
-      <Stack.Screen name="IdentifierExample2"
+        })}
+      />
+      <Stack.Screen
+        name="IdentifierExample2"
         component={IdentifierExample2}
         options={{
           title: 'Identifier Example 2',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
+              type: 'button',
               label: 'Btn',
               onPress: () => Alert.alert('Button 1 pressed'),
             },
           ],
-        }} />
-      <Stack.Screen name='ExessiveItemsExample'
+        }}
+      />
+      <Stack.Screen
+        name="ExessiveItemsExample"
         component={ExessiveItemsExample}
         options={{
           title: 'Exessive Items Example',
-          headerRightItems: [
+          unstable_headerRightItems: () => [
             {
-              label: "Button 1",
+              type: 'button',
+              label: 'Button 1',
               onPress: () => Alert.alert('Button 1 pressed'),
             },
             {
-              label: "Button 2",
+              type: 'button',
+              label: 'Button 2',
               onPress: () => Alert.alert('Button 2 pressed'),
             },
             {
-              label: "Button 3",
+              type: 'button',
+              label: 'Button 3',
               onPress: () => Alert.alert('Button 3 pressed'),
             },
             {
-              label: "Button 4",
+              type: 'button',
+              label: 'Button 4',
               onPress: () => Alert.alert('Button 4 pressed'),
             },
-          ]
-        }} />
-
+          ],
+        }}
+      />
     </Stack.Navigator>
   );
 }

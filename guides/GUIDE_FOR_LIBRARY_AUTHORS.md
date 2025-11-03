@@ -71,7 +71,7 @@ Boolean indicating whether the full screen dismiss gesture has shadow under view
 doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
 default iOS shadow. Defaults to `true`.
 IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
-to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
+to the legacy implementation when handling custom animations, but we assume `true` for shadows.
 
 ### `gestureEnabled` (iOS only)
 
@@ -462,10 +462,10 @@ The config component is expected to be rendered as a direct child of `<Screen>`.
 
 Along with this component's properties that can be used to customize header behavior, one can also use one of the below component containers to render custom react-native content in different areas of the native header:
 
-#### `ScreenStackHeaderCenterView` 
+#### `ScreenStackHeaderCenterView`
 The children will render in the center of the native navigation bar.
 
-#### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`  
+#### `ScreenStackHeaderRightView` / `ScreenStackHeaderLeftView`
 The children will render on the right-hand or left-hand side of the navigation bar (or on the opposite side in case LTR locales are set on the user's device). Supports these properties:
 
 - `hidesSharedBackground?: boolean` - Hide shared background (iOS 26+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
@@ -575,9 +575,11 @@ An array of objects describing native bar button items to display on the left or
 
 #### The button and menu items support:
 
-`label: string` — Label of the button.
+`type: 'button' | 'menu'` — Type of the item.
 
-`labelStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button label.
+`title: string` — Title of the button.
+
+`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button title.
 
 `icon?: PlatformIconIOS` — Icon for the item.
 
@@ -601,22 +603,25 @@ An array of objects describing native bar button items to display on the left or
 
 `selected?: boolean` — Whether the button is selected. Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
 
-`changesSelectionAsPrimaryAction?: boolean` — Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
-
-#### The button with a menu also support: 
+#### The button with a menu also support:
 
 ```
 menu?: {
+  type: 'menu';
   label?: string;
+  changesSelectionAsPrimaryAction?: boolean // Whether selection changes as a primary action (iOS 15+). Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
   items: Array<
     | {
       label?: string;
       type: 'action';
       icon?: PlatformIconIOSSfSymbol;
       state?: 'on' | 'off' | 'mixed'; // State of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
-      attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented'; // Style of the menu item. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
+      disabled?: boolean; // Attribute indicating disabled style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
+      destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
+      hidden?: boolean; // Attribute indicating hidden style. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
+      keepsMenuPresented?: boolean; // Attribute indicating that the menu remains presented after firing the element’s action instead of dismissing. Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
       discoverabilityTitle?: string; // Discoverability title of the menu item. Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
-    } 
+    }
     | {
       label?: string;
       type: 'submenu';
@@ -629,6 +634,7 @@ menu?: {
 
 #### The spacing item supports:
 
+`type: 'spacing'` — Type of the item.
 `spacing?: number` — Fixed space between items. The numeric value is only supported on iOS 18-
 
 #### Example configuration:
@@ -638,18 +644,22 @@ menu?: {
     options={{
       headerRightItems: [
         {
+          type: 'button',
           label: 'Text button',
           onPress: () => Alert.alert('Text pressed'),
         },
         {
+          type: 'button',
           image: require('../../assets/search_black.png'),
           onPress: () => Alert.alert('Icon pressed'),
         },
         {
+          type: 'button',
           sfSymbolName: "square.and.arrow.up",
           onPress: () => Alert.alert('SF symbol pressed'),
         },
         {
+          type: 'menu',
           label: 'Menu',
           menu: {
             items: [
@@ -667,6 +677,7 @@ menu?: {
           },
         },
         {
+          type: 'button',
           label: 'Badge',
           badge: {
             value: '3',
@@ -676,6 +687,7 @@ menu?: {
           onPress: () => Alert.alert('Badge pressed'),
         },
         {
+          type: 'button',
           label: 'Prominent',
           variant: 'prominent',
           tintColor: 'green',

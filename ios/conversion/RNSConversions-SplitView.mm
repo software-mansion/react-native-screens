@@ -60,6 +60,25 @@ UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
   }
 }
 
+#if !TARGET_OS_TV
+UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp(
+    facebook::react::RNSSplitViewHostPrimaryBackgroundStyle primaryBackgroundStyle)
+{
+  using enum facebook::react::RNSSplitViewHostPrimaryBackgroundStyle;
+
+  switch (primaryBackgroundStyle) {
+    case None:
+      return UISplitViewControllerBackgroundStyleNone;
+    case Sidebar:
+      return UISplitViewControllerBackgroundStyleSidebar;
+    case Default:
+    default:
+      UISplitViewController *tempSplitVC = [[UISplitViewController alloc] init];
+      return tempSplitVC.primaryBackgroundStyle;
+  }
+}
+#endif // !TARGET_OS_TV
+
 UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
     react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility)
 {

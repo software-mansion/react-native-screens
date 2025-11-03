@@ -65,6 +65,7 @@ class RNSSplitViewAppearanceApplicator {
     // Step 1 - general settings
     splitViewController.displayModeButtonVisibility = splitView.displayModeButtonVisibility
     splitViewController.preferredSplitBehavior = splitView.preferredSplitBehavior
+    splitViewController.primaryBackgroundStyle = splitView.primaryBackgroundStyle
     splitViewController.presentsWithGesture = splitView.presentsWithGesture
     splitViewController.primaryEdge = splitView.primaryEdge
     splitViewController.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton

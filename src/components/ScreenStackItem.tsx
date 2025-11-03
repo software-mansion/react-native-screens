@@ -190,11 +190,7 @@ function getPositioningStyle(
   }
 
   if (isIOS) {
-    if (allowedDetents === 'fitToContents') {
-      return styles.absolute;
-    } else {
-      return styles.container;
-    }
+    return styles.absolute;
   }
 
   // Other platforms, tested reliably only on Android

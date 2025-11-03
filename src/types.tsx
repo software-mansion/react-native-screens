@@ -126,6 +126,19 @@ export type PlatformIconIOS =
     }
   | PlatformIconShared;
 
+export type PlatformIconAndroid =
+  | {
+      type: 'drawableResource';
+      name: string;
+    }
+  | PlatformIconShared;
+
+export interface PlatformIcon {
+  ios?: PlatformIconIOS;
+  android?: PlatformIconAndroid;
+  shared?: PlatformIconShared;
+}
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
@@ -180,7 +193,7 @@ export interface ScreenProps extends ViewProps {
    * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
    *
    * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
-   * to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
+   * to the legacy implementation when handling custom animations, but we assume `true` for shadows.
    *
    * @platform ios
    */
@@ -971,13 +984,13 @@ interface SharedHeaderBarButtonItem {
    */
   index?: number;
   /**
-   * Label of the item.
+   * Title of the item.
    */
-  label?: string;
+  title?: string;
   /**
    * Style for the item label.
    */
-  labelStyle?: {
+  titleStyle?: {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
@@ -1059,6 +1072,7 @@ interface SharedHeaderBarButtonItem {
 
 export interface HeaderBarButtonItemWithAction
   extends SharedHeaderBarButtonItem {
+  type: 'button';
   onPress: () => void;
   /**
    * A Boolean value that indicates whether the item is in a selected state.
@@ -1066,18 +1080,11 @@ export interface HeaderBarButtonItemWithAction
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
    */
   selected?: boolean;
-  /**
-   * A Boolean value that indicates whether the item represents an action or selection.
-   * Only available from iOS 15.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
-   */
-  changesSelectionAsPrimaryAction?: boolean;
 }
 
 export interface HeaderBarButtonItemMenuAction {
   type: 'action';
-  label?: string;
+  title?: string;
   onPress: () => void;
   icon?: PlatformIconIOSSfSymbol;
   /**
@@ -1087,11 +1094,29 @@ export interface HeaderBarButtonItemMenuAction {
    */
   state?: 'on' | 'off' | 'mixed';
   /**
-   * Attributes of the item.
+   * Indicates whether to apply disabled style to the item.
    *
-   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
    */
-  attributes?: 'destructive' | 'disabled' | 'hidden' | 'keepsMenuPresented';
+  disabled?: boolean;
+  /**
+   * Indicates whether to apply destructive style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
+   */
+  destructive?: boolean;
+  /**
+   * Indicates whether to apply hidden style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
+   */
+  hidden?: boolean;
+  /**
+   * Indicates whether to keep the menu presented after firing the element’s action.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
+   */
+  keepsMenuPresented?: boolean;
   /**
    * Discoverability label of the menu item.
    *
@@ -1102,19 +1127,28 @@ export interface HeaderBarButtonItemMenuAction {
 
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
-  label?: string;
+  title?: string;
   icon?: PlatformIconIOSSfSymbol;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
 }
 
 export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
+  type: 'menu';
   menu: {
-    label?: string;
+    title?: string;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
   };
+  /**
+   * A Boolean value that indicates whether the button title should indicate selection or not.
+   * Only available from iOS 15.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+   */
+  changesSelectionAsPrimaryAction?: boolean;
 }
 
 export interface HeaderBarButtonItemSpacing {
+  type: 'spacing';
   spacing: number;
 }
 

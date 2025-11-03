@@ -23,6 +23,7 @@ RCT_EXPORT_MODULE(RNSBottomTabsManager)
 #pragma mark - LEGACY Props
 
 RCT_EXPORT_VIEW_PROPERTY(tabBarTintColor, UIColor);
+RCT_EXPORT_VIEW_PROPERTY(tabBarHidden, BOOL);
 // This remapping allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input
 // from JS.
 RCT_REMAP_VIEW_PROPERTY(

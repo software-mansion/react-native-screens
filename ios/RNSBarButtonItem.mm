@@ -20,26 +20,48 @@
     return self;
   }
 
-  self.title = dict[@"label"];
+  self.title = dict[@"title"];
 
   NSDictionary *imageSourceObj = dict[@"imageSource"];
+  NSDictionary *templateSourceObj = dict[@"templateSource"];
+
+  RCTImageSource *imageSource = nil;
   if (imageSourceObj) {
-    RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageSourceObj];
+    imageSource = [RCTConvert RCTImageSource:imageSourceObj];
+  } else if (templateSourceObj) {
+    imageSource = [RCTConvert RCTImageSource:templateSourceObj];
+  }
+
+  if (imageSource) {
     [imageLoader loadImageWithURLRequest:imageSource.request
-                                callback:^(NSError *_Nullable error, UIImage *_Nullable image) {
-                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                    self.image = image;
-                                  });
-                                }];
+        size:imageSource.size
+        scale:imageSource.scale
+        clipped:true
+        resizeMode:RCTResizeModeContain
+        progressBlock:^(int64_t progress, int64_t total) {
+        }
+        partialLoadBlock:^(UIImage *_Nonnull image) {
+        }
+        completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
+          dispatch_async(dispatch_get_main_queue(), ^{
+            UIImage *imageWithRenderingMode = nil;
+            if (imageSourceObj) {
+              imageWithRenderingMode = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+            } else if (templateSourceObj) {
+              imageWithRenderingMode = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            }
+            self.image = imageWithRenderingMode;
+          });
+        }];
   }
   NSString *sfSymbolName = dict[@"sfSymbolName"];
   if (sfSymbolName) {
     self.image = [UIImage systemImageNamed:sfSymbolName];
   }
 
-  NSDictionary *labelStyle = dict[@"labelStyle"];
-  if (labelStyle) {
-    [self setLabelStyleFromConfig:labelStyle];
+  NSDictionary *titleStyle = dict[@"titleStyle"];
+  if (titleStyle) {
+    [self setTitleStyleFromConfig:titleStyle];
   }
 
   id tintColorObj = dict[@"tintColor"];
@@ -153,9 +175,9 @@
       }
     }
   }
-  NSString *label = dict[@"label"];
+  NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  return [UIMenu menuWithTitle:label
+  return [UIMenu menuWithTitle:title
                          image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                     identifier:nil
                        options:0
@@ -165,9 +187,9 @@
 + (UIAction *)createActionItemFromConfig:(NSDictionary *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
 {
   NSString *menuId = dict[@"menuId"];
-  NSString *label = dict[@"label"];
+  NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  UIAction *actionElement = [UIAction actionWithTitle:label
+  UIAction *actionElement = [UIAction actionWithTitle:title
                                                 image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                                            identifier:nil
                                               handler:^(__kindof UIAction *_Nonnull a) {
@@ -188,25 +210,36 @@
     actionElement.state = UIMenuElementStateMixed;
   }
 
-  NSString *attributes = dict[@"attributes"];
-  if ([attributes isEqualToString:@"destructive"]) {
-    actionElement.attributes = UIMenuElementAttributesDestructive;
-  } else if ([attributes isEqualToString:@"disabled"]) {
-    actionElement.attributes = UIMenuElementAttributesDisabled;
-  } else if ([attributes isEqualToString:@"hidden"]) {
-    actionElement.attributes = UIMenuElementAttributesHidden;
-  } else if ([attributes isEqualToString:@"keepsMenuPresented"]) {
+  NSNumber *disabled = dict[@"disabled"];
+  NSNumber *hidden = dict[@"hidden"];
+  NSNumber *destructive = dict[@"destructive"];
+  NSNumber *keepsMenuPresented = dict[@"keepsMenuPresented"];
+
+  if (disabled != nil && [disabled boolValue]) {
+    actionElement.attributes |= UIMenuElementAttributesDisabled;
+  }
+
+  if (hidden != nil && [hidden boolValue]) {
+    actionElement.attributes |= UIMenuElementAttributesHidden;
+  }
+
+  if (destructive != nil && [destructive boolValue]) {
+    actionElement.attributes |= UIMenuElementAttributesDestructive;
+  }
+
+  if (keepsMenuPresented != nil && [keepsMenuPresented boolValue]) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
     if (@available(iOS 16.0, *)) {
-      actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
+      actionElement.attributes |= UIMenuElementAttributesKeepsMenuPresented;
     }
 #endif
 #if TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160000
     if (@available(tvOS 16.0, *)) {
-      actionElement.attributes = UIMenuElementAttributesKeepsMenuPresented;
+      actionElement.attributes |= UIMenuElementAttributesKeepsMenuPresented;
     }
 #endif
   }
+
   return actionElement;
 }
 
@@ -217,11 +250,11 @@
   }
 }
 
-- (void)setLabelStyleFromConfig:(NSDictionary *)labelStyle
+- (void)setTitleStyleFromConfig:(NSDictionary *)titleStyle
 {
-  NSString *fontFamily = labelStyle[@"fontFamily"];
-  NSNumber *fontSize = labelStyle[@"fontSize"];
-  NSString *fontWeight = labelStyle[@"fontWeight"];
+  NSString *fontFamily = titleStyle[@"fontFamily"];
+  NSNumber *fontSize = titleStyle[@"fontSize"];
+  NSString *fontWeight = titleStyle[@"fontWeight"];
   NSMutableDictionary *attrs = [NSMutableDictionary new];
   if (fontFamily || fontWeight) {
     NSNumber *resolvedFontSize = fontSize;
@@ -252,9 +285,9 @@
 
     attrs[NSFontAttributeName] = [UIFont systemFontOfSize:resolvedFontSize];
   }
-  id labelColor = labelStyle[@"color"];
-  if (labelColor) {
-    attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:labelColor];
+  id titleColor = titleStyle[@"color"];
+  if (titleColor) {
+    attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:titleColor];
   }
   [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
   [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];

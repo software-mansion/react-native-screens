@@ -8,6 +8,7 @@
 #import "RNSSafeAreaViewNotifications.h"
 
 #if RCT_NEW_ARCH_ENABLED
+#include <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <rnscreens/RNSSafeAreaViewComponentDescriptor.h>
@@ -147,7 +148,13 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
   }
 
   auto newData = facebook::react::RNSSafeAreaViewState{RCTEdgeInsetsFromUIEdgeInsets(_currentSafeAreaInsets)};
-  _state->updateState(std::move(newData));
+  _state->updateState(
+      std::move(newData)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+          ,
+      facebook::react::EventQueue::UpdateMode::unstable_Immediate
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
+  );
 }
 #else
 - (void)updateLocalData
@@ -159,7 +166,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
 #endif // RCT_NEW_ARCH_ENABLED
 
 #if RCT_NEW_ARCH_ENABLED
-#pragma mark - RCTViewComponentViewProtocol
+#pragma mark - RCTComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {

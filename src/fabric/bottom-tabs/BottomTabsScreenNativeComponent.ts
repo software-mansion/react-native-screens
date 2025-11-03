@@ -125,14 +125,15 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
+  isTitleUndefined?: WithDefault<boolean, true>;
   badgeValue?: string;
 
   // Currently iOS-only
   orientation?: WithDefault<Orientation, 'inherit'>;
 
   // Android-specific image handling
-  iconResourceName?: string;
-  iconResource?: ImageSource;
+  drawableIconResourceName?: string;
+  imageIconResource?: ImageSource;
   tabBarItemBadgeTextColor?: ColorValue;
   tabBarItemBadgeBackgroundColor?: ColorValue;
 

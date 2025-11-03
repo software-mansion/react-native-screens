@@ -268,6 +268,7 @@ open class ScreenViewManager :
         view?.sheetElevation = value.toFloat()
     }
 
+    // mark: iOS-only
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(
         view: Screen?,
@@ -333,6 +334,13 @@ open class ScreenViewManager :
         view: Screen?,
         value: String?,
     ) = Unit
+
+    override fun setSynchronousShadowStateUpdatesEnabled(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
+
+    // END mark: iOS-only
 
     @ReactProp(name = "sheetAllowedDetents")
     override fun setSheetAllowedDetents(
