@@ -238,42 +238,14 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  BOOL isValidBottomAccessory = [childComponentView isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
-  BOOL isTabsScreen = [childComponentView isKindOfClass:[RNSBottomTabsScreenComponentView class]];
-  RCTAssert(
-      isValidBottomAccessory || isTabsScreen,
-      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to mount %@",
-      childComponentView);
-
-  if (isTabsScreen) {
-    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
-    childScreen.reactSuperview = self;
-  } else if (isValidBottomAccessory) {
-    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
-    bottomAccessory.bottomTabsHostView = self;
-  }
-
+  [self validateAndHandleReactSubview:childComponentView didMount:YES];
   [_reactSubviews insertObject:childComponentView atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = YES;
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  BOOL isValidBottomAccessory = [childComponentView isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
-  BOOL isTabsScreen = [childComponentView isKindOfClass:[RNSBottomTabsScreenComponentView class]];
-  RCTAssert(
-      isValidBottomAccessory || isTabsScreen,
-      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to unmount %@",
-      childComponentView);
-
-  if (isTabsScreen) {
-    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
-    childScreen.reactSuperview = nil;
-  } else if (isValidBottomAccessory) {
-    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
-    bottomAccessory.bottomTabsHostView = nil;
-  }
-
+  [self validateAndHandleReactSubview:childComponentView didMount:NO];
   [_reactSubviews removeObject:childComponentView];
   _hasModifiedReactSubviewsInCurrentTransaction = YES;
 }
@@ -411,42 +383,14 @@ namespace react = facebook::react;
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
 {
   [super insertReactSubview:subview atIndex:index];
-  BOOL isValidBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
-  BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
-  RCTAssert(
-      isValidBottomAccessory || isTabsScreen,
-      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to mount %@",
-      subview);
-
-  if (isTabsScreen) {
-    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
-    childScreen.reactSuperview = self;
-  } else if (isValidBottomAccessory) {
-    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(subview);
-    bottomAccessory.bottomTabsHostView = self;
-  }
-
+  [self validateAndHandleReactSubview:subview didMount:YES];
   [_reactSubviews insertObject:subview atIndex:index];
 }
 
 - (void)removeReactSubview:(UIView *)subview
 {
   [super removeReactSubview:subview];
-  BOOL isValidBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
-  BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
-  RCTAssert(
-      isValidBottomAccessory || isTabsScreen,
-      @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to unmount %@",
-      subview);
-
-  if (isTabsScreen) {
-    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
-    childScreen.reactSuperview = nil;
-  } else if (isValidBottomAccessory) {
-    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(subview);
-    bottomAccessory.bottomTabsHostView = nil;
-  }
-
+  [self validateAndHandleReactSubview:subview didMount:NO];
   [_reactSubviews removeObject:subview];
 }
 
@@ -545,6 +489,30 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#pragma mark - Common
+
+- (void)validateAndHandleReactSubview:(UIView *)subview didMount:(BOOL)mount
+{
+  BOOL isBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
+  BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
+  RCTAssert(
+      isBottomAccessory || isTabsScreen,
+      @"%@",
+      [NSString
+          stringWithFormat:
+              @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to %@ %@",
+              mount ? @"mount" : @"unmount",
+              subview]);
+
+  if (isTabsScreen) {
+    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
+    childScreen.reactSuperview = mount ? self : nil;
+  } else if (isBottomAccessory) {
+    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(subview);
+    bottomAccessory.bottomTabsHostView = mount ? self : nil;
+  }
+}
 
 #pragma mark - React Image Loader
 
