@@ -1,5 +1,7 @@
 #import "RNSBottomTabsHostComponentView.h"
 
+#import <cxxreact/ReactNativeVersion.h>
+
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTImageLoader.h>
