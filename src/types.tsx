@@ -207,8 +207,6 @@ export interface ScreenProps extends ViewProps {
   /**
    * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
    *
-   * @deprecated since iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
-   *
    * @platform ios
    */
   gestureResponseDistance?: GestureResponseDistanceType;
