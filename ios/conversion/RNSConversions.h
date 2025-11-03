@@ -2,6 +2,7 @@
 
 #if defined(__cplusplus)
 #import <React/RCTImageSource.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
@@ -71,6 +72,17 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScroll
     react::RNSBottomTabsScreenRightScrollEdgeEffect edgeEffect);
 RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
     react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect);
+
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+BOOL RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+    react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment *payloadEnvironment,
+    UITabAccessoryEnvironment environment);
+#else // RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+NSString *_Nullable RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+    UITabAccessoryEnvironment environment);
+#endif // RCT_NEW_ARCH_ENABLED
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,

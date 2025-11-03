@@ -400,4 +400,48 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
 
 #undef SWITCH_EDGE_EFFECT
 
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+BOOL RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+    react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment *payloadEnvironment,
+    UITabAccessoryEnvironment environment)
+{
+  switch (environment) {
+    case UITabAccessoryEnvironmentRegular:
+      *payloadEnvironment = react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
+      break;
+    case UITabAccessoryEnvironmentInline:
+      *payloadEnvironment = react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Inline;
+      break;
+    default:
+      return NO;
+  }
+
+  return YES;
+}
+#else // RCT_NEW_ARCH_ENABLED
+static NSString *const BOTTOM_TABS_ACCESSORY_REGULAR_ENVIRONMENT = @"regular";
+static NSString *const BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT = @"inline";
+
+API_AVAILABLE(ios(26.0))
+NSString *RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+    UITabAccessoryEnvironment environment)
+{
+  NSString *environmentString = nil;
+  switch (environment) {
+    case UITabAccessoryEnvironmentRegular:
+      environmentString = BOTTOM_TABS_ACCESSORY_REGULAR_ENVIRONMENT;
+      break;
+    case UITabAccessoryEnvironmentInline:
+      environmentString = BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT;
+      break;
+    default:
+      break;
+  }
+
+  return environmentString;
+}
+
+#endif // RCT_NEW_ARCH_ENABLED
+
 }; // namespace rnscreens::conversion

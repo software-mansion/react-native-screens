@@ -2,6 +2,7 @@
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
+#import <RNSConversions.h>
 #import <React/RCTLog.h>
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -40,15 +41,9 @@ namespace react = facebook::react;
 #if RCT_NEW_ARCH_ENABLED
   if (_reactEventEmitter != nullptr) {
     react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment payloadEnvironment;
-    switch (environment) {
-      case UITabAccessoryEnvironmentRegular:
-        payloadEnvironment = react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
-        break;
-      case UITabAccessoryEnvironmentInline:
-        payloadEnvironment = react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Inline;
-        break;
-      default:
-        return NO;
+    if (!rnscreens::conversion::RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+            &payloadEnvironment, environment)) {
+      return NO;
     }
 
     _reactEventEmitter->onEnvironmentChange({.environment = payloadEnvironment});
@@ -59,17 +54,13 @@ namespace react = facebook::react;
   }
 #else
   if (self.onEnvironmentChange) {
-    NSString *environmentString;
-    switch (environment) {
-      case UITabAccessoryEnvironmentRegular:
-        environmentString = @"regular";
-        break;
-      case UITabAccessoryEnvironmentInline:
-        environmentString = @"inline";
-        break;
-      default:
-        return NO;
+    NSString *environmentString =
+        rnscreens::conversion::RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+            environment);
+    if (environmentString == nil) {
+      return NO;
     }
+
     self.onEnvironmentChange(@{@"environment" : environmentString});
     return YES;
   } else {
