@@ -75,6 +75,9 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
       case "tabBarControllerMode":
         mViewManager.setTabBarControllerMode(view, (String) value);
         break;
+      case "tabBarHidden":
+        mViewManager.setTabBarHidden(view, value == null ? false : (boolean) value);
+        break;
       case "controlNavigationStateInJS":
         mViewManager.setControlNavigationStateInJS(view, value == null ? false : (boolean) value);
         break;
