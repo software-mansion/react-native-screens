@@ -3,6 +3,7 @@
 #include <react/fabric/FabricUIManagerBinding.h>
 #include <react/fabric/JFabricUIManager.h>
 #include <react/renderer/scheduler/Scheduler.h>
+#include <stack>
 
 namespace facebook {
 namespace react {
@@ -88,16 +89,22 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
 }
 
 void RNSScreenShadowNodeCommitHook::findScreenNodes(
-    const std::shared_ptr<const ShadowNode> &node,
+    const std::shared_ptr<const ShadowNode> &rootShadowNode,
     std::vector<std::shared_ptr<const RNSScreenShadowNode>> &screenNodes) {
-  // TODO: think of sth better than full DFS over shadow tree; maybe, for
-  // instance, a screen registry?
-  for (auto child : node->getChildren()) {
-    if (std::strcmp(node->getComponentName(), "RNSScreen") == 0) {
-      screenNodes.push_back(
-          std::dynamic_pointer_cast<const RNSScreenShadowNode>(node));
+  std::stack<std::shared_ptr<const ShadowNode>> shadowNodesToVisit;
+  shadowNodesToVisit.emplace(rootShadowNode);
+
+  while (!shadowNodesToVisit.empty()) {
+    auto node = shadowNodesToVisit.top();
+    shadowNodesToVisit.pop();
+
+    for (auto child : node->getChildren()) {
+      if (std::strcmp(node->getComponentName(), "RNSScreen") == 0) {
+        screenNodes.push_back(
+            std::dynamic_pointer_cast<const RNSScreenShadowNode>(node));
+      }
+      shadowNodesToVisit.emplace(child);
     }
-    findScreenNodes(child, screenNodes);
   }
 }
 
