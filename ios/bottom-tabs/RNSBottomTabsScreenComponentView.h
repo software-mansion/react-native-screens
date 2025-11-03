@@ -8,8 +8,6 @@
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 
-#import <cxxreact/ReactNativeVersion.h>
-
 #ifdef RCT_NEW_ARCH_ENABLED
 // Starting 0.82.0, we're switching to the new impl based on RCTComponentViewProtocol.
 // Additional runtime check is needed for RCs of 0.82

@@ -7,8 +7,6 @@
 #import "RNSScreenContainer.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
-#import <cxxreact/ReactNativeVersion.h>
-
 // Starting 0.82.0, we're switching to the new impl based on RCTComponentViewProtocol.
 // Additional runtime check is needed for RCs of 0.82
 #if REACT_NATIVE_VERSION_MINOR <= 82
