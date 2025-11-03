@@ -167,10 +167,7 @@ export interface NativeProps extends ViewProps {
   rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
 
-  experimental_overrideUserInterfaceStyle?: WithDefault<
-    UserInterfaceStyle,
-    'unspecified'
-  >;
+  userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});

@@ -190,7 +190,7 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
-    override fun setExperimental_overrideUserInterfaceStyle(
+    override fun setUserInterfaceStyle(
         view: TabScreen,
         value: String?,
     ) = Unit

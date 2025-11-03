@@ -98,8 +98,8 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "topScrollEdgeEffect":
         mViewManager.setTopScrollEdgeEffect(view, (String) value);
         break;
-      case "experimental_overrideUserInterfaceStyle":
-        mViewManager.setExperimental_overrideUserInterfaceStyle(view, (String) value);
+      case "userInterfaceStyle":
+        mViewManager.setUserInterfaceStyle(view, (String) value);
         break;
       default:
         super.setProperty(view, propName, value);

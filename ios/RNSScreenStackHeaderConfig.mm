@@ -1141,10 +1141,8 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _backButtonDisplayMode =
       [RNSConvert UINavigationItemBackButtonDisplayModeFromCppEquivalent:newScreenProps.backButtonDisplayMode];
 
-  if (newScreenProps.experimental_overrideUserInterfaceStyle !=
-      oldScreenProps.experimental_overrideUserInterfaceStyle) {
-    _userInterfaceStyle =
-        [RNSConvert UIUserInterfaceStyleFromCppEquivalent:newScreenProps.experimental_overrideUserInterfaceStyle];
+  if (newScreenProps.userInterfaceStyle != oldScreenProps.userInterfaceStyle) {
+    _userInterfaceStyle = [RNSConvert UIUserInterfaceStyleFromCppEquivalent:newScreenProps.userInterfaceStyle];
   }
 
   if (newScreenProps.direction != oldScreenProps.direction) {
@@ -1295,11 +1293,7 @@ RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
-RCT_REMAP_VIEW_PROPERTY(
-    experimental_overrideUserInterfaceStyle,
-    userInterfaceStyle,
-    UIUserInterfaceStyle) // `overrideUserInterfaceStyle` is an UIView property, we need to use different name
-                          // internally
+RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)

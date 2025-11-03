@@ -404,10 +404,9 @@ RNS_IGNORE_SUPER_CALL_END
     scrollEdgeEffectsNeedUpdate = YES;
   }
 
-  if (newComponentProps.experimental_overrideUserInterfaceStyle !=
-      oldComponentProps.experimental_overrideUserInterfaceStyle) {
+  if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {
     _userInterfaceStyle = rnscreens::conversion::UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
-        newComponentProps.experimental_overrideUserInterfaceStyle);
+        newComponentProps.userInterfaceStyle);
   }
 
   if (tabBarItemNeedsRecreation) {
