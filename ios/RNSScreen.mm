@@ -28,8 +28,10 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import <cxxreact/ReactNativeVersion.h>
 
 #import "RNSConversions.h"
+#import "RNSReactNativeVersionUtils.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
@@ -1508,6 +1510,15 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
+
+#if REACT_NATIVE_VERSION_MINOR >= 82
+- (void)invalidate
+{
+  if (!facebook::react::is082PrereleaseOrLower()) {
+    [self invalidateImpl];
+  }
+}
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
 
 #pragma mark - Paper specific
 #else
