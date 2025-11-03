@@ -1,10 +1,6 @@
 #include "RNSBottomTabsAccessoryShadowNode.h"
 
-#include <yoga/Yoga.h>
-
 namespace facebook::react {
-
-using namespace yoga;
 
 extern const char RNSBottomTabsAccessoryComponentName[] =
     "RNSBottomTabsAccessory";

@@ -250,7 +250,7 @@ namespace react = facebook::react;
     childScreen.reactSuperview = self;
   } else if (isValidBottomAccessory) {
     auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
-    bottomAccessory.reactSuperview = self;
+    bottomAccessory.bottomTabsHostView = self;
   }
 
   [_reactSubviews insertObject:childComponentView atIndex:index];
@@ -271,7 +271,7 @@ namespace react = facebook::react;
     childScreen.reactSuperview = nil;
   } else if (isValidBottomAccessory) {
     auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childComponentView);
-    bottomAccessory.reactSuperview = nil;
+    bottomAccessory.bottomTabsHostView = nil;
   }
 
   [_reactSubviews removeObject:childComponentView];

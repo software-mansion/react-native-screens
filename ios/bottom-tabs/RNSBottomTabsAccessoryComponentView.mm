@@ -19,7 +19,7 @@ namespace react = facebook::react;
   RNSBottomAccessoryHelper *_helper API_AVAILABLE(ios(26.0));
   RNSBottomTabsAccessoryEventEmitter *_Nonnull _reactEventEmitter;
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-  RNSBottomTabsHostComponentView *__weak _Nullable _reactSuperview;
+  RNSBottomTabsHostComponentView *__weak _Nullable _bottomTabsHostView;
 #if !RCT_NEW_ARCH_ENABLED
   __weak RCTBridge *_bridge;
 #endif // !RCT_NEW_ARCH_ENABLED
@@ -55,18 +55,11 @@ namespace react = facebook::react;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   if (@available(iOS 26, *)) {
     _helper = [[RNSBottomAccessoryHelper alloc] initWithBottomAccessoryView:self];
+    _reactEventEmitter = [RNSBottomTabsAccessoryEventEmitter new];
   }
-  _reactEventEmitter = [RNSBottomTabsAccessoryEventEmitter new];
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-  _reactSuperview = nil;
+  _bottomTabsHostView = nil;
 }
-
-RNS_IGNORE_SUPER_CALL_BEGIN
-- (nullable RNSBottomTabsHostComponentView *)reactSuperview
-{
-  return _reactSuperview;
-}
-RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - UIKit callbacks
 
