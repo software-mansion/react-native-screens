@@ -762,6 +762,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * Does not support dynamic changes to the prop value for the currently visible screen.
    *
+   * Please note that this prop is marked as **experimental** and might be subject to breaking changes or even removal.
+   *
    * @default unspecified
    * @platform ios
    */
