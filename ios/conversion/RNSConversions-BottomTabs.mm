@@ -401,9 +401,9 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
 #undef SWITCH_EDGE_EFFECT
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
-    react::RNSBottomTabsScreenUnstable_overrideUserInterfaceStyle userInterfaceStyle)
+    react::RNSBottomTabsScreenExperimental_overrideUserInterfaceStyle userInterfaceStyle)
 {
-  using enum facebook::react::RNSBottomTabsScreenUnstable_overrideUserInterfaceStyle;
+  using enum facebook::react::RNSBottomTabsScreenExperimental_overrideUserInterfaceStyle;
   switch (userInterfaceStyle) {
     case Unspecified:
       return UIUserInterfaceStyleUnspecified;

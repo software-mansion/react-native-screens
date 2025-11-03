@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) UISemanticContentAttribute direction;
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
-@property (nonatomic) UIUserInterfaceStyle unstable_userInterfaceStyle;
+@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerRightBarButtonItems;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerLeftBarButtonItems;

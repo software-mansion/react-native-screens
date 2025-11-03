@@ -158,9 +158,9 @@
     // On iOS 26, we need to set user interface style 2 parent views above the tab bar
     // for this prop to take effect.
     self.tabBar.superview.superview.overrideUserInterfaceStyle =
-        selectedViewController.tabScreenComponentView.unstable_userInterfaceStyle;
+        selectedViewController.tabScreenComponentView.userInterfaceStyle;
   } else {
-    self.tabBar.overrideUserInterfaceStyle = selectedViewController.tabScreenComponentView.unstable_userInterfaceStyle;
+    self.tabBar.overrideUserInterfaceStyle = selectedViewController.tabScreenComponentView.userInterfaceStyle;
   }
   [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   [selectedViewController.tabScreenComponentView updateContentScrollViewEdgeEffectsIfExists];

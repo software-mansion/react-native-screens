@@ -106,7 +106,7 @@ namespace react = facebook::react;
 
   _systemItem = RNSBottomTabsScreenSystemItemNone;
 
-  _unstable_userInterfaceStyle = UIUserInterfaceStyleUnspecified;
+  _userInterfaceStyle = UIUserInterfaceStyleUnspecified;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -404,9 +404,10 @@ RNS_IGNORE_SUPER_CALL_END
     scrollEdgeEffectsNeedUpdate = YES;
   }
 
-  if (newComponentProps.unstable_overrideUserInterfaceStyle != oldComponentProps.unstable_overrideUserInterfaceStyle) {
-    _unstable_userInterfaceStyle = rnscreens::conversion::UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
-        newComponentProps.unstable_overrideUserInterfaceStyle);
+  if (newComponentProps.experimental_overrideUserInterfaceStyle !=
+      oldComponentProps.experimental_overrideUserInterfaceStyle) {
+    _userInterfaceStyle = rnscreens::conversion::UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
+        newComponentProps.experimental_overrideUserInterfaceStyle);
   }
 
   if (tabBarItemNeedsRecreation) {

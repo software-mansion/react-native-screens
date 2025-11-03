@@ -524,7 +524,7 @@ export interface BottomTabsScreenProps {
    * @default unspecified
    * @platform ios
    */
-  unstable_overrideUserInterfaceStyle?: BottomTabsScreenUserInterfaceStyle;
+  experimental_overrideUserInterfaceStyle?: BottomTabsScreenUserInterfaceStyle;
   // #endregion iOS-only appearance
 
   // #region Events

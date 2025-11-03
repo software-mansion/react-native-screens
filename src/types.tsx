@@ -765,7 +765,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @default unspecified
    * @platform ios
    */
-  unstable_overrideUserInterfaceStyle?: UserInterfaceStyle;
+  experimental_overrideUserInterfaceStyle?: UserInterfaceStyle;
 }
 
 export interface SearchBarProps {

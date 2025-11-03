@@ -87,7 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 
-@property (nonatomic) UIUserInterfaceStyle unstable_userInterfaceStyle;
+@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
 
 @property (nonatomic) RNSBottomTabsScreenSystemItem systemItem;
 

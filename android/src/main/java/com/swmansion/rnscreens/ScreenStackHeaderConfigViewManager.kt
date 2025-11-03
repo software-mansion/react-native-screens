@@ -341,10 +341,10 @@ class ScreenStackHeaderConfigViewManager :
         logNotAvailable("headerRightBarButtonItems")
     }
 
-    override fun setUnstable_overrideUserInterfaceStyle(
+    override fun setExperimental_overrideUserInterfaceStyle(
         view: ScreenStackHeaderConfig?,
         value: String?,
     ) {
-        logNotAvailable("unstable_overrideUserInterfaceStyle")
+        logNotAvailable("experimental_overrideUserInterfaceStyle")
     }
 }

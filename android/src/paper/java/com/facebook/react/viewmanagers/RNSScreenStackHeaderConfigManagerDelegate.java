@@ -118,8 +118,8 @@ public class RNSScreenStackHeaderConfigManagerDelegate<T extends View, U extends
       case "synchronousShadowStateUpdatesEnabled":
         mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
         break;
-      case "unstable_overrideUserInterfaceStyle":
-        mViewManager.setUnstable_overrideUserInterfaceStyle(view, (String) value);
+      case "experimental_overrideUserInterfaceStyle":
+        mViewManager.setExperimental_overrideUserInterfaceStyle(view, (String) value);
         break;
       default:
         super.setProperty(view, propName, value);

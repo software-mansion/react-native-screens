@@ -276,10 +276,10 @@
 }
 
 + (UIUserInterfaceStyle)UIUserInterfaceStyleFromCppEquivalent:
-    (react::RNSScreenStackHeaderConfigUnstable_overrideUserInterfaceStyle)userInterfaceStyle
+    (react::RNSScreenStackHeaderConfigExperimental_overrideUserInterfaceStyle)userInterfaceStyle
 {
   switch (userInterfaceStyle) {
-    using enum react::RNSScreenStackHeaderConfigUnstable_overrideUserInterfaceStyle;
+    using enum react::RNSScreenStackHeaderConfigExperimental_overrideUserInterfaceStyle;
 
     case Unspecified:
       return UIUserInterfaceStyleUnspecified;

@@ -73,7 +73,7 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
     react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect);
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
-    react::RNSBottomTabsScreenUnstable_overrideUserInterfaceStyle userInterfaceStyle);
+    react::RNSBottomTabsScreenExperimental_overrideUserInterfaceStyle userInterfaceStyle);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
