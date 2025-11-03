@@ -167,6 +167,7 @@ export interface NativeProps extends ViewProps {
   rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
 
+  // Experimental
   userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 

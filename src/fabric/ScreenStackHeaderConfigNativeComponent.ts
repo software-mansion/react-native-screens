@@ -84,6 +84,8 @@ export interface NativeProps extends ViewProps {
   onPressHeaderBarButtonItem?: DirectEventHandler<OnPressHeaderBarButtonItemEvent>;
   onPressHeaderBarButtonMenuItem?: DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>;
   synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
+
+  // Experimental
   userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 
