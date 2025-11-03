@@ -58,7 +58,7 @@ class TabScreen(
     }
 
     // Icon
-    var iconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
+    var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             icon = getSystemDrawableResource(reactContext, newValue)
         }

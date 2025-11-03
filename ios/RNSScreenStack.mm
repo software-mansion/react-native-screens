@@ -34,11 +34,6 @@
 #import "integrations/RNSDismissibleModalProtocol.h"
 #import "utils/UINavigationBar+RNSUtility.h"
 
-#ifdef RNS_GAMMA_ENABLED
-#import "RNSFrameCorrectionProvider.h"
-#import "Swift-Bridging.h"
-#endif // RNS_GAMMA_ENABLED
-
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -166,11 +161,6 @@ namespace react = facebook::react;
         static_cast<RNSTabsScreenViewController *>(self.parentViewController);
     [previousParentTabsScreenVC clearTabsSpecialEffectsDelegateIfNeeded:self];
   }
-#ifdef RNS_GAMMA_ENABLED
-  if (parent == nil) {
-    [self maybeUnregisterFromSplitViewFrameCorrectionWorkaround];
-  }
-#endif // RNS_GAMMA_ENABLED
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
@@ -180,11 +170,6 @@ namespace react = facebook::react;
     RNSTabsScreenViewController *parentTabsScreenVC = static_cast<RNSTabsScreenViewController *>(parent);
     [parentTabsScreenVC setTabsSpecialEffectsDelegate:self];
   }
-#ifdef RNS_GAMMA_ENABLED
-  if (parent != nil) {
-    [self maybeRegisterForSplitViewFrameCorrectionWorkaround];
-  }
-#endif // RNS_GAMMA_ENABLED
 }
 
 - (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
@@ -200,40 +185,6 @@ namespace react = facebook::react;
 
   return false;
 }
-
-#pragma mark - RNSFrameCorrectionProvider
-
-#ifdef RNS_GAMMA_ENABLED
-- (void)maybeRegisterForSplitViewFrameCorrectionWorkaround
-{
-  if (auto frameCorrectionProvider = [self findAncestorFrameCorrectionProvider]) {
-    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
-    [frameCorrectionProvider registerForFrameCorrection:self.view.superview];
-  }
-}
-
-- (void)maybeUnregisterFromSplitViewFrameCorrectionWorkaround
-{
-  if (auto frameCorrectionProvider = [self findAncestorFrameCorrectionProvider]) {
-    // We need to apply an update for the parent of the view which `RNSNavigationController` is describing
-    [frameCorrectionProvider unregisterFromFrameCorrection:self.view.superview];
-  }
-}
-
-- (id<RNSFrameCorrectionProvider>)findAncestorFrameCorrectionProvider
-{
-  auto parent = [self parentViewController];
-  while (parent != nil) {
-    if ([parent respondsToSelector:@selector(registerForFrameCorrection:)] &&
-        [parent respondsToSelector:@selector(unregisterFromFrameCorrection:)]) {
-      return (id<RNSFrameCorrectionProvider>)parent;
-    }
-    parent = [parent parentViewController];
-  }
-
-  return nil;
-}
-#endif // RNS_GAMMA_ENABLED
 
 @end
 
@@ -912,24 +863,21 @@ RNS_IGNORE_SUPER_CALL_END
     // On iOS < 26, we have a custom full screen swipe recognizer that functions similarily
     // to interactiveContentPopGestureRecognizer introduced in iOS 26.
     // On iOS >= 26, we want to use the native one, but we are unable to handle custom animations
-    // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation.
-    // In this case, the old one should behave as close as the new native one, having only the difference
-    // in animation, and without any customization that is exclusive for it (e.g. gestureResponseDistance).
+    // with native interactiveContentPopGestureRecognizer, so we have to fallback to the old implementation
+    // for this one case only.
     if (@available(iOS 26, *)) {
-      if (customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
-        _isFullWidthSwipingWithPanGesture = YES;
-        [self cancelTouchesInParent];
-        return YES;
+      if (!customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
+        return NO;
       }
-      return NO;
-    } else {
-      if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
-        _isFullWidthSwipingWithPanGesture = YES;
-        [self cancelTouchesInParent];
-        return YES;
-      }
-      return NO;
     }
+
+    if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
+      _isFullWidthSwipingWithPanGesture = YES;
+      [self cancelTouchesInParent];
+      return YES;
+    }
+
+    return NO;
   }
 
   // Now we're dealing with RNSScreenEdgeGestureRecognizer (or _UIParallaxTransitionPanGestureRecognizer)
@@ -954,6 +902,15 @@ RNS_IGNORE_SUPER_CALL_END
       // it should only recognize with `customAnimationOnSwipe` set
       return NO;
     }
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    if (@available(iOS 26, *)) {
+      if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
+          ![self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
+        return NO;
+      }
+    }
+#endif // check for iOS >= 26
+
     // _UIParallaxTransitionPanGestureRecognizer (other...)
     [self cancelTouchesInParent];
     return YES;
@@ -1245,7 +1202,8 @@ RNS_IGNORE_SUPER_CALL_END
     BOOL isBackGesture = [panGestureRecognizer translationInView:panGestureRecognizer.view].x > 0 &&
         _controller.viewControllers.count > 1;
 
-    if (gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
+    if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan ||
+        gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
       return NO;
     }
 
@@ -1457,7 +1415,11 @@ RNS_IGNORE_SUPER_CALL_END
         return;
       }
       for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
+#ifdef RCT_NEW_ARCH_ENABLED
+        [screenRef invalidateImpl];
+#else
         [screenRef invalidate];
+#endif
       }
       strongSelf->_toBeDeletedScreens.clear();
     });

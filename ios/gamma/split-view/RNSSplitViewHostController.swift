@@ -28,6 +28,14 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private let maxNumberOfColumns: Int = 3
   private let maxNumberOfInspectors: Int = 1
 
+  /// Tracks currently visible columns of the UISplitViewController.
+  ///
+  /// This set is kept in sync via `UISplitViewControllerDelegate` methods (`willShow` / `willHide`)
+  /// to reflect which columns are currently rendered in the UI.
+  /// It ensures that only visible columns are considered (e.g. for accessing topViewController),
+  /// avoiding crashes when certain columns are collapsed or hidden.
+  private var visibleColumns: Set<UISplitViewController.Column> = []
+
   ///
   /// @brief Initializes the SplitView host controller with provided style.
   ///
@@ -313,25 +321,30 @@ extension RNSSplitViewHostController {
   ///
   /// @brief Gets the children RNSSplitViewScreenController instances.
   ///
-  /// Accesses SplitView controllers associated with columns. It asserts that each view controller is a navigation controller and its topViewController is of type RNSSplitViewScreenController.
+  /// Accesses SplitView controllers associated with presented columns. It asserts that each view controller is a navigation controller and its topViewController is of type RNSSplitViewScreenController.
   ///
   /// @return An array of RNSSplitViewScreenController corresponding to current split view columns.
   ///
   var splitViewScreenControllers: [RNSSplitViewScreenController] {
-    return viewControllers.lazy.map { viewController in
+    return visibleColumns.compactMap { column in
+      let viewController = self.viewController(for: column)
+      assert(viewController != nil, "[RNScreens] viewController for column \(column) is nil.")
+
+      let splitViewNavigationController = viewController as? RNSSplitViewNavigationController
       assert(
-        viewController is RNSSplitViewNavigationController,
+        splitViewNavigationController != nil,
         "[RNScreens] Expected RNSSplitViewNavigationController but got \(type(of: viewController))")
 
-      let splitViewNavigationController = viewController as! RNSSplitViewNavigationController
-      let splitViewNavigationControllerTopViewController = splitViewNavigationController
-        .topViewController
+      let maybeSplitViewScreenController = splitViewNavigationController?.topViewController
       assert(
-        splitViewNavigationControllerTopViewController is RNSSplitViewScreenController,
-        "[RNScreens] Expected RNSSplitViewScreenController but got \(type(of: splitViewNavigationControllerTopViewController))"
+        maybeSplitViewScreenController != nil,
+        "[RNScreens] RNSSplitViewScreenController is nil for column \(column)")
+      assert(
+        maybeSplitViewScreenController is RNSSplitViewScreenController,
+        "[RNScreens] Expected RNSSplitViewScreenController but got \(type(of: maybeSplitViewScreenController))"
       )
 
-      return splitViewNavigationControllerTopViewController as! RNSSplitViewScreenController
+      return maybeSplitViewScreenController as? RNSSplitViewScreenController
     }
   }
 
@@ -424,6 +437,18 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 #endif
 
 extension RNSSplitViewHostController: UISplitViewControllerDelegate {
+  public func splitViewController(
+    _ svc: UISplitViewController, willShow column: UISplitViewController.Column
+  ) {
+    visibleColumns.insert(column)
+  }
+
+  public func splitViewController(
+    _ svc: UISplitViewController, willHide column: UISplitViewController.Column
+  ) {
+    visibleColumns.remove(column)
+  }
+
   public func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
     reactEventEmitter.emitOnCollapse()
   }
