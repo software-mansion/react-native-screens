@@ -127,12 +127,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSTabBarController ()
 
 /**
- * Tell the controller that react provided tabs might have changed (count / instances) & the child view controllers
- * might need to be updated.
+ * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be
+ * updated.
  *
- * This also automatically raises `needsReactChildrenUpdate` flag if needed, no need to call it manually.
+ * This also automatically raises `needsReactChildrenUpdate` flag, no need to call it manually.
  */
-- (void)childViewControllersMightHaveChangedTo:(nonnull NSArray<RNSTabsScreenViewController *> *)childViewControllers;
+- (void)childViewControllersHaveChangedTo:(nonnull NSArray<RNSTabsScreenViewController *> *)childViewControllers;
 
 /**
  * Tell the controller that react provided tabs have changed (count / instances) & the child view controllers need to be

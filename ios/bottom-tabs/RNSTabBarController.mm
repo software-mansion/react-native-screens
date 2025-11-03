@@ -41,23 +41,8 @@
 
 #pragma mark-- Signals
 
-- (void)childViewControllersMightHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
+- (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
 {
-  if (_tabScreenControllers.count == reactChildControllers.count) {
-    BOOL changed = NO;
-
-    for (int i = 0; i < _tabScreenControllers.count; ++i) {
-      if (_tabScreenControllers[i] != reactChildControllers[i]) {
-        changed = YES;
-        break;
-      }
-    }
-
-    if (!changed) {
-      return;
-    }
-  }
-
   _tabScreenControllers = reactChildControllers;
   self.needsUpdateOfReactChildrenControllers = true;
 }

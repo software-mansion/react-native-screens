@@ -49,7 +49,8 @@ namespace react = facebook::react;
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
   NSMutableArray<UIView *> *_reactSubviews;
-  BOOL _hasModifiedReactSubviewsInCurrentTransaction;
+  BOOL _hasModifiedTabsScreensInCurrentTransaction;
+  BOOL _hasModifiedBottomAccessoryInCurrentTransation;
   BOOL _needsTabBarAppearanceUpdate;
 }
 
@@ -92,7 +93,8 @@ namespace react = facebook::react;
   _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
 #endif // RCT_NEW_ARCH_ENABLED
 
-  _hasModifiedReactSubviewsInCurrentTransaction = NO;
+  _hasModifiedTabsScreensInCurrentTransaction = NO;
+  _hasModifiedBottomAccessoryInCurrentTransation = NO;
   _needsTabBarAppearanceUpdate = NO;
 }
 
@@ -149,6 +151,10 @@ namespace react = facebook::react;
 
 - (void)updateContainer
 {
+  if (!_hasModifiedTabsScreensInCurrentTransaction && !_hasModifiedBottomAccessoryInCurrentTransation) {
+    return;
+  }
+
   NSMutableArray<RNSTabsScreenViewController *> *tabControllers =
       [[NSMutableArray alloc] initWithCapacity:_reactSubviews.count];
   RNSBottomTabsAccessoryComponentView *bottomAccessory = nil;
@@ -162,26 +168,30 @@ namespace react = facebook::react;
     }
   }
 
-  RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
-
-  [_controller childViewControllersMightHaveChangedTo:tabControllers];
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-  if (@available(iOS 26.0, *)) {
-    if (bottomAccessory != nil) {
-      // We wrap RNSBottomTabsAccessoryComponentView in plain UIView to maintain native
-      // corner radius. RCTViewComponentView overrides it to 0 by default and we're unable
-      // to restore default value in an easy way. By wrapping it in UIView, it is clipped
-      // to default corner radius.
-      UIView *wrapperView = [UIView new];
-      [wrapperView addSubview:bottomAccessory];
-
-      [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
-    } else {
-      [_controller setBottomAccessory:nil animated:YES];
-    }
+  if (_hasModifiedTabsScreensInCurrentTransaction) {
+    RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
+    [_controller childViewControllersHaveChangedTo:tabControllers];
   }
+
+  if (_hasModifiedBottomAccessoryInCurrentTransation) {
+    RNSLog(@"updateContainer: bottomAccessory: %@", bottomAccessory);
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    if (@available(iOS 26.0, *)) {
+      if (bottomAccessory != nil) {
+        // We wrap RNSBottomTabsAccessoryComponentView in plain UIView to maintain native
+        // corner radius. RCTViewComponentView overrides it to 0 by default and we're unable
+        // to restore default value in an easy way. By wrapping it in UIView, it is clipped
+        // to default corner radius.
+        UIView *wrapperView = [UIView new];
+        [wrapperView addSubview:bottomAccessory];
+
+        [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
+      } else {
+        [_controller setBottomAccessory:nil animated:YES];
+      }
+    }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  }
 }
 
 - (void)markChildUpdated
@@ -240,14 +250,12 @@ namespace react = facebook::react;
 {
   [self validateAndHandleReactSubview:childComponentView didMount:YES];
   [_reactSubviews insertObject:childComponentView atIndex:index];
-  _hasModifiedReactSubviewsInCurrentTransaction = YES;
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [self validateAndHandleReactSubview:childComponentView didMount:NO];
   [_reactSubviews removeObject:childComponentView];
-  _hasModifiedReactSubviewsInCurrentTransaction = YES;
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -350,7 +358,8 @@ namespace react = facebook::react;
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  _hasModifiedReactSubviewsInCurrentTransaction = NO;
+  _hasModifiedTabsScreensInCurrentTransaction = NO;
+  _hasModifiedBottomAccessoryInCurrentTransation = NO;
   [_controller reactMountingTransactionWillMount];
 
 #if RCT_NEW_ARCH_ENABLED
@@ -369,7 +378,7 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  if (_hasModifiedReactSubviewsInCurrentTransaction) {
+  if (_hasModifiedTabsScreensInCurrentTransaction || _hasModifiedBottomAccessoryInCurrentTransation) {
     [self updateContainer];
   }
   [_controller reactMountingTransactionDidMount];
@@ -397,7 +406,6 @@ namespace react = facebook::react;
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)didUpdateReactSubviews
 {
-  _hasModifiedReactSubviewsInCurrentTransaction = YES;
   [self invalidateFlagsOnControllerIfNeeded];
 }
 RNS_IGNORE_SUPER_CALL_END
@@ -418,9 +426,10 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller setNeedsUpdateOfTabBarAppearance:true];
   }
 
-  if (_hasModifiedReactSubviewsInCurrentTransaction) {
-    _hasModifiedReactSubviewsInCurrentTransaction = NO;
+  if (_hasModifiedTabsScreensInCurrentTransaction || _hasModifiedBottomAccessoryInCurrentTransation) {
     [self updateContainer];
+    _hasModifiedTabsScreensInCurrentTransaction = NO;
+    _hasModifiedBottomAccessoryInCurrentTransation = NO;
   }
 }
 
@@ -508,9 +517,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (isTabsScreen) {
     auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
     childScreen.reactSuperview = mount ? self : nil;
+    _hasModifiedTabsScreensInCurrentTransaction = YES;
   } else if (isBottomAccessory) {
     auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(subview);
     bottomAccessory.bottomTabsHostView = mount ? self : nil;
+    _hasModifiedBottomAccessoryInCurrentTransation = YES;
   }
 }
 
