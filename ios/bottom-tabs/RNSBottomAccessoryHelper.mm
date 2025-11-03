@@ -58,8 +58,8 @@ namespace react = facebook::react;
       registerForTraitChanges:@[ [UITraitTabAccessoryEnvironment class] ]
                   withHandler:^(__kindof id<UITraitEnvironment>, UITraitCollection *previousTraitCollection) {
                     [self->_bottomAccessoryView.reactEventEmitter
-                        emitOnEnvironmentChangeIfNecessary:self->_bottomAccessoryView.traitCollection
-                                                               .tabAccessoryEnvironment];
+                        emitOnEnvironmentChangeIfNeeded:self->_bottomAccessoryView.traitCollection
+                                                            .tabAccessoryEnvironment];
                   }];
 }
 

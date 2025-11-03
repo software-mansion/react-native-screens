@@ -36,7 +36,7 @@ namespace react = facebook::react;
 }
 #endif // RCT_NEW_ARCH_ENABLED
 
-- (BOOL)emitOnEnvironmentChangeIfNecessary:(UITabAccessoryEnvironment)environment API_AVAILABLE(ios(26.0))
+- (BOOL)emitOnEnvironmentChangeIfNeeded:(UITabAccessoryEnvironment)environment API_AVAILABLE(ios(26.0))
 {
 #if RCT_NEW_ARCH_ENABLED
   if (_reactEventEmitter != nullptr) {
