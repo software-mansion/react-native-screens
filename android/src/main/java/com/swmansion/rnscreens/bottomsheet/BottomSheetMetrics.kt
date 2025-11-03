@@ -12,12 +12,16 @@ fun getSheetMetrics(
     screen: Screen,
     availableHeight: Int,
     sheetHeight: Int,
-): BottomSheetMetrics {
+): BottomSheetMetrics? {
+    if (!screen.usesFormSheetPresentation()) {
+        return null
+    }
+
     val maxDetent = screen.sheetDetents.lastOrNull() ?: 1.0
 
     val maxSheetHeight =
         when {
-            screen.usesFormSheetPresentation() && screen.isSheetFitToContents() -> sheetHeight
+            screen.isSheetFitToContents() -> sheetHeight
             else -> (availableHeight * maxDetent).toInt()
         }
 
