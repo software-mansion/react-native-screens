@@ -5,7 +5,7 @@ import type {
   NativeSyntheticEvent,
   ViewProps,
 } from 'react-native';
-import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+import type { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
 
 export type BottomAccessoryFn = (
   environment: BottomTabsAccessoryEnvironment,
