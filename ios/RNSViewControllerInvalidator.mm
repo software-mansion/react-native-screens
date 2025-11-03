@@ -3,8 +3,8 @@
 #import "RNSViewControllerInvalidator.h"
 
 #import <React/RCTAssert.h>
-#import <cxxreact/ReactNativeVersion.h>
 #import "RNSInvalidatedComponentsRegistry.h"
+#import "RNSReactNativeVersionUtils.h"
 #import "RNSViewControllerInvalidating.h"
 
 @implementation RNSViewControllerInvalidator
@@ -13,8 +13,7 @@
                      forRegistry:(RNSInvalidatedComponentsRegistry *_Nonnull)registry
 {
   // Backward compatibility for 0.82 RC or lower
-  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
-      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+  if (facebook::react::is082PrereleaseOrLower()) {
     if (view.window == nil) {
       [view invalidateController];
     } else {

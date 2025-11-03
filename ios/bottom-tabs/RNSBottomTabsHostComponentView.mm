@@ -10,6 +10,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSBottomTabsComponentDescriptor.h>
 #import "RNSBottomTabsHostComponentView+RNSImageLoader.h"
+#import "RNSReactNativeVersionUtils.h"
 
 #if REACT_NATIVE_VERSION_MINOR <= 82
 #import "RNSInvalidatedComponentsRegistry.h"
@@ -113,8 +114,7 @@ namespace react = facebook::react;
   if (newWindow == nil) {
 #if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
     // Starting from 0.82.0, we're switching to the new implementation
-    if (facebook::react::ReactNativeVersion.Minor <= 81 ||
-        (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+    if (facebook::react::is082PrereleaseOrLower()) {
       [_invalidatedComponentsRegistry flushInvalidViews];
     }
 #endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
@@ -181,8 +181,7 @@ namespace react = facebook::react;
 - (void)invalidateController
 {
   // Starting from 0.82.0, we're switching to the new implementation
-  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
-      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+  if (facebook::react::is082PrereleaseOrLower()) {
     [self invalidateImpl];
   }
 }
@@ -354,8 +353,7 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   // From 0.82.0, we're using a new invalidate callback
-  if (facebook::react::ReactNativeVersion.Minor >= 83 ||
-      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease == "")) {
+  if (!facebook::react::is082PrereleaseOrLower()) {
     [self invalidateImpl];
   }
 }
@@ -372,8 +370,7 @@ namespace react = facebook::react;
 
 #if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
   // From 0.82.0, we're using a new invalidate callback
-  if (facebook::react::ReactNativeVersion.Minor <= 81 ||
-      (facebook::react::ReactNativeVersion.Minor == 82 && facebook::react::ReactNativeVersion.Prerelease != "")) {
+  if (facebook::react::is082PrereleaseOrLower()) {
     for (const auto &mutation : transaction.getMutations()) {
       if ([self shouldInvalidateOnMutation:mutation]) {
         for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
