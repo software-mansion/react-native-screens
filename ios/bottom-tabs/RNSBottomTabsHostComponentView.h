@@ -3,6 +3,7 @@
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
+#import "RNSReactNativeVersionUtils.h"
 #import "RNSScreenContainer.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -18,14 +19,6 @@
 #import <React/RCTInvalidating.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
-#define RNS_BOTTOM_TABS_HOST_INVALIDATING_INTERFACE RNSViewControllerInvalidating
-#elif !RCT_NEW_ARCH_ENABLED
-#define RNS_BOTTOM_TABS_HOST_INVALIDATING_INTERFACE RCTInvalidating
-#else
-#define RNS_BOTTOM_TABS_HOST_INVALIDATING_INTERFACE NSObject
-#endif
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomTabsScreenComponentView;
@@ -40,8 +33,13 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSBottomTabsHostComponentView
-    : RNSReactBaseView <RNSScreenContainerDelegate, RNS_BOTTOM_TABS_HOST_INVALIDATING_INTERFACE>
+@interface RNSBottomTabsHostComponentView : RNSReactBaseView <
+                                                RNSScreenContainerDelegate
+#if defined(__cplusplus)
+                                                ,
+                                                RNS_INVALIDATING_INTERFACE
+#endif
+                                                >
 
 #if !RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame reactImageLoader:(RCTImageLoader *)imageLoader;

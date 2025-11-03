@@ -3,6 +3,7 @@
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
+#import "RNSReactNativeVersionUtils.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
@@ -19,14 +20,6 @@
 #import <React/RCTInvalidating.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
-#define RNS_BOTTOM_TABS_SCREEN_INVALIDATING_INTERFACE RNSViewControllerInvalidating
-#elif !RCT_NEW_ARCH_ENABLED
-#define RNS_BOTTOM_TABS_SCREEN_INVALIDATING_INTERFACE RCTInvalidating
-#else
-#define RNS_BOTTOM_TABS_SCREEN_INVALIDATING_INTERFACE NSObject
-#endif
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSBottomTabsHostComponentView;
@@ -36,8 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSBottomTabsScreenComponentView
-    : RNSReactBaseView <RNSSafeAreaProviding, RNS_BOTTOM_TABS_SCREEN_INVALIDATING_INTERFACE>
+@interface RNSBottomTabsScreenComponentView : RNSReactBaseView <
+                                                  RNSSafeAreaProviding
+#if defined(__cplusplus)
+                                                  ,
+                                                  RNS_INVALIDATING_INTERFACE
+#endif
+                                                  >
 
 /**
  * View controller responsible for managing tab represented by this component view.
