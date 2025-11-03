@@ -8,7 +8,7 @@ extern const char RNSBottomTabsAccessoryComponentName[] =
 Point RNSBottomTabsAccessoryShadowNode::getContentOriginOffset(
     bool /*includeTransform*/) const {
   auto stateData = getStateData();
-  return stateData.offset;
+  return stateData.contentOffset;
 }
 
 } // namespace facebook::react

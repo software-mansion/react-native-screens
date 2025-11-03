@@ -10,11 +10,11 @@ class JSI_EXPORT RNSBottomTabsAccessoryState final {
   using Shared = std::shared_ptr<const RNSBottomTabsAccessoryState>;
 
   RNSBottomTabsAccessoryState() {};
-  RNSBottomTabsAccessoryState(Size frameSize_, Point offset_)
-      : frameSize(frameSize_), offset(offset_) {};
+  RNSBottomTabsAccessoryState(Size frameSize_, Point contentOffset_)
+      : frameSize(frameSize_), contentOffset(contentOffset_) {};
 
   const Size frameSize{};
-  const Point offset{};
+  const Point contentOffset{};
 };
 
 } // namespace facebook::react
