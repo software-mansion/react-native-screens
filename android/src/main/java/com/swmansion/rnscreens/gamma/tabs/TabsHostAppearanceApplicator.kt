@@ -26,7 +26,7 @@ class TabsHostAppearanceApplicator(
     }
 
     fun updateSharedAppearance(tabsHost: TabsHost) {
-        bottomNavigationView.isVisible = true
+        bottomNavigationView.isVisible = !tabsHost.tabBarHidden
         bottomNavigationView.setBackgroundColor(
             tabsHost.tabBarBackgroundColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorSurfaceContainer),
