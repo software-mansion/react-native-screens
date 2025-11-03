@@ -137,7 +137,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabKey: 'Tab1',
       title: 'Config',
       icon: {
-        sfSymbolName: 'gear',
+        ios: {
+          type: 'sfSymbol',
+          name: 'gear',
+        },
       },
     },
     component: Config,
@@ -147,7 +150,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabKey: 'Tab2',
       title: 'Test',
       icon: {
-        sfSymbolName: 'rectangle.stack',
+        ios: {
+          type: 'sfSymbol',
+          name: 'rectangle.stack',
+        },
       },
     },
     component: TestScreen,
