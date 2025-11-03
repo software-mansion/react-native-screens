@@ -27,7 +27,6 @@ import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
-import com.swmansion.rnscreens.utils.RNSLog
 
 class SheetDelegate(
     val screen: Screen,
@@ -344,11 +343,6 @@ class SheetDelegate(
                 availableHeight = availableHeight,
                 sheetHeight = screen.height,
             )
-
-        if (metrics == null) {
-            RNSLog.w("[RNScreens]", "Sheet metrics were not defined for the screen that's expected to be the sheet")
-            return insets
-        }
 
         val newTopInset =
             if (screen.isOverflowingStatusBar(prevInsets.top, metrics) && !isImeVisible) {

@@ -22,23 +22,4 @@ object RNSLog {
             Log.d(tag, message.format(*args))
         }
     }
-
-    fun w(
-        tag: String,
-        message: String,
-    ) {
-        if (BuildConfig.RNS_DEBUG_LOGGING) {
-            Log.w(tag, message)
-        }
-    }
-
-    fun w(
-        tag: String,
-        message: String,
-        vararg args: Any,
-    ) {
-        if (BuildConfig.RNS_DEBUG_LOGGING) {
-            Log.w(tag, message.format(*args))
-        }
-    }
 }

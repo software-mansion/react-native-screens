@@ -12,9 +12,9 @@ fun getSheetMetrics(
     screen: Screen,
     availableHeight: Int,
     sheetHeight: Int,
-): BottomSheetMetrics? {
-    if (!screen.usesFormSheetPresentation()) {
-        return null
+): BottomSheetMetrics {
+    require(screen.usesFormSheetPresentation()) {
+        "[RNScreens] Expected screen to use form sheet presentation"
     }
 
     val maxDetent = screen.sheetDetents.lastOrNull() ?: 1.0
