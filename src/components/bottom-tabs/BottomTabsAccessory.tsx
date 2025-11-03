@@ -11,9 +11,8 @@ export default function BottomTabsAccessory(props: BottomTabsAccessoryProps) {
     <BottomTabsAccessoryNativeComponent
       {...props}
       collapsable={false}
-      style={[props.style, styles.container]}>
-      {props.children}
-    </BottomTabsAccessoryNativeComponent>
+      style={[props.style, styles.container]}
+    />
   );
 }
 
