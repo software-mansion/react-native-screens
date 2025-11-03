@@ -6,13 +6,6 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
-#import "RNSReactNativeVersionUtils.h"
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSInvalidatedComponentsRegistry.h"
-#import "RNSViewControllerInvalidator.h"
-#endif // RCT_NEW_ARCH_ENABLED
-
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
@@ -25,9 +18,6 @@ namespace react = facebook::react;
 @implementation RNSStackScreenComponentView {
   RNSStackScreenController *_Nonnull _controller;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
-#ifdef RCT_NEW_ARCH_ENABLED
-  BOOL _markedForInvalidation;
-#endif // RCT_NEW_ARCH_ENABLED
 
   // Flags
   BOOL _needsLifecycleStateUpdate;
@@ -47,9 +37,6 @@ namespace react = facebook::react;
   [self resetProps];
   [self setupController];
 
-#ifdef RCT_NEW_ARCH_ENABLED
-  _markedForInvalidation = NO;
-#endif // RCT_NEW_ARCH_ENABLED
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
 
   _needsLifecycleStateUpdate = NO;
@@ -81,19 +68,6 @@ namespace react = facebook::react;
       strongSelf->_controller = nil;
     }
   });
-}
-
-#pragma mark - UIView methods
-
-- (void)willMoveToWindow:(UIWindow *)newWindow
-{
-#if RCT_NEW_ARCH_ENABLED
-  if (newWindow == nil) {
-    if (_markedForInvalidation) {
-      [self invalidateController];
-    }
-  }
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #pragma mark - Events
@@ -154,56 +128,10 @@ namespace react = facebook::react;
   return NO;
 }
 
-#if REACT_NATIVE_VERSION_MINOR >= 82
-
 - (void)invalidate
-{
-  // From 0.82.0, we're using a new invalidate callback
-  if (!facebook::react::is082PrereleaseOrLower()) {
-    [self invalidateImpl];
-  }
-}
-
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
-#pragma mark - RCTMountingTransactionObserving
-
-- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
-                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
-{
-  // From 0.82.0, we're using a new invalidate callback
-  if (facebook::react::is082PrereleaseOrLower()) {
-    for (const auto &mutation : transaction.getMutations()) {
-      if ([self shouldInvalidateOnMutation:mutation]) {
-        if (self.window == nil) {
-          [self invalidateController];
-        } else {
-          _markedForInvalidation = YES;
-        }
-      }
-    }
-  }
-}
-
-#if REACT_NATIVE_VERSION_MINOR <= 82
-
-#pragma mark - RNSViewControllerInvalidating
-
-- (void)invalidateController
 {
   [self invalidateImpl];
 }
-
-- (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
-{
-  return (mutation.oldChildShadowView.tag == self.tag && mutation.type == facebook::react::ShadowViewMutation::Delete);
-}
-
-#endif // REACT_NATIVE_VERSION_MINOR <= 82
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 

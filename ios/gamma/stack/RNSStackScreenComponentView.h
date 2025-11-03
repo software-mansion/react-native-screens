@@ -1,10 +1,5 @@
 #import "RNSReactBaseView.h"
-#import "RNSReactNativeVersionUtils.h"
 #import "RNSStackScreenComponentEventEmitter.h"
-
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
-#import "RNSViewControllerInvalidating.h"
-#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,9 +13,6 @@ typedef NS_ENUM(int, RNSScreenStackLifecycleState) {
 };
 
 @interface RNSStackScreenComponentView : RNSReactBaseView
-#if defined(__cplusplus)
-                                         <RNS_INVALIDATING_INTERFACE>
-#endif // __cplusplus
 
 @property (nonatomic, weak, readwrite, nullable) RNSScreenStackHostComponentView *stackHost;
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
