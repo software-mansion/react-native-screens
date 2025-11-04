@@ -3,6 +3,7 @@
 #import <React/RCTImageLoader.h>
 #import "RCTConvert+RNSBottomTabs.h"
 #import "RNSConversions.h"
+#import "RNSTabBarController.h"
 #import "RNSTabsScreenViewController.h"
 
 @implementation RNSTabBarAppearanceCoordinator
@@ -18,6 +19,10 @@
 
   // Step 1 - configure host-specific appearance
   tabBar.tintColor = hostComponentView.tabBarTintColor;
+
+  // Set tint color for iPadOS tab bar. This is the official way recommended by Apple:
+  // https://developer.apple.com/forums/thread/761056?answerId=798245022#798245022
+  hostComponentView.controller.view.tintColor = hostComponentView.tabBarTintColor;
 
   if (tabScreenCtrls == nil) {
     return;
@@ -60,6 +65,8 @@
       UITabBarSystemItem systemItem =
           rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
       tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].image;
+    } else {
+      tabBarItem.image = nil;
     }
 
     if (screenView.selectedIconSfSymbolName != nil) {
@@ -69,6 +76,8 @@
       UITabBarSystemItem systemItem =
           rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
       tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].selectedImage;
+    } else {
+      tabBarItem.selectedImage = nil;
     }
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
@@ -200,7 +209,7 @@
       itemStateAppearanceProps[@"tabBarItemTitleFontWeight"] != nil ||
       itemStateAppearanceProps[@"tabBarItemTitleFontStyle"] != nil) {
     titleTextAttributes[NSFontAttributeName] =
-        [RCTFont updateFont:nil
+        [RCTFont updateFont:tabBarItemStateAppearance.titleTextAttributes[NSFontAttributeName]
                  withFamily:itemStateAppearanceProps[@"tabBarItemTitleFontFamily"]
                        size:itemStateAppearanceProps[@"tabBarItemTitleFontSize"]
                      weight:itemStateAppearanceProps[@"tabBarItemTitleFontWeight"]

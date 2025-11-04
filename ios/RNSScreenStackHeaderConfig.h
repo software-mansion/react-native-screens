@@ -59,6 +59,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UISemanticContentAttribute direction;
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
+@property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerRightBarButtonItems;
+@property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerLeftBarButtonItems;
+#if !RCT_NEW_ARCH_ENABLED
+@property (nonatomic) RCTDirectEventBlock onPressHeaderBarButtonItem;
+@property (nonatomic) RCTDirectEventBlock onPressHeaderBarButtonMenuItem;
+#endif
+@property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
 
 NS_ASSUME_NONNULL_END
 

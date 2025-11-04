@@ -64,6 +64,7 @@ namespace react = facebook::react;
     (react::RNSScreenRightScrollEdgeEffect)edgeEffect;
 + (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
     (react::RNSScreenTopScrollEdgeEffect)edgeEffect;
++ (id)idFromFollyDynamic:(const folly::dynamic &)dyn;
 
 #endif // RCT_NEW_ARCH_ENABLED
 

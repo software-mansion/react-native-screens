@@ -32,10 +32,7 @@ type TabBarMinimizeBehavior =
   | 'onScrollDown'
   | 'onScrollUp';
 
-type TabBarControllerMode =
-  | 'automatic'
-  | 'tabBar'
-  | 'tabSidebar';
+type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 export interface NativeProps extends ViewProps {
   // Events
@@ -67,6 +64,7 @@ export interface NativeProps extends ViewProps {
   tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: WithDefault<TabBarControllerMode, 'automatic'>;
+  tabBarHidden?: WithDefault<boolean, false>;
 
   // Control
 

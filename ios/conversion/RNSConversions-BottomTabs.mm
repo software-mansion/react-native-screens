@@ -200,8 +200,7 @@ UITabBarControllerMode UITabBarControllerModeFromRNSBottomTabsTabBarControllerMo
 }
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
-UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(
-    RNSTabBarControllerMode tabBarDisplayMode)
+UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarDisplayMode)
 {
   switch (tabBarDisplayMode) {
     case RNSTabBarControllerModeAutomatic:
