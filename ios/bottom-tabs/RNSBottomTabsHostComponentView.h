@@ -6,14 +6,14 @@
 #import "RNSReactNativeVersionUtils.h"
 #import "RNSScreenContainer.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
 // Starting 0.82.0, we're switching to the new impl based on RCTComponentViewProtocol.
 // Additional runtime check is needed for RCs of 0.82
 #if REACT_NATIVE_VERSION_MINOR <= 82
 #import "RNSViewControllerInvalidating.h"
 #endif // REACT_NATIVE_VERSION_MINOR <= 82
 
-#else
+#else // RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
