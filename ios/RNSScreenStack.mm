@@ -1421,7 +1421,7 @@ RNS_IGNORE_SUPER_CALL_END
           [screenRef invalidateImpl];
 #else // RCT_NEW_ARCH_ENABLED
           [screenRef invalidate];
-#endif  // RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
         }
         strongSelf->_toBeDeletedScreens.clear();
       });
