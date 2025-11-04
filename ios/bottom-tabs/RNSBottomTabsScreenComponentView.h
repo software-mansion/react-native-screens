@@ -14,7 +14,7 @@
 #if REACT_NATIVE_VERSION_MINOR <= 82
 #import "RNSViewControllerInvalidating.h"
 #endif // REACT_NATIVE_VERSION_MINOR <= 82
-#else  // RCT_NEW_ARCH_ENABLED
+#else // RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
 #endif // RCT_NEW_ARCH_ENABLED
 

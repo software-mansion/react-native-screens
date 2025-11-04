@@ -20,8 +20,10 @@
 #import "RCTTouchHandler+RNSUtility.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import <cxxreact/ReactNativeVersion.h>
 #import "RNSDefines.h"
 #import "RNSPercentDrivenInteractiveTransition.h"
+#import "RNSReactNativeVersionUtils.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
@@ -210,13 +212,13 @@ namespace react = facebook::react;
   RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
   /// Screens that are subject of `ShadowViewMutation::Type::Delete` mutation
   /// in current transaction. This vector should be populated when we receive notification via
   /// `RCTMountingObserving` protocol, that a transaction will be performed, and should
   /// be cleaned up when we're notified that the transaction has been completed.
   std::vector<__strong RNSScreenView *> _toBeDeletedScreens;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR <= 82
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1369,15 +1371,19 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  for (const auto &mutation : transaction.getMutations()) {
-    if (mutation.type == react::ShadowViewMutation::Delete) {
-      RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
-      if (toBeRemovedChild != nil) {
-        [toBeRemovedChild willBeUnmountedInUpcomingTransaction];
-        _toBeDeletedScreens.push_back(toBeRemovedChild);
+#if REACT_NATIVE_VERSION_MINOR <= 82
+  if (facebook::react::is082PrereleaseOrLower()) {
+    for (const auto &mutation : transaction.getMutations()) {
+      if (mutation.type == react::ShadowViewMutation::Delete) {
+        RNSScreenView *_Nullable toBeRemovedChild = [self childScreenForTag:mutation.oldChildShadowView.tag];
+        if (toBeRemovedChild != nil) {
+          [toBeRemovedChild willBeUnmountedInUpcomingTransaction];
+          _toBeDeletedScreens.push_back(toBeRemovedChild);
+        }
       }
     }
   }
+#endif // REACT_NATIVE_VERSION_MINOR <= 82
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -1400,24 +1406,28 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
 
-  if (!self->_toBeDeletedScreens.empty()) {
-    __weak RNSScreenStackView *weakSelf = self;
-    // We want to run after container updates are performed (transitions etc.)
-    dispatch_async(dispatch_get_main_queue(), ^{
-      RNSScreenStackView *_Nullable strongSelf = weakSelf;
-      if (strongSelf == nil) {
-        return;
-      }
-      for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
-#ifdef RCT_NEW_ARCH_ENABLED
-        [screenRef invalidateImpl];
-#else
-        [screenRef invalidate];
-#endif
-      }
-      strongSelf->_toBeDeletedScreens.clear();
-    });
+#if REACT_NATIVE_VERSION_MINOR <= 82
+  if (facebook::react::is082PrereleaseOrLower()) {
+    if (!self->_toBeDeletedScreens.empty()) {
+      __weak RNSScreenStackView *weakSelf = self;
+      // We want to run after container updates are performed (transitions etc.)
+      dispatch_async(dispatch_get_main_queue(), ^{
+        RNSScreenStackView *_Nullable strongSelf = weakSelf;
+        if (strongSelf == nil) {
+          return;
+        }
+        for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
+#if RCT_NEW_ARCH_ENABLED
+          [screenRef invalidateImpl];
+#else // RCT_NEW_ARCH_ENABLED
+          [screenRef invalidate];
+#endif // RCT_NEW_ARCH_ENABLED
+        }
+        strongSelf->_toBeDeletedScreens.clear();
+      });
+    }
   }
+#endif // REACT_NATIVE_VERSION_MINOR <= 82
 }
 
 - (void)prepareForRecycle

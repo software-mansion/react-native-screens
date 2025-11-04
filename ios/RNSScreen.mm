@@ -28,8 +28,10 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import <cxxreact/ReactNativeVersion.h>
 
 #import "RNSConversions.h"
+#import "RNSReactNativeVersionUtils.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
@@ -936,16 +938,23 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
-  _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+      [strongSelf->_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    }
+  });
 }
 
-#ifndef RCT_NEW_ARCH_ENABLED
+#if !RCT_NEW_ARCH_ENABLED
 - (void)invalidate
 {
   [self invalidateImpl];
 }
-#endif
+#endif // !RCT_NEW_ARCH_ENABLED
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
@@ -1508,6 +1517,15 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
+
+#if REACT_NATIVE_VERSION_MINOR >= 82
+- (void)invalidate
+{
+  if (!facebook::react::is082PrereleaseOrLower()) {
+    [self invalidateImpl];
+  }
+}
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
 
 #pragma mark - Paper specific
 #else
