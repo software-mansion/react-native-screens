@@ -1417,11 +1417,11 @@ RNS_IGNORE_SUPER_CALL_END
           return;
         }
         for (RNSScreenView *screenRef : strongSelf->_toBeDeletedScreens) {
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
           [screenRef invalidateImpl];
-#else
+#else // RCT_NEW_ARCH_ENABLED
           [screenRef invalidate];
-#endif
+#endif  // RCT_NEW_ARCH_ENABLED
         }
         strongSelf->_toBeDeletedScreens.clear();
       });

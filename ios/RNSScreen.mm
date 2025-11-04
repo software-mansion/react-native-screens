@@ -949,7 +949,7 @@ RNS_IGNORE_SUPER_CALL_END
   });
 }
 
-#ifndef RCT_NEW_ARCH_ENABLED
+#if !RCT_NEW_ARCH_ENABLED
 - (void)invalidate
 {
   [self invalidateImpl];
