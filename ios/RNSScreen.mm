@@ -954,7 +954,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [self invalidateImpl];
 }
-#endif
+#endif // !RCT_NEW_ARCH_ENABLED
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
