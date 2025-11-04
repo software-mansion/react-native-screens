@@ -152,6 +152,10 @@ A callback that gets called when the current screen will disappear. This is call
 
 Boolean indicating whether to prevent current screen from being dismissed. Defaults to `false`.
 
+### `renderBackground`
+
+Callback returning the custom React element to be rendered as the background of the screen.
+
 ### `replaceAnimation`
 
 Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
