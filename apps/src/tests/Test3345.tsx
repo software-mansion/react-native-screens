@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button } from 'react-native';
+import { View, Button, ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -23,12 +23,35 @@ function ModalScreen() {
     console.log('Modal width:', width);
   };
   return (
-    <View style={{ flex: 1, width: '100%', alignSelf: 'center', paddingHorizontal: 16, backgroundColor: 'green' }} onLayout={onLayout}>
-      <View style={{ flex: 1, backgroundColor: 'purple' }} />
+    <View style={{ flex: 1, width: '100%', flexDirection: 'row', paddingHorizontal: 16, backgroundColor: 'green' }} onLayout={onLayout}>
+      <ScrollView style={{ alignSelf: 'center', width: 600 }}>
+        <View style={{ width: 600, height: 400, backgroundColor: 'purple', alignSelf: 'center' }} />
+        <View style={{ width: 600, height: 400, backgroundColor: 'purple', alignSelf: 'center' }} />
+        <View style={{ width: 600, height: 400, backgroundColor: 'purple', alignSelf: 'center' }} />
+      </ScrollView>
     </View>
   );
 }
 
+function ModalScreen2() {
+  const onLayout = (event) => {
+    const { width } = event.nativeEvent.layout;
+    console.log('Modal width:', width);
+  };
+  return (
+    <View style={{ flex: 1, backgroundColor: 'green' }} onLayout={onLayout}>
+      <View style={{ flex: 1, overflow: 'hidden', elevation: 4 }}>
+        <View style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={{ maxWidth: 600, alignSelf: 'center', width: '100%', paddingHorizontal: 16, flex: 1 }}>
+            <View style={{ width: 600, height: 400, backgroundColor: 'purple', alignSelf: 'center' }} />
+            <View style={{ width: 600, height: 400, backgroundColor: 'purple', alignSelf: 'center' }} />
+            <View style={{ width: 600, height: 400, backgroundColor: 'purple', alignSelf: 'center' }} />
+          </ScrollView>
+        </View>
+      </View>
+    </View>
+  );
+}
 function App() {
   return (
     <NavigationContainer>
@@ -36,7 +59,7 @@ function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen
           name="Modal"
-          component={ModalScreen}
+          component={ModalScreen2}
           options={{
             presentation: 'modal'
           }}
