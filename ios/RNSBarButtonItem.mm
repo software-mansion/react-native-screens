@@ -25,25 +25,20 @@
   NSDictionary *templateSourceObj = dict[@"templateSource"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
 
-  RCTImageSource *imageSource = nil;
-  if (imageSourceObj) {
-    imageSource = [RCTConvert RCTImageSource:imageSourceObj];
-  } else if (templateSourceObj) {
-    imageSource = [RCTConvert RCTImageSource:templateSourceObj];
-  }
-
-  if (imageSource) {
+  if (imageSourceObj != nil) {
     void (^completionAction)(NSError *_Nullable, UIImage *_Nullable) =
         ^(NSError *_Nullable error, UIImage *_Nullable image) {
-          UIImage *imageWithRenderingMode = nil;
-          if (imageSourceObj) {
-            imageWithRenderingMode = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-          } else if (templateSourceObj) {
-            imageWithRenderingMode = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-          }
-          self.image = imageWithRenderingMode;
+          self.image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         };
     [self loadImageSyncFromImageSourceJson:imageSourceObj withImageLoader:imageLoader completionBlock:completionAction];
+  } else if (templateSourceObj != nil) {
+    void (^completionAction)(NSError *_Nullable, UIImage *_Nullable) =
+        ^(NSError *_Nullable error, UIImage *_Nullable image) {
+          self.image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        };
+    [self loadImageSyncFromImageSourceJson:templateSourceObj
+                           withImageLoader:imageLoader
+                           completionBlock:completionAction];
   } else if (sfSymbolName != nil) {
     self.image = [UIImage systemImageNamed:sfSymbolName];
   }
