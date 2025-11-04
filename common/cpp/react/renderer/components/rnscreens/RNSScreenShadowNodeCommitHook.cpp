@@ -58,7 +58,9 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
       (!wasHorizontal && willBeHorizontal);
 
   std::shared_ptr<ShadowNode> finalRootShadowNode = newRootShadowNode;
-  if (orientationDidChange) {
+  if (orientationDidChange ||
+      shadowTree.getCurrentRevision().number <= this->lastRotatedRevision_) {
+    this->lastRotatedRevision_ = shadowTree.getCurrentRevision().number + 1;
     std::vector<std::shared_ptr<const RNSScreenShadowNode>> screens;
     findScreenNodes(newRootShadowNode, screens);
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <react/renderer/mounting/ShadowTreeRevision.h>
 #include <react/renderer/uimanager/UIManagerCommitHook.h>
 #include "RNSScreenShadowNode.h"
 
@@ -28,6 +29,7 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
 
  private:
   std::shared_ptr<const ContextContainer> contextContainer_;
+  ShadowTreeRevision::Number lastRotatedRevision_ = 0;
 
   void findScreenNodes(
       const std::shared_ptr<const ShadowNode> &rootShadowNode,
