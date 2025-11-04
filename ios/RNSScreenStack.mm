@@ -1393,8 +1393,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  BOOL afterUpdates = screenChildComponent.snapshotAfterUpdates;
-  [screenChildComponent.controller setViewToSnapshotAfterUpdates:afterUpdates];
+  [screenChildComponent.controller setViewToSnapshot];
 
   RCTAssert(
       screenChildComponent.reactSuperview == self,
