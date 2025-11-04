@@ -400,6 +400,8 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
 
 #undef SWITCH_EDGE_EFFECT
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 BOOL RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
@@ -443,5 +445,7 @@ NSString *RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvi
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 }; // namespace rnscreens::conversion
