@@ -25,8 +25,8 @@ namespace react = facebook::react;
   BOOL _initialStateUpdateSent;
   CADisplayLink *_displayLink;
 #else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
-  RNSBottomTabsAccessoryContentComponentView *_regularContentView;
-  RNSBottomTabsAccessoryContentComponentView *_inlineContentView;
+  RNSBottomTabsAccessoryContentComponentView *__weak _regularContentView;
+  RNSBottomTabsAccessoryContentComponentView *__weak _inlineContentView;
 #endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
 
   CGRect _previousFrame;

@@ -36,14 +36,15 @@ namespace react = facebook::react;
     RNSBottomTabsAccessoryComponentView *accessoryView =
         static_cast<RNSBottomTabsAccessoryComponentView *>(self.superview);
     _accessoryView = accessoryView;
-    [accessoryView.helper setContentView:(self.window != nil ? self : nil) forEnvironment:_environment];
+    [_accessoryView.helper setContentView:(self.window != nil ? self : nil) forEnvironment:_environment];
   } else {
+    [_accessoryView.helper setContentView:(self.window != nil ? self : nil) forEnvironment:_environment];
     _accessoryView = nil;
   }
 }
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION \
-          && RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION && RCT_NEW_ARCH_ENABLED && \
+          REACT_NATIVE_VERSION_MINOR >= 82
 
 #if RCT_NEW_ARCH_ENABLED
 
