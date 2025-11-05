@@ -88,7 +88,6 @@
       [RNSImageLoadingHelper loadImageFromSource:screenView.iconImageSource
                                  withImageLoader:imageLoader
                                       asTemplate:isTemplate
-                         synchronouslyIfPossible:YES
                                  completionBlock:^(UIImage *image) {
                                    tabBarItem.image = image;
                                  }];
@@ -101,7 +100,6 @@
       [RNSImageLoadingHelper loadImageFromSource:screenView.selectedIconImageSource
                                  withImageLoader:imageLoader
                                       asTemplate:isTemplate
-                         synchronouslyIfPossible:YES
                                  completionBlock:^(UIImage *image) {
                                    tabBarItem.selectedImage = image;
                                  }];

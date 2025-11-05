@@ -24,17 +24,15 @@
 #endif // !defined(NDEBUG)
   {
     [self loadImageFromSource:imageSource
-                withImageLoader:imageLoader
-                     asTemplate:isTemplate
-        synchronouslyIfPossible:YES
-                completionBlock:imageLoadingCompletionBlock];
+              withImageLoader:imageLoader
+                   asTemplate:isTemplate
+              completionBlock:imageLoadingCompletionBlock];
   }
 }
 
 + (void)loadImageFromSource:(nonnull RCTImageSource *)imageSource
             withImageLoader:(nonnull RCTImageLoader *)imageLoader
                  asTemplate:(BOOL)isTemplate
-    synchronouslyIfPossible:(BOOL)shouldLoadSynchronously
             completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock
 {
   RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
@@ -50,7 +48,7 @@
       partialLoadBlock:^(UIImage *_Nonnull image) {
       }
       completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
-        if (shouldLoadSynchronously && RCTIsMainQueue()) {
+        if (RCTIsMainQueue()) {
           imageLoadingCompletionBlock([RNSImageLoadingHelper handleRenderingModeForImage:image isTemplate:isTemplate]);
         } else {
           dispatch_async(dispatch_get_main_queue(), ^{
