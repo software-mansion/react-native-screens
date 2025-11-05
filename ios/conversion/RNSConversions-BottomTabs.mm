@@ -1,4 +1,5 @@
 #import <React/RCTConversions.h>
+#include <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
 #import "RNSConversions.h"
 #import "RNSDefines.h"
@@ -421,6 +422,26 @@ BOOL RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironme
 
   return YES;
 }
+
+#if REACT_NATIVE_VERSION_MINOR >= 82
+RNSBottomTabsAccessoryEnvironment RNSBottomTabsAccessoryEnvironmentFromCppEquivalent(
+    react::RNSBottomTabsAccessoryContentEnvironment environment)
+{
+  using enum react::RNSBottomTabsAccessoryContentEnvironment;
+
+  switch (environment) {
+    case Regular:
+      return RNSBottomTabsAccessoryEnvironmentRegular;
+
+    case Inline:
+      return RNSBottomTabsAccessoryEnvironmentInline;
+
+    default:
+      RCTLogError(@"[RNScreens] Unsupported BottomTabsAccessory environment");
+  }
+}
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
+
 #else // RCT_NEW_ARCH_ENABLED
 static NSString *const BOTTOM_TABS_ACCESSORY_REGULAR_ENVIRONMENT = @"regular";
 static NSString *const BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT = @"inline";

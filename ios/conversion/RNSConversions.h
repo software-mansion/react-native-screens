@@ -80,6 +80,11 @@ API_AVAILABLE(ios(26.0))
 BOOL RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
     react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment *payloadEnvironment,
     UITabAccessoryEnvironment environment);
+
+#if REACT_NATIVE_VERSION_MINOR >= 82
+RNSBottomTabsAccessoryEnvironment RNSBottomTabsAccessoryEnvironmentFromCppEquivalent(
+    react::RNSBottomTabsAccessoryContentEnvironment environment);
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 NSString *_Nullable RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(

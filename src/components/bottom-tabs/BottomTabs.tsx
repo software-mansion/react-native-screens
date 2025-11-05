@@ -18,6 +18,7 @@ import type {
 import { bottomTabsDebugLog } from '../../private/logging';
 import BottomTabsAccessory from './BottomTabsAccessory';
 import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+import BottomTabsAccessoryContent from './BottomTabsAccessoryContent';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -72,14 +73,24 @@ function BottomTabs(props: BottomTabsProps) {
       {filteredProps.children}
       {bottomAccessory &&
         Platform.OS === 'ios' &&
-        parseInt(Platform.Version, 10) >= 26 && (
+        parseInt(Platform.Version, 10) >= 26 &&
+        (Platform.constants.reactNativeVersion.minor >= 82 ? (
+          <BottomTabsAccessory>
+            <BottomTabsAccessoryContent environment="regular">
+              {bottomAccessory('regular')}
+            </BottomTabsAccessoryContent>
+            <BottomTabsAccessoryContent environment="inline">
+              {bottomAccessory('inline')}
+            </BottomTabsAccessoryContent>
+          </BottomTabsAccessory>
+        ) : (
           <BottomTabsAccessory
             onEnvironmentChange={event => {
               setBottomAccessoryEnvironment(event.nativeEvent.environment);
             }}>
             {bottomAccessory(bottomAccessoryEnvironment)}
           </BottomTabsAccessory>
-        )}
+        ))}
     </BottomTabsNativeComponent>
   );
 }

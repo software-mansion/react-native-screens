@@ -169,6 +169,7 @@
         "RNSBottomTabsScreen": "RNSBottomTabsScreenComponentView",
         "RNSBottomTabs": "RNSBottomTabsHostComponentView",
         "RNSBottomTabsAccessory": "RNSBottomTabsAccessoryComponentView",
+        "RNSBottomTabsAccessoryContent": "RNSBottomTabsAccessoryContentComponentView",
         "RNSFullWindowOverlay": "RNSFullWindowOverlay",
         "RNSModalScreen": "RNSModalScreen",
         "RNSScreenContainer": "RNSScreenContainerView",
@@ -232,6 +233,9 @@
         },
         "RNSBottomTabsAccessory": {
           "className": "RNSBottomTabsAccessoryComponentView"
+        },
+        "RNSBottomTabsAccessoryContent": {
+          "className": "RNSBottomTabsAccessoryContentComponentView"
         },
         "RNSSplitViewHost": {
           "className": "RNSSplitViewHostComponentView"

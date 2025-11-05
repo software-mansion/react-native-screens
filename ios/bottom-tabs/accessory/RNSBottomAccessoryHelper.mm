@@ -24,6 +24,9 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
   BOOL _initialStateUpdateSent;
   CADisplayLink *_displayLink;
+#else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+  RNSBottomTabsAccessoryContentComponentView *_regularContentView;
+  RNSBottomTabsAccessoryContentComponentView *_inlineContentView;
 #endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
 
   CGRect _previousFrame;
@@ -46,9 +49,60 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
   _initialStateUpdateSent = NO;
   _displayLink = nil;
+#else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+  _regularContentView = nil;
+  _inlineContentView = nil;
 #endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
   _previousFrame = CGRectZero;
 }
+
+#pragma mark - Content view switching workaround
+
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+
+- (BOOL)isContentViewSwitchingWorkaroundActive
+{
+  return _regularContentView != nil && _inlineContentView != nil;
+}
+
+- (void)setContentView:(RNSBottomTabsAccessoryContentComponentView *)contentView
+        forEnvironment:(RNSBottomTabsAccessoryEnvironment)environment
+{
+  switch (environment) {
+    case RNSBottomTabsAccessoryEnvironmentRegular:
+      _regularContentView = contentView;
+      break;
+
+    case RNSBottomTabsAccessoryEnvironmentInline:
+      _inlineContentView = contentView;
+      break;
+
+    default:
+      RCTLogError(@"[RNScreens] Unsupported BottomTabsAccessory environment");
+  }
+
+  [self handleContentViewVisibilityForEnvironmentIfNeeded];
+}
+
+- (void)handleContentViewVisibilityForEnvironmentIfNeeded
+{
+  if (!self.isContentViewSwitchingWorkaroundActive) {
+    return;
+  }
+
+  switch (self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment) {
+    case UITabAccessoryEnvironmentInline:
+      _regularContentView.layer.opacity = 0.0;
+      _inlineContentView.layer.opacity = 1.0;
+      break;
+    default:
+      _regularContentView.layer.opacity = 1.0;
+      _inlineContentView.layer.opacity = 0.0;
+      break;
+  }
+}
+
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
 
 #pragma mark - Observing environment changes
 
@@ -57,9 +111,12 @@ namespace react = facebook::react;
   return [_bottomAccessoryView
       registerForTraitChanges:@[ [UITraitTabAccessoryEnvironment class] ]
                   withHandler:^(__kindof id<UITraitEnvironment>, UITraitCollection *previousTraitCollection) {
-                    [self->_bottomAccessoryView.reactEventEmitter
-                        emitOnEnvironmentChangeIfNeeded:self->_bottomAccessoryView.traitCollection
-                                                            .tabAccessoryEnvironment];
+                    UITabAccessoryEnvironment environment =
+                        self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment;
+                    [self->_bottomAccessoryView.reactEventEmitter emitOnEnvironmentChangeIfNeeded:environment];
+#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+                    [self handleContentViewVisibilityForEnvironmentIfNeeded];
+#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
                   }];
 }
 
@@ -186,6 +243,9 @@ namespace react = facebook::react;
   _previousFrame = CGRectZero;
 #if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
   [self invalidateDisplayLink];
+#else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+  _regularContentView = nil;
+  _inlineContentView = nil;
 #endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
 }
 
