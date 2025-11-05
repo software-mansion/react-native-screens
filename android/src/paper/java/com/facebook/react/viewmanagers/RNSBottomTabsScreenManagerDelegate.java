@@ -35,6 +35,9 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "title":
         mViewManager.setTitle(view, value == null ? null : (String) value);
         break;
+      case "isTitleUndefined":
+        mViewManager.setIsTitleUndefined(view, value == null ? true : (boolean) value);
+        break;
       case "badgeValue":
         mViewManager.setBadgeValue(view, value == null ? null : (String) value);
         break;

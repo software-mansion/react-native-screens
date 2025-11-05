@@ -3,7 +3,6 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
 #import "RNSConversions.h"
-#import "RNSFrameCorrector.h"
 #import "RNSSafeAreaViewNotifications.h"
 
 #import "Swift-Bridging.h"
@@ -86,14 +85,6 @@ namespace react = facebook::react;
   _columnType = RNSSplitViewScreenColumnTypeColumn;
 }
 
-- (void)invalidate
-{
-  // Controller keeps the strong reference to the component via the `.view` property.
-  // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
-  // when we want to destroy the component.
-  _controller = nil;
-}
-
 - (void)registerForFrameCorrection:(UIView *)view
 {
   [_viewsForFrameCorrection addObject:view];
@@ -116,10 +107,6 @@ namespace react = facebook::react;
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-
-  for (UIView *view in _viewsForFrameCorrection) {
-    [RNSFrameCorrector applyFrameCorrectionFor:view inContextOfSplitViewColumn:self];
-  }
 }
 
 #pragma mark - ShadowTreeState
@@ -160,29 +147,11 @@ namespace react = facebook::react;
   [self dispatchSafeAreaDidChangeNotification];
 }
 
-#pragma mark - RCTViewComponentViewProtocol
+#pragma mark - RCTComponentViewProtocol
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSSplitViewScreenComponentDescriptor>();
-}
-
-- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
-           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
-{
-  // We're tracking presentation layer updates in the RNSSplitViewScreen.
-  // There's a problem with SplitView that it sets the frame to the end value of the animation right after the animation
-  // begins. Because of that, the size of our component is desynchronizing easily and we're blocking a communication
-  // between native and shadow layout for a while until the transition ends. For the following case when we want to make
-  // a transition from width A to B:
-  // 1. size 'A' is set on ShadowNode
-  // 2. animation for the transition starts
-  // 3. `setFrame` is called with the width 'B'
-  // 4. in the same time, we want to track updates and treat intermediate value A' indicated from the presentation layer
-  // as our source of truth
-  if (![_controller isViewSizeTransitionInProgress]) {
-    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
-  }
 }
 
 + (BOOL)shouldBeRecycled
@@ -217,6 +186,14 @@ namespace react = facebook::react;
   [super updateEventEmitter:eventEmitter];
   [_reactEventEmitter
       updateEventEmitter:std::static_pointer_cast<const react::RNSSplitViewScreenEventEmitter>(eventEmitter)];
+}
+
+- (void)invalidate
+{
+  // Controller keeps the strong reference to the component via the `.view` property.
+  // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
+  // when we want to destroy the component.
+  _controller = nil;
 }
 
 @end

@@ -142,6 +142,14 @@ class TabsHostViewManager :
         value: String?,
     ) = Unit
 
+    @ReactProp(name = "tabBarHidden")
+    override fun setTabBarHidden(
+        view: TabsHost,
+        value: Boolean,
+    ) {
+        view.tabBarHidden = value
+    }
+
     // Android additional
 
     @ReactProp(name = "tabBarItemTitleFontColorActive", customType = "Color")

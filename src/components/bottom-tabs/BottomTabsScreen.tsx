@@ -142,6 +142,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       leftScrollEdgeEffect={scrollEdgeEffects?.left}
       rightScrollEdgeEffect={scrollEdgeEffects?.right}
       topScrollEdgeEffect={scrollEdgeEffects?.top}
+      isTitleUndefined={rest.title === null || rest.title === undefined}
       {...rest}>
       <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
         {rest.children}

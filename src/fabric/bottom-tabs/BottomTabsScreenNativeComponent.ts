@@ -125,6 +125,7 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
+  isTitleUndefined?: WithDefault<boolean, true>;
   badgeValue?: string;
 
   // Currently iOS-only

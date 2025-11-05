@@ -58,6 +58,18 @@ namespace react = facebook::react;
   _controller.view = self;
 }
 
+- (void)invalidateImpl
+{
+  // We want to run after container updates are performed (transitions etc.)
+  __weak auto weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      strongSelf->_controller = nil;
+    }
+  });
+}
+
 #pragma mark - Events
 
 - (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter
@@ -66,7 +78,7 @@ namespace react = facebook::react;
   return _reactEventEmitter;
 }
 
-#pragma mark - RCTViewComponentViewProtocol
+#pragma mark - RCTComponentViewProtocol
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
@@ -114,6 +126,11 @@ namespace react = facebook::react;
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+- (void)invalidate
+{
+  [self invalidateImpl];
 }
 
 @end

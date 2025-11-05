@@ -65,6 +65,8 @@
       UITabBarSystemItem systemItem =
           rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
       tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].image;
+    } else {
+      tabBarItem.image = nil;
     }
 
     if (screenView.selectedIconSfSymbolName != nil) {
@@ -74,6 +76,8 @@
       UITabBarSystemItem systemItem =
           rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
       tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].selectedImage;
+    } else {
+      tabBarItem.selectedImage = nil;
     }
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;

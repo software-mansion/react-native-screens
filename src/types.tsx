@@ -193,7 +193,7 @@ export interface ScreenProps extends ViewProps {
    * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
    *
    * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
-   * to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
+   * to the legacy implementation when handling custom animations, but we assume `true` for shadows.
    *
    * @platform ios
    */
@@ -206,8 +206,6 @@ export interface ScreenProps extends ViewProps {
   gestureEnabled?: boolean;
   /**
    * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
-   *
-   * @deprecated since iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
    *
    * @platform ios
    */
@@ -1080,13 +1078,6 @@ export interface HeaderBarButtonItemWithAction
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
    */
   selected?: boolean;
-  /**
-   * A Boolean value that indicates whether the item represents an action or selection.
-   * Only available from iOS 15.0 and later.
-   *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
-   */
-  changesSelectionAsPrimaryAction?: boolean;
 }
 
 export interface HeaderBarButtonItemMenuAction {
@@ -1145,6 +1136,13 @@ export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
     title?: string;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
   };
+  /**
+   * A Boolean value that indicates whether the button title should indicate selection or not.
+   * Only available from iOS 15.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+   */
+  changesSelectionAsPrimaryAction?: boolean;
 }
 
 export interface HeaderBarButtonItemSpacing {
