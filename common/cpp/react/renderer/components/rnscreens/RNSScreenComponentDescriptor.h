@@ -13,6 +13,7 @@
 #include <react/renderer/uimanager/UIManagerCommitHook.h>
 #include <memory>
 #include "RNSScreenShadowNode.h"
+#include "YGLSN.h"
 
 namespace facebook {
 namespace react {
@@ -47,6 +48,25 @@ class RNSScreenComponentDescriptor final
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
             shadowNode.getState());
     auto stateData = state->getData();
+
+    auto frame = screenShadowNode.getLayoutMetrics().frame;
+    auto frameSize = screenShadowNode.getStateData().frameSize;
+    auto yogaStyle =
+        reinterpret_cast<YGLSN *>(&layoutableShadowNode)->yogaNode_.style();
+    yogaStyle.dimension(yoga::Dimension::Width);
+    __android_log_print(
+        ANDROID_LOG_DEBUG,
+        "SCREENS",
+        "[[Adopt]] Screen rev=%d frameSize w=%f h=%f frame w=%f h=%f Yoga size w=%f h=%f",
+        shadowNode.revision_,
+        frameSize.width,
+        frameSize.height,
+        frame.size.width,
+        frame.size.height,
+        yogaStyle.dimension(yoga::Dimension::Width).value().unwrapOrDefault(-1),
+        yogaStyle.dimension(yoga::Dimension::Height)
+            .value()
+            .unwrapOrDefault(-1));
 
 #ifdef ANDROID
     if (!commitHook_) {
@@ -90,6 +110,14 @@ class RNSScreenComponentDescriptor final
           FrameCorrectionModes::Mode::FrameHeightCorrection);
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameOriginCorrection);
+
+      __android_log_print(
+          ANDROID_LOG_DEBUG,
+          "SCREENS",
+          "[[Adopt]] Screen rev=%d setSize w=%f h=%f",
+          layoutableShadowNode.revision_,
+          stateData.frameSize.width,
+          stateData.frameSize.height);
 
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});

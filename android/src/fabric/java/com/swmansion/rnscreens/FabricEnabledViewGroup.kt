@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.annotation.UiThread
 import com.facebook.react.bridge.ReactContext
@@ -27,6 +28,7 @@ abstract class FabricEnabledViewGroup(
         height: Int,
         headerHeight: Int,
     ) {
+        Log.d("SCREENS", "[[KOTLIN]] Screen updateScreenSizeFabric rev=?? w=%d h=%d".format(width, height))
         updateState(width, height, headerHeight)
     }
 

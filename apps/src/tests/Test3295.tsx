@@ -1,97 +1,29 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useReducedMotion,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import React, { useEffect, useState } from 'react';
+import type { PropsWithChildren } from 'react';
+import {
+  Dimensions,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
+
 import { Screen, ScreenStack } from 'react-native-screens';
 
-const colors = [
-  ['lime', 'green'],
-  ['blue', 'cyan'],
-];
+type SectionProps = PropsWithChildren<{
+  title: string;
+}>;
 
-function useLoop() {
-  const sv = useSharedValue(0);
-
-  useEffect(() => {
-    sv.value = 0;
-    sv.value = withRepeat(withTiming(1, { duration: 1000 }), -1, true);
-  }, [sv]);
-
-  return sv;
-}
-
-const N = 12;
-
-function ChessboardExample() {
-  const [state, setState] = React.useState(0);
-
-  const sv = useLoop();
-
-  const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    if (shouldReduceMotion) {
-      return;
-    }
-    const id = setInterval(() => {
-      setState((s) => 1 - s);
-    }, 10);
-    return () => clearInterval(id);
-  }, [shouldReduceMotion]);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      width: 10 + sv.value * 20,
-      height: 10 + sv.value * 20,
-    };
-  }, []);
-
+function Section({ children, title }: SectionProps): React.JSX.Element {
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
-    <View style={styles.workaround} collapsable={false}>
-      <View style={styles.chessboard}>
-        <View style={styles.border}>
-          {[...Array(N).keys()].map((i) => (
-            <View style={styles.row} key={i}>
-              {[...Array(N).keys()].map((j) => (
-                <Animated.View
-                  key={j}
-                  style={[
-                    { backgroundColor: colors[state % 2][(i + j) % 2] },
-                    animatedStyle,
-                  ]}
-                />
-              ))}
-            </View>
-          ))}
-        </View>
-      </View>
-    </View>
+    <View style={styles.sectionContainer}>
+      <Text>{title}</Text>
+      <Text>{children}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  workaround: {
-    height: 400,
-    // prevents calling _state->updateState from RNScreens after each change because of view flattening
-  },
-  chessboard: {
-    alignItems: 'flex-start',
-  },
-  border: {
-    borderWidth: 10,
-    borderColor: 'red',
-  },
-  row: {
-    flexDirection: 'row',
-  },
-});
 
 function floodJsThread() {
   setInterval(() => {
@@ -100,15 +32,33 @@ function floodJsThread() {
       // Intentionally do nothing; just burn CPU cycles.
       Math.sqrt(Math.random());
     }
-  }, 10);
+  }, 12);
 }
 
 /*
  * create artificial pressure in the JS thread to show off thep problem.
  * */
-// floodJsThread();
+floodJsThread();
+floodJsThread();
 
 function AppMain(): React.JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  const backgroundStyle = {
+    flex: 1,
+    backgroundColor: 'white',
+  };
+
+  const [num, setNum] = useState(0);
+
+  useEffect(() => {
+    let i = 0;
+    setInterval(() => {
+      i++;
+      setNum(i);
+    }, 2)
+  }, []);
+
   /*
    * To keep the template simple and small we're adding padding to prevent view
    * from rendering under the System UI.
@@ -121,50 +71,50 @@ function AppMain(): React.JSX.Element {
   const safePadding = '5%';
 
   return (
-    <ChessboardExample />
-    // <View style={backgroundStyle}>
-    //   <StatusBar
-    //     barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-    //     backgroundColor={backgroundStyle.backgroundColor}
-    //   />
-    //   <View
-    //     style={{
-    //       flex: 1,
-    //       paddingHorizontal: safePadding,
-    //       paddingBottom: safePadding,
-    //       justifyContent: 'center',
-    //       alignContent: 'center',
-    //     }}>
-    //     <Section title="Step One">
-    //       This test shows how the native layout update triggers a layout shift.
-    //     </Section>
-    //     <Section title="Step One">
-    //       There is a view with a blue background. We don't expect to ever see
-    //       flashes of the blue background.
-    //     </Section>
-    //   </View>
-    // </View>
+    <View style={backgroundStyle}>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundStyle.backgroundColor}
+      />
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: safePadding,
+          paddingBottom: safePadding,
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}>
+        <Section title="Step One">
+          This test shows how the native layout update triggers a layout shift.
+        </Section>
+        <Section title="Step One">
+          There is a view with a blue background. We don't expect to ever see
+          flashes of the blue background.
+        </Section>
+        <Section title="Orientation"> {num} </Section>
+      </View>
+    </View>
   );
 }
 
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
+const styles = StyleSheet.create({
+  sectionContainer: {
+    marginTop: 32,
+    paddingHorizontal: 24,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  sectionDescription: {
+    marginTop: 8,
+    fontSize: 18,
+    fontWeight: '400',
+  },
+  highlight: {
+    fontWeight: '700',
+  },
+});
 
 function App() {
   return (

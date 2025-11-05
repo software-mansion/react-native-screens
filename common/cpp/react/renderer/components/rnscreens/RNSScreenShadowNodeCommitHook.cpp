@@ -57,24 +57,38 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
   const bool orientationDidChange = (wasHorizontal && !willBeHorizontal) ||
       (!wasHorizontal && willBeHorizontal);
 
+  std::vector<std::shared_ptr<const RNSScreenShadowNode>> screens;
+  __android_log_print(
+      ANDROID_LOG_DEBUG,
+      "SCREENS",
+      "DFS start tree rev=%ld",
+      (long)shadowTree.getCurrentRevision().number);
+  findScreenNodes(newRootShadowNode, screens);
+
   std::shared_ptr<ShadowNode> finalRootShadowNode = newRootShadowNode;
   if (orientationDidChange ||
       shadowTree.getCurrentRevision().number <= this->lastRotatedRevision_) {
-    this->lastRotatedRevision_ = shadowTree.getCurrentRevision().number + 1;
-    std::vector<std::shared_ptr<const RNSScreenShadowNode>> screens;
-    findScreenNodes(newRootShadowNode, screens);
+    //    this->lastRotatedRevision_ = shadowTree.getCurrentRevision().number +
+    //    1;
 
     for (auto screen : screens) {
       const auto rootShadowNodeClone = newRootShadowNode->cloneTree(
           screen->getFamily(), [](const ShadowNode &oldShadowNode) {
             auto clone =
                 oldShadowNode.clone({.state = oldShadowNode.getState()});
+            __android_log_print(
+                ANDROID_LOG_DEBUG,
+                "SCREENS",
+                "[[Hook]] ^^^ cloned screen old rev=%d new rev=%d",
+                oldShadowNode.revision_,
+                clone->revision_);
             auto screenNode = static_pointer_cast<RNSScreenShadowNode>(clone);
             auto yogaNode =
                 static_pointer_cast<YogaLayoutableShadowNode>(clone);
 
             screenNode->getStateDataMutable().frameSize = {0, 0};
-            screenNode->getStateDataMutable().contentOffset = {0, 0};
+            //            screenNode->getStateDataMutable().contentOffset = {0,
+            //            0};
             yogaNode->setSize({YGUndefined, YGUndefined});
 
             return clone;
@@ -104,6 +118,19 @@ void RNSScreenShadowNodeCommitHook::findScreenNodes(
       if (std::strcmp(node->getComponentName(), "RNSScreen") == 0) {
         screenNodes.push_back(
             std::dynamic_pointer_cast<const RNSScreenShadowNode>(node));
+        auto frame =
+            ((RNSScreenShadowNode *)node.get())->getLayoutMetrics().frame;
+        auto frameSize =
+            ((RNSScreenShadowNode *)node.get())->getStateData().frameSize;
+        __android_log_print(
+            ANDROID_LOG_DEBUG,
+            "SCREENS",
+            "[[Hook]] Screen rev=%d frameSize w=%f h=%f frame w=%f h=%f",
+            node->revision_,
+            frameSize.width,
+            frameSize.height,
+            frame.size.width,
+            frame.size.height);
       }
       shadowNodesToVisit.emplace(child);
     }
