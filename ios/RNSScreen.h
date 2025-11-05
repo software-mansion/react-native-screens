@@ -131,6 +131,12 @@ namespace react = facebook::react;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
 @property (nonatomic, readonly, getter=isMarkedForUnmountInCurrentTransaction)
     BOOL markedForUnmountInCurrentTransaction;
+
+/**
+ * Whether the snapshot for the transition made for JS-popped views should be taken after view updates or not.
+ * *This property was introduced for the sake of integration with reanimated.*
+ */
+@property (nonatomic) BOOL snapshotAfterUpdates;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;

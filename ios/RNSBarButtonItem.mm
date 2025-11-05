@@ -2,7 +2,7 @@
 #import <React/RCTConvert.h>
 #import <React/RCTFont.h>
 #import <React/RCTImageSource.h>
-#import <objc/runtime.h>
+#import "RCTImageSource+AccessHiddenMembers.h"
 #import "RNSDefines.h"
 
 @implementation RNSBarButtonItem {
@@ -20,48 +20,36 @@
     return self;
   }
 
-  self.title = dict[@"title"];
-
+  NSString *title = dict[@"title"];
   NSDictionary *imageSourceObj = dict[@"imageSource"];
   NSDictionary *templateSourceObj = dict[@"templateSource"];
-
-  RCTImageSource *imageSource = nil;
-  if (imageSourceObj) {
-    imageSource = [RCTConvert RCTImageSource:imageSourceObj];
-  } else if (templateSourceObj) {
-    imageSource = [RCTConvert RCTImageSource:templateSourceObj];
-  }
-
-  if (imageSource) {
-    [imageLoader loadImageWithURLRequest:imageSource.request
-        size:imageSource.size
-        scale:imageSource.scale
-        clipped:true
-        resizeMode:RCTResizeModeContain
-        progressBlock:^(int64_t progress, int64_t total) {
-        }
-        partialLoadBlock:^(UIImage *_Nonnull image) {
-        }
-        completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
-          dispatch_async(dispatch_get_main_queue(), ^{
-            UIImage *imageWithRenderingMode = nil;
-            if (imageSourceObj) {
-              imageWithRenderingMode = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-            } else if (templateSourceObj) {
-              imageWithRenderingMode = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-            }
-            self.image = imageWithRenderingMode;
-          });
-        }];
-  }
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  if (sfSymbolName) {
+
+  if (imageSourceObj != nil) {
+    void (^completionAction)(NSError *_Nullable, UIImage *_Nullable) =
+        ^(NSError *_Nullable error, UIImage *_Nullable image) {
+          self.image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        };
+    [self loadImageSyncFromImageSourceJson:imageSourceObj withImageLoader:imageLoader completionBlock:completionAction];
+  } else if (templateSourceObj != nil) {
+    void (^completionAction)(NSError *_Nullable, UIImage *_Nullable) =
+        ^(NSError *_Nullable error, UIImage *_Nullable image) {
+          self.image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        };
+    [self loadImageSyncFromImageSourceJson:templateSourceObj
+                           withImageLoader:imageLoader
+                           completionBlock:completionAction];
+  } else if (sfSymbolName != nil) {
     self.image = [UIImage systemImageNamed:sfSymbolName];
   }
 
-  NSDictionary *titleStyle = dict[@"titleStyle"];
-  if (titleStyle) {
-    [self setTitleStyleFromConfig:titleStyle];
+  if (title != nil) {
+    self.title = title;
+
+    NSDictionary *titleStyle = dict[@"titleStyle"];
+    if (titleStyle != nil) {
+      [self setTitleStyleFromConfig:titleStyle];
+    }
   }
 
   id tintColorObj = dict[@"tintColor"];
@@ -338,5 +326,56 @@
   }
 }
 #endif
+
+/**
+ * Should be called from UI thread only. If done so, the method **tries** to load the image synchronously.
+ * There is no guarantee, because in release mode we rely on `RCTImageLoader` implementation details.
+ * No matter how the image is loaded, `completionBlock` is executed on main queue.
+ */
+- (void)loadImageSyncFromImageSourceJson:(nonnull NSDictionary *)imageSourceJson
+                         withImageLoader:(nullable RCTImageLoader *)imageLoader
+                         completionBlock:
+                             (void (^_Nonnull)(NSError *_Nullable error, UIImage *_Nullable image))completion
+{
+  RCTAssert(RCTIsMainQueue(), @"[RNScreens] Expected to run on main queue");
+
+  RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageSourceJson];
+  RCTAssert(imageSource != nil, @"[RNScreens] Expected nonnill image source");
+
+  // We use `+ [RCTConvert UIImage:]` only in debug mode, because it is deprecated, however
+  // I haven't found different way to load image synchronously in debug other than
+  // writing the code manually.
+
+#if !defined(NDEBUG) // We're in debug mode here
+  if (!imageSource.packagerAsset) {
+    // This is rather unexpected. In debug mode local asset should be sourced from packager.
+    RCTLogWarn(@"[RNScreens] Unexpected case during image load: loading not a packager asset");
+  }
+
+  // Try to load anyway.
+  UIImage *loadedImage = [RCTConvert UIImage:imageSourceJson];
+  completion(nil, loadedImage);
+  return;
+#else // We're in release mode here
+  [imageLoader loadImageWithURLRequest:imageSource.request
+      size:imageSource.size
+      scale:imageSource.scale
+      clipped:true
+      resizeMode:RCTResizeModeContain
+      progressBlock:^(int64_t progress, int64_t total) {
+      }
+      partialLoadBlock:^(UIImage *_Nonnull image) {
+      }
+      completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
+        if (RCTIsMainQueue()) {
+          completion(error, image);
+        } else {
+          dispatch_async(dispatch_get_main_queue(), ^{
+            completion(error, image);
+          });
+        }
+      }];
+#endif
+}
 
 @end

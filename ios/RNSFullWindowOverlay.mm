@@ -114,7 +114,18 @@
   _accessibilityContainerViewIsModal = YES;
   _reactFrame = CGRectNull;
   _container = self.container;
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(applicationDidBecomeActive:)
+                                               name:UIApplicationDidBecomeActiveNotification
+                                             object:nil];
+
   [self show];
+}
+
+- (void)dealloc
+{
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)setAccessibilityContainerViewIsModal:(BOOL)accessibilityContainerViewIsModal
@@ -163,6 +174,13 @@
 #endif
     }
     [_touchHandler attachToView:_container];
+  }
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+{
+  if (_container.superview == nil) {
+    [self show];
   }
 }
 
