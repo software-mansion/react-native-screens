@@ -3,10 +3,9 @@
 
 @implementation RNSImageLoadingHelper
 
-+ (void)loadImageSyncIfPossibleFromJsonSource:(nonnull id)jsonImageSource
++ (void)loadImageSyncIfPossibleFromJsonSource:(nonnull NSDictionary *)jsonImageSource
                               withImageLoader:(nonnull RCTImageLoader *)imageLoader
                                    asTemplate:(BOOL)isTemplate
-               synchronouslyInDebugIfPossible:(BOOL)shouldLoadSynchronouslyInDebug
                               completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock
 {
   RCTAssert(RCTIsMainQueue(), @"[RNScreens] Expected to run on main queue");
@@ -16,8 +15,11 @@
 
 #if !defined(NDEBUG) // We're in debug mode here
   if (imageSource.packagerAsset) {
-    UIImage *loadedImage = [RCTConvert UIImage:jsonImageSource];
-    imageLoadingCompletionBlock(loadedImage);
+    // We use `+ [RCTConvert UIImage:]` only in debug mode, because it is deprecated, however
+    // we haven't found different way to load image synchronously in debug other than
+    // writing the code manually.
+    UIImage *image = [RCTConvert UIImage:jsonImageSource];
+    imageLoadingCompletionBlock([RNSImageLoadingHelper handleRenderingModeForImage:image isTemplate:isTemplate]);
   } else
 #endif // !defined(NDEBUG)
   {
@@ -38,14 +40,6 @@
   RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
   RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
 
-  auto completionWrapper = ^(UIImage *image) {
-    if (isTemplate) {
-      imageLoadingCompletionBlock([image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]);
-    } else {
-      imageLoadingCompletionBlock([image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]);
-    }
-  };
-
   [imageLoader loadImageWithURLRequest:imageSource.request
       size:imageSource.size
       scale:imageSource.scale
@@ -57,13 +51,23 @@
       }
       completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
         if (shouldLoadSynchronously && RCTIsMainQueue()) {
-          completionWrapper(image);
+          imageLoadingCompletionBlock([RNSImageLoadingHelper handleRenderingModeForImage:image isTemplate:isTemplate]);
         } else {
           dispatch_async(dispatch_get_main_queue(), ^{
-            completionWrapper(image);
+            imageLoadingCompletionBlock([RNSImageLoadingHelper handleRenderingModeForImage:image
+                                                                                isTemplate:isTemplate]);
           });
         }
       }];
+}
+
++ (nullable UIImage *)handleRenderingModeForImage:(nullable UIImage *)image isTemplate:(BOOL)isTemplate
+{
+  if (isTemplate) {
+    return [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  } else {
+    return [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+  }
 }
 
 @end

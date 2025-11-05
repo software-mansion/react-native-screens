@@ -3,10 +3,14 @@
 
 @interface RNSImageLoadingHelper : NSObject
 
-+ (void)loadImageSyncIfPossibleFromJsonSource:(nonnull id)jsonImageSource
+/**
+ * Should be called from UI thread only. If done so, the method **tries** to load the image synchronously.
+ * There is no guarantee, because in release mode we rely on `RCTImageLoader` implementation details.
+ * No matter how the image is loaded, `completionBlock` is executed on main queue.
+ */
++ (void)loadImageSyncIfPossibleFromJsonSource:(nonnull NSDictionary *)jsonImageSource
                               withImageLoader:(nonnull RCTImageLoader *)imageLoader
                                    asTemplate:(BOOL)isTemplate
-               synchronouslyInDebugIfPossible:(BOOL)shouldLoadSynchronouslyInDebug
                               completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock;
 
 + (void)loadImageFromSource:(nonnull RCTImageSource *)imageSource
