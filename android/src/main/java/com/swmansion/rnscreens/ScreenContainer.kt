@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.util.Log
 import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
@@ -51,6 +52,9 @@ open class ScreenContainer(
         r: Int,
         b: Int,
     ) {
+        val w = r - l
+        val h = b - t
+        Log.d("SCREENS", "ScreenStack onLayout w=$w, h=$h")
         var i = 0
         val size = childCount
         while (i < size) {

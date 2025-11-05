@@ -15,6 +15,8 @@
 #include "RNSScreenShadowNode.h"
 #include "YGLSN.h"
 
+#include <thread>
+
 namespace facebook {
 namespace react {
 
@@ -53,11 +55,14 @@ class RNSScreenComponentDescriptor final
     auto frameSize = screenShadowNode.getStateData().frameSize;
     auto yogaStyle =
         reinterpret_cast<YGLSN *>(&layoutableShadowNode)->yogaNode_.style();
-    yogaStyle.dimension(yoga::Dimension::Width);
+    //    yogaStyle.dimension(yoga::Dimension::Width);
+
+    auto hash = std::hash<std::thread::id>{}(std::this_thread::get_id());
     __android_log_print(
         ANDROID_LOG_DEBUG,
         "SCREENS",
-        "[[Adopt]] Screen rev=%d frameSize w=%f h=%f frame w=%f h=%f Yoga size w=%f h=%f",
+        "[[Adopt at %zu]] Screen rev=%d frameSize w=%f h=%f frame w=%f h=%f Yoga size w=%f h=%f",
+        hash,
         shadowNode.revision_,
         frameSize.width,
         frameSize.height,
@@ -121,6 +126,9 @@ class RNSScreenComponentDescriptor final
 
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
+    } else if (
+        stateData.frameSize.width == 0 && stateData.frameSize.height == 0) {
+      layoutableShadowNode.setSize({YGUndefined, YGUndefined});
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
