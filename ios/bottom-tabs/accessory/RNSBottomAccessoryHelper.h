@@ -3,12 +3,12 @@
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 #import <UIKit/UIKit.h>
-#include <cxxreact/ReactNativeVersion.h>
 #import "RNSBottomTabsAccessoryComponentView.h"
 #import "RNSBottomTabsAccessoryContentComponentView.h"
 #import "RNSEnums.h"
 
 #if defined(__cplusplus)
+#include <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/core/State.h>
 
 namespace react = facebook::react;
@@ -41,7 +41,7 @@ API_AVAILABLE(ios(26.0))
 
 #pragma mark - Content view switching workaround
 
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+#if RCT_NEW_ARCH_ENABLED && defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
 
 /**
  * Due to *synchonous* events not being actually *synchronous*, we are unable to handle layout modifications
@@ -64,7 +64,7 @@ API_AVAILABLE(ios(26.0))
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
 
 #pragma mark - Hidden from Swift
 
