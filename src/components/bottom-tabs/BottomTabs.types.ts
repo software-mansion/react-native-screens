@@ -212,6 +212,16 @@ export interface BottomTabsProps extends ViewProps {
    *
    * If this prop is `undefined`, the bottom accessory will not be rendered.
    *
+   * On legacy architecture (Paper) and on new architecture (Fabric) with RN < 0.82,
+   * implementation uses DisplayLink which might result in the size of bottom
+   * accessory being updated with a delay.
+   *
+   * Starting from RN 0.82, this issue is mitigated but in order to allow accessory
+   * rendering based on environment, component is rendered 2 times for both `regular`
+   * and `inline` environments at the same time. Environment determines which component
+   * is visible at given moment. This might require implementing a solution to share
+   * state between both rendered components (e.g. usage of context).
+   *
    * Available starting from iOS 26.
    *
    * @platform iOS
