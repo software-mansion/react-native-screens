@@ -10,7 +10,7 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
-import { ScrollEdgeEffect } from './components/shared/types';
+import type { ScrollEdgeEffect, UserInterfaceStyle } from './types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -82,8 +82,6 @@ export type HeaderSubviewTypes =
   | 'left'
   | 'center'
   | 'searchBar';
-
-export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 export type HeaderHeightChangeEventType = {
   headerHeight: number;
@@ -764,10 +762,19 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    *
    * Please note that this prop is marked as **experimental** and might be subject to breaking changes or even removal.
    *
+   * The following values are currently supported:
+   * - `unspecified` - an unspecified interface style,
+   * - `light` - the light interface style,
+   * - `dark` - the dark interface style.
+   *
+   * The supported values correspond to the official UIKit documentation:
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle|UIUserInterfaceStyle}
+   *
    * @default unspecified
    * @platform ios
    */
-  experimental_overrideUserInterfaceStyle?: UserInterfaceStyle;
+  experimental_userInterfaceStyle?: UserInterfaceStyle;
 }
 
 export interface SearchBarProps {

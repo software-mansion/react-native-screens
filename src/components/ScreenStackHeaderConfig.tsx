@@ -112,7 +112,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   return (
     <ScreenStackHeaderConfigNativeComponent
       {...props}
-      userInterfaceStyle={props.experimental_overrideUserInterfaceStyle}
+      userInterfaceStyle={props.experimental_userInterfaceStyle}
       headerLeftBarButtonItems={preparedHeaderLeftBarButtonItems}
       headerRightBarButtonItems={preparedHeaderRightBarButtonItems}
       onPressHeaderBarButtonItem={onPressHeaderBarButtonItem}

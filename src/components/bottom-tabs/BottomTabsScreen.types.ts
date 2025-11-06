@@ -4,8 +4,12 @@ import type {
   TextStyle,
   ViewProps,
 } from 'react-native';
-import { ScrollEdgeEffect } from '../shared/types';
-import type { PlatformIcon, PlatformIconIOS } from '../../types';
+import type {
+  PlatformIcon,
+  PlatformIconIOS,
+  UserInterfaceStyle,
+  ScrollEdgeEffect,
+} from '../../types';
 
 export type EmptyObject = Record<string, never>;
 
@@ -56,11 +60,6 @@ export type BottomTabsSystemItem =
   | 'recents'
   | 'search'
   | 'topRated';
-
-export type BottomTabsScreenUserInterfaceStyle =
-  | 'unspecified'
-  | 'light'
-  | 'dark';
 
 // Currently iOS-only
 export type BottomTabsScreenOrientation =
@@ -523,10 +522,19 @@ export interface BottomTabsScreenProps {
    *
    * Please note that this prop is marked as **experimental** and might be subject to breaking changes or even removal.
    *
+   * The following values are currently supported:
+   * - `unspecified` - an unspecified interface style,
+   * - `light` - the light interface style,
+   * - `dark` - the dark interface style.
+   *
+   * The supported values correspond to the official UIKit documentation:
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle|UIUserInterfaceStyle}
+   *
    * @default unspecified
    * @platform ios
    */
-  experimental_overrideUserInterfaceStyle?: BottomTabsScreenUserInterfaceStyle;
+  experimental_userInterfaceStyle?: UserInterfaceStyle;
   // #endregion iOS-only appearance
 
   // #region Events
