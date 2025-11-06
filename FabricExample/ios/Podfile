@@ -5,6 +5,8 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+require_relative './scripts/rns_update_info_plist'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
@@ -33,5 +35,7 @@ target 'FabricExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    rns_update_info_plist
   end
 end
