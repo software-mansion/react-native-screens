@@ -307,10 +307,10 @@ class ScreenStackFragment :
             return null
         }
 
-        return if (enter) createEnterAnimator() else createExitAnimator()
+        return if (enter) createSheetEnterAnimator() else createExitAnimator()
     }
 
-    private fun createEnterAnimator(): Animator {
+    private fun createSheetEnterAnimator(): Animator {
         val animatorSet = AnimatorSet()
         val dimmingDelegate = requireDimmingDelegate()
 
