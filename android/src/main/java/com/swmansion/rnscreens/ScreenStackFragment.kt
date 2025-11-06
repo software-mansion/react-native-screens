@@ -336,7 +336,7 @@ class ScreenStackFragment :
         val dimmingDelegate = requireDimmingDelegate()
 
         val alphaAnimator = createDimmingViewAlphaAnimator(dimmingDelegate.dimmingView.alpha, 0f)
-        val slideAnimator = createSlideOutAnimator()
+        val slideAnimator = createSheetSlideOutAnimator()
 
         animatorSet.play(alphaAnimator).with(slideAnimator)
 
@@ -366,7 +366,7 @@ class ScreenStackFragment :
         }
     }
 
-    private fun createSlideOutAnimator(): ValueAnimator {
+    private fun createSheetSlideOutAnimator(): ValueAnimator {
         val endValue = (coordinatorLayout.bottom - screen.top - screen.translationY)
         return ValueAnimator.ofFloat(0f, endValue).apply {
             addUpdateListener {
