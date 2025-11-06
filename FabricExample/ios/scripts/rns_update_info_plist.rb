@@ -1,21 +1,15 @@
 require 'plist'
 require 'shellwords'
 
-def rns_update_info_plist
-  plist_path = File.expand_path('../FabricExample/Info.plist', __dir__)
+INFO_PLIST_PATH = File.expand_path('../FabricExample/Info.plist', __dir__)
 
-  unless File.exist?(plist_path)
-    puts "Info.plist not found at: #{plist_path}"
+def rns_add_scene_manifest_to_info_plist
+  unless File.exist?(INFO_PLIST_PATH)
+    puts "Info.plist not found at: #{INFO_PLIST_PATH}"
     return
   end
 
-  use_scene_delegate = ENV['RNS_USE_SCENE_DELEGATE'] == '1'
-
-  unless use_scene_delegate
-    return
-  end
-
-  plist = Plist.parse_xml(plist_path) || {}
+  plist = Plist.parse_xml(INFO_PLIST_PATH) || {}
 
   scene_manifest = {
     'UIApplicationSupportsMultipleScenes' => true,
@@ -31,9 +25,24 @@ def rns_update_info_plist
 
   plist['UIApplicationSceneManifest'] = scene_manifest
 
-  File.write(plist_path, plist.to_plist)
+  File.write(INFO_PLIST_PATH, plist.to_plist)
+  system("plutil -convert xml1 #{Shellwords.escape(INFO_PLIST_PATH)}")
+  puts "Added UIApplicationSceneManifest to Info.plist"
+end
 
-  system("plutil -convert xml1 #{Shellwords.escape(plist_path)}")
+def rns_remove_scene_manifest_from_info_plist
+  unless File.exist?(INFO_PLIST_PATH)
+    puts "Info.plist not found at: #{INFO_PLIST_PATH}"
+    return
+  end
 
-  puts "UIApplicationSceneManifest inserted into Info.plist."
+  plist = Plist.parse_xml(INFO_PLIST_PATH) || {}
+
+  if plist.delete('UIApplicationSceneManifest')
+    File.write(INFO_PLIST_PATH, plist.to_plist)
+    system("plutil -convert xml1 #{Shellwords.escape(INFO_PLIST_PATH)}")
+    puts "Removed UIApplicationSceneManifest from Info.plist"
+  else
+    puts "UIApplicationSceneManifest not present in Info.plist"
+  end
 end

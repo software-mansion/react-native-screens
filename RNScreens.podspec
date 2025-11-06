@@ -5,7 +5,6 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 gamma_project_enabled = ENV['RNS_GAMMA_ENABLED'] == '1'
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 debug_logging = ENV['RNS_DEBUG_LOGGING'] == '1'
-use_scene_delegate = ENV['RNS_USE_SCENE_DELEGATE'] == '1'
 
 source_files_exts = new_arch_enabled ? '{h,m,mm,cpp,swift}' : '{h,m,mm,swift}'
 source_files = ["ios/**/*.#{source_files_exts}"]
@@ -22,7 +21,6 @@ rnscreens_cpp_flags = []
 
 rnscreens_cpp_flags << "-DRNS_DEBUG_LOGGING=1" if debug_logging
 rnscreens_cpp_flags << "-DRNS_GAMMA_ENABLED=1" if gamma_project_enabled
-rnscreens_cpp_flags << "-DRNS_USE_SCENE_DELEGATE=1" if use_scene_delegate
 
 rnscreens_config  =  {
   'OTHER_CPLUSPLUSFLAGS' => rnscreens_cpp_flags.join(" ")
