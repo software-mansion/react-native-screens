@@ -128,7 +128,7 @@ class RNSScreenComponentDescriptor final
           Size{stateData.frameSize.width, stateData.frameSize.height});
     } else if (
         stateData.frameSize.width == 0 && stateData.frameSize.height == 0) {
-      //      layoutableShadowNode.setSize({YGUndefined, YGUndefined});
+      layoutableShadowNode.setSize({YGUndefined, YGUndefined});
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {

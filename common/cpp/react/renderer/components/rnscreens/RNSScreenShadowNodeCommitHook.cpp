@@ -86,21 +86,21 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
     for (auto screen : screens) {
       const auto rootShadowNodeClone = newRootShadowNode->cloneTree(
           screen->getFamily(), [](const ShadowNode &oldShadowNode) {
-            const auto &screenShadowNode =
-                dynamic_cast<const RNSScreenShadowNode &>(oldShadowNode);
-            const auto &oldStateData = dynamic_cast<const RNSScreenState &>(
-                screenShadowNode.getStateData());
-            auto newData = RNSScreenState(
-                {.width = 0.f, .height = 0.f}, oldStateData.contentOffset);
-            std::shared_ptr<const void> newDataPtr =
-                std::make_shared<const RNSScreenState>(newData);
-            auto newState = oldShadowNode.getComponentDescriptor().createState(
-                oldShadowNode.getFamily(), newDataPtr);
-            auto clone = oldShadowNode.clone({.state = newState});
+            //            const auto &screenShadowNode = dynamic_cast<const
+            //            RNSScreenShadowNode &>(oldShadowNode); const auto
+            //            &oldStateData = dynamic_cast<const
+            //            RNSScreenState&>(screenShadowNode.getStateData());
+            //            auto newData = RNSScreenState({.width = 0.f, .height =
+            //            0.f}, oldStateData.contentOffset);
+            //            std::shared_ptr<const void> newDataPtr =
+            //            std::make_shared<const RNSScreenState>(newData); auto
+            //            newState =
+            //            oldShadowNode.getComponentDescriptor().createState(oldShadowNode.getFamily(),
+            //            newDataPtr); auto clone =
+            //                oldShadowNode.clone({.state = newState });
 
-            //            auto clone =
-            //                oldShadowNode.clone({.state =
-            //                oldShadowNode.getState()});
+            auto clone =
+                oldShadowNode.clone({.state = oldShadowNode.getState()});
             __android_log_print(
                 ANDROID_LOG_DEBUG,
                 "SCREENS",
@@ -111,9 +111,7 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
             auto yogaNode =
                 static_pointer_cast<YogaLayoutableShadowNode>(clone);
 
-            //            screenNode->getStateDataMutable().frameSize = {0, 0};
-            // This should be now cleaned up in adopt, after I've added that
-            // "else if", however lets just make sure.
+            screenNode->getStateDataMutable().frameSize = {0, 0};
             yogaNode->setSize({YGUndefined, YGUndefined});
 
             return clone;
