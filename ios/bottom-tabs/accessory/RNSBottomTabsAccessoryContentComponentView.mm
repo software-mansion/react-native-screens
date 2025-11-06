@@ -38,7 +38,7 @@ namespace react = facebook::react;
     _accessoryView = accessoryView;
     [_accessoryView.helper setContentView:(self.window != nil ? self : nil) forEnvironment:_environment];
   } else {
-    [_accessoryView.helper setContentView:(self.window != nil ? self : nil) forEnvironment:_environment];
+    [_accessoryView.helper setContentView:nil forEnvironment:_environment];
     _accessoryView = nil;
   }
 }
