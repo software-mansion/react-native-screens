@@ -250,7 +250,13 @@ class SheetDelegate(
         }
     }
 
-    internal fun calculateSheetOffsetY(keyboardHeight: Int): Int {
+    // This function calculates the Y offset to which the FormSheet should animate
+    // when appearing (entering) or disappearing (exiting) with the on-screen keyboard (IME) present.
+    // Its purpose is to ensure the FormSheet does not exceed the top edge of the screen.
+    // It tries to display the FormSheet fully above the keyboard when there's enough space.
+    // Otherwise, it shifts the sheet as high as possible, even if it means part of its content
+    // will remain hidden behind the keyboard.
+    internal fun computeSheetOffsetYWithIMEPresent(keyboardHeight: Int): Int {
         val containerHeight = tryResolveContainerHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"

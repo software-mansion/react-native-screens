@@ -377,7 +377,7 @@ class ScreenStackFragment :
 
     private fun updateSheetTranslationY(baseTranslationY: Float) {
         val keyboardCorrection = lastKeyboardBottomOffset
-        val bottomOffset = sheetDelegate?.calculateSheetOffsetY(keyboardCorrection)?.toFloat() ?: 0f
+        val bottomOffset = sheetDelegate?.computeSheetOffsetYWithIMEPresent(keyboardCorrection)?.toFloat() ?: 0f
 
         screen.translationY = baseTranslationY - bottomOffset
     }
