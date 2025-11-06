@@ -1,13 +1,8 @@
 #include "RNSScreenShadowNodeCommitHook.h"
-#include <android/log.h>
 #include <react/fabric/FabricUIManagerBinding.h>
 #include <react/fabric/JFabricUIManager.h>
 #include <react/renderer/scheduler/Scheduler.h>
-#include <cstdio>
-#include <iostream>
-#include <sstream>
 #include <stack>
-#include <thread>
 
 namespace facebook {
 namespace react {
@@ -55,67 +50,20 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
   auto newRootProps =
       std::static_pointer_cast<const RootProps>(newRootShadowNode->getProps());
 
-  const bool wasHorizontal = isHorizontal_(oldRootProps);
-  const bool willBeHorizontal = isHorizontal_(newRootProps);
+  const bool wasHorizontal = isHorizontal(oldRootProps);
+  const bool willBeHorizontal = isHorizontal(newRootProps);
 
   const bool orientationDidChange = (wasHorizontal && !willBeHorizontal) ||
       (!wasHorizontal && willBeHorizontal);
 
-  // Convert threadId to string using stringstream
-  auto hash = std::hash<std::thread::id>{}(std::this_thread::get_id());
-
-  auto newRootSize =
-      newRootShadowNode->getConcreteProps().layoutConstraints.maximumSize;
-  std::vector<std::shared_ptr<const RNSScreenShadowNode>> screens;
-  __android_log_print(
-      ANDROID_LOG_DEBUG,
-      "SCREENS",
-      "Thread: %zu DFS start tree rev=%ld RSN w=%f h=%f",
-      hash,
-      (long)shadowTree.getCurrentRevision().number,
-      newRootSize.width,
-      newRootSize.height);
-  findScreenNodes(newRootShadowNode, screens);
-
   std::shared_ptr<ShadowNode> finalRootShadowNode = newRootShadowNode;
-  if (orientationDidChange ||
-      shadowTree.getCurrentRevision().number <= this->lastRotatedRevision_) {
-    //    this->lastRotatedRevision_ = shadowTree.getCurrentRevision().number +
-    //    1;
+  if (orientationDidChange) {
+    std::vector<std::shared_ptr<const RNSScreenShadowNode>> screens;
+    findScreenNodes(newRootShadowNode, screens);
 
     for (auto screen : screens) {
       const auto rootShadowNodeClone = newRootShadowNode->cloneTree(
-          screen->getFamily(), [](const ShadowNode &oldShadowNode) {
-            //            const auto &screenShadowNode = dynamic_cast<const
-            //            RNSScreenShadowNode &>(oldShadowNode); const auto
-            //            &oldStateData = dynamic_cast<const
-            //            RNSScreenState&>(screenShadowNode.getStateData());
-            //            auto newData = RNSScreenState({.width = 0.f, .height =
-            //            0.f}, oldStateData.contentOffset);
-            //            std::shared_ptr<const void> newDataPtr =
-            //            std::make_shared<const RNSScreenState>(newData); auto
-            //            newState =
-            //            oldShadowNode.getComponentDescriptor().createState(oldShadowNode.getFamily(),
-            //            newDataPtr); auto clone =
-            //                oldShadowNode.clone({.state = newState });
-
-            auto clone =
-                oldShadowNode.clone({.state = oldShadowNode.getState()});
-            __android_log_print(
-                ANDROID_LOG_DEBUG,
-                "SCREENS",
-                "[[Hook]] ^^^ cloned screen old rev=%d new rev=%d",
-                oldShadowNode.revision_,
-                clone->revision_);
-            auto screenNode = static_pointer_cast<RNSScreenShadowNode>(clone);
-            auto yogaNode =
-                static_pointer_cast<YogaLayoutableShadowNode>(clone);
-
-            screenNode->getStateDataMutable().frameSize = {0, 0};
-            yogaNode->setSize({YGUndefined, YGUndefined});
-
-            return clone;
-          });
+          screen->getFamily(), doCloneScreenShadowNodeWithSizeReset);
 
       if (rootShadowNodeClone) {
         finalRootShadowNode = rootShadowNodeClone;
@@ -127,9 +75,30 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
       finalRootShadowNode->ShadowNode::clone(ShadowNodeFragment{}));
 }
 
+/**
+ * Creates a new RNSScreenShadowNode with frameSize set to 0 to indicate that
+ * the node's layout needs to be recalculated. The state returned from
+ * `getStateDataMutable()` is a shared pointer to the state shared among the
+ * component's family. By updating the value that it points to, we effectively
+ * invalidate the size for all previous revisions of the ShadowNode that might
+ * come asynchronously. We then catch these cases in
+ * RNSScreenComponentDescriptor and force Yoga to recalculate the screen layout.
+ */
+std::shared_ptr<ShadowNode>
+RNSScreenShadowNodeCommitHook::doCloneScreenShadowNodeWithSizeReset(
+    const facebook::react::ShadowNode &oldShadowNode) {
+  auto clone = oldShadowNode.clone({.state = oldShadowNode.getState()});
+  auto screenNode = static_pointer_cast<RNSScreenShadowNode>(clone);
+
+  screenNode->getStateDataMutable().frameSize = {0, 0};
+
+  return clone;
+}
+
 void RNSScreenShadowNodeCommitHook::findScreenNodes(
     const std::shared_ptr<const ShadowNode> &rootShadowNode,
-    std::vector<std::shared_ptr<const RNSScreenShadowNode>> &screenNodes) {
+    std::vector<std::shared_ptr<const RNSScreenShadowNode>> &screenNodes)
+    const {
   std::stack<std::shared_ptr<const ShadowNode>> shadowNodesToVisit;
   shadowNodesToVisit.emplace(rootShadowNode);
 
@@ -141,20 +110,8 @@ void RNSScreenShadowNodeCommitHook::findScreenNodes(
       if (std::strcmp(node->getComponentName(), "RNSScreen") == 0) {
         screenNodes.push_back(
             std::dynamic_pointer_cast<const RNSScreenShadowNode>(node));
-        auto frame =
-            ((RNSScreenShadowNode *)node.get())->getLayoutMetrics().frame;
-        auto frameSize =
-            ((RNSScreenShadowNode *)node.get())->getStateData().frameSize;
-        __android_log_print(
-            ANDROID_LOG_DEBUG,
-            "SCREENS",
-            "[[Hook]] Screen rev=%d frameSize w=%f h=%f frame w=%f h=%f",
-            node->revision_,
-            frameSize.width,
-            frameSize.height,
-            frame.size.width,
-            frame.size.height);
       }
+
       shadowNodesToVisit.emplace(child);
     }
   }

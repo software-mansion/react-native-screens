@@ -11,11 +11,7 @@
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include <react/renderer/uimanager/UIManager.h>
 #include <react/renderer/uimanager/UIManagerCommitHook.h>
-#include <memory>
 #include "RNSScreenShadowNode.h"
-#include "YGLSN.h"
-
-#include <thread>
 
 namespace facebook {
 namespace react {
@@ -50,28 +46,6 @@ class RNSScreenComponentDescriptor final
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
             shadowNode.getState());
     auto stateData = state->getData();
-
-    auto frame = screenShadowNode.getLayoutMetrics().frame;
-    auto frameSize = screenShadowNode.getStateData().frameSize;
-    auto yogaStyle =
-        reinterpret_cast<YGLSN *>(&layoutableShadowNode)->yogaNode_.style();
-    //    yogaStyle.dimension(yoga::Dimension::Width);
-
-    auto hash = std::hash<std::thread::id>{}(std::this_thread::get_id());
-    __android_log_print(
-        ANDROID_LOG_DEBUG,
-        "SCREENS",
-        "[[Adopt at %zu]] Screen rev=%d frameSize w=%f h=%f frame w=%f h=%f Yoga size w=%f h=%f",
-        hash,
-        shadowNode.revision_,
-        frameSize.width,
-        frameSize.height,
-        frame.size.width,
-        frame.size.height,
-        yogaStyle.dimension(yoga::Dimension::Width).value().unwrapOrDefault(-1),
-        yogaStyle.dimension(yoga::Dimension::Height)
-            .value()
-            .unwrapOrDefault(-1));
 
 #ifdef ANDROID
     if (!commitHook_) {
@@ -116,18 +90,17 @@ class RNSScreenComponentDescriptor final
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameOriginCorrection);
 
-      __android_log_print(
-          ANDROID_LOG_DEBUG,
-          "SCREENS",
-          "[[Adopt]] Screen rev=%d setSize w=%f h=%f",
-          layoutableShadowNode.revision_,
-          stateData.frameSize.width,
-          stateData.frameSize.height);
-
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     } else if (
         stateData.frameSize.width == 0 && stateData.frameSize.height == 0) {
+      // The state ends up here in two cases:
+      // 1. application starts
+      // 2. screen orientation has changed and the ShadowNodes that follow
+      // should have their layout recalculated - this includes the ShadowNode
+      // whose commit hook has detected the change, and all the older instances
+      // that came asynchronously (see
+      // RNSScreenShadowNodeCommitHook::doCloneScreenShadowNodeWithSizeReset)
       layoutableShadowNode.setSize({YGUndefined, YGUndefined});
     }
 #else

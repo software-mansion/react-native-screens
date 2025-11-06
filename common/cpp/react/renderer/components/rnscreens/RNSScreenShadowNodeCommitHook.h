@@ -29,13 +29,16 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
 
  private:
   std::shared_ptr<const ContextContainer> contextContainer_;
-  ShadowTreeRevision::Number lastRotatedRevision_ = 0;
 
   void findScreenNodes(
       const std::shared_ptr<const ShadowNode> &rootShadowNode,
-      std::vector<std::shared_ptr<const RNSScreenShadowNode>> &screenNodes);
+      std::vector<std::shared_ptr<const RNSScreenShadowNode>> &screenNodes)
+      const;
 
-  inline bool isHorizontal_(std::weak_ptr<const RootProps> props) {
+  static std::shared_ptr<ShadowNode> doCloneScreenShadowNodeWithSizeReset(
+      const ShadowNode &oldShadowNode);
+
+  inline bool isHorizontal(std::weak_ptr<const RootProps> props) const {
     auto layoutConstraints = props.lock().get()->layoutConstraints;
     const float width = layoutConstraints.maximumSize.width;
     const float height = layoutConstraints.maximumSize.height;
