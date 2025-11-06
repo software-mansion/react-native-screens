@@ -362,7 +362,7 @@ class ScreenStackFragment :
         val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
 
         return ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
-            addUpdateListener { updateScreenTranslation(it.animatedValue as Float) }
+            addUpdateListener { updateSheetTranslationY(it.animatedValue as Float) }
         }
     }
 
@@ -370,12 +370,12 @@ class ScreenStackFragment :
         val endValue = (coordinatorLayout.bottom - screen.top - screen.translationY)
         return ValueAnimator.ofFloat(0f, endValue).apply {
             addUpdateListener {
-                updateScreenTranslation(it.animatedValue as Float)
+                updateSheetTranslationY(it.animatedValue as Float)
             }
         }
     }
 
-    private fun updateScreenTranslation(baseTranslationY: Float) {
+    private fun updateSheetTranslationY(baseTranslationY: Float) {
         val keyboardCorrection = lastKeyboardBottomOffset ?: 0
         val bottomOffset = sheetDelegate?.calculateSheetOffsetY(keyboardCorrection)?.toFloat() ?: 0f
 
@@ -417,13 +417,13 @@ class ScreenStackFragment :
         lastKeyboardBottomOffset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
         // Prioritize enter/exit animations over direct keyboard inset reactions.
         // We store the latest keyboard offset in `lastKeyboardBottomOffset`
-        // so that it can always be respected when applying translations in `updateScreenTranslation`.
+        // so that it can always be respected when applying translations in `updateSheetTranslationY`.
         //
         // This approach allows screen translation to be triggered from two sources, but without messing them together:
         // - During enter/exit animations, while accounting for the keyboard height.
         // - While interacting with a TextInput inside the bottom sheet, to handle keyboard show/hide events.
         if (!isSheetAnimatinInProgress) {
-            updateScreenTranslation(0f)
+            updateSheetTranslationY(0f)
         }
     }
 
