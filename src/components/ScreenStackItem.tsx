@@ -185,7 +185,7 @@ export default React.forwardRef(ScreenStackItem);
 
 function getPositioningStyle(
   allowedDetents: ScreenProps['sheetAllowedDetents'],
-  presentation?: StackPresentationTypes,
+  presentation: StackPresentationTypes,
 ) {
   const isIOS = Platform.OS === 'ios';
 
