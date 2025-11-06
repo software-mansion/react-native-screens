@@ -1,45 +1,49 @@
-import ReactAppDependencyProvider
-import React_RCTAppDelegate
-import UIKit
+#if !RNS_USE_SCENE_DELEGATE
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-  var window: UIWindow?
-  var reactNativeDelegate: ReactNativeDelegate?
-  var reactNativeFactory: RCTReactNativeFactory?
+  import ReactAppDependencyProvider
+  import React_RCTAppDelegate
+  import UIKit
 
-  func scene(
-    _ scene: UIScene, willConnectTo session: UISceneSession,
-    options connectionOptions: UIScene.ConnectionOptions
-  ) {
-    guard let scene = (scene as? UIWindowScene) else { return }
+  class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    var window: UIWindow?
+    var reactNativeDelegate: ReactNativeDelegate?
+    var reactNativeFactory: RCTReactNativeFactory?
 
-    let delegate = ReactNativeDelegate()
-    let factory = RCTReactNativeFactory(delegate: delegate)
-    delegate.dependencyProvider = RCTAppDependencyProvider()
+    func scene(
+      _ scene: UIScene, willConnectTo session: UISceneSession,
+      options connectionOptions: UIScene.ConnectionOptions
+    ) {
+      guard let scene = (scene as? UIWindowScene) else { return }
 
-    reactNativeDelegate = delegate
-    reactNativeFactory = factory
+      let delegate = ReactNativeDelegate()
+      let factory = RCTReactNativeFactory(delegate: delegate)
+      delegate.dependencyProvider = RCTAppDependencyProvider()
 
-    window = UIWindow(windowScene: scene)
+      reactNativeDelegate = delegate
+      reactNativeFactory = factory
 
-    factory.startReactNative(
-      withModuleName: "FabricExample",
-      in: window
-    )
+      window = UIWindow(windowScene: scene)
+
+      factory.startReactNative(
+        withModuleName: "FabricExample",
+        in: window
+      )
+    }
+
+    func sceneDidDisconnect(_ scene: UIScene) {
+    }
+
+    func sceneDidBecomeActive(_ scene: UIScene) {
+    }
+
+    func sceneWillResignActive(_ scene: UIScene) {
+    }
+
+    func sceneWillEnterForeground(_ scene: UIScene) {
+    }
+
+    func sceneDidEnterBackground(_ scene: UIScene) {
+    }
   }
 
-  func sceneDidDisconnect(_ scene: UIScene) {
-  }
-
-  func sceneDidBecomeActive(_ scene: UIScene) {
-  }
-
-  func sceneWillResignActive(_ scene: UIScene) {
-  }
-
-  func sceneWillEnterForeground(_ scene: UIScene) {
-  }
-
-  func sceneDidEnterBackground(_ scene: UIScene) {
-  }
-}
+#endif  // !RNS_USE_SCENE_DELEGATE

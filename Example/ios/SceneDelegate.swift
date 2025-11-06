@@ -1,3 +1,5 @@
+#if !RNS_USE_SCENE_DELEGATE
+
 import ReactAppDependencyProvider
 import React_RCTAppDelegate
 import UIKit
@@ -43,3 +45,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   func sceneDidEnterBackground(_ scene: UIScene) {
   }
 }
+
+#endif // !RNS_USE_SCENE_DELEGATE
