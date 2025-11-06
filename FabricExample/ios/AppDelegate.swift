@@ -1,4 +1,4 @@
-#if RNS_USE_SCENE_DELEGATE
+#if !RNS_USE_SCENE_DELEGATE
 
   import ReactAppDependencyProvider
   import React_RCTAppDelegate
@@ -72,4 +72,4 @@
 
   }
 
-#endif  // RNS_USE_SCENE_DELEGATE
+#endif  // !RNS_USE_SCENE_DELEGATE
