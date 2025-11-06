@@ -25,7 +25,7 @@ type MainProps = {
 
 const Stack = createNativeStackNavigator();
 
-const Main = ({ navigation }: MainProps) => {
+function Main({ navigation }: MainProps) {
   return (
     <View style={{ flex: 1 }}>
       <Button
@@ -72,7 +72,7 @@ const formSheetBaseOptions: NativeStackNavigationOptions = {
   headerShown: false,
 };
 
-const FormSheetBase = ({ autoFocus = false }: { autoFocus?: boolean }) => {
+function FormSheetBase({ autoFocus = false }: { autoFocus?: boolean }) {
   return (
     <View>
       <TextInput
@@ -88,7 +88,9 @@ const FormSheetBase = ({ autoFocus = false }: { autoFocus?: boolean }) => {
   );
 };
 
-const FormSheetWithAutoFocus = () => <FormSheetBase autoFocus />;
+function FormSheetWithAutoFocus() {
+  return <FormSheetBase autoFocus />;
+} 
 
 export default function App() {
   return (
