@@ -314,7 +314,7 @@ class ScreenStackFragment :
         val animatorSet = AnimatorSet()
         val dimmingDelegate = requireDimmingDelegate()
 
-        val alphaAnimator = createAlphaAnimator(0f, dimmingDelegate.maxAlpha)
+        val alphaAnimator = createDimmingViewAlphaAnimator(0f, dimmingDelegate.maxAlpha)
         val slideAnimator = createSlideInAnimator()
 
         animatorSet
@@ -335,7 +335,7 @@ class ScreenStackFragment :
         val animatorSet = AnimatorSet()
         val dimmingDelegate = requireDimmingDelegate()
 
-        val alphaAnimator = createAlphaAnimator(dimmingDelegate.dimmingView.alpha, 0f)
+        val alphaAnimator = createDimmingViewAlphaAnimator(dimmingDelegate.dimmingView.alpha, 0f)
         val slideAnimator = createSlideOutAnimator()
 
         animatorSet.play(alphaAnimator).with(slideAnimator)
@@ -345,7 +345,7 @@ class ScreenStackFragment :
         return animatorSet
     }
 
-    private fun createAlphaAnimator(
+    private fun createDimmingViewAlphaAnimator(
         from: Float,
         to: Float,
     ): ValueAnimator =
