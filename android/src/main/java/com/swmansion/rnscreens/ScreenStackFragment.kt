@@ -66,7 +66,7 @@ class ScreenStackFragment :
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
-    private var fadeAnimationRunning = false
+    private var isSheetAnimatinInProgress = false
 
     private var lastKeyboardBottomOffset: Int? = null
 
@@ -402,12 +402,12 @@ class ScreenStackFragment :
             object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {
                     super.onAnimationStart(animation)
-                    fadeAnimationRunning = true
+                    isSheetAnimatinInProgress = true
                 }
 
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    fadeAnimationRunning = false
+                    isSheetAnimatinInProgress = false
                 }
             },
         )
@@ -422,7 +422,7 @@ class ScreenStackFragment :
         // This approach allows screen translation to be triggered from two sources, but without messing them together:
         // - During enter/exit animations, while accounting for the keyboard height.
         // - While interacting with a TextInput inside the bottom sheet, to handle keyboard show/hide events.
-        if (!fadeAnimationRunning) {
+        if (!isSheetAnimatinInProgress) {
             updateScreenTranslation(0f)
         }
     }
