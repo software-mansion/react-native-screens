@@ -64,7 +64,7 @@ function Main({ navigation }: MainProps) {
       />
     </View>
   );
-};
+}
 
 const formSheetBaseOptions: NativeStackNavigationOptions = {
   presentation: 'formSheet',
@@ -86,11 +86,11 @@ function FormSheetBase({ autoFocus = false }: { autoFocus?: boolean }) {
       />
     </View>
   );
-};
+}
 
 function FormSheetWithAutoFocus() {
   return <FormSheetBase autoFocus />;
-} 
+}
 
 export default function App() {
   return (
