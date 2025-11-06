@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.bottomsheet
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -176,7 +175,7 @@ class SheetDelegate(
             }
 
             is KeyboardVisible -> {
-                val isBottomKeyboardVisible = keyboardState.height != 0
+                val isOnScreenKeyboardVisible = keyboardState.height != 0
 
                 when (screen.sheetDetents.count()) {
                     1 ->
@@ -186,7 +185,7 @@ class SheetDelegate(
 
                     2 ->
                         behavior.apply {
-                            if (isBottomKeyboardVisible) {
+                            if (isOnScreenKeyboardVisible) {
                                 useTwoDetents(
                                     state = BottomSheetBehavior.STATE_EXPANDED,
                                 )
@@ -198,7 +197,7 @@ class SheetDelegate(
 
                     3 ->
                         behavior.apply {
-                            if (isBottomKeyboardVisible) {
+                            if (isOnScreenKeyboardVisible) {
                                 useThreeDetents(
                                     state = BottomSheetBehavior.STATE_EXPANDED,
                                 )
@@ -302,7 +301,6 @@ class SheetDelegate(
         if (isImeVisible) {
             isKeyboardVisible = true
             keyboardState = KeyboardVisible(imeInset.bottom)
-            Log.d("tomaboro", "ime inset bottom ${imeInset.bottom}")
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
