@@ -315,7 +315,7 @@ class ScreenStackFragment :
         val dimmingDelegate = requireDimmingDelegate()
 
         val alphaAnimator = createDimmingViewAlphaAnimator(0f, dimmingDelegate.maxAlpha)
-        val slideAnimator = createSlideInAnimator()
+        val slideAnimator = createSheetSlideInAnimator()
 
         animatorSet
             .play(slideAnimator)
@@ -357,7 +357,7 @@ class ScreenStackFragment :
             }
         }
 
-    private fun createSlideInAnimator(): ValueAnimator {
+    private fun createSheetSlideInAnimator(): ValueAnimator {
         val startValueCallback = { _: Number? -> screen.height.toFloat() }
         val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
 
