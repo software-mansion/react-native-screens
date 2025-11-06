@@ -2,7 +2,7 @@
 #import "RNSBottomTabsHostComponentView.h"
 #import "RNSReactBaseView.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
 #import "RNSViewControllerInvalidating.h"
 #else
 #import <React/RCTBridge.h>
@@ -18,11 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 @interface RNSBottomTabsAccessoryComponentView : RNSReactBaseView <
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
                                                      RNSViewControllerInvalidating
-#else
+#else // RCT_NEW_ARCH_ENABLED
                                                      RCTInvalidating
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
                                                      >
 
 #if !RCT_NEW_ARCH_ENABLED
