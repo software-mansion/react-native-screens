@@ -1,5 +1,4 @@
 import React
-import ReactAppDependencyProvider
 import React_RCTAppDelegate
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
