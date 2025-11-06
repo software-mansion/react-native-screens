@@ -68,7 +68,7 @@ class ScreenStackFragment :
 
     private var isSheetAnimatinInProgress = false
 
-    private var lastKeyboardBottomOffset: Int? = null
+    private var lastKeyboardBottomOffset: Int = 0
 
     private lateinit var coordinatorLayout: ScreensCoordinatorLayout
 
@@ -376,7 +376,7 @@ class ScreenStackFragment :
     }
 
     private fun updateSheetTranslationY(baseTranslationY: Float) {
-        val keyboardCorrection = lastKeyboardBottomOffset ?: 0
+        val keyboardCorrection = lastKeyboardBottomOffset
         val bottomOffset = sheetDelegate?.calculateSheetOffsetY(keyboardCorrection)?.toFloat() ?: 0f
 
         screen.translationY = baseTranslationY - bottomOffset
