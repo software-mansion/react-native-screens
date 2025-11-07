@@ -152,7 +152,7 @@ class SheetDelegate(
                                         }
                                     }
                                 } else {
-                                    (screen.sheetDetents.first() * containerHeight).toInt()
+                                    (screen.sheetDetents[0] * containerHeight).toInt()
                                 }
                             useSingleDetent(maxAllowedHeight = height)
                         }
@@ -165,7 +165,7 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
                         )
 
                     3 ->
@@ -176,8 +176,8 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
                             halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            maxAllowedHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
 
@@ -247,7 +247,7 @@ class SheetDelegate(
                                         }
                                     }
                                 } else {
-                                    (screen.sheetDetents.last() * containerHeight).toInt()
+                                    (screen.sheetDetents[0] * containerHeight).toInt()
                                 }
                             useSingleDetent(maxAllowedHeight = height, forceExpandedState = false)
                         }
@@ -255,14 +255,14 @@ class SheetDelegate(
                     2 ->
                         behavior.useTwoDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
                         )
 
                     3 ->
                         behavior.useThreeDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            maxAllowedHeight = (screen.sheetDetents.last() * containerHeight).toInt(),
                             halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            maxAllowedHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
 
