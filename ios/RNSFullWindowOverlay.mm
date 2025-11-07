@@ -114,13 +114,6 @@
   _accessibilityContainerViewIsModal = YES;
   _reactFrame = CGRectNull;
   _container = self.container;
-
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(applicationDidBecomeActive:)
-                                               name:UIApplicationDidBecomeActiveNotification
-                                             object:nil];
-
-  [self show];
 }
 
 - (void)dealloc
@@ -149,12 +142,6 @@
   return _container;
 }
 
-- (void)show
-{
-  UIWindow *window = RCTKeyWindow();
-  [window addSubview:_container];
-}
-
 - (void)didMoveToSuperview
 {
   if (self.superview == nil) {
@@ -177,25 +164,24 @@
   }
 }
 
-- (void)applicationDidBecomeActive:(NSNotification *)notification
+- (void)didMoveToWindow
 {
-  if (_container.superview == nil) {
-    [self show];
+  // Detaching FullWindowOverlay is handled by `didMoveToSuperview`
+  if (self.window != nil) {
+    [self maybeShow];
+  }
+}
+
+- (void)maybeShow
+{
+  UIWindow *window = [self window];
+  if (![[window subviews] containsObject:self]) {
+    [window addSubview:_container];
   }
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric Specific
-
-// When the component unmounts we remove it from window's children,
-// so when the component gets recycled we need to add it back.
-- (void)maybeShow
-{
-  UIWindow *window = RCTKeyWindow();
-  if (![[window subviews] containsObject:self]) {
-    [window addSubview:_container];
-  }
-}
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
@@ -214,11 +200,6 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  // When the component unmounts we remove it from window's children,
-  // so when the component gets recycled we need to add it back.
-  // As for now it is called here as we lack of method that is called
-  // just before component gets restored (from recycle pool).
-  [self maybeShow];
   [self addSubview:childComponentView];
 }
 
