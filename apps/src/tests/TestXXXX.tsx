@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import { StyleSheet, View, Button, Text } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 
 export default function App() {
@@ -7,8 +7,13 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Button title="Show" onPress={() => setModalShown(true)} />
+      <Button
+        title="Show Delayed"
+        onPress={() => setTimeout(() => setModalShown(true), 2000)}
+      />
       <Button title="Reset" onPress={() => setModalShown(false)} />
       {modalShown && <MyModal onHide={() => setModalShown(false)} />}
+      <Text>modal shown: {String(modalShown)}</Text>
     </View>
   );
 }
