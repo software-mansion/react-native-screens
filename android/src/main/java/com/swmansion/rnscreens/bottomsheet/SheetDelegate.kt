@@ -421,7 +421,11 @@ class SheetDelegate(
         return animatorSet
     }
 
-    private fun createDimmingViewAlphaAnimator(from: Float, to: Float, dimmingDelegate: DimmingViewManager): ValueAnimator =
+    private fun createDimmingViewAlphaAnimator(
+        from: Float,
+        to: Float,
+        dimmingDelegate: DimmingViewManager,
+    ): ValueAnimator =
         ValueAnimator.ofFloat(from, to).apply {
             addUpdateListener { animator ->
                 (animator.animatedValue as? Float)?.let {
@@ -470,7 +474,11 @@ class SheetDelegate(
         }
     }
 
-    private fun attachCommonListeners(animatorSet: AnimatorSet, isEnter: Boolean, screenStackFragment: ScreenStackFragment) {
+    private fun attachCommonListeners(
+        animatorSet: AnimatorSet,
+        isEnter: Boolean,
+        screenStackFragment: ScreenStackFragment,
+    ) {
         animatorSet.addListener(
             ScreenAnimationDelegate(
                 screenStackFragment,
@@ -483,15 +491,17 @@ class SheetDelegate(
             ),
         )
 
-        animatorSet.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator) {
-                isSheetAnimationInProgress = true
-            }
+        animatorSet.addListener(
+            object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    isSheetAnimationInProgress = true
+                }
 
-            override fun onAnimationEnd(animation: Animator) {
-                isSheetAnimationInProgress = false
-            }
-        })
+                override fun onAnimationEnd(animation: Animator) {
+                    isSheetAnimationInProgress = false
+                }
+            },
+        )
     }
 
     private inner class KeyboardHandler : BottomSheetBehavior.BottomSheetCallback() {
@@ -544,7 +554,7 @@ class SheetDelegate(
         val fragment: ScreenStackFragment,
         val screen: Screen,
         val coordinatorLayout: CoordinatorLayout,
-        val dimmingDelegate: DimmingViewManager
+        val dimmingDelegate: DimmingViewManager,
     )
 
     companion object {
