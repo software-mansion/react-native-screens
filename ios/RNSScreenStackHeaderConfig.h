@@ -127,6 +127,16 @@ NS_ASSUME_NONNULL_END
 
 @end
 
+#pragma mark - Experimental
+
+@interface RNSScreenStackHeaderConfig ()
+
+@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
+
+@end
+
+#pragma mark - View Manager
+
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
 
 @end
@@ -134,6 +144,7 @@ NS_ASSUME_NONNULL_END
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
 
+#pragma mark - Legacy Shadow View
 /**
  * Used as local data send to shadow view on Paper. This helps us to provide Yoga
  * with knowledge of native insets in the navigation bar.
@@ -154,6 +165,8 @@ NS_ASSUME_NONNULL_END
 
 @end
 #endif
+
+#pragma mark - RCTConvert
 
 @interface RCTConvert (RNSScreenStackHeader)
 

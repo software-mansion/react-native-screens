@@ -770,6 +770,20 @@ A flag to that lets you opt out of insetting the header. You may want to set thi
 
 When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.
 
+### `experimental_userInterfaceStyle` (iOS only)
+
+Allows to override system appearance for the navigation bar. Does not support dynamic changes to the prop value for the currently visible screen. The default value is `unspecified`.
+
+Please note that this prop is marked as **experimental** and might be subject to breaking changes or even removal.
+
+The following values are currently supported:
+
+- `unspecified` - an unspecified interface style,
+- `light` - the light interface style,
+- `dark` - the dark interface style.
+
+The supported values correspond to the official UIKit documentation: https://developer.apple.com/documentation/uikit/uiuserinterfacestyle.
+
 # Guide for native component authors
 
 If you are adding a new native component to be used from the React Native app, you may want it to respond to navigation lifecycle events.
