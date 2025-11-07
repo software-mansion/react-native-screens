@@ -166,7 +166,10 @@
 
 - (void)didMoveToWindow
 {
-  [self maybeShow];
+  // Detaching FullWindowOverlay is handled by `didMoveToSuperview`
+  if (self.window != nil) {
+    [self maybeShow];
+  }
 }
 
 - (void)maybeShow
