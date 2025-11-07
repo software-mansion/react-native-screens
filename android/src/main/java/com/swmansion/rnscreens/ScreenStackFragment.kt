@@ -28,7 +28,6 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
-import com.swmansion.rnscreens.bottomsheet.SheetAnimationDelegate
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -73,8 +72,6 @@ class ScreenStackFragment :
     private var dimmingDelegate: DimmingViewManager? = null
 
     internal var sheetDelegate: SheetDelegate? = null
-
-    private var sheetAnimationDelegate: SheetAnimationDelegate? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -232,8 +229,6 @@ class ScreenStackFragment :
             dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
             dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
-            val sheetAnimationDelegate = requireSheetAnimationDelegate(sheetDelegate, dimmingDelegate)
-
             // Pre-layout the content for the sake of enter transition.
 
             val container = screen.container!!
@@ -245,7 +240,7 @@ class ScreenStackFragment :
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 ViewCompat.setOnApplyWindowInsetsListener(screen) { _, windowInsets ->
-                    sheetAnimationDelegate.handleKeyboardInsetsProgress(windowInsets)
+                    sheetDelegate.handleKeyboardInsetsProgress(windowInsets)
                     windowInsets
                 }
             }
@@ -264,7 +259,7 @@ class ScreenStackFragment :
                         // On API 30+, we handle keyboard inset animation progress here.
                         // On lower APIs, we rely on ViewCompat.setOnApplyWindowInsetsListener instead.
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            sheetAnimationDelegate.handleKeyboardInsetsProgress(insets)
+                            sheetDelegate.handleKeyboardInsetsProgress(insets)
                         }
                         return insets
                     }
@@ -308,17 +303,31 @@ class ScreenStackFragment :
     private fun createSheetEnterAnimator(): Animator {
         val sheetDelegate = requireSheetDelegate()
         val dimmingDelegate = requireDimmingDelegate()
-        val sheetAnimationDelegate = requireSheetAnimationDelegate(sheetDelegate, dimmingDelegate)
 
-        return sheetAnimationDelegate.createSheetEnterAnimator()
+        val sheetAnimationData =
+            SheetDelegate.SheetAnimationContext(
+                this,
+                this.screen,
+                this.coordinatorLayout,
+                dimmingDelegate,
+            )
+
+        return sheetDelegate.createSheetEnterAnimator(sheetAnimationData)
     }
 
     private fun createSheetExitAnimator(): Animator {
         val sheetDelegate = requireSheetDelegate()
         val dimmingDelegate = requireDimmingDelegate()
-        val sheetAnimationDelegate = requireSheetAnimationDelegate(sheetDelegate, dimmingDelegate)
 
-        return sheetAnimationDelegate.createSheetExitAnimator()
+        val sheetAnimationData =
+            SheetDelegate.SheetAnimationContext(
+                this,
+                this.screen,
+                this.coordinatorLayout,
+                dimmingDelegate,
+            )
+
+        return sheetDelegate.createSheetExitAnimator(sheetAnimationData)
     }
 
     private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
@@ -461,15 +470,5 @@ class ScreenStackFragment :
             sheetDelegate = SheetDelegate(screen)
         }
         return sheetDelegate!!
-    }
-
-    private fun requireSheetAnimationDelegate(
-        sheetDelegate: SheetDelegate,
-        dimmingDelegate: DimmingViewManager,
-    ): SheetAnimationDelegate {
-        if (sheetAnimationDelegate == null) {
-            sheetAnimationDelegate = SheetAnimationDelegate(this, screen, coordinatorLayout, sheetDelegate, dimmingDelegate)
-        }
-        return sheetAnimationDelegate!!
     }
 }
