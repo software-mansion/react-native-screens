@@ -5,7 +5,15 @@ import type {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { Button, Platform, Text, View, ViewStyle } from 'react-native';
+import {
+  Button,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+  ViewStyle,
+} from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 import { Spacer } from '../shared';
 import Colors from '../shared/styling/Colors';
@@ -21,6 +29,14 @@ type StackParamList = {
   FormSheetWithThreeDetents: undefined;
   FormSheetWithMaxDetent: undefined;
   FormSheetOverStatusBar: undefined;
+  FormSheetWithFitToContentsWithTextInput: undefined;
+  FormSheetWithSmallDetentWithTextInput: undefined;
+  FormSheetWithMediumDetentWithTextInput: undefined;
+  FormSheetWithLargeDetentWithTextInput: undefined;
+  FormSheetWithTwoDetentsWithTextInput: undefined;
+  FormSheetWithThreeDetentsWithTextInput: undefined;
+  FormSheetWithMaxDetentWithTextInput: undefined;
+  FormSheetOverStatusBarWithTextInput: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -43,16 +59,27 @@ const EXAMPLES = [
   ['3 detents', 'FormSheetWithThreeDetents'],
   ['Max detent', 'FormSheetWithMaxDetent'],
   ['Partially covered status bar', 'FormSheetOverStatusBar'],
+  ['Fit to contents (TextInput)', 'FormSheetWithFitToContentsWithTextInput'],
+  ['1 small detent (TextInput)', 'FormSheetWithSmallDetentWithTextInput'],
+  ['1 medium detent (TextInput)', 'FormSheetWithMediumDetentWithTextInput'],
+  ['1 large detent (TextInput)', 'FormSheetWithLargeDetentWithTextInput'],
+  ['2 detents (TextInput)', 'FormSheetWithTwoDetentsWithTextInput'],
+  ['3 detents (TextInput)', 'FormSheetWithThreeDetentsWithTextInput'],
+  ['Max detent (TextInput)', 'FormSheetWithMaxDetentWithTextInput'],
+  [
+    'Partially covered status bar (TextInput)',
+    'FormSheetOverStatusBarWithTextInput',
+  ],
 ];
 
-const Main = ({
+function Main({
   navigation,
   useSafeArea,
   edges,
   toggleSafeArea,
   toggleTopEdge,
   toggleBottomEdge,
-}: MainProps) => {
+}: MainProps) {
   return (
     <View style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 20, marginVertical: 4 }}>
@@ -79,17 +106,21 @@ const Main = ({
           backgroundColor: 'black',
         }}
       />
-      {EXAMPLES.map(([title, screen]) => (
-        <View key={screen} style={{ marginVertical: 4 }}>
-          <Button
-            title={title}
-            onPress={() => navigation.navigate(screen as keyof StackParamList)}
-          />
-        </View>
-      ))}
+      <ScrollView>
+        {EXAMPLES.map(([title, screen]) => (
+          <View key={screen} style={{ marginVertical: 4 }}>
+            <Button
+              title={title}
+              onPress={() =>
+                navigation.navigate(screen as keyof StackParamList)
+              }
+            />
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
-};
+}
 
 const formSheetBaseOptions: NativeStackNavigationOptions = {
   presentation: 'formSheet',
@@ -100,33 +131,71 @@ const formSheetBaseOptions: NativeStackNavigationOptions = {
   },
 };
 
-const PressableBase = () => (
-  <PressableWithFeedback>
-    <View
-      style={{
-        alignItems: 'center',
-        height: 40,
-        justifyContent: 'center',
-      }}>
-      <Text>Pressable</Text>
+function PressableBase() {
+  return (
+    <PressableWithFeedback>
+      <View
+        style={{
+          alignItems: 'center',
+          height: 40,
+          justifyContent: 'center',
+        }}>
+        <Text>Pressable</Text>
+      </View>
+    </PressableWithFeedback>
+  );
+}
+
+function FormSheetBase() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'space-between' }}>
+      <PressableBase />
+      <PressableBase />
     </View>
-  </PressableWithFeedback>
-);
+  );
+}
 
-const FormSheetBase = () => (
-  <View style={{ flex: 1, justifyContent: 'space-between' }}>
-    <PressableBase />
-    <PressableBase />
-  </View>
-);
+function FormSheetNoFlex() {
+  return (
+    <View>
+      <PressableBase />
+      <Spacer space={100} />
+      <PressableBase />
+    </View>
+  );
+}
 
-const FormSheetNoFlex = () => (
-  <View>
-    <PressableBase />
-    <Spacer space={100} />
-    <PressableBase />
-  </View>
-);
+function FormSheetTextInput() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'space-between' }}>
+      <TextInput
+        style={{
+          borderWidth: 1,
+          borderColor: 'black',
+          padding: 10,
+          borderRadius: 10,
+        }}
+      />
+    </View>
+  );
+}
+
+function FormSheetTextInputNoFlex() {
+  return (
+    <View>
+      <Spacer space={100} />
+      <TextInput
+        style={{
+          borderWidth: 1,
+          borderColor: 'black',
+          padding: 10,
+          borderRadius: 10,
+        }}
+      />
+      <Spacer space={100} />
+    </View>
+  );
+}
 
 const withOptionalSafeArea =
   (
@@ -266,6 +335,105 @@ export default function App() {
           name="FormSheetOverStatusBar"
           component={withOptionalSafeArea(
             FormSheetBase,
+            useSafeArea,
+            safeAreaEdges,
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [0.99],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetWithFitToContentsWithTextInput"
+          component={withOptionalSafeArea(
+            FormSheetTextInputNoFlex,
+            useSafeArea,
+            safeAreaEdges,
+            {
+              flex: 0,
+            },
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: 'fitToContents',
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetWithSmallDetentWithTextInput"
+          component={withOptionalSafeArea(
+            FormSheetTextInput,
+            useSafeArea,
+            safeAreaEdges,
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [0.2],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetWithMediumDetentWithTextInput"
+          component={withOptionalSafeArea(
+            FormSheetTextInput,
+            useSafeArea,
+            safeAreaEdges,
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [0.5],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetWithLargeDetentWithTextInput"
+          component={withOptionalSafeArea(
+            FormSheetTextInput,
+            useSafeArea,
+            safeAreaEdges,
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [0.8],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetWithTwoDetentsWithTextInput"
+          component={withOptionalSafeArea(
+            FormSheetTextInput,
+            useSafeArea,
+            safeAreaEdges,
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [0.3, 0.6],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetWithThreeDetentsWithTextInput"
+          component={withOptionalSafeArea(
+            FormSheetTextInput,
+            useSafeArea,
+            safeAreaEdges,
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [0.3, 0.6, 0.9],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetWithMaxDetentWithTextInput"
+          component={withOptionalSafeArea(
+            FormSheetTextInput,
+            useSafeArea,
+            safeAreaEdges,
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [1.0],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetOverStatusBarWithTextInput"
+          component={withOptionalSafeArea(
+            FormSheetTextInput,
             useSafeArea,
             safeAreaEdges,
           )}
