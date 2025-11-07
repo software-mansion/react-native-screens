@@ -383,11 +383,11 @@ class SheetDelegate(
 
     // Sheet entering/exiting animations
 
-    internal fun createSheetEnterAnimator(sheetAnimationData: SheetAnimationContext): Animator {
+    internal fun createSheetEnterAnimator(sheetAnimationContext: SheetAnimationContext): Animator {
         val animatorSet = AnimatorSet()
 
-        val dimmingDelegate = sheetAnimationData.dimmingDelegate
-        val screenStackFragment = sheetAnimationData.fragment
+        val dimmingDelegate = sheetAnimationContext.dimmingDelegate
+        val screenStackFragment = sheetAnimationContext.fragment
 
         val alphaAnimator = createDimmingViewAlphaAnimator(0f, dimmingDelegate.maxAlpha, dimmingDelegate)
         val slideAnimator = createSheetSlideInAnimator()
@@ -403,12 +403,12 @@ class SheetDelegate(
         return animatorSet
     }
 
-    internal fun createSheetExitAnimator(sheetAnimationData: SheetAnimationContext): Animator {
+    internal fun createSheetExitAnimator(sheetAnimationContext: SheetAnimationContext): Animator {
         val animatorSet = AnimatorSet()
 
-        val coordinatorLayout = sheetAnimationData.coordinatorLayout
-        val dimmingDelegate = sheetAnimationData.dimmingDelegate
-        val screenStackFragment = sheetAnimationData.fragment
+        val coordinatorLayout = sheetAnimationContext.coordinatorLayout
+        val dimmingDelegate = sheetAnimationContext.dimmingDelegate
+        val screenStackFragment = sheetAnimationContext.fragment
 
         val alphaAnimator =
             createDimmingViewAlphaAnimator(dimmingDelegate.dimmingView.alpha, 0f, dimmingDelegate)

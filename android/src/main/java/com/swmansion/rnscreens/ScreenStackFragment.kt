@@ -304,7 +304,7 @@ class ScreenStackFragment :
         val sheetDelegate = requireSheetDelegate()
         val dimmingDelegate = requireDimmingDelegate()
 
-        val sheetAnimationData =
+        val sheetAnimationContext =
             SheetDelegate.SheetAnimationContext(
                 this,
                 this.screen,
@@ -312,14 +312,14 @@ class ScreenStackFragment :
                 dimmingDelegate,
             )
 
-        return sheetDelegate.createSheetEnterAnimator(sheetAnimationData)
+        return sheetDelegate.createSheetEnterAnimator(sheetAnimationContext)
     }
 
     private fun createSheetExitAnimator(): Animator {
         val sheetDelegate = requireSheetDelegate()
         val dimmingDelegate = requireDimmingDelegate()
 
-        val sheetAnimationData =
+        val sheetAnimationContext =
             SheetDelegate.SheetAnimationContext(
                 this,
                 this.screen,
@@ -327,7 +327,7 @@ class ScreenStackFragment :
                 dimmingDelegate,
             )
 
-        return sheetDelegate.createSheetExitAnimator(sheetAnimationData)
+        return sheetDelegate.createSheetExitAnimator(sheetAnimationContext)
     }
 
     private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
