@@ -13,7 +13,7 @@ def rns_set_swift_active_compilation_flag(project_path:, flag:)
     end
 
     config.build_settings[key] = flags_list.uniq.join(' ')
-    puts "Added #{flag} for '#{config.name}':"
+    puts "Added #{flag} for '#{config.name}'"
   end
 
   app_project.save
