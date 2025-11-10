@@ -132,7 +132,7 @@ namespace react = facebook::react;
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-  [self notifyFrameUpdate];
+  [self notifyWrapperViewFrameHasChanged];
 }
 
 - (UIView *)nativeWrapperView
@@ -143,7 +143,7 @@ namespace react = facebook::react;
   return _bottomAccessoryView.superview.superview;
 }
 
-- (void)notifyFrameUpdate
+- (void)notifyWrapperViewFrameHasChanged
 {
 #if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
   // Make sure that bottom accessory's size is sent to ShadowNode as soon as possible.
