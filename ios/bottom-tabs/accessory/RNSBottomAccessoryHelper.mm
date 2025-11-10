@@ -15,7 +15,7 @@
 namespace react = facebook::react;
 
 @implementation RNSBottomAccessoryHelper {
-  RNSBottomTabsAccessoryComponentView *_bottomAccessoryView;
+  RNSBottomTabsAccessoryComponentView *__weak _bottomAccessoryView;
 
 #if RCT_NEW_ARCH_ENABLED
   react::RNSBottomTabsAccessoryShadowNode::ConcreteState::Shared _state;
