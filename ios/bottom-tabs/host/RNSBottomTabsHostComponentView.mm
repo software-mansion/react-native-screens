@@ -26,6 +26,14 @@
 
 namespace react = facebook::react;
 
+#pragma mark - Modified React Subviews extension
+
+@interface RNSBottomTabsHostComponentView ()
+
+@property (nonatomic, readonly) BOOL hasModifiedReactSubviewsInCurrentTransaction;
+
+@end
+
 #pragma mark - View implementation
 
 @interface RNSBottomTabsHostComponentView ()
@@ -382,7 +390,7 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  if (_hasModifiedTabsScreensInCurrentTransaction || _hasModifiedBottomAccessoryInCurrentTransation) {
+  if (self.hasModifiedReactSubviewsInCurrentTransaction) {
     [self updateContainer];
   }
   [_controller reactMountingTransactionDidMount];
@@ -534,6 +542,17 @@ RNS_IGNORE_SUPER_CALL_END
 - (nullable RCTImageLoader *)reactImageLoader
 {
   return _imageLoader;
+}
+
+@end
+
+#pragma mark - Modified React Subviews implementation
+
+@implementation RNSBottomTabsHostComponentView (ModifiedReactSubviews)
+
+- (BOOL)hasModifiedReactSubviewsInCurrentTransaction
+{
+  return _hasModifiedTabsScreensInCurrentTransaction || _hasModifiedBottomAccessoryInCurrentTransation;
 }
 
 @end
