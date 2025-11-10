@@ -260,14 +260,12 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [self validateAndHandleReactSubview:childComponentView shouldMount:YES];
-  [_reactSubviews insertObject:childComponentView atIndex:index];
+  [self validateAndHandleReactSubview:childComponentView atIndex:index shouldMount:YES];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [self validateAndHandleReactSubview:childComponentView shouldMount:NO];
-  [_reactSubviews removeObject:childComponentView];
+  [self validateAndHandleReactSubview:childComponentView atIndex:index shouldMount:NO];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -404,15 +402,14 @@ namespace react = facebook::react;
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
 {
   [super insertReactSubview:subview atIndex:index];
-  [self validateAndHandleReactSubview:subview shouldMount:YES];
-  [_reactSubviews insertObject:subview atIndex:index];
+  [self validateAndHandleReactSubview:subview atIndex:index shouldMount:YES];
 }
 
 - (void)removeReactSubview:(UIView *)subview
 {
   [super removeReactSubview:subview];
-  [self validateAndHandleReactSubview:subview shouldMount:NO];
-  [_reactSubviews removeObject:subview];
+  // index is not used for unmount
+  [self validateAndHandleReactSubview:subview atIndex:-1 shouldMount:NO];
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -513,7 +510,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Common
 
-- (void)validateAndHandleReactSubview:(UIView *)subview shouldMount:(BOOL)mount
+- (void)validateAndHandleReactSubview:(UIView *)subview atIndex:(NSInteger)index shouldMount:(BOOL)mount
 {
   BOOL isBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
   BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
@@ -534,6 +531,12 @@ RNS_IGNORE_SUPER_CALL_END
     auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(subview);
     bottomAccessory.bottomTabsHostView = mount ? self : nil;
     _hasModifiedBottomAccessoryInCurrentTransation = YES;
+  }
+
+  if (mount) {
+    [_reactSubviews insertObject:subview atIndex:index];
+  } else {
+    [_reactSubviews removeObject:subview];
   }
 }
 
