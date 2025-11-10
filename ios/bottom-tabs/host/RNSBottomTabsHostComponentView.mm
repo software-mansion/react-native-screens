@@ -260,13 +260,13 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [self validateAndHandleReactSubview:childComponentView didMount:YES];
+  [self validateAndHandleReactSubview:childComponentView shouldMount:YES];
   [_reactSubviews insertObject:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [self validateAndHandleReactSubview:childComponentView didMount:NO];
+  [self validateAndHandleReactSubview:childComponentView shouldMount:NO];
   [_reactSubviews removeObject:childComponentView];
 }
 
@@ -513,7 +513,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Common
 
-- (void)validateAndHandleReactSubview:(UIView *)subview didMount:(BOOL)mount
+- (void)validateAndHandleReactSubview:(UIView *)subview shouldMount:(BOOL)mount
 {
   BOOL isBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
   BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
