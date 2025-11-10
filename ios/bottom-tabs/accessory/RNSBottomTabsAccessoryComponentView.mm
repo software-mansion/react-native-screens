@@ -20,9 +20,11 @@ namespace react = facebook::react;
   RNSBottomTabsAccessoryEventEmitter *_Nonnull _reactEventEmitter;
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   RNSBottomTabsHostComponentView *__weak _Nullable _bottomTabsHostView;
-#if !RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
+  react::RNSBottomTabsAccessoryShadowNode::ConcreteState::Shared _state;
+#else // RCT_NEW_ARCH_ENABLED
   __weak RCTBridge *_bridge;
-#endif // !RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -89,10 +91,7 @@ namespace react = facebook::react;
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
 {
   [super updateState:state oldState:oldState];
-
-  if (@available(iOS 26, *)) {
-    [_helper updateState:state oldState:oldState];
-  }
+  _state = std::static_pointer_cast<const react::RNSBottomTabsAccessoryComponentDescriptor::ConcreteState>(state);
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -118,16 +117,16 @@ namespace react = facebook::react;
   return NO;
 }
 
+- (facebook::react::RNSBottomTabsAccessoryShadowNode::ConcreteState::Shared)state
+{
+  return _state;
+}
+
 #pragma mark - RNSViewControllerInvalidating
 
 - (void)invalidateController
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-  [_helper invalidate];
-  _helper = nil;
-#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-  return;
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  [self invalidateImpl];
 }
 
 - (BOOL)shouldInvalidateOnMutation:(const facebook::react::ShadowViewMutation &)mutation
@@ -153,15 +152,22 @@ namespace react = facebook::react;
 
 - (void)invalidate
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-  [_helper invalidate];
-  _helper = nil;
-#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-  return;
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  [self invalidateImpl];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+- (void)invalidateImpl
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  [_helper invalidate];
+  _helper = nil;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if RCT_NEW_ARCH_ENABLED
+  _state.reset();
+#endif // RCT_NEW_ARCH_ENABLED
+}
 
 #pragma mark - React events
 

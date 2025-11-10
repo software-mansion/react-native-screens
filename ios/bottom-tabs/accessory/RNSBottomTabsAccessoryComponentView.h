@@ -9,6 +9,10 @@
 #import <React/RCTInvalidating.h>
 #endif
 
+#if RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
+#import <rnscreens/RNSBottomTabsAccessoryComponentDescriptor.h>
+#endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
+
 NS_ASSUME_NONNULL_BEGIN
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
@@ -68,5 +72,17 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#pragma mark - Hidden from Swift
+
+#if RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
+
+@interface RNSBottomTabsAccessoryComponentView ()
+
+- (facebook::react::RNSBottomTabsAccessoryShadowNode::ConcreteState::Shared)state;
+
+@end
+
+#endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END

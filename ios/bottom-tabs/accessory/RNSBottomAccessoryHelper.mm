@@ -17,10 +17,6 @@ namespace react = facebook::react;
 @implementation RNSBottomAccessoryHelper {
   RNSBottomTabsAccessoryComponentView *__weak _bottomAccessoryView;
 
-#if RCT_NEW_ARCH_ENABLED
-  react::RNSBottomTabsAccessoryShadowNode::ConcreteState::Shared _state;
-#endif // RCT_NEW_ARCH_ENABLED
-
 #if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
   BOOL _initialStateUpdateSent;
   CADisplayLink *_displayLink;
@@ -204,10 +200,10 @@ namespace react = facebook::react;
 {
   if (!CGRectEqualToRect(frame, _previousFrame)) {
 #if RCT_NEW_ARCH_ENABLED
-    if (_state != nullptr) {
+    if (_bottomAccessoryView.state != nullptr) {
       auto newState =
           react::RNSBottomTabsAccessoryState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-      _state->updateState(
+      _bottomAccessoryView.state->updateState(
           std::move(newState)
 #if REACT_NATIVE_VERSION_MINOR >= 82
               ,
@@ -222,15 +218,6 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
   }
 }
-
-#if RCT_NEW_ARCH_ENABLED
-
-- (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
-{
-  _state = std::static_pointer_cast<const react::RNSBottomTabsAccessoryShadowNode::ConcreteState>(state);
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)invalidate
 {

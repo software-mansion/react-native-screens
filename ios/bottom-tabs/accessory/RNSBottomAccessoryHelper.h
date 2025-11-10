@@ -66,18 +66,6 @@ API_AVAILABLE(ios(26.0))
 
 #endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
 
-#pragma mark - Hidden from Swift
-
-#if RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
-
-@interface RNSBottomAccessoryHelper ()
-
-- (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState;
-
-@end
-
-#endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
-
 NS_ASSUME_NONNULL_END
 
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
