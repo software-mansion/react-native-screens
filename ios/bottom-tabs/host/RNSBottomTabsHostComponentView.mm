@@ -165,6 +165,10 @@ namespace react = facebook::react;
     } else if ([childView isKindOfClass:[RNSBottomTabsAccessoryComponentView class]]) {
       RCTAssert(bottomAccessory == nil, @"[RNScreens] There can only be one child RNSBottomTabsAccessoryComponentView");
       bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childView);
+    } else {
+      RCTLogError(
+          @"[RNScreens] BottomTabs only accepts children of type BottomTabScreen and BottomTabsAccessory. Detected %@ instead.",
+          childView);
     }
   }
 
@@ -510,7 +514,7 @@ RNS_IGNORE_SUPER_CALL_END
       @"%@",
       [NSString
           stringWithFormat:
-              @"BottomTabsView only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to %@ %@",
+              @"BottomTabs only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to %@ %@",
               mount ? @"mount" : @"unmount",
               subview]);
 
