@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 #if BOTTOM_ACCESSORY_AVAILABLE
 
 @class RNSBottomAccessoryHelper;
+@class RNSBottomTabsAccessoryShadowStateProxy;
 
 #endif // BOTTOM_ACCESSORY_AVAILABLE
 
@@ -40,9 +41,15 @@ NS_ASSUME_NONNULL_BEGIN
 #if BOTTOM_ACCESSORY_AVAILABLE
 
 /**
- * If not null, the bottom accesory's helper that handles synchronization with ShadowNode.
+ * If not null, the bottom accesory's helper that handles accessory size and environment changes.
+ * It also manages *content view switching workaround* for RN >= 0.82.
  */
 @property (nonatomic, strong, readonly, nullable) RNSBottomAccessoryHelper *helper;
+
+/**
+ * If not null, the bottom accesory's shadow state proxy that handles communication with ShadowTree.
+ */
+@property (nonatomic, strong, readonly, nullable) RNSBottomTabsAccessoryShadowStateProxy *shadowStateProxy;
 
 #endif // BOTTOM_ACCESSORY_AVAILABLE
 

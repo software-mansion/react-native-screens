@@ -9,18 +9,11 @@
 #import "RNSBottomTabsAccessoryContentComponentView.h"
 #import "RNSEnums.h"
 
-#if defined(__cplusplus)
-#include <cxxreact/ReactNativeVersion.h>
-#import <react/renderer/core/State.h>
-
-namespace react = facebook::react;
-#endif // defined(__cplusplus)
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @class RNSBottomAccessoryHelper
- * @brief Class responsible for state synchronization between Host and ShadowTree for
+ * @brief Class responsible for managing accessory size and environment changes for
  * RNSBottomTabsAccessoryComponentView.
  */
 API_AVAILABLE(ios(26.0))
@@ -62,6 +55,10 @@ API_AVAILABLE(ios(26.0))
 - (void)setContentView:(nullable RNSBottomTabsAccessoryContentComponentView *)contentView
         forEnvironment:(RNSBottomTabsAccessoryEnvironment)environment;
 
+/**
+ * If `contentView` is set for both environments, sets opacity according to current tab accessory `environent`.
+ * Otherwise, it is a no-op.
+ */
 - (void)handleContentViewVisibilityForEnvironmentIfNeeded;
 
 @end

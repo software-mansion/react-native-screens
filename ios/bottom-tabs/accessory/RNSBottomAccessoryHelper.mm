@@ -1,18 +1,12 @@
 #import "RNSBottomAccessoryHelper.h"
+#import "RNSBottomTabsAccessoryShadowStateProxy.h"
 
 #define BOTTOM_ACCESSORY_AVAILABLE RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 #if BOTTOM_ACCESSORY_AVAILABLE
 
 #import <React/RCTAssert.h>
-#import <React/RCTConversions.h>
 #include <cxxreact/ReactNativeVersion.h>
-
-#if RCT_NEW_ARCH_ENABLED
-#import <rnscreens/RNSBottomTabsAccessoryShadowNode.h>
-#else // RCT_NEW_ARCH_ENABLED
-#import <React/RCTUIManager.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 namespace react = facebook::react;
 
@@ -27,7 +21,6 @@ namespace react = facebook::react;
   RNSBottomTabsAccessoryContentComponentView *__weak _inlineContentView;
 #endif // REACT_NATIVE_VERSION_MINOR < 82
 
-  CGRect _previousFrame;
   id<UITraitChangeRegistration> _traitChangeRegistration;
 }
 
@@ -51,7 +44,6 @@ namespace react = facebook::react;
   _regularContentView = nil;
   _inlineContentView = nil;
 #endif // REACT_NATIVE_VERSION_MINOR < 82
-  _previousFrame = CGRectZero;
 }
 
 #pragma mark - Content view switching workaround
@@ -149,17 +141,17 @@ namespace react = facebook::react;
   // We want the enable the display link as well so that it takes over later with correct origin.
   if (!_initialStateUpdateSent) {
     CGRect frame = CGRectMake(0, 0, self.nativeWrapperView.frame.size.width, self.nativeWrapperView.frame.size.height);
-    [self updateShadowStateWithFrame:frame];
+    [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:frame];
     _initialStateUpdateSent = YES;
   }
 
-  if (_displayLink == nil && !CGRectEqualToRect(_previousFrame, self.nativeWrapperView.frame)) {
+  if (_displayLink == nil) {
     [self setupDisplayLink];
   }
 #else // REACT_NATIVE_VERSION_MINOR < 82
   // We use self.nativeWrapperView because it has both the size and the origin
   // that we want to send to the ShadowNode.
-  [self updateShadowStateWithFrame:self.nativeWrapperView.frame];
+  [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:self.nativeWrapperView.frame];
 #endif // REACT_NATIVE_VERSION_MINOR < 82
 }
 
@@ -179,7 +171,7 @@ namespace react = facebook::react;
     return;
   }
 
-  [self updateShadowStateWithFrame:presentationFrame];
+  [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:presentationFrame];
 
   // self.nativeWrapperView.frame is set to final value at the beginning of the transition.
   // When frame from presentation layer matches self.nativeWrapperView.frame, it indicates that
@@ -196,30 +188,7 @@ namespace react = facebook::react;
 }
 #endif // REACT_NATIVE_VERSION_MINOR < 82
 
-#pragma mark - Synchronization with ShadowNode
-
-- (void)updateShadowStateWithFrame:(CGRect)frame
-{
-  if (!CGRectEqualToRect(frame, _previousFrame)) {
-#if RCT_NEW_ARCH_ENABLED
-    if (_bottomAccessoryView.state != nullptr) {
-      auto newState =
-          react::RNSBottomTabsAccessoryState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-      _bottomAccessoryView.state->updateState(
-          std::move(newState)
-#if REACT_NATIVE_VERSION_MINOR >= 82
-              ,
-          facebook::react::EventQueue::UpdateMode::unstable_Immediate
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
-      );
-      _previousFrame = frame;
-    }
-#else // RCT_NEW_ARCH_ENABLED
-    [_bottomAccessoryView.bridge.uiManager setSize:frame.size forView:_bottomAccessoryView];
-    _previousFrame = frame;
-#endif // RCT_NEW_ARCH_ENABLED
-  }
-}
+#pragma mark - Invalidation
 
 - (void)invalidate
 {
@@ -229,7 +198,6 @@ namespace react = facebook::react;
   // If we're called from didMoveToWindow, it's not a problem, but I'm not sure if this will always be the case.
   [_bottomAccessoryView.superview.superview removeObserver:self forKeyPath:@"center"];
   _bottomAccessoryView = nil;
-  _previousFrame = CGRectZero;
 #if REACT_NATIVE_VERSION_MINOR < 82
   [self invalidateDisplayLink];
 #else // REACT_NATIVE_VERSION_MINOR < 82

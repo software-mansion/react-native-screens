@@ -1,5 +1,6 @@
 #import "RNSBottomTabsAccessoryComponentView.h"
 #import "RNSBottomAccessoryHelper.h"
+#import "RNSBottomTabsAccessoryShadowStateProxy.h"
 
 #define BOTTOM_ACCESSORY_AVAILABLE RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
@@ -18,6 +19,7 @@ namespace react = facebook::react;
 @implementation RNSBottomTabsAccessoryComponentView {
 #if BOTTOM_ACCESSORY_AVAILABLE
   RNSBottomAccessoryHelper *_helper API_AVAILABLE(ios(26.0));
+  RNSBottomTabsAccessoryShadowStateProxy *_shadowStateProxy API_AVAILABLE(ios(26.0));
   RNSBottomTabsAccessoryEventEmitter *_Nonnull _reactEventEmitter;
 #endif // BOTTOM_ACCESSORY_AVAILABLE
   RNSBottomTabsHostComponentView *__weak _Nullable _bottomTabsHostView;
@@ -58,6 +60,7 @@ namespace react = facebook::react;
 #if BOTTOM_ACCESSORY_AVAILABLE
   if (@available(iOS 26, *)) {
     _helper = [[RNSBottomAccessoryHelper alloc] initWithBottomAccessoryView:self];
+    _shadowStateProxy = [[RNSBottomTabsAccessoryShadowStateProxy alloc] initWithBottomAccessoryView:self];
     _reactEventEmitter = [RNSBottomTabsAccessoryEventEmitter new];
   }
 #endif // BOTTOM_ACCESSORY_AVAILABLE
@@ -163,6 +166,9 @@ namespace react = facebook::react;
 #if BOTTOM_ACCESSORY_AVAILABLE
   [_helper invalidate];
   _helper = nil;
+
+  [_shadowStateProxy invalidate];
+  _shadowStateProxy = nil;
 #endif // BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED
