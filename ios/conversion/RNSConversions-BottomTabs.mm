@@ -469,4 +469,20 @@ NSString *RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvi
 
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
+UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
+    react::RNSBottomTabsScreenUserInterfaceStyle userInterfaceStyle)
+{
+  using enum facebook::react::RNSBottomTabsScreenUserInterfaceStyle;
+  switch (userInterfaceStyle) {
+    case Unspecified:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported user interface style");
+  }
+}
+
 }; // namespace rnscreens::conversion

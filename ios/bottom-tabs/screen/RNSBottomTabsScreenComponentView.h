@@ -91,6 +91,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - Experimental
+
+@interface RNSBottomTabsScreenComponentView ()
+
+@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
+
+@end
+
 #pragma mark - Events
 
 @interface RNSBottomTabsScreenComponentView ()

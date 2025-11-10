@@ -52,6 +52,9 @@ namespace react = facebook::react;
 + (RNSOptionalBoolean)RNSOptionalBooleanFromRNSSearchBarHideNavigationBar:
     (react::RNSSearchBarHideNavigationBar)hideNavigationBar;
 
++ (UIUserInterfaceStyle)UIUserInterfaceStyleFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigUserInterfaceStyle)userInterfaceStyle;
+
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
 
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;

@@ -93,6 +93,9 @@ NSString *_Nullable RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAcc
 
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
+UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
+    react::RNSBottomTabsScreenUserInterfaceStyle userInterfaceStyle);
+
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
     RNSBottomTabsIconType iconType);
