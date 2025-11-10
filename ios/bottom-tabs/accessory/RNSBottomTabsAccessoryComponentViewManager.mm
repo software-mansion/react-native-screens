@@ -3,15 +3,12 @@
 #if !RCT_NEW_ARCH_ENABLED
 #import <React/RCTImageLoader.h>
 #import "RNSBottomTabsAccessoryComponentView.h"
-#endif
 
 @implementation RNSBottomTabsAccessoryComponentViewManager
 
-// TODO: This seems to be legacy arch only - test & remove when no longer needed
+// TODO: This is legacy arch only - remove when no longer needed
 
 RCT_EXPORT_MODULE(RNSBottomTabsAccessoryManager)
-
-#if !RCT_NEW_ARCH_ENABLED
 
 - (UIView *)view
 {
@@ -23,6 +20,6 @@ RCT_EXPORT_MODULE(RNSBottomTabsAccessoryManager)
 
 RCT_EXPORT_VIEW_PROPERTY(onEnvironmentChange, RCTDirectEventBlock);
 
-#endif // !RCT_NEW_ARCH_ENABLED
-
 @end
+
+#endif // !RCT_NEW_ARCH_ENABLED

@@ -14,8 +14,8 @@ namespace react = facebook::react;
 @implementation RNSBottomTabsAccessoryContentComponentView {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION && REACT_NATIVE_VERSION_MINOR >= 82
   RNSBottomTabsAccessoryComponentView *__weak _Nullable _accessoryView;
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION && \
-          REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION && REACT_NATIVE_VERSION_MINOR >=
+       // 82
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -41,8 +41,8 @@ namespace react = facebook::react;
   }
 }
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION && \
-          REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION && REACT_NATIVE_VERSION_MINOR >=
+       // 82
 
 #if RCT_NEW_ARCH_ENABLED
 
