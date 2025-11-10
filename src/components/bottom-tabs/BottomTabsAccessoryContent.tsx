@@ -13,17 +13,7 @@ export default function BottomTabsAccessoryContent(
     <BottomTabsAccessoryContentNativeComponent
       {...props}
       collapsable={false}
-      style={[props.style, styles.container]}
+      style={[props.style, StyleSheet.absoluteFill]}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-  },
-});
