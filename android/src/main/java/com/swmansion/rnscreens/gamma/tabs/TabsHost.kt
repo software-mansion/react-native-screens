@@ -324,8 +324,10 @@ class TabsHost(
 
         appearanceCoordinator.updateTabAppearance(this)
 
-        bottomNavigationView.selectedItemId =
-            checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
+        val selectedItemId = checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
+        if (selectedItemId != bottomNavigationView.selectedItemId) {
+            bottomNavigationView.selectedItemId = selectedItemId
+        }
 
         post {
             refreshLayout()
