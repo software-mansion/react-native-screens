@@ -1,8 +1,9 @@
 #import "RNSBottomTabsAccessoryComponentView.h"
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-
 #import "RNSBottomAccessoryHelper.h"
+
+#define BOTTOM_ACCESSORY_AVAILABLE RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED
 #import <rnscreens/RNSBottomTabsAccessoryComponentDescriptor.h>
@@ -10,15 +11,15 @@
 
 namespace react = facebook::react;
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 #pragma mark - View implementation
 
 @implementation RNSBottomTabsAccessoryComponentView {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
   RNSBottomAccessoryHelper *_helper API_AVAILABLE(ios(26.0));
   RNSBottomTabsAccessoryEventEmitter *_Nonnull _reactEventEmitter;
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
   RNSBottomTabsHostComponentView *__weak _Nullable _bottomTabsHostView;
 #if RCT_NEW_ARCH_ENABLED
   react::RNSBottomTabsAccessoryShadowNode::ConcreteState::Shared _state;
@@ -54,18 +55,18 @@ namespace react = facebook::react;
 
 - (void)initState
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
   if (@available(iOS 26, *)) {
     _helper = [[RNSBottomAccessoryHelper alloc] initWithBottomAccessoryView:self];
     _reactEventEmitter = [RNSBottomTabsAccessoryEventEmitter new];
   }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
   _bottomTabsHostView = nil;
 }
 
 #pragma mark - UIKit callbacks
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 - (void)didMoveToWindow
 {
@@ -80,13 +81,13 @@ namespace react = facebook::react;
   }
 }
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTViewComponentViewProtocol
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
 {
@@ -108,7 +109,7 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSBottomTabsAccessoryComponentDescriptor>();
 }
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 + (BOOL)shouldBeRecycled
 {
@@ -139,14 +140,14 @@ namespace react = facebook::react;
 
 #pragma mark - LEGACY architecture implementation
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 - (void)setOnEnvironmentChange:(RCTDirectEventBlock)onEnvironmentChange
 {
   [self.reactEventEmitter setOnEnvironmentChange:onEnvironmentChange];
 }
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 #pragma mark - RCTInvalidating
 
@@ -159,10 +160,10 @@ namespace react = facebook::react;
 
 - (void)invalidateImpl
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
   [_helper invalidate];
   _helper = nil;
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED
   _state.reset();
@@ -171,7 +172,7 @@ namespace react = facebook::react;
 
 #pragma mark - React events
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 - (nonnull RNSBottomTabsAccessoryEventEmitter *)reactEventEmitter
 {
@@ -179,7 +180,7 @@ namespace react = facebook::react;
   return _reactEventEmitter;
 }
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 @end
 
@@ -192,3 +193,5 @@ Class<RCTComponentViewProtocol> RNSBottomTabsAccessoryCls(void)
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#undef BOTTOM_ACCESSORY_AVAILABLE

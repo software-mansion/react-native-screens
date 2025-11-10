@@ -13,13 +13,15 @@
 #import <rnscreens/RNSBottomTabsAccessoryComponentDescriptor.h>
 #endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 
+#define BOTTOM_ACCESSORY_AVAILABLE RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 NS_ASSUME_NONNULL_BEGIN
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 @class RNSBottomAccessoryHelper;
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 @interface RNSBottomTabsAccessoryComponentView : RNSReactBaseView <
 #if RCT_NEW_ARCH_ENABLED
@@ -35,14 +37,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, readonly, nullable) RCTBridge *bridge;
 #endif // !RCT_NEW_ARCH_ENABLED
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 /**
  * If not null, the bottom accesory's helper that handles synchronization with ShadowNode.
  */
 @property (nonatomic, strong, readonly, nullable) RNSBottomAccessoryHelper *helper;
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 /**
  * If not null, the bottom tabs host view that this accessory component view belongs to.
@@ -53,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - React Events
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 @interface RNSBottomTabsAccessoryComponentView ()
 
@@ -71,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
 
 #pragma mark - Hidden from Swift
 
@@ -86,3 +88,5 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
+
+#undef BOTTOM_ACCESSORY_AVAILABLE

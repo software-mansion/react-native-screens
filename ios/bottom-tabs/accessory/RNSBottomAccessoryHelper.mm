@@ -1,6 +1,8 @@
 #import "RNSBottomAccessoryHelper.h"
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#define BOTTOM_ACCESSORY_AVAILABLE RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if BOTTOM_ACCESSORY_AVAILABLE
 
 #import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
@@ -238,4 +240,6 @@ namespace react = facebook::react;
 
 @end
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // BOTTOM_ACCESSORY_AVAILABLE
+
+#undef BOTTOM_ACCESSORY_AVAILABLE
