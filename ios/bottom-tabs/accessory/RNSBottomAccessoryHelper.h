@@ -41,10 +41,10 @@ API_AVAILABLE(ios(26.0))
 
 #pragma mark - Content view switching workaround
 
-#if RCT_NEW_ARCH_ENABLED && defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
+#if defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
 
 /**
- * Due to *synchonous* events not being actually *synchronous*, we are unable to handle layout modifications
+ * Due to *synchronous* events not being actually *synchronous*, we are unable to handle layout modifications
  * in reaction to environment change (e.g. subviews being mounted/unmounted; changes to size/origin are synchronous
  * thanks to synchronous state updates and work correctly).
  * In order to mitigate this, we introduced a workaround approach: 2 views are rendered all the time on top of each
@@ -64,7 +64,7 @@ API_AVAILABLE(ios(26.0))
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
 
 NS_ASSUME_NONNULL_END
 

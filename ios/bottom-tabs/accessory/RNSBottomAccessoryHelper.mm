@@ -17,13 +17,13 @@ namespace react = facebook::react;
 @implementation RNSBottomAccessoryHelper {
   RNSBottomTabsAccessoryComponentView *__weak _bottomAccessoryView;
 
-#if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#if REACT_NATIVE_VERSION_MINOR < 82
   BOOL _initialStateUpdateSent;
   CADisplayLink *_displayLink;
-#else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#else // REACT_NATIVE_VERSION_MINOR < 82
   RNSBottomTabsAccessoryContentComponentView *__weak _regularContentView;
   RNSBottomTabsAccessoryContentComponentView *__weak _inlineContentView;
-#endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#endif // REACT_NATIVE_VERSION_MINOR < 82
 
   CGRect _previousFrame;
   id<UITraitChangeRegistration> _traitChangeRegistration;
@@ -42,19 +42,19 @@ namespace react = facebook::react;
 
 - (void)initState
 {
-#if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#if REACT_NATIVE_VERSION_MINOR < 82
   _initialStateUpdateSent = NO;
   _displayLink = nil;
-#else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#else // REACT_NATIVE_VERSION_MINOR < 82
   _regularContentView = nil;
   _inlineContentView = nil;
-#endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#endif // REACT_NATIVE_VERSION_MINOR < 82
   _previousFrame = CGRectZero;
 }
 
 #pragma mark - Content view switching workaround
 
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+#if REACT_NATIVE_VERSION_MINOR >= 82
 
 - (BOOL)isContentViewSwitchingWorkaroundActive
 {
@@ -98,7 +98,7 @@ namespace react = facebook::react;
   }
 }
 
-#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
 
 #pragma mark - Observing environment changes
 
@@ -110,9 +110,9 @@ namespace react = facebook::react;
                     UITabAccessoryEnvironment environment =
                         self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment;
                     [self->_bottomAccessoryView.reactEventEmitter emitOnEnvironmentChangeIfNeeded:environment];
-#if RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+#if REACT_NATIVE_VERSION_MINOR >= 82
                     [self handleContentViewVisibilityForEnvironmentIfNeeded];
-#endif // RCT_NEW_ARCH_ENABLED && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
                   }];
 }
 
@@ -141,7 +141,7 @@ namespace react = facebook::react;
 
 - (void)notifyWrapperViewFrameHasChanged
 {
-#if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#if REACT_NATIVE_VERSION_MINOR < 82
   // Make sure that bottom accessory's size is sent to ShadowNode as soon as possible.
   // We set origin to (0,0) because initially self.nativeWrapperView's origin is incorrect.
   // We want the enable the display link as well so that it takes over later with correct origin.
@@ -154,14 +154,14 @@ namespace react = facebook::react;
   if (_displayLink == nil && !CGRectEqualToRect(_previousFrame, self.nativeWrapperView.frame)) {
     [self setupDisplayLink];
   }
-#else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#else // REACT_NATIVE_VERSION_MINOR < 82
   // We use self.nativeWrapperView because it has both the size and the origin
   // that we want to send to the ShadowNode.
   [self updateShadowStateWithFrame:self.nativeWrapperView.frame];
-#endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#endif // REACT_NATIVE_VERSION_MINOR < 82
 }
 
-#if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#if REACT_NATIVE_VERSION_MINOR < 82
 - (void)setupDisplayLink
 {
   _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleDisplayLink:)];
@@ -192,7 +192,7 @@ namespace react = facebook::react;
   [_displayLink invalidate];
   _displayLink = nil;
 }
-#endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#endif // REACT_NATIVE_VERSION_MINOR < 82
 
 #pragma mark - Synchronization with ShadowNode
 
@@ -228,12 +228,12 @@ namespace react = facebook::react;
   [_bottomAccessoryView.superview.superview removeObserver:self forKeyPath:@"center"];
   _bottomAccessoryView = nil;
   _previousFrame = CGRectZero;
-#if !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#if REACT_NATIVE_VERSION_MINOR < 82
   [self invalidateDisplayLink];
-#else // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#else // REACT_NATIVE_VERSION_MINOR < 82
   _regularContentView = nil;
   _inlineContentView = nil;
-#endif // !RCT_NEW_ARCH_ENABLED || REACT_NATIVE_VERSION_MINOR < 82
+#endif // REACT_NATIVE_VERSION_MINOR < 82
 }
 
 @end
