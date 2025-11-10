@@ -404,14 +404,14 @@ namespace react = facebook::react;
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
 {
   [super insertReactSubview:subview atIndex:index];
-  [self validateAndHandleReactSubview:subview didMount:YES];
+  [self validateAndHandleReactSubview:subview shouldMount:YES];
   [_reactSubviews insertObject:subview atIndex:index];
 }
 
 - (void)removeReactSubview:(UIView *)subview
 {
   [super removeReactSubview:subview];
-  [self validateAndHandleReactSubview:subview didMount:NO];
+  [self validateAndHandleReactSubview:subview shouldMount:NO];
   [_reactSubviews removeObject:subview];
 }
 
