@@ -1,10 +1,15 @@
 package com.swmansion.rnscreens.bottomsheet
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
@@ -19,6 +24,9 @@ import com.swmansion.rnscreens.KeyboardState
 import com.swmansion.rnscreens.KeyboardVisible
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
+import com.swmansion.rnscreens.events.ScreenAnimationDelegate
+import com.swmansion.rnscreens.events.ScreenEventEmitter
+import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 
 class SheetDelegate(
     val screen: Screen,
@@ -26,6 +34,10 @@ class SheetDelegate(
     OnApplyWindowInsetsListener {
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
+
+    private var isSheetAnimationInProgress: Boolean = false
+
+    private var lastKeyboardBottomOffset: Int = 0
 
     var lastStableDetentIndex: Int = screen.sheetInitialDetentIndex
         private set
@@ -144,9 +156,9 @@ class SheetDelegate(
                                         }
                                     }
                                 } else {
-                                    (screen.sheetDetents.first() * containerHeight).toInt()
+                                    (screen.sheetDetents[0] * containerHeight).toInt()
                                 }
-                            useSingleDetent(height = height)
+                            useSingleDetent(maxAllowedHeight = height)
                         }
 
                     2 ->
@@ -157,7 +169,7 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
                         )
 
                     3 ->
@@ -168,8 +180,8 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            thirdHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
                             halfExpandedRatio = screen.sheetDetents[1].toFloat(),
+                            maxAllowedHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
 
@@ -180,6 +192,8 @@ class SheetDelegate(
             }
 
             is KeyboardVisible -> {
+                val isOnScreenKeyboardVisible = keyboardState.height != 0
+
                 when (screen.sheetDetents.count()) {
                     1 ->
                         behavior.apply {
@@ -188,17 +202,25 @@ class SheetDelegate(
 
                     2 ->
                         behavior.apply {
-                            useTwoDetents(
-                                state = BottomSheetBehavior.STATE_EXPANDED,
-                            )
+                            if (isOnScreenKeyboardVisible) {
+                                useTwoDetents(
+                                    state = BottomSheetBehavior.STATE_EXPANDED,
+                                )
+                            } else {
+                                useTwoDetents()
+                            }
                             addBottomSheetCallback(keyboardHandlerCallback)
                         }
 
                     3 ->
                         behavior.apply {
-                            useThreeDetents(
-                                state = BottomSheetBehavior.STATE_EXPANDED,
-                            )
+                            if (isOnScreenKeyboardVisible) {
+                                useThreeDetents(
+                                    state = BottomSheetBehavior.STATE_EXPANDED,
+                                )
+                            } else {
+                                useThreeDetents()
+                            }
                             addBottomSheetCallback(keyboardHandlerCallback)
                         }
 
@@ -216,22 +238,35 @@ class SheetDelegate(
                 behavior.removeBottomSheetCallback(keyboardHandlerCallback)
                 when (screen.sheetDetents.count()) {
                     1 ->
-                        behavior.useSingleDetent(
-                            height = (screen.sheetDetents.first() * containerHeight).toInt(),
-                            forceExpandedState = false,
-                        )
+                        behavior.apply {
+                            val height =
+                                if (screen.isSheetFitToContents()) {
+                                    screen.contentWrapper?.let { contentWrapper ->
+                                        contentWrapper.height.takeIf {
+                                            // subtree might not be laid out, e.g. after fragment reattachment
+                                            // and view recreation, however since it is retained by
+                                            // react-native it has its height cached. We want to use it.
+                                            // Otherwise we would have to trigger RN layout manually.
+                                            contentWrapper.isLaidOutOrHasCachedLayout()
+                                        }
+                                    }
+                                } else {
+                                    (screen.sheetDetents[0] * containerHeight).toInt()
+                                }
+                            useSingleDetent(maxAllowedHeight = height, forceExpandedState = false)
+                        }
 
                     2 ->
                         behavior.useTwoDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            secondHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
+                            maxAllowedHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
                         )
 
                     3 ->
                         behavior.useThreeDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            thirdHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
                             halfExpandedRatio = screen.sheetDetents[1].toFloat(),
+                            maxAllowedHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
 
@@ -241,6 +276,36 @@ class SheetDelegate(
                 }
             }
         }
+    }
+
+    // This function calculates the Y offset to which the FormSheet should animate
+    // when appearing (entering) or disappearing (exiting) with the on-screen keyboard (IME) present.
+    // Its purpose is to ensure the FormSheet does not exceed the top edge of the screen.
+    // It tries to display the FormSheet fully above the keyboard when there's enough space.
+    // Otherwise, it shifts the sheet as high as possible, even if it means part of its content
+    // will remain hidden behind the keyboard.
+    internal fun computeSheetOffsetYWithIMEPresent(keyboardHeight: Int): Int {
+        val containerHeight = tryResolveContainerHeight()
+        check(containerHeight != null) {
+            "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
+        }
+
+        if (screen.isSheetFitToContents()) {
+            val contentHeight = screen.contentWrapper?.height ?: 0
+            val offsetFromTop = containerHeight - contentHeight
+            return minOf(offsetFromTop, keyboardHeight)
+        }
+
+        val detents = screen.sheetDetents
+        if (detents.isEmpty()) {
+            throw IllegalStateException("[RNScreens] Cannot determine sheet detent - detents list is empty")
+        }
+
+        val detentValue = detents[detents.size - 1].coerceIn(0.0, 1.0)
+        val sheetHeight = (detentValue * containerHeight).toInt()
+        val offsetFromTop = containerHeight - sheetHeight
+
+        return minOf(offsetFromTop, keyboardHeight)
     }
 
     // This is listener function, not the view's.
@@ -276,7 +341,6 @@ class SheetDelegate(
                     this.configureBottomSheetBehaviour(it, KeyboardDidHide)
                 } else if (keyboardState != KeyboardNotVisible) {
                     this.configureBottomSheetBehaviour(it, KeyboardNotVisible)
-                } else {
                 }
             }
 
@@ -321,6 +385,129 @@ class SheetDelegate(
                 ?.let { return it }
         }
         return null
+    }
+
+    // Sheet entering/exiting animations
+
+    internal fun createSheetEnterAnimator(sheetAnimationContext: SheetAnimationContext): Animator {
+        val animatorSet = AnimatorSet()
+
+        val dimmingDelegate = sheetAnimationContext.dimmingDelegate
+        val screenStackFragment = sheetAnimationContext.fragment
+
+        val alphaAnimator = createDimmingViewAlphaAnimator(0f, dimmingDelegate.maxAlpha, dimmingDelegate)
+        val slideAnimator = createSheetSlideInAnimator()
+
+        animatorSet
+            .play(slideAnimator)
+            .takeIf {
+                dimmingDelegate.willDimForDetentIndex(screen, screen.sheetInitialDetentIndex)
+            }?.with(alphaAnimator)
+
+        attachCommonListeners(animatorSet, isEnter = true, screenStackFragment)
+
+        return animatorSet
+    }
+
+    internal fun createSheetExitAnimator(sheetAnimationContext: SheetAnimationContext): Animator {
+        val animatorSet = AnimatorSet()
+
+        val coordinatorLayout = sheetAnimationContext.coordinatorLayout
+        val dimmingDelegate = sheetAnimationContext.dimmingDelegate
+        val screenStackFragment = sheetAnimationContext.fragment
+
+        val alphaAnimator =
+            createDimmingViewAlphaAnimator(dimmingDelegate.dimmingView.alpha, 0f, dimmingDelegate)
+        val slideAnimator = createSheetSlideOutAnimator(coordinatorLayout)
+
+        animatorSet.play(alphaAnimator).with(slideAnimator)
+
+        attachCommonListeners(animatorSet, isEnter = false, screenStackFragment)
+
+        return animatorSet
+    }
+
+    private fun createDimmingViewAlphaAnimator(
+        from: Float,
+        to: Float,
+        dimmingDelegate: DimmingViewManager,
+    ): ValueAnimator =
+        ValueAnimator.ofFloat(from, to).apply {
+            addUpdateListener { animator ->
+                (animator.animatedValue as? Float)?.let {
+                    dimmingDelegate.dimmingView.alpha = it
+                }
+            }
+        }
+
+    private fun createSheetSlideInAnimator(): ValueAnimator {
+        val startValueCallback = { _: Number? -> screen.height.toFloat() }
+        val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
+
+        return ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
+            addUpdateListener { updateSheetTranslationY(it.animatedValue as Float) }
+        }
+    }
+
+    private fun createSheetSlideOutAnimator(coordinatorLayout: CoordinatorLayout): ValueAnimator {
+        val endValue = (coordinatorLayout.bottom - screen.top - screen.translationY)
+
+        return ValueAnimator.ofFloat(0f, endValue).apply {
+            addUpdateListener {
+                updateSheetTranslationY(it.animatedValue as Float)
+            }
+        }
+    }
+
+    private fun updateSheetTranslationY(baseTranslationY: Float) {
+        val keyboardCorrection = lastKeyboardBottomOffset
+        val bottomOffset = computeSheetOffsetYWithIMEPresent(keyboardCorrection).toFloat()
+
+        screen.translationY = baseTranslationY - bottomOffset
+    }
+
+    internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
+        lastKeyboardBottomOffset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+        // Prioritize enter/exit animations over direct keyboard inset reactions.
+        // We store the latest keyboard offset in `lastKeyboardBottomOffset`
+        // so that it can always be respected when applying translations in `updateSheetTranslationY`.
+        //
+        // This approach allows screen translation to be triggered from two sources, but without messing them together:
+        // - During enter/exit animations, while accounting for the keyboard height.
+        // - While interacting with a TextInput inside the bottom sheet, to handle keyboard show/hide events.
+        if (!isSheetAnimationInProgress) {
+            updateSheetTranslationY(0f)
+        }
+    }
+
+    private fun attachCommonListeners(
+        animatorSet: AnimatorSet,
+        isEnter: Boolean,
+        screenStackFragment: ScreenStackFragment,
+    ) {
+        animatorSet.addListener(
+            ScreenAnimationDelegate(
+                screenStackFragment,
+                ScreenEventEmitter(screen),
+                if (isEnter) {
+                    ScreenAnimationDelegate.AnimationType.ENTER
+                } else {
+                    ScreenAnimationDelegate.AnimationType.EXIT
+                },
+            ),
+        )
+
+        animatorSet.addListener(
+            object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    isSheetAnimationInProgress = true
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    isSheetAnimationInProgress = false
+                }
+            },
+        )
     }
 
     private inner class KeyboardHandler : BottomSheetBehavior.BottomSheetCallback() {
@@ -370,6 +557,13 @@ class SheetDelegate(
             this@SheetDelegate.onSheetSlide(bottomSheet)
         }
     }
+
+    internal data class SheetAnimationContext(
+        val fragment: ScreenStackFragment,
+        val screen: Screen,
+        val coordinatorLayout: CoordinatorLayout,
+        val dimmingDelegate: DimmingViewManager,
+    )
 
     companion object {
         const val TAG = "SheetDelegate"

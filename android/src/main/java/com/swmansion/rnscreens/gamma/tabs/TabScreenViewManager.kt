@@ -128,6 +128,11 @@ class TabScreenViewManager :
         view.tabTitle = value
     }
 
+    override fun setIsTitleUndefined(
+        view: TabScreen,
+        value: Boolean,
+    ) = Unit
+
     override fun setSpecialEffects(
         view: TabScreen,
         value: ReadableMap?,
@@ -181,6 +186,11 @@ class TabScreenViewManager :
     ) = Unit
 
     override fun setSystemItem(
+        view: TabScreen,
+        value: String?,
+    ) = Unit
+
+    override fun setUserInterfaceStyle(
         view: TabScreen,
         value: String?,
     ) = Unit

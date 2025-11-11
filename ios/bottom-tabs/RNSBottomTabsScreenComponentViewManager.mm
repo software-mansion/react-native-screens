@@ -43,6 +43,8 @@ RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
 
+RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle);
+
 RCT_EXPORT_VIEW_PROPERTY(systemItem, RNSBottomTabsScreenSystemItem);
 
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);

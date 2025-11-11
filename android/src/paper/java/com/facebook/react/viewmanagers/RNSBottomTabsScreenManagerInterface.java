@@ -19,6 +19,7 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
   void setIsFocused(T view, boolean value);
   void setTabKey(T view, @Nullable String value);
   void setTitle(T view, @Nullable String value);
+  void setIsTitleUndefined(T view, boolean value);
   void setBadgeValue(T view, @Nullable String value);
   void setOrientation(T view, @Nullable String value);
   void setDrawableIconResourceName(T view, @Nullable String value);
@@ -39,4 +40,5 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
   void setLeftScrollEdgeEffect(T view, @Nullable String value);
   void setRightScrollEdgeEffect(T view, @Nullable String value);
   void setTopScrollEdgeEffect(T view, @Nullable String value);
+  void setUserInterfaceStyle(T view, @Nullable String value);
 }

@@ -84,6 +84,7 @@ namespace react = facebook::react;
   _isSelectedScreen = NO;
   _badgeValue = nil;
   _title = nil;
+  _isTitleUndefined = YES;
   _orientation = RNSOrientationInherit;
 
   _standardAppearance = [UITabBarAppearance new];
@@ -104,6 +105,8 @@ namespace react = facebook::react;
   _selectedIconSfSymbolName = nil;
 
   _systemItem = RNSBottomTabsScreenSystemItemNone;
+
+  _userInterfaceStyle = UIUserInterfaceStyleUnspecified;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -192,12 +195,30 @@ RNS_IGNORE_SUPER_CALL_END
 {
   UITabBarItem *tabBarItem = _controller.tabBarItem;
 
-  if (![tabBarItem.title isEqualToString:_title]) {
-    tabBarItem.title = _title;
+  NSString *evaluatedTitle = _title;
+  if (_title == nil && _systemItem != RNSBottomTabsScreenSystemItemNone) {
+    // Restore default system item title
+    UITabBarSystemItem systemItem =
+        rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
+    evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].title;
   }
+
+  [self updateTabBarItemTitle:evaluatedTitle];
 
   if (![tabBarItem.badgeValue isEqualToString:_badgeValue]) {
     tabBarItem.badgeValue = _badgeValue;
+  }
+}
+
+- (void)updateTabBarItemTitle:(NSString *)newTitle
+{
+  // Setting _controller.title updates also _controller.tabBarItem.title but only if there
+  // is a change to _controller.title. After creating new tabBarItem, _controller.title
+  // remains the same but _controller.tabBarItem.title is nil. For consistency, we always
+  // update both.
+  if (![_controller.tabBarItem.title isEqualToString:newTitle] || ![_controller.title isEqualToString:newTitle]) {
+    _controller.title = newTitle;
+    _controller.tabBarItem.title = newTitle;
   }
 }
 
@@ -224,7 +245,7 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #if RCT_NEW_ARCH_ENABLED
-#pragma mark - RCTViewComponentViewProtocol
+#pragma mark - RCTComponentViewProtocol
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
@@ -238,9 +259,17 @@ RNS_IGNORE_SUPER_CALL_END
   bool tabBarItemNeedsUpdate{false};
   bool scrollEdgeEffectsNeedUpdate{false};
 
-  if (newComponentProps.title != oldComponentProps.title) {
-    _title = RCTNSStringFromStringNilIfEmpty(newComponentProps.title);
-    _controller.title = _title;
+  if (newComponentProps.title != oldComponentProps.title ||
+      newComponentProps.isTitleUndefined != oldComponentProps.isTitleUndefined) {
+    _isTitleUndefined = newComponentProps.isTitleUndefined;
+
+    if (_isTitleUndefined) {
+      _title = nil;
+    } else {
+      _title = RCTNSStringFromString(newComponentProps.title);
+    }
+
+    tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.orientation != oldComponentProps.orientation) {
@@ -373,6 +402,11 @@ RNS_IGNORE_SUPER_CALL_END
                                      RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
                                          newComponentProps.topScrollEdgeEffect)];
     scrollEdgeEffectsNeedUpdate = YES;
+  }
+
+  if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {
+    _userInterfaceStyle = rnscreens::conversion::UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
+        newComponentProps.userInterfaceStyle);
   }
 
   if (tabBarItemNeedsRecreation) {
@@ -508,7 +542,8 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setTitle:(NSString *)title
 {
   _title = title;
-  _controller.title = title;
+  _isTitleUndefined = title == nil;
+  _tabBarItemNeedsUpdate = YES;
 }
 
 - (void)setBadgeValue:(NSString *)badgeValue

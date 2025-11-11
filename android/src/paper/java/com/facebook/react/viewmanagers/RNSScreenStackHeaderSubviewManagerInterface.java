@@ -16,4 +16,5 @@ import androidx.annotation.Nullable;
 public interface RNSScreenStackHeaderSubviewManagerInterface<T extends View>  {
   void setType(T view, @Nullable String value);
   void setHidesSharedBackground(T view, boolean value);
+  void setSynchronousShadowStateUpdatesEnabled(T view, boolean value);
 }

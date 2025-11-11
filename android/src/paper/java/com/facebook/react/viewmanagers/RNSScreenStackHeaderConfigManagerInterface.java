@@ -45,4 +45,6 @@ public interface RNSScreenStackHeaderConfigManagerInterface<T extends View>  {
   void setTopInsetEnabled(T view, boolean value);
   void setHeaderLeftBarButtonItems(T view, @Nullable ReadableArray value);
   void setHeaderRightBarButtonItems(T view, @Nullable ReadableArray value);
+  void setSynchronousShadowStateUpdatesEnabled(T view, boolean value);
+  void setUserInterfaceStyle(T view, @Nullable String value);
 }

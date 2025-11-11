@@ -45,6 +45,8 @@ type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
+
 export interface NativeProps extends ViewProps {
   onAttached?: DirectEventHandler<OnAttachedEvent>;
   onDetached?: DirectEventHandler<OnDetachedEvent>;
@@ -81,6 +83,10 @@ export interface NativeProps extends ViewProps {
   headerRightBarButtonItems?: UnsafeMixed[];
   onPressHeaderBarButtonItem?: DirectEventHandler<OnPressHeaderBarButtonItemEvent>;
   onPressHeaderBarButtonMenuItem?: DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>;
+  synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
+
+  // Experimental
+  userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 
 export default codegenNativeComponent<NativeProps>(

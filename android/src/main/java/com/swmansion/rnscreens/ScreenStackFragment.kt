@@ -1,11 +1,10 @@
 package com.swmansion.rnscreens
 
 import android.animation.Animator
-import android.animation.AnimatorSet
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -31,12 +30,9 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
-import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
-import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.swmansion.rnscreens.utils.resolveBackgroundColor
 import kotlin.math.max
@@ -242,20 +238,34 @@ class ScreenStackFragment :
             )
             coordinatorLayout.layout(0, 0, container.width, container.height)
 
-            // Replace InsetsAnimationCallback created by BottomSheetBehavior with empty
-            // implementation so it does not interfere with our custom formSheet entering animation
-            // More details: https://github.com/software-mansion/react-native-screens/pull/2909
-            ViewCompat.setWindowInsetsAnimationCallback(
-                screen,
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                ViewCompat.setOnApplyWindowInsetsListener(screen) { _, windowInsets ->
+                    sheetDelegate.handleKeyboardInsetsProgress(windowInsets)
+                    windowInsets
+                }
+            }
+
+            val insetsAnimationCallback =
                 object : WindowInsetsAnimationCompat.Callback(
-                    DISPATCH_MODE_STOP,
+                    WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP,
                 ) {
+                    // Replace InsetsAnimationCallback created by BottomSheetBehavior
+                    // to avoid interfering with custom animations.
+                    // See: https://github.com/software-mansion/react-native-screens/pull/2909
                     override fun onProgress(
                         insets: WindowInsetsCompat,
                         runningAnimations: MutableList<WindowInsetsAnimationCompat>,
-                    ): WindowInsetsCompat = insets
-                },
-            )
+                    ): WindowInsetsCompat {
+                        // On API 30+, we handle keyboard inset animation progress here.
+                        // On lower APIs, we rely on ViewCompat.setOnApplyWindowInsetsListener instead.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            sheetDelegate.handleKeyboardInsetsProgress(insets)
+                        }
+                        return insets
+                    }
+                }
+
+            ViewCompat.setWindowInsetsAnimationCallback(screen, insetsAnimationCallback)
         }
 
         return coordinatorLayout
@@ -287,88 +297,37 @@ class ScreenStackFragment :
             return null
         }
 
-        val animatorSet = AnimatorSet()
+        return if (enter) createSheetEnterAnimator() else createSheetExitAnimator()
+    }
+
+    private fun createSheetEnterAnimator(): Animator {
+        val sheetDelegate = requireSheetDelegate()
         val dimmingDelegate = requireDimmingDelegate()
 
-        if (enter) {
-            val alphaAnimator =
-                ValueAnimator.ofFloat(0f, dimmingDelegate.maxAlpha).apply {
-                    addUpdateListener { anim ->
-                        val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
-                    }
-                }
-
-            val startValueCallback = { initialStartValue: Number? -> screen.height.toFloat() }
-            val evaluator = ExternalBoundaryValuesEvaluator(startValueCallback, { 0f })
-            val slideAnimator =
-                ValueAnimator.ofObject(evaluator, screen.height.toFloat(), 0f).apply {
-                    addUpdateListener { anim ->
-                        val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let {
-                            screen.translationY = it
-                        }
-                    }
-                }
-
-            val translateAnimator =
-                ValueAnimator.ofInt(coordinatorLayout.bottom, screen.top).apply {
-                    addUpdateListener { anim ->
-                        screen.onSheetTranslation(anim.animatedValue as Int)
-                    }
-                }
-
-            animatorSet
-                .play(slideAnimator)
-                .with(translateAnimator)
-                .takeIf {
-                    dimmingDelegate.willDimForDetentIndex(
-                        screen,
-                        screen.sheetInitialDetentIndex,
-                    )
-                }?.with(alphaAnimator)
-        } else {
-            val alphaAnimator =
-                ValueAnimator.ofFloat(dimmingDelegate.dimmingView.alpha, 0f).apply {
-                    addUpdateListener { anim ->
-                        val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let { dimmingDelegate.dimmingView.alpha = it }
-                    }
-                }
-
-            val slideAnimator =
-                ValueAnimator.ofFloat(0f, (coordinatorLayout.bottom - screen.top).toFloat()).apply {
-                    addUpdateListener { anim ->
-                        val animatedValue = anim.animatedValue as? Float
-                        animatedValue?.let {
-                            screen.translationY = it
-                        }
-                    }
-                }
-
-            val translateAnimator =
-                ValueAnimator.ofInt(screen.top, coordinatorLayout.bottom).apply {
-                    addUpdateListener { anim ->
-                        screen.onSheetTranslation(anim.animatedValue as Int)
-                    }
-                }
-            animatorSet
-                .play(alphaAnimator)
-                .with(slideAnimator)
-                .with(translateAnimator)
-        }
-        animatorSet.addListener(
-            ScreenAnimationDelegate(
+        val sheetAnimationContext =
+            SheetDelegate.SheetAnimationContext(
                 this,
-                ScreenEventEmitter(this.screen),
-                if (enter) {
-                    ScreenAnimationDelegate.AnimationType.ENTER
-                } else {
-                    ScreenAnimationDelegate.AnimationType.EXIT
-                },
-            ),
-        )
-        return animatorSet
+                this.screen,
+                this.coordinatorLayout,
+                dimmingDelegate,
+            )
+
+        return sheetDelegate.createSheetEnterAnimator(sheetAnimationContext)
+    }
+
+    private fun createSheetExitAnimator(): Animator {
+        val sheetDelegate = requireSheetDelegate()
+        val dimmingDelegate = requireDimmingDelegate()
+
+        val sheetAnimationContext =
+            SheetDelegate.SheetAnimationContext(
+                this,
+                this.screen,
+                this.coordinatorLayout,
+                dimmingDelegate,
+            )
+
+        return sheetDelegate.createSheetExitAnimator(sheetAnimationContext)
     }
 
     private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()

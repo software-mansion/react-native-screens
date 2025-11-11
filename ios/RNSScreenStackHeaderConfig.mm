@@ -5,6 +5,7 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -233,7 +234,14 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newState != _lastSendState) {
     _lastSendState = newState;
-    _state->updateState(std::move(newState));
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
   }
 }
 
@@ -575,6 +583,8 @@ RNS_IGNORE_SUPER_CALL_END
     navitem.title = config.title;
     return;
   }
+
+  navctr.navigationBar.overrideUserInterfaceStyle = config.userInterfaceStyle;
 
 #if !TARGET_OS_TV
   [config configureBackItem:prevItem withPrevVC:prevVC];
@@ -1131,6 +1141,10 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _backButtonDisplayMode =
       [RNSConvert UINavigationItemBackButtonDisplayModeFromCppEquivalent:newScreenProps.backButtonDisplayMode];
 
+  if (newScreenProps.userInterfaceStyle != oldScreenProps.userInterfaceStyle) {
+    _userInterfaceStyle = [RNSConvert UIUserInterfaceStyleFromCppEquivalent:newScreenProps.userInterfaceStyle];
+  }
+
   if (newScreenProps.direction != oldScreenProps.direction) {
     _direction = [RNSConvert UISemanticContentAttributeFromCppEquivalent:newScreenProps.direction];
   }
@@ -1177,6 +1191,8 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   if (needsNavigationControllerLayout) {
     [self layoutNavigationControllerView];
   }
+
+  _synchronousShadowStateUpdatesEnabled = newScreenProps.synchronousShadowStateUpdatesEnabled;
 
   _initialPropsSet = YES;
   _props = std::static_pointer_cast<react::RNSScreenStackHeaderConfigProps const>(props);
@@ -1277,6 +1293,7 @@ RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
+RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)

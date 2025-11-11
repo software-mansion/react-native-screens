@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
+@property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
 
 @property (nonatomic, weak) UIView *reactSuperview;
 

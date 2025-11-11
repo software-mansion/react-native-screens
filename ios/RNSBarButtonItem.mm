@@ -1,9 +1,8 @@
 #import "RNSBarButtonItem.h"
 #import <React/RCTConvert.h>
 #import <React/RCTFont.h>
-#import <React/RCTImageSource.h>
-#import <objc/runtime.h>
 #import "RNSDefines.h"
+#import "RNSImageLoadingHelper.h"
 
 @implementation RNSBarButtonItem {
   NSString *_buttonId;
@@ -20,34 +19,32 @@
     return self;
   }
 
-  self.title = dict[@"title"];
-
+  NSString *title = dict[@"title"];
   NSDictionary *imageSourceObj = dict[@"imageSource"];
-  if (imageSourceObj) {
-    RCTImageSource *imageSource = [RCTConvert RCTImageSource:imageSourceObj];
-    [imageLoader loadImageWithURLRequest:imageSource.request
-        size:imageSource.size
-        scale:imageSource.scale
-        clipped:true
-        resizeMode:RCTResizeModeContain
-        progressBlock:^(int64_t progress, int64_t total) {
-        }
-        partialLoadBlock:^(UIImage *_Nonnull image) {
-        }
-        completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
-          dispatch_async(dispatch_get_main_queue(), ^{
-            self.image = image;
-          });
-        }];
-  }
+  NSDictionary *templateSourceObj = dict[@"templateSource"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  if (sfSymbolName) {
+
+  if (imageSourceObj != nil || templateSourceObj != nil) {
+    BOOL isTemplate = imageSourceObj != nil ? NO : YES;
+    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
+
+    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
+                                                 withImageLoader:imageLoader
+                                                      asTemplate:isTemplate
+                                                 completionBlock:^(UIImage *image) {
+                                                   self.image = image;
+                                                 }];
+  } else if (sfSymbolName != nil) {
     self.image = [UIImage systemImageNamed:sfSymbolName];
   }
 
-  NSDictionary *titleStyle = dict[@"titleStyle"];
-  if (titleStyle) {
-    [self setTitleStyleFromConfig:titleStyle];
+  if (title != nil) {
+    self.title = title;
+
+    NSDictionary *titleStyle = dict[@"titleStyle"];
+    if (titleStyle != nil) {
+      [self setTitleStyleFromConfig:titleStyle];
+    }
   }
 
   id tintColorObj = dict[@"tintColor"];

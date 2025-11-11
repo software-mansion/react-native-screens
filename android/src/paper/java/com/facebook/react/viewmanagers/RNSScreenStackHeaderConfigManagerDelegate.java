@@ -115,6 +115,12 @@ public class RNSScreenStackHeaderConfigManagerDelegate<T extends View, U extends
       case "headerRightBarButtonItems":
         mViewManager.setHeaderRightBarButtonItems(view, (ReadableArray) value);
         break;
+      case "synchronousShadowStateUpdatesEnabled":
+        mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
+        break;
+      case "userInterfaceStyle":
+        mViewManager.setUserInterfaceStyle(view, (String) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }

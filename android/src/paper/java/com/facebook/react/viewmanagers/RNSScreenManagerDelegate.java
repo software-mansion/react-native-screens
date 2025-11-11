@@ -137,6 +137,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
       case "topScrollEdgeEffect":
         mViewManager.setTopScrollEdgeEffect(view, (String) value);
         break;
+      case "synchronousShadowStateUpdatesEnabled":
+        mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }

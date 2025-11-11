@@ -71,7 +71,7 @@ Boolean indicating whether the full screen dismiss gesture has shadow under view
 doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
 default iOS shadow. Defaults to `true`.
 IMPORTANT: Starting from iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
-to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
+to the legacy implementation when handling custom animations, but we assume `true` for shadows.
 
 ### `gestureEnabled` (iOS only)
 
@@ -80,8 +80,6 @@ When set to `false` the back swipe gesture will be disabled. The default value i
 #### `gestureResponseDistance` (iOS only)
 
 Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage:
-IMPORTANT: Starting from iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
-
 ```tsx
 gestureResponseDistance: {
   start: 200,
@@ -778,6 +776,20 @@ A flag to that lets you opt out of insetting the header. You may want to set thi
 ### `translucent`
 
 When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.
+
+### `experimental_userInterfaceStyle` (iOS only)
+
+Allows to override system appearance for the navigation bar. Does not support dynamic changes to the prop value for the currently visible screen. The default value is `unspecified`.
+
+Please note that this prop is marked as **experimental** and might be subject to breaking changes or even removal.
+
+The following values are currently supported:
+
+- `unspecified` - an unspecified interface style,
+- `light` - the light interface style,
+- `dark` - the dark interface style.
+
+The supported values correspond to the official UIKit documentation: https://developer.apple.com/documentation/uikit/uiuserinterfacestyle.
 
 # Guide for native component authors
 

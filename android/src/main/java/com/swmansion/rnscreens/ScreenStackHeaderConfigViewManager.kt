@@ -205,6 +205,13 @@ class ScreenStackHeaderConfigViewManager :
         config.setDirection(direction)
     }
 
+    // synchronousShadowStateUpdatesEnabled is not available on Android atm,
+    // however we must override their setters
+    override fun setSynchronousShadowStateUpdatesEnabled(
+        config: ScreenStackHeaderConfig?,
+        value: Boolean,
+    ) = Unit
+
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
         hashMapOf(
             HeaderAttachedEvent.EVENT_NAME to hashMapOf("registrationName" to "onAttached"),
@@ -332,5 +339,12 @@ class ScreenStackHeaderConfigViewManager :
         value: ReadableArray?,
     ) {
         logNotAvailable("headerRightBarButtonItems")
+    }
+
+    override fun setUserInterfaceStyle(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) {
+        logNotAvailable("userInterfaceStyle")
     }
 }
