@@ -75,6 +75,7 @@ struct ContentWrapperBox {
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
   BOOL _shouldUpdateScrollEdgeEffects;
+  __weak UIWindow *_previousWindow;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -739,6 +740,15 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)didMoveToWindow
 {
+  if (@available(iOS 26, *)) {
+    // If we moved from nil to a window, that means a dismiss gesture was cancelled
+    // Re-enable interactions that were disabled in willMoveToWindow
+    if (self.window != nil && _previousWindow == nil) {
+      self.window.userInteractionEnabled = true;
+    }
+    _previousWindow = nil;
+  }
+
   // For RN touches to work we need to instantiate and connect RCTTouchHandler. This only applies
   // for screens that aren't mounted under RCTRootView e.g., modals that are mounted directly to
   // root application window.
@@ -799,6 +809,9 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
   if (@available(iOS 26, *)) {
+    // Store the current window to detect cancelled transitions in didMoveToWindow
+    _previousWindow = self.window;
+
     // In iOS 26, as soon as another screen appears in transition, it is interactable
     // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
     // Disabling interactions for parent navigation controller won't be enough in case of nested stack
