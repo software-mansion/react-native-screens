@@ -392,14 +392,17 @@ class SheetDelegate(
     internal fun createSheetEnterAnimator(sheetAnimationContext: SheetAnimationContext): Animator {
         val animatorSet = AnimatorSet()
 
+        val coordinatorLayout = sheetAnimationContext.coordinatorLayout
         val dimmingDelegate = sheetAnimationContext.dimmingDelegate
         val screenStackFragment = sheetAnimationContext.fragment
 
         val alphaAnimator = createDimmingViewAlphaAnimator(0f, dimmingDelegate.maxAlpha, dimmingDelegate)
         val slideAnimator = createSheetSlideInAnimator()
+        val translationEventAnimator = createTranslationEventAnimator(coordinatorLayout.bottom, screen.top)
 
         animatorSet
             .play(slideAnimator)
+            .with(translationEventAnimator)
             .takeIf {
                 dimmingDelegate.willDimForDetentIndex(screen, screen.sheetInitialDetentIndex)
             }?.with(alphaAnimator)
@@ -419,13 +422,27 @@ class SheetDelegate(
         val alphaAnimator =
             createDimmingViewAlphaAnimator(dimmingDelegate.dimmingView.alpha, 0f, dimmingDelegate)
         val slideAnimator = createSheetSlideOutAnimator(coordinatorLayout)
+        val translationEventAnimator = createTranslationEventAnimator(screen.top, coordinatorLayout.bottom)
 
-        animatorSet.play(alphaAnimator).with(slideAnimator)
+        animatorSet
+            .play(alphaAnimator)
+            .with(slideAnimator)
+            .with(translationEventAnimator)
 
         attachCommonListeners(animatorSet, isEnter = false, screenStackFragment)
 
         return animatorSet
     }
+
+    private fun createTranslationEventAnimator(
+        from: Int,
+        to: Int,
+    ): ValueAnimator =
+        ValueAnimator.ofInt(from, to).apply {
+            addUpdateListener { anim ->
+                screen.onSheetTranslation(anim.animatedValue as Int)
+            }
+        }
 
     private fun createDimmingViewAlphaAnimator(
         from: Float,
