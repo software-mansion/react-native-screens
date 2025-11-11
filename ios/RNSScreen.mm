@@ -958,6 +958,11 @@ RNS_IGNORE_SUPER_CALL_END
                           animate:(BOOL)animate
 {
   if (sheet.selectedDetentIdentifier != detent) {
+#ifdef RCT_NEW_ARCH_ENABLED
+    // On Fabric, layout does not trigger real-time Y position.
+    // Start tracking detent change animation instead.
+    [_controller setupSheetDetentAnimationTracking];
+#endif
     [self setPropertyForSheet:sheet
                     withBlock:^{
                       sheet.selectedDetentIdentifier = detent;
@@ -1567,6 +1572,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _trackingYFromLayout;
   BOOL _dragging;
   BOOL _isTransitioning;
+  BOOL _isAnimatingDetentChange;
   BOOL _closing;
   BOOL _goingForward;
   int _dismissCount;
@@ -1607,7 +1613,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _trackingYFromLayout = YES;
 
     CGFloat sheetY = self.presentedView.frame.origin.y;
-    [self notifySheetTranslation:sheetY transitioning:NO];
+
+    // If we're animating a detent change, mark as transitioning
+    // to manually animate position in JS.
+    BOOL transitioning = _isAnimatingDetentChange;
+
+    [self notifySheetTranslation:sheetY transitioning:transitioning];
   }
 }
 
@@ -1956,6 +1967,23 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self.screenView notifySheetTranslation:y transitioning:transitioning];
   }
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (void)setupSheetDetentAnimationTracking
+{
+  if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
+    return;
+  }
+
+  // Mark that we're animating a detent change
+  _isAnimatingDetentChange = YES;
+
+  // Schedule flag reset after animation completes (default sheet animation is ~0.35s)
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    self->_isAnimatingDetentChange = NO;
+  });
+}
+#endif
 
 #pragma mark - transition progress related methods
 

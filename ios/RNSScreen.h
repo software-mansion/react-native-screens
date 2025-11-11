@@ -53,6 +53,7 @@ namespace react = facebook::react;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
+- (void)setupSheetDetentAnimationTracking;
 - (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
