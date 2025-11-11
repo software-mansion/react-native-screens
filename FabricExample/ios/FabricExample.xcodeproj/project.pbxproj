@@ -500,6 +500,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
