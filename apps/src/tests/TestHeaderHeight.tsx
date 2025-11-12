@@ -20,10 +20,19 @@ import {
   ScreenStackItem,
   SearchBar,
   SearchBarPlacement,
+  StackPresentationTypes,
 } from 'react-native-screens';
 import Colors from '../shared/styling/Colors';
 import { SettingsPicker, SettingsSwitch } from '../shared';
 import { NavigationContainer } from '@react-navigation/native';
+import ConfigWrapperContext, {
+  Configuration,
+  DEFAULT_GLOBAL_CONFIGURATION,
+} from '../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
+import {
+  BottomTabsContainer,
+  TabConfiguration,
+} from '../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 
 interface NavigationProps {
   setShowTestScreen: Dispatch<SetStateAction<boolean>>;
@@ -33,6 +42,7 @@ interface Config {
   headerTransparent: boolean;
   headerLargeTitle: boolean;
   headerShown: boolean;
+  presentation: StackPresentationTypes;
   searchBarPlacement: 'disabled' | SearchBarPlacement;
   searchBarHideNavigationBar: boolean;
   searchBarHideWhenScrolling: boolean;
@@ -85,6 +95,26 @@ function ConfigScreen({ setShowTestScreen }: NavigationProps) {
         label="headerShown"
         value={config.headerShown}
         onValueChange={value => setConfig({ ...config, headerShown: value })}
+      />
+      <SettingsPicker<Config['presentation']>
+        label="presentation"
+        value={config.presentation}
+        onValueChange={value =>
+          setConfig({
+            ...config,
+            presentation: value,
+          })
+        }
+        items={[
+          'push',
+          'modal',
+          'transparentModal',
+          'containedModal',
+          'containedTransparentModal',
+          'fullScreenModal',
+          'formSheet',
+          'pageSheet',
+        ]}
       />
       <Text style={styles.title}>Search bar configuration</Text>
       <SettingsPicker<Config['searchBarPlacement']>
@@ -177,6 +207,8 @@ function Navigation() {
         {showTestScreen && (
           <ScreenStackItem
             screenId="test"
+            style={StyleSheet.absoluteFill}
+            activityState={2}
             onHeaderHeightChange={e => {
               console.log(`[HeaderHeight] ${e.nativeEvent.headerHeight}`);
               setConfig({
@@ -186,6 +218,7 @@ function Navigation() {
             }}
             gestureEnabled={false}
             // mirrors react-navigation logic
+            stackPresentation={config.presentation}
             headerConfig={{
               hidden: config.headerShown === false,
               translucent:
@@ -235,11 +268,12 @@ function Navigation() {
   );
 }
 
-export default function App() {
+function HeaderHeightTest() {
   const [config, setConfig] = useState<Config>({
     headerTransparent: false,
     headerLargeTitle: false,
     headerShown: true,
+    presentation: 'push',
     searchBarPlacement: 'disabled',
     searchBarHideNavigationBar: true,
     searchBarHideWhenScrolling: true,
@@ -262,3 +296,61 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+function HeaderHeightTabsWrapper() {
+  const [config, setConfig] = React.useState<Configuration>(
+    DEFAULT_GLOBAL_CONFIGURATION,
+  );
+
+  const TAB_CONFIGS: TabConfiguration[] = [
+    {
+      tabScreenProps: {
+        tabKey: 'Tab1',
+        title: 'Tab 1',
+        icon: {
+          ios: {
+            type: 'sfSymbol',
+            name: 'sun.max',
+          },
+          android: {
+            type: 'drawableResource',
+            name: 'sunny',
+          },
+        },
+      },
+      component: HeaderHeightTest,
+    },
+    {
+      tabScreenProps: {
+        tabKey: 'Tab2',
+        title: 'Tab 2',
+        icon: {
+          ios: {
+            type: 'sfSymbol',
+            name: 'snow',
+          },
+          android: {
+            type: 'drawableResource',
+            name: 'mode_cool',
+          },
+        },
+      },
+      component: HeaderHeightTest,
+    },
+  ];
+
+  return (
+    <ConfigWrapperContext.Provider
+      value={{
+        config,
+        setConfig,
+      }}>
+      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+    </ConfigWrapperContext.Provider>
+  );
+}
+
+export default function App() {
+  return <HeaderHeightTest />;
+  // return <HeaderHeightTabsWrapper />;
+}
