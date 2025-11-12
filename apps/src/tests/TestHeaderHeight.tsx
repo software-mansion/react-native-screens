@@ -69,6 +69,33 @@ export const useConfigContext = () => {
   return ctx;
 };
 
+function HeaderHeightInfo({
+  positionAbsolute = true,
+}: {
+  positionAbsolute?: boolean;
+}) {
+  const { config } = useConfigContext();
+  return (
+    <View
+      style={[
+        {
+          width: 60,
+          height: 60,
+          minHeight: 60,
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#D4EEE8CC',
+        },
+        positionAbsolute
+          ? { position: 'absolute', top: config.headerHeight, right: 10 }
+          : undefined,
+      ]}>
+      <Text style={{ fontSize: 20 }}>{config.headerHeight.toFixed(1)}</Text>
+    </View>
+  );
+}
+
 function ConfigScreen({ setShowTestScreen }: NavigationProps) {
   const { config, setConfig } = useConfigContext();
 
@@ -174,6 +201,9 @@ function TestScreen({ setShowTestScreen }: NavigationProps) {
     <>
       <LongText size="xs" />
       <Button onPress={() => setShowTestScreen(false)} title="Back to config" />
+      {config.presentation !== 'push' && (
+        <HeaderHeightInfo positionAbsolute={false} />
+      )}
     </>
   );
 
@@ -248,22 +278,7 @@ function Navigation() {
           </ScreenStackItem>
         )}
       </ScreenStack>
-      {showTestScreen && (
-        <View
-          style={{
-            position: 'absolute',
-            top: config.headerHeight,
-            right: 10,
-            width: 60,
-            height: 60,
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#D4EEE8CC',
-          }}>
-          <Text style={{ fontSize: 20 }}>{config.headerHeight.toFixed(1)}</Text>
-        </View>
-      )}
+      {showTestScreen && config.presentation === 'push' && <HeaderHeightInfo />}
     </>
   );
 }
@@ -351,6 +366,6 @@ function HeaderHeightTabsWrapper() {
 }
 
 export default function App() {
-  return <HeaderHeightTest />;
-  // return <HeaderHeightTabsWrapper />;
+  // return <HeaderHeightTest />;
+  return <HeaderHeightTabsWrapper />;
 }
