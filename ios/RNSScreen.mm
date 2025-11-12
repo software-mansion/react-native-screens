@@ -99,6 +99,7 @@ struct ContentWrapperBox {
 {
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const react::RNSScreenProps>();
+    _snapshotAfterUpdates = NO;
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     _contentWrapperBox = {};
@@ -2178,7 +2179,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIView *superView = self.view.superview;
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window != nil) {
-    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    auto afterUpdates = self.screenView.snapshotAfterUpdates;
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:afterUpdates];
     snapshot.frame = self.view.frame;
     [self.view removeFromSuperview];
     self.view = snapshot;

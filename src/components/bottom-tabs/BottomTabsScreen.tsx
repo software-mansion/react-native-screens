@@ -65,6 +65,8 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     standardAppearance,
     scrollEdgeAppearance,
     scrollEdgeEffects,
+    // eslint-disable-next-line camelcase -- we use sneak case experimental prefix
+    experimental_userInterfaceStyle,
     ...rest
   } = props;
 
@@ -143,6 +145,8 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
       rightScrollEdgeEffect={scrollEdgeEffects?.right}
       topScrollEdgeEffect={scrollEdgeEffects?.top}
       isTitleUndefined={rest.title === null || rest.title === undefined}
+      // eslint-disable-next-line camelcase -- we use sneak case experimental prefix
+      userInterfaceStyle={experimental_userInterfaceStyle}
       {...rest}>
       <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
         {rest.children}

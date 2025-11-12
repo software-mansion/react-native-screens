@@ -154,6 +154,14 @@
 
   RNSLog(@"Change selected view controller to: %@", selectedViewController);
 
+  if (@available(iOS 26.0, *)) {
+    // On iOS 26, we need to set user interface style 2 parent views above the tab bar
+    // for this prop to take effect.
+    self.tabBar.superview.superview.overrideUserInterfaceStyle =
+        selectedViewController.tabScreenComponentView.userInterfaceStyle;
+  } else {
+    self.tabBar.overrideUserInterfaceStyle = selectedViewController.tabScreenComponentView.userInterfaceStyle;
+  }
   [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
   [selectedViewController.tabScreenComponentView updateContentScrollViewEdgeEffectsIfExists];
   [self setSelectedViewController:selectedViewController];
