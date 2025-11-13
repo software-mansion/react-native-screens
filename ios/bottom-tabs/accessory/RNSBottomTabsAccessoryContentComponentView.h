@@ -4,7 +4,7 @@
 
 #if defined(__cplusplus)
 
-#include <cxxreact/ReactNativeVersion.h>
+#import <cxxreact/ReactNativeVersion.h>
 
 #endif // defined(__cplusplus)
 

@@ -6,7 +6,7 @@
 #if BOTTOM_ACCESSORY_AVAILABLE
 
 #import <React/RCTAssert.h>
-#include <cxxreact/ReactNativeVersion.h>
+#import <cxxreact/ReactNativeVersion.h>
 
 namespace react = facebook::react;
 
