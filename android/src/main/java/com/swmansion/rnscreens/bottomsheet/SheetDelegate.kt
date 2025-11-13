@@ -311,6 +311,7 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -318,19 +319,6 @@ class SheetDelegate(
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
-
-            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            return WindowInsetsCompat
-                .Builder(insets)
-                .setInsets(
-                    WindowInsetsCompat.Type.navigationBars(),
-                    Insets.of(
-                        prevInsets.left,
-                        prevInsets.top,
-                        prevInsets.right,
-                        0,
-                    ),
-                ).build()
         } else {
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
@@ -344,12 +332,30 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+        // We're taking the metrics of the rootView, not screen to support nested navigators
+        val availableHeight = screen.rootView.height
+
+        val metrics =
+            getSheetMetrics(
+                screen = screen,
+                availableHeight = availableHeight,
+                sheetHeight = screen.height,
+            )
+
+        val newTopInset =
+            if (screen.isOverflowingStatusBar(prevInsets.top, metrics) && !isImeVisible) {
+                prevInsets.top - (metrics.availableHeight - metrics.maxSheetHeight)
+            } else {
+                0
+            }
+
+        val newBottomInset = if (!isImeVisible) prevInsets.bottom else 0
+
         return WindowInsetsCompat
             .Builder(insets)
             .setInsets(
-                WindowInsetsCompat.Type.navigationBars(),
-                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, 0),
+                WindowInsetsCompat.Type.systemBars(),
+                Insets.of(prevInsets.left, newTopInset, prevInsets.right, newBottomInset),
             ).build()
     }
 

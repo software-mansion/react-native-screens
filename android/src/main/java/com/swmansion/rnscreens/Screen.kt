@@ -26,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.BottomSheetMetrics
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -142,6 +143,9 @@ class Screen(
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents()) {
                 sheetBehavior?.useSingleDetent(height)
+                // During the initial call in `onCreateView`, insets are not yet available,
+                // so we need to request an additional layout pass later to account for them.
+                requestLayout()
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -529,6 +533,11 @@ class Screen(
                     }.build()
         }
     }
+
+    fun isOverflowingStatusBar(
+        topInset: Int,
+        metrics: BottomSheetMetrics,
+    ): Boolean = metrics.maxSheetHeight >= metrics.availableHeight - topInset
 
     enum class StackPresentation {
         PUSH,
