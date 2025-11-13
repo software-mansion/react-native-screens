@@ -29,6 +29,7 @@
 #import "RNSScreenWindowTraits.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSTabsScreenViewController.h"
+#import "RNSViewInteractionAware.h"
 #import "UIScrollView+RNScreens.h"
 #import "UIView+RNSUtility.h"
 #import "integrations/RNSDismissibleModalProtocol.h"
@@ -42,7 +43,8 @@ namespace react = facebook::react;
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate
+    UIViewControllerTransitioningDelegate,
+    RNSViewInteractionAware
 #ifdef RCT_NEW_ARCH_ENABLED
     ,
     RCTMountingTransactionObserving
@@ -210,6 +212,7 @@ namespace react = facebook::react;
   RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
+  UIPanGestureRecognizer *_sinkEventsPanGestureRecognizer;
 #ifdef RCT_NEW_ARCH_ENABLED
   /// Screens that are subject of `ShadowViewMutation::Type::Delete` mutation
   /// in current transaction. This vector should be populated when we receive notification via
@@ -255,6 +258,7 @@ namespace react = facebook::react;
   _presentedModals = [NSMutableArray new];
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
+  _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
@@ -363,6 +367,12 @@ RNS_IGNORE_SUPER_CALL_END
     [self maybeAddToParentAndUpdateContainer];
   }
 #endif
+  if (self.window == nil) {
+    // When hot reload happens that would remove the whole stack, disabling the interaction on a screen out transition
+    // will not be matched with enabling the interactions on another screen's in transition. We need to make sure
+    // that the subtree is interactive again
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
 }
 
 - (void)maybeAddToParentAndUpdateContainer
@@ -844,6 +854,20 @@ RNS_IGNORE_SUPER_CALL_END
   [[self rnscreens_findTouchHandlerInAncestorChain] rnscreens_cancelTouches];
 }
 
+- (void)rnscreens_disableInteractions
+{
+  // When transitioning between screens, disable interactions on stack subview which wraps the screens
+  // and sink all gesture events. This should work for nested stacks and stack inside bottom tabs, inside stack.
+  self.subviews[0].userInteractionEnabled = NO;
+  [self addGestureRecognizer:_sinkEventsPanGestureRecognizer];
+}
+
+- (void)rnscreens_enableInteractions
+{
+  self.subviews[0].userInteractionEnabled = YES;
+  [self removeGestureRecognizer:_sinkEventsPanGestureRecognizer];
+}
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
   if (_disableSwipeBack) {
@@ -1217,6 +1241,15 @@ RNS_IGNORE_SUPER_CALL_END
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
+  if (otherGestureRecognizer == _sinkEventsPanGestureRecognizer) {
+    // When transition happens between two stack screens, a special "sink" recognizer is added, and then removed.
+    // It captures all gestures for the time of transition and does nothing, so that in nested stack scenario,
+    // the outer most stack does not recognize swipe gestures, otherwise it would dismiss the whole nested stack.
+    // For the recognizer to work as described, it should have precedence over all other recognizers.
+    // see also: rnscreens_enableInteractions, rnscreens_disableInteractions
+    return YES;
+  }
+
   if (@available(iOS 26, *)) {
     if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
         [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
