@@ -73,13 +73,12 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScroll
 RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
     react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect);
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
-BOOL RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
-    react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment *payloadEnvironment,
-    UITabAccessoryEnvironment environment);
+react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment
+RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment);
 
 #if REACT_NATIVE_VERSION_MINOR >= 82
 RNSBottomTabsAccessoryEnvironment RNSBottomTabsAccessoryEnvironmentFromCppEquivalent(
@@ -91,7 +90,7 @@ NSString *_Nullable RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAcc
     UITabAccessoryEnvironment environment);
 #endif // RCT_NEW_ARCH_ENABLED
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
     react::RNSBottomTabsScreenUserInterfaceStyle userInterfaceStyle);

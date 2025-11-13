@@ -401,26 +401,22 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
 
 #undef SWITCH_EDGE_EFFECT
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
-BOOL RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
-    react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment *payloadEnvironment,
-    UITabAccessoryEnvironment environment)
+react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment
+RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment)
 {
   switch (environment) {
     case UITabAccessoryEnvironmentRegular:
-      *payloadEnvironment = react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
-      break;
+      return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
     case UITabAccessoryEnvironmentInline:
-      *payloadEnvironment = react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Inline;
-      break;
+      return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Inline;
     default:
-      return NO;
+      RCTLogError(@"[RNScreens] Unsupported environment for onEnvironmentChange event");
+      return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
   }
-
-  return YES;
 }
 
 #if REACT_NATIVE_VERSION_MINOR >= 82
@@ -459,6 +455,7 @@ NSString *RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvi
       environmentString = BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT;
       break;
     default:
+      RCTLogError(@"[RNScreens] Unsupported environment for onEnvironmentChange event");
       break;
   }
 
@@ -467,7 +464,7 @@ NSString *RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvi
 
 #endif // RCT_NEW_ARCH_ENABLED
 
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
     react::RNSBottomTabsScreenUserInterfaceStyle userInterfaceStyle)

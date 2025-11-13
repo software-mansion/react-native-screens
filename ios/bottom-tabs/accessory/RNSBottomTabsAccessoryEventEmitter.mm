@@ -40,11 +40,9 @@ namespace react = facebook::react;
 {
 #if RCT_NEW_ARCH_ENABLED
   if (_reactEventEmitter != nullptr) {
-    react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment payloadEnvironment;
-    if (!rnscreens::conversion::RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
-            &payloadEnvironment, environment)) {
-      return NO;
-    }
+    auto payloadEnvironment =
+        rnscreens::conversion::RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+            environment);
 
     _reactEventEmitter->onEnvironmentChange({.environment = payloadEnvironment});
     return YES;
@@ -57,9 +55,6 @@ namespace react = facebook::react;
     NSString *environmentString =
         rnscreens::conversion::RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
             environment);
-    if (environmentString == nil) {
-      return NO;
-    }
 
     self.onEnvironmentChange(@{@"environment" : environmentString});
     return YES;
