@@ -46,7 +46,7 @@ interface Config {
   searchBarPlacement: 'disabled' | SearchBarPlacement;
   searchBarHideNavigationBar: boolean;
   searchBarHideWhenScrolling: boolean;
-  content: 'regularView' | 'scrollView';
+  content: 'regularView' | 'scrollView' | 'config';
   headerHeight: number;
 }
 
@@ -187,7 +187,7 @@ function ConfigScreen({ setShowTestScreen }: NavigationProps) {
             content: value,
           })
         }
-        items={['regularView', 'scrollView']}
+        items={['regularView', 'scrollView', 'config']}
       />
       <Button title="Push screen" onPress={() => setShowTestScreen(true)} />
     </ScrollView>
@@ -217,6 +217,13 @@ function TestScreen({ setShowTestScreen }: NavigationProps) {
           <LongText size="lg" />
         </ScrollView>
       );
+    case 'config':
+      return (
+        <>
+          {topContent}
+          <ConfigScreen setShowTestScreen={setShowTestScreen} />
+        </>
+      );
   }
 }
 
@@ -237,7 +244,12 @@ function Navigation() {
         {showTestScreen && (
           <ScreenStackItem
             screenId="test"
-            style={StyleSheet.absoluteFill}
+            style={[
+              StyleSheet.absoluteFill,
+              {
+                backgroundColor: Colors.cardBackground,
+              },
+            ]}
             activityState={2}
             onHeaderHeightChange={e => {
               console.log(`[HeaderHeight] ${e.nativeEvent.headerHeight}`);
