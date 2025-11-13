@@ -159,7 +159,7 @@ namespace react = facebook::react;
 
 - (void)updateContainer
 {
-  if (!_hasModifiedTabsScreensInCurrentTransaction && !_hasModifiedBottomAccessoryInCurrentTransation) {
+  if (!self.hasModifiedReactSubviewsInCurrentTransaction) {
     return;
   }
 
@@ -435,7 +435,7 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller setNeedsUpdateOfTabBarAppearance:true];
   }
 
-  if (_hasModifiedTabsScreensInCurrentTransaction || _hasModifiedBottomAccessoryInCurrentTransation) {
+  if (self.hasModifiedReactSubviewsInCurrentTransaction) {
     [self updateContainer];
     _hasModifiedTabsScreensInCurrentTransaction = NO;
     _hasModifiedBottomAccessoryInCurrentTransation = NO;
