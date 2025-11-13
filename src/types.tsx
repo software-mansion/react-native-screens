@@ -1106,6 +1106,7 @@ export interface HeaderBarButtonItemWithAction
 export interface HeaderBarButtonItemMenuAction {
   type: 'action';
   title?: string;
+  subtitle?: string;
   onPress: () => void;
   icon?: PlatformIconIOSSfSymbol;
   /**
@@ -1151,6 +1152,10 @@ export interface HeaderBarButtonItemSubmenu {
   title?: string;
   icon?: PlatformIconIOSSfSymbol;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
+  displayInline?: boolean;
+  destructive?: boolean;
+  singleSelection?: boolean;
+  displayAsPalette?: boolean;
 }
 
 export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
@@ -1158,6 +1163,8 @@ export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
   menu: {
     title?: string;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
+    singleSelection?: boolean;
+    displayAsPalette?: boolean;
   };
   /**
    * A Boolean value that indicates whether the button title should indicate selection or not.
