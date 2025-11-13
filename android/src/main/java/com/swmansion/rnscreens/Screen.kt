@@ -34,6 +34,7 @@ import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -187,7 +188,7 @@ class Screen(
             dispatchShadowStateUpdate(width, height, t)
 
             // FormSheet has no header in current model.
-            notifyHeaderHeightChange(t)
+//            notifyHeaderHeightChange(t)
         }
     }
 
@@ -456,12 +457,18 @@ class Screen(
             super.onTouchEvent(event)
         }
 
-    private fun notifyHeaderHeightChange(headerHeight: Int) {
+    public fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
         UIManagerHelper
             .getEventDispatcherForReactTag(screenContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
+            ?.dispatchEvent(
+                HeaderHeightChangeEvent(
+                    surfaceId,
+                    id,
+                    pxToDp(screenContext, headerHeight.toFloat()).toDouble(),
+                ),
+            )
     }
 
     internal fun onSheetDetentChanged(

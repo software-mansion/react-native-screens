@@ -93,6 +93,8 @@ class ScreenStackHeaderConfig(
                 defaultStartInsetWithNavigation
             }
 
+    val headerHeightUpdateProxy = ScreenStackHeaderHeightUpdateProxy(this)
+
     fun destroy() {
         isDestroyed = true
     }
@@ -125,6 +127,8 @@ class ScreenStackHeaderConfig(
                 ?: contentInsetStartEstimation
 
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
+
+        headerHeightUpdateProxy.updateHeaderHeightIfNeeded()
 
         // Note that implementation of the callee differs between architectures.
         updateHeaderConfigState(
@@ -162,7 +166,7 @@ class ScreenStackHeaderConfig(
             ?.dispatchEvent(HeaderDetachedEvent(surfaceId, id))
     }
 
-    private val screen: Screen?
+    val screen: Screen?
         get() = parent as? Screen
 
     private val screenStack: ScreenStack?
@@ -216,6 +220,7 @@ class ScreenStackHeaderConfig(
             if (toolbar.parent != null) {
                 screenFragment?.removeToolbar()
             }
+            headerHeightUpdateProxy.updateHeaderHeightIfNeeded()
             return
         }
 
@@ -336,6 +341,8 @@ class ScreenStackHeaderConfig(
             toolbar.addView(view)
             i++
         }
+
+        headerHeightUpdateProxy.updateHeaderHeightIfNeeded()
     }
 
     private fun maybeUpdate() {
