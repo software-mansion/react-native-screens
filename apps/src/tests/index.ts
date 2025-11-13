@@ -160,6 +160,7 @@ export { default as Test3342 } from './Test3342';
 export { default as Test3346 } from './Test3346';
 export { default as Test3369 } from './Test3369';
 export { default as Test3379 } from './Test3379';
+export { default as Test3384 } from './Test3384';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';
