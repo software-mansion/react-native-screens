@@ -7,16 +7,14 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
-#define BOTTOM_ACCESSORY_AVAILABLE RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-
 namespace react = facebook::react;
 
 #pragma mark - View implementation
 
 @implementation RNSBottomTabsAccessoryContentComponentView {
-#if BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
   RNSBottomTabsAccessoryComponentView *__weak _Nullable _accessoryView;
-#endif // BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -27,7 +25,7 @@ namespace react = facebook::react;
 
 #pragma mark - UIKit callbacks
 
-#if BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
 
 - (void)didMoveToWindow
 {
@@ -42,13 +40,13 @@ namespace react = facebook::react;
   }
 }
 
-#endif // BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
 
 #if RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTViewComponentViewProtocol
 
-#if BOTTOM_ACCESSORY_AVAILABLE
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 #if REACT_NATIVE_VERSION_MINOR >= 82
 
@@ -79,7 +77,7 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSBottomTabsAccessoryContentComponentDescriptor>();
 }
 
-#endif // BOTTOM_ACCESSORY_AVAILABLE
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 + (BOOL)shouldBeRecycled
 {
@@ -101,5 +99,3 @@ Class<RCTComponentViewProtocol> RNSBottomTabsAccessoryContentCls(void)
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
-
-#undef BOTTOM_ACCESSORY_AVAILABLE

@@ -13,16 +13,14 @@
 #import <rnscreens/RNSBottomTabsAccessoryComponentDescriptor.h>
 #endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 
-#define BOTTOM_ACCESSORY_AVAILABLE RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-
 NS_ASSUME_NONNULL_BEGIN
 
-#if BOTTOM_ACCESSORY_AVAILABLE
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 @class RNSBottomAccessoryHelper;
 @class RNSBottomTabsAccessoryShadowStateProxy;
 
-#endif // BOTTOM_ACCESSORY_AVAILABLE
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 @interface RNSBottomTabsAccessoryComponentView : RNSReactBaseView <
 #if RCT_NEW_ARCH_ENABLED
@@ -38,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, readonly, nullable) RCTBridge *bridge;
 #endif // !RCT_NEW_ARCH_ENABLED
 
-#if BOTTOM_ACCESSORY_AVAILABLE
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 /**
  * If not null, the bottom accesory's helper that handles accessory size and environment changes.
@@ -51,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, readonly, nullable) RNSBottomTabsAccessoryShadowStateProxy *shadowStateProxy;
 
-#endif // BOTTOM_ACCESSORY_AVAILABLE
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 /**
  * If not null, the bottom tabs host view that this accessory component view belongs to.
@@ -62,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - React Events
 
-#if BOTTOM_ACCESSORY_AVAILABLE
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 @interface RNSBottomTabsAccessoryComponentView ()
 
@@ -80,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#endif // BOTTOM_ACCESSORY_AVAILABLE
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 #pragma mark - Hidden from Swift
 
@@ -95,5 +93,3 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RCT_NEW_ARCH_ENABLED && defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
-
-#undef BOTTOM_ACCESSORY_AVAILABLE
