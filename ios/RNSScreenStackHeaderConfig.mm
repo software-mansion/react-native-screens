@@ -575,11 +575,10 @@ RNS_IGNORE_SUPER_CALL_END
     vc.edgesForExtendedLayout = UIRectEdgeAll;
   }
 
-  [navctr setNavigationBarHidden:shouldHide animated:animated];
-
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
   if (shouldHide) {
+    [navctr setNavigationBarHidden:true animated:animated];
     navitem.title = config.title;
     return;
   }
@@ -595,6 +594,8 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.largeTitleDisplayMode =
       config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
 #endif
+
+  [navctr setNavigationBarHidden:false animated:animated];
 
   UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
   navitem.standardAppearance = appearance;
