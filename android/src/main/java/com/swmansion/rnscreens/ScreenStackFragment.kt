@@ -12,6 +12,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.animation.Animation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
@@ -122,6 +123,10 @@ class ScreenStackFragment :
             isToolbarTranslucent = translucent
         }
     }
+
+    fun hasToolbar() = toolbar !== null
+
+    fun applyInsetsOnToolbar(insets: WindowInsets?) = (this.toolbar as CustomToolbar?)?.applyWindowInsets(insets);
 
     override fun onContainerUpdate() {
         super.onContainerUpdate()

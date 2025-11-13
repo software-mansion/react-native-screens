@@ -23,7 +23,17 @@ internal class ScreensCoordinatorLayout(
         PointerEventsBoxNoneImpl(),
     )
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        println("SCL name=${fragment.screen.headerConfig?.getTitle()} inset pre = ${insets}")
+        if (fragment.hasToolbar()) {
+            val after = fragment.applyInsetsOnToolbar(insets)
+            println("SCL inset post = ${after}")
+            return after
+        }
+
+        println("SCL default")
+        return super.onApplyWindowInsets(insets)
+    }
 
     private val animationListener: Animation.AnimationListener =
         object : Animation.AnimationListener {
