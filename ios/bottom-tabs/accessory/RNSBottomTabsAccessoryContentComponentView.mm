@@ -67,6 +67,14 @@ namespace react = facebook::react;
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
+
+  // In finalize updates, `invalidateLayer` is called. It resets `view.layer.opacity`
+  // which we use to switch visible bottom accessory content view. In order to mitigate
+  // this, we update visibility after `[super finalizeUpdates:updateMask]`. Without this,
+  // both content views are visible on first render. It does not happen on subsequent
+  // renders because `updateState` is called before trait changes but there might be other
+  // cases when `finalizeUpdates` will run so to make sure that we maintain correct
+  // visibility, we call `handleContentViewVisibilityForEnvironmentIfNeeded` here.
   [_accessoryView.helper handleContentViewVisibilityForEnvironmentIfNeeded];
 }
 
