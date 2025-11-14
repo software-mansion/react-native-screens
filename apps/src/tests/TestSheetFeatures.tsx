@@ -155,15 +155,15 @@ function FitToContentsFormSheet({ navigation }: RouteProps<'FitToContentsFormShe
   return (
     <View style={styles.content}>
       <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Trigger keyboard..."/>
+      <View>
+        <Button title="Add Content" onPress={handleAddContentPress} />
+        <Button title="Dismiss" onPress={() => navigation.goBack()} />
+      </View>
       {contents.map((_, i) => (
         <View key={i} style={styles.item}>
           <Text style={{ color: 'gray' }}>Content #{i + 1}</Text>
         </View>
       ))}
-      <View>
-        <Button title="Add Content" onPress={handleAddContentPress} />
-        <Button title="Dismiss" onPress={() => navigation.goBack()} />
-      </View>
     </View>
   );
 }

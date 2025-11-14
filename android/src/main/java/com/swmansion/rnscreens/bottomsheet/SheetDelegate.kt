@@ -39,6 +39,9 @@ class SheetDelegate(
 
     private var lastKeyboardBottomOffset: Int = 0
 
+    private var heightAnimator: ValueAnimator? = null
+    private var previousHeight: Int = -1
+
     var lastStableDetentIndex: Int = screen.sheetInitialDetentIndex
         private set
 
@@ -525,6 +528,30 @@ class SheetDelegate(
                 }
             },
         )
+    }
+
+    internal fun animateContentHeightChange(targetHeight: Int) {
+        val params = screen.layoutParams
+
+        // Cancel any ongoing animation
+        heightAnimator?.cancel()
+
+        // Create and start height animation
+        heightAnimator =
+            ValueAnimator.ofInt(screen.height, targetHeight).apply {
+                duration = 200
+                addUpdateListener { animator ->
+                    val animatedHeight = animator.animatedValue as Int
+                    params.height = animatedHeight
+                    screen.layoutParams = params
+
+                    // Dispatch translation event
+                    screen.onSheetTranslation(screen.top)
+                }
+                start()
+            }
+
+        previousHeight = targetHeight
     }
 
     private inner class KeyboardHandler : BottomSheetBehavior.BottomSheetCallback() {
