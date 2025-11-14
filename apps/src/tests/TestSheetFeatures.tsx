@@ -29,6 +29,7 @@ const SPRING_CONFIG: WithSpringConfig = {
 type RouteParamList = {
   Home: undefined;
   FormSheet: undefined;
+  FitToContentsFormSheet: undefined;
 };
 
 const Stack = createNativeStackNavigator<RouteParamList>();
@@ -50,8 +51,9 @@ function Home({ navigation }: RouteProps<'Home'>) {
   }));
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'lightsalmon' }}>
+    <View style={styles.container}>
       <Button title="Open sheet" onPress={() => navigation.navigate('FormSheet')} />
+      <Button title="Open fitToContents Sheet" onPress={() => navigation.navigate('FitToContentsFormSheet')} />
       <Animated.View style={[styles.circle, circleStyle]} />
     </View>
   );
@@ -83,23 +85,21 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
         withTiming(0, { duration: 350 }) :
         withSpring(0, SPRING_CONFIG);
     }
-  }, []))
+  }, [contextY]))
 
   useEffect(() => {
     navigation.setOptions({
       sheetInitialDetentIndex: currentDetentIndex,
     })
-  }, [currentDetentIndex])
+  }, [navigation, currentDetentIndex])
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('sheetDetentChange', ({ data }) => {
+    return navigation.addListener('sheetDetentChange', ({ data }) => {
       if (data.stable) {
         setCurrentDetentIndex(data.index);
       }
     })
-
-    return unsubscribe
-  }, [])
+  }, [navigation])
 
   return (
     <ScrollView
@@ -115,10 +115,56 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
       </View>
       {Array.from({ length: 40 }, (_, i) => (
         <View key={i} style={styles.item}>
-          <Text style={{ color: 'gray' }}>{i + 1}</Text>
+          <Text style={{ color: 'gray' }}>Content #{i + 1}</Text>
         </View>
       ))}
     </ScrollView>
+  );
+}
+
+function FitToContentsFormSheet({ navigation }: RouteProps<'FitToContentsFormSheet'>) {
+  const frame = useSafeAreaFrame();
+  const contextY = React.useContext(TranslationContext)
+  const translation = useReanimatedSheetTranslation()
+
+  const [contents, setContents] = useState<number[]>([]);
+
+  useAnimatedReaction(() => translation.value, () => {
+    if (!contextY) return
+    contextY.value = -(frame.height - translation.value)
+  })
+
+  const handleAddContentPress = () => {
+    setContents([
+      ...contents,
+      contents.length + 1,
+    ]);
+  }
+
+  // Reanimated doesn't get fired when dismissed even if native is firing it.
+  // I guess due to the component being unmounted early in react-navigation?
+  useFocusEffect(useCallback(() => {
+    return () => {
+      if (!contextY) return;
+      contextY.value = Platform.OS === 'android' ?
+        withTiming(0, { duration: 350 }) :
+        withSpring(0, SPRING_CONFIG);
+    }
+  }, [contextY]))
+
+  return (
+    <View style={styles.content}>
+      <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Trigger keyboard..."/>
+      {contents.map((_, i) => (
+        <View key={i} style={styles.item}>
+          <Text style={{ color: 'gray' }}>Content #{i + 1}</Text>
+        </View>
+      ))}
+      <View>
+        <Button title="Add Content" onPress={handleAddContentPress} />
+        <Button title="Dismiss" onPress={() => navigation.goBack()} />
+      </View>
+    </View>
   );
 }
 
@@ -135,7 +181,15 @@ export default function App() {
               presentation: 'formSheet',
               sheetAllowedDetents: [0.3, 0.5, 0.8],
               // sheetAllowedDetents: [0.9997],
-              // sheetAllowedDetents: 'fitToContents',
+              sheetLargestUndimmedDetentIndex: 'none',
+              sheetCornerRadius: 16,
+              headerShown: false,
+              // sheetDismissible: false,
+              unstable_sheetFooter: FormSheetFooter,
+            }} />
+            <Stack.Screen name="FitToContentsFormSheet" component={FitToContentsFormSheet} options={{
+              presentation: 'formSheet',
+              sheetAllowedDetents: 'fitToContents',
               sheetLargestUndimmedDetentIndex: 'none',
               sheetCornerRadius: 16,
               headerShown: false,
@@ -150,6 +204,11 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'lightsalmon',
+    gap: 8,
+  },
   circle: {
     position: 'absolute',
     right: 16,
