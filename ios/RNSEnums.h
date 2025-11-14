@@ -181,3 +181,8 @@ typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
   RNSOptionalBooleanTrue,
   RNSOptionalBooleanFalse
 };
+
+typedef NS_ENUM(NSInteger, RNSBottomTabsAccessoryEnvironment) {
+  RNSBottomTabsAccessoryEnvironmentRegular,
+  RNSBottomTabsAccessoryEnvironmentInline
+};

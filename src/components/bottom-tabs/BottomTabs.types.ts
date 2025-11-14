@@ -1,9 +1,15 @@
+import { ReactNode } from 'react';
 import type {
   ColorValue,
   TextStyle,
   NativeSyntheticEvent,
   ViewProps,
 } from 'react-native';
+import type { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+
+export type BottomAccessoryFn = (
+  environment: BottomTabsAccessoryEnvironment,
+) => ReactNode;
 
 export type NativeFocusChangeEvent = {
   tabKey: string;
@@ -192,6 +198,36 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 26 or higher
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+  /**
+   * @summary Specifies component used as bottom accessory.
+   *
+   * This prop is a function that accepts `environment` as a parameter and returns
+   * the component that will be rendered in the bottom accessory.
+   *
+   * `environment` can be one of the following values:
+   *
+   * - `regular` - the accessory is laid out above the bottom tab bar,
+   * - `inline` - the accessory is laid out inline with the collapsed bottom
+   *   tab bar.
+   *
+   * If this prop is `undefined`, the bottom accessory will not be rendered.
+   *
+   * On legacy architecture (Paper) and on new architecture (Fabric) with RN < 0.82,
+   * implementation uses DisplayLink which might result in the size of bottom
+   * accessory being updated with a delay.
+   *
+   * Starting from RN 0.82, this issue is mitigated but in order to allow accessory
+   * rendering based on environment, component is rendered 2 times for both `regular`
+   * and `inline` environments at the same time. Environment determines which component
+   * is visible at given moment. This might require implementing a solution to share
+   * state between both rendered components (e.g. usage of context).
+   *
+   * Available starting from iOS 26.
+   *
+   * @platform iOS
+   * @supported iOS 26 or higher
+   */
+  bottomAccessory?: BottomAccessoryFn;
   /**
    * @summary Specifies the display mode for the tab bar.
    *
