@@ -18,6 +18,9 @@ namespace react = facebook::react;
 + (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode;
 
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
+    (react::RNSScreenFullScreenSwipeEnabled)fullScreenSwipeEnabled;
+
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
     (react::RNSScreenStackPresentation)stackPresentation;
 
@@ -49,6 +52,9 @@ namespace react = facebook::react;
 + (RNSOptionalBoolean)RNSOptionalBooleanFromRNSSearchBarHideNavigationBar:
     (react::RNSSearchBarHideNavigationBar)hideNavigationBar;
 
++ (UIUserInterfaceStyle)UIUserInterfaceStyleFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigUserInterfaceStyle)userInterfaceStyle;
+
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
 
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
@@ -61,6 +67,7 @@ namespace react = facebook::react;
     (react::RNSScreenRightScrollEdgeEffect)edgeEffect;
 + (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
     (react::RNSScreenTopScrollEdgeEffect)edgeEffect;
++ (id)idFromFollyDynamic:(const folly::dynamic &)dyn;
 
 #endif // RCT_NEW_ARCH_ENABLED
 

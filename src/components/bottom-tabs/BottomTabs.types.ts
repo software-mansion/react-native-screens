@@ -23,6 +23,9 @@ export type TabBarMinimizeBehavior =
   | 'onScrollDown'
   | 'onScrollUp';
 
+// iOS-specific
+export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
+
 export interface BottomTabsProps extends ViewProps {
   // #region Events
   /**
@@ -34,6 +37,15 @@ export interface BottomTabsProps extends ViewProps {
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
   ) => void;
   // #endregion Events
+
+  // #region General
+  /**
+   * @summary Hides the tab bar.
+   *
+   * @default false
+   */
+  tabBarHidden?: boolean;
+  // #endregion General
 
   // #region Android-only appearance
   /**
@@ -180,6 +192,27 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 26 or higher
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+  /**
+   * @summary Specifies the display mode for the tab bar.
+   *
+   * Available starting from iOS 18.
+   * Not supported on tvOS.
+   *
+   * The following values are currently supported:
+   *
+   * - `automatic` - the system sets the display mode based on the tab’s content
+   * - `tabBar` - the system displays the content only as a tab bar
+   * - `tabSidebar` - the tab bar is displayed as a sidebar
+   *
+   * See the official documentation for more details:
+   * @see {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/mode|UITabBarController.Mode}
+   *
+   * @default Defaults to `automatic`.
+   *
+   * @platform ios
+   * @supported iOS 18 or higher
+   */
+  tabBarControllerMode?: TabBarControllerMode;
   // #endregion iOS-only appearance
 
   // #region Experimental support

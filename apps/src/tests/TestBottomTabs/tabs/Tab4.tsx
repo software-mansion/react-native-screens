@@ -113,15 +113,12 @@ export function Tab4() {
         <Stack.Screen
           name="Screen1"
           component={Screen1}
-          options={{ headerTransparent: true, orientation: 'landscape' }}
+          options={{ headerTransparent: true }}
         />
         <Stack.Screen
           name="Screen2"
           component={Screen2}
-          options={{
-            headerLargeTitle: true,
-            orientation: 'default',
-          }}
+          options={{ headerLargeTitle: true }}
         />
         <Stack.Screen
           name="Screen3"

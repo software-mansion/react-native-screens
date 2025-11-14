@@ -30,5 +30,7 @@ public interface RNSBottomTabsManagerInterface<T extends View>  {
   void setTabBarItemLabelVisibilityMode(T view, @Nullable String value);
   void setTabBarTintColor(T view, @Nullable Integer value);
   void setTabBarMinimizeBehavior(T view, @Nullable String value);
+  void setTabBarControllerMode(T view, @Nullable String value);
+  void setTabBarHidden(T view, boolean value);
   void setControlNavigationStateInJS(T view, boolean value);
 }

@@ -48,12 +48,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) UIColor *tabBarTintColor;
 
+@property (nonatomic, readonly) BOOL tabBarHidden;
+
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 @property (nonatomic, readonly) UITabBarMinimizeBehavior tabBarMinimizeBehavior API_AVAILABLE(ios(26.0));
 #endif // Check for iOS >= 26
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+@property (nonatomic, readonly) UITabBarControllerMode tabBarControllerMode API_AVAILABLE(ios(18.0));
+#endif // Check for iOS >= 18
 @end
 
 #pragma mark - React Events

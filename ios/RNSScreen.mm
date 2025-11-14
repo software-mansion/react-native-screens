@@ -12,6 +12,7 @@
 #import <React/RCTRootComponentView.h>
 #import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -98,6 +99,7 @@ struct ContentWrapperBox {
 {
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const react::RNSScreenProps>();
+    _snapshotAfterUpdates = NO;
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     _contentWrapperBox = {};
@@ -131,6 +133,7 @@ struct ContentWrapperBox {
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
   _activityState = RNSActivityStateUndefined;
+  _fullScreenSwipeEnabled = RNSOptionalBooleanUndefined;
   _fullScreenSwipeShadowEnabled = YES;
   _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
@@ -141,6 +144,17 @@ struct ContentWrapperBox {
 #ifdef RCT_NEW_ARCH_ENABLED
   _markedForUnmountInCurrentTransaction = NO;
 #endif // RCT_NEW_ARCH_ENABLED
+}
+
++ (RNSViewInteractionManager *)viewInteractionManagerInstance
+{
+  static RNSViewInteractionManager *manager = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    manager = [[RNSViewInteractionManager alloc] init];
+  });
+
+  return manager;
 }
 
 - (BOOL)getFullScreenSwipeShadowEnabled
@@ -187,7 +201,15 @@ RNS_IGNORE_SUPER_CALL_END
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
-    _state->updateState(std::move(newState));
+
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
@@ -465,6 +487,21 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _shouldUpdateScrollEdgeEffects = YES;
   _topScrollEdgeEffect = topScrollEdgeEffect;
+}
+
+- (BOOL)isFullScreenSwipeEffectivelyEnabled
+{
+  switch (_fullScreenSwipeEnabled) {
+    case RNSOptionalBooleanTrue:
+      return YES;
+    case RNSOptionalBooleanFalse:
+      return NO;
+    case RNSOptionalBooleanUndefined:
+      if (@available(iOS 26, *)) {
+        return YES;
+      }
+      return NO;
+  }
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -777,9 +814,10 @@ RNS_IGNORE_SUPER_CALL_END
     // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
     // Disabling interactions for parent navigation controller won't be enough in case of nested stack
     // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
-    // To be sure, we block interactions on the whole window.
-    // Note that newWindows is nil when moving from instead of moving to, and Obj-C handles nil correctly
-    newWindow.userInteractionEnabled = false;
+
+    // Use RNSViewInteractionManager util to find a suitable subtree to disable interations on,
+    // starting from reactSuperview, because on Paper, self is not attached yet.
+    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
   }
 }
 
@@ -787,7 +825,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (@available(iOS 26, *)) {
     // Disable interactions to disallow multiple modals dismissed at once; see willMoveToWindow
-    presentationController.containerView.window.userInteractionEnabled = false;
+    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
   }
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -818,7 +856,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (@available(iOS 26, *)) {
     // Reenable interactions; see presentationControllerWillDismiss
-    presentationController.containerView.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
 
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
@@ -834,7 +872,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (@available(iOS 26, *)) {
     // Reenable interactions; see presentationControllerWillDismiss
     // Dismissed screen doesn't hold a reference to window, but presentingViewController.view does
-    presentationController.presentingViewController.view.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
 
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
@@ -909,11 +947,18 @@ RNS_IGNORE_SUPER_CALL_END
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-- (void)invalidate
+- (void)invalidateImpl
 {
   _controller = nil;
   [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
+
+#ifndef RCT_NEW_ARCH_ENABLED
+- (void)invalidate
+{
+  [self invalidateImpl];
+}
+#endif
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
@@ -1333,7 +1378,8 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
-  [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+  _fullScreenSwipeEnabled =
+      [RNSConvert RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:newScreenProps.fullScreenSwipeEnabled];
 
   [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
 
@@ -1354,6 +1400,8 @@ RNS_IGNORE_SUPER_CALL_END
   [self setActivityStateOrNil:[NSNumber numberWithFloat:newScreenProps.activityState]];
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
+
+  [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
@@ -1464,6 +1512,7 @@ RNS_IGNORE_SUPER_CALL_END
   [super finalizeUpdates:updateMask];
   if (_shouldUpdateScrollEdgeEffects) {
     [self updateContentScrollViewEdgeEffectsIfExists];
+    _shouldUpdateScrollEdgeEffects = NO;
   }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -1636,7 +1685,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   if (@available(iOS 26, *)) {
     // Reenable interactions, see willMoveToWindow
-    self.view.window.userInteractionEnabled = true;
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
@@ -1678,6 +1727,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
   [self traverseForScrollView:self.screenView];
 #endif
+  if (@available(iOS 26, *)) {
+    // Reenable interactions, see willMoveToWindow
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
 }
 
 - (void)viewDidLayoutSubviews
@@ -2126,7 +2179,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIView *superView = self.view.superview;
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window != nil) {
-    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    auto afterUpdates = self.screenView.snapshotAfterUpdates;
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:afterUpdates];
     snapshot.frame = self.view.frame;
     [self.view removeFromSuperview];
     self.view = snapshot;
@@ -2171,7 +2225,7 @@ RCT_EXPORT_MODULE()
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, RNSOptionalBoolean);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)

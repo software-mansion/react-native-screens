@@ -16,6 +16,7 @@ import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
+@SuppressWarnings("deprecation")
 public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSBottomTabsManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSBottomTabsManagerDelegate(U viewManager) {
     super(viewManager);
@@ -70,6 +71,12 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
         break;
       case "tabBarMinimizeBehavior":
         mViewManager.setTabBarMinimizeBehavior(view, (String) value);
+        break;
+      case "tabBarControllerMode":
+        mViewManager.setTabBarControllerMode(view, (String) value);
+        break;
+      case "tabBarHidden":
+        mViewManager.setTabBarHidden(view, value == null ? false : (boolean) value);
         break;
       case "controlNavigationStateInJS":
         mViewManager.setControlNavigationStateInJS(view, value == null ? false : (boolean) value);

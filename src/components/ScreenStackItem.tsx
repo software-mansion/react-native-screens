@@ -53,27 +53,31 @@ function ScreenStackItem(
 
   React.useImperativeHandle(ref, () => currentScreenRef.current!);
 
+  const stackPresentationWithDefault = stackPresentation ?? 'push';
+  const headerConfigHiddenWithDefault = headerConfig?.hidden ?? false;
+
   const isHeaderInModal =
     Platform.OS === 'android'
       ? false
-      : stackPresentation !== 'push' && headerConfig?.hidden === false;
+      : stackPresentationWithDefault !== 'push' &&
+        headerConfigHiddenWithDefault === false;
 
-  const headerHiddenPreviousRef = React.useRef(headerConfig?.hidden);
+  const headerHiddenPreviousRef = React.useRef(headerConfigHiddenWithDefault);
 
   React.useEffect(() => {
     warnOnce(
       Platform.OS !== 'android' &&
-        stackPresentation !== 'push' &&
-        headerHiddenPreviousRef.current !== headerConfig?.hidden,
+        stackPresentationWithDefault !== 'push' &&
+        headerHiddenPreviousRef.current !== headerConfigHiddenWithDefault,
       `Dynamically changing header's visibility in modals will result in remounting the screen and losing all local state.`,
     );
 
-    headerHiddenPreviousRef.current = headerConfig?.hidden;
-  }, [headerConfig?.hidden, stackPresentation]);
+    headerHiddenPreviousRef.current = headerConfigHiddenWithDefault;
+  }, [headerConfigHiddenWithDefault, stackPresentationWithDefault]);
 
   const debugContainerStyle = getPositioningStyle(
     sheetAllowedDetents,
-    stackPresentation,
+    stackPresentationWithDefault,
   );
 
   // For iOS, we need to extract background color and apply it to Screen
@@ -81,7 +85,7 @@ function ScreenStackItem(
   let internalScreenStyle;
 
   if (
-    stackPresentation === 'formSheet' &&
+    stackPresentationWithDefault === 'formSheet' &&
     Platform.OS === 'ios' &&
     contentStyle
   ) {
@@ -99,7 +103,7 @@ function ScreenStackItem(
       <DebugContainer
         contentStyle={contentStyle}
         style={debugContainerStyle}
-        stackPresentation={stackPresentation ?? 'push'}>
+        stackPresentation={stackPresentationWithDefault}>
         {shouldUseSafeAreaView ? (
           <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
             {children}
@@ -121,7 +125,7 @@ function ScreenStackItem(
        */}
       <ScreenStackHeaderConfig {...headerConfig} />
       {/* eslint-disable-next-line camelcase */}
-      {stackPresentation === 'formSheet' && unstable_sheetFooter && (
+      {stackPresentationWithDefault === 'formSheet' && unstable_sheetFooter && (
         <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
       )}
     </>
@@ -153,7 +157,7 @@ function ScreenStackItem(
       activityState={activityState}
       shouldFreeze={shouldFreeze}
       screenId={screenId}
-      stackPresentation={stackPresentation}
+      stackPresentation={stackPresentationWithDefault}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       sheetAllowedDetents={sheetAllowedDetents}
       style={[style, internalScreenStyle]}
@@ -181,7 +185,7 @@ export default React.forwardRef(ScreenStackItem);
 
 function getPositioningStyle(
   allowedDetents: ScreenProps['sheetAllowedDetents'],
-  presentation?: StackPresentationTypes,
+  presentation: StackPresentationTypes,
 ) {
   const isIOS = Platform.OS === 'ios';
 
@@ -190,11 +194,7 @@ function getPositioningStyle(
   }
 
   if (isIOS) {
-    if (allowedDetents === 'fitToContents') {
-      return styles.absolute;
-    } else {
-      return styles.container;
-    }
+    return styles.absolute;
   }
 
   // Other platforms, tested reliably only on Android

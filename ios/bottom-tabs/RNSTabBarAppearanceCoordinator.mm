@@ -3,6 +3,8 @@
 #import <React/RCTImageLoader.h>
 #import "RCTConvert+RNSBottomTabs.h"
 #import "RNSConversions.h"
+#import "RNSImageLoadingHelper.h"
+#import "RNSTabBarController.h"
 #import "RNSTabsScreenViewController.h"
 
 @implementation RNSTabBarAppearanceCoordinator
@@ -18,6 +20,10 @@
 
   // Step 1 - configure host-specific appearance
   tabBar.tintColor = hostComponentView.tabBarTintColor;
+
+  // Set tint color for iPadOS tab bar. This is the official way recommended by Apple:
+  // https://developer.apple.com/forums/thread/761056?answerId=798245022#798245022
+  hostComponentView.controller.view.tintColor = hostComponentView.tabBarTintColor;
 
   if (tabScreenCtrls == nil) {
     return;
@@ -55,68 +61,54 @@
   if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
     if (screenView.iconSfSymbolName != nil) {
       tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+    } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
+      // Restore default system item icon
+      UITabBarSystemItem systemItem =
+          rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
+      tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].image;
+    } else {
+      tabBarItem.image = nil;
     }
 
     if (screenView.selectedIconSfSymbolName != nil) {
       tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
+      // Restore default system item icon
+      UITabBarSystemItem systemItem =
+          rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
+      tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].selectedImage;
+    } else {
+      tabBarItem.selectedImage = nil;
     }
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSBottomTabsIconTypeTemplate;
 
     // Normal icon
     if (screenView.iconImageSource != nil) {
-      [self loadImageFrom:screenView.iconImageSource
-          withImageLoader:imageLoader
-               asTemplate:isTemplate
-          completionBlock:^(UIImage *image) {
-            tabBarItem.image = image;
-          }];
+      [RNSImageLoadingHelper loadImageFromSource:screenView.iconImageSource
+                                 withImageLoader:imageLoader
+                                      asTemplate:isTemplate
+                                 completionBlock:^(UIImage *image) {
+                                   tabBarItem.image = image;
+                                 }];
     } else {
       tabBarItem.image = nil;
     }
 
     // Selected icon
     if (screenView.selectedIconImageSource != nil) {
-      [self loadImageFrom:screenView.selectedIconImageSource
-          withImageLoader:imageLoader
-               asTemplate:isTemplate
-          completionBlock:^(UIImage *image) {
-            tabBarItem.selectedImage = image;
-          }];
+      [RNSImageLoadingHelper loadImageFromSource:screenView.selectedIconImageSource
+                                 withImageLoader:imageLoader
+                                      asTemplate:isTemplate
+                                 completionBlock:^(UIImage *image) {
+                                   tabBarItem.selectedImage = image;
+                                 }];
     } else {
       tabBarItem.selectedImage = nil;
     }
   } else {
     RCTLogWarn(@"[RNScreens] unable to load tab bar item icons: imageLoader should not be nil");
   }
-}
-
-- (void)loadImageFrom:(nonnull RCTImageSource *)imageSource
-      withImageLoader:(nonnull RCTImageLoader *)imageLoader
-           asTemplate:(bool)isTemplate
-      completionBlock:(void (^)(UIImage *image))imageLoadingCompletionBlock
-{
-  RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
-  RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
-
-  [imageLoader loadImageWithURLRequest:imageSource.request
-      size:imageSource.size
-      scale:imageSource.scale
-      clipped:true
-      resizeMode:RCTResizeModeContain
-      progressBlock:^(int64_t progress, int64_t total) {
-      }
-      partialLoadBlock:^(UIImage *_Nonnull image) {
-      }
-      completionBlock:^(NSError *_Nullable error, UIImage *_Nullable image) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-          if (isTemplate) {
-            imageLoadingCompletionBlock([image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]);
-          } else {
-            imageLoadingCompletionBlock([image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]);
-          }
-        });
-      }];
 }
 
 + (void)configureTabBarAppearance:(nonnull UITabBarAppearance *)tabBarAppearance
@@ -190,7 +182,7 @@
       itemStateAppearanceProps[@"tabBarItemTitleFontWeight"] != nil ||
       itemStateAppearanceProps[@"tabBarItemTitleFontStyle"] != nil) {
     titleTextAttributes[NSFontAttributeName] =
-        [RCTFont updateFont:nil
+        [RCTFont updateFont:tabBarItemStateAppearance.titleTextAttributes[NSFontAttributeName]
                  withFamily:itemStateAppearanceProps[@"tabBarItemTitleFontFamily"]
                        size:itemStateAppearanceProps[@"tabBarItemTitleFontSize"]
                      weight:itemStateAppearanceProps[@"tabBarItemTitleFontWeight"]

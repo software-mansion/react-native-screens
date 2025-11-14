@@ -74,6 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) UITabBarAppearance *scrollEdgeAppearance;
 
 @property (nonatomic, nullable) NSString *title;
+@property (nonatomic, readonly) BOOL isTitleUndefined;
 @property (nonatomic, readonly) RNSOrientation orientation;
 
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
@@ -87,6 +88,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 
 @property (nonatomic) RNSBottomTabsScreenSystemItem systemItem;
+
+@end
+
+#pragma mark - Experimental
+
+@interface RNSBottomTabsScreenComponentView ()
+
+@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
 
 @end
 

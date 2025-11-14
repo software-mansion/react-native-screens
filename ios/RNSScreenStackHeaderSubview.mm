@@ -4,6 +4,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -23,6 +24,10 @@ namespace react = facebook::react;
   react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
   CGRect _lastScheduledFrame;
 #endif
+  // TODO: Refactor this, so that we don't keep reference here at all.
+  // Currently this likely creates retain cycle between subview & the bar button item.
+  UIBarButtonItem *_barButtonItem;
+  BOOL _hidesSharedBackground;
 }
 
 #pragma mark - Common
@@ -95,7 +100,15 @@ namespace react = facebook::react;
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState =
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
-    _state->updateState(std::move(newState));
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
+
     _lastScheduledFrame = frame;
   }
 }
@@ -135,6 +148,8 @@ namespace react = facebook::react;
   const auto &newHeaderSubviewProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewProps>(props);
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
+  [self setHidesSharedBackground:newHeaderSubviewProps.hidesSharedBackground];
+  [self setSynchronousShadowStateUpdatesEnabled:newHeaderSubviewProps.synchronousShadowStateUpdatesEnabled];
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -190,6 +205,34 @@ RNS_IGNORE_SUPER_CALL_END
 }
 #endif // RCT_NEW_ARCH_ENABLED
 
+#pragma mark - UIBarButtonItem specific
+
+- (UIBarButtonItem *)getUIBarButtonItem
+{
+  if (_barButtonItem == nil) {
+    _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self];
+    [self configureBarButtonItem];
+  }
+  return _barButtonItem;
+}
+
+- (void)configureBarButtonItem
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (_barButtonItem != nil) {
+      [_barButtonItem setHidesSharedBackground:_hidesSharedBackground];
+    }
+  }
+#endif
+}
+
+- (void)setHidesSharedBackground:(BOOL)hidesSharedBackground
+{
+  _hidesSharedBackground = hidesSharedBackground;
+  [self configureBarButtonItem];
+}
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager
@@ -197,6 +240,7 @@ RNS_IGNORE_SUPER_CALL_END
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
+RCT_EXPORT_VIEW_PROPERTY(hidesSharedBackground, BOOL)
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

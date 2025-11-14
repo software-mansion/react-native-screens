@@ -89,7 +89,7 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           options={{
-            statusBarTranslucent: true,
+            // statusBarTranslucent: true, // This prop has been deprecated.
             statusBarStyle: 'dark',
             //headerTitle: HeaderTitle,
             //headerRight: HeaderRight,
@@ -109,7 +109,7 @@ export default function App() {
           name="DynamicHeader"
           component={DynamicHeaderScreen}
           options={{
-            statusBarTranslucent: true,
+            // statusBarTranslucent: true, // This prop has been deprecated.
             statusBarStyle: 'dark',
             headerTitle: HeaderTitle,
             headerSearchBarOptions: {

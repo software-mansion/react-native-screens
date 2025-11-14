@@ -207,7 +207,7 @@ namespace react = facebook::react;
   return [_reactEventEmitter emitOnNativeFocusChange:OnNativeFocusChangePayload{.tabKey = tabScreen.tabKey}];
 }
 
-#pragma mark - RCTViewComponentViewProtocol
+#pragma mark - RCTComponentViewProtocol
 #if RCT_NEW_ARCH_ENABLED
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -253,6 +253,18 @@ namespace react = facebook::react;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
   }
 
+  if (newComponentProps.tabBarHidden != oldComponentProps.tabBarHidden) {
+    _tabBarHidden = newComponentProps.tabBarHidden;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    if (@available(iOS 18.0, *)) {
+      [_controller setTabBarHidden:_tabBarHidden animated:NO];
+    } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    {
+      _controller.tabBar.hidden = _tabBarHidden;
+    }
+  }
+
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
@@ -263,6 +275,19 @@ namespace react = facebook::react;
 #endif // Check for iOS >= 26
       if (newComponentProps.tabBarMinimizeBehavior != react::RNSBottomTabsTabBarMinimizeBehavior::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
+      }
+  }
+
+  if (newComponentProps.tabBarControllerMode != oldComponentProps.tabBarControllerMode) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    if (@available(iOS 18.0, *)) {
+      _tabBarControllerMode = rnscreens::conversion::UITabBarControllerModeFromRNSBottomTabsTabBarControllerMode(
+          newComponentProps.tabBarControllerMode);
+      _controller.mode = _tabBarControllerMode;
+    } else
+#endif // Check for iOS >= 18
+      if (newComponentProps.tabBarControllerMode != react::RNSBottomTabsTabBarControllerMode::Automatic) {
+        RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
       }
   }
 
@@ -416,6 +441,19 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateTabBarAppearance];
 }
 
+- (void)setTabBarHidden:(BOOL)tabBarHidden
+{
+  _tabBarHidden = tabBarHidden;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+  if (@available(iOS 18.0, *)) {
+    [_controller setTabBarHidden:_tabBarHidden animated:NO];
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+  {
+    _controller.tabBar.hidden = _tabBarHidden;
+  }
+}
+
 // This is a Paper-only setter method that will be called by the mounting code.
 // It allows us to store UITabBarMinimizeBehavior in the component while accepting a custom enum as input from JS.
 - (void)setTabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior:(RNSTabBarMinimizeBehavior)tabBarMinimizeBehavior
@@ -429,6 +467,20 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // Check for iOS >= 26
     if (tabBarMinimizeBehavior != RNSTabBarMinimizeBehaviorAutomatic) {
       RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
+    }
+}
+
+- (void)setTabBarControllerModeFromRNSTabBarControllerMode:(RNSTabBarControllerMode)tabBarControllerMode
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+  if (@available(iOS 18.0, *)) {
+    _tabBarControllerMode =
+        rnscreens::conversion::UITabBarControllerModeFromRNSTabBarControllerMode(tabBarControllerMode);
+    _controller.mode = _tabBarControllerMode;
+  } else
+#endif // Check for iOS >= 18
+    if (tabBarControllerMode != RNSTabBarControllerModeAutomatic) {
+      RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
     }
 }
 

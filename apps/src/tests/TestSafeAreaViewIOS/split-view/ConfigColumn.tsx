@@ -8,7 +8,7 @@ import ConfigWrapperContext, {
   DEFAULT_GLOBAL_CONFIGURATION,
 } from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import ConfigColumnTab from './ConfigColumnTab';
-import { SafeAreaView } from 'react-native-screens/private';
+import { SafeAreaView } from 'react-native-screens/experimental';
 
 export default function ConfigColumn({
   configColumnIndex,

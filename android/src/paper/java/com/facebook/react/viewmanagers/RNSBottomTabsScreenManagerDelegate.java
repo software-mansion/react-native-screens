@@ -18,6 +18,7 @@ import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
+@SuppressWarnings("deprecation")
 public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSBottomTabsScreenManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSBottomTabsScreenManagerDelegate(U viewManager) {
     super(viewManager);
@@ -34,17 +35,20 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "title":
         mViewManager.setTitle(view, value == null ? null : (String) value);
         break;
+      case "isTitleUndefined":
+        mViewManager.setIsTitleUndefined(view, value == null ? true : (boolean) value);
+        break;
       case "badgeValue":
         mViewManager.setBadgeValue(view, value == null ? null : (String) value);
         break;
       case "orientation":
         mViewManager.setOrientation(view, (String) value);
         break;
-      case "iconResourceName":
-        mViewManager.setIconResourceName(view, value == null ? null : (String) value);
+      case "drawableIconResourceName":
+        mViewManager.setDrawableIconResourceName(view, value == null ? null : (String) value);
         break;
-      case "iconResource":
-        mViewManager.setIconResource(view, (ReadableMap) value);
+      case "imageIconResource":
+        mViewManager.setImageIconResource(view, (ReadableMap) value);
         break;
       case "tabBarItemBadgeTextColor":
         mViewManager.setTabBarItemBadgeTextColor(view, ColorPropConverter.getColor(value, view.getContext()));
@@ -93,6 +97,9 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
         break;
       case "topScrollEdgeEffect":
         mViewManager.setTopScrollEdgeEffect(view, (String) value);
+        break;
+      case "userInterfaceStyle":
+        mViewManager.setUserInterfaceStyle(view, (String) value);
         break;
       default:
         super.setProperty(view, propName, value);

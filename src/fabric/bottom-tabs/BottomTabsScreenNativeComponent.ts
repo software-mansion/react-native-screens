@@ -111,6 +111,8 @@ type SystemItem =
 
 type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
+type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
+
 export interface NativeProps extends ViewProps {
   // Events
   onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
@@ -125,14 +127,15 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
+  isTitleUndefined?: WithDefault<boolean, true>;
   badgeValue?: string;
 
   // Currently iOS-only
   orientation?: WithDefault<Orientation, 'inherit'>;
 
   // Android-specific image handling
-  iconResourceName?: string;
-  iconResource?: ImageSource;
+  drawableIconResourceName?: string;
+  imageIconResource?: ImageSource;
   tabBarItemBadgeTextColor?: ColorValue;
   tabBarItemBadgeBackgroundColor?: ColorValue;
 
@@ -163,6 +166,9 @@ export interface NativeProps extends ViewProps {
   leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+
+  // Experimental
+  userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});

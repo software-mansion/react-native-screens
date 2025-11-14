@@ -43,6 +43,19 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 
 #endif // Check for iOS >= 26
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(18.0))
+UITabBarControllerMode UITabBarControllerModeFromRNSBottomTabsTabBarControllerMode(
+    react::RNSBottomTabsTabBarControllerMode tabBarControllerMode);
+#else // RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(18.0))
+UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarControllerMode);
+#endif // RCT_NEW_ARCH_ENABLED
+
+#endif // Check for iOS >= 18
+
 RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
 
 RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
@@ -58,6 +71,9 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScroll
     react::RNSBottomTabsScreenRightScrollEdgeEffect edgeEffect);
 RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
     react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect);
+
+UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
+    react::RNSBottomTabsScreenUserInterfaceStyle userInterfaceStyle);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
@@ -80,6 +96,11 @@ UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(react::RNSSpli
 
 UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
     react::RNSSplitViewHostPreferredDisplayMode displayMode);
+
+#if !TARGET_OS_TV
+UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp(
+    react::RNSSplitViewHostPrimaryBackgroundStyle primaryBackgroundStyle);
+#endif // !TARGET_OS_TV
 
 UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
     react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility);

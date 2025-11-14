@@ -36,6 +36,20 @@
   }
 }
 
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
+    (react::RNSScreenFullScreenSwipeEnabled)fullScreenSwipeEnabled
+{
+  switch (fullScreenSwipeEnabled) {
+    using enum react::RNSScreenFullScreenSwipeEnabled;
+    case Undefined:
+      return RNSOptionalBooleanUndefined;
+    case True:
+      return RNSOptionalBooleanTrue;
+    case False:
+      return RNSOptionalBooleanFalse;
+  }
+}
+
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
     (react::RNSScreenStackPresentation)stackPresentation
 {
@@ -203,6 +217,7 @@
     using enum react::RNSSearchBarAutoCapitalize;
     case Words:
       return UITextAutocapitalizationTypeWords;
+    case SystemDefault:
     case Sentences:
       return UITextAutocapitalizationTypeSentences;
     case Characters:
@@ -257,6 +272,23 @@
       return RNSOptionalBooleanTrue;
     case False:
       return RNSOptionalBooleanFalse;
+  }
+}
+
++ (UIUserInterfaceStyle)UIUserInterfaceStyleFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigUserInterfaceStyle)userInterfaceStyle
+{
+  switch (userInterfaceStyle) {
+    using enum react::RNSScreenStackHeaderConfigUserInterfaceStyle;
+
+    case Unspecified:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported user interface style");
   }
 }
 
@@ -324,6 +356,34 @@
       return RNSBlurEffectStyleNone;
 #endif // !TARGET_OS_TV
   }
+}
+
++ (id)idFromFollyDynamic:(const folly::dynamic &)dyn
+{
+  if (dyn.isNull()) {
+    return nil;
+  } else if (dyn.isBool()) {
+    return [NSNumber numberWithBool:dyn.getBool()];
+  } else if (dyn.isInt()) {
+    return [NSNumber numberWithLongLong:dyn.getInt()];
+  } else if (dyn.isDouble()) {
+    return [NSNumber numberWithDouble:dyn.getDouble()];
+  } else if (dyn.isString()) {
+    return [NSString stringWithUTF8String:dyn.getString().c_str()];
+  } else if (dyn.isArray()) {
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:dyn.size()];
+    for (const auto &item : dyn) {
+      [array addObject:[self idFromFollyDynamic:item]];
+    }
+    return array;
+  } else if (dyn.isObject()) {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:dyn.size()];
+    for (const auto &pair : dyn.items()) {
+      dict[@(pair.first.c_str())] = [self idFromFollyDynamic:pair.second];
+    }
+    return dict;
+  }
+  return nil;
 }
 
 #endif // RCT_NEW_ARCH_ENABLED

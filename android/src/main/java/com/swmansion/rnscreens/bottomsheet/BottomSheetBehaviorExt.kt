@@ -4,7 +4,7 @@ import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(
-    height: Int? = null,
+    maxAllowedHeight: Int? = null,
     forceExpandedState: Boolean = true,
 ): BottomSheetBehavior<T> {
     this.skipCollapsed = true
@@ -12,8 +12,8 @@ internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(
     if (forceExpandedState) {
         this.state = BottomSheetBehavior.STATE_EXPANDED
     }
-    height?.let {
-        maxHeight = height
+    maxAllowedHeight?.let {
+        maxHeight = maxAllowedHeight
     }
     return this
 }
@@ -21,19 +21,20 @@ internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(
 internal fun <T : View> BottomSheetBehavior<T>.useTwoDetents(
     @BottomSheetBehavior.StableState state: Int? = null,
     firstHeight: Int? = null,
-    secondHeight: Int? = null,
+    maxAllowedHeight: Int? = null,
 ): BottomSheetBehavior<T> {
     skipCollapsed = false
     isFitToContents = true
     state?.let { this.state = state }
     firstHeight?.let { peekHeight = firstHeight }
-    secondHeight?.let { maxHeight = secondHeight }
+    maxAllowedHeight?.let { maxHeight = maxAllowedHeight }
     return this
 }
 
 internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     @BottomSheetBehavior.StableState state: Int? = null,
     firstHeight: Int? = null,
+    maxAllowedHeight: Int? = null,
     halfExpandedRatio: Float? = null,
     expandedOffsetFromTop: Int? = null,
 ): BottomSheetBehavior<T> {
@@ -43,5 +44,6 @@ internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     firstHeight?.let { this.peekHeight = firstHeight }
     halfExpandedRatio?.let { this.halfExpandedRatio = halfExpandedRatio }
     expandedOffsetFromTop?.let { this.expandedOffset = expandedOffsetFromTop }
+    maxAllowedHeight?.let { maxHeight = maxAllowedHeight }
     return this
 }

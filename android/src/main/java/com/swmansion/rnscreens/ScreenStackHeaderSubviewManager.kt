@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
@@ -40,6 +41,21 @@ class ScreenStackHeaderSubviewManager :
                 else -> throw JSApplicationIllegalArgumentException("Unknown type $type")
             }
     }
+
+    @ReactProp(name = "hidesSharedBackground")
+    override fun setHidesSharedBackground(
+        view: ScreenStackHeaderSubview,
+        hidesSharedBackground: Boolean,
+    ) {
+        Log.w("[RNScreens]", "hidesSharedBackground prop is not available on Android")
+    }
+
+    // synchronousShadowStateUpdatesEnabled is not available on Android atm,
+    // however we must override their setters
+    override fun setSynchronousShadowStateUpdatesEnabled(
+        view: ScreenStackHeaderSubview?,
+        value: Boolean,
+    ) = Unit
 
     override fun updateState(
         view: ScreenStackHeaderSubview,
