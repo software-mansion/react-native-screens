@@ -160,10 +160,32 @@
   }
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
+
+  UIMenuOptions options = 0;
+  NSNumber *singleSelection = dict[@"singleSelection"];
+  NSNumber *displayAsPalette = dict[@"displayAsPalette"];
+  NSNumber *displayInline = dict[@"displayInline"];
+  NSNumber *destructive = dict[@"destructive"];
+
+  if (singleSelection != nil && [singleSelection boolValue]) {
+    options |= UIMenuOptionsSingleSelection;
+  }
+  if (@available(iOS 17.0, *)) {
+    if (displayAsPalette != nil && [displayAsPalette boolValue]) {
+      options |= UIMenuOptionsDisplayAsPalette;
+    }
+  }
+  if (displayInline != nil && [displayInline boolValue]) {
+    options |= UIMenuOptionsDisplayInline;
+  }
+  if (destructive != nil && [destructive boolValue]) {
+    options |= UIMenuOptionsDestructive;
+  }
+
   return [UIMenu menuWithTitle:title
                          image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                     identifier:nil
-                       options:0
+                       options:options
                       children:elements];
 }
 
@@ -221,6 +243,11 @@
       actionElement.attributes |= UIMenuElementAttributesKeepsMenuPresented;
     }
 #endif
+  }
+
+  NSString *subtitle = dict[@"subtitle"];
+  if (subtitle != nil) {
+    actionElement.subtitle = subtitle;
   }
 
   return actionElement;
