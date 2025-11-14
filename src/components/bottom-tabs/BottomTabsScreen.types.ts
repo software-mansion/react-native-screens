@@ -257,6 +257,7 @@ export interface BottomTabsScreenItemStateAppearance {
 
 export interface BottomTabsScreenProps {
   children?: ViewProps['children'];
+  style?: ViewProps['style'];
   /**
    * @summary Defines what should be rendered when tab screen is frozen.
    *
