@@ -134,6 +134,10 @@ class TabsHost(
 
     private var interfaceInsetsChangeListener: SafeAreaView? = null
 
+    // We need to differentiate between user tapping the menu item
+    // and update requested from JS.
+    private var menuItemSelectedViaContainerUpdate = false
+
     private val appearanceCoordinator =
         TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
 
@@ -228,7 +232,12 @@ class TabsHost(
             val fragment = getFragmentForMenuItemId(item.itemId)
             val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
             eventEmitter.emitOnNativeFocusChange(tabKey)
-            true
+            if (menuItemSelectedViaContainerUpdate) {
+                menuItemSelectedViaContainerUpdate = false
+                true
+            } else {
+                false
+            }
         }
     }
 
@@ -324,6 +333,7 @@ class TabsHost(
 
         appearanceCoordinator.updateTabAppearance(this)
 
+        menuItemSelectedViaContainerUpdate = true
         bottomNavigationView.selectedItemId =
             checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
 
