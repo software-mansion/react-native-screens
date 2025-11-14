@@ -1,14 +1,14 @@
 import { ScrollView } from 'react-native';
-import LongText from './LongText';
 import React from 'react';
 import Colors from '../../../shared/styling/Colors';
+import LongText from '../../../shared/LongText';
 
 export default function ScrollViewAutomatic() {
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       style={{ backgroundColor: Colors.BlueLight80 }}>
-      <LongText />
+      <LongText size="xl" />
     </ScrollView>
   );
 }
