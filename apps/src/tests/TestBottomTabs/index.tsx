@@ -19,6 +19,7 @@ internalEnableDetailedBottomTabsLogging();
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
+      style: { backgroundColor: Colors.YellowDark100 },
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyLight100,
         stacked: {
@@ -38,11 +39,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         ios: {
           type: 'sfSymbol',
           name: 'house.fill',
-        }, 
+        },
         android: {
           type: 'imageSource',
           imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-        }
+        },
       },
       selectedIcon: {
         type: 'sfSymbol',
@@ -105,11 +106,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         ios: {
           type: 'templateSource',
           templateSource: require('../../../assets/variableIcons/icon.png'),
-        }, 
+        },
         android: {
           type: 'drawableResource',
           name: 'sym_call_missed',
-        }
+        },
       },
       selectedIcon: {
         type: 'templateSource',
@@ -148,7 +149,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         shared: {
           type: 'imageSource',
           imageSource: require('../../../assets/variableIcons/icon.png'),
-        }
+        },
       },
       selectedIcon: {
         type: 'imageSource',
@@ -171,8 +172,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
         android: {
           type: 'drawableResource',
-          name: 'custom_home_icon'
-        }
+          name: 'custom_home_icon',
+        },
       },
       selectedIcon: {
         type: 'sfSymbol',
