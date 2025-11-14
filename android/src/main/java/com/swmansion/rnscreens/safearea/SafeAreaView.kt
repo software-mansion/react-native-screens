@@ -3,6 +3,7 @@
 package com.swmansion.rnscreens.safearea
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
@@ -114,28 +115,45 @@ class SafeAreaView(
             }
         }
 
-        return WindowInsetsCompat
-            .Builder(insets)
-            .apply {
-                if (insetType.containsSystem()) {
-                    setInsets(
-                        WindowInsetsCompat.Type.systemBars(),
-                        getConsumedInsetsFromSelectedEdges(
-                            insets.getInsets(
-                                WindowInsetsCompat.Type.systemBars(),
-                            ),
-                        ),
-                    )
-                    setInsets(
-                        WindowInsetsCompat.Type.displayCutout(),
-                        getConsumedInsetsFromSelectedEdges(
-                            insets.getInsets(
-                                WindowInsetsCompat.Type.displayCutout(),
-                            ),
-                        ),
-                    )
-                }
-            }.build()
+        var shouldConsumeDisplayCutout = false
+        var consumedInsets =
+            WindowInsetsCompat
+                .Builder(insets)
+                .apply {
+                    if (insetType.containsSystem()) {
+                        val consumedSystemBarsInsets =
+                            getConsumedInsetsFromSelectedEdges(
+                                insets.getInsets(
+                                    WindowInsetsCompat.Type.systemBars(),
+                                ),
+                            )
+
+                        val consumedDisplayCutoutInsets =
+                            getConsumedInsetsFromSelectedEdges(
+                                insets.getInsets(
+                                    WindowInsetsCompat.Type.displayCutout(),
+                                ),
+                            )
+                        shouldConsumeDisplayCutout = consumedDisplayCutoutInsets == Insets.NONE
+
+                        setInsets(
+                            WindowInsetsCompat.Type.systemBars(),
+                            consumedSystemBarsInsets,
+                        )
+                        setInsets(
+                            WindowInsetsCompat.Type.displayCutout(),
+                            consumedDisplayCutoutInsets,
+                        )
+                    }
+                }.build()
+
+        // On Android versions prior to R, setInsets(WindowInsetsCompat.Type.displayCutout(), ...)
+        // does not work. We need to use previous API.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R && shouldConsumeDisplayCutout) {
+            consumedInsets = consumedInsets.consumeDisplayCutout()
+        }
+
+        return consumedInsets
     }
 
     private fun updateInsetsIfNeeded(): Boolean {

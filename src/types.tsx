@@ -10,7 +10,10 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
-import type { ScrollEdgeEffect, UserInterfaceStyle } from './types';
+import type {
+  ScrollEdgeEffect,
+  UserInterfaceStyle,
+} from './components/shared/types';
 
 export type SearchBarCommands = {
   focus: () => void;
