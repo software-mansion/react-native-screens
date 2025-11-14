@@ -116,32 +116,36 @@ class SafeAreaView(
         }
 
         var shouldConsumeDisplayCutout = false
-        var consumedInsets = WindowInsetsCompat
-            .Builder(insets)
-            .apply {
-                if (insetType.containsSystem()) {
-                    val consumedSystemBarsInsets = getConsumedInsetsFromSelectedEdges(
-                        insets.getInsets(
+        var consumedInsets =
+            WindowInsetsCompat
+                .Builder(insets)
+                .apply {
+                    if (insetType.containsSystem()) {
+                        val consumedSystemBarsInsets =
+                            getConsumedInsetsFromSelectedEdges(
+                                insets.getInsets(
+                                    WindowInsetsCompat.Type.systemBars(),
+                                ),
+                            )
+
+                        val consumedDisplayCutoutInsets =
+                            getConsumedInsetsFromSelectedEdges(
+                                insets.getInsets(
+                                    WindowInsetsCompat.Type.displayCutout(),
+                                ),
+                            )
+                        shouldConsumeDisplayCutout = consumedDisplayCutoutInsets == Insets.NONE
+
+                        setInsets(
                             WindowInsetsCompat.Type.systemBars(),
-                        ))
-
-                    val consumedDisplayCutoutInsets = getConsumedInsetsFromSelectedEdges(
-                        insets.getInsets(
-                            WindowInsetsCompat.Type.displayCutout()
+                            consumedSystemBarsInsets,
                         )
-                    )
-                    shouldConsumeDisplayCutout = consumedDisplayCutoutInsets == Insets.NONE
-
-                    setInsets(
-                        WindowInsetsCompat.Type.systemBars(),
-                        consumedSystemBarsInsets
-                    )
-                    setInsets(
-                        WindowInsetsCompat.Type.displayCutout(),
-                        consumedDisplayCutoutInsets
-                    )
-                }
-            }.build()
+                        setInsets(
+                            WindowInsetsCompat.Type.displayCutout(),
+                            consumedDisplayCutoutInsets,
+                        )
+                    }
+                }.build()
 
         // On Android versions prior to R, setInsets(WindowInsetsCompat.Type.displayCutout(), ...)
         // does not work. We need to use previous API.
