@@ -153,6 +153,11 @@ class Screen(
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents()) {
                 sheetBehavior?.useSingleDetent(height)
+
+                // Force update layout to adjust sheet content
+                val params = layoutParams
+                params.height = height
+                layoutParams = params
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
