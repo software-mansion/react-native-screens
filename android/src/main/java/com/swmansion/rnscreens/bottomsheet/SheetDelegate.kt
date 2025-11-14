@@ -39,6 +39,9 @@ class SheetDelegate(
 
     private var lastKeyboardBottomOffset: Int = 0
 
+    private var heightAnimator: ValueAnimator? = null
+    private var previousHeight: Int = -1
+
     var lastStableDetentIndex: Int = screen.sheetInitialDetentIndex
         private set
 
@@ -96,6 +99,10 @@ class SheetDelegate(
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
     }
 
+    private fun onSheetSlide(bottomSheet: View) {
+        screen.onSheetTranslation(bottomSheet.top)
+    }
+
     private fun onSheetStateChanged(newState: Int) {
         val isStable = SheetUtils.isStateStable(newState)
 
@@ -126,8 +133,8 @@ class SheetDelegate(
         }
 
         behavior.apply {
-            isHideable = true
-            isDraggable = true
+            isHideable = screen.isSheetDismissible
+            isDraggable = if (screen.isSheetFitToContents()) screen.isSheetDismissible else true
         }
 
         // There is a guard internally that does not allow the callback to be duplicated.
@@ -176,7 +183,7 @@ class SheetDelegate(
                                     screen.sheetDetents.count(),
                                 ),
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            halfExpandedRatio = screen.sheetDetents[1].toFloat(),
                             maxAllowedHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
@@ -261,7 +268,7 @@ class SheetDelegate(
                     3 ->
                         behavior.useThreeDetents(
                             firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
+                            halfExpandedRatio = screen.sheetDetents[1].toFloat(),
                             maxAllowedHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
                             expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
                         )
@@ -388,14 +395,17 @@ class SheetDelegate(
     internal fun createSheetEnterAnimator(sheetAnimationContext: SheetAnimationContext): Animator {
         val animatorSet = AnimatorSet()
 
+        val coordinatorLayout = sheetAnimationContext.coordinatorLayout
         val dimmingDelegate = sheetAnimationContext.dimmingDelegate
         val screenStackFragment = sheetAnimationContext.fragment
 
         val alphaAnimator = createDimmingViewAlphaAnimator(0f, dimmingDelegate.maxAlpha, dimmingDelegate)
         val slideAnimator = createSheetSlideInAnimator()
+        val translationEventAnimator = createTranslationEventAnimator(coordinatorLayout.bottom, screen.top)
 
         animatorSet
             .play(slideAnimator)
+            .with(translationEventAnimator)
             .takeIf {
                 dimmingDelegate.willDimForDetentIndex(screen, screen.sheetInitialDetentIndex)
             }?.with(alphaAnimator)
@@ -415,13 +425,27 @@ class SheetDelegate(
         val alphaAnimator =
             createDimmingViewAlphaAnimator(dimmingDelegate.dimmingView.alpha, 0f, dimmingDelegate)
         val slideAnimator = createSheetSlideOutAnimator(coordinatorLayout)
+        val translationEventAnimator = createTranslationEventAnimator(screen.top, coordinatorLayout.bottom)
 
-        animatorSet.play(alphaAnimator).with(slideAnimator)
+        animatorSet
+            .play(alphaAnimator)
+            .with(slideAnimator)
+            .with(translationEventAnimator)
 
         attachCommonListeners(animatorSet, isEnter = false, screenStackFragment)
 
         return animatorSet
     }
+
+    private fun createTranslationEventAnimator(
+        from: Int,
+        to: Int,
+    ): ValueAnimator =
+        ValueAnimator.ofInt(from, to).apply {
+            addUpdateListener { anim ->
+                screen.onSheetTranslation(anim.animatedValue as Int)
+            }
+        }
 
     private fun createDimmingViewAlphaAnimator(
         from: Float,
@@ -506,6 +530,30 @@ class SheetDelegate(
         )
     }
 
+    internal fun animateContentHeightChange(targetHeight: Int) {
+        val params = screen.layoutParams
+
+        // Cancel any ongoing animation
+        heightAnimator?.cancel()
+
+        // Create and start height animation
+        heightAnimator =
+            ValueAnimator.ofInt(screen.height, targetHeight).apply {
+                duration = 200
+                addUpdateListener { animator ->
+                    val animatedHeight = animator.animatedValue as Int
+                    params.height = animatedHeight
+                    screen.layoutParams = params
+
+                    // Dispatch translation event
+                    screen.onSheetTranslation(screen.top)
+                }
+                start()
+            }
+
+        previousHeight = targetHeight
+    }
+
     private inner class KeyboardHandler : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(
             bottomSheet: View,
@@ -549,7 +597,9 @@ class SheetDelegate(
         override fun onSlide(
             bottomSheet: View,
             slideOffset: Float,
-        ) = Unit
+        ) {
+            this@SheetDelegate.onSheetSlide(bottomSheet)
+        }
     }
 
     internal data class SheetAnimationContext(

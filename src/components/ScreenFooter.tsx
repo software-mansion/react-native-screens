@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewProps } from 'react-native';
+import { StyleSheet, ViewProps } from 'react-native';
 import ScreenFooterNativeComponent from '../fabric/ScreenFooterNativeComponent';
 
 /**
@@ -14,7 +14,20 @@ type FooterProps = {
 };
 
 export function FooterComponent({ children }: FooterProps) {
-  return <ScreenFooter collapsable={false}>{children}</ScreenFooter>;
+  return (
+    <ScreenFooter style={styles.container} collapsable={false}>
+      {children}
+    </ScreenFooter>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});
 
 export default ScreenFooter;

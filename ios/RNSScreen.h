@@ -54,6 +54,7 @@ namespace react = facebook::react;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
+- (void)setupSheetDetentAnimationTracking;
 - (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
@@ -122,6 +123,7 @@ namespace react = facebook::react;
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) NSInteger sheetInitialDetent;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
+@property (nonatomic) BOOL sheetDismissible;
 #endif // !TARGET_OS_TV
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -147,6 +149,7 @@ namespace react = facebook::react;
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
+@property (nonatomic, copy) RCTDirectEventBlock onSheetTranslation;
 @property (nonatomic, copy) RCTDirectEventBlock onGestureCancel;
 @property (nonatomic, copy) RCTDirectEventBlock onSheetDetentChanged;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -174,6 +177,7 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
+- (void)notifySheetTranslation:(double)y transitioning:(BOOL)transitioning;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
