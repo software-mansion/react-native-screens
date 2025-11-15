@@ -4,6 +4,7 @@
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
+#import "RNSScrollViewFinder.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "RNSViewControllerInvalidating.h"
@@ -27,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSBottomTabsHostComponentView : RNSReactBaseView <
                                                 RNSScreenContainerDelegate,
+                                                RNSContentScrollViewProviding,
 #ifdef RCT_NEW_ARCH_ENABLED
                                                 RNSViewControllerInvalidating
 #else

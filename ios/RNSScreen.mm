@@ -1287,8 +1287,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateContentScrollViewEdgeEffectsIfExists
 {
-  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                      withProvider:self];
+  [RNSScrollEdgeEffectApplicator
+      applyToScrollView:[RNSScrollViewFinder findContentScrollViewWithDelegatingToProvider:self]
+           withProvider:self];
 }
 
 #pragma mark - RNSSafeAreaProviding
