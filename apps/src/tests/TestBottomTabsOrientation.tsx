@@ -71,7 +71,7 @@ function makeTabConfigs(
           ios: {
             type: 'sfSymbol',
             name: 'house.fill',
-          }, 
+          },
           android: {
             type: 'imageSource',
             imageSource: require('../../assets/variableIcons/icon_fill.png'),
@@ -94,7 +94,7 @@ function makeTabConfigs(
           ios: {
             type: 'templateSource',
             templateSource: require('../../assets/variableIcons/icon.png'),
-          }, 
+          },
           android: {
             type: 'drawableResource',
             name: 'sym_call_missed',
