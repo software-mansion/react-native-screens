@@ -1,16 +1,22 @@
 #import <React/RCTImageSource.h>
 #import "RNSBottomTabsScreenEventEmitter.h"
+#import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
+#import "RNSReactNativeVersionUtils.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
+// Starting 0.82.0, we're switching to the new impl based on RCTComponentViewProtocol.
+// Additional runtime check is needed for RCs of 0.82
+#if REACT_NATIVE_VERSION_MINOR <= 82
 #import "RNSViewControllerInvalidating.h"
-#else
+#endif // REACT_NATIVE_VERSION_MINOR <= 82
+#else  // RCT_NEW_ARCH_ENABLED
 #import <React/RCTInvalidating.h>
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,11 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
  * of a particular tab.
  */
 @interface RNSBottomTabsScreenComponentView : RNSReactBaseView <
-                                                  RNSSafeAreaProviding,
-#ifdef RCT_NEW_ARCH_ENABLED
-                                                  RNSViewControllerInvalidating
-#else
-                                                  RCTInvalidating
+                                                  RNSSafeAreaProviding
+#if defined(__cplusplus)
+                                                  ,
+                                                  RNS_INVALIDATING_INTERFACE
 #endif
                                                   >
 
