@@ -5,8 +5,12 @@ import android.view.WindowInsets
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.children
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.google.android.material.appbar.AppBarLayout
+import com.swmansion.rnscreens.CustomToolbar
 import com.swmansion.rnscreens.PointerEventsBoxNoneImpl
+import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.stack.anim.ScreensAnimation
@@ -23,7 +27,22 @@ internal class ScreensCoordinatorLayout(
         PointerEventsBoxNoneImpl(),
     )
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
+    override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        val childrenList = children.toList()
+        val shouldUseCustomDispatch =
+            childCount == 2 && childrenList[0] is Screen && childrenList[1] is AppBarLayout
+
+        if (!shouldUseCustomDispatch) {
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        childrenList[1].dispatchApplyWindowInsets(insets)
+
+        val screenInsets = ((childrenList[1] as AppBarLayout).children.first() as CustomToolbar).screenInsets
+        childrenList[0].dispatchApplyWindowInsets(screenInsets)
+
+        return insets
+    }
 
     private val animationListener: Animation.AnimationListener =
         object : Animation.AnimationListener {

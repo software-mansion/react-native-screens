@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Insets
 import android.os.Build
 import android.view.Choreographer
 import android.view.WindowInsets
@@ -35,6 +36,8 @@ open class CustomToolbar(
     private val shouldApplyTopInset = true
 
     private var lastInsets = InsetsCompat.NONE
+
+    var screenInsets = WindowInsets.CONSUMED
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
@@ -129,9 +132,38 @@ open class CustomToolbar(
                 lastInsets.right,
                 lastInsets.bottom,
             )
+
+            screenInsets =
+                WindowInsets
+                    .Builder(unhandledInsets)
+                    .setInsets(
+                        WindowInsets.Type.displayCutout(),
+                        Insets.of(cutoutInsets.left, 0, cutoutInsets.right, cutoutInsets.bottom),
+                    ).setInsets(
+                        WindowInsets.Type.systemBars(),
+                        Insets.of(
+                            systemBarInsets.left,
+                            if (shouldApplyTopInset) 0 else systemBarInsets.top,
+                            systemBarInsets.right,
+                            systemBarInsets.bottom,
+                        ),
+                    ).build()
         }
 
-        return unhandledInsets
+        return WindowInsets
+            .Builder(unhandledInsets)
+            .setInsets(
+                WindowInsets.Type.displayCutout(),
+                Insets.NONE,
+            ).setInsets(
+                WindowInsets.Type.systemBars(),
+                Insets.of(
+                    0,
+                    if (shouldApplyTopInset) 0 else systemBarInsets.top,
+                    0,
+                    systemBarInsets.bottom,
+                ),
+            ).build()
     }
 
     override fun onLayout(
