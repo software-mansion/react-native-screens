@@ -186,9 +186,6 @@ class Screen(
             val height = b - t
 
             dispatchShadowStateUpdate(width, height, t)
-
-            // FormSheet has no header in current model.
-//            notifyHeaderHeightChange(t)
         }
     }
 
@@ -457,7 +454,7 @@ class Screen(
             super.onTouchEvent(event)
         }
 
-    public fun notifyHeaderHeightChange(headerHeight: Int) {
+    fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
         UIManagerHelper
