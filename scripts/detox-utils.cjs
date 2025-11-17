@@ -1,4 +1,5 @@
 const ChildProcess = require('node:child_process');
+const { iosDevice } = require('./devices');
 
 const CI_AVD_NAME = 'e2e_emulator';
 
@@ -19,14 +20,12 @@ function detectLocalAndroidEmulator() {
 
   // Fallback: try to use Android SDK
   try {
-    let stdout = ChildProcess.execSync("emulator -list-avds")
+    const stdout = ChildProcess.execSync("emulator -list-avds")
 
     // Possibly convert Buffer to string
-    if (typeof stdout !== 'string') {
-      stdout = stdout.toString();
-    }
+    const outputText = typeof stdout === 'string' ? stdout : stdout.toString();
 
-    const avdList = stdout.trim().split('\n').map(name => name.trim());
+    const avdList = outputText.trim().split('\n').map(name => name.trim());
 
     if (avdList.length === 0) {
       throw new Error('No installed AVDs detected on the device');
@@ -47,7 +46,6 @@ function detectAndroidEmulatorName() {
 }
 
 /**
- * @type {Detox.DetoxConfig}
  * @param {string} applicationName name (FabricExample / ScreensExample)
  * @returns {Detox.DetoxConfig}
  */
@@ -94,9 +92,7 @@ function commonDetoxConfigFactory(applicationName) {
     devices: {
       simulator: {
         type: 'ios.simulator',
-        device: {
-          type: 'iPhone 16 Pro',
-        },
+        device: iosDevice,
       },
       attached: {
         type: 'android.attached',
@@ -122,10 +118,10 @@ function commonDetoxConfigFactory(applicationName) {
         device: 'simulator',
         app: 'ios.release',
       },
-      'ios.release': {
-        device: 'simulator',
-        app: 'ios.release',
-      },
+      // 'ios.release': {
+      //   device: 'simulator',
+      //   app: 'ios.release',
+      // },
       'android.att.debug': {
         device: 'attached',
         app: 'android.debug',
@@ -142,10 +138,10 @@ function commonDetoxConfigFactory(applicationName) {
         device: 'emulator',
         app: 'android.release',
       },
-      'android.release': {
-        device: 'emulator',
-        app: 'android.release',
-      },
+      // 'android.release': {
+      //   device: 'emulator',
+      //   app: 'android.release',
+      // },
     },
   }
 }
