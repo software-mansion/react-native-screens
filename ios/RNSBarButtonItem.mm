@@ -343,11 +343,13 @@ UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config)
   if (singleSelection != nil && [singleSelection boolValue]) {
     options |= UIMenuOptionsSingleSelection;
   }
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
   if (@available(iOS 17.0, *)) {
     if (displayAsPalette != nil && [displayAsPalette boolValue]) {
       options |= UIMenuOptionsDisplayAsPalette;
     }
   }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
   if (displayInline != nil && [displayInline boolValue]) {
     options |= UIMenuOptionsDisplayInline;
   }
