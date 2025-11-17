@@ -4,6 +4,8 @@
 #import "RNSDefines.h"
 #import "RNSImageLoadingHelper.h"
 
+static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
+
 @implementation RNSBarButtonItem {
   NSString *_buttonId;
   RNSBarButtonItemAction _itemAction;
@@ -161,31 +163,10 @@
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
 
-  UIMenuOptions options = 0;
-  NSNumber *singleSelection = dict[@"singleSelection"];
-  NSNumber *displayAsPalette = dict[@"displayAsPalette"];
-  NSNumber *displayInline = dict[@"displayInline"];
-  NSNumber *destructive = dict[@"destructive"];
-
-  if (singleSelection != nil && [singleSelection boolValue]) {
-    options |= UIMenuOptionsSingleSelection;
-  }
-  if (@available(iOS 17.0, *)) {
-    if (displayAsPalette != nil && [displayAsPalette boolValue]) {
-      options |= UIMenuOptionsDisplayAsPalette;
-    }
-  }
-  if (displayInline != nil && [displayInline boolValue]) {
-    options |= UIMenuOptionsDisplayInline;
-  }
-  if (destructive != nil && [destructive boolValue]) {
-    options |= UIMenuOptionsDestructive;
-  }
-
   return [UIMenu menuWithTitle:title
                          image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                     identifier:nil
-                       options:options
+                       options:RNSMakeUIMenuOptionsFromConfig(dict)
                       children:elements];
 }
 
@@ -350,3 +331,28 @@
 #endif
 
 @end
+
+UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config)
+{
+  UIMenuOptions options = 0;
+  NSNumber *singleSelection = config[@"singleSelection"];
+  NSNumber *displayAsPalette = config[@"displayAsPalette"];
+  NSNumber *displayInline = config[@"displayInline"];
+  NSNumber *destructive = config[@"destructive"];
+
+  if (singleSelection != nil && [singleSelection boolValue]) {
+    options |= UIMenuOptionsSingleSelection;
+  }
+  if (@available(iOS 17.0, *)) {
+    if (displayAsPalette != nil && [displayAsPalette boolValue]) {
+      options |= UIMenuOptionsDisplayAsPalette;
+    }
+  }
+  if (displayInline != nil && [displayInline boolValue]) {
+    options |= UIMenuOptionsDisplayInline;
+  }
+  if (destructive != nil && [destructive boolValue]) {
+    options |= UIMenuOptionsDestructive;
+  }
+  return options;
+}
