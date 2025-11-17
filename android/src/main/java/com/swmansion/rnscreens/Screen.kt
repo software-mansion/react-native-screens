@@ -212,7 +212,9 @@ class Screen(
         }
     }
 
-    private fun triggerPostponedEnterTransitionIfNeeded() {
+    // TODO(@t0maboro):
+    // 1. It cannot be public, prepare some better solution for BottomSheetTransitionCoordinator use-case
+    public fun triggerPostponedEnterTransitionIfNeeded() {
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
@@ -235,10 +237,14 @@ class Screen(
         )
     }
 
+    // TODO(@t0maboro):
+    // 1. It cannot be public
+    // 2. Figure out whether I need to call this from BottomSheetTransitionCoordinator
+
     /**
      * @param offsetY ignored on old architecture
      */
-    private fun dispatchShadowStateUpdate(
+    public fun dispatchShadowStateUpdate(
         width: Int,
         height: Int,
         offsetY: Int,

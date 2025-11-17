@@ -27,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.BottomSheetTransitionCoordinator
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -54,6 +55,8 @@ class ScreenStackFragment :
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
+
+    private lateinit var sheetTransitionCoordinator: BottomSheetTransitionCoordinator
 
     private var lastFocusedChild: View? = null
 
@@ -228,6 +231,10 @@ class ScreenStackFragment :
             val dimmingDelegate = requireDimmingDelegate(forceCreation = true)
             dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
             dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
+
+            // TODO(@t0maboro):
+            // 1. We should expose methods from BottomSheetTransitionCoordinator and pass attributes directly to methods
+            sheetTransitionCoordinator = BottomSheetTransitionCoordinator(screen, sheetDelegate, coordinatorLayout)
 
             // Pre-layout the content for the sake of enter transition.
 

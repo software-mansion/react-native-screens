@@ -6,6 +6,7 @@ import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -37,6 +38,7 @@ class SheetDelegate(
 
     private var isSheetAnimationInProgress: Boolean = false
 
+    private var lastTopInset: Int = 0
     private var lastKeyboardBottomOffset: Int = 0
 
     var lastStableDetentIndex: Int = screen.sheetInitialDetentIndex
@@ -166,7 +168,7 @@ class SheetDelegate(
                             firstHeight = screen.sheetDetents.firstHeight(containerHeight),
                             halfExpandedRatio = screen.sheetDetents.halfExpandedRatio(),
                             maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
-                            expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight),
+                            expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight, lastTopInset),
                         )
 
                     else -> throw IllegalStateException(
@@ -243,7 +245,7 @@ class SheetDelegate(
                             firstHeight = screen.sheetDetents.firstHeight(containerHeight),
                             halfExpandedRatio = screen.sheetDetents.halfExpandedRatio(),
                             maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
-                            expandedOffsetFromTop = screen.sheetDetents.maxAllowedHeight(containerHeight),
+                            expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight, lastTopInset),
                         )
 
                     else -> throw IllegalStateException(
@@ -290,6 +292,10 @@ class SheetDelegate(
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
         val prevSystemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
+        // TODO(@t0maboro):
+        // 1. lastTopInset needs to have some explanation why it's needed here
+        lastTopInset = prevSystemBarsInsets.top
+
         if (isImeVisible) {
             isKeyboardVisible = true
             keyboardState = KeyboardVisible(imeInset.bottom)
@@ -335,22 +341,31 @@ class SheetDelegate(
      * this is acceptable.
      */
     private fun tryResolveContainerHeight(): Int? {
-        screen.container?.let { return it.height }
+        // TODO(@t0maboro):
+        // 1. lastTopInset needs to have some explanation why it's needed here
+        // 2. I shouldn't touch this method at all and subtract this value somewhere else
+        screen.container?.let { return it.height - lastTopInset }
 
         val context = screen.reactContext
 
+        // TODO(@t0maboro):
+        // 1. lastTopInset needs to have some explanation why it's needed here
+        // 2. I shouldn't touch this method at all and subtract this value somewhere else
         context
             .resources
             ?.displayMetrics
             ?.heightPixels
-            ?.let { return it }
+            ?.let { return it - lastTopInset }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // TODO(@t0maboro):
+            // 1. lastTopInset needs to have some explanation why it's needed here
+            // 2. I shouldn't touch this method at all and subtract this value somewhere else
             (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)
                 ?.currentWindowMetrics
                 ?.bounds
                 ?.height()
-                ?.let { return it }
+                ?.let { return it - lastTopInset }
         }
         return null
     }

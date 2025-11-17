@@ -144,6 +144,13 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
     // there. Tween animations have some magic way to make this work (maybe they
     // postpone the transition internally, dunno).
 
+    // TODO(@t0maboro):
+    // 1. Only for testing purposes
+    // 2. We need to have a dedicated mechanism for Fabric
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && this.usesFormSheetPresentation()) {
+        return true
+    }
+
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED || !this.usesFormSheetPresentation()) {
         return false
     }
