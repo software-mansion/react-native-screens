@@ -100,7 +100,7 @@ function Second({ navigation }: ScreenBaseProps) {
           });
         }}
       />
-      <Button 
+      <Button
         title="Use multiple right items"
         onPress={() => {
           navigation.setOptions({
@@ -115,7 +115,7 @@ function Second({ navigation }: ScreenBaseProps) {
                     <Text>Right-2</Text>
                   </View>
                 )
-              }, 
+              },
               {
                 customView: () => (
                   <View
@@ -128,7 +128,7 @@ function Second({ navigation }: ScreenBaseProps) {
                 )
               }
             ]
-          }) 
+          })
         }} />
 
       <Button

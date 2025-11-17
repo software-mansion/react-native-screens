@@ -18,7 +18,10 @@ export async function selectTestScreen(screenName: string) {
     // More details: https://github.com/software-mansion/react-native-screens/pull/2919
     await device.pressBack();
   } else {
-    await element(by.type('UISearchBarTextField')).replaceText(screenName);
+    await waitFor(element(by.id('root-screen-tests-' + screenName)))
+      .toBeVisible()
+      .whileElement(by.id('root-screen-examples-scrollview'))
+      .scroll(600, 'down', Number.NaN, 0.85);
   }
 
   await expect(element(by.id(`root-screen-tests-${screenName}`))).toBeVisible();
