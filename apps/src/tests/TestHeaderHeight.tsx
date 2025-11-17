@@ -442,9 +442,7 @@ function HeaderHeightTest() {
         {config.headerHeightApi === 'react-native-screens' ? (
           <ReactNativeScreensNavigation />
         ) : (
-          <>
-            <ReactNavigationNavigation />
-          </>
+          <ReactNavigationNavigation />
         )}
       </ConfigContext.Provider>
     </NavigationContainer>
