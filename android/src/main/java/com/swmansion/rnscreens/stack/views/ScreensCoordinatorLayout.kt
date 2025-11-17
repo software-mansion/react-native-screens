@@ -14,6 +14,7 @@ import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.stack.anim.ScreensAnimation
+import androidx.core.view.isNotEmpty
 
 internal class ScreensCoordinatorLayout(
     context: Context,
@@ -38,7 +39,12 @@ internal class ScreensCoordinatorLayout(
 
         childrenList[1].dispatchApplyWindowInsets(insets)
 
-        val screenInsets = ((childrenList[1] as AppBarLayout).children.first() as CustomToolbar).screenInsets
+        val appBarLayout = childrenList[1] as AppBarLayout
+        val screenInsets = if (appBarLayout.isNotEmpty() && appBarLayout.children.first() is CustomToolbar) {
+            (appBarLayout.children.first() as CustomToolbar).screenInsets
+        } else {
+            insets
+        }
         childrenList[0].dispatchApplyWindowInsets(screenInsets)
 
         return insets

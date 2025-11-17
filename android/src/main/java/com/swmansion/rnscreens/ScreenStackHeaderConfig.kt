@@ -32,6 +32,12 @@ class ScreenStackHeaderConfig(
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
+        set(value) {
+            if (field != value) {
+                requestApplyInsets()
+            }
+            field = value
+        }
     var isHeaderTranslucent =
         false // named this way to avoid conflict with platform's isTranslucent
     private var title: String? = null
