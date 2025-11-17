@@ -624,11 +624,16 @@ menu?: {
       label?: string;
       type: 'submenu';
       icon?: PlatformIconIOSSfSymbol;
+      displayInline?: boolean; // Whether to display submenu inline - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/displayinline
+      destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/destructive
+      singleSelection?: boolean; // Whether submenu allows single selection - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/singleselection
+      displayAsPalette?: boolean; // Whether to display submenu as palette - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/displayaspalette
       items: menu['items']; // References itself so you can create inifinte deep menus. So either actions or more submenus
     }
   >
 }
 ```
+
 
 #### The spacing item supports:
 
