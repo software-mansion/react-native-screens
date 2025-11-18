@@ -248,14 +248,10 @@ class Screen(
         )
     }
 
-    // TODO(@t0maboro):
-    // 1. It cannot be public
-    // 2. Figure out whether I need to call this from BottomSheetTransitionCoordinator
-
     /**
      * @param offsetY ignored on old architecture
      */
-    public fun dispatchShadowStateUpdate(
+    internal fun dispatchShadowStateUpdate(
         width: Int,
         height: Int,
         offsetY: Int,
