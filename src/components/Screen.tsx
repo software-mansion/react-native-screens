@@ -100,8 +100,8 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetInitialDetentIndex = 0,
       // TODO(@t0maboro)
       // 1. add prop in react-navigation
-      // 2. change the default value to false
-      sheetOverflowsSystemBars = true,
+      // 2. change the default value to true
+      sheetOverflowsSystemBars = false,
       // Other
       screenId,
       stackPresentation,
