@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -225,9 +224,6 @@ class ScreenStackFragment :
             attachShapeToScreen(screen)
             screen.elevation = screen.sheetElevation
 
-            Log.d("tomaboro", "overflows? ${screen.sheetOverflowsSystemBars}")
-            // TODO(@t0maboro) - add overflows logic
-
             // Lifecycle of sheet delegate is tied to fragment.
             val sheetDelegate = requireSheetDelegate()
             sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!)
@@ -236,8 +232,10 @@ class ScreenStackFragment :
             dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
             dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
-            sheetTransitionCoordinator = BottomSheetTransitionCoordinator()
-            sheetTransitionCoordinator.attachInsetsAndLayoutListenersToBottomSheet(screen, sheetDelegate, coordinatorLayout)
+            if(!screen.sheetOverflowsSystemBars) {
+                sheetTransitionCoordinator = BottomSheetTransitionCoordinator()
+                sheetTransitionCoordinator.attachInsetsAndLayoutListenersToBottomSheet(screen, sheetDelegate, coordinatorLayout)
+            }
 
             // Pre-layout the content for the sake of enter transition.
 

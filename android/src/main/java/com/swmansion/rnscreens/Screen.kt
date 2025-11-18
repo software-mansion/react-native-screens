@@ -221,7 +221,7 @@ class Screen(
     // To ensure the BottomSheet correctly respects insets during its enter transition,
     // we delay the transition until both layout and insets have been applied.
     internal fun requestTriggeringPostponedEnterTransition() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !sheetOverflowsSystemBars) {
             shouldTriggerPostponedTransitionAfterLayout = true
         }
     }

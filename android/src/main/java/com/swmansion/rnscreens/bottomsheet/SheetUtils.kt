@@ -150,13 +150,11 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
     // To ensure the BottomSheet height respects the top inset we delay starting the enter
     // transition until both layout and insets are fully applied.
 
-    // Fabric
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-        return this.usesFormSheetPresentation()
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !this.sheetOverflowsSystemBars && this.usesFormSheetPresentation()) {
+        return true
     }
 
-    // Paper
-    if (!this.usesFormSheetPresentation()) {
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED || !this.usesFormSheetPresentation()) {
         return false
     }
     // Assumes that formSheet uses content wrapper
