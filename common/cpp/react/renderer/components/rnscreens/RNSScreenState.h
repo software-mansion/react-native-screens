@@ -38,7 +38,7 @@ class JSI_EXPORT RNSScreenState final {
         headerCorrectionModes_{previousState.headerCorrectionModes_} {};
 #endif
 
-  const Size frameSize{};
+  Size frameSize{};
   Point contentOffset;
 
 #ifdef ANDROID

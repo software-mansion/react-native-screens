@@ -2,11 +2,15 @@
 
 #ifdef ANDROID
 #include <fbjni/fbjni.h>
+#include "RNSScreenShadowNodeCommitHook.h"
 #endif // ANDROID
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/rnscreens/utils/RectUtil.h>
+#include <react/renderer/components/root/RootShadowNode.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
+#include <react/renderer/uimanager/UIManager.h>
+#include <react/renderer/uimanager/UIManagerCommitHook.h>
 #include "RNSScreenShadowNode.h"
 
 namespace facebook {
@@ -16,12 +20,22 @@ using namespace rnscreens;
 
 class RNSScreenComponentDescriptor final
     : public ConcreteComponentDescriptor<RNSScreenShadowNode> {
+ private:
+#ifdef ANDROID
+  /*
+   * A commit hook that triggers on `shadowTreeWillCommit` event,
+   * and can read the properties of RootShadowNodes for determining screen
+   * orientation.
+   */
+  mutable std::shared_ptr<RNSScreenShadowNodeCommitHook> commitHook_;
+#endif // ANDROID
+
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
-    auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
+    auto &screenShadowNode = dynamic_cast<RNSScreenShadowNode &>(shadowNode);
 
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
@@ -32,8 +46,18 @@ class RNSScreenComponentDescriptor final
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
             shadowNode.getState());
     auto stateData = state->getData();
-
 #ifdef ANDROID
+    if (!commitHook_) {
+      // For the the application that needs to react to orientation change
+      // as early as possible, we attach a commit hook that checks for the
+      // change in the old vs new RootShadowNode. The hook cannot be attached in
+      // the constructor because UIManager is still missing from
+      // ContextContainer. Instead, we do it here, on the first call to the
+      // function.
+      commitHook_ =
+          std::make_shared<RNSScreenShadowNodeCommitHook>(contextContainer_);
+    }
+
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       // When we receive dimensions from JVM side we can remove padding used for
       // correction, and we can stop applying height and offset corrections for
@@ -66,9 +90,15 @@ class RNSScreenComponentDescriptor final
           FrameCorrectionModes::Mode::FrameHeightCorrection);
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameOriginCorrection);
-
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
+    } else if (
+        stateData.frameSize.width == 0 && stateData.frameSize.height == 0) {
+      // Reset YogaNode so it recalculates its layout. Useful for the case
+      // when native orientation changes and react has not been notified yet.
+      // The if condition holds true on first render and when it is reset inside
+      // RNSScreenShadowNodeCommitHook.
+      layoutableShadowNode.setSize({YGUndefined, YGUndefined});
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {

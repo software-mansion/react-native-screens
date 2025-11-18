@@ -155,6 +155,10 @@ FrameCorrectionModes &RNSScreenShadowNode::getFrameCorrectionModes() {
   return getStateDataMutable().getFrameCorrectionModes();
 }
 
+void RNSScreenShadowNode::resetFrameSizeState() {
+  getStateDataMutable().frameSize = {0, 0};
+}
+
 RNSScreenShadowNode::StateData &RNSScreenShadowNode::getStateDataMutable() {
   // We assume that this method is called to mutate the data, so we ensure
   // we're unsealed.
