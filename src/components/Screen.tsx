@@ -98,6 +98,10 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetExpandsWhenScrolledToEdge = true,
       sheetElevation = 24,
       sheetInitialDetentIndex = 0,
+      // TODO(@t0maboro)
+      // 1. add prop in react-navigation
+      // 2. change the default value to false
+      sheetOverflowsSystemBars = true,
       // Other
       screenId,
       stackPresentation,
@@ -229,6 +233,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             sheetAllowedDetents={resolvedSheetAllowedDetents}
             sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
             sheetElevation={sheetElevation}
+            sheetOverflowsSystemBars={sheetOverflowsSystemBars}
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}

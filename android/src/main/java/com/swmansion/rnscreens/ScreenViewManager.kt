@@ -269,6 +269,11 @@ open class ScreenViewManager :
         view?.sheetElevation = value.toFloat()
     }
 
+    @ReactProp(name = "sheetOverflowsSystemBars")
+    override fun setSheetOverflowsSystemBars(view: Screen?, sheetOverflowsSystemBars: Boolean) {
+        view?.sheetOverflowsSystemBars = sheetOverflowsSystemBars
+    }
+
     // mark: iOS-only
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(

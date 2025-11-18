@@ -24,6 +24,7 @@ public interface RNSScreenManagerInterface<T extends View>  {
   void setSheetExpandsWhenScrolledToEdge(T view, boolean value);
   void setSheetInitialDetent(T view, int value);
   void setSheetElevation(T view, int value);
+  void setSheetOverflowsSystemBars(T view, boolean value);
   void setCustomAnimationOnSwipe(T view, boolean value);
   void setFullScreenSwipeEnabled(T view, @Nullable String value);
   void setFullScreenSwipeShadowEnabled(T view, boolean value);

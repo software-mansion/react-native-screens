@@ -129,6 +129,7 @@ const formSheetBaseOptions: NativeStackNavigationOptions = {
   contentStyle: {
     backgroundColor: Colors.GreenLight100,
   },
+  // TODO(@t0maboro) - add overflows prop here
 };
 
 function PressableBase() {

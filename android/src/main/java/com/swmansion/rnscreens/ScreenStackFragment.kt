@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -223,6 +224,9 @@ class ScreenStackFragment :
             // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
             attachShapeToScreen(screen)
             screen.elevation = screen.sheetElevation
+
+            Log.d("tomaboro", "overflows? ${screen.sheetOverflowsSystemBars}")
+            // TODO(@t0maboro) - add overflows logic
 
             // Lifecycle of sheet delegate is tied to fragment.
             val sheetDelegate = requireSheetDelegate()

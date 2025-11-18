@@ -87,6 +87,7 @@ class Screen(
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
+    var sheetOverflowsSystemBars = false
 
     /**
      * On Paper, when using form sheet presentation we want to delay enter transition in order
