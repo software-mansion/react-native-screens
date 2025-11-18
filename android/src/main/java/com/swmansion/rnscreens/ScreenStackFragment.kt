@@ -28,6 +28,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.BottomSheetTransitionCoordinator
+import com.swmansion.rnscreens.bottomsheet.BottomSheetWindowInsetListenerChain
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -75,6 +76,8 @@ class ScreenStackFragment :
     private var dimmingDelegate: DimmingViewManager? = null
 
     internal var sheetDelegate: SheetDelegate? = null
+
+    internal var bottomSheetWindowInsetListenerChain: BottomSheetWindowInsetListenerChain? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -234,7 +237,7 @@ class ScreenStackFragment :
 
             if(!screen.sheetOverflowsSystemBars) {
                 sheetTransitionCoordinator = BottomSheetTransitionCoordinator()
-                sheetTransitionCoordinator.attachInsetsAndLayoutListenersToBottomSheet(screen, sheetDelegate, coordinatorLayout)
+                sheetTransitionCoordinator.attachInsetsAndLayoutListenersToBottomSheet(this, screen, sheetDelegate, coordinatorLayout)
             }
 
             // Pre-layout the content for the sake of enter transition.
@@ -247,10 +250,12 @@ class ScreenStackFragment :
             coordinatorLayout.layout(0, 0, container.width, container.height)
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                ViewCompat.setOnApplyWindowInsetsListener(screen) { _, windowInsets ->
+                val bottomSheetWindowInsetListenerChain = requireBottomSheetWindowInsetsListenerChain()
+                bottomSheetWindowInsetListenerChain.addListener { _, windowInsets ->
                     sheetDelegate.handleKeyboardInsetsProgress(windowInsets)
                     windowInsets
                 }
+                ViewCompat.setOnApplyWindowInsetsListener(screen, bottomSheetWindowInsetListenerChain)
             }
 
             val insetsAnimationCallback =
@@ -478,5 +483,12 @@ class ScreenStackFragment :
             sheetDelegate = SheetDelegate(screen)
         }
         return sheetDelegate!!
+    }
+
+    internal fun requireBottomSheetWindowInsetsListenerChain(): BottomSheetWindowInsetListenerChain {
+        if (bottomSheetWindowInsetListenerChain == null) {
+            bottomSheetWindowInsetListenerChain = BottomSheetWindowInsetListenerChain()
+        }
+        return bottomSheetWindowInsetListenerChain!!
     }
 }

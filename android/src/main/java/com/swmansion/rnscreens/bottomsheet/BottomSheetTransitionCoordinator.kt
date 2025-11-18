@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import androidx.annotation.RequiresApi
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.swmansion.rnscreens.Screen
+import com.swmansion.rnscreens.ScreenStackFragment
 
 class BottomSheetTransitionCoordinator {
     private var isLayoutComplete = false
@@ -18,6 +18,7 @@ class BottomSheetTransitionCoordinator {
     private var lastInsetsCompat: WindowInsetsCompat? = null
 
     fun attachInsetsAndLayoutListenersToBottomSheet(
+        screenStackFragment: ScreenStackFragment,
         screen: Screen,
         sheetDelegate: SheetDelegate,
         coordinatorLayout: ViewGroup,
@@ -33,10 +34,10 @@ class BottomSheetTransitionCoordinator {
                     )
                 }
             } else {
-                // TODO(@t0maboro) - not a big fan of it, but we already have a listener on screen level
-                ViewCompat.setOnApplyWindowInsetsListener(screen.contentWrapper!!) { _, insetsCompat ->
+                val bottomSheetWindowInsetListenerChain = screenStackFragment.requireBottomSheetWindowInsetsListenerChain()
+                bottomSheetWindowInsetListenerChain.addListener { _, windowInsets ->
                     onScreenContainerInsetsAppliedLegacy(
-                        insetsCompat,
+                        windowInsets,
                         screen,
                         sheetDelegate,
                         coordinatorLayout,
@@ -62,7 +63,6 @@ class BottomSheetTransitionCoordinator {
         sheetDelegate: SheetDelegate,
         coordinatorLayout: ViewGroup,
     ): WindowInsets {
-        // TODO(@t0maboro) - there's some flicker on reconfiguration with slide-out keyboard animation
         if (lastInsets == insets) {
             return insets
         }
@@ -107,7 +107,6 @@ class BottomSheetTransitionCoordinator {
         sheetDelegate: SheetDelegate,
         coordinatorLayout: ViewGroup,
     ) {
-        Log.d("tomaboro", "handleInsetsApplication with ${sheetDelegate.keyboardState}")
         // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
         // When insets are available, we can factor them in to update the maximum height accordingly.
 
@@ -128,7 +127,9 @@ class BottomSheetTransitionCoordinator {
             coordinatorLayout.layout(0, 0, container.width, container.height)
         }
 
-        // TODO(@t0maboro) - this paddding is needed but requires some updates with contentWrapper
+        // TODO(@t0maboro)
+        // 1. padding doesn't work well with fitToContents
+        // 2. verify on paper
         // screen.setPadding(0, 0, 0, bottomInset)
 
         // Although the layout of the screen container and CoordinatorLayout hasn't changed,

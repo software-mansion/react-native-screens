@@ -191,8 +191,7 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            // TODO(@t0maboro) this needs to be passed dynamically
-            // dispatchShadowStateUpdate(width, height - 168, t)
+            dispatchShadowStateUpdate(width, height, t)
 
             // FormSheet has no header in current model.
             notifyHeaderHeightChange(t)
@@ -205,8 +204,7 @@ class Screen(
         }
 
         if (coordinatorLayoutDidChange) {
-            // TODO(@t0maboro) this needs to be passed dynamically
-            // dispatchShadowStateUpdate(width, height - 168, top)
+            dispatchShadowStateUpdate(width, height, top)
         }
 
         footer?.onParentLayout(coordinatorLayoutDidChange, left, top, right, bottom, container!!.height)
@@ -490,8 +488,7 @@ class Screen(
         // There is no need to update shadow state for transient sheet states -
         // we are unsure of the exact sheet position anyway.
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
-            // TODO(@t0maboro) this needs to be passed dynamically
-            // updateScreenSizeFabric(width, height - 168, top)
+            updateScreenSizeFabric(width, height, top)
         }
     }
 
