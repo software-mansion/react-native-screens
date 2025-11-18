@@ -219,7 +219,7 @@ class Screen(
     // On Fabric, the view layout is completed before window insets are applied.
     // To ensure the BottomSheet correctly respects insets during its enter transition,
     // we delay the transition until both layout and insets have been applied.
-    internal fun requestPostponingEnterTransition() {
+    internal fun requestTriggeringPostponedEnterTransition() {
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             shouldTriggerPostponedTransitionAfterLayout = true
         }

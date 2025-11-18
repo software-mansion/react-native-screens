@@ -97,9 +97,7 @@ class BottomSheetTransitionCoordinator(
     private fun triggerSheetEnterTransitionIfReady() {
         if (!isLayoutComplete || !areInsetsApplied) return
 
-        // TODO(@t0maboro):
-        // 1. Calling some field that I don't want to use directly outside Screen class
-        screen.requestPostponingEnterTransition()
+        screen.requestTriggeringPostponedEnterTransition()
         screen.triggerPostponedEnterTransitionIfNeeded()
     }
 }
