@@ -16,12 +16,28 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                     menuAction:(RNSBarButtonMenuItemAction)menuAction
                    imageLoader:(RCTImageLoader *)imageLoader
 {
+  // When title is equal to "search", then use the system search item
+  // TODO: in actual implementation add a field to config to specify system item type
+  // https://developer.apple.com/documentation/uikit/uibarbuttonitem/systemitem?language=objc
+  NSString *title = dict[@"title"];
+  if (title != nil && [title isEqualToString:@"search"]) {
+    self = [super initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:nil action:nil];
+    if (self) {
+      NSString *buttonId = dict[@"buttonId"];
+      if (buttonId && action) {
+        self.target = self;
+        self.action = @selector(handleBarButtonItemPress:);
+        _itemAction = action;
+        _buttonId = buttonId;
+      }
+    }
+    return self;
+  }
   self = [super init];
   if (!self) {
     return self;
   }
 
-  NSString *title = dict[@"title"];
   NSDictionary *imageSourceObj = dict[@"imageSource"];
   NSDictionary *templateSourceObj = dict[@"templateSource"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
