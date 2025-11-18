@@ -96,7 +96,7 @@ class BottomSheetTransitionCoordinator(
 
         // TODO(@t0maboro):
         // 1. Calling some field that I don't want to use directly outside Screen class
-        screen.shouldTriggerPostponedTransitionAfterLayout = true
+        screen.requestPostponingEnterTransition()
         screen.triggerPostponedEnterTransitionIfNeeded()
     }
 }

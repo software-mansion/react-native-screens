@@ -89,9 +89,13 @@ class Screen(
     var sheetElevation: Float = 24F
 
     /**
-     * When using form sheet presentation we want to delay enter transition **on Paper** in order
+     * On Paper, when using form sheet presentation we want to delay enter transition in order
      * to wait for initial layout from React, otherwise the animator-based animation will look
-     * glitchy. *This is not needed on Fabric*.
+     * glitchy.
+     *
+     * On Fabric, the view layout is completed before window insets are applied.
+     * To ensure the BottomSheet correctly respects insets during its enter transition,
+     * we delay the transition until both layout and insets have been applied.
      */
     var shouldTriggerPostponedTransitionAfterLayout = false
 
@@ -212,9 +216,16 @@ class Screen(
         }
     }
 
-    // TODO(@t0maboro):
-    // 1. It cannot be public, prepare some better solution for BottomSheetTransitionCoordinator use-case
-    public fun triggerPostponedEnterTransitionIfNeeded() {
+    // On Fabric, the view layout is completed before window insets are applied.
+    // To ensure the BottomSheet correctly respects insets during its enter transition,
+    // we delay the transition until both layout and insets have been applied.
+    internal fun requestPostponingEnterTransition() {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            shouldTriggerPostponedTransitionAfterLayout = true
+        }
+    }
+
+    internal fun triggerPostponedEnterTransitionIfNeeded() {
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
