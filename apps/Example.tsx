@@ -307,7 +307,6 @@ const ExampleApp = (): React.JSX.Element => {
         <ThemeToggle.Provider value={{ toggleTheme }}>
           <NavigationContainer theme={isDark ? ScreensDarkTheme : ScreensLightTheme}>
             <Stack.Navigator
-              initialRouteName="Test2933"
               screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
               <Stack.Screen
                 name="Main"

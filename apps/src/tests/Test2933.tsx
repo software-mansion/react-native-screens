@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   useColorScheme,
@@ -26,17 +24,18 @@ function Section({ children, title }: SectionProps): React.JSX.Element {
 
 function floodJsThread() {
   setInterval(() => {
-    const end = Date.now() + 25;
+    const end = Date.now() + 10;
     while (Date.now() < end) {
       // Intentionally do nothing; just burn CPU cycles.
       Math.sqrt(Math.random());
     }
-  }, 27);
+  }, 12);
 }
 
 /*
  * create artificial pressure in the JS thread to show off thep problem.
  * */
+floodJsThread();
 floodJsThread();
 
 function AppMain(): React.JSX.Element {
@@ -46,6 +45,16 @@ function AppMain(): React.JSX.Element {
     flex: 1,
     backgroundColor: 'white',
   };
+
+  const [num, setNum] = useState(0);
+
+  useEffect(() => {
+    let i = 0;
+    setInterval(() => {
+      i++;
+      setNum(i);
+    }, 2)
+  }, []);
 
   /*
    * To keep the template simple and small we're adding padding to prevent view
@@ -60,10 +69,11 @@ function AppMain(): React.JSX.Element {
 
   return (
     <View style={backgroundStyle}>
+      {/* // TODO nowy task
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
-      />
+      /> */}
       <View
         style={{
           flex: 1,
@@ -79,6 +89,7 @@ function AppMain(): React.JSX.Element {
           There is a view with a blue background. We don't expect to ever see
           flashes of the blue background.
         </Section>
+        <Section title="Orientation"> {num} </Section>
       </View>
     </View>
   );
