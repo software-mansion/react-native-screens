@@ -41,7 +41,7 @@ internal class ScreensCoordinatorLayout(
 
         val appBarLayout = childrenList[1] as AppBarLayout
         val screenInsets = if (appBarLayout.isNotEmpty() && appBarLayout.children.first() is CustomToolbar) {
-            (appBarLayout.children.first() as CustomToolbar).screenInsets
+            (appBarLayout.children.first() as CustomToolbar).screenInsets.toWindowInsets()
         } else {
             insets
         }

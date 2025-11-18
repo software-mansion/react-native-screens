@@ -2,17 +2,17 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Insets
 import android.os.Build
 import android.view.Choreographer
-import android.view.WindowInsets
+import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.Insets
+import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
-import com.swmansion.rnscreens.utils.InsetsCompat
-import com.swmansion.rnscreens.utils.resolveInsetsOrZero
 import kotlin.math.max
 
 /**
@@ -25,7 +25,8 @@ import kotlin.math.max
 open class CustomToolbar(
     context: Context,
     val config: ScreenStackHeaderConfig,
-) : Toolbar(context) {
+) : Toolbar(context),
+    OnApplyWindowInsetsListener {
     // Due to edge-to-edge enforcement starting from Android SDK 35, isTopInsetEnabled prop has been
     // removed. Previously, shouldAvoidDisplayCutout, shouldApplyTopInset would directly return the
     // value of isTopInsetEnabled. Now, the values of shouldAvoidDisplayCutout, shouldApplyTopInse
@@ -35,9 +36,9 @@ open class CustomToolbar(
 
     private val shouldApplyTopInset = true
 
-    private var lastInsets = InsetsCompat.NONE
+    private var lastInsets = Insets.NONE
 
-    var screenInsets = WindowInsets.CONSUMED
+    var screenInsets = WindowInsetsCompat.CONSUMED
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
@@ -55,6 +56,10 @@ open class CustomToolbar(
                 layout(left, top, right, bottom)
             }
         }
+
+    init {
+        ViewCompat.setOnApplyWindowInsetsListener(this, this)
+    }
 
     override fun requestLayout() {
         super.requestLayout()
@@ -85,8 +90,11 @@ open class CustomToolbar(
         }
     }
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        val unhandledInsets = super.onApplyWindowInsets(insets)
+    override fun onApplyWindowInsets(
+        v: View,
+        insets: WindowInsetsCompat,
+    ): WindowInsetsCompat {
+        val unhandledInsets = WindowInsetsCompat.toWindowInsetsCompat(super.onApplyWindowInsets(insets.toWindowInsets()))
 
         // There are few UI modes we could be running in
         //
@@ -95,16 +103,14 @@ open class CustomToolbar(
         // 3. edge-to-edge with translucent navigation buttons bar.
         //
         // Additionally we need to gracefully handle possible display cutouts.
-        val cutoutInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), unhandledInsets)
-        val systemBarInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), unhandledInsets)
+        val cutoutInsets = unhandledInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+        val systemBarInsets = unhandledInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
         // This seems to work fine in all tested configurations, because cutout & system bars overlap
         // only in portrait mode & top inset is controlled separately, therefore we don't count
         // any insets twice.
         val horizontalInsets =
-            InsetsCompat.of(
+            Insets.of(
                 cutoutInsets.left + systemBarInsets.left,
                 0,
                 cutoutInsets.right + systemBarInsets.right,
@@ -115,14 +121,14 @@ open class CustomToolbar(
         // If there are no cutout displays, we want to apply the additional padding to
         // respect the status bar.
         val verticalInsets =
-            InsetsCompat.of(
+            Insets.of(
                 0,
                 max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
                 0,
                 max(cutoutInsets.bottom, 0),
             )
 
-        val newInsets = InsetsCompat.add(horizontalInsets, verticalInsets)
+        val newInsets = Insets.add(horizontalInsets, verticalInsets)
 
         if (lastInsets != newInsets) {
             lastInsets = newInsets
@@ -134,13 +140,13 @@ open class CustomToolbar(
             )
 
             screenInsets =
-                WindowInsets
+                WindowInsetsCompat
                     .Builder(unhandledInsets)
                     .setInsets(
-                        WindowInsets.Type.displayCutout(),
+                        WindowInsetsCompat.Type.displayCutout(),
                         Insets.of(cutoutInsets.left, 0, cutoutInsets.right, cutoutInsets.bottom),
                     ).setInsets(
-                        WindowInsets.Type.systemBars(),
+                        WindowInsetsCompat.Type.systemBars(),
                         Insets.of(
                             systemBarInsets.left,
                             if (shouldApplyTopInset) 0 else systemBarInsets.top,
@@ -150,13 +156,13 @@ open class CustomToolbar(
                     ).build()
         }
 
-        return WindowInsets
+        return WindowInsetsCompat
             .Builder(unhandledInsets)
             .setInsets(
-                WindowInsets.Type.displayCutout(),
+                WindowInsetsCompat.Type.displayCutout(),
                 Insets.NONE,
             ).setInsets(
-                WindowInsets.Type.systemBars(),
+                WindowInsetsCompat.Type.systemBars(),
                 Insets.of(
                     0,
                     if (shouldApplyTopInset) 0 else systemBarInsets.top,
