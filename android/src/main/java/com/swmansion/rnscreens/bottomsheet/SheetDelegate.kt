@@ -336,7 +336,7 @@ class SheetDelegate(
 
         // Note: We do not manipulate the top inset manually. Therefore, if SafeAreaView has top insets enabled,
         // we must retain the top inset even if the formSheet does not currently overflow into the status bar.
-        // This is important because in some specific edge cases — for example, when the keyboard slides in —
+        // This is important because in some specific edge cases - for example, when the keyboard slides in -
         // the formSheet might overlap the status bar. If we ignored the top inset and it suddenly became necessary,
         // it would result in a noticeable visual content jump. To ensure consistency and avoid layout shifts,
         // we always include the top inset upfront, which can be disabled from the application perspective.
