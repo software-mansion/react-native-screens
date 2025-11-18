@@ -233,6 +233,15 @@ corresponding legacy prop values for `sheetAllowedDetents` prop.
 
 Defaults to `none`, indicating that the dimming view should be always present.
 
+### `sheetOverflowsSystemBars` (Android only)
+
+Whether the sheet content should be rendered behind the Status Bar
+
+When set to `true`, the sheet will extend to the physical edges of the screen, allowing the content to be visible behind the system bars.
+When set to `false`, the sheet's layout will be constrained by the system insets.
+
+Defaults to `true`.
+
 ### `stackAnimation`
 
 Allows for the customization of how the given screen should appear/disappear when pushed or popped at the top of the stack. The following values are currently supported:

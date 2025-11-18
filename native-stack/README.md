@@ -321,10 +321,6 @@ corresponding legacy prop values for `sheetAllowedDetents` prop.
 
 Defaults to `none`, indicating that the dimming view should be always present.
 
-#### `sheetOverflowsSystemBars`
-
-TODO(@t0maboro) - add docs
-
 #### `stackAnimation`
 
 How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:

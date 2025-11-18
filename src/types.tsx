@@ -473,7 +473,12 @@ export interface ScreenProps extends ViewProps {
    */
   sheetInitialDetentIndex?: number | 'last';
   /**
-   * TODO(@t0maboro) - add docs
+   * Whether the sheet content should be rendered behind the Status Bar
+   *
+   * When set to `true`, the sheet will extend to the physical edges of the screen, allowing the content to be visible behind the system bars.
+   * When set to `false`, the sheet's layout will be constrained by the system insets.
+   *
+   * Defaults to `true`.
    *
    * @platform android
    */
