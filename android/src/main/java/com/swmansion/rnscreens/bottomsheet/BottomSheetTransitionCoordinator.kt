@@ -70,8 +70,8 @@ class BottomSheetTransitionCoordinator {
         areInsetsApplied = true
         triggerSheetEnterTransitionIfReady(screen)
 
-        // TODO(@t0maboro):
-        // 1. SheetDelegate has onApplyWindowInsets method - we should ensure that both are coordinated well
+        // Our goal is to execute the side effect of delaying the animation,
+        // therefore we pass the unmodified insets in every case.
         return insets
     }
 
