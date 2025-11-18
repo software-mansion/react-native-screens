@@ -59,9 +59,6 @@ class BottomSheetTransitionCoordinator {
             coordinatorLayout.layout(0, 0, container.width, container.height)
         }
 
-        // TODO(@t0maboro):
-        // 1. Check paper
-
         // Although the layout of the screen container and CoordinatorLayout hasn't changed,
         // the BottomSheetBehavior has updated the maximum height.
         // We manually trigger the callback to notify that the bottom sheet layout has been applied.
