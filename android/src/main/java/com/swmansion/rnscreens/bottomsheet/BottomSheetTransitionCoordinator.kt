@@ -29,7 +29,7 @@ class BottomSheetTransitionCoordinator {
                         insets,
                         screen,
                         sheetDelegate,
-                        coordinatorLayout
+                        coordinatorLayout,
                     )
                 }
             } else {
@@ -39,7 +39,7 @@ class BottomSheetTransitionCoordinator {
                         insetsCompat,
                         screen,
                         sheetDelegate,
-                        coordinatorLayout
+                        coordinatorLayout,
                     )
                 }
             }
@@ -73,7 +73,7 @@ class BottomSheetTransitionCoordinator {
             bottomInset,
             screen,
             sheetDelegate,
-            coordinatorLayout
+            coordinatorLayout,
         )
 
         return insets
@@ -95,7 +95,7 @@ class BottomSheetTransitionCoordinator {
             bottomInset,
             screen,
             sheetDelegate,
-            coordinatorLayout
+            coordinatorLayout,
         )
 
         return insetsCompat
@@ -105,11 +105,15 @@ class BottomSheetTransitionCoordinator {
         bottomInset: Int,
         screen: Screen,
         sheetDelegate: SheetDelegate,
-        coordinatorLayout: ViewGroup
+        coordinatorLayout: ViewGroup,
     ) {
         Log.d("tomaboro", "handleInsetsApplication with ${sheetDelegate.keyboardState}")
         // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
         // When insets are available, we can factor them in to update the maximum height accordingly.
+
+        // TODO(@t0maboro) there's some content flicker here while dismissing the keyboard with swipe gesture
+        // 1. maybe we should just update maxHeight/expandedOffsetFromTop values, as the no. of detents shouldn't change here
+        // 2. maybe we shouldn't do anything on exiting transition
         sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!, sheetDelegate.keyboardState)
 
         screen.container?.let { container ->
