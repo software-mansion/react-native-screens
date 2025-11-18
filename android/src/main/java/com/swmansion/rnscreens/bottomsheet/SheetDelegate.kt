@@ -120,7 +120,7 @@ class SheetDelegate(
         keyboardState: KeyboardState = KeyboardNotVisible,
         selectedDetentIndex: Int = lastStableDetentIndex,
     ): BottomSheetBehavior<Screen> {
-        val containerHeight = tryResolveContainerHeight()
+        val containerHeight = if (screen.sheetOverflowsSystemBars) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -263,7 +263,7 @@ class SheetDelegate(
     // Otherwise, it shifts the sheet as high as possible, even if it means part of its content
     // will remain hidden behind the keyboard.
     internal fun computeSheetOffsetYWithIMEPresent(keyboardHeight: Int): Int {
-        val containerHeight = tryResolveContainerHeight()
+        val containerHeight = if (screen.sheetOverflowsSystemBars) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -292,8 +292,8 @@ class SheetDelegate(
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
         val prevSystemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-        // TODO(@t0maboro):
-        // 1. lastTopInset needs to have some explanation why it's needed here
+        // We save the top inset (status bar height) to later subtract it from the window height
+        // during sheet size calculations. This ensures the sheet respects the safe area.
         lastTopInset = prevSystemBarsInsets.top
 
         if (isImeVisible) {
@@ -336,36 +336,33 @@ class SheetDelegate(
     ) = state == BottomSheetBehavior.STATE_HIDDEN
 
     /**
+     * This method tries to resolve the maximum height available for the sheet content,
+     * accounting for the system top inset.
+     */
+    private fun tryResolveSafeAreaSpaceForSheet(): Int? = tryResolveContainerHeight()?.let { it - lastTopInset }
+
+    /**
      * This method might return slightly different values depending on code path,
      * but during testing I've found this effect negligible. For practical purposes
      * this is acceptable.
      */
     private fun tryResolveContainerHeight(): Int? {
-        // TODO(@t0maboro):
-        // 1. lastTopInset needs to have some explanation why it's needed here
-        // 2. I shouldn't touch this method at all and subtract this value somewhere else
-        screen.container?.let { return it.height - lastTopInset }
+        screen.container?.let { return it.height }
 
         val context = screen.reactContext
 
-        // TODO(@t0maboro):
-        // 1. lastTopInset needs to have some explanation why it's needed here
-        // 2. I shouldn't touch this method at all and subtract this value somewhere else
         context
             .resources
             ?.displayMetrics
             ?.heightPixels
-            ?.let { return it - lastTopInset }
+            ?.let { return it }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // TODO(@t0maboro):
-            // 1. lastTopInset needs to have some explanation why it's needed here
-            // 2. I shouldn't touch this method at all and subtract this value somewhere else
             (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)
                 ?.currentWindowMetrics
                 ?.bounds
                 ?.height()
-                ?.let { return it - lastTopInset }
+                ?.let { return it }
         }
         return null
     }
