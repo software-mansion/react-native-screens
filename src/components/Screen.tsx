@@ -267,6 +267,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             topScrollEdgeEffect={scrollEdgeEffects?.top}
             synchronousShadowStateUpdatesEnabled={
               featureFlags.experiment.synchronousScreenUpdatesEnabled
+            }
+            earlyScreenOrientationChangeEnabled={
+              featureFlags.experiment.earlyScreenOrientationChangeEnabled
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
