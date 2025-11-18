@@ -3,7 +3,6 @@ package com.swmansion.rnscreens.bottomsheet
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
-import androidx.core.view.WindowInsetsCompat
 import com.swmansion.rnscreens.Screen
 
 class BottomSheetTransitionCoordinator {
@@ -43,8 +42,6 @@ class BottomSheetTransitionCoordinator {
         //  3. We should check here whether insets has changed
         if (areInsetsApplied) return insets
 
-        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-
         // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
         // When insets are available, we can factor them in to update the maximum height accordingly.
         sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!)
@@ -74,12 +71,7 @@ class BottomSheetTransitionCoordinator {
 
         // TODO(@t0maboro):
         // 1. SheetDelegate has onApplyWindowInsets method - we should ensure that both are coordinated well
-        return WindowInsets
-            .Builder(insets)
-            .setInsets(
-                WindowInsetsCompat.Type.systemBars(),
-                android.graphics.Insets.of(prevInsets.left, 0, prevInsets.right, prevInsets.bottom),
-            ).build()
+        return insets
     }
 
     private fun triggerSheetEnterTransitionIfReady(screen: Screen) {
