@@ -9,6 +9,8 @@ class BottomSheetTransitionCoordinator {
     private var isLayoutComplete = false
     private var areInsetsApplied = false
 
+    private var lastInsets: WindowInsets? = null
+
     fun attachInsetsAndLayoutListenersToBottomSheet(
         screen: Screen,
         sheetDelegate: SheetDelegate,
@@ -36,15 +38,14 @@ class BottomSheetTransitionCoordinator {
         sheetDelegate: SheetDelegate,
         coordinatorLayout: ViewGroup,
     ): WindowInsets {
-        // TODO(@t0maboro):
-        //  1. Without this line, FormSheet with TextInput is reconfiguring bottom sheet with state.collapsed for some reason
-        //  2. TextInput with medium/large detent is causing some reconfiguration and flicker on dismissing with swipe with keyboard open
-        //  3. We should check here whether insets has changed
-        if (areInsetsApplied) return insets
+        if (lastInsets == insets) {
+            return insets
+        }
+        lastInsets = insets
 
         // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
         // When insets are available, we can factor them in to update the maximum height accordingly.
-        sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!)
+        sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!, sheetDelegate.keyboardState)
 
         screen.container?.let { container ->
             // Needs to be highlighted that nothing changes at the container level.

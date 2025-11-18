@@ -33,7 +33,8 @@ class SheetDelegate(
 ) : LifecycleEventObserver,
     OnApplyWindowInsetsListener {
     private var isKeyboardVisible: Boolean = false
-    private var keyboardState: KeyboardState = KeyboardNotVisible
+    var keyboardState: KeyboardState = KeyboardNotVisible
+        private set
 
     private var isSheetAnimationInProgress: Boolean = false
 
