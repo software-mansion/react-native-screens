@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import androidx.core.view.WindowInsetsCompat
-import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.Screen
 
 class BottomSheetTransitionCoordinator {
@@ -63,15 +62,12 @@ class BottomSheetTransitionCoordinator {
         }
 
         // TODO(@t0maboro):
-        // 1. Without this call, ScreenContentWrapper size doesn't adapt to screen size
-        // 2. Fix this for Paper
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            screen.dispatchShadowStateUpdate(
-                screen.width,
-                screen.height,
-                prevInsets.top,
-            )
-        }
+        // 1. Check paper
+
+        // Although the layout of the screen container and CoordinatorLayout hasn't changed,
+        // the BottomSheetBehavior has updated the maximum height.
+        // We manually trigger the callback to notify that the bottom sheet layout has been applied.
+        screen.onBottomSheetBehaviorDidLayout(true)
 
         areInsetsApplied = true
         triggerSheetEnterTransitionIfReady(screen)
