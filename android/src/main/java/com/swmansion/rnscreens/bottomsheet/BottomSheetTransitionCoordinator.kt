@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.bottomsheet
 
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
@@ -69,7 +68,7 @@ class BottomSheetTransitionCoordinator {
         lastInsets = insets
 
         val bottomInset = insets.getInsets(WindowInsets.Type.systemBars()).bottom
-        handleInsetsApplication(
+        handleInsets(
             bottomInset,
             screen,
             sheetDelegate,
@@ -91,7 +90,7 @@ class BottomSheetTransitionCoordinator {
         lastInsetsCompat = insetsCompat
 
         val bottomInset = insetsCompat.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
-        handleInsetsApplication(
+        handleInsets(
             bottomInset,
             screen,
             sheetDelegate,
@@ -101,7 +100,7 @@ class BottomSheetTransitionCoordinator {
         return insetsCompat
     }
 
-    private fun handleInsetsApplication(
+    private fun handleInsets(
         bottomInset: Int,
         screen: Screen,
         sheetDelegate: SheetDelegate,
