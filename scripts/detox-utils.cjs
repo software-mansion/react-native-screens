@@ -118,10 +118,6 @@ function commonDetoxConfigFactory(applicationName) {
         device: 'simulator',
         app: 'ios.release',
       },
-      // 'ios.release': {
-      //   device: 'simulator',
-      //   app: 'ios.release',
-      // },
       'android.att.debug': {
         device: 'attached',
         app: 'android.debug',
@@ -138,10 +134,6 @@ function commonDetoxConfigFactory(applicationName) {
         device: 'emulator',
         app: 'android.release',
       },
-      // 'android.release': {
-      //   device: 'emulator',
-      //   app: 'android.release',
-      // },
     },
   }
 }

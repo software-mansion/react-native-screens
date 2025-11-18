@@ -67,8 +67,8 @@ const iosDevice = {
 };
 
 module.exports = {
-  appleModels: APPLE_MODELS,
-  iosVersions: IOS_VERSIONS,
+  APPLE_MODELS,
+  IOS_VERSIONS,
   iosDevice,
   getiosVersion,
 };

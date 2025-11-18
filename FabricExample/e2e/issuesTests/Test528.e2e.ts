@@ -28,5 +28,5 @@ describeIfiOS('Test528', () => {
     await expect(element(by.text('Custom Button'))).toBeVisible(100);
     await device.setOrientation('portrait');
     await expect(element(by.text('Custom Button'))).toBeVisible(100);
-  }); 
+  });
 });

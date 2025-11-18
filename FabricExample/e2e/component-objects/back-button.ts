@@ -14,13 +14,10 @@ export async function getBackButton() {
 async function getiOSBackButton() {
     const iosVersion = semverCoerce(getiosVersion())!;
     const backButtonElement = element(by.id('BackButton'));
-    console.log('here1');
     if (semverSatisfies(iosVersion, '>=26.0')) {
-        console.log('here2');
         const elementsByAttributes = await backButtonElement.getAttributes() as unknown as { elements: { className: string }[] };
         const elements = elementsByAttributes.elements;
         if (Array.isArray(elements)) {
-            console.log('here3');
             return backButtonElement.atIndex(elements.findIndex(
                 elem => elem.className === '_UIButtonBarButton'
             ));
