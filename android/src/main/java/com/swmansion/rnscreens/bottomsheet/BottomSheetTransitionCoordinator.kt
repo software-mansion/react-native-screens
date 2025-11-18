@@ -9,27 +9,37 @@ import androidx.core.view.WindowInsetsCompat
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.Screen
 
-class BottomSheetTransitionCoordinator(
-    private val screen: Screen,
-    private val sheetDelegate: SheetDelegate,
-    private val coordinatorLayout: ViewGroup,
-) {
+class BottomSheetTransitionCoordinator() {
     private var isLayoutComplete = false
     private var areInsetsApplied = false
 
-    init {
+    fun attachInsetsAndLayoutListenersToBottomSheet(
+        screen: Screen,
+        sheetDelegate: SheetDelegate,
+        coordinatorLayout: ViewGroup
+    ) {
         screen.container?.apply {
-            // TODO(@t0maboro):
-            // 1. It requires API level 30 - we need to add support for lower API levels
-            setOnApplyWindowInsetsListener(::onScreenContainerInsetsApplied)
-            addOnLayoutChangeListener(::onScreenContainerLayoutChanged)
+            setOnApplyWindowInsetsListener { view, insets ->
+                onScreenContainerInsetsApplied(view, insets, screen, sheetDelegate, coordinatorLayout)
+            }
+            addOnLayoutChangeListener { view, l, t, r, b, ol, ot, or, ob ->
+                onScreenContainerLayoutChanged(screen)
+            }
         }
+    }
+
+    private fun onScreenContainerLayoutChanged(screen: Screen) {
+        isLayoutComplete = true
+        triggerSheetEnterTransitionIfReady(screen)
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
     private fun onScreenContainerInsetsApplied(
         view: View,
         insets: WindowInsets,
+        screen: Screen,
+        sheetDelegate: SheetDelegate,
+        coordinatorLayout: ViewGroup
     ): WindowInsets {
         // TODO(@t0maboro):
         //  1. Without this line, FormSheet with TextInput is reconfiguring bottom sheet with state.collapsed for some reason
@@ -44,8 +54,7 @@ class BottomSheetTransitionCoordinator(
         sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!)
 
         // TODO(@t0maboro):
-        // 1. We need to copy these calls from ScreenStackFragment
-        // 2. forceLayout is crucial for repeating the same logic for measure as in ScreenStackFragment
+        // 1. forceLayout is crucial for repeating the same logic for measure as in ScreenStackFragment
         screen.container?.let { container ->
             coordinatorLayout.forceLayout()
             coordinatorLayout.measure(
@@ -67,7 +76,7 @@ class BottomSheetTransitionCoordinator(
         }
 
         areInsetsApplied = true
-        triggerSheetEnterTransitionIfReady()
+        triggerSheetEnterTransitionIfReady(screen)
 
         // TODO(@t0maboro):
         // 1. SheetDelegate has onApplyWindowInsets method - we should ensure that both are coordinated well
@@ -79,22 +88,7 @@ class BottomSheetTransitionCoordinator(
             ).build()
     }
 
-    private fun onScreenContainerLayoutChanged(
-        view: View,
-        left: Int,
-        top: Int,
-        right: Int,
-        bottom: Int,
-        oldLeft: Int,
-        oldTop: Int,
-        oldRight: Int,
-        oldBottom: Int,
-    ) {
-        isLayoutComplete = true
-        triggerSheetEnterTransitionIfReady()
-    }
-
-    private fun triggerSheetEnterTransitionIfReady() {
+    private fun triggerSheetEnterTransitionIfReady(screen: Screen) {
         if (!isLayoutComplete || !areInsetsApplied) return
 
         screen.requestTriggeringPostponedEnterTransition()

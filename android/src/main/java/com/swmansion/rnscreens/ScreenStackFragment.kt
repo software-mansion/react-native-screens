@@ -232,9 +232,8 @@ class ScreenStackFragment :
             dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
             dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
-            // TODO(@t0maboro):
-            // 1. We should expose methods from BottomSheetTransitionCoordinator and pass attributes directly to methods
-            sheetTransitionCoordinator = BottomSheetTransitionCoordinator(screen, sheetDelegate, coordinatorLayout)
+            sheetTransitionCoordinator = BottomSheetTransitionCoordinator()
+            sheetTransitionCoordinator.attachInsetsAndLayoutListenersToBottomSheet(screen, sheetDelegate, coordinatorLayout)
 
             // Pre-layout the content for the sake of enter transition.
 
