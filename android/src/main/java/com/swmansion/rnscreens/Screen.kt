@@ -26,7 +26,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.bottomsheet.BottomSheetMetrics
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -533,11 +532,6 @@ class Screen(
                     }.build()
         }
     }
-
-    fun isOverflowingStatusBar(
-        topInset: Int,
-        metrics: BottomSheetMetrics,
-    ): Boolean = metrics.maxSheetHeight >= metrics.availableHeight - topInset
 
     enum class StackPresentation {
         PUSH,
