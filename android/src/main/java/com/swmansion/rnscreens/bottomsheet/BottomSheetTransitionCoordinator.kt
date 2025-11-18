@@ -1,22 +1,20 @@
 package com.swmansion.rnscreens.bottomsheet
 
-import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
-import androidx.annotation.RequiresApi
 import androidx.core.view.WindowInsetsCompat
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.Screen
 
-class BottomSheetTransitionCoordinator() {
+class BottomSheetTransitionCoordinator {
     private var isLayoutComplete = false
     private var areInsetsApplied = false
 
     fun attachInsetsAndLayoutListenersToBottomSheet(
         screen: Screen,
         sheetDelegate: SheetDelegate,
-        coordinatorLayout: ViewGroup
+        coordinatorLayout: ViewGroup,
     ) {
         screen.container?.apply {
             setOnApplyWindowInsetsListener { view, insets ->
@@ -33,13 +31,12 @@ class BottomSheetTransitionCoordinator() {
         triggerSheetEnterTransitionIfReady(screen)
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun onScreenContainerInsetsApplied(
         view: View,
         insets: WindowInsets,
         screen: Screen,
         sheetDelegate: SheetDelegate,
-        coordinatorLayout: ViewGroup
+        coordinatorLayout: ViewGroup,
     ): WindowInsets {
         // TODO(@t0maboro):
         //  1. Without this line, FormSheet with TextInput is reconfiguring bottom sheet with state.collapsed for some reason
@@ -49,13 +46,14 @@ class BottomSheetTransitionCoordinator() {
 
         val prevInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-        // TODO(@t0maboro):
-        // 1. Reconfiguration is crucial, because we're updating the maximum height for the screen with the system bars insets
+        // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
+        // When insets are available, we can factor them in to update the maximum height accordingly.
         sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!)
 
-        // TODO(@t0maboro):
-        // 1. forceLayout is crucial for repeating the same logic for measure as in ScreenStackFragment
         screen.container?.let { container ->
+            // Needs to be highlighted that nothing changes at the container level.
+            // However, calling additional measure will trigger BottomSheetBehavior's `onMeasureChild` logic.
+            // This method ensures that the bottom sheet respects the maxHeight we update in `configureBottomSheetBehavior`.
             coordinatorLayout.forceLayout()
             coordinatorLayout.measure(
                 View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY),
