@@ -1,5 +1,5 @@
-const ChildProcess = require('node:child_process');
-const { iosDevice } = require('./devices');
+const { iosDevice } = require('./ios-devices');
+const { detectAndroidEmulatorName } = require('./android-devices');
 
 const CI_AVD_NAME = 'e2e_emulator';
 
@@ -10,40 +10,6 @@ const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 // test-butler requires AOSP emulator image, which is not available to download for arm64-v8a in Android Studio SDK Manager, therefore
 // it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
-
-function detectLocalAndroidEmulator() {
-  // "DETOX_AVD_NAME" can be set for local developement
-  const detoxAvdName = process.env.DETOX_AVD_NAME ?? null;
-  if (detoxAvdName !== null) {
-    return detoxAvdName
-  }
-
-  // Fallback: try to use Android SDK
-  try {
-    const stdout = ChildProcess.execSync("emulator -list-avds")
-
-    // Possibly convert Buffer to string
-    const outputText = typeof stdout === 'string' ? stdout : stdout.toString();
-
-    const avdList = outputText.trim().split('\n').map(name => name.trim());
-
-    if (avdList.length === 0) {
-      throw new Error('No installed AVDs detected on the device');
-    }
-
-    // Just select first one in the list. 
-    // TODO: consider giving user a choice here.
-    return avdList[0];
-  } catch (error) {
-    const errorMessage = `Failed to find Android emulator. Set "DETOX_AVD_NAME" env variable pointing to one. Cause: ${error}`
-    console.error(errorMessage);
-    throw new Error(errorMessage);
-  }
-}
-
-function detectAndroidEmulatorName() {
-  return isRunningCI ? CI_AVD_NAME : detectLocalAndroidEmulator();
-}
 
 /**
  * @param {string} applicationName name (FabricExample / ScreensExample)
