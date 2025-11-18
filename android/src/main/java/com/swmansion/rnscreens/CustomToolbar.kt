@@ -154,22 +154,39 @@ open class CustomToolbar(
                             systemBarInsets.bottom,
                         ),
                     ).build()
+
+            // On Android versions prior to R, setInsets(WindowInsetsCompat.Type.displayCutout(), ...)
+            // does not work. We need to use previous API.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                screenInsets = screenInsets.consumeDisplayCutout()
+            }
         }
 
-        return WindowInsetsCompat
-            .Builder(unhandledInsets)
-            .setInsets(
-                WindowInsetsCompat.Type.displayCutout(),
-                Insets.NONE,
-            ).setInsets(
-                WindowInsetsCompat.Type.systemBars(),
-                Insets.of(
-                    0,
-                    if (shouldApplyTopInset) 0 else systemBarInsets.top,
-                    0,
-                    systemBarInsets.bottom,
-                ),
-            ).build()
+        var consumedInsets =
+            WindowInsetsCompat
+                .Builder(unhandledInsets)
+                .setInsets(
+                    WindowInsetsCompat.Type.displayCutout(),
+                    Insets.NONE,
+                ).setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    Insets.of(
+                        0,
+                        if (shouldApplyTopInset) 0 else systemBarInsets.top,
+                        0,
+                        systemBarInsets.bottom,
+                    ),
+                ).build()
+
+        // On Android versions prior to R, setInsets(WindowInsetsCompat.Type.displayCutout(), ...)
+        // does not work. We need to use previous API.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            consumedInsets = consumedInsets.consumeDisplayCutout()
+        }
+
+        // Technically, we don't need those returned insets anywhere but for consistency's sake
+        // I decided to return the correct value.
+        return consumedInsets
     }
 
     override fun onLayout(
