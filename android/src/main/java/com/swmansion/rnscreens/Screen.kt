@@ -251,7 +251,7 @@ class Screen(
     /**
      * @param offsetY ignored on old architecture
      */
-    internal fun dispatchShadowStateUpdate(
+    private fun dispatchShadowStateUpdate(
         width: Int,
         height: Int,
         offsetY: Int,
