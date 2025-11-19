@@ -237,7 +237,7 @@ Defaults to `none`, indicating that the dimming view should be always present.
 
 Whether the sheet content should be rendered behind the Status Bar.
 
-When set to `true`, the sheet will extend to the physical edges of the screen, allowing content to be visible behind the status bar. Detent ratios in sheetAllowedDetents will be measured relative to the full screen height.
+When set to `true`, the sheet will extend to the physical edges of the stack, allowing content to be visible behind the status bar. Detent ratios in sheetAllowedDetents will be measured relative to the stack height.
 
 When set to `false`, the sheet's layout will be constrained by the status bar insets from the top and the detent ratios will then be measured relative to the adjusted height (excluding the top inset). This means that sheetAllowedDetents will result in different sheet heights depending on this prop.
 

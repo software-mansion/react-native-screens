@@ -475,9 +475,9 @@ export interface ScreenProps extends ViewProps {
   /**
    * Whether the sheet content should be rendered behind the Status Bar.
    *
-   * When set to `true`, the sheet will extend to the physical edges of the screen,
+   * When set to `true`, the sheet will extend to the physical edges of the stack,
    * allowing content to be visible behind the status bar. Detent ratios in sheetAllowedDetents
-   * will be measured relative to the full screen height.
+   * will be measured relative to the full stack height.
    *
    * When set to `false`, the sheet's layout will be constrained by the status bar insets from the top
    * and the detent ratios will then be measured relative to the adjusted height (excluding the top inset).
