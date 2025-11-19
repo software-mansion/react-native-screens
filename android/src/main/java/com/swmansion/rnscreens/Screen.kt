@@ -34,7 +34,6 @@ import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
-import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -454,7 +453,7 @@ class Screen(
             super.onTouchEvent(event)
         }
 
-    fun notifyHeaderHeightChange(headerHeight: Int) {
+    internal fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
         UIManagerHelper
@@ -463,7 +462,7 @@ class Screen(
                 HeaderHeightChangeEvent(
                     surfaceId,
                     id,
-                    pxToDp(screenContext, headerHeight.toFloat()).toDouble(),
+                    PixelUtil.toDIPFromPixel(headerHeight.toFloat()).toDouble(),
                 ),
             )
     }

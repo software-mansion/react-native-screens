@@ -1,16 +1,14 @@
 package com.swmansion.rnscreens
 
-class ScreenStackHeaderHeightUpdateProxy(
-    val config: ScreenStackHeaderConfig,
-) {
+class ScreenStackHeaderHeightUpdateProxy {
     var previousHeaderHeightInPx: Int? = null
 
-    fun updateHeaderHeightIfNeeded() {
+    fun updateHeaderHeightIfNeeded(config: ScreenStackHeaderConfig, screen: Screen?) {
         val currentHeaderHeightInPx = if (config.isHeaderHidden) 0 else config.toolbar.height
 
         if (currentHeaderHeightInPx != previousHeaderHeightInPx) {
             previousHeaderHeightInPx = currentHeaderHeightInPx
-            config.screen?.notifyHeaderHeightChange(currentHeaderHeightInPx)
+            screen?.notifyHeaderHeightChange(currentHeaderHeightInPx)
         }
     }
 }
