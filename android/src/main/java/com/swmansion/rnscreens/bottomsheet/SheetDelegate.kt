@@ -311,6 +311,7 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+        val prevSystemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -318,19 +319,6 @@ class SheetDelegate(
             sheetBehavior?.let {
                 this.configureBottomSheetBehaviour(it, keyboardState)
             }
-
-            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            return WindowInsetsCompat
-                .Builder(insets)
-                .setInsets(
-                    WindowInsetsCompat.Type.navigationBars(),
-                    Insets.of(
-                        prevInsets.left,
-                        prevInsets.top,
-                        prevInsets.right,
-                        0,
-                    ),
-                ).build()
         } else {
             sheetBehavior?.let {
                 if (isKeyboardVisible) {
@@ -344,12 +332,19 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+        val newBottomInset = if (!isImeVisible) prevSystemBarsInsets.bottom else 0
+
+        // Note: We do not manipulate the top inset manually. Therefore, if SafeAreaView has top insets enabled,
+        // we must retain the top inset even if the formSheet does not currently overflow into the status bar.
+        // This is important because in some specific edge cases - for example, when the keyboard slides in -
+        // the formSheet might overlap the status bar. If we ignored the top inset and it suddenly became necessary,
+        // it would result in a noticeable visual content jump. To ensure consistency and avoid layout shifts,
+        // we always include the top inset upfront, which can be disabled from the application perspective.
         return WindowInsetsCompat
             .Builder(insets)
             .setInsets(
-                WindowInsetsCompat.Type.navigationBars(),
-                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, 0),
+                WindowInsetsCompat.Type.systemBars(),
+                Insets.of(prevSystemBarsInsets.left, prevSystemBarsInsets.top, prevSystemBarsInsets.right, newBottomInset),
             ).build()
     }
 
