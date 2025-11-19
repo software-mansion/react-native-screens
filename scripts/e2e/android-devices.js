@@ -6,7 +6,7 @@ const SemVer = require('semver/classes/semver')
 
 const CI_AVD_NAME = 'e2e_emulator';
 const SUPPORTED_API_LEVEL_RANGE = '>=25'; // Android 7.1.1
-const isRunningCI = JSON.parse(String(process.env.CI));
+const isRunningCI = process.env.CI;
 
 function detectAndroidEmulatorName() {
   return isRunningCI ? CI_AVD_NAME : detectLocalAndroidEmulator();
@@ -17,23 +17,32 @@ function detectLocalAndroidEmulator() {
   const detoxAvdName = process.env.DETOX_AVD_NAME;
   if (detoxAvdName) return detoxAvdName;
 
-  const availableEmulatorNames = getAvailableEmulatorNames();
+  attachAllAvailableEmulators();
+    
+  const deviceIds = getDeviceIds();
+  const devices = deviceIds.map(id => ({id, name: getDeviceName(id)}));
   const requestedAPILevel = getPassedAndroidAPILevel();
   if (!requestedAPILevel) {
-    return findDeviceWithTheHighestAPILevel(availableEmulatorNames);
+    return findDeviceWithTheHighestAPILevel(devices).name;
   }
-  const requestedEmulator = availableEmulatorNames.find(emulatorName => getEmulatorAPILevel(emulatorName) === requestedAPILevel);
+  const requestedEmulator = devices.find(emulator => getEmulatorAPILevel(emulator.id) === requestedAPILevel);
   if (requestedEmulator) {
-    return requestedEmulator
+    return requestedEmulator.name
   }
   throw new Error(`Android emulator with API level ${requestedAPILevel} is not available (Create a new one).`)
 }
 
+/**
+ * attaches all available devices to be able to call them via adb
+ */
+function attachAllAvailableEmulators() {
+  const availableEmulatorNames = getAvailableEmulatorNames();
+  availableEmulatorNames.forEach(turnOnDevice);
+}
+
 function getAvailableEmulatorNames() {
   try {
-    const stdout = ChildProcess.execSync("emulator -list-avds")
-    // Possibly convert Buffer to string
-    const outputText = typeof stdout === 'string' ? stdout : stdout.toString();
+    const outputText = getCommandLineResponse("emulator -list-avds");
     const avdList = outputText.trim().split('\n').map(name => name.trim());
     if (avdList.length === 0) {
       throw new Error('No installed AVDs detected on the device');
@@ -61,24 +70,14 @@ function getPassedAndroidAPILevel() {
 }
 
 /**
- * @param {string} emulatorName
+ * @param {string} emulatorId
  * @returns device's API Level or null if failed
  */
-function getEmulatorAPILevel(emulatorName) {
-    try {
-    const stdout = ChildProcess.execSync(`adb -s ${emulatorName} shell getprop ro.build.version.sdk`)
-    const outputText = typeof stdout === 'string' ? stdout : stdout.toString();
-    const response = outputText.split('\n').map(name => name.trim()).filter(Boolean);
-
-    if (response.length !== 1) {
-      throw new Error(
-        `One-line response expected. Reveived:\n${response}\n(${response.length} non-empty lines, ${outputText} total length)`
-      );
-    }
-
-    return response[0];
+function getEmulatorAPILevel(emulatorId) {
+  try {
+    return getOneLineCommandLineResponse(`adb -s ${emulatorId} shell getprop ro.build.version.sdk`);
   } catch (error) {
-    const errorMessage = `Android emulator "${emulatorName}" doesn't want to share its API Level 👹.\nCause: ${error}`
+    const errorMessage = `Android emulator "${emulatorId}" doesn't want to share its API Level 👹.\nCause: ${error?.message}`
     console.warn(errorMessage);
     console.warn('SKIPPING...');
     return null;
@@ -86,20 +85,19 @@ function getEmulatorAPILevel(emulatorName) {
 }
 
 /**
- * @param {string[]} adbDeviceNames
+ * @param {{name: string, id: string}[]} devices
  */
-function findDeviceWithTheHighestAPILevel(adbDeviceNames){
-  if (adbDeviceNames.length === 1) return adbDeviceNames[0];
+function findDeviceWithTheHighestAPILevel(devices){
   /**
- * @type {Map<string, string>}
+ * @type {Map<string, {name: string, id: string}>}
  */
   const versionToDeviceName = new Map();
-  for (const name of adbDeviceNames) {
-    const apiLevel = getEmulatorAPILevel(name);
+  for (const device of devices) {
+    const apiLevel = getEmulatorAPILevel(device.id);
     if (!apiLevel) continue;
     const parsedVersion = semverCoerce(apiLevel);
     if (!parsedVersion) continue;
-    versionToDeviceName.set(parsedVersion.toString(), name);
+    versionToDeviceName.set(parsedVersion.toString(), device);
   }
   const versions = Array.from(versionToDeviceName.keys());
   const highestAvailableVersion = semverMaxSatisfying(
@@ -114,11 +112,64 @@ function findDeviceWithTheHighestAPILevel(adbDeviceNames){
 }
 
 /**
+ * @returns {string[]}
+ */
+function getDeviceIds() {
+  const nonEmptyLines = getCommandLineResponse('adb devices').split('\n').map(line => line.trim()).filter(Boolean);
+  return nonEmptyLines;
+}
+
+/**
  * @param {unknown} value
  * @returns {value is SemVer}
  */
 function isSemVer(value) {
     return value instanceof SemVer;
+}
+
+/**
+ * Turns on (attaches) the device
+ * @param {string} deviceId
+ * @returns {string} device name (avd name)
+ */
+function getDeviceName (deviceId) {
+  return getOneLineCommandLineResponse(`adb -s ${deviceId} emu avd name`);
+}
+
+/**
+ * Turns on (attaches) the device
+ * @param {string} deviceName 
+ */
+function turnOnDevice (deviceName) {
+  ChildProcess.execSync(`emulator @${deviceName}`);
+}
+
+/**
+ * Runs a command and returns it's response as string. The response is quaranteed to be one line
+ * @param {string} command to run
+ * @returns {string} command-line response
+ */
+function getOneLineCommandLineResponse (command) {
+  const outputText = getCommandLineResponse(command)
+  const response = outputText.split('\n').map(name => name.trim()).filter(Boolean);
+  
+  if (response.length === 1) {
+    return response[0];
+  }
+  throw new Error(
+    `One-line response expected. Reveived:\n${response}\n(${response.length} non-empty lines, ${outputText} total length)`
+  );
+}
+
+/**
+ * Runs a command and returns it's response as string
+ * @param {string} command to run
+ * @returns {string} command-line response
+ */
+function getCommandLineResponse (command) {
+    const stdout = ChildProcess.execSync(command);
+    // Possibly convert Buffer to string
+    return typeof stdout === 'string' ? stdout : stdout.toString();
 }
 
 module.exports = {

@@ -1,5 +1,5 @@
-const { iosDevice } = require('./ios-devices');
-const { detectAndroidEmulatorName } = require('./android-devices');
+const { iosDevice } = require('./e2e/ios-devices');
+const { detectAndroidEmulatorName } = require('./e2e/android-devices');
 
 const CI_AVD_NAME = 'e2e_emulator';
 

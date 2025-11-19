@@ -1,5 +1,5 @@
 import { device, element, by } from 'detox';
-import { getiosVersion } from '../../../scripts/ios-devices.js';
+import { getiosVersion } from '../../../scripts/e2e/ios-devices.js';
 import semverSatisfies from 'semver/functions/satisfies';
 import semverCoerce from 'semver/functions/coerce';
 
@@ -22,8 +22,7 @@ async function getiOSBackButton() {
             return backButtonElement.atIndex(elements.findIndex(
                 elem => elem.className === '_UIButtonBarButton'
             ));
-        } else return backButtonElement;
-    } else {
-        return backButtonElement;
+        }
     }
+    return backButtonElement;
 }
