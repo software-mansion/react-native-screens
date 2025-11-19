@@ -14,6 +14,8 @@
 #import "RNSViewControllerInvalidator.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSBottomAccessoryHelper.h"
+#import "RNSBottomTabsAccessoryComponentView.h"
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSConversions.h"
 #import "RNSConvert.h"
@@ -23,6 +25,14 @@
 #import "RNSTabBarControllerDelegate.h"
 
 namespace react = facebook::react;
+
+#pragma mark - Modified React Subviews extension
+
+@interface RNSBottomTabsHostComponentView ()
+
+@property (nonatomic, readonly) BOOL hasModifiedReactSubviewsInCurrentTransaction;
+
+@end
 
 #pragma mark - View implementation
 
@@ -46,8 +56,9 @@ namespace react = facebook::react;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
-  NSMutableArray<RNSBottomTabsScreenComponentView *> *_reactSubviews;
-  BOOL _hasModifiedReactSubviewsInCurrentTransaction;
+  NSMutableArray<UIView *> *_reactSubviews;
+  BOOL _hasModifiedTabsScreensInCurrentTransaction;
+  BOOL _hasModifiedBottomAccessoryInCurrentTransation;
   BOOL _needsTabBarAppearanceUpdate;
 }
 
@@ -90,7 +101,8 @@ namespace react = facebook::react;
   _invalidatedComponentsRegistry = [RNSInvalidatedComponentsRegistry new];
 #endif // RCT_NEW_ARCH_ENABLED
 
-  _hasModifiedReactSubviewsInCurrentTransaction = NO;
+  _hasModifiedTabsScreensInCurrentTransaction = NO;
+  _hasModifiedBottomAccessoryInCurrentTransation = NO;
   _needsTabBarAppearanceUpdate = NO;
 }
 
@@ -147,15 +159,51 @@ namespace react = facebook::react;
 
 - (void)updateContainer
 {
-  NSMutableArray<RNSTabsScreenViewController *> *tabControllers =
-      [[NSMutableArray alloc] initWithCapacity:_reactSubviews.count];
-  for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
-    [tabControllers addObject:childView.controller];
+  if (!self.hasModifiedReactSubviewsInCurrentTransaction) {
+    return;
   }
 
-  RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
+  NSMutableArray<RNSTabsScreenViewController *> *tabControllers =
+      [[NSMutableArray alloc] initWithCapacity:_reactSubviews.count];
+  RNSBottomTabsAccessoryComponentView *bottomAccessory = nil;
+  for (UIView *childView in _reactSubviews) {
+    if ([childView isKindOfClass:[RNSBottomTabsScreenComponentView class]]) {
+      RNSBottomTabsScreenComponentView *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childView);
+      [tabControllers addObject:childScreen.controller];
+    } else if ([childView isKindOfClass:[RNSBottomTabsAccessoryComponentView class]]) {
+      RCTAssert(bottomAccessory == nil, @"[RNScreens] There can only be one child RNSBottomTabsAccessoryComponentView");
+      bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(childView);
+    } else {
+      RCTLogError(
+          @"[RNScreens] BottomTabs only accepts children of type BottomTabScreen and BottomTabsAccessory. Detected %@ instead.",
+          childView);
+    }
+  }
 
-  [_controller childViewControllersHaveChangedTo:tabControllers];
+  if (_hasModifiedTabsScreensInCurrentTransaction) {
+    RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
+    [_controller childViewControllersHaveChangedTo:tabControllers];
+  }
+
+  if (_hasModifiedBottomAccessoryInCurrentTransation) {
+    RNSLog(@"updateContainer: bottomAccessory: %@", bottomAccessory);
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    if (@available(iOS 26.0, *)) {
+      if (bottomAccessory != nil) {
+        // We wrap RNSBottomTabsAccessoryComponentView in plain UIView to maintain native
+        // corner radius. RCTViewComponentView overrides it to 0 by default and we're unable
+        // to restore default value in an easy way. By wrapping it in UIView, it is clipped
+        // to default corner radius.
+        UIView *wrapperView = [UIView new];
+        [wrapperView addSubview:bottomAccessory];
+
+        [_controller setBottomAccessory:[[UITabAccessory alloc] initWithContentView:wrapperView] animated:YES];
+      } else {
+        [_controller setBottomAccessory:nil animated:YES];
+      }
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  }
 }
 
 - (void)markChildUpdated
@@ -186,7 +234,7 @@ namespace react = facebook::react;
   // whole component is destroyed & therefore we do the necessary cleanup here.
   // If at some point that statement does not hold anymore, this cleanup
   // should be moved to a different place.
-  for (RNSBottomTabsScreenComponentView *subview in _reactSubviews) {
+  for (UIView<RCTInvalidating> *subview in _reactSubviews) {
     [subview invalidate];
   }
   _controller = nil;
@@ -212,30 +260,12 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSBottomTabsScreenComponentView.class],
-      @"BottomTabsView only accepts children of type BottomTabScreen. Attempted to mount %@",
-      childComponentView);
-
-  auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
-  childScreen.reactSuperview = self;
-
-  [_reactSubviews insertObject:childScreen atIndex:index];
-  _hasModifiedReactSubviewsInCurrentTransaction = YES;
+  [self validateAndHandleReactSubview:childComponentView atIndex:index shouldMount:YES];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert(
-      [childComponentView isKindOfClass:RNSBottomTabsScreenComponentView.class],
-      @"BottomTabsView only accepts children of type BottomTabScreen. Attempted to unmount %@",
-      childComponentView);
-
-  auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(childComponentView);
-  childScreen.reactSuperview = nil;
-
-  [_reactSubviews removeObject:childScreen];
-  _hasModifiedReactSubviewsInCurrentTransaction = YES;
+  [self validateAndHandleReactSubview:childComponentView atIndex:index shouldMount:NO];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -338,13 +368,14 @@ namespace react = facebook::react;
 - (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  _hasModifiedReactSubviewsInCurrentTransaction = NO;
+  _hasModifiedTabsScreensInCurrentTransaction = NO;
+  _hasModifiedBottomAccessoryInCurrentTransation = NO;
   [_controller reactMountingTransactionWillMount];
 
 #if RCT_NEW_ARCH_ENABLED
   for (const auto &mutation : transaction.getMutations()) {
     if ([self shouldInvalidateOnMutation:mutation]) {
-      for (RNSBottomTabsScreenComponentView *childView in _reactSubviews) {
+      for (UIView<RNSViewControllerInvalidating> *childView in _reactSubviews) {
         [RNSViewControllerInvalidator invalidateViewIfDetached:childView forRegistry:_invalidatedComponentsRegistry];
       }
 
@@ -357,7 +388,7 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  if (_hasModifiedReactSubviewsInCurrentTransaction) {
+  if (self.hasModifiedReactSubviewsInCurrentTransaction) {
     [self updateContainer];
   }
   [_controller reactMountingTransactionDidMount];
@@ -368,40 +399,25 @@ namespace react = facebook::react;
 
 #pragma mark - LEGACY RCTComponent protocol
 
-RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
 {
-  RCTAssert(
-      [subview isKindOfClass:RNSBottomTabsScreenComponentView.class],
-      @"BottomTabsView only accepts children of type BottomTabScreen. Attempted to mount %@",
-      subview);
-
-  auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
-  childScreen.reactSuperview = self;
-
-  [_reactSubviews insertObject:childScreen atIndex:index];
+  [super insertReactSubview:subview atIndex:index];
+  [self validateAndHandleReactSubview:subview atIndex:index shouldMount:YES];
 }
 
 - (void)removeReactSubview:(UIView *)subview
 {
-  RCTAssert(
-      [subview isKindOfClass:RNSBottomTabsScreenComponentView.class],
-      @"BottomTabsView only accepts children of type BottomTabScreen. Attempted to unmount %@",
-      subview);
-
-  auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
-  childScreen.reactSuperview = nil;
-
-  [_reactSubviews removeObject:childScreen];
+  [super removeReactSubview:subview];
+  // index is not used for unmount
+  [self validateAndHandleReactSubview:subview atIndex:-1 shouldMount:NO];
 }
-RNS_IGNORE_SUPER_CALL_END
 
+RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)didUpdateReactSubviews
 {
-  [super didUpdateReactSubviews];
-  _hasModifiedReactSubviewsInCurrentTransaction = YES;
   [self invalidateFlagsOnControllerIfNeeded];
 }
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
@@ -419,9 +435,10 @@ RNS_IGNORE_SUPER_CALL_END
     [_controller setNeedsUpdateOfTabBarAppearance:true];
   }
 
-  if (_hasModifiedReactSubviewsInCurrentTransaction) {
-    _hasModifiedReactSubviewsInCurrentTransaction = NO;
+  if (self.hasModifiedReactSubviewsInCurrentTransaction) {
     [self updateContainer];
+    _hasModifiedTabsScreensInCurrentTransaction = NO;
+    _hasModifiedBottomAccessoryInCurrentTransation = NO;
   }
 }
 
@@ -491,11 +508,54 @@ RNS_IGNORE_SUPER_CALL_END
 
 #endif // RCT_NEW_ARCH_ENABLED
 
+#pragma mark - Common
+
+- (void)validateAndHandleReactSubview:(UIView *)subview atIndex:(NSInteger)index shouldMount:(BOOL)mount
+{
+  BOOL isBottomAccessory = [subview isKindOfClass:[RNSBottomTabsAccessoryComponentView class]];
+  BOOL isTabsScreen = [subview isKindOfClass:[RNSBottomTabsScreenComponentView class]];
+  RCTAssert(
+      isBottomAccessory || isTabsScreen,
+      @"%@",
+      [NSString
+          stringWithFormat:
+              @"BottomTabs only accepts children of type BottomTabScreen and BottomTabsAccessory. Attempted to %@ %@",
+              mount ? @"mount" : @"unmount",
+              subview]);
+
+  if (isTabsScreen) {
+    auto *childScreen = static_cast<RNSBottomTabsScreenComponentView *>(subview);
+    childScreen.reactSuperview = mount ? self : nil;
+    _hasModifiedTabsScreensInCurrentTransaction = YES;
+  } else if (isBottomAccessory) {
+    auto *bottomAccessory = static_cast<RNSBottomTabsAccessoryComponentView *>(subview);
+    bottomAccessory.bottomTabsHostView = mount ? self : nil;
+    _hasModifiedBottomAccessoryInCurrentTransation = YES;
+  }
+
+  if (mount) {
+    [_reactSubviews insertObject:subview atIndex:index];
+  } else {
+    [_reactSubviews removeObject:subview];
+  }
+}
+
 #pragma mark - React Image Loader
 
 - (nullable RCTImageLoader *)reactImageLoader
 {
   return _imageLoader;
+}
+
+@end
+
+#pragma mark - Modified React Subviews implementation
+
+@implementation RNSBottomTabsHostComponentView (ModifiedReactSubviews)
+
+- (BOOL)hasModifiedReactSubviewsInCurrentTransaction
+{
+  return _hasModifiedTabsScreensInCurrentTransaction || _hasModifiedBottomAccessoryInCurrentTransation;
 }
 
 @end
