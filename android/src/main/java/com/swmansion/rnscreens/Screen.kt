@@ -8,7 +8,6 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
@@ -475,10 +474,6 @@ class Screen(
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
             updateScreenSizeFabric(width, height, top)
         }
-    }
-
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        return super.onApplyWindowInsets(insets)
     }
 
     override fun onAttachedToWindow() {
