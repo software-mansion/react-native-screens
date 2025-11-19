@@ -76,6 +76,23 @@ function ScreenStackItem(
     headerHiddenPreviousRef.current = headerConfigHiddenWithDefault;
   }, [headerConfigHiddenWithDefault, stackPresentationWithDefault]);
 
+  const hasEdgeEffects =
+    rest?.scrollEdgeEffects === undefined ||
+    Object.values(rest.scrollEdgeEffects).some(
+      propValue => propValue !== 'hidden',
+    );
+  const hasBlurEffect =
+    headerConfig?.blurEffect !== undefined &&
+    headerConfig.blurEffect !== 'none';
+
+  warnOnce(
+    hasEdgeEffects &&
+      hasBlurEffect &&
+      Platform.OS === 'ios' &&
+      parseInt(Platform.Version, 10) >= 26,
+    '[RNScreens] Using both `blurEffect` and `scrollEdgeEffects` simultaneously may cause overlapping effects.',
+  );
+
   const debugContainerStyle = getPositioningStyle(
     sheetAllowedDetents,
     stackPresentationWithDefault,
