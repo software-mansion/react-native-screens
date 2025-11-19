@@ -104,9 +104,6 @@ class BottomSheetTransitionCoordinator {
         // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
         // When insets are available, we can factor them in to update the maximum height accordingly.
 
-        // TODO(@t0maboro) there's some content flicker here while dismissing the keyboard with swipe gesture
-        // 1. maybe we should just update maxHeight/expandedOffsetFromTop values, as the no. of detents shouldn't change here
-        // 2. maybe we shouldn't do anything on exiting transition
         sheetDelegate.updateBottomSheetMetrics(screen.sheetBehavior!!)
 
         screen.container?.let { container ->
