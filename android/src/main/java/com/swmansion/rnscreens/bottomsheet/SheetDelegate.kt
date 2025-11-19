@@ -311,7 +311,7 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
-        val prevInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val prevSystemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -332,7 +332,7 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val newBottomInset = if (!isImeVisible) prevInsets.bottom else 0
+        val newBottomInset = if (!isImeVisible) prevSystemBarsInsets.bottom else 0
 
         // Note: We do not manipulate the top inset manually. Therefore, if SafeAreaView has top insets enabled,
         // we must retain the top inset even if the formSheet does not currently overflow into the status bar.
@@ -344,7 +344,7 @@ class SheetDelegate(
             .Builder(insets)
             .setInsets(
                 WindowInsetsCompat.Type.systemBars(),
-                Insets.of(prevInsets.left, prevInsets.top, prevInsets.right, newBottomInset),
+                Insets.of(prevSystemBarsInsets.left, prevSystemBarsInsets.top, prevSystemBarsInsets.right, newBottomInset),
             ).build()
     }
 
