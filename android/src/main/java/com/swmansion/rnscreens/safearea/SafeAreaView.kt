@@ -34,7 +34,8 @@ class SafeAreaView(
     private val reactContext: ThemedReactContext,
 ) : ReactViewGroup(reactContext),
     OnApplyWindowInsetsListener,
-    ViewTreeObserver.OnPreDrawListener, View.OnApplyWindowInsetsListener {
+    ViewTreeObserver.OnPreDrawListener,
+    View.OnApplyWindowInsetsListener {
     private var provider = WeakReference<SafeAreaProvider>(null)
     private var currentInterfaceInsets: EdgeInsets = EdgeInsets.ZERO
     private var currentSystemInsets: EdgeInsets = EdgeInsets.ZERO
@@ -116,10 +117,11 @@ class SafeAreaView(
     // More details in the comment above setting the listener.
     override fun onApplyWindowInsets(
         v: View,
-        insets: WindowInsets
+        insets: WindowInsets,
     ): WindowInsets {
         val rootViewUnawareInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
-        return this.onApplyWindowInsets(this, rootViewUnawareInsets)
+        return this
+            .onApplyWindowInsets(this, rootViewUnawareInsets)
             .toWindowInsets() ?: InsetUtils.CONSUMED_PLATFORM_WINDOW_INSETS
     }
 
