@@ -269,9 +269,9 @@ open class ScreenViewManager :
         view?.sheetElevation = value.toFloat()
     }
 
-    @ReactProp(name = "sheetOverflowsSystemBars")
-    override fun setSheetOverflowsSystemBars(view: Screen?, sheetOverflowsSystemBars: Boolean) {
-        view?.sheetOverflowsSystemBars = sheetOverflowsSystemBars
+    @ReactProp(name = "sheetShouldOverflowStatusBar")
+    override fun setSheetShouldOverflowStatusBar(view: Screen?, sheetShouldOverflowStatusBar: Boolean) {
+        view?.sheetShouldOverflowStatusBar = sheetShouldOverflowStatusBar
     }
 
     // mark: iOS-only

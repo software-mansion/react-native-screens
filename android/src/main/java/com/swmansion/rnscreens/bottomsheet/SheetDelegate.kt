@@ -120,7 +120,7 @@ class SheetDelegate(
         keyboardState: KeyboardState = KeyboardNotVisible,
         selectedDetentIndex: Int = lastStableDetentIndex,
     ): BottomSheetBehavior<Screen> {
-        val containerHeight = if (screen.sheetOverflowsSystemBars) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        val containerHeight = if (screen.sheetShouldOverflowStatusBar) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -263,7 +263,7 @@ class SheetDelegate(
     // Otherwise, it shifts the sheet as high as possible, even if it means part of its content
     // will remain hidden behind the keyboard.
     internal fun computeSheetOffsetYWithIMEPresent(keyboardHeight: Int): Int {
-        val containerHeight = if (screen.sheetOverflowsSystemBars) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        val containerHeight = if (screen.sheetShouldOverflowStatusBar) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }

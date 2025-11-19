@@ -67,9 +67,7 @@ class BottomSheetTransitionCoordinator {
         }
         lastInsets = insets
 
-        val bottomInset = insets.getInsets(WindowInsets.Type.systemBars()).bottom
         handleInsets(
-            bottomInset,
             screen,
             sheetDelegate,
             coordinatorLayout,
@@ -89,9 +87,7 @@ class BottomSheetTransitionCoordinator {
         }
         lastInsetsCompat = insetsCompat
 
-        val bottomInset = insetsCompat.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
         handleInsets(
-            bottomInset,
             screen,
             sheetDelegate,
             coordinatorLayout,
@@ -101,7 +97,6 @@ class BottomSheetTransitionCoordinator {
     }
 
     private fun handleInsets(
-        bottomInset: Int,
         screen: Screen,
         sheetDelegate: SheetDelegate,
         coordinatorLayout: ViewGroup,
@@ -125,11 +120,6 @@ class BottomSheetTransitionCoordinator {
             )
             coordinatorLayout.layout(0, 0, container.width, container.height)
         }
-
-        // TODO(@t0maboro)
-        // 1. padding doesn't work well with fitToContents
-        // 2. verify on paper
-        // screen.setPadding(0, 0, 0, bottomInset)
 
         // Although the layout of the screen container and CoordinatorLayout hasn't changed,
         // the BottomSheetBehavior has updated the maximum height.

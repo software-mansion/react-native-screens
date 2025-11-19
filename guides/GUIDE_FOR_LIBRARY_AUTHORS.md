@@ -233,12 +233,12 @@ corresponding legacy prop values for `sheetAllowedDetents` prop.
 
 Defaults to `none`, indicating that the dimming view should be always present.
 
-### `sheetOverflowsSystemBars` (Android only)
+### `sheetShouldOverflowStatusBar` (Android only)
 
 Whether the sheet content should be rendered behind the Status Bar
 
-When set to `true`, the sheet will extend to the physical edges of the screen, allowing the content to be visible behind the system bars.
-When set to `false`, the sheet's layout will be constrained by the system insets.
+When set to `true`, the sheet will extend to the physical edges of the screen, allowing the content to be visible behind the status bar.
+When set to `false`, the sheet's layout will be constrained by the system insets from the top.
 
 Defaults to `true`.
 

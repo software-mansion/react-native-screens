@@ -150,7 +150,7 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
     // To ensure the BottomSheet height respects the top inset we delay starting the enter
     // transition until both layout and insets are fully applied.
 
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !this.sheetOverflowsSystemBars && this.usesFormSheetPresentation()) {
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !this.sheetShouldOverflowStatusBar && this.usesFormSheetPresentation()) {
         return true
     }
 

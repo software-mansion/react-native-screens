@@ -129,7 +129,7 @@ const formSheetBaseOptions: NativeStackNavigationOptions = {
   contentStyle: {
     backgroundColor: Colors.GreenLight100,
   },
-  // TODO(@t0maboro) - add `sheetOverflowsSystemBars` prop here when possible
+  // TODO(@t0maboro) - add `sheetShouldOverflowStatusBar` prop here when possible
 };
 
 function PressableBase() {
