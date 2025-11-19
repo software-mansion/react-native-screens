@@ -107,7 +107,7 @@ class BottomSheetTransitionCoordinator {
         // TODO(@t0maboro) there's some content flicker here while dismissing the keyboard with swipe gesture
         // 1. maybe we should just update maxHeight/expandedOffsetFromTop values, as the no. of detents shouldn't change here
         // 2. maybe we shouldn't do anything on exiting transition
-        sheetDelegate.configureBottomSheetBehaviour(screen.sheetBehavior!!, sheetDelegate.keyboardState)
+        sheetDelegate.updateBottomSheetMetrics(screen.sheetBehavior!!)
 
         screen.container?.let { container ->
             // Needs to be highlighted that nothing changes at the container level.
