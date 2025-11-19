@@ -270,7 +270,10 @@ open class ScreenViewManager :
     }
 
     @ReactProp(name = "sheetShouldOverflowStatusBar")
-    override fun setSheetShouldOverflowStatusBar(view: Screen?, sheetShouldOverflowStatusBar: Boolean) {
+    override fun setSheetShouldOverflowStatusBar(
+        view: Screen?,
+        sheetShouldOverflowStatusBar: Boolean,
+    ) {
         view?.sheetShouldOverflowStatusBar = sheetShouldOverflowStatusBar
     }
 

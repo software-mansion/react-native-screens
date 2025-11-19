@@ -23,7 +23,10 @@ class BottomSheetWindowInsetListenerChain : OnApplyWindowInsetsListener {
         listeners.add(listener)
     }
 
-    override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
+    override fun onApplyWindowInsets(
+        v: View,
+        insets: WindowInsetsCompat,
+    ): WindowInsetsCompat {
         var currentInsets = insets
 
         for (listener in listeners) {

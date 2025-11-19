@@ -235,7 +235,7 @@ class ScreenStackFragment :
             dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
             dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
-            if(!screen.sheetShouldOverflowStatusBar) {
+            if (!screen.sheetShouldOverflowStatusBar) {
                 sheetTransitionCoordinator = BottomSheetTransitionCoordinator()
                 sheetTransitionCoordinator.attachInsetsAndLayoutListenersToBottomSheet(this, screen, sheetDelegate, coordinatorLayout)
             }
