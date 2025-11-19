@@ -41,6 +41,9 @@ open class CustomToolbar(
 
     private var lastInsets = Insets.NONE
 
+    // As CustomToolbar is responsible for handling insets in Stack, we store what insets should
+    // be passed to Screen in this property. It's used by ScreensCoordinatorLayout in overriden
+    // dispatchApplyWindowInsets.
     var screenInsets = WindowInsetsCompat.CONSUMED
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
@@ -165,6 +168,7 @@ open class CustomToolbar(
                 lastInsets.bottom,
             )
 
+            // Insets for Screen component.
             screenInsets =
                 WindowInsetsCompat
                     .Builder(unhandledInsets)
