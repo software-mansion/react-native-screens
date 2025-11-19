@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.view.Choreographer
 import android.view.View
+import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.Insets
@@ -13,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
+import com.swmansion.rnscreens.utils.InsetUtils
 import kotlin.math.max
 
 /**
@@ -26,7 +28,8 @@ open class CustomToolbar(
     context: Context,
     val config: ScreenStackHeaderConfig,
 ) : Toolbar(context),
-    OnApplyWindowInsetsListener {
+    OnApplyWindowInsetsListener,
+    View.OnApplyWindowInsetsListener {
     // Due to edge-to-edge enforcement starting from Android SDK 35, isTopInsetEnabled prop has been
     // removed. Previously, shouldAvoidDisplayCutout, shouldApplyTopInset would directly return the
     // value of isTopInsetEnabled. Now, the values of shouldAvoidDisplayCutout, shouldApplyTopInse
@@ -58,7 +61,17 @@ open class CustomToolbar(
         }
 
     init {
-        ViewCompat.setOnApplyWindowInsetsListener(this, this)
+        // In order to consume display cutout insets on API 27-29, we can't use root window insets
+        // aware WindowInsetsCompat because they always return display cutout insets from root view.
+        // That's why we manually convert platform WindowInsets to WindowInsetsCompat (without
+        // supplying information about the view that is used by WindowInsetsCompat to find the root
+        // view) in View's OnApplyWindowInsetsListener, use ViewCompat listener and return insets
+        // converted back to platform WindowInsets.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+            setOnApplyWindowInsetsListener(this)
+        } else {
+            ViewCompat.setOnApplyWindowInsetsListener(this, this)
+        }
     }
 
     override fun requestLayout() {
@@ -90,11 +103,24 @@ open class CustomToolbar(
         }
     }
 
+    // Wrapper used on API < 30 to correctly handle consuming display cutout insets.
+    // More details in the comment above setting the listener.
+    override fun onApplyWindowInsets(
+        v: View,
+        insets: WindowInsets,
+    ): WindowInsets {
+        val rootViewUnawareInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
+        return this
+            .onApplyWindowInsets(this, rootViewUnawareInsets)
+            .toWindowInsets() ?: InsetUtils.CONSUMED_PLATFORM_WINDOW_INSETS
+    }
+
     override fun onApplyWindowInsets(
         v: View,
         insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
-        val unhandledInsets = WindowInsetsCompat.toWindowInsetsCompat(super.onApplyWindowInsets(insets.toWindowInsets()))
+        val unhandledInsets =
+            WindowInsetsCompat.toWindowInsetsCompat(super.onApplyWindowInsets(insets.toWindowInsets()))
 
         // There are few UI modes we could be running in
         //
