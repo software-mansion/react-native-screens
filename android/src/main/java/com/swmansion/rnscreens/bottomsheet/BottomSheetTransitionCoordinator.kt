@@ -103,7 +103,6 @@ class BottomSheetTransitionCoordinator {
     ) {
         // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
         // When insets are available, we can factor them in to update the maximum height accordingly.
-
         sheetDelegate.updateBottomSheetMetrics(screen.sheetBehavior!!)
 
         screen.container?.let { container ->
