@@ -120,32 +120,34 @@ class SheetDelegate(
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
 
-        val maxAllowedHeight = when(screen.isSheetFitToContents()) {
-            true -> screen.contentWrapper?.let { contentWrapper ->
-                contentWrapper.height.takeIf {
-                    // subtree might not be laid out, e.g. after fragment reattachment
-                    // and view recreation, however since it is retained by
-                    // react-native it has its height cached. We want to use it.
-                    // Otherwise we would have to trigger RN layout manually.
-                    contentWrapper.isLaidOutOrHasCachedLayout()
-                }
+        val maxAllowedHeight =
+            when (screen.isSheetFitToContents()) {
+                true ->
+                    screen.contentWrapper?.let { contentWrapper ->
+                        contentWrapper.height.takeIf {
+                            // subtree might not be laid out, e.g. after fragment reattachment
+                            // and view recreation, however since it is retained by
+                            // react-native it has its height cached. We want to use it.
+                            // Otherwise we would have to trigger RN layout manually.
+                            contentWrapper.isLaidOutOrHasCachedLayout()
+                        }
+                    }
+                false -> (screen.sheetDetents.last() * containerHeight).toInt()
             }
-            false -> (screen.sheetDetents.last() * containerHeight).toInt()
-        }
 
         // For 3 detents, we need to add the top inset back here because we are calculating the offset
         // from the absolute top of the view, but our calculated max height (containerHeight)
         // has been reduced by this inset.
-        val expandedOffsetFromTop = when (screen.sheetDetents.count()) {
-            3 -> ((1 - screen.sheetDetents[2]) * containerHeight).toInt() + lastTopInset
-            else -> null
-        }
+        val expandedOffsetFromTop =
+            when (screen.sheetDetents.count()) {
+                3 -> ((1 - screen.sheetDetents[2]) * containerHeight).toInt() + lastTopInset
+                else -> null
+            }
 
         behavior.apply {
             updateMetrics(maxAllowedHeight, expandedOffsetFromTop)
         }
     }
-
 
     internal fun configureBottomSheetBehaviour(
         behavior: BottomSheetBehavior<Screen>,
