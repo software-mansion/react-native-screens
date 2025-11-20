@@ -27,12 +27,10 @@ class BottomSheetWindowInsetListenerChain : OnApplyWindowInsetsListener {
         v: View,
         insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
-        var currentInsets = insets
-
         for (listener in listeners) {
-            currentInsets = listener.onApplyWindowInsets(v, currentInsets)
+            listener.onApplyWindowInsets(v, insets)
         }
 
-        return currentInsets
+        return insets
     }
 }
