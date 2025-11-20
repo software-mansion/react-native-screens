@@ -12,10 +12,10 @@ const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
 
 function detectLocalAndroidEmulator() {
-  // "DETOX_ADB_NAME" can be set for local developement
-  const detoxAdbName = process.env.DETOX_ADB_NAME ?? null;
-  if (detoxAdbName !== null) {
-    return detoxAdbName
+  // "DETOX_AVD_NAME" can be set for local developement
+  const detoxAvdName = process.env.DETOX_AVD_NAME ?? null;
+  if (detoxAvdName !== null) {
+    return detoxAvdName
   }
 
   // Fallback: try to use Android SDK
@@ -37,14 +37,14 @@ function detectLocalAndroidEmulator() {
     // TODO: consider giving user a choice here.
     return avdList[0];
   } catch (error) {
-    const errorMessage = `Failed to find Android emulator. Set "DETOX_ADB_NAME" env variable pointing to one. Cause: ${error}`
+    const errorMessage = `Failed to find Android emulator. Set "DETOX_AVD_NAME" env variable pointing to one. Cause: ${error}`
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
 }
 
 function detectAndroidEmulatorName() {
-  return isRunningCI ? CI_ADB_NAME : detectLocalAndroidEmulator();
+  return isRunningCI ? CI_ADB_NAME : detectLocalAndroidEmulator(); // ??
 }
 
 /**

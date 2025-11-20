@@ -1,19 +1,24 @@
-const DEFAULT_APPLE_MODEL = 'iPhone 17';
-const DEVICE_MODEL = process.env.E2E_APPLE_DEVICE || DEFEAULT_APPLE_MODEL
+const DEFAULT_APPLE_DEVICE = 'iPhone 17';
 const DEFEAULT_IOS_VERSION = 'iOS 26.2';
 
+/**
+ * @return {string}
+ */
+function getAppleDevice() {
+  return process.env.E2E_APPLE_DEVICE || DEFAULT_APPLE_DEVICE;
+}
 /**
  * @return {`iOS ${string}`} requested version of ios, or default if not specified
  */
 function getIOSVersion() {
-    const passedVersion = process.env.E2E_IOS_VERSION;
-    if (passedVersion) {
-        if (passedVersion.startsWith('iOS ')) {
-          return /** @type {`iOS ${string}`} */ (passedVersion);
-        }
-        return `iOS ${passedVersion}`;
+  const passedVersion = process.env.E2E_IOS_VERSION;
+  if (passedVersion) {
+    if (passedVersion.startsWith('iOS ')) {
+      return /** @type {`iOS ${string}`} */ (passedVersion);
     }
-    return DEFEAULT_IOS_VERSION;
+    return `iOS ${passedVersion}`;
+  }
+  return DEFEAULT_IOS_VERSION;
 }
 
 /**
@@ -22,16 +27,15 @@ function getIOSVersion() {
  * @property {`iOS ${string}`} os - operation system version
  */
 
-/** 
+/**
  * @satisfies {AppleDevice}
  * @readonly
  * */
 const iosDevice = {
-  type: DEVICE_MODEL,
-  os: getiosVersion(),
+  type: getAppleDevice(),
+  os: getIOSVersion(),
 };
 
 module.exports = {
   iosDevice,
-  getiosVersion,
 };
