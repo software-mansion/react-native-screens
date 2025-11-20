@@ -325,10 +325,12 @@ class SheetDelegate(
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
         val prevSystemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val prevDisplayCutoutInsets = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
 
-        // We save the top inset (status bar height) to later subtract it from the window height
-        // during sheet size calculations. This ensures the sheet respects the safe area.
-        lastTopInset = prevSystemBarsInsets.top
+        // We save the top inset (status bar height + display cutout) to later
+        // subtract it from the window height during sheet size calculations.
+        // This ensures the sheet respects the safe area.
+        lastTopInset = prevSystemBarsInsets.top + prevDisplayCutoutInsets.top
 
         if (isImeVisible) {
             isKeyboardVisible = true
