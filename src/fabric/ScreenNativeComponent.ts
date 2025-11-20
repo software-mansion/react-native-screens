@@ -91,7 +91,7 @@ export interface NativeProps extends ViewProps {
   sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>;
   sheetInitialDetent?: WithDefault<Int32, 0>;
   sheetElevation?: WithDefault<Int32, 24>;
-  sheetShouldOverflowTopInset?: WithDefault<boolean, true>;
+  sheetShouldOverflowTopInset?: WithDefault<boolean, false>;
   customAnimationOnSwipe?: boolean;
   fullScreenSwipeEnabled?: WithDefault<OptionalBoolean, 'undefined'>;
   fullScreenSwipeShadowEnabled?: WithDefault<boolean, true>;
