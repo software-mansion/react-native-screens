@@ -8,9 +8,18 @@ class SheetDetents(
     init {
         require(rawDetents.isNotEmpty()) { "[$TAG] At least one detent must be provided." }
         require(rawDetents.size <= 3) { "[$TAG] Maximum of 3 detents supported." }
-        rawDetents.forEach {
-            require(it in 0.0..1.0 || it == SHEET_FIT_TO_CONTENTS) {
-                "[$TAG] Detent values must be within 0.0 and 1.0, or SHEET_FIT_TO_CONTENTS should be defined, got $it."
+
+        if (rawDetents.size == 1) {
+            rawDetents[0].let {
+                require(it in 0.0..1.0 || it == SHEET_FIT_TO_CONTENTS) {
+                    "[$TAG] Detent value must be within 0.0 and 1.0, or SHEET_FIT_TO_CONTENTS should be defined, got $it."
+                }
+            }
+        } else {
+            rawDetents.forEach {
+                require(it in 0.0..1.0) {
+                    "[$TAG] Detent values must be within 0.0 and 1.0, got $it."
+                }
             }
         }
     }
