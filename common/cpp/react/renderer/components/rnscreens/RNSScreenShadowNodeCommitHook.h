@@ -15,8 +15,6 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
  public:
   RNSScreenShadowNodeCommitHook(std::shared_ptr<const ContextContainer>);
 
-  RNSScreenShadowNodeCommitHook(const RNSScreenShadowNodeCommitHook &);
-
   virtual ~RNSScreenShadowNodeCommitHook() noexcept override;
 
   virtual void commitHookWasRegistered(const UIManager &) noexcept override {}
@@ -32,12 +30,12 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
  private:
   std::shared_ptr<const ContextContainer> contextContainer_;
 
-  void findScreenNodes(
+  static void findScreenNodes(
       const std::shared_ptr<const ShadowNode> &rootShadowNode,
-      std::vector<std::shared_ptr<const RNSScreenShadowNode>> &screenNodes);
+      std::vector<const RNSScreenShadowNode *> &screenNodes);
 
-  inline bool isHorizontal_(std::weak_ptr<const RootProps> props) {
-    auto layoutConstraints = props.lock().get()->layoutConstraints;
+  static inline bool isHorizontal_(const RootProps &props) {
+    auto layoutConstraints = props.layoutConstraints;
     const float width = layoutConstraints.maximumSize.width;
     const float height = layoutConstraints.maximumSize.height;
 

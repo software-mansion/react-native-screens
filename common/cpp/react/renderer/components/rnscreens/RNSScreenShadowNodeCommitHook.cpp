@@ -21,11 +21,6 @@ RNSScreenShadowNodeCommitHook::RNSScreenShadowNodeCommitHook(
   }
 }
 
-RNSScreenShadowNodeCommitHook::RNSScreenShadowNodeCommitHook(
-    const RNSScreenShadowNodeCommitHook &other) {
-  contextContainer_ = other.contextContainer_;
-}
-
 RNSScreenShadowNodeCommitHook::~RNSScreenShadowNodeCommitHook() noexcept {
   if (contextContainer_) {
     auto fabricUIManager =
@@ -49,15 +44,14 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
   auto newRootProps =
       std::static_pointer_cast<const RootProps>(newRootShadowNode->getProps());
 
-  const bool wasHorizontal = isHorizontal_(oldRootProps);
-  const bool willBeHorizontal = isHorizontal_(newRootProps);
+  const bool wasHorizontal = isHorizontal_(*oldRootProps.get());
+  const bool willBeHorizontal = isHorizontal_(*newRootProps.get());
 
-  const bool orientationDidChange = (wasHorizontal && !willBeHorizontal) ||
-      (!wasHorizontal && willBeHorizontal);
+  const bool orientationDidChange = wasHorizontal != willBeHorizontal;
 
   std::shared_ptr<ShadowNode> finalRootShadowNode = newRootShadowNode;
   if (orientationDidChange) {
-    std::vector<std::shared_ptr<const RNSScreenShadowNode>> screens;
+    std::vector<const RNSScreenShadowNode *> screens;
     findScreenNodes(newRootShadowNode, screens);
 
     for (auto screen : screens) {
@@ -81,26 +75,24 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
     }
   }
 
-  return std::static_pointer_cast<RootShadowNode>(
-      finalRootShadowNode->ShadowNode::clone(ShadowNodeFragment{}));
+  return std::static_pointer_cast<RootShadowNode>(finalRootShadowNode);
 }
 
 void RNSScreenShadowNodeCommitHook::findScreenNodes(
     const std::shared_ptr<const ShadowNode> &rootShadowNode,
-    std::vector<std::shared_ptr<const RNSScreenShadowNode>> &screenNodes) {
-  std::stack<std::shared_ptr<const ShadowNode>> shadowNodesToVisit;
-  shadowNodesToVisit.emplace(rootShadowNode);
+    std::vector<const RNSScreenShadowNode *> &screenNodes) {
+  std::stack<const ShadowNode *> shadowNodesToVisit;
+  shadowNodesToVisit.emplace(rootShadowNode.get());
 
   while (!shadowNodesToVisit.empty()) {
     auto node = shadowNodesToVisit.top();
     shadowNodesToVisit.pop();
 
-    for (auto child : node->getChildren()) {
-      if (std::strcmp(node->getComponentName(), "RNSScreen") == 0) {
-        screenNodes.push_back(
-            std::dynamic_pointer_cast<const RNSScreenShadowNode>(node));
+    for (auto const &child : node->getChildren()) {
+      if (node->getComponentHandle() == RNSScreenShadowNode::Handle()) {
+        screenNodes.push_back(static_cast<const RNSScreenShadowNode *>(node));
       }
-      shadowNodesToVisit.emplace(child);
+      shadowNodesToVisit.emplace(child.get());
     }
   }
 }

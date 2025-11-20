@@ -2,6 +2,7 @@
 
 #ifdef ANDROID
 #include <fbjni/fbjni.h>
+#include <react/renderer/uimanager/UIManager.h>
 #include "RNSScreenShadowNodeCommitHook.h"
 #endif // ANDROID
 #include <react/debug/react_native_assert.h>
@@ -9,8 +10,6 @@
 #include <react/renderer/components/rnscreens/utils/RectUtil.h>
 #include <react/renderer/components/root/RootShadowNode.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
-#include <react/renderer/uimanager/UIManager.h>
-#include <react/renderer/uimanager/UIManagerCommitHook.h>
 #include "RNSScreenShadowNode.h"
 
 namespace facebook {
@@ -35,12 +34,12 @@ class RNSScreenComponentDescriptor final
 
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
-    auto &screenShadowNode = dynamic_cast<RNSScreenShadowNode &>(shadowNode);
+    auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
 
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
     auto &layoutableShadowNode =
-        dynamic_cast<YogaLayoutableShadowNode &>(screenShadowNode);
+        static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
 
     auto state =
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
