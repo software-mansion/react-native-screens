@@ -69,7 +69,7 @@ class SheetDetents(
         topInset: Int = 0,
     ): Int {
         if (count < 3) throw IllegalStateException("[$TAG] At least 3 detents required for expandedOffsetFromTop.")
-        return ((1 - at(2).coerceIn(0.0, 1.0)) * containerHeight).toInt() + topInset
+        return ((1 - at(2)) * containerHeight).toInt() + topInset
     }
 
     internal fun peekHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
