@@ -24,24 +24,24 @@ class SheetDetents(
         }
     }
 
-    val count: Int get() = rawDetents.size
+    internal val count: Int get() = rawDetents.size
 
-    fun empty(): Boolean = count == 0
+    internal fun empty(): Boolean = count == 0
 
-    fun at(index: Int): Double = rawDetents[index]
+    internal fun at(index: Int): Double = rawDetents[index]
 
-    fun last(): Double = rawDetents.last()
+    internal fun last(): Double = rawDetents.last()
 
-    fun heightAt(
+    internal fun heightAt(
         index: Int,
         containerHeight: Int,
     ): Int = (at(index).coerceIn(0.0, 1.0) * containerHeight).toInt()
 
-    fun firstHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
+    internal fun firstHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
 
-    fun maxAllowedHeight(containerHeight: Int): Int = heightAt(count - 1, containerHeight)
+    internal fun maxAllowedHeight(containerHeight: Int): Int = heightAt(count - 1, containerHeight)
 
-    fun maxAllowedHeightForFitToContents(screen: Screen): Int =
+    internal fun maxAllowedHeightForFitToContents(screen: Screen): Int =
         screen.contentWrapper?.let { contentWrapper ->
             contentWrapper.height.takeIf {
                 // subtree might not be laid out, e.g. after fragment reattachment
@@ -52,12 +52,12 @@ class SheetDetents(
             }
         } ?: 0
 
-    fun halfExpandedRatio(): Float {
+    internal fun halfExpandedRatio(): Float {
         if (count < 3) throw IllegalStateException("[$TAG] At least 3 detents required for halfExpandedRatio.")
         return (at(1) / at(2)).toFloat()
     }
 
-    fun expandedOffsetFromTop(
+    internal fun expandedOffsetFromTop(
         containerHeight: Int,
         topInset: Int = 0,
     ): Int {
@@ -65,11 +65,11 @@ class SheetDetents(
         return ((1 - at(2).coerceIn(0.0, 1.0)) * containerHeight).toInt() + topInset
     }
 
-    fun peekHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
+    internal fun peekHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
 
-    fun sheetStateFromIndex(index: Int): Int = SheetUtils.sheetStateFromDetentIndex(index, count)
+    internal fun sheetStateFromIndex(index: Int): Int = SheetUtils.sheetStateFromDetentIndex(index, count)
 
-    fun indexFromSheetState(state: Int): Int = SheetUtils.detentIndexFromSheetState(state, count)
+    internal fun indexFromSheetState(state: Int): Int = SheetUtils.detentIndexFromSheetState(state, count)
 
     companion object {
         const val TAG = "SheetDetents"
