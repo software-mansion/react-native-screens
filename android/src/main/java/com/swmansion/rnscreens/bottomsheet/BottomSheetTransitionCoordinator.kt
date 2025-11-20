@@ -11,9 +11,7 @@ class BottomSheetTransitionCoordinator {
         triggerSheetEnterTransitionIfReady(screen)
     }
 
-    internal fun onScreenContainerInsetsApplied(
-        screen: Screen,
-    ) {
+    internal fun onScreenContainerInsetsApplied(screen: Screen) {
         areInsetsApplied = true
         triggerSheetEnterTransitionIfReady(screen)
     }
