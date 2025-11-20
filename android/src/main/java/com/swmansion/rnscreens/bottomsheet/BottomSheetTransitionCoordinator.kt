@@ -3,8 +3,6 @@ package com.swmansion.rnscreens.bottomsheet
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
-import androidx.annotation.RequiresApi
 import androidx.core.view.WindowInsetsCompat
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
@@ -13,7 +11,6 @@ class BottomSheetTransitionCoordinator {
     private var isLayoutComplete = false
     private var areInsetsApplied = false
 
-    private var lastInsets: WindowInsets? = null
     private var lastInsetsCompat: WindowInsetsCompat? = null
 
     fun attachInsetsAndLayoutListenersToBottomSheet(
@@ -24,18 +21,20 @@ class BottomSheetTransitionCoordinator {
     ) {
         screen.container?.apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                setOnApplyWindowInsetsListener { view, insets ->
-                    onScreenContainerInsetsApplied(
-                        insets,
+                setOnApplyWindowInsetsListener { _, insets ->
+                    val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
+                    onScreenContainerInsetsAppliedCompat(
+                        insetsCompat,
                         screen,
                         sheetDelegate,
                         coordinatorLayout,
                     )
+                    insets
                 }
             } else {
                 val bottomSheetWindowInsetListenerChain = screenStackFragment.requireBottomSheetWindowInsetsListenerChain()
                 bottomSheetWindowInsetListenerChain.addListener { _, windowInsets ->
-                    onScreenContainerInsetsAppliedLegacy(
+                    onScreenContainerInsetsAppliedCompat(
                         windowInsets,
                         screen,
                         sheetDelegate,
@@ -55,28 +54,7 @@ class BottomSheetTransitionCoordinator {
         triggerSheetEnterTransitionIfReady(screen)
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun onScreenContainerInsetsApplied(
-        insets: WindowInsets,
-        screen: Screen,
-        sheetDelegate: SheetDelegate,
-        coordinatorLayout: ViewGroup,
-    ): WindowInsets {
-        if (lastInsets == insets) {
-            return insets
-        }
-        lastInsets = insets
-
-        handleInsets(
-            screen,
-            sheetDelegate,
-            coordinatorLayout,
-        )
-
-        return insets
-    }
-
-    private fun onScreenContainerInsetsAppliedLegacy(
+    private fun onScreenContainerInsetsAppliedCompat(
         insetsCompat: WindowInsetsCompat,
         screen: Screen,
         sheetDelegate: SheetDelegate,
