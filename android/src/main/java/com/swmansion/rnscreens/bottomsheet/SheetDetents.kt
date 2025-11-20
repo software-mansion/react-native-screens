@@ -38,7 +38,7 @@ class SheetDetents(
     ): Int {
         val detent = at(index)
         require(detent != SHEET_FIT_TO_CONTENTS) {
-            "[$TAG] FIT_TO_CONTENTS is not supported by heightAt"
+            "[$TAG] FIT_TO_CONTENTS is not supported by heightAt."
         }
 
         return (detent * containerHeight).toInt()
