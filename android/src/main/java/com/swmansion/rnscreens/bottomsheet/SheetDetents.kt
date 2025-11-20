@@ -35,7 +35,14 @@ class SheetDetents(
     internal fun heightAt(
         index: Int,
         containerHeight: Int,
-    ): Int = (at(index).coerceIn(0.0, 1.0) * containerHeight).toInt()
+    ): Int {
+        val detent = at(index)
+        require(detent != SHEET_FIT_TO_CONTENTS) {
+            "[$TAG] FIT_TO_CONTENTS is not supported by heightAt"
+        }
+
+        return (detent * containerHeight).toInt()
+    }
 
     internal fun firstHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
 
