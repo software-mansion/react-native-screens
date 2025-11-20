@@ -1,6 +1,7 @@
 const ChildProcess = require('node:child_process');
+const { iosDevice } = require('./ios-devices');
 
-const CI_AVD_NAME = 'e2e_emulator';
+const CI_ADB_NAME = 'e2e_emulator';
 
 const isRunningCI = process.env.CI != null;
 
@@ -11,10 +12,10 @@ const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
 
 function detectLocalAndroidEmulator() {
-  // "DETOX_AVD_NAME" can be set for local developement
-  const detoxAvdName = process.env.DETOX_AVD_NAME ?? null;
-  if (detoxAvdName !== null) {
-    return detoxAvdName
+  // "DETOX_ADB_NAME" can be set for local developement
+  const detoxAdbName = process.env.DETOX_ADB_NAME ?? null;
+  if (detoxAdbName !== null) {
+    return detoxAdbName
   }
 
   // Fallback: try to use Android SDK
@@ -36,18 +37,17 @@ function detectLocalAndroidEmulator() {
     // TODO: consider giving user a choice here.
     return avdList[0];
   } catch (error) {
-    const errorMessage = `Failed to find Android emulator. Set "DETOX_AVD_NAME" env variable pointing to one. Cause: ${error}`
+    const errorMessage = `Failed to find Android emulator. Set "DETOX_ADB_NAME" env variable pointing to one. Cause: ${error}`
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
 }
 
 function detectAndroidEmulatorName() {
-  return isRunningCI ? CI_AVD_NAME : detectLocalAndroidEmulator();
+  return isRunningCI ? CI_ADB_NAME : detectLocalAndroidEmulator();
 }
 
 /**
- * @type {Detox.DetoxConfig}
  * @param {string} applicationName name (FabricExample / ScreensExample)
  * @returns {Detox.DetoxConfig}
  */
@@ -94,14 +94,12 @@ function commonDetoxConfigFactory(applicationName) {
     devices: {
       simulator: {
         type: 'ios.simulator',
-        device: {
-          type: 'iPhone 16 Pro',
-        },
+        device: iosDevice,
       },
       attached: {
         type: 'android.attached',
         device: {
-          adbName: CI_AVD_NAME,
+          adbName: CI_ADB_NAME,
         },
         utilBinaryPaths: testButlerApkPath,
       },
