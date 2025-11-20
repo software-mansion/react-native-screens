@@ -477,18 +477,12 @@ class ScreenStackFragment :
     // Mark: Avoiding top inset by BottomSheet
 
     private fun attachInsetsAndLayoutListenersToBottomSheet(sheetTransitionCoordinator: BottomSheetTransitionCoordinator) {
-        val sheetDelegate = requireSheetDelegate()
-
         screen.container?.apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 setOnApplyWindowInsetsListener { _, insets ->
                     val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
                     handleInsetsUpdateAndNotifyTransition(
                         insetsCompat,
-                        screen,
-                        sheetDelegate,
-                        coordinatorLayout,
-                        sheetTransitionCoordinator,
                     )
                     insets
                 }
@@ -497,10 +491,6 @@ class ScreenStackFragment :
                 bottomSheetWindowInsetListenerChain.addListener { _, windowInsets ->
                     handleInsetsUpdateAndNotifyTransition(
                         windowInsets,
-                        screen,
-                        sheetDelegate,
-                        coordinatorLayout,
-                        sheetTransitionCoordinator,
                     )
                     windowInsets
                 }
@@ -512,13 +502,7 @@ class ScreenStackFragment :
         }
     }
 
-    private fun handleInsetsUpdateAndNotifyTransition(
-        insetsCompat: WindowInsetsCompat,
-        screen: Screen,
-        sheetDelegate: SheetDelegate,
-        coordinatorLayout: ViewGroup,
-        sheetTransitionCoordinator: BottomSheetTransitionCoordinator,
-    ) {
+    private fun handleInsetsUpdateAndNotifyTransition(insetsCompat: WindowInsetsCompat) {
         if (lastInsetsCompat == insetsCompat) {
             return
         }
@@ -526,6 +510,7 @@ class ScreenStackFragment :
 
         // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
         // When insets are available, we can factor them in to update the maximum height accordingly.
+        val sheetDelegate = requireSheetDelegate()
         sheetDelegate.updateBottomSheetMetrics(screen.sheetBehavior!!)
 
         screen.container?.let { container ->
