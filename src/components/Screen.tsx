@@ -98,7 +98,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetExpandsWhenScrolledToEdge = true,
       sheetElevation = 24,
       sheetInitialDetentIndex = 0,
-      sheetShouldOverflowStatusBar = true,
+      sheetShouldOverflowTopInset = false,
       // Other
       screenId,
       stackPresentation,
@@ -230,7 +230,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             sheetAllowedDetents={resolvedSheetAllowedDetents}
             sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
             sheetElevation={sheetElevation}
-            sheetShouldOverflowStatusBar={sheetShouldOverflowStatusBar}
+            sheetShouldOverflowTopInset={sheetShouldOverflowTopInset}
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}

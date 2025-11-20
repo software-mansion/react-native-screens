@@ -87,7 +87,7 @@ class Screen(
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
-    var sheetShouldOverflowStatusBar = false
+    var sheetShouldOverflowTopInset = false
 
     /**
      * On Paper, when using form sheet presentation we want to delay enter transition in order
@@ -221,7 +221,7 @@ class Screen(
     // To ensure the BottomSheet correctly respects insets during its enter transition,
     // we delay the transition until both layout and insets have been applied.
     internal fun requestTriggeringPostponedEnterTransition() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !sheetShouldOverflowStatusBar) {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !sheetShouldOverflowTopInset) {
             shouldTriggerPostponedTransitionAfterLayout = true
         }
     }

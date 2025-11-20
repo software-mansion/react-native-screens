@@ -269,12 +269,12 @@ open class ScreenViewManager :
         view?.sheetElevation = value.toFloat()
     }
 
-    @ReactProp(name = "sheetShouldOverflowStatusBar")
-    override fun setSheetShouldOverflowStatusBar(
+    @ReactProp(name = "sheetShouldOverflowTopInset")
+    override fun setSheetShouldOverflowTopInset(
         view: Screen?,
-        sheetShouldOverflowStatusBar: Boolean,
+        sheetShouldOverflowTopInset: Boolean,
     ) {
-        view?.sheetShouldOverflowStatusBar = sheetShouldOverflowStatusBar
+        view?.sheetShouldOverflowTopInset = sheetShouldOverflowTopInset
     }
 
     // mark: iOS-only
