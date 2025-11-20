@@ -6,7 +6,7 @@ import type { ViewProps } from 'react-native';
 import { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
 
 type EnvironmentChangeEvent = {
-  environment: 'regular' | 'inline';
+  environment: 'regular' | 'inline' | 'none';
 };
 
 export interface NativeProps extends ViewProps {
