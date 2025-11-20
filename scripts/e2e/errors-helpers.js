@@ -12,7 +12,9 @@ function isError (potentialError) {
  */
 function assertError (potentialError) {
     if (!isError(potentialError)) {
-      throw new Error(`${JSON.stringify(potentialError)} thrown, but it's not an error!`);
+      throw new Error(
+        `${JSON.stringify(potentialError)} thrown, but it's an error or it comes from a different runtime environment!`
+      );
     }
 }
 

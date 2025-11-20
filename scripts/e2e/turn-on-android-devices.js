@@ -103,7 +103,6 @@ function waitForBootSync(serial) {
   let booted = false;
   while (!booted) {
     try {
-      // Check sys.boot_completed property
       const res = execSync(`adb -s ${serial} shell getprop sys.boot_completed`, {
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'] // offline/unauthorized may cause stderr so we ignore it
