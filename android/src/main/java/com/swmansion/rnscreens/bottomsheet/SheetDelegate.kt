@@ -44,9 +44,8 @@ class SheetDelegate(
 
     @BottomSheetBehavior.State
     var lastStableState: Int =
-        SheetUtils.sheetStateFromDetentIndex(
+        screen.sheetDetents.sheetStateFromIndex(
             screen.sheetInitialDetentIndex,
-            screen.sheetDetents.count(),
         )
         private set
 
@@ -102,9 +101,8 @@ class SheetDelegate(
         if (isStable) {
             lastStableState = newState
             lastStableDetentIndex =
-                SheetUtils.detentIndexFromSheetState(
+                screen.sheetDetents.indexFromSheetState(
                     newState,
-                    screen.sheetDetents.count(),
                 )
         }
 
@@ -137,22 +135,14 @@ class SheetDelegate(
 
         return when (keyboardState) {
             is KeyboardNotVisible -> {
-                when (screen.sheetDetents.count()) {
+                when (screen.sheetDetents.count) {
                     1 ->
                         behavior.apply {
                             val height =
                                 if (screen.isSheetFitToContents()) {
-                                    screen.contentWrapper?.let { contentWrapper ->
-                                        contentWrapper.height.takeIf {
-                                            // subtree might not be laid out, e.g. after fragment reattachment
-                                            // and view recreation, however since it is retained by
-                                            // react-native it has its height cached. We want to use it.
-                                            // Otherwise we would have to trigger RN layout manually.
-                                            contentWrapper.isLaidOutOrHasCachedLayout()
-                                        }
-                                    }
+                                    screen.sheetDetents.maxAllowedHeightForFitToContents(screen)
                                 } else {
-                                    (screen.sheetDetents[0] * containerHeight).toInt()
+                                    screen.sheetDetents.maxAllowedHeight(containerHeight)
                                 }
                             useSingleDetent(maxAllowedHeight = height)
                         }
@@ -160,29 +150,27 @@ class SheetDelegate(
                     2 ->
                         behavior.useTwoDetents(
                             state =
-                                SheetUtils.sheetStateFromDetentIndex(
+                                screen.sheetDetents.sheetStateFromIndex(
                                     selectedDetentIndex,
-                                    screen.sheetDetents.count(),
                                 ),
-                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            maxAllowedHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
+                            firstHeight = screen.sheetDetents.firstHeight(containerHeight),
+                            maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
                         )
 
                     3 ->
                         behavior.useThreeDetents(
                             state =
-                                SheetUtils.sheetStateFromDetentIndex(
+                                screen.sheetDetents.sheetStateFromIndex(
                                     selectedDetentIndex,
-                                    screen.sheetDetents.count(),
                                 ),
-                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
-                            maxAllowedHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
-                            expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
+                            firstHeight = screen.sheetDetents.firstHeight(containerHeight),
+                            halfExpandedRatio = screen.sheetDetents.halfExpandedRatio(),
+                            maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
+                            expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight),
                         )
 
                     else -> throw IllegalStateException(
-                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
+                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count}. Expected at most 3.",
                     )
                 }
             }
@@ -190,7 +178,7 @@ class SheetDelegate(
             is KeyboardVisible -> {
                 val isOnScreenKeyboardVisible = keyboardState.height != 0
 
-                when (screen.sheetDetents.count()) {
+                when (screen.sheetDetents.count) {
                     1 ->
                         behavior.apply {
                             addBottomSheetCallback(keyboardHandlerCallback)
@@ -221,7 +209,7 @@ class SheetDelegate(
                         }
 
                     else -> throw IllegalStateException(
-                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
+                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count}. Expected at most 3.",
                     )
                 }
             }
@@ -232,42 +220,34 @@ class SheetDelegate(
                 // stay unchanged.
 
                 behavior.removeBottomSheetCallback(keyboardHandlerCallback)
-                when (screen.sheetDetents.count()) {
+                when (screen.sheetDetents.count) {
                     1 ->
                         behavior.apply {
                             val height =
                                 if (screen.isSheetFitToContents()) {
-                                    screen.contentWrapper?.let { contentWrapper ->
-                                        contentWrapper.height.takeIf {
-                                            // subtree might not be laid out, e.g. after fragment reattachment
-                                            // and view recreation, however since it is retained by
-                                            // react-native it has its height cached. We want to use it.
-                                            // Otherwise we would have to trigger RN layout manually.
-                                            contentWrapper.isLaidOutOrHasCachedLayout()
-                                        }
-                                    }
+                                    screen.sheetDetents.maxAllowedHeightForFitToContents(screen)
                                 } else {
-                                    (screen.sheetDetents[0] * containerHeight).toInt()
+                                    screen.sheetDetents.maxAllowedHeight(containerHeight)
                                 }
                             useSingleDetent(maxAllowedHeight = height, forceExpandedState = false)
                         }
 
                     2 ->
                         behavior.useTwoDetents(
-                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            maxAllowedHeight = (screen.sheetDetents[1] * containerHeight).toInt(),
+                            firstHeight = screen.sheetDetents.firstHeight(containerHeight),
+                            maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
                         )
 
                     3 ->
                         behavior.useThreeDetents(
-                            firstHeight = (screen.sheetDetents[0] * containerHeight).toInt(),
-                            halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat(),
-                            maxAllowedHeight = (screen.sheetDetents[2] * containerHeight).toInt(),
-                            expandedOffsetFromTop = ((1 - screen.sheetDetents[2]) * containerHeight).toInt(),
+                            firstHeight = screen.sheetDetents.firstHeight(containerHeight),
+                            halfExpandedRatio = screen.sheetDetents.halfExpandedRatio(),
+                            maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
+                            expandedOffsetFromTop = screen.sheetDetents.maxAllowedHeight(containerHeight),
                         )
 
                     else -> throw IllegalStateException(
-                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.",
+                        "[RNScreens] Invalid detent count ${screen.sheetDetents.count}. Expected at most 3.",
                     )
                 }
             }
@@ -293,11 +273,11 @@ class SheetDelegate(
         }
 
         val detents = screen.sheetDetents
-        if (detents.isEmpty()) {
+        if (detents.empty()) {
             throw IllegalStateException("[RNScreens] Cannot determine sheet detent - detents list is empty")
         }
 
-        val detentValue = detents[detents.size - 1].coerceIn(0.0, 1.0)
+        val detentValue = detents.at(detents.count - 1).coerceIn(0.0, 1.0)
         val sheetHeight = (detentValue * containerHeight).toInt()
         val offsetFromTop = containerHeight - sheetHeight
 

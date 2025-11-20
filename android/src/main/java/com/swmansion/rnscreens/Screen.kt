@@ -26,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -81,9 +82,7 @@ class Screen(
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
 
-    // We want to make sure here that at least one value is present in this array all the time.
-    // TODO: Model this with custom data structure to guarantee that this invariant is not violated.
-    var sheetDetents = mutableListOf(1.0)
+    var sheetDetents: SheetDetents = SheetDetents(listOf(1.0))
     var sheetLargestUndimmedDetentIndex: Int = -1
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesOnTouchOutside = true
@@ -573,11 +572,6 @@ class Screen(
 
     companion object {
         const val TAG = "Screen"
-
-        /**
-         * This value describes value in sheet detents array that will be treated as `fitToContents` option.
-         */
-        const val SHEET_FIT_TO_CONTENTS = -1.0
     }
 }
 
