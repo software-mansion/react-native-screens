@@ -500,7 +500,7 @@ export interface BottomTabsScreenProps {
   /**
    * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
    * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
-   * for the specifed edge of the ScrollView.
+   * for the specified edge of the ScrollView.
    *
    * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
    * the ScrollView will use only the innermost one's config.
