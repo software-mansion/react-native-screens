@@ -184,5 +184,6 @@ typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
 
 typedef NS_ENUM(NSInteger, RNSBottomTabsAccessoryEnvironment) {
   RNSBottomTabsAccessoryEnvironmentRegular,
-  RNSBottomTabsAccessoryEnvironmentInline
+  RNSBottomTabsAccessoryEnvironmentInline,
+  RNSBottomTabsAccessoryEnvironmentNone
 };

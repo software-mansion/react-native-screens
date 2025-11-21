@@ -413,6 +413,8 @@ RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UI
       return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
     case UITabAccessoryEnvironmentInline:
       return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Inline;
+    case UITabAccessoryEnvironmentNone:
+      return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::None;
     default:
       RCTLogError(@"[RNScreens] Unsupported environment for onEnvironmentChange event");
       return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
@@ -431,6 +433,9 @@ RNSBottomTabsAccessoryEnvironment RNSBottomTabsAccessoryEnvironmentFromCppEquiva
 
     case Inline:
       return RNSBottomTabsAccessoryEnvironmentInline;
+
+    case None:
+      return RNSBottomTabsAccessoryEnvironmentNone;
 
     default:
       RCTLogError(@"[RNScreens] Unsupported BottomTabsAccessory environment");
