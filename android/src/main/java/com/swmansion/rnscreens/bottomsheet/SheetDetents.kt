@@ -3,8 +3,10 @@ package com.swmansion.rnscreens.bottomsheet
 import com.swmansion.rnscreens.Screen
 
 class SheetDetents(
-    private val rawDetents: List<Double>,
+    rawDetents: List<Double>,
 ) {
+    private val rawDetents: List<Double> = rawDetents.toList()
+
     init {
         require(rawDetents.isNotEmpty()) { "[RNScreens] At least one detent must be provided." }
         require(rawDetents.size <= 3) { "[RNScreens] Maximum of 3 detents supported." }
