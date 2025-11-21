@@ -6,19 +6,19 @@ class SheetDetents(
     private val rawDetents: List<Double>,
 ) {
     init {
-        require(rawDetents.isNotEmpty()) { "[$TAG] At least one detent must be provided." }
-        require(rawDetents.size <= 3) { "[$TAG] Maximum of 3 detents supported." }
+        require(rawDetents.isNotEmpty()) { "[RNScreens] At least one detent must be provided." }
+        require(rawDetents.size <= 3) { "[RNScreens] Maximum of 3 detents supported." }
 
         if (rawDetents.size == 1) {
             rawDetents[0].let {
                 require(it in 0.0..1.0 || it == SHEET_FIT_TO_CONTENTS) {
-                    "[$TAG] Detent value must be within 0.0 and 1.0, or SHEET_FIT_TO_CONTENTS should be defined, got $it."
+                    "[RNScreens] Detent value must be within 0.0 and 1.0, or SHEET_FIT_TO_CONTENTS should be defined, got $it."
                 }
             }
         } else {
             rawDetents.forEach {
                 require(it in 0.0..1.0) {
-                    "[$TAG] Detent values must be within 0.0 and 1.0, got $it."
+                    "[RNScreens] Detent values must be within 0.0 and 1.0, got $it."
                 }
             }
         }
@@ -38,7 +38,7 @@ class SheetDetents(
     ): Int {
         val detent = at(index)
         require(detent != SHEET_FIT_TO_CONTENTS) {
-            "[$TAG] FIT_TO_CONTENTS is not supported by heightAt."
+            "[RNScreens] FIT_TO_CONTENTS is not supported by heightAt."
         }
 
         return (detent * containerHeight).toInt()
@@ -60,7 +60,7 @@ class SheetDetents(
         } ?: 0
 
     internal fun halfExpandedRatio(): Float {
-        if (count < 3) throw IllegalStateException("[$TAG] At least 3 detents required for halfExpandedRatio.")
+        if (count < 3) throw IllegalStateException("[RNScreens] At least 3 detents required for halfExpandedRatio.")
         return (at(1) / at(2)).toFloat()
     }
 
@@ -68,7 +68,7 @@ class SheetDetents(
         containerHeight: Int,
         topInset: Int = 0,
     ): Int {
-        if (count < 3) throw IllegalStateException("[$TAG] At least 3 detents required for expandedOffsetFromTop.")
+        if (count < 3) throw IllegalStateException("[RNScreens] At least 3 detents required for expandedOffsetFromTop.")
         return ((1 - at(2)) * containerHeight).toInt() + topInset
     }
 
@@ -79,8 +79,6 @@ class SheetDetents(
     internal fun indexFromSheetState(state: Int): Int = SheetUtils.detentIndexFromSheetState(state, count)
 
     companion object {
-        const val TAG = "SheetDetents"
-
         /**
          * This value describes value in sheet detents array that will be treated as `fitToContents` option.
          */
