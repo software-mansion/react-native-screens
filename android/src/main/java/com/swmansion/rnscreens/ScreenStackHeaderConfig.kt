@@ -32,6 +32,12 @@ class ScreenStackHeaderConfig(
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
+        set(value) {
+            if (field != value) {
+                requestApplyInsets()
+            }
+            field = value
+        }
     var isHeaderTranslucent =
         false // named this way to avoid conflict with platform's isTranslucent
     private var title: String? = null
@@ -222,6 +228,12 @@ class ScreenStackHeaderConfig(
         if (toolbar.parent == null) {
             screenFragment?.setToolbar(toolbar)
         }
+
+        // Ensure that menuView is created. With current support action bar logic, this sometimes
+        // does not happen when nested stacks are used. MenuView is necessary for correct header
+        // height calculation. More details:
+        // https://github.com/software-mansion/react-native-screens-labs/issues/564
+        toolbar.menu
 
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
