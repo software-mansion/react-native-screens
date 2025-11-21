@@ -14,7 +14,7 @@ const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.
 
 function detectLocalAndroidEmulator() {
   // "RNS_E2E_AVD_NAME" can be set for local developement
-  const avdName = process.env.RNS_E2E_AVD_NAME ?? null;
+  const avdName = process.env.RNS_AVD_NAME ?? null;
   if (avdName !== null) {
     return avdName
   }
@@ -50,6 +50,67 @@ function detectAndroidEmulatorName() {
 }
 
 /**
+ * @returns {string | null} Device serial as requested by user, first serial from adb list or null
+ */
+function resolveAndroidDeviceSerial() {
+  const deviceSerial = process.env.RNS_DEVICE_SERIAL ?? null;
+
+  if (deviceSerial !== null) {
+    return deviceSerial;
+  }
+
+  // Fallback: try to use adb
+  try {
+    let stdout = ChildProcess.execSync("adb devices");
+
+    // Possibly convert Buffer to string
+    if (typeof stdout !== 'string') {
+      stdout = stdout.toString();
+    }
+
+    /** @type {string} */
+    const stringStdout = stdout;
+
+    // Example `adb devices` output:
+    //
+    // List of devices attached
+    // 6lh6huzhr48lu8t8        device
+    // emulator-5554   device
+
+    const deviceList = stringStdout
+      .trim()
+      .split('\n')
+      .map(line => line.trim())
+      .filter((line, index) => line !== '' && index !== 0) // empty lines & header
+      .map(line => line.split(' ', 1)[0]);
+
+
+    if (deviceList.length === 0) {
+      throw new Error("Seems that the attached device list is empty");
+    }
+
+    // Just select first one in the list.
+    // TODO: consider giving user a choice here.
+    return deviceList[0];
+  } catch (error) {
+    console.error(`Failed to find attached device. Try setting "RNS_DEVICE_SERIAL" env variable pointing to one. Cause: ${error}`);
+  }
+
+  return null;
+}
+
+/**
+ * The output of this function can be controlled through couple of env vars.
+ *
+ * * `RNS_DEVICE_SERIAL` env var can be specified in case of running 
+ * tests with an attached device. It can also be an emulator.
+ * The expected value here is the same as you would pass to `adb -s`.
+ * You can find device serial by running `adb devices` command.
+ *
+ * * `RNS_AVD_NAME` env var can be specified in case of running tests on emulator. 
+ * The exepected value here is the same as displayed in Android Studio or listed by
+ * `emulator -list-avds`.
+ *
  * @param {string} applicationName name (FabricExample / ScreensExample)
  * @returns {Detox.DetoxConfig}
  */
@@ -101,7 +162,7 @@ function commonDetoxConfigFactory(applicationName) {
       attached: {
         type: 'android.attached',
         device: {
-          adbName: process.env.RNS_ADB_NAME,
+          adbName: resolveAndroidDeviceSerial(),
         },
         utilBinaryPaths: testButlerApkPath,
       },
