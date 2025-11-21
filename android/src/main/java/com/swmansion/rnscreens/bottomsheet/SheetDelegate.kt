@@ -273,9 +273,6 @@ class SheetDelegate(
         }
 
         val detents = screen.sheetDetents
-        if (detents.empty()) {
-            throw IllegalStateException("[RNScreens] Cannot determine sheet detent - detents list is empty")
-        }
 
         val detentValue = detents.at(detents.count - 1).coerceIn(0.0, 1.0)
         val sheetHeight = (detentValue * containerHeight).toInt()

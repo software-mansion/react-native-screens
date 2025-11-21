@@ -26,8 +26,6 @@ class SheetDetents(
 
     internal val count: Int get() = rawDetents.size
 
-    internal fun empty(): Boolean = count == 0
-
     internal fun at(index: Int): Double = rawDetents[index]
 
     internal fun last(): Double = rawDetents.last()
