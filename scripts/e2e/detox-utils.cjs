@@ -39,9 +39,8 @@ function detectLocalAndroidEmulator() {
 
 function detectAndroidEmulatorName() {
   // "RNS_E2E_AVD_NAME" can be set for local developement
-  return process.env.RNS_E2E_AVD_NAME || isRunningCI
-    ? DEFAULT_CI_AVD_NAME
-    : detectLocalAndroidEmulator();
+  if (isRunningCI) return DEFAULT_CI_AVD_NAME;
+  return process.env.RNS_E2E_AVD_NAME || detectLocalAndroidEmulator();
 }
 
 /**
