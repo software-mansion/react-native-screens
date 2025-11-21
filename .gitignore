@@ -64,3 +64,5 @@ android/.settings
 # Local environment (direnv)
 .envrc
 
+# e2e
+*Example/artifacts

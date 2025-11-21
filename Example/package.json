@@ -9,10 +9,10 @@
     "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types && yarn format",
     "check-types": "tsc --noEmit",
-    "build-e2e-ios": "detox build --configuration ios.release",
-    "build-e2e-android": "detox build --configuration android.release",
-    "test-e2e-ios": "detox test --configuration ios.release --take-screenshots failing",
-    "test-e2e-android": "detox test --configuration android.release --take-screenshots failing",
+    "build-e2e-ios": "detox build --configuration ios.sim.release",
+    "build-e2e-android": "detox build --configuration android.emu.release",
+    "test-e2e-ios": "detox test --configuration ios.sim.release --take-screenshots failing",
+    "test-e2e-android": "detox test --configuration android.emu.release --take-screenshots failing",
     "postinstall": "patch-package"
   },
   "dependencies": {
