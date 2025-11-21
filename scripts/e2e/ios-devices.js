@@ -5,13 +5,13 @@ const DEFEAULT_IOS_VERSION = 'iOS 26.2';
  * @return {string}
  */
 function getAppleDevice() {
-  return process.env.E2E_APPLE_DEVICE || DEFAULT_APPLE_DEVICE;
+  return process.env.RNS_E2E_APPLE_DEVICE || DEFAULT_APPLE_DEVICE;
 }
 /**
  * @return {`iOS ${string}`} requested version of ios, or default if not specified
  */
 function getIOSVersion() {
-  const passedVersion = process.env.E2E_IOS_VERSION;
+  const passedVersion = process.env.RNS_E2E_IOS_VERSION;
   if (passedVersion) {
     if (passedVersion.startsWith('iOS ')) {
       return /** @type {`iOS ${string}`} */ (passedVersion);

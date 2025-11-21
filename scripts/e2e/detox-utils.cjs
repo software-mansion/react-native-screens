@@ -1,7 +1,7 @@
 const ChildProcess = require('node:child_process');
 const { iosDevice } = require('./ios-devices');
 
-const CI_ADB_NAME = 'e2e_emulator';
+const RNS_CI_AVD_NAME = 'e2e_emulator';
 
 const isRunningCI = process.env.CI != null;
 
@@ -12,8 +12,8 @@ const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
 
 function detectLocalAndroidEmulator() {
-  // "DETOX_AVD_NAME" can be set for local developement
-  const detoxAvdName = process.env.DETOX_AVD_NAME ?? null;
+  // "RNS_DETOX_AVD_NAME" can be set for local developement
+  const detoxAvdName = process.env.RNS_DETOX_AVD_NAME ?? null;
   if (detoxAvdName !== null) {
     return detoxAvdName
   }
@@ -44,7 +44,7 @@ function detectLocalAndroidEmulator() {
 }
 
 function detectAndroidEmulatorName() {
-  return isRunningCI ? CI_ADB_NAME : detectLocalAndroidEmulator(); // ??
+  return isRunningCI ? RNS_CI_AVD_NAME : detectLocalAndroidEmulator(); // ??
 }
 
 /**
@@ -99,7 +99,7 @@ function commonDetoxConfigFactory(applicationName) {
       attached: {
         type: 'android.attached',
         device: {
-          adbName: CI_ADB_NAME,
+          avdName: RNS_CI_AVD_NAME,
         },
         utilBinaryPaths: testButlerApkPath,
       },
