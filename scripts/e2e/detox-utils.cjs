@@ -1,6 +1,7 @@
 const ChildProcess = require('node:child_process');
 const { iosDevice } = require('./ios-devices');
 
+// Should be kept in sync with the constant defined in e2e workflow file
 const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
 
 const isRunningCI = process.env.CI != null;
