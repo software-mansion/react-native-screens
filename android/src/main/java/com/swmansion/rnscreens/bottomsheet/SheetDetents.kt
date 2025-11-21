@@ -28,7 +28,9 @@ class SheetDetents(
 
     internal fun at(index: Int): Double = rawDetents[index]
 
-    internal fun last(): Double = rawDetents.last()
+    internal fun shortest(): Double = rawDetents.first()
+
+    internal fun highest(): Double = rawDetents.last()
 
     internal fun heightAt(
         index: Int,

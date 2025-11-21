@@ -274,7 +274,7 @@ class SheetDelegate(
 
         val detents = screen.sheetDetents
 
-        val detentValue = detents.at(detents.count - 1).coerceIn(0.0, 1.0)
+        val detentValue = detents.highest().coerceIn(0.0, 1.0)
         val sheetHeight = (detentValue * containerHeight).toInt()
         val offsetFromTop = containerHeight - sheetHeight
 
