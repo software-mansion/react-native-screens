@@ -1,41 +1,28 @@
-const DEFAULT_APPLE_DEVICE = 'iPhone 17';
-const DEFEAULT_IOS_VERSION = 'iOS 26.2';
+const DEFAULT_APPLE_SIMULATOR_NAME = 'iPhone 17';
+const DEFAULT_IOS_VERSION = 'iOS 26.2';
 
 /**
  * @return {string}
  */
-function getAppleDevice() {
-  return process.env.RNS_E2E_APPLE_SIM_NAME || DEFAULT_APPLE_DEVICE;
+function resolveAppleSimulatorName() {
+  return process.env.RNS_APPLE_SIM_NAME ?? DEFAULT_APPLE_SIMULATOR_NAME;
 }
 /**
  * @return {`iOS ${string}`} requested version of ios, or default if not specified
  */
 function getIOSVersion() {
-  const passedVersion = process.env.RNS_E2E_IOS_VERSION;
+  const passedVersion = process.env.RNS_IOS_VERSION;
   if (passedVersion) {
     if (passedVersion.startsWith('iOS ')) {
       return /** @type {`iOS ${string}`} */ (passedVersion);
     }
     return `iOS ${passedVersion}`;
   }
-  return DEFEAULT_IOS_VERSION;
+  return DEFAULT_IOS_VERSION;
 }
 
-/**
- * @typedef {Object} AppleDevice - creates a new type named 'SpecialType'
- * @property {string} type - a string which represents a model of an iPhone
- * @property {`iOS ${string}`} os - operation system version
- */
-
-/**
- * @satisfies {AppleDevice}
- * @readonly
- * */
-const iosDevice = {
-  type: getAppleDevice(),
-  os: getIOSVersion(),
-};
-
 module.exports = {
-  iosDevice,
+  resolveAppleSimulatorName,
+  getIOSVersion,
 };
+
