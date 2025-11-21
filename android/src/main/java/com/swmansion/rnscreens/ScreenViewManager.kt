@@ -14,6 +14,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
+import com.swmansion.rnscreens.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
@@ -347,18 +348,14 @@ open class ScreenViewManager :
         view: Screen,
         value: ReadableArray?,
     ) {
-        view.sheetDetents.clear()
+        val parsedDetents =
+            if (value != null && value.size() > 0) {
+                List(value.size()) { index -> value.getDouble(index) }
+            } else {
+                listOf(1.0)
+            }
 
-        if (value == null || value.size() == 0) {
-            view.sheetDetents.add(1.0)
-            return
-        }
-
-        IntProgression
-            .fromClosedRange(0, value.size() - 1, 1)
-            .asSequence()
-            .map { idx -> value.getDouble(idx) }
-            .toCollection(view.sheetDetents)
+        view.sheetDetents = SheetDetents(parsedDetents)
     }
 
     @ReactProp(name = "sheetLargestUndimmedDetent")

@@ -19,7 +19,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogRootView
 import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogScreen
-import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.recycle
@@ -239,44 +238,41 @@ class ScreenModalFragment :
             isDraggable = true
         }
 
-        when (screen.sheetDetents.count()) {
+        when (screen.sheetDetents.count) {
             1 ->
                 behavior.apply {
                     state = BottomSheetBehavior.STATE_EXPANDED
                     skipCollapsed = true
                     isFitToContents = true
-                    maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
+                    maxHeight = screen.sheetDetents.maxAllowedHeight(containerHeight)
                 }
 
             2 ->
                 behavior.apply {
                     state =
-                        SheetUtils.sheetStateFromDetentIndex(
+                        screen.sheetDetents.sheetStateFromIndex(
                             screen.sheetInitialDetentIndex,
-                            screen.sheetDetents.count(),
                         )
                     skipCollapsed = false
                     isFitToContents = true
-                    peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                    maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
+                    peekHeight = screen.sheetDetents.peekHeight(containerHeight)
+                    maxHeight = screen.sheetDetents.maxAllowedHeight(containerHeight)
                 }
 
             3 ->
                 behavior.apply {
                     state =
-                        SheetUtils.sheetStateFromDetentIndex(
+                        screen.sheetDetents.sheetStateFromIndex(
                             screen.sheetInitialDetentIndex,
-                            screen.sheetDetents.count(),
                         )
                     skipCollapsed = false
                     isFitToContents = false
-                    peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                    expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
-                    halfExpandedRatio =
-                        (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+                    peekHeight = screen.sheetDetents.peekHeight(containerHeight)
+                    expandedOffset = screen.sheetDetents.expandedOffsetFromTop(containerHeight)
+                    halfExpandedRatio = screen.sheetDetents.halfExpandedRatio()
                 }
 
-            else -> throw IllegalStateException("[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.")
+            else -> throw IllegalStateException("[RNScreens] Invalid detent count ${screen.sheetDetents.count}. Expected at most 3.")
         }
     }
 
