@@ -44,7 +44,7 @@ function detectLocalAndroidEmulator() {
 }
 
 function detectAndroidEmulatorName() {
-  return isRunningCI ? RNS_CI_AVD_NAME : detectLocalAndroidEmulator(); // ??
+  return isRunningCI ? RNS_CI_AVD_NAME : detectLocalAndroidEmulator();
 }
 
 /**
@@ -99,7 +99,7 @@ function commonDetoxConfigFactory(applicationName) {
       attached: {
         type: 'android.attached',
         device: {
-          avdName: RNS_CI_AVD_NAME,
+          avdName: process.env.RNS_ADB_NAME,
         },
         utilBinaryPaths: testButlerApkPath,
       },
