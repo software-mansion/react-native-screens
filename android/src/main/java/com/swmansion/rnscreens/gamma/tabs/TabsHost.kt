@@ -16,6 +16,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
+import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.safearea.EdgeInsets
 import com.swmansion.rnscreens.safearea.SafeAreaProvider
@@ -92,7 +93,29 @@ class TabsHost(
         }
     }
 
+    private inner class SpecialEffectsHandler {
+        fun handleRepeatedTabSelection(): Boolean {
+            val contentView = this@TabsHost.contentView
+            val selectedTabFragment = this@TabsHost.currentFocusedTab
+            if (selectedTabFragment.tabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
+                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(contentView)
+                if (screenStack != null && screenStack.popToRoot()) {
+                    return true
+                }
+            }
+            if (selectedTabFragment.tabScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+                val scrollView = ViewFinder.findScrollViewInFirstDescendantChain(contentView)
+                if (scrollView != null && scrollView.scrollY > 0) {
+                    scrollView.smoothScrollTo(scrollView.scrollX, 0)
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
     private val containerUpdateCoordinator = ContainerUpdateCoordinator()
+    private val specialEffectsHandler = SpecialEffectsHandler()
 
     private val wrappedContext =
         ContextThemeWrapper(
@@ -127,6 +150,9 @@ class TabsHost(
         get() = checkNotNull(fragmentManager) { "[RNScreens] Nullish fragment manager" }
 
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
+
+    private val currentFocusedTab: TabScreenFragment
+        get() = checkNotNull(tabScreenFragments.find { it.tabScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
 
     private var lastAppliedUiMode: Int? = null
 
@@ -226,8 +252,10 @@ class TabsHost(
         bottomNavigationView.setOnItemSelectedListener { item ->
             RNSLog.d(TAG, "Item selected $item")
             val fragment = getFragmentForMenuItemId(item.itemId)
-            val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
-            eventEmitter.emitOnNativeFocusChange(tabKey)
+            if (fragment != currentFocusedTab || !specialEffectsHandler.handleRepeatedTabSelection()) {
+                val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
+                eventEmitter.emitOnNativeFocusChange(tabKey)
+            }
             true
         }
     }
@@ -334,8 +362,7 @@ class TabsHost(
     }
 
     private fun updateSelectedTab() {
-        val newFocusedTab =
-            checkNotNull(tabScreenFragments.find { it.tabScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
+        val newFocusedTab = currentFocusedTab
 
         check(requireFragmentManager.fragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
         val oldFocusedTab = requireFragmentManager.fragments.firstOrNull()

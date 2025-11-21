@@ -38,11 +38,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         ios: {
           type: 'sfSymbol',
           name: 'house.fill',
-        }, 
+        },
         android: {
           type: 'imageSource',
           imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-        }
+        },
       },
       selectedIcon: {
         type: 'sfSymbol',
@@ -105,11 +105,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         ios: {
           type: 'templateSource',
           templateSource: require('../../../assets/variableIcons/icon.png'),
-        }, 
+        },
         android: {
           type: 'drawableResource',
           name: 'sym_call_missed',
-        }
+        },
       },
       selectedIcon: {
         type: 'templateSource',
@@ -148,7 +148,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         shared: {
           type: 'imageSource',
           imageSource: require('../../../assets/variableIcons/icon.png'),
-        }
+        },
       },
       selectedIcon: {
         type: 'imageSource',
@@ -171,8 +171,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
         android: {
           type: 'drawableResource',
-          name: 'custom_home_icon'
-        }
+          name: 'custom_home_icon',
+        },
       },
       selectedIcon: {
         type: 'sfSymbol',
@@ -181,6 +181,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab4',
       systemItem: 'search', // iOS specific
       badgeValue: '123',
+      specialEffects: {
+        repeatedTabSelection: {
+          popToRoot: false,
+        },
+      },
     },
     component: Tab4,
   },
