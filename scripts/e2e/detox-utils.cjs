@@ -13,9 +13,15 @@ const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
 
 function detectLocalAndroidEmulator() {
+  // "RNS_E2E_AVD_NAME" can be set for local developement
+  const avdName = process.env.RNS_E2E_AVD_NAME ?? null;
+  if (avdName !== null) {
+    return avdName
+  }
+
   // Fallback: try to use Android SDK
   try {
-    let stdout = ChildProcess.execSync("emulator -list-avds")
+    let stdout = ChildProcess.execSync("emulator -list-avds");
 
     // Possibly convert Buffer to string
     if (typeof stdout !== 'string') {
@@ -40,8 +46,7 @@ function detectLocalAndroidEmulator() {
 
 function detectAndroidEmulatorName() {
   // "RNS_E2E_AVD_NAME" can be set for local developement
-  if (isRunningCI) return DEFAULT_CI_AVD_NAME;
-  return process.env.RNS_E2E_AVD_NAME || detectLocalAndroidEmulator();
+  return isRunningCI ? DEFAULT_CI_AVD_NAME : detectLocalAndroidEmulator();
 }
 
 /**
