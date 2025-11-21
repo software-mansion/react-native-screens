@@ -132,15 +132,15 @@ class SheetDelegate(
                             contentWrapper.isLaidOutOrHasCachedLayout()
                         }
                     }
-                false -> (screen.sheetDetents.last() * containerHeight).toInt()
+                false -> (screen.sheetDetents.highest() * containerHeight).toInt()
             }
 
         // For 3 detents, we need to add the top inset back here because we are calculating the offset
         // from the absolute top of the view, but our calculated max height (containerHeight)
         // has been reduced by this inset.
         val expandedOffsetFromTop =
-            when (screen.sheetDetents.count()) {
-                3 -> ((1 - screen.sheetDetents[2]) * containerHeight).toInt() + lastTopInset
+            when (screen.sheetDetents.count) {
+                3 -> screen.sheetDetents.expandedOffsetFromTop(containerHeight, lastTopInset)
                 else -> null
             }
 
