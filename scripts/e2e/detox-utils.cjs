@@ -31,7 +31,7 @@ function detectLocalAndroidEmulator() {
     // TODO: consider giving user a choice here.
     return avdList[0];
   } catch (error) {
-    const errorMessage = `Failed to find Android emulator. Set "DETOX_AVD_NAME" env variable pointing to one. Cause: ${error}`;
+    const errorMessage = `Failed to find Android emulator. Set "RNS_E2E_AVD_NAME" env variable pointing to one. Cause: ${error}`;
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
@@ -96,7 +96,7 @@ function commonDetoxConfigFactory(applicationName) {
       attached: {
         type: 'android.attached',
         device: {
-          avdName: process.env.RNS_ADB_NAME,
+          adbName: process.env.RNS_ADB_NAME,
         },
         utilBinaryPaths: testButlerApkPath,
       },
