@@ -5,7 +5,7 @@ const DEFEAULT_IOS_VERSION = 'iOS 26.2';
  * @return {string}
  */
 function getAppleDevice() {
-  return process.env.RNS_E2E_APPLE_DEVICE || DEFAULT_APPLE_DEVICE;
+  return process.env.RNS_E2E_APPLE_SIM_NAME || DEFAULT_APPLE_DEVICE;
 }
 /**
  * @return {`iOS ${string}`} requested version of ios, or default if not specified
