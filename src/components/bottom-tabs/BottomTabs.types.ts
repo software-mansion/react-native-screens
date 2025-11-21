@@ -264,7 +264,8 @@ export interface BottomTabsProps extends ViewProps {
    * On iOS, some features are not fully implemented for managed tabs
    * (e.g. overrideScrollViewContentInsetAdjustmentBehavior).
    *
-   * On Android, only controlled tabs are currently supported.
+   * On Android, only controlled tabs are currently supported and the
+   * value of this prop is ignored.
    *
    * @default Defaults to `false`.
    *
