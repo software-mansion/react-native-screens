@@ -1,7 +1,7 @@
 const ChildProcess = require('node:child_process');
 const { iosDevice } = require('./ios-devices');
 
-const RNS_CI_AVD_NAME = 'e2e_emulator';
+const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
 
 const isRunningCI = process.env.CI != null;
 
@@ -12,12 +12,6 @@ const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
 
 function detectLocalAndroidEmulator() {
-  // "RNS_DETOX_AVD_NAME" can be set for local developement
-  const detoxAvdName = process.env.RNS_DETOX_AVD_NAME ?? null;
-  if (detoxAvdName !== null) {
-    return detoxAvdName
-  }
-
   // Fallback: try to use Android SDK
   try {
     let stdout = ChildProcess.execSync("emulator -list-avds")
@@ -33,18 +27,21 @@ function detectLocalAndroidEmulator() {
       throw new Error('No installed AVDs detected on the device');
     }
 
-    // Just select first one in the list. 
+    // Just select first one in the list.
     // TODO: consider giving user a choice here.
     return avdList[0];
   } catch (error) {
-    const errorMessage = `Failed to find Android emulator. Set "DETOX_AVD_NAME" env variable pointing to one. Cause: ${error}`
+    const errorMessage = `Failed to find Android emulator. Set "DETOX_AVD_NAME" env variable pointing to one. Cause: ${error}`;
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
 }
 
 function detectAndroidEmulatorName() {
-  return isRunningCI ? RNS_CI_AVD_NAME : detectLocalAndroidEmulator();
+  // "RNS_E2E_AVD_NAME" can be set for local developement
+  return process.env.RNS_E2E_AVD_NAME || isRunningCI
+    ? DEFAULT_CI_AVD_NAME
+    : detectLocalAndroidEmulator();
 }
 
 /**
@@ -145,10 +142,10 @@ function commonDetoxConfigFactory(applicationName) {
         app: 'android.release',
       },
     },
-  }
+  };
 }
 
 module.exports = {
   commonDetoxConfigFactory,
   isRunningCI,
-}
+};
