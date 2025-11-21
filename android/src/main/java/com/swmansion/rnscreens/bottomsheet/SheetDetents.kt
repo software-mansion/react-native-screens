@@ -21,6 +21,10 @@ class SheetDetents(
                     "[RNScreens] Detent values must be within 0.0 and 1.0, got $it."
                 }
             }
+
+            require(rawDetents == rawDetents.sorted()) {
+                "[RNScreens] Detents must be sorted in ascending order."
+            }
         }
     }
 
