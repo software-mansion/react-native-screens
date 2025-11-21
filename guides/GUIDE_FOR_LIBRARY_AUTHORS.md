@@ -104,6 +104,23 @@ Unfortunately the same behavior is not available on iOS since the behavior of na
 
 Defaults to `false`.
 
+### `scrollEdgeEffects` (>= iOS 26 only)
+
+Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
+Depending on values set, it will blur the scrolling content below certain UI elements (e.g. header items, search bar) for the specified edge of the ScrollView.
+When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around, the ScrollView will use only the innermost one's config.
+
+Edge effects can be configured for each edge separately. The following values are currently supported:
+
+- `automatic` - the automatic scroll edge effect style,
+- `hard` - a scroll edge effect with a hard cutoff and dividing line,
+- `soft` - a soft-edged scroll edge effect,
+- `hidden` - no scroll edge effect.
+
+Defaults to `automatic` for each edge.
+
+**Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
+
 ### `navigationBarColor` (Android only)
 
 This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
@@ -540,6 +557,8 @@ When set to `false` it works as a "kill switch": it enforces `backButtonDisplayM
 ### `blurEffect` (iOS only)
 
 Blur effect to be applied to the header. Works with `backgroundColor`'s alpha < 1.
+
+**Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
 
 ### `children`
 
