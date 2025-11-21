@@ -324,13 +324,13 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
-        val prevSystemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-        val prevDisplayCutoutInsets = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+        val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val displayCutoutInsets = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
 
         // We save the top inset (status bar height or display cutout) to later
         // subtract it from the window height during sheet size calculations.
         // This ensures the sheet respects the safe area.
-        lastTopInset = maxOf(prevSystemBarsInsets.top, prevDisplayCutoutInsets.top)
+        lastTopInset = maxOf(systemBarsInsets.top, displayCutoutInsets.top)
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -351,7 +351,7 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val newBottomInset = if (!isImeVisible) prevSystemBarsInsets.bottom else 0
+        val newBottomInset = if (!isImeVisible) systemBarsInsets.bottom else 0
 
         // Note: We do not manipulate the top inset manually. Therefore, if SafeAreaView has top insets enabled,
         // we must retain the top inset even if the formSheet does not currently overflow into the status bar.
@@ -363,7 +363,7 @@ class SheetDelegate(
             .Builder(insets)
             .setInsets(
                 WindowInsetsCompat.Type.systemBars(),
-                Insets.of(prevSystemBarsInsets.left, prevSystemBarsInsets.top, prevSystemBarsInsets.right, newBottomInset),
+                Insets.of(systemBarsInsets.left, systemBarsInsets.top, systemBarsInsets.right, newBottomInset),
             ).build()
     }
 
