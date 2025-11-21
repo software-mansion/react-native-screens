@@ -1,8 +1,5 @@
-const ChildProcess = require('node:child_process');
-const { iosDevice } = require('./ios-devices');
-
-// Should be kept in sync with the constant defined in e2e workflow file
-const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
+const AppleDeviceUtil = require('./ios-devices');
+const AndroidDeviceUtil = require('./android-devices');
 
 const isRunningCI = process.env.CI != null;
 
@@ -103,13 +100,19 @@ function resolveAndroidDeviceSerial() {
  * The output of this function can be controlled through couple of env vars.
  *
  * * `RNS_DEVICE_SERIAL` env var can be specified in case of running 
- * tests with an attached device. It can also be an emulator.
+ * tests with an attached Android device. It can also be an emulator.
  * The expected value here is the same as you would pass to `adb -s`.
  * You can find device serial by running `adb devices` command.
  *
- * * `RNS_AVD_NAME` env var can be specified in case of running tests on emulator. 
+ * * `RNS_AVD_NAME` env var can be specified in case of running tests on Android emulator. 
  * The exepected value here is the same as displayed in Android Studio or listed by
  * `emulator -list-avds`.
+ *
+ * * `RNS_APPLE_SIM_NAME` env var can be set in case of running tests on iOS simulator.
+ * The expected value here is exactly as one listed in XCode.
+ *
+ * * `RNS_IOS_VERSION` env var can be specified to request particular iOS version
+ * for the given simulator. Note that required SDK & simulators must be installed.
  *
  * @param {string} applicationName name (FabricExample / ScreensExample)
  * @returns {Detox.DetoxConfig}
@@ -157,19 +160,22 @@ function commonDetoxConfigFactory(applicationName) {
     devices: {
       simulator: {
         type: 'ios.simulator',
-        device: iosDevice,
+        device: {
+          type: AppleDeviceUtil.resolveAppleSimulatorName(),
+          os: AppleDeviceUtil.getIOSVersion(),
+        },
       },
       attached: {
         type: 'android.attached',
         device: {
-          adbName: resolveAndroidDeviceSerial(),
+          adbName: AndroidDeviceUtil.resolveAndroidDeviceSerial(),
         },
         utilBinaryPaths: testButlerApkPath,
       },
       emulator: {
         type: 'android.emulator',
         device: {
-          avdName: detectAndroidEmulatorName(),
+          avdName: AndroidDeviceUtil.detectAndroidEmulatorName(),
         },
         utilBinaryPaths: testButlerApkPath,
       },
