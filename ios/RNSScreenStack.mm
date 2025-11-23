@@ -666,7 +666,6 @@ RNS_IGNORE_SUPER_CALL_END
     // Modal is non-dismissible (e.g., third-party modal like TrueSheet)
     // We need to update changeRootController to this modal so new modals can be presented from it
     if (firstModalToBeDismissed != nil) {
-      NSLog(@"[RNScreens] Non-dismissible modal detected: %@", NSStringFromClass([firstModalToBeDismissed class]));
       changeRootController = firstModalToBeDismissed;
 
       // Check if the non-dismissible modal itself has presented modals that need to be dismissed
@@ -675,9 +674,6 @@ RNS_IGNORE_SUPER_CALL_END
           [_presentedModals containsObject:modalPresentedByNonDismissible]) {
         // The non-dismissible modal has presented one of our modals
         // We need to dismiss it before presenting new ones
-        NSLog(
-            @"[RNScreens] Dismissing modal presented by non-dismissible controller: %@",
-            NSStringFromClass([modalPresentedByNonDismissible class]));
         [firstModalToBeDismissed dismissViewControllerAnimated:YES completion:finish];
         return;
       }
