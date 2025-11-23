@@ -601,8 +601,10 @@ RNS_IGNORE_SUPER_CALL_END
 
   // This check is for external modals that are not owned by this stack. They can prevent the dismissal of the modal by
   // extending RNSDismissibleModalProtocol and returning NO from isDismissible method.
-  if (![firstModalToBeDismissed conformsToProtocol:@protocol(RNSDismissibleModalProtocol)] ||
-      [(id<RNSDismissibleModalProtocol>)firstModalToBeDismissed isDismissible]) {
+  BOOL shouldDismissFirstModal = ![firstModalToBeDismissed conformsToProtocol:@protocol(RNSDismissibleModalProtocol)] ||
+      [(id<RNSDismissibleModalProtocol>)firstModalToBeDismissed isDismissible];
+
+  if (shouldDismissFirstModal) {
     if (firstModalToBeDismissed != nil) {
       const BOOL firstModalToBeDismissedIsOwned = [firstModalToBeDismissed isKindOfClass:RNSScreen.class];
       const BOOL firstModalToBeDismissedIsOwnedByThisStack =
@@ -657,6 +659,26 @@ RNS_IGNORE_SUPER_CALL_END
       // scenario we will still have problems, see: https://github.com/software-mansion/react-native-screens/issues/1813
       if ([_presentedModals containsObject:topMostVc] && ![controllers containsObject:topMostVc]) {
         [changeRootController dismissViewControllerAnimated:YES completion:finish];
+        return;
+      }
+    }
+  } else {
+    // Modal is non-dismissible (e.g., third-party modal like TrueSheet)
+    // We need to update changeRootController to this modal so new modals can be presented from it
+    if (firstModalToBeDismissed != nil) {
+      NSLog(@"[RNScreens] Non-dismissible modal detected: %@", NSStringFromClass([firstModalToBeDismissed class]));
+      changeRootController = firstModalToBeDismissed;
+
+      // Check if the non-dismissible modal itself has presented modals that need to be dismissed
+      UIViewController *modalPresentedByNonDismissible = firstModalToBeDismissed.presentedViewController;
+      if (modalPresentedByNonDismissible != nil && ![modalPresentedByNonDismissible isBeingDismissed] &&
+          [_presentedModals containsObject:modalPresentedByNonDismissible]) {
+        // The non-dismissible modal has presented one of our modals
+        // We need to dismiss it before presenting new ones
+        NSLog(
+            @"[RNScreens] Dismissing modal presented by non-dismissible controller: %@",
+            NSStringFromClass([modalPresentedByNonDismissible class]));
+        [firstModalToBeDismissed dismissViewControllerAnimated:YES completion:finish];
         return;
       }
     }
