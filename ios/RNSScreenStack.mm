@@ -670,8 +670,8 @@ RNS_IGNORE_SUPER_CALL_END
       UIViewController *presentingController = nil;
 
       // Check if the external modal implements the optional method
-      if ([dismissibleModal respondsToSelector:@selector(presentingControllerForModals)]) {
-        presentingController = [dismissibleModal presentingControllerForModals];
+      if ([dismissibleModal respondsToSelector:@selector(presentingViewController)]) {
+        presentingController = [dismissibleModal presentingViewController];
       }
 
       // Only handle the non-dismissible modal if it provides a presenting controller
