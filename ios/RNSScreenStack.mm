@@ -664,18 +664,29 @@ RNS_IGNORE_SUPER_CALL_END
     }
   } else {
     // Modal is non-dismissible (e.g., third-party modal like TrueSheet)
-    // We need to update changeRootController to this modal so new modals can be presented from it
+    // Check if the external modal provides a presenting controller
     if (firstModalToBeDismissed != nil) {
-      changeRootController = firstModalToBeDismissed;
+      id<RNSDismissibleModalProtocol> dismissibleModal = (id<RNSDismissibleModalProtocol>)firstModalToBeDismissed;
+      UIViewController *presentingController = nil;
 
-      // Check if the non-dismissible modal itself has presented modals that need to be dismissed
-      UIViewController *modalPresentedByNonDismissible = firstModalToBeDismissed.presentedViewController;
-      if (modalPresentedByNonDismissible != nil && ![modalPresentedByNonDismissible isBeingDismissed] &&
-          [_presentedModals containsObject:modalPresentedByNonDismissible]) {
-        // The non-dismissible modal has presented one of our modals
-        // We need to dismiss it before presenting new ones
-        [firstModalToBeDismissed dismissViewControllerAnimated:YES completion:finish];
-        return;
+      // Check if the external modal implements the optional method
+      if ([dismissibleModal respondsToSelector:@selector(presentingControllerForModals)]) {
+        presentingController = [dismissibleModal presentingControllerForModals];
+      }
+
+      // Only handle the non-dismissible modal if it provides a presenting controller
+      if (presentingController != nil) {
+        changeRootController = presentingController;
+
+        // Check if the presenting controller has presented modals that need to be dismissed
+        UIViewController *modalPresentedByController = presentingController.presentedViewController;
+        if (modalPresentedByController != nil && ![modalPresentedByController isBeingDismissed] &&
+            [_presentedModals containsObject:modalPresentedByController]) {
+          // The presenting controller has presented one of our modals
+          // We need to dismiss it before presenting new ones
+          [presentingController dismissViewControllerAnimated:YES completion:finish];
+          return;
+        }
       }
     }
   }
