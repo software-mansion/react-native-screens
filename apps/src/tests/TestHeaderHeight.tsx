@@ -3,6 +3,7 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from 'react';
 import {
@@ -24,7 +25,7 @@ import {
 } from 'react-native-screens';
 import Colors from '../shared/styling/Colors';
 import { SettingsPicker, SettingsSwitch } from '../shared';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -33,10 +34,26 @@ import {
   BottomTabsContainer,
   TabConfiguration,
 } from '../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
+import { useHeaderHeight } from '@react-navigation/elements';
 
-interface NavigationProps {
-  setShowTestScreen: Dispatch<SetStateAction<boolean>>;
+interface ScreensNavigationProps {
+  push?: () => void;
+  pop?: () => void;
 }
+
+type NavigationProps =
+  | {
+      type: 'SCREENS';
+      props: ScreensNavigationProps;
+    }
+  | {
+      type: 'REACT_NAVIGATION';
+      props: StackNavigationProp;
+    };
 
 interface Config {
   headerTransparent: boolean;
@@ -46,8 +63,9 @@ interface Config {
   searchBarPlacement: 'disabled' | SearchBarPlacement;
   searchBarHideNavigationBar: boolean;
   searchBarHideWhenScrolling: boolean;
-  content: 'regularView' | 'scrollView';
+  content: 'regularView' | 'scrollView' | 'config';
   headerHeight: number;
+  headerHeightApi: 'react-native-screens' | 'react-navigation';
 }
 
 export interface ConfigContextInterface {
@@ -69,7 +87,7 @@ export const useConfigContext = () => {
   return ctx;
 };
 
-function HeaderHeightInfo({
+function HeaderHeightInfoComponent({
   positionAbsolute = true,
 }: {
   positionAbsolute?: boolean;
@@ -96,13 +114,29 @@ function HeaderHeightInfo({
   );
 }
 
-function ConfigScreen({ setShowTestScreen }: NavigationProps) {
+function ConfigScreen(props: NavigationProps) {
+  const push =
+    props.type === 'SCREENS'
+      ? props.props.push
+      : () => props.props.navigation.push('TestScreen');
   const { config, setConfig } = useConfigContext();
 
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ padding: 16, gap: 5 }}>
+      <Text style={styles.title}>API configuration</Text>
+      <SettingsPicker<Config['headerHeightApi']>
+        label="headerHeightApi"
+        value={config.headerHeightApi}
+        onValueChange={value =>
+          setConfig({
+            ...config,
+            headerHeightApi: value,
+          })
+        }
+        items={['react-native-screens', 'react-navigation']}
+      />
       <Text style={styles.title}>Stack configuration</Text>
       <SettingsSwitch
         label="headerTransparent"
@@ -187,22 +221,45 @@ function ConfigScreen({ setShowTestScreen }: NavigationProps) {
             content: value,
           })
         }
-        items={['regularView', 'scrollView']}
+        items={['regularView', 'scrollView', 'config']}
       />
-      <Button title="Push screen" onPress={() => setShowTestScreen(true)} />
+      <Button title="Push screen" onPress={() => push?.()} />
     </ScrollView>
   );
 }
 
-function TestScreen({ setShowTestScreen }: NavigationProps) {
-  const { config } = useConfigContext();
+function ReactNavigationTestScreenWrapper(props: NavigationProps) {
+  const { config, setConfig } = useConfigContext();
+  const height = useHeaderHeight();
+  useEffect(() => {
+    if (config.headerHeight !== height) {
+      console.log(`[HeaderHeight][react-navigation] ${height}`);
+      setConfig(prev => ({ ...prev, headerHeight: height }));
+    }
+  }, [config.headerHeight, height, setConfig]);
+
+  return <TestScreen {...props} />;
+}
+
+function TestScreen(props: NavigationProps) {
+  const pop =
+    props.type === 'SCREENS'
+      ? props.props.pop
+      : () => props.props.navigation.pop();
+  const { config, setConfig } = useConfigContext();
 
   const topContent = (
     <>
       <LongText size="xs" />
-      <Button onPress={() => setShowTestScreen(false)} title="Back to config" />
+      <Button
+        onPress={() => {
+          pop?.();
+          setConfig(prev => ({ ...prev, headerHeight: -1000 }));
+        }}
+        title="Back to config"
+      />
       {config.presentation !== 'push' && (
-        <HeaderHeightInfo positionAbsolute={false} />
+        <HeaderHeightInfoComponent positionAbsolute={false} />
       )}
     </>
   );
@@ -217,12 +274,27 @@ function TestScreen({ setShowTestScreen }: NavigationProps) {
           <LongText size="lg" />
         </ScrollView>
       );
+    case 'config':
+      return (
+        <>
+          {topContent}
+          <ConfigScreen {...props} />
+        </>
+      );
   }
 }
 
-function Navigation() {
+function ReactNativeScreensNavigation() {
   const { config, setConfig } = useConfigContext();
   const [showTestScreen, setShowTestScreen] = useState(false);
+
+  const props: NavigationProps = {
+    type: 'SCREENS',
+    props: {
+      push: () => setShowTestScreen(true),
+      pop: () => setShowTestScreen(false),
+    },
+  };
 
   return (
     <>
@@ -232,15 +304,22 @@ function Navigation() {
           headerConfig={{
             hidden: true,
           }}>
-          <ConfigScreen setShowTestScreen={setShowTestScreen} />
+          <ConfigScreen {...props} />
         </ScreenStackItem>
         {showTestScreen && (
           <ScreenStackItem
             screenId="test"
-            style={StyleSheet.absoluteFill}
+            style={[
+              StyleSheet.absoluteFill,
+              {
+                backgroundColor: Colors.cardBackground,
+              },
+            ]}
             activityState={2}
             onHeaderHeightChange={e => {
-              console.log(`[HeaderHeight] ${e.nativeEvent.headerHeight}`);
+              console.log(
+                `[HeaderHeight][react-native-screens] ${e.nativeEvent.headerHeight}`,
+              );
               setConfig({
                 ...config,
                 headerHeight: e.nativeEvent.headerHeight,
@@ -274,11 +353,71 @@ function Navigation() {
                   </ScreenStackHeaderSearchBarView>
                 ) : undefined,
             }}>
-            <TestScreen setShowTestScreen={setShowTestScreen} />
+            <TestScreen {...props} />
           </ScreenStackItem>
         )}
       </ScreenStack>
-      {showTestScreen && config.presentation === 'push' && <HeaderHeightInfo />}
+      {showTestScreen && config.presentation === 'push' && (
+        <HeaderHeightInfoComponent />
+      )}
+    </>
+  );
+}
+
+type RouteParamList = {
+  ConfigScreen: undefined;
+  TestScreen: undefined;
+};
+
+type NavigationProp<ParamList extends ParamListBase> = {
+  navigation: NativeStackNavigationProp<ParamList>;
+};
+
+type StackNavigationProp = NavigationProp<RouteParamList>;
+
+const Stack = createNativeStackNavigator<RouteParamList>();
+
+const ConfigScreenComponent = (props: StackNavigationProp) => (
+  <ConfigScreen {...{ type: 'REACT_NAVIGATION', props }} />
+);
+
+const TestScreenComponent = (props: StackNavigationProp) => (
+  <ReactNavigationTestScreenWrapper {...{ type: 'REACT_NAVIGATION', props }} />
+);
+
+function ReactNavigationNavigation() {
+  const { config } = useConfigContext();
+
+  return (
+    <>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="ConfigScreen"
+          component={ConfigScreenComponent}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TestScreen"
+          component={TestScreenComponent}
+          options={{
+            headerBackVisible: false,
+            headerTransparent: config.headerTransparent,
+            headerLargeTitle: config.headerLargeTitle,
+            headerShown: config.headerShown,
+            presentation:
+              config.presentation === 'push' ? 'card' : config.presentation,
+            headerSearchBarOptions:
+              config.searchBarPlacement !== 'disabled'
+                ? {
+                    placement: config.searchBarPlacement,
+                    hideNavigationBar: config.searchBarHideNavigationBar,
+                    hideWhenScrolling: config.searchBarHideWhenScrolling,
+                  }
+                : undefined,
+          }}
+        />
+      </Stack.Navigator>
+      <HeaderHeightInfoComponent />
     </>
   );
 }
@@ -294,12 +433,17 @@ function HeaderHeightTest() {
     searchBarHideWhenScrolling: true,
     content: 'regularView',
     headerHeight: 0,
+    headerHeightApi: 'react-native-screens',
   });
 
   return (
     <NavigationContainer>
       <ConfigContext.Provider value={{ config, setConfig }}>
-        <Navigation />
+        {config.headerHeightApi === 'react-native-screens' ? (
+          <ReactNativeScreensNavigation />
+        ) : (
+          <ReactNavigationNavigation />
+        )}
       </ConfigContext.Provider>
     </NavigationContainer>
   );

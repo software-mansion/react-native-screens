@@ -31,6 +31,14 @@ export const compatibilityFlags = {
    * * https://github.com/react-navigation/react-navigation/pull/12125
    */
   usesHeaderFlexboxImplementation: true,
+
+  /**
+   * In https://github.com/software-mansion/react-native-screens/pull/3402, we fix values
+   * reported in `onHeaderHeightChange` event on Android. To allow backward compatibility in
+   * `@react-navigation/native-stack`, we expose a way to check whether the new implementation
+   * is in use or not.
+   */
+  usesNewAndroidHeaderHeightImplementation: true,
 } as const;
 
 const _featureFlags = {
