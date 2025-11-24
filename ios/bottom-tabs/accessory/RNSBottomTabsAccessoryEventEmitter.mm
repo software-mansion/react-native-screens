@@ -44,7 +44,12 @@ namespace react = facebook::react;
         rnscreens::conversion::RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
             environment);
 
-    _reactEventEmitter->onEnvironmentChange({.environment = payloadEnvironment});
+    // If environment is other than `regular` or `inline`, we don't emit the event.
+    if (!payloadEnvironment.has_value()) {
+      return NO;
+    }
+
+    _reactEventEmitter->onEnvironmentChange({.environment = payloadEnvironment.value()});
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnEnvironmentChange event emission due to nullish emitter");
@@ -55,6 +60,11 @@ namespace react = facebook::react;
     NSString *environmentString =
         rnscreens::conversion::RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
             environment);
+
+    // If environment is other than `regular` or `inline`, we don't emit the event.
+    if (environmentString == nil) {
+      return NO;
+    }
 
     self.onEnvironmentChange(@{@"environment" : environmentString});
     return YES;
