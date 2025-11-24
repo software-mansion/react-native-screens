@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 // that should be used as the presenting controller for subsequent modals.
 // This gives the external modal implementation control over the presentation chain.
 // If not implemented or returns nil, the non-dismissible modal itself will be used.
-- (nullable UIViewController *)presentingViewController;
+- (nullable UIViewController *)newPresentingViewController;
 
 @end
 
