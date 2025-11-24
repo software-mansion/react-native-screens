@@ -6,14 +6,14 @@ const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
 
 const isRunningCI = process.env.CI != null;
 
-// Assumes that local developement is done on arm64-v8a.
+// Assumes that local development is done on arm64-v8a.
 const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 // test-butler requires AOSP emulator image, which is not available to download for arm64-v8a in Android Studio SDK Manager, therefore
 // it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
 
 function detectLocalAndroidEmulator() {
-  // "RNS_E2E_AVD_NAME" can be set for local developement
+  // "RNS_E2E_AVD_NAME" can be set for local development
   const avdName = process.env.RNS_E2E_AVD_NAME ?? null;
   if (avdName !== null) {
     return avdName
@@ -45,7 +45,7 @@ function detectLocalAndroidEmulator() {
 }
 
 function detectAndroidEmulatorName() {
-  // "RNS_E2E_AVD_NAME" can be set for local developement
+  // "RNS_E2E_AVD_NAME" can be set for local development
   return isRunningCI ? DEFAULT_CI_AVD_NAME : detectLocalAndroidEmulator();
 }
 

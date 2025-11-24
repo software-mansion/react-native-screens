@@ -1,5 +1,5 @@
 const DEFAULT_APPLE_DEVICE = 'iPhone 17';
-const DEFEAULT_IOS_VERSION = 'iOS 26.2';
+const DEFAULT_IOS_VERSION = 'iOS 26.2';
 
 /**
  * @return {string}
@@ -29,7 +29,7 @@ function getIOSVersion() {
       throw new Error(`Environment variable ${envVariableKey} should be "iOS xyz".`);
     }
   }
-  return DEFEAULT_IOS_VERSION;
+  return DEFAULT_IOS_VERSION;
 }
 
 /**
