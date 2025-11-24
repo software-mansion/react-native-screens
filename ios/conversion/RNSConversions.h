@@ -77,7 +77,7 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
-react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment
+std::optional<react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
 RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment);
 
 #if REACT_NATIVE_VERSION_MINOR >= 82

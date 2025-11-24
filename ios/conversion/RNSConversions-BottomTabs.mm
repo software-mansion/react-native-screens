@@ -405,7 +405,7 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
-react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment
+std::optional<react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
 RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment)
 {
   switch (environment) {
@@ -414,8 +414,8 @@ RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UI
     case UITabAccessoryEnvironmentInline:
       return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Inline;
     default:
-      RCTLogError(@"[RNScreens] Unsupported environment for onEnvironmentChange event");
-      return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
+      // We want to ignore other environments (e.g. `none`), that's why there is no warning here.
+      return std::nullopt;
   }
 }
 
@@ -446,7 +446,7 @@ API_AVAILABLE(ios(26.0))
 NSString *RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
     UITabAccessoryEnvironment environment)
 {
-  NSString *environmentString = nil;
+  NSString *environmentString;
   switch (environment) {
     case UITabAccessoryEnvironmentRegular:
       environmentString = BOTTOM_TABS_ACCESSORY_REGULAR_ENVIRONMENT;
@@ -455,7 +455,8 @@ NSString *RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvi
       environmentString = BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT;
       break;
     default:
-      RCTLogError(@"[RNScreens] Unsupported environment for onEnvironmentChange event");
+      // We want to ignore other environments (e.g. `none`), that's why there is no warning here.
+      environmentString = nil;
       break;
   }
 
