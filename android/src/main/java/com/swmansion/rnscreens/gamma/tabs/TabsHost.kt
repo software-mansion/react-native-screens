@@ -9,10 +9,12 @@ import android.view.View
 import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
@@ -26,7 +28,7 @@ import kotlin.properties.Delegates
 
 class TabsHost(
     val reactContext: ThemedReactContext,
-) : FrameLayout(reactContext),
+) : CoordinatorLayout(reactContext),
     TabScreenDelegate,
     SafeAreaProvider,
     View.OnLayoutChangeListener {
@@ -126,11 +128,14 @@ class TabsHost(
     private val bottomNavigationView: BottomNavigationView =
         BottomNavigationView(wrappedContext).apply {
             layoutParams =
-                LayoutParams(
-                    LayoutParams.MATCH_PARENT,
-                    LayoutParams.WRAP_CONTENT,
-                    Gravity.BOTTOM,
-                )
+                CoordinatorLayout
+                    .LayoutParams(
+                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                        CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                    ).apply {
+                        gravity = Gravity.BOTTOM
+                        behavior = HideBottomViewOnScrollBehavior<BottomNavigationView>()
+                    }
         }
 
     private val contentView: FrameLayout =
