@@ -11,43 +11,33 @@ const pressBack = async () => {
 };
 
 const awaitClassicalEventBehavior = async () => {
-  if (device.getPlatform() === 'ios') {
-    await expect(
-      element(by.text('9. Chats | transitionStart | closing')),
-    ).toExist();
-    await expect(
-      element(by.text('10. Privacy | transitionStart | closing')),
-    ).toExist();
-    await expect(
-      element(by.text('11. Main | transitionStart | opening')),
-    ).toExist();
-    await expect(
-      element(by.text('12. Chats | transitionEnd | closing')),
-    ).toExist();
-    await expect(
-      element(by.text('13. Privacy | transitionEnd | closing')),
-    ).toExist();
-    await expect(element(by.text('14. Privacy | beforeRemove'))).toExist();
-    await expect(element(by.text('15. Chats | beforeRemove'))).toExist();
-    await expect(
-      element(by.text('16. Main | transitionEnd | opening')),
-    ).toExist();
-  } else {
-    await expect(element(by.text('9. Privacy | beforeRemove'))).toExist();
-    await expect(element(by.text('10. Chats | beforeRemove'))).toExist();
-    await expect(
-      element(by.text('11. Main | transitionStart | opening')),
-    ).toExist();
-    await expect(
-      element(by.text('12. Main | transitionEnd | opening')),
-    ).toExist();
+  const expectedEvents =
+    device.getPlatform() === 'ios'
+      ? [
+          '9. Chats | transitionStart | closing',
+          '10. Privacy | transitionStart | closing',
+          '11. Main | transitionStart | opening',
+          '12. Chats | transitionEnd | closing',
+          '13. Privacy | transitionEnd | closing',
+          '14. Privacy | beforeRemove',
+          '15. Chats | beforeRemove',
+          '16. Main | transitionEnd | opening',
+        ]
+      : [
+          '9. Privacy | beforeRemove',
+          '10. Chats | beforeRemove',
+          '11. Main | transitionStart | opening',
+          '12. Main | transitionEnd | opening',
+        ];
+  for (const expectedEventNotiication of expectedEvents) {
+    await expect(element(by.text(expectedEventNotiication))).toExist();
   }
 };
 
 describe('Events', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    // await device.launchApp({ newInstance: true });
+    await device.launchApp({ newInstance: true });
 
     await waitFor(element(by.id('root-screen-playground-Events')))
       .toBeVisible()
