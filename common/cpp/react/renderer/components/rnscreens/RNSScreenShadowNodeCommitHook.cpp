@@ -9,27 +9,13 @@ namespace react {
 RNSScreenShadowNodeCommitHook::RNSScreenShadowNodeCommitHook(
     std::shared_ptr<const ContextContainer> contextContainer)
     : contextContainer_(contextContainer) {
-  if (contextContainer_) {
-    auto fabricUIManager =
-        contextContainer_
-            ->at<jni::alias_ref<facebook::react::JFabricUIManager::javaobject>>(
-                "FabricUIManager");
-    fabricUIManager->getBinding()
-        ->getScheduler()
-        ->getUIManager()
-        ->registerCommitHook(*this);
-  }
+  getUIManagerFromSharedContext(contextContainer)->registerCommitHook(*this);
 }
 
 RNSScreenShadowNodeCommitHook::~RNSScreenShadowNodeCommitHook() noexcept {
-  if (contextContainer_) {
-    auto fabricUIManager =
-        contextContainer_
-            ->at<jni::alias_ref<facebook::react::JFabricUIManager::javaobject>>(
-                "FabricUIManager");
-    fabricUIManager->getBinding()
-        ->getScheduler()
-        ->getUIManager()
+  const auto contextContainer = contextContainer_.lock();
+  if (contextContainer) {
+    getUIManagerFromSharedContext(contextContainer)
         ->unregisterCommitHook(*this);
   }
 }
@@ -47,35 +33,39 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
   const bool wasHorizontal = isHorizontal_(*oldRootProps.get());
   const bool willBeHorizontal = isHorizontal_(*newRootProps.get());
 
-  const bool orientationDidChange = wasHorizontal != willBeHorizontal;
+  if (wasHorizontal != willBeHorizontal) {
+    return newRootShadowNodeWithScreenFrameSizesReset(newRootShadowNode);
+  }
 
-  std::shared_ptr<ShadowNode> finalRootShadowNode = newRootShadowNode;
-  if (orientationDidChange) {
-    std::vector<const RNSScreenShadowNode *> screens;
-    findScreenNodes(newRootShadowNode, screens);
+  return newRootShadowNode;
+}
 
-    for (auto screen : screens) {
-      const auto rootShadowNodeClone = newRootShadowNode->cloneTree(
-          screen->getFamily(), [](const ShadowNode &oldShadowNode) {
-            auto clone =
-                oldShadowNode.clone({.state = oldShadowNode.getState()});
-            auto screenNode = static_pointer_cast<RNSScreenShadowNode>(clone);
-            auto yogaNode =
-                static_pointer_cast<YogaLayoutableShadowNode>(clone);
+RootShadowNode::Unshared
+RNSScreenShadowNodeCommitHook::newRootShadowNodeWithScreenFrameSizesReset(
+    RootShadowNode::Unshared rootShadowNode) {
+  std::vector<const RNSScreenShadowNode *> screens;
+  findScreenNodes(rootShadowNode, screens);
 
-            screenNode->resetFrameSizeState();
-            yogaNode->setSize({YGUndefined, YGUndefined});
+  for (auto screen : screens) {
+    const auto rootShadowNodeClone = rootShadowNode->cloneTree(
+        screen->getFamily(), [](const ShadowNode &oldShadowNode) {
+          auto clone = oldShadowNode.clone({.state = oldShadowNode.getState()});
+          auto screenNode = static_pointer_cast<RNSScreenShadowNode>(clone);
+          auto yogaNode = static_pointer_cast<YogaLayoutableShadowNode>(clone);
 
-            return clone;
-          });
+          screenNode->resetFrameSizeState();
+          yogaNode->setSize({YGUndefined, YGUndefined});
 
-      if (rootShadowNodeClone) {
-        finalRootShadowNode = rootShadowNodeClone;
-      }
+          return clone;
+        });
+
+    if (rootShadowNodeClone) {
+      rootShadowNode =
+          std::static_pointer_cast<RootShadowNode>(rootShadowNodeClone);
     }
   }
 
-  return std::static_pointer_cast<RootShadowNode>(finalRootShadowNode);
+  return rootShadowNode;
 }
 
 void RNSScreenShadowNodeCommitHook::findScreenNodes(
@@ -95,6 +85,16 @@ void RNSScreenShadowNodeCommitHook::findScreenNodes(
       shadowNodesToVisit.emplace(child.get());
     }
   }
+}
+
+std::shared_ptr<UIManager>
+RNSScreenShadowNodeCommitHook::getUIManagerFromSharedContext(
+    std::shared_ptr<const ContextContainer> sharedContext) {
+  auto fabricUIManager =
+      sharedContext
+          ->at<jni::alias_ref<facebook::react::JFabricUIManager::javaobject>>(
+              "FabricUIManager");
+  return fabricUIManager->getBinding()->getScheduler()->getUIManager();
 }
 
 } // namespace react

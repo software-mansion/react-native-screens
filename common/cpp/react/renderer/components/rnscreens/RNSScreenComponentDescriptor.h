@@ -52,7 +52,7 @@ class RNSScreenComponentDescriptor final
         dynamic_cast<const RNSScreenProps *>(
             screenShadowNode.getProps().get()));
     auto props =
-        dynamic_cast<const RNSScreenProps *>(screenShadowNode.getProps().get());
+        static_cast<const RNSScreenProps *>(screenShadowNode.getProps().get());
 
     if (!commitHook_ && props->earlyScreenOrientationChangeEnabled) {
       // For the the application that needs to react to orientation change
