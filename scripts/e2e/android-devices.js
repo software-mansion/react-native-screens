@@ -1,5 +1,5 @@
 const { getCommandLineResponse } = require('./command-line-helpers');
-const { getDeviceIds } = require('./turn-on-android-emulators');
+const { getDeviceIds, bootDevices } = require('./turn-on-android-emulators');
 
 const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
 const isRunningCI = !!process.env.CI;
@@ -12,6 +12,10 @@ const envVarKeys = /** @type {const} */ ({
 const passedAdbSerial = process.env[envVarKeys.adbSerial];
 
 function resolveAttachedAndroidDeviceSerial() {
+  const isEmulatorConfig = process.argv.some(runtimeArg =>
+    runtimeArg.includes('android.att'),
+  );
+  if (!isEmulatorConfig) return 'INACTIVE CONFIG';
   if (passedAdbSerial) return passedAdbSerial;
   const connectedPhysicalDevices = getDeviceIds().filter(
     deviceID => !deviceID.startsWith('emulator'),
@@ -46,7 +50,27 @@ function detectAndroidEmulatorName() {
 }
 
 function detectLocalAndroidEmulator() {
-  return getAvailableEmulatorNames()[0]; // non-zero length is guaranteed. It will be replaced in the next change anyway.
+  bootInactiveEmulators();
+  // non-zero length is guaranteed. It will be replaced in the next change anyway.
+  return getAvailableEmulatorNames()[0];
+}
+
+/**
+ * attaches all available emulators to be able to call them via adb
+ */
+function bootInactiveEmulators() {
+  const allAvailableEmulatorNames = getAvailableEmulatorNames();
+  try {
+    const alreadyRunningDevices = new Set(
+      getDeviceIds().map(resolveAvdNameFromDeviceId)
+    );
+    const inactiveEmulators = allAvailableEmulatorNames.filter(
+      deviceName => !alreadyRunningDevices.has(deviceName),
+    );
+    bootDevices(inactiveEmulators);
+  } catch (_) {
+    bootDevices(allAvailableEmulatorNames);
+  }
 }
 
 function getAvailableEmulatorNames() {
@@ -67,7 +91,6 @@ function getAvailableEmulatorNames() {
     throw new Error(errorMessage);
   }
 }
-
 
 /**
  * @param {string} deviceId - Device adb identifier, device serial

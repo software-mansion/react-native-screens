@@ -73,8 +73,7 @@ function bootDevices(avdNames) {
     return newSerials;
   } catch (error) {
     throw new Error(
-      '❌ Error booting devices:\n' +
-      /** @type {Error} */ (error).message,
+      '❌ Error booting devices:\n' + /** @type {Error} */ (error).message,
     );
   }
 }
@@ -104,8 +103,7 @@ function spawnEmulator(avdName) {
  */
 function getConnectedEmulators() {
   try {
-    return getDeviceIds()
-      .filter(line => line.trim().startsWith('emulator-'))
+    return getDeviceIds().filter(line => line.trim().startsWith('emulator-'));
   } catch (_) {
     return [];
   }
@@ -137,7 +135,6 @@ function getDeviceIds() {
   });
 }
 
-
 /**
  * @param {string} serial
  */
@@ -145,7 +142,10 @@ function waitForBootSync(serial) {
   let booted = false;
   const giveUpTimestamp = Date.now() + DEVICE_RESPONSE_TIMEOUT;
   while (!booted) {
-    if (giveUpTimestamp < Date.now()) break;
+    if (giveUpTimestamp < Date.now()) {
+      console.warn(`The heathcheck for device ${serial} timed out!`);
+      break;
+    }
     try {
       const res = execSync(
         `adb -s ${serial} shell getprop sys.boot_completed`,
