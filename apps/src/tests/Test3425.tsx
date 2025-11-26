@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { enableFreeze } from 'react-native-screens';
 import { Button, View } from 'react-native';
 import Colors from '../shared/styling/Colors';
 import { TestBottomTabs } from '.';
-
-enableFreeze(true);
 
 export default function App() {
   const [index, setIndex] = useState(0);
