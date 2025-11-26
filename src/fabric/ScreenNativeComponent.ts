@@ -122,7 +122,7 @@ export interface NativeProps extends ViewProps {
   synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
   androidResetScreenShadowStateOnOrientationChangeEnabled?: WithDefault<
     boolean,
-    false
+    true
   >;
 }
 
