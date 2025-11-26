@@ -120,7 +120,10 @@ export interface NativeProps extends ViewProps {
   rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
-  earlyScreenOrientationChangeEnabled?: WithDefault<boolean, false>;
+  androidResetScreenShadowStateOnOrientationChangeEnabled?: WithDefault<
+    boolean,
+    false
+  >;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {

@@ -137,8 +137,8 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
       case "synchronousShadowStateUpdatesEnabled":
         mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
         break;
-      case "earlyScreenOrientationChangeEnabled":
-        mViewManager.setEarlyScreenOrientationChangeEnabled(view, value == null ? false : (boolean) value);
+      case "androidResetScreenShadowStateOnOrientationChangeEnabled":
+        mViewManager.setAndroidResetScreenShadowStateOnOrientationChangeEnabled(view, value == null ? false : (boolean) value);
         break;
       default:
         super.setProperty(view, propName, value);

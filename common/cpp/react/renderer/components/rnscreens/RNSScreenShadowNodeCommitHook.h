@@ -31,7 +31,7 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
   std::weak_ptr<const ContextContainer> contextContainer_;
 
   static inline bool isHorizontal_(const RootProps &props) {
-    auto layoutConstraints = props.layoutConstraints;
+    const auto &layoutConstraints = props.layoutConstraints;
     const float width = layoutConstraints.maximumSize.width;
     const float height = layoutConstraints.maximumSize.height;
 

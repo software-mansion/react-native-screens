@@ -2,7 +2,8 @@ const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = true;
 const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
-const RNS_EARLY_SCREEN_ORIENTATION_CHANGE_DEFAULT = false;
+const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
+  true;
 
 // TODO: Migrate freeze here
 
@@ -43,8 +44,8 @@ const _featureFlags = {
       RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
     synchronousHeaderSubviewUpdatesEnabled:
       RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
-    earlyScreenOrientationChangeEnabled:
-      RNS_EARLY_SCREEN_ORIENTATION_CHANGE_DEFAULT,
+    androidResetScreenShadowStateOnOrientationChangeEnabled:
+      RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
   },
   stable: {},
 };
@@ -91,10 +92,10 @@ const synchronousHeaderSubviewUpdatesAccessor =
     'synchronousHeaderSubviewUpdatesEnabled',
     RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
   );
-const earlyScreenOrientationChangeAccessor =
+const androidResetScreenShadowStateOnOrientationChangeAccessor =
   createExperimentalFeatureFlagAccessor(
-    'earlyScreenOrientationChangeEnabled',
-    RNS_EARLY_SCREEN_ORIENTATION_CHANGE_DEFAULT,
+    'androidResetScreenShadowStateOnOrientationChangeEnabled',
+    RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
   );
 
 /**
@@ -131,11 +132,13 @@ export const featureFlags = {
     set synchronousHeaderSubviewUpdatesEnabled(value: boolean) {
       synchronousHeaderSubviewUpdatesAccessor.set(value);
     },
-    get earlyScreenOrientationChangeEnabled() {
-      return earlyScreenOrientationChangeAccessor.get();
+    get androidResetScreenShadowStateOnOrientationChangeEnabled() {
+      return androidResetScreenShadowStateOnOrientationChangeAccessor.get();
     },
-    set earlyScreenOrientationChangeEnabled(value: boolean) {
-      earlyScreenOrientationChangeAccessor.set(value);
+    set androidResetScreenShadowStateOnOrientationChangeEnabled(
+      value: boolean,
+    ) {
+      androidResetScreenShadowStateOnOrientationChangeAccessor.set(value);
     },
   },
   /**

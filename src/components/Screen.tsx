@@ -268,8 +268,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             synchronousShadowStateUpdatesEnabled={
               featureFlags.experiment.synchronousScreenUpdatesEnabled
             }
-            earlyScreenOrientationChangeEnabled={
-              featureFlags.experiment.earlyScreenOrientationChangeEnabled
+            androidResetScreenShadowStateOnOrientationChangeEnabled={
+              featureFlags.experiment
+                .androidResetScreenShadowStateOnOrientationChangeEnabled
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children

@@ -46,15 +46,17 @@ class RNSScreenComponentDescriptor final
             shadowNode.getState());
     auto stateData = state->getData();
 #ifdef ANDROID
-    // get featureFlags.experiment.earlyScreenOrientationChangeEnabled from
-    // Screen props enable the commit hook only when the developer asks to
+    // get
+    // featureFlags.experiment.androidResetScreenShadowStateOnOrientationChange
+    // from Screen props enable the commit hook only when the developer asks to
     react_native_assert(
         dynamic_cast<const RNSScreenProps *>(
             screenShadowNode.getProps().get()));
     auto props =
         static_cast<const RNSScreenProps *>(screenShadowNode.getProps().get());
 
-    if (!commitHook_ && props->earlyScreenOrientationChangeEnabled) {
+    if (!commitHook_ &&
+        props->androidResetScreenShadowStateOnOrientationChangeEnabled) {
       // For the the application that needs to react to orientation change
       // as early as possible, we attach a commit hook that checks for the
       // change in the old vs new RootShadowNode. The hook cannot be attached in

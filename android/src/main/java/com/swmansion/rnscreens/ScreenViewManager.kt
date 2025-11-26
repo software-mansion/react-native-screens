@@ -342,7 +342,7 @@ open class ScreenViewManager :
 
     // END mark: iOS-only
 
-    override fun setEarlyScreenOrientationChangeEnabled(
+    override fun setAndroidResetScreenShadowStateOnOrientationChangeEnabled(
         view: Screen?,
         value: Boolean,
     ) = Unit // represents a feature flag and is checked via getProps() in RNSScreenComponentDescriptor.h
