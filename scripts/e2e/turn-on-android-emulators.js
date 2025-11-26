@@ -1,7 +1,8 @@
 const { spawn, execSync } = require('node:child_process');
+const { getCommandLineResponse } = require('./command-line-helpers');
 
 const ALL_DEVICES_TIMEOUT = 120_000; // I expect perform this process in less than 2 minutes
-const DEVICE_RESPONSE_TIMEOUT = 60000; // I expect one device to boot in 60 seconds
+const DEVICE_RESPONSE_TIMEOUT = 60_000; // I expect one device to boot in 60 seconds
 
 /**
  * Spawns multiple emulators and waits for them to be fully booted.
@@ -13,8 +14,8 @@ function bootDevices(avdNames) {
   if (!avdNames || avdNames.length === 0) return [];
 
   try {
-    const initialDevices = getConnectedDevices();
-    const expectedTotal = initialDevices.length + avdNames.length;
+    const initialDevices = getConnectedEmulators();
+    const targetDeviceCount = initialDevices.length + avdNames.length;
 
     console.log(
       `🎯 Target: Booting ${avdNames.length} devices (${avdNames.join(
@@ -22,7 +23,7 @@ function bootDevices(avdNames) {
       )})...`,
     );
     console.log(
-      `   Existing devices: ${initialDevices.length}. Waiting for total: ${expectedTotal}`,
+      `   Existing devices: ${initialDevices.length}. Waiting for total: ${targetDeviceCount}`,
     );
 
     for (const name of avdNames) {
@@ -40,14 +41,14 @@ function bootDevices(avdNames) {
 
     const giveUpTimestamp = Date.now() + ALL_DEVICES_TIMEOUT;
     while (Date.now() <= giveUpTimestamp) {
-      currentDevices = getConnectedDevices();
+      currentDevices = getConnectedEmulators();
 
       // Simple progress indicator
       process.stdout.write(
-        `\r   Found: ${currentDevices.length} / ${expectedTotal}`,
+        `\r   Found: ${currentDevices.length} / ${targetDeviceCount}`,
       );
 
-      if (currentDevices.length >= expectedTotal) {
+      if (currentDevices.length >= targetDeviceCount) {
         console.log('\n✅ All devices registered.');
         break;
       }
@@ -71,11 +72,10 @@ function bootDevices(avdNames) {
     console.log('🎉 All requested devices are running!');
     return newSerials;
   } catch (error) {
-    console.error(
-      '❌ Error booting devices:',
+    throw new Error(
+      '❌ Error booting devices:\n' +
       /** @type {Error} */ (error).message,
     );
-    process.exit(1);
   }
 }
 
@@ -100,19 +100,43 @@ function spawnEmulator(avdName) {
 }
 
 /**
- * @returns {string[]} array of device ids
+ * @returns {string[]} array of emulators' device ids
  */
-function getConnectedDevices() {
+function getConnectedEmulators() {
   try {
-    return execSync('adb devices', { encoding: 'utf8' })
-      .split('\n')
-      .filter(line => line.includes('emulator') || line.includes('device'))
-      .map(line => line.split('\t')[0].trim())
-      .filter(id => id !== 'List of devices attached');
+    return getDeviceIds()
+      .filter(line => line.trim().startsWith('emulator-'))
   } catch (_) {
     return [];
   }
 }
+
+/**
+ * @returns {string[]} list of device adb serials,
+ * for both physicall and emulated devices, but only
+ * with status "device" (connected and ready)
+ */
+function getDeviceIds() {
+  const adbDeviceLines = getCommandLineResponse('adb devices')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean);
+  // Remove header line: "List of devices attached"
+  adbDeviceLines.shift();
+  if (adbDeviceLines.length === 0) {
+    throw new Error('The attached device list is empty');
+  }
+  return adbDeviceLines.map(line => {
+    const [id, state] = line.split('\t');
+    if (state !== 'device') {
+      console.warn(
+        `The device (id ${id}) has status "${state}". Its status should be "device" to continue!`,
+      );
+    }
+    return id;
+  });
+}
+
 
 /**
  * @param {string} serial
@@ -136,11 +160,14 @@ function waitForBootSync(serial) {
         execSync('sleep 2');
       }
     } catch (_) {
+      // if the device is not ready yet the execSync may throw
+      // so I catch, sleep, and try again (we are in the loop)
       execSync('sleep 2');
     }
   }
 }
 
 module.exports = {
+  getDeviceIds,
   bootDevices,
 };

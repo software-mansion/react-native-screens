@@ -1,4 +1,5 @@
 const { getCommandLineResponse } = require('./command-line-helpers');
+const { getDeviceIds } = require('./turn-on-android-emulators');
 
 const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
 const isRunningCI = !!process.env.CI;
@@ -12,21 +13,21 @@ const passedAdbSerial = process.env[envVarKeys.adbSerial];
 
 function resolveAttachedAndroidDeviceSerial() {
   if (passedAdbSerial) return passedAdbSerial;
-  const connectedNonEmulators = getDeviceIds().filter(
+  const connectedPhysicalDevices = getDeviceIds().filter(
     deviceID => !deviceID.startsWith('emulator'),
   );
-  if (connectedNonEmulators.length === 0) {
+  if (connectedPhysicalDevices.length === 0) {
     throw new Error('No physical devices attached.');
-  } else if (connectedNonEmulators.length === 1) {
-    return connectedNonEmulators[0];
-  } else
+  } else if (connectedPhysicalDevices.length > 1) {
     throw new Error(
-      `Connected devices: ${connectedNonEmulators.join(', ')}\nUnplug ${
-        connectedNonEmulators.length - 1
+      `Connected devices: ${connectedPhysicalDevices.join(', ')}\nUnplug ${
+        connectedPhysicalDevices.length - 1
       } device(s) or use ${
         envVarKeys.adbSerial
       } environment variable to select a specific one.`,
     );
+  }
+  return connectedPhysicalDevices[0];
 }
 
 function detectAndroidEmulatorName() {
@@ -35,7 +36,7 @@ function detectAndroidEmulatorName() {
   );
   if (!isEmulatorConfig) return 'INACTIVE CONFIG';
   if (passedAdbSerial) {
-    return getDeviceName(passedAdbSerial);
+    return resolveAvdNameFromDeviceId(passedAdbSerial);
   }
   const passedAvdName = process.env[envVarKeys.avdName];
   if (passedAvdName) {
@@ -67,41 +68,19 @@ function getAvailableEmulatorNames() {
   }
 }
 
-/**
- * @returns {string[]}
- */
-function getDeviceIds() {
-  const nonEmptyLines = getCommandLineResponse('adb devices')
-    .split('\n')
-    .map(line => line.trim())
-    .filter(Boolean);
-  nonEmptyLines.shift(); // The first line is always the "List of devices attached" (header) so we ignore it
-  if (nonEmptyLines.length === 0) {
-    throw new Error('The attached device list is empty');
-  }
-  return nonEmptyLines.map(line => {
-    const [id, state] = line.split('\t');
-    if (state !== 'device') {
-      console.warn(
-        `The device (id ${id}) has status "${state}". Its status should be "device" to continue!`,
-      );
-    }
-    return id;
-  });
-}
 
 /**
  * @param {string} deviceId - Device adb identifier, device serial
  * @returns {string} device name (avd name)
  */
-function getDeviceName(deviceId) {
+function resolveAvdNameFromDeviceId(deviceId) {
   const deviceName = getCommandLineResponse(
     `adb -s ${deviceId} emu avd name`,
   ).split('\r\n')[0];
   if (deviceName) {
     return deviceName;
   }
-  throw new Error(`Failed to get device name for id "${deviceId}"`);
+  throw new Error(`Failed to get emulator name for id "${deviceId}"`);
 }
 
 module.exports = {
