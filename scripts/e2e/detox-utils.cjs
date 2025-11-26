@@ -9,104 +9,27 @@ const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 // it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
 
-function detectLocalAndroidEmulator() {
-  // "RNS_AVD_NAME" can be set for local developement
-  const avdName = process.env.RNS_AVD_NAME ?? null;
-  if (avdName !== null) {
-    return avdName
-  }
-
-  // Fallback: try to use Android SDK
-  try {
-    let stdout = ChildProcess.execSync("emulator -list-avds");
-
-    // Possibly convert Buffer to string
-    if (typeof stdout !== 'string') {
-      stdout = stdout.toString();
-    }
-
-    const avdList = stdout.trim().split('\n').map(name => name.trim());
-
-    if (avdList.length === 0) {
-      throw new Error('No installed AVDs detected on the device');
-    }
-
-    // Just select first one in the list.
-    // TODO: consider giving user a choice here.
-    return avdList[0];
-  } catch (error) {
-    const errorMessage = `Failed to find Android emulator. Set "RNS_E2E_AVD_NAME" env variable pointing to one. Cause: ${error}`;
-    console.error(errorMessage);
-    throw new Error(errorMessage);
-  }
-}
-
-function detectAndroidEmulatorName() {
-  // "RNS_E2E_AVD_NAME" can be set for local development
-  return isRunningCI ? DEFAULT_CI_AVD_NAME : detectLocalAndroidEmulator();
-}
-
 /**
- * @returns {string | null} Device serial as requested by user, first serial from adb list or null
+ * @typedef {import('../../FabricExample/node_modules/detox')} Detox
  */
-function resolveAndroidDeviceSerial() {
-  const deviceSerial = process.env.RNS_DEVICE_SERIAL ?? null;
-
-  if (deviceSerial !== null) {
-    return deviceSerial;
-  }
-
-  // Fallback: try to use adb
-  try {
-    let stdout = ChildProcess.execSync("adb devices");
-
-    // Possibly convert Buffer to string
-    if (typeof stdout !== 'string') {
-      stdout = stdout.toString();
-    }
-
-    /** @type {string} */
-    const stringStdout = stdout;
-
-    // Example `adb devices` output:
-    //
-    // List of devices attached
-    // 6lh6huzhr48lu8t8        device
-    // emulator-5554   device
-
-    const deviceList = stringStdout
-      .trim()
-      .split('\n')
-      .map(line => line.trim())
-      .filter((line, index) => line !== '' && index !== 0) // empty lines & header
-      .map(line => line.split(' ', 1)[0]);
-
-
-    if (deviceList.length === 0) {
-      throw new Error("Seems that the attached device list is empty");
-    }
-
-    // Just select first one in the list.
-    // TODO: consider giving user a choice here.
-    return deviceList[0];
-  } catch (error) {
-    console.error(`Failed to find attached device. Try setting "RNS_DEVICE_SERIAL" env variable pointing to one. Cause: ${error}`);
-  }
-
-  return null;
-}
 
 /**
  * The output of this function can be controlled through couple of env vars.
  *
- * * `RNS_DEVICE_SERIAL` env var can be specified in case of running 
+ * Android:
+ *
+ * * `RNS_DEVICE_SERIAL` env var can be specified in case of running
  * tests with an attached Android device. It can also be an emulator.
  * The expected value here is the same as you would pass to `adb -s`.
  * You can find device serial by running `adb devices` command.
+ * Example: RNS_DEVICE_SERIAL=33221FDH3000VT
  *
- * * `RNS_AVD_NAME` env var can be specified in case of running tests on Android emulator. 
+ * * `RNS_AVD_NAME` env var can be specified in case of running tests on Android emulator.
  * The exepected value here is the same as displayed in Android Studio or listed by
- * `emulator -list-avds`.
+ * `emulator -list-avds`. Recommended for regular needs.
+ * Example: RNS_AVD_NAME=Pixel_8
+ *
+ * iOS:
  *
  * * `RNS_APPLE_SIM_NAME` env var can be set in case of running tests on iOS simulator.
  * The expected value here is exactly as one listed in XCode.
@@ -168,7 +91,7 @@ function commonDetoxConfigFactory(applicationName) {
       attached: {
         type: 'android.attached',
         device: {
-          adbName: AndroidDeviceUtil.resolveAndroidDeviceSerial(),
+          adbName: AndroidDeviceUtil.resolveAttachedAndroidDeviceSerial(),
         },
         utilBinaryPaths: testButlerApkPath,
       },
@@ -189,10 +112,6 @@ function commonDetoxConfigFactory(applicationName) {
         device: 'simulator',
         app: 'ios.release',
       },
-      'ios.release': {
-        device: 'simulator',
-        app: 'ios.release',
-      },
       'android.att.debug': {
         device: 'attached',
         app: 'android.debug',
@@ -206,10 +125,6 @@ function commonDetoxConfigFactory(applicationName) {
         app: 'android.debug',
       },
       'android.emu.release': {
-        device: 'emulator',
-        app: 'android.release',
-      },
-      'android.release': {
         device: 'emulator',
         app: 'android.release',
       },

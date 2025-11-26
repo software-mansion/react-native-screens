@@ -5,7 +5,7 @@ const DEFAULT_IOS_VERSION = 'iOS 26.2';
  * @return {string}
  */
 function resolveAppleSimulatorName() {
-  const envVariableKey = 'RNS_E2E_APPLE_SIM_NAME';
+  const envVariableKey = 'RNS_APPLE_SIM_NAME';
   const passedDevice = process.env[envVariableKey];
   if (passedDevice) {
     if (/^(iPhone|iPad)\s.+/.test(passedDevice)) {
@@ -14,7 +14,7 @@ function resolveAppleSimulatorName() {
       throw new Error(`Environment variable ${envVariableKey} should be "iPhone xyz" or "iPad xyz".`);
     }
   }
-  return process.env.RNS_APPLE_SIM_NAME || DEFAULT_APPLE_SIMULATOR_NAME;
+  return DEFAULT_APPLE_SIMULATOR_NAME;
 }
 /**
  * @return {`iOS ${string}`} requested version of ios, or default if not specified
@@ -36,4 +36,3 @@ module.exports = {
   resolveAppleSimulatorName,
   getIOSVersion,
 };
-
