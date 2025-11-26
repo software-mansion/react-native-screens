@@ -1,6 +1,6 @@
 const ChildProcess = require('node:child_process');
 /**
- * Runs a command and returns it's response as string
+ * Runs a command and returns its response as a string
  * @param {string} command - The command to run.
  * @returns {string} command-line response
  */

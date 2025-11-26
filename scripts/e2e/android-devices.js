@@ -77,7 +77,7 @@ function getDeviceIds() {
     .filter(Boolean);
   nonEmptyLines.shift(); // The first line is always the "List of devices attached" (header) so we ignore it
   if (nonEmptyLines.length === 0) {
-    throw new Error('Seems that the attached device list is empty');
+    throw new Error('The attached device list is empty');
   }
   return nonEmptyLines.map(line => {
     const [id, state] = line.split('\t');
