@@ -1,3 +1,5 @@
+#pragma once
+
 #import <Foundation/Foundation.h>
 
 // Hide C++ symbols from C compiler used when building Swift module

@@ -1,3 +1,5 @@
+#pragma once
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSDismissibleModalProtocol <NSObject>

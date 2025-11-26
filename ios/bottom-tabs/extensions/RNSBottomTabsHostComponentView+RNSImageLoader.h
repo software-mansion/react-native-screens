@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSBottomTabsHostComponentView.h"
 
 #if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
