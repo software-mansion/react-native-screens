@@ -1,7 +1,7 @@
 const { getCommandLineResponse } = require('./command-line-helpers');
 
 const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
-const isRunningCI = process.env.CI;
+const isRunningCI = !!process.env.CI;
 
 const envVarKeys = /** @type {const} */ ({
   adbSerial: 'RNS_DEVICE_SERIAL',
@@ -75,7 +75,7 @@ function getDeviceIds() {
 }
 
 /**
- * @param {string} deviceId adb identifier, device serial
+ * @param {string} device adb identifier, device serial
  * @returns {string} device name (avd name)
  */
 function getDeviceName(deviceId) {

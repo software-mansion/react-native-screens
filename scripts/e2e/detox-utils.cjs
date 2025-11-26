@@ -25,7 +25,7 @@ const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.
  * Example: RNS_DEVICE_SERIAL=33221FDH3000VT
  *
  * * `RNS_AVD_NAME` env var can be specified in case of running tests on Android emulator.
- * The exepected value here is the same as displayed in Android Studio or listed by
+ * The expected value here is the same as displayed in Android Studio or listed by
  * `emulator -list-avds`. Recommended for regular needs.
  * Example: RNS_AVD_NAME=Pixel_8
  *
