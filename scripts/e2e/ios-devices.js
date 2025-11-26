@@ -11,7 +11,9 @@ function resolveAppleSimulatorName() {
     if (/^(iPhone|iPad)\s.+/.test(passedDevice)) {
       return passedDevice;
     } else {
-      throw new Error(`Environment variable ${envVariableKey} should be "iPhone xyz" or "iPad xyz".`);
+      throw new Error(
+        `Environment variable ${envVariableKey} should be "iPhone xyz" or "iPad xyz".`,
+      );
     }
   }
   return DEFAULT_APPLE_SIMULATOR_NAME;
@@ -26,7 +28,9 @@ function getIOSVersion() {
     if (/^(iOS)\s.+/.test(passedVersion)) {
       return /** @type {`iOS ${string}`} */ (passedVersion);
     } else {
-      throw new Error(`Environment variable ${envVariableKey} should be "iOS xyz".`);
+      throw new Error(
+        `Environment variable ${envVariableKey} should be "iOS xyz".`,
+      );
     }
   }
   return DEFAULT_IOS_VERSION;

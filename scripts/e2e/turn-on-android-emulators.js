@@ -62,7 +62,10 @@ function bootDevices(avdNames) {
     console.log('🎉 All requested devices are running!');
     return newSerials;
   } catch (error) {
-    console.error('❌ Error booting devices:', /** @type {Error} */(error).message);
+    console.error(
+      '❌ Error booting devices:',
+      /** @type {Error} */ (error).message,
+    );
     process.exit(1);
   }
 }
