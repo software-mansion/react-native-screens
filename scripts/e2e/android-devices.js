@@ -31,19 +31,21 @@ function resolveAttachedAndroidDeviceSerial() {
 
 function detectAndroidEmulatorName() {
   const isEmulatorConfig = process.argv.some(runtimeArg =>
-    runtimeArg.includes('android.emu')
+    runtimeArg.includes('android.emu'),
   );
   if (!isEmulatorConfig) return 'INACTIVE CONFIG';
   if (passedAdbSerial) {
     return getDeviceName(passedAdbSerial);
   }
-  return process.env[envVarKeys.avdName] || isRunningCI
-    ? DEFAULT_CI_AVD_NAME
-    : detectLocalAndroidEmulator();
+  const passedAvdName = process.env[envVarKeys.avdName];
+  if (passedAvdName) {
+    return passedAvdName;
+  }
+  return isRunningCI ? DEFAULT_CI_AVD_NAME : detectLocalAndroidEmulator();
 }
 
 function detectLocalAndroidEmulator() {
-  return getAvailableEmulatorNames()[0];
+  return getAvailableEmulatorNames()[0]; // non-zero length is guaranteed. It will be replaced in the next change anyway.
 }
 
 function getAvailableEmulatorNames() {
@@ -52,7 +54,8 @@ function getAvailableEmulatorNames() {
     const avdList = outputText
       .trim()
       .split('\n')
-      .map(name => name.trim());
+      .map(name => name.trim())
+      .filter(Boolean);
     if (avdList.length === 0) {
       throw new Error('No installed AVDs detected on the device');
     }
@@ -80,7 +83,7 @@ function getDeviceIds() {
     const [id, state] = line.split('\t');
     if (state !== 'device') {
       console.warn(
-        `THE DEVICE (ID ${id}) HAS STATUS "${state}". ITS STATUS SHOULD BE 'device' TO CONTINUE!`,
+        `The device (id ${id}) has status "${state}". Its status should be "device" to continue!`,
       );
     }
     return id;
@@ -88,7 +91,7 @@ function getDeviceIds() {
 }
 
 /**
- * @param {string} device adb identifier, device serial
+ * @param {string} deviceId - Device adb identifier, device serial
  * @returns {string} device name (avd name)
  */
 function getDeviceName(deviceId) {

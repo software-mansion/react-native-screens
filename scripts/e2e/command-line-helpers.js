@@ -5,9 +5,15 @@ const ChildProcess = require('node:child_process');
  * @returns {string} command-line response
  */
 function getCommandLineResponse(command) {
-  const stdout = ChildProcess.execSync(command);
-  // Possibly convert Buffer to string
-  return typeof stdout === 'string' ? stdout : stdout.toString();
+  try {
+    return ChildProcess.execSync(command, { encoding: 'utf-8' });
+  } catch (e) {
+    throw new Error(
+      `Execution command "${command}" failed! Reason:\n${
+        /** @type {Error} */ (e).message
+      }`,
+    );
+  }
 }
 
 module.exports = {

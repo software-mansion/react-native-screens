@@ -1,10 +1,14 @@
 const { spawn, execSync } = require('node:child_process');
 
+const ALL_DEVICES_TIMEOUT = 120_000; // I expect perform this process in less than 2 minutes
+const DEVICE_RESPONSE_TIMEOUT = 60000; // I expect one device to boot in 60 seconds
+
 /**
  * Spawns multiple emulators and waits for them to be fully booted.
  * @param {string[]} avdNames - Array of AVD names to boot (e.g. ['Nexus_6P', 'Pixel_4'])
  * @returns {string[]} - The list of new ADB serial IDs (e.g. ['emulator-5554', 'emulator-5556'])
  */
+
 function bootDevices(avdNames) {
   if (!avdNames || avdNames.length === 0) return [];
 
@@ -21,16 +25,21 @@ function bootDevices(avdNames) {
       `   Existing devices: ${initialDevices.length}. Waiting for total: ${expectedTotal}`,
     );
 
-    avdNames.forEach(name => {
+    for (const name of avdNames) {
       console.log(`   🚀 Spawning ${name}...`);
       spawnEmulator(name);
       execSync('sleep 1'); // prevent choking the ADB server
-    });
+    }
 
     console.log(`⏳ Waiting for devices to appear in ADB...`);
+
+    /**
+     * @type {string[]}
+     */
     let currentDevices = [];
 
-    while (true) {
+    const giveUpTimestamp = Date.now() + ALL_DEVICES_TIMEOUT;
+    while (Date.now() <= giveUpTimestamp) {
       currentDevices = getConnectedDevices();
 
       // Simple progress indicator
@@ -43,7 +52,7 @@ function bootDevices(avdNames) {
         break;
       }
 
-      // Blocking sleep (User Preference)
+      // check every second
       execSync('sleep 1');
     }
 
@@ -110,7 +119,9 @@ function getConnectedDevices() {
  */
 function waitForBootSync(serial) {
   let booted = false;
+  const giveUpTimestamp = Date.now() + DEVICE_RESPONSE_TIMEOUT;
   while (!booted) {
+    if (giveUpTimestamp < Date.now()) break;
     try {
       const res = execSync(
         `adb -s ${serial} shell getprop sys.boot_completed`,
