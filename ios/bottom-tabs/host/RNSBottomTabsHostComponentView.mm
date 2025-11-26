@@ -165,7 +165,7 @@ namespace react = facebook::react;
 {
   RCTAssert(
       self.subviews.count == 1,
-      @"[RNScreens] Incorrect number of subviews in RNSBottomTabsHostComponentView. Expected 1, actual: %lu.",
+      @"[RNScreens] Unexpected number of subviews in RNSBottomTabsHostComponentView. Expected 1, actual: %lu.",
       static_cast<unsigned long>(self.subviews.count));
 
   [self.subviews[0] setFrame:self.bounds];
