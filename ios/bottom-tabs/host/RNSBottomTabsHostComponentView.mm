@@ -155,6 +155,24 @@ namespace react = facebook::react;
   }
 }
 
+#if RCT_NEW_ARCH_ENABLED
+
+// On Fabric, when tabs are rendered dynamically, tab screens receive incorrect frame from UIKit layout
+// (frame matches full window size instead of the size of the host). To mitigate this, we override
+// `layoutSubviews` and assign correct frame ourselves.
+// TODO: investigate why we receive incorrect frame, fix and remove this workaround
+- (void)layoutSubviews
+{
+  RCTAssert(
+      self.subviews.count == 1,
+      @"[RNScreens] Incorrect number of subviews in RNSBottomTabsHostComponentView. Expected 1, actual: %lu.",
+      static_cast<unsigned long>(self.subviews.count));
+
+  [self.subviews[0] setFrame:self.bounds];
+}
+
+#endif // RCT_NEW_ARCH_ENABLED
+
 #pragma mark - RNSScreenContainerDelegate
 
 - (void)updateContainer
