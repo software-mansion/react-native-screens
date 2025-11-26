@@ -1,25 +1,27 @@
 const ChildProcess = require('node:child_process');
+const { iosDevice } = require('./ios-devices');
 
-const CI_AVD_NAME = 'e2e_emulator';
+// Should be kept in sync with the constant defined in e2e workflow file
+const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
 
 const isRunningCI = process.env.CI != null;
 
-// Assumes that local developement is done on arm64-v8a.
+// Assumes that local development is done on arm64-v8a.
 const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 // test-butler requires AOSP emulator image, which is not available to download for arm64-v8a in Android Studio SDK Manager, therefore
 // it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
 const testButlerApkPath = isRunningCI ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk'] : undefined;
 
 function detectLocalAndroidEmulator() {
-  // "DETOX_AVD_NAME" can be set for local developement
-  const detoxAvdName = process.env.DETOX_AVD_NAME ?? null;
-  if (detoxAvdName !== null) {
-    return detoxAvdName
+  // "RNS_E2E_AVD_NAME" can be set for local development
+  const avdName = process.env.RNS_E2E_AVD_NAME ?? null;
+  if (avdName !== null) {
+    return avdName
   }
 
   // Fallback: try to use Android SDK
   try {
-    let stdout = ChildProcess.execSync("emulator -list-avds")
+    let stdout = ChildProcess.execSync("emulator -list-avds");
 
     // Possibly convert Buffer to string
     if (typeof stdout !== 'string') {
@@ -32,22 +34,22 @@ function detectLocalAndroidEmulator() {
       throw new Error('No installed AVDs detected on the device');
     }
 
-    // Just select first one in the list. 
+    // Just select first one in the list.
     // TODO: consider giving user a choice here.
     return avdList[0];
   } catch (error) {
-    const errorMessage = `Failed to find Android emulator. Set "DETOX_AVD_NAME" env variable pointing to one. Cause: ${error}`
+    const errorMessage = `Failed to find Android emulator. Set "RNS_E2E_AVD_NAME" env variable pointing to one. Cause: ${error}`;
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
 }
 
 function detectAndroidEmulatorName() {
-  return isRunningCI ? CI_AVD_NAME : detectLocalAndroidEmulator();
+  // "RNS_E2E_AVD_NAME" can be set for local development
+  return isRunningCI ? DEFAULT_CI_AVD_NAME : detectLocalAndroidEmulator();
 }
 
 /**
- * @type {Detox.DetoxConfig}
  * @param {string} applicationName name (FabricExample / ScreensExample)
  * @returns {Detox.DetoxConfig}
  */
@@ -94,14 +96,12 @@ function commonDetoxConfigFactory(applicationName) {
     devices: {
       simulator: {
         type: 'ios.simulator',
-        device: {
-          type: 'iPhone 16 Pro',
-        },
+        device: iosDevice,
       },
       attached: {
         type: 'android.attached',
         device: {
-          adbName: CI_AVD_NAME,
+          adbName: process.env.RNS_ADB_NAME,
         },
         utilBinaryPaths: testButlerApkPath,
       },
@@ -147,10 +147,10 @@ function commonDetoxConfigFactory(applicationName) {
         app: 'android.release',
       },
     },
-  }
+  };
 }
 
 module.exports = {
   commonDetoxConfigFactory,
   isRunningCI,
-}
+};
