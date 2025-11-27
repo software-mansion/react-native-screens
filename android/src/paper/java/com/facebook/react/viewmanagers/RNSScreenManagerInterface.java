@@ -53,4 +53,5 @@ public interface RNSScreenManagerInterface<T extends View>  {
   void setRightScrollEdgeEffect(T view, @Nullable String value);
   void setTopScrollEdgeEffect(T view, @Nullable String value);
   void setSynchronousShadowStateUpdatesEnabled(T view, boolean value);
+  void setAndroidResetScreenShadowStateOnOrientationChangeEnabled(T view, boolean value);
 }
