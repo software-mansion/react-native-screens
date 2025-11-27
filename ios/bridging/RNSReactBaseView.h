@@ -1,3 +1,5 @@
+#pragma once
+
 // Hide C++ symbols from C compiler used when building Swift module
 #if defined(__cplusplus)
 

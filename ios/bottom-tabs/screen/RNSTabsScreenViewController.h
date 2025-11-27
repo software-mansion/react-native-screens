@@ -1,3 +1,5 @@
+#pragma once
+
 #import <UIKit/UIKit.h>
 #import "RNSBottomTabsScreenComponentView.h"
 #import "RNSBottomTabsSpecialEffectsSupporting.h"

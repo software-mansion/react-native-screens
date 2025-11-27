@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"

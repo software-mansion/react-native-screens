@@ -1,3 +1,5 @@
+#pragma once
+
 #import <RNSDefines.h>
 
 #if RNS_BOTTOM_ACCESSORY_AVAILABLE

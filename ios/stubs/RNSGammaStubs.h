@@ -1,3 +1,5 @@
+#pragma once
+
 #import <Foundation/Foundation.h>
 
 // These symbols are a stubs for components defined in Gamma project implementation.

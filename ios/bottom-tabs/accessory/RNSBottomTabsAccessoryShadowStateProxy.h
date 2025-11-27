@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSBottomAccessoryHelper.h"
 
 #if RNS_BOTTOM_ACCESSORY_AVAILABLE
