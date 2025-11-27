@@ -111,7 +111,7 @@ function getConnectedEmulators() {
 
 /**
  * @returns {string[]} list of device adb serials,
- * for both physicall and emulated devices, but only
+ * for both physical and emulated devices, but only
  * with status "device" (connected and ready)
  */
 function getDeviceIds() {
@@ -143,7 +143,7 @@ function waitForBootSync(serial) {
   const giveUpTimestamp = Date.now() + DEVICE_RESPONSE_TIMEOUT;
   while (!booted) {
     if (giveUpTimestamp < Date.now()) {
-      console.warn(`The heathcheck for device ${serial} timed out!`);
+      console.warn(`The healthcheck for device ${serial} timed out!`);
       break;
     }
     try {
