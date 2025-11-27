@@ -37,6 +37,7 @@ class SheetDelegate(
 
     private var isSheetAnimationInProgress: Boolean = false
 
+    private var lastTopInset: Int = 0
     private var lastKeyboardBottomOffset: Int = 0
 
     var lastStableDetentIndex: Int = screen.sheetInitialDetentIndex
@@ -113,12 +114,45 @@ class SheetDelegate(
         }
     }
 
+    internal fun updateBottomSheetMetrics(behavior: BottomSheetBehavior<Screen>) {
+        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        check(containerHeight != null) {
+            "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
+        }
+
+        val maxAllowedHeight =
+            when (screen.isSheetFitToContents()) {
+                true ->
+                    screen.contentWrapper?.let { contentWrapper ->
+                        contentWrapper.height.takeIf {
+                            // subtree might not be laid out, e.g. after fragment reattachment
+                            // and view recreation, however since it is retained by
+                            // react-native it has its height cached. We want to use it.
+                            // Otherwise we would have to trigger RN layout manually.
+                            contentWrapper.isLaidOutOrHasCachedLayout()
+                        }
+                    }
+                false -> (screen.sheetDetents.highest() * containerHeight).toInt()
+            }
+
+        // For 3 detents, we need to add the top inset back here because we are calculating the offset
+        // from the absolute top of the view, but our calculated max height (containerHeight)
+        // has been reduced by this inset.
+        val expandedOffsetFromTop =
+            when (screen.sheetDetents.count) {
+                3 -> screen.sheetDetents.expandedOffsetFromTop(containerHeight, lastTopInset)
+                else -> null
+            }
+
+        behavior.updateMetrics(maxAllowedHeight, expandedOffsetFromTop)
+    }
+
     internal fun configureBottomSheetBehaviour(
         behavior: BottomSheetBehavior<Screen>,
         keyboardState: KeyboardState = KeyboardNotVisible,
         selectedDetentIndex: Int = lastStableDetentIndex,
     ): BottomSheetBehavior<Screen> {
-        val containerHeight = tryResolveContainerHeight()
+        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -166,7 +200,7 @@ class SheetDelegate(
                             firstHeight = screen.sheetDetents.firstHeight(containerHeight),
                             halfExpandedRatio = screen.sheetDetents.halfExpandedRatio(),
                             maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
-                            expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight),
+                            expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight, lastTopInset),
                         )
 
                     else -> throw IllegalStateException(
@@ -243,7 +277,7 @@ class SheetDelegate(
                             firstHeight = screen.sheetDetents.firstHeight(containerHeight),
                             halfExpandedRatio = screen.sheetDetents.halfExpandedRatio(),
                             maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
-                            expandedOffsetFromTop = screen.sheetDetents.maxAllowedHeight(containerHeight),
+                            expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight, lastTopInset),
                         )
 
                     else -> throw IllegalStateException(
@@ -261,7 +295,7 @@ class SheetDelegate(
     // Otherwise, it shifts the sheet as high as possible, even if it means part of its content
     // will remain hidden behind the keyboard.
     internal fun computeSheetOffsetYWithIMEPresent(keyboardHeight: Int): Int {
-        val containerHeight = tryResolveContainerHeight()
+        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -288,7 +322,13 @@ class SheetDelegate(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeInset = insets.getInsets(WindowInsetsCompat.Type.ime())
-        val prevSystemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val displayCutoutInsets = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+
+        // We save the top inset (status bar height or display cutout) to later
+        // subtract it from the window height during sheet size calculations.
+        // This ensures the sheet respects the safe area.
+        lastTopInset = maxOf(systemBarsInsets.top, displayCutoutInsets.top)
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -309,7 +349,7 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        val newBottomInset = if (!isImeVisible) prevSystemBarsInsets.bottom else 0
+        val newBottomInset = if (!isImeVisible) systemBarsInsets.bottom else 0
 
         // Note: We do not manipulate the top inset manually. Therefore, if SafeAreaView has top insets enabled,
         // we must retain the top inset even if the formSheet does not currently overflow into the status bar.
@@ -321,13 +361,19 @@ class SheetDelegate(
             .Builder(insets)
             .setInsets(
                 WindowInsetsCompat.Type.systemBars(),
-                Insets.of(prevSystemBarsInsets.left, prevSystemBarsInsets.top, prevSystemBarsInsets.right, newBottomInset),
+                Insets.of(systemBarsInsets.left, systemBarsInsets.top, systemBarsInsets.right, newBottomInset),
             ).build()
     }
 
     private fun shouldDismissSheetInState(
         @BottomSheetBehavior.State state: Int,
     ) = state == BottomSheetBehavior.STATE_HIDDEN
+
+    /**
+     * This method tries to resolve the maximum height available for the sheet content,
+     * accounting for the system top inset.
+     */
+    private fun tryResolveSafeAreaSpaceForSheet(): Int? = tryResolveContainerHeight()?.let { it - lastTopInset }
 
     /**
      * This method might return slightly different values depending on code path,

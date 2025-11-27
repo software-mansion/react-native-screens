@@ -250,6 +250,16 @@ corresponding legacy prop values for `sheetAllowedDetents` prop.
 
 Defaults to `none`, indicating that the dimming view should be always present.
 
+### `sheetShouldOverflowTopInset` (Android only)
+
+Whether the sheet content should be rendered behind the Status Bar or display cutouts.
+
+When set to `true`, the sheet will extend to the physical edges of the stack, allowing content to be visible behind the status bar or display cutouts. Detent ratios in sheetAllowedDetents will be measured relative to the full stack height.
+
+When set to `false`, the sheet's layout will be constrained by the inset from the top and the detent ratios will then be measured relative to the adjusted height (excluding the top inset). This means that sheetAllowedDetents will result in different sheet heights depending on this prop.
+
+Defaults to `false`.
+
 ### `stackAnimation`
 
 Allows for the customization of how the given screen should appear/disappear when pushed or popped at the top of the stack. The following values are currently supported:
