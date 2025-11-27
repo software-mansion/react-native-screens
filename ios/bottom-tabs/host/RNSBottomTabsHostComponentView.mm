@@ -146,6 +146,17 @@ namespace react = facebook::react;
       if (parentView.reactViewController) {
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
+
+        // Enable auto-layout to ensure valid size of tabBarController.view.
+        // In host tree, tabBarController.view is the only child of HostComponentView.
+        controller.view.translatesAutoresizingMaskIntoConstraints = NO;
+        [NSLayoutConstraint activateConstraints:@[
+          [controller.view.topAnchor constraintEqualToAnchor:self.topAnchor],
+          [controller.view.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+          [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+          [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
+        ]];
+
         [controller didMoveToParentViewController:parentView.reactViewController];
         break;
       }
@@ -154,24 +165,6 @@ namespace react = facebook::react;
     return;
   }
 }
-
-#if RCT_NEW_ARCH_ENABLED
-
-// On Fabric, when tabs are rendered dynamically, tab screens receive incorrect frame from UIKit layout
-// (frame matches full window size instead of the size of the host). To mitigate this, we override
-// `layoutSubviews` and assign correct frame ourselves.
-// TODO: investigate why we receive incorrect frame, fix and remove this workaround
-- (void)layoutSubviews
-{
-  RCTAssert(
-      self.subviews.count == 1,
-      @"[RNScreens] Unexpected number of subviews in RNSBottomTabsHostComponentView. Expected 1, actual: %lu.",
-      static_cast<unsigned long>(self.subviews.count));
-
-  [self.subviews[0] setFrame:self.bounds];
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RNSScreenContainerDelegate
 
