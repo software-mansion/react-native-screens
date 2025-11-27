@@ -130,13 +130,15 @@ function getDeviceIds(filterPredicate = () => true) {
   // Remove header line: "List of devices attached"
   adbDeviceLines.shift();
   if (adbDeviceLines.length === 0) {
-    throw new Error('The attached device list is empty');
+    throw new EmptyAttachedDeviceList('The attached device list is empty');
   }
   return adbDeviceLines
     .map(line => /** @type {[string, string]} */(line.split('\t')))
     .filter(filterPredicate)
     .map(deviceIdAndState => deviceIdAndState[0])
   }
+
+class EmptyAttachedDeviceList extends Error {};
 
 /**
  * @param {string} serial
@@ -171,6 +173,7 @@ function waitForBootSync(serial) {
 }
 
 module.exports = {
+  EmptyAttachedDeviceList,
   getDeviceIds,
   bootDevices,
 };

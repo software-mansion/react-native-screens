@@ -1,5 +1,9 @@
 const { getCommandLineResponse } = require('./command-line-helpers');
-const { getDeviceIds, bootDevices } = require('./turn-on-android-emulators');
+const {
+  getDeviceIds,
+  bootDevices,
+  EmptyAttachedDeviceList,
+} = require('./turn-on-android-emulators');
 
 const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
 const isRunningCI = !!process.env.CI;
@@ -60,23 +64,27 @@ function detectLocalAndroidEmulator() {
  */
 function bootInactiveEmulators() {
   const allAvailableEmulatorNames = getAvailableEmulatorNames();
+  let inactiveEmulators = [];
   try {
     const alreadyRunningDevices = new Set(
-      getDeviceIds(passOnlyReadyDevices).map(resolveAvdNameFromDeviceId),
+      getDeviceIds(isInDeviceState).map(resolveAvdNameFromDeviceId),
     );
-    const inactiveEmulators = allAvailableEmulatorNames.filter(
+    inactiveEmulators = allAvailableEmulatorNames.filter(
       deviceName => !alreadyRunningDevices.has(deviceName),
     );
-    bootDevices(inactiveEmulators);
-  } catch (_) {
-    bootDevices(allAvailableEmulatorNames);
+  } catch (e) {
+    if (e instanceof EmptyAttachedDeviceList) {
+      inactiveEmulators = allAvailableEmulatorNames;
+    } else throw e;
   }
+
+  bootDevices(inactiveEmulators);
 }
 
 /**
  * @param {[string, string]} deviceIdAndState
  */
-function passOnlyReadyDevices(deviceIdAndState) {
+function isInDeviceState(deviceIdAndState) {
   const [deviceId, state] = deviceIdAndState;
   if (state === 'device') {
     return true;
