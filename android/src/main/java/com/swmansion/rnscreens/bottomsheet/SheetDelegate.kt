@@ -144,9 +144,7 @@ class SheetDelegate(
                 else -> null
             }
 
-        behavior.apply {
-            updateMetrics(maxAllowedHeight, expandedOffsetFromTop)
-        }
+        behavior.updateMetrics(maxAllowedHeight, expandedOffsetFromTop)
     }
 
     internal fun configureBottomSheetBehaviour(
