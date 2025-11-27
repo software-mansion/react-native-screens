@@ -1,9 +1,4 @@
 const { getCommandLineResponse } = require('./command-line-helpers');
-const {
-  getDeviceIds,
-  bootDevices,
-  EmptyAttachedDeviceList,
-} = require('./turn-on-android-emulators');
 
 const DEFAULT_CI_AVD_NAME = 'e2e_emulator';
 const isRunningCI = !!process.env.CI;
@@ -24,15 +19,15 @@ function resolveAttachedAndroidDeviceSerial() {
   const connectedPhysicalDevices = getDeviceIds((deviceIdAndState) => {
     const [deviceId, state] = deviceIdAndState;
     if (deviceId.startsWith('emulator')) {
-      return false
+      return false;
     }
     if (state === 'device') {
-      return true
+      return true;
     } else {
       console.warn(
         `Device "${deviceId}" has state "${state}", but state "device" is expected. This device will be ignored.`,
       );
-      return false;
+      return false;;
     }
   });
   if (connectedPhysicalDevices.length === 0) {
@@ -61,50 +56,11 @@ function detectAndroidEmulatorName() {
   if (passedAvdName) {
     return passedAvdName;
   }
-  return isRunningCI ? DEFAULT_CI_AVD_NAME : detectLocalAndroidEmulator();
-}
-
-function detectLocalAndroidEmulator() {
-  bootInactiveEmulators();
-  // non-zero length is guaranteed. It will be replaced in the next change anyway.
+  if (isRunningCI) {
+    return DEFAULT_CI_AVD_NAME;
+  }
+  // non-zero length is guaranteed.
   return getAvailableEmulatorNames()[0];
-}
-
-/**
- * attaches all available emulators to be able to call them via adb
- */
-function bootInactiveEmulators() {
-  const allAvailableEmulatorNames = getAvailableEmulatorNames();
-  let inactiveEmulators = [];
-  try {
-    const alreadyRunningDevices = new Set(
-      getDeviceIds(isInDeviceState).map(resolveAvdNameFromDeviceId),
-    );
-    inactiveEmulators = allAvailableEmulatorNames.filter(
-      deviceName => !alreadyRunningDevices.has(deviceName),
-    );
-  } catch (e) {
-    if (e instanceof EmptyAttachedDeviceList) {
-      inactiveEmulators = allAvailableEmulatorNames;
-    } else throw e;
-  }
-
-  bootDevices(inactiveEmulators);
-}
-
-/**
- * @param {[string, string]} deviceIdAndState
- */
-function isInDeviceState(deviceIdAndState) {
-  const [deviceId, state] = deviceIdAndState;
-  if (state === 'device') {
-    return true;
-  } else {
-    console.warn(
-      `Device "${deviceId}" has state "${state}", but state "device" is expected. This device will be ignored.`,
-    );
-    return false;
-  }
 }
 
 function getAvailableEmulatorNames() {
@@ -139,6 +95,36 @@ function resolveAvdNameFromDeviceId(deviceId) {
   }
   throw new Error(`Failed to get emulator name for id "${deviceId}"`);
 }
+
+
+/**
+ * @callback AdbDevicesFilterPredicate
+ * @param {[string, string]} idAndState
+ * @param {number} index element's position in the output list
+ * @returns {boolean} true if it should go through the filter and false otherwise
+ */
+
+/**
+ * @param {AdbDevicesFilterPredicate} [filterPredicate]
+ * @returns {string[]} list of device adb serials,
+ * for both physical and emulated devices, but only
+ * with status "device" (connected and ready)
+ */
+function getDeviceIds(filterPredicate = () => true) {
+  const adbDeviceLines = getCommandLineResponse('adb devices')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean);
+  // Remove header line: "List of devices attached"
+  adbDeviceLines.shift();
+  if (adbDeviceLines.length === 0) {
+    throw new Error('The attached device list is empty');
+  }
+  return adbDeviceLines
+    .map(line => /** @type {[string, string]} */(line.split('\t')))
+    .filter(filterPredicate)
+    .map(deviceIdAndState => deviceIdAndState[0])
+  }
 
 module.exports = {
   detectAndroidEmulatorName,
