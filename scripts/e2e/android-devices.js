@@ -62,7 +62,7 @@ function bootInactiveEmulators() {
   const allAvailableEmulatorNames = getAvailableEmulatorNames();
   try {
     const alreadyRunningDevices = new Set(
-      getDeviceIds().map(resolveAvdNameFromDeviceId)
+      getDeviceIds(passOnlyReadyDevices).map(resolveAvdNameFromDeviceId),
     );
     const inactiveEmulators = allAvailableEmulatorNames.filter(
       deviceName => !alreadyRunningDevices.has(deviceName),
@@ -70,6 +70,21 @@ function bootInactiveEmulators() {
     bootDevices(inactiveEmulators);
   } catch (_) {
     bootDevices(allAvailableEmulatorNames);
+  }
+}
+
+/**
+ * @param {[string, string]} deviceIdAndState
+ */
+function passOnlyReadyDevices(deviceIdAndState) {
+  const [deviceId, state] = deviceIdAndState;
+  if (state === 'device') {
+    return true;
+  } else {
+    console.warn(
+      `Device "${deviceId}" has state "${state}", but state "device" is expected. This device will be ignored.`,
+    );
+    return false;
   }
 }
 

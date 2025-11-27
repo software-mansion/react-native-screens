@@ -110,11 +110,19 @@ function getConnectedEmulators() {
 }
 
 /**
+ * @callback AdbDevicesFilterPredicate
+ * @param {[string, string]} idAndState
+ * @param {number} index element's position in the output list
+ * @returns {boolean} true if it should go through the filter and false otherwise
+ */
+
+/**
+ * @param {AdbDevicesFilterPredicate} [filterPredicate]
  * @returns {string[]} list of device adb serials,
  * for both physical and emulated devices, but only
  * with status "device" (connected and ready)
  */
-function getDeviceIds() {
+function getDeviceIds(filterPredicate = () => true) {
   const adbDeviceLines = getCommandLineResponse('adb devices')
     .split('\n')
     .map(line => line.trim())
@@ -124,16 +132,11 @@ function getDeviceIds() {
   if (adbDeviceLines.length === 0) {
     throw new Error('The attached device list is empty');
   }
-  return adbDeviceLines.map(line => {
-    const [id, state] = line.split('\t');
-    if (state !== 'device') {
-      console.warn(
-        `The device (id ${id}) has status "${state}". Its status should be "device" to continue!`,
-      );
-    }
-    return id;
-  });
-}
+  return adbDeviceLines
+    .map(line => /** @type {[string, string]} */(line.split('\t')))
+    .filter(filterPredicate)
+    .map(deviceIdAndState => deviceIdAndState[0])
+  }
 
 /**
  * @param {string} serial
