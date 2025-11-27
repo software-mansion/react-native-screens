@@ -581,7 +581,7 @@ RNS_IGNORE_SUPER_CALL_END
     navitem.title = config.title;
 
     // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
-    [navctr setNavigationBarHidden:shouldHide animated:animated];
+    [navctr setNavigationBarHidden:YES animated:animated];
     return;
   }
 
@@ -727,7 +727,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
-  [navctr setNavigationBarHidden:shouldHide animated:animated];
+  RCTAssert(shouldHide == NO, @"[RNScreens] RNSScreenStackHeaderConfig: expected shouldHide to be NO.");
+  [navctr setNavigationBarHidden:NO animated:animated];
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
