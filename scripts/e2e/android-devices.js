@@ -21,9 +21,20 @@ function resolveAttachedAndroidDeviceSerial() {
   );
   if (!isEmulatorConfig) return 'INACTIVE CONFIG';
   if (passedAdbSerial) return passedAdbSerial;
-  const connectedPhysicalDevices = getDeviceIds().filter(
-    deviceID => !deviceID.startsWith('emulator'),
-  );
+  const connectedPhysicalDevices = getDeviceIds((deviceIdAndState) => {
+    const [deviceId, state] = deviceIdAndState;
+    if (deviceId.startsWith('emulator')) {
+      return false
+    }
+    if (state === 'device') {
+      return true
+    } else {
+      console.warn(
+        `Device "${deviceId}" has state "${state}", but state "device" is expected. This device will be ignored.`,
+      );
+      return false;
+    }
+  });
   if (connectedPhysicalDevices.length === 0) {
     throw new Error('No physical devices attached.');
   } else if (connectedPhysicalDevices.length > 1) {
