@@ -29,8 +29,8 @@ const awaitClassicalEventBehavior = async () => {
           '11. Main | transitionStart | opening',
           '12. Main | transitionEnd | opening',
         ];
-  for (const expectedEventNotiication of expectedEvents) {
-    await expect(element(by.text(expectedEventNotiication))).toExist();
+  for (const expectedEventNotification of expectedEvents) {
+    await expect(element(by.text(expectedEventNotification))).toExist();
   }
 };
 
