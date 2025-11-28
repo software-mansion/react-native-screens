@@ -3,6 +3,7 @@ import { getIOSVersion } from '../../../scripts/e2e/ios-devices.js';
 import semverSatisfies from 'semver/functions/satisfies';
 import semverCoerce from 'semver/functions/coerce';
 
+const IOS_BAR_BUTTON_TYPE = '_UIButtonBarButton';
 const backButtonElement = element(by.id('BackButton'));
 
 export async function tapBarBackButton() {
@@ -22,9 +23,12 @@ async function getIOSBackButton() {
       };
     const elements = elementsByAttributes.elements;
     if (Array.isArray(elements)) {
-      return backButtonElement.atIndex(
-        elements.findIndex(elem => elem.className === '_UIButtonBarButton'),
+      const uiBarButtonIndex = elements.findIndex(
+        elem => elem.className === IOS_BAR_BUTTON_TYPE,
       );
+      if (uiBarButtonIndex !== -1) {
+        return backButtonElement.atIndex(uiBarButtonIndex);
+      }
     }
   }
   return backButtonElement;
