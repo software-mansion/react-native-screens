@@ -50,6 +50,14 @@ function isTestSectionEnabled() {
   return true;
 }
 
+const DISABLED_TEST_CASES = [
+  "TestScreenAnimationV5",
+];
+
+function isTestCaseEnabled(testCaseName: string) {
+  return !DISABLED_TEST_CASES.includes(testCaseName);
+}
+
 const SCREENS: Record<
   string,
   {
@@ -137,6 +145,10 @@ const SCREENS: Record<
 
 if (isTestSectionEnabled()) {
   Object.keys(Tests).forEach(testName => {
+    if (!isTestCaseEnabled(testName)) {
+      return;
+    }
+
     SCREENS[testName] = {
       title: testName,
       component: () => {
