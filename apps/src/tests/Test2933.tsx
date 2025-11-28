@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
+  Button,
   StyleSheet,
   Text,
   useColorScheme,
@@ -32,15 +33,7 @@ function floodJsThread() {
   }, 12);
 }
 
-/*
- * create artificial pressure in the JS thread to show off thep problem.
- * */
-floodJsThread();
-floodJsThread();
-
 function AppMain(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
   const backgroundStyle = {
     flex: 1,
     backgroundColor: 'white',
@@ -90,6 +83,12 @@ function AppMain(): React.JSX.Element {
           flashes of the blue background.
         </Section>
         <Section title="Orientation"> {num} </Section>
+
+        <Section title="Extra computation">
+          To better show off the problem, you can add extra computation to the JS thread, so that the commits
+          are likely further apart from each other.
+          <Button title="Add extra computation to the JS thread" onPress={floodJsThread} />
+        </Section>
       </View>
     </View>
   );
