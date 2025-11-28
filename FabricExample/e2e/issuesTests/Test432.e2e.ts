@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectTestScreen } from '../e2e-utils';
-import { getBackButton } from '../component-objects/back-button';
+import { tapBarBackButton } from '../component-objects/back-button';
 
 describe('Test432', () => {
   beforeAll(async () => {
@@ -27,7 +27,7 @@ describe('Test432', () => {
     await expect(element(by.id('details-headerRight-red'))).toBeVisible(100);
 
     if (device.getPlatform() === 'ios') {
-      await (await getBackButton()).tap();
+      await tapBarBackButton();
     } else {
       await device.pressBack();
     }
@@ -48,7 +48,7 @@ describe('Test432', () => {
     waitFor(element(by.id('info-headerRight-green-1'))).toBeVisible(100);
 
     if (device.getPlatform() === 'ios') {
-      await (await getBackButton()).tap();
+      await tapBarBackButton();
     } else {
       await device.pressBack();
     }

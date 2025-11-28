@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectTestScreen } from '../e2e-utils';
-import { getBackButton } from '../component-objects/back-button';
+import { tapBarBackButton } from '../component-objects/back-button';
 
 // Detox currently supports orientation only on iOS
 describeIfiOS('Test528', () => {
@@ -24,7 +24,7 @@ describeIfiOS('Test528', () => {
     await element(by.text('Go to Screen 2')).tap();
     await device.setOrientation('landscape');
 
-    await (await getBackButton()).tap();
+    await tapBarBackButton();
     await expect(element(by.text('Custom Button'))).toBeVisible(100);
     await device.setOrientation('portrait');
     await expect(element(by.text('Custom Button'))).toBeVisible(100);

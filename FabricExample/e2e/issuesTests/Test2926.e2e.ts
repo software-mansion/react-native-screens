@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { describeIfiOS, selectTestScreen } from '../e2e-utils';
-import { getBackButton } from '../component-objects/back-button';
+import { tapBarBackButton } from '../component-objects/back-button';
 
 // PR related to iOS search bar
 describeIfiOS('Test2926', () => {
@@ -27,7 +27,7 @@ describeIfiOS('Test2926', () => {
     await element(by.type('UISearchBarTextField')).replaceText('Item 2');
     await element(by.id('home-button-open-second')).tap();
 
-    await (await getBackButton()).tap();
+    await tapBarBackButton();
 
     await expect(element(by.type('UISearchBarTextField'))).toBeVisible();
     await expect(element(by.type('UISearchBarTextField'))).toHaveText('Item 2');

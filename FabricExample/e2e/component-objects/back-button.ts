@@ -5,12 +5,12 @@ import semverCoerce from 'semver/functions/coerce';
 
 const backButtonElement = element(by.id('BackButton'));
 
-export async function getBackButton() {
+export async function tapBarBackButton() {
   const platform = device.getPlatform();
   if (platform === 'ios') {
-    return getIOSBackButton();
+    return (await getIOSBackButton()).tap();
   } else if (platform === 'android') {
-    return backButtonElement;
+    return backButtonElement.tap();
   } else throw new Error(`Platform "${platform}" not supported`);
 }
 async function getIOSBackButton() {
