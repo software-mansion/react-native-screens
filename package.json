@@ -163,28 +163,6 @@
       "javaPackageName": "com.swmansion.rnscreens"
     },
     "ios": {
-      "componentProvider": {
-        "RNSStackScreen": "RNSStackScreenComponentView",
-        "RNSStackHost": "RNSStackHostComponentView",
-        "RNSBottomTabsScreen": "RNSBottomTabsScreenComponentView",
-        "RNSBottomTabs": "RNSBottomTabsHostComponentView",
-        "RNSBottomTabsAccessory": "RNSBottomTabsAccessoryComponentView",
-        "RNSBottomTabsAccessoryContent": "RNSBottomTabsAccessoryContentComponentView",
-        "RNSFullWindowOverlay": "RNSFullWindowOverlay",
-        "RNSModalScreen": "RNSModalScreen",
-        "RNSScreenContainer": "RNSScreenContainerView",
-        "RNSScreenContentWrapper": "RNSScreenContentWrapper",
-        "RNSScreenFooter": "RNSScreenFooter",
-        "RNSScreen": "RNSScreenView",
-        "RNSScreenNavigationContainer": "RNSScreenNavigationContainerView",
-        "RNSScreenStackHeaderConfig": "RNSScreenStackHeaderConfig",
-        "RNSScreenStackHeaderSubview": "RNSScreenStackHeaderSubview",
-        "RNSScreenStack": "RNSScreenStackView",
-        "RNSSearchBar": "RNSSearchBar",
-        "RNSSplitViewHost": "RNSSplitViewHostComponentView",
-        "RNSSplitViewScreen": "RNSSplitViewScreenComponentView",
-        "RNSSafeAreaView": "RNSSafeAreaViewComponentView"
-      },
       "components": {
         "RNSFullWindowOverlay": {
           "className": "RNSFullWindowOverlay"
