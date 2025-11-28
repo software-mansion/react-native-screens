@@ -478,6 +478,8 @@ class SheetDelegate(
         val bottomOffset = computeSheetOffsetYWithIMEPresent(keyboardCorrection).toFloat()
 
         screen.translationY = baseTranslationY - bottomOffset
+
+        screen.onSheetYTranslationChanged()
     }
 
     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {

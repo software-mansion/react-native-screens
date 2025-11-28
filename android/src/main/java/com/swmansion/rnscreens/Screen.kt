@@ -249,7 +249,7 @@ class Screen(
     /**
      * @param offsetY ignored on old architecture
      */
-    private fun dispatchShadowStateUpdate(
+    internal fun dispatchShadowStateUpdate(
         width: Int,
         height: Int,
         offsetY: Int,
@@ -492,6 +492,12 @@ class Screen(
         // we are unsure of the exact sheet position anyway.
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
             updateScreenSizeFabric(width, height, top)
+        }
+    }
+
+    internal fun onSheetYTranslationChanged() {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateScreenSizeFabric(width, height, top + translationY.toInt())
         }
     }
 
