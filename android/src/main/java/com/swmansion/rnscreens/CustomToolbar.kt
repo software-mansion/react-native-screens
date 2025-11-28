@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
-import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.utils.InsetsCompat
 import com.swmansion.rnscreens.utils.resolveInsetsOrZero
 import kotlin.math.max
@@ -79,9 +78,13 @@ open class CustomToolbar(
 
     override fun requestLayout() {
         super.requestLayout()
-        if (shouldApplyLayoutCorrectionForTopInset && !isInLayout) {
-            (parent as? CustomAppBarLayout)?.onToolbarLayout(paddingTop)
-            shouldApplyLayoutCorrectionForTopInset = false
+
+        val maybeAppBarLayout = parent as? CustomAppBarLayout
+        maybeAppBarLayout?.let {
+            if (shouldApplyLayoutCorrectionForTopInset && !it.isInLayout) {
+                it.onToolbarLayout(paddingTop)
+                shouldApplyLayoutCorrectionForTopInset = false
+            }
         }
 
         val softInputMode =

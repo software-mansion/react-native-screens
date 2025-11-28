@@ -11,11 +11,15 @@ class CustomAppBarLayout(
     /**
      * Handles the layout correction from the child Toolbar.
      */
-    fun onToolbarLayout(toolbarPaddingTop: Int) {
+    internal fun onToolbarLayout(toolbarPaddingTop: Int) {
+        applyFrameCorrectionByTopInset(toolbarPaddingTop)
+    }
+
+    private fun applyFrameCorrectionByTopInset(topInset: Int) {
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(height + toolbarPaddingTop, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height + topInset, MeasureSpec.EXACTLY),
         )
-        layout(left, top, right, bottom + toolbarPaddingTop)
+        layout(left, top, right, bottom + topInset)
     }
 }
