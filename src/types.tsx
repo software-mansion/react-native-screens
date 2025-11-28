@@ -9,7 +9,6 @@ import {
   ColorValue,
   ImageSourcePropType,
 } from 'react-native';
-import { NativeStackNavigatorProps } from './native-stack/types';
 import type {
   ScrollEdgeEffect,
   UserInterfaceStyle,
@@ -610,8 +609,13 @@ export interface ScreenContainerProps extends ViewProps {
 }
 
 export interface GestureDetectorBridge {
+  /**
+   * Callback to attach into ScreenStack's useEffect() from ScreenGestureDetector that wraps the stack.
+   *
+   * @param stackRef holds a reference to an instance of ScreenStackNativeComponent
+   */
   stackUseEffectCallback: (
-    stackRef: React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>,
+    stackRef: React.MutableRefObject<React.Ref<View>>,
   ) => void;
 }
 

@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
-} from 'react-native-screens/native-stack'
+} from '@react-navigation/native-stack'
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 
 type StackParamList = {
