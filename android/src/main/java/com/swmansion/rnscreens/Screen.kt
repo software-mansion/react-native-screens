@@ -491,7 +491,7 @@ class Screen(
         // There is no need to update shadow state for transient sheet states -
         // we are unsure of the exact sheet position anyway.
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
-            updateScreenSizeFabric(width, height, top)
+            updateScreenSizeFabric(width, height, top + translationY.toInt())
         }
     }
 
