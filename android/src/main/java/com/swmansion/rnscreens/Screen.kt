@@ -249,7 +249,7 @@ class Screen(
     /**
      * @param offsetY ignored on old architecture
      */
-    internal fun dispatchShadowStateUpdate(
+    private fun dispatchShadowStateUpdate(
         width: Int,
         height: Int,
         offsetY: Int,
@@ -497,6 +497,7 @@ class Screen(
 
     internal fun onSheetYTranslationChanged() {
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // Translation is relative to the bottom edge, therefore it returns negative values.
             updateScreenSizeFabric(width, height, top + translationY.toInt())
         }
     }
