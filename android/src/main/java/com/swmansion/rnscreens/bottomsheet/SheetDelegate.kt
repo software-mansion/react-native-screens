@@ -519,6 +519,8 @@ class SheetDelegate(
 
                 override fun onAnimationEnd(animation: Animator) {
                     isSheetAnimationInProgress = false
+
+                    screen.onSheetYTranslationChanged()
                 }
             },
         )

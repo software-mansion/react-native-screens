@@ -280,6 +280,12 @@ class ScreenStackFragment :
                         }
                         return insets
                     }
+
+                    override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                        super.onEnd(animation)
+
+                        screen.onSheetYTranslationChanged()
+                    }
                 }
 
             ViewCompat.setWindowInsetsAnimationCallback(screen, insetsAnimationCallback)

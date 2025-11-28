@@ -37,6 +37,7 @@ type StackParamList = {
   FormSheetWithThreeDetentsWithTextInput: undefined;
   FormSheetWithMaxDetentWithTextInput: undefined;
   FormSheetOverStatusBarWithTextInput: undefined;
+  FormSheetTextInputAndPressable: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -70,6 +71,7 @@ const EXAMPLES = [
     'Partially covered status bar (TextInput)',
     'FormSheetOverStatusBarWithTextInput',
   ],
+  ['Pressable & TextInput', 'FormSheetTextInputAndPressable']
 ];
 
 function Main({
@@ -194,6 +196,23 @@ function FormSheetTextInputNoFlex() {
         }}
       />
       <Spacer space={100} />
+    </View>
+  );
+}
+
+function FormSheetTextInputAndPressable() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'space-between' }}>
+      <PressableBase />
+      <TextInput
+        style={{
+          borderWidth: 1,
+          borderColor: 'black',
+          padding: 10,
+          borderRadius: 10,
+        }}
+      />
+      <PressableBase />
     </View>
   );
 }
@@ -441,6 +460,18 @@ export default function App() {
           options={{
             ...formSheetBaseOptions,
             sheetAllowedDetents: [0.99],
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetTextInputAndPressable"
+          component={withOptionalSafeArea(
+            FormSheetTextInputAndPressable,
+            useSafeArea,
+            safeAreaEdges,
+          )}
+          options={{
+            ...formSheetBaseOptions,
+            sheetAllowedDetents: [0.5],
           }}
         />
       </Stack.Navigator>
