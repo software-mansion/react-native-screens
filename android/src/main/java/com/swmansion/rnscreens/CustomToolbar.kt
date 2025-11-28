@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
+import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.utils.InsetsCompat
 import com.swmansion.rnscreens.utils.resolveInsetsOrZero
 import kotlin.math.max
@@ -34,11 +35,34 @@ open class CustomToolbar(
 
     private val shouldApplyTopInset = true
 
+    private var shouldApplyLayoutCorrectionForTopInset = false
+
     private var lastInsets = InsetsCompat.NONE
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
     private var isLayoutEnqueued = false
+
+    init {
+        // Ensure ActionMenuView is initialized as soon as the Toolbar is created.
+        //
+        // Android measures Toolbar height based on the tallest child view.
+        // During the first measurement:
+        // 1. The Toolbar is created but not yet added to the action bar via `activity.setSupportActionBar(toolbar)`
+        //    (typically called in `onUpdate` method from `ScreenStackHeaderConfig`).
+        // 2. At this moment, the title view may exist, but ActionMenuView (which may be taller) hasn't been added yet.
+        // 3. This causes the initial height calculation to be based on the title view, potentially too small.
+        // 4. When ActionMenuView is eventually attached, the Toolbar might need to re-layout due to the size change.
+        //
+        // By referencing the menu here, we trigger `ensureMenu`, which creates and attaches ActionMenuView early.
+        // This guarantees that all size-dependent children are present during the first layout pass,
+        // resulting in correct height determination from the beginning.
+        //
+        // TODO(@t0maboro): I believe that CustomToolbar is used only when the header is visible,
+        // but I need to double check
+        menu
+    }
+
     private val layoutCallback: Choreographer.FrameCallback =
         object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
@@ -55,6 +79,11 @@ open class CustomToolbar(
 
     override fun requestLayout() {
         super.requestLayout()
+        if (shouldApplyLayoutCorrectionForTopInset && !isInLayout) {
+            (parent as? CustomAppBarLayout)?.onToolbarLayout(paddingTop)
+            shouldApplyLayoutCorrectionForTopInset = false
+        }
+
         val softInputMode =
             (context as ThemedReactContext)
                 .currentActivity
@@ -161,6 +190,7 @@ open class CustomToolbar(
         right: Int,
         bottom: Int,
     ) {
+        shouldApplyLayoutCorrectionForTopInset = true
         requestForceShadowStateUpdateOnLayout()
         setPadding(left, top, right, bottom)
     }

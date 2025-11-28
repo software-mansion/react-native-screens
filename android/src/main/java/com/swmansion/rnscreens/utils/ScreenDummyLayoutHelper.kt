@@ -11,6 +11,7 @@ import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
+import com.swmansion.rnscreens.CustomAppBarLayout
 import com.swmansion.rnscreens.ScreenStackHeaderConfig
 import java.lang.ref.WeakReference
 
@@ -27,7 +28,7 @@ internal class ScreenDummyLayoutHelper(
     // The state required to compute header dimensions. We want this on instance rather than on class
     // for context access & being tied to instance lifetime.
     private lateinit var coordinatorLayout: CoordinatorLayout
-    private lateinit var appBarLayout: AppBarLayout
+    private lateinit var appBarLayout: CustomAppBarLayout
     private lateinit var dummyContentView: View
     private lateinit var toolbar: Toolbar
     private var defaultFontSize: Float = 0f
@@ -106,7 +107,7 @@ internal class ScreenDummyLayoutHelper(
         coordinatorLayout = CoordinatorLayout(contextWithTheme)
 
         appBarLayout =
-            AppBarLayout(contextWithTheme).apply {
+            CustomAppBarLayout(contextWithTheme).apply {
                 layoutParams =
                     CoordinatorLayout.LayoutParams(
                         CoordinatorLayout.LayoutParams.MATCH_PARENT,
