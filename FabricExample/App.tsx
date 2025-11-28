@@ -1,5 +1,5 @@
 import App from '../apps';
-import { featureFlags } from '../src';
+import { featureFlags } from 'react-native-screens';
 
 featureFlags.experiment.synchronousScreenUpdatesEnabled = false
 featureFlags.experiment.synchronousHeaderConfigUpdatesEnabled = false
