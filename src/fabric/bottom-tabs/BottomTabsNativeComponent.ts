@@ -18,6 +18,7 @@ import type {
 
 type NativeFocusChangeEvent = {
   tabKey: string;
+  repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
 type TabBarItemLabelVisibilityMode =

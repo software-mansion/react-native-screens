@@ -13,6 +13,7 @@ export type BottomAccessoryFn = (
 
 export type NativeFocusChangeEvent = {
   tabKey: string;
+  repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
 // Android-specific

@@ -649,6 +649,30 @@ RNS_IGNORE_SUPER_CALL_END
   _tabBarItemNeedsRecreation = YES;
 }
 
+- (void)setSpecialEffects:(NSDictionary *)specialEffects
+{
+  if (specialEffects == nil || specialEffects[@"repeatedTabSelection"] == nil ||
+      ![specialEffects[@"repeatedTabSelection"] isKindOfClass:[NSDictionary class]]) {
+    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
+    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
+    return;
+  }
+
+  NSDictionary *repeatedTabSelection = specialEffects[@"repeatedTabSelection"];
+
+  if (repeatedTabSelection[@"popToRoot"] != nil) {
+    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = [RCTConvert BOOL:repeatedTabSelection[@"popToRoot"]];
+  } else {
+    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
+  }
+
+  if (repeatedTabSelection[@"scrollToTop"] != nil) {
+    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = [RCTConvert BOOL:repeatedTabSelection[@"scrollToTop"]];
+  } else {
+    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
+  }
+}
+
 - (void)setOrientation:(RNSOrientation)orientation
 {
   _orientation = orientation;
