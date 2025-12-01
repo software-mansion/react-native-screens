@@ -2,8 +2,8 @@
 
 #if RNS_BOTTOM_ACCESSORY_AVAILABLE
 
-#import <RNSConversions.h>
 #import <React/RCTLog.h>
+#import "RNSConversions.h"
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
