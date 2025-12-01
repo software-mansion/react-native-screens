@@ -2,8 +2,10 @@ package com.swmansion.rnscreens.utils
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.jni.annotations.DoNotStrip
@@ -179,11 +181,16 @@ internal class ScreenDummyLayoutHelper(
         }
 
         val topLevelDecorView = requireActivity().window.decorView
+        val topInset = getDecorViewTopInset()
 
         // These dimensions are not accurate, as they do include status bar & navigation bar, however
         // it is ok for our purposes.
         val decorViewWidth = topLevelDecorView.width
-        val decorViewHeight = topLevelDecorView.height
+        // Adjust the height of the top-level decor view by subtracting the top inset.
+        // This accounts for edge-to-edge support where we need to manually do frame correction
+        // for AppBarLayout. To ensure proper layout for the Screen, we manually downscale the content
+        // to accommodate the extra padding.
+        val decorViewHeight = topLevelDecorView.height - topInset
 
         val widthMeasureSpec =
             View.MeasureSpec.makeMeasureSpec(decorViewWidth, View.MeasureSpec.EXACTLY)
@@ -208,7 +215,11 @@ internal class ScreenDummyLayoutHelper(
         // scenarios when layout violates measured dimensions.
         coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
 
-        val headerHeight = PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
+        // Include the top inset to account for the extra padding manually applied to the CustomToolbar.
+        // This ensures the total height calculation of the AppBarLayout is accurate in edge-to-edge layouts.
+        val totalAppBarLayoutHeight = appBarLayout.height.toFloat() + topInset
+
+        val headerHeight = PixelUtil.toDIPFromPixel(totalAppBarLayoutHeight)
         cache = CacheEntry(CacheKey(fontSize, isTitleEmpty), headerHeight)
         return headerHeight
     }
@@ -265,6 +276,31 @@ internal class ScreenDummyLayoutHelper(
 
     override fun onHostDestroy() {
         reactContextRef.get()?.removeLifecycleEventListener(this)
+    }
+
+    private fun getDecorViewTopInset(): Int {
+        val activity = getInstance()?.requireActivity() ?: return 0
+        val decorView = activity.window.decorView
+        val insets = decorView.rootWindowInsets ?: return 0
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getTopInsetModern(insets)
+        } else {
+            @Suppress("DEPRECATION")
+            insets.systemWindowInsetTop
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun getTopInsetModern(insets: android.view.WindowInsets): Int {
+        val systemBarsTop =
+            insets
+                .getInsets(
+                    android.view.WindowInsets.Type
+                        .systemBars(),
+                ).top
+        val cutoutTop = insets.displayCutout?.safeInsetTop ?: 0
+        return maxOf(systemBarsTop, cutoutTop)
     }
 }
 
