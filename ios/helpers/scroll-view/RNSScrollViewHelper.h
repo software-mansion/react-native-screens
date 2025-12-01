@@ -1,3 +1,5 @@
+#pragma once
+
 #import <UIKit/UIKit.h>
 
 @interface RNSScrollViewHelper : NSObject

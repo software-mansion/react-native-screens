@@ -1,10 +1,11 @@
-import { View } from 'react-native';
+const NOOP = () => {
+  console.warn(
+    '[RNScreens] SplitView is supported only for iOS. Consider using an alternative layout for Android.',
+  );
+  return null;
+};
 
-const Column = View;
-const Inspector = View;
-
-console.warn(
-  '[RNScreens] SplitView is supported only for iOS. Consider using an alternative layout for Android.',
-);
+const Column = NOOP;
+const Inspector = NOOP;
 
 export default { Column, Inspector };

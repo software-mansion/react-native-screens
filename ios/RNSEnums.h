@@ -1,3 +1,5 @@
+#pragma once
+
 typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
   RNSScreenStackPresentationPush,
   RNSScreenStackPresentationModal,

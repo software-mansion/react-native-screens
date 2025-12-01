@@ -1181,6 +1181,14 @@ RNS_IGNORE_SUPER_CALL_END
   return scrollView.panGestureRecognizer == gestureRecognizer;
 }
 
+// Check if ScrollView has horizontal scrolling.
+// This is the same logic as in RCTScrollView:
+// https://github.com/facebook/react-native/blob/69b131c2b1627f64f34a534dac4cf48a542e6ea6/packages/react-native/React/Views/ScrollView/RCTScrollView.m#L557
+- (BOOL)scrollViewHasHorizontalPart:(UIScrollView *)scrollView
+{
+  return scrollView.contentSize.width > scrollView.frame.size.width;
+}
+
 // Custom method for compatibility with iOS < 13.4
 // RNSScreenStackView is a UIGestureRecognizerDelegate for three types of gesture recognizers:
 // RNSPanGestureRecognizer, RNSScreenEdgeGestureRecognizer, _UIParallaxTransitionPanGestureRecognizer
@@ -1282,7 +1290,10 @@ RNS_IGNORE_SUPER_CALL_END
   if (@available(iOS 26, *)) {
     if (gestureRecognizer == _controller.interactiveContentPopGestureRecognizer &&
         [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
-      return YES;
+      // ScrollView should take precedence when scrolling horizontally (it should be required to fail).
+      // However, if it does not allow for horizontal scrolling, there should be no such restriction,
+      // and swiping horizontally should dismiss the screen.
+      return [self scrollViewHasHorizontalPart:static_cast<UIScrollView *>(otherGestureRecognizer.view)];
     }
   }
 
@@ -1305,6 +1316,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif // check for iOS >= 26
 
+  // edge swipe to dismiss should take precedence over scrolling (both horizontally and vertically)
   return isEdgeSwipeGestureRecognizer && [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 

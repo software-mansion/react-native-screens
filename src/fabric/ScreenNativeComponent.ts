@@ -91,6 +91,7 @@ export interface NativeProps extends ViewProps {
   sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>;
   sheetInitialDetent?: WithDefault<Int32, 0>;
   sheetElevation?: WithDefault<Int32, 24>;
+  sheetShouldOverflowTopInset?: WithDefault<boolean, false>;
   customAnimationOnSwipe?: boolean;
   fullScreenSwipeEnabled?: WithDefault<OptionalBoolean, 'undefined'>;
   fullScreenSwipeShadowEnabled?: WithDefault<boolean, true>;
@@ -120,6 +121,10 @@ export interface NativeProps extends ViewProps {
   rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
   synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
+  androidResetScreenShadowStateOnOrientationChangeEnabled?: WithDefault<
+    boolean,
+    true
+  >;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {

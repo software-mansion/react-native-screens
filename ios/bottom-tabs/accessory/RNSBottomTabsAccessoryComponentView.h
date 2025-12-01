@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSBottomTabsAccessoryEventEmitter.h"
 #import "RNSBottomTabsHostComponentView.h"
 #import "RNSReactBaseView.h"

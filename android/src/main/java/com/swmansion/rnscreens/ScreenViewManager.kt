@@ -269,6 +269,14 @@ open class ScreenViewManager :
         view?.sheetElevation = value.toFloat()
     }
 
+    @ReactProp(name = "sheetShouldOverflowTopInset")
+    override fun setSheetShouldOverflowTopInset(
+        view: Screen?,
+        sheetShouldOverflowTopInset: Boolean,
+    ) {
+        view?.sheetShouldOverflowTopInset = sheetShouldOverflowTopInset
+    }
+
     // mark: iOS-only
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(
@@ -342,6 +350,11 @@ open class ScreenViewManager :
     ) = Unit
 
     // END mark: iOS-only
+
+    override fun setAndroidResetScreenShadowStateOnOrientationChangeEnabled(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit // represents a feature flag and is checked via getProps() in RNSScreenComponentDescriptor.h
 
     @ReactProp(name = "sheetAllowedDetents")
     override fun setSheetAllowedDetents(

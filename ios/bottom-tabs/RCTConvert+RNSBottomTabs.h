@@ -1,3 +1,5 @@
+#pragma once
+
 #import <React/RCTConvert.h>
 #import <UIKit/UIKit.h>
 

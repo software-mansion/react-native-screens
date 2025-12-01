@@ -27,6 +27,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.BottomSheetTransitionCoordinator
+import com.swmansion.rnscreens.bottomsheet.BottomSheetWindowInsetListenerChain
 import com.swmansion.rnscreens.bottomsheet.DimmingViewManager
 import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -55,6 +57,8 @@ class ScreenStackFragment :
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
 
+    private lateinit var sheetTransitionCoordinator: BottomSheetTransitionCoordinator
+
     private var lastFocusedChild: View? = null
 
     var searchView: CustomSearchView? = null
@@ -72,6 +76,10 @@ class ScreenStackFragment :
     private var dimmingDelegate: DimmingViewManager? = null
 
     internal var sheetDelegate: SheetDelegate? = null
+
+    internal var bottomSheetWindowInsetListenerChain: BottomSheetWindowInsetListenerChain? = null
+
+    private var lastInsetsCompat: WindowInsetsCompat? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -229,6 +237,13 @@ class ScreenStackFragment :
             dimmingDelegate.onViewHierarchyCreated(screen, coordinatorLayout)
             dimmingDelegate.onBehaviourAttached(screen, screen.sheetBehavior!!)
 
+            if (!screen.sheetShouldOverflowTopInset) {
+                sheetTransitionCoordinator = BottomSheetTransitionCoordinator()
+                attachInsetsAndLayoutListenersToBottomSheet(
+                    sheetTransitionCoordinator,
+                )
+            }
+
             // Pre-layout the content for the sake of enter transition.
 
             val container = screen.container!!
@@ -239,10 +254,12 @@ class ScreenStackFragment :
             coordinatorLayout.layout(0, 0, container.width, container.height)
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                ViewCompat.setOnApplyWindowInsetsListener(screen) { _, windowInsets ->
+                val bottomSheetWindowInsetListenerChain = requireBottomSheetWindowInsetsListenerChain()
+                bottomSheetWindowInsetListenerChain.addListener { _, windowInsets ->
                     sheetDelegate.handleKeyboardInsetsProgress(windowInsets)
                     windowInsets
                 }
+                ViewCompat.setOnApplyWindowInsetsListener(screen, bottomSheetWindowInsetListenerChain)
             }
 
             val insetsAnimationCallback =
@@ -457,6 +474,65 @@ class ScreenStackFragment :
         screenStack.dismiss(this)
     }
 
+    // Mark: Avoiding top inset by BottomSheet
+
+    private fun attachInsetsAndLayoutListenersToBottomSheet(sheetTransitionCoordinator: BottomSheetTransitionCoordinator) {
+        screen.container?.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                setOnApplyWindowInsetsListener { _, insets ->
+                    val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
+                    handleInsetsUpdateAndNotifyTransition(
+                        insetsCompat,
+                    )
+                    insets
+                }
+            } else {
+                val bottomSheetWindowInsetListenerChain = requireBottomSheetWindowInsetsListenerChain()
+                bottomSheetWindowInsetListenerChain.addListener { _, windowInsets ->
+                    handleInsetsUpdateAndNotifyTransition(
+                        windowInsets,
+                    )
+                    windowInsets
+                }
+            }
+        }
+
+        screen.container?.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            sheetTransitionCoordinator.onScreenContainerLayoutChanged(screen)
+        }
+    }
+
+    private fun handleInsetsUpdateAndNotifyTransition(insetsCompat: WindowInsetsCompat) {
+        if (lastInsetsCompat == insetsCompat) {
+            return
+        }
+        lastInsetsCompat = insetsCompat
+
+        // Reconfigure BottomSheetBehavior with the same state and updated maxHeight.
+        // When insets are available, we can factor them in to update the maximum height accordingly.
+        val sheetDelegate = requireSheetDelegate()
+        sheetDelegate.updateBottomSheetMetrics(screen.sheetBehavior!!)
+
+        screen.container?.let { container ->
+            // Needs to be highlighted that nothing changes at the container level.
+            // However, calling additional measure will trigger BottomSheetBehavior's `onMeasureChild` logic.
+            // This method ensures that the bottom sheet respects the maxHeight we update in `configureBottomSheetBehavior`.
+            coordinatorLayout.forceLayout()
+            coordinatorLayout.measure(
+                View.MeasureSpec.makeMeasureSpec(container.width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(container.height, View.MeasureSpec.EXACTLY),
+            )
+            coordinatorLayout.layout(0, 0, container.width, container.height)
+        }
+
+        // Although the layout of the screen container and CoordinatorLayout hasn't changed,
+        // the BottomSheetBehavior has updated the maximum height.
+        // We manually trigger the callback to notify that the bottom sheet layout has been applied.
+        screen.onBottomSheetBehaviorDidLayout(true)
+
+        sheetTransitionCoordinator.onScreenContainerInsetsApplied(screen)
+    }
+
     private fun requireDimmingDelegate(forceCreation: Boolean = false): DimmingViewManager {
         if (dimmingDelegate == null || forceCreation) {
             dimmingDelegate?.invalidate(screen.sheetBehavior)
@@ -470,5 +546,12 @@ class ScreenStackFragment :
             sheetDelegate = SheetDelegate(screen)
         }
         return sheetDelegate!!
+    }
+
+    internal fun requireBottomSheetWindowInsetsListenerChain(): BottomSheetWindowInsetListenerChain {
+        if (bottomSheetWindowInsetListenerChain == null) {
+            bottomSheetWindowInsetListenerChain = BottomSheetWindowInsetListenerChain()
+        }
+        return bottomSheetWindowInsetListenerChain!!
     }
 }

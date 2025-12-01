@@ -1,3 +1,5 @@
+#pragma once
+
 #import <React/RCTImageSource.h>
 #import "RNSBottomTabsScreenEventEmitter.h"
 #import "RNSEnums.h"
