@@ -11,7 +11,7 @@ internal class TabsHostEventEmitter(
     fun emitOnNativeFocusChange(
         tabKey: String,
         tabNumber: Int,
-        repeatedSelectionHandledBySpecialEffect: Boolean
+        repeatedSelectionHandledBySpecialEffect: Boolean,
     ) {
         reactEventDispatcher.dispatchEvent(
             TabsHostNativeFocusChangeEvent(
@@ -19,8 +19,8 @@ internal class TabsHostEventEmitter(
                 viewTag,
                 tabKey,
                 tabNumber,
-                repeatedSelectionHandledBySpecialEffect
-            )
+                repeatedSelectionHandledBySpecialEffect,
+            ),
         )
     }
 }
