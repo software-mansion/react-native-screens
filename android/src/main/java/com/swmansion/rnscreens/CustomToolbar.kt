@@ -56,9 +56,6 @@ open class CustomToolbar(
         // By referencing the menu here, we trigger `ensureMenu`, which creates and attaches ActionMenuView early.
         // This guarantees that all size-dependent children are present during the first layout pass,
         // resulting in correct height determination from the beginning.
-        //
-        // TODO(@t0maboro): I believe that CustomToolbar is used only when the header is visible,
-        // but I need to double check
         menu
     }
 
