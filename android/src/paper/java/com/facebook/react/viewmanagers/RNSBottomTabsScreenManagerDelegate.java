@@ -71,11 +71,17 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "iconSfSymbolName":
         mViewManager.setIconSfSymbolName(view, value == null ? null : (String) value);
         break;
+      case "iconXcassetsName":
+        mViewManager.setIconXcassetsName(view, value == null ? null : (String) value);
+        break;
       case "selectedIconImageSource":
         mViewManager.setSelectedIconImageSource(view, (ReadableMap) value);
         break;
       case "selectedIconSfSymbolName":
         mViewManager.setSelectedIconSfSymbolName(view, value == null ? null : (String) value);
+        break;
+      case "selectedIconXcassetsName":
+        mViewManager.setSelectedIconXcassetName(view, value == null ? null : (String) value);
         break;
       case "systemItem":
         mViewManager.setSystemItem(view, (String) value);
