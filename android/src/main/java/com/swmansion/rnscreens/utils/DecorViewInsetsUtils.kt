@@ -6,7 +6,6 @@ import android.view.WindowInsets
 import androidx.annotation.RequiresApi
 
 object DecorViewInsetsUtils {
-
     /**
      * Retrieves the top system inset (such as status bar or display cutout) from the given decor view.
      *

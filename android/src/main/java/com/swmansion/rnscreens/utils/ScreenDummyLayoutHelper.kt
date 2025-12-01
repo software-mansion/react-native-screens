@@ -2,10 +2,8 @@ package com.swmansion.rnscreens.utils
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
 import android.util.Log
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.jni.annotations.DoNotStrip
