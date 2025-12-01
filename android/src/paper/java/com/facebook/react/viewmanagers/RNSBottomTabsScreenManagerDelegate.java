@@ -19,10 +19,12 @@ import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
 @SuppressWarnings("deprecation")
-public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSBottomTabsScreenManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
+public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSBottomTabsScreenManagerInterface<T>>
+    extends BaseViewManagerDelegate<T, U> {
   public RNSBottomTabsScreenManagerDelegate(U viewManager) {
     super(viewManager);
   }
+
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
@@ -81,7 +83,7 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
         mViewManager.setSelectedIconSfSymbolName(view, value == null ? null : (String) value);
         break;
       case "selectedIconXcassetsName":
-        mViewManager.setSelectedIconXcassetName(view, value == null ? null : (String) value);
+        mViewManager.setSelectedIconXcassetsName(view, value == null ? null : (String) value);
         break;
       case "systemItem":
         mViewManager.setSystemItem(view, (String) value);
