@@ -120,8 +120,14 @@ export type PlatformIconIOSSfSymbol = {
   name: string;
 };
 
+export type PlatformIconIOSXcassets = {
+  type: 'xcassets';
+  name: string;
+};
+
 export type PlatformIconIOS =
   | PlatformIconIOSSfSymbol
+  | PlatformIconIOSXcassets
   | {
       type: 'templateSource';
       templateSource: ImageSourcePropType;

@@ -328,6 +328,8 @@ export interface BottomTabsScreenProps {
    * iOS-only:
    * - `{ type: 'sfSymbol', name }`
    *   Uses an SF Symbol with the specified name.
+   * - `{ type: 'xcassets', name }`
+   *   Uses assets from Xcassets.
    * - `{ type: 'templateSource', templateSource }`
    *   Uses the provided image as a template image.
    *   The icon color will depend on the current state
