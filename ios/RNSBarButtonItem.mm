@@ -25,6 +25,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   NSDictionary *imageSourceObj = dict[@"imageSource"];
   NSDictionary *templateSourceObj = dict[@"templateSource"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
+  NSString *xcassetsName = dict[@"xcassetsName"];
 
   if (imageSourceObj != nil || templateSourceObj != nil) {
     BOOL isTemplate = imageSourceObj != nil ? NO : YES;
@@ -38,6 +39,8 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                                                  }];
   } else if (sfSymbolName != nil) {
     self.image = [UIImage systemImageNamed:sfSymbolName];
+  } else if (xcassetsName != nil) {
+    self.image = [UIImage imageNamed:xcassetsName];
   }
 
   if (title != nil) {
@@ -162,9 +165,17 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   }
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
+  NSString *xcassetsName = dict[@"xcassetsName"];
+
+  UIImage* image = nil;
+  if (sfSymbolName != nil) {
+    image = [UIImage systemImageNamed:sfSymbolName];
+  } else if (xcassetsName != nil) {
+    image = [UIImage imageNamed:xcassetsName];
+  }
 
   return [UIMenu menuWithTitle:title
-                         image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
+                         image:image
                     identifier:nil
                        options:RNSMakeUIMenuOptionsFromConfig(dict)
                       children:elements];
@@ -175,8 +186,17 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   NSString *menuId = dict[@"menuId"];
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
+  NSString *xcassetsName = dict[@"xcassetsName"];
+
+  UIImage *image = nil;
+  if (sfSymbolName != nil) {
+    image = [UIImage systemImageNamed:sfSymbolName];
+  } else {
+    image = [UIImage imageNamed:xcassetsName];
+  }
+
   UIAction *actionElement = [UIAction actionWithTitle:title
-                                                image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
+                                                image:image
                                            identifier:nil
                                               handler:^(__kindof UIAction *_Nonnull a) {
                                                 menuAction(menuId);
