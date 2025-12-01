@@ -100,9 +100,11 @@ namespace react = facebook::react;
 
   _iconImageSource = nil;
   _iconSfSymbolName = nil;
+  _iconXcassetsName = nil;
 
   _selectedIconImageSource = nil;
   _selectedIconSfSymbolName = nil;
+  _selectedIconXcassetsName = nil;
 
   _systemItem = RNSBottomTabsScreenSystemItemNone;
 
@@ -329,6 +331,11 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
+  if (newComponentProps.iconXcassetsName != oldComponentProps.iconXcassetsName) {
+    _iconXcassetsName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconXcassetsName);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
   if (newComponentProps.selectedIconImageSource != oldComponentProps.selectedIconImageSource) {
     _selectedIconImageSource = rnscreens::conversion::RCTImageSourceFromImageSourceAndIconType(
         &newComponentProps.selectedIconImageSource, _iconType);
@@ -337,6 +344,11 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
     _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.selectedIconXcassetsName != oldComponentProps.selectedIconXcassetsName) {
+    _selectedIconXcassetsName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconXcassetsName);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -570,6 +582,12 @@ RNS_IGNORE_SUPER_CALL_END
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
+- (void)setIconXcassetsName:(NSString *)iconXcassetsName
+{
+  _iconXcassetsName = [NSString rnscreens_stringOrNilIfEmpty:iconXcassetsName];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
 - (void)setSelectedIconImageSource:(RCTImageSource *)selectedIconImageSource
 {
   _selectedIconImageSource = selectedIconImageSource;
@@ -579,6 +597,12 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setSelectedIconSfSymbolName:(NSString *)selectedIconSfSymbolName
 {
   _selectedIconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSfSymbolName];
+  _tabItemNeedsAppearanceUpdate = YES;
+}
+
+- (void)setSelectedIconXcassetsName:(NSString *)selectedIconXcassetsName
+{
+  _selectedIconXcassetsName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconXcassetsName];
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
