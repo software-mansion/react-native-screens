@@ -14,6 +14,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
+import com.swmansion.rnscreens.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
@@ -268,6 +269,14 @@ open class ScreenViewManager :
         view?.sheetElevation = value.toFloat()
     }
 
+    @ReactProp(name = "sheetShouldOverflowTopInset")
+    override fun setSheetShouldOverflowTopInset(
+        view: Screen?,
+        sheetShouldOverflowTopInset: Boolean,
+    ) {
+        view?.sheetShouldOverflowTopInset = sheetShouldOverflowTopInset
+    }
+
     // mark: iOS-only
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(
@@ -342,23 +351,24 @@ open class ScreenViewManager :
 
     // END mark: iOS-only
 
+    override fun setAndroidResetScreenShadowStateOnOrientationChangeEnabled(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit // represents a feature flag and is checked via getProps() in RNSScreenComponentDescriptor.h
+
     @ReactProp(name = "sheetAllowedDetents")
     override fun setSheetAllowedDetents(
         view: Screen,
         value: ReadableArray?,
     ) {
-        view.sheetDetents.clear()
+        val parsedDetents =
+            if (value != null && value.size() > 0) {
+                List(value.size()) { index -> value.getDouble(index) }
+            } else {
+                listOf(1.0)
+            }
 
-        if (value == null || value.size() == 0) {
-            view.sheetDetents.add(1.0)
-            return
-        }
-
-        IntProgression
-            .fromClosedRange(0, value.size() - 1, 1)
-            .asSequence()
-            .map { idx -> value.getDouble(idx) }
-            .toCollection(view.sheetDetents)
+        view.sheetDetents = SheetDetents(parsedDetents)
     }
 
     @ReactProp(name = "sheetLargestUndimmedDetent")

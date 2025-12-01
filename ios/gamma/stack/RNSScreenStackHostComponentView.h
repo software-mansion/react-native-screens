@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSReactBaseView.h"
 #import "RNSStackScreenComponentView.h"
 

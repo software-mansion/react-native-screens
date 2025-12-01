@@ -54,40 +54,6 @@ function throwIfFileMissing(filepath) {
   }
 }
 
-/**
-  * Adapts files codegend for the new architecture for paticular needs of old architecure.
-  * This usually comes down to keeping backward compat on old architecture.
-  *
-  * @param {string} dir - directory with codegened files
-  */
-function fixOldArchJavaForRN77Compat(dir) {
-  console.log(`${TAG} fixOldArchJavaForRN77Compat:  ${dir}`);
-  const files = readdirSync(dir);
-  files.forEach(file => {
-    const filePath = path.join(dir, file);
-    const fileExtension = path.extname(file);
-    if (fileExtension === '.java') {
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      let newFileContent = fileContent.replace(
-        /extends ViewManagerWithGeneratedInterface/g,
-        '',
-      );
-      if (fileContent !== newFileContent) {
-        // Also remove redundant import
-        newFileContent = newFileContent.replace(
-          /import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;/,
-          '',
-        );
-
-        console.log(' => fixOldArchJava77 applied to:', filePath);
-        fs.writeFileSync(filePath, newFileContent, 'utf-8');
-      }
-    } else if (fs.lstatSync(filePath).isDirectory()) {
-      fixOldArchJavaForRN77Compat(filePath);
-    }
-  });
-}
-
 async function generateCodegen() {
   console.log(`${TAG} generateCodegen`);
   exec(`rm -rf ${GENERATED_DIR}`);
@@ -101,7 +67,6 @@ async function generateCodegen() {
   );
 
   const generatedJavaFilesDir = `${GENERATED_DIR}/source/codegen/java/`;
-  fixOldArchJavaForRN77Compat(generatedJavaFilesDir);
 }
 
 async function generateCodegenJavaOldArch() {

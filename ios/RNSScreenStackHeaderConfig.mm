@@ -575,12 +575,13 @@ RNS_IGNORE_SUPER_CALL_END
     vc.edgesForExtendedLayout = UIRectEdgeAll;
   }
 
-  [navctr setNavigationBarHidden:shouldHide animated:animated];
-
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
   if (shouldHide) {
     navitem.title = config.title;
+
+    // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
+    [navctr setNavigationBarHidden:YES animated:animated];
     return;
   }
 
@@ -723,6 +724,11 @@ RNS_IGNORE_SUPER_CALL_END
                                                 withCurrentItems:navitem.leftBarButtonItems];
   navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
                                                  withCurrentItems:navitem.rightBarButtonItems];
+
+  // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
+  // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
+  RCTAssert(shouldHide == NO, @"[RNScreens] RNSScreenStackHeaderConfig: expected shouldHide to be NO.");
+  [navctr setNavigationBarHidden:NO animated:animated];
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {

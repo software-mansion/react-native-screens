@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  Platform,
   StyleSheet,
   findNodeHandle,
   type NativeSyntheticEvent,
@@ -15,6 +16,9 @@ import type {
   NativeFocusChangeEvent,
 } from './BottomTabs.types';
 import { bottomTabsDebugLog } from '../../private/logging';
+import BottomTabsAccessory from './BottomTabsAccessory';
+import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+import BottomTabsAccessoryContent from './BottomTabsAccessoryContent';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -26,6 +30,7 @@ function BottomTabs(props: BottomTabsProps) {
     onNativeFocusChange,
     experimentalControlNavigationStateInJS = featureFlags.experiment
       .controlledBottomTabs,
+    bottomAccessory,
     ...filteredProps
   } = props;
 
@@ -54,6 +59,9 @@ function BottomTabs(props: BottomTabsProps) {
     [onNativeFocusChange],
   );
 
+  const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
+    useState<BottomTabsAccessoryEnvironment>('regular');
+
   return (
     <BottomTabsNativeComponent
       style={styles.fillParent}
@@ -63,6 +71,26 @@ function BottomTabs(props: BottomTabsProps) {
       ref={componentNodeRef}
       {...filteredProps}>
       {filteredProps.children}
+      {bottomAccessory &&
+        Platform.OS === 'ios' &&
+        parseInt(Platform.Version, 10) >= 26 &&
+        (Platform.constants.reactNativeVersion.minor >= 82 ? (
+          <BottomTabsAccessory>
+            <BottomTabsAccessoryContent environment="regular">
+              {bottomAccessory('regular')}
+            </BottomTabsAccessoryContent>
+            <BottomTabsAccessoryContent environment="inline">
+              {bottomAccessory('inline')}
+            </BottomTabsAccessoryContent>
+          </BottomTabsAccessory>
+        ) : (
+          <BottomTabsAccessory
+            onEnvironmentChange={event => {
+              setBottomAccessoryEnvironment(event.nativeEvent.environment);
+            }}>
+            {bottomAccessory(bottomAccessoryEnvironment)}
+          </BottomTabsAccessory>
+        ))}
     </BottomTabsNativeComponent>
   );
 }

@@ -235,11 +235,27 @@ export interface ScreenProps extends ViewProps {
   nativeBackButtonDismissalEnabled?: boolean;
   /**
    * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
-   * Depending on values set, it will blur the scrolling content below certain UI elements (Header Items, SearchBar)
-   * for the specifed edge of the ScrollView.
+   * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
+   * for the specified edge of the ScrollView.
    *
    * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
    * the ScrollView will use only the innermost one's config.
+   *
+   * **Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
+   *
+   * Edge effects can be configured for each edge separately. The following values are currently supported:
+   *
+   * - `automatic` - the automatic scroll edge effect style,
+   * - `hard` - a scroll edge effect with a hard cutoff and dividing line,
+   * - `soft` - a soft-edged scroll edge effect,
+   * - `hidden` - no scroll edge effect.
+   *
+   * The supported values correspond to the `UIScrollEdgeEffect`'s `style` and `isHidden` props
+   * in the official UIKit documentation:
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect|UIScrollEdgeEffect}
+   *
+   * @default `automatic` for each edge
    *
    * @platform ios
    *
@@ -473,6 +489,22 @@ export interface ScreenProps extends ViewProps {
    */
   sheetInitialDetentIndex?: number | 'last';
   /**
+   * Whether the sheet content should be rendered behind the Status Bar or display cutouts.
+   *
+   * When set to `true`, the sheet will extend to the physical edges of the stack,
+   * allowing content to be visible behind the status bar or display cutouts.
+   * Detent ratios in sheetAllowedDetents will be measured relative to the full stack height.
+   *
+   * When set to `false`, the sheet's layout will be constrained by the inset from the top
+   * and the detent ratios will then be measured relative to the adjusted height (excluding the top inset).
+   * This means that sheetAllowedDetents will result in different sheet heights depending on this prop.
+   *
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
+  sheetShouldOverflowTopInset?: boolean;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
@@ -627,6 +659,9 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   backTitleVisible?: boolean;
   /**
    * Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
+   *
+   * **Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
+   *
    * @platform ios
    */
   blurEffect?: BlurEffectTypes;
@@ -1106,6 +1141,7 @@ export interface HeaderBarButtonItemWithAction
 export interface HeaderBarButtonItemMenuAction {
   type: 'action';
   title?: string;
+  subtitle?: string;
   onPress: () => void;
   icon?: PlatformIconIOSSfSymbol;
   /**
@@ -1151,6 +1187,10 @@ export interface HeaderBarButtonItemSubmenu {
   title?: string;
   icon?: PlatformIconIOSSfSymbol;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
+  displayInline?: boolean;
+  destructive?: boolean;
+  singleSelection?: boolean;
+  displayAsPalette?: boolean;
 }
 
 export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
@@ -1158,6 +1198,8 @@ export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
   menu: {
     title?: string;
     items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
+    singleSelection?: boolean;
+    displayAsPalette?: boolean;
   };
   /**
    * A Boolean value that indicates whether the button title should indicate selection or not.

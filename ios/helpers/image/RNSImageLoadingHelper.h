@@ -1,3 +1,5 @@
+#pragma once
+
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 

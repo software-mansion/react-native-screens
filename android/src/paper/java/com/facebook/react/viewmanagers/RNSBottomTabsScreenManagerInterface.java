@@ -13,9 +13,9 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 
-
-public interface RNSBottomTabsScreenManagerInterface<T extends View>  {
+public interface RNSBottomTabsScreenManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setIsFocused(T view, boolean value);
   void setTabKey(T view, @Nullable String value);
   void setTitle(T view, @Nullable String value);

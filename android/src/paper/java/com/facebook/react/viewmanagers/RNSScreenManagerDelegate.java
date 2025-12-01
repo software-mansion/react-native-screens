@@ -50,6 +50,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
       case "sheetElevation":
         mViewManager.setSheetElevation(view, value == null ? 24 : ((Double) value).intValue());
         break;
+      case "sheetShouldOverflowTopInset":
+        mViewManager.setSheetShouldOverflowTopInset(view, value == null ? false : (boolean) value);
+        break;
       case "customAnimationOnSwipe":
         mViewManager.setCustomAnimationOnSwipe(view, value == null ? false : (boolean) value);
         break;
@@ -136,6 +139,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
         break;
       case "synchronousShadowStateUpdatesEnabled":
         mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
+        break;
+      case "androidResetScreenShadowStateOnOrientationChangeEnabled":
+        mViewManager.setAndroidResetScreenShadowStateOnOrientationChangeEnabled(view, value == null ? true : (boolean) value);
         break;
       default:
         super.setProperty(view, propName, value);

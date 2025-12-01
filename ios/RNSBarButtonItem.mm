@@ -4,6 +4,8 @@
 #import "RNSDefines.h"
 #import "RNSImageLoadingHelper.h"
 
+static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
+
 @implementation RNSBarButtonItem {
   NSString *_buttonId;
   RNSBarButtonItemAction _itemAction;
@@ -160,10 +162,11 @@
   }
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
+
   return [UIMenu menuWithTitle:title
                          image:sfSymbolName ? [UIImage systemImageNamed:sfSymbolName] : nil
                     identifier:nil
-                       options:0
+                       options:RNSMakeUIMenuOptionsFromConfig(dict)
                       children:elements];
 }
 
@@ -221,6 +224,11 @@
       actionElement.attributes |= UIMenuElementAttributesKeepsMenuPresented;
     }
 #endif
+  }
+
+  NSString *subtitle = dict[@"subtitle"];
+  if (subtitle != nil) {
+    actionElement.subtitle = subtitle;
   }
 
   return actionElement;
@@ -323,3 +331,30 @@
 #endif
 
 @end
+
+UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config)
+{
+  UIMenuOptions options = 0;
+  NSNumber *singleSelection = config[@"singleSelection"];
+  NSNumber *displayAsPalette = config[@"displayAsPalette"];
+  NSNumber *displayInline = config[@"displayInline"];
+  NSNumber *destructive = config[@"destructive"];
+
+  if (singleSelection != nil && [singleSelection boolValue]) {
+    options |= UIMenuOptionsSingleSelection;
+  }
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    if (displayAsPalette != nil && [displayAsPalette boolValue]) {
+      options |= UIMenuOptionsDisplayAsPalette;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (displayInline != nil && [displayInline boolValue]) {
+    options |= UIMenuOptionsDisplayInline;
+  }
+  if (destructive != nil && [destructive boolValue]) {
+    options |= UIMenuOptionsDestructive;
+  }
+  return options;
+}

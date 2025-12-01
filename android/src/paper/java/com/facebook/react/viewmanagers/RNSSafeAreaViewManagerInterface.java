@@ -12,9 +12,9 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 
-
-public interface RNSSafeAreaViewManagerInterface<T extends View>  {
+public interface RNSSafeAreaViewManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setEdges(T view, @Nullable ReadableMap value);
   void setInsetType(T view, @Nullable String value);
 }

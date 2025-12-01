@@ -1,3 +1,5 @@
+#pragma once
+
 typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
   RNSScreenStackPresentationPush,
   RNSScreenStackPresentationModal,
@@ -180,4 +182,9 @@ typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
   RNSOptionalBooleanUndefined,
   RNSOptionalBooleanTrue,
   RNSOptionalBooleanFalse
+};
+
+typedef NS_ENUM(NSInteger, RNSBottomTabsAccessoryEnvironment) {
+  RNSBottomTabsAccessoryEnvironmentRegular,
+  RNSBottomTabsAccessoryEnvironmentInline
 };

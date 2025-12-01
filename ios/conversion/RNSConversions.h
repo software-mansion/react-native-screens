@@ -2,6 +2,7 @@
 
 #if defined(__cplusplus)
 #import <React/RCTImageSource.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
@@ -71,6 +72,25 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScroll
     react::RNSBottomTabsScreenRightScrollEdgeEffect edgeEffect);
 RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
     react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect);
+
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE
+
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+std::optional<react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
+RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment);
+
+#if REACT_NATIVE_VERSION_MINOR >= 82
+RNSBottomTabsAccessoryEnvironment RNSBottomTabsAccessoryEnvironmentFromCppEquivalent(
+    react::RNSBottomTabsAccessoryContentEnvironment environment);
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
+#else // RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+NSString *_Nullable RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+    UITabAccessoryEnvironment environment);
+#endif // RCT_NEW_ARCH_ENABLED
+
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
     react::RNSBottomTabsScreenUserInterfaceStyle userInterfaceStyle);

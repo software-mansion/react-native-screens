@@ -38,8 +38,10 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 
   FrameCorrectionModes &getFrameCorrectionModes();
 
- private:
 #ifdef ANDROID
+  void resetFrameSizeState();
+
+ private:
   void applyFrameCorrections();
 
   StateData &getStateDataMutable();
