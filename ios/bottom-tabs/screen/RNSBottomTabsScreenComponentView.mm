@@ -456,6 +456,8 @@ RNS_IGNORE_SUPER_CALL_END
 {
   RNSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
   [super mountChildComponentView:childComponentView index:index];
+  [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+  [self updateContentScrollViewEdgeEffectsIfExists];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
