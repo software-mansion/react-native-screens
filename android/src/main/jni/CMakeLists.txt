@@ -45,6 +45,7 @@ if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
     ReactAndroid::reactnative
     ReactAndroid::jsi
     fbjni::fbjni
+    log
   )
 else()
   target_link_libraries(

@@ -181,7 +181,7 @@ internal class ScreenDummyLayoutHelper(
         }
 
         val topLevelDecorView = requireActivity().window.decorView
-        val topInset = getDecorViewTopInset()
+        val topInset = DecorViewInsetsUtils.getDecorViewTopInset(topLevelDecorView)
 
         // These dimensions are not accurate, as they do include status bar & navigation bar, however
         // it is ok for our purposes.
@@ -276,31 +276,6 @@ internal class ScreenDummyLayoutHelper(
 
     override fun onHostDestroy() {
         reactContextRef.get()?.removeLifecycleEventListener(this)
-    }
-
-    private fun getDecorViewTopInset(): Int {
-        val activity = getInstance()?.requireActivity() ?: return 0
-        val decorView = activity.window.decorView
-        val insets = decorView.rootWindowInsets ?: return 0
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            getTopInsetModern(insets)
-        } else {
-            @Suppress("DEPRECATION")
-            insets.systemWindowInsetTop
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun getTopInsetModern(insets: android.view.WindowInsets): Int {
-        val systemBarsTop =
-            insets
-                .getInsets(
-                    android.view.WindowInsets.Type
-                        .systemBars(),
-                ).top
-        val cutoutTop = insets.displayCutout?.safeInsetTop ?: 0
-        return maxOf(systemBarsTop, cutoutTop)
     }
 }
 
