@@ -173,8 +173,7 @@ RNS_IGNORE_SUPER_CALL_END
       // so we need to hit test subviews from left to right, because of the view flattening
       UIView *headerComponent = nil;
       for (UIView *headerComponentSubview in subview.subviews) {
-        CGPoint convertedPoint =
-            [self.screenView.controller.navigationController.view convertPoint:point toView:headerComponentSubview];
+        CGPoint convertedPoint = [self convertPoint:point toView:headerComponentSubview];
         UIView *hitTestResult = [headerComponentSubview hitTest:convertedPoint withEvent:event];
 
         if (hitTestResult != nil) {
