@@ -138,11 +138,6 @@ namespace react = facebook::react;
 
 #pragma mark - RCTComponentViewProtocol
 
-- (void)prepareForRecycle
-{
-  [super prepareForRecycle];
-}
-
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
   const auto &newHeaderSubviewProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewProps>(props);
