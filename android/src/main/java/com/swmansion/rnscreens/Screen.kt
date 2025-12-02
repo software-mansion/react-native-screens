@@ -195,7 +195,7 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            if (!insetsApplied) {
+            if (!insetsApplied && headerConfig?.isHeaderHidden == false) {
                 val topLevelDecorView =
                     requireNotNull(
                         reactContext.currentActivity?.window?.decorView,
