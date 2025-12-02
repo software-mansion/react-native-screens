@@ -169,9 +169,9 @@ RNS_IGNORE_SUPER_CALL_END
         continue;
       }
 
-      // we wrap the headerLeft/Right component in a UIBarButtonItem
-      // so we need to hit test subviews right to left, because of the view flattening
-      // (matches RCTViewComponentView implementation)
+      // We wrap the headerLeft/Right component in a UIBarButtonItem
+      // so we need to hit test subviews, because of the view flattening
+      // (we match RCTViewComponentView implementation).
       for (UIView *headerComponentSubview in [subview.subviews reverseObjectEnumerator]) {
         CGPoint convertedPoint = [self convertPoint:point toView:headerComponentSubview];
         UIView *hitTestResult = [headerComponentSubview hitTest:convertedPoint withEvent:event];
