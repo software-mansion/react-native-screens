@@ -72,7 +72,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nonnull RNSBottomTabsHostEventEmitter *)reactEventEmitter;
 
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen;
+- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen
+                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect;
 
 #if !RCT_NEW_ARCH_ENABLED
 #pragma mark - LEGACY Event blocks

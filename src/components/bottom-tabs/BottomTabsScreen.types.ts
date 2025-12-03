@@ -256,16 +256,6 @@ export interface BottomTabsScreenItemStateAppearance {
 }
 
 export interface BottomTabsScreenProps {
-  children?: ViewProps['children'];
-  /**
-   * @summary Defines what should be rendered when tab screen is frozen.
-   *
-   * @see {@link https://github.com/software-mansion/react-freeze|`react-freeze`'s GitHub repository} for more information about `react-freeze`.
-   *
-   * @platform android, ios
-   */
-  placeholder?: React.ReactNode | undefined;
-
   // #region Control
   /**
    * @summary Determines selected tab.
@@ -289,6 +279,15 @@ export interface BottomTabsScreenProps {
   // #endregion
 
   // #region General
+  children?: ViewProps['children'];
+  /**
+   * @summary Defines what should be rendered when tab screen is frozen.
+   *
+   * @see {@link https://github.com/software-mansion/react-freeze|`react-freeze`'s GitHub repository} for more information about `react-freeze`.
+   *
+   * @platform android, ios
+   */
+  placeholder?: React.ReactNode | undefined;
   /**
    * @summary Title of the tab screen, displayed in the tab bar item.
    *
@@ -341,8 +340,66 @@ export interface BottomTabsScreenProps {
    *
    * On iOS, if no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.
+   *
+   * @platform android, ios
    */
   icon?: PlatformIcon;
+  /**
+   * @summary Specifies which special effects (also known as microinteractions)
+   * are enabled for the tab screen.
+   *
+   * For repeated tab selection (selecting already focused tab bar item),
+   * there are 2 supported special effects:
+   * - `popToRoot` - when Stack is nested inside tab screen and repeated
+   *   selection is detected, the Stack will pop to root screen,
+   * - `scrollToTop` - when there is a ScrollView in first descendant
+   *   chain from tab screen and repeated selection is detected, ScrollView
+   *   will be scrolled to top.
+   *
+   * `popToRoot` has priority over `scrollToTop`.
+   *
+   * @default All special effects are enabled by default.
+   *
+   * @platform android, ios
+   */
+  specialEffects?: {
+    repeatedTabSelection?: {
+      /**
+       * @default true
+       */
+      popToRoot?: boolean;
+      /**
+       * @default true
+       */
+      scrollToTop?: boolean;
+    };
+  };
+  /**
+   * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
+   *
+   * @default undefined
+   *
+   * @platform android, ios
+   */
+  freezeContents?: boolean;
+  // #endregion General
+
+  // #region Android-only
+  /**
+   * @summary Specifies the color of the text in the badge.
+   *
+   * @platform android
+   */
+  tabBarItemBadgeTextColor?: ColorValue;
+  /**
+   * @summary Specifies the background color of the badge.
+   *
+   * @platform android
+   */
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+  // #endregion Android-only
+
+  // #region iOS-only
   /**
    * @summary Specifies supported orientations for the tab screen.
    *
@@ -392,22 +449,6 @@ export interface BottomTabsScreenProps {
    * @platform ios
    */
   orientation?: BottomTabsScreenOrientation;
-  // #endregion General
-  /**
-   * @summary Specifies the color of the text in the badge.
-   *
-   * @platform android
-   */
-  tabBarItemBadgeTextColor?: ColorValue;
-  /**
-   * @summary Specifies the background color of the badge.
-   *
-   * @platform android
-   */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-  // #endregion Android-only appearance
-
-  // #region iOS-only appearance
   /**
    * @summary Specifies the standard tab bar appearance.
    *
@@ -449,43 +490,10 @@ export interface BottomTabsScreenProps {
    * be customized.
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
+   *
    * @platform ios
    */
   systemItem?: BottomTabsSystemItem;
-  /**
-   * @summary Specifies which special effects (also known as microinteractions)
-   * are enabled for the tab screen.
-   *
-   * For repeated tab selection (selecting already focused tab bar item),
-   * there are 2 supported special effects:
-   * - `popToRoot` - when Stack is nested inside tab screen and repeated
-   *   selection is detected, the Stack will pop to root screen,
-   * - `scrollToTop` - when there is a ScrollView in first descendant
-   *   chain from tab screen and repeated selection is detected, ScrollView
-   *   will be scrolled to top.
-   *
-   * `popToRoot` has priority over `scrollToTop`.
-   *
-   * @default All special effects are enabled by default.
-   */
-  specialEffects?: {
-    repeatedTabSelection?: {
-      /**
-       * @default true
-       */
-      popToRoot?: boolean;
-      /**
-       * @default true
-       */
-      scrollToTop?: boolean;
-    };
-  };
-  /**
-   * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
-   *
-   * @default `undefined`
-   */
-  freezeContents?: boolean;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
@@ -550,10 +558,11 @@ export interface BottomTabsScreenProps {
    * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle|UIUserInterfaceStyle}
    *
    * @default unspecified
+   *
    * @platform ios
    */
   experimental_userInterfaceStyle?: UserInterfaceStyle;
-  // #endregion iOS-only appearance
+  // #endregion iOS-only
 
   // #region Events
   /**

@@ -13,6 +13,7 @@ export type BottomAccessoryFn = (
 
 export type NativeFocusChangeEvent = {
   tabKey: string;
+  repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
 // Android-specific
@@ -49,11 +50,13 @@ export interface BottomTabsProps extends ViewProps {
    * @summary Hides the tab bar.
    *
    * @default false
+   *
+   * @platform android, ios
    */
   tabBarHidden?: boolean;
   // #endregion General
 
-  // #region Android-only appearance
+  // #region Android-only
   /**
    * @summary Specifies the background color for the entire tab bar.
    *
@@ -157,12 +160,13 @@ export interface BottomTabsProps extends ViewProps {
    * @see {@link https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md#making-navigation-bar-accessible|Material Components documentation}
    *
    * @default auto
+   *
    * @platform android
    */
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
-  // #endregion Android-only appearance
+  // #endregion Android-only
 
-  // #region iOS-only appearance
+  // #region iOS-only
   /**
    * @summary Specifies the color used for selected tab's text and icon color.
    *
@@ -249,7 +253,7 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode;
-  // #endregion iOS-only appearance
+  // #endregion iOS-only
 
   // #region Experimental support
   /**

@@ -33,9 +33,6 @@ RCT_EXPORT_VIEW_PROPERTY(iconSfSymbolName, NSString);
 RCT_EXPORT_VIEW_PROPERTY(selectedIconImageSource, RCTImageSource);
 RCT_EXPORT_VIEW_PROPERTY(selectedIconSfSymbolName, NSString);
 
-RCT_EXPORT_VIEW_PROPERTY(shouldUseRepeatedTabSelectionPopToRootSpecialEffect, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(shouldUseRepeatedTabSelectionScrollToTopSpecialEffect, BOOL);
-
 RCT_EXPORT_VIEW_PROPERTY(overrideScrollViewContentInsetAdjustmentBehavior, BOOL);
 
 RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
@@ -46,6 +43,8 @@ RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle);
 
 RCT_EXPORT_VIEW_PROPERTY(systemItem, RNSBottomTabsScreenSystemItem);
+
+RCT_EXPORT_VIEW_PROPERTY(specialEffects, NSDictionary);
 
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);

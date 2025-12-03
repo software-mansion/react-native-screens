@@ -261,9 +261,13 @@ namespace react = facebook::react;
   return _reactEventEmitter;
 }
 
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(RNSBottomTabsScreenComponentView *)tabScreen
+- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen
+                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect
 {
-  return [_reactEventEmitter emitOnNativeFocusChange:OnNativeFocusChangePayload{.tabKey = tabScreen.tabKey}];
+  return [_reactEventEmitter
+      emitOnNativeFocusChange:OnNativeFocusChangePayload{
+                                  .tabKey = tabScreen.tabKey,
+                                  .repeatedSelectionHandledBySpecialEffect = repeatedSelectionHandledBySpecialEffect}];
 }
 
 #pragma mark - RCTComponentViewProtocol

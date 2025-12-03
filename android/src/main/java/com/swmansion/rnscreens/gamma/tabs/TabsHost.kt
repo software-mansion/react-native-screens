@@ -252,10 +252,14 @@ class TabsHost(
         bottomNavigationView.setOnItemSelectedListener { item ->
             RNSLog.d(TAG, "Item selected $item")
             val fragment = getFragmentForMenuItemId(item.itemId)
-            if (fragment != currentFocusedTab || !specialEffectsHandler.handleRepeatedTabSelection()) {
-                val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
-                eventEmitter.emitOnNativeFocusChange(tabKey)
-            }
+            val repeatedSelectionHandledBySpecialEffect =
+                if (fragment == currentFocusedTab) specialEffectsHandler.handleRepeatedTabSelection() else false
+            val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
+            eventEmitter.emitOnNativeFocusChange(
+                tabKey,
+                item.itemId,
+                repeatedSelectionHandledBySpecialEffect,
+            )
             true
         }
     }
@@ -352,8 +356,11 @@ class TabsHost(
 
         appearanceCoordinator.updateTabAppearance(this)
 
-        bottomNavigationView.selectedItemId =
+        val selectedTabScreenFragmentId =
             checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
+        if (bottomNavigationView.selectedItemId != selectedTabScreenFragmentId) {
+            bottomNavigationView.selectedItemId = selectedTabScreenFragmentId
+        }
 
         post {
             refreshLayout()
