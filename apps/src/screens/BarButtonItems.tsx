@@ -16,6 +16,7 @@ const Stack = createNativeStackNavigator();
 const demoScreens = [
   { name: 'PlainButtonDemo', title: 'Plain Button' },
   { name: 'IconButtonDemo', title: 'Icon Button' },
+  { name: 'XcassetsIconButtonDemo', title: 'Xcassets Icon Button' },
   { name: 'SystemIconButtonDemo', title: 'System Icon Button' },
   { name: 'MenuButtonDemo', title: 'Menu Button' },
   { name: 'BadgeButtonDemo', title: 'Badge Button' },
@@ -63,6 +64,7 @@ const DemoScreenContent = () => (
 
 const PlainButtonDemo = DemoScreenContent;
 const IconButtonDemo = DemoScreenContent;
+const XcassetsIconButtonDemo = DemoScreenContent;
 const MenuButtonDemo = DemoScreenContent;
 const BadgeButtonDemo = DemoScreenContent;
 const DisabledButtonDemo = DemoScreenContent;
@@ -125,6 +127,24 @@ export default function BarButtonItemsExample() {
               label: 'Title',
               onPress: () => Alert.alert('Icon pressed'),
             },
+          ],
+        }}
+      />
+      <Stack.Screen
+        name="XcassetsIconButtonDemo"
+        component={XcassetsIconButtonDemo}
+        options={{
+          title: 'Icon Button',
+          unstable_headerRightItems: () => [
+            {
+              type: "button",
+              icon: {
+                type: "xcassets",
+                name: "logo",
+              },
+              label: "Xcassets",
+              onPress: () => Alert.alert('Icon Xcassets pressed'),
+            }
           ],
         }}
       />
