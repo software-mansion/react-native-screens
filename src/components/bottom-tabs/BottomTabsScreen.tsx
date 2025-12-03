@@ -119,8 +119,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
   );
 
   bottomTabsDebugLog(
-    `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
-      rest.tabKey
+    `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${rest.tabKey
     } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
   );
 
@@ -280,6 +279,7 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconSfSymbolName?: string;
+  iconXcassetsName?: string;
 } {
   if (!icon) {
     return {};
@@ -300,9 +300,14 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
       iconType: 'template',
       iconImageSource: icon.templateSource,
     };
+  } else if (icon.type === 'xcassets') {
+    return {
+      iconType: 'xcassets',
+      iconXcassetsName: icon.name,
+    };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource` or `templateSource`.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource`, `templateSource` or `xcassets`.',
     );
   }
 }
@@ -316,8 +321,10 @@ function parseIconsToNativeProps(
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconSfSymbolName?: string;
+  iconXcassetsName?: string;
   selectedIconImageSource?: ImageSourcePropType;
   selectedIconSfSymbolName?: string;
+  selectedIconXcassetsName?: string;
 } {
   if (Platform.OS === 'android') {
     const androidNativeProps = parseAndroidIconToNativeProps(
@@ -329,13 +336,14 @@ function parseIconsToNativeProps(
   }
 
   if (Platform.OS === 'ios') {
-    const { iconImageSource, iconSfSymbolName, iconType } =
+    const { iconImageSource, iconSfSymbolName, iconXcassetsName, iconType } =
       parseIOSIconToNativeProps(icon?.ios || icon?.shared);
 
     const {
       iconImageSource: selectedIconImageSource,
       iconSfSymbolName: selectedIconSfSymbolName,
       iconType: selectedIconType,
+      iconXcassetsName: selectedIconXcassetsName
     } = parseIOSIconToNativeProps(selectedIcon);
 
     if (
@@ -355,8 +363,10 @@ function parseIconsToNativeProps(
       iconType,
       iconImageSource,
       iconSfSymbolName,
+      iconXcassetsName,
       selectedIconImageSource,
       selectedIconSfSymbolName,
+      selectedIconXcassetsName
     };
   }
 
