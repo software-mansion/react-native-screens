@@ -88,7 +88,7 @@ namespace react = facebook::react;
 
 - (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView
 {
-  [self updateShadowStateInContextOfAncestorView:ancestorView withFrame:self.frame];
+  [self updateShadowStateInContextOfAncestorView:ancestorView withFrame:self.bounds];
 }
 
 - (void)updateShadowStateWithFrame:(CGRect)frame
@@ -158,6 +158,10 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  _layoutMetrics = layoutMetrics;
+  [self invalidateIntrinsicContentSize];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
   // CALayer will crash if we pass NaN or Inf values.
   // It's unclear how to detect this case on cross-platform manner holistically, so we have to do it on the mounting
@@ -205,11 +209,51 @@ RNS_IGNORE_SUPER_CALL_END
 - (UIBarButtonItem *)getUIBarButtonItem
 {
   if (_barButtonItem == nil) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    // Starting from iOS 26, UIBarButtonItem's customView is streched to have at least 36 width.
+    // Stretching RNSScreenStackHeaderSubview means that its subviews are aligned to left instead
+    // of the center. To mitigate this, we add a wrapper view that will center
+    // RNSScreenStackHeaderSubview inside of itself.
+    UIView *wrapperView = [UIView new];
+    wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    [wrapperView addSubview:self];
+
+    [self.centerXAnchor constraintEqualToAnchor:wrapperView.centerXAnchor].active = YES;
+    [self.centerYAnchor constraintEqualToAnchor:wrapperView.centerYAnchor].active = YES;
+
+    // To prevent UIKit from stretching subviews to all available width, we need to:
+    // 1. Set width of wrapperView to match RNSScreenStackHeaderSubview BUT when
+    //    RNSScreenStackHeaderSubview's width is smaller that minimal required 36 width, it breaks
+    //    UIKit's constraint. That's why we need to lower the priority of the constraint.
+    NSLayoutConstraint *widthEqual = [wrapperView.widthAnchor constraintEqualToAnchor:self.widthAnchor];
+    widthEqual.priority = UILayoutPriorityDefaultHigh;
+    widthEqual.active = YES;
+
+    NSLayoutConstraint *heightEqual = [wrapperView.heightAnchor constraintEqualToAnchor:self.heightAnchor];
+    heightEqual.priority = UILayoutPriorityDefaultHigh;
+    heightEqual.active = YES;
+
+    // 2. Set content hugging prriority for RNSScreenStackHeaderSubview.
+    [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+    [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+
+    _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
+#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self];
-    [self configureBarButtonItem];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   }
+
   return _barButtonItem;
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (CGSize)intrinsicContentSize
+{
+  return RCTCGSizeFromSize(_layoutMetrics.frame.size);
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 - (void)configureBarButtonItem
 {
