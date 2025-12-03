@@ -439,7 +439,7 @@ export default function BarButtonItemsExample() {
                 items: [
                   {
                     label: 'Action 1',
-                    icon: { type: 'sfSymbol', name: 'star' },
+                    icon: { type: 'xcassets', name: 'logo' },
                     type: 'action',
                     state: 'on',
                     destructive: true,
@@ -471,6 +471,7 @@ export default function BarButtonItemsExample() {
                         destructive: true,
                         keepsMenuPresented: true,
                         discoverabilityLabel: 'Sub Action 1',
+                        icon: { type: "xcassets", name: "logo" }
                       },
                       {
                         label: 'Sub Action 2',
