@@ -17,6 +17,10 @@ class TabsHostNativeFocusChangeEvent(
 
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
 
+    // If the user taps currently selected tab 2 times and e.g. scroll to top effect can run,
+    // we should send 2 events [(tabKey, true), (tabKey, false)]. We don't want them to be coalesced
+    // as we would lose information about activation of special effect. That's why we take into
+    // account `repeatedSelectionHandledBySpecialEffect` for coalescingKey.
     override fun getCoalescingKey(): Short = (tabNumber * 10 + if (repeatedSelectionHandledBySpecialEffect) 1 else 0).toShort()
 
     override fun getEventData(): WritableMap? =
