@@ -20,10 +20,13 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenStackHeaderSubview {
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
   react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
   CGRect _lastScheduledFrame;
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
+#if !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  CGRect _lastReactFrame;
+#endif // !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // TODO: Refactor this, so that we don't keep reference here at all.
   // Currently this likely creates retain cycle between subview & the bar button item.
   UIBarButtonItem *_barButtonItem;
@@ -195,6 +198,10 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)reactSetFrame:(CGRect)frame
 {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  _lastReactFrame = frame;
+  [self invalidateIntrinsicContentSize];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
   // makes UINavigationBar the only one to control the position of header content.
   if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
@@ -235,7 +242,7 @@ RNS_IGNORE_SUPER_CALL_END
     heightEqual.priority = UILayoutPriorityDefaultHigh;
     heightEqual.active = YES;
 
-    // 2. Set content hugging prriority for RNSScreenStackHeaderSubview.
+    // 2. Set content hugging priority for RNSScreenStackHeaderSubview.
     [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
 
@@ -252,7 +259,11 @@ RNS_IGNORE_SUPER_CALL_END
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 - (CGSize)intrinsicContentSize
 {
+#if RCT_NEW_ARCH_ENABLED
   return RCTCGSizeFromSize(_layoutMetrics.frame.size);
+#else // RCT_NEW_ARCH_ENABLED
+  return _lastReactFrame.size;
+#endif // RCT_NEW_ARCH_ENABLED
 }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
