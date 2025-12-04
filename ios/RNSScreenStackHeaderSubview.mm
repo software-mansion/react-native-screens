@@ -25,7 +25,7 @@ namespace react = facebook::react;
   CGRect _lastScheduledFrame;
 #endif // RCT_NEW_ARCH_ENABLED
 #if !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  CGRect _lastReactFrame;
+  CGSize _lastReactFrameSize;
 #endif // !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // TODO: Refactor this, so that we don't keep reference here at all.
   // Currently this likely creates retain cycle between subview & the bar button item.
@@ -161,10 +161,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  _layoutMetrics = layoutMetrics;
-  [self invalidateIntrinsicContentSize];
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
   // CALayer will crash if we pass NaN or Inf values.
   // It's unclear how to detect this case on cross-platform manner holistically, so we have to do it on the mounting
@@ -177,7 +173,12 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         NSStringFromCGRect(frame),
         self);
   } else {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    _layoutMetrics = layoutMetrics;
+    [self invalidateIntrinsicContentSize];
+#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     self.bounds = CGRect{CGPointZero, frame.size};
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     [self layoutNavigationBar];
   }
 }
@@ -198,17 +199,19 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)reactSetFrame:(CGRect)frame
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  _lastReactFrame = frame;
-  [self invalidateIntrinsicContentSize];
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
   // makes UINavigationBar the only one to control the position of header content.
   if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    _lastReactFrameSize = frame.size;
+    [self invalidateIntrinsicContentSize];
+#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     [self layoutNavigationBar];
   }
 }
+
 #endif // RCT_NEW_ARCH_ENABLED
 
 #pragma mark - UIBarButtonItem specific
@@ -262,7 +265,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if RCT_NEW_ARCH_ENABLED
   return RCTCGSizeFromSize(_layoutMetrics.frame.size);
 #else // RCT_NEW_ARCH_ENABLED
-  return _lastReactFrame.size;
+  return _lastReactFrameSize;
 #endif // RCT_NEW_ARCH_ENABLED
 }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
