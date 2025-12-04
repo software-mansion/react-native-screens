@@ -243,6 +243,7 @@ RNS_IGNORE_SUPER_CALL_END
 #else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self];
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    [self configureBarButtonItem];
   }
 
   return _barButtonItem;
