@@ -165,7 +165,7 @@ export { default as Test3369 } from './Test3369';
 export { default as Test3379 } from './Test3379';
 export { default as Test3422 } from './Test3422';
 export { default as Test3425 } from './Test3425';
-export { default as TestFoo } from './TestFoo';
+export { default as Test3450 } from './Test3450';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';
