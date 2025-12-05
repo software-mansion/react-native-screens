@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.text.InputType
+import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -29,6 +30,17 @@ class SearchBarView(
     var shouldOverrideBackButton: Boolean = true
     var autoFocus: Boolean = false
     var shouldShowHintSearchIcon: Boolean = true
+
+    var showAsAction: Int = MenuItem.SHOW_AS_ACTION_ALWAYS
+        private set
+
+    fun setShowAsAction(actionView: String?) {
+        showAsAction = when (actionView) {
+            "collapse" -> MenuItem.SHOW_AS_ACTION_ALWAYS or MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
+            "always" ->  MenuItem.SHOW_AS_ACTION_ALWAYS
+            else -> MenuItem.SHOW_AS_ACTION_ALWAYS
+        }
+    }
 
     private var searchViewFormatter: SearchViewFormatter? = null
 

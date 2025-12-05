@@ -19,6 +19,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.children
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.appbar.AppBarLayout
@@ -419,32 +420,43 @@ class ScreenStackFragment :
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun shouldShowSearchBar(): Boolean {
+    private fun locateSearchBarSubviewInConfig(): ScreenStackHeaderSubview? {
         val config = screen.headerConfig
         val numberOfSubViews = config?.configSubviewsCount ?: 0
         if (config != null && numberOfSubViews > 0) {
             for (i in 0 until numberOfSubViews) {
                 val subView = config.getConfigSubview(i)
                 if (subView.type == ScreenStackHeaderSubview.Type.SEARCH_BAR) {
-                    return true
+                    return subView
                 }
             }
         }
-        return false
+        return null
+    }
+
+    private fun extractShowAsActionFromSearchBar(searchSubview: ScreenStackHeaderSubview): Int {
+        for (child in searchSubview.children) {
+            if (child is SearchBarView) {
+                return child.showAsAction
+            }
+        }
+
+        return MenuItem.SHOW_AS_ACTION_ALWAYS
     }
 
     private fun updateToolbarMenu(menu: Menu) {
         menu.clear()
-        if (shouldShowSearchBar()) {
+        locateSearchBarSubviewInConfig()?.let {
             val currentContext = context
             if (searchView == null && currentContext != null) {
                 val newSearchView = CustomSearchView(currentContext, this)
                 searchView = newSearchView
                 onSearchViewCreate?.invoke(newSearchView)
             }
-            menu.add("").apply {
-                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            menu.add("Search").apply {
                 actionView = searchView
+                setIcon(R.drawable.ic_action_search)
+                setShowAsAction(extractShowAsActionFromSearchBar(it))
             }
         }
     }
