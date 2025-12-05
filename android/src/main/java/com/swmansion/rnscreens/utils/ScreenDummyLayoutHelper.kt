@@ -184,11 +184,7 @@ internal class ScreenDummyLayoutHelper(
         // These dimensions are not accurate, as they do include navigation bar, however
         // it is ok for our purposes.
         val decorViewWidth = topLevelDecorView.width
-        // Adjust the height of the top-level decor view by subtracting the top inset.
-        // This accounts for edge-to-edge support where we need to manually do frame correction
-        // for AppBarLayout. To ensure proper layout for the Screen, we manually downscale the content
-        // to accommodate the extra padding.
-        val decorViewHeight = topLevelDecorView.height - topInset
+        val decorViewHeight = topLevelDecorView.height
 
         val widthMeasureSpec =
             View.MeasureSpec.makeMeasureSpec(decorViewWidth, View.MeasureSpec.EXACTLY)
