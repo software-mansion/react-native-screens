@@ -201,7 +201,7 @@ class Screen(
                         reactContext.currentActivity?.window?.decorView,
                     ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
 
-                val topInset = getDecorViewTopInset(topLevelDecorView, this)
+                val topInset = getDecorViewTopInset(topLevelDecorView)
                 val correctedHeight = height - topInset
                 val correctedOffsetY = t + topInset
 
