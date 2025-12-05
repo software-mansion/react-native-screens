@@ -210,7 +210,6 @@ internal class ScreenDummyLayoutHelper(
         coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
 
         // Include the top inset to account for the extra padding manually applied to the CustomToolbar.
-        // This ensures the total height calculation of the AppBarLayout is accurate in edge-to-edge layouts.
         val totalAppBarLayoutHeight = appBarLayout.height.toFloat() + topInset
 
         val headerHeight = PixelUtil.toDIPFromPixel(totalAppBarLayoutHeight)
