@@ -79,6 +79,8 @@ open class CustomToolbar(
         val maybeAppBarLayout = parent as? CustomAppBarLayout
         maybeAppBarLayout?.let {
             if (shouldApplyLayoutCorrectionForTopInset && !it.isInLayout) {
+                // In `applyToolbarLayoutCorrection`, we call and immediate layout on AppBarLayout
+                // to update it right away and avoid showing a potentially wrong UI state.
                 it.applyToolbarLayoutCorrection(paddingTop)
                 shouldApplyLayoutCorrectionForTopInset = false
             }
