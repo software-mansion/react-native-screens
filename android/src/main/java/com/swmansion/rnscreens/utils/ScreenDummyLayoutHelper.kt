@@ -179,7 +179,7 @@ internal class ScreenDummyLayoutHelper(
         }
 
         val topLevelDecorView = requireActivity().window.decorView
-        val topInset = getDecorViewTopInsetRelativelyToTopScreenOrZero(topLevelDecorView, null)
+        val topInset = getDecorViewTopInset(topLevelDecorView)
 
         // These dimensions are not accurate, as they do include navigation bar, however
         // it is ok for our purposes.
