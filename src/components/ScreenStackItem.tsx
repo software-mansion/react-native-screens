@@ -21,7 +21,7 @@ import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
 import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import SafeAreaView from './safe-area/SafeAreaView';
-import featureFlags from '../flags';
+import { featureFlags } from '../flags';
 
 type Props = Omit<
   ScreenProps,
