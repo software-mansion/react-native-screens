@@ -2,17 +2,12 @@
 
 import { codegenNativeComponent } from 'react-native';
 import type {
+  CodegenTypes as CT,
   ColorValue,
   ImageSource,
   ProcessedColorValue,
   ViewProps,
 } from 'react-native';
-import {
-  DirectEventHandler,
-  Float,
-  Int32,
-  WithDefault,
-} from 'react-native/Libraries/Types/CodegenTypes';
 
 import { UnsafeMixed } from './codegenUtils';
 
@@ -23,19 +18,19 @@ export type IconType = 'image' | 'template' | 'sfSymbol';
 type GenericEmptyEvent = Readonly<{}>;
 
 type LifecycleStateChangeEvent = Readonly<{
-  previousState: Int32;
-  newState: Int32;
+  previousState: CT.Int32;
+  newState: CT.Int32;
 }>;
 
 export type ItemStateAppearance = {
   tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: Float;
+  tabBarItemTitleFontSize?: CT.Float;
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
   tabBarItemTitleFontColor?: ProcessedColorValue | null;
   tabBarItemTitlePositionAdjustment?: {
-    horizontal?: Float;
-    vertical?: Float;
+    horizontal?: CT.Float;
+    vertical?: CT.Float;
   };
   tabBarItemIconColor?: ProcessedColorValue | null;
   tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
@@ -55,7 +50,7 @@ export type Appearance = {
 
   tabBarBackgroundColor?: ProcessedColorValue | null;
   tabBarShadowColor?: ProcessedColorValue | null;
-  tabBarBlurEffect?: WithDefault<BlurEffect, 'systemDefault'>;
+  tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
 };
 
 type BlurEffect =
@@ -114,11 +109,11 @@ type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 export interface NativeProps extends ViewProps {
   // Events
-  onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
-  onWillAppear?: DirectEventHandler<GenericEmptyEvent>;
-  onDidAppear?: DirectEventHandler<GenericEmptyEvent>;
-  onWillDisappear?: DirectEventHandler<GenericEmptyEvent>;
-  onDidDisappear?: DirectEventHandler<GenericEmptyEvent>;
+  onLifecycleStateChange?: CT.DirectEventHandler<LifecycleStateChangeEvent>;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
 
   // Control
   isFocused?: boolean;
@@ -126,11 +121,11 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
-  isTitleUndefined?: WithDefault<boolean, true>;
+  isTitleUndefined?: CT.WithDefault<boolean, true>;
   badgeValue?: string;
 
   // Currently iOS-only
-  orientation?: WithDefault<Orientation, 'inherit'>;
+  orientation?: CT.WithDefault<Orientation, 'inherit'>;
 
   // Android-specific image handling
   drawableIconResourceName?: string;
@@ -142,7 +137,7 @@ export interface NativeProps extends ViewProps {
   standardAppearance?: UnsafeMixed<Appearance>;
   scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
-  iconType?: WithDefault<IconType, 'sfSymbol'>;
+  iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
 
   iconImageSource?: ImageSource;
   iconSfSymbolName?: string;
@@ -150,24 +145,27 @@ export interface NativeProps extends ViewProps {
   selectedIconImageSource?: ImageSource;
   selectedIconSfSymbolName?: string;
 
-  systemItem?: WithDefault<SystemItem, 'none'>;
+  systemItem?: CT.WithDefault<SystemItem, 'none'>;
 
   specialEffects?: {
     repeatedTabSelection?: {
-      popToRoot?: WithDefault<boolean, true>;
-      scrollToTop?: WithDefault<boolean, true>;
+      popToRoot?: CT.WithDefault<boolean, true>;
+      scrollToTop?: CT.WithDefault<boolean, true>;
     };
   };
 
-  overrideScrollViewContentInsetAdjustmentBehavior?: WithDefault<boolean, true>;
+  overrideScrollViewContentInsetAdjustmentBehavior?: CT.WithDefault<
+    boolean,
+    true
+  >;
 
-  bottomScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
-  leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
-  rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
-  topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
 
   // Experimental
-  userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
+  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsScreen', {});

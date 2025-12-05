@@ -16,7 +16,7 @@ import SearchBarNativeComponent, {
   SearchButtonPressedEvent,
   ChangeTextEvent,
 } from '../fabric/SearchBarNativeComponent';
-import { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
+import type { CodegenTypes as CT } from 'react-native';
 
 const NativeSearchBar: React.ComponentType<
   SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands> }
@@ -112,15 +112,15 @@ function SearchBar(
       hideNavigationBar={parseBooleanToOptionalBooleanNativeProp(
         hideNavigationBar,
       )}
-      onSearchFocus={onFocus as DirectEventHandler<SearchBarEvent>}
-      onSearchBlur={onBlur as DirectEventHandler<SearchBarEvent>}
+      onSearchFocus={onFocus as CT.DirectEventHandler<SearchBarEvent>}
+      onSearchBlur={onBlur as CT.DirectEventHandler<SearchBarEvent>}
       onSearchButtonPress={
-        onSearchButtonPress as DirectEventHandler<SearchButtonPressedEvent>
+        onSearchButtonPress as CT.DirectEventHandler<SearchButtonPressedEvent>
       }
       onCancelButtonPress={
-        onCancelButtonPress as DirectEventHandler<SearchBarEvent>
+        onCancelButtonPress as CT.DirectEventHandler<SearchBarEvent>
       }
-      onChangeText={onChangeText as DirectEventHandler<ChangeTextEvent>}
+      onChangeText={onChangeText as CT.DirectEventHandler<ChangeTextEvent>}
     />
   );
 }

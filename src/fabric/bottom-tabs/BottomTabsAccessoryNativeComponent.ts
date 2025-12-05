@@ -1,15 +1,14 @@
 'use client';
 
 import { codegenNativeComponent } from 'react-native';
-import type { ViewProps } from 'react-native';
-import { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
+import type { CodegenTypes as CT, ViewProps } from 'react-native';
 
 type EnvironmentChangeEvent = {
   environment: 'regular' | 'inline';
 };
 
 export interface NativeProps extends ViewProps {
-  onEnvironmentChange?: DirectEventHandler<EnvironmentChangeEvent>;
+  onEnvironmentChange?: CT.DirectEventHandler<EnvironmentChangeEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabsAccessory', {

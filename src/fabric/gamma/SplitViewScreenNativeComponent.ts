@@ -1,10 +1,6 @@
 'use client';
 
-import type { ViewProps } from 'react-native';
-import {
-  DirectEventHandler,
-  WithDefault,
-} from 'react-native/Libraries/Types/CodegenTypes';
+import type { CodegenTypes as CT, ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -14,13 +10,13 @@ type SplitViewScreenColumnType = 'column' | 'inspector';
 
 interface NativeProps extends ViewProps {
   // Config
-  columnType?: WithDefault<SplitViewScreenColumnType, 'column'>;
+  columnType?: CT.WithDefault<SplitViewScreenColumnType, 'column'>;
 
   // Events
-  onWillAppear?: DirectEventHandler<GenericEmptyEvent>;
-  onDidAppear?: DirectEventHandler<GenericEmptyEvent>;
-  onWillDisappear?: DirectEventHandler<GenericEmptyEvent>;
-  onDidDisappear?: DirectEventHandler<GenericEmptyEvent>;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewScreen', {
