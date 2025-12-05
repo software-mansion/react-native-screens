@@ -1,6 +1,6 @@
 'use client';
 
-import type { ViewProps , CodegenTypes as CT } from 'react-native';
+import type { CodegenTypes as CT, ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
