@@ -21,6 +21,7 @@ import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
 import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import SafeAreaView from './safe-area/SafeAreaView';
+import featureFlags from 'react-native-screens/flags';
 
 type Props = Omit<
   ScreenProps,
@@ -208,13 +209,22 @@ function getPositioningStyle(
   presentation: StackPresentationTypes,
 ) {
   const isIOS = Platform.OS === 'ios';
+  const rnMinorVersion = Platform.constants.reactNativeVersion.minor;
 
   if (presentation !== 'formSheet') {
     return styles.container;
   }
 
   if (isIOS) {
-    return styles.absoluteWithNoBottom;
+    if (
+      allowedDetents !== 'fitToContents' &&
+      rnMinorVersion >= 82 &&
+      featureFlags.experiment.synchronousScreenUpdatesEnabled
+    ) {
+      return styles.container;
+    } else {
+      return styles.absoluteWithNoBottom;
+    }
   }
 
   // Other platforms, tested reliably only on Android
