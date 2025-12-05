@@ -74,6 +74,7 @@ export interface NativeProps extends ViewProps {
   titleColor?: ColorValue;
   disableBackButtonMenu?: boolean;
   backButtonDisplayMode?: WithDefault<BackButtonDisplayMode, 'default'>;
+  backButtonUseModernImplementation?: WithDefault<boolean, false>;
   hideBackButton?: boolean;
   backButtonInCustomView?: boolean;
   blurEffect?: WithDefault<BlurEffect, 'none'>;
