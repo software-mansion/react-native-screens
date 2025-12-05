@@ -11,7 +11,7 @@ class CustomAppBarLayout(
     /**
      * Handles the layout correction from the child Toolbar.
      */
-    internal fun onToolbarLayout(toolbarPaddingTop: Int) {
+    internal fun applyToolbarLayoutCorrection(toolbarPaddingTop: Int) {
         applyFrameCorrectionByTopInset(toolbarPaddingTop)
     }
 

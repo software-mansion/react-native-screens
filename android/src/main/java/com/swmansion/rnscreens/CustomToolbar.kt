@@ -79,7 +79,7 @@ open class CustomToolbar(
         val maybeAppBarLayout = parent as? CustomAppBarLayout
         maybeAppBarLayout?.let {
             if (shouldApplyLayoutCorrectionForTopInset && !it.isInLayout) {
-                it.onToolbarLayout(paddingTop)
+                it.applyToolbarLayoutCorrection(paddingTop)
                 shouldApplyLayoutCorrectionForTopInset = false
             }
         }
