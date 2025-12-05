@@ -1,13 +1,12 @@
 'use client';
 
 /* eslint-disable */
-import { codegenNativeComponent } from 'react-native';
+import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 import type { ViewProps, ColorValue, HostComponent } from 'react-native';
 import type {
   WithDefault,
   DirectEventHandler,
 } from 'react-native/Libraries/Types/CodegenTypes';
-import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
 export type SearchBarEvent = Readonly<{}>;
 
