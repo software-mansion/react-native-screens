@@ -13,7 +13,10 @@ import androidx.core.view.WindowInsetsCompat
  * @param subjectView The view for which we're taking further action with returned insets.
  * @return The top inset in pixels.
  */
-internal fun getDecorViewTopInset(decorView: View, subjectView: View): Int {
+internal fun getDecorViewTopInset(
+    decorView: View,
+    subjectView: View,
+): Int {
     val location = IntArray(2)
     subjectView.getLocationOnScreen(location)
     val isTopLevel = location[1] == 0
