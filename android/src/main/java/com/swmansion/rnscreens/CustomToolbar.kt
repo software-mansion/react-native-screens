@@ -126,6 +126,13 @@ open class CustomToolbar(
         val systemBarInsets =
             resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), unhandledInsets)
 
+        // Check the absolute position on screen.
+        // If y != 0, it means this toolbar is nested.
+        // In that case, we should not apply the top inset again.
+        val location = IntArray(2)
+        getLocationOnScreen(location)
+        val isTopLevel = location[1] == 0
+
         // This seems to work fine in all tested configurations, because cutout & system bars overlap
         // only in portrait mode & top inset is controlled separately, therefore we don't count
         // any insets twice.
@@ -137,13 +144,20 @@ open class CustomToolbar(
                 0,
             )
 
+        val topInset =
+            if (isTopLevel) {
+                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0)
+            } else {
+                0
+            }
+
         // We want to handle display cutout always, no matter the HeaderConfig prop values.
         // If there are no cutout displays, we want to apply the additional padding to
         // respect the status bar.
         val verticalInsets =
             InsetsCompat.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
+                topInset,
                 0,
                 max(cutoutInsets.bottom, 0),
             )
