@@ -179,8 +179,9 @@ internal class ScreenDummyLayoutHelper(
         }
 
         val topLevelDecorView = requireActivity().window.decorView
+        val topInset = getDecorViewTopInset(topLevelDecorView)
 
-        // These dimensions are not accurate, as they do include status bar & navigation bar, however
+        // These dimensions are not accurate, as they do include navigation bar, however
         // it is ok for our purposes.
         val decorViewWidth = topLevelDecorView.width
         val decorViewHeight = topLevelDecorView.height
@@ -208,7 +209,10 @@ internal class ScreenDummyLayoutHelper(
         // scenarios when layout violates measured dimensions.
         coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
 
-        val headerHeight = PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
+        // Include the top inset to account for the extra padding manually applied to the CustomToolbar.
+        val totalAppBarLayoutHeight = appBarLayout.height.toFloat() + topInset
+
+        val headerHeight = PixelUtil.toDIPFromPixel(totalAppBarLayoutHeight)
         cache = CacheEntry(CacheKey(fontSize, isTitleEmpty), headerHeight)
         return headerHeight
     }
