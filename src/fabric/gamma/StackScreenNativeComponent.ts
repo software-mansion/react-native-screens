@@ -5,8 +5,7 @@ import {
   DirectEventHandler,
   Int32,
 } from 'react-native/Libraries/Types/CodegenTypes';
-// eslint-disable-next-line @react-native/no-deep-imports
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import { codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type GenericEmptyEvent = Readonly<{}>;
