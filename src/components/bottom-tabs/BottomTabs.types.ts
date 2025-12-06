@@ -265,9 +265,6 @@ export interface BottomTabsProps extends ViewProps {
    * If set to false, tab screen change will not be prevented by the
    * native side (managed/natively-driven).
    *
-   * On iOS, some features are not fully implemented for managed tabs
-   * (e.g. overrideScrollViewContentInsetAdjustmentBehavior).
-   *
    * On Android, only controlled tabs are currently supported and the
    * value of this prop is ignored.
    *

@@ -504,6 +504,8 @@ export interface BottomTabsScreenProps {
    * prevents ScrollViews from respecting navigation bar insets.
    * When this prop is set to `true`, `automatic` behavior is reverted.
    *
+   * Supported only on Fabric.
+   *
    * @default true
    *
    * @platform ios

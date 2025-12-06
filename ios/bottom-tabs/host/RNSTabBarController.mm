@@ -162,8 +162,7 @@
   } else {
     self.tabBar.overrideUserInterfaceStyle = selectedViewController.tabScreenComponentView.userInterfaceStyle;
   }
-  [selectedViewController.tabScreenComponentView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
-  [selectedViewController.tabScreenComponentView updateContentScrollViewEdgeEffectsIfExists];
+
   [self setSelectedViewController:selectedViewController];
 }
 
