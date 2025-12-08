@@ -214,7 +214,7 @@ function getPositioningStyle(
   }
 
   if (isIOS) {
-    return styles.absolute;
+    return styles.absoluteWithNoBottom;
   }
 
   // Other platforms, tested reliably only on Android
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  absolute: {
+  absoluteWithNoBottom: {
     position: 'absolute',
     top: 0,
     start: 0,
