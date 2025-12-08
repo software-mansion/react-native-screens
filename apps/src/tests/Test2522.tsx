@@ -23,25 +23,35 @@ type MainProps = {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 };
 
-const EXAMPLES = [
-  ['flex:1', 'FormSheetWithFlex'],
-  ['height:fixed', 'FormSheetWithFixedHeight'],
-  ['flex:1 & fitToContents', 'FormSheetWithFlexAndFitToContents'],
-  ['height:fixed & fitToContents', 'FormSheetWithFixedHeightAndFitToContents'],
+interface Example {
+  title: string;
+  screen: keyof StackParamList;
+}
+
+const EXAMPLES: Example[] = [
+  { title: 'flex:1', screen: 'FormSheetWithFlex' },
+  { title: 'height:fixed', screen: 'FormSheetWithFixedHeight' },
+  {
+    title: 'flex:1 & fitToContents',
+    screen: 'FormSheetWithFlexAndFitToContents',
+  },
+  {
+    title: 'height:fixed & fitToContents',
+    screen: 'FormSheetWithFixedHeightAndFitToContents',
+  },
 ];
 
 function Main({ navigation }: MainProps) {
   return (
     <View style={{ flex: 1, padding: 16 }}>
+      <Text style={styles.text}>
+        Supported since RN 0.82 with synchronousScreenUpdatesEnabled flag
+        enabled
+      </Text>
       <ScrollView>
-        {EXAMPLES.map(([title, screen]) => (
+        {EXAMPLES.map(({ title, screen }) => (
           <View key={screen} style={{ marginVertical: 4 }}>
-            <Button
-              title={title}
-              onPress={() =>
-                navigation.navigate(screen as keyof StackParamList)
-              }
-            />
+            <Button title={title} onPress={() => navigation.navigate(screen)} />
           </View>
         ))}
       </ScrollView>
@@ -131,8 +141,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 24,
+    fontSize: 20,
     margin: 8,
-    alignSelf: 'center',
+    textAlign: 'center',
   },
 });
