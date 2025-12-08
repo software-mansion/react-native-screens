@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable */
 import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 import type {
   CodegenTypes as CT,
@@ -9,6 +8,7 @@ import type {
   HostComponent,
 } from 'react-native';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type SearchBarEvent = Readonly<{}>;
 
 export type SearchButtonPressedEvent = Readonly<{
