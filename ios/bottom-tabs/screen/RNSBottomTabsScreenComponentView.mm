@@ -456,6 +456,13 @@ RNS_IGNORE_SUPER_CALL_END
 {
   RNSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
   [super mountChildComponentView:childComponentView index:index];
+
+  // overrideScrollViewBehavior and updateContentScrollViewEdgeEffects use first descendant chain
+  // from screen to find ScrollView, that's why we're only interested in child mounted at index 0.
+  if (index == 0) {
+    [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    [self updateContentScrollViewEdgeEffectsIfExists];
+  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
