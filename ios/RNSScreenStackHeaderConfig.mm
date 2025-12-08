@@ -325,7 +325,7 @@ RNS_IGNORE_SUPER_CALL_END
   // font customized on the navigation item level, so nothing to do here
 }
 
-+ (void)setTitleAttibutes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
++ (void)setTitleAttributes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
 {
   [button setTitleTextAttributes:attrs forState:UIControlStateNormal];
   [button setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
@@ -762,6 +762,171 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)configureBackItem:(nullable UINavigationItem *)prevItem
                withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
 {
+  const auto *config = self;
+
+  if (config.backButtonUseModernImplementation) {
+    [self configureModernBackItem:prevItem withPrevVC:prevVC];
+  } else {
+    [self configureLegacyBackItem:prevItem withPrevVC:prevVC];
+  }
+}
+
+- (void)configureModernBackItem:(nullable UINavigationItem *)prevItem
+                     withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
+{
+#if !TARGET_OS_TV
+  if (prevItem == nil) {
+    return;
+  }
+
+  const auto *config = self;
+
+  // If previous screen controller was recreated (e.g. when you go back to tab with stack that has multiple screens),
+  // its navigationItem may not have any information from screen's headerConfig, including the title.
+  // If this is the case, we attempt to set the title using previous screen's config directly.
+  if (prevItem.title == nil && [prevVC isKindOfClass:[RNSScreen class]]) {
+    RNSScreen *prevScreen = static_cast<RNSScreen *>(prevVC);
+    RNSScreenStackHeaderConfig *prevConfig = prevScreen.screenView.findHeaderConfig;
+    if (prevConfig != nil) {
+      prevItem.title = prevConfig.title;
+    }
+  }
+
+  BOOL usesCustomFont =
+      (config.backTitleFontFamily &&
+       // While being used by react-navigation, the `backTitleFontFamily` will
+       // be set to "System" by default - which is the system default font.
+       // To avoid always considering the font as customized, we need to have an additional check.
+       // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
+       ![config.backTitleFontFamily isEqual:@"System"]) ||
+      config.backTitleFontSize;
+
+  BOOL shouldUseCustomBackBarButtonItem = usesCustomFont || config.disableBackButtonMenu;
+  if (shouldUseCustomBackBarButtonItem) {
+    [self configureCustomBackItem:prevItem usingCustomFont:usesCustomFont];
+  } else {
+    [self configureNativeBackItem:prevItem];
+  }
+#endif
+}
+
+- (void)configureCustomBackItem:(nonnull UINavigationItem *)prevItem
+                usingCustomFont:(BOOL)usesCustomFont API_UNAVAILABLE(tvos)
+{
+  const auto *config = self;
+
+  NSString *resolvedBackTitle = nil;
+  if (@available(iOS 26, *)) {
+    resolvedBackTitle = [self resolveCustomBackItemTitleForSystemVersion26AndAboveWithPrevItem:prevItem];
+  } else {
+    resolvedBackTitle = [self resolveCustomBackItemTitleForSystemVersionPriorTo26WithPrevItem:prevItem];
+  }
+
+  RNSBackBarButtonItem *backBarButtonItem = [[RNSBackBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                                  style:UIBarButtonItemStylePlain
+                                                                                 target:nil
+                                                                                 action:nil];
+  [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+
+  if (usesCustomFont) {
+    [self configureCustomFontForCustomBackButton:backBarButtonItem backItem:prevItem];
+  }
+
+  prevItem.backBarButtonItem = backBarButtonItem;
+}
+
+- (NSString *)resolveCustomBackItemTitleForSystemVersionPriorTo26WithPrevItem:(nonnull UINavigationItem *)prevItem
+{
+  const auto *config = self;
+
+  NSString *resolvedBackTitle = nil;
+  switch (config.backButtonDisplayMode) {
+    // We're unable to provide generic back button title for DisplayModeGeneric when using custom back item,
+    // that's why we fallback to DisplayModeDefault behavior.
+    case UINavigationItemBackButtonDisplayModeDefault:
+    case UINavigationItemBackButtonDisplayModeGeneric:
+      resolvedBackTitle = [NSString rnscreens_isBlankOrNull:config.backTitle] ? prevItem.title : config.backTitle;
+      break;
+
+    case UINavigationItemBackButtonDisplayModeMinimal:
+      resolvedBackTitle = nil;
+      break;
+
+    default:
+      RCTLogError(@"[RNScreens] Unsupported UINavigationItemBackButtonDisplayMode");
+      break;
+  }
+
+  return resolvedBackTitle;
+}
+
+- (NSString *)resolveCustomBackItemTitleForSystemVersion26AndAboveWithPrevItem:(nonnull UINavigationItem *)prevItem
+{
+  const auto *config = self;
+
+  NSString *resolvedBackTitle = nil;
+  switch (config.backButtonDisplayMode) {
+    case UINavigationItemBackButtonDisplayModeDefault:
+      resolvedBackTitle = [NSString rnscreens_isBlankOrNull:config.backTitle] ? nil : config.backTitle;
+      break;
+
+    // Starting from iOS 26, DisplayModeGeneric and DisplayModeMinimal behave in the same way.
+    case UINavigationItemBackButtonDisplayModeGeneric:
+    case UINavigationItemBackButtonDisplayModeMinimal:
+      resolvedBackTitle = nil;
+      break;
+
+    default:
+      RCTLogError(@"[RNScreens] Unsupported UINavigationItemBackButtonDisplayMode");
+      break;
+  }
+
+  return resolvedBackTitle;
+}
+
+- (void)configureCustomFontForCustomBackButton:(nonnull RNSBackBarButtonItem *)backBarButtonItem
+                                      backItem:(nonnull UINavigationItem *)prevItem
+{
+  const auto *config = self;
+
+  NSMutableDictionary *attrs = [NSMutableDictionary new];
+  NSNumber *size = config.backTitleFontSize ?: @17;
+  if (config.backTitleFontFamily) {
+    attrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                          withFamily:config.backTitleFontFamily
+                                                size:size
+                                              weight:nil
+                                               style:nil
+                                             variant:nil
+                                     scaleMultiplier:1.0];
+  } else {
+    attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+  }
+  [RNSScreenStackHeaderConfig setTitleAttributes:attrs forButton:backBarButtonItem];
+}
+
+- (void)configureNativeBackItem:(nonnull UINavigationItem *)prevItem API_UNAVAILABLE(tvos)
+{
+  const auto *config = self;
+
+  prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
+
+  // We set `backButtonTitle` only if we want to use custom title
+  // as starting from iOS 26, the behavior differs between `title` and `backButtonTitle`:
+  // `title` is not shown in back button whereas `backButtonTitle` is.
+  if ([NSString rnscreens_isBlankOrNull:config.backTitle]) {
+    prevItem.backButtonTitle = nil;
+  } else {
+    prevItem.backButtonTitle = config.backTitle;
+  }
+
+  // Make sure that we don't use custom back button
+  prevItem.backBarButtonItem = nil;
+}
+
+- (void)configureLegacyBackItem:(nullable UINavigationItem *)prevItem
+                     withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
+{
 #if !TARGET_OS_TV
   if (prevItem == nil) {
     return;
@@ -814,7 +979,7 @@ RNS_IGNORE_SUPER_CALL_END
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
-      [RNSScreenStackHeaderConfig setTitleAttibutes:attrs forButton:backBarButtonItem];
+      [RNSScreenStackHeaderConfig setTitleAttributes:attrs forButton:backBarButtonItem];
     }
 
     // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
@@ -1154,6 +1319,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   }
 
   _backTitleVisible = newScreenProps.backTitleVisible;
+  _backButtonUseModernImplementation = newScreenProps.backButtonUseModernImplementation;
 
   // We cannot compare SharedColor because it is shared value.
   // We could compare color value, but it is more performant to just assign new value
@@ -1298,6 +1464,7 @@ RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
 RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle)
+RCT_EXPORT_VIEW_PROPERTY(backButtonUseModernImplementation, BOOL)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)

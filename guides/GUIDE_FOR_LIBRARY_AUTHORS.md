@@ -548,7 +548,7 @@ Controls the color of the navigation header.
 
 ### `backTitle` (iOS only)
 
-Allows for controlling the string to be rendered next to back button. By default iOS uses the title of the previous screen.
+Allows for controlling the string to be rendered next to back button. The title of the previous screen is used as default if `backButtonUseModernImplementation` is set to `false` or if `backButtonUseModernImplementation` is set to `true` and iOS version prior to 26 is used.
 
 ### `backTitleFontFamily` (iOS only)
 
@@ -559,6 +559,8 @@ Allows for customizing font family to be used for back button title on iOS.
 Allows for customizing font size to be used for back button title on iOS.
 
 ### `backTitleVisible` (iOS only)
+
+This prop has been **deprecated**. Kept only for backward compatibility, is respected only if `backButtonUseModernImplementation` is set to `false`.
 
 Whether the back button title should be visible. Defaults to `true`.
 
@@ -580,17 +582,38 @@ Controls whether the stack should be in `rtl` or `ltr` form.
 
 ### `disableBackButtonMenu` (iOS only)
 
-Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+Boolean indicating whether to show the menu on longPress of the back button.
 
 ### `backButtonDisplayMode` (iOS only)
 
-Enum value indicating display mode of back button. It is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` and `backTitleVisible=false` is set. The `backTitleVisible` forces `backButtonDisplayMode: minimal` and omits other values. Read more [#2800](https://github.com/software-mansion/react-native-screens/pull/2800). The other props, under the hood, customize `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123).
+Enum value indicating display mode of back button.
 
 Possible options:
 
-- `default` – show given back button previous controller title, system generic or just icon based on available space
-- `generic` – show given system generic or just icon based on available space
+- `default` – show given back button previous controller title, system generic or just icon based on available space and OS version
+- `generic` – show given system generic or just icon based on available space and OS version
 - `minimal` – show just an icon
+
+Starting from iOS 26:
+- the `title` of the previous screen is not used as back button title,
+- `generic` display mode behaves the same as `minimal`.
+
+In order to add text to the back button on iOS 26, use `default` display mode and specify text in `backTitle` property.
+
+On iOS versions prior to 26, using `generic` display mode with `backTitleFontFamily`, `backTitleFontSize`
+or `disableBackButtonMenu` property set is not supported due to limitations in the native platform.
+In such cases, display mode will fallback to `default`.
+
+If `backButtonUseModernImplementation` is set to `false`, this prop is used only when none of: `backTitleFontFamily`,
+`backTitleFontSize`, `disableBackButtonMenu` and `backTitleVisible=false` is set.
+
+### `backButtonUseModernImplementation` (iOS only)
+
+Used for backward compatibility only. Setting this prop to `true` is recommended.
+
+Uses new implementation of native back button configuration.
+
+Default is `false`.
 
 ### `headerLeftBarButtonItems` / `headerRightBarButtonsItems` (iOS only)
 
