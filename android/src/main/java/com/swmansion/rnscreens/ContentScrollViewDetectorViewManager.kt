@@ -16,7 +16,7 @@ open class ContentScrollViewDetectorViewManager :
     init {
         delegate =
             RNSContentScrollViewDetectorManagerDelegate<ContentScrollViewDetector, ContentScrollViewDetectorViewManager>(
-                this
+                this,
             )
     }
 
