@@ -8,9 +8,7 @@ Currently, the `RNSScreenContentWrapper` (the view that adapts to the size of Fo
 
 Preventing `RNSScreenContentWrapper` from resizing to match its parent was initially necessary due to the lack of synchronous updates in React Native. During transitions between detents, the size of `RNSModalScreen` is updated **asynchronously** in the Shadow Tree. This leads to a mismatch with the current native state and causes the content to flicker, as shown in the video:
 
-<video controls width="100%">
-  <source src="form-sheet-flex-assets/jumping-content.mp4" type="video/mp4">
-</video>
+[Screen content flickers](form-sheet-flex-assets/jumping-content.mp4)
 
 These styles are controlled by `ScreenStackItem`:  
 https://github.com/software-mansion/react-native-screens/blob/338df214aeafbfa01252ffc0aa8fa97728100a1f/src/components/ScreenStackItem.tsx#L216-L218
