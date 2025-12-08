@@ -174,8 +174,11 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         self);
   } else {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
     _layoutMetrics = layoutMetrics;
-    [self invalidateIntrinsicContentSize];
+    if (sizeHasChanged) {
+      [self invalidateIntrinsicContentSize];
+    }
 #else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     self.bounds = CGRect{CGPointZero, frame.size};
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
