@@ -6,7 +6,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 
 @SuppressLint("ViewConstructor")
-class ScrollViewWrapper(
+class ContentScrollViewDetector(
     val reactContext: ReactContext,
 ) : ReactViewGroup(reactContext) {
     override fun onAttachedToWindow() {

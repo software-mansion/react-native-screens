@@ -16,8 +16,8 @@ import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
 @SuppressWarnings("deprecation")
-public class RNSScrollViewWrapperManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSScrollViewWrapperManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
-  public RNSScrollViewWrapperManagerDelegate(U viewManager) {
+public class RNSContentScrollViewDetectorManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSContentScrollViewDetectorManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
+  public RNSContentScrollViewDetectorManagerDelegate(U viewManager) {
     super(viewManager);
   }
   @Override
