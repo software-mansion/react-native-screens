@@ -1,7 +1,6 @@
 #pragma once
 
 #import <React/RCTImageSource.h>
-#import "ContentScrollViewConsumer.h"
 #import "RNSBottomTabsScreenEventEmitter.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
@@ -26,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSBottomTabsScreenComponentView : RNSReactBaseView <
                                                   RNSSafeAreaProviding,
-                                                  ContentScrollViewConsumer,
 #ifdef RCT_NEW_ARCH_ENABLED
                                                   RNSViewControllerInvalidating
 #else

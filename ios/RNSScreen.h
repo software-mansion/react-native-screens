@@ -3,7 +3,6 @@
 #import <React/RCTComponent.h>
 #import <React/RCTViewManager.h>
 
-#import "ContentScrollViewConsumer.h"
 #import "RNSEnums.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScreenContainer.h"
@@ -74,8 +73,7 @@ namespace react = facebook::react;
     <RNSScreenContentWrapperDelegate,
      RNSScrollViewBehaviorOverriding,
      RNSSafeAreaProviding,
-     RNSScrollEdgeEffectProviding,
-     ContentScrollViewConsumer>
+     RNSScrollEdgeEffectProviding>
 
 /**
  * This is value of the prop as passed by the user. To get effective value see derived property

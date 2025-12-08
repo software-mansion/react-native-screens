@@ -266,18 +266,6 @@ RNS_IGNORE_SUPER_CALL_END
   [scrollViewComponent setFrame:self.frame];
 }
 
-#pragma mark - ContentScrollViewConsumer
-
-- (void)registerContentScrollView:(UIScrollView *)scrollView
-{
-  RCTLogInfo(@"Registering content ScrollView");
-}
-
-- (void)unregisterContentScrollView:(UIScrollView *)scrollView
-{
-  RCTLogInfo(@"Unregistering content ScrollView");
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
