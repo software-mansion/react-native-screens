@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type {
   NativeStackNavigationOptions,
@@ -8,6 +8,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Spacer } from '../shared';
 import Colors from '../shared/styling/Colors';
+import { featureFlags } from 'react-native-screens';
+
+// For keeping the reference to the original value from the global scope,
+// because we need to override it for this specific example.
+let originalSynchronousScreenUpdatesFlagEnabled: boolean;
 
 type StackParamList = {
   Main: undefined;
@@ -94,6 +99,18 @@ function FormSheetWithFixedHeight() {
 }
 
 export default function App() {
+  useEffect(() => {
+    originalSynchronousScreenUpdatesFlagEnabled =
+      featureFlags.experiment.synchronousScreenUpdatesEnabled;
+    featureFlags.experiment.synchronousScreenUpdatesEnabled = true;
+
+    return () => {
+      // Note: It signals an error that the flag value has changed, but this is intentional
+      featureFlags.experiment.synchronousScreenUpdatesEnabled =
+        originalSynchronousScreenUpdatesFlagEnabled;
+    };
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
