@@ -1,26 +1,21 @@
 'use client';
 
-import type { ViewProps } from 'react-native';
-import {
-  DirectEventHandler,
-  Int32,
-} from 'react-native/Libraries/Types/CodegenTypes';
-// eslint-disable-next-line @react-native/no-deep-imports
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import { codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type GenericEmptyEvent = Readonly<{}>;
 
 export interface NativeProps extends ViewProps {
   // Control
-  maxLifecycleState: Int32;
+  maxLifecycleState: CT.Int32;
   screenKey: string;
 
   // Events
-  onWillAppear?: DirectEventHandler<GenericEmptyEvent>;
-  onDidAppear?: DirectEventHandler<GenericEmptyEvent>;
-  onWillDisappear?: DirectEventHandler<GenericEmptyEvent>;
-  onDidDisappear?: DirectEventHandler<GenericEmptyEvent>;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackScreen', {});

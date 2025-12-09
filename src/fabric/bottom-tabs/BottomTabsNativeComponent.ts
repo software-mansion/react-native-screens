@@ -1,13 +1,7 @@
 'use client';
 
-// eslint-disable-next-line @react-native/no-deep-imports
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ColorValue, ViewProps } from 'react-native';
-import type {
-  DirectEventHandler,
-  Float,
-  WithDefault,
-} from 'react-native/Libraries/Types/CodegenTypes';
+import { codegenNativeComponent } from 'react-native';
+import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 
 // TODO: Report issue on RN repo, that nesting color value inside a struct does not work.
 // Generated code is ok, but the value is not passed down correctly - whatever color is set
@@ -37,7 +31,7 @@ type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 export interface NativeProps extends ViewProps {
   // Events
-  onNativeFocusChange?: DirectEventHandler<NativeFocusChangeEvent>;
+  onNativeFocusChange?: CT.DirectEventHandler<NativeFocusChangeEvent>;
 
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
@@ -45,8 +39,8 @@ export interface NativeProps extends ViewProps {
   // Android-specific
   tabBarBackgroundColor?: ColorValue;
   tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: Float;
-  tabBarItemTitleFontSizeActive?: Float;
+  tabBarItemTitleFontSize?: CT.Float;
+  tabBarItemTitleFontSizeActive?: CT.Float;
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
   tabBarItemTitleFontColor?: ColorValue;
@@ -54,23 +48,23 @@ export interface NativeProps extends ViewProps {
   tabBarItemIconColor?: ColorValue;
   tabBarItemIconColorActive?: ColorValue;
   tabBarItemActiveIndicatorColor?: ColorValue;
-  tabBarItemActiveIndicatorEnabled?: WithDefault<boolean, true>;
+  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
   tabBarItemRippleColor?: ColorValue;
-  tabBarItemLabelVisibilityMode?: WithDefault<
+  tabBarItemLabelVisibilityMode?: CT.WithDefault<
     TabBarItemLabelVisibilityMode,
     'auto'
   >;
 
   // iOS-specific
   tabBarTintColor?: ColorValue;
-  tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
-  tabBarControllerMode?: WithDefault<TabBarControllerMode, 'automatic'>;
-  tabBarHidden?: WithDefault<boolean, false>;
+  tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
+  tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
+  tabBarHidden?: CT.WithDefault<boolean, false>;
 
   // Control
 
   // Experimental support
-  controlNavigationStateInJS?: WithDefault<boolean, false>;
+  controlNavigationStateInJS?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSBottomTabs', {

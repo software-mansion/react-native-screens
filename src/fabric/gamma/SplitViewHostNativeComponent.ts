@@ -1,13 +1,7 @@
 'use client';
 
-import type { ViewProps } from 'react-native';
-// eslint-disable-next-line @react-native/no-deep-imports
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type {
-  DirectEventHandler,
-  Float,
-  WithDefault,
-} from 'react-native/Libraries/Types/CodegenTypes';
+import type { CodegenTypes as CT, ViewProps } from 'react-native';
+import { codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -46,50 +40,50 @@ type SplitViewOrientation =
 type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
 interface ColumnMetrics {
-  minimumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
-  maximumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
-  preferredPrimaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
-  minimumSupplementaryColumnWidth?: WithDefault<Float, -1.0>;
-  maximumSupplementaryColumnWidth?: WithDefault<Float, -1.0>;
-  preferredSupplementaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
+  minimumPrimaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
+  maximumPrimaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
+  preferredPrimaryColumnWidthOrFraction?: CT.WithDefault<CT.Float, -1.0>;
+  minimumSupplementaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
+  maximumSupplementaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
+  preferredSupplementaryColumnWidthOrFraction?: CT.WithDefault<CT.Float, -1.0>;
 
   // iOS 26 only
-  minimumSecondaryColumnWidth?: WithDefault<Float, -1.0>;
-  preferredSecondaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
-  minimumInspectorColumnWidth?: WithDefault<Float, -1.0>;
-  maximumInspectorColumnWidth?: WithDefault<Float, -1.0>;
-  preferredInspectorColumnWidthOrFraction?: WithDefault<Float, -1.0>;
+  minimumSecondaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
+  preferredSecondaryColumnWidthOrFraction?: CT.WithDefault<CT.Float, -1.0>;
+  minimumInspectorColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
+  maximumInspectorColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
+  preferredInspectorColumnWidthOrFraction?: CT.WithDefault<CT.Float, -1.0>;
 }
 
 interface NativeProps extends ViewProps {
   // Appearance
 
-  preferredDisplayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
-  preferredSplitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
-  primaryEdge?: WithDefault<SplitViewPrimaryEdge, 'leading'>;
-  showSecondaryToggleButton?: WithDefault<boolean, false>;
-  displayModeButtonVisibility?: WithDefault<
+  preferredDisplayMode?: CT.WithDefault<SplitViewDisplayMode, 'automatic'>;
+  preferredSplitBehavior?: CT.WithDefault<SplitViewSplitBehavior, 'automatic'>;
+  primaryEdge?: CT.WithDefault<SplitViewPrimaryEdge, 'leading'>;
+  showSecondaryToggleButton?: CT.WithDefault<boolean, false>;
+  displayModeButtonVisibility?: CT.WithDefault<
     SplitViewDisplayModeButtonVisibility,
     'automatic'
   >;
   columnMetrics?: ColumnMetrics;
-  orientation?: WithDefault<SplitViewOrientation, 'inherit'>;
-  primaryBackgroundStyle?: WithDefault<
+  orientation?: CT.WithDefault<SplitViewOrientation, 'inherit'>;
+  primaryBackgroundStyle?: CT.WithDefault<
     SplitViewPrimaryBackgroundStyle,
     'default'
   >;
 
   // Interactions
 
-  presentsWithGesture?: WithDefault<boolean, true>;
-  showInspector?: WithDefault<boolean, false>;
+  presentsWithGesture?: CT.WithDefault<boolean, true>;
+  showInspector?: CT.WithDefault<boolean, false>;
 
   // Custom events
 
-  onCollapse?: DirectEventHandler<GenericEmptyEvent>;
-  onDisplayModeWillChange?: DirectEventHandler<DisplayModeWillChangeEvent>;
-  onExpand?: DirectEventHandler<GenericEmptyEvent>;
-  onInspectorHide?: DirectEventHandler<GenericEmptyEvent>;
+  onCollapse?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDisplayModeWillChange?: CT.DirectEventHandler<DisplayModeWillChangeEvent>;
+  onExpand?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onInspectorHide?: CT.DirectEventHandler<GenericEmptyEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewHost', {});
