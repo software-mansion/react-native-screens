@@ -27,6 +27,13 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
+      - name: Select Xcode 16.1
+        run: sudo xcode-select -s /Applications/Xcode_16.1.app
+
+      - name: Check Xcode version
+        run: xcodebuild -version
+
       - name: Setup Node.js (version from .nvmrc)
         uses: actions/setup-node@v4
         with:
