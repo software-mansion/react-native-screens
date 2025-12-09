@@ -19,42 +19,42 @@ One solution would be to make `RNSScreen` the reference point - having a **synch
 
 ![With flex support](form-sheet-flex-assets/content-wrapper-flex-allowed.png "ScreenContentWrapper layout with flex support")
 
-**This implementation becomes possible in React Native 0.82+, but the significant drawback, which is the inconsistency across platforms, remains.**
+**This implementation becomes possible in React Native 0.82+, but has the significant drawback, which is the inconsistency across platforms, remains.**
 
 ## Platform Differences
 
-On Android, the FormSheet follows a different implementation model. Unlike on iOS, it knows its maximum dimensions using:
+On Android, the FormSheet follows a different implementation model. Unlike on iOS, it knows how to compute its maximum dimensions using:
 
-- Defined `sheetDetents`
-- Our knowledge about the renderable space.
+- Defined `sheetDetents` (by taking the maximum detent value as the multiplier)
+- The renderable space (the initial height being a reference how high the sheet would be if the maximum detent would be set to 1.0)
 
-Because Android also lacks synchronous state updates, the following approach was chosen:
+Because Android also lacks synchronous state updates, to avoid the similar issues with content flickering, the following approach was chosen:
 
-- The FormSheet always renders at its **maximum size**.
-- **Only a portion of that size is shown** based on the active detent.
+- The `FormSheet` always renders at its **maximum size**.
+- **Only a portion of the component is shown** if the active detent is different from the maximum detent.
 - The transition between detents is handled using **`translateY`**.
 
 On the other hand, on iOS:
 
-- The FormSheet's **size dynamically adapts** based on the current detent.
-- Components aligned to the bottom of the FormSheet are **tightened to the bottom edge**.
+- The FormSheet's **size dynamically adapts** based on the active detent.
+- Components aligned to the bottom of the `FormSheet` are **bound to the bottom edge**.
 - The transition is handled via changing the **`height`** of the sheet.
 
 | Platform | Minimal Detent | Maximal Detent |
 |----------|----------------|----------------|
 | Android  | ![Android min](form-sheet-flex-assets/android-min-detent.png "Android min detent") | ![Android max](form-sheet-flex-assets/android-max-detent.png "Android max detent") |
-| iOS      | ![iOS min](form-sheet-flex-assets/ios-min-detent.png "iOS min detent")           | ![iOS max](form-sheet-flex-assets/ios-max-detent.png "iOS max detent")             |
+| iOS      | ![iOS min](form-sheet-flex-assets/ios-min-detent.png "iOS min detent") | ![iOS max](form-sheet-flex-assets/ios-max-detent.png "iOS max detent") |
 
-These platform differences create challenges for implementing consistent cross-platform behavior, particularly when using layout styles like `flex: 1`.
+These platform differences create challenges for implementing consistent cross-platform behavior, particularly when using dynamic layout using `flex`.
 
 ## Potential Solution
 
-Adding support for `flex: 1` on iOS is possible, but it results in completely different styling behavior. Currently, there is also inconsistency - the component behaves correctly on Android, but not on iOS. Therefore, we believe a smaller issue is dealing with styling differences across platforms rather than losing complete functionality on one of them.
+Adding support for `flex` on iOS is possible, but it results in completely different styling behavior. Before applying that solution, the inconsistency is also present - the component renders correctly on Android, but not on iOS. Therefore, we believe a smaller issue is dealing with styling differences across platforms rather than losing complete functionality on one of them.
 
 However, there are certain technical limitations that make implementing a unified solution difficult:
 
-- Due to the lack of synchronous ShadowNode state updates on Android, we cannot replicate the iOS model (which involves changing the component's height dynamically) without causing content to flicker.
-- On iOS, we cannot reliably determine the large detent value based on the medium detent. These values are defined by the system. Starting from iOS 16, Apple provides an API revealing these values, but we must still support iOS 15, which does not give us access to that data.
+- Due to the **lack of synchronous ShadowNode state updates on Android**, we cannot replicate the iOS model (which involves changing the component's height dynamically) without causing content to flicker.
+- On iOS, we **cannot reliably determine the large detent value based on the medium detent**. These values are defined by the system. Starting from iOS 16, Apple provides an API revealing these values, but we must still support iOS 15, which does not give us access to that data.
 
 **Once we decide to drop support for iOS 15, we could potentially migrate the current iOS implementation to use the Android-like fixed-height FormSheet model.**
 
@@ -64,7 +64,7 @@ Until then, supporting styling with `flex: 1` may cause visual inconsistencies. 
 
 ### 1. FormSheet with Detents, Content Styled with Flex
 
-Difference:
+Differences:
 - On Android, the "End" text becomes visible only when expanded to the maximum detent.
 - On iOS, the "End" text is always visible.
 
@@ -77,8 +77,8 @@ Difference:
 
 ### 2. FormSheet with Detents, Content Styled with maxHeight
 
-Difference:
-- No visual differences observed - works consistently across both platforms.
+Differences:
+- No visual differences.
 
 | Platform | Android | iOS |
 |----------|---------|-----|
@@ -89,8 +89,8 @@ Difference:
 
 ### 3. FormSheet with fitToContents, Content Styled with Flex
 
-Difference:
-- Android does not support `fitToContents` when using `flex` - we do not support this use case. 
+Differences:
+- Android does not support `fitToContents` when using `flex`, because having `flex` we cannot determine the content size precisely - we do not support this use case. 
 - On iOS, it works by coincidence.
 - `fitToContents` requires knowing the content height, which is not possible when using flex.
 
@@ -102,7 +102,7 @@ Difference:
 
 ### 4. FormSheet with fitToContents, Content Styled with maxHeight
 
-Difference:
+Differences:
 - iOS automatically respects the bottom inset of the navigation bar. 
 - On Android, this must be handled manually by wrapping the component with `SafeAreaView`.
 
