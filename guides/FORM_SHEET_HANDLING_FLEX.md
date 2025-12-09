@@ -49,6 +49,27 @@ These platform differences create challenges for implementing consistent cross-p
 
 ## Potential Solution
 
+Adding `flex` to iOS styles when `fitToContents` is not used and synchronous updates are available. In the current scenario, we have the following hierarchy, where the content determines the size of `ScreenContentWrapper` and is unaware of the height of the `Screen` frame. Due to the style `position: absolute, top: 0, left: 0, right: 0`, we lose the binding to the bottom edge of the `Screen` component.
+
+```
+- Screen: (x1, y1, w1, *h1*)
+-- ScreenContentWrapper: (x1, y1, w1, *h2*)
+--- Content: (x1, y1, w1, *h2*)
+---- Highest View: (x1, y1, w1, *h2*)
+```
+
+In the above situation, applying a `flex` style will not have any impact on Y axis, because the content determines the maximum height to which the content extends, so no deterministic gap can be formed on its own.
+Allowing the use of the `flex` style (when `fitToContents` isn't used) enables achieving the following hierarchy:
+
+```
+- Screen: (x1, y1, w1, *h1*)
+-- ScreenContentWrapper: (x1, y1, w1, *h1*)
+--- Content: (x1, y1, w1, *h1*)
+---- Highest View: (x1, y1, w1, *h2*)
+```
+
+Applying a flex style to the `Content` makes it possible to position `Highest View` using the flexbox model relatively to the current size of the `Screen`, determined by the active detent.
+
 Adding support for `flex` on iOS is possible, but it results in completely different styling behavior. Before applying that solution, the inconsistency is also present - the component renders correctly on Android, but not on iOS. Therefore, we believe a smaller issue is dealing with styling differences across platforms rather than losing complete functionality on one of them.
 
 However, there are certain technical limitations that make implementing a unified solution difficult:
