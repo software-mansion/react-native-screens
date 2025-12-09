@@ -58,16 +58,18 @@ Adding `flex` to iOS styles when `fitToContents` is not used and synchronous upd
 ---- Highest View: (x1, y1, w1, *h2*)
 ```
 
-<div style="display: flex; justify-content: space-between;">
-  <div style="width: 50%;">
-    <img src="form-sheet-flex-assets/ios-min.png" alt="iOS min detent" style="max-width: 100%; height: auto;">
-    <p>iOS min detent</p>
-  </div>
-  <div style="width: 50%;">
-    <img src="form-sheet-flex-assets/ios-max-before-fix.png" alt="iOS max detent" style="max-width: 100%; height: auto;">
-    <p>iOS max detent</p>
-  </div>
-</div>
+<table>
+  <tr>
+    <td>
+      <img src="form-sheet-flex-assets/ios-min.png" alt="iOS min detent" width="300"><br>
+      <p>iOS min detent</p>
+    </td>
+    <td>
+      <img src="form-sheet-flex-assets/ios-max-before-fix.png" alt="iOS max detent" width="300"><br>
+      <p>iOS max detent</p>
+    </td>
+  </tr>
+</table>
 
 In the above situation, applying a `flex` style will not have any impact on Y axis, because the content determines the maximum height to which the content extends, so no deterministic gap can be formed on its own.
 Allowing the use of the `flex` style (when `fitToContents` isn't used) enables achieving the following hierarchy:
@@ -76,19 +78,21 @@ Allowing the use of the `flex` style (when `fitToContents` isn't used) enables a
 - Screen: (x1, y1, w1, *h1*)
 -- ScreenContentWrapper: (x1, y1, w1, *h1*)
 --- Content: (x1, y1, w1, *h1*)
----- Highest View: (x1, y1, w1, *h2*)
+---- Highest View: (x1, y1, w1, *h1*)
 ```
 
-<div style="display: flex; justify-content: space-between;">
-  <div style="width: 50%;">
-    <img src="form-sheet-flex-assets/ios-min.png" alt="iOS min detent" style="max-width: 100%; height: auto;">
-    <p>iOS min detent</p>
-  </div>
-  <div style="width: 50%;">
-    <img src="form-sheet-flex-assets/ios-max-after-fix.png" alt="iOS max detent" style="max-width: 100%; height: auto;">
-    <p>iOS max detent</p>
-  </div>
-</div>
+<table>
+  <tr>
+    <td>
+      <img src="form-sheet-flex-assets/ios-min.png" alt="iOS min detent" width="300"><br>
+      <p>iOS min detent</p>
+    </td>
+    <td>
+      <img src="form-sheet-flex-assets/ios-max-after-fix.png" alt="iOS max detent" width="300"><br>
+      <p>iOS max detent</p>
+    </td>
+  </tr>
+</table>
 
 Applying a flex style to the `Content` makes it possible to position `Highest View` using the flexbox model relatively to the current size of the `Screen`, determined by the active detent.
 
