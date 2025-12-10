@@ -367,10 +367,16 @@ RNS_IGNORE_SUPER_CALL_END
     [self maybeAddToParentAndUpdateContainer];
   }
 #endif
-  if (self.window == nil) {
-    // When hot reload happens that would remove the whole stack, disabling the interaction on a screen out transition
-    // will not be matched with enabling the interactions on another screen's in transition. We need to make sure
-    // that the subtree is interactive again
+  if (@available(iOS 26, *)) {
+    // Re-enable interactions that have been disabled by screen transition
+    //
+    // There are some cases where stack screens cannot reenable the interactivity on their own.
+    // 1) When hot reload happens that would remove the whole stack, disabling the interaction on a screen out
+    // transition will not be matched with enabling the interactions on another screen's in transition. 2) In
+    // UIPageViewController, you can make a whole ScreenStack appear by switching pages. In this case we found out that
+    // the screen.viewDidAppear is called and enables interactions before willMoveToWindow that disables them.
+    //
+    // For these cases, we need ScreenStack to help making sure that the subtree is interactive again.
     [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
   }
 }
