@@ -17,13 +17,13 @@ namespace react = facebook::react;
       [self unregisterContentScrollViewInAncestors];
     }
   } else {
-    if ((_scrollView = [self findContentScrollView])) {
+    if ((_scrollView = [self findContentScrollViewWithinDetector])) {
       [self registerContentScrollViewInAncestors];
     }
   }
 }
 
-- (nullable UIScrollView *)findContentScrollView
+- (nullable UIScrollView *)findContentScrollViewWithinDetector
 {
   auto scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self];
   if (scrollView) {

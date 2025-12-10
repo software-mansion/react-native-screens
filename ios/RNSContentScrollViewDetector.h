@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSContentScrollViewDetector : RNSReactBaseView
 
-- (nullable UIScrollView *)findContentScrollView;
+- (nullable UIScrollView *)findContentScrollViewWithinDetector;
 
 - (void)registerContentScrollViewInAncestors;
 
