@@ -6,21 +6,24 @@ namespace react = facebook::react;
 
 @implementation RNSContentScrollViewDetector {
   UIScrollView *_scrollView;
-  UIView *_linkedView;
+  UIView *_scrollViewConsumer;
 }
 
 - (void)didMoveToWindow
 {
   if (self.window == nil) {
-    [self unregisterContentScrollViewInHierarchy];
+    // The view is detached from window
+    if (_scrollView) {
+      [self unregisterContentScrollViewInAncestors];
+    }
   } else {
     if ((_scrollView = [self findContentScrollView])) {
-      [self registerContentScrollViewInHierarchy];
+      [self registerContentScrollViewInAncestors];
     }
   }
 }
 
-- (UIScrollView *)findContentScrollView
+- (nullable UIScrollView *)findContentScrollView
 {
   auto scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self];
   if (scrollView) {
@@ -31,12 +34,12 @@ namespace react = facebook::react;
   return nullptr;
 }
 
-- (void)registerContentScrollViewInHierarchy
+- (void)registerContentScrollViewInAncestors
 {
-  if (_linkedView != nullptr) {
+  if (_scrollViewConsumer != nullptr) {
     RCTLogWarn(
         @"Content ScrollView has already been registered. Make sure to only have one ScrollViewWrapper for content ScrollView.");
-    [self unregisterContentScrollViewInHierarchy];
+    [self unregisterContentScrollViewInAncestors];
   }
 
   UIView *parent = self.superview;
@@ -48,7 +51,7 @@ namespace react = facebook::react;
 
     if ([parent respondsToSelector:@selector(registerContentScrollView:)]) {
       [(id<ContentScrollViewConsumer>)parent registerContentScrollView:_scrollView];
-      _linkedView = parent;
+      _scrollViewConsumer = parent;
       RCTLogInfo(@"registered content ScrollView for: %@", parent);
       break;
     }
@@ -57,16 +60,16 @@ namespace react = facebook::react;
   }
 }
 
-- (void)unregisterContentScrollViewInHierarchy
+- (void)unregisterContentScrollViewInAncestors
 {
-  if (_linkedView == nullptr) {
+  if (_scrollViewConsumer == nullptr) {
     return;
   }
 
-  [(id<ContentScrollViewConsumer>)_linkedView unregisterContentScrollView:_scrollView];
+  [(id<ContentScrollViewConsumer>)_scrollViewConsumer unregisterContentScrollView:_scrollView];
 
-  RCTLogInfo(@"unregistered content ScrollView for: %@", _linkedView);
-  _linkedView = nullptr;
+  RCTLogInfo(@"unregistered content ScrollView for: %@", _scrollViewConsumer);
+  _scrollViewConsumer = nullptr;
 }
 
 #pragma mark - RCTViewComponentViewProtocol

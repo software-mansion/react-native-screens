@@ -10,18 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSContentScrollViewDetector :
-#ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView
-#else
-    UIView
-#endif
+@interface RNSContentScrollViewDetector : RNSReactBaseView
 
-- (UIScrollView *)findContentScrollView;
+- (nullable UIScrollView *)findContentScrollView;
 
-- (void)registerContentScrollViewInHierarchy;
+- (void)registerContentScrollViewInAncestors;
 
-- (void)unregisterContentScrollViewInHierarchy;
+- (void)unregisterContentScrollViewInAncestors;
 
 @end
 
