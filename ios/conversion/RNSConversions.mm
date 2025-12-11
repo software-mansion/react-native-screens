@@ -43,7 +43,7 @@ RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientati
       return RNSOrientationLandscape;
     case UIInterfaceOrientationMaskLandscapeLeft:
       return RNSOrientationLandscapeLeft;
-    case UIInterfaceOrientationLandscapeRight:
+    case UIInterfaceOrientationMaskLandscapeRight:
       return RNSOrientationLandscapeRight;
     case UIInterfaceOrientationMaskPortraitUpsideDown:
       return RNSOrientationPortraitDown;
