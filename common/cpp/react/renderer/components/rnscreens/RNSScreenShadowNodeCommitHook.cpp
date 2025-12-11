@@ -13,11 +13,10 @@ RNSScreenShadowNodeCommitHook::RNSScreenShadowNodeCommitHook(
 }
 
 RNSScreenShadowNodeCommitHook::~RNSScreenShadowNodeCommitHook() noexcept {
-  const auto contextContainer = contextContainer_.lock();
-  if (contextContainer) {
-    getUIManagerFromSharedContext(contextContainer)
-        ->unregisterCommitHook(*this);
-  }
+  // Note: We intentionally don't unregister the commit hook here.
+  // During hot reload, the FabricUIManagerBinding may already be destroyed
+  // when this destructor is called, causing a JNI crash when trying to
+  // access the binding. The UIManager will clean up hooks when it's destroyed.
 }
 
 RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
