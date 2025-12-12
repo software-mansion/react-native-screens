@@ -51,6 +51,7 @@ class RNScreensPackage : BaseReactPackage() {
             TabsHostViewManager(),
             TabScreenViewManager(),
             SafeAreaViewManager(),
+            ContentScrollViewDetectorViewManager(),
         )
     }
 

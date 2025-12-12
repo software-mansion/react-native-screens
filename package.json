@@ -183,7 +183,8 @@
         "RNSSearchBar": "RNSSearchBar",
         "RNSSplitViewHost": "RNSSplitViewHostComponentView",
         "RNSSplitViewScreen": "RNSSplitViewScreenComponentView",
-        "RNSSafeAreaView": "RNSSafeAreaViewComponentView"
+        "RNSSafeAreaView": "RNSSafeAreaViewComponentView",
+        "RNSContentScrollViewDetector": "RNSContentScrollViewDetector"
       },
       "components": {
         "RNSFullWindowOverlay": {
@@ -245,6 +246,9 @@
         },
         "RNSSafeAreaView": {
           "className": "RNSSafeAreaViewComponentView"
+        },
+        "RNSContentScrollViewDetector": {
+          "className": "RNSContentScrollViewDetector"
         }
       }
     }
