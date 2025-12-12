@@ -13,7 +13,8 @@ class RNSScreenComponentDescriptor;
 
 class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
  public:
-  RNSScreenShadowNodeCommitHook(std::shared_ptr<const ContextContainer>);
+  RNSScreenShadowNodeCommitHook(
+      const std::shared_ptr<const ContextContainer> &);
 
   virtual ~RNSScreenShadowNodeCommitHook() noexcept override;
 
@@ -28,8 +29,6 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
       const ShadowTreeCommitOptions & /*commitOptions*/) noexcept override;
 
  private:
-  std::weak_ptr<const ContextContainer> contextContainer_;
-
   static inline bool isHorizontal_(const RootProps &props) {
     const auto &layoutConstraints = props.layoutConstraints;
     const float width = layoutConstraints.maximumSize.width;
@@ -46,7 +45,7 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
       std::vector<const RNSScreenShadowNode *> &screenNodes);
 
   static std::shared_ptr<UIManager> getUIManagerFromSharedContext(
-      std::shared_ptr<const ContextContainer> sharedContext);
+      const std::shared_ptr<const ContextContainer> &sharedContext);
 };
 
 } // namespace react
