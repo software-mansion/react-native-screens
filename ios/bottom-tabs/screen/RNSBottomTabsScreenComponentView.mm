@@ -70,10 +70,10 @@ namespace react = facebook::react;
   _scrollEdgeEffectsNeedUpdate = NO;
 #endif
 
-  // Prevents incorrect tab bar appearance after tab change on iOS 26.0
-  // TODO: verify if it's still necessary on iOS 26.1
+  // Use clearColor to prevent any background flash during tab transitions.
+  // This ensures compatibility with both light and dark themes.
 #if !TARGET_OS_TV
-  self.backgroundColor = [UIColor systemBackgroundColor];
+  self.backgroundColor = [UIColor clearColor];
 #endif // !TARGET_OS_TV
 
   [self resetProps];
