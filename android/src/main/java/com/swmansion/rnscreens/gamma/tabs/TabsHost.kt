@@ -371,8 +371,18 @@ class TabsHost(
     private fun updateSelectedTab() {
         val newFocusedTab = currentFocusedTab
 
-        check(requireFragmentManager.fragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
-        val oldFocusedTab = requireFragmentManager.fragments.firstOrNull()
+        // Handle stale fragments gracefully instead of crashing.
+        // This can happen when navigating away from tabs (e.g., logout) and back (e.g., re-login).
+        // The native fragment manager may retain stale tab fragments from the previous session.
+        val existingFragments = requireFragmentManager.fragments.toList()
+        if (existingFragments.size > 1) {
+            // Clean up stale fragments - remove all except first one for transition
+            RNSLog.d(TAG, "[RNScreens] Found ${existingFragments.size} fragments, cleaning up stale ones")
+            requireFragmentManager.beginTransaction().apply {
+                existingFragments.drop(1).forEach { this.remove(it) }
+            }.commitNowAllowingStateLoss()
+        }
+        val oldFocusedTab = existingFragments.firstOrNull()
 
         if (newFocusedTab === oldFocusedTab) {
             return
