@@ -107,16 +107,17 @@ namespace react = facebook::react;
   return static_cast<RNSScreenView *_Nullable>(currentView);
 }
 
-- (std::pair<RNS_REACT_SCROLL_VIEW_COMPONENT *, UIView *>)childRCTScrollViewComponentAndContentContainer
+- (RNSScrollViewSearchResult)childRCTScrollViewComponentAndContentContainer
 {
   // Directly search subviews
   for (UIView *subview in self.subviews) {
     if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-      return {static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview), self};
+      return (RNSScrollViewSearchResult){.scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview),
+                                         .contentContainerView = self};
     }
   }
 
-// Fallback 1: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
+  // Fallback 1: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     UIView *maybeSafeAreaView = self.subviews.firstObject;
@@ -124,22 +125,24 @@ namespace react = facebook::react;
       for (UIView *subview in maybeSafeAreaView.subviews) {
         if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
           auto scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
-          return {scrollViewComponent, maybeSafeAreaView};
-          ;
+          return (RNSScrollViewSearchResult){
+              .scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview),
+              .contentContainerView = maybeSafeAreaView};
         }
       }
     }
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
-  return {nullptr, nullptr};
+  return (RNSScrollViewSearchResult){.scrollViewComponent = nullptr, .contentContainerView = nullptr};
 }
 
 - (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size
 {
   auto scrollViewComponentAndContentContainerPair = [self childRCTScrollViewComponentAndContentContainer];
-  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = scrollViewComponentAndContentContainerPair.first;
-  UIView *_Nullable containerView = scrollViewComponentAndContentContainerPair.second;
+  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+      scrollViewComponentAndContentContainerPair.scrollViewComponent;
+  UIView *_Nullable containerView = scrollViewComponentAndContentContainerPair.contentContainerView;
 
   if (scrollViewComponent == nil) {
     return NO;

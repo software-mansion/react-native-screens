@@ -904,7 +904,7 @@ RNS_IGNORE_SUPER_CALL_END
   RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
 
   if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
-          [contentWrapper childRCTScrollViewComponentAndContentContainer].first;
+          [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
       scrollViewComponent != nil) {
     return scrollViewComponent;
   }

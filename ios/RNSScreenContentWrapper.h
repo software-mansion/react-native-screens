@@ -25,6 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+struct RNSScrollViewSearchResult {
+  RNS_REACT_SCROLL_VIEW_COMPONENT *scrollViewComponent;
+  UIView *contentContainerView;
+};
+
 @interface RNSScreenContentWrapper :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView
@@ -39,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)triggerDelegateUpdate;
 
-- (std::pair<RNS_REACT_SCROLL_VIEW_COMPONENT *, UIView *>)childRCTScrollViewComponentAndContentContainer;
+- (RNSScrollViewSearchResult)childRCTScrollViewComponentAndContentContainer;
 
 - (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size;
 
