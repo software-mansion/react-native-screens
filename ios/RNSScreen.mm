@@ -903,7 +903,8 @@ RNS_IGNORE_SUPER_CALL_END
   // Step 1: Query registered content wrapper for the scrollview.
   RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
 
-  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [contentWrapper childRCTScrollViewComponent];
+  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+          [contentWrapper childRCTScrollViewComponentAndContentContainer].first;
       scrollViewComponent != nil) {
     return scrollViewComponent;
   }

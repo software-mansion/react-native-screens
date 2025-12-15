@@ -107,40 +107,39 @@ namespace react = facebook::react;
   return static_cast<RNSScreenView *_Nullable>(currentView);
 }
 
-- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)childRCTScrollViewComponent
+- (std::pair<RNS_REACT_SCROLL_VIEW_COMPONENT *, UIView *>)childRCTScrollViewComponentAndContentContainer
 {
+  // Directly search subviews
   for (UIView *subview in self.subviews) {
     if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+      return {static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview), self};
     }
   }
 
-  return nil;
-}
-
-- (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size
-{
-  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [self childRCTScrollViewComponent];
-  // Stores the reference to the deepest view which wraps the content
-  UIView *containerView = self;
-
+// Fallback 1: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  // Fallback 1: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
   if (@available(iOS 26.0, *)) {
-    if (scrollViewComponent == nil) {
-      UIView *maybeSafeAreaView = self.subviews.firstObject;
-      if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
-        for (UIView *subview in maybeSafeAreaView.subviews) {
-          if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-            scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
-            containerView = maybeSafeAreaView;
-            break;
-          }
+    UIView *maybeSafeAreaView = self.subviews.firstObject;
+    if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+      for (UIView *subview in maybeSafeAreaView.subviews) {
+        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+          auto scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+          return {scrollViewComponent, maybeSafeAreaView};
+          ;
         }
       }
     }
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  return {nullptr, nullptr};
+}
+
+- (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size
+{
+  auto scrollViewComponentAndContentContainerPair = [self childRCTScrollViewComponentAndContentContainer];
+  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = scrollViewComponentAndContentContainerPair.first;
+  UIView *_Nullable containerView = scrollViewComponentAndContentContainerPair.second;
 
   if (scrollViewComponent == nil) {
     return NO;

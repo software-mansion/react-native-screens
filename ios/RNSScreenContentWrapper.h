@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)triggerDelegateUpdate;
 
-- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)childRCTScrollViewComponent;
+- (std::pair<RNS_REACT_SCROLL_VIEW_COMPONENT *, UIView *>)childRCTScrollViewComponentAndContentContainer;
 
 - (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size;
 
