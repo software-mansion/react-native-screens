@@ -87,6 +87,9 @@ namespace react = facebook::react;
   _isTitleUndefined = YES;
   _orientation = RNSOrientationInherit;
 
+  _tabBarItemTestId = nil;
+  _tabBarItemAccessibilityLabel = nil;
+
   _standardAppearance = [UITabBarAppearance new];
   _scrollEdgeAppearance = nil;
 
@@ -187,6 +190,9 @@ RNS_IGNORE_SUPER_CALL_END
   } else {
     tabBarItem = [[UITabBarItem alloc] init];
   }
+
+  tabBarItem.accessibilityIdentifier = _tabBarItemTestId;
+  tabBarItem.accessibilityLabel = _tabBarItemAccessibilityLabel;
 
   _controller.tabBarItem = tabBarItem;
 }
@@ -291,6 +297,16 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
     tabBarItemNeedsUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemTestId != oldComponentProps.tabBarItemTestId) {
+    _tabBarItemTestId = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestId);
+    tabBarItemNeedsRecreation = YES;
+  }
+
+  if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
+    _tabBarItemAccessibilityLabel = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
+    tabBarItemNeedsRecreation = YES;
   }
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
