@@ -25,10 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-struct RNSScrollViewSearchResult {
+typedef struct {
   RNS_REACT_SCROLL_VIEW_COMPONENT *scrollViewComponent;
   UIView *contentContainerView;
-};
+} RNSScrollViewSearchResult;
 
 @interface RNSScreenContentWrapper :
 #ifdef RCT_NEW_ARCH_ENABLED
