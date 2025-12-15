@@ -145,11 +145,12 @@ namespace react = facebook::react;
     return NO;
   }
 
-  if (self.subviews.count > 2) {
+  if (containerView.subviews.count > 2) {
     RCTLogWarn(
-        @"[RNScreens] FormSheet with ScrollView expects at most 2 subviews. Got %ld. This might result in incorrect layout. \
+        @"[RNScreens] FormSheet with ScrollView expects at most 2 subviews. Got %ld for container: %@. This might result in incorrect layout. \
           If you want to display header alongside the scrollView, make sure to apply `collapsable: false` on your header component view.",
-        self.subviews.count);
+        containerView.subviews.count,
+        NSStringFromClass(containerView.class));
   }
 
   NSUInteger scrollViewComponentIndex = [containerView.subviews indexOfObject:scrollViewComponent];
