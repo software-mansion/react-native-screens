@@ -124,19 +124,23 @@ namespace react = facebook::react;
   // Stores the reference to the deepest view which wraps the content
   UIView *containerView = self;
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // Fallback 1: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
-  if (scrollViewComponent == nil) {
-    UIView *maybeSafeAreaView = self.subviews.firstObject;
-    if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
-      for (UIView *subview in maybeSafeAreaView.subviews) {
-        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-          scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
-          containerView = maybeSafeAreaView;
-          break;
+  if (@available(iOS 26.0, *)) {
+    if (scrollViewComponent == nil) {
+      UIView *maybeSafeAreaView = self.subviews.firstObject;
+      if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+        for (UIView *subview in maybeSafeAreaView.subviews) {
+          if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+            scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+            containerView = maybeSafeAreaView;
+            break;
+          }
         }
       }
     }
   }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   if (scrollViewComponent == nil) {
     return NO;

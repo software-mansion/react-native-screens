@@ -917,15 +917,19 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // Fallback 2: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
-  UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
-  if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
-    for (UIView *subview in maybeSafeAreaView.subviews) {
-      if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-        return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+  if (@available(iOS 26.0, *)) {
+    UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
+    if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+      for (UIView *subview in maybeSafeAreaView.subviews) {
+        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+          return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+        }
       }
     }
   }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   return nil;
 }
