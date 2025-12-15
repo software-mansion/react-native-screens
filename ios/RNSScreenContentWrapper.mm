@@ -124,7 +124,6 @@ namespace react = facebook::react;
     if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
       for (UIView *subview in maybeSafeAreaView.subviews) {
         if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-          auto scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
           return (RNSScrollViewSearchResult){
               .scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview),
               .contentContainerView = maybeSafeAreaView};
