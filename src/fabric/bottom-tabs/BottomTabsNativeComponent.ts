@@ -33,6 +33,10 @@ export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: CT.DirectEventHandler<NativeFocusChangeEvent>;
 
+  // General
+  tabBarHidden?: CT.WithDefault<boolean, false>;
+  nativeContainerBackgroundColor?: ColorValue;
+
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
 
@@ -59,7 +63,6 @@ export interface NativeProps extends ViewProps {
   tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
-  tabBarHidden?: CT.WithDefault<boolean, false>;
 
   // Control
 

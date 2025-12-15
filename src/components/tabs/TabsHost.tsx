@@ -28,6 +28,7 @@ function TabsHost(props: TabsHostProps) {
     experimentalControlNavigationStateInJS = featureFlags.experiment
       .controlledBottomTabs,
     bottomAccessory,
+    nativeContainerStyle,
     ...filteredProps
   } = props;
 
@@ -64,6 +65,7 @@ function TabsHost(props: TabsHostProps) {
       style={styles.fillParent}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={experimentalControlNavigationStateInJS}
+      nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredProps}>
