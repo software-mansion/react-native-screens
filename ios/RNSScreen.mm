@@ -30,6 +30,7 @@
 #import <React/RCTUIManagerUtils.h>
 
 #import "RNSConversions.h"
+#import "RNSSafeAreaViewComponentView.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
@@ -913,6 +914,16 @@ RNS_IGNORE_SUPER_CALL_END
     firstSubview = firstSubview.subviews[0];
     if ([firstSubview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
       return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
+    }
+  }
+
+  // Fallback 2: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
+  UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
+  if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+    for (UIView *subview in maybeSafeAreaView.subviews) {
+      if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+        return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+      }
     }
   }
 

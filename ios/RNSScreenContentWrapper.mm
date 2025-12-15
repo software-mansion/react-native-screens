@@ -1,5 +1,6 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSDefines.h"
+#import "RNSSafeAreaViewComponentView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 
@@ -113,12 +114,29 @@ namespace react = facebook::react;
       return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
     }
   }
+
   return nil;
 }
 
 - (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size
 {
   RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [self childRCTScrollViewComponent];
+  // Stores the reference to the deepest view which wraps the content
+  UIView *containerView = self;
+
+  // Fallback 1: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
+  if (scrollViewComponent == nil) {
+    UIView *maybeSafeAreaView = self.subviews.firstObject;
+    if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+      for (UIView *subview in maybeSafeAreaView.subviews) {
+        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+          scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+          containerView = maybeSafeAreaView;
+          break;
+        }
+      }
+    }
+  }
 
   if (scrollViewComponent == nil) {
     return NO;
@@ -131,7 +149,7 @@ namespace react = facebook::react;
         self.subviews.count);
   }
 
-  NSUInteger scrollViewComponentIndex = [[self subviews] indexOfObject:scrollViewComponent];
+  NSUInteger scrollViewComponentIndex = [containerView.subviews indexOfObject:scrollViewComponent];
 
   // Case 1: ScrollView first child - takes whole size.
   if (scrollViewComponentIndex == 0) {
@@ -143,7 +161,7 @@ namespace react = facebook::react;
 
   // Case 2: There is a header - we adjust scrollview size by the header height.
   if (scrollViewComponentIndex == 1) {
-    UIView *headerView = self.subviews[0];
+    UIView *headerView = containerView.subviews[0];
     CGRect newFrame = scrollViewComponent.frame;
     newFrame.size = size;
     newFrame.size.height -= headerView.frame.size.height;
