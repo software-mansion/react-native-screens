@@ -312,7 +312,8 @@ namespace react = facebook::react;
   }
 
   if (newComponentProps.nativeContainerBackgroundColor != oldComponentProps.nativeContainerBackgroundColor) {
-    _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
+    _nativeContainerBackgroundColor =
+        RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor) ?: [UIColor systemBackgroundColor];
     _controller.view.backgroundColor = _nativeContainerBackgroundColor;
   }
 
@@ -490,6 +491,12 @@ RNS_IGNORE_SUPER_CALL_END
   {
     _controller.tabBar.hidden = _tabBarHidden;
   }
+}
+
+- (void)setNativeContainerBackgroundColor:(UIColor *_Nullable)nativeContainerBackgroundColor
+{
+  _nativeContainerBackgroundColor = nativeContainerBackgroundColor ?: [UIColor systemBackgroundColor];
+  _controller.view.backgroundColor = _nativeContainerBackgroundColor;
 }
 
 // This is a Paper-only setter method that will be called by the mounting code.
