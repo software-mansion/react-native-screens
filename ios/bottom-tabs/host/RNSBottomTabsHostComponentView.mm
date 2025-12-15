@@ -113,6 +113,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
+  _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 }
 
 #pragma mark - UIView methods
@@ -308,6 +309,11 @@ namespace react = facebook::react;
     {
       _controller.tabBar.hidden = _tabBarHidden;
     }
+  }
+
+  if (newComponentProps.nativeContainerBackgroundColor != oldComponentProps.nativeContainerBackgroundColor) {
+    _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
+    _controller.view.backgroundColor = _nativeContainerBackgroundColor;
   }
 
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
