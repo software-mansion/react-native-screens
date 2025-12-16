@@ -6,6 +6,9 @@ export { StackScreenLifecycleState } from './StackScreen';
 export * from './StackHost.types';
 export * from './StackScreen.types';
 
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
 const Stack = {
   Host: StackHost,
   Screen: StackScreen,
