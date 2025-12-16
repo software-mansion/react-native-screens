@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  ScreenStackHost,
-  StackScreen,
+  Stack,
   StackScreenLifecycleState,
 } from 'react-native-screens/experimental';
 import type { StackScreenProps } from 'react-native-screens/experimental';
@@ -148,9 +147,9 @@ export function StackContainer({ pathConfigs }: StackContainerProps) {
   console.log('StackContainer render', stack);
 
   return (
-    <ScreenStackHost>
+    <Stack.Host>
       {stack.map(({ component: Component, ...screenProps }) => (
-        <StackScreen
+        <Stack.Screen
           key={screenProps.screenKey}
           {...screenProps}
           onPop={handlePop}>
@@ -162,8 +161,8 @@ export function StackContainer({ pathConfigs }: StackContainerProps) {
             }}>
             <Component />
           </StackNavigationContext.Provider>
-        </StackScreen>
+        </Stack.Screen>
       ))}
-    </ScreenStackHost>
+    </Stack.Host>
   );
 }
