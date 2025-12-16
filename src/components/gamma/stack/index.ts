@@ -1,13 +1,13 @@
-import ScreenStackHost from './ScreenStackHost';
+import StackHost from './StackHost';
 import StackScreen from './StackScreen';
 
 export { StackScreenLifecycleState } from './StackScreen';
 
-export * from './ScreenStackHost.types';
+export * from './StackHost.types';
 export * from './StackScreen.types';
 
 const Stack = {
-  Host: ScreenStackHost,
+  Host: StackHost,
   Screen: StackScreen,
 };
 
