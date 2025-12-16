@@ -13,5 +13,5 @@ export {
   StackScreenLifecycleState,
 } from '../components/gamma/stack';
 
-export { default as Split } from '../components/gamma/split-view/';
+export { default as Split } from '../components/gamma/split';
 export { default as SafeAreaView } from '../components/safe-area/SafeAreaView';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitViewBaseConfig } from '../helpers/types';
 
@@ -9,8 +9,8 @@ export const SplitViewWithNativeStackGestures = ({
   splitViewBaseConfig: SplitViewBaseConfig;
 }) => {
   return (
-    <SplitViewHost {...splitViewBaseConfig}>
-      <SplitViewScreen.Column>
+    <Split.Host {...splitViewBaseConfig}>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             gestureEnabled: true,
@@ -22,8 +22,8 @@ export const SplitViewWithNativeStackGestures = ({
             gestureEnabled: false,
           }}
         />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             fullScreenGestureEnabled: true,
@@ -38,8 +38,8 @@ export const SplitViewWithNativeStackGestures = ({
             gestureEnabled: false,
           }}
         />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             fullScreenGestureEnabled: true,
@@ -57,7 +57,7 @@ export const SplitViewWithNativeStackGestures = ({
             animationMatchesGesture: true,
           }}
         />
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 };

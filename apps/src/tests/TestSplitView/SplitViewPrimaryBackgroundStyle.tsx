@@ -2,8 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Button, StyleSheet, Text, View, ScrollView } from 'react-native';
 import {
   SafeAreaView,
-  SplitViewHost,
-  SplitViewScreen,
+  Split
 } from 'react-native-screens/experimental';
 import type { SplitViewPrimaryBackgroundStyle } from 'react-native-screens/experimental';
 import type { SplitViewBaseConfig } from './helpers/types';
@@ -50,21 +49,21 @@ const SplitViewPrimaryBackgroundStyleApp = ({
     useState<SplitViewPrimaryBackgroundStyle>('default');
 
   return (
-    <SplitViewHost
+    <Split.Host
       {...splitViewBaseConfig}
       primaryBackgroundStyle={primaryBgStyle}>
-      <SplitViewScreen.Column>
+      <Split.Column>
         <View style={styles.leftColumn} />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <SafeAreaView edges={{ top: true }}>
           <ScrollView contentContainerStyle={styles.rightColumn}>
             <ConfigPanel setPrimaryBgStyle={setPrimaryBgStyle} />
             <ItemsPanel />
           </ScrollView>
         </SafeAreaView>
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 };
 

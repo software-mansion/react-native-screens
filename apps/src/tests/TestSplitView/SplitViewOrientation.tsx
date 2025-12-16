@@ -1,28 +1,28 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens/experimental';
 import { Colors } from '../../shared/styling/Colors';
 import { SplitViewBaseConfig } from './helpers/types';
 
 const SplitViewOrientation = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
   return (
-    <SplitViewHost {...splitViewBaseConfig} orientation='landscapeLeft'>
-      <SplitViewScreen.Column>
+    <Split.Host {...splitViewBaseConfig} orientation='landscapeLeft'>
+      <Split.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Primary column</Text>
         </View>
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Supplementary column</Text>
         </View>
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Secondary column</Text>
         </View>
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 }
 

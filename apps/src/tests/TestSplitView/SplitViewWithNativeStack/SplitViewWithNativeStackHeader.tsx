@@ -1,5 +1,5 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { Image, View } from 'react-native';
 import Colors from '../../../shared/styling/Colors';
@@ -21,8 +21,8 @@ export const SplitViewWithNativeStackHeader = ({
   splitViewBaseConfig: SplitViewBaseConfig;
 }) => {
   return (
-    <SplitViewHost {...splitViewBaseConfig}>
-      <SplitViewScreen.Column>
+    <Split.Host {...splitViewBaseConfig}>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{ headerShown: false }}
           customScreenTwoNavigationOptions={{
@@ -45,8 +45,8 @@ export const SplitViewWithNativeStackHeader = ({
             headerBackImageSource: require('../../../../assets/backButton.png'),
           }}
         />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{ headerTransparent: true }}
           customScreenTwoNavigationOptions={{
@@ -63,8 +63,8 @@ export const SplitViewWithNativeStackHeader = ({
             ),
           }}
         />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             headerTintColor: Colors.RedDark100,
@@ -86,7 +86,7 @@ export const SplitViewWithNativeStackHeader = ({
             headerRight: HeaderRight,
           }}
         />
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 };

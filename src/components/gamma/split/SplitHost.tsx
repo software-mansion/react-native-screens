@@ -5,8 +5,8 @@ import type {
   SplitViewDisplayMode,
   SplitViewHostProps,
   SplitViewSplitBehavior,
-} from './SplitViewHost.types';
-import SplitViewScreen from './SplitViewScreen';
+} from './SplitHost.types';
+import SplitScreen from './SplitScreen';
 
 // According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
 // Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
@@ -38,7 +38,7 @@ const isValidDisplayModeForSplitBehavior = (
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function SplitViewHost(props: SplitViewHostProps) {
+function SplitHost(props: SplitViewHostProps) {
   const { preferredDisplayMode, preferredSplitBehavior } = props;
 
   React.useEffect(() => {
@@ -64,12 +64,12 @@ function SplitViewHost(props: SplitViewHostProps) {
 
   const columns = children.filter(
     // @ts-ignore - type is valid attribute for child
-    child => child.type === SplitViewScreen.Column,
+    child => child.type === SplitScreen.Column,
   );
 
   const inspectors = children.filter(
     // @ts-ignore - type is valid attribute for child
-    child => child.type === SplitViewScreen.Inspector,
+    child => child.type === SplitScreen.Inspector,
   );
 
   return (
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplitViewHost;
+export default SplitHost;

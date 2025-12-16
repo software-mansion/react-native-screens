@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import SplitViewScreenNativeComponent from '../../../fabric/gamma/SplitViewScreenNativeComponent';
-import { SplitViewScreenProps } from './SplitViewScreen.types';
+import { SplitViewScreenProps } from './SplitScreen.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -35,9 +35,9 @@ function Inspector(props: SplitViewScreenProps) {
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 // TODO: refactor to drop `Screen` suffix as the API name is really long at the moment
-const SplitViewScreen = {
+const SplitScreen = {
   Column,
   Inspector,
 };
 
-export default SplitViewScreen;
+export default SplitScreen;

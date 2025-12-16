@@ -1,5 +1,5 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitViewBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
@@ -11,8 +11,8 @@ export const SplitViewWithNativeStackSearchBar = ({
   splitViewBaseConfig: SplitViewBaseConfig;
 }) => {
   return (
-    <SplitViewHost {...splitViewBaseConfig}>
-      <SplitViewScreen.Column>
+    <Split.Host {...splitViewBaseConfig}>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             headerSearchBarOptions: {
@@ -27,8 +27,8 @@ export const SplitViewWithNativeStackSearchBar = ({
             },
           }}
         />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{
             headerSearchBarOptions: {
@@ -49,8 +49,8 @@ export const SplitViewWithNativeStackSearchBar = ({
             },
           }}
         />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenTwoNavigationOptions={{
             headerSearchBarOptions: {
@@ -62,7 +62,7 @@ export const SplitViewWithNativeStackSearchBar = ({
           }}
           CustomScreenTwo={ScrollViewWithText}
         />
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 };
