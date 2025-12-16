@@ -2,9 +2,9 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import SplitViewHostNativeComponent from '../../../fabric/gamma/SplitViewHostNativeComponent';
 import type {
-  SplitViewDisplayMode,
-  SplitViewHostProps,
-  SplitViewSplitBehavior,
+  SplitDisplayMode,
+  SplitHostProps,
+  SplitSplitBehavior,
 } from './SplitHost.types';
 import SplitScreen from './SplitScreen';
 
@@ -13,8 +13,8 @@ import SplitScreen from './SplitScreen';
 // Therefore, we're adding check on the JS side to return a feedback to the client when that pairing isn't valid.
 // However, we're not blocking these props to be set on the native side, because it doesn't crash, just the result or transitions may not work as expected.
 const displayModeForSplitViewCompatibilityMap: Record<
-  SplitViewSplitBehavior,
-  SplitViewDisplayMode[]
+  SplitSplitBehavior,
+  SplitDisplayMode[]
 > = {
   tile: ['secondaryOnly', 'oneBesideSecondary', 'twoBesideSecondary'],
   overlay: ['secondaryOnly', 'oneOverSecondary', 'twoOverSecondary'],
@@ -23,8 +23,8 @@ const displayModeForSplitViewCompatibilityMap: Record<
 };
 
 const isValidDisplayModeForSplitBehavior = (
-  displayMode: SplitViewDisplayMode,
-  splitBehavior: SplitViewSplitBehavior,
+  displayMode: SplitDisplayMode,
+  splitBehavior: SplitSplitBehavior,
 ) => {
   if (splitBehavior === 'automatic') {
     // for automatic we cannot easily verify the compatibility, because it depends on the system preference for display mode, therefore we're assuming that 'automatic' has only valid combinations
@@ -38,7 +38,7 @@ const isValidDisplayModeForSplitBehavior = (
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function SplitHost(props: SplitViewHostProps) {
+function SplitHost(props: SplitHostProps) {
   const { preferredDisplayMode, preferredSplitBehavior } = props;
 
   React.useEffect(() => {

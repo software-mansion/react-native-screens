@@ -3,9 +3,9 @@ import type { NativeSyntheticEvent, ViewProps } from 'react-native';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
-export type SplitViewScreenColumnType = 'column' | 'inspector';
+export type SplitScreenColumnType = 'column' | 'inspector';
 
-export interface SplitViewScreenProps extends ViewProps {
+export interface SplitScreenProps extends ViewProps {
   children?: React.ReactNode;
   /**
    * @summary A callback that gets invoked when the current SplitViewScreen did appear.

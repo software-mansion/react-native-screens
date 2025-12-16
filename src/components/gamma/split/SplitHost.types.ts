@@ -8,22 +8,15 @@ export type DisplayModeWillChangeEvent = {
   nextDisplayMode: string;
 };
 
-export type SplitViewDisplayModeButtonVisibility =
-  | 'always'
-  | 'automatic'
-  | 'never';
+export type SplitDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
 
-export type SplitViewSplitBehavior =
-  | 'automatic'
-  | 'displace'
-  | 'overlay'
-  | 'tile';
+export type SplitSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
 
-export type SplitViewPrimaryEdge = 'leading' | 'trailing';
+export type SplitPrimaryEdge = 'leading' | 'trailing';
 
-export type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
+export type SplitPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
-export type SplitViewDisplayMode =
+export type SplitDisplayMode =
   | 'automatic'
   | 'secondaryOnly'
   | 'oneBesideSecondary'
@@ -32,7 +25,7 @@ export type SplitViewDisplayMode =
   | 'twoOverSecondary'
   | 'twoDisplaceSecondary';
 
-export type SplitViewHostOrientation =
+export type SplitHostOrientation =
   | 'inherit'
   | 'all'
   | 'allButUpsideDown'
@@ -43,7 +36,7 @@ export type SplitViewHostOrientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
-export interface SplitViewColumnMetrics {
+export interface SplitColumnMetrics {
   /**
    * @summary Minimum width for the primary sidebar.
    *
@@ -121,7 +114,7 @@ export interface SplitViewColumnMetrics {
    */
   preferredInspectorColumnWidthOrFraction?: number;
 }
-export interface SplitViewHostProps extends ViewProps {
+export interface SplitHostProps extends ViewProps {
   children?: React.ReactNode;
 
   /**
@@ -137,7 +130,7 @@ export interface SplitViewHostProps extends ViewProps {
    * - `secondary` - the view with the main content
    * - `inspector` - the view which is providing additional data about the secondary column
    */
-  columnMetrics?: SplitViewColumnMetrics;
+  columnMetrics?: SplitColumnMetrics;
   /**
    * @summary Determines whether the button for changing the SplitView display mode is visible on the screen.
    *
@@ -152,7 +145,7 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @default automatic
    */
-  displayModeButtonVisibility?: SplitViewDisplayModeButtonVisibility;
+  displayModeButtonVisibility?: SplitDisplayModeButtonVisibility;
   /**
    * @summary A callback that gets invoked when the SplitView was collapsed to a single column.
    */
@@ -220,7 +213,7 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @platform ios
    */
-  orientation?: SplitViewHostOrientation;
+  orientation?: SplitHostOrientation;
   /**
    * @summary Determines whether gestures are enabled to change the display mode.
    */
@@ -245,7 +238,7 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @default automatic
    */
-  preferredDisplayMode?: SplitViewDisplayMode;
+  preferredDisplayMode?: SplitDisplayMode;
   /**
    * @summary Specifies the split behavior which will be preferred to use, if the layout requirements are met.
    *
@@ -263,7 +256,7 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @default automatic
    */
-  preferredSplitBehavior?: SplitViewSplitBehavior;
+  preferredSplitBehavior?: SplitSplitBehavior;
   /**
    * @summary Specifies the background style of the primary view controller.
    *
@@ -285,7 +278,7 @@ export interface SplitViewHostProps extends ViewProps {
    * @remarks
    * According to the documentation, this property shouldn't have any effect on iOS. However, on iOS 26 the support for this prop was added.
    */
-  primaryBackgroundStyle?: SplitViewPrimaryBackgroundStyle;
+  primaryBackgroundStyle?: SplitPrimaryBackgroundStyle;
   /**
    * @summary Indicates on which side primary sidebar is placed, affecting the split view layout.
    *
@@ -299,7 +292,7 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @default leading
    */
-  primaryEdge?: SplitViewPrimaryEdge;
+  primaryEdge?: SplitPrimaryEdge;
   /**
    * @summary Determines whether inspector column should be displayed.
    *
