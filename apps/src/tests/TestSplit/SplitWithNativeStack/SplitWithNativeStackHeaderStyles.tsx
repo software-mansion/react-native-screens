@@ -1,13 +1,13 @@
 import React from 'react';
 import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 import Colors from '../../../shared/styling/Colors';
 
-export const SplitViewWithNativeStackHeaderStyles = ({
+export const SplitWithNativeStackHeaderStyles = ({
   splitViewBaseConfig,
 }: {
-  splitViewBaseConfig: SplitViewBaseConfig;
+  splitViewBaseConfig: SplitBaseConfig;
 }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>

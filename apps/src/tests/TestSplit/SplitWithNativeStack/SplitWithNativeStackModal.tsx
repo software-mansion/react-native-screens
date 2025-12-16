@@ -4,7 +4,7 @@ import { NativeStackNavigatorComponent, type ScreenOneProps } from '../helpers';
 import { StyleSheet, Text, View } from 'react-native';
 import PressableWithFeedback from '../../../shared/PressableWithFeedback';
 import Colors from '../../../shared/styling/Colors';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 
 const ScreenOne = ({ navigation }: ScreenOneProps) => (
   <View style={styles.container}>
@@ -30,7 +30,7 @@ const ScreenThree = () => (
   </View>
 )
 
-export const SplitViewWithNativeStackModal = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+export const SplitWithNativeStackModal = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>
       <Split.Column>

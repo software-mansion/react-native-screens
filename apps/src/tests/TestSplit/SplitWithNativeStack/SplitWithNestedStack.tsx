@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
 import PressableWithFeedback from '../../../shared/PressableWithFeedback';
 import Colors from '../../../shared/styling/Colors';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 
 type StackOuterParamList = {
   OuterScreenOne: undefined;
@@ -77,7 +77,7 @@ const OuterStack = () => (
   </NavigationContainer>
 );
 
-export const SplitViewWithNestedStack = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+export const SplitWithNestedStack = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>
       <Split.Column>

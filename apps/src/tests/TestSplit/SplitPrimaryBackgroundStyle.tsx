@@ -5,7 +5,7 @@ import {
   Split
 } from 'react-native-screens/experimental';
 import type { SplitViewPrimaryBackgroundStyle } from 'react-native-screens/experimental';
-import type { SplitViewBaseConfig } from './helpers/types';
+import type { SplitBaseConfig } from './helpers/types';
 import { Colors } from '../../shared/styling/Colors';
 
 const ConfigPanel = ({
@@ -40,10 +40,10 @@ const ItemsPanel = () => {
   );
 };
 
-const SplitViewPrimaryBackgroundStyleApp = ({
+const SplitPrimaryBackgroundStyleApp = ({
   splitViewBaseConfig,
 }: {
-  splitViewBaseConfig: SplitViewBaseConfig;
+  splitViewBaseConfig: SplitBaseConfig;
 }) => {
   const [primaryBgStyle, setPrimaryBgStyle] =
     useState<SplitViewPrimaryBackgroundStyle>('default');
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplitViewPrimaryBackgroundStyleApp;
+export default SplitPrimaryBackgroundStyleApp;

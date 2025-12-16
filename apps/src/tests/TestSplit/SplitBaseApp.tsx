@@ -2,25 +2,22 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Split } from 'react-native-screens/experimental';
 import { Colors } from '../../shared/styling/Colors';
-import { SplitViewBaseConfig } from './helpers/types';
+import { TestBottomTabs, TestScreenStack } from '..';
+import { SplitBaseConfig } from './helpers/types';
 
-const SplitViewOrientation = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+const SplitBaseApp = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
   return (
-    <Split.Host {...splitViewBaseConfig} orientation='landscapeLeft'>
+    <Split.Host {...splitViewBaseConfig}>
       <Split.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Primary column</Text>
         </View>
       </Split.Column>
       <Split.Column>
-        <View style={[styles.container, { backgroundColor: Colors.White }]}>
-          <Text style={styles.text}>Supplementary column</Text>
-        </View>
+        <TestBottomTabs />
       </Split.Column>
       <Split.Column>
-        <View style={[styles.container, { backgroundColor: Colors.White }]}>
-          <Text style={styles.text}>Secondary column</Text>
-        </View>
+        <TestScreenStack />
       </Split.Column>
     </Split.Host>
   );
@@ -49,4 +46,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SplitViewOrientation;
+export default SplitBaseApp;

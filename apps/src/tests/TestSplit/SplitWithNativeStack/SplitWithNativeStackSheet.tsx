@@ -1,10 +1,10 @@
 import React from 'react';
 import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
 
-export const SplitViewWithNativeStackSheet = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+export const SplitWithNativeStackSheet = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>
       <Split.Column>

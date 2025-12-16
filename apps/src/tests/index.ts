@@ -186,5 +186,5 @@ export { default as TestAnimation } from './TestAnimation';
 export { default as TestBottomTabs } from './TestBottomTabs';
 export { default as TestBottomTabsOrientation } from './TestBottomTabsOrientation';
 export { default as TestScreenStack } from './TestScreenStack';
-export { default as TestSplitView } from './TestSplitView';
+export { default as TestSplitView } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';

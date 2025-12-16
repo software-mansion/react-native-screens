@@ -1,14 +1,14 @@
 import React from 'react';
 import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
 import Colors from '../../../shared/styling/Colors';
 
-export const SplitViewWithNativeStackSearchBar = ({
+export const SplitWithNativeStackSearchBar = ({
   splitViewBaseConfig,
 }: {
-  splitViewBaseConfig: SplitViewBaseConfig;
+  splitViewBaseConfig: SplitBaseConfig;
 }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>

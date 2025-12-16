@@ -4,16 +4,16 @@ import { NativeStackNavigatorComponent, type ScreenOneProps } from '../helpers';
 import { StyleSheet, Text, View } from 'react-native';
 import PressableWithFeedback from '../../../shared/PressableWithFeedback';
 import Colors from '../../../shared/styling/Colors';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 
 const ScreenOne = ({ navigation }: ScreenOneProps) => (
   <View style={styles.container}>
     <Text style={styles.text}>ScreenOne</Text>
     <PressableWithFeedback style={styles.pressable} onPress={() => navigation.navigate('ScreenTwo')}>
-      <Text style={styles.text}>Show full screen modal</Text>
+      <Text style={styles.text}>Show contained modal</Text>
     </PressableWithFeedback>
     <PressableWithFeedback style={styles.pressable} onPress={() => navigation.navigate('ScreenThree')}>
-      <Text style={styles.text}>Show form sheet</Text>
+      <Text style={styles.text}>Show contained transparent modal</Text>
     </PressableWithFeedback>
   </View>
 )
@@ -30,7 +30,7 @@ const ScreenThree = () => (
   </View>
 )
 
-export const SplitViewWithNativeStackPresentation = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+export const SplitWithNativeStackContainedModal = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>
       <Split.Column>
@@ -45,10 +45,10 @@ export const SplitViewWithNativeStackPresentation = ({ splitViewBaseConfig }: { 
           customScreenOneName='ScreenOne'
           CustomScreenTwo={ScreenTwo}
           customScreenTwoName='ScreenTwo'
-          customScreenTwoNavigationOptions={{ presentation: 'fullScreenModal' }}
+          customScreenTwoNavigationOptions={{ presentation: 'containedModal' }}
           CustomScreenThree={ScreenThree}
           customScreenThreeName='ScreenThree'
-          customScreenThreeNavigationOptions={{ presentation: 'formSheet' }}
+          customScreenThreeNavigationOptions={{ presentation: 'containedTransparentModal' }}
         />
       </Split.Column>
     </Split.Host>

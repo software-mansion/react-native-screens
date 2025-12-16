@@ -3,7 +3,7 @@ import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { Image, View } from 'react-native';
 import Colors from '../../../shared/styling/Colors';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 
 const HeaderLeft = () => (
   <View style={{ width: 36, height: 36, backgroundColor: Colors.RedDark100 }} />
@@ -15,10 +15,10 @@ const HeaderRight = () => (
   />
 );
 
-export const SplitViewWithNativeStackHeader = ({
+export const SplitWithNativeStackHeader = ({
   splitViewBaseConfig,
 }: {
-  splitViewBaseConfig: SplitViewBaseConfig;
+  splitViewBaseConfig: SplitBaseConfig;
 }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>

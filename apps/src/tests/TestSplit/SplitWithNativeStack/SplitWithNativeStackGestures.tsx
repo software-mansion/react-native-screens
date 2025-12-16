@@ -1,12 +1,12 @@
 import React from 'react';
 import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 
-export const SplitViewWithNativeStackGestures = ({
+export const SplitWithNativeStackGestures = ({
   splitViewBaseConfig,
 }: {
-  splitViewBaseConfig: SplitViewBaseConfig;
+  splitViewBaseConfig: SplitBaseConfig;
 }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>

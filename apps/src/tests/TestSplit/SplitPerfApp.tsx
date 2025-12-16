@@ -12,7 +12,7 @@ import {
   Split
 } from 'react-native-screens/experimental';
 import { Colors } from '../../shared/styling/Colors';
-import { SplitViewBaseConfig } from './helpers/types';
+import { SplitBaseConfig } from './helpers/types';
 
 const { width } = Dimensions.get('window');
 
@@ -78,10 +78,10 @@ const GridImage = ({ numColumns = 2 }: { numColumns?: number }) => {
   );
 };
 
-const SplitViewPerfApp = ({
+const SplitPerfApp = ({
   splitViewBaseConfig,
 }: {
-  splitViewBaseConfig: SplitViewBaseConfig;
+  splitViewBaseConfig: SplitBaseConfig;
 }) => {
   return (
     <Split.Host {...splitViewBaseConfig}>
@@ -140,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplitViewPerfApp;
+export default SplitPerfApp;
