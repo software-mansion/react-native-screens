@@ -229,7 +229,7 @@ function getPositioningStyle(
 
   // Other platforms, tested reliably only on Android
   if (allowedDetents === 'fitToContents') {
-    return {};
+    return styles.absoluteWithNoBottom;
   }
 
   return styles.container;
@@ -281,6 +281,13 @@ function getSafeAreaEdges(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  absolute: {
+    position: 'absolute',
+    top: 0,
+    start: 0,
+    end: 0,
+    bottom: 0,
   },
   absoluteWithNoBottom: {
     position: 'absolute',
