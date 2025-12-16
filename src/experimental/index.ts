@@ -8,11 +8,11 @@ export * from './types';
 
 // Components
 
-export { default as ScreenStackHost } from '../components/gamma/stack/ScreenStackHost';
 export {
-  default as StackScreen,
+  default as Stack,
   StackScreenLifecycleState,
-} from '../components/gamma/stack/StackScreen';
+} from '../components/gamma/stack';
+
 export { default as SplitViewHost } from '../components/gamma/split-view/SplitViewHost';
 export { default as SplitViewScreen } from '../components/gamma/split-view/SplitViewScreen';
 export { default as SafeAreaView } from '../components/safe-area/SafeAreaView';
