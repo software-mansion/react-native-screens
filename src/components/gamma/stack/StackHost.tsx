@@ -1,12 +1,12 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import ScreenStackHostNativeComponent from '../../../fabric/gamma/ScreenStackHostNativeComponent';
-import type { ScreenStackHostProps } from './ScreenStackHost.types';
+import type { ScreenStackHostProps } from './StackHost.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function ScreenStackHost({ children }: ScreenStackHostProps) {
+function StackHost({ children }: ScreenStackHostProps) {
   return (
     <ScreenStackHostNativeComponent style={styles.container}>
       {children}
@@ -20,4 +20,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScreenStackHost;
+export default StackHost;
