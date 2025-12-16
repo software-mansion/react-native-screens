@@ -4,14 +4,14 @@ import {
   SafeAreaView,
   Split
 } from 'react-native-screens/experimental';
-import type { SplitViewPrimaryBackgroundStyle } from 'react-native-screens/experimental';
+import type { SplitPrimaryBackgroundStyle } from 'react-native-screens/experimental';
 import type { SplitBaseConfig } from './helpers/types';
 import { Colors } from '../../shared/styling/Colors';
 
 const ConfigPanel = ({
   setPrimaryBgStyle,
 }: {
-  setPrimaryBgStyle: (primaryBgStyle: SplitViewPrimaryBackgroundStyle) => void;
+  setPrimaryBgStyle: (primaryBgStyle: SplitPrimaryBackgroundStyle) => void;
 }) => (
   <View style={styles.configPanel}>
     <Button
@@ -46,7 +46,7 @@ const SplitPrimaryBackgroundStyleApp = ({
   splitViewBaseConfig: SplitBaseConfig;
 }) => {
   const [primaryBgStyle, setPrimaryBgStyle] =
-    useState<SplitViewPrimaryBackgroundStyle>('default');
+    useState<SplitPrimaryBackgroundStyle>('default');
 
   return (
     <Split.Host
