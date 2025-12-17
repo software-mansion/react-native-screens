@@ -174,14 +174,22 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         self);
   } else {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
-    _layoutMetrics = layoutMetrics;
-    if (sizeHasChanged) {
-      [self invalidateIntrinsicContentSize];
+    BOOL needsAutoLayout = NO;
+    if (@available(iOS 26.0, *)) {
+      needsAutoLayout = _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight;
     }
-#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    self.bounds = CGRect{CGPointZero, frame.size};
+
+    if (needsAutoLayout) {
+      BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
+      _layoutMetrics = layoutMetrics;
+      if (sizeHasChanged) {
+        [self invalidateIntrinsicContentSize];
+      }
+    } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    {
+      self.bounds = CGRect{CGPointZero, frame.size};
+    }
     [self layoutNavigationBar];
   }
 }
@@ -206,11 +214,19 @@ RNS_IGNORE_SUPER_CALL_END
   // makes UINavigationBar the only one to control the position of header content.
   if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    _lastReactFrameSize = frame.size;
-    [self invalidateIntrinsicContentSize];
-#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    BOOL needsAutoLayout = NO;
+    if (@available(iOS 26.0, *)) {
+      needsAutoLayout = _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight;
+    }
+
+    if (needsAutoLayout) {
+      _lastReactFrameSize = frame.size;
+      [self invalidateIntrinsicContentSize];
+    } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    {
+      [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    }
     [self layoutNavigationBar];
   }
 }
@@ -221,41 +237,48 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (UIBarButtonItem *)getUIBarButtonItem
 {
+  RCTAssert(
+      _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight,
+      @"[RNScreens] Unexpected subview type.");
+
   if (_barButtonItem == nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    // Starting from iOS 26, UIBarButtonItem's customView is streched to have at least 36 width.
-    // Stretching RNSScreenStackHeaderSubview means that its subviews are aligned to left instead
-    // of the center. To mitigate this, we add a wrapper view that will center
-    // RNSScreenStackHeaderSubview inside of itself.
-    UIView *wrapperView = [UIView new];
-    wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
+    if (@available(iOS 26.0, *)) {
+      // Starting from iOS 26, UIBarButtonItem's customView is streched to have at least 36 width.
+      // Stretching RNSScreenStackHeaderSubview means that its subviews are aligned to left instead
+      // of the center. To mitigate this, we add a wrapper view that will center
+      // RNSScreenStackHeaderSubview inside of itself.
+      UIView *wrapperView = [UIView new];
+      wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
 
-    self.translatesAutoresizingMaskIntoConstraints = NO;
-    [wrapperView addSubview:self];
+      self.translatesAutoresizingMaskIntoConstraints = NO;
+      [wrapperView addSubview:self];
 
-    [self.centerXAnchor constraintEqualToAnchor:wrapperView.centerXAnchor].active = YES;
-    [self.centerYAnchor constraintEqualToAnchor:wrapperView.centerYAnchor].active = YES;
+      [self.centerXAnchor constraintEqualToAnchor:wrapperView.centerXAnchor].active = YES;
+      [self.centerYAnchor constraintEqualToAnchor:wrapperView.centerYAnchor].active = YES;
 
-    // To prevent UIKit from stretching subviews to all available width, we need to:
-    // 1. Set width of wrapperView to match RNSScreenStackHeaderSubview BUT when
-    //    RNSScreenStackHeaderSubview's width is smaller that minimal required 36 width, it breaks
-    //    UIKit's constraint. That's why we need to lower the priority of the constraint.
-    NSLayoutConstraint *widthEqual = [wrapperView.widthAnchor constraintEqualToAnchor:self.widthAnchor];
-    widthEqual.priority = UILayoutPriorityDefaultHigh;
-    widthEqual.active = YES;
+      // To prevent UIKit from stretching subviews to all available width, we need to:
+      // 1. Set width of wrapperView to match RNSScreenStackHeaderSubview BUT when
+      //    RNSScreenStackHeaderSubview's width is smaller that minimal required 36 width, it breaks
+      //    UIKit's constraint. That's why we need to lower the priority of the constraint.
+      NSLayoutConstraint *widthEqual = [wrapperView.widthAnchor constraintEqualToAnchor:self.widthAnchor];
+      widthEqual.priority = UILayoutPriorityDefaultHigh;
+      widthEqual.active = YES;
 
-    NSLayoutConstraint *heightEqual = [wrapperView.heightAnchor constraintEqualToAnchor:self.heightAnchor];
-    heightEqual.priority = UILayoutPriorityDefaultHigh;
-    heightEqual.active = YES;
+      NSLayoutConstraint *heightEqual = [wrapperView.heightAnchor constraintEqualToAnchor:self.heightAnchor];
+      heightEqual.priority = UILayoutPriorityDefaultHigh;
+      heightEqual.active = YES;
 
-    // 2. Set content hugging priority for RNSScreenStackHeaderSubview.
-    [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
-    [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+      // 2. Set content hugging priority for RNSScreenStackHeaderSubview.
+      [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+      [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
 
-    _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
-#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self];
+      _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
+    } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    {
+      _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self];
+    }
     [self configureBarButtonItem];
   }
 
@@ -281,7 +304,7 @@ RNS_IGNORE_SUPER_CALL_END
       [_barButtonItem setHidesSharedBackground:_hidesSharedBackground];
     }
   }
-#endif
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
 - (void)setHidesSharedBackground:(BOOL)hidesSharedBackground
