@@ -1,5 +1,5 @@
 import type { ViewProps } from 'react-native';
 
-export type ScreenStackHostProps = {
+export type StackHostProps = {
   children?: ViewProps['children'];
 };

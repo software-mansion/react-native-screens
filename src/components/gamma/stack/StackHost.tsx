@@ -1,16 +1,16 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import ScreenStackHostNativeComponent from '../../../fabric/gamma/stack/StackHostNativeComponent';
-import type { ScreenStackHostProps } from './StackHost.types';
+import StackHostNativeComponent from '../../../fabric/gamma/stack/StackHostNativeComponent';
+import type { StackHostProps } from './StackHost.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function StackHost({ children }: ScreenStackHostProps) {
+function StackHost({ children }: StackHostProps) {
   return (
-    <ScreenStackHostNativeComponent style={styles.container}>
+    <StackHostNativeComponent style={styles.container}>
       {children}
-    </ScreenStackHostNativeComponent>
+    </StackHostNativeComponent>
   );
 }
 
