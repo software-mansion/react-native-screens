@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Button, View, Text, StyleSheet } from 'react-native';
+import { Button, View, Text, StyleSheet, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import Colors from '../shared/styling/Colors';
+import PressableWithFeedback from '../shared/PressableWithFeedback';
 
 type StackParamList = {
   Home: undefined;
@@ -40,7 +41,10 @@ const FormSheetScreen = ({
     <View style={styles.formSheetContainer}>
       {showTopView && (
         <View style={styles.rectangle}>
-          <Text style={styles.text}>Top View</Text>
+          <TextInput style={styles.input} />
+          <PressableWithFeedback>
+            <Text style={styles.text}>Top View</Text>
+          </PressableWithFeedback>
         </View>
       )}
       <Text style={styles.formSheetTitle}>Form Sheet Content</Text>
@@ -60,7 +64,9 @@ const FormSheetScreen = ({
       <Button title="Dismiss" onPress={() => navigation.goBack()} />
       {showBottomView && (
         <View style={styles.rectangle}>
-          <Text style={styles.text}>Bottom View</Text>
+          <PressableWithFeedback>
+            <Text style={styles.text}>Bottom View</Text>
+          </PressableWithFeedback>
         </View>
       )}
     </View>
@@ -78,6 +84,9 @@ export default function App() {
           options={{
             presentation: 'formSheet',
             sheetAllowedDetents: 'fitToContents',
+            contentStyle: {
+              backgroundColor: Colors.YellowLight40
+            }
           }}
         />
       </Stack.Navigator>
@@ -101,7 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
     gap: 20,
-    backgroundColor: Colors.White,
   },
   formSheetTitle: {
     fontSize: 20,
@@ -120,4 +128,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  input: {
+    width: 100,
+    height: 20,
+    borderColor: Colors.BlueDark100,
+    borderWidth: 1
+  }
 });
