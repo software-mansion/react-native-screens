@@ -117,6 +117,8 @@ class Screen(
     private val isNativeStackScreen: Boolean
         get() = container is ScreenStack
 
+    private val sheetHeightAnimationDuration = 500L
+
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
@@ -147,12 +149,17 @@ class Screen(
     ) {
         val height = bottom - top
 
+        val sheetBehavior = sheetBehavior
         if (usesFormSheetPresentation()) {
-            if (isSheetFitToContents()) {
-                sheetBehavior?.useSingleDetent(height)
-                // During the initial call in `onCreateView`, insets are not yet available,
-                // so we need to request an additional layout pass later to account for them.
-                requestLayout()
+            if (isSheetFitToContents() && sheetBehavior != null) {
+                val oldHeight = sheetBehavior.maxHeight
+                val shouldAnimateContentHeightChange = oldHeight > 0 && oldHeight != height
+
+                if (shouldAnimateContentHeightChange) {
+                    animateSheetContentHeightChange(sheetBehavior, oldHeight, height)
+                } else {
+                    updateSheetDetentWithoutHeightChangeAnimation(sheetBehavior, height)
+                }
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -166,6 +173,80 @@ class Screen(
                 }
             }
         }
+    }
+
+    private fun animateSheetContentHeightChange(
+        behavior: BottomSheetBehavior<Screen>,
+        oldHeight: Int,
+        newHeight: Int,
+    ) {
+        val delta = (newHeight - oldHeight).toFloat()
+        val isContentExpanding = delta > 0
+
+        if (isContentExpanding) {
+            /*
+             * Expanding content animation:
+             *
+             * Before animation, we're updating the SheetBehavior - the maximum height is the new
+             * content height, then we're forcing a layout pass. This ensures the view calculates
+             * with its new bounds when the animation starts.
+             *
+             * In the animation, we're translating the Screen back to it's (newly calculated) origin
+             * position, providing an impression that FormSheet expands. It already has the final size,
+             * but some content is not yet visible on the screen.
+             *
+             * After animation, we just need to send a notification that ShadowTree state should be updated,
+             * as the positioning of pressables has changed due to the Y translation manipulation.
+             */
+            this.translationY = delta
+            this
+                .animate()
+                .translationY(0f)
+                .setDuration(sheetHeightAnimationDuration)
+                .withStartAction {
+                    behavior.useSingleDetent(newHeight)
+                    requestLayout()
+                }.withEndAction {
+                    onSheetYTranslationChanged()
+                }.start()
+        } else {
+            /*
+             * Shrinking content animation:
+             *
+             * Before the animation, our Screen translationY is 0 - because its actual layout and visual position are equal.
+             *
+             * In the animation, we're translating the Screen down by the calculated height delta to the position (which will
+             * be new absolute 0 for the Screen, after ending the transition), providing an impression that FormSheet shrinks.
+             * FormSheet's size remains unchanged during the whole animation, therefore there is no view clipping.
+             *
+             * After animation, we can update the layout: the maximum FormSheet height is updated and we're forcing
+             * another layout pass. Additionally, since the actual layout and the target position are equal,
+             * we can reset translationY to 0.
+             *
+             * After animation, we need to send a notification that ShadowTree state should be updated,
+             * as the FormSheet size has change and the positioning of pressables has changed due to the Y translation manipulation.
+             */
+            this
+                .animate()
+                .translationY(-delta)
+                .setDuration(sheetHeightAnimationDuration)
+                .withEndAction {
+                    behavior.useSingleDetent(newHeight)
+                    requestLayout()
+                    this.translationY = 0f
+                    onSheetYTranslationChanged()
+                }.start()
+        }
+    }
+
+    private fun updateSheetDetentWithoutHeightChangeAnimation(
+        behavior: BottomSheetBehavior<Screen>,
+        height: Int,
+    ) {
+        behavior.useSingleDetent(height)
+        // During the initial call in `onCreateView`, insets are not yet available,
+        // so we need to request an additional layout pass later to account for them.
+        requestLayout()
     }
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
