@@ -9,6 +9,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
@@ -226,6 +227,12 @@ class TabsHost(
         if (newValue != oldValue) {
             updateInterfaceInsets()
             updateNavigationMenuIfNeeded(oldValue, newValue)
+        }
+    }
+
+    var nativeContainerBackgroundColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            background = newValue?.toDrawable()
         }
     }
 
