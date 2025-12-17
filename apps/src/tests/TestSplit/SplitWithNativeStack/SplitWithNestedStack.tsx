@@ -1,11 +1,11 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens/experimental';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
 import PressableWithFeedback from '../../../shared/PressableWithFeedback';
 import Colors from '../../../shared/styling/Colors';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 
 type StackOuterParamList = {
   OuterScreenOne: undefined;
@@ -77,19 +77,19 @@ const OuterStack = () => (
   </NavigationContainer>
 );
 
-export const SplitViewWithNestedStack = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+export const SplitWithNestedStack = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <SplitViewHost {...splitViewBaseConfig}>
-      <SplitViewScreen.Column>
+    <Split.Host {...splitBaseConfig}>
+      <Split.Column>
         <OuterStack />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <OuterStack />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <OuterStack />
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 }
 

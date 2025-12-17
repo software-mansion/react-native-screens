@@ -9,11 +9,10 @@ import {
   Dimensions,
 } from 'react-native';
 import {
-  SplitViewHost,
-  SplitViewScreen,
+  Split
 } from 'react-native-screens/experimental';
 import { Colors } from '../../shared/styling/Colors';
-import { SplitViewBaseConfig } from './helpers/types';
+import { SplitBaseConfig } from './helpers/types';
 
 const { width } = Dimensions.get('window');
 
@@ -79,32 +78,32 @@ const GridImage = ({ numColumns = 2 }: { numColumns?: number }) => {
   );
 };
 
-const SplitViewPerfApp = ({
-  splitViewBaseConfig,
+const SplitPerfApp = ({
+  splitBaseConfig,
 }: {
-  splitViewBaseConfig: SplitViewBaseConfig;
+  splitBaseConfig: SplitBaseConfig;
 }) => {
   return (
-    <SplitViewHost {...splitViewBaseConfig}>
-      <SplitViewScreen.Column>
+    <Split.Host {...splitBaseConfig}>
+      <Split.Column>
         <View
           style={[styles.container, { backgroundColor: Colors.RedLight40 }]}>
           <FlatListColumn />
         </View>
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <View
           style={[styles.container, { backgroundColor: Colors.GreenLight60 }]}>
           <ScrollViewColumn />
         </View>
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <View
           style={[styles.container, { backgroundColor: Colors.NavyLight40 }]}>
           <GridImage />
         </View>
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 };
 
@@ -141,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplitViewPerfApp;
+export default SplitPerfApp;

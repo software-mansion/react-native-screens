@@ -1,10 +1,10 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent, type ScreenOneProps } from '../helpers';
 import { StyleSheet, Text, View } from 'react-native';
 import PressableWithFeedback from '../../../shared/PressableWithFeedback';
 import Colors from '../../../shared/styling/Colors';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 
 const ScreenOne = ({ navigation }: ScreenOneProps) => (
   <View style={styles.container}>
@@ -30,16 +30,16 @@ const ScreenThree = () => (
   </View>
 )
 
-export const SplitViewWithNativeStackPresentation = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+export const SplitWithNativeStackPresentation = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <SplitViewHost {...splitViewBaseConfig}>
-      <SplitViewScreen.Column>
+    <Split.Host {...splitBaseConfig}>
+      <Split.Column>
         <NativeStackNavigatorComponent />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           CustomScreenOne={ScreenOne}
           customScreenOneName='ScreenOne'
@@ -50,8 +50,8 @@ export const SplitViewWithNativeStackPresentation = ({ splitViewBaseConfig }: { 
           customScreenThreeName='ScreenThree'
           customScreenThreeNavigationOptions={{ presentation: 'formSheet' }}
         />
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 }
 

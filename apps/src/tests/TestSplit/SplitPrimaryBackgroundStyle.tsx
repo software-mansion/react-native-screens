@@ -2,17 +2,16 @@ import React, { useMemo, useState } from 'react';
 import { Button, StyleSheet, Text, View, ScrollView } from 'react-native';
 import {
   SafeAreaView,
-  SplitViewHost,
-  SplitViewScreen,
+  Split
 } from 'react-native-screens/experimental';
-import type { SplitViewPrimaryBackgroundStyle } from 'react-native-screens/experimental';
-import type { SplitViewBaseConfig } from './helpers/types';
+import type { SplitPrimaryBackgroundStyle } from 'react-native-screens/experimental';
+import type { SplitBaseConfig } from './helpers/types';
 import { Colors } from '../../shared/styling/Colors';
 
 const ConfigPanel = ({
   setPrimaryBgStyle,
 }: {
-  setPrimaryBgStyle: (primaryBgStyle: SplitViewPrimaryBackgroundStyle) => void;
+  setPrimaryBgStyle: (primaryBgStyle: SplitPrimaryBackgroundStyle) => void;
 }) => (
   <View style={styles.configPanel}>
     <Button
@@ -41,30 +40,30 @@ const ItemsPanel = () => {
   );
 };
 
-const SplitViewPrimaryBackgroundStyleApp = ({
-  splitViewBaseConfig,
+const SplitPrimaryBackgroundStyleApp = ({
+  splitBaseConfig,
 }: {
-  splitViewBaseConfig: SplitViewBaseConfig;
+  splitBaseConfig: SplitBaseConfig;
 }) => {
   const [primaryBgStyle, setPrimaryBgStyle] =
-    useState<SplitViewPrimaryBackgroundStyle>('default');
+    useState<SplitPrimaryBackgroundStyle>('default');
 
   return (
-    <SplitViewHost
-      {...splitViewBaseConfig}
+    <Split.Host
+      {...splitBaseConfig}
       primaryBackgroundStyle={primaryBgStyle}>
-      <SplitViewScreen.Column>
+      <Split.Column>
         <View style={styles.leftColumn} />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <SafeAreaView edges={{ top: true }}>
           <ScrollView contentContainerStyle={styles.rightColumn}>
             <ConfigPanel setPrimaryBgStyle={setPrimaryBgStyle} />
             <ItemsPanel />
           </ScrollView>
         </SafeAreaView>
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 };
 
@@ -96,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplitViewPrimaryBackgroundStyleApp;
+export default SplitPrimaryBackgroundStyleApp;

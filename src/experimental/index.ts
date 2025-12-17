@@ -13,6 +13,5 @@ export {
   StackScreenLifecycleState,
 } from '../components/gamma/stack';
 
-export { default as SplitViewHost } from '../components/gamma/split-view/SplitViewHost';
-export { default as SplitViewScreen } from '../components/gamma/split-view/SplitViewScreen';
+export { default as Split } from '../components/gamma/split';
 export { default as SafeAreaView } from '../components/safe-area/SafeAreaView';

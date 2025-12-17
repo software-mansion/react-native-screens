@@ -413,7 +413,7 @@ export interface BottomTabsScreenProps {
    *      is queried.
    *
    * Note that:
-   * - some components (like `SplitViewHost`) may choose not to query
+   * - some components (like `SplitHost`) may choose not to query
    *   its child components,
    * - Stack v4 implementation **ALWAYS** returns some supported
    *   orientations (`allButUpsideDown` by default), overriding

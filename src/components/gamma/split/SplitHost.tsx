@@ -2,19 +2,19 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import SplitViewHostNativeComponent from '../../../fabric/gamma/SplitViewHostNativeComponent';
 import type {
-  SplitViewDisplayMode,
-  SplitViewHostProps,
-  SplitViewSplitBehavior,
-} from './SplitViewHost.types';
-import SplitViewScreen from './SplitViewScreen';
+  SplitDisplayMode,
+  SplitHostProps,
+  SplitBehavior,
+} from './SplitHost.types';
+import SplitScreen from './SplitScreen';
 
 // According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
 // Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
 // Therefore, we're adding check on the JS side to return a feedback to the client when that pairing isn't valid.
 // However, we're not blocking these props to be set on the native side, because it doesn't crash, just the result or transitions may not work as expected.
-const displayModeForSplitViewCompatibilityMap: Record<
-  SplitViewSplitBehavior,
-  SplitViewDisplayMode[]
+const displayModeForSplitCompatibilityMap: Record<
+  SplitBehavior,
+  SplitDisplayMode[]
 > = {
   tile: ['secondaryOnly', 'oneBesideSecondary', 'twoBesideSecondary'],
   overlay: ['secondaryOnly', 'oneOverSecondary', 'twoOverSecondary'],
@@ -23,14 +23,14 @@ const displayModeForSplitViewCompatibilityMap: Record<
 };
 
 const isValidDisplayModeForSplitBehavior = (
-  displayMode: SplitViewDisplayMode,
-  splitBehavior: SplitViewSplitBehavior,
+  displayMode: SplitDisplayMode,
+  splitBehavior: SplitBehavior,
 ) => {
   if (splitBehavior === 'automatic') {
     // for automatic we cannot easily verify the compatibility, because it depends on the system preference for display mode, therefore we're assuming that 'automatic' has only valid combinations
     return true;
   }
-  return displayModeForSplitViewCompatibilityMap[splitBehavior].includes(
+  return displayModeForSplitCompatibilityMap[splitBehavior].includes(
     displayMode,
   );
 };
@@ -38,7 +38,7 @@ const isValidDisplayModeForSplitBehavior = (
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function SplitViewHost(props: SplitViewHostProps) {
+function SplitHost(props: SplitHostProps) {
   const { preferredDisplayMode, preferredSplitBehavior } = props;
 
   React.useEffect(() => {
@@ -49,7 +49,7 @@ function SplitViewHost(props: SplitViewHostProps) {
       );
       if (!isValid) {
         const validDisplayModes =
-          displayModeForSplitViewCompatibilityMap[preferredSplitBehavior];
+          displayModeForSplitCompatibilityMap[preferredSplitBehavior];
         console.warn(
           `Invalid display mode "${preferredDisplayMode}" for split behavior "${preferredSplitBehavior}".` +
             `\nValid modes for "${preferredSplitBehavior}" are: ${validDisplayModes.join(
@@ -64,12 +64,12 @@ function SplitViewHost(props: SplitViewHostProps) {
 
   const columns = children.filter(
     // @ts-ignore - type is valid attribute for child
-    child => child.type === SplitViewScreen.Column,
+    child => child.type === SplitScreen.Column,
   );
 
   const inspectors = children.filter(
     // @ts-ignore - type is valid attribute for child
-    child => child.type === SplitViewScreen.Inspector,
+    child => child.type === SplitScreen.Inspector,
   );
 
   return (
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplitViewHost;
+export default SplitHost;

@@ -8,22 +8,15 @@ export type DisplayModeWillChangeEvent = {
   nextDisplayMode: string;
 };
 
-export type SplitViewDisplayModeButtonVisibility =
-  | 'always'
-  | 'automatic'
-  | 'never';
+export type SplitDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
 
-export type SplitViewSplitBehavior =
-  | 'automatic'
-  | 'displace'
-  | 'overlay'
-  | 'tile';
+export type SplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
 
-export type SplitViewPrimaryEdge = 'leading' | 'trailing';
+export type SplitPrimaryEdge = 'leading' | 'trailing';
 
-export type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
+export type SplitPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
-export type SplitViewDisplayMode =
+export type SplitDisplayMode =
   | 'automatic'
   | 'secondaryOnly'
   | 'oneBesideSecondary'
@@ -32,7 +25,7 @@ export type SplitViewDisplayMode =
   | 'twoOverSecondary'
   | 'twoDisplaceSecondary';
 
-export type SplitViewHostOrientation =
+export type SplitHostOrientation =
   | 'inherit'
   | 'all'
   | 'allButUpsideDown'
@@ -43,47 +36,47 @@ export type SplitViewHostOrientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
-export interface SplitViewColumnMetrics {
+export interface SplitColumnMetrics {
   /**
    * @summary Minimum width for the primary sidebar.
    *
-   * Specifies the minimum width for the primary column in the SplitView layout, typically representing the leftmost sidebar.
+   * Specifies the minimum width for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
   minimumPrimaryColumnWidth?: number;
   /**
    * @summary Maximum width for the primary sidebar.
    *
-   * Specifies the maximum width (in points) for the primary column in the SplitView layout, typically representing the leftmost sidebar.
+   * Specifies the maximum width (in points) for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
   maximumPrimaryColumnWidth?: number;
   /**
    * @summary Preferred width for the primary sidebar.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the primary column in the SplitView layout, typically representing the leftmost sidebar.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
   preferredPrimaryColumnWidthOrFraction?: number;
   /**
    * @summary Minimum width for the intermediate sidebar.
    *
-   * Specifies the minimum width (in points) for the supplementary column in the SplitView layout, typically representing the intermediate sidebar.
+   * Specifies the minimum width (in points) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
   minimumSupplementaryColumnWidth?: number;
   /**
    * @summary Maximum width for the intermediate sidebar.
    *
-   * Specifies the maximum width (in points) for the supplementary column in the SplitView layout, typically representing the intermediate sidebar.
+   * Specifies the maximum width (in points) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
   maximumSupplementaryColumnWidth?: number;
   /**
    * @summary Preferred width for the intermediate sidebar.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the supplementary column in the SplitView layout, typically representing the intermediate sidebar.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
   preferredSupplementaryColumnWidthOrFraction?: number;
   /**
    * @summary Minimum width for the secondary component.
    *
-   * Specifies the minimum width (in points) for the secondary column in the SplitView layout, typically for the view with the main content.
+   * Specifies the minimum width (in points) for the secondary column in the Split layout, typically for the view with the main content.
    *
    * @supported iOS 26 or higher
    */
@@ -91,7 +84,7 @@ export interface SplitViewColumnMetrics {
   /**
    * @summary Preferred width for the secondary component.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the secondary column in the SplitView layout, typically for the view with the main content.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the secondary column in the Split layout, typically for the view with the main content.
    *
    * @supported iOS 26 or higher
    */
@@ -99,7 +92,7 @@ export interface SplitViewColumnMetrics {
   /**
    * @summary Minimum width for the inspector component.
    *
-   * Specifies the minimum width (in points) for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
+   * Specifies the minimum width (in points) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
    *
    * @supported iOS 26 or higher
    */
@@ -107,7 +100,7 @@ export interface SplitViewColumnMetrics {
   /**
    * @summary Maximum width for the inspector component.
    *
-   * Specifies the maximum width (in points) for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
+   * Specifies the maximum width (in points) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
    *
    * @supported iOS 26 or higher
    */
@@ -115,13 +108,13 @@ export interface SplitViewColumnMetrics {
   /**
    * @summary Preferred width for the inspector component.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
    *
    * @supported iOS 26 or higher
    */
   preferredInspectorColumnWidthOrFraction?: number;
 }
-export interface SplitViewHostProps extends ViewProps {
+export interface SplitHostProps extends ViewProps {
   children?: React.ReactNode;
 
   /**
@@ -137,9 +130,9 @@ export interface SplitViewHostProps extends ViewProps {
    * - `secondary` - the view with the main content
    * - `inspector` - the view which is providing additional data about the secondary column
    */
-  columnMetrics?: SplitViewColumnMetrics;
+  columnMetrics?: SplitColumnMetrics;
   /**
-   * @summary Determines whether the button for changing the SplitView display mode is visible on the screen.
+   * @summary Determines whether the button for changing the Split display mode is visible on the screen.
    *
    * The following values are currently supported:
    *
@@ -152,13 +145,13 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @default automatic
    */
-  displayModeButtonVisibility?: SplitViewDisplayModeButtonVisibility;
+  displayModeButtonVisibility?: SplitDisplayModeButtonVisibility;
   /**
-   * @summary A callback that gets invoked when the SplitView was collapsed to a single column.
+   * @summary A callback that gets invoked when the Split was collapsed to a single column.
    */
   onCollapse?: (e: NativeSyntheticEvent<GenericEmptyEvent>) => void;
   /**
-   * @summary A callback that gets invoked when the SplitView displayMode has changed.
+   * @summary A callback that gets invoked when the Split displayMode has changed.
    *
    * The purpose of this callback is tracking displayMode updates on host from the JS side.
    * These updates might be a consequence of some native interactions, like pressing native button or performing swipe gesture.
@@ -167,13 +160,13 @@ export interface SplitViewHostProps extends ViewProps {
     e: NativeSyntheticEvent<DisplayModeWillChangeEvent>,
   ) => void;
   /**
-   * @summary A callback that gets invoked when the SplitView was expanded to multiple columns.
+   * @summary A callback that gets invoked when the Split was expanded to multiple columns.
    */
   onExpand?: (e: NativeSyntheticEvent<GenericEmptyEvent>) => void;
   /**
-   * @summary A callback that gets invoked when the SplitView inspector is either programmatically hidden (in column presentation) or dismissed (in modal presentation).
+   * @summary A callback that gets invoked when the Split inspector is either programmatically hidden (in column presentation) or dismissed (in modal presentation).
    *
-   * The purpose of this callback depends on whether the SplitView is collapsed or expanded.
+   * The purpose of this callback depends on whether the Split is collapsed or expanded.
    *
    * @supported iOS 26 or higher
    */
@@ -220,7 +213,7 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @platform ios
    */
-  orientation?: SplitViewHostOrientation;
+  orientation?: SplitHostOrientation;
   /**
    * @summary Determines whether gestures are enabled to change the display mode.
    */
@@ -245,7 +238,7 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @default automatic
    */
-  preferredDisplayMode?: SplitViewDisplayMode;
+  preferredDisplayMode?: SplitDisplayMode;
   /**
    * @summary Specifies the split behavior which will be preferred to use, if the layout requirements are met.
    *
@@ -263,7 +256,7 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @default automatic
    */
-  preferredSplitBehavior?: SplitViewSplitBehavior;
+  preferredSplitBehavior?: SplitBehavior;
   /**
    * @summary Specifies the background style of the primary view controller.
    *
@@ -285,7 +278,7 @@ export interface SplitViewHostProps extends ViewProps {
    * @remarks
    * According to the documentation, this property shouldn't have any effect on iOS. However, on iOS 26 the support for this prop was added.
    */
-  primaryBackgroundStyle?: SplitViewPrimaryBackgroundStyle;
+  primaryBackgroundStyle?: SplitPrimaryBackgroundStyle;
   /**
    * @summary Indicates on which side primary sidebar is placed, affecting the split view layout.
    *
@@ -299,12 +292,12 @@ export interface SplitViewHostProps extends ViewProps {
    *
    * @default leading
    */
-  primaryEdge?: SplitViewPrimaryEdge;
+  primaryEdge?: SplitPrimaryEdge;
   /**
    * @summary Determines whether inspector column should be displayed.
    *
-   * Inspector will be displayed on the trailing edge of the main (secondary) column (for expanded SplitView) or as a modal (for collapsed SplitView).
-   * The result on the interface for this prop depends on whether the SplitView is collapsed or expanded.
+   * Inspector will be displayed on the trailing edge of the main (secondary) column (for expanded Split) or as a modal (for collapsed Split).
+   * The result on the interface for this prop depends on whether the Split is collapsed or expanded.
    *
    * @supported iOS 26 or higher
    */

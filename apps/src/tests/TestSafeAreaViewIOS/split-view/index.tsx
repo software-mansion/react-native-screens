@@ -7,8 +7,7 @@ import {
 import { NavigationIndependentTree } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
 import {
-  SplitViewHost,
-  SplitViewScreen,
+  Split
 } from 'react-native-screens/experimental';
 import ConfigColumn from './ConfigColumn';
 import { mapContentStringToComponent } from '../shared';
@@ -55,39 +54,39 @@ export default function SplitViewSAVExample({
       }}>
       <NavigationIndependentTree>
         <NavigationContainer>
-          <SplitViewHost
+          <Split.Host
             preferredDisplayMode="twoBesideSecondary"
             preferredSplitBehavior="tile"
             showInspector={config.showInspector}>
-            <SplitViewScreen.Column>
+            <Split.Column>
               {configColumnIndex !== 1 ? (
                 renderColumnContent(config.column1)
               ) : (
                 <ConfigColumn configColumnIndex={configColumnIndex} />
               )}
-            </SplitViewScreen.Column>
-            <SplitViewScreen.Column>
+            </Split.Column>
+            <Split.Column>
               {configColumnIndex !== 2 ? (
                 renderColumnContent(config.column2)
               ) : (
                 <ConfigColumn configColumnIndex={configColumnIndex} />
               )}
-            </SplitViewScreen.Column>
-            <SplitViewScreen.Column>
+            </Split.Column>
+            <Split.Column>
               {configColumnIndex !== 3 ? (
                 renderColumnContent(config.column3)
               ) : (
                 <ConfigColumn configColumnIndex={configColumnIndex} />
               )}
-            </SplitViewScreen.Column>
-            <SplitViewScreen.Inspector>
+            </Split.Column>
+            <Split.Inspector>
               {configColumnIndex !== 4 ? (
                 renderColumnContent(config.column4)
               ) : (
                 <ConfigColumn configColumnIndex={configColumnIndex} />
               )}
-            </SplitViewScreen.Inspector>
-          </SplitViewHost>
+            </Split.Inspector>
+          </Split.Host>
         </NavigationContainer>
       </NavigationIndependentTree>
     </SplitViewSAVExampleContext.Provider>

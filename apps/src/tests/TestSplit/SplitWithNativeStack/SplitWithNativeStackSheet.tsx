@@ -1,13 +1,13 @@
 import React from 'react';
-import { SplitViewHost, SplitViewScreen } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens/experimental';
 import { NativeStackNavigatorComponent } from '../helpers';
-import { SplitViewBaseConfig } from '../helpers/types';
+import { SplitBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
 
-export const SplitViewWithNativeStackSheet = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitViewBaseConfig }) => {
+export const SplitWithNativeStackSheet = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <SplitViewHost {...splitViewBaseConfig}>
-      <SplitViewScreen.Column>
+    <Split.Host {...splitBaseConfig}>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenTwoNavigationOptions={{
             presentation: 'formSheet',
@@ -18,8 +18,8 @@ export const SplitViewWithNativeStackSheet = ({ splitViewBaseConfig }: { splitVi
             sheetAllowedDetents: 'fitToContents',
           }}
         />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenTwoNavigationOptions={{
             presentation: 'formSheet',
@@ -34,8 +34,8 @@ export const SplitViewWithNativeStackSheet = ({ splitViewBaseConfig }: { splitVi
           }}
           CustomScreenThree={ScrollViewWithText}
         />
-      </SplitViewScreen.Column>
-      <SplitViewScreen.Column>
+      </Split.Column>
+      <Split.Column>
         <NativeStackNavigatorComponent
           customScreenTwoNavigationOptions={{
             presentation: 'formSheet',
@@ -49,7 +49,7 @@ export const SplitViewWithNativeStackSheet = ({ splitViewBaseConfig }: { splitVi
             sheetGrabberVisible: true,
           }}
         />
-      </SplitViewScreen.Column>
-    </SplitViewHost>
+      </Split.Column>
+    </Split.Host>
   );
 };
