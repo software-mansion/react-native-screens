@@ -296,7 +296,7 @@ export interface SplitHostProps extends ViewProps {
   /**
    * @summary Determines whether inspector column should be displayed.
    *
-   * Inspector will be displayed on the trailing edge of the main (secondary) column (for expanded Split) or as a modal (for collapsed SplitView).
+   * Inspector will be displayed on the trailing edge of the main (secondary) column (for expanded Split) or as a modal (for collapsed Split).
    * The result on the interface for this prop depends on whether the Split is collapsed or expanded.
    *
    * @supported iOS 26 or higher
