@@ -10,7 +10,7 @@ export type DisplayModeWillChangeEvent = {
 
 export type SplitDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
 
-export type SplitSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
+export type SplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
 
 export type SplitPrimaryEdge = 'leading' | 'trailing';
 
@@ -256,7 +256,7 @@ export interface SplitHostProps extends ViewProps {
    *
    * @default automatic
    */
-  preferredSplitBehavior?: SplitSplitBehavior;
+  preferredSplitBehavior?: SplitBehavior;
   /**
    * @summary Specifies the background style of the primary view controller.
    *
