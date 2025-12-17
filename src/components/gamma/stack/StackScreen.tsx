@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import StackScreenNativeComponent from '../../../fabric/gamma/StackScreenNativeComponent';
+import StackScreenNativeComponent from '../../../fabric/gamma/stack/StackScreenNativeComponent';
 import type { NativeSyntheticEvent } from 'react-native';
 import { StackScreenProps } from './StackScreen.types';
 

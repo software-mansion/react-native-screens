@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import ScreenStackHostNativeComponent from '../../../fabric/gamma/ScreenStackHostNativeComponent';
+import ScreenStackHostNativeComponent from '../../../fabric/gamma/stack/ScreenStackHostNativeComponent';
 import type { ScreenStackHostProps } from './StackHost.types';
 
 /**
