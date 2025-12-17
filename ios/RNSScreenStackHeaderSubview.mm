@@ -174,12 +174,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         self);
   } else {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    BOOL needsAutoLayout = NO;
-    if (@available(iOS 26.0, *)) {
-      needsAutoLayout = _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight;
-    }
-
-    if (needsAutoLayout) {
+    if (self.needsAutoLayout) {
       BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
       _layoutMetrics = layoutMetrics;
       if (sizeHasChanged) {
@@ -214,12 +209,7 @@ RNS_IGNORE_SUPER_CALL_END
   // makes UINavigationBar the only one to control the position of header content.
   if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    BOOL needsAutoLayout = NO;
-    if (@available(iOS 26.0, *)) {
-      needsAutoLayout = _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight;
-    }
-
-    if (needsAutoLayout) {
+    if (self.needsAutoLayout) {
       _lastReactFrameSize = frame.size;
       [self invalidateIntrinsicContentSize];
     } else
@@ -232,6 +222,22 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+// Starting from iOS 26, to center left and right subviews inside liquid glass backdrop,
+// we need to use auto layout. To make Yoga's layout work with auto layout, we pass information
+// from Yoga via `intrinsicContentSize`.
+- (BOOL)needsAutoLayout
+{
+  BOOL needsAutoLayout = NO;
+  if (@available(iOS 26.0, *)) {
+    needsAutoLayout = _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight;
+  }
+  return needsAutoLayout;
+}
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #pragma mark - UIBarButtonItem specific
 
