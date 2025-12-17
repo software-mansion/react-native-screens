@@ -67,6 +67,7 @@ function TabsScreen(props: TabsScreenProps) {
     scrollEdgeEffects,
     // eslint-disable-next-line camelcase -- we use sneak case experimental prefix
     experimental_userInterfaceStyle,
+    style,
     ...rest
   } = props;
 
@@ -129,7 +130,7 @@ function TabsScreen(props: TabsScreenProps) {
   return (
     <BottomTabsScreenNativeComponent
       collapsable={false}
-      style={styles.fillParent}
+      style={[style, styles.fillParent]}
       onWillAppear={onWillAppearCallback}
       onDidAppear={onDidAppearCallback}
       onWillDisappear={onWillDisappearCallback}
