@@ -20,13 +20,13 @@ import {
 import { SplitBaseConfig } from './helpers/types';
 
 const App = () => {
-  const splitViewBaseConfig: SplitBaseConfig = {
+  const splitBaseConfig: SplitBaseConfig = {
     preferredDisplayMode: 'twoBesideSecondary',
     preferredSplitBehavior: 'tile',
   };
 
   return (
-    <SplitBaseApp splitBaseConfig={splitViewBaseConfig} />
+    <SplitBaseApp splitBaseConfig={splitBaseConfig} />
   );
 }
 
