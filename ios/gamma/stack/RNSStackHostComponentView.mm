@@ -137,7 +137,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 @end
 
-Class<RCTComponentViewProtocol> RNSScreenStackHostCls(void)
+Class<RCTComponentViewProtocol> RNSStackHostCls(void)
 {
   return RNSStackHostComponentView.class;
 }

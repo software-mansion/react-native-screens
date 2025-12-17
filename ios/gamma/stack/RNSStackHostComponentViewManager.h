@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScreenStackHostComponentViewManager : RCTViewManager
+@interface RNSStackHostComponentViewManager : RCTViewManager
 
 @end
 
