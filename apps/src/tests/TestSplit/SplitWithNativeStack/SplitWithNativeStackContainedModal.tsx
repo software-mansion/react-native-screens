@@ -30,9 +30,9 @@ const ScreenThree = () => (
   </View>
 )
 
-export const SplitWithNativeStackContainedModal = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
+export const SplitWithNativeStackContainedModal = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <NativeStackNavigatorComponent />
       </Split.Column>

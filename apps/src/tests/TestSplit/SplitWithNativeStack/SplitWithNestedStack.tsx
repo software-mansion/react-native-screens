@@ -77,9 +77,9 @@ const OuterStack = () => (
   </NavigationContainer>
 );
 
-export const SplitWithNestedStack = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
+export const SplitWithNestedStack = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <OuterStack />
       </Split.Column>

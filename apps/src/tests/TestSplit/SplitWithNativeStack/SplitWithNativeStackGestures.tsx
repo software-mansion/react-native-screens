@@ -4,12 +4,12 @@ import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitBaseConfig } from '../helpers/types';
 
 export const SplitWithNativeStackGestures = ({
-  splitViewBaseConfig,
+  splitBaseConfig,
 }: {
-  splitViewBaseConfig: SplitBaseConfig;
+  splitBaseConfig: SplitBaseConfig;
 }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{

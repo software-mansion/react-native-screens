@@ -5,9 +5,9 @@ import { Colors } from '../../shared/styling/Colors';
 import { TestBottomTabs, TestScreenStack } from '..';
 import { SplitBaseConfig } from './helpers/types';
 
-const SplitBaseApp = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
+const SplitBaseApp = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Primary column</Text>

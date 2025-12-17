@@ -6,12 +6,12 @@ import { ScrollViewWithText } from './common';
 import Colors from '../../../shared/styling/Colors';
 
 export const SplitWithNativeStackSearchBar = ({
-  splitViewBaseConfig,
+  splitBaseConfig,
 }: {
-  splitViewBaseConfig: SplitBaseConfig;
+  splitBaseConfig: SplitBaseConfig;
 }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{

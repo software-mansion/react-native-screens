@@ -4,9 +4,9 @@ import { Split } from 'react-native-screens/experimental';
 import { Colors } from '../../shared/styling/Colors';
 import { SplitBaseConfig } from './helpers/types';
 
-const SplitOrientation = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
+const SplitOrientation = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <Split.Host {...splitViewBaseConfig} orientation='landscapeLeft'>
+    <Split.Host {...splitBaseConfig} orientation='landscapeLeft'>
       <Split.Column>
         <View style={[styles.container, { backgroundColor: Colors.White }]}>
           <Text style={styles.text}>Primary column</Text>

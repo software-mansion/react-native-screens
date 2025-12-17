@@ -1,6 +1,6 @@
 const NOOP = () => {
   console.warn(
-    '[RNScreens] SplitView is supported only for iOS. Consider using an alternative layout for Web.',
+    '[RNScreens] Split component is supported only for iOS. Consider using an alternative layout for Web.',
   );
   return null;
 };
@@ -8,4 +8,13 @@ const NOOP = () => {
 const Column = NOOP;
 const Inspector = NOOP;
 
-export default { Column, Inspector };
+/**
+ * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
+ */
+// TODO: refactor to drop `Screen` suffix as the API name is really long at the moment
+const SplitScreen = {
+  Column,
+  Inspector,
+};
+
+export default SplitScreen;

@@ -1,8 +1,8 @@
-const SplitViewHost = () => {
+const SplitHost = () => {
   console.warn(
-    '[RNScreens] SplitView is supported only for iOS. Consider using an alternative layout for Web.',
+    '[RNScreens] Split component is supported only for iOS. Consider using an alternative layout for Web.',
   );
   return null;
 };
 
-export default SplitViewHost;
+export default SplitHost;

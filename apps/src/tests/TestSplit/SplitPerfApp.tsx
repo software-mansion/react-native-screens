@@ -79,12 +79,12 @@ const GridImage = ({ numColumns = 2 }: { numColumns?: number }) => {
 };
 
 const SplitPerfApp = ({
-  splitViewBaseConfig,
+  splitBaseConfig,
 }: {
-  splitViewBaseConfig: SplitBaseConfig;
+  splitBaseConfig: SplitBaseConfig;
 }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <View
           style={[styles.container, { backgroundColor: Colors.RedLight40 }]}>

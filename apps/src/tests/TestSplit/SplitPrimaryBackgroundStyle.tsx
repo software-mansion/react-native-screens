@@ -41,16 +41,16 @@ const ItemsPanel = () => {
 };
 
 const SplitPrimaryBackgroundStyleApp = ({
-  splitViewBaseConfig,
+  splitBaseConfig,
 }: {
-  splitViewBaseConfig: SplitBaseConfig;
+  splitBaseConfig: SplitBaseConfig;
 }) => {
   const [primaryBgStyle, setPrimaryBgStyle] =
     useState<SplitPrimaryBackgroundStyle>('default');
 
   return (
     <Split.Host
-      {...splitViewBaseConfig}
+      {...splitBaseConfig}
       primaryBackgroundStyle={primaryBgStyle}>
       <Split.Column>
         <View style={styles.leftColumn} />

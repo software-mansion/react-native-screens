@@ -40,43 +40,43 @@ export interface SplitColumnMetrics {
   /**
    * @summary Minimum width for the primary sidebar.
    *
-   * Specifies the minimum width for the primary column in the SplitView layout, typically representing the leftmost sidebar.
+   * Specifies the minimum width for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
   minimumPrimaryColumnWidth?: number;
   /**
    * @summary Maximum width for the primary sidebar.
    *
-   * Specifies the maximum width (in points) for the primary column in the SplitView layout, typically representing the leftmost sidebar.
+   * Specifies the maximum width (in points) for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
   maximumPrimaryColumnWidth?: number;
   /**
    * @summary Preferred width for the primary sidebar.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the primary column in the SplitView layout, typically representing the leftmost sidebar.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the primary column in the Split layout, typically representing the leftmost sidebar.
    */
   preferredPrimaryColumnWidthOrFraction?: number;
   /**
    * @summary Minimum width for the intermediate sidebar.
    *
-   * Specifies the minimum width (in points) for the supplementary column in the SplitView layout, typically representing the intermediate sidebar.
+   * Specifies the minimum width (in points) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
   minimumSupplementaryColumnWidth?: number;
   /**
    * @summary Maximum width for the intermediate sidebar.
    *
-   * Specifies the maximum width (in points) for the supplementary column in the SplitView layout, typically representing the intermediate sidebar.
+   * Specifies the maximum width (in points) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
   maximumSupplementaryColumnWidth?: number;
   /**
    * @summary Preferred width for the intermediate sidebar.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the supplementary column in the SplitView layout, typically representing the intermediate sidebar.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
    */
   preferredSupplementaryColumnWidthOrFraction?: number;
   /**
    * @summary Minimum width for the secondary component.
    *
-   * Specifies the minimum width (in points) for the secondary column in the SplitView layout, typically for the view with the main content.
+   * Specifies the minimum width (in points) for the secondary column in the Split layout, typically for the view with the main content.
    *
    * @supported iOS 26 or higher
    */
@@ -84,7 +84,7 @@ export interface SplitColumnMetrics {
   /**
    * @summary Preferred width for the secondary component.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the secondary column in the SplitView layout, typically for the view with the main content.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the secondary column in the Split layout, typically for the view with the main content.
    *
    * @supported iOS 26 or higher
    */
@@ -92,7 +92,7 @@ export interface SplitColumnMetrics {
   /**
    * @summary Minimum width for the inspector component.
    *
-   * Specifies the minimum width (in points) for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
+   * Specifies the minimum width (in points) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
    *
    * @supported iOS 26 or higher
    */
@@ -100,7 +100,7 @@ export interface SplitColumnMetrics {
   /**
    * @summary Maximum width for the inspector component.
    *
-   * Specifies the maximum width (in points) for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
+   * Specifies the maximum width (in points) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
    *
    * @supported iOS 26 or higher
    */
@@ -108,7 +108,7 @@ export interface SplitColumnMetrics {
   /**
    * @summary Preferred width for the inspector component.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the inspector column in the SplitView layout, typically the view which is providing additional data about the secondary column.
+   * Specifies the preferred width (in points or as a fraction for percentage width support) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
    *
    * @supported iOS 26 or higher
    */
@@ -132,7 +132,7 @@ export interface SplitHostProps extends ViewProps {
    */
   columnMetrics?: SplitColumnMetrics;
   /**
-   * @summary Determines whether the button for changing the SplitView display mode is visible on the screen.
+   * @summary Determines whether the button for changing the Split display mode is visible on the screen.
    *
    * The following values are currently supported:
    *
@@ -147,11 +147,11 @@ export interface SplitHostProps extends ViewProps {
    */
   displayModeButtonVisibility?: SplitDisplayModeButtonVisibility;
   /**
-   * @summary A callback that gets invoked when the SplitView was collapsed to a single column.
+   * @summary A callback that gets invoked when the Split was collapsed to a single column.
    */
   onCollapse?: (e: NativeSyntheticEvent<GenericEmptyEvent>) => void;
   /**
-   * @summary A callback that gets invoked when the SplitView displayMode has changed.
+   * @summary A callback that gets invoked when the Split displayMode has changed.
    *
    * The purpose of this callback is tracking displayMode updates on host from the JS side.
    * These updates might be a consequence of some native interactions, like pressing native button or performing swipe gesture.
@@ -160,13 +160,13 @@ export interface SplitHostProps extends ViewProps {
     e: NativeSyntheticEvent<DisplayModeWillChangeEvent>,
   ) => void;
   /**
-   * @summary A callback that gets invoked when the SplitView was expanded to multiple columns.
+   * @summary A callback that gets invoked when the Split was expanded to multiple columns.
    */
   onExpand?: (e: NativeSyntheticEvent<GenericEmptyEvent>) => void;
   /**
-   * @summary A callback that gets invoked when the SplitView inspector is either programmatically hidden (in column presentation) or dismissed (in modal presentation).
+   * @summary A callback that gets invoked when the Split inspector is either programmatically hidden (in column presentation) or dismissed (in modal presentation).
    *
-   * The purpose of this callback depends on whether the SplitView is collapsed or expanded.
+   * The purpose of this callback depends on whether the Split is collapsed or expanded.
    *
    * @supported iOS 26 or higher
    */
@@ -296,8 +296,8 @@ export interface SplitHostProps extends ViewProps {
   /**
    * @summary Determines whether inspector column should be displayed.
    *
-   * Inspector will be displayed on the trailing edge of the main (secondary) column (for expanded SplitView) or as a modal (for collapsed SplitView).
-   * The result on the interface for this prop depends on whether the SplitView is collapsed or expanded.
+   * Inspector will be displayed on the trailing edge of the main (secondary) column (for expanded Split) or as a modal (for collapsed SplitView).
+   * The result on the interface for this prop depends on whether the Split is collapsed or expanded.
    *
    * @supported iOS 26 or higher
    */

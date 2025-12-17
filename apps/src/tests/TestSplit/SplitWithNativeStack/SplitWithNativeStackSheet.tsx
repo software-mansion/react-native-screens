@@ -4,9 +4,9 @@ import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitBaseConfig } from '../helpers/types';
 import { ScrollViewWithText } from './common';
 
-export const SplitWithNativeStackSheet = ({ splitViewBaseConfig }: { splitViewBaseConfig: SplitBaseConfig }) => {
+export const SplitWithNativeStackSheet = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <NativeStackNavigatorComponent
           customScreenTwoNavigationOptions={{

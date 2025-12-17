@@ -5,12 +5,12 @@ import { SplitBaseConfig } from '../helpers/types';
 import Colors from '../../../shared/styling/Colors';
 
 export const SplitWithNativeStackHeaderStyles = ({
-  splitViewBaseConfig,
+  splitBaseConfig,
 }: {
-  splitViewBaseConfig: SplitBaseConfig;
+  splitBaseConfig: SplitBaseConfig;
 }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{

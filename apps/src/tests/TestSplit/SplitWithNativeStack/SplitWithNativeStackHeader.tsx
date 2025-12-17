@@ -16,12 +16,12 @@ const HeaderRight = () => (
 );
 
 export const SplitWithNativeStackHeader = ({
-  splitViewBaseConfig,
+  splitBaseConfig,
 }: {
-  splitViewBaseConfig: SplitBaseConfig;
+  splitBaseConfig: SplitBaseConfig;
 }) => {
   return (
-    <Split.Host {...splitViewBaseConfig}>
+    <Split.Host {...splitBaseConfig}>
       <Split.Column>
         <NativeStackNavigatorComponent
           customScreenOneNavigationOptions={{ headerShown: false }}

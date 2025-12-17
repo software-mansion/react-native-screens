@@ -12,7 +12,7 @@ import SplitScreen from './SplitScreen';
 // Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
 // Therefore, we're adding check on the JS side to return a feedback to the client when that pairing isn't valid.
 // However, we're not blocking these props to be set on the native side, because it doesn't crash, just the result or transitions may not work as expected.
-const displayModeForSplitViewCompatibilityMap: Record<
+const displayModeForSplitCompatibilityMap: Record<
   SplitSplitBehavior,
   SplitDisplayMode[]
 > = {
@@ -30,7 +30,7 @@ const isValidDisplayModeForSplitBehavior = (
     // for automatic we cannot easily verify the compatibility, because it depends on the system preference for display mode, therefore we're assuming that 'automatic' has only valid combinations
     return true;
   }
-  return displayModeForSplitViewCompatibilityMap[splitBehavior].includes(
+  return displayModeForSplitCompatibilityMap[splitBehavior].includes(
     displayMode,
   );
 };
@@ -49,7 +49,7 @@ function SplitHost(props: SplitHostProps) {
       );
       if (!isValid) {
         const validDisplayModes =
-          displayModeForSplitViewCompatibilityMap[preferredSplitBehavior];
+          displayModeForSplitCompatibilityMap[preferredSplitBehavior];
         console.warn(
           `Invalid display mode "${preferredDisplayMode}" for split behavior "${preferredSplitBehavior}".` +
             `\nValid modes for "${preferredSplitBehavior}" are: ${validDisplayModes.join(
