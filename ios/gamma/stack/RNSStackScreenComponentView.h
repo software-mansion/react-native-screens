@@ -6,7 +6,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSStackScreenController;
-@class RNSScreenStackHostComponentView;
+@class RNSStackHostComponentView;
 
 typedef NS_ENUM(int, RNSScreenStackLifecycleState) {
   RNSScreenStackLifecycleInitial = 0,
@@ -16,7 +16,7 @@ typedef NS_ENUM(int, RNSScreenStackLifecycleState) {
 
 @interface RNSStackScreenComponentView : RNSReactBaseView
 
-@property (nonatomic, weak, readwrite, nullable) RNSScreenStackHostComponentView *stackHost;
+@property (nonatomic, weak, readwrite, nullable) RNSStackHostComponentView *stackHost;
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
 
 @property (nonatomic, strong, readonly, nullable) NSString *screenKey;

@@ -4,10 +4,10 @@ import UIKit
 @objc
 public class RNSStackController: UINavigationController, ReactMountingTransactionObserving {
   private var needsChildViewControllersUpdate = false
-  private let screenStackHostComponentView: RNSScreenStackHostComponentView
+  private let stackHostComponentView: RNSStackHostComponentView
 
-  @objc public required init(stackHostComponentView: RNSScreenStackHostComponentView) {
-    self.screenStackHostComponentView = stackHostComponentView
+  @objc public required init(stackHostComponentView: RNSStackHostComponentView) {
+    self.stackHostComponentView = stackHostComponentView
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -47,7 +47,7 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
 
   private func sourceAllViewControllers() -> [RNSStackScreenController] {
     let screenStackComponents =
-      screenStackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
+      stackHostComponentView.reactSubviews() as! [RNSStackScreenComponentView]
     return screenStackComponents.lazy.map(\.controller)
   }
 

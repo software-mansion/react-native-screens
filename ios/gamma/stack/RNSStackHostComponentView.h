@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScreenStackHostComponentView : RNSReactBaseView
+@interface RNSStackHostComponentView : RNSReactBaseView
 
 @property (nonatomic, nonnull, strong, readonly) RNSStackController *stackController;
 

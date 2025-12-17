@@ -1,4 +1,4 @@
-#import "RNSScreenStackHostComponentView.h"
+#import "RNSStackHostComponentView.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -13,10 +13,10 @@
 
 namespace react = facebook::react;
 
-@interface RNSScreenStackHostComponentView () <RCTMountingTransactionObserving>
+@interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
 @end
 
-@implementation RNSScreenStackHostComponentView {
+@implementation RNSStackHostComponentView {
   RNSStackController *_Nonnull _controller;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _reactSubviews;
 
@@ -139,5 +139,5 @@ RNS_IGNORE_SUPER_CALL_END
 
 Class<RCTComponentViewProtocol> RNSScreenStackHostCls(void)
 {
-  return RNSScreenStackHostComponentView.class;
+  return RNSStackHostComponentView.class;
 }
