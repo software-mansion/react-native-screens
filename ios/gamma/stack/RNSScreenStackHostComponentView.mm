@@ -107,7 +107,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSScreenStackHostComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSStackHostComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled

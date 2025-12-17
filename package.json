@@ -165,7 +165,7 @@
     "ios": {
       "componentProvider": {
         "RNSStackScreen": "RNSStackScreenComponentView",
-        "RNSScreenStackHost": "RNSScreenStackHostComponentView",
+        "RNSStackHost": "RNSScreenStackHostComponentView",
         "RNSBottomTabsScreen": "RNSBottomTabsScreenComponentView",
         "RNSBottomTabs": "RNSBottomTabsHostComponentView",
         "RNSBottomTabsAccessory": "RNSBottomTabsAccessoryComponentView",
@@ -222,7 +222,7 @@
         "RNSStackScreen": {
           "className": "RNSStackScreenComponentView"
         },
-        "RNSScreenStackHost": {
+        "RNSStackHost": {
           "className": "RNSScreenStackHostComponentView"
         },
         "RNSBottomTabsScreen": {
