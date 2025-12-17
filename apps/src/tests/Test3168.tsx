@@ -205,7 +205,10 @@ function TabsStackComponent() {
         tabKey: 'main',
         title: 'Main',
         icon: {
-          sfSymbolName: 'house',
+          ios: {
+            type: 'sfSymbol',
+            name: 'house',
+          },
         },
       },
       component: () => Menu({ tabsMode: true }),
@@ -215,7 +218,10 @@ function TabsStackComponent() {
         tabKey: 'another',
         title: 'Another',
         icon: {
-          sfSymbolName: 'ellipsis',
+          ios: {
+            type: 'sfSymbol',
+            name: 'ellipsis',
+          },
         },
       },
       component: AnotherTab,
@@ -225,7 +231,10 @@ function TabsStackComponent() {
         tabKey: 'examples',
         title: 'Search',
         icon: {
-          sfSymbolName: 'magnifyingglass',
+          ios: {
+            type: 'sfSymbol',
+            name: 'magnifyingglass',
+          },
         },
         systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
       },
