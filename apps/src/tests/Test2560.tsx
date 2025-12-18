@@ -15,7 +15,7 @@ import {
 import Colors from '../shared/styling/Colors';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 
-const USE_ANIMATED_COMPONENT = true;
+const USE_ANIMATED_COMPONENT = false;
 
 type StackParamList = {
   Home: undefined;
