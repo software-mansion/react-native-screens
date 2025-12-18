@@ -257,6 +257,7 @@ class Screen(
          */
         behavior.updateMetrics(height)
         layout(this.left, this.bottom - height, this.right, this.bottom)
+        onSheetYTranslationChanged()
     }
 
     private fun updateSheetDetentWithoutHeightChangeAnimation(
