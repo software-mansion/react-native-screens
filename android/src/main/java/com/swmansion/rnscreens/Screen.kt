@@ -224,7 +224,7 @@ class Screen(
              * we can reset translationY to 0.
              *
              * After animation, we need to send a notification that ShadowTree state should be updated,
-             * as the FormSheet size has change and the positioning of pressables has changed due to the Y translation manipulation.
+             * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
              */
             this
                 .animate()
