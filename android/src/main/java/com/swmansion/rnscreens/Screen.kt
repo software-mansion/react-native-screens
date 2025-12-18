@@ -29,6 +29,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.updateMetrics
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
@@ -92,6 +93,7 @@ class Screen(
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
     var sheetShouldOverflowTopInset = false
+    var sheetContentDefaultResizeAnimationEnabled = true
 
     /**
      * On Paper, when using form sheet presentation we want to delay enter transition in order
@@ -154,7 +156,11 @@ class Screen(
                 val shouldAnimateContentHeightChange = oldHeight > 0 && oldHeight != height
 
                 if (shouldAnimateContentHeightChange) {
-                    animateSheetContentHeightChange(sheetBehavior, oldHeight, height)
+                    if (sheetContentDefaultResizeAnimationEnabled) {
+                        animateSheetContentHeightChangeWithDefaultAnimation(sheetBehavior, oldHeight, height)
+                    } else {
+                        updateSheetDetentContentHeightAndLayout(sheetBehavior, height)
+                    }
                 } else {
                     updateSheetDetentWithoutHeightChangeAnimation(sheetBehavior, height)
                 }
@@ -173,7 +179,7 @@ class Screen(
         }
     }
 
-    private fun animateSheetContentHeightChange(
+    private fun animateSheetContentHeightChangeWithDefaultAnimation(
         behavior: BottomSheetBehavior<Screen>,
         oldHeight: Int,
         newHeight: Int,
@@ -201,7 +207,7 @@ class Screen(
                 .animate()
                 .translationY(0f)
                 .withStartAction {
-                    behavior.useSingleDetent(newHeight)
+                    behavior.updateMetrics(newHeight)
                     requestLayout()
                 }.withEndAction {
                     onSheetYTranslationChanged()
@@ -227,12 +233,25 @@ class Screen(
                 .animate()
                 .translationY(-delta)
                 .withEndAction {
-                    behavior.useSingleDetent(newHeight)
+                    behavior.updateMetrics(newHeight)
                     requestLayout()
                     this.translationY = 0f
                     onSheetYTranslationChanged()
                 }.start()
         }
+    }
+
+    private fun updateSheetDetentContentHeightAndLayout(
+        behavior: BottomSheetBehavior<Screen>,
+        height: Int,
+    ) {
+        /*
+         * We're just updating sheets height and forcing Screen layout to be updated immediately.
+         * This allows custom animators in RN to work, as we do not interfere with these animations
+         * and we're just reacting to the sheet's content size changes.
+         */
+        behavior.updateMetrics(height)
+        layout(this.left, this.bottom - height, this.right, this.bottom)
     }
 
     private fun updateSheetDetentWithoutHeightChangeAnimation(

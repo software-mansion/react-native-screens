@@ -504,6 +504,14 @@ export interface ScreenProps extends ViewProps {
    */
   sheetShouldOverflowTopInset?: boolean;
   /**
+   * TODO: @t0maboro - add description
+   *
+   * Defaults to `true`.
+   *
+   * @platform android
+   */
+  sheetContentDefaultResizeAnimationEnabled?: boolean;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation

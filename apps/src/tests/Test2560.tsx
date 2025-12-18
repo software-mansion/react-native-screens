@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { Button, View, Text, StyleSheet, TextInput } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  Button,
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Animated,
+} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -7,6 +14,8 @@ import {
 } from '@react-navigation/native-stack';
 import Colors from '../shared/styling/Colors';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
+
+const USE_ANIMATED_COMPONENT = true;
 
 type StackParamList = {
   Home: undefined;
@@ -31,11 +40,25 @@ const FormSheetScreen = ({
   const [showTopView, setShowTopView] = useState(false);
   const [showBottomView, setShowBottomView] = useState(false);
   const [rectangleHeight, setRectangleHeight] = useState(200);
+  const animatedRectangleHeight = useRef(new Animated.Value(200)).current;
+  const currentAnimatedRectangleHeight = useRef(200);
 
   const toggleTopView = () => setShowTopView(prev => !prev);
   const toggleBottomView = () => setShowBottomView(prev => !prev);
   const toggleRectangleHeight = () =>
     setRectangleHeight(prev => (prev === 200 ? 400 : 200));
+
+  const toggleAnimatedRectangleHeight = () => {
+    const newHeight =
+      currentAnimatedRectangleHeight.current === 200 ? 400 : 200;
+    Animated.timing(animatedRectangleHeight, {
+      toValue: newHeight,
+      duration: 300,
+      useNativeDriver: false,
+    }).start(() => {
+      currentAnimatedRectangleHeight.current = newHeight;
+    });
+  };
 
   return (
     <View style={styles.formSheetContainer}>
@@ -48,15 +71,29 @@ const FormSheetScreen = ({
         </View>
       )}
       <Text style={styles.formSheetTitle}>Form Sheet Content</Text>
-      <View style={[styles.rectangle, { height: rectangleHeight }]} />
+      {USE_ANIMATED_COMPONENT ? (
+        <Animated.View
+          style={[styles.rectangle, { height: animatedRectangleHeight }]}
+        />
+      ) : (
+        <View style={[styles.rectangle, { height: rectangleHeight }]} />
+      )}
+
       <Button
         title={showTopView ? 'Hide Top View' : 'Show Top View'}
         onPress={toggleTopView}
       />
-      <Button
-        title={`Toggle Height (Current: ${rectangleHeight}px)`}
-        onPress={toggleRectangleHeight}
-      />
+      {USE_ANIMATED_COMPONENT ? (
+        <Button
+          title={`Toggle Animated Rectangle Height (Current: ${currentAnimatedRectangleHeight.current}px)`}
+          onPress={toggleAnimatedRectangleHeight}
+        />
+      ) : (
+        <Button
+          title={`Toggle Height (Current: ${rectangleHeight}px)`}
+          onPress={toggleRectangleHeight}
+        />
+      )}
       <Button
         title={showBottomView ? 'Hide Bottom View' : 'Show Bottom View'}
         onPress={toggleBottomView}
@@ -85,8 +122,8 @@ export default function App() {
             presentation: 'formSheet',
             sheetAllowedDetents: 'fitToContents',
             contentStyle: {
-              backgroundColor: Colors.YellowLight40
-            }
+              backgroundColor: Colors.YellowLight40,
+            },
           }}
         />
       </Stack.Navigator>
@@ -132,6 +169,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 20,
     borderColor: Colors.BlueDark100,
-    borderWidth: 1
-  }
+    borderWidth: 1,
+  },
 });

@@ -260,6 +260,10 @@ When set to `false`, the sheet's layout will be constrained by the inset from th
 
 Defaults to `false`.
 
+### `sheetContentDefaultResizeAnimationEnabled` (Android only)
+
+TODO: @t0maboro - add description
+
 ### `stackAnimation`
 
 Allows for the customization of how the given screen should appear/disappear when pushed or popped at the top of the stack. The following values are currently supported:
