@@ -113,7 +113,11 @@ namespace react = facebook::react;
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
+#if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
+#else // !TARGET_OS_TV
+  _nativeContainerBackgroundColor = nil;
+#endif // !TARGET_OS_TV
 }
 
 #pragma mark - UIView methods
@@ -312,8 +316,13 @@ namespace react = facebook::react;
   }
 
   if (newComponentProps.nativeContainerBackgroundColor != oldComponentProps.nativeContainerBackgroundColor) {
-    _nativeContainerBackgroundColor =
-        RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor) ?: [UIColor systemBackgroundColor];
+    _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
+#if !TARGET_OS_TV
+    if (_nativeContainerBackgroundColor == nil) {
+      _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
+    }
+#endif // !TARGET_OS_TV
+
     _controller.view.backgroundColor = _nativeContainerBackgroundColor;
   }
 
@@ -495,7 +504,13 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setNativeContainerBackgroundColor:(UIColor *_Nullable)nativeContainerBackgroundColor
 {
-  _nativeContainerBackgroundColor = nativeContainerBackgroundColor ?: [UIColor systemBackgroundColor];
+  _nativeContainerBackgroundColor = nativeContainerBackgroundColor;
+#if !TARGET_OS_TV
+  if (_nativeContainerBackgroundColor == nil) {
+    _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
+  }
+#endif // !TARGET_OS_TV
+
   _controller.view.backgroundColor = _nativeContainerBackgroundColor;
 }
 
