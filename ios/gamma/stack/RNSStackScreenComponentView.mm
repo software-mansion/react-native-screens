@@ -49,7 +49,7 @@ namespace react = facebook::react;
 
   // container state
   _screenKey = nil;
-  _maxLifecycleState = RNSScreenStackLifecycleInitial;
+  _maxLifecycleState = RNSStackScreenLifecycleInitial;
 }
 
 - (void)setupController

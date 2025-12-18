@@ -9,9 +9,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class RNSStackHostComponentView;
 
 typedef NS_ENUM(int, RNSStackScreenLifecycleState) {
-  RNSScreenStackLifecycleInitial = 0,
-  RNSScreenStackLifecycleDetached = 1,
-  RNSScreenStackLifecycleAttached = 2,
+  RNSStackScreenLifecycleInitial = 0,
+  RNSStackScreenLifecycleDetached = 1,
+  RNSStackScreenLifecycleAttached = 2,
 };
 
 @interface RNSStackScreenComponentView : RNSReactBaseView
