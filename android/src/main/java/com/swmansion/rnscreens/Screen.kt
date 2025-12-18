@@ -117,7 +117,7 @@ class Screen(
     private val isNativeStackScreen: Boolean
         get() = container is ScreenStack
 
-    private val sheetHeightAnimationDuration = 500L
+    private val sheetHeightAnimationDuration = 300L
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
