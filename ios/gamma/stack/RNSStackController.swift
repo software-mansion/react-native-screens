@@ -38,7 +38,7 @@ public class RNSStackController: UINavigationController, ReactMountingTransactio
       "[RNScreens] Child view controller must be invalidated when update is forced!")
 
     let activeControllers = sourceAllViewControllers()
-      .filter { screenCtrl in screenCtrl.screenStackComponentView.maxLifecycleState == .attached }
+      .filter { screenCtrl in screenCtrl.screen.maxLifecycleState == .attached }
 
     setViewControllers(activeControllers, animated: true)
 

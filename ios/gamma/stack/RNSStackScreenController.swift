@@ -3,13 +3,13 @@ import UIKit
 
 @objc
 public class RNSStackScreenController: UIViewController {
-  let screenStackComponentView: RNSStackScreenComponentView
+  let screen: RNSStackScreenComponentView
   private var reactEventEmitter: RNSStackScreenComponentEventEmitter {
-    return screenStackComponentView.reactEventEmitter()
+    return screen.reactEventEmitter()
   }
 
   @objc public required init(componentView: RNSStackScreenComponentView) {
-    self.screenStackComponentView = componentView
+    self.screen = componentView
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -22,7 +22,7 @@ public class RNSStackScreenController: UIViewController {
       return navCtrl as? RNSStackController
     }
 
-    if let stackHost = self.screenStackComponentView.stackHost {
+    if let stackHost = self.screen.stackHost {
       return stackHost.stackController
     }
 
