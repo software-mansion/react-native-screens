@@ -163,6 +163,8 @@ class TabsHost(
     private val appearanceCoordinator =
         TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
 
+    private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabScreenFragments)
+
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
@@ -339,6 +341,7 @@ class TabsHost(
     override fun onMenuItemAttributesChange(tabScreen: TabScreen) {
         getMenuItemForTabScreen(tabScreen)?.let { menuItem ->
             appearanceCoordinator.updateMenuItemAppearance(menuItem, tabScreen)
+            a11yCoordinator.setA11yPropertiesToTabItems()
         }
     }
 
