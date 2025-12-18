@@ -117,8 +117,6 @@ class Screen(
     private val isNativeStackScreen: Boolean
         get() = container is ScreenStack
 
-    private val sheetHeightAnimationDuration = 300L
-
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
@@ -202,7 +200,6 @@ class Screen(
             this
                 .animate()
                 .translationY(0f)
-                .setDuration(sheetHeightAnimationDuration)
                 .withStartAction {
                     behavior.useSingleDetent(newHeight)
                     requestLayout()
@@ -229,7 +226,6 @@ class Screen(
             this
                 .animate()
                 .translationY(-delta)
-                .setDuration(sheetHeightAnimationDuration)
                 .withEndAction {
                     behavior.useSingleDetent(newHeight)
                     requestLayout()
