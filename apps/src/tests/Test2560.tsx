@@ -124,6 +124,7 @@ export default function App() {
             contentStyle: {
               backgroundColor: Colors.YellowLight40,
             },
+            // TODO(@t0maboro) - add `sheetContentDefaultResizeAnimationEnabled` prop here when possible
           }}
         />
       </Stack.Navigator>
