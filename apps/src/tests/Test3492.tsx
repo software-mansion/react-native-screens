@@ -12,7 +12,6 @@ import {
   ScrollView,
   Pressable,
   useWindowDimensions,
-  ColorValue,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -26,6 +25,7 @@ import ConfigWrapperContext, {
   DEFAULT_GLOBAL_CONFIGURATION,
 } from '../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import LongText from '../shared/LongText';
+import { someExtensiveComputation } from './TestBottomTabs/utils';
 
 type TabKey = 'Tab2' | 'Tab3' | 'Tab4';
 
@@ -39,6 +39,7 @@ type RectConfig = {
 type SingleTabConfig = {
   navBackground: string;
   reactBackground: string;
+  isHeavy: 'true' | 'false';
   contentType: ContentType;
   rectConfig: RectConfig;
 };
@@ -62,6 +63,7 @@ const DEFAULT_RECT_CONFIG: RectConfig = {
 const DEFAULT_TAB_CONFIG: SingleTabConfig = {
   navBackground: Colors.White,
   reactBackground: 'transparent',
+  isHeavy: 'false',
   contentType: 'view',
   rectConfig: DEFAULT_RECT_CONFIG,
 };
@@ -77,6 +79,78 @@ const INITIAL_CONFIG: AppConfig = {
 
 const PRESETS: Record<string, AppConfig> = {
   Default: INITIAL_CONFIG,
+  ColorfulTab: {
+    containerBackground: Colors.White,
+    tabs: {
+      Tab2: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'view',
+        navBackground: Colors.PurpleLight40,
+        reactBackground: 'transparent',
+      },
+      Tab3: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'scrollViewWithText',
+        navBackground: Colors.BlueLight40,
+        reactBackground: 'transparent',
+      },
+      Tab4: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'scrollViewWithRects',
+        navBackground: Colors.NavyDark140,
+        reactBackground: 'transparent',
+        rectConfig: { height: 80, gap: 15 },
+      },
+    },
+  },
+  ColorfulReact: {
+    containerBackground: Colors.White,
+    tabs: {
+      Tab2: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'view',
+        navBackground: 'transparent',
+        reactBackground: Colors.PurpleLight40,
+      },
+      Tab3: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'scrollViewWithText',
+        navBackground: 'transparent',
+        reactBackground: Colors.BlueLight40,
+      },
+      Tab4: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'scrollViewWithRects',
+        navBackground: 'transparent',
+        reactBackground: Colors.NavyDark140,
+        rectConfig: { height: 80, gap: 15 },
+      },
+    },
+  },
+  ColorfulTabReact: {
+    containerBackground: Colors.White,
+    tabs: {
+      Tab2: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'view',
+        navBackground: Colors.White,
+        reactBackground: Colors.PurpleLight40,
+      },
+      Tab3: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'scrollViewWithText',
+        navBackground: Colors.White,
+        reactBackground: Colors.BlueLight40,
+      },
+      Tab4: {
+        ...DEFAULT_TAB_CONFIG,
+        contentType: 'scrollViewWithRects',
+        navBackground: Colors.White,
+        reactBackground: Colors.NavyDark140,
+        rectConfig: { height: 80, gap: 15 },
+      },
+    },
+  },
 };
 
 const BackgroundTestContext = createContext<BackgroundContextType | null>(null);
@@ -131,8 +205,7 @@ const SimplePicker = ({
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{
         gap: 12,
-        paddingVertical: 10,
-        paddingHorizontal: 5,
+        padding: 5,
       }}>
       {options.map((opt: string) => (
         <Pressable
@@ -151,14 +224,13 @@ const SimplePicker = ({
             },
             shadowOpacity: 0.22,
             shadowRadius: 2.22,
-
             elevation: 3,
-            transform: [{ scale: value === opt ? 1.2 : 1 }],
           }}>
           <Text
             style={{
               color: 'black',
               fontSize: 12,
+              fontWeight: opt === value ? 'bold' : undefined,
             }}>
             {opt}
           </Text>
@@ -203,6 +275,10 @@ const TestScreenRenderer = ({ tabKey }: { tabKey: TabKey }) => {
   const tabConfig = config.tabs[tabKey];
 
   const Container = tabConfig.contentType === 'view' ? View : ScrollView;
+
+  if (tabConfig.isHeavy === 'true') {
+    someExtensiveComputation();
+  }
 
   return (
     <Container
@@ -325,12 +401,19 @@ function ConfigScreen() {
               onChange={(c: string) => updateTab(key, { reactBackground: c })}
             />
             <SimplePicker
+              label="Heavy Render"
+              value={String(tConfig.isHeavy)}
+              options={['true', 'false']}
+              onChange={(c: string) =>
+                updateTab(key, { isHeavy: c === 'true' ? 'true' : 'false' })
+              }
+            />
+            <SimplePicker
               label="Content Type"
               value={tConfig.contentType}
               options={contentTypes}
               onChange={(c: any) => updateTab(key, { contentType: c })}
             />
-
             {tConfig.contentType === 'scrollViewWithRects' && (
               <View
                 style={{
@@ -343,7 +426,7 @@ function ConfigScreen() {
                 <SimplePicker
                   label="Item Height"
                   value={String(tConfig.rectConfig.height)}
-                  options={['50', '100', '200', '400']}
+                  options={['50', '100', '200']}
                   onChange={(v: string) =>
                     updateRects(key, { height: parseFloat(v) })
                   }
@@ -351,7 +434,7 @@ function ConfigScreen() {
                 <SimplePicker
                   label="Gap Size"
                   value={String(tConfig.rectConfig.gap)}
-                  options={['0', '10', '20', '50', '100']}
+                  options={['20', '50', '100']}
                   onChange={(v: string) =>
                     updateRects(key, { gap: parseFloat(v) })
                   }
@@ -392,11 +475,6 @@ function Tabs() {
           },
           style: { backgroundColor: Colors.White },
         },
-        safeAreaConfiguration: {
-          edges: {
-            bottom: true,
-          },
-        },
         component: ConfigScreen,
       },
       {
@@ -405,11 +483,6 @@ function Tabs() {
           title: 'Tab 2',
           icon: { ios: { type: 'sfSymbol', name: 'square' } },
           style: { backgroundColor: config.tabs.Tab2.navBackground },
-        },
-        safeAreaConfiguration: {
-          edges: {
-            bottom: true,
-          },
         },
         component: ScreenTab2,
       },
@@ -420,11 +493,6 @@ function Tabs() {
           icon: { ios: { type: 'sfSymbol', name: 'triangle' } },
           style: { backgroundColor: config.tabs.Tab3.navBackground },
         },
-        safeAreaConfiguration: {
-          edges: {
-            bottom: true,
-          },
-        },
         component: ScreenTab3,
       },
       {
@@ -433,11 +501,6 @@ function Tabs() {
           title: 'Tab 4',
           icon: { ios: { type: 'sfSymbol', name: 'circle' } },
           style: { backgroundColor: config.tabs.Tab4.navBackground },
-        },
-        safeAreaConfiguration: {
-          edges: {
-            bottom: true,
-          },
         },
         component: ScreenTab4,
       },
