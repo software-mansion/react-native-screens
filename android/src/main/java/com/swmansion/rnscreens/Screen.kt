@@ -208,7 +208,7 @@ class Screen(
                 .translationY(0f)
                 .withStartAction {
                     behavior.updateMetrics(newHeight)
-                    requestLayout()
+                    layout(this.left, this.bottom - newHeight, this.right, this.bottom)
                 }.withEndAction {
                     onSheetYTranslationChanged()
                 }.start()
@@ -217,6 +217,10 @@ class Screen(
              * Shrinking content animation:
              *
              * Before the animation, our Screen translationY is 0 - because its actual layout and visual position are equal.
+             *
+             * Before the animation, I'm updating sheet metrics to the target value - it won't update until the next layout pass,
+             * which is controlled by end action. This is done deliberately, to allow catching the case when quick combination
+             * of shrink & expand animation is detected.
              *
              * In the animation, we're translating the Screen down by the calculated height delta to the position (which will
              * be new absolute 0 for the Screen, after ending the transition), providing an impression that FormSheet shrinks.
@@ -232,9 +236,10 @@ class Screen(
             this
                 .animate()
                 .translationY(-delta)
-                .withEndAction {
+                .withStartAction {
                     behavior.updateMetrics(newHeight)
-                    requestLayout()
+                }.withEndAction {
+                    layout(this.left, this.bottom - newHeight, this.right, this.bottom)
                     this.translationY = 0f
                     onSheetYTranslationChanged()
                 }.start()
