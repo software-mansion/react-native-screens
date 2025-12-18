@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScreenStackHostComponentView : NSObject
+@interface RNSStackHostComponentView : NSObject
 @end
 
 @interface RNSStackScreenComponentView : NSObject
