@@ -403,6 +403,8 @@ export interface BottomTabsScreenProps {
 
   /**
    * @summary accessibilityLabel for the TabBarItem
+   *
+   * @supported iOS, Android API level >=26
    */
   tabBarItemAccessibilityLabel?: string;
 
