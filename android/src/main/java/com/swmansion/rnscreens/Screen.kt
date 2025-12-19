@@ -257,7 +257,9 @@ class Screen(
          */
         behavior.updateMetrics(height)
         layout(this.left, this.bottom - height, this.right, this.bottom)
-        onSheetYTranslationChanged()
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateScreenSizeFabric(width, height, top + translationY.toInt())
+        }
     }
 
     private fun updateSheetDetentWithoutHeightChangeAnimation(
