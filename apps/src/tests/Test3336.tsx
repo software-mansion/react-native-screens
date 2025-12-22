@@ -285,11 +285,11 @@ export default function App() {
             <Main
               navigation={navigation}
               useSafeArea={useSafeArea}
+              shouldOverflowTopInset={shouldOverflowTopInset}
               edges={safeAreaEdges}
               toggleSafeArea={toggleSafeArea}
               toggleTopEdge={toggleTopEdge}
               toggleBottomEdge={toggleBottomEdge}
-              shouldOverflowTopInset={shouldOverflowTopInset}
               toggleOverflowTopInset={toggleOverflowTopInset}
             />
           )}
