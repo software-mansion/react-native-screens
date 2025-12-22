@@ -125,7 +125,7 @@ export interface NativeProps extends ViewProps {
   badgeValue?: string;
 
   // Accessibility
-  tabBarItemTestId?: string;
+  tabBarItemTestID?: string;
   tabBarItemAccessibilityLabel?: string;
 
   // Currently iOS-only

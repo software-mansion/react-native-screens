@@ -41,8 +41,8 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "badgeValue":
         mViewManager.setBadgeValue(view, value == null ? null : (String) value);
         break;
-      case "tabBarItemTestId":
-        mViewManager.setTabBarItemTestId(view, value == null ? null : (String) value);
+      case "tabBarItemTestID":
+        mViewManager.setTabBarItemTestID(view, value == null ? null : (String) value);
         break;
       case "tabBarItemAccessibilityLabel":
         mViewManager.setTabBarItemAccessibilityLabel(view, value == null ? null : (String) value);

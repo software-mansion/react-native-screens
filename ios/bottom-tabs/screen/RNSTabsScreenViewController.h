@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) RNSBottomTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSBottomTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
-@property (nonatomic, nullable) NSString *tabItemTestId;
+@property (nonatomic, nullable) NSString *tabItemTestID;
 @property (nonatomic, nullable) NSString *tabItemAccessibilityLabel;
 
 /**

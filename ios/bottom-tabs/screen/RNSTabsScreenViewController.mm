@@ -132,7 +132,7 @@
 
 - (void)updateTabItemA11yProps
 {
-  self.tabBarItem.accessibilityIdentifier = _tabItemTestId;
+  self.tabBarItem.accessibilityIdentifier = _tabItemTestID;
   self.tabBarItem.accessibilityLabel = _tabItemAccessibilityLabel;
 }
 
