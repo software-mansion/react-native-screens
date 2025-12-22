@@ -210,6 +210,10 @@ class Screen(
                     behavior.updateMetrics(newHeight)
                     layout(this.left, this.bottom - newHeight, this.right, this.bottom)
                 }.withEndAction {
+                    // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+                    // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+                    // to its old position when the user starts a gesture.
+                    parent.requestLayout()
                     onSheetYTranslationChanged()
                 }.start()
         } else {
@@ -241,6 +245,10 @@ class Screen(
                 }.withEndAction {
                     layout(this.left, this.bottom - newHeight, this.right, this.bottom)
                     this.translationY = 0f
+                    // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+                    // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+                    // to its old position when the user starts a gesture.
+                    parent.requestLayout()
                     onSheetYTranslationChanged()
                 }.start()
         }
@@ -257,6 +265,10 @@ class Screen(
          */
         behavior.updateMetrics(height)
         layout(this.left, this.bottom - height, this.right, this.bottom)
+        // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+        // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+        // to its old position when the user starts a gesture.
+        parent.requestLayout()
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             updateScreenSizeFabric(width, height, top + translationY.toInt())
         }
