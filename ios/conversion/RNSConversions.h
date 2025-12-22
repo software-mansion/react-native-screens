@@ -135,4 +135,10 @@ RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(react::R
 
 }; // namespace rnscreens::conversion
 
+#if RCT_NEW_ARCH_ENABLED
+
+#import "RNSConversions-Stack.h"
+
+#endif // RCT_NEW_ARCH_ENABLED
+
 #endif

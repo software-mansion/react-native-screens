@@ -32,7 +32,7 @@ public class RNSStackScreenController: UIViewController {
   // MARK: Signals
 
   @objc
-  public func setNeedsLifecycleStateUpdate() {
+  public func setActivityModeInvalidated() {
     findStackController()?.setNeedsUpdateOfChildViewControllers()
   }
 
