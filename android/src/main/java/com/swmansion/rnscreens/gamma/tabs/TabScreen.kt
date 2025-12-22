@@ -58,7 +58,7 @@ class TabScreen(
     }
 
     // Accessibility
-    var tabBarItemTestId: String? by Delegates.observable(null) { _, oldValue, newValue ->
+    var tabBarItemTestID: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 

@@ -20,7 +20,7 @@ class TabsHostA11yCoordinator(
         }
 
         // when matching view by id, espresso driver seems to look for tag property
-        menuView.tag = tabScreen.tabBarItemTestId
+        menuView.tag = tabScreen.tabBarItemTestID
     }
 
     fun setA11yPropertiesToTabItems() {

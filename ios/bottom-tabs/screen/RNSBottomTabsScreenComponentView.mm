@@ -294,8 +294,8 @@ RNS_IGNORE_SUPER_CALL_END
     tabBarItemNeedsUpdate = YES;
   }
 
-  if (newComponentProps.tabBarItemTestId != oldComponentProps.tabBarItemTestId) {
-    _tabBarItemTestId = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestId);
+  if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
+    _tabBarItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
     tabBarItemNeedsRecreation = YES;
   }
 
@@ -351,8 +351,8 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.tabBarItemTestId != oldComponentProps.tabBarItemTestId) {
-    _controller.tabItemTestId = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestId);
+  if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
+    _controller.tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
     tabBarItemNeedsA11yUpdate = YES;
   }
 

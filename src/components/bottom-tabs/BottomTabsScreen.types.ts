@@ -389,17 +389,17 @@ export interface BottomTabsScreenProps {
   /**
    * @summary testId for the BottomTabScreen
    */
-  screenTestId?: string;
-
-  /**
-   * @summary testId for the TabBarItem
-   */
-  tabBarItemTestId?: string;
+  testID?: string;
 
   /**
    * @summary accessibilityLabel for the BottomTabScreen
    */
-  screenAccessibilityLabel?: string;
+  accessibilityLabel?: string;
+
+  /**
+   * @summary testId for the TabBarItem
+   */
+  tabBarItemTestID?: string;
 
   /**
    * @summary accessibilityLabel for the TabBarItem

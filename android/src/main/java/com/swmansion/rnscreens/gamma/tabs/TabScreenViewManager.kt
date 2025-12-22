@@ -181,12 +181,12 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
-    @ReactProp(name = "tabBarItemTestId")
-    override fun setTabBarItemTestId(
+    @ReactProp(name = "tabBarItemTestID")
+    override fun setTabBarItemTestID(
         view: TabScreen,
         value: String?,
     ) {
-        view.tabBarItemTestId = value
+        view.tabBarItemTestID = value
     }
 
     @ReactProp(name = "tabBarItemAccessibilityLabel")

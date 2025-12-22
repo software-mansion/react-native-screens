@@ -21,7 +21,7 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View> extends Vie
   void setTitle(T view, @Nullable String value);
   void setIsTitleUndefined(T view, boolean value);
   void setBadgeValue(T view, @Nullable String value);
-  void setTabBarItemTestId(T view, @Nullable String value);
+  void setTabBarItemTestID(T view, @Nullable String value);
   void setTabBarItemAccessibilityLabel(T view, @Nullable String value);
   void setOrientation(T view, @Nullable String value);
   void setDrawableIconResourceName(T view, @Nullable String value);

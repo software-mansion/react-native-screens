@@ -65,8 +65,6 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
     standardAppearance,
     scrollEdgeAppearance,
     scrollEdgeEffects,
-    screenTestId,
-    screenAccessibilityLabel,
     // eslint-disable-next-line camelcase -- we use sneak case experimental prefix
     experimental_userInterfaceStyle,
     ...rest
@@ -130,8 +128,6 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 
   return (
     <BottomTabsScreenNativeComponent
-      testID={screenTestId}
-      accessibilityLabel={screenAccessibilityLabel}
       collapsable={false}
       style={styles.fillParent}
       onWillAppear={onWillAppearCallback}
