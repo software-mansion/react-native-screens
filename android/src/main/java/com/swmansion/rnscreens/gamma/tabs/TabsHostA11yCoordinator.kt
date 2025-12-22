@@ -10,7 +10,10 @@ class TabsHostA11yCoordinator(
     private val bottomNavigationView: BottomNavigationView,
     private val tabScreenFragments: List<TabScreenFragment>,
 ) {
-    fun setA11yPropertiesToTabItem(menuItem: MenuItem, tabScreen: TabScreen) {
+    fun setA11yPropertiesToTabItem(
+        menuItem: MenuItem,
+        tabScreen: TabScreen,
+    ) {
         val menuView = bottomNavigationView.findViewById<NavigationBarItemView>(menuItem.itemId)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
