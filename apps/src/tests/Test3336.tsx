@@ -19,6 +19,14 @@ import { Spacer } from '../shared';
 import Colors from '../shared/styling/Colors';
 import { Edge, SafeAreaView } from 'react-native-screens/experimental';
 
+/**
+ * Changelog:
+ *
+ * #3435 - Add example for testing pressables when TextInput changed Sheet translation on keyboard appear/disappear
+ * #3336 - Add example covering all FormSheet detents - SAV pairs
+ *
+ */
+
 type StackParamList = {
   Main: undefined;
   FormSheetWithFitToContents: undefined;
@@ -73,7 +81,7 @@ const EXAMPLES = [
     'Partially covered status bar (TextInput)',
     'FormSheetOverStatusBarWithTextInput',
   ],
-  ['Pressable & TextInput', 'FormSheetTextInputAndPressable']
+  ['Pressable & TextInput', 'FormSheetTextInputAndPressable'],
 ];
 
 function Main({
@@ -108,7 +116,10 @@ function Main({
         <Button onPress={toggleBottomEdge} title="Toggle bottom edge" />
       </View>
       <View style={{ marginVertical: 4 }}>
-        <Button onPress={toggleOverflowTopInset} title="Toggle overflow top inset" />
+        <Button
+          onPress={toggleOverflowTopInset}
+          title="Toggle overflow top inset"
+        />
       </View>
       <View
         style={{
@@ -135,13 +146,13 @@ function Main({
 }
 
 const getFormSheetBaseOptions = (
-  shouldOverflowTopInset: boolean
+  shouldOverflowTopInset: boolean,
 ): NativeStackNavigationOptions => ({
   presentation: 'formSheet',
   animation: 'slide_from_bottom',
   headerShown: false,
   contentStyle: {
-  backgroundColor: Colors.GreenLight100,
+    backgroundColor: Colors.GreenLight100,
   },
   sheetShouldOverflowTopInset: shouldOverflowTopInset,
 });
