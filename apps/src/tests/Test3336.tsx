@@ -45,10 +45,12 @@ const Stack = createNativeStackNavigator<StackParamList>();
 type MainProps = {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
   useSafeArea: boolean;
+  shouldOverflowTopInset: boolean;
   edges: Partial<Record<Edge, boolean>>;
   toggleSafeArea: () => void;
   toggleTopEdge: () => void;
   toggleBottomEdge: () => void;
+  toggleOverflowTopInset: () => void;
 };
 
 const EXAMPLES = [
@@ -77,10 +79,12 @@ const EXAMPLES = [
 function Main({
   navigation,
   useSafeArea,
+  shouldOverflowTopInset,
   edges,
   toggleSafeArea,
   toggleTopEdge,
   toggleBottomEdge,
+  toggleOverflowTopInset,
 }: MainProps) {
   return (
     <View style={{ flex: 1, padding: 16 }}>
@@ -91,6 +95,9 @@ function Main({
         [Android] Edges, top: {edges.top ? 'enabled' : 'disabled'}, bottom:{' '}
         {edges.bottom ? 'enabled' : 'disabled'}
       </Text>
+      <Text style={{ fontSize: 20, marginVertical: 4 }}>
+        sheetShouldOverflowTopInset: {shouldOverflowTopInset ? 'true' : 'false'}
+      </Text>
       <View style={{ marginVertical: 4 }}>
         <Button onPress={toggleSafeArea} title="Toggle SAV" />
       </View>
@@ -99,6 +106,9 @@ function Main({
       </View>
       <View style={{ marginVertical: 4 }}>
         <Button onPress={toggleBottomEdge} title="Toggle bottom edge" />
+      </View>
+      <View style={{ marginVertical: 4 }}>
+        <Button onPress={toggleOverflowTopInset} title="Toggle overflow top inset" />
       </View>
       <View
         style={{
@@ -124,15 +134,17 @@ function Main({
   );
 }
 
-const formSheetBaseOptions: NativeStackNavigationOptions = {
+const getFormSheetBaseOptions = (
+  shouldOverflowTopInset: boolean
+): NativeStackNavigationOptions => ({
   presentation: 'formSheet',
   animation: 'slide_from_bottom',
   headerShown: false,
   contentStyle: {
-    backgroundColor: Colors.GreenLight100,
+  backgroundColor: Colors.GreenLight100,
   },
-  // TODO(@t0maboro) - add `sheetShouldOverflowTopInset` prop here when possible
-};
+  sheetShouldOverflowTopInset: shouldOverflowTopInset,
+});
 
 function PressableBase() {
   return (
@@ -241,11 +253,13 @@ export default function App() {
     top: true,
     bottom: true,
   });
+  const [shouldOverflowTopInset, setShouldOverflowTopInset] = useState(false);
   const toggleSafeArea = () => setUseSafeArea(prev => !prev);
   const toggleTopEdge = () =>
     setSafeAreaEdges(prev => ({ ...prev, top: !prev.top }));
   const toggleBottomEdge = () =>
     setSafeAreaEdges(prev => ({ ...prev, bottom: !prev.bottom }));
+  const toggleOverflowTopInset = () => setShouldOverflowTopInset(prev => !prev);
 
   return (
     <NavigationContainer>
@@ -261,6 +275,8 @@ export default function App() {
               toggleSafeArea={toggleSafeArea}
               toggleTopEdge={toggleTopEdge}
               toggleBottomEdge={toggleBottomEdge}
+              shouldOverflowTopInset={shouldOverflowTopInset}
+              toggleOverflowTopInset={toggleOverflowTopInset}
             />
           )}
         />
@@ -275,7 +291,7 @@ export default function App() {
             },
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: 'fitToContents',
           }}
         />
@@ -287,7 +303,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.2],
           }}
         />
@@ -299,7 +315,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.5],
           }}
         />
@@ -311,7 +327,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.8],
           }}
         />
@@ -323,7 +339,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.3, 0.6],
           }}
         />
@@ -335,7 +351,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.3, 0.6, 0.9],
           }}
         />
@@ -347,7 +363,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [1.0],
           }}
         />
@@ -359,7 +375,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.99],
           }}
         />
@@ -374,7 +390,7 @@ export default function App() {
             },
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: 'fitToContents',
           }}
         />
@@ -386,7 +402,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.2],
           }}
         />
@@ -398,7 +414,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.5],
           }}
         />
@@ -410,7 +426,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.8],
           }}
         />
@@ -422,7 +438,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.3, 0.6],
           }}
         />
@@ -434,7 +450,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.3, 0.6, 0.9],
           }}
         />
@@ -446,7 +462,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [1.0],
           }}
         />
@@ -458,7 +474,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.99],
           }}
         />
@@ -470,7 +486,7 @@ export default function App() {
             safeAreaEdges,
           )}
           options={{
-            ...formSheetBaseOptions,
+            ...getFormSheetBaseOptions(shouldOverflowTopInset),
             sheetAllowedDetents: [0.5],
           }}
         />
