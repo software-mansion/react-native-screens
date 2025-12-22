@@ -87,9 +87,6 @@ namespace react = facebook::react;
   _isTitleUndefined = YES;
   _orientation = RNSOrientationInherit;
 
-  _tabBarItemTestId = nil;
-  _tabBarItemAccessibilityLabel = nil;
-
   _standardAppearance = [UITabBarAppearance new];
   _scrollEdgeAppearance = nil;
 
@@ -191,9 +188,6 @@ RNS_IGNORE_SUPER_CALL_END
     tabBarItem = [[UITabBarItem alloc] init];
   }
 
-  tabBarItem.accessibilityIdentifier = _tabBarItemTestId;
-  tabBarItem.accessibilityLabel = _tabBarItemAccessibilityLabel;
-
   _controller.tabBarItem = tabBarItem;
 }
 
@@ -264,6 +258,7 @@ RNS_IGNORE_SUPER_CALL_END
   bool tabBarItemNeedsRecreation{false};
   bool tabBarItemNeedsUpdate{false};
   bool scrollEdgeEffectsNeedUpdate{false};
+  bool tabBarItemNeedsA11yUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title ||
       newComponentProps.isTitleUndefined != oldComponentProps.isTitleUndefined) {
@@ -356,6 +351,17 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
+  if (newComponentProps.tabBarItemTestId != oldComponentProps.tabBarItemTestId) {
+    _controller.tabItemTestId = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestId);
+    tabBarItemNeedsA11yUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
+    _controller.tabItemAccessibilityLabel =
+        RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
+    tabBarItemNeedsA11yUpdate = YES;
+  }
+
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
       oldComponentProps.specialEffects.repeatedTabSelection.popToRoot) {
     _shouldUseRepeatedTabSelectionPopToRootSpecialEffect =
@@ -435,6 +441,10 @@ RNS_IGNORE_SUPER_CALL_END
 
     // Force appearance update to make sure correct image for tab bar item is used
     tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (tabBarItemNeedsA11yUpdate) {
+    [_controller updateTabItemA11yProps];
   }
 
   if (tabItemNeedsAppearanceUpdate) {

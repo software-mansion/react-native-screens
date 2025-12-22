@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) RNSBottomTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSBottomTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
+@property (nonatomic, nullable) NSString *tabItemTestId;
+@property (nonatomic, nullable) NSString *tabItemAccessibilityLabel;
 
 /**
  * Tell the controller that the tab screen it owns has got its react-props-focus changed.
@@ -50,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
  * already changed (to other delegate or nil), this method does nothing.
  */
 - (void)clearTabsSpecialEffectsDelegateIfNeeded:(nonnull id<RNSBottomTabsSpecialEffectsSupporting>)delegate;
+
+- (void)updateTabItemA11yProps;
 
 @end
 
