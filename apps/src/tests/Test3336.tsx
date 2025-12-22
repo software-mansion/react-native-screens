@@ -22,6 +22,9 @@ import { Edge, SafeAreaView } from 'react-native-screens/experimental';
 /**
  * Changelog:
  *
+ * #3503 - Add toggle for `sheetShouldOverflowTopInset` - allowing testing SAV integration with FormSheet that overlaps top inset.
+ *           If `sheetShouldOverflowTopInset` is true - FormSheet with max detent should overflow the content with system bars, unless
+ *           SafeAreaView insets are enabled.
  * #3435 - Add example for testing pressables when TextInput changed Sheet translation on keyboard appear/disappear
  * #3336 - Add example covering all FormSheet detents - SAV pairs
  *
