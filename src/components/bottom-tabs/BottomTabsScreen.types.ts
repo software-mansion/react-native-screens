@@ -387,7 +387,7 @@ export interface BottomTabsScreenProps {
   // #region Accessibility
 
   /**
-   * @summary testId for the BottomTabScreen
+   * @summary testID for the BottomTabScreen
    */
   testID?: string;
 
@@ -397,7 +397,7 @@ export interface BottomTabsScreenProps {
   accessibilityLabel?: string;
 
   /**
-   * @summary testId for the TabBarItem
+   * @summary testID for the TabBarItem
    */
   tabBarItemTestID?: string;
 

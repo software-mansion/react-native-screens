@@ -297,13 +297,16 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
-    _tabBarItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
+    _controller.tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
     tabBarItemNeedsRecreation = YES;
+    tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
-    _tabBarItemAccessibilityLabel = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
+    _controller.tabItemAccessibilityLabel =
+        RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
     tabBarItemNeedsRecreation = YES;
+    tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
@@ -351,17 +354,6 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
     _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
     tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
-    _controller.tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
-    tabBarItemNeedsA11yUpdate = YES;
-  }
-
-  if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
-    _controller.tabItemAccessibilityLabel =
-        RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
-    tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (newComponentProps.specialEffects.repeatedTabSelection.popToRoot !=
