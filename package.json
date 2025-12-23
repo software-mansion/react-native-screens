@@ -123,9 +123,6 @@
     "shelljs": "^0.9.2",
     "typescript": "^5.8.3"
   },
-  "resolutions": {
-    "@types/react": "^18.2.72"
-  },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
     "FabricExample/ios/**/*.swift": "yarn format-ios-swift",
