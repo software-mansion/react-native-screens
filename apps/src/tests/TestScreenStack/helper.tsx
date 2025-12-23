@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'react-native';
 import { ScreenLayout } from './ScreenLayout';
-import { useStackNavigation } from '../../shared/gamma/containers/stack/StackContainer';
+import { useStackNavigation } from '../../shared/gamma/containers/stack/StackContainer-legacy';
 
 export function generateStackWithNames(screenNames: string[]) {
   const TestComponent = () => {
