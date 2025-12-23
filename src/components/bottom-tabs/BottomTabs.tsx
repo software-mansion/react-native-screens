@@ -31,6 +31,7 @@ function BottomTabs(props: BottomTabsProps) {
     experimentalControlNavigationStateInJS = featureFlags.experiment
       .controlledBottomTabs,
     bottomAccessory,
+    nativeContainerStyle,
     ...filteredProps
   } = props;
 
@@ -67,6 +68,7 @@ function BottomTabs(props: BottomTabsProps) {
       style={styles.fillParent}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={experimentalControlNavigationStateInJS}
+      nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredProps}>

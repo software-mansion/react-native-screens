@@ -127,6 +127,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
   },
   {
     tabScreenProps: {
+      style: {
+        backgroundColor: Colors.YellowLight40,
+      },
       tabKey: 'Tab3',
       badgeValue: '2137',
       scrollEdgeEffects: { bottom: 'hard' },
@@ -204,6 +207,9 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
+        nativeContainerStyle={{
+          backgroundColor: Colors.GreenLight80,
+        }}
         tabBarBackgroundColor={Colors.NavyLight100}
         tabBarItemActiveIndicatorColor={Colors.GreenLight40}
         tabBarItemActiveIndicatorEnabled={true}
