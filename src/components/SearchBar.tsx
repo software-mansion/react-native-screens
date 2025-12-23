@@ -19,11 +19,11 @@ import SearchBarNativeComponent, {
 import type { CodegenTypes as CT } from 'react-native';
 
 const NativeSearchBar: React.ComponentType<
-  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands> }
+  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands | null> }
 > &
   typeof NativeSearchBarCommands =
   SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
-    SearchBarCommandsType;
+  SearchBarCommandsType;
 const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
 
@@ -42,7 +42,7 @@ function SearchBar(
   props: SearchBarProps,
   forwardedRef: React.Ref<SearchBarCommands>,
 ) {
-  const searchBarRef = React.useRef<SearchBarCommands | null>(null);
+  const searchBarRef = React.useRef<SearchBarCommands>(null);
 
   React.useImperativeHandle(forwardedRef, () => ({
     blur: () => {
