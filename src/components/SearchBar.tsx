@@ -23,11 +23,11 @@ const NativeSearchBar: React.ComponentType<
 > &
   typeof NativeSearchBarCommands =
   SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
-  SearchBarCommandsType;
+    SearchBarCommandsType;
 const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
 
-type NativeSearchBarRef = React.ElementRef<typeof NativeSearchBar>;
+type NativeSearchBarRef = React.ComponentRef<typeof NativeSearchBar>;
 
 type SearchBarCommandsType = {
   blur: (viewRef: NativeSearchBarRef) => void;
