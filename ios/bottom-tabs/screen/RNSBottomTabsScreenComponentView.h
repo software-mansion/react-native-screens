@@ -64,6 +64,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) NSString *tabKey;
 @property (nonatomic, nullable) NSString *badgeValue;
 
+@property (nonatomic, nullable) NSString *tabBarItemTestID;
+@property (nonatomic, nullable) NSString *tabBarItemAccessibilityLabel;
+
 @property (nonatomic, readonly) RNSBottomTabsIconType iconType;
 
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *iconImageSource;

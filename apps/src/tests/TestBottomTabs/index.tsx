@@ -31,6 +31,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
           },
         },
       },
+      testID: 'tab-screen-1-id',
+      accessibilityLabel: 'First Tab Screen',
+      tabBarItemTestID: 'tab-item-1-id',
+      tabBarItemAccessibilityLabel: 'First Tab Item',
       tabKey: 'Tab1',
       title: 'Tab1',
       isFocused: true,
@@ -55,6 +59,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       badgeValue: 'NEW',
+      testID: 'tab-screen-2-id',
+      accessibilityLabel: 'Second Tab Screen',
+      tabBarItemTestID: 'tab-item-2-id',
+      tabBarItemAccessibilityLabel: 'Second Tab Item',
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyDark140,
         stacked: {
@@ -129,6 +137,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab3',
       badgeValue: '2137',
+      testID: 'tab-screen-3-id',
+      accessibilityLabel: 'Third Tab Screen',
+      tabBarItemTestID: 'tab-item-3-id',
+      tabBarItemAccessibilityLabel: 'Third Tab Item',
       scrollEdgeEffects: { bottom: 'hard' },
       tabBarItemBadgeBackgroundColor: Colors.RedDark40,
       tabBarItemBadgeTextColor: Colors.RedDark120,
@@ -164,6 +176,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab4',
+      testID: 'tab-screen-4-id',
+      accessibilityLabel: 'Fourth Tab Screen',
+      tabBarItemTestID: 'tab-item-4-id',
+      tabBarItemAccessibilityLabel: 'Fourth Tab Item',
       icon: {
         ios: {
           type: 'sfSymbol',

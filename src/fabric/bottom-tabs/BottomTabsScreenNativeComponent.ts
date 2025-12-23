@@ -124,6 +124,10 @@ export interface NativeProps extends ViewProps {
   isTitleUndefined?: CT.WithDefault<boolean, true>;
   badgeValue?: string;
 
+  // Accessibility
+  tabBarItemTestID?: string;
+  tabBarItemAccessibilityLabel?: string;
+
   // Currently iOS-only
   orientation?: CT.WithDefault<Orientation, 'inherit'>;
 

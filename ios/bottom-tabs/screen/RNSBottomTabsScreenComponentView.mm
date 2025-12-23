@@ -38,6 +38,7 @@ namespace react = facebook::react;
   BOOL _tabBarItemNeedsRecreation;
   BOOL _tabBarItemNeedsUpdate;
   BOOL _scrollEdgeEffectsNeedUpdate;
+  BOOL _tabBarItemNeedsA11yUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
@@ -68,6 +69,7 @@ namespace react = facebook::react;
   _tabBarItemNeedsRecreation = NO;
   _tabBarItemNeedsUpdate = NO;
   _scrollEdgeEffectsNeedUpdate = NO;
+  _tabBarItemNeedsA11yUpdate = NO;
 #endif
 
   // Prevents incorrect tab bar appearance after tab change on iOS 26.0
@@ -258,6 +260,7 @@ RNS_IGNORE_SUPER_CALL_END
   bool tabBarItemNeedsRecreation{false};
   bool tabBarItemNeedsUpdate{false};
   bool scrollEdgeEffectsNeedUpdate{false};
+  bool tabBarItemNeedsA11yUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title ||
       newComponentProps.isTitleUndefined != oldComponentProps.isTitleUndefined) {
@@ -291,6 +294,17 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
     tabBarItemNeedsUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
+    _controller.tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
+    tabBarItemNeedsA11yUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
+    _controller.tabItemAccessibilityLabel =
+        RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
+    tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
@@ -421,6 +435,10 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
+  if (tabBarItemNeedsA11yUpdate) {
+    [_controller updateTabItemA11yProps];
+  }
+
   if (tabItemNeedsAppearanceUpdate) {
     [_controller tabItemAppearanceHasChanged];
   }
@@ -519,6 +537,11 @@ RNS_IGNORE_SUPER_CALL_END
     _tabItemNeedsAppearanceUpdate = NO;
   }
 
+  if (_tabBarItemNeedsA11yUpdate) {
+    [_controller updateTabItemA11yProps];
+    _tabBarItemNeedsA11yUpdate = NO;
+  }
+
   if (_tabScreenOrientationNeedsUpdate) {
     [_controller tabScreenOrientationHasChanged];
     _tabScreenOrientationNeedsUpdate = NO;
@@ -557,6 +580,18 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
   _tabBarItemNeedsUpdate = YES;
+}
+
+- (void)setTabBarItemTestID:(NSString *)tabBarItemTestID
+{
+  _controller.tabItemTestID = tabBarItemTestID;
+  _tabBarItemNeedsA11yUpdate = YES;
+}
+
+- (void)setTabBarItemAccessibilityLabel:(NSString *)tabBarItemAccessibilityLabel
+{
+  _controller.tabItemAccessibilityLabel = tabBarItemAccessibilityLabel;
+  _tabBarItemNeedsA11yUpdate = YES;
 }
 
 - (void)setIconType:(RNSBottomTabsIconType)iconType
