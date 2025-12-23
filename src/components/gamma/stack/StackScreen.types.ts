@@ -2,6 +2,8 @@ import { NativeSyntheticEvent, ViewProps } from 'react-native';
 
 export type GenericEmptyEvent = Record<string, never>;
 
+export type StackScreenActivityMode = 'detached' | 'attached';
+
 export type StackScreenEventHandler = (
   event: NativeSyntheticEvent<GenericEmptyEvent>,
 ) => void;
@@ -9,8 +11,8 @@ export type StackScreenEventHandler = (
 export type StackScreenProps = {
   children?: ViewProps['children'];
 
-  maxLifecycleState: 0 | 1 | 2; // TODO: Figure out to type this w/o circular import
-
+  // Control
+  activityMode: StackScreenActivityMode;
   screenKey: string;
 
   // Events

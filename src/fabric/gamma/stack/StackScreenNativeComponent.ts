@@ -4,14 +4,19 @@ import type { CodegenTypes as CT, ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type GenericEmptyEvent = Readonly<{}>;
+type GenericEmptyEvent = Readonly<{}>;
+
+type ActivityMode = 'detached' | 'attached';
 
 export interface NativeProps extends ViewProps {
   // Control
-  maxLifecycleState: CT.Int32;
+
+  // Codegen does not currently support non-optional enum.
+  activityMode?: CT.WithDefault<ActivityMode, 'detached'>;
   screenKey: string;
 
   // Events
+
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;

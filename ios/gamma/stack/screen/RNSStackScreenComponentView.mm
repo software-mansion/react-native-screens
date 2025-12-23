@@ -6,6 +6,8 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#import "RNSConversions-Stack.h"
+
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
@@ -20,7 +22,7 @@ namespace react = facebook::react;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
 
   // Flags
-  BOOL _needsLifecycleStateUpdate;
+  BOOL _hasUpdatedActivityMode;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -39,7 +41,7 @@ namespace react = facebook::react;
 
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
 
-  _needsLifecycleStateUpdate = NO;
+  _hasUpdatedActivityMode = NO;
 }
 
 - (void)resetProps
@@ -49,7 +51,7 @@ namespace react = facebook::react;
 
   // container state
   _screenKey = nil;
-  _maxLifecycleState = RNSStackScreenLifecycleInitial;
+  _activityMode = RNSStackScreenActivityModeDetached;
 }
 
 - (void)setupController
@@ -86,9 +88,9 @@ namespace react = facebook::react;
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(props);
 
-  if (oldComponentProps.maxLifecycleState != newComponentProps.maxLifecycleState) {
-    _maxLifecycleState = static_cast<RNSStackScreenLifecycleState>(newComponentProps.maxLifecycleState);
-    _needsLifecycleStateUpdate = YES;
+  if (oldComponentProps.activityMode != newComponentProps.activityMode) {
+    _activityMode = rnscreens::conversion::convert<RNSStackScreenActivityMode>(newComponentProps.activityMode);
+    _hasUpdatedActivityMode = YES;
   }
 
   if (oldComponentProps.screenKey != newComponentProps.screenKey) {
@@ -101,9 +103,9 @@ namespace react = facebook::react;
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
-  if (_needsLifecycleStateUpdate) {
-    _needsLifecycleStateUpdate = NO;
-    [_controller setNeedsLifecycleStateUpdate];
+  if (_hasUpdatedActivityMode) {
+    _hasUpdatedActivityMode = NO;
+    [_controller setActivityModeInvalidated];
   }
 
   [super finalizeUpdates:updateMask];
