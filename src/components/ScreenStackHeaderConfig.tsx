@@ -51,62 +51,62 @@ export const ScreenStackHeaderConfig = React.forwardRef<
   // Handle bar button item presses
   const onPressHeaderBarButtonItem = hasHeaderBarButtonItems
     ? (event: NativeSyntheticEvent<{ buttonId: string }>) => {
-      const pressedItem = [
-        ...(preparedHeaderLeftBarButtonItems ?? []),
-        ...(preparedHeaderRightBarButtonItems ?? []),
-      ].find(
-        item =>
-          item &&
-          'buttonId' in item &&
-          item.buttonId === event.nativeEvent.buttonId,
-      );
-      if (
-        pressedItem &&
-        pressedItem.type === 'button' &&
-        pressedItem.onPress
-      ) {
-        pressedItem.onPress();
+        const pressedItem = [
+          ...(preparedHeaderLeftBarButtonItems ?? []),
+          ...(preparedHeaderRightBarButtonItems ?? []),
+        ].find(
+          item =>
+            item &&
+            'buttonId' in item &&
+            item.buttonId === event.nativeEvent.buttonId,
+        );
+        if (
+          pressedItem &&
+          pressedItem.type === 'button' &&
+          pressedItem.onPress
+        ) {
+          pressedItem.onPress();
+        }
       }
-    }
     : undefined;
 
   // Handle bar button menu item presses by deep-searching nested menus
   const onPressHeaderBarButtonMenuItem = hasHeaderBarButtonItems
     ? (event: NativeSyntheticEvent<{ menuId: string }>) => {
-      // Recursively search menu tree
-      const findInMenu = (
-        menu: HeaderBarButtonItemWithMenu['menu'],
-        menuId: string,
-      ): HeaderBarButtonItemMenuAction | undefined => {
-        for (const item of menu.items) {
-          if ('items' in item) {
-            // submenu: recurse
-            const found = findInMenu(item, menuId);
-            if (found) {
-              return found;
+        // Recursively search menu tree
+        const findInMenu = (
+          menu: HeaderBarButtonItemWithMenu['menu'],
+          menuId: string,
+        ): HeaderBarButtonItemMenuAction | undefined => {
+          for (const item of menu.items) {
+            if ('items' in item) {
+              // submenu: recurse
+              const found = findInMenu(item, menuId);
+              if (found) {
+                return found;
+              }
+            } else if ('menuId' in item && item.menuId === menuId) {
+              return item;
             }
-          } else if ('menuId' in item && item.menuId === menuId) {
-            return item;
           }
-        }
-        return undefined;
-      };
+          return undefined;
+        };
 
-      // Check each bar-button item with a menu
-      const allItems = [
-        ...(preparedHeaderLeftBarButtonItems ?? []),
-        ...(preparedHeaderRightBarButtonItems ?? []),
-      ];
-      for (const item of allItems) {
-        if (item && item.type === 'menu' && item.menu) {
-          const action = findInMenu(item.menu, event.nativeEvent.menuId);
-          if (action) {
-            action.onPress();
-            return;
+        // Check each bar-button item with a menu
+        const allItems = [
+          ...(preparedHeaderLeftBarButtonItems ?? []),
+          ...(preparedHeaderRightBarButtonItems ?? []),
+        ];
+        for (const item of allItems) {
+          if (item && item.type === 'menu' && item.menu) {
+            const action = findInMenu(item.menu, event.nativeEvent.menuId);
+            if (action) {
+              action.onPress();
+              return;
+            }
           }
         }
       }
-    }
     : undefined;
 
   return (
@@ -176,7 +176,9 @@ export const ScreenStackHeaderLeftView = (
   );
 };
 
-export const ScreenStackHeaderCenterView = (props: ViewProps): React.JSX.Element => {
+export const ScreenStackHeaderCenterView = (
+  props: ViewProps,
+): React.JSX.Element => {
   const { style, ...rest } = props;
 
   return (
