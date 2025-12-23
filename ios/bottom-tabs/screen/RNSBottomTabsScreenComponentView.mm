@@ -298,14 +298,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
     _controller.tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
-    tabBarItemNeedsRecreation = YES;
     tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
     _controller.tabItemAccessibilityLabel =
         RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
-    tabBarItemNeedsRecreation = YES;
     tabBarItemNeedsA11yUpdate = YES;
   }
 
