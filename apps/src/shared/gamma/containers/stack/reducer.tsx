@@ -94,7 +94,15 @@ function navigationActionPopHandler(
   // FIXME: We have a problem here. We can not really determine, which route is currently at the very top!
   // For now let's just accept routeKey as param here.
 
-  if (state.length <= 1) {
+  const attachedCount = state.reduce((count, route) => {
+    if (route.activityMode === 'attached') {
+      return count + 1;
+    } else {
+      return count
+    }
+  }, 0);
+
+  if (attachedCount <= 1) {
     console.warn(`[Stack] Can not perform pop action on route: ${action.routeKey} - at least one route must be present`);
     return state;
   }
