@@ -39,7 +39,7 @@ export function useStackOperationMethods(
   const popCompletedAction: PopCompletedActionMethod = React.useCallback(
     (routeKey: string) => {
       dispatch({
-        type: 'pop-complated',
+        type: 'pop-completed',
         routeKey,
         ctx: actionContext,
       });
