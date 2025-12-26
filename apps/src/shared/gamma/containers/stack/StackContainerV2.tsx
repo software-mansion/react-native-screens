@@ -4,6 +4,7 @@ import type { NavigationAction, StackContainerProps, StackRouteConfig, StackStat
 import { navigationStateReducer } from "./reducer";
 import { useStackOperationMethods } from "./hooks/useStackOperationMethods";
 import { StackNavigationContext, type StackNavigationContextPayload } from "./contexts/StackNavigationContext";
+import { type NativeComponentGenericRef, useRenderDebugInfo } from "react-native-screens/private";
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   requireRouteConfigs(routeConfigs);
@@ -23,8 +24,20 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
     }
   }, [navMethods, routeConfigs, stackState.length]);
 
+  const hostRef = useRenderDebugInfo<NativeComponentGenericRef>('StackContainer');
+
+  const onScreenDismissed = React.useCallback((screenKey: string) => {
+    console.log(`onScreenDismissed for ${screenKey}`);
+    navMethods.popCompletedAction(screenKey);
+  }, [navMethods]);
+
+  const onScreenNativelyDismissed = React.useCallback((screenKey: string) => {
+    console.log(`onScreenNativelyDismissed for ${screenKey}`);
+    navMethods.popNativeAction(screenKey);
+  }, [navMethods]);
+
   return (
-    <Stack.Host>
+    <Stack.Host ref={hostRef}>
       {stackState.map(({ Component, options, activityMode, routeKey }) => {
         const stackNavigationContext: StackNavigationContextPayload = {
           routeKey,
@@ -33,7 +46,10 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
         };
 
         return (
-          <Stack.Screen key={routeKey} {...options} activityMode={activityMode} screenKey={routeKey}>
+          <Stack.Screen key={routeKey} {...options} activityMode={activityMode} screenKey={routeKey}
+            onDismiss={onScreenDismissed}
+            onNativeDismiss={onScreenNativelyDismissed}
+          >
             <StackNavigationContext.Provider value={stackNavigationContext}>
               <Component />
             </StackNavigationContext.Provider>

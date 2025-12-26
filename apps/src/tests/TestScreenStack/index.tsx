@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { generateStackWithNames } from './helper';
+// import { generateStackWithNames } from './helper';
 // import { StackContainer } from '../../shared/gamma/containers/stack/StackContainer-legacy';
 import { StackContainer, StackRouteConfig, useStackNavigationContext } from '../../shared/gamma/containers/stack';
 import { Button, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-screens/experimental';
 
 // export default function App() {
 //   return (
@@ -18,7 +17,9 @@ function TemplateScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center' }}>
       <Text>TemplateScreen</Text>
+      <Button title='Push A' onPress={() => navigation.push('A')} />
       <Button title='Push B' onPress={() => navigation.push('B')} />
+      <Button title='Pop' onPress={() => navigation.pop(navigation.routeKey)} />
     </View>
   )
 }

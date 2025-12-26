@@ -23,14 +23,15 @@ export function navigationStateReducer(
     case 'pop': {
       return navigationActionPopHandler(state, action);
     }
-    case 'pop-complated': {
+    case 'pop-completed': {
       return navigationActionPopCompletedHandler(state, action);
     }
     case 'pop-native': {
       return navigationActionNativePopHandler(state, action);
     }
   }
-  // @ts-expect-error: exhaustive switch
+
+  // @ts-ignore
   throw new Error(
     `[Stack] Unhandled navigation action: ${JSON.stringify(action)}`,
   );
@@ -81,6 +82,11 @@ function navigationActionPopHandler(
   // FIXME: We have a problem here. We can not really determine, which route is currently at the very top!
   // For now let's just accept routeKey as param here.
 
+  if (state.length <= 1) {
+    console.warn(`[Stack] Can not perform pop action on route: ${action.routeKey} - at least one route must be present`);
+    return state;
+  }
+
   const routeIndex = state.findIndex(
     route => route.routeKey === action.routeKey,
   );
@@ -119,22 +125,45 @@ function navigationActionPopCompletedHandler(
   );
   if (routeIndex === NOT_FOUND_INDEX) {
     console.error(
-      `[Stack] Can not perform 'pop-complated' action - popped screen is no longer in state!`,
+      `[Stack] Can not perform 'pop-completed' action - popped screen is no longer in state!`,
     );
     return state;
   }
 
+  const route = state[routeIndex];
+  if (route.activityMode !== 'detached') {
+    console.warn(`[Stack] Popped non-detached route!`);
+  }
+
+  console.debug(`Remove route: ${action.routeKey} from index: ${routeIndex}`);
+
   // Let's remove the route from the state
   // TODO: Consider adding option for keeping it in state.
-  const newState = state.splice(routeIndex, 1);
+  const newState = state.toSpliced(routeIndex, 1);
   return newState;
 }
 
 function navigationActionNativePopHandler(
-  _state: StackState,
-  _action: NavigationActionNativePop,
+  state: StackState,
+  action: NavigationActionNativePop,
 ): StackState {
-  throw new Error('[Stack] pop-native action is not supported yet');
+  if (state.length <= 1) {
+    throw new Error('[Stack] action: "pop-native" can not be performed with less than 2 routes!');
+  }
+
+  const routeIndex = state.findIndex(route => route.routeKey === action.routeKey);
+  if (routeIndex === NOT_FOUND_INDEX) {
+    console.error(`[Stack] Can not perform 'pop-native' action - popped screen is not in state!`);
+    return state;
+  }
+
+  const route = state[routeIndex];
+  if (route.activityMode === 'detached') {
+    console.warn('[Stack] natively popped route has "detached" state');
+  }
+
+  const newState = state.toSpliced(routeIndex, 1);
+  return newState;
 }
 
 function createRouteFromConfig(config: StackRouteConfig): StackRoute {

@@ -50,7 +50,7 @@ export type NavigationActionPop = {
 };
 
 export type NavigationActionPopCompleted = {
-  type: 'pop-complated';
+  type: 'pop-completed';
   routeKey: string;
   ctx: NavigationActionContext;
 };

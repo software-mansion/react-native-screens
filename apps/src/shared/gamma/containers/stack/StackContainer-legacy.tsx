@@ -151,7 +151,7 @@ export function StackContainer({ pathConfigs }: StackContainerProps) {
         <Stack.Screen
           key={screenProps.screenKey}
           {...screenProps}
-          onPop={handlePop}>
+          onDismiss={handlePop}>
           <StackNavigationContext.Provider
             value={{
               ...screenProps,
