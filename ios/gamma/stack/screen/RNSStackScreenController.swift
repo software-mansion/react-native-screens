@@ -31,11 +31,6 @@ public class RNSStackScreenController: UIViewController {
 
   // MARK: Signals
 
-  @objc
-  public func setActivityModeInvalidated() {
-    findStackController()?.setNeedsUpdateOfChildViewControllers()
-  }
-
   // MARK: Events
 
   public override func viewWillAppear(_ animated: Bool) {

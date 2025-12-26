@@ -74,7 +74,6 @@
   }
 }
 
-
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSStackScreenEventEmitter> &)emitter
 {
   _reactEventEmitter = emitter;

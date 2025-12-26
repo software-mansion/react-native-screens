@@ -9,6 +9,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSDefines.h"
 
+#import "RNSStackScreenComponentView.h"
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
@@ -73,6 +74,13 @@ RNS_IGNORE_SUPER_CALL_END
 {
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
   return _controller;
+}
+
+#pragma mark - Communication with StackScreen
+
+- (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen
+{
+  [_controller setNeedsUpdateOfChildViewControllers];
 }
 
 #pragma mark - RCTComponentViewProtocol
