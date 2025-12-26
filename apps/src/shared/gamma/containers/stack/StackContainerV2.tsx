@@ -1,7 +1,7 @@
 import React from "react";
 import { Stack } from "react-native-screens/experimental";
 import type { NavigationAction, StackContainerProps, StackRouteConfig, StackState } from "./StackContainerV2.types";
-import { navigationStateReducer } from "./reducer";
+import { navigationStateReducer, navigationStateReducerWithLogging } from "./reducer";
 import { useStackOperationMethods } from "./hooks/useStackOperationMethods";
 import { StackNavigationContext, type StackNavigationContextPayload } from "./contexts/StackNavigationContext";
 import { type NativeComponentGenericRef, useRenderDebugInfo } from "react-native-screens/private";
@@ -10,7 +10,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   requireRouteConfigs(routeConfigs);
 
   const [stackState, navActionDispatch]: [StackState, React.Dispatch<NavigationAction>]
-    = React.useReducer(navigationStateReducer, []);
+    = React.useReducer(navigationStateReducerWithLogging, []);
 
   const routesByName = React.useMemo(() => {
     return Object.fromEntries(routeConfigs.map((route) => [route.name, route]));

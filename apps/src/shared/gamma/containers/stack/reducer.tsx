@@ -37,6 +37,18 @@ export function navigationStateReducer(
   );
 }
 
+export function navigationStateReducerWithLogging(state: StackState, action: NavigationAction): StackState {
+  console.debug(`[Stack] Handling action: ${JSON.stringify(action)}`);
+  console.debug(`[Stack] BEFORE state: ${JSON.stringify(state, undefined, 2)}`);
+  const newState = navigationStateReducer(state, action);
+  if (state === newState) {
+    console.debug('[Stack] AFTER state: unchanged');
+  } else {
+    console.debug(`[Stack] AFTER state: ${JSON.stringify(newState, undefined, 2)}`);
+  }
+  return newState;
+}
+
 function navigationActionPushHandler(
   state: StackState,
   action: NavigationActionPush,

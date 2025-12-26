@@ -16,7 +16,7 @@ function TemplateScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center' }}>
-      <Text>TemplateScreen</Text>
+      <Text>Route: {navigation.routeKey}</Text>
       <Button title='Push A' onPress={() => navigation.push('A')} />
       <Button title='Push B' onPress={() => navigation.push('B')} />
       <Button title='Pop' onPress={() => navigation.pop(navigation.routeKey)} />
