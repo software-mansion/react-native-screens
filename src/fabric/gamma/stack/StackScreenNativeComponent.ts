@@ -21,6 +21,9 @@ export interface NativeProps extends ViewProps {
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
+
+  onDismiss?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackScreen', {});

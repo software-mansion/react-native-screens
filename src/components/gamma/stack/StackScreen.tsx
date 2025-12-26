@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import StackScreenNativeComponent from '../../../fabric/gamma/stack/StackScreenNativeComponent';
 import type { NativeSyntheticEvent } from 'react-native';
 import { StackScreenProps } from './StackScreen.types';
+import { NativeComponentGenericRef, useRenderDebugInfo } from 'react-native-screens/private';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -18,18 +19,22 @@ function StackScreen({
   onDidAppear,
   onDidDisappear,
   // Custom events
-  onPop,
+  onDismiss,
+  onNativeDismiss,
 }: StackScreenProps) {
-  const handleOnDidDisappear = React.useCallback(
-    (e: NativeSyntheticEvent<Record<string, never>>) => {
-      onDidDisappear?.(e);
-      onPop?.(screenKey);
-    },
-    [onDidDisappear, onPop, screenKey],
-  );
+  const onDismissWrapper = React.useCallback(() => {
+    onDismiss?.(screenKey);
+  }, [onDismiss, screenKey]);
+
+  const onNativeDismissWrapper = React.useCallback(() => {
+    onNativeDismiss?.(screenKey);
+  }, [onNativeDismiss, screenKey]);
+
+  const componentRef = useRenderDebugInfo(React.useMemo(() => `StackScreen (${screenKey})`, [screenKey]));
 
   return (
     <StackScreenNativeComponent
+      ref={componentRef}
       style={StyleSheet.absoluteFill}
       // Control
       activityMode={activityMode}
@@ -38,7 +43,10 @@ function StackScreen({
       onWillAppear={onWillAppear}
       onDidAppear={onDidAppear}
       onWillDisappear={onWillDisappear}
-      onDidDisappear={handleOnDidDisappear}>
+      onDidDisappear={onDidDisappear}
+      onDismiss={onDismissWrapper}
+      onNativeDismiss={onNativeDismissWrapper}
+    >
       {children}
     </StackScreenNativeComponent>
   );

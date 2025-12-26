@@ -52,6 +52,29 @@
   }
 }
 
+- (BOOL)emitOnDismiss
+{
+  if (_reactEventEmitter != nullptr) {
+    _reactEventEmitter->onDismiss({});
+    return YES;
+  } else {
+    RCTLogWarn(@"[RNScreens] Skipped OnDismissed event emission due to nullish emitter");
+    return NO;
+  }
+}
+
+- (BOOL)emitOnNativeDismiss
+{
+  if (_reactEventEmitter != nullptr) {
+    _reactEventEmitter->onNativeDismiss({});
+    return YES;
+  } else {
+    RCTLogWarn(@"[RNScreens] Skipped onNativeDismiss event emission due to nullish emitter");
+    return NO;
+  }
+}
+
+
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSStackScreenEventEmitter> &)emitter
 {
   _reactEventEmitter = emitter;

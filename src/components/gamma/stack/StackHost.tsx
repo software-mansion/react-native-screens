@@ -6,9 +6,9 @@ import type { StackHostProps } from './StackHost.types';
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function StackHost({ children }: StackHostProps) {
+function StackHost({ children, ref }: StackHostProps) {
   return (
-    <StackHostNativeComponent style={styles.container}>
+    <StackHostNativeComponent ref={ref} style={styles.container}>
       {children}
     </StackHostNativeComponent>
   );
