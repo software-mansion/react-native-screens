@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import StackScreenNativeComponent from '../../../fabric/gamma/stack/StackScreenNativeComponent';
-import type { NativeSyntheticEvent } from 'react-native';
 import { StackScreenProps } from './StackScreen.types';
-import { NativeComponentGenericRef, useRenderDebugInfo } from 'react-native-screens/private';
+import { useRenderDebugInfo } from 'react-native-screens/private';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -30,10 +29,13 @@ function StackScreen({
     onNativeDismiss?.(screenKey);
   }, [onNativeDismiss, screenKey]);
 
-  const componentRef = useRenderDebugInfo(React.useMemo(() => `StackScreen (${screenKey})`, [screenKey]));
+  const componentRef = useRenderDebugInfo(
+    React.useMemo(() => `StackScreen (${screenKey})`, [screenKey]),
+  );
 
   return (
     <StackScreenNativeComponent
+      // @ts-ignore - debug only
       ref={componentRef}
       style={StyleSheet.absoluteFill}
       // Control
@@ -45,8 +47,7 @@ function StackScreen({
       onWillDisappear={onWillDisappear}
       onDidDisappear={onDidDisappear}
       onDismiss={onDismissWrapper}
-      onNativeDismiss={onNativeDismissWrapper}
-    >
+      onNativeDismiss={onNativeDismissWrapper}>
       {children}
     </StackScreenNativeComponent>
   );

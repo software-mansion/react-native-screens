@@ -4,5 +4,7 @@ import { type NativeProps } from '../../../fabric/gamma/stack/StackHostNativeCom
 
 export type StackHostProps = {
   children: ViewProps['children'];
-  ref?: React.RefObject<React.Component<NativeProps> & ReactNativeElement | null>; // TODO: Work on these types
+  ref?: React.RefObject<
+    (React.Component<NativeProps> & ReactNativeElement) | null
+  >; // TODO: Work on these types
 };

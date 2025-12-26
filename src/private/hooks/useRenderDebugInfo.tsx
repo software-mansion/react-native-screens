@@ -1,9 +1,11 @@
-import React from "react";
-import { findNodeHandle, ReactNativeElement } from "react-native";
+import React from 'react';
+import { findNodeHandle, ReactNativeElement } from 'react-native';
 
 export type NativeComponentGenericRef = React.Component & ReactNativeElement;
 
-export function useRenderDebugInfo<RefType extends React.Component>(componentName: string) {
+export function useRenderDebugInfo<RefType extends React.Component>(
+  componentName: string,
+) {
   const componentRef = React.useRef<RefType>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 
@@ -32,6 +34,10 @@ export function useRenderDebugInfo<RefType extends React.Component>(componentNam
   return componentRef;
 }
 
-function logMessage(componentName: string, nodeHandle: number, message: string) {
+function logMessage(
+  componentName: string,
+  nodeHandle: number,
+  message: string,
+) {
   console.log(`${componentName} [${nodeHandle}] ${message}`);
 }
