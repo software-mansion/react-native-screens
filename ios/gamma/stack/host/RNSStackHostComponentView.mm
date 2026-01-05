@@ -14,6 +14,8 @@
 
 namespace react = facebook::react;
 
+static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *reactSubviews);
+
 @interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
 @end
 
@@ -97,6 +99,13 @@ RNS_IGNORE_SUPER_CALL_END
   childScreen.stackHost = self;
   [_reactSubviews insertObject:childScreen atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
+
+  NSLog(
+      @"StackHost [%ld] mount: StackScreen [%ld] (%@) at %ld",
+      self.tag,
+      childComponentView.tag,
+      childScreen.screenKey,
+      index);
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -111,6 +120,13 @@ RNS_IGNORE_SUPER_CALL_END
   [_reactSubviews removeObject:childScreen];
   childScreen.stackHost = nil;
   _hasModifiedReactSubviewsInCurrentTransaction = true;
+
+  NSLog(
+      @"StackHost [%ld] unmount: StackScreen [%ld] (%@) at %ld",
+      self.tag,
+      childComponentView.tag,
+      childScreen.screenKey,
+      index);
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -139,6 +155,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (_hasModifiedReactSubviewsInCurrentTransaction) {
     [_controller setNeedsUpdateOfChildViewControllers];
+    dumpStackHostSubviewsState(_reactSubviews);
   }
   [_controller reactMountingTransactionDidMount];
 }
@@ -148,4 +165,16 @@ RNS_IGNORE_SUPER_CALL_END
 Class<RCTComponentViewProtocol> RNSStackHostCls(void)
 {
   return RNSStackHostComponentView.class;
+}
+
+static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *reactSubviews)
+{
+  NSMutableArray<NSString *> *descs = [[NSMutableArray alloc] initWithCapacity:reactSubviews.count];
+  for (RNSStackScreenComponentView *screen in reactSubviews) {
+    [descs addObject:[NSString stringWithFormat:@"StackScreen [%ld] %@ activityMode=%d",
+                                                screen.tag,
+                                                screen.screenKey,
+                                                screen.activityMode]];
+  }
+  NSLog(@"%@", descs);
 }

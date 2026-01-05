@@ -1,7 +1,7 @@
 import React from "react";
 import { Stack } from "react-native-screens/experimental";
 import type { NavigationAction, StackContainerProps, StackRouteConfig, StackState } from "./StackContainerV2.types";
-import { navigationStateReducer, navigationStateReducerWithLogging } from "./reducer";
+import { navigationStateReducerWithLogging } from "./reducer";
 import { useStackOperationMethods } from "./hooks/useStackOperationMethods";
 import { StackNavigationContext, type StackNavigationContextPayload } from "./contexts/StackNavigationContext";
 import { type NativeComponentGenericRef, useRenderDebugInfo } from "react-native-screens/private";
@@ -43,6 +43,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
           routeKey,
           push: navMethods.pushAction,
           pop: navMethods.popAction,
+          preload: navMethods.preloadAction,
         };
 
         return (

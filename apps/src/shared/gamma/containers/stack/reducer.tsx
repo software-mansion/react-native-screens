@@ -37,14 +37,19 @@ export function navigationStateReducer(
   );
 }
 
-export function navigationStateReducerWithLogging(state: StackState, action: NavigationAction): StackState {
+export function navigationStateReducerWithLogging(
+  state: StackState,
+  action: NavigationAction,
+): StackState {
   console.debug(`[Stack] Handling action: ${JSON.stringify(action)}`);
   console.debug(`[Stack] BEFORE state: ${JSON.stringify(state, undefined, 2)}`);
   const newState = navigationStateReducer(state, action);
   if (state === newState) {
     console.debug('[Stack] AFTER state: unchanged');
   } else {
-    console.debug(`[Stack] AFTER state: ${JSON.stringify(newState, undefined, 2)}`);
+    console.debug(
+      `[Stack] AFTER state: ${JSON.stringify(newState, undefined, 2)}`,
+    );
   }
   return newState;
 }
@@ -103,7 +108,9 @@ function navigationActionPopHandler(
   }, 0);
 
   if (attachedCount <= 1) {
-    console.warn(`[Stack] Can not perform pop action on route: ${action.routeKey} - at least one route must be present`);
+    console.warn(
+      `[Stack] Can not perform pop action on route: ${action.routeKey} - at least one route must be present`,
+    );
     return state;
   }
 
@@ -168,12 +175,16 @@ function navigationActionNativePopHandler(
   action: NavigationActionNativePop,
 ): StackState {
   if (state.length <= 1) {
-    throw new Error('[Stack] action: "pop-native" can not be performed with less than 2 routes!');
+    throw new Error(
+      '[Stack] action: "pop-native" can not be performed with less than 2 routes!',
+    );
   }
 
   const routeIndex = state.findIndex(route => route.routeKey === action.routeKey);
   if (routeIndex === NOT_FOUND_INDEX) {
-    console.error(`[Stack] Can not perform 'pop-native' action - popped screen is not in state!`);
+    console.error(
+      `[Stack] Can not perform 'pop-native' action - popped screen is not in state!`,
+    );
     return state;
   }
 
