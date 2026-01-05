@@ -68,15 +68,16 @@ function navigationActionPushHandler(
   );
 
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
-    const newState = [...state];
-    const route = newState[renderedRouteIndex];
+    const route = state[renderedRouteIndex];
 
-    if (route.activityMode === 'attached') {
+    if (route.activityMode === 'detached') {
       console.info(
-        `[Stack] Unable to push route with name: ${action.routeName}, route is already pushed`,
+        `[Stack] Route ${route.name} already rendered, attaching it`,
       );
-    } else {
-      route.activityMode = 'attached';
+      const newState = state.toSpliced(renderedRouteIndex, 1);
+      const routeCopy = { ...route };
+      routeCopy.activityMode = 'attached';
+      newState.push(routeCopy);
       return newState;
     }
   }
@@ -108,7 +109,7 @@ function navigationActionPopHandler(
     if (route.activityMode === 'attached') {
       return count + 1;
     } else {
-      return count
+      return count;
     }
   }, 0);
 
@@ -185,7 +186,9 @@ function navigationActionNativePopHandler(
     );
   }
 
-  const routeIndex = state.findIndex(route => route.routeKey === action.routeKey);
+  const routeIndex = state.findIndex(
+    route => route.routeKey === action.routeKey,
+  );
   if (routeIndex === NOT_FOUND_INDEX) {
     console.error(
       `[Stack] Can not perform 'pop-native' action - popped screen is not in state!`,
@@ -229,5 +232,5 @@ function createRouteFromConfig(config: StackRouteConfig): StackRoute {
 }
 
 function generateRouteKeyForRouteName(routeName: string): string {
-  return `route-${routeName}-${generateID()}`;
+  return `r-${routeName}-${generateID()}`;
 }
