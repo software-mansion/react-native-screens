@@ -131,7 +131,7 @@ ScreenStackHeaderConfig.displayName = 'ScreenStackHeaderConfig';
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps,
-): JSX.Element => (
+): React.JSX.Element => (
   <ScreenStackHeaderSubview
     type="back"
     style={styles.headerSubview}
@@ -144,7 +144,7 @@ export const ScreenStackHeaderBackButtonImage = (
 
 export const ScreenStackHeaderRightView = (
   props: ScreenStackHeaderSubviewProps & ViewProps,
-): JSX.Element => {
+): React.JSX.Element => {
   const { style, ...rest } = props;
 
   return (
@@ -161,7 +161,7 @@ export const ScreenStackHeaderRightView = (
 
 export const ScreenStackHeaderLeftView = (
   props: ScreenStackHeaderSubviewProps & ViewProps,
-): JSX.Element => {
+): React.JSX.Element => {
   const { style, ...rest } = props;
 
   return (
@@ -176,7 +176,9 @@ export const ScreenStackHeaderLeftView = (
   );
 };
 
-export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => {
+export const ScreenStackHeaderCenterView = (
+  props: ViewProps,
+): React.JSX.Element => {
   const { style, ...rest } = props;
 
   return (
@@ -193,7 +195,7 @@ export const ScreenStackHeaderCenterView = (props: ViewProps): JSX.Element => {
 
 export const ScreenStackHeaderSearchBarView = (
   props: ViewProps,
-): JSX.Element => (
+): React.JSX.Element => (
   <ScreenStackHeaderSubview
     {...props}
     type="searchBar"

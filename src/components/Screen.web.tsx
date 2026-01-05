@@ -12,7 +12,7 @@ export const InnerScreen = View;
 // createAnimatedComponent` does not support stateless functional components; use a class component instead.
 // NOTE: React Server Components do not support class components.
 export class NativeScreen extends React.Component<ScreenProps> {
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     let {
       active,
       activityState,
