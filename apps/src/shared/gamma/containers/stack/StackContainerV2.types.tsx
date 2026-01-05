@@ -27,12 +27,14 @@ export type PushActionMethod = (routeName: string) => void;
 export type PopActionMethod = (routeKey: string) => void;
 export type PopCompletedActionMethod = (routeKey: string) => void;
 export type PopNativeActionMethod = (routeKey: string) => void;
+export type PreloadActionMethod = (routeName: string) => void;
 
 export type NavigationActionMethods = {
   pushAction: PushActionMethod;
   popAction: PopActionMethod;
   popCompletedAction: PopCompletedActionMethod;
   popNativeAction: PopNativeActionMethod;
+  preloadAction: PreloadActionMethod;
 };
 
 export type StackState = StackRoute[];
@@ -61,6 +63,12 @@ export type NavigationActionNativePop = {
   ctx: NavigationActionContext;
 };
 
+export type NavigationActionPreload = {
+  type: 'preload';
+  routeName: string;
+  ctx: NavigationActionContext;
+};
+
 export type NavigationActionContext = {
   routeConfigs: StackRouteConfig[];
   routesByName: Record<string, StackRouteConfig>;
@@ -70,4 +78,5 @@ export type NavigationAction =
   | NavigationActionPush
   | NavigationActionPop
   | NavigationActionPopCompleted
-  | NavigationActionNativePop;
+  | NavigationActionNativePop
+  | NavigationActionPreload;

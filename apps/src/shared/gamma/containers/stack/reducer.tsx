@@ -3,6 +3,7 @@ import type {
   NavigationActionNativePop,
   NavigationActionPop,
   NavigationActionPopCompleted,
+  NavigationActionPreload,
   NavigationActionPush,
   StackRoute,
   StackRouteConfig,
@@ -28,6 +29,9 @@ export function navigationStateReducer(
     }
     case 'pop-native': {
       return navigationActionNativePopHandler(state, action);
+    }
+    case 'preload': {
+      return navigationActionPreloadHandler(state, action);
     }
   }
 
@@ -62,6 +66,7 @@ function navigationActionPushHandler(
   const renderedRouteIndex = state.findIndex(
     route => route.name === action.routeName,
   );
+
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
     const newState = [...state];
     const route = newState[renderedRouteIndex];
@@ -195,6 +200,24 @@ function navigationActionNativePopHandler(
 
   const newState = state.toSpliced(routeIndex, 1);
   return newState;
+}
+
+function navigationActionPreloadHandler(
+  state: StackState,
+  action: NavigationActionPreload,
+): StackState {
+  const routeConfig = action.ctx.routeConfigs.find(
+    routeConfig => routeConfig.name === action.routeName,
+  );
+
+  if (!routeConfig) {
+    console.error(
+      `[Stack] Can not perform 'preload' action - route config with name: ${action.routeName} not found!`,
+    );
+    return state;
+  }
+
+  return [...state, createRouteFromConfig(routeConfig)];
 }
 
 function createRouteFromConfig(config: StackRouteConfig): StackRoute {

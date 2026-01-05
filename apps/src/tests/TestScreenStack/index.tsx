@@ -20,6 +20,8 @@ function TemplateScreen() {
       <Button title='Push A' onPress={() => navigation.push('A')} />
       <Button title='Push B' onPress={() => navigation.push('B')} />
       <Button title='Pop' onPress={() => navigation.pop(navigation.routeKey)} />
+      <Button title='Preload A' onPress={() => navigation.preload('A')} />
+      <Button title='Preload B' onPress={() => navigation.preload('B')} />
     </View>
   )
 }

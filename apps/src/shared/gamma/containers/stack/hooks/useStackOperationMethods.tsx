@@ -54,14 +54,19 @@ export function useStackOperationMethods(
     [dispatch, actionContext],
   );
 
+  const preloadAction = React.useCallback((routeKey: string) => {
+    dispatch({ type: 'preload', routeName: routeKey, ctx: actionContext });
+  }, [dispatch, actionContext]);
+
   const aggregateValue = React.useMemo(() => {
     return {
       pushAction,
       popAction,
       popCompletedAction,
       popNativeAction,
+      preloadAction,
     };
-  }, [pushAction, popAction, popCompletedAction, popNativeAction]);
+  }, [pushAction, popAction, popCompletedAction, popNativeAction, preloadAction]);
 
   return aggregateValue;
 }
