@@ -49,7 +49,7 @@ Alternatively add two sections - Before & After
 
 <!--
 Please name all newly added and existing test files that you tested the changes with.
-This section should also contain short description of steps 
+This section should also contain short description of steps to reproduce the issue.
 
 The reproduction code should be minimal & complete. Don't exclude exports or remove "not important" parts of reproduction example.
 -->
