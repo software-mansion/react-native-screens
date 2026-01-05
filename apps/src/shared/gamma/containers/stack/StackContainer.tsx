@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Stack,
-  StackScreenLifecycleState,
 } from 'react-native-screens/experimental';
 import type { StackScreenProps } from 'react-native-screens/experimental';
 
@@ -88,7 +87,7 @@ export function StackContainer({ pathConfigs }: StackContainerProps) {
         ...currentStack,
         {
           screenKey: getId().toString(),
-          maxLifecycleState: StackScreenLifecycleState.ATTACHED,
+          activityMode: 'attached',
           ...requestedPath,
         },
       ]);
@@ -126,7 +125,7 @@ export function StackContainer({ pathConfigs }: StackContainerProps) {
         ...currentStack, // This is mutated through pop()
         {
           ...lastElement,
-          maxLifecycleState: StackScreenLifecycleState.DETACHED,
+          activityMode: 'detached',
         },
       ];
     });

@@ -4,19 +4,13 @@ import StackScreenNativeComponent from '../../../fabric/gamma/stack/StackScreenN
 import type { NativeSyntheticEvent } from 'react-native';
 import { StackScreenProps } from './StackScreen.types';
 
-export const StackScreenLifecycleState = {
-  INITIAL: 0,
-  DETACHED: 1,
-  ATTACHED: 2,
-} as const;
-
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function StackScreen({
   children,
   // Control
-  maxLifecycleState,
+  activityMode,
   screenKey,
   // Events
   onWillAppear,
@@ -38,7 +32,7 @@ function StackScreen({
     <StackScreenNativeComponent
       style={StyleSheet.absoluteFill}
       // Control
-      maxLifecycleState={maxLifecycleState}
+      activityMode={activityMode}
       screenKey={screenKey}
       // Events
       onWillAppear={onWillAppear}
