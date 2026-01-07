@@ -1,5 +1,7 @@
 #pragma once
 
+#if defined(__cplusplus)
+
 namespace rnscreens {
 
 namespace do_not_use {
@@ -25,3 +27,5 @@ template <>
 struct always_false<do_not_use::DoNotUseThis> : std::true_type {};
 
 }; // namespace rnscreens
+
+#endif // defined(__cplusplus)
