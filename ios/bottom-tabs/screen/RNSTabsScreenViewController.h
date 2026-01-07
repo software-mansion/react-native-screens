@@ -51,11 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)clearTabsSpecialEffectsDelegateIfNeeded:(nonnull id<RNSBottomTabsSpecialEffectsSupporting>)delegate;
 
-/**
- * Update the values of accessibility props on the menu item for the screen managed by the controller.
- */
-- (void)updateTabItemA11yProps;
-
 @end
 
 NS_ASSUME_NONNULL_END

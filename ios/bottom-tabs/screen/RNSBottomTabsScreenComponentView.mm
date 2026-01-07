@@ -38,7 +38,6 @@ namespace react = facebook::react;
   BOOL _tabBarItemNeedsRecreation;
   BOOL _tabBarItemNeedsUpdate;
   BOOL _scrollEdgeEffectsNeedUpdate;
-  BOOL _tabBarItemNeedsA11yUpdate;
 #endif // !RCT_NEW_ARCH_ENABLED
 }
 
@@ -69,7 +68,6 @@ namespace react = facebook::react;
   _tabBarItemNeedsRecreation = NO;
   _tabBarItemNeedsUpdate = NO;
   _scrollEdgeEffectsNeedUpdate = NO;
-  _tabBarItemNeedsA11yUpdate = NO;
 #endif
 
   // Prevents incorrect tab bar appearance after tab change on iOS 26.0
@@ -532,11 +530,6 @@ RNS_IGNORE_SUPER_CALL_END
     _tabItemNeedsAppearanceUpdate = NO;
   }
 
-  if (_tabBarItemNeedsA11yUpdate) {
-    [_controller updateTabItemA11yProps];
-    _tabBarItemNeedsA11yUpdate = NO;
-  }
-
   if (_tabScreenOrientationNeedsUpdate) {
     [_controller tabScreenOrientationHasChanged];
     _tabScreenOrientationNeedsUpdate = NO;
@@ -579,13 +572,13 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setTabBarItemTestID:(NSString *)tabBarItemTestID
 {
-  _controller.tabItemTestID = tabBarItemTestID;
+  _tabItemTestID = tabBarItemTestID;
   _tabBarItemNeedsA11yUpdate = YES;
 }
 
 - (void)setTabBarItemAccessibilityLabel:(NSString *)tabBarItemAccessibilityLabel
 {
-  _controller.tabItemAccessibilityLabel = tabBarItemAccessibilityLabel;
+  _tabItemAccessibilityLabel = tabBarItemAccessibilityLabel;
   _tabBarItemNeedsA11yUpdate = YES;
 }
 
@@ -684,6 +677,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _systemItem = systemItem;
   _tabBarItemNeedsRecreation = YES;
+  _tabBarItemNeedsA11yUpdate = YES;
 }
 
 - (void)setSpecialEffects:(NSDictionary *)specialEffects
