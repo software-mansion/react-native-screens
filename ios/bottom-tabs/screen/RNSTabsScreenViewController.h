@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) RNSBottomTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSBottomTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
-@property (nonatomic, nullable) NSString *tabItemTestID;
-@property (nonatomic, nullable) NSString *tabItemAccessibilityLabel;
 
 /**
  * Tell the controller that the tab screen it owns has got its react-props-focus changed.

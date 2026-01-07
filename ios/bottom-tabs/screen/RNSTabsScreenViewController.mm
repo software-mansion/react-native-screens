@@ -130,12 +130,6 @@
   return self.tabScreenComponentView.orientation;
 }
 
-- (void)updateTabItemA11yProps
-{
-  self.tabBarItem.accessibilityIdentifier = _tabItemTestID;
-  self.tabBarItem.accessibilityLabel = _tabItemAccessibilityLabel;
-}
-
 #endif // !TARGET_OS_TV
 
 @end

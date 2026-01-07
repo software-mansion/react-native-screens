@@ -87,6 +87,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
 
+@property (nonatomic, nullable) NSString *tabItemTestID;
+@property (nonatomic, nullable) NSString *tabItemAccessibilityLabel;
+@property (nonatomic) BOOL tabBarItemNeedsA11yUpdate;
+
 @property (nonatomic) RNSScrollEdgeEffect bottomScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;

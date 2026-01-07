@@ -260,7 +260,6 @@ RNS_IGNORE_SUPER_CALL_END
   bool tabBarItemNeedsRecreation{false};
   bool tabBarItemNeedsUpdate{false};
   bool scrollEdgeEffectsNeedUpdate{false};
-  bool tabBarItemNeedsA11yUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title ||
       newComponentProps.isTitleUndefined != oldComponentProps.isTitleUndefined) {
@@ -297,14 +296,13 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
-    _controller.tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
-    tabBarItemNeedsA11yUpdate = YES;
+    _tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
+    _tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
-    _controller.tabItemAccessibilityLabel =
-        RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
-    tabBarItemNeedsA11yUpdate = YES;
+    _tabItemAccessibilityLabel = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
+    _tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
@@ -426,6 +424,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (tabBarItemNeedsRecreation) {
     [self createTabBarItem];
     tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (tabBarItemNeedsUpdate) {
@@ -433,10 +432,6 @@ RNS_IGNORE_SUPER_CALL_END
 
     // Force appearance update to make sure correct image for tab bar item is used
     tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (tabBarItemNeedsA11yUpdate) {
-    [_controller updateTabItemA11yProps];
   }
 
   if (tabItemNeedsAppearanceUpdate) {
