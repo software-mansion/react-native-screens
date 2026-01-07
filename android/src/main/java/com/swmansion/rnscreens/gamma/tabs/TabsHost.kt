@@ -89,7 +89,7 @@ class TabsHost(
             if (isBottomNavigationMenuInvalidated) {
                 isBottomNavigationMenuInvalidated = false
                 this@TabsHost.updateBottomNavigationViewAppearance()
-                a11yCoordinator.setA11yPropertiesToTabItems()
+                a11yCoordinator.setA11yPropertiesToAllTabItems()
             }
         }
     }

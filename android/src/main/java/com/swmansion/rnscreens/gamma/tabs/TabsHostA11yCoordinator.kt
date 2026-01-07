@@ -26,7 +26,7 @@ class TabsHostA11yCoordinator(
         menuView.tag = tabScreen.tabBarItemTestID
     }
 
-    fun setA11yPropertiesToTabItems() {
+    fun setA11yPropertiesToAllTabItems() {
         tabScreenFragments.forEachIndexed { index, fragment ->
             val menuItem = bottomNavigationView.menu[index]
             setA11yPropertiesToTabItem(menuItem, fragment.tabScreen)
