@@ -48,13 +48,13 @@ public class RNSStackScreenController: UIViewController {
   public override func viewDidDisappear(_ animated: Bool) {
     reactEventEmitter.emitOnDidDisappear()
   }
-  
+
   public override func didMove(toParent parent: UIViewController?) {
     print("ScreenCtrl [\(self.screen.tag)] didMoveToParent \(String(describing: parent))")
     super.didMove(toParent: parent)
-    
+
     if parent == nil {
-      if (self.screen.activityMode == .detached) {
+      if self.screen.activityMode == .detached {
         reactEventEmitter.emitOnDismiss()
       } else {
         reactEventEmitter.emitOnNativeDismiss()
