@@ -26,4 +26,9 @@ class MainActivity : ReactActivity() {
     supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
     super.onCreate(savedInstanceState)
   }
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    getWindow().setNavigationBarContrastEnforced(false)
+  }
 }
