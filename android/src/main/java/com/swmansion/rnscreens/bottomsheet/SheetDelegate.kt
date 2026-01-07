@@ -303,7 +303,10 @@ class SheetDelegate(
         if (screen.isSheetFitToContents()) {
             val contentHeight = screen.contentWrapper?.height ?: 0
             val offsetFromTop = containerHeight - contentHeight
-            return minOf(offsetFromTop, keyboardHeight)
+            // If the content is higher than the Screen, offsetFromTop becomes negative.
+            // In such cases, we return 0 because a negative translation would shift the Screen
+            // to the bottom, which is not intended.
+            return minOf(maxOf(0, offsetFromTop), keyboardHeight)
         }
 
         val detents = screen.sheetDetents
