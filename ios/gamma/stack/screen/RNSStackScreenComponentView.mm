@@ -7,6 +7,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSStackHostComponentView.h"
 
 #import "Swift-Bridging.h"
 
@@ -105,7 +106,7 @@ namespace react = facebook::react;
 {
   if (_hasUpdatedActivityMode) {
     _hasUpdatedActivityMode = NO;
-    [_controller setActivityModeInvalidated];
+    [self.stackHost stackScreenChangedActivityMode:self];
   }
 
   [super finalizeUpdates:updateMask];

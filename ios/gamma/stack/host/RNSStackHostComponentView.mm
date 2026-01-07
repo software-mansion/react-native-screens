@@ -9,9 +9,12 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSDefines.h"
 
+#import "RNSStackScreenComponentView.h"
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
+
+static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *reactSubviews);
 
 @interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
 @end
@@ -75,6 +78,13 @@ RNS_IGNORE_SUPER_CALL_END
   return _controller;
 }
 
+#pragma mark - Communication with StackScreen
+
+- (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen
+{
+  [_controller setNeedsUpdateOfChildViewControllers];
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -89,6 +99,13 @@ RNS_IGNORE_SUPER_CALL_END
   childScreen.stackHost = self;
   [_reactSubviews insertObject:childScreen atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
+
+  NSLog(
+      @"StackHost [%ld] mount: StackScreen [%ld] (%@) at %ld",
+      self.tag,
+      childComponentView.tag,
+      childScreen.screenKey,
+      index);
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -103,6 +120,13 @@ RNS_IGNORE_SUPER_CALL_END
   [_reactSubviews removeObject:childScreen];
   childScreen.stackHost = nil;
   _hasModifiedReactSubviewsInCurrentTransaction = true;
+
+  NSLog(
+      @"StackHost [%ld] unmount: StackScreen [%ld] (%@) at %ld",
+      self.tag,
+      childComponentView.tag,
+      childScreen.screenKey,
+      index);
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -131,6 +155,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (_hasModifiedReactSubviewsInCurrentTransaction) {
     [_controller setNeedsUpdateOfChildViewControllers];
+    dumpStackHostSubviewsState(_reactSubviews);
   }
   [_controller reactMountingTransactionDidMount];
 }
@@ -140,4 +165,16 @@ RNS_IGNORE_SUPER_CALL_END
 Class<RCTComponentViewProtocol> RNSStackHostCls(void)
 {
   return RNSStackHostComponentView.class;
+}
+
+static void dumpStackHostSubviewsState(NSArray<RNSStackScreenComponentView *> *reactSubviews)
+{
+  NSMutableArray<NSString *> *descs = [[NSMutableArray alloc] initWithCapacity:reactSubviews.count];
+  for (RNSStackScreenComponentView *screen in reactSubviews) {
+    [descs addObject:[NSString stringWithFormat:@"StackScreen [%ld] %@ activityMode=%d",
+                                                screen.tag,
+                                                screen.screenKey,
+                                                screen.activityMode]];
+  }
+  NSLog(@"%@", descs);
 }

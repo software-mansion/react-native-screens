@@ -7,4 +7,8 @@ export {
   bottomTabsDebugLog,
 } from './logging';
 
+// Hooks
+
+export { useRenderDebugInfo } from './hooks/useRenderDebugInfo';
+
 // Components

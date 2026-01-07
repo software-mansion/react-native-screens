@@ -31,11 +31,6 @@ public class RNSStackScreenController: UIViewController {
 
   // MARK: Signals
 
-  @objc
-  public func setActivityModeInvalidated() {
-    findStackController()?.setNeedsUpdateOfChildViewControllers()
-  }
-
   // MARK: Events
 
   public override func viewWillAppear(_ animated: Bool) {
@@ -52,5 +47,18 @@ public class RNSStackScreenController: UIViewController {
 
   public override func viewDidDisappear(_ animated: Bool) {
     reactEventEmitter.emitOnDidDisappear()
+  }
+
+  public override func didMove(toParent parent: UIViewController?) {
+    print("ScreenCtrl [\(self.screen.tag)] didMoveToParent \(String(describing: parent))")
+    super.didMove(toParent: parent)
+
+    if parent == nil {
+      if self.screen.activityMode == .detached {
+        reactEventEmitter.emitOnDismiss()
+      } else {
+        reactEventEmitter.emitOnNativeDismiss()
+      }
+    }
   }
 }
