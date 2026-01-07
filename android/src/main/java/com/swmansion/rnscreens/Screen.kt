@@ -217,6 +217,11 @@ class Screen(
             return
         }
 
+        if (isSheetFitToContents()) {
+            // Force a layout pass to synchronize BottomSheetBehavior's internal offsets with the new maxHeight.
+            requestLayout()
+        }
+
         if (coordinatorLayoutDidChange) {
             dispatchShadowStateUpdate(width, height, top)
         }
