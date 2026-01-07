@@ -14,7 +14,7 @@ struct DoNotUseThis {
   DoNotUseThis(const DoNotUseThis &&other) = delete;
 };
 
-} // namespace do_not_use
+}; // namespace do_not_use
 
 /// Workaround for  `static_assert(false)`. See:
 /// https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2593r0.html#valid-workaround
@@ -24,4 +24,4 @@ struct always_false : std::false_type {};
 template <>
 struct always_false<do_not_use::DoNotUseThis> : std::true_type {};
 
-} // namespace rnscreens
+}; // namespace rnscreens
