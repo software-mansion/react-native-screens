@@ -12,11 +12,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   const [stackState, navActionDispatch]: [StackState, React.Dispatch<NavigationAction>]
     = React.useReducer(navigationStateReducerWithLogging, []);
 
-  const routesByName = React.useMemo(() => {
-    return Object.fromEntries(routeConfigs.map((route) => [route.name, route]));
-  }, [routeConfigs]);
-
-  const navMethods = useStackOperationMethods(navActionDispatch, routeConfigs, routesByName);
+  const navMethods = useStackOperationMethods(navActionDispatch, routeConfigs);
 
   React.useEffect(() => {
     if (stackState.length === 0) {

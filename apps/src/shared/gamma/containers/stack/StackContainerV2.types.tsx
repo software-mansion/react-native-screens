@@ -71,7 +71,6 @@ export type NavigationActionPreload = {
 
 export type NavigationActionContext = {
   routeConfigs: StackRouteConfig[];
-  routesByName: Record<string, StackRouteConfig>;
 };
 
 export type NavigationAction =

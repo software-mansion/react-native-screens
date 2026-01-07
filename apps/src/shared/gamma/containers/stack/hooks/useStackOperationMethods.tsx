@@ -13,14 +13,12 @@ import {
 export function useStackOperationMethods(
   dispatch: React.Dispatch<NavigationAction>,
   routeConfigs: StackRouteConfig[],
-  routesByName: Record<string, StackRouteConfig>,
 ): NavigationActionMethods {
   const actionContext: NavigationActionContext = React.useMemo(() => {
     return {
       routeConfigs,
-      routesByName,
     };
-  }, [routeConfigs, routesByName]);
+  }, [routeConfigs]);
 
   const pushAction: PushActionMethod = React.useCallback(
     (routeName: string) => {
