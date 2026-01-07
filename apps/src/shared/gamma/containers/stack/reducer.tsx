@@ -8,7 +8,7 @@ import type {
   StackRoute,
   StackRouteConfig,
   StackState,
-} from './StackContainerV2.types';
+} from './StackContainer.types';
 import { generateID } from './utils/id-generator';
 
 const NOT_FOUND_INDEX = -1;

@@ -2,10 +2,10 @@ export type {
   StackRouteOptions,
   StackRouteConfig,
   StackContainerProps,
-} from './StackContainerV2.types';
+} from './StackContainer.types';
 
 export type { StackNavigationContextPayload } from './contexts/StackNavigationContext';
 
 export { useStackNavigationContext } from './hooks/useStackNavigationContext';
 
-export { StackContainer } from './StackContainerV2';
+export { StackContainer } from './StackContainer';

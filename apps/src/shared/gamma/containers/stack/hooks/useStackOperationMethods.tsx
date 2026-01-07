@@ -8,7 +8,7 @@ import {
   PopNativeActionMethod,
   PushActionMethod,
   StackRouteConfig,
-} from '../StackContainerV2.types';
+} from '../StackContainer.types';
 
 export function useStackOperationMethods(
   dispatch: React.Dispatch<NavigationAction>,

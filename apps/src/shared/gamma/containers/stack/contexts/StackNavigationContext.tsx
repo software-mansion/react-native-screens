@@ -1,5 +1,5 @@
 import React from "react";
-import type { PopActionMethod, PreloadActionMethod, PushActionMethod } from "../StackContainerV2.types";
+import type { PopActionMethod, PreloadActionMethod, PushActionMethod } from "../StackContainer.types";
 
 export type StackNavigationContextPayload = {
   routeKey: string;

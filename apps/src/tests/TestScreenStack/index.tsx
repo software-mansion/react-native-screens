@@ -1,15 +1,7 @@
 import React from 'react';
 
-// import { generateStackWithNames } from './helper';
-// import { StackContainer } from '../../shared/gamma/containers/stack/StackContainer-legacy';
 import { StackContainer, StackRouteConfig, useStackNavigationContext } from '../../shared/gamma/containers/stack';
 import { Button, Text, View } from 'react-native';
-
-// export default function App() {
-//   return (
-//     <StackContainer pathConfigs={generateStackWithNames(['A', 'B', 'C'])} />
-//   );
-// }
 
 function TemplateScreen() {
   const navigation = useStackNavigationContext();
