@@ -27,6 +27,7 @@ public interface RNSSearchBarManagerInterface<T extends View> extends ViewManage
   void setTextColor(T view, @Nullable Integer value);
   void setAutoFocus(T view, boolean value);
   void setDisableBackButtonOverride(T view, boolean value);
+  void setShowAsAction(T view, @Nullable String value);
   void setInputType(T view, @Nullable String value);
   void setHintTextColor(T view, @Nullable Integer value);
   void setHeaderIconColor(T view, @Nullable Integer value);
