@@ -515,6 +515,7 @@ RNS_IGNORE_SUPER_CALL_END
     _tabBarItemNeedsRecreation = NO;
 
     _tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (_tabBarItemNeedsUpdate) {
@@ -677,7 +678,6 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _systemItem = systemItem;
   _tabBarItemNeedsRecreation = YES;
-  _tabBarItemNeedsA11yUpdate = YES;
 }
 
 - (void)setSpecialEffects:(NSDictionary *)specialEffects

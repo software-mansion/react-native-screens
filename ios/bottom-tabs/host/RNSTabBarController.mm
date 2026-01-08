@@ -187,8 +187,8 @@
 
 - (void)updateTabBarA11yIfNeeded
 {
-  for (RNSTabsScreenViewController *tabViewController in self.viewControllers) {
-    auto screenView = static_cast<RNSBottomTabsScreenComponentView *>(tabViewController.tabScreenComponentView);
+  for (UIViewController *tabViewController in self.viewControllers) {
+    auto screenView = static_cast<RNSTabsScreenViewController *>(tabViewController).tabScreenComponentView;
     if (!screenView.tabBarItemNeedsA11yUpdate) {
       continue;
     }
