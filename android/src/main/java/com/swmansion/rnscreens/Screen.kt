@@ -153,16 +153,20 @@ class Screen(
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents() && sheetBehavior != null) {
                 val oldHeight = sheetBehavior.maxHeight
-                val shouldAnimateContentHeightChange = oldHeight > 0 && oldHeight != height
+                val isInitial = oldHeight == 0
+                val heightChanged = oldHeight != height
 
-                val sheetContentHeightAnimation =
-                    when {
-                        !shouldAnimateContentHeightChange -> FormSheetSizeChangeAnimationType.NONE
-                        sheetContentDefaultResizeAnimationEnabled -> FormSheetSizeChangeAnimationType.DEFAULT
-                        else -> FormSheetSizeChangeAnimationType.CUSTOM
-                    }
+                if (!heightChanged) {
+                    return
+                }
 
-                updateSheetContentHeight(sheetBehavior, oldHeight, height, sheetContentHeightAnimation)
+                if (isInitial) {
+                    setupInitialSheetContentHeight(sheetBehavior, height)
+                } else if (sheetContentDefaultResizeAnimationEnabled) {
+                    updateSheetContentHeightWithDefaultAnimation(sheetBehavior, oldHeight, height)
+                } else {
+                    updateSheetContentHeightWithoutDefaultAnimation(sheetBehavior, height)
+                }
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -178,38 +182,7 @@ class Screen(
         }
     }
 
-    private fun updateSheetContentHeight(
-        sheetBehavior: BottomSheetBehavior<Screen>,
-        oldHeight: Int,
-        newHeight: Int,
-        animationType: FormSheetSizeChangeAnimationType,
-    ) {
-        when (animationType) {
-            FormSheetSizeChangeAnimationType.DEFAULT -> {
-                animateSheetContentHeightChangeWithDefaultAnimation(sheetBehavior, oldHeight, newHeight)
-            }
-            FormSheetSizeChangeAnimationType.CUSTOM -> {
-                updateSheetDetentContentHeight(sheetBehavior, newHeight, animated = true)
-            }
-            FormSheetSizeChangeAnimationType.NONE -> {
-                updateSheetDetentContentHeight(sheetBehavior, newHeight, animated = false)
-            }
-        }
-    }
-
-    private fun updateSheetDetentContentHeight(
-        sheetBehavior: BottomSheetBehavior<Screen>,
-        newHeight: Int,
-        animated: Boolean,
-    ) {
-        if (animated) {
-            updateSheetDetentContentHeightAndLayout(sheetBehavior, newHeight)
-        } else {
-            updateSheetDetentWithoutHeightChangeAnimation(sheetBehavior, newHeight)
-        }
-    }
-
-    private fun animateSheetContentHeightChangeWithDefaultAnimation(
+    private fun updateSheetContentHeightWithDefaultAnimation(
         behavior: BottomSheetBehavior<Screen>,
         oldHeight: Int,
         newHeight: Int,
@@ -284,7 +257,7 @@ class Screen(
         }
     }
 
-    private fun updateSheetDetentContentHeightAndLayout(
+    private fun updateSheetContentHeightWithoutDefaultAnimation(
         behavior: BottomSheetBehavior<Screen>,
         height: Int,
     ) {
@@ -304,7 +277,7 @@ class Screen(
         }
     }
 
-    private fun updateSheetDetentWithoutHeightChangeAnimation(
+    private fun setupInitialSheetContentHeight(
         behavior: BottomSheetBehavior<Screen>,
         height: Int,
     ) {
@@ -761,12 +734,6 @@ class Screen(
         HIDDEN,
         ANIMATED,
         NAVIGATION_BAR_HIDDEN,
-    }
-
-    enum class FormSheetSizeChangeAnimationType {
-        NONE,
-        DEFAULT,
-        CUSTOM,
     }
 
     companion object {
