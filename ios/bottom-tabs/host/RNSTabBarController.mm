@@ -97,6 +97,7 @@
   [self updateReactChildrenControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
+  [self updateTabBarA11yIfNeeded];
   [self updateOrientationIfNeeded];
 }
 
@@ -182,6 +183,20 @@
                                    withHostComponentView:self.tabsHostComponentView
                                     tabScreenControllers:_tabScreenControllers
                                              imageLoader:[self.tabsHostComponentView reactImageLoader]];
+}
+
+- (void)updateTabBarA11yIfNeeded
+{
+  for (UIViewController *tabViewController in self.viewControllers) {
+    auto screenView = static_cast<RNSTabsScreenViewController *>(tabViewController).tabScreenComponentView;
+    if (!screenView.tabBarItemNeedsA11yUpdate) {
+      continue;
+    }
+
+    screenView.tabBarItemNeedsA11yUpdate = NO;
+    tabViewController.tabBarItem.accessibilityIdentifier = screenView.tabItemTestID;
+    tabViewController.tabBarItem.accessibilityLabel = screenView.tabItemAccessibilityLabel;
+  }
 }
 
 #if !defined(NDEBUG)

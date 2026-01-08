@@ -293,6 +293,16 @@ RNS_IGNORE_SUPER_CALL_END
     tabBarItemNeedsUpdate = YES;
   }
 
+  if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
+    _tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
+    _tabBarItemNeedsA11yUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
+    _tabItemAccessibilityLabel = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
+    _tabBarItemNeedsA11yUpdate = YES;
+  }
+
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
     _standardAppearance = [UITabBarAppearance new];
     [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
@@ -412,6 +422,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (tabBarItemNeedsRecreation) {
     [self createTabBarItem];
     tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (tabBarItemNeedsUpdate) {
@@ -504,6 +515,7 @@ RNS_IGNORE_SUPER_CALL_END
     _tabBarItemNeedsRecreation = NO;
 
     _tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (_tabBarItemNeedsUpdate) {
@@ -557,6 +569,18 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
   _tabBarItemNeedsUpdate = YES;
+}
+
+- (void)setTabBarItemTestID:(NSString *)tabBarItemTestID
+{
+  _tabItemTestID = tabBarItemTestID;
+  _tabBarItemNeedsA11yUpdate = YES;
+}
+
+- (void)setTabBarItemAccessibilityLabel:(NSString *)tabBarItemAccessibilityLabel
+{
+  _tabItemAccessibilityLabel = tabBarItemAccessibilityLabel;
+  _tabBarItemNeedsA11yUpdate = YES;
 }
 
 - (void)setIconType:(RNSBottomTabsIconType)iconType

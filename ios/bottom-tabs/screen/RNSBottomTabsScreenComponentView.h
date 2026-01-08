@@ -64,6 +64,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) NSString *tabKey;
 @property (nonatomic, nullable) NSString *badgeValue;
 
+@property (nonatomic, nullable) NSString *tabBarItemTestID;
+@property (nonatomic, nullable) NSString *tabBarItemAccessibilityLabel;
+
 @property (nonatomic, readonly) RNSBottomTabsIconType iconType;
 
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *iconImageSource;
@@ -83,6 +86,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;
 
 @property (nonatomic, readonly) BOOL overrideScrollViewContentInsetAdjustmentBehavior;
+
+@property (nonatomic, nullable) NSString *tabItemTestID;
+@property (nonatomic, nullable) NSString *tabItemAccessibilityLabel;
+@property (nonatomic) BOOL tabBarItemNeedsA11yUpdate;
 
 @property (nonatomic) RNSScrollEdgeEffect bottomScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
