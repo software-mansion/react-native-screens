@@ -32,10 +32,9 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
   auto newRootProps =
       std::static_pointer_cast<const RootProps>(newRootShadowNode->getProps());
 
-  const bool wasHorizontal = isHorizontal_(*oldRootProps);
-  const bool willBeHorizontal = isHorizontal_(*newRootProps);
-
-  if (wasHorizontal != willBeHorizontal) {
+  // Check if screen area has changed size (either because of orientation
+  // change, or application resize with floating window / split screen)
+  if (_screenSizeChanged(*oldRootProps, *newRootProps)) {
     return newRootShadowNodeWithScreenFrameSizesReset(newRootShadowNode);
   }
 
