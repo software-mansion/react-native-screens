@@ -626,6 +626,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)notifyWillDisappear
 {
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"RNSScreenViewWillDisappear" object:self userInfo:nil];
+
   if (_hideKeyboardOnSwipe) {
     [self endEditing:YES];
   }
