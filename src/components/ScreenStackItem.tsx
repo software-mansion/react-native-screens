@@ -229,7 +229,7 @@ function getPositioningStyle(
 
   // Other platforms, tested reliably only on Android
   if (allowedDetents === 'fitToContents') {
-    return {};
+    return styles.absoluteWithNoBottom;
   }
 
   return styles.container;
