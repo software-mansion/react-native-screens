@@ -163,9 +163,9 @@ class Screen(
                 if (isInitial) {
                     setupInitialSheetContentHeight(sheetBehavior, height)
                 } else if (sheetContentDefaultResizeAnimationEnabled) {
-                    updateSheetContentHeightWithDefaultAnimation(sheetBehavior, oldHeight, height)
+                    updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
                 } else {
-                    updateSheetContentHeightWithoutDefaultAnimation(sheetBehavior, height)
+                    updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
                 }
             }
 
@@ -182,7 +182,7 @@ class Screen(
         }
     }
 
-    private fun updateSheetContentHeightWithDefaultAnimation(
+    private fun updateSheetContentHeightWithAnimation(
         behavior: BottomSheetBehavior<Screen>,
         oldHeight: Int,
         newHeight: Int,
@@ -257,7 +257,7 @@ class Screen(
         }
     }
 
-    private fun updateSheetContentHeightWithoutDefaultAnimation(
+    private fun updateSheetContentHeightWithoutAnimation(
         behavior: BottomSheetBehavior<Screen>,
         height: Int,
     ) {
