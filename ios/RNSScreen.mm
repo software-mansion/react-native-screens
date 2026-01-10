@@ -41,6 +41,7 @@
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
+#import "integrations/RNSLifecycleListenerProtocol.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -76,6 +77,7 @@ struct ContentWrapperBox {
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
   BOOL _shouldUpdateScrollEdgeEffects;
+  RNSScreen *_controllerBeforeInvalidate;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -630,6 +632,26 @@ RNS_IGNORE_SUPER_CALL_END
   if (_hideKeyboardOnSwipe) {
     [self endEditing:YES];
   }
+
+  // Notify any presented view controllers that conform to RNSLifecycleListenerProtocol
+  RNSScreen *controller = _controller ?: _controllerBeforeInvalidate;
+  if (controller) {
+    UIViewController *presented = controller.presentedViewController;
+    while (presented) {
+      UIViewController *next = presented.presentedViewController;
+      if ([presented conformsToProtocol:@protocol(RNSLifecycleListenerProtocol)]) {
+        BOOL isPresenterUnmounting = NO;
+        RNSScreen *presenter = (RNSScreen *)presented.presentingViewController;
+        if ([presenter isKindOfClass:[RNSScreen class]]) {
+          isPresenterUnmounting = presenter.screenView.isMarkedForUnmountInCurrentTransaction;
+        }
+        [(id<RNSLifecycleListenerProtocol>)presented screenWillDisappear:controller
+                                                   isPresenterUnmounting:isPresenterUnmounting];
+      }
+      presented = next;
+    }
+  }
+
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   if (_eventEmitter != nullptr) {
@@ -965,6 +987,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)invalidateImpl
 {
+  if (_controller && !_controllerBeforeInvalidate) {
+    _controllerBeforeInvalidate = _controller;
+  }
   _controller = nil;
   [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
