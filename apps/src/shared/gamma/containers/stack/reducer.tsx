@@ -64,24 +64,22 @@ function navigationActionPushHandler(
 ): StackState {
   // 1 - Check whether the route is already rendered
   const renderedRouteIndex = state.findIndex(
-    route => route.name === action.routeName,
+    route => route.name === action.routeName && route.activityMode === 'detached',
   );
 
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
     const route = state[renderedRouteIndex];
 
-    if (route.activityMode === 'detached') {
-      console.info(
-        `[Stack] Route ${route.name} already rendered, attaching it`,
-      );
-      const newState = state.toSpliced(renderedRouteIndex, 1);
-      const routeCopy = { ...route };
-      routeCopy.activityMode = 'attached';
-      // Please note that we are pushing the route copy to the end of the array,
-      // to mitigate potential issues with element inspector and state restoration.
-      newState.push(routeCopy);
-      return newState;
-    }
+    console.info(
+      `[Stack] Route ${route.name} already rendered, attaching it`,
+    );
+    const newState = state.toSpliced(renderedRouteIndex, 1);
+    const routeCopy = { ...route };
+    routeCopy.activityMode = 'attached';
+    // Please note that we are pushing the route copy to the end of the array,
+    // to mitigate potential issues with element inspector and state restoration.
+    newState.push(routeCopy);
+    return newState;
   }
 
   // 2 - Try to render new route
