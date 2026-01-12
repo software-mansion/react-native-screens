@@ -77,6 +77,8 @@ function navigationActionPushHandler(
       const newState = state.toSpliced(renderedRouteIndex, 1);
       const routeCopy = { ...route };
       routeCopy.activityMode = 'attached';
+      // Please note that we are pushing the route copy to the end of the array,
+      // to mitigate potential issues with element inspector and state restoration.
       newState.push(routeCopy);
       return newState;
     }
