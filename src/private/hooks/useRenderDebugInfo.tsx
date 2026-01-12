@@ -3,6 +3,9 @@ import { findNodeHandle, ReactNativeElement } from 'react-native';
 
 export type NativeComponentGenericRef = React.Component & ReactNativeElement;
 
+// A hook that logs information when component is rendered, mounted and unmounted.
+// It returns a ref that can be passed to a component instance in order to
+// enrich the logging information with the component's node handle.
 export function useRenderDebugInfo<RefType extends React.Component>(
   componentName: string,
 ) {
