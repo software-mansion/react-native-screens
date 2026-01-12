@@ -4,13 +4,15 @@
 
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSStackScreenComponentView.h"
+#import "always_false.h"
 
 namespace rnscreens::conversion {
 
 template <typename TargetType, typename InputType>
 TargetType convert(InputType) {
   static_assert(
-      false, "[RNScreens] Missing template specialisation for demanded types!");
+      rnscreens::always_false<TargetType>::value,
+      "[RNScreens] Missing template specialisation for demanded types!");
 }
 
 template <>
