@@ -384,6 +384,32 @@ export interface BottomTabsScreenProps {
   freezeContents?: boolean;
   // #endregion General
 
+  // #region Accessibility
+
+  /**
+   * @summary testID for the BottomTabScreen
+   */
+  testID?: string;
+
+  /**
+   * @summary accessibilityLabel for the BottomTabScreen
+   */
+  accessibilityLabel?: string;
+
+  /**
+   * @summary testID for the TabBarItem
+   */
+  tabBarItemTestID?: string;
+
+  /**
+   * @summary accessibilityLabel for the TabBarItem
+   *
+   * @supported iOS, Android API level >=26
+   */
+  tabBarItemAccessibilityLabel?: string;
+
+  // #endregion Accessibility
+
   // #region Android-only
   /**
    * @summary Specifies the color of the text in the badge.

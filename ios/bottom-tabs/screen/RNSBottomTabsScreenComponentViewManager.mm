@@ -24,6 +24,9 @@ RCT_EXPORT_VIEW_PROPERTY(title, NSString);
 RCT_EXPORT_VIEW_PROPERTY(orientation, RNSOrientation);
 RCT_EXPORT_VIEW_PROPERTY(badgeValue, NSString);
 
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemTestID, NSString);
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemAccessibilityLabel, NSString);
+
 RCT_EXPORT_VIEW_PROPERTY(standardAppearance, NSDictionary);
 RCT_EXPORT_VIEW_PROPERTY(scrollEdgeAppearance, NSDictionary);
 

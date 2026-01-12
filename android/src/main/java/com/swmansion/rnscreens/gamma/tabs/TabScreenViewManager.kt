@@ -181,6 +181,22 @@ class TabScreenViewManager :
         value: String?,
     ) = Unit
 
+    @ReactProp(name = "tabBarItemTestID")
+    override fun setTabBarItemTestID(
+        view: TabScreen,
+        value: String?,
+    ) {
+        view.tabBarItemTestID = value
+    }
+
+    @ReactProp(name = "tabBarItemAccessibilityLabel")
+    override fun setTabBarItemAccessibilityLabel(
+        view: TabScreen,
+        value: String?,
+    ) {
+        view.tabBarItemAccessibilityLabel = value
+    }
+
     // Android specific
     @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
     override fun setTabBarItemBadgeTextColor(
