@@ -89,7 +89,6 @@ function useSanitizeRouteConfigs(
 
   // Do not recompute in case the routeConfigs have hot changed
   const areNamesUnique = React.useMemo(() => {
-    console.warn('CHECKING ROUTE NAMES');
     const routeNames = routeConfigs.map(routeConfig => routeConfig.name);
     const uniqueRouteNames = new Set(routeNames);
     return routeNames.length === uniqueRouteNames.size;
