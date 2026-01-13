@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, useColorScheme } from 'react-native';
 import { ListItem, SettingsSwitch } from '../shared';
 import { ScreensDarkTheme, ScreensLightTheme } from '../shared/styling/adapter/react-navigation';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SCREENS: Record<
   string,
@@ -90,24 +91,26 @@ function MainScreen (props: { navigation: NavigationProp<LegacyTestStackParamLis
   const filteredTests = screens.filter(searchFilter);
 
   return (
-    <ScrollView testID="legacy-tests-scrollview" contentInsetAdjustmentBehavior="automatic">
-      <SettingsSwitch
-        style={styles.switch}
-        label="Search bar"
-        value={searchBarEnabled}
-        onValueChange={() => setSearchBarEnabled(!searchBarEnabled)}
-        testID="legacy-tests-search-bar"
-      />
-        {filteredTests.map(name => (
-          <ListItem
-            key={name}
-            testID={`legacy-tests-${name}`}
-            title={SCREENS[name].title}
-            onPress={() => navigation.navigate(name)}
-            disabled={false}
-          />
-        ))}
-    </ScrollView>
+    <SafeAreaView edges={{ top: 'off', bottom: 'maximum' }}>
+      <ScrollView testID="legacy-tests-scrollview">
+        <SettingsSwitch
+          style={styles.switch}
+          label="Search bar"
+          value={searchBarEnabled}
+          onValueChange={() => setSearchBarEnabled(!searchBarEnabled)}
+          testID="legacy-tests-search-bar"
+        />
+          {filteredTests.map(name => (
+            <ListItem
+              key={name}
+              testID={`legacy-tests-${name}`}
+              title={SCREENS[name].title}
+              onPress={() => navigation.navigate(name)}
+              disabled={false}
+            />
+          ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

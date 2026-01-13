@@ -38,6 +38,7 @@ import { ScreensDarkTheme, ScreensLightTheme } from './src/shared/styling/adapte
 import LegacyTestsScreen from './src/tests/LegacyTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
 import ComponentIntegrationTests from './src/tests/component-integration-tests';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
@@ -157,67 +158,69 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const isDark = useTheme().dark;
 
   return (
-    <ScrollView testID="root-screen-examples-scrollview" contentInsetAdjustmentBehavior="automatic">
-      <SettingsSwitch
-        style={styles.switch}
-        label="Right to left"
-        value={I18nManager.isRTL}
-        onValueChange={() => {
-          I18nManager.forceRTL(!I18nManager.isRTL);
-          RNRestart.Restart();
-        }}
-        testID="root-screen-switch-rtl"
-      />
-      <SettingsSwitch
-        style={styles.switch}
-        label="Dark mode"
-        value={isDark}
-        onValueChange={toggleTheme}
-      />
-      <ThemedText style={styles.label} testID="root-screen-examples-header">
-        Examples
-      </ThemedText>
-      {examples.map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-example-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-          disabled={!isPlatformReady(name)}
+    <SafeAreaView edges={{ top: 'off', bottom: 'maximum' }}>
+      <ScrollView testID="root-screen-examples-scrollview">
+        <SettingsSwitch
+          style={styles.switch}
+          label="Right to left"
+          value={I18nManager.isRTL}
+          onValueChange={() => {
+            I18nManager.forceRTL(!I18nManager.isRTL);
+            RNRestart.Restart();
+          }}
+          testID="root-screen-switch-rtl"
         />
-      ))}
-      <ThemedText style={styles.label}>Playgrounds</ThemedText>
-      {playgrounds.map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-playground-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-          disabled={!isPlatformReady(name)}
+        <SettingsSwitch
+          style={styles.switch}
+          label="Dark mode"
+          value={isDark}
+          onValueChange={toggleTheme}
         />
-      ))}
-      <ThemedText style={styles.label}>Single Feature Tests</ThemedText>
-      <ListItem
-        key="SingleFeatureTests"
-        testID="root-screen-single-feature-tests"
-        title="Single Feature Tests"
-        onPress={() => navigation.navigate("SingleFeatureTests")}
-      />
-      <ThemedText style={styles.label}>Component Integration Tests</ThemedText>
-      <ListItem
-        key="ComponentIntegrationTests"
-        testID="root-screen-component-integration-tests"
-        title="Component Integration Tests"
-        onPress={() => navigation.navigate("ComponentIntegrationTests")}
-      />
-      <ThemedText style={styles.label}>Legacy Tests</ThemedText>
-      <ListItem
-        key="LegacyTests"
-        testID="root-screen-legacy-tests"
-        title="Legacy Tests"
-        onPress={() => navigation.navigate("LegacyTests")}
-      />
-    </ScrollView>
+        <ThemedText style={styles.label} testID="root-screen-examples-header">
+          Examples
+        </ThemedText>
+        {examples.map(name => (
+          <ListItem
+            key={name}
+            testID={`root-screen-example-${name}`}
+            title={SCREENS[name].title}
+            onPress={() => navigation.navigate(name)}
+            disabled={!isPlatformReady(name)}
+          />
+        ))}
+        <ThemedText style={styles.label}>Playgrounds</ThemedText>
+        {playgrounds.map(name => (
+          <ListItem
+            key={name}
+            testID={`root-screen-playground-${name}`}
+            title={SCREENS[name].title}
+            onPress={() => navigation.navigate(name)}
+            disabled={!isPlatformReady(name)}
+          />
+        ))}
+        <ThemedText style={styles.label}>Single Feature Tests</ThemedText>
+        <ListItem
+          key="SingleFeatureTests"
+          testID="root-screen-single-feature-tests"
+          title="Single Feature Tests"
+          onPress={() => navigation.navigate("SingleFeatureTests")}
+        />
+        <ThemedText style={styles.label}>Component Integration Tests</ThemedText>
+        <ListItem
+          key="ComponentIntegrationTests"
+          testID="root-screen-component-integration-tests"
+          title="Component Integration Tests"
+          onPress={() => navigation.navigate("ComponentIntegrationTests")}
+        />
+        <ThemedText style={styles.label}>Legacy Tests</ThemedText>
+        <ListItem
+          key="LegacyTests"
+          testID="root-screen-legacy-tests"
+          title="Legacy Tests"
+          onPress={() => navigation.navigate("LegacyTests")}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
