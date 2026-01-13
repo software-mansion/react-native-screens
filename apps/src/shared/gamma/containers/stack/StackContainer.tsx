@@ -6,7 +6,10 @@ import type {
   StackRouteConfig,
   StackState,
 } from './StackContainer.types';
-import { navigationStateReducerWithLogging } from './reducer';
+import {
+  createRouteFromConfig,
+  navigationStateReducerWithLogging,
+} from './reducer';
 import { useStackOperationMethods } from './hooks/useStackOperationMethods';
 import {
   StackNavigationContext,
@@ -23,15 +26,13 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   const [stackState, navActionDispatch]: [
     StackState,
     React.Dispatch<NavigationAction>,
-  ] = React.useReducer(navigationStateReducerWithLogging, []);
+  ] = React.useReducer(
+    navigationStateReducerWithLogging,
+    routeConfigs,
+    determineFirstRoute,
+  );
 
   const navMethods = useStackOperationMethods(navActionDispatch, routeConfigs);
-
-  React.useEffect(() => {
-    if (stackState.length === 0) {
-      navMethods.pushAction(routeConfigs[0].name);
-    }
-  }, [navMethods, routeConfigs, stackState.length]);
 
   const hostRef =
     useRenderDebugInfo<NativeComponentGenericRef>('StackContainer');
@@ -97,4 +98,10 @@ function useSanitizeRouteConfigs(
   if (!areNamesUnique) {
     throw new Error('[RNScreens] All routes must have unique names');
   }
+}
+
+function determineFirstRoute(routeConfigs: StackRouteConfig[]): StackState {
+  const firstRoute = createRouteFromConfig(routeConfigs[0]);
+  firstRoute.activityMode = 'attached';
+  return [firstRoute];
 }

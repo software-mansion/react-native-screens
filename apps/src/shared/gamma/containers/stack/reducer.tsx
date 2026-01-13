@@ -139,7 +139,7 @@ function navigationActionPopHandler(
   }
 
   const newState = [...state];
-  // FIXME: This modifes existing state, possibly impacting calculations done before new state is updated.
+  // NOTE: This modifes existing state, possibly impacting calculations done before new state is updated.
   // Consider doing deep copy of the state here.
   // EDIT: not sure really whether this is really a problem or not, since the updates are queued
   // and the original state won't be immediatelly affected.
@@ -222,7 +222,7 @@ function navigationActionPreloadHandler(
   return [...state, createRouteFromConfig(routeConfig)];
 }
 
-function createRouteFromConfig(config: StackRouteConfig): StackRoute {
+export function createRouteFromConfig(config: StackRouteConfig): StackRoute {
   return {
     ...config,
     activityMode: 'detached',
