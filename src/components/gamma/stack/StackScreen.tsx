@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import StackScreenNativeComponent from '../../../fabric/gamma/stack/StackScreenNativeComponent';
-import { StackScreenProps } from './StackScreen.types';
+import { OnDismissEvent, StackScreenProps } from './StackScreen.types';
 import { useRenderDebugInfo } from '../../../private/';
 
 /**
@@ -20,13 +20,16 @@ function StackScreen({
   onDismiss,
   onNativeDismiss,
 }: StackScreenProps) {
-  const onDismissWrapper = React.useCallback(() => {
-    onDismiss?.(screenKey);
-  }, [onDismiss, screenKey]);
-
-  const onNativeDismissWrapper = React.useCallback(() => {
-    onNativeDismiss?.(screenKey);
-  }, [onNativeDismiss, screenKey]);
+  const onDismissWrapper = React.useCallback(
+    (event: OnDismissEvent) => {
+      if (event.nativeEvent.isNativeDismiss) {
+        onNativeDismiss?.(screenKey);
+      } else {
+        onDismiss?.(screenKey);
+      }
+    },
+    [onDismiss, onNativeDismiss, screenKey],
+  );
 
   const componentRef = useRenderDebugInfo(
     React.useMemo(() => `StackScreen (${screenKey})`, [screenKey]),
@@ -45,8 +48,7 @@ function StackScreen({
       onDidAppear={onDidAppear}
       onWillDisappear={onWillDisappear}
       onDidDisappear={onDidDisappear}
-      onDismiss={onDismissWrapper}
-      onNativeDismiss={onNativeDismissWrapper}>
+      onDismiss={onDismissWrapper}>
       {children}
     </StackScreenNativeComponent>
   );

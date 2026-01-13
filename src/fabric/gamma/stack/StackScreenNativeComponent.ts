@@ -6,6 +6,10 @@ import { codegenNativeComponent } from 'react-native';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
+type OnDismissEventPayload = Readonly<{
+  isNativeDismiss: boolean;
+}>;
+
 type ActivityMode = 'detached' | 'attached';
 
 export interface NativeProps extends ViewProps {
@@ -22,8 +26,7 @@ export interface NativeProps extends ViewProps {
   onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
 
-  onDismiss?: CT.DirectEventHandler<GenericEmptyEvent>;
-  onNativeDismiss?: CT.DirectEventHandler<GenericEmptyEvent>;
+  onDismiss?: CT.DirectEventHandler<OnDismissEventPayload>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackScreen', {});

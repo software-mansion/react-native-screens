@@ -55,7 +55,7 @@
 - (BOOL)emitOnDismiss
 {
   if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onDismiss({});
+    _reactEventEmitter->onDismiss({.isNativeDismiss = false});
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnDismissed event emission due to nullish emitter");
@@ -66,10 +66,10 @@
 - (BOOL)emitOnNativeDismiss
 {
   if (_reactEventEmitter != nullptr) {
-    _reactEventEmitter->onNativeDismiss({});
+    _reactEventEmitter->onDismiss({.isNativeDismiss = true});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped onNativeDismiss event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnDismiss (native) event emission due to nullish emitter");
     return NO;
   }
 }

@@ -1,11 +1,17 @@
 import { NativeSyntheticEvent, ViewProps } from 'react-native';
 
-export type GenericEmptyEvent = Record<string, never>;
+export type OnDismissEventPayload = {
+  isNativeDismiss: boolean;
+};
+
+export type EmptyEventPayload = Record<string, never>;
+
+export type OnDismissEvent = NativeSyntheticEvent<OnDismissEventPayload>;
 
 export type StackScreenActivityMode = 'detached' | 'attached';
 
 export type StackScreenEventHandler = (
-  event: NativeSyntheticEvent<GenericEmptyEvent>,
+  event: NativeSyntheticEvent<EmptyEventPayload>,
 ) => void;
 
 export type StackScreenProps = {
