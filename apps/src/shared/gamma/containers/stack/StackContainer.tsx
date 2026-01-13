@@ -1,16 +1,29 @@
-import React from "react";
-import { Stack } from "react-native-screens/experimental";
-import type { NavigationAction, StackContainerProps, StackRouteConfig, StackState } from "./StackContainer.types";
-import { navigationStateReducerWithLogging } from "./reducer";
-import { useStackOperationMethods } from "./hooks/useStackOperationMethods";
-import { StackNavigationContext, type StackNavigationContextPayload } from "./contexts/StackNavigationContext";
-import { type NativeComponentGenericRef, useRenderDebugInfo } from "react-native-screens/private";
+import React from 'react';
+import { Stack } from 'react-native-screens/experimental';
+import type {
+  NavigationAction,
+  StackContainerProps,
+  StackRouteConfig,
+  StackState,
+} from './StackContainer.types';
+import { navigationStateReducerWithLogging } from './reducer';
+import { useStackOperationMethods } from './hooks/useStackOperationMethods';
+import {
+  StackNavigationContext,
+  type StackNavigationContextPayload,
+} from './contexts/StackNavigationContext';
+import {
+  type NativeComponentGenericRef,
+  useRenderDebugInfo,
+} from 'react-native-screens/private';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
-  requireRouteConfigs(routeConfigs);
+  useSanitizeRouteConfigs(routeConfigs);
 
-  const [stackState, navActionDispatch]: [StackState, React.Dispatch<NavigationAction>]
-    = React.useReducer(navigationStateReducerWithLogging, []);
+  const [stackState, navActionDispatch]: [
+    StackState,
+    React.Dispatch<NavigationAction>,
+  ] = React.useReducer(navigationStateReducerWithLogging, []);
 
   const navMethods = useStackOperationMethods(navActionDispatch, routeConfigs);
 
@@ -20,17 +33,24 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
     }
   }, [navMethods, routeConfigs, stackState.length]);
 
-  const hostRef = useRenderDebugInfo<NativeComponentGenericRef>('StackContainer');
+  const hostRef =
+    useRenderDebugInfo<NativeComponentGenericRef>('StackContainer');
 
-  const onScreenDismissed = React.useCallback((screenKey: string) => {
-    console.log(`onScreenDismissed for ${screenKey}`);
-    navMethods.popCompletedAction(screenKey);
-  }, [navMethods]);
+  const onScreenDismissed = React.useCallback(
+    (screenKey: string) => {
+      console.log(`onScreenDismissed for ${screenKey}`);
+      navMethods.popCompletedAction(screenKey);
+    },
+    [navMethods],
+  );
 
-  const onScreenNativelyDismissed = React.useCallback((screenKey: string) => {
-    console.log(`onScreenNativelyDismissed for ${screenKey}`);
-    navMethods.popNativeAction(screenKey);
-  }, [navMethods]);
+  const onScreenNativelyDismissed = React.useCallback(
+    (screenKey: string) => {
+      console.log(`onScreenNativelyDismissed for ${screenKey}`);
+      navMethods.popNativeAction(screenKey);
+    },
+    [navMethods],
+  );
 
   return (
     <Stack.Host ref={hostRef}>
@@ -43,10 +63,13 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
         };
 
         return (
-          <Stack.Screen key={routeKey} {...options} activityMode={activityMode} screenKey={routeKey}
+          <Stack.Screen
+            key={routeKey}
+            {...options}
+            activityMode={activityMode}
+            screenKey={routeKey}
             onDismiss={onScreenDismissed}
-            onNativeDismiss={onScreenNativelyDismissed}
-          >
+            onNativeDismiss={onScreenNativelyDismissed}>
             <StackNavigationContext.Provider value={stackNavigationContext}>
               <Component />
             </StackNavigationContext.Provider>
@@ -55,12 +78,24 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
       })}
     </Stack.Host>
   );
-};
+}
 
-function requireRouteConfigs(routeConfigs?: StackRouteConfig[] | undefined | null) {
+function useSanitizeRouteConfigs(
+  routeConfigs?: StackRouteConfig[] | undefined | null,
+) {
   if (!routeConfigs || routeConfigs.length === 0) {
     throw new Error('[RNScreens] There must be at least one route configured');
   }
+
+  // Do not recompute in case the routeConfigs have hot changed
+  const areNamesUnique = React.useMemo(() => {
+    console.warn('CHECKING ROUTE NAMES');
+    const routeNames = routeConfigs.map(routeConfig => routeConfig.name);
+    const uniqueRouteNames = new Set(routeNames);
+    return routeNames.length === uniqueRouteNames.size;
+  }, [routeConfigs]);
+
+  if (!areNamesUnique) {
+    throw new Error('[RNScreens] All routes must have unique names');
+  }
 }
-
-
