@@ -64,15 +64,14 @@ function navigationActionPushHandler(
 ): StackState {
   // 1 - Check whether the route is already rendered
   const renderedRouteIndex = state.findIndex(
-    route => route.name === action.routeName && route.activityMode === 'detached',
+    route =>
+      route.name === action.routeName && route.activityMode === 'detached',
   );
 
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
     const route = state[renderedRouteIndex];
 
-    console.info(
-      `[Stack] Route ${route.name} already rendered, attaching it`,
-    );
+    console.info(`[Stack] Route ${route.name} already rendered, attaching it`);
     const newState = state.toSpliced(renderedRouteIndex, 1);
     const routeCopy = { ...route };
     routeCopy.activityMode = 'attached';
@@ -210,7 +209,7 @@ function navigationActionPreloadHandler(
   action: NavigationActionPreload,
 ): StackState {
   const routeConfig = action.ctx.routeConfigs.find(
-    routeConfig => routeConfig.name === action.routeName,
+    config => config.name === action.routeName,
   );
 
   if (!routeConfig) {
