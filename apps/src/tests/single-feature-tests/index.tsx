@@ -3,12 +3,12 @@ import { ScrollView } from 'react-native';
 import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import BottomTabsScenarios from './BottomTabs';
-import BottomTabsScreenScenarios from './BottomTabsScreen';
-import SplitHostScenarios from './SplitHost';
-import SplitScreenScenarios from './SplitScreen';
-import StackHostScenarios from './StackHost';
-import StackScreenScenarios from './StackScreen';
+import BottomTabsScenarios from './bottom-tabs';
+import BottomTabsScreenScenarios from './bottom-tabs-screen';
+import SplitHostScenarios from './split-host';
+import SplitScreenScenarios from './split-screen';
+import StackHostScenarios from './stack-host';
+import StackScreenScenarios from './stack-screen';
 import { Scenario } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 
