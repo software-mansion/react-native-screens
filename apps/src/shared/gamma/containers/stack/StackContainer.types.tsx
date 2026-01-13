@@ -8,7 +8,7 @@ export type StackRouteOptions = Omit<
 
 export type StackRouteConfig = {
   name: string;
-  Component: () => React.ReactNode;
+  Component: React.ComponentType;
   options: StackRouteOptions;
 };
 
