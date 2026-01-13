@@ -17,7 +17,6 @@ function StackScreen({
   onWillDisappear,
   onDidAppear,
   onDidDisappear,
-  // Custom events
   onDismiss,
   onNativeDismiss,
 }: StackScreenProps) {

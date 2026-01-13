@@ -21,7 +21,6 @@ export type StackScreenProps = {
   onWillDisappear?: StackScreenEventHandler;
   onDidDisappear?: StackScreenEventHandler;
 
-  // Custom events
   onDismiss?: (screenKey: string) => void;
   onNativeDismiss?: (screenKey: string) => void;
 };
