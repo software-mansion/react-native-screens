@@ -230,6 +230,14 @@ export function createRouteFromConfig(config: StackRouteConfig): StackRoute {
   };
 }
 
+export function determineFirstRoute(
+  routeConfigs: StackRouteConfig[],
+): StackState {
+  const firstRoute = createRouteFromConfig(routeConfigs[0]);
+  firstRoute.activityMode = 'attached';
+  return [firstRoute];
+}
+
 function generateRouteKeyForRouteName(routeName: string): string {
   return `r-${routeName}-${generateID()}`;
 }

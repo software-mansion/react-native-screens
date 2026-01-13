@@ -7,7 +7,7 @@ import type {
   StackState,
 } from './StackContainer.types';
 import {
-  createRouteFromConfig,
+  determineFirstRoute,
   navigationStateReducerWithLogging,
 } from './reducer';
 import { useStackOperationMethods } from './hooks/useStackOperationMethods';
@@ -98,10 +98,4 @@ function useSanitizeRouteConfigs(
   if (!areNamesUnique) {
     throw new Error('[RNScreens] All routes must have unique names');
   }
-}
-
-function determineFirstRoute(routeConfigs: StackRouteConfig[]): StackState {
-  const firstRoute = createRouteFromConfig(routeConfigs[0]);
-  firstRoute.activityMode = 'attached';
-  return [firstRoute];
 }
