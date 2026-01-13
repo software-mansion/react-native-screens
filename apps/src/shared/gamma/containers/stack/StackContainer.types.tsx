@@ -16,8 +16,6 @@ export type StackContainerProps = {
   routeConfigs: StackRouteConfig[];
 };
 
-// Possibly private?
-
 export type StackRoute = StackRouteConfig & {
   activityMode: StackScreenProps['activityMode'];
   routeKey: StackScreenProps['screenKey'];
