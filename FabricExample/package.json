@@ -25,7 +25,7 @@
     "@react-navigation/stack": "link:../react-navigation/packages/stack/",
     "nanoid": "^4.0.2",
     "react": "19.2.0",
-    "react-native": "0.83.0-rc.4",
+    "react-native": "patch:react-native@npm%3A0.83.0-rc.4#~/.yarn/patches/react-native-npm-0.83.0-rc.4-57ab456d66.patch",
     "react-native-edge-to-edge": "^1.6.0",
     "react-native-gesture-handler": "^2.29.0",
     "react-native-reanimated": "~4.2.0",
