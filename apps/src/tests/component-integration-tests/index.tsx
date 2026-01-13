@@ -5,8 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Scenario } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 
-import OrientationScenarios from './Orientation';
-import ScrollViewScenarios from './ScrollView';
+import OrientationScenarios from './orientation';
+import ScrollViewScenarios from './scroll-view';
 
 function HomeScreen() {
   return (
