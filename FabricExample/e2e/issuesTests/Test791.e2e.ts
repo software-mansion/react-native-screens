@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
 
 // issue related to iOS
 describeIfiOS('Test791', () => {
@@ -8,7 +8,7 @@ describeIfiOS('Test791', () => {
   });
 
   it('Test791 should exist', async () => {
-    await selectTestScreen('Test791');
+    await selectIssueTestScreen('Test791');
   });
 
   it('the app should not crash after quickly pushing multiple card screens behind the modal', async () => {

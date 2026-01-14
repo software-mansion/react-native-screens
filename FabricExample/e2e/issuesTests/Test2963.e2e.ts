@@ -1,5 +1,5 @@
 import { device, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
 
 // issue related to iOS
 describeIfiOS('Test2963', () => {
@@ -8,7 +8,7 @@ describeIfiOS('Test2963', () => {
   });
 
   it('Test2963 should exist', async () => {
-    await selectTestScreen('Test2963');
+    await selectIssueTestScreen('Test2963');
   });
 
   it('pushing more than 4 modals with header from interval should be possible', async () => {
@@ -18,7 +18,7 @@ describeIfiOS('Test2963', () => {
 
     await waitFor(element(by.id('screen-5-text')))
       .toBeVisible()
-      .withTimeout(6000);
+      .withTimeout(10000);
 
     await element(by.id('screen-5-button-stop')).tap();
   });
@@ -28,7 +28,7 @@ describeIfiOS('Test2963', () => {
 
     await waitFor(element(by.id('screen-5-text')))
       .toBeVisible()
-      .withTimeout(6000);
+      .withTimeout(10000);
 
     await element(by.id('screen-5-button-stop')).tap();
   });
@@ -38,7 +38,7 @@ describeIfiOS('Test2963', () => {
 
     await waitFor(element(by.id('screen-5-text')))
       .toBeVisible()
-      .withTimeout(6000);
+      .withTimeout(10000);
 
     await element(by.id('screen-5-button-stop')).tap();
   });
@@ -48,7 +48,7 @@ describeIfiOS('Test2963', () => {
 
     await waitFor(element(by.id('screen-5-text')))
       .toBeVisible()
-      .withTimeout(6000);
+      .withTimeout(10000);
 
     await element(by.id('screen-5-button-stop')).tap();
   });

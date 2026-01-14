@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
 
 // headerLargeTitle is supported only on iOS
 describeIfiOS('Test649', () => {
@@ -8,7 +8,7 @@ describeIfiOS('Test649', () => {
   });
 
   it('Test649 should exist', async () => {
-    await selectTestScreen('Test649');
+    await selectIssueTestScreen('Test649');
   });
 
   it('header large title "First" should be fully visible', async () => {

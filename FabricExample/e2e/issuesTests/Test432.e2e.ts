@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { selectTestScreen } from '../e2e-utils';
-import { tapBarBackButton } from '../component-objects/back-button';
+import { selectIssueTestScreen } from '../e2e-utils';
+import { tapBarBackButton } from '../elements/back-button';
 
 describe('Test432', () => {
   beforeAll(async () => {
@@ -8,7 +8,7 @@ describe('Test432', () => {
   });
 
   it('Test432 should exist', async () => {
-    await selectTestScreen('Test432');
+    await selectIssueTestScreen('Test432');
   });
 
   it('headerRight element should be fully visible', async () => {
