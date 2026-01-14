@@ -1,8 +1,8 @@
 import TabsHost from './TabsHost';
-import TabsScreen from './BottomTabsScreen';
+import TabsScreen from './TabsScreen';
 
 export type * from './TabsHost.types';
-export type * from './BottomTabsScreen.types';
+export type * from './TabsScreen.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE

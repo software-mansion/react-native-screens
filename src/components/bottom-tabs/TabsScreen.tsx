@@ -27,7 +27,7 @@ import type {
   BottomTabsScreenItemStateAppearance,
   BottomTabsScreenProps,
   EmptyObject,
-} from './BottomTabsScreen.types';
+} from './TabsScreen.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type {
   PlatformIcon,
