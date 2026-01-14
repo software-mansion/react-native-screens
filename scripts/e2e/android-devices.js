@@ -16,7 +16,7 @@ function resolveAttachedAndroidDeviceSerial() {
   );
   if (!isEmulatorConfig) return 'INACTIVE CONFIG';
   if (passedAdbSerial) return passedAdbSerial;
-  const connectedPhysicalDevices = getDeviceIds(deviceIdAndState => {
+  const connectedPhysicalDevices = getDeviceIds((deviceIdAndState) => {
     const [deviceId, state] = deviceIdAndState;
     if (deviceId.startsWith('emulator')) {
       return false;
@@ -27,7 +27,7 @@ function resolveAttachedAndroidDeviceSerial() {
       console.warn(
         `Device "${deviceId}" has state "${state}", but state "device" is expected. This device will be ignored.`,
       );
-      return false;
+      return false;;
     }
   });
   if (connectedPhysicalDevices.length === 0) {
@@ -96,6 +96,7 @@ function resolveAvdNameFromDeviceId(deviceId) {
   throw new Error(`Failed to get emulator name for id "${deviceId}"`);
 }
 
+
 /**
  * @callback AdbDevicesFilterPredicate
  * @param {[string, string]} idAndState
@@ -120,10 +121,10 @@ function getDeviceIds(filterPredicate = () => true) {
     throw new Error('The attached device list is empty');
   }
   return adbDeviceLines
-    .map(line => /** @type {[string, string]} */ (line.split('\t')))
+    .map(line => /** @type {[string, string]} */(line.split('\t')))
     .filter(filterPredicate)
-    .map(deviceIdAndState => deviceIdAndState[0]);
-}
+    .map(deviceIdAndState => deviceIdAndState[0])
+  }
 
 module.exports = {
   detectAndroidEmulatorName,
