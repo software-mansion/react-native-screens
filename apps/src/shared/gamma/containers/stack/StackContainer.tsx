@@ -88,7 +88,7 @@ function useSanitizeRouteConfigs(
     throw new Error('[RNScreens] There must be at least one route configured');
   }
 
-  // Do not recompute in case the routeConfigs have hot changed
+  // Do not recompute in case the routeConfigs have not changed
   const areNamesUnique = React.useMemo(() => {
     const routeNames = routeConfigs.map(routeConfig => routeConfig.name);
     const uniqueRouteNames = new Set(routeNames);
