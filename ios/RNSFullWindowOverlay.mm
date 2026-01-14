@@ -166,22 +166,29 @@
 
 - (void)didMoveToWindow
 {
-  // Detaching FullWindowOverlay is handled by `didMoveToSuperview`
-  if (self.window != nil) {
-    [self maybeShow];
-  }
+    [super didMoveToWindow];
+    [self show];
 }
 
-- (void)maybeShow
-{
-  UIWindow *window = [self window];
-  if (![[window subviews] containsObject:self]) {
-    [window addSubview:_container];
-  }
+- (void)show
+{    UIWindow *targetWindow = self.window;
+    
+    if (!targetWindow) {
+        targetWindow = RCTKeyWindow();
+    }
+    
+    if (targetWindow && _container) {
+        [targetWindow addSubview:_container];
+    }
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric Specific
+
+- (void)maybeShow
+{
+    [self show];
+}
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
@@ -200,6 +207,7 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  [self maybeShow];
   [self addSubview:childComponentView];
 }
 
