@@ -26,4 +26,10 @@ class MainActivity : ReactActivity() {
     supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
     super.onCreate(savedInstanceState)
   }
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    // opt out of having 80% opacity over 3-button navigation
+    getWindow().setNavigationBarContrastEnforced(false)
+  }
 }
