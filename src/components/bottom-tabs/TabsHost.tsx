@@ -23,7 +23,7 @@ import BottomTabsAccessoryContent from './BottomTabsAccessoryContent';
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function BottomTabs(props: BottomTabsProps) {
+function TabsHost(props: BottomTabsProps) {
   bottomTabsDebugLog(`BottomTabs render`);
 
   const {
@@ -95,7 +95,7 @@ function BottomTabs(props: BottomTabsProps) {
   );
 }
 
-export default BottomTabs;
+export default TabsHost;
 
 const styles = StyleSheet.create({
   fillParent: {
