@@ -1,6 +1,6 @@
 import { ViewProps } from 'react-native';
-import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+import { TabsAccessoryEnvironment } from './TabsAccessory.types';
 
 export type BottomTabsAccessoryContentProps = ViewProps & {
-  environment?: BottomTabsAccessoryEnvironment;
+  environment?: TabsAccessoryEnvironment;
 };

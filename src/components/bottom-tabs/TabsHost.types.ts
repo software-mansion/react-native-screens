@@ -5,10 +5,10 @@ import type {
   NativeSyntheticEvent,
   ViewProps,
 } from 'react-native';
-import type { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+import type { TabsAccessoryEnvironment } from './TabsAccessory.types';
 
 export type TabAccessoryComponentFactory = (
-  environment: BottomTabsAccessoryEnvironment,
+  environment: TabsAccessoryEnvironment,
 ) => ReactNode;
 
 export type NativeFocusChangeEvent = {

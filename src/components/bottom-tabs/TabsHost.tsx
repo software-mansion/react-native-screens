@@ -13,8 +13,8 @@ import BottomTabsNativeComponent, {
 import featureFlags from '../../flags';
 import type { TabsHostProps, NativeFocusChangeEvent } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
-import BottomTabsAccessory from './BottomTabsAccessory';
-import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+import TabsAccessory from './TabsAccessory';
+import { TabsAccessoryEnvironment } from './TabsAccessory.types';
 import BottomTabsAccessoryContent from './BottomTabsAccessoryContent';
 
 /**
@@ -57,7 +57,7 @@ function TabsHost(props: TabsHostProps) {
   );
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
-    useState<BottomTabsAccessoryEnvironment>('regular');
+    useState<TabsAccessoryEnvironment>('regular');
 
   return (
     <BottomTabsNativeComponent
@@ -72,21 +72,21 @@ function TabsHost(props: TabsHostProps) {
         Platform.OS === 'ios' &&
         parseInt(Platform.Version, 10) >= 26 &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
-          <BottomTabsAccessory>
+          <TabsAccessory>
             <BottomTabsAccessoryContent environment="regular">
               {tabAccessory('regular')}
             </BottomTabsAccessoryContent>
             <BottomTabsAccessoryContent environment="inline">
               {tabAccessory('inline')}
             </BottomTabsAccessoryContent>
-          </BottomTabsAccessory>
+          </TabsAccessory>
         ) : (
-          <BottomTabsAccessory
+          <TabsAccessory
             onEnvironmentChange={event => {
               setBottomAccessoryEnvironment(event.nativeEvent.environment);
             }}>
             {tabAccessory(bottomAccessoryEnvironment)}
-          </BottomTabsAccessory>
+          </TabsAccessory>
         ))}
     </BottomTabsNativeComponent>
   );
