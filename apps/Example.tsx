@@ -5,16 +5,15 @@ import {
   I18nManager,
   Platform,
   useColorScheme,
+  View,
+  Text,
 } from 'react-native';
 import {
   NavigationContainer,
   useTheme,
 } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNRestart from 'react-native-restart';
-
-import { ListItem, SettingsSwitch, ThemedText } from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import SwipeBackAnimation from './src/screens/SwipeBackAnimation';
@@ -39,6 +38,8 @@ import LegacyTestsScreen from './src/tests/LegacyTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
 import ComponentIntegrationTests from './src/tests/component-integration-tests';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Colors from './src/shared/styling/Colors';
+import { TestScenarioGroup, TestScenarioListItem, TestScenarioSettingsSwitch } from './src/tests/shared/landing-screen-components';
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
@@ -149,76 +150,90 @@ type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-interface MainScreenProps {
-  navigation: StackNavigationProp<RootStackParamList, 'Main'>;
-}
-
-const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
+function MainScreen() {
   const { toggleTheme } = useContext(ThemeToggle);
   const isDark = useTheme().dark;
+  const titleStyle = isDark ? styles.titleDark : styles.title;
 
   return (
-    <SafeAreaView edges={{ top: 'off', bottom: 'maximum' }}>
-      <ScrollView testID="root-screen-examples-scrollview">
-        <SettingsSwitch
-          style={styles.switch}
-          label="Right to left"
-          value={I18nManager.isRTL}
-          onValueChange={() => {
-            I18nManager.forceRTL(!I18nManager.isRTL);
-            RNRestart.Restart();
-          }}
-          testID="root-screen-switch-rtl"
-        />
-        <SettingsSwitch
-          style={styles.switch}
-          label="Dark mode"
-          value={isDark}
-          onValueChange={toggleTheme}
-        />
-        <ThemedText style={styles.label} testID="root-screen-examples-header">
-          Examples
-        </ThemedText>
-        {examples.map(name => (
-          <ListItem
-            key={name}
-            testID={`root-screen-example-${name}`}
-            title={SCREENS[name].title}
-            onPress={() => navigation.navigate(name)}
-            disabled={!isPlatformReady(name)}
+    <SafeAreaView
+      edges={{ top: 'maximum', bottom: 'maximum' }}
+      style={{ backgroundColor: isDark ? "#000000" : Colors.White }}
+    >
+      <ScrollView
+        testID="root-screen-examples-scrollview"
+        style={styles.container}
+      >
+        <View style={{ marginBottom: 20 }}>
+          <Text style={titleStyle}>Welcome to</Text>
+          <Text style={[titleStyle, { fontWeight: 'bold' }]}>react-native-screens</Text>
+        </View>
+
+        <View style={styles.group}>
+          <TestScenarioSettingsSwitch
+            label="Right to left"
+            value={I18nManager.isRTL}
+            onValueChange={() => {
+              I18nManager.forceRTL(!I18nManager.isRTL);
+              RNRestart.Restart();
+            }}
+            testID="root-screen-switch-rtl"
           />
-        ))}
-        <ThemedText style={styles.label}>Playgrounds</ThemedText>
-        {playgrounds.map(name => (
-          <ListItem
-            key={name}
-            testID={`root-screen-playground-${name}`}
-            title={SCREENS[name].title}
-            onPress={() => navigation.navigate(name)}
-            disabled={!isPlatformReady(name)}
+          <TestScenarioSettingsSwitch
+            label="Dark mode"
+            value={isDark}
+            onValueChange={toggleTheme}
+            testID="root-screen-switch-dark-mode"
           />
-        ))}
-        <ThemedText style={styles.label}>Single Feature Tests</ThemedText>
-        <ListItem
-          key="SingleFeatureTests"
-          testID="root-screen-single-feature-tests"
-          title="Single Feature Tests"
-          onPress={() => navigation.navigate("SingleFeatureTests")}
-        />
-        <ThemedText style={styles.label}>Component Integration Tests</ThemedText>
-        <ListItem
-          key="ComponentIntegrationTests"
-          testID="root-screen-component-integration-tests"
-          title="Component Integration Tests"
-          onPress={() => navigation.navigate("ComponentIntegrationTests")}
-        />
-        <ThemedText style={styles.label}>Legacy Tests</ThemedText>
-        <ListItem
-          key="LegacyTests"
-          testID="root-screen-legacy-tests"
-          title="Legacy Tests"
-          onPress={() => navigation.navigate("LegacyTests")}
-        />
+        </View>
+
+        <Text style={titleStyle}>Examples</Text>
+
+        <TestScenarioGroup>
+          {examples.map(name => (
+            <TestScenarioListItem
+              key={name}
+              testID={`root-screen-example-${name}`}
+              title={SCREENS[name].title}
+              route={name}
+              disabled={!isPlatformReady(name)}
+            />
+          ))}
+        </TestScenarioGroup>
+
+        <Text style={titleStyle}>Playgrounds</Text>
+
+        <TestScenarioGroup>
+          {playgrounds.map(name => (
+            <TestScenarioListItem
+              key={name}
+              testID={`root-screen-playground-${name}`}
+              title={SCREENS[name].title}
+              route={name}
+              disabled={!isPlatformReady(name)}
+            />
+          ))}
+        </TestScenarioGroup>
+
+        <Text style={titleStyle}>Looking for more?</Text>
+
+        <View style={[styles.group, { marginTop: 20 }]}>
+          <TestScenarioListItem
+            testID="root-screen-single-feature-tests"
+            title="Single Feature Tests"
+            route="SingleFeatureTests"
+          />
+          <TestScenarioListItem
+            testID="root-screen-component-integration-tests"
+            title="Component Integration Tests"
+            route="ComponentIntegrationTests"
+          />
+          <TestScenarioListItem
+            testID="root-screen-legacy-tests"
+            title="Legacy Tests"
+            route="LegacyTests"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -243,10 +258,7 @@ const ExampleApp = (): React.JSX.Element => {
               screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
               <Stack.Screen
                 name="Main"
-                options={{
-                  title: `${Platform.isTV ? '📺' : '📱'
-                    } React Native Screens Examples`,
-                }}
+                options={{ headerShown: false }}
                 component={MainScreen}
               />
               {Object.keys(SCREENS).map(name => (
@@ -284,13 +296,21 @@ const ExampleApp = (): React.JSX.Element => {
 };
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: 15,
-    margin: 10,
-    marginTop: 15,
+  container: {
+    padding: 20,
   },
-  switch: {
-    marginTop: 15,
+  group: {
+    flex: 1,
+    gap: 20,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 32,
+    color: Colors.NavyLight100,
+  },
+  titleDark: {
+    fontSize: 32,
+    color: Colors.GreenDark60,
   },
 });
 
