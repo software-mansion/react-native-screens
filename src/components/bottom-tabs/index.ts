@@ -1,7 +1,7 @@
 import TabsHost from './TabsHost';
 import BottomTabsScreen from './BottomTabsScreen';
 
-export type * from './BottomTabs.types';
+export type * from './TabsHost.types';
 export type * from './BottomTabsScreen.types';
 
 /**
