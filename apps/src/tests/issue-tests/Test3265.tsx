@@ -18,7 +18,7 @@ export default function TestScrollViewHorizontal() {
         <Stack.Screen name='Home' component={(props: { navigation: StackNavigationProps }) => <View>
           <Button onPress={() => props.navigation.navigate('ScrollView')} title='Go to ScrollView' />
         </View>} />
-        <Stack.Screen name="ScrollView" component={() =>
+        <Stack.Screen name="ScrollView" component={() => 
           <ScrollView horizontal={ true } >
             <View style={{ width: 300 }}>
               <Text style={{ fontSize: 48 }}>{ Array.from({ length: 100 }).map( _ => ['🤖', '👨‍💻', '👾'][Math.floor(Math.random() * 3)]).join('')}</Text>
