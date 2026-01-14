@@ -231,7 +231,7 @@ export interface TabsHostProps extends ViewProps {
    * @platform iOS
    * @supported iOS 26 or higher
    */
-  tabAccessory?: TabAccessoryComponentFactory;
+  bottomAccessory?: TabAccessoryComponentFactory;
   /**
    * @summary Specifies the display mode for the tab bar.
    *
