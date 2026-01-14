@@ -174,7 +174,7 @@ export interface TabsHostProps extends ViewProps {
    * selection view.
    *
    * `tabBarItemTitleFontColor` and `tabBarItemIconColor` defined on
-   * BottomTabsScreen component override this color.
+   * TabsScreen component override this color.
    *
    * @platform ios
    */

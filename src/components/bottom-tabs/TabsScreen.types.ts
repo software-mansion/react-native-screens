@@ -387,12 +387,12 @@ export interface TabsScreenProps {
   // #region Accessibility
 
   /**
-   * @summary testID for the BottomTabScreen
+   * @summary testID for the TabsScreen
    */
   testID?: string;
 
   /**
-   * @summary accessibilityLabel for the BottomTabScreen
+   * @summary accessibilityLabel for the TabsScreen
    */
   accessibilityLabel?: string;
 
