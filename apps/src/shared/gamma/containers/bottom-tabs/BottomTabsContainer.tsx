@@ -1,9 +1,8 @@
 import React from 'react';
 import { Platform, type NativeSyntheticEvent } from 'react-native';
 import {
-  BottomTabs,
+  Tabs,
   BottomTabsProps,
-  BottomTabsScreen,
   BottomTabsScreenProps,
   NativeFocusChangeEvent,
 } from 'react-native-screens';
@@ -76,7 +75,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
   );
 
   return (
-    <BottomTabs
+    <Tabs.Host
       // Use controlled bottom tabs by default, but allow to overwrite if user wants to
       onNativeFocusChange={onNativeFocusChangeCallback}
       experimentalControlNavigationStateInJS={
@@ -93,16 +92,16 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
         );
 
         return (
-          <BottomTabsScreen
+          <Tabs.Screen
             key={tabKey}
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
             {getContent(tabConfig)}
-          </BottomTabsScreen>
+          </Tabs.Screen>
         );
       })}
-    </BottomTabs>
+    </Tabs.Host>
   );
 }
 
