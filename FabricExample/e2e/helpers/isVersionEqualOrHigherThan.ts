@@ -1,3 +1,6 @@
+type MajorVersion = `${number}`;
+type MajorMinorVersion = `${number}.${number}`;
+
 function assertSupportedVersionString(version: string): asserts version is MajorVersion | MajorMinorVersion {
     if (Number(version) === parseInt(version, 10)) {
         return;
@@ -12,16 +15,6 @@ function assertSupportedVersionString(version: string): asserts version is Major
     throw new Error(`Version string "${version}" is not a valid MAJOR or MAJOR.MINOR version.`);
 }
 
-export function isVersion(version: string) {
-    assertSupportedVersionString(version);
-    return {
-        equalOrHigherThan(versionToCompare: string) {
-            assertSupportedVersionString(versionToCompare);
-            return compareVersions(version, versionToCompare) >= 0;
-        },
-    }
-}
-
 function compareVersions(version: MajorVersion | MajorMinorVersion, versionToCompare: MajorVersion | MajorMinorVersion) {
     const [majorA, minorA = '0'] = version.split('.').map(Number);
     const [majorB, minorB = '0'] = versionToCompare.split('.').map(Number);
@@ -32,5 +25,9 @@ function compareVersions(version: MajorVersion | MajorMinorVersion, versionToCom
     }
 }
 
-type MajorVersion = `${number}`;
-type MajorMinorVersion = `${number}.${number}`;
+export default function isVersionEqualOrHigherThan(first: string, second: string) {
+    assertSupportedVersionString(first);
+    assertSupportedVersionString(second);
+
+    return compareVersions(first, second) >= 0;
+}
