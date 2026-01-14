@@ -113,6 +113,11 @@ namespace react = facebook::react;
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
+#if !TARGET_OS_TV
+  _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
+#else // !TARGET_OS_TV
+  _nativeContainerBackgroundColor = nil;
+#endif // !TARGET_OS_TV
 }
 
 #pragma mark - UIView methods
@@ -310,6 +315,17 @@ namespace react = facebook::react;
     }
   }
 
+  if (newComponentProps.nativeContainerBackgroundColor != oldComponentProps.nativeContainerBackgroundColor) {
+    _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
+#if !TARGET_OS_TV
+    if (_nativeContainerBackgroundColor == nil) {
+      _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
+    }
+#endif // !TARGET_OS_TV
+
+    _controller.view.backgroundColor = _nativeContainerBackgroundColor;
+  }
+
   if (newComponentProps.tabBarMinimizeBehavior != oldComponentProps.tabBarMinimizeBehavior) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
@@ -484,6 +500,18 @@ RNS_IGNORE_SUPER_CALL_END
   {
     _controller.tabBar.hidden = _tabBarHidden;
   }
+}
+
+- (void)setNativeContainerBackgroundColor:(UIColor *_Nullable)nativeContainerBackgroundColor
+{
+  _nativeContainerBackgroundColor = nativeContainerBackgroundColor;
+#if !TARGET_OS_TV
+  if (_nativeContainerBackgroundColor == nil) {
+    _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
+  }
+#endif // !TARGET_OS_TV
+
+  _controller.view.backgroundColor = _nativeContainerBackgroundColor;
 }
 
 // This is a Paper-only setter method that will be called by the mounting code.

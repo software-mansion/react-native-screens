@@ -33,7 +33,16 @@ export type TabBarMinimizeBehavior =
 // iOS-specific
 export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
-export interface TabsHostProps extends ViewProps {
+export type TabsHostNativeContainerStyleProps = {
+  /**
+   * @summary Specifies the background color of the native container.
+   *
+   * @platform android, ios
+   */
+  backgroundColor?: ColorValue;
+};
+
+export interface TabsHostProps {
   // #region Events
   /**
    * A callback that gets invoked when user requests change of focused tab screen.
@@ -46,6 +55,7 @@ export interface TabsHostProps extends ViewProps {
   // #endregion Events
 
   // #region General
+  children?: ViewProps['children'];
   /**
    * @summary Hides the tab bar.
    *
@@ -54,6 +64,16 @@ export interface TabsHostProps extends ViewProps {
    * @platform android, ios
    */
   tabBarHidden?: boolean;
+  /**
+   * @summary Allows for native container view customization.
+   *
+   * On Android, style is applied to `FrameLayout` that wraps currently focused screen
+   * and `BottomNavigationView`. On iOS, style is applied to `UITabBarController`'s
+   * view.
+   *
+   * @platform android, ios
+   */
+  nativeContainerStyle?: TabsHostNativeContainerStyleProps;
   // #endregion General
 
   // #region Android-only

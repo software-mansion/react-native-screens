@@ -52,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL tabBarHidden;
 
+@property (nonatomic, strong, readonly, nullable) UIColor *nativeContainerBackgroundColor;
+
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)

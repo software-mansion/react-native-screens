@@ -150,6 +150,14 @@ class TabsHostViewManager :
         view.tabBarHidden = value
     }
 
+    @ReactProp(name = "nativeContainerBackgroundColor", customType = "Color")
+    override fun setNativeContainerBackgroundColor(
+        view: TabsHost,
+        value: Int?,
+    ) {
+        view.nativeContainerBackgroundColor = value
+    }
+
     // Android additional
 
     @ReactProp(name = "tabBarItemTitleFontColorActive", customType = "Color")

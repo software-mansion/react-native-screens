@@ -1,8 +1,10 @@
 import type {
   ColorValue,
   NativeSyntheticEvent,
+  StyleProp,
   TextStyle,
   ViewProps,
+  ViewStyle,
 } from 'react-native';
 import type {
   PlatformIcon,
@@ -280,6 +282,7 @@ export interface TabsScreenProps {
 
   // #region General
   children?: ViewProps['children'];
+  style?: StyleProp<Pick<ViewStyle, 'backgroundColor'>>;
   /**
    * @summary Defines what should be rendered when tab screen is frozen.
    *
