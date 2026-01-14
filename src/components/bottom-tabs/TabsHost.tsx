@@ -15,7 +15,7 @@ import type { TabsHostProps, NativeFocusChangeEvent } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import TabsAccessory from './TabsAccessory';
 import { TabsAccessoryEnvironment } from './TabsAccessory.types';
-import BottomTabsAccessoryContent from './BottomTabsAccessoryContent';
+import TabsAccessoryContent from './TabsAccessoryContent';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -73,12 +73,12 @@ function TabsHost(props: TabsHostProps) {
         parseInt(Platform.Version, 10) >= 26 &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
           <TabsAccessory>
-            <BottomTabsAccessoryContent environment="regular">
+            <TabsAccessoryContent environment="regular">
               {tabAccessory('regular')}
-            </BottomTabsAccessoryContent>
-            <BottomTabsAccessoryContent environment="inline">
+            </TabsAccessoryContent>
+            <TabsAccessoryContent environment="inline">
               {tabAccessory('inline')}
-            </BottomTabsAccessoryContent>
+            </TabsAccessoryContent>
           </TabsAccessory>
         ) : (
           <TabsAccessory
