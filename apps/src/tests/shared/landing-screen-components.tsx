@@ -9,7 +9,7 @@ export function TestScenarioListItem(props: { title: string; route: string, test
 
   return (
     <TouchableOpacity 
-      activeOpacity={0.8} 
+      activeOpacity={0.6} 
       style={theme.dark ? styles.listItemDark : styles.listItem}
       testID={props.testID}
       onPress={() => navigation.navigate(props.route)}
