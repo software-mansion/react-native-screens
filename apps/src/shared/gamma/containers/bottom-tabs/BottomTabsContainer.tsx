@@ -2,8 +2,8 @@ import React from 'react';
 import { Platform, type NativeSyntheticEvent } from 'react-native';
 import {
   Tabs,
-  BottomTabsProps,
-  BottomTabsScreenProps,
+  TabsHostProps,
+  TabsScreenProps,
   NativeFocusChangeEvent,
 } from 'react-native-screens';
 import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
@@ -11,12 +11,12 @@ import type { SafeAreaViewProps } from '../../../../../../src/components/safe-ar
 import ConfigWrapperContext from './ConfigWrapperContext';
 
 export interface TabConfiguration {
-  tabScreenProps: BottomTabsScreenProps;
+  tabScreenProps: TabsScreenProps;
   component: React.ComponentType;
   safeAreaConfiguration?: SafeAreaViewProps;
 }
 
-export type BottomTabsContainerProps = BottomTabsProps & {
+export type BottomTabsContainerProps = TabsHostProps & {
   tabConfigs: TabConfiguration[];
 };
 

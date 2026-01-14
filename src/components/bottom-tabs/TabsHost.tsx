@@ -11,7 +11,7 @@ import BottomTabsNativeComponent, {
   type NativeProps as BottomTabsNativeComponentProps,
 } from '../../fabric/bottom-tabs/BottomTabsNativeComponent';
 import featureFlags from '../../flags';
-import type { BottomTabsProps, NativeFocusChangeEvent } from './TabsHost.types';
+import type { TabsHostProps, NativeFocusChangeEvent } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import BottomTabsAccessory from './BottomTabsAccessory';
 import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
@@ -20,7 +20,7 @@ import BottomTabsAccessoryContent from './BottomTabsAccessoryContent';
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function TabsHost(props: BottomTabsProps) {
+function TabsHost(props: TabsHostProps) {
   bottomTabsDebugLog(`TabsHost render`);
 
   const {

@@ -13,7 +13,7 @@ import type {
 
 export type EmptyObject = Record<string, never>;
 
-export type BottomTabsScreenEventHandler<T> = (
+export type TabsScreenEventHandler<T> = (
   event: NativeSyntheticEvent<T>,
 ) => void;
 
@@ -23,7 +23,7 @@ export type LifecycleStateChangeEvent = Readonly<{
 }>;
 
 // iOS-specific
-export type BottomTabsScreenBlurEffect =
+export type TabsScreenBlurEffect =
   | 'none'
   | 'systemDefault'
   | 'extraLight'
@@ -47,7 +47,7 @@ export type BottomTabsScreenBlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-export type BottomTabsSystemItem =
+export type TabsSystemItem =
   | 'bookmarks'
   | 'contacts'
   | 'downloads'
@@ -62,7 +62,7 @@ export type BottomTabsSystemItem =
   | 'topRated';
 
 // Currently iOS-only
-export type BottomTabsScreenOrientation =
+export type TabsScreenOrientation =
   | 'inherit'
   | 'all'
   | 'allButUpsideDown'
@@ -74,7 +74,7 @@ export type BottomTabsScreenOrientation =
   | 'landscapeRight';
 
 // iOS-specific
-export interface BottomTabsScreenAppearance {
+export interface TabsScreenAppearance {
   /**
    * @summary Specifies the appearance of tab bar items when they are in stacked layout.
    *
@@ -83,7 +83,7 @@ export interface BottomTabsScreenAppearance {
    *
    * @platform ios
    */
-  stacked?: BottomTabsScreenItemAppearance;
+  stacked?: TabsScreenItemAppearance;
   /**
    * @summary Specifies the appearance of tab bar items when they are in inline layout.
    *
@@ -95,7 +95,7 @@ export interface BottomTabsScreenAppearance {
    *
    * @platform ios
    */
-  inline?: BottomTabsScreenItemAppearance;
+  inline?: TabsScreenItemAppearance;
   /**
    * @summary Specifies the appearance of tab bar items when they are in compact inline layout.
    *
@@ -107,7 +107,7 @@ export interface BottomTabsScreenAppearance {
    *
    * @platform ios
    */
-  compactInline?: BottomTabsScreenItemAppearance;
+  compactInline?: TabsScreenItemAppearance;
 
   /**
    * @summary Specifies the background color for the entire tab bar when tab screen is selected.
@@ -139,7 +139,7 @@ export interface BottomTabsScreenAppearance {
    * @platform ios
    * @supported iOS 18 or lower
    */
-  tabBarBlurEffect?: BottomTabsScreenBlurEffect;
+  tabBarBlurEffect?: TabsScreenBlurEffect;
   /**
    * @summary Specifies the shadow color for the tab bar when tab screen is selected.
    *
@@ -152,35 +152,35 @@ export interface BottomTabsScreenAppearance {
 }
 
 // iOS-specific
-export interface BottomTabsScreenItemAppearance {
+export interface TabsScreenItemAppearance {
   /**
    * Specifies the tab bar item appearance when it's enabled, unselected, and not the focused item.
    *
    * @platform ios
    */
-  normal?: BottomTabsScreenItemStateAppearance;
+  normal?: TabsScreenItemStateAppearance;
   /**
    * Specifies the tab bar item appearance when it's selected.
    *
    * @platform ios
    */
-  selected?: BottomTabsScreenItemStateAppearance;
+  selected?: TabsScreenItemStateAppearance;
   /**
    * Specifies the tab bar item appearance when it's focused.
    *
    * @platform ios
    */
-  focused?: BottomTabsScreenItemStateAppearance;
+  focused?: TabsScreenItemStateAppearance;
   /**
    * Specifies the tab bar item appearance when it's disabled.
    *
    * @platform ios
    */
-  disabled?: BottomTabsScreenItemStateAppearance;
+  disabled?: TabsScreenItemStateAppearance;
 }
 
 // iOS-specific
-export interface BottomTabsScreenItemStateAppearance {
+export interface TabsScreenItemStateAppearance {
   /**
    * @summary Specifies the font family used for the title of each tab bar item
    * when tab screen is selected.
@@ -255,7 +255,7 @@ export interface BottomTabsScreenItemStateAppearance {
   tabBarItemBadgeBackgroundColor?: ColorValue;
 }
 
-export interface BottomTabsScreenProps {
+export interface TabsScreenProps {
   // #region Control
   /**
    * @summary Determines selected tab.
@@ -474,7 +474,7 @@ export interface BottomTabsScreenProps {
    *
    * @platform ios
    */
-  orientation?: BottomTabsScreenOrientation;
+  orientation?: TabsScreenOrientation;
   /**
    * @summary Specifies the standard tab bar appearance.
    *
@@ -483,7 +483,7 @@ export interface BottomTabsScreenProps {
    *
    * @platform ios
    */
-  standardAppearance?: BottomTabsScreenAppearance;
+  standardAppearance?: TabsScreenAppearance;
   /**
    * @summary Specifies the tab bar appearace when edge of scrollable content aligns
    * with the edge of the tab bar.
@@ -496,7 +496,7 @@ export interface BottomTabsScreenProps {
    *
    * @platform ios
    */
-  scrollEdgeAppearance?: BottomTabsScreenAppearance;
+  scrollEdgeAppearance?: TabsScreenAppearance;
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
@@ -519,7 +519,7 @@ export interface BottomTabsScreenProps {
    *
    * @platform ios
    */
-  systemItem?: BottomTabsSystemItem;
+  systemItem?: TabsSystemItem;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
@@ -599,27 +599,27 @@ export interface BottomTabsScreenProps {
    *
    * @platform android, ios
    */
-  onWillAppear?: BottomTabsScreenEventHandler<EmptyObject>;
+  onWillAppear?: TabsScreenEventHandler<EmptyObject>;
   /**
    * @summary A callback that gets invoked when the tab screen did appear.
    * This is called as soon as the transition ends.
    *
    * @platform android, ios
    */
-  onDidAppear?: BottomTabsScreenEventHandler<EmptyObject>;
+  onDidAppear?: TabsScreenEventHandler<EmptyObject>;
   /**
    * @summary A callback that gets invoked when the tab screen will disappear.
    * This is called as soon as the transition begins.
    *
    * @platform android, ios
    */
-  onWillDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
+  onWillDisappear?: TabsScreenEventHandler<EmptyObject>;
   /**
    * @summary A callback that gets invoked when the tab screen did disappear.
    * This is called as soon as the transition ends.
    *
    * @platform android, ios
    */
-  onDidDisappear?: BottomTabsScreenEventHandler<EmptyObject>;
+  onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
   // #endregion Events
 }

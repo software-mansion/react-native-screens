@@ -33,7 +33,7 @@ export type TabBarMinimizeBehavior =
 // iOS-specific
 export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
-export interface BottomTabsProps extends ViewProps {
+export interface TabsHostProps extends ViewProps {
   // #region Events
   /**
    * A callback that gets invoked when user requests change of focused tab screen.
