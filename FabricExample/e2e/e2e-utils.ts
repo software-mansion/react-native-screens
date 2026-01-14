@@ -1,9 +1,20 @@
 import { device, expect, element, by } from 'detox';
 
-export const describeIfiOS = device.getPlatform() === 'ios' ? describe : describe.skip;
+export const describeIfiOS =
+  device.getPlatform() === 'ios' ? describe : describe.skip;
 
-export async function selectTestScreen(screenName: string) {
-  await element(by.id('root-screen-switch-search-bar')).tap();
+async function scrollTo(id: string) {
+  await waitFor(element(by.id(id)))
+    .toBeVisible()
+    .whileElement(by.id('root-screen-examples-scrollview'))
+    .scroll(600, 'down', Number.NaN, 0.85);
+}
+
+export async function selectIssueTestScreen(screenName: string) {
+  await scrollTo('root-screen-issue-tests');
+  await element(by.id('root-screen-issue-tests')).tap();
+
+  await waitFor(element(by.id('issue-tests-scrollview'))).toBeVisible();
 
   if (device.getPlatform() === 'android') {
     await element(by.label('Search')).tap();
@@ -12,18 +23,10 @@ export async function selectTestScreen(screenName: string) {
     // I don't know why element(by.type('androidx.appcompat.widget.SearchView.SearchAutoComplete'))
     // does not work even if it appears in view hierarchy returned by Detox in debug logging mode.
     await element(by.text('')).replaceText(screenName);
-
-    // Press back to hide the keyboard.
-    // This is necessary to make sure that search results are not obstructed by the keyboard.
-    // More details: https://github.com/software-mansion/react-native-screens/pull/2919
-    await device.pressBack();
-  } else {
-    await waitFor(element(by.id('root-screen-tests-' + screenName)))
-      .toBeVisible()
-      .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(600, 'down', Number.NaN, 0.85);
+  } else if (device.getPlatform() === 'ios') {
+    await element(by.traits(['searchField'])).typeText(screenName);
   }
 
-  await expect(element(by.id(`root-screen-tests-${screenName}`))).toBeVisible();
-  await element(by.id(`root-screen-tests-${screenName}`)).tap();
+  await expect(element(by.id(`issue-tests-${screenName}`))).toBeVisible();
+  await element(by.id(`issue-tests-${screenName}`)).tap();
 }

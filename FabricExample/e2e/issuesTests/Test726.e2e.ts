@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
 
 // issue related to iOS
 describeIfiOS('Test726', () => {
@@ -8,7 +8,7 @@ describeIfiOS('Test726', () => {
   });
 
   it('Test726 should exist', async () => {
-    await selectTestScreen('Test726');
+    await selectIssueTestScreen('Test726');
   });
 
   it('swiping back should not cause the freeze', async () => {

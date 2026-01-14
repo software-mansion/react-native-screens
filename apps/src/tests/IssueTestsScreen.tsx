@@ -6,13 +6,12 @@ import {
 } from '@react-navigation/native';
 import * as Tests from './issue-tests';
 import { ScrollView, StyleSheet, useColorScheme } from 'react-native';
-import { ListItem, SettingsSwitch } from '../shared';
+import { ListItem } from '../shared';
 import {
   ScreensDarkTheme,
   ScreensLightTheme,
 } from '../shared/styling/adapter/react-navigation';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SCREENS: Record<
   string,
@@ -70,24 +69,21 @@ function MainScreen(props: {
   navigation: NavigationProp<IssueTestsStackParamList>;
 }) {
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [searchBarEnabled, setSearchBarEnabled] = React.useState(false);
 
   const { navigation } = props;
 
   React.useLayoutEffect(() => {
-    if (searchBarEnabled) {
-      navigation.setOptions({
-        headerSearchBarOptions: {
-          onChangeText: event => setSearchQuery(event.nativeEvent.text),
-        },
-      });
-    } else {
-      setSearchQuery('');
-      navigation.setOptions({
-        headerSearchBarOptions: undefined,
-      });
-    }
-  }, [navigation, searchBarEnabled]);
+    navigation.setOptions({
+      headerSearchBarOptions: {
+        onChangeText: event => setSearchQuery(event.nativeEvent.text),
+        placement: 'stacked',
+        hideNavigationBar: false,
+        obscureBackground: false,
+        autoCapitalize: 'none',
+        hideWhenScrolling: false,
+      },
+    });
+  }, [navigation]);
 
   const searchFilter = React.useCallback(
     (name: string) =>
@@ -99,26 +95,19 @@ function MainScreen(props: {
   const filteredTests = screens.filter(searchFilter);
 
   return (
-    <SafeAreaView edges={{ top: 'off', bottom: 'maximum' }}>
-      <ScrollView testID="issue-tests-scrollview">
-        <SettingsSwitch
-          style={styles.switch}
-          label="Search bar"
-          value={searchBarEnabled}
-          onValueChange={() => setSearchBarEnabled(!searchBarEnabled)}
-          testID="issue-tests-search-bar"
+    <ScrollView
+      testID="issue-tests-scrollview"
+      contentInsetAdjustmentBehavior="automatic">
+      {filteredTests.map(name => (
+        <ListItem
+          key={name}
+          testID={`issue-tests-${name}`}
+          title={SCREENS[name].title}
+          onPress={() => navigation.navigate(name)}
+          disabled={false}
         />
-        {filteredTests.map(name => (
-          <ListItem
-            key={name}
-            testID={`issue-tests-${name}`}
-            title={SCREENS[name].title}
-            onPress={() => navigation.navigate(name)}
-            disabled={false}
-          />
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+      ))}
+    </ScrollView>
   );
 }
 
@@ -154,16 +143,5 @@ function IssueTests() {
     </NavigationIndependentTree>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 15,
-    margin: 10,
-    marginTop: 15,
-  },
-  switch: {
-    marginTop: 15,
-  },
-});
 
 export default IssueTests;
