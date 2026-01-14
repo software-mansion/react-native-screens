@@ -222,7 +222,7 @@ function navigationActionPreloadHandler(
   return [...state, createRouteFromConfig(routeConfig)];
 }
 
-export function createRouteFromConfig(config: StackRouteConfig): StackRoute {
+function createRouteFromConfig(config: StackRouteConfig): StackRoute {
   return {
     ...config,
     activityMode: 'detached',
