@@ -1,5 +1,5 @@
 import TabsHost from './TabsHost';
-import BottomTabsScreen from './BottomTabsScreen';
+import TabsScreen from './BottomTabsScreen';
 
 export type * from './TabsHost.types';
 export type * from './BottomTabsScreen.types';
@@ -9,7 +9,7 @@ export type * from './BottomTabsScreen.types';
  */
 const Tabs = {
   Host: TabsHost,
-  Screen: BottomTabsScreen,
+  Screen: TabsScreen,
 };
 
 export default Tabs;

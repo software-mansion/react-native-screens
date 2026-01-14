@@ -21,7 +21,7 @@ import BottomTabsAccessoryContent from './BottomTabsAccessoryContent';
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
 function TabsHost(props: BottomTabsProps) {
-  bottomTabsDebugLog(`BottomTabs render`);
+  bottomTabsDebugLog(`TabsHost render`);
 
   const {
     onNativeFocusChange,
@@ -47,7 +47,7 @@ function TabsHost(props: BottomTabsProps) {
   const onNativeFocusChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
       bottomTabsDebugLog(
-        `BottomTabs [${
+        `TabsHost [${
           componentNodeHandle.current ?? -1
         }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
       );

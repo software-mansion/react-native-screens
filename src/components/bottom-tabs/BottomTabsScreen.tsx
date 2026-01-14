@@ -38,7 +38,7 @@ import type {
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function BottomTabsScreen(props: BottomTabsScreenProps) {
+function TabsScreen(props: BottomTabsScreenProps) {
   const componentNodeRef = React.useRef<React.Component<NativeProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 
@@ -364,7 +364,7 @@ function parseIconsToNativeProps(
   return {};
 }
 
-export default BottomTabsScreen;
+export default TabsScreen;
 
 const styles = StyleSheet.create({
   fillParent: {
