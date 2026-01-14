@@ -22,12 +22,12 @@ import BottomTabsScreenNativeComponent, {
 } from '../../fabric/bottom-tabs/BottomTabsScreenNativeComponent';
 import { featureFlags } from '../../flags';
 import type {
-  BottomTabsScreenAppearance,
-  BottomTabsScreenItemAppearance,
-  BottomTabsScreenItemStateAppearance,
-  BottomTabsScreenProps,
+  TabsScreenAppearance,
+  TabsScreenItemAppearance,
+  TabsScreenItemStateAppearance,
+  TabsScreenProps,
   EmptyObject,
-} from './BottomTabsScreen.types';
+} from './TabsScreen.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type {
   PlatformIcon,
@@ -38,7 +38,7 @@ import type {
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function BottomTabsScreen(props: BottomTabsScreenProps) {
+function TabsScreen(props: TabsScreenProps) {
   const componentNodeRef = React.useRef<React.Component<NativeProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 
@@ -156,7 +156,7 @@ function BottomTabsScreen(props: BottomTabsScreenProps) {
 }
 
 function mapAppearanceToNativeProp(
-  appearance?: BottomTabsScreenAppearance,
+  appearance?: TabsScreenAppearance,
 ): Appearance | undefined {
   if (!appearance) return undefined;
 
@@ -179,7 +179,7 @@ function mapAppearanceToNativeProp(
 }
 
 function mapItemAppearanceToNativeProp(
-  itemAppearance?: BottomTabsScreenItemAppearance,
+  itemAppearance?: TabsScreenItemAppearance,
 ): ItemAppearance | undefined {
   if (!itemAppearance) return undefined;
 
@@ -195,7 +195,7 @@ function mapItemAppearanceToNativeProp(
 }
 
 function mapItemStateAppearanceToNativeProp(
-  itemStateAppearance?: BottomTabsScreenItemStateAppearance,
+  itemStateAppearance?: TabsScreenItemStateAppearance,
 ): ItemStateAppearance | undefined {
   if (!itemStateAppearance) return undefined;
 
@@ -364,7 +364,7 @@ function parseIconsToNativeProps(
   return {};
 }
 
-export default BottomTabsScreen;
+export default TabsScreen;
 
 const styles = StyleSheet.create({
   fillParent: {

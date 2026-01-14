@@ -1,12 +1,12 @@
 import { NativeSyntheticEvent, ViewProps } from 'react-native';
 
-export type BottomTabsAccessoryEnvironment = 'regular' | 'inline';
+export type TabsAccessoryEnvironment = 'regular' | 'inline';
 
 export type EnvironmentChangeEvent = {
-  environment: BottomTabsAccessoryEnvironment;
+  environment: TabsAccessoryEnvironment;
 };
 
-export type BottomTabsAccessoryProps = ViewProps & {
+export type TabsAccessoryProps = ViewProps & {
   onEnvironmentChange?: (
     event: NativeSyntheticEvent<EnvironmentChangeEvent>,
   ) => void;

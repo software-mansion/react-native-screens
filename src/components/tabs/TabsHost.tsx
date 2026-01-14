@@ -11,20 +11,17 @@ import BottomTabsNativeComponent, {
   type NativeProps as BottomTabsNativeComponentProps,
 } from '../../fabric/bottom-tabs/BottomTabsNativeComponent';
 import featureFlags from '../../flags';
-import type {
-  BottomTabsProps,
-  NativeFocusChangeEvent,
-} from './BottomTabs.types';
+import type { TabsHostProps, NativeFocusChangeEvent } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
-import BottomTabsAccessory from './BottomTabsAccessory';
-import { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
-import BottomTabsAccessoryContent from './BottomTabsAccessoryContent';
+import TabsAccessory from './TabsAccessory';
+import { TabsAccessoryEnvironment } from './TabsAccessory.types';
+import TabsAccessoryContent from './TabsAccessoryContent';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function BottomTabs(props: BottomTabsProps) {
-  bottomTabsDebugLog(`BottomTabs render`);
+function TabsHost(props: TabsHostProps) {
+  bottomTabsDebugLog(`TabsHost render`);
 
   const {
     onNativeFocusChange,
@@ -50,7 +47,7 @@ function BottomTabs(props: BottomTabsProps) {
   const onNativeFocusChangeCallback = React.useCallback(
     (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
       bottomTabsDebugLog(
-        `BottomTabs [${
+        `TabsHost [${
           componentNodeHandle.current ?? -1
         }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
       );
@@ -60,7 +57,7 @@ function BottomTabs(props: BottomTabsProps) {
   );
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
-    useState<BottomTabsAccessoryEnvironment>('regular');
+    useState<TabsAccessoryEnvironment>('regular');
 
   return (
     <BottomTabsNativeComponent
@@ -75,27 +72,27 @@ function BottomTabs(props: BottomTabsProps) {
         Platform.OS === 'ios' &&
         parseInt(Platform.Version, 10) >= 26 &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
-          <BottomTabsAccessory>
-            <BottomTabsAccessoryContent environment="regular">
+          <TabsAccessory>
+            <TabsAccessoryContent environment="regular">
               {bottomAccessory('regular')}
-            </BottomTabsAccessoryContent>
-            <BottomTabsAccessoryContent environment="inline">
+            </TabsAccessoryContent>
+            <TabsAccessoryContent environment="inline">
               {bottomAccessory('inline')}
-            </BottomTabsAccessoryContent>
-          </BottomTabsAccessory>
+            </TabsAccessoryContent>
+          </TabsAccessory>
         ) : (
-          <BottomTabsAccessory
+          <TabsAccessory
             onEnvironmentChange={event => {
               setBottomAccessoryEnvironment(event.nativeEvent.environment);
             }}>
             {bottomAccessory(bottomAccessoryEnvironment)}
-          </BottomTabsAccessory>
+          </TabsAccessory>
         ))}
     </BottomTabsNativeComponent>
   );
 }
 
-export default BottomTabs;
+export default TabsHost;
 
 const styles = StyleSheet.create({
   fillParent: {

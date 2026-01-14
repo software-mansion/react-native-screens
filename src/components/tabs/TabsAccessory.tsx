@@ -1,12 +1,12 @@
 import React from 'react';
 import BottomTabsAccessoryNativeComponent from '../../fabric/bottom-tabs/BottomTabsAccessoryNativeComponent';
-import { BottomTabsAccessoryProps } from './BottomTabsAccessory.types';
+import { TabsAccessoryProps } from './TabsAccessory.types';
 import { StyleSheet } from 'react-native';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-export default function BottomTabsAccessory(props: BottomTabsAccessoryProps) {
+export default function TabsAccessory(props: TabsAccessoryProps) {
   return (
     <BottomTabsAccessoryNativeComponent
       {...props}

@@ -5,10 +5,10 @@ import type {
   NativeSyntheticEvent,
   ViewProps,
 } from 'react-native';
-import type { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+import type { TabsAccessoryEnvironment } from './TabsAccessory.types';
 
-export type BottomAccessoryFn = (
-  environment: BottomTabsAccessoryEnvironment,
+export type TabAccessoryComponentFactory = (
+  environment: TabsAccessoryEnvironment,
 ) => ReactNode;
 
 export type NativeFocusChangeEvent = {
@@ -33,7 +33,7 @@ export type TabBarMinimizeBehavior =
 // iOS-specific
 export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
-export interface BottomTabsProps extends ViewProps {
+export interface TabsHostProps extends ViewProps {
   // #region Events
   /**
    * A callback that gets invoked when user requests change of focused tab screen.
@@ -174,7 +174,7 @@ export interface BottomTabsProps extends ViewProps {
    * selection view.
    *
    * `tabBarItemTitleFontColor` and `tabBarItemIconColor` defined on
-   * BottomTabsScreen component override this color.
+   * TabsScreen component override this color.
    *
    * @platform ios
    */
@@ -231,7 +231,7 @@ export interface BottomTabsProps extends ViewProps {
    * @platform iOS
    * @supported iOS 26 or higher
    */
-  bottomAccessory?: BottomAccessoryFn;
+  bottomAccessory?: TabAccessoryComponentFactory;
   /**
    * @summary Specifies the display mode for the tab bar.
    *
