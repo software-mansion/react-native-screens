@@ -7,7 +7,7 @@ import type {
 } from 'react-native';
 import type { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
 
-export type BottomAccessoryFn = (
+export type TabAccessoryComponentFactory = (
   environment: BottomTabsAccessoryEnvironment,
 ) => ReactNode;
 
@@ -231,7 +231,7 @@ export interface BottomTabsProps extends ViewProps {
    * @platform iOS
    * @supported iOS 26 or higher
    */
-  bottomAccessory?: BottomAccessoryFn;
+  tabAccessory?: TabAccessoryComponentFactory;
   /**
    * @summary Specifies the display mode for the tab bar.
    *

@@ -27,7 +27,7 @@ function TabsHost(props: BottomTabsProps) {
     onNativeFocusChange,
     experimentalControlNavigationStateInJS = featureFlags.experiment
       .controlledBottomTabs,
-    bottomAccessory,
+    tabAccessory,
     ...filteredProps
   } = props;
 
@@ -68,16 +68,16 @@ function TabsHost(props: BottomTabsProps) {
       ref={componentNodeRef}
       {...filteredProps}>
       {filteredProps.children}
-      {bottomAccessory &&
+      {tabAccessory &&
         Platform.OS === 'ios' &&
         parseInt(Platform.Version, 10) >= 26 &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
           <BottomTabsAccessory>
             <BottomTabsAccessoryContent environment="regular">
-              {bottomAccessory('regular')}
+              {tabAccessory('regular')}
             </BottomTabsAccessoryContent>
             <BottomTabsAccessoryContent environment="inline">
-              {bottomAccessory('inline')}
+              {tabAccessory('inline')}
             </BottomTabsAccessoryContent>
           </BottomTabsAccessory>
         ) : (
@@ -85,7 +85,7 @@ function TabsHost(props: BottomTabsProps) {
             onEnvironmentChange={event => {
               setBottomAccessoryEnvironment(event.nativeEvent.environment);
             }}>
-            {bottomAccessory(bottomAccessoryEnvironment)}
+            {tabAccessory(bottomAccessoryEnvironment)}
           </BottomTabsAccessory>
         ))}
     </BottomTabsNativeComponent>

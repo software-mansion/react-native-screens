@@ -227,7 +227,7 @@ function Tabs() {
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
         tabBarMinimizeBehavior={bottomAccessoryConfig.tabBarMinimizeBehavior}
-        bottomAccessory={
+        tabAccessory={
           bottomAccessoryConfig.shown
             ? environment =>
                 getBottomAccessory(environment, bottomAccessoryConfig)
