@@ -58,7 +58,7 @@
     _reactEventEmitter->onDismiss({.isNativeDismiss = false});
     return YES;
   } else {
-    RCTLogWarn(@"[RNScreens] Skipped OnDismissed event emission due to nullish emitter");
+    RCTLogWarn(@"[RNScreens] Skipped OnDismiss event emission due to nullish emitter");
     return NO;
   }
 }
