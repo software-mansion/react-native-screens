@@ -22,7 +22,10 @@ internal fun View.resolveInsetsOrZero(
         return InsetsCompat.NONE
     }
 
-    val windowInsetsCompat = WindowInsetsCompat.toWindowInsetsCompat(sourceWindowInsets, this)
+    // We don't use root view-aware WindowInsetsCompat to make sure we get information about display
+    // cutout inset being consumed by one of the ancestor views. Refer to WindowInsetsCompat
+    // `Impl20` implementation of getInsetsForType (case Type.DISPLAY_CUTOUT).
+    val windowInsetsCompat = WindowInsetsCompat.toWindowInsetsCompat(sourceWindowInsets)
     return if (!ignoreVisibility) {
         windowInsetsCompat.getInsets(insetType)
     } else {

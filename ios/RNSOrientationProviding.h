@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSEnums.h"
 
 NS_ASSUME_NONNULL_BEGIN

@@ -8,6 +8,7 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
@@ -26,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
@@ -34,6 +36,7 @@ import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.utils.getDecorViewTopInset
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -50,6 +53,8 @@ class Screen(
 
     val reactEventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+
+    var insetsApplied = false
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -81,18 +86,21 @@ class Screen(
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
 
-    // We want to make sure here that at least one value is present in this array all the time.
-    // TODO: Model this with custom data structure to guarantee that this invariant is not violated.
-    var sheetDetents = mutableListOf(1.0)
+    var sheetDetents: SheetDetents = SheetDetents(listOf(1.0))
     var sheetLargestUndimmedDetentIndex: Int = -1
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
+    var sheetShouldOverflowTopInset = false
 
     /**
-     * When using form sheet presentation we want to delay enter transition **on Paper** in order
+     * On Paper, when using form sheet presentation we want to delay enter transition in order
      * to wait for initial layout from React, otherwise the animator-based animation will look
-     * glitchy. *This is not needed on Fabric*.
+     * glitchy.
+     *
+     * On Fabric, the view layout is completed before window insets are applied.
+     * To ensure the BottomSheet correctly respects insets during its enter transition,
+     * we delay the transition until both layout and insets have been applied.
      */
     var shouldTriggerPostponedTransitionAfterLayout = false
 
@@ -142,6 +150,9 @@ class Screen(
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents()) {
                 sheetBehavior?.useSingleDetent(height)
+                // During the initial call in `onCreateView`, insets are not yet available,
+                // so we need to request an additional layout pass later to account for them.
+                requestLayout()
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -184,10 +195,20 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            dispatchShadowStateUpdate(width, height, t)
+            if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
+                val topLevelDecorView =
+                    requireNotNull(
+                        reactContext.currentActivity?.window?.decorView,
+                    ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
 
-            // FormSheet has no header in current model.
-            notifyHeaderHeightChange(t)
+                val topInset = getDecorViewTopInset(topLevelDecorView)
+                val correctedHeight = height - topInset
+                val correctedOffsetY = t + topInset
+
+                dispatchShadowStateUpdate(width, correctedHeight, correctedOffsetY)
+            } else {
+                dispatchShadowStateUpdate(width, height, t)
+            }
         }
     }
 
@@ -210,7 +231,16 @@ class Screen(
         }
     }
 
-    private fun triggerPostponedEnterTransitionIfNeeded() {
+    // On Fabric, the view layout is completed before window insets are applied.
+    // To ensure the BottomSheet correctly respects insets during its enter transition,
+    // we delay the transition until both layout and insets have been applied.
+    internal fun requestTriggeringPostponedEnterTransition() {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !sheetShouldOverflowTopInset) {
+            shouldTriggerPostponedTransitionAfterLayout = true
+        }
+    }
+
+    internal fun triggerPostponedEnterTransitionIfNeeded() {
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
@@ -456,12 +486,18 @@ class Screen(
             super.onTouchEvent(event)
         }
 
-    private fun notifyHeaderHeightChange(headerHeight: Int) {
+    internal fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
         UIManagerHelper
             .getEventDispatcherForReactTag(screenContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
+            ?.dispatchEvent(
+                HeaderHeightChangeEvent(
+                    surfaceId,
+                    id,
+                    PixelUtil.toDIPFromPixel(headerHeight.toFloat()).toDouble(),
+                ),
+            )
     }
 
     internal fun onSheetDetentChanged(
@@ -472,8 +508,21 @@ class Screen(
         // There is no need to update shadow state for transient sheet states -
         // we are unsure of the exact sheet position anyway.
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
-            updateScreenSizeFabric(width, height, top)
+            onSheetYTranslationChanged()
         }
+    }
+
+    internal fun onSheetYTranslationChanged() {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // Translation is relative to the bottom edge, therefore it returns negative values.
+            updateScreenSizeFabric(width, height, top + translationY.toInt())
+        }
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        insetsApplied = true
+
+        return super.onApplyWindowInsets(insets)
     }
 
     override fun onAttachedToWindow() {
@@ -570,11 +619,6 @@ class Screen(
 
     companion object {
         const val TAG = "Screen"
-
-        /**
-         * This value describes value in sheet detents array that will be treated as `fitToContents` option.
-         */
-        const val SHEET_FIT_TO_CONTENTS = -1.0
     }
 }
 

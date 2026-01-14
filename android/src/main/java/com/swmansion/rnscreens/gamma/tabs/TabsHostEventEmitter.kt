@@ -8,7 +8,19 @@ internal class TabsHostEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag) {
-    fun emitOnNativeFocusChange(tabKey: String) {
-        reactEventDispatcher.dispatchEvent(TabsHostNativeFocusChangeEvent(surfaceId, viewTag, tabKey))
+    fun emitOnNativeFocusChange(
+        tabKey: String,
+        tabNumber: Int,
+        repeatedSelectionHandledBySpecialEffect: Boolean,
+    ) {
+        reactEventDispatcher.dispatchEvent(
+            TabsHostNativeFocusChangeEvent(
+                surfaceId,
+                viewTag,
+                tabKey,
+                tabNumber,
+                repeatedSelectionHandledBySpecialEffect,
+            ),
+        )
     }
 }

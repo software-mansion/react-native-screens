@@ -34,11 +34,31 @@ open class CustomToolbar(
 
     private val shouldApplyTopInset = true
 
+    private var shouldApplyLayoutCorrectionForTopInset = false
+
     private var lastInsets = InsetsCompat.NONE
 
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
     private var isLayoutEnqueued = false
+
+    init {
+        // Ensure ActionMenuView is initialized as soon as the Toolbar is created.
+        //
+        // Android measures Toolbar height based on the tallest child view.
+        // During the first measurement:
+        // 1. The Toolbar is created but not yet added to the action bar via `activity.setSupportActionBar(toolbar)`
+        //    (typically called in `onUpdate` method from `ScreenStackHeaderConfig`).
+        // 2. At this moment, the title view may exist, but ActionMenuView (which may be taller) hasn't been added yet.
+        // 3. This causes the initial height calculation to be based on the title view, potentially too small.
+        // 4. When ActionMenuView is eventually attached, the Toolbar might need to re-layout due to the size change.
+        //
+        // By referencing the menu here, we trigger `ensureMenu`, which creates and attaches ActionMenuView early.
+        // This guarantees that all size-dependent children are present during the first layout pass,
+        // resulting in correct height determination from the beginning.
+        menu
+    }
+
     private val layoutCallback: Choreographer.FrameCallback =
         object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
@@ -55,6 +75,17 @@ open class CustomToolbar(
 
     override fun requestLayout() {
         super.requestLayout()
+
+        val maybeAppBarLayout = parent as? CustomAppBarLayout
+        maybeAppBarLayout?.let {
+            if (shouldApplyLayoutCorrectionForTopInset && !it.isInLayout) {
+                // In `applyToolbarLayoutCorrection`, we call and immediate layout on AppBarLayout
+                // to update it right away and avoid showing a potentially wrong UI state.
+                it.applyToolbarLayoutCorrection(paddingTop)
+                shouldApplyLayoutCorrectionForTopInset = false
+            }
+        }
+
         val softInputMode =
             (context as ThemedReactContext)
                 .currentActivity
@@ -92,21 +123,10 @@ open class CustomToolbar(
         // 3. edge-to-edge with translucent navigation buttons bar.
         //
         // Additionally we need to gracefully handle possible display cutouts.
-
-        // We use rootWindowInsets in lieu of insets or unhandledInsets here,
-        // because cutout sometimes (only in certain scenarios, e.g. with headerLeft view present)
-        // happen to be Insets.ZERO and is not reliable.
-        val rootWindowInsets = rootWindowInsets
         val cutoutInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), rootWindowInsets)
+            resolveInsetsOrZero(WindowInsetsCompat.Type.displayCutout(), unhandledInsets)
         val systemBarInsets =
-            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), rootWindowInsets)
-        val statusBarInsetsStable =
-            resolveInsetsOrZero(
-                WindowInsetsCompat.Type.systemBars(),
-                rootWindowInsets,
-                ignoreVisibility = true,
-            )
+            resolveInsetsOrZero(WindowInsetsCompat.Type.systemBars(), unhandledInsets)
 
         // This seems to work fine in all tested configurations, because cutout & system bars overlap
         // only in portrait mode & top inset is controlled separately, therefore we don't count
@@ -125,7 +145,7 @@ open class CustomToolbar(
         val verticalInsets =
             InsetsCompat.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) statusBarInsetsStable.top else 0),
+                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
                 0,
                 max(cutoutInsets.bottom, 0),
             )
@@ -172,6 +192,7 @@ open class CustomToolbar(
         right: Int,
         bottom: Int,
     ) {
+        shouldApplyLayoutCorrectionForTopInset = true
         requestForceShadowStateUpdateOnLayout()
         setPadding(left, top, right, bottom)
     }

@@ -57,6 +57,15 @@ class TabScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
+    // Accessibility
+    var tabBarItemTestID: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+    }
+
+    var tabBarItemAccessibilityLabel: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+    }
+
     // Icon
     var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -67,6 +76,9 @@ class TabScreen(
     var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
+
+    var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
+    var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
 
     private fun <T> updateMenuItemAttributesIfNeeded(
         oldValue: T,

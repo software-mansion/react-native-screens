@@ -20,7 +20,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext"
+    "target": "esnext",
+    "types": ["jest", "node"],
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

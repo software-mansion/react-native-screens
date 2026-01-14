@@ -243,6 +243,15 @@ open class ScreenContainer(
         transaction.commitNowAllowingStateLoss()
     }
 
+    fun notifyScreenDetached(screen: Screen) {
+        if (context is ReactContext) {
+            val surfaceId = UIManagerHelper.getSurfaceId(context)
+            UIManagerHelper
+                .getEventDispatcherForReactTag(context as ReactContext, screen.id)
+                ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
+        }
+    }
+
     fun notifyTopDetached() {
         val top = topScreen as Screen
         if (context is ReactContext) {
@@ -402,18 +411,27 @@ open class ScreenContainer(
             // attach newly activated screens
             var addedBefore = false
             val pendingFront: ArrayList<ScreenFragmentWrapper> = ArrayList()
-
             for (fragmentWrapper in screenWrappers) {
-                val activityState = getActivityState(fragmentWrapper)
-                if (activityState !== ActivityState.INACTIVE && !fragmentWrapper.fragment.isAdded) {
-                    addedBefore = true
-                    attachScreen(it, fragmentWrapper.fragment)
-                } else if (activityState !== ActivityState.INACTIVE && addedBefore) {
-                    // we detach the screen and then reattach it later to make it appear on front
-                    detachScreen(it, fragmentWrapper.fragment)
-                    pendingFront.add(fragmentWrapper)
-                }
                 fragmentWrapper.screen.setTransitioning(transitioning)
+
+                val activityState = getActivityState(fragmentWrapper)
+                if (activityState == ActivityState.INACTIVE) {
+                    continue
+                }
+
+                if (fragmentWrapper.fragment.isAdded) {
+                    if (addedBefore) {
+                        detachScreen(it, fragmentWrapper.fragment)
+                        pendingFront.add(fragmentWrapper)
+                    }
+                } else {
+                    if (addedBefore) {
+                        pendingFront.add(fragmentWrapper)
+                    } else {
+                        addedBefore = true
+                        attachScreen(it, fragmentWrapper.fragment)
+                    }
+                }
             }
 
             for (screenFragment in pendingFront) {

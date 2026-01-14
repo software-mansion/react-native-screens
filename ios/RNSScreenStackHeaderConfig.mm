@@ -169,19 +169,17 @@ RNS_IGNORE_SUPER_CALL_END
         continue;
       }
 
-      // we wrap the headerLeft/Right component in a UIBarButtonItem
-      // so we need to hit test subviews from left to right, because of the view flattening
-      UIView *headerComponent = nil;
-      for (UIView *headerComponentSubview in subview.subviews) {
+      // We wrap the headerLeft/Right component in a UIBarButtonItem
+      // so we need to hit test subviews, because of the view flattening
+      // (we match RCTViewComponentView implementation).
+      for (UIView *headerComponentSubview in [subview.subviews reverseObjectEnumerator]) {
         CGPoint convertedPoint = [self convertPoint:point toView:headerComponentSubview];
         UIView *hitTestResult = [headerComponentSubview hitTest:convertedPoint withEvent:event];
 
         if (hitTestResult != nil) {
-          headerComponent = hitTestResult;
+          return hitTestResult;
         }
       }
-
-      return headerComponent;
     }
   }
   return nil;
@@ -575,12 +573,13 @@ RNS_IGNORE_SUPER_CALL_END
     vc.edgesForExtendedLayout = UIRectEdgeAll;
   }
 
-  [navctr setNavigationBarHidden:shouldHide animated:animated];
-
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
   if (shouldHide) {
     navitem.title = config.title;
+
+    // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
+    [navctr setNavigationBarHidden:YES animated:animated];
     return;
   }
 
@@ -723,6 +722,11 @@ RNS_IGNORE_SUPER_CALL_END
                                                 withCurrentItems:navitem.leftBarButtonItems];
   navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
                                                  withCurrentItems:navitem.rightBarButtonItems];
+
+  // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
+  // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
+  RCTAssert(shouldHide == NO, @"[RNScreens] RNSScreenStackHeaderConfig: expected shouldHide to be NO.");
+  [navctr setNavigationBarHidden:NO animated:animated];
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {

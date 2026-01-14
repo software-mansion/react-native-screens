@@ -21,6 +21,7 @@ import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
 import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import SafeAreaView from './safe-area/SafeAreaView';
+import { featureFlags } from '../flags';
 
 type Props = Omit<
   ScreenProps,
@@ -42,6 +43,7 @@ function ScreenStackItem(
     contentStyle,
     style,
     screenId,
+    onHeaderHeightChange,
     // eslint-disable-next-line camelcase
     unstable_sheetFooter,
     ...rest
@@ -74,6 +76,23 @@ function ScreenStackItem(
 
     headerHiddenPreviousRef.current = headerConfigHiddenWithDefault;
   }, [headerConfigHiddenWithDefault, stackPresentationWithDefault]);
+
+  const hasEdgeEffects =
+    rest?.scrollEdgeEffects === undefined ||
+    Object.values(rest.scrollEdgeEffects).some(
+      propValue => propValue !== 'hidden',
+    );
+  const hasBlurEffect =
+    headerConfig?.blurEffect !== undefined &&
+    headerConfig.blurEffect !== 'none';
+
+  warnOnce(
+    hasEdgeEffects &&
+      hasBlurEffect &&
+      Platform.OS === 'ios' &&
+      parseInt(Platform.Version, 10) >= 26,
+    '[RNScreens] Using both `blurEffect` and `scrollEdgeEffects` simultaneously may cause overlapping effects.',
+  );
 
   const debugContainerStyle = getPositioningStyle(
     sheetAllowedDetents,
@@ -161,6 +180,7 @@ function ScreenStackItem(
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       sheetAllowedDetents={sheetAllowedDetents}
       style={[style, internalScreenStyle]}
+      onHeaderHeightChange={isHeaderInModal ? undefined : onHeaderHeightChange}
       {...rest}>
       {isHeaderInModal ? (
         <ScreenStack style={styles.container}>
@@ -170,7 +190,8 @@ function ScreenStackItem(
             activityState={activityState}
             shouldFreeze={shouldFreeze}
             hasLargeHeader={headerConfig?.largeTitle ?? false}
-            style={StyleSheet.absoluteFill}>
+            style={StyleSheet.absoluteFill}
+            onHeaderHeightChange={onHeaderHeightChange}>
             {content}
           </Screen>
         </ScreenStack>
@@ -188,13 +209,22 @@ function getPositioningStyle(
   presentation: StackPresentationTypes,
 ) {
   const isIOS = Platform.OS === 'ios';
+  const rnMinorVersion = Platform.constants.reactNativeVersion.minor;
 
   if (presentation !== 'formSheet') {
     return styles.container;
   }
 
   if (isIOS) {
-    return styles.absolute;
+    if (
+      allowedDetents !== 'fitToContents' &&
+      rnMinorVersion >= 82 &&
+      featureFlags.experiment.synchronousScreenUpdatesEnabled
+    ) {
+      return styles.container;
+    } else {
+      return styles.absoluteWithNoBottom;
+    }
   }
 
   // Other platforms, tested reliably only on Android
@@ -252,7 +282,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  absolute: {
+  absoluteWithNoBottom: {
     position: 'absolute',
     top: 0,
     start: 0,

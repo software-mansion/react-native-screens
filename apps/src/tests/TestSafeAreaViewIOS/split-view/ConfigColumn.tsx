@@ -23,7 +23,10 @@ export default function ConfigColumn({
           tabKey: 'column' + index,
           title: 'Column ' + index,
           icon: {
-            sfSymbolName: index + '.circle',
+            ios: {
+              type: 'sfSymbol',
+              name: index + '.circle',
+            },
           },
         },
         component: () => ConfigColumnTab({ index, configColumnIndex }),

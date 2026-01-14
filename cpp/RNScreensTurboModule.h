@@ -1,3 +1,5 @@
+#pragma once
+
 // Needed on Paper only to hide the files from Swift build process
 #if defined(__cplusplus)
 

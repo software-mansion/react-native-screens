@@ -31,6 +31,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
           },
         },
       },
+      testID: 'tab-screen-1-id',
+      accessibilityLabel: 'First Tab Screen',
+      tabBarItemTestID: 'tab-item-1-id',
+      tabBarItemAccessibilityLabel: 'First Tab Item',
       tabKey: 'Tab1',
       title: 'Tab1',
       isFocused: true,
@@ -38,11 +42,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         ios: {
           type: 'sfSymbol',
           name: 'house.fill',
-        }, 
+        },
         android: {
           type: 'imageSource',
           imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-        }
+        },
       },
       selectedIcon: {
         type: 'sfSymbol',
@@ -55,6 +59,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       badgeValue: 'NEW',
+      testID: 'tab-screen-2-id',
+      accessibilityLabel: 'Second Tab Screen',
+      tabBarItemTestID: 'tab-item-2-id',
+      tabBarItemAccessibilityLabel: 'Second Tab Item',
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyDark140,
         stacked: {
@@ -105,11 +113,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         ios: {
           type: 'templateSource',
           templateSource: require('../../../assets/variableIcons/icon.png'),
-        }, 
+        },
         android: {
           type: 'drawableResource',
           name: 'sym_call_missed',
-        }
+        },
       },
       selectedIcon: {
         type: 'templateSource',
@@ -129,6 +137,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab3',
       badgeValue: '2137',
+      testID: 'tab-screen-3-id',
+      accessibilityLabel: 'Third Tab Screen',
+      tabBarItemTestID: 'tab-item-3-id',
+      tabBarItemAccessibilityLabel: 'Third Tab Item',
       scrollEdgeEffects: { bottom: 'hard' },
       tabBarItemBadgeBackgroundColor: Colors.RedDark40,
       tabBarItemBadgeTextColor: Colors.RedDark120,
@@ -148,7 +160,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         shared: {
           type: 'imageSource',
           imageSource: require('../../../assets/variableIcons/icon.png'),
-        }
+        },
       },
       selectedIcon: {
         type: 'imageSource',
@@ -164,6 +176,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       tabKey: 'Tab4',
+      testID: 'tab-screen-4-id',
+      accessibilityLabel: 'Fourth Tab Screen',
+      tabBarItemTestID: 'tab-item-4-id',
+      tabBarItemAccessibilityLabel: 'Fourth Tab Item',
       icon: {
         ios: {
           type: 'sfSymbol',
@@ -171,8 +187,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
         android: {
           type: 'drawableResource',
-          name: 'custom_home_icon'
-        }
+          name: 'custom_home_icon',
+        },
       },
       selectedIcon: {
         type: 'sfSymbol',
@@ -181,6 +197,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
       title: 'Tab4',
       systemItem: 'search', // iOS specific
       badgeValue: '123',
+      specialEffects: {
+        repeatedTabSelection: {
+          popToRoot: false,
+        },
+      },
     },
     component: Tab4,
   },

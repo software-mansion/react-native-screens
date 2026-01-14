@@ -1,3 +1,5 @@
+#pragma once
+
 #import "RNSEnums.h"
 
 @protocol RNSScrollEdgeEffectProviding

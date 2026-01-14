@@ -1,6 +1,6 @@
 #import "RNSGammaStubs.h"
 
-@implementation RNSScreenStackHostComponentView
+@implementation RNSStackHostComponentView
 @end
 
 @implementation RNSStackScreenComponentView

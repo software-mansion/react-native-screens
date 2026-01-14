@@ -104,6 +104,23 @@ Unfortunately the same behavior is not available on iOS since the behavior of na
 
 Defaults to `false`.
 
+### `scrollEdgeEffects` (>= iOS 26 only)
+
+Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
+Depending on values set, it will blur the scrolling content below certain UI elements (e.g. header items, search bar) for the specified edge of the ScrollView.
+When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around, the ScrollView will use only the innermost one's config.
+
+Edge effects can be configured for each edge separately. The following values are currently supported:
+
+- `automatic` - the automatic scroll edge effect style,
+- `hard` - a scroll edge effect with a hard cutoff and dividing line,
+- `soft` - a soft-edged scroll edge effect,
+- `hidden` - no scroll edge effect.
+
+Defaults to `automatic` for each edge.
+
+**Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
+
 ### `navigationBarColor` (Android only)
 
 This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
@@ -232,6 +249,16 @@ There also legacy & **deprecated** prop values available: `medium`, `large` (don
 corresponding legacy prop values for `sheetAllowedDetents` prop.
 
 Defaults to `none`, indicating that the dimming view should be always present.
+
+### `sheetShouldOverflowTopInset` (Android only)
+
+Whether the sheet content should be rendered behind the Status Bar or display cutouts.
+
+When set to `true`, the sheet will extend to the physical edges of the stack, allowing content to be visible behind the status bar or display cutouts. Detent ratios in sheetAllowedDetents will be measured relative to the full stack height.
+
+When set to `false`, the sheet's layout will be constrained by the inset from the top and the detent ratios will then be measured relative to the adjusted height (excluding the top inset). This means that sheetAllowedDetents will result in different sheet heights depending on this prop.
+
+Defaults to `false`.
 
 ### `stackAnimation`
 
@@ -541,6 +568,8 @@ When set to `false` it works as a "kill switch": it enforces `backButtonDisplayM
 
 Blur effect to be applied to the header. Works with `backgroundColor`'s alpha < 1.
 
+**Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
+
 ### `children`
 
 Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenStackHeaderLeftView`, `ScreenStackHeaderCenterView`, `ScreenStackHeaderSearchBarView`.
@@ -624,11 +653,16 @@ menu?: {
       label?: string;
       type: 'submenu';
       icon?: PlatformIconIOSSfSymbol;
+      displayInline?: boolean; // Whether to display submenu inline - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/displayinline
+      destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/destructive
+      singleSelection?: boolean; // Whether submenu allows single selection - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/singleselection
+      displayAsPalette?: boolean; // Whether to display submenu as palette - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/displayaspalette
       items: menu['items']; // References itself so you can create inifinte deep menus. So either actions or more submenus
     }
   >
 }
 ```
+
 
 #### The spacing item supports:
 

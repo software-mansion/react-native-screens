@@ -1,5 +1,6 @@
 #import "RNSScreenContentWrapper.h"
 #import "RNSDefines.h"
+#import "RNSSafeAreaViewComponentView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 
@@ -106,32 +107,55 @@ namespace react = facebook::react;
   return static_cast<RNSScreenView *_Nullable>(currentView);
 }
 
-- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)childRCTScrollViewComponent
+- (RNSScrollViewSearchResult)childRCTScrollViewComponentAndContentContainer
 {
+  // Directly search subviews
   for (UIView *subview in self.subviews) {
     if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-      return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+      return (RNSScrollViewSearchResult){.scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview),
+                                         .contentContainerView = self};
     }
   }
-  return nil;
+
+  // Fallback 1: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    UIView *maybeSafeAreaView = self.subviews.firstObject;
+    if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+      for (UIView *subview in maybeSafeAreaView.subviews) {
+        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+          return (RNSScrollViewSearchResult){
+              .scrollViewComponent = static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview),
+              .contentContainerView = maybeSafeAreaView};
+        }
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  return (RNSScrollViewSearchResult){.scrollViewComponent = nullptr, .contentContainerView = nullptr};
 }
 
 - (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size
 {
-  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [self childRCTScrollViewComponent];
+  auto scrollViewComponentAndContentContainerPair = [self childRCTScrollViewComponentAndContentContainer];
+  RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+      scrollViewComponentAndContentContainerPair.scrollViewComponent;
+  UIView *_Nullable containerView = scrollViewComponentAndContentContainerPair.contentContainerView;
 
   if (scrollViewComponent == nil) {
     return NO;
   }
 
-  if (self.subviews.count > 2) {
+  if (containerView.subviews.count > 2) {
     RCTLogWarn(
-        @"[RNScreens] FormSheet with ScrollView expects at most 2 subviews. Got %ld. This might result in incorrect layout. \
+        @"[RNScreens] FormSheet with ScrollView expects at most 2 subviews. Got %ld for container: %@. This might result in incorrect layout. \
           If you want to display header alongside the scrollView, make sure to apply `collapsable: false` on your header component view.",
-        self.subviews.count);
+        containerView.subviews.count,
+        NSStringFromClass(containerView.class));
   }
 
-  NSUInteger scrollViewComponentIndex = [[self subviews] indexOfObject:scrollViewComponent];
+  NSUInteger scrollViewComponentIndex = [containerView.subviews indexOfObject:scrollViewComponent];
 
   // Case 1: ScrollView first child - takes whole size.
   if (scrollViewComponentIndex == 0) {
@@ -143,7 +167,7 @@ namespace react = facebook::react;
 
   // Case 2: There is a header - we adjust scrollview size by the header height.
   if (scrollViewComponentIndex == 1) {
-    UIView *headerView = self.subviews[0];
+    UIView *headerView = containerView.subviews[0];
     CGRect newFrame = scrollViewComponent.frame;
     newFrame.size = size;
     newFrame.size.height -= headerView.frame.size.height;

@@ -16,10 +16,10 @@ import SearchBarNativeComponent, {
   SearchButtonPressedEvent,
   ChangeTextEvent,
 } from '../fabric/SearchBarNativeComponent';
-import { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
+import type { CodegenTypes as CT } from 'react-native';
 
 const NativeSearchBar: React.ComponentType<
-  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands> }
+  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands | null> }
 > &
   typeof NativeSearchBarCommands =
   SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
@@ -27,7 +27,7 @@ const NativeSearchBar: React.ComponentType<
 const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
 
-type NativeSearchBarRef = React.ElementRef<typeof NativeSearchBar>;
+type NativeSearchBarRef = React.ComponentRef<typeof NativeSearchBar>;
 
 type SearchBarCommandsType = {
   blur: (viewRef: NativeSearchBarRef) => void;
@@ -42,7 +42,7 @@ function SearchBar(
   props: SearchBarProps,
   forwardedRef: React.Ref<SearchBarCommands>,
 ) {
-  const searchBarRef = React.useRef<SearchBarCommands | null>(null);
+  const searchBarRef = React.useRef<SearchBarCommands>(null);
 
   React.useImperativeHandle(forwardedRef, () => ({
     blur: () => {
@@ -112,15 +112,15 @@ function SearchBar(
       hideNavigationBar={parseBooleanToOptionalBooleanNativeProp(
         hideNavigationBar,
       )}
-      onSearchFocus={onFocus as DirectEventHandler<SearchBarEvent>}
-      onSearchBlur={onBlur as DirectEventHandler<SearchBarEvent>}
+      onSearchFocus={onFocus as CT.DirectEventHandler<SearchBarEvent>}
+      onSearchBlur={onBlur as CT.DirectEventHandler<SearchBarEvent>}
       onSearchButtonPress={
-        onSearchButtonPress as DirectEventHandler<SearchButtonPressedEvent>
+        onSearchButtonPress as CT.DirectEventHandler<SearchButtonPressedEvent>
       }
       onCancelButtonPress={
-        onCancelButtonPress as DirectEventHandler<SearchBarEvent>
+        onCancelButtonPress as CT.DirectEventHandler<SearchBarEvent>
       }
-      onChangeText={onChangeText as DirectEventHandler<ChangeTextEvent>}
+      onChangeText={onChangeText as CT.DirectEventHandler<ChangeTextEvent>}
     />
   );
 }

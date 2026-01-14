@@ -1,7 +1,9 @@
-const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = true;
+const RNS_CONTROLLED_BOTTOM_TABS_DEFAULT = false;
 const RNS_SYNCHRONOUS_SCREEN_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
+const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
+  true;
 
 // TODO: Migrate freeze here
 
@@ -31,6 +33,14 @@ export const compatibilityFlags = {
    * * https://github.com/react-navigation/react-navigation/pull/12125
    */
   usesHeaderFlexboxImplementation: true,
+
+  /**
+   * In https://github.com/software-mansion/react-native-screens/pull/3402, we fix values
+   * reported in `onHeaderHeightChange` event on Android. To allow backward compatibility in
+   * `@react-navigation/native-stack`, we expose a way to check whether the new implementation
+   * is in use or not.
+   */
+  usesNewAndroidHeaderHeightImplementation: true,
 } as const;
 
 const _featureFlags = {
@@ -42,6 +52,8 @@ const _featureFlags = {
       RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT,
     synchronousHeaderSubviewUpdatesEnabled:
       RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
+    androidResetScreenShadowStateOnOrientationChangeEnabled:
+      RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
   },
   stable: {},
 };
@@ -88,6 +100,11 @@ const synchronousHeaderSubviewUpdatesAccessor =
     'synchronousHeaderSubviewUpdatesEnabled',
     RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
   );
+const androidResetScreenShadowStateOnOrientationChangeAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'androidResetScreenShadowStateOnOrientationChangeEnabled',
+    RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
+  );
 
 /**
  * Exposes configurable global behaviour of the library.
@@ -122,6 +139,14 @@ export const featureFlags = {
     },
     set synchronousHeaderSubviewUpdatesEnabled(value: boolean) {
       synchronousHeaderSubviewUpdatesAccessor.set(value);
+    },
+    get androidResetScreenShadowStateOnOrientationChangeEnabled() {
+      return androidResetScreenShadowStateOnOrientationChangeAccessor.get();
+    },
+    set androidResetScreenShadowStateOnOrientationChangeEnabled(
+      value: boolean,
+    ) {
+      androidResetScreenShadowStateOnOrientationChangeAccessor.set(value);
     },
   },
   /**

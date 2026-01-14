@@ -1,12 +1,13 @@
 package com.swmansion.rnscreens.gamma.tabs.image
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.net.toUri
 import com.facebook.common.executors.CallerThreadExecutor
 import com.facebook.common.references.CloseableReference
 import com.facebook.datasource.BaseDataSubscriber
@@ -16,6 +17,7 @@ import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.CloseableStaticBitmap
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.swmansion.rnscreens.gamma.tabs.TabScreen
+import java.util.Locale
 
 internal fun loadTabImage(
     context: Context,
@@ -25,7 +27,8 @@ internal fun loadTabImage(
     // Since image loading might happen on a background thread
     // ref. https://frescolib.org/docs/intro-image-pipeline.html
     // We should schedule rendering the result on the UI thread
-    loadTabImageInternal(context, uri) { drawable ->
+    val resolvedUri = ImageSource(context, uri).getUri(context) ?: return
+    loadTabImageInternal(context, resolvedUri) { drawable ->
         Handler(Looper.getMainLooper()).post {
             view.icon = drawable
         }
@@ -34,23 +37,12 @@ internal fun loadTabImage(
 
 private fun loadTabImageInternal(
     context: Context,
-    uri: String,
+    uri: Uri,
     onLoaded: (Drawable) -> Unit,
 ) {
-    val source = resolveTabImageSource(context, uri) ?: return
-    val finalUri =
-        when (source) {
-            is RNSImageSource.DrawableRes -> {
-                "res://${context.packageName}/${source.resId}".toUri()
-            }
-            is RNSImageSource.UriString -> {
-                source.uri.toUri()
-            }
-        }
-
     val imageRequest =
         ImageRequestBuilder
-            .newBuilderWithSource(finalUri)
+            .newBuilderWithSource(uri)
             .build()
 
     val dataSource = Fresco.getImagePipeline().fetchDecodedImage(imageRequest, context)
@@ -78,37 +70,86 @@ private fun loadTabImageInternal(
     )
 }
 
-private fun resolveTabImageSource(
-    context: Context,
-    uri: String,
-): RNSImageSource? {
-    // In release builds, assets are coming with bundle and we need to work with resource id.
-    // In debug, metro is responsible for handling assets via http.
-    // At the moment, we're supporting images (drawable) and SVG icons (raw).
-    // For any other type, we may consider adding a support in the future if needed.
-    if (uri.startsWith("_")) {
-        val drawableResId = context.resources.getIdentifier(uri, "drawable", context.packageName)
-        if (drawableResId != 0) {
-            return RNSImageSource.DrawableRes(drawableResId)
+// Adapted from https://github.com/callstackincubator/react-native-bottom-tabs/blob/main/packages/react-native-bottom-tabs/android/src/main/java/com/rcttabview/ImageSource.kt
+private class ImageSource(
+    private val context: Context,
+    private val uriString: String?,
+) {
+    private fun isLocalResourceUri(uri: Uri?): Boolean = uri?.scheme?.startsWith("res") ?: false
+
+    fun getUri(context: Context): Uri? {
+        val uri = computeUri(context)
+        if (isLocalResourceUri(uri)) {
+            return Uri.parse(
+                uri!!.toString().replace("res:/", "android.resource://${context.packageName}/"),
+            )
         }
-        val rawResId = context.resources.getIdentifier(uri, "raw", context.packageName)
-        if (rawResId != 0) {
-            return RNSImageSource.DrawableRes(rawResId)
-        }
-        Log.e("[RNScreens]", "Resource not found in drawable or raw: $uri")
-        return null
+        return uri
     }
 
-    // If asset isn't included in android source directories and we're loading it from given path.
-    return RNSImageSource.UriString(uri)
+    private fun computeUri(context: Context): Uri? {
+        val stringUri = uriString ?: return null
+
+        return try {
+            val uri = Uri.parse(stringUri)
+            // Verify scheme is set, so that relative uri (used by static resources) are not handled.
+            if (uri.scheme == null) {
+                computeLocalUri(stringUri, context)
+            } else {
+                uri
+            }
+        } catch (_: Exception) {
+            computeLocalUri(stringUri, context)
+        }
+    }
+
+    private fun computeLocalUri(
+        name: String,
+        context: Context,
+    ): Uri? = ResourceIdHelper.getResourceUri(context, name)
 }
 
-private sealed class RNSImageSource {
-    data class DrawableRes(
-        val resId: Int,
-    ) : RNSImageSource()
+// Adapted from https://github.com/expo/expo/blob/sdk-52/packages/expo-image/android/src/main/java/expo/modules/image/ResourceIdHelper.kt
+private object ResourceIdHelper {
+    private val idMap = mutableMapOf<String, Int>()
 
-    data class UriString(
-        val uri: String,
-    ) : RNSImageSource()
+    @SuppressLint("DiscouragedApi")
+    private fun getIdForResourceType(
+        context: Context,
+        name: String,
+        type: String,
+    ): Int {
+        if (name.isEmpty()) return -1
+        val normalizedName = name.lowercase(Locale.ROOT).replace("-", "_")
+        val key = "$type/$normalizedName"
+        synchronized(this) {
+            idMap[key]?.let { return it }
+            val id = context.resources.getIdentifier(normalizedName, type, context.packageName)
+            idMap[key] = id
+            return id
+        }
+    }
+
+    fun getResourceUri(
+        context: Context,
+        name: String,
+    ): Uri? {
+        val normalizedName = name.lowercase(Locale.ROOT).replace("-", "_")
+
+        val drawableResId = getIdForResourceType(context, name, "drawable")
+        if (drawableResId != 0) {
+            return Uri.parse("res:/$drawableResId")
+        }
+
+        val rawResId = getIdForResourceType(context, name, "raw")
+        if (rawResId != 0) {
+            return Uri.parse("res:/$rawResId")
+        }
+
+        return if (name.startsWith("asset:/")) {
+            Uri.parse("file:///android_asset/" + name.removePrefix("asset:/"))
+        } else {
+            Uri.parse("file:///android_asset/$name")
+        }
+    }
 }

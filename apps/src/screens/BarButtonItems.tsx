@@ -437,6 +437,8 @@ export default function BarButtonItemsExample() {
                   },
                   {
                     label: 'Submenu',
+                    displayInline: true,
+                    destructive: true,
                     icon: { type: 'sfSymbol', name: 'star' },
                     type: 'submenu',
                     items: [
@@ -444,6 +446,7 @@ export default function BarButtonItemsExample() {
                         label: 'Sub Action 1',
                         state: 'mixed',
                         type: 'action',
+                        subtitle: 'With subtitle',
                         onPress: () => Alert.alert('Sub Action 1 pressed'),
                         destructive: true,
                         keepsMenuPresented: true,
@@ -451,6 +454,26 @@ export default function BarButtonItemsExample() {
                       },
                       {
                         label: 'Sub Action 2',
+                        type: 'action',
+                        onPress: () => Alert.alert('Sub Action 2 pressed'),
+                      },
+                    ],
+                  },
+                  {
+                    label: 'Palette',
+                    displayInline: true,
+                    displayAsPalette: true,
+                    destructive: true,
+                    type: 'submenu',
+                    items: [
+                      {
+                        state: 'on',
+                        icon: { type: 'sfSymbol', name: '0.circle.fill' },
+                        type: 'action',
+                        onPress: () => Alert.alert('Sub Action 1 pressed'),
+                      },
+                      {
+                        icon: { type: 'sfSymbol', name: '1.circle.fill' },
                         type: 'action',
                         onPress: () => Alert.alert('Sub Action 2 pressed'),
                       },

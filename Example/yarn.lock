@@ -3120,7 +3120,6 @@ __metadata:
     react: "npm:19.1.0"
     react-native: "npm:0.81.1"
     react-native-codegen: "npm:^0.71.3"
-    react-native-edge-to-edge: "npm:^1.6.0"
     react-native-gesture-handler: "npm:^2.28.0"
     react-native-reanimated: "npm:^3.19.0"
     react-native-restart: "npm:^0.0.27"
@@ -7052,14 +7051,14 @@ __metadata:
   linkType: hard
 
 "js-yaml@npm:^3.13.1":
-  version: 3.14.1
-  resolution: "js-yaml@npm:3.14.1"
+  version: 3.14.2
+  resolution: "js-yaml@npm:3.14.2"
   dependencies:
     argparse: "npm:^1.0.7"
     esprima: "npm:^4.0.0"
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: 10c0/6746baaaeac312c4db8e75fa22331d9a04cccb7792d126ed8ce6a0bbcfef0cedaddd0c5098fade53db067c09fe00aa1c957674b4765610a8b06a5a189e46433b
+  checksum: 10c0/3261f25912f5dd76605e5993d0a126c2b6c346311885d3c483706cd722efe34f697ea0331f654ce27c00a42b426e524518ec89d65ed02ea47df8ad26dcc8ce69
   languageName: node
   linkType: hard
 
@@ -8871,16 +8870,6 @@ __metadata:
     jscodeshift: "npm:^0.14.0"
     nullthrows: "npm:^1.1.1"
   checksum: 10c0/7daca7b2317dda277a4f8f230ac141ef575c0e6376eeb3cd333480fea9dc41b0b4e31b8521c1f9d496f7cd887e47c4885f2d330c902ddb07539e7af764a4109c
-  languageName: node
-  linkType: hard
-
-"react-native-edge-to-edge@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "react-native-edge-to-edge@npm:1.6.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/6373cc1b447eae31689a9b62e38b15621e9273626e2324700c4c3eb58c02ce489236a4b9e3e0dc1187e062defd8316195c5b1213facd718706b79b92127a05a3
   languageName: node
   linkType: hard
 

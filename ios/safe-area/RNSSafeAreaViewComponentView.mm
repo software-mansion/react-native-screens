@@ -8,7 +8,7 @@
 #import "RNSSafeAreaViewNotifications.h"
 
 #if RCT_NEW_ARCH_ENABLED
-#include <cxxreact/ReactNativeVersion.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <rnscreens/RNSSafeAreaViewComponentDescriptor.h>

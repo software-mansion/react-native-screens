@@ -1,3 +1,5 @@
+#pragma once
+
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
 #import "RNSDefines.h"
@@ -23,6 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+typedef struct {
+  RNS_REACT_SCROLL_VIEW_COMPONENT *scrollViewComponent;
+  UIView *contentContainerView;
+} RNSScrollViewSearchResult;
+
 @interface RNSScreenContentWrapper :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView
@@ -37,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)triggerDelegateUpdate;
 
-- (nullable RNS_REACT_SCROLL_VIEW_COMPONENT *)childRCTScrollViewComponent;
+- (RNSScrollViewSearchResult)childRCTScrollViewComponentAndContentContainer;
 
 - (BOOL)coerceChildScrollViewComponentSizeToSize:(CGSize)size;
 

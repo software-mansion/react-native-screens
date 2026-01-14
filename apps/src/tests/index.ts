@@ -119,6 +119,7 @@ export { default as Test2332 } from './Test2332';
 export { default as Test2379 } from './Test2379';
 export { default as Test2395 } from './Test2395';
 export { default as Test2466 } from './Test2466';
+export { default as Test2522 } from './Test2522';
 export { default as Test2538 } from './Test2538';
 export { default as Test2543 } from './Test2543'; // [E2E created](iOS): issue related to iOS formSheet initial detent
 export { default as Test2552 } from './Test2552';
@@ -138,10 +139,11 @@ export { default as Test2855 } from './Test2855';
 export { default as Test2877 } from './Test2877'; // [E2E created](iOS): issue is related to formSheet on iOS
 export { default as Test2895 } from './Test2895';
 export { default as Test2899 } from './Test2899';
+export { default as Test2933 } from './Test2933';
 export { default as Test2926 } from './Test2926'; // [E2E created](iOS): PR related to iOS search bar
-export { default as Test2949 } from './Test2949'; // [E2E skipped]: can't check system bars styles
 export { default as Test2963 } from './Test2963'; // [E2E created](iOS): issue related to iOS
 export { default as Test3004 } from './Test3004';
+export { default as Test3006 } from './Test3006';
 export { default as Test3045 } from './Test3045';
 export { default as Test3074 } from './Test3074';
 export { default as Test3093 } from './Test3093';
@@ -156,17 +158,26 @@ export { default as Test3248 } from './Test3248';
 export { default as Test3265 } from './Test3265';
 export { default as Test3271 } from './Test3271';
 export { default as Test3282 } from './Test3282';
+export { default as Test3288 } from './Test3288';
+export { default as Test3336 } from './Test3336';
 export { default as Test3342 } from './Test3342';
 export { default as Test3346 } from './Test3346';
 export { default as Test3369 } from './Test3369';
 export { default as Test3379 } from './Test3379';
 export { default as Test3380 } from './Test3380';
+export { default as Test3422 } from './Test3422';
+export { default as Test3425 } from './Test3425';
+export { default as Test3446 } from './Test3446';
+export { default as Test3450 } from './Test3450';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
-export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
+// The following test was meant to demo the "go back" gesture using Reanimated
+// but the associated PR in react-navigation is currently put on hold
+// export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';
 export { default as TestPreload } from './TestPreload';
 export { default as TestActivityStateProgression } from './TestActivityStateProgression';
 export { default as TestHeaderTitle } from './TestHeaderTitle';
+export { default as TestHeaderHeight } from './TestHeaderHeight';
 export { default as TestModalNavigation } from './TestModalNavigation';
 export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
@@ -175,5 +186,5 @@ export { default as TestAnimation } from './TestAnimation';
 export { default as TestBottomTabs } from './TestBottomTabs';
 export { default as TestBottomTabsOrientation } from './TestBottomTabsOrientation';
 export { default as TestScreenStack } from './TestScreenStack';
-export { default as TestSplitView } from './TestSplitView';
+export { default as TestSplit } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';

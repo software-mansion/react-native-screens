@@ -1,4 +1,5 @@
 #import <React/RCTConversions.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
 #import "RNSConversions.h"
 #import "RNSDefines.h"
@@ -399,6 +400,72 @@ RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEd
 }
 
 #undef SWITCH_EDGE_EFFECT
+
+#if RNS_BOTTOM_ACCESSORY_AVAILABLE
+
+#if RCT_NEW_ARCH_ENABLED
+API_AVAILABLE(ios(26.0))
+std::optional<react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
+RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment)
+{
+  switch (environment) {
+    case UITabAccessoryEnvironmentRegular:
+      return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
+    case UITabAccessoryEnvironmentInline:
+      return react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Inline;
+    default:
+      // We want to ignore other environments (e.g. `none`), that's why there is no warning here.
+      return std::nullopt;
+  }
+}
+
+#if REACT_NATIVE_VERSION_MINOR >= 82
+RNSBottomTabsAccessoryEnvironment RNSBottomTabsAccessoryEnvironmentFromCppEquivalent(
+    react::RNSBottomTabsAccessoryContentEnvironment environment)
+{
+  using enum react::RNSBottomTabsAccessoryContentEnvironment;
+
+  switch (environment) {
+    case Regular:
+      return RNSBottomTabsAccessoryEnvironmentRegular;
+
+    case Inline:
+      return RNSBottomTabsAccessoryEnvironmentInline;
+
+    default:
+      RCTLogError(@"[RNScreens] Unsupported BottomTabsAccessory environment");
+  }
+}
+#endif // REACT_NATIVE_VERSION_MINOR >= 82
+
+#else // RCT_NEW_ARCH_ENABLED
+static NSString *const BOTTOM_TABS_ACCESSORY_REGULAR_ENVIRONMENT = @"regular";
+static NSString *const BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT = @"inline";
+
+API_AVAILABLE(ios(26.0))
+NSString *RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+    UITabAccessoryEnvironment environment)
+{
+  NSString *environmentString;
+  switch (environment) {
+    case UITabAccessoryEnvironmentRegular:
+      environmentString = BOTTOM_TABS_ACCESSORY_REGULAR_ENVIRONMENT;
+      break;
+    case UITabAccessoryEnvironmentInline:
+      environmentString = BOTTOM_TABS_ACCESSORY_INLINE_ENVIRONMENT;
+      break;
+    default:
+      // We want to ignore other environments (e.g. `none`), that's why there is no warning here.
+      environmentString = nil;
+      break;
+  }
+
+  return environmentString;
+}
+
+#endif // RCT_NEW_ARCH_ENABLED
+
+#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
     react::RNSBottomTabsScreenUserInterfaceStyle userInterfaceStyle)

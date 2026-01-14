@@ -1,14 +1,7 @@
 'use client';
 
-// eslint-disable-next-line @react-native/no-deep-imports
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ViewProps, ColorValue } from 'react-native';
-import type {
-  Int32,
-  WithDefault,
-  DirectEventHandler,
-  UnsafeMixed,
-} from 'react-native/Libraries/Types/CodegenTypes';
+import { codegenNativeComponent } from 'react-native';
+import type { CodegenTypes as CT, ViewProps, ColorValue } from 'react-native';
 
 type DirectionType = 'rtl' | 'ltr';
 
@@ -48,20 +41,20 @@ type BlurEffect =
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 export interface NativeProps extends ViewProps {
-  onAttached?: DirectEventHandler<OnAttachedEvent>;
-  onDetached?: DirectEventHandler<OnDetachedEvent>;
+  onAttached?: CT.DirectEventHandler<OnAttachedEvent>;
+  onDetached?: CT.DirectEventHandler<OnDetachedEvent>;
   backgroundColor?: ColorValue;
   backTitle?: string;
   backTitleFontFamily?: string;
-  backTitleFontSize?: Int32;
-  backTitleVisible?: WithDefault<boolean, 'true'>;
+  backTitleFontSize?: CT.Int32;
+  backTitleVisible?: CT.WithDefault<boolean, 'true'>;
   color?: ColorValue;
-  direction?: WithDefault<DirectionType, 'ltr'>;
+  direction?: CT.WithDefault<DirectionType, 'ltr'>;
   hidden?: boolean;
   hideShadow?: boolean;
   largeTitle?: boolean;
   largeTitleFontFamily?: string;
-  largeTitleFontSize?: Int32;
+  largeTitleFontSize?: CT.Int32;
   largeTitleFontWeight?: string;
   largeTitleBackgroundColor?: ColorValue;
   largeTitleHideShadow?: boolean;
@@ -69,24 +62,24 @@ export interface NativeProps extends ViewProps {
   translucent?: boolean;
   title?: string;
   titleFontFamily?: string;
-  titleFontSize?: Int32;
+  titleFontSize?: CT.Int32;
   titleFontWeight?: string;
   titleColor?: ColorValue;
   disableBackButtonMenu?: boolean;
-  backButtonDisplayMode?: WithDefault<BackButtonDisplayMode, 'default'>;
+  backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean;
   backButtonInCustomView?: boolean;
-  blurEffect?: WithDefault<BlurEffect, 'none'>;
+  blurEffect?: CT.WithDefault<BlurEffect, 'none'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean;
-  headerLeftBarButtonItems?: UnsafeMixed[];
-  headerRightBarButtonItems?: UnsafeMixed[];
-  onPressHeaderBarButtonItem?: DirectEventHandler<OnPressHeaderBarButtonItemEvent>;
-  onPressHeaderBarButtonMenuItem?: DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>;
-  synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
+  headerLeftBarButtonItems?: CT.UnsafeMixed[];
+  headerRightBarButtonItems?: CT.UnsafeMixed[];
+  onPressHeaderBarButtonItem?: CT.DirectEventHandler<OnPressHeaderBarButtonItemEvent>;
+  onPressHeaderBarButtonMenuItem?: CT.DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
 
   // Experimental
-  userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
+  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 
 export default codegenNativeComponent<NativeProps>(

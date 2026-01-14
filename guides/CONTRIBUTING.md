@@ -107,9 +107,10 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-4. `cd Example` or `cd FabricExample`
-5. `yarn`
-6. `(cd ios && pod install && cd ../)`
+3. `cd Example` or `cd FabricExample`
+4. `yarn`
+5. `rbenv exec bundle install`
+6. `(cd ios && rbenv exec bundle exec pod install && cd ../)`
 7. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
 
 and open `react-native-screens/Example/ios/ScreensExample.xcworkspace` with XCode.

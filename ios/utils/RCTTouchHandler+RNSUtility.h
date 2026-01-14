@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef RCT_NEW_ARCH_ENABLED
 
 #import <React/RCTTouchHandler.h>

@@ -98,6 +98,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetExpandsWhenScrolledToEdge = true,
       sheetElevation = 24,
       sheetInitialDetentIndex = 0,
+      sheetShouldOverflowTopInset = false,
       // Other
       screenId,
       stackPresentation,
@@ -229,6 +230,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             sheetAllowedDetents={resolvedSheetAllowedDetents}
             sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
             sheetElevation={sheetElevation}
+            sheetShouldOverflowTopInset={sheetShouldOverflowTopInset}
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
@@ -267,6 +269,10 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             topScrollEdgeEffect={scrollEdgeEffects?.top}
             synchronousShadowStateUpdatesEnabled={
               featureFlags.experiment.synchronousScreenUpdatesEnabled
+            }
+            androidResetScreenShadowStateOnOrientationChangeEnabled={
+              featureFlags.experiment
+                .androidResetScreenShadowStateOnOrientationChangeEnabled
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children

@@ -11,9 +11,9 @@ package com.facebook.react.viewmanagers;
 
 import android.view.View;
 import androidx.annotation.Nullable;
+import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 
-
-public interface RNSBottomTabsManagerInterface<T extends View>  {
+public interface RNSBottomTabsManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setTabBarBackgroundColor(T view, @Nullable Integer value);
   void setTabBarItemTitleFontFamily(T view, @Nullable String value);
   void setTabBarItemTitleFontSize(T view, float value);

@@ -256,16 +256,6 @@ export interface BottomTabsScreenItemStateAppearance {
 }
 
 export interface BottomTabsScreenProps {
-  children?: ViewProps['children'];
-  /**
-   * @summary Defines what should be rendered when tab screen is frozen.
-   *
-   * @see {@link https://github.com/software-mansion/react-freeze|`react-freeze`'s GitHub repository} for more information about `react-freeze`.
-   *
-   * @platform android, ios
-   */
-  placeholder?: React.ReactNode | undefined;
-
   // #region Control
   /**
    * @summary Determines selected tab.
@@ -289,6 +279,15 @@ export interface BottomTabsScreenProps {
   // #endregion
 
   // #region General
+  children?: ViewProps['children'];
+  /**
+   * @summary Defines what should be rendered when tab screen is frozen.
+   *
+   * @see {@link https://github.com/software-mansion/react-freeze|`react-freeze`'s GitHub repository} for more information about `react-freeze`.
+   *
+   * @platform android, ios
+   */
+  placeholder?: React.ReactNode | undefined;
   /**
    * @summary Title of the tab screen, displayed in the tab bar item.
    *
@@ -341,8 +340,92 @@ export interface BottomTabsScreenProps {
    *
    * On iOS, if no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.
+   *
+   * @platform android, ios
    */
   icon?: PlatformIcon;
+  /**
+   * @summary Specifies which special effects (also known as microinteractions)
+   * are enabled for the tab screen.
+   *
+   * For repeated tab selection (selecting already focused tab bar item),
+   * there are 2 supported special effects:
+   * - `popToRoot` - when Stack is nested inside tab screen and repeated
+   *   selection is detected, the Stack will pop to root screen,
+   * - `scrollToTop` - when there is a ScrollView in first descendant
+   *   chain from tab screen and repeated selection is detected, ScrollView
+   *   will be scrolled to top.
+   *
+   * `popToRoot` has priority over `scrollToTop`.
+   *
+   * @default All special effects are enabled by default.
+   *
+   * @platform android, ios
+   */
+  specialEffects?: {
+    repeatedTabSelection?: {
+      /**
+       * @default true
+       */
+      popToRoot?: boolean;
+      /**
+       * @default true
+       */
+      scrollToTop?: boolean;
+    };
+  };
+  /**
+   * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
+   *
+   * @default undefined
+   *
+   * @platform android, ios
+   */
+  freezeContents?: boolean;
+  // #endregion General
+
+  // #region Accessibility
+
+  /**
+   * @summary testID for the BottomTabScreen
+   */
+  testID?: string;
+
+  /**
+   * @summary accessibilityLabel for the BottomTabScreen
+   */
+  accessibilityLabel?: string;
+
+  /**
+   * @summary testID for the TabBarItem
+   */
+  tabBarItemTestID?: string;
+
+  /**
+   * @summary accessibilityLabel for the TabBarItem
+   *
+   * @supported iOS, Android API level >=26
+   */
+  tabBarItemAccessibilityLabel?: string;
+
+  // #endregion Accessibility
+
+  // #region Android-only
+  /**
+   * @summary Specifies the color of the text in the badge.
+   *
+   * @platform android
+   */
+  tabBarItemBadgeTextColor?: ColorValue;
+  /**
+   * @summary Specifies the background color of the badge.
+   *
+   * @platform android
+   */
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+  // #endregion Android-only
+
+  // #region iOS-only
   /**
    * @summary Specifies supported orientations for the tab screen.
    *
@@ -356,7 +439,7 @@ export interface BottomTabsScreenProps {
    *      is queried.
    *
    * Note that:
-   * - some components (like `SplitViewHost`) may choose not to query
+   * - some components (like `SplitHost`) may choose not to query
    *   its child components,
    * - Stack v4 implementation **ALWAYS** returns some supported
    *   orientations (`allButUpsideDown` by default), overriding
@@ -392,22 +475,6 @@ export interface BottomTabsScreenProps {
    * @platform ios
    */
   orientation?: BottomTabsScreenOrientation;
-  // #endregion General
-  /**
-   * @summary Specifies the color of the text in the badge.
-   *
-   * @platform android
-   */
-  tabBarItemBadgeTextColor?: ColorValue;
-  /**
-   * @summary Specifies the background color of the badge.
-   *
-   * @platform android
-   */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
-  // #endregion Android-only appearance
-
-  // #region iOS-only appearance
   /**
    * @summary Specifies the standard tab bar appearance.
    *
@@ -449,39 +516,10 @@ export interface BottomTabsScreenProps {
    * be customized.
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
+   *
    * @platform ios
    */
   systemItem?: BottomTabsSystemItem;
-  /**
-   * @summary Specifies which special effects (also known as microinteractions)
-   * are enabled for the tab screen.
-   *
-   * For repeated tab selection (selecting already focused tab bar item),
-   * there are 2 supported special effects:
-   * - `popToRoot` - when Stack is nested inside tab screen and repeated
-   *   selection is detected, the Stack will pop to root screen,
-   * - `scrollToTop` - when there is a ScrollView in first descendant
-   *   chain from tab screen and repeated selection is detected, ScrollView
-   *   will be scrolled to top.
-   *
-   * `popToRoot` has priority over `scrollToTop`.
-   *
-   * @default All special effects are enabled by default.
-   *
-   * @platform ios
-   */
-  specialEffects?: {
-    repeatedTabSelection?: {
-      popToRoot?: boolean;
-      scrollToTop?: boolean;
-    };
-  };
-  /**
-   * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
-   *
-   * @default `undefined`
-   */
-  freezeContents?: boolean;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
@@ -492,6 +530,8 @@ export interface BottomTabsScreenProps {
    * prevents ScrollViews from respecting navigation bar insets.
    * When this prop is set to `true`, `automatic` behavior is reverted.
    *
+   * Supported only on Fabric.
+   *
    * @default true
    *
    * @platform ios
@@ -499,11 +539,25 @@ export interface BottomTabsScreenProps {
   overrideScrollViewContentInsetAdjustmentBehavior?: boolean;
   /**
    * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
-   * Depending on values set, it will blur the scrolling content below certain UI elements (Header Items, SearchBar)
-   * for the specifed edge of the ScrollView.
+   * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
+   * for the specified edge of the ScrollView.
    *
    * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
    * the ScrollView will use only the innermost one's config.
+   *
+   * Edge effects can be configured for each edge separately. The following values are currently supported:
+   *
+   * - `automatic` - the automatic scroll edge effect style,
+   * - `hard` - a scroll edge effect with a hard cutoff and dividing line,
+   * - `soft` - a soft-edged scroll edge effect,
+   * - `hidden` - no scroll edge effect.
+   *
+   * The supported values correspond to the `UIScrollEdgeEffect`'s `style` and `isHidden` props
+   * in the official UIKit documentation:
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect|UIScrollEdgeEffect}
+   *
+   * @default `automatic` for each edge
    *
    * @platform ios
    *
@@ -532,10 +586,11 @@ export interface BottomTabsScreenProps {
    * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle|UIUserInterfaceStyle}
    *
    * @default unspecified
+   *
    * @platform ios
    */
   experimental_userInterfaceStyle?: UserInterfaceStyle;
-  // #endregion iOS-only appearance
+  // #endregion iOS-only
 
   // #region Events
   /**

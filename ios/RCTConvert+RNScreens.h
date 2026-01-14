@@ -1,3 +1,5 @@
+#pragma once
+
 #if !RCT_NEW_ARCH_ENABLED
 
 #import <React/RCTConvert.h>

@@ -1,3 +1,5 @@
+#pragma once
+
 #import <Foundation/Foundation.h>
 #import "RNSBottomTabsHostComponentView.h"
 #import "RNSTabsScreenViewController.h"

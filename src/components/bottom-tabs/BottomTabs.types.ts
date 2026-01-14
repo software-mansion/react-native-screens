@@ -1,12 +1,19 @@
+import { ReactNode } from 'react';
 import type {
   ColorValue,
   TextStyle,
   NativeSyntheticEvent,
   ViewProps,
 } from 'react-native';
+import type { BottomTabsAccessoryEnvironment } from './BottomTabsAccessory.types';
+
+export type BottomAccessoryFn = (
+  environment: BottomTabsAccessoryEnvironment,
+) => ReactNode;
 
 export type NativeFocusChangeEvent = {
   tabKey: string;
+  repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
 // Android-specific
@@ -43,11 +50,13 @@ export interface BottomTabsProps extends ViewProps {
    * @summary Hides the tab bar.
    *
    * @default false
+   *
+   * @platform android, ios
    */
   tabBarHidden?: boolean;
   // #endregion General
 
-  // #region Android-only appearance
+  // #region Android-only
   /**
    * @summary Specifies the background color for the entire tab bar.
    *
@@ -151,12 +160,13 @@ export interface BottomTabsProps extends ViewProps {
    * @see {@link https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md#making-navigation-bar-accessible|Material Components documentation}
    *
    * @default auto
+   *
    * @platform android
    */
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
-  // #endregion Android-only appearance
+  // #endregion Android-only
 
-  // #region iOS-only appearance
+  // #region iOS-only
   /**
    * @summary Specifies the color used for selected tab's text and icon color.
    *
@@ -193,6 +203,36 @@ export interface BottomTabsProps extends ViewProps {
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
   /**
+   * @summary Specifies component used as bottom accessory.
+   *
+   * This prop is a function that accepts `environment` as a parameter and returns
+   * the component that will be rendered in the bottom accessory.
+   *
+   * `environment` can be one of the following values:
+   *
+   * - `regular` - the accessory is laid out above the bottom tab bar,
+   * - `inline` - the accessory is laid out inline with the collapsed bottom
+   *   tab bar.
+   *
+   * If this prop is `undefined`, the bottom accessory will not be rendered.
+   *
+   * On legacy architecture (Paper) and on new architecture (Fabric) with RN < 0.82,
+   * implementation uses DisplayLink which might result in the size of bottom
+   * accessory being updated with a delay.
+   *
+   * Starting from RN 0.82, this issue is mitigated but in order to allow accessory
+   * rendering based on environment, component is rendered 2 times for both `regular`
+   * and `inline` environments at the same time. Environment determines which component
+   * is visible at given moment. This might require implementing a solution to share
+   * state between both rendered components (e.g. usage of context).
+   *
+   * Available starting from iOS 26.
+   *
+   * @platform iOS
+   * @supported iOS 26 or higher
+   */
+  bottomAccessory?: BottomAccessoryFn;
+  /**
    * @summary Specifies the display mode for the tab bar.
    *
    * Available starting from iOS 18.
@@ -213,7 +253,7 @@ export interface BottomTabsProps extends ViewProps {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode;
-  // #endregion iOS-only appearance
+  // #endregion iOS-only
 
   // #region Experimental support
   /**
@@ -225,10 +265,8 @@ export interface BottomTabsProps extends ViewProps {
    * If set to false, tab screen change will not be prevented by the
    * native side (managed/natively-driven).
    *
-   * On iOS, some features are not fully implemented for managed tabs
-   * (e.g. overrideScrollViewContentInsetAdjustmentBehavior).
-   *
-   * On Android, only controlled tabs are currently supported.
+   * On Android, only controlled tabs are currently supported and the
+   * value of this prop is ignored.
    *
    * @default Defaults to `false`.
    *

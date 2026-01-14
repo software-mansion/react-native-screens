@@ -193,22 +193,6 @@ android {
                     "src/paper/java",
                 ]
             }
-
-            // Background color resolving
-            if (REACT_NATIVE_MINOR_VERSION <= 74) {
-                srcDirs += "src/versioned/backgroundcolor/74"
-            } else if (REACT_NATIVE_MINOR_VERSION <= 76) {
-                srcDirs += "src/versioned/backgroundcolor/76"
-            } else {
-                srcDirs += "src/versioned/backgroundcolor/latest"
-            }
-
-            // Native only classes that use PointerEvents
-            if (REACT_NATIVE_MINOR_VERSION <= 77) {
-                srcDirs += "src/versioned/pointerevents/77"
-            } else {
-                srcDirs += "src/versioned/pointerevents/latest"
-            }
         }
         res {
             if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
@@ -236,7 +220,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.6.1'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.android.material:material:1.13.0'
     implementation "androidx.core:core-ktx:1.8.0"
 
     constraints {
