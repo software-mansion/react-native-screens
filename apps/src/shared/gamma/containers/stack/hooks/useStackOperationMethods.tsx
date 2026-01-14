@@ -6,6 +6,7 @@ import {
   PopActionMethod,
   PopCompletedActionMethod,
   PopNativeActionMethod,
+  PreloadActionMethod,
   PushActionMethod,
   StackRouteConfig,
 } from '../StackContainer.types';
@@ -52,9 +53,12 @@ export function useStackOperationMethods(
     [dispatch, actionContext],
   );
 
-  const preloadAction = React.useCallback((routeKey: string) => {
-    dispatch({ type: 'preload', routeName: routeKey, ctx: actionContext });
-  }, [dispatch, actionContext]);
+  const preloadAction: PreloadActionMethod = React.useCallback(
+    (routeName: string) => {
+      dispatch({ type: 'preload', routeName, ctx: actionContext });
+    },
+    [dispatch, actionContext],
+  );
 
   const aggregateValue = React.useMemo(() => {
     return {
@@ -64,7 +68,13 @@ export function useStackOperationMethods(
       popNativeAction,
       preloadAction,
     };
-  }, [pushAction, popAction, popCompletedAction, popNativeAction, preloadAction]);
+  }, [
+    pushAction,
+    popAction,
+    popCompletedAction,
+    popNativeAction,
+    preloadAction,
+  ]);
 
   return aggregateValue;
 }
