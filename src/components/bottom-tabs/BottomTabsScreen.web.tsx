@@ -1,5 +1,5 @@
 import { View } from 'react-native';
 
-const BottomTabsScreen = View;
+const TabsScreen = View;
 
-export default BottomTabsScreen;
+export default TabsScreen;
