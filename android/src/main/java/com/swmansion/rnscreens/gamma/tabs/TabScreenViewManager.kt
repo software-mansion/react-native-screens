@@ -79,12 +79,7 @@ class TabScreenViewManager :
         value: ReadableMap?,
     ) = Unit
 
-    override fun setIconSfSymbolName(
-        view: TabScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setIconXcassetsName(
+    override fun setIconResourceName(
         view: TabScreen?,
         value: String?,
     ) = Unit
@@ -94,12 +89,7 @@ class TabScreenViewManager :
         value: ReadableMap?,
     ) = Unit
 
-    override fun setSelectedIconSfSymbolName(
-        view: TabScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setSelectedIconXcassetsName(
+    override fun setSelectedIconResourceName(
         view: TabScreen?,
         value: String?,
     ) = Unit

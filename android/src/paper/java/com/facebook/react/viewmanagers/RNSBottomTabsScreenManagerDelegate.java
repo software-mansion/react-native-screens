@@ -19,12 +19,10 @@ import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
 @SuppressWarnings("deprecation")
-public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSBottomTabsScreenManagerInterface<T>>
-    extends BaseViewManagerDelegate<T, U> {
+public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSBottomTabsScreenManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSBottomTabsScreenManagerDelegate(U viewManager) {
     super(viewManager);
   }
-
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
@@ -76,20 +74,14 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "iconImageSource":
         mViewManager.setIconImageSource(view, (ReadableMap) value);
         break;
-      case "iconSfSymbolName":
-        mViewManager.setIconSfSymbolName(view, value == null ? null : (String) value);
-        break;
-      case "iconXcassetsName":
-        mViewManager.setIconXcassetsName(view, value == null ? null : (String) value);
+      case "iconResourceName":
+        mViewManager.setIconResourceName(view, value == null ? null : (String) value);
         break;
       case "selectedIconImageSource":
         mViewManager.setSelectedIconImageSource(view, (ReadableMap) value);
         break;
-      case "selectedIconSfSymbolName":
-        mViewManager.setSelectedIconSfSymbolName(view, value == null ? null : (String) value);
-        break;
-      case "selectedIconXcassetsName":
-        mViewManager.setSelectedIconXcassetsName(view, value == null ? null : (String) value);
+      case "selectedIconResourceName":
+        mViewManager.setSelectedIconResourceName(view, value == null ? null : (String) value);
         break;
       case "systemItem":
         mViewManager.setSystemItem(view, (String) value);
