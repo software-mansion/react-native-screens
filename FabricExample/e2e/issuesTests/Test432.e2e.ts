@@ -26,7 +26,11 @@ describe('Test432', () => {
     await element(by.id('details-button-toggle-subviews')).tap();
     await expect(element(by.id('details-headerRight-red'))).toBeVisible(100);
 
-    await tapBarBackButton();
+    if (device.getPlatform() === 'ios') {
+      await tapBarBackButton();
+    } else {
+      await device.pressBack();
+    }
 
     await expect(element(by.id('home-headerRight'))).toBeVisible(100);
   });
@@ -43,7 +47,11 @@ describe('Test432', () => {
     await element(by.id('info-button-toggle-subviews')).tap();
     waitFor(element(by.id('info-headerRight-green-1'))).toBeVisible(100);
 
-    await tapBarBackButton();
+    if (device.getPlatform() === 'ios') {
+      await tapBarBackButton();
+    } else {
+      await device.pressBack();
+    }
 
     await expect(element(by.id('home-headerRight'))).toBeVisible(100);
   });
