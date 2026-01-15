@@ -1,7 +1,5 @@
-import { Scenario } from "../../shared/helpers";
+import { Scenario } from '../../shared/helpers';
 
-const ScrollViewScenarios: Scenario[] = [
-
-];
+const ScrollViewScenarios: Scenario[] = [];
 
 export default ScrollViewScenarios;

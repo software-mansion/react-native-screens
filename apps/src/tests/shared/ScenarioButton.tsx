@@ -1,24 +1,34 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export function ScenarioButton(props: { route: string, title: string, details?: string, platformsHint?: ('ios'|'android')[] }) {
+export function ScenarioButton(props: {
+  route: string;
+  title: string;
+  details?: string;
+  platformsHint?: ('ios' | 'android')[];
+}) {
   const navigation = useNavigation<any>();
-  const hasAndroid = props.platformsHint?.length === 0 || props.platformsHint?.includes('android');
-  const hasIOS = props.platformsHint?.length === 0 || props.platformsHint?.includes('ios');
+  const hasAndroid =
+    props.platformsHint?.length === 0 ||
+    props.platformsHint?.includes('android');
+  const hasIOS =
+    props.platformsHint?.length === 0 || props.platformsHint?.includes('ios');
 
   return (
-    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(props.route)}>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => navigation.navigate(props.route)}>
       <View style={styles.descriptionContainer}>
         <Text style={styles.text}>{props.title}</Text>
-        { props.details && <Text style={styles.details}>{props.details}</Text> }
+        {props.details && <Text style={styles.details}>{props.details}</Text>}
       </View>
       <View style={styles.platformsContainer}>
-        { hasIOS && <Text style={styles.ios}>i</Text> }
-        { hasAndroid && <Text style={styles.android}>a</Text> }
+        {hasIOS && <Text style={styles.ios}>i</Text>}
+        {hasAndroid && <Text style={styles.android}>a</Text>}
       </View>
     </TouchableOpacity>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
