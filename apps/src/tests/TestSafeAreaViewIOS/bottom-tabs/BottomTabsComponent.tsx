@@ -21,7 +21,10 @@ export default function BottomTabsComponent() {
         tabKey: 'config',
         title: 'Config',
         icon: {
-          sfSymbolName: 'gear',
+          ios: {
+            type: 'sfSymbol',
+            name: 'gear',
+          },
         },
       },
       component: ConfigTab,
@@ -31,7 +34,10 @@ export default function BottomTabsComponent() {
         tabKey: 'test',
         title: 'Test',
         icon: {
-          sfSymbolName: 'uiwindow.split.2x1',
+          ios: {
+            type: 'sfSymbol',
+            name: 'uiwindow.split.2x1',
+          },
         },
         systemItem:
           config.tabBarItemSystemItem !== 'disabled'
@@ -60,7 +66,10 @@ export default function BottomTabsComponent() {
         config: tabsConfig,
         setConfig: setTabsConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} tabBarMinimizeBehavior={config.tabBarMinimizeBehavior} />
+      <BottomTabsContainer
+        tabConfigs={TAB_CONFIGS}
+        tabBarMinimizeBehavior={config.tabBarMinimizeBehavior}
+      />
     </ConfigWrapperContext.Provider>
   );
 }

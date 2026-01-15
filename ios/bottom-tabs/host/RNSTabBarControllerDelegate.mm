@@ -32,26 +32,20 @@
   }
 #endif // !TARGET_OS_TV
 
-  bool repeatedSelectionHandledNatively = false;
-
-  // Detect repeated selection and inform tabScreenController
-  if ([tabBarCtrl selectedViewController] == tabScreenCtrl) {
-    repeatedSelectionHandledNatively = [tabScreenCtrl tabScreenSelectedRepeatedly];
-  }
-
-  // TODO: send an event with information about event being handled natively
-  if (!repeatedSelectionHandledNatively) {
-    [tabBarCtrl.tabsHostComponentView
-        emitOnNativeFocusChangeRequestSelectedTabScreen:tabScreenCtrl.tabScreenComponentView];
-
-    // TODO: handle overrideScrollViewBehaviorInFirstDescendantChainIfNeeded for natively-driven tabs
-    return ![self shouldPreventNativeTabChangeWithinTabBarController:tabBarCtrl];
-  }
-
   // TODO: handle enforcing orientation with natively-driven tabs
 
-  // As we're selecting the same controller, returning both true and false works here.
-  return true;
+  // Detect repeated selection and inform tabScreenController
+  BOOL repeatedSelection = [tabBarCtrl selectedViewController] == tabScreenCtrl;
+  BOOL repeatedSelectionHandledBySpecialEffect =
+      repeatedSelection ? [tabScreenCtrl tabScreenSelectedRepeatedly] : false;
+
+  [tabBarCtrl.tabsHostComponentView
+      emitOnNativeFocusChangeRequestSelectedTabScreen:tabScreenCtrl.tabScreenComponentView
+              repeatedSelectionHandledBySpecialEffect:repeatedSelectionHandledBySpecialEffect];
+
+  // On repeated selection we return false to prevent native *pop to root* effect that works only starting from iOS 26
+  // and interferes with our implementation (which is necessary for controlled tabs).
+  return repeatedSelection ? false : ![self shouldPreventNativeTabChangeWithinTabBarController:tabBarCtrl];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController

@@ -1,6 +1,10 @@
 import React from 'react';
 
-import { BottomTabsScreenOrientation, enableFreeze, ScreenOrientationTypes } from 'react-native-screens';
+import {
+  type TabsScreenOrientation,
+  enableFreeze,
+  ScreenOrientationTypes,
+} from 'react-native-screens';
 import {
   BottomTabsContainer,
   type TabConfiguration,
@@ -8,7 +12,11 @@ import {
 import Colors from '../shared/styling/Colors';
 import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
 import { Button, ScrollView, Text, View } from 'react-native';
-import { NavigationContainer, NavigationIndependentTree, NavigationProp } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigationIndependentTree,
+  NavigationProp,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 enableFreeze(true);
@@ -18,12 +26,18 @@ function ScreenComponent() {
   return (
     <ScrollView contentOffset={{ x: 0, y: 200 }}>
       {Array.from({ length: 99 }).map((_, i) => (
-        <View key={i} style={{ margin: 8, padding: 8, backgroundColor: Colors.PurpleLight100 }}>
+        <View
+          key={i}
+          style={{
+            margin: 8,
+            padding: 8,
+            backgroundColor: Colors.PurpleLight100,
+          }}>
           <Text style={{ color: Colors.White }}>Entry #{i + 1}</Text>
         </View>
       ))}
     </ScrollView>
-  )
+  );
 }
 
 function StackComponent(props: { orientation?: ScreenOrientationTypes }) {
@@ -38,17 +52,17 @@ function StackComponent(props: { orientation?: ScreenOrientationTypes }) {
           component={ScreenComponent}
           options={{
             headerTransparent: true,
-            orientation: props.orientation
+            orientation: props.orientation,
           }}
         />
       </Stack.Navigator>
     </NavigationContainer>
-  )
+  );
 }
 
 interface TabOrientation {
-  tabScreen: BottomTabsScreenOrientation,
-  stackScreen?: ScreenOrientationTypes,
+  tabScreen: TabsScreenOrientation;
+  stackScreen?: ScreenOrientationTypes;
 }
 
 interface TabsOrientations {
@@ -71,11 +85,11 @@ function makeTabConfigs(
           ios: {
             type: 'sfSymbol',
             name: 'house.fill',
-          }, 
+          },
           android: {
             type: 'imageSource',
             imageSource: require('../../assets/variableIcons/icon_fill.png'),
-          }
+          },
         },
         selectedIcon: {
           type: 'sfSymbol',
@@ -83,7 +97,9 @@ function makeTabConfigs(
         },
         orientation: tabsOrientations.home.tabScreen,
       },
-      component: tabsOrientations.home.stackScreen ? (() => <TabElement orientation={tabsOrientations.home.stackScreen} />) : TabElement,
+      component: tabsOrientations.home.stackScreen
+        ? () => <TabElement orientation={tabsOrientations.home.stackScreen} />
+        : TabElement,
     },
     {
       tabScreenProps: {
@@ -94,11 +110,11 @@ function makeTabConfigs(
           ios: {
             type: 'templateSource',
             templateSource: require('../../assets/variableIcons/icon.png'),
-          }, 
+          },
           android: {
             type: 'drawableResource',
             name: 'sym_call_missed',
-          }
+          },
         },
         selectedIcon: {
           type: 'templateSource',
@@ -106,7 +122,9 @@ function makeTabConfigs(
         },
         orientation: tabsOrientations.portrait.tabScreen,
       },
-      component: () => <TabElement orientation={tabsOrientations.portrait.stackScreen} />,
+      component: () => (
+        <TabElement orientation={tabsOrientations.portrait.stackScreen} />
+      ),
     },
     {
       tabScreenProps: {
@@ -116,7 +134,7 @@ function makeTabConfigs(
           shared: {
             type: 'imageSource',
             imageSource: require('../../assets/variableIcons/icon.png'),
-          }
+          },
         },
         selectedIcon: {
           type: 'imageSource',
@@ -124,20 +142,33 @@ function makeTabConfigs(
         },
         orientation: tabsOrientations.landscape.tabScreen,
       },
-      component: () => <TabElement orientation={tabsOrientations.landscape.stackScreen} />,
+      component: () => (
+        <TabElement orientation={tabsOrientations.landscape.stackScreen} />
+      ),
     },
   ];
 }
 
-function ChooseBottomTabs(props: { navigation: NavigationProp<{ ScreenStackBottomTabs: undefined, ScrollOnlyBottomTabs: undefined }> }) {
+function ChooseBottomTabs(props: {
+  navigation: NavigationProp<{
+    ScreenStackBottomTabs: undefined;
+    ScrollOnlyBottomTabs: undefined;
+  }>;
+}) {
   const { navigation } = props;
 
   return (
     <View style={{ marginTop: 200 }}>
-      <Button title='Tabs with ScreenStack' onPress={() => navigation.navigate('ScreenStackBottomTabs')}/>
-      <Button title='Tabs with Scroll only' onPress={() => navigation.navigate('ScrollOnlyBottomTabs')}/>
+      <Button
+        title="Tabs with ScreenStack"
+        onPress={() => navigation.navigate('ScreenStackBottomTabs')}
+      />
+      <Button
+        title="Tabs with Scroll only"
+        onPress={() => navigation.navigate('ScrollOnlyBottomTabs')}
+      />
     </View>
-  )
+  );
 }
 
 function ScreenStackBottomTabs() {
@@ -152,9 +183,9 @@ function ScreenStackBottomTabs() {
 
   return (
     <NavigationIndependentTree>
-      <BottomTabsContainer tabConfigs={tabConfigs}/>
+      <BottomTabsContainer tabConfigs={tabConfigs} />
     </NavigationIndependentTree>
-  )
+  );
 }
 
 function ScrollOnlyBottomTabs() {
@@ -169,9 +200,9 @@ function ScrollOnlyBottomTabs() {
 
   return (
     <NavigationIndependentTree>
-      <BottomTabsContainer tabConfigs={tabConfigs}/>
+      <BottomTabsContainer tabConfigs={tabConfigs} />
     </NavigationIndependentTree>
-  )
+  );
 }
 
 function App() {
@@ -181,20 +212,20 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name='ChooseBottomTabs'
-          key='ChooseBottomTabs'
+          name="ChooseBottomTabs"
+          key="ChooseBottomTabs"
           component={ChooseBottomTabs}
           options={{ title: 'Choose BottomTabs content' }}
         />
         <Stack.Screen
-          name='ScreenStackBottomTabs'
-          key='ScreenStackBottomTabs'
+          name="ScreenStackBottomTabs"
+          key="ScreenStackBottomTabs"
           component={ScreenStackBottomTabs}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name='ScrollOnlyBottomTabs'
-          key='ScrollOnlyBottomTabs'
+          name="ScrollOnlyBottomTabs"
+          key="ScrollOnlyBottomTabs"
           component={ScrollOnlyBottomTabs}
           options={{ headerShown: false }}
         />

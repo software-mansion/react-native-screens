@@ -1129,7 +1129,8 @@ RNS_IGNORE_SUPER_CALL_END
     RNSScreenView *topMostScreen = (RNSScreenView *)_reactSubviews.lastObject;
     UIView *headerConfig = topMostScreen.findHeaderConfig;
     if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
+      CGPoint convertedPoint = [self convertPoint:point toView:headerConfig];
+      UIView *headerHitTestResult = [headerConfig hitTest:convertedPoint withEvent:event];
       if (headerHitTestResult != nil) {
         return headerHitTestResult;
       }

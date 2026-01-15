@@ -7,17 +7,19 @@ namespace facebook {
 namespace react {
 
 RNSScreenShadowNodeCommitHook::RNSScreenShadowNodeCommitHook(
-    std::shared_ptr<const ContextContainer> contextContainer)
-    : contextContainer_(contextContainer) {
-  getUIManagerFromSharedContext(contextContainer)->registerCommitHook(*this);
+    const std::shared_ptr<const ContextContainer> &contextContainer) {
+  if (auto uiManager = getUIManagerFromSharedContext(contextContainer)) {
+    uiManager->registerCommitHook(*this);
+  }
 }
 
 RNSScreenShadowNodeCommitHook::~RNSScreenShadowNodeCommitHook() noexcept {
-  const auto contextContainer = contextContainer_.lock();
-  if (contextContainer) {
-    getUIManagerFromSharedContext(contextContainer)
-        ->unregisterCommitHook(*this);
-  }
+  // We intentionally don't unregister the commit hook here.
+  // During hot reload, the FabricUIManagerBinding may already be destroyed
+  // when this destructor is called, causing a JNI crash when trying to
+  // access the binding. The UIManager will clean up hooks when it's destroyed
+  // In case the lifecycle of the commit hook should be shorter than
+  // that of the UIManager consider unregistering the hook manually.
 }
 
 RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
@@ -30,8 +32,8 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
   auto newRootProps =
       std::static_pointer_cast<const RootProps>(newRootShadowNode->getProps());
 
-  const bool wasHorizontal = isHorizontal_(*oldRootProps.get());
-  const bool willBeHorizontal = isHorizontal_(*newRootProps.get());
+  const bool wasHorizontal = isHorizontal_(*oldRootProps);
+  const bool willBeHorizontal = isHorizontal_(*newRootProps);
 
   if (wasHorizontal != willBeHorizontal) {
     return newRootShadowNodeWithScreenFrameSizesReset(newRootShadowNode);
@@ -87,14 +89,37 @@ void RNSScreenShadowNodeCommitHook::findScreenNodes(
   }
 }
 
+/**
+ * This method might return nullptr. See its implementation for details.
+ */
 std::shared_ptr<UIManager>
 RNSScreenShadowNodeCommitHook::getUIManagerFromSharedContext(
-    std::shared_ptr<const ContextContainer> sharedContext) {
+    const std::shared_ptr<const ContextContainer> &sharedContext) {
+  if (sharedContext == nullptr) {
+    return nullptr;
+  }
+
   auto fabricUIManager =
       sharedContext
           ->at<jni::alias_ref<facebook::react::JFabricUIManager::javaobject>>(
               "FabricUIManager");
-  return fabricUIManager->getBinding()->getScheduler()->getUIManager();
+  if (fabricUIManager == nullptr) {
+    return nullptr;
+  }
+
+  // This line might still crash in case the FabricUIManager.mBinding (Java
+  // class) is at this moment `null`.
+  auto *fabricUiManagerBinding = fabricUIManager->getBinding();
+  if (fabricUiManagerBinding == nullptr) {
+    return nullptr;
+  }
+
+  auto scheduler = fabricUiManagerBinding->getScheduler();
+  if (scheduler == nullptr) {
+    return nullptr;
+  }
+
+  return scheduler->getUIManager();
 }
 
 } // namespace react

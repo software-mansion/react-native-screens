@@ -30,6 +30,7 @@
 #import <React/RCTUIManagerUtils.h>
 
 #import "RNSConversions.h"
+#import "RNSSafeAreaViewComponentView.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
@@ -902,7 +903,8 @@ RNS_IGNORE_SUPER_CALL_END
   // Step 1: Query registered content wrapper for the scrollview.
   RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
 
-  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [contentWrapper childRCTScrollViewComponent];
+  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+          [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
       scrollViewComponent != nil) {
     return scrollViewComponent;
   }
@@ -915,6 +917,20 @@ RNS_IGNORE_SUPER_CALL_END
       return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
     }
   }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  // Fallback 2: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
+  if (@available(iOS 26.0, *)) {
+    UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
+    if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+      for (UIView *subview in maybeSafeAreaView.subviews) {
+        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+          return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+        }
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   return nil;
 }

@@ -52,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL tabBarHidden;
 
+@property (nonatomic, strong, readonly, nullable) UIColor *nativeContainerBackgroundColor;
+
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -72,7 +74,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nonnull RNSBottomTabsHostEventEmitter *)reactEventEmitter;
 
-- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen;
+- (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen
+                repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect;
 
 #if !RCT_NEW_ARCH_ENABLED
 #pragma mark - LEGACY Event blocks

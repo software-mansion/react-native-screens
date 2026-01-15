@@ -9,6 +9,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
@@ -89,6 +90,7 @@ class TabsHost(
             if (isBottomNavigationMenuInvalidated) {
                 isBottomNavigationMenuInvalidated = false
                 this@TabsHost.updateBottomNavigationViewAppearance()
+                a11yCoordinator.setA11yPropertiesToAllTabItems()
             }
         }
     }
@@ -163,6 +165,8 @@ class TabsHost(
     private val appearanceCoordinator =
         TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
 
+    private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabScreenFragments)
+
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
     }
@@ -226,6 +230,12 @@ class TabsHost(
         }
     }
 
+    var nativeContainerBackgroundColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            background = newValue?.toDrawable()
+        }
+    }
+
     private fun <T> updateNavigationMenuIfNeeded(
         oldValue: T,
         newValue: T,
@@ -252,10 +262,14 @@ class TabsHost(
         bottomNavigationView.setOnItemSelectedListener { item ->
             RNSLog.d(TAG, "Item selected $item")
             val fragment = getFragmentForMenuItemId(item.itemId)
-            if (fragment != currentFocusedTab || !specialEffectsHandler.handleRepeatedTabSelection()) {
-                val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
-                eventEmitter.emitOnNativeFocusChange(tabKey)
-            }
+            val repeatedSelectionHandledBySpecialEffect =
+                if (fragment == currentFocusedTab) specialEffectsHandler.handleRepeatedTabSelection() else false
+            val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
+            eventEmitter.emitOnNativeFocusChange(
+                tabKey,
+                item.itemId,
+                repeatedSelectionHandledBySpecialEffect,
+            )
             true
         }
     }
@@ -335,6 +349,7 @@ class TabsHost(
     override fun onMenuItemAttributesChange(tabScreen: TabScreen) {
         getMenuItemForTabScreen(tabScreen)?.let { menuItem ->
             appearanceCoordinator.updateMenuItemAppearance(menuItem, tabScreen)
+            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabScreen)
         }
     }
 
@@ -352,8 +367,11 @@ class TabsHost(
 
         appearanceCoordinator.updateTabAppearance(this)
 
-        bottomNavigationView.selectedItemId =
+        val selectedTabScreenFragmentId =
             checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
+        if (bottomNavigationView.selectedItemId != selectedTabScreenFragmentId) {
+            bottomNavigationView.selectedItemId = selectedTabScreenFragmentId
+        }
 
         post {
             refreshLayout()

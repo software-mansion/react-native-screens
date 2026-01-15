@@ -70,12 +70,6 @@ namespace react = facebook::react;
   _scrollEdgeEffectsNeedUpdate = NO;
 #endif
 
-  // Prevents incorrect tab bar appearance after tab change on iOS 26.0
-  // TODO: verify if it's still necessary on iOS 26.1
-#if !TARGET_OS_TV
-  self.backgroundColor = [UIColor systemBackgroundColor];
-#endif // !TARGET_OS_TV
-
   [self resetProps];
 }
 
@@ -295,6 +289,16 @@ RNS_IGNORE_SUPER_CALL_END
     tabBarItemNeedsUpdate = YES;
   }
 
+  if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
+    _tabItemTestID = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemTestID);
+    _tabBarItemNeedsA11yUpdate = YES;
+  }
+
+  if (newComponentProps.tabBarItemAccessibilityLabel != oldComponentProps.tabBarItemAccessibilityLabel) {
+    _tabItemAccessibilityLabel = RCTNSStringFromStringNilIfEmpty(newComponentProps.tabBarItemAccessibilityLabel);
+    _tabBarItemNeedsA11yUpdate = YES;
+  }
+
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
     _standardAppearance = [UITabBarAppearance new];
     [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
@@ -424,6 +428,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (tabBarItemNeedsRecreation) {
     [self createTabBarItem];
     tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (tabBarItemNeedsUpdate) {
@@ -468,6 +473,13 @@ RNS_IGNORE_SUPER_CALL_END
 {
   RNSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
   [super mountChildComponentView:childComponentView index:index];
+
+  // overrideScrollViewBehavior and updateContentScrollViewEdgeEffects use first descendant chain
+  // from screen to find ScrollView, that's why we're only interested in child mounted at index 0.
+  if (index == 0) {
+    [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    [self updateContentScrollViewEdgeEffectsIfExists];
+  }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -509,6 +521,7 @@ RNS_IGNORE_SUPER_CALL_END
     _tabBarItemNeedsRecreation = NO;
 
     _tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsA11yUpdate = YES;
   }
 
   if (_tabBarItemNeedsUpdate) {
@@ -562,6 +575,18 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _badgeValue = [NSString rnscreens_stringOrNilIfBlank:badgeValue];
   _tabBarItemNeedsUpdate = YES;
+}
+
+- (void)setTabBarItemTestID:(NSString *)tabBarItemTestID
+{
+  _tabItemTestID = tabBarItemTestID;
+  _tabBarItemNeedsA11yUpdate = YES;
+}
+
+- (void)setTabBarItemAccessibilityLabel:(NSString *)tabBarItemAccessibilityLabel
+{
+  _tabItemAccessibilityLabel = tabBarItemAccessibilityLabel;
+  _tabBarItemNeedsA11yUpdate = YES;
 }
 
 - (void)setIconType:(RNSBottomTabsIconType)iconType
@@ -671,6 +696,30 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _systemItem = systemItem;
   _tabBarItemNeedsRecreation = YES;
+}
+
+- (void)setSpecialEffects:(NSDictionary *)specialEffects
+{
+  if (specialEffects == nil || specialEffects[@"repeatedTabSelection"] == nil ||
+      ![specialEffects[@"repeatedTabSelection"] isKindOfClass:[NSDictionary class]]) {
+    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
+    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
+    return;
+  }
+
+  NSDictionary *repeatedTabSelection = specialEffects[@"repeatedTabSelection"];
+
+  if (repeatedTabSelection[@"popToRoot"] != nil) {
+    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = [RCTConvert BOOL:repeatedTabSelection[@"popToRoot"]];
+  } else {
+    _shouldUseRepeatedTabSelectionPopToRootSpecialEffect = YES;
+  }
+
+  if (repeatedTabSelection[@"scrollToTop"] != nil) {
+    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = [RCTConvert BOOL:repeatedTabSelection[@"scrollToTop"]];
+  } else {
+    _shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = YES;
+  }
 }
 
 - (void)setOrientation:(RNSOrientation)orientation

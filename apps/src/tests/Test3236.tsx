@@ -58,7 +58,10 @@ function App() {
         title: 'Tab 1',
         freezeContents: false,
         icon: {
-          sfSymbolName: 'sun.max',
+          ios: {
+            type: 'sfSymbol',
+            name: 'sun.max',
+          },
         },
         iconResourceName: 'sunny',
       },
@@ -69,7 +72,10 @@ function App() {
         tabKey: 'Tab2',
         title: 'Tab 2',
         icon: {
-          sfSymbolName: 'snow',
+          ios: {
+            type: 'sfSymbol',
+            name: 'snow',
+          },
         },
         iconResourceName: 'mode_cool',
       },

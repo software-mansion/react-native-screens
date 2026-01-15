@@ -8,6 +8,7 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
@@ -35,6 +36,7 @@ import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.utils.getDecorViewTopInset
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -51,6 +53,8 @@ class Screen(
 
     val reactEventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+
+    var insetsApplied = false
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -191,7 +195,20 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            dispatchShadowStateUpdate(width, height, t)
+            if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
+                val topLevelDecorView =
+                    requireNotNull(
+                        reactContext.currentActivity?.window?.decorView,
+                    ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
+
+                val topInset = getDecorViewTopInset(topLevelDecorView)
+                val correctedHeight = height - topInset
+                val correctedOffsetY = t + topInset
+
+                dispatchShadowStateUpdate(width, correctedHeight, correctedOffsetY)
+            } else {
+                dispatchShadowStateUpdate(width, height, t)
+            }
         }
     }
 
@@ -500,6 +517,12 @@ class Screen(
             // Translation is relative to the bottom edge, therefore it returns negative values.
             updateScreenSizeFabric(width, height, top + translationY.toInt())
         }
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        insetsApplied = true
+
+        return super.onApplyWindowInsets(insets)
     }
 
     override fun onAttachedToWindow() {

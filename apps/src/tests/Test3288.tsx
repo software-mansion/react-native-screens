@@ -26,8 +26,10 @@ import {
 import { SettingsPicker, SettingsSwitch } from '../shared';
 import Colors from '../shared/styling/Colors';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
-import { TabBarMinimizeBehavior } from 'react-native-screens';
-import { BottomTabsAccessoryEnvironment } from 'react-native-screens/components/bottom-tabs/BottomTabsAccessory.types';
+import type {
+  TabBarMinimizeBehavior,
+  TabsAccessoryEnvironment,
+} from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
 
 type BottomAccessoryConfig = {
@@ -161,7 +163,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
 ];
 
 function getBottomAccessory(
-  environment: BottomTabsAccessoryEnvironment,
+  environment: TabsAccessoryEnvironment,
   config: BottomAccessoryConfig,
 ) {
   const pressableStyle: PressableProps['style'] = ({ pressed }) => ({

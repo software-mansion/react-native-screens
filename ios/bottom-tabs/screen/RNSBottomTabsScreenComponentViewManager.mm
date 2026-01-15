@@ -24,6 +24,9 @@ RCT_EXPORT_VIEW_PROPERTY(title, NSString);
 RCT_EXPORT_VIEW_PROPERTY(orientation, RNSOrientation);
 RCT_EXPORT_VIEW_PROPERTY(badgeValue, NSString);
 
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemTestID, NSString);
+RCT_EXPORT_VIEW_PROPERTY(tabBarItemAccessibilityLabel, NSString);
+
 RCT_EXPORT_VIEW_PROPERTY(standardAppearance, NSDictionary);
 RCT_EXPORT_VIEW_PROPERTY(scrollEdgeAppearance, NSDictionary);
 
@@ -35,9 +38,6 @@ RCT_EXPORT_VIEW_PROPERTY(selectedIconImageSource, RCTImageSource);
 RCT_EXPORT_VIEW_PROPERTY(selectedIconSfSymbolName, NSString);
 RCT_EXPORT_VIEW_PROPERTY(selectedIconXcassetsName, NSString);
 
-RCT_EXPORT_VIEW_PROPERTY(shouldUseRepeatedTabSelectionPopToRootSpecialEffect, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(shouldUseRepeatedTabSelectionScrollToTopSpecialEffect, BOOL);
-
 RCT_EXPORT_VIEW_PROPERTY(overrideScrollViewContentInsetAdjustmentBehavior, BOOL);
 
 RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
@@ -48,6 +48,8 @@ RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
 RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle);
 
 RCT_EXPORT_VIEW_PROPERTY(systemItem, RNSBottomTabsScreenSystemItem);
+
+RCT_EXPORT_VIEW_PROPERTY(specialEffects, NSDictionary);
 
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);

@@ -3120,7 +3120,6 @@ __metadata:
     react: "npm:19.1.0"
     react-native: "npm:0.81.1"
     react-native-codegen: "npm:^0.71.3"
-    react-native-edge-to-edge: "npm:^1.6.0"
     react-native-gesture-handler: "npm:^2.28.0"
     react-native-reanimated: "npm:^3.19.0"
     react-native-restart: "npm:^0.0.27"
@@ -8871,16 +8870,6 @@ __metadata:
     jscodeshift: "npm:^0.14.0"
     nullthrows: "npm:^1.1.1"
   checksum: 10c0/7daca7b2317dda277a4f8f230ac141ef575c0e6376eeb3cd333480fea9dc41b0b4e31b8521c1f9d496f7cd887e47c4885f2d330c902ddb07539e7af764a4109c
-  languageName: node
-  linkType: hard
-
-"react-native-edge-to-edge@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "react-native-edge-to-edge@npm:1.6.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/6373cc1b447eae31689a9b62e38b15621e9273626e2324700c4c3eb58c02ce489236a4b9e3e0dc1187e062defd8316195c5b1213facd718706b79b92127a05a3
   languageName: node
   linkType: hard
 

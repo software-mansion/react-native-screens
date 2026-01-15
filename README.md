@@ -1,4 +1,19 @@
-<img src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png" width="100%" alt="React Native Screens by Software Mansion" >
+<p align="center" style="margin:0; padding:0;">
+  <img
+    src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png"
+    alt="React Native Screens by Software Mansion"
+    style="display:block; margin:0; padding:0;"
+  />
+  <a href="https://stateofreactnative.com/">
+    <img
+      src="https://github.com/user-attachments/assets/cbe2ee58-1306-4ce8-9c6a-e6c297e6b511"
+      alt="State of React Native Survey"
+      width="1100"
+      height="120"
+      style="display:block; margin:0; padding:0;"
+    />
+  </a>
+</p>
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
@@ -121,6 +136,7 @@ Here's a table with summary of supported `react-native` versions:
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.19.0+         | 0.81.0+              |
 | 4.14.0+         | 0.79.0+              |
 | 4.5.0+          | 0.77.0+              |
 | 4.0.0+          | 0.76.0+              |
@@ -133,6 +149,7 @@ Here's a table with summary of supported `react-native` versions with old archit
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.19.0+         | 0.80.0+              |
 | 4.14.0+         | 0.79.0+              |
 | 4.9.0+          | 0.76.0+              |
 | 4.5.0+          | 0.74.0+              |

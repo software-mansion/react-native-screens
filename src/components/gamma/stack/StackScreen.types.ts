@@ -1,16 +1,24 @@
 import { NativeSyntheticEvent, ViewProps } from 'react-native';
 
-export type GenericEmptyEvent = Record<string, never>;
+export type OnDismissEventPayload = {
+  isNativeDismiss: boolean;
+};
+
+export type EmptyEventPayload = Record<string, never>;
+
+export type OnDismissEvent = NativeSyntheticEvent<OnDismissEventPayload>;
+
+export type StackScreenActivityMode = 'detached' | 'attached';
 
 export type StackScreenEventHandler = (
-  event: NativeSyntheticEvent<GenericEmptyEvent>,
+  event: NativeSyntheticEvent<EmptyEventPayload>,
 ) => void;
 
 export type StackScreenProps = {
   children?: ViewProps['children'];
 
-  maxLifecycleState: 0 | 1 | 2; // TODO: Figure out to type this w/o circular import
-
+  // Control
+  activityMode: StackScreenActivityMode;
   screenKey: string;
 
   // Events
@@ -19,6 +27,6 @@ export type StackScreenProps = {
   onWillDisappear?: StackScreenEventHandler;
   onDidDisappear?: StackScreenEventHandler;
 
-  // Custom events
-  onPop?: (screenKey: string) => void;
+  onDismiss?: (screenKey: string) => void;
+  onNativeDismiss?: (screenKey: string) => void;
 };
