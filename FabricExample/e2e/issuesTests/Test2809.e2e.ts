@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { selectTestScreen } from '../e2e-utils';
 
 const expectBackButtonMenuWithTheSameLabel = async (text: string) => {
    await element(by.text(text)).longPressAndDrag(700, NaN, NaN, element(by.text('VOID')), NaN, NaN, "fast", 0); // open
@@ -43,7 +43,8 @@ const expectInitialPageToExist = async (testName: string, expectToExist: Detox.N
    }
 };
 
-describeIfiOS('Test2809', () => {
+// TODO: Fix & reenable after https://github.com/software-mansion/react-native-screens/pull/3303
+describe.skip('Test2809', () => {
    beforeAll(async () => {
       await device.reloadReactNative();
    });
