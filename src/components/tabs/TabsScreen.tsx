@@ -120,7 +120,8 @@ function TabsScreen(props: TabsScreenProps) {
   );
 
   bottomTabsDebugLog(
-    `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${rest.tabKey
+    `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
+      rest.tabKey
     } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
   );
 
@@ -279,8 +280,7 @@ function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
 function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
-  iconSfSymbolName?: string;
-  iconXcassetsName?: string;
+  iconResourceName?: string;
 } {
   if (!icon) {
     return {};
@@ -289,7 +289,7 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
   if (icon.type === 'sfSymbol') {
     return {
       iconType: 'sfSymbol',
-      iconSfSymbolName: icon.name,
+      iconResourceName: icon.name,
     };
   } else if (icon.type === 'imageSource') {
     return {
@@ -301,14 +301,14 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
       iconType: 'template',
       iconImageSource: icon.templateSource,
     };
-  } else if (icon.type === 'xcassets') {
+  } else if (icon.type === 'xcasset') {
     return {
-      iconType: 'xcassets',
-      iconXcassetsName: icon.name,
+      iconType: 'xcasset',
+      iconResourceName: icon.name,
     };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource`, `templateSource` or `xcassets`.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `image`, `template` or `xcasset`.',
     );
   }
 }
@@ -321,11 +321,9 @@ function parseIconsToNativeProps(
   drawableIconResourceName?: string;
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
-  iconSfSymbolName?: string;
-  iconXcassetsName?: string;
+  iconResourceName?: string;
   selectedIconImageSource?: ImageSourcePropType;
-  selectedIconSfSymbolName?: string;
-  selectedIconXcassetsName?: string;
+  selectedIconResourceName?: string;
 } {
   if (Platform.OS === 'android') {
     const androidNativeProps = parseAndroidIconToNativeProps(
@@ -337,14 +335,13 @@ function parseIconsToNativeProps(
   }
 
   if (Platform.OS === 'ios') {
-    const { iconImageSource, iconSfSymbolName, iconXcassetsName, iconType } =
+    const { iconImageSource, iconResourceName, iconType } =
       parseIOSIconToNativeProps(icon?.ios || icon?.shared);
 
     const {
       iconImageSource: selectedIconImageSource,
-      iconSfSymbolName: selectedIconSfSymbolName,
+      iconResourceName: selectedIconResourceName,
       iconType: selectedIconType,
-      iconXcassetsName: selectedIconXcassetsName
     } = parseIOSIconToNativeProps(selectedIcon);
 
     if (
@@ -363,11 +360,9 @@ function parseIconsToNativeProps(
     return {
       iconType,
       iconImageSource,
-      iconSfSymbolName,
-      iconXcassetsName,
+      iconResourceName,
       selectedIconImageSource,
-      selectedIconSfSymbolName,
-      selectedIconXcassetsName
+      selectedIconResourceName,
     };
   }
 

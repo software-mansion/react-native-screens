@@ -120,25 +120,25 @@ export type PlatformIconIOSSfSymbol = {
   name: string;
 };
 
-export type PlatformIconIOSXcassets = {
-  type: 'xcassets';
+export type PlatformIconIOSXcasset = {
+  type: 'xcasset';
   name: string;
 };
 
 export type PlatformIconIOS =
   | PlatformIconIOSSfSymbol
-  | PlatformIconIOSXcassets
+  | PlatformIconIOSXcasset
   | {
-    type: 'templateSource';
-    templateSource: ImageSourcePropType;
-  }
+      type: 'templateSource';
+      templateSource: ImageSourcePropType;
+    }
   | PlatformIconShared;
 
 export type PlatformIconAndroid =
   | {
-    type: 'drawableResource';
-    name: string;
-  }
+      type: 'drawableResource';
+      name: string;
+    }
   | PlatformIconShared;
 
 export interface PlatformIcon {
@@ -475,12 +475,12 @@ export interface ScreenProps extends ViewProps {
    * Defaults to `none`, indicating that the dimming view should be always present.
    */
   sheetLargestUndimmedDetentIndex?:
-  | number
-  | 'none'
-  | 'last'
-  | 'medium' // deprecated
-  | 'large' // deprecated
-  | 'all'; // deprecated
+    | number
+    | 'none'
+    | 'last'
+    | 'medium' // deprecated
+    | 'large' // deprecated
+    | 'all'; // deprecated
   /**
    * Index of the detent the sheet should expand to after being opened.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -848,11 +848,11 @@ export interface SearchBarProps {
    * - on iOS, it is the same as `sentences`.
    */
   autoCapitalize?:
-  | 'systemDefault'
-  | 'none'
-  | 'words'
-  | 'sentences'
-  | 'characters';
+    | 'systemDefault'
+    | 'none'
+    | 'words'
+    | 'sentences'
+    | 'characters';
   /**
    * Automatically focuses search bar on mount
    *
@@ -1153,7 +1153,7 @@ export interface HeaderBarButtonItemMenuAction {
   title?: string;
   subtitle?: string;
   onPress: () => void;
-  icon?: PlatformIconIOSSfSymbol;
+  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
   /**
    * State of the item.
    *
@@ -1195,7 +1195,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string;
-  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcassets;
+  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean;
   destructive?: boolean;

@@ -93,12 +93,10 @@ namespace react = facebook::react;
   _iconType = RNSBottomTabsIconTypeSfSymbol;
 
   _iconImageSource = nil;
-  _iconSfSymbolName = nil;
-  _iconXcassetsName = nil;
+  _iconResourceName = nil;
 
   _selectedIconImageSource = nil;
-  _selectedIconSfSymbolName = nil;
-  _selectedIconXcassetsName = nil;
+  _selectedIconResourceName = nil;
 
   _systemItem = RNSBottomTabsScreenSystemItemNone;
 
@@ -330,13 +328,8 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.iconSfSymbolName != oldComponentProps.iconSfSymbolName) {
-    _iconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconSfSymbolName);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.iconXcassetsName != oldComponentProps.iconXcassetsName) {
-    _iconXcassetsName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconXcassetsName);
+  if (newComponentProps.iconResourceName != oldComponentProps.iconResourceName) {
+    _iconResourceName = RCTNSStringFromStringNilIfEmpty(newComponentProps.iconResourceName);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -346,13 +339,8 @@ RNS_IGNORE_SUPER_CALL_END
     tabItemNeedsAppearanceUpdate = YES;
   }
 
-  if (newComponentProps.selectedIconSfSymbolName != oldComponentProps.selectedIconSfSymbolName) {
-    _selectedIconSfSymbolName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconSfSymbolName);
-    tabItemNeedsAppearanceUpdate = YES;
-  }
-
-  if (newComponentProps.selectedIconXcassetsName != oldComponentProps.selectedIconXcassetsName) {
-    _selectedIconXcassetsName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconXcassetsName);
+  if (newComponentProps.selectedIconResourceName != oldComponentProps.selectedIconResourceName) {
+    _selectedIconResourceName = RCTNSStringFromStringNilIfEmpty(newComponentProps.selectedIconResourceName);
     tabItemNeedsAppearanceUpdate = YES;
   }
 
@@ -601,15 +589,9 @@ RNS_IGNORE_SUPER_CALL_END
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
-- (void)setIconSfSymbolName:(NSString *)iconSfSymbolName
+- (void)setIconResourceName:(NSString *)iconResourceName
 {
-  _iconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:iconSfSymbolName];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setIconXcassetsName:(NSString *)iconXcassetsName
-{
-  _iconXcassetsName = [NSString rnscreens_stringOrNilIfEmpty:iconXcassetsName];
+  _iconResourceName = [NSString rnscreens_stringOrNilIfEmpty:iconResourceName];
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
@@ -619,15 +601,9 @@ RNS_IGNORE_SUPER_CALL_END
   _tabItemNeedsAppearanceUpdate = YES;
 }
 
-- (void)setSelectedIconSfSymbolName:(NSString *)selectedIconSfSymbolName
+- (void)setSelectedIconResourceName:(NSString *)selectedIconResourceName
 {
-  _selectedIconSfSymbolName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconSfSymbolName];
-  _tabItemNeedsAppearanceUpdate = YES;
-}
-
-- (void)setSelectedIconXcassetsName:(NSString *)selectedIconXcassetsName
-{
-  _selectedIconXcassetsName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconXcassetsName];
+  _selectedIconResourceName = [NSString rnscreens_stringOrNilIfEmpty:selectedIconResourceName];
   _tabItemNeedsAppearanceUpdate = YES;
 }
 

@@ -12,7 +12,7 @@ import type {
 import { UnsafeMixed } from './codegenUtils';
 
 // iOS-specific: SFSymbol, image as a template usage
-export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcassets';
+export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcasset';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -144,12 +144,10 @@ export interface NativeProps extends ViewProps {
   iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
 
   iconImageSource?: ImageSource;
-  iconSfSymbolName?: string;
-  iconXcassetsName?: string;
+  iconResourceName?: string;
 
   selectedIconImageSource?: ImageSource;
-  selectedIconSfSymbolName?: string;
-  selectedIconXcassetsName?: string;
+  selectedIconResourceName?: string;
 
   systemItem?: CT.WithDefault<SystemItem, 'none'>;
 

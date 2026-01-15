@@ -14,21 +14,22 @@ const prepareMenu = (
     items: menu.items.map((menuItem, menuIndex) => {
       const iconType = menuItem.icon?.type;
       const sfSymbolName =
-        iconType === 'sfSymbol' ? menuItem.icon.name : undefined;
-      const xcassetsName = 
-        iconType === 'xcassets' ? menuItem.icon.name : undefined;
+        iconType === 'sfSymbol' ? menuItem.icon?.name : undefined;
+      const xcassetName =
+        iconType === 'xcasset' ? menuItem.icon?.name : undefined;
+
       if (menuItem.type === 'submenu') {
         return {
           ...menuItem,
           sfSymbolName,
-          xcassetsName,
+          xcassetName,
           ...prepareMenu(menuItem, menuIndex, side),
         };
       }
       return {
         ...menuItem,
         sfSymbolName,
-        xcassetsName,
+        xcassetName,
         menuId: `${menuIndex}-${index}-${side}`,
       };
     }),
@@ -69,7 +70,7 @@ export const prepareHeaderBarButtonItems = (
       imageSource,
       templateSource,
       sfSymbolName: item.icon?.type === 'sfSymbol' ? item.icon.name : undefined,
-      xcassetsName: item.icon?.type === 'xcassets' ? item.icon.name : undefined,
+      xcassetName: item.icon?.type === 'xcasset' ? item.icon.name : undefined,
       titleStyle,
       tintColor,
       badge,

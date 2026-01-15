@@ -58,9 +58,13 @@
                fromScreenView:(RNSBottomTabsScreenComponentView *)screenView
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
-  if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
-    if (screenView.iconSfSymbolName != nil) {
-      tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+  if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol || screenView.iconType == RNSBottomTabsIconTypeXcasset) {
+    if (screenView.iconResourceName != nil) {
+      if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
+        tabBarItem.image = [UIImage systemImageNamed:screenView.iconResourceName];
+      } else {
+        tabBarItem.image = [UIImage imageNamed:screenView.iconResourceName];
+      }
     } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
       // Restore default system item icon
       UITabBarSystemItem systemItem =
@@ -70,30 +74,12 @@
       tabBarItem.image = nil;
     }
 
-    if (screenView.selectedIconSfSymbolName != nil) {
-      tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
-    } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
-      // Restore default system item icon
-      UITabBarSystemItem systemItem =
-          rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-      tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].selectedImage;
-    } else {
-      tabBarItem.selectedImage = nil;
-    }
-  } else if (screenView.iconType == RNSBottomTabsIconTypeXcassets) {
-    if (screenView.iconXcassetsName != nil) {
-      tabBarItem.image = [UIImage imageNamed:screenView.iconXcassetsName];
-    } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
-      // Restore default system item icon
-      UITabBarSystemItem systemItem =
-          rnscreens::conversion::RNSBottomTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-      tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:0].image;
-    } else {
-      tabBarItem.image = nil;
-    }
-
-    if (screenView.selectedIconXcassetsName != nil) {
-      tabBarItem.selectedImage = [UIImage imageNamed:screenView.selectedIconXcassetsName];
+    if (screenView.selectedIconResourceName != nil) {
+      if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
+        tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName];
+      } else {
+        tabBarItem.selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
+      }
     } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
       // Restore default system item icon
       UITabBarSystemItem systemItem =

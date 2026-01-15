@@ -137,14 +137,14 @@ export default function BarButtonItemsExample() {
           title: 'Icon Button',
           unstable_headerRightItems: () => [
             {
-              type: "button",
+              type: 'button',
               icon: {
-                type: "xcassets",
-                name: "logo",
+                type: 'xcassets',
+                name: 'logo',
               },
-              label: "Xcassets",
+              label: 'Xcassets',
               onPress: () => Alert.alert('Icon Xcassets pressed'),
-            }
+            },
           ],
         }}
       />
@@ -439,7 +439,7 @@ export default function BarButtonItemsExample() {
                 items: [
                   {
                     label: 'Action 1',
-                    icon: { type: 'xcassets', name: 'logo' },
+                    icon: { type: 'xcasset', name: 'logo' },
                     type: 'action',
                     state: 'on',
                     destructive: true,
@@ -471,7 +471,7 @@ export default function BarButtonItemsExample() {
                         destructive: true,
                         keepsMenuPresented: true,
                         discoverabilityLabel: 'Sub Action 1',
-                        icon: { type: "xcassets", name: "logo" }
+                        icon: { type: 'xcassets', name: 'logo' },
                       },
                       {
                         label: 'Sub Action 2',

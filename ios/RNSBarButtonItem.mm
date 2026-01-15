@@ -25,7 +25,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   NSDictionary *imageSourceObj = dict[@"imageSource"];
   NSDictionary *templateSourceObj = dict[@"templateSource"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetsName = dict[@"xcassetsName"];
+  NSString *xcassetName = dict[@"xcassetName"];
 
   if (imageSourceObj != nil || templateSourceObj != nil) {
     BOOL isTemplate = imageSourceObj != nil ? NO : YES;
@@ -39,8 +39,8 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                                                  }];
   } else if (sfSymbolName != nil) {
     self.image = [UIImage systemImageNamed:sfSymbolName];
-  } else if (xcassetsName != nil) {
-    self.image = [UIImage imageNamed:xcassetsName];
+  } else if (xcassetName != nil) {
+    self.image = [UIImage imageNamed:xcassetName];
   }
 
   if (title != nil) {
@@ -165,13 +165,13 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   }
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetsName = dict[@"xcassetsName"];
+  NSString *xcassetName = dict[@"xcassetName"];
 
   UIImage* image = nil;
   if (sfSymbolName != nil) {
     image = [UIImage systemImageNamed:sfSymbolName];
-  } else if (xcassetsName != nil) {
-    image = [UIImage imageNamed:xcassetsName];
+  } else if (xcassetName != nil) {
+    image = [UIImage imageNamed:xcassetName];
   }
 
   return [UIMenu menuWithTitle:title
@@ -186,13 +186,13 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   NSString *menuId = dict[@"menuId"];
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetsName = dict[@"xcassetsName"];
+  NSString *xcassetName = dict[@"xcassetName"];
 
   UIImage *image = nil;
   if (sfSymbolName != nil) {
     image = [UIImage systemImageNamed:sfSymbolName];
   } else {
-    image = [UIImage imageNamed:xcassetsName];
+    image = [UIImage imageNamed:xcassetName];
   }
 
   UIAction *actionElement = [UIAction actionWithTitle:title
