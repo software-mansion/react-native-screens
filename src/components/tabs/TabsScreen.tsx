@@ -308,7 +308,7 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
     };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `image`, `template` or `xcasset`.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource`, `templateSource` or `xcasset`.',
     );
   }
 }
