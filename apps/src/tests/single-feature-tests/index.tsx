@@ -12,66 +12,35 @@ import SplitHostScenarios from './split-host';
 import SplitScreenScenarios from './split-screen';
 import StackHostScenarios from './stack-host';
 import StackScreenScenarios from './stack-screen';
-import { Scenario } from '../shared/helpers';
+import { Scenario, ucsplit } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
+import ScenariosScreen from '../shared/ScenarioScreen';
+
+const COMPONENTS_SCENARIOS: Record<string, Scenario[]> = {
+  BottomTabs: BottomTabsScenarios,
+  BottomTabsScreen: BottomTabsScreenScenarios,
+  SplitHost: SplitHostScenarios,
+  SplitScreen: SplitScreenScenarios,
+  StackHost: StackHostScenarios,
+  StackScreen: StackScreenScenarios,
+} as const;
+
+type ParamsList = { [k: keyof typeof COMPONENTS_SCENARIOS]: undefined } & {
+  Home: undefined;
+};
 
 function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      <ScenarioButton title="Bottom Tabs" route="BottomTabs" />
-      <ScenarioButton title="Bottom Tabs Screen" route="BottomTabsScreen" />
-      <ScenarioButton title="Split Host" route="SplitHost" />
-      <ScenarioButton title="Split Screen" route="SplitScreen" />
-      <ScenarioButton title="Stack Host" route="StackHost" />
-      <ScenarioButton title="Stack Screen" route="StackScreen" />
-    </ScrollView>
-  );
-}
-
-function ScenarioSelect(props: { scenarios: Scenario[] }) {
-  return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {props.scenarios.map(({ name, key, details, platforms }) => (
-        <ScenarioButton
-          title={name}
-          details={details}
-          route={key}
-          key={key}
-          platformsHint={platforms}
-        />
+      {Object.entries(COMPONENTS_SCENARIOS).map(([key]) => (
+        <ScenarioButton key={key} title={ucsplit(key)} route={key} />
       ))}
     </ScrollView>
   );
 }
 
-function ScenariosScreen(props: { title: string; scenarios: Scenario[] }) {
-  const Stack = createNativeStackNavigator();
-
-  return (
-    <NavigationIndependentTree>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-            key="home"
-            name="home"
-            options={{
-              headerShown: true,
-              headerLargeTitleEnabled: true,
-              headerTitle: props.title,
-            }}>
-            {() => <ScenarioSelect scenarios={props.scenarios} />}
-          </Stack.Screen>
-          {props.scenarios.map(({ name, key, screen }) => (
-            <Stack.Screen name={name} key={key} component={screen as any} />
-          ))}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </NavigationIndependentTree>
-  );
-}
-
 export default function App() {
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator<ParamsList>();
 
   return (
     <NavigationIndependentTree>
@@ -86,54 +55,17 @@ export default function App() {
               headerTitle: 'Scenarios',
             }}
           />
-          <Stack.Screen name="BottomTabs">
-            {() => (
-              <ScenariosScreen
-                title="BottomTabs"
-                scenarios={BottomTabsScenarios}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="BottomTabsScreen">
-            {() => (
-              <ScenariosScreen
-                title="BottomTabsScreen"
-                scenarios={BottomTabsScreenScenarios}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="SplitHost">
-            {() => (
-              <ScenariosScreen
-                title="SplitHost"
-                scenarios={SplitHostScenarios}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="SplitScreen">
-            {() => (
-              <ScenariosScreen
-                title="SplitScreen"
-                scenarios={SplitScreenScenarios}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="StackHost">
-            {() => (
-              <ScenariosScreen
-                title="StackHost"
-                scenarios={StackHostScenarios}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="StackScreen">
-            {() => (
-              <ScenariosScreen
-                title="StackScreen"
-                scenarios={StackScreenScenarios}
-              />
-            )}
-          </Stack.Screen>
+          {Object.entries(COMPONENTS_SCENARIOS).map(([key, scenarios]) => (
+            <Stack.Screen name={key}>
+              {() => (
+                <ScenariosScreen
+                  key={key}
+                  title={ucsplit(key)}
+                  scenarios={scenarios}
+                />
+              )}
+            </Stack.Screen>
+          ))}
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>
