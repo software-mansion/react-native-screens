@@ -1,4 +1,4 @@
-import { getCommandLineResponse } from "react-native-screens/scripts/e2e/command-line-helpers";
+import { getCommandLineResponse } from "../../../scripts/e2e/command-line-helpers";
 import { device } from 'detox';
 
 export default function disableStylusPopupOnAndroid() {

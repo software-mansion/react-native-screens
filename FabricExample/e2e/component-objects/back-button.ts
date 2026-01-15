@@ -13,6 +13,7 @@ export async function tapBarBackButton() {
     return backButtonElement.tap();
   } else throw new Error(`Platform "${platform}" not supported`);
 }
+
 async function getIOSBackButton() {
   const iosVersion = getIOSVersion().replace('iOS', '').trim();
   if (isVersionEqualOrHigherThan(iosVersion, '26.0')) {
