@@ -191,7 +191,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   UIImage *image = nil;
   if (sfSymbolName != nil) {
     image = [UIImage systemImageNamed:sfSymbolName];
-  } else {
+  } else if (xcassetName != nil) {
     image = [UIImage imageNamed:xcassetName];
   }
 

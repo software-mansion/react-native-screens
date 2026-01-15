@@ -15,7 +15,7 @@ RCT_ENUM_CONVERTER(
       @"image" : @(RNSBottomTabsIconTypeImage),
       @"template" : @(RNSBottomTabsIconTypeTemplate),
       @"sfSymbol" : @(RNSBottomTabsIconTypeSfSymbol),
-      @"xcassets" : @(RNSBottomTabsIconTypeXcassets),
+      @"xcasset" : @(RNSBottomTabsIconTypeXcasset),
     }),
     RNSBottomTabsIconTypeSfSymbol,
     integerValue)
