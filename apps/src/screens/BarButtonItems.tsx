@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 const demoScreens = [
   { name: 'PlainButtonDemo', title: 'Plain Button' },
   { name: 'IconButtonDemo', title: 'Icon Button' },
-  { name: 'XcassetsIconButtonDemo', title: 'Xcassets Icon Button' },
+  { name: 'XcassetIconButtonDemo', title: 'Xcasset Icon Button' },
   { name: 'SystemIconButtonDemo', title: 'System Icon Button' },
   { name: 'MenuButtonDemo', title: 'Menu Button' },
   { name: 'BadgeButtonDemo', title: 'Badge Button' },
@@ -64,7 +64,7 @@ const DemoScreenContent = () => (
 
 const PlainButtonDemo = DemoScreenContent;
 const IconButtonDemo = DemoScreenContent;
-const XcassetsIconButtonDemo = DemoScreenContent;
+const XcassetIconButtonDemo = DemoScreenContent;
 const MenuButtonDemo = DemoScreenContent;
 const BadgeButtonDemo = DemoScreenContent;
 const DisabledButtonDemo = DemoScreenContent;
@@ -131,19 +131,19 @@ export default function BarButtonItemsExample() {
         }}
       />
       <Stack.Screen
-        name="XcassetsIconButtonDemo"
-        component={XcassetsIconButtonDemo}
+        name="XcassetIconButtonDemo"
+        component={XcassetIconButtonDemo}
         options={{
           title: 'Icon Button',
           unstable_headerRightItems: () => [
             {
               type: 'button',
               icon: {
-                type: 'xcassets',
-                name: 'logo',
+                type: 'xcasset',
+                name: 'custom-icon-fill',
               },
-              label: 'Xcassets',
-              onPress: () => Alert.alert('Icon Xcassets pressed'),
+              label: 'Xcasset',
+              onPress: () => Alert.alert('Icon Xcasset pressed'),
             },
           ],
         }}
@@ -439,7 +439,7 @@ export default function BarButtonItemsExample() {
                 items: [
                   {
                     label: 'Action 1',
-                    icon: { type: 'xcasset', name: 'logo' },
+                    icon: { type: 'xcasset', name: 'custom-icon-fill' },
                     type: 'action',
                     state: 'on',
                     destructive: true,
@@ -471,7 +471,7 @@ export default function BarButtonItemsExample() {
                         destructive: true,
                         keepsMenuPresented: true,
                         discoverabilityLabel: 'Sub Action 1',
-                        icon: { type: 'xcassets', name: 'logo' },
+                        icon: { type: 'xcasset', name: 'custom-icon-fill' },
                       },
                       {
                         label: 'Sub Action 2',
