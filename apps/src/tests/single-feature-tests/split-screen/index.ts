@@ -1,7 +1,5 @@
-import { Scenario } from "../../shared/helpers";
+import { Scenario } from '../../shared/helpers';
 
-const SplitScreenScenarios: Scenario[] = [
-
-]
+const SplitScreenScenarios: Scenario[] = [];
 
 export default SplitScreenScenarios;

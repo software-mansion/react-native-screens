@@ -1,37 +1,47 @@
 import LongText from '../../../shared/LongText';
 import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  Pressable, 
-  ScrollView, 
-} from 'react-native';
-import BottomTabsConfigProvider, { BottomTabsAutoconfig, useDispatchBottomTabsConfig } from '../../shared/BottomTabsConfigProvider';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+
+import BottomTabsConfigProvider, {
+  BottomTabsAutoconfig,
+  useDispatchBottomTabsConfig,
+} from '../../shared/BottomTabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
 
 function ShortViewUL() {
   return (
-    <View style={[styles.shortView, { alignItems: 'flex-start', justifyContent: 'flex-start' }]}>
+    <View
+      style={[
+        styles.shortView,
+        { alignItems: 'flex-start', justifyContent: 'flex-start' },
+      ]}>
       <Text style={styles.shortViewText}>Upper Left</Text>
     </View>
-  )
+  );
 }
 
 function ShortViewC() {
   return (
-    <View style={[styles.shortView, { alignItems: 'center', justifyContent: 'center' }]}>
+    <View
+      style={[
+        styles.shortView,
+        { alignItems: 'center', justifyContent: 'center' },
+      ]}>
       <Text style={styles.shortViewText}>Center</Text>
     </View>
-  )
+  );
 }
 
 function ShortViewLR() {
   return (
-    <View style={[styles.shortView, { alignItems: 'flex-end', justifyContent: 'flex-end' }]}>
+    <View
+      style={[
+        styles.shortView,
+        { alignItems: 'flex-end', justifyContent: 'flex-end' },
+      ]}>
       <Text style={styles.shortViewText}>Lower Right</Text>
     </View>
-  )
+  );
 }
 
 function LongView() {
@@ -39,25 +49,25 @@ function LongView() {
     <View style={styles.fullView}>
       <LongText />
     </View>
-  )
+  );
 }
 
 function RGBView() {
   return (
-      <View style={styles.fullView}>
-        <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
-        <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} />
-        <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} />
-      </View>
-  )
+    <View style={styles.fullView}>
+      <View style={[styles.rgbStrip, { backgroundColor: '#ff4d4d' }]} />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4dff4d' }]} />
+      <View style={[styles.rgbStrip, { backgroundColor: '#4d4dff' }]} />
+    </View>
+  );
 }
 
 const ACCESSORY_VARIANTS = [
   { id: 0, content: ShortViewUL },
   { id: 1, content: ShortViewC },
   { id: 2, content: ShortViewLR },
-  { id: 3, content: LongView},
-  { id: 4, content: RGBView},
+  { id: 3, content: LongView },
+  { id: 4, content: RGBView },
 ];
 
 function ConfigScreen() {
@@ -68,33 +78,32 @@ function ConfigScreen() {
     dispatch({
       type: 'tabBar',
       config: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
-    })
+    });
   }, [selected]);
 
   return (
     <ScrollView style={styles.container}>
-      {ACCESSORY_VARIANTS.map((item) => (
+      {ACCESSORY_VARIANTS.map(item => (
         <Pressable
           key={item.id}
           onPress={() => setSelected(item.id)}
           style={[
             styles.card,
-            selected === item.id ? styles.selectedCard : styles.unselectedCard
-          ]}
-        >
+            selected === item.id ? styles.selectedCard : styles.unselectedCard,
+          ]}>
           {item.content}
         </Pressable>
       ))}
     </ScrollView>
   );
-};
+}
 
 export default function BottomAccessory() {
   return (
     <BottomTabsConfigProvider tabs={{ Tab1: ConfigScreen, Tab2: DummyScreen }}>
       <BottomTabsAutoconfig />
     </BottomTabsConfigProvider>
-  )
+  );
 }
 
 const styles = StyleSheet.create({

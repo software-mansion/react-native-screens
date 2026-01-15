@@ -1,7 +1,5 @@
-import { Scenario } from "../../shared/helpers";
+import { Scenario } from '../../shared/helpers';
 
-const SplitHostScenarios: Scenario[] = [
-
-];
+const SplitHostScenarios: Scenario[] = [];
 
 export default SplitHostScenarios;
