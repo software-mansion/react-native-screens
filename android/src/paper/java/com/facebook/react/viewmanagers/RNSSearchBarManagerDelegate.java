@@ -64,6 +64,9 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
       case "disableBackButtonOverride":
         mViewManager.setDisableBackButtonOverride(view, value == null ? false : (boolean) value);
         break;
+      case "showAsAction":
+        mViewManager.setShowAsAction(view, (String) value);
+        break;
       case "inputType":
         mViewManager.setInputType(view, value == null ? null : (String) value);
         break;
