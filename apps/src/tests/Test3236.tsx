@@ -26,14 +26,14 @@ function makeTab(
           title={`Change mode (currently ${controllerMode})`}
           onPress={() => {
             switch (controllerMode) {
-              case 'automatic':
+              case 'auto':
                 setControllerMode('tabBar');
                 break;
               case 'tabBar':
                 setControllerMode('tabSidebar');
                 break;
               default:
-                setControllerMode('automatic');
+                setControllerMode('auto');
                 break;
             }
           }}
@@ -49,7 +49,7 @@ function App() {
   );
 
   const [controllerMode, setControllerMode] =
-    useState<TabBarControllerMode>('automatic');
+    useState<TabBarControllerMode>('auto');
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {

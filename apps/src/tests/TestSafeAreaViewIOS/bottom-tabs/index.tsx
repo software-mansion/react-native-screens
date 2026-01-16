@@ -12,7 +12,7 @@ import {
 export default function BottomTabsSAVExample() {
   const [exampleConfig, setExampleConfig] =
     useState<BottomTabsSAVExampleConfig>({
-      tabBarMinimizeBehavior: 'automatic',
+      tabBarMinimizeBehavior: 'auto',
       tabBarItemSystemItem: 'disabled',
       content: 'regularView',
       safeAreaTopEdge: true,
