@@ -1,19 +1,4 @@
-<p align="center" style="margin:0; padding:0;">
-  <img
-    src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png"
-    alt="React Native Screens by Software Mansion"
-    style="display:block; margin:0; padding:0;"
-  />
-  <a href="https://stateofreactnative.com/">
-    <img
-      src="https://github.com/user-attachments/assets/cbe2ee58-1306-4ce8-9c6a-e6c297e6b511"
-      alt="State of React Native Survey"
-      width="1100"
-      height="120"
-      style="display:block; margin:0; padding:0;"
-    />
-  </a>
-</p>
+<img src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png" width="100%" alt="React Native Screens by Software Mansion" >
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
