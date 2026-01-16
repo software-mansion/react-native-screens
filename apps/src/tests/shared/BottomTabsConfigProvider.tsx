@@ -11,32 +11,51 @@ import React, {
   useContext,
   useReducer,
 } from 'react';
+import { BottomTabsProps } from 'react-native-screens';
+import { KeyList } from './helpers';
 
-type BottomTabConfigAction =
+type StaticTabScreenProps<S extends KeyList> = Omit<
+  TabConfiguration['tabScreenProps'],
+  'tabKey'
+> & { tabKey: Extract<keyof S, string> };
+
+type StaticTabConfiguration<S extends KeyList> = Omit<
+  TabConfiguration,
+  'tabScreenProps'
+> & {
+  tabScreenProps: StaticTabScreenProps<S>;
+};
+
+type StaticBottomTabsContainerProps<S extends KeyList> = BottomTabsProps & {
+  tabConfigs: StaticTabConfiguration<S>[];
+};
+
+type BottomTabConfigUpdate<S extends KeyList> =
   | {
       type: 'tabScreen';
-      tabKey: string;
+      tabKey: Extract<keyof S, string>;
       config: Partial<
-        Omit<TabConfiguration, 'tabScreenProps'> & {
-          tabScreenProps: Partial<TabConfiguration['tabScreenProps']>;
+        Omit<StaticTabConfiguration<S>, 'tabScreenProps'> & {
+          tabScreenProps: Partial<StaticTabScreenProps<S>>;
         }
       >;
     }
   | {
       type: 'tabBar';
-      config: Omit<Partial<BottomTabsContainerProps>, 'tabConfigs'>;
+      config: Partial<Omit<StaticBottomTabsContainerProps<S>, 'tabConfigs'>>;
     };
 
-const ConfigContext = createContext<BottomTabsContainerProps>({
+const ConfigContext = createContext<StaticBottomTabsContainerProps<any>>({
   tabConfigs: [],
 });
-const ConfigDispatchContext = createContext<Dispatch<BottomTabConfigAction>>(
-  () => {},
-);
+
+const ConfigDispatchContext = createContext<
+  Dispatch<BottomTabConfigUpdate<any>>
+>(() => {});
 
 function reduce(
-  config: BottomTabsContainerProps,
-  action: BottomTabConfigAction,
+  config: StaticBottomTabsContainerProps<any>,
+  action: BottomTabConfigUpdate<any>,
 ) {
   switch (action.type) {
     case 'tabBar':
@@ -83,23 +102,37 @@ function makeInitialConfig(
   };
 }
 
-export function useBottomTabsConfig() {
+/**
+ * Configuration for the Tabs.
+ * Use within the Provider returned by createTabsConfig.
+ * Template parameter with available Tab keys is required.
+ */
+export function useBottomTabsConfig<
+  S extends KeyList = {},
+>(): StaticBottomTabsContainerProps<S> {
   const config = useContext(ConfigContext);
-  return config;
+  return config as StaticBottomTabsContainerProps<S>;
 }
 
-export function useDispatchBottomTabsConfig() {
+/**
+ * Dispatcher for useReducer pattern for Tabs configuration.
+ * Use within the Provider returned by createTabsConfig.
+ * Template parameter with available Tab keys is required.
+ */
+export function useDispatchBottomTabsConfig<S extends KeyList = {}>(): Dispatch<
+  BottomTabConfigUpdate<S>
+> {
   const dispatch = useContext(ConfigDispatchContext);
   return dispatch;
 }
 
-export function BottomTabsAutoconfig() {
+function BottomTabsAutoconfig() {
   const config = useBottomTabsConfig();
 
   return <BottomTabsContainer {...config} />;
 }
 
-export default function BottomTabsConfigProvider(props: {
+function BottomTabsConfigProvider(props: {
   children: ReactNode | ReactNode[];
   tabs: Record<string, ComponentType>;
 }) {
@@ -112,4 +145,30 @@ export default function BottomTabsConfigProvider(props: {
       </ConfigDispatchContext.Provider>
     </ConfigContext.Provider>
   );
+}
+
+/**
+ * Creates a Provider and Autoconfig component for easy Tabs configuration.
+ * Template parameter with available Tab keys is required.
+ */
+export function createTabsConfig<S extends KeyList = {}>(
+  tabs: {} extends S
+    ? never
+    : Record<Extract<keyof S, string>, React.ComponentType>,
+) {
+  return {
+    Provider: (props: { children: ReactNode | ReactNode[] }) => (
+      <BottomTabsConfigProvider tabs={tabs}>
+        {props.children}
+      </BottomTabsConfigProvider>
+    ),
+    Autoconfig: BottomTabsAutoconfig,
+  };
+}
+
+export function findTabScreenOptions<S extends KeyList>(
+  config: StaticBottomTabsContainerProps<S>,
+  key: Extract<keyof S, string>,
+): StaticTabConfiguration<S> | undefined {
+  return config.tabConfigs.find(c => c.tabScreenProps.tabKey === key);
 }

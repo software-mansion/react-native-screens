@@ -1,6 +1,5 @@
 import {
   NavigationIndependentTree,
-  ParamListBase,
   RouteConfigProps,
 } from '@react-navigation/native';
 import {
@@ -15,28 +14,32 @@ import React, {
   useContext,
   useReducer,
 } from 'react';
+import { KeyList } from './helpers';
 
-type StackScreenConfig = RouteConfigProps<
-  ParamListBase,
-  any,
+type StackScreenConfig<S extends KeyList> = RouteConfigProps<
+  S,
+  keyof S,
   any,
   any,
   any,
   any
 > & { component: ComponentType };
 
-type StackConfigAction = {
+type StackConfigUpdate<S extends KeyList> = {
   type: 'screen';
-  name: string;
+  name: Extract<keyof S, string>;
   config: NativeStackNavigationOptions;
 };
 
-const ConfigContext = createContext<StackScreenConfig[]>([]);
-const ConfigDispatchContext = createContext<Dispatch<StackConfigAction>>(
+const ConfigContext = createContext<StackScreenConfig<any>[]>([]);
+const ConfigDispatchContext = createContext<Dispatch<StackConfigUpdate<any>>>(
   () => {},
 );
 
-function reduce(config: StackScreenConfig[], action: StackConfigAction) {
+function reduce(
+  config: StackScreenConfig<any>[],
+  action: StackConfigUpdate<any>,
+) {
   switch (action.type) {
     case 'screen':
       const index = config.findIndex(c => c.name === action.name);
@@ -58,7 +61,7 @@ function reduce(config: StackScreenConfig[], action: StackConfigAction) {
 
 function makeInitialConfig(
   screens: Record<string, ComponentType>,
-): StackScreenConfig[] {
+): StackScreenConfig<any>[] {
   return Object.entries(screens).map(([k, C]) => ({
     name: k,
     component: C,
@@ -66,17 +69,31 @@ function makeInitialConfig(
   }));
 }
 
-export function useStackConfig() {
+/**
+ * Configuration for the Stack.
+ * Use within the Provider returned by createStackConfig.
+ * Template parameter with available Screen names is required.
+ */
+export function useStackConfig<
+  S extends KeyList = {},
+>(): StackScreenConfig<S>[] {
   const config = useContext(ConfigContext);
-  return config;
+  return config as StackScreenConfig<S>[];
 }
 
-export function useDispatchStackConfig() {
+/**
+ * Dispatcher for useReducer pattern for Stack configuration.
+ * Use within the Provider returned by createStackConfig.
+ * Template parameter with available Screen names is required.
+ */
+export function useDispatchStackConfig<S extends KeyList = {}>(): Dispatch<
+  StackConfigUpdate<S>
+> {
   const dispatch = useContext(ConfigDispatchContext);
   return dispatch;
 }
 
-export function StackAutoconfig() {
+function StackAutoconfig() {
   const config = useStackConfig();
   const Stack = createNativeStackNavigator();
 
@@ -96,7 +113,7 @@ export function StackAutoconfig() {
   );
 }
 
-export default function StackConfigProvider(props: {
+function StackConfigProvider(props: {
   children: ReactNode | ReactNode[];
   screens: Record<string, ComponentType>;
 }) {
@@ -112,4 +129,30 @@ export default function StackConfigProvider(props: {
       </ConfigDispatchContext.Provider>
     </ConfigContext.Provider>
   );
+}
+
+/**
+ * Creates a Provider and Autoconfig component for easy Stack configuration.
+ * Template parameter with available Screen names is required.
+ */
+export function createStackConfig<S extends KeyList = {}>(
+  screens: {} extends S
+    ? never
+    : Record<Extract<keyof S, string>, React.ComponentType>,
+) {
+  return {
+    Provider: (props: { children: ReactNode | ReactNode[] }) => (
+      <StackConfigProvider screens={screens}>
+        {props.children}
+      </StackConfigProvider>
+    ),
+    Autoconfig: StackAutoconfig,
+  };
+}
+
+export function findStackScreenOptions<S extends KeyList>(
+  config: StackScreenConfig<S>[],
+  key: Extract<keyof S, string>,
+): StackScreenConfig<S>['options'] | undefined {
+  return config.find(c => c.name === key)?.options;
 }

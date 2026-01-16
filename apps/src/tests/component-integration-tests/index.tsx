@@ -47,22 +47,17 @@ export default function App() {
               headerTitle: 'Scenarios',
             }}
           />
-          <Stack.Screen name="Orientation">
-            {() => (
-              <ScenariosScreen
-                title="Orientation"
-                scenarios={OrientationScenarios}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="ScrollView">
-            {() => (
-              <ScenariosScreen
-                title="ScrollView"
-                scenarios={ScrollViewScenarios}
-              />
-            )}
-          </Stack.Screen>
+          {Object.entries(COMPONENTS_SCENARIOS).map(([key, scenarios]) => (
+            <Stack.Screen name={key}>
+              {() => (
+                <ScenariosScreen
+                  key={key}
+                  title={ucsplit(key)}
+                  scenarios={scenarios}
+                />
+              )}
+            </Stack.Screen>
+          ))}
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>
