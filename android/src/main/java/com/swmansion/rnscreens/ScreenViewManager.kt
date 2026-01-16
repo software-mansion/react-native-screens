@@ -277,12 +277,12 @@ open class ScreenViewManager :
         view?.sheetShouldOverflowTopInset = sheetShouldOverflowTopInset
     }
 
-    @ReactProp(name = "sheetContentDefaultResizeAnimationEnabled")
-    override fun setSheetContentDefaultResizeAnimationEnabled(
+    @ReactProp(name = "sheetDefaultResizeAnimationEnabled")
+    override fun setSheetDefaultResizeAnimationEnabled(
         view: Screen?,
-        sheetContentDefaultResizeAnimationEnabled: Boolean,
+        sheetDefaultResizeAnimationEnabled: Boolean,
     ) {
-        view?.sheetContentDefaultResizeAnimationEnabled = sheetContentDefaultResizeAnimationEnabled
+        view?.sheetDefaultResizeAnimationEnabled = sheetDefaultResizeAnimationEnabled
     }
 
     // mark: iOS-only
