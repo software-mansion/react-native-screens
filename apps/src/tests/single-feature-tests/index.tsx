@@ -6,8 +6,8 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import BottomTabsScenarios from './bottom-tabs';
-import BottomTabsScreenScenarios from './bottom-tabs-screen';
+import BottomTabsScenarios from './tabs-host';
+import BottomTabsScreenScenarios from './tabs-screen';
 import SplitHostScenarios from './split-host';
 import SplitScreenScenarios from './split-screen';
 import StackHostScenarios from './stack-host';

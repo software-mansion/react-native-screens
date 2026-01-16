@@ -3,17 +3,17 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import {
   createTabsConfig,
-  useBottomTabsConfig,
-  useDispatchBottomTabsConfig,
-} from '../../shared/BottomTabsConfigProvider';
+  useTabsConfig,
+  useDispatchTabsConfig,
+} from '../../shared/TabsConfigProvider';
 
 type TabsParamList = {
   Tab1: undefined;
 };
 
 function ConfigScreen() {
-  const config = useBottomTabsConfig<TabsParamList>();
-  const dispatch = useDispatchBottomTabsConfig<TabsParamList>();
+  const config = useTabsConfig<TabsParamList>();
+  const dispatch = useDispatchTabsConfig<TabsParamList>();
 
   return (
     <ScrollView style={{ padding: 40 }}>

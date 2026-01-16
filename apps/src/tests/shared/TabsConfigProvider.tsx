@@ -1,6 +1,5 @@
 import {
   BottomTabsContainer,
-  BottomTabsContainerProps,
   TabConfiguration,
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import React, {
@@ -11,7 +10,7 @@ import React, {
   useContext,
   useReducer,
 } from 'react';
-import { BottomTabsProps } from 'react-native-screens';
+import { TabsHostProps } from 'react-native-screens';
 import { KeyList } from './helpers';
 
 type StaticTabScreenProps<S extends KeyList> = Omit<
@@ -26,11 +25,11 @@ type StaticTabConfiguration<S extends KeyList> = Omit<
   tabScreenProps: StaticTabScreenProps<S>;
 };
 
-type StaticBottomTabsContainerProps<S extends KeyList> = BottomTabsProps & {
+type StaticTabsContainerProps<S extends KeyList> = TabsHostProps & {
   tabConfigs: StaticTabConfiguration<S>[];
 };
 
-type BottomTabConfigUpdate<S extends KeyList> =
+type TabConfigUpdate<S extends KeyList> =
   | {
       type: 'tabScreen';
       tabKey: Extract<keyof S, string>;
@@ -42,20 +41,20 @@ type BottomTabConfigUpdate<S extends KeyList> =
     }
   | {
       type: 'tabBar';
-      config: Partial<Omit<StaticBottomTabsContainerProps<S>, 'tabConfigs'>>;
+      config: Partial<Omit<StaticTabsContainerProps<S>, 'tabConfigs'>>;
     };
 
-const ConfigContext = createContext<StaticBottomTabsContainerProps<any>>({
+const ConfigContext = createContext<StaticTabsContainerProps<any>>({
   tabConfigs: [],
 });
 
-const ConfigDispatchContext = createContext<
-  Dispatch<BottomTabConfigUpdate<any>>
->(() => {});
+const ConfigDispatchContext = createContext<Dispatch<TabConfigUpdate<any>>>(
+  () => {},
+);
 
 function reduce(
-  config: StaticBottomTabsContainerProps<any>,
-  action: BottomTabConfigUpdate<any>,
+  config: StaticTabsContainerProps<any>,
+  action: TabConfigUpdate<any>,
 ) {
   switch (action.type) {
     case 'tabBar':
@@ -84,7 +83,7 @@ function reduce(
 
 function makeInitialConfig(
   tabs: Record<string, ComponentType>,
-): BottomTabsContainerProps {
+): StaticTabsContainerProps<any> {
   return {
     tabConfigs: Object.entries(tabs).map(([k, C]) => ({
       tabScreenProps: {
@@ -107,11 +106,11 @@ function makeInitialConfig(
  * Use within the Provider returned by createTabsConfig.
  * Template parameter with available Tab keys is required.
  */
-export function useBottomTabsConfig<
+export function useTabsConfig<
   S extends KeyList = {},
->(): StaticBottomTabsContainerProps<S> {
+>(): StaticTabsContainerProps<S> {
   const config = useContext(ConfigContext);
-  return config as StaticBottomTabsContainerProps<S>;
+  return config as StaticTabsContainerProps<S>;
 }
 
 /**
@@ -119,20 +118,20 @@ export function useBottomTabsConfig<
  * Use within the Provider returned by createTabsConfig.
  * Template parameter with available Tab keys is required.
  */
-export function useDispatchBottomTabsConfig<S extends KeyList = {}>(): Dispatch<
-  BottomTabConfigUpdate<S>
+export function useDispatchTabsConfig<S extends KeyList = {}>(): Dispatch<
+  TabConfigUpdate<S>
 > {
   const dispatch = useContext(ConfigDispatchContext);
   return dispatch;
 }
 
-function BottomTabsAutoconfig() {
-  const config = useBottomTabsConfig();
+function TabsAutoconfig() {
+  const config = useTabsConfig();
 
   return <BottomTabsContainer {...config} />;
 }
 
-function BottomTabsConfigProvider(props: {
+function TabsConfigProvider(props: {
   children: ReactNode | ReactNode[];
   tabs: Record<string, ComponentType>;
 }) {
@@ -158,16 +157,14 @@ export function createTabsConfig<S extends KeyList = {}>(
 ) {
   return {
     Provider: (props: { children: ReactNode | ReactNode[] }) => (
-      <BottomTabsConfigProvider tabs={tabs}>
-        {props.children}
-      </BottomTabsConfigProvider>
+      <TabsConfigProvider tabs={tabs}>{props.children}</TabsConfigProvider>
     ),
-    Autoconfig: BottomTabsAutoconfig,
+    Autoconfig: TabsAutoconfig,
   };
 }
 
 export function findTabScreenOptions<S extends KeyList>(
-  config: StaticBottomTabsContainerProps<S>,
+  config: StaticTabsContainerProps<S>,
   key: Extract<keyof S, string>,
 ): StaticTabConfiguration<S> | undefined {
   return config.tabConfigs.find(c => c.tabScreenProps.tabKey === key);

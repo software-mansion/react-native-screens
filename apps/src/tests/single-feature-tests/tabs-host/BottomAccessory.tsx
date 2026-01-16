@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import {
   createTabsConfig,
-  useDispatchBottomTabsConfig,
-} from '../../shared/BottomTabsConfigProvider';
+  useDispatchTabsConfig,
+} from '../../shared/TabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
 
 type TabsParamList = {
@@ -76,7 +76,7 @@ const ACCESSORY_VARIANTS = [
 
 function ConfigScreen() {
   const [selected, setSelected] = useState(0);
-  const dispatch = useDispatchBottomTabsConfig();
+  const dispatch = useDispatchTabsConfig();
 
   useEffect(() => {
     dispatch({

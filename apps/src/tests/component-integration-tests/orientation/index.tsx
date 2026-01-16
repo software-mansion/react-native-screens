@@ -4,18 +4,18 @@ import TabsInStack from './TabsInStack';
 
 const OrientationScenarios: Scenario[] = [
   {
-    name: 'StackInBottomTabs',
+    name: 'StackInTabs',
     details:
       'Configuration in Stack contained within TabScreen always takes precedence',
-    key: 'StackInBottomTabs',
+    key: 'StackInTabs',
     screen: StackInTabs,
     platforms: ['ios'],
   },
   {
-    name: 'BottomTabsInStack',
+    name: 'TabsInStack',
     details:
-      'Configuration in BottomTabs contained within StackScreen should have precedence over configuraton in Stack contained within TabScreen',
-    key: 'BottomTabsInStack',
+      'Configuration in Tabs contained within StackScreen should have precedence over configuraton in Stack contained within TabScreen',
+    key: 'TabsInStack',
     screen: TabsInStack,
     platforms: ['ios'],
   },
