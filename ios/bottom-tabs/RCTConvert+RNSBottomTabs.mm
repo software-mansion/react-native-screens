@@ -27,13 +27,13 @@ RCT_ENUM_CONVERTER(
       @"onScrollDown" : @(RNSTabBarMinimizeBehaviorOnScrollDown),
       @"onScrollUp" : @(RNSTabBarMinimizeBehaviorOnScrollUp),
     }),
-    RNSTabBarMinimizeBehaviorAutomatic,
+    RNSTabBarMinimizeBehaviorAuto,
     integerValue)
 
 RCT_ENUM_CONVERTER(
     RNSTabBarControllerMode,
     (@{
-      @"automatic" : @(RNSTabBarControllerModeAuto),
+      @"automatic" : @(RNSTabBaroCntrollerModeAuto),
       @"tabBar" : @(RNSTabBarControllerModeTabBar),
       @"tabSidebar" : @(RNSTabBarControllerModeTabSidebar),
     }),
