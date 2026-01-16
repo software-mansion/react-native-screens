@@ -1,15 +1,20 @@
 import { SettingsPicker } from '../../../shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import StackConfigProvider, {
-  StackAutoconfig,
+import {
+  createStackConfig,
+  findStackScreenOptions,
   useDispatchStackConfig,
   useStackConfig,
 } from '../../shared/StackConfigProvider';
 
+type StackParamList = {
+  Screen1: undefined;
+};
+
 function ConfigScreen() {
-  const config = useStackConfig();
-  const dispatch = useDispatchStackConfig();
+  const config = useStackConfig<StackParamList>();
+  const dispatch = useDispatchStackConfig<StackParamList>();
 
   return (
     <ScrollView style={{ padding: 40 }}>
@@ -17,8 +22,7 @@ function ConfigScreen() {
         label="orientation"
         items={['portrait', 'landscape', 'undefined']}
         value={
-          config.find(c => c.name === 'Screen1')?.options?.orientation ??
-          'undefined'
+          findStackScreenOptions(config, 'Screen1')?.orientation ?? 'undefined'
         }
         onValueChange={value =>
           dispatch({
@@ -32,10 +36,12 @@ function ConfigScreen() {
   );
 }
 
+const Stack = createStackConfig<StackParamList>({ Screen1: ConfigScreen });
+
 export default function Orientation() {
   return (
-    <StackConfigProvider screens={{ Screen1: ConfigScreen }}>
-      <StackAutoconfig />
-    </StackConfigProvider>
+    <Stack.Provider>
+      <Stack.Autoconfig />
+    </Stack.Provider>
   );
 }

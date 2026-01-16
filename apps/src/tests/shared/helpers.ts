@@ -6,6 +6,8 @@ export interface Scenario {
   screen: React.ComponentType;
 }
 
+export type KeyList = Record<keyof any, undefined>;
+
 const UC_REGEX = /[A-Z][^A-Z]+/g;
 
 export function ucsplit(str: string) {

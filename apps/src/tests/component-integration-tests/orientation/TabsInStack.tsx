@@ -1,24 +1,35 @@
 import { SettingsPicker } from '../../../shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import BottomTabsConfigProvider, {
-  BottomTabsAutoconfig,
+import {
+  createTabsConfig,
+  findTabScreenOptions,
   useBottomTabsConfig,
   useDispatchBottomTabsConfig,
 } from '../../shared/BottomTabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
-import StackConfigProvider, {
-  StackAutoconfig,
+import {
+  createStackConfig,
+  findStackScreenOptions,
   useDispatchStackConfig,
   useStackConfig,
 } from '../../shared/StackConfigProvider';
 
-function ConfigScreen() {
-  const tabsConfig = useBottomTabsConfig();
-  const tabsDispatch = useDispatchBottomTabsConfig();
+type StackParamList = {
+  Screen1: undefined;
+};
 
-  const stackConfig = useStackConfig();
-  const stackDispatch = useDispatchStackConfig();
+type TabsParamList = {
+  Tab1: undefined;
+  Tab2: undefined;
+};
+
+function ConfigScreen() {
+  const tabsConfig = useBottomTabsConfig<TabsParamList>();
+  const tabsDispatch = useDispatchBottomTabsConfig<TabsParamList>();
+
+  const stackConfig = useStackConfig<StackParamList>();
+  const stackDispatch = useDispatchStackConfig<StackParamList>();
 
   return (
     <ScrollView style={{ padding: 40 }}>
@@ -26,7 +37,7 @@ function ConfigScreen() {
         label="Stack Screen orientation"
         items={['portrait', 'landscape', 'undefined']}
         value={
-          stackConfig.find(c => c.name === 'Screen1')?.options?.orientation ??
+          findStackScreenOptions(stackConfig, 'Screen1')?.orientation ??
           'undefined'
         }
         onValueChange={value =>
@@ -41,8 +52,8 @@ function ConfigScreen() {
         label="Tab Screen orientation"
         items={['portrait', 'landscape', 'undefined']}
         value={
-          tabsConfig.tabConfigs.find(c => c.tabScreenProps.tabKey === 'Tab1')
-            ?.tabScreenProps.orientation ?? 'undefined'
+          findTabScreenOptions(tabsConfig, 'Tab1')?.tabScreenProps
+            .orientation ?? 'undefined'
         }
         onValueChange={value =>
           tabsDispatch({
@@ -60,18 +71,25 @@ function ConfigScreen() {
   );
 }
 
+const Tabs = createTabsConfig<TabsParamList>({
+  Tab1: ConfigScreen,
+  Tab2: DummyScreen,
+});
+
 function TabsScreen() {
   return (
-    <BottomTabsConfigProvider tabs={{ Tab1: ConfigScreen, Tab2: DummyScreen }}>
-      <BottomTabsAutoconfig />
-    </BottomTabsConfigProvider>
+    <Tabs.Provider>
+      <Tabs.Autoconfig />
+    </Tabs.Provider>
   );
 }
 
+const Stack = createStackConfig<StackParamList>({ Screen1: TabsScreen });
+
 export default function TabsAndStack() {
   return (
-    <StackConfigProvider screens={{ Screen1: TabsScreen }}>
-      <StackAutoconfig />
-    </StackConfigProvider>
+    <Stack.Provider>
+      <Stack.Autoconfig />
+    </Stack.Provider>
   );
 }

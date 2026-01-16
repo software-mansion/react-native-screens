@@ -1,12 +1,16 @@
 import LongText from '../../../shared/LongText';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-
-import BottomTabsConfigProvider, {
-  BottomTabsAutoconfig,
+import {
+  createTabsConfig,
   useDispatchBottomTabsConfig,
 } from '../../shared/BottomTabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
+
+type TabsParamList = {
+  Tab1: undefined;
+  Tab2: undefined;
+};
 
 function ShortViewUL() {
   return (
@@ -98,11 +102,16 @@ function ConfigScreen() {
   );
 }
 
+const Tabs = createTabsConfig<TabsParamList>({
+  Tab1: ConfigScreen,
+  Tab2: DummyScreen,
+});
+
 export default function BottomAccessory() {
   return (
-    <BottomTabsConfigProvider tabs={{ Tab1: ConfigScreen, Tab2: DummyScreen }}>
-      <BottomTabsAutoconfig />
-    </BottomTabsConfigProvider>
+    <Tabs.Provider>
+      <Tabs.Autoconfig />
+    </Tabs.Provider>
   );
 }
 
