@@ -33,7 +33,7 @@ RCT_ENUM_CONVERTER(
 RCT_ENUM_CONVERTER(
     RNSTabBarControllerMode,
     (@{
-      @"automatic" : @(RNSTabBaroCntrollerModeAuto),
+      @"automatic" : @(RNSTabBarControllerModeAuto),
       @"tabBar" : @(RNSTabBarControllerModeTabBar),
       @"tabSidebar" : @(RNSTabBarControllerModeTabSidebar),
     }),
