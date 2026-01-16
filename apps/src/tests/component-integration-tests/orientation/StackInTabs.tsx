@@ -4,9 +4,9 @@ import { ScrollView } from 'react-native';
 import {
   createTabsConfig,
   findTabScreenOptions,
-  useBottomTabsConfig,
-  useDispatchBottomTabsConfig,
-} from '../../shared/BottomTabsConfigProvider';
+  useTabsConfig,
+  useDispatchTabsConfig,
+} from '../../shared/TabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
 
 import {
@@ -26,8 +26,8 @@ type TabsParamsList = {
 };
 
 function ConfigScreen() {
-  const tabsConfig = useBottomTabsConfig<TabsParamsList>();
-  const tabsDispatch = useDispatchBottomTabsConfig<TabsParamsList>();
+  const tabsConfig = useTabsConfig<TabsParamsList>();
+  const tabsDispatch = useDispatchTabsConfig<TabsParamsList>();
 
   const stackConfig = useStackConfig<StackParamsList>();
   const stackDispatch = useDispatchStackConfig<StackParamsList>();
