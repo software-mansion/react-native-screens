@@ -120,8 +120,14 @@ export type PlatformIconIOSSfSymbol = {
   name: string;
 };
 
+export type PlatformIconIOSXcasset = {
+  type: 'xcasset';
+  name: string;
+};
+
 export type PlatformIconIOS =
   | PlatformIconIOSSfSymbol
+  | PlatformIconIOSXcasset
   | {
       type: 'templateSource';
       templateSource: ImageSourcePropType;
@@ -1164,7 +1170,7 @@ export interface HeaderBarButtonItemMenuAction {
   title?: string;
   subtitle?: string;
   onPress: () => void;
-  icon?: PlatformIconIOSSfSymbol;
+  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
   /**
    * State of the item.
    *
@@ -1206,7 +1212,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string;
-  icon?: PlatformIconIOSSfSymbol;
+  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean;
   destructive?: boolean;

@@ -228,6 +228,8 @@ RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIc
       return RNSBottomTabsIconTypeTemplate;
     case SfSymbol:
       return RNSBottomTabsIconTypeSfSymbol;
+    case Xcasset:
+      return RNSBottomTabsIconTypeXcasset;
   }
 }
 
