@@ -218,7 +218,8 @@ class Screen(
         }
 
         if (isSheetFitToContents()) {
-            // Force a layout pass to synchronize BottomSheetBehavior's internal offsets with the new maxHeight.
+            // The maxHeight may have changed due to incoming top inset.
+            // Force a layout pass to sync BottomSheetBehavior's internal offsets with the new value.
             requestLayout()
         }
 
