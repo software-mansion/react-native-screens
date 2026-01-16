@@ -29,6 +29,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.updateMetrics
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
@@ -92,6 +93,7 @@ class Screen(
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
     var sheetShouldOverflowTopInset = false
+    var sheetDefaultResizeAnimationEnabled = true
 
     /**
      * On Paper, when using form sheet presentation we want to delay enter transition in order
@@ -147,12 +149,24 @@ class Screen(
     ) {
         val height = bottom - top
 
+        val sheetBehavior = sheetBehavior
         if (usesFormSheetPresentation()) {
-            if (isSheetFitToContents()) {
-                sheetBehavior?.useSingleDetent(height)
-                // During the initial call in `onCreateView`, insets are not yet available,
-                // so we need to request an additional layout pass later to account for them.
-                requestLayout()
+            if (isSheetFitToContents() && sheetBehavior != null) {
+                val oldHeight = sheetBehavior.maxHeight
+                val isInitial = oldHeight == 0
+                val heightChanged = oldHeight != height
+
+                if (!heightChanged) {
+                    return
+                }
+
+                if (isInitial) {
+                    setupInitialSheetContentHeight(sheetBehavior, height)
+                } else if (sheetDefaultResizeAnimationEnabled) {
+                    updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
+                } else {
+                    updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
+                }
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -166,6 +180,111 @@ class Screen(
                 }
             }
         }
+    }
+
+    private fun updateSheetContentHeightWithAnimation(
+        behavior: BottomSheetBehavior<Screen>,
+        oldHeight: Int,
+        newHeight: Int,
+    ) {
+        val delta = (newHeight - oldHeight).toFloat()
+        val isContentExpanding = delta > 0
+
+        if (isContentExpanding) {
+            /*
+             * Expanding content animation:
+             *
+             * Before animation, we're updating the SheetBehavior - the maximum height is the new
+             * content height, then we're forcing a layout pass. This ensures the view calculates
+             * with its new bounds when the animation starts.
+             *
+             * In the animation, we're translating the Screen back to it's (newly calculated) origin
+             * position, providing an impression that FormSheet expands. It already has the final size,
+             * but some content is not yet visible on the screen.
+             *
+             * After animation, we just need to send a notification that ShadowTree state should be updated,
+             * as the positioning of pressables has changed due to the Y translation manipulation.
+             */
+            this.translationY = delta
+            this
+                .animate()
+                .translationY(0f)
+                .withStartAction {
+                    behavior.updateMetrics(newHeight)
+                    layout(this.left, this.bottom - newHeight, this.right, this.bottom)
+                }.withEndAction {
+                    // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+                    // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+                    // to its old position when the user starts a gesture.
+                    parent.requestLayout()
+                    onSheetYTranslationChanged()
+                }.start()
+        } else {
+            /*
+             * Shrinking content animation:
+             *
+             * Before the animation, our Screen translationY is 0 - because its actual layout and visual position are equal.
+             *
+             * Before the animation, I'm updating sheet metrics to the target value - it won't update until the next layout pass,
+             * which is controlled by end action. This is done deliberately, to allow catching the case when quick combination
+             * of shrink & expand animation is detected.
+             *
+             * In the animation, we're translating the Screen down by the calculated height delta to the position (which will
+             * be new absolute 0 for the Screen, after ending the transition), providing an impression that FormSheet shrinks.
+             * FormSheet's size remains unchanged during the whole animation, therefore there is no view clipping.
+             *
+             * After animation, we can update the layout: the maximum FormSheet height is updated and we're forcing
+             * another layout pass. Additionally, since the actual layout and the target position are equal,
+             * we can reset translationY to 0.
+             *
+             * After animation, we need to send a notification that ShadowTree state should be updated,
+             * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
+             */
+            this
+                .animate()
+                .translationY(-delta)
+                .withStartAction {
+                    behavior.updateMetrics(newHeight)
+                }.withEndAction {
+                    layout(this.left, this.bottom - newHeight, this.right, this.bottom)
+                    this.translationY = 0f
+                    // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+                    // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+                    // to its old position when the user starts a gesture.
+                    parent.requestLayout()
+                    onSheetYTranslationChanged()
+                }.start()
+        }
+    }
+
+    private fun updateSheetContentHeightWithoutAnimation(
+        behavior: BottomSheetBehavior<Screen>,
+        height: Int,
+    ) {
+        /*
+         * We're just updating sheets height and forcing Screen layout to be updated immediately.
+         * This allows custom animators in RN to work, as we do not interfere with these animations
+         * and we're just reacting to the sheet's content size changes.
+         */
+        behavior.updateMetrics(height)
+        layout(this.left, this.bottom - height, this.right, this.bottom)
+        // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+        // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+        // to its old position when the user starts a gesture.
+        parent.requestLayout()
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateScreenSizeFabric(width, height, top + translationY.toInt())
+        }
+    }
+
+    private fun setupInitialSheetContentHeight(
+        behavior: BottomSheetBehavior<Screen>,
+        height: Int,
+    ) {
+        behavior.useSingleDetent(height)
+        // During the initial call in `onCreateView`, insets are not yet available,
+        // so we need to request an additional layout pass later to account for them.
+        requestLayout()
     }
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {

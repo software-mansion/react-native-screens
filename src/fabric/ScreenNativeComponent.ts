@@ -84,6 +84,7 @@ export interface NativeProps extends ViewProps {
   sheetInitialDetent?: CT.WithDefault<CT.Int32, 0>;
   sheetElevation?: CT.WithDefault<CT.Int32, 24>;
   sheetShouldOverflowTopInset?: CT.WithDefault<boolean, false>;
+  sheetDefaultResizeAnimationEnabled?: CT.WithDefault<boolean, true>;
   customAnimationOnSwipe?: boolean;
   fullScreenSwipeEnabled?: CT.WithDefault<OptionalBoolean, 'undefined'>;
   fullScreenSwipeShadowEnabled?: CT.WithDefault<boolean, true>;

@@ -504,6 +504,23 @@ export interface ScreenProps extends ViewProps {
    */
   sheetShouldOverflowTopInset?: boolean;
   /**
+   * Whether the default native animation should be used when the sheet's with
+   * `fitToContents` content size changes.
+   *
+   * When set to `true`, the sheet uses internal logic to synchronize size updates and
+   * translation animations during entry, exit, or content updates. This ensures a smooth
+   * transition for standard, static content mounting/unmounting.
+   *
+   * When set to `false`, the internal animation and translation logic is ignored. This
+   * allows the sheet to adjust its size dynamically based on the current dimensions of
+   * the content provided by the developer, allowing implementing custom resizing animations.
+   *
+   * Defaults to `true`.
+   *
+   * @platform android
+   */
+  sheetDefaultResizeAnimationEnabled?: boolean;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation

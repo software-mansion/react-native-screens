@@ -123,6 +123,7 @@ export { default as Test2522 } from './Test2522';
 export { default as Test2538 } from './Test2538';
 export { default as Test2543 } from './Test2543'; // [E2E created](iOS): issue related to iOS formSheet initial detent
 export { default as Test2552 } from './Test2552';
+export { default as Test2560 } from './Test2560';
 export { default as Test2611 } from './Test2611';
 export { default as Test2631 } from './Test2631';
 export { default as Test2668 } from './Test2668';

@@ -227,9 +227,21 @@ function getPositioningStyle(
     }
   }
 
-  // Other platforms, tested reliably only on Android
+  /**
+   * Note: `bottom: 0` is intentionally excluded from these styles for two reasons:
+   *
+   * 1. Omitting the bottom constraint ensures the Yoga layout engine does not dynamically
+   * recalculate the Screen and content size during animations.
+   *
+   * 2. Including `bottom: 0` with 'position: absolute' would force
+   * the component to anchor itself to an ancestor's bottom edge. This creates
+   * a dependency on the ancestor's size, whereas 'fitToContents' requires the
+   * FormSheet's dimensions to be derived strictly from its children.
+   *
+   * It was tested reliably only on Android.
+   */
   if (allowedDetents === 'fitToContents') {
-    return {};
+    return styles.absoluteWithNoBottom;
   }
 
   return styles.container;
