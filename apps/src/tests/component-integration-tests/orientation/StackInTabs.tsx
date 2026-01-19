@@ -8,13 +8,14 @@ import {
   useDispatchTabsConfig,
 } from '../../shared/TabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
-
 import {
-  createStackConfig,
-  findStackScreenOptions,
   useDispatchStackConfig,
   useStackConfig,
-} from '../../shared/StackConfigProvider';
+} from '../../shared/hooks/stack-config';
+import {
+  createAutoConfiguredStack,
+  findStackScreenOptions,
+} from '../../shared/stack';
 
 type StackParamsList = {
   Screen1: undefined;
@@ -72,7 +73,9 @@ function ConfigScreen() {
   );
 }
 
-const Stack = createStackConfig<StackParamsList>({ Screen1: ConfigScreen });
+const Stack = createAutoConfiguredStack<StackParamsList>({
+  Screen1: ConfigScreen,
+});
 
 function StackScreen() {
   return (

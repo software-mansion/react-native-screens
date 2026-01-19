@@ -2,11 +2,11 @@ import { SettingsPicker } from '../../../shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
 import {
-  createStackConfig,
+  createAutoConfiguredStack,
   findStackScreenOptions,
   useDispatchStackConfig,
   useStackConfig,
-} from '../../shared/StackConfigProvider';
+} from '../../shared/contexts/stack-config';
 
 type StackParamList = {
   Screen1: undefined;
@@ -36,7 +36,9 @@ function ConfigScreen() {
   );
 }
 
-const Stack = createStackConfig<StackParamList>({ Screen1: ConfigScreen });
+const Stack = createAutoConfiguredStack<StackParamList>({
+  Screen1: ConfigScreen,
+});
 
 export default function Orientation() {
   return (
