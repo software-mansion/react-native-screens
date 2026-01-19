@@ -1247,7 +1247,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-arrow-functions@npm:^7.0.0, @babel/plugin-transform-arrow-functions@npm:^7.24.7, @babel/plugin-transform-arrow-functions@npm:^7.25.9":
+"@babel/plugin-transform-arrow-functions@npm:^7.0.0, @babel/plugin-transform-arrow-functions@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-arrow-functions@npm:7.25.9"
   dependencies:
@@ -1385,7 +1385,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-computed-properties@npm:^7.0.0, @babel/plugin-transform-computed-properties@npm:^7.24.7, @babel/plugin-transform-computed-properties@npm:^7.25.9":
+"@babel/plugin-transform-computed-properties@npm:^7.0.0, @babel/plugin-transform-computed-properties@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-computed-properties@npm:7.25.9"
   dependencies:
@@ -1500,7 +1500,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-function-name@npm:^7.0.0, @babel/plugin-transform-function-name@npm:^7.25.1, @babel/plugin-transform-function-name@npm:^7.25.9":
+"@babel/plugin-transform-function-name@npm:^7.0.0, @babel/plugin-transform-function-name@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-function-name@npm:7.25.9"
   dependencies:
@@ -1524,7 +1524,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-literals@npm:^7.0.0, @babel/plugin-transform-literals@npm:^7.25.2, @babel/plugin-transform-literals@npm:^7.25.9":
+"@babel/plugin-transform-literals@npm:^7.0.0, @babel/plugin-transform-literals@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-literals@npm:7.25.9"
   dependencies:
@@ -1535,7 +1535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-logical-assignment-operators@npm:^7.24.7, @babel/plugin-transform-logical-assignment-operators@npm:^7.25.9":
+"@babel/plugin-transform-logical-assignment-operators@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-logical-assignment-operators@npm:7.25.9"
   dependencies:
@@ -1677,7 +1677,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-numeric-separator@npm:^7.24.7, @babel/plugin-transform-numeric-separator@npm:^7.25.9":
+"@babel/plugin-transform-numeric-separator@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-numeric-separator@npm:7.25.9"
   dependencies:
@@ -1699,7 +1699,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-object-rest-spread@npm:^7.24.7, @babel/plugin-transform-object-rest-spread@npm:^7.25.9":
+"@babel/plugin-transform-object-rest-spread@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-object-rest-spread@npm:7.25.9"
   dependencies:
@@ -1759,7 +1759,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-parameters@npm:^7.0.0, @babel/plugin-transform-parameters@npm:^7.20.7, @babel/plugin-transform-parameters@npm:^7.24.7, @babel/plugin-transform-parameters@npm:^7.25.9":
+"@babel/plugin-transform-parameters@npm:^7.0.0, @babel/plugin-transform-parameters@npm:^7.20.7, @babel/plugin-transform-parameters@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-parameters@npm:7.25.9"
   dependencies:
@@ -1928,7 +1928,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-shorthand-properties@npm:^7.0.0, @babel/plugin-transform-shorthand-properties@npm:^7.24.7, @babel/plugin-transform-shorthand-properties@npm:^7.25.9":
+"@babel/plugin-transform-shorthand-properties@npm:^7.0.0, @babel/plugin-transform-shorthand-properties@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-shorthand-properties@npm:7.25.9"
   dependencies:
@@ -1950,7 +1950,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-spread@npm:^7.0.0, @babel/plugin-transform-spread@npm:^7.24.7, @babel/plugin-transform-spread@npm:^7.25.9":
+"@babel/plugin-transform-spread@npm:^7.0.0, @babel/plugin-transform-spread@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-spread@npm:7.25.9"
   dependencies:
@@ -1962,7 +1962,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-sticky-regex@npm:^7.0.0, @babel/plugin-transform-sticky-regex@npm:^7.24.7, @babel/plugin-transform-sticky-regex@npm:^7.25.9":
+"@babel/plugin-transform-sticky-regex@npm:^7.0.0, @babel/plugin-transform-sticky-regex@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-sticky-regex@npm:7.25.9"
   dependencies:
@@ -3251,77 +3251,53 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-clean@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-clean@npm:20.0.1"
+"@react-native-community/cli-clean@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-clean@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-tools": "npm:20.0.1"
-    chalk: "npm:^4.1.2"
+    "@react-native-community/cli-tools": "npm:20.1.0"
     execa: "npm:^5.0.0"
     fast-glob: "npm:^3.3.2"
-  checksum: 10c0/7057ca335f8b01ce49a15b2937e84590a6747f8ad267c4dd0df9eb21c3bf3c8c0f8756f06ef8d57cec9d938c6108cd7f289241ff75619828e83c409db3bceb74
+    picocolors: "npm:^1.1.1"
+  checksum: 10c0/5d7fce73545154035e55801e9596b634c85bbe7bb04861f3d0787f2a9588b7b6f927709bfce4e45a8d62da03e5a92789281e07dafd29e2db86ca52ca3e5ad49c
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-config-android@npm:20.0.0":
-  version: 20.0.0
-  resolution: "@react-native-community/cli-config-android@npm:20.0.0"
+"@react-native-community/cli-config-android@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-config-android@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-tools": "npm:20.0.0"
-    chalk: "npm:^4.1.2"
+    "@react-native-community/cli-tools": "npm:20.1.0"
     fast-glob: "npm:^3.3.2"
     fast-xml-parser: "npm:^4.4.1"
-  checksum: 10c0/79298ecde495e0587585e8d67431e9543ac83392a06e5c8fb736853d199f0aae014858b1d3db81ce3decf58c2172c95c78eeb27e0f2be2b8a5ad43b96331d0ce
+    picocolors: "npm:^1.1.1"
+  checksum: 10c0/66e95adf2fb9750a12592a146b034ab4b8ea15aa41efb5d497d6be2f08029a59a0be2450e97de0bf59aa6b66778b3af0bbd693a42b7e7f9f60c9d9b5f966aadc
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-config-android@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-config-android@npm:20.0.1"
+"@react-native-community/cli-config-apple@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-config-apple@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-tools": "npm:20.0.1"
-    chalk: "npm:^4.1.2"
-    fast-glob: "npm:^3.3.2"
-    fast-xml-parser: "npm:^4.4.1"
-  checksum: 10c0/6d7607af8a88339764fdc551d8293ddaf648b8ece3cd309a3ebfac25038e2761c9dad2e10705b3481defbb9e9388dba7073d6e7b76d2297e708934c593ffb96a
-  languageName: node
-  linkType: hard
-
-"@react-native-community/cli-config-apple@npm:20.0.0":
-  version: 20.0.0
-  resolution: "@react-native-community/cli-config-apple@npm:20.0.0"
-  dependencies:
-    "@react-native-community/cli-tools": "npm:20.0.0"
-    chalk: "npm:^4.1.2"
+    "@react-native-community/cli-tools": "npm:20.1.0"
     execa: "npm:^5.0.0"
     fast-glob: "npm:^3.3.2"
-  checksum: 10c0/1b11e1dde776ccc3244eb3029eb49239120a89a12ed84bd4957e4e7b81bba4b332ed04a2fb081fd9a9711be65d1a85cf429247fa2daa4010ba4b42b5bf273c2f
+    picocolors: "npm:^1.1.1"
+  checksum: 10c0/2c7b7116594c7b0035ef7e41e0219fcff664c3883471460ae48f19dd88ec9a26dd5b4bd60e33c054603b3a10efd78570490bc84599ad987e4ffb274b05512351
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-config-apple@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-config-apple@npm:20.0.1"
+"@react-native-community/cli-config@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-config@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-tools": "npm:20.0.1"
-    chalk: "npm:^4.1.2"
-    execa: "npm:^5.0.0"
-    fast-glob: "npm:^3.3.2"
-  checksum: 10c0/4924ecb3f405f5da2ff2acc968232d451c8862a11e0d877ee898347ecc467e9664aee2cbab2df488250776b171acafde33212a7880bb4e2e0c35b5e82e24c5ea
-  languageName: node
-  linkType: hard
-
-"@react-native-community/cli-config@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-config@npm:20.0.1"
-  dependencies:
-    "@react-native-community/cli-tools": "npm:20.0.1"
-    chalk: "npm:^4.1.2"
+    "@react-native-community/cli-tools": "npm:20.1.0"
     cosmiconfig: "npm:^9.0.0"
     deepmerge: "npm:^4.3.0"
     fast-glob: "npm:^3.3.2"
     joi: "npm:^17.2.1"
-  checksum: 10c0/5c1a78fc8f2e65fa1dcf99e63dbd7b72bd875c3acf5c649b8b917c41cdbeb355617a844db079b2723e835ed2ff9059dec8a4ced03b383005d09c737813ea4e07
+    picocolors: "npm:^1.1.1"
+  checksum: 10c0/e3d863ffc5d18aa7b7406908c1360de7ea7a1bab32897e34d0afe184f4682bb5d110d4db0c6ba2c35c4f1330ca4a281b8fc3548e53a2978b8b07ca3beca5765c
   languageName: node
   linkType: hard
 
@@ -3334,26 +3310,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-doctor@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-doctor@npm:20.0.1"
+"@react-native-community/cli-doctor@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-doctor@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-config": "npm:20.0.1"
-    "@react-native-community/cli-platform-android": "npm:20.0.1"
-    "@react-native-community/cli-platform-apple": "npm:20.0.1"
-    "@react-native-community/cli-platform-ios": "npm:20.0.1"
-    "@react-native-community/cli-tools": "npm:20.0.1"
-    chalk: "npm:^4.1.2"
+    "@react-native-community/cli-config": "npm:20.1.0"
+    "@react-native-community/cli-platform-android": "npm:20.1.0"
+    "@react-native-community/cli-platform-apple": "npm:20.1.0"
+    "@react-native-community/cli-platform-ios": "npm:20.1.0"
+    "@react-native-community/cli-tools": "npm:20.1.0"
     command-exists: "npm:^1.2.8"
     deepmerge: "npm:^4.3.0"
     envinfo: "npm:^7.13.0"
     execa: "npm:^5.0.0"
     node-stream-zip: "npm:^1.9.1"
     ora: "npm:^5.4.1"
+    picocolors: "npm:^1.1.1"
     semver: "npm:^7.5.2"
     wcwidth: "npm:^1.0.1"
     yaml: "npm:^2.2.1"
-  checksum: 10c0/c316fd13a8ed8fa862608c7c9e28a42845dcd50a757954993f036206306beed288fff6e9f29d38e53b3a35277c1e2a9dbec30f7900199517c93c54eac7275206
+  checksum: 10c0/79762f3e789fe98f21c6f500f6c65df399508979f05174272652a9422295f4dace099e87575776bf209b533a6667070fc355c5b510e14a8a61b31a9a8af7b3be
   languageName: node
   linkType: hard
 
@@ -3370,29 +3346,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-platform-android@npm:20.0.0":
-  version: 20.0.0
-  resolution: "@react-native-community/cli-platform-android@npm:20.0.0"
+"@react-native-community/cli-platform-android@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-platform-android@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-config-android": "npm:20.0.0"
-    "@react-native-community/cli-tools": "npm:20.0.0"
-    chalk: "npm:^4.1.2"
+    "@react-native-community/cli-config-android": "npm:20.1.0"
+    "@react-native-community/cli-tools": "npm:20.1.0"
     execa: "npm:^5.0.0"
     logkitty: "npm:^0.7.1"
-  checksum: 10c0/9c17cbc0661698dd8154286ce893205b91a9f71cb8af8505641fb82ab99217116300fe0dfb8b5e6e9270cf3917c0fb227d45f90322ad7e624d9c65aacf086012
-  languageName: node
-  linkType: hard
-
-"@react-native-community/cli-platform-android@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-platform-android@npm:20.0.1"
-  dependencies:
-    "@react-native-community/cli-config-android": "npm:20.0.1"
-    "@react-native-community/cli-tools": "npm:20.0.1"
-    chalk: "npm:^4.1.2"
-    execa: "npm:^5.0.0"
-    logkitty: "npm:^0.7.1"
-  checksum: 10c0/5178f85aa1c7ee321776055f84c4e8413f7daf745da703a9f35f36800d745e6c3aff85262fffce7102cd49b9aa54d47ce25613804682983a8247e5e8a52d93f5
+    picocolors: "npm:^1.1.1"
+  checksum: 10c0/8b44178a78245085824c3fda9d6753d03cd817772fdde82b1d4f1a89f177f10339822401c0b8ef17e8353f3168c3971ae4cfb0a158cef03c22e55f5dff66179b
   languageName: node
   linkType: hard
 
@@ -3414,47 +3377,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-platform-apple@npm:20.0.0":
-  version: 20.0.0
-  resolution: "@react-native-community/cli-platform-apple@npm:20.0.0"
+"@react-native-community/cli-platform-apple@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-platform-apple@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-config-apple": "npm:20.0.0"
-    "@react-native-community/cli-tools": "npm:20.0.0"
-    chalk: "npm:^4.1.2"
+    "@react-native-community/cli-config-apple": "npm:20.1.0"
+    "@react-native-community/cli-tools": "npm:20.1.0"
     execa: "npm:^5.0.0"
     fast-xml-parser: "npm:^4.4.1"
-  checksum: 10c0/a6b2296d6291853f59d3c68302676fea54d68fa6626c14727b7db63280761714785fd70a75d7ae036644a7ea5ebd8211235c64d4dec5297565d734a1c5a3b6c9
+    picocolors: "npm:^1.1.1"
+  checksum: 10c0/2218e172bf13c0bb027f7f2a036a0515f8fe023d98fc65d22d0dab601036c5b461b1af7a5d826df2dd3e86a3894f9531d43e8861746a071ee22c0b33b8e47c29
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-platform-apple@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-platform-apple@npm:20.0.1"
+"@react-native-community/cli-platform-ios@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-platform-ios@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-config-apple": "npm:20.0.1"
-    "@react-native-community/cli-tools": "npm:20.0.1"
-    chalk: "npm:^4.1.2"
-    execa: "npm:^5.0.0"
-    fast-xml-parser: "npm:^4.4.1"
-  checksum: 10c0/2ca9669339f616ba6a6d0df299cd0828fed3497b1d16414be0f92fa46b2395e7ab12c7c0a7bd7c66ce026a100225dde9ba133796813365d0f4dc31681a8a82e7
-  languageName: node
-  linkType: hard
-
-"@react-native-community/cli-platform-ios@npm:20.0.0":
-  version: 20.0.0
-  resolution: "@react-native-community/cli-platform-ios@npm:20.0.0"
-  dependencies:
-    "@react-native-community/cli-platform-apple": "npm:20.0.0"
-  checksum: 10c0/6eb77946cb3392cc548007723b790796360651e62422095da2bbc8a20b7c8e79d9fc32c0155ba669a10c556e6e7327964d59e5755c64f6099708701e4acf8fd3
-  languageName: node
-  linkType: hard
-
-"@react-native-community/cli-platform-ios@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-platform-ios@npm:20.0.1"
-  dependencies:
-    "@react-native-community/cli-platform-apple": "npm:20.0.1"
-  checksum: 10c0/9989444c4490413104f5ca7de666f90a97a7b1901d9a301e36242ee80e5f5bdffd2899858c3a0476c6e46bf3b0bd17da87e76970b688bcea90ff6b02bf4a612c
+    "@react-native-community/cli-platform-apple": "npm:20.1.0"
+  checksum: 10c0/f5eef9dfbe3dad7dc69f4b3a37ebee9d124f3a649071e0275624f88468a7f506b622646dcbd61ba0435cc35e705badfc287690d6b7c3867c0a86c9a45d4f463e
   languageName: node
   linkType: hard
 
@@ -3473,11 +3414,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-server-api@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-server-api@npm:20.0.1"
+"@react-native-community/cli-server-api@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-server-api@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-tools": "npm:20.0.1"
+    "@react-native-community/cli-tools": "npm:20.1.0"
     body-parser: "npm:^1.20.3"
     compression: "npm:^1.7.1"
     connect: "npm:^3.6.5"
@@ -3487,7 +3428,7 @@ __metadata:
     pretty-format: "npm:^29.7.0"
     serve-static: "npm:^1.13.1"
     ws: "npm:^6.2.3"
-  checksum: 10c0/29dd846b8836059333e4dc83e8867b3d65916af3a5c3287933ff04c73a86aeb078e0f1ccdf42aaf2660b654b9094ed4c6b0724d229067fb1966ae12715e3d7b2
+  checksum: 10c0/d83c9bbff36fb84201478ed8efc17c80f1474cb0346a2577eee7299407e9e34892c213e2316062a2c59d47ebfe9f0c8215b82cd1abb05c85fe7702a94a52cdf5
   languageName: node
   linkType: hard
 
@@ -3508,39 +3449,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-tools@npm:20.0.0":
-  version: 20.0.0
-  resolution: "@react-native-community/cli-tools@npm:20.0.0"
+"@react-native-community/cli-tools@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-tools@npm:20.1.0"
   dependencies:
     "@vscode/sudo-prompt": "npm:^9.0.0"
     appdirsjs: "npm:^1.2.4"
-    chalk: "npm:^4.1.2"
     execa: "npm:^5.0.0"
     find-up: "npm:^5.0.0"
     launch-editor: "npm:^2.9.1"
     mime: "npm:^2.4.1"
     ora: "npm:^5.4.1"
+    picocolors: "npm:^1.1.1"
     prompts: "npm:^2.4.2"
     semver: "npm:^7.5.2"
-  checksum: 10c0/3a379558f2673de68d872d740754e242d9dd84dd0a837f94910936faad632f35fc9b61dd9d256e635391815da7a4cbc42c3ca918371d60fb4d5a3b4acea6bffd
-  languageName: node
-  linkType: hard
-
-"@react-native-community/cli-tools@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-tools@npm:20.0.1"
-  dependencies:
-    "@vscode/sudo-prompt": "npm:^9.0.0"
-    appdirsjs: "npm:^1.2.4"
-    chalk: "npm:^4.1.2"
-    execa: "npm:^5.0.0"
-    find-up: "npm:^5.0.0"
-    launch-editor: "npm:^2.9.1"
-    mime: "npm:^2.4.1"
-    ora: "npm:^5.4.1"
-    prompts: "npm:^2.4.2"
-    semver: "npm:^7.5.2"
-  checksum: 10c0/d6f083b2592250b11c114e3abe6ef38c70653aac1316750b8ba9dcbc81b99c25879999164498511128b8ebcaa083aa0427181225b178d70ca76b4c5f466f952f
+  checksum: 10c0/993f5dfbc1ae6301e616269896b2e5ecc29888cc8a12325881148b546b07d45572bd065e392ceaad32f86067e31b0eabedbe71fac3b1b820cd489ab86e56094d
   languageName: node
   linkType: hard
 
@@ -3558,12 +3481,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-types@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli-types@npm:20.0.1"
+"@react-native-community/cli-types@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli-types@npm:20.1.0"
   dependencies:
     joi: "npm:^17.2.1"
-  checksum: 10c0/dd1e2013594fa8f30ff0f1494bb67ccb62fd9a5d4933294e8e193f8074362559f863eaddacb6e127505490929aef4f59c7019032606ca21964bdbf205fc4171d
+  checksum: 10c0/247deebf26b435c0cbabfb7dd7de09a4e79c544ee72a2ef2817268108f7c085dab4d54c7fbc8111ad89360e13227f2041c5eac208971c251da332e4d33311a7b
   languageName: node
   linkType: hard
 
@@ -3576,28 +3499,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli@npm:20.0.1":
-  version: 20.0.1
-  resolution: "@react-native-community/cli@npm:20.0.1"
+"@react-native-community/cli@npm:20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-community/cli@npm:20.1.0"
   dependencies:
-    "@react-native-community/cli-clean": "npm:20.0.1"
-    "@react-native-community/cli-config": "npm:20.0.1"
-    "@react-native-community/cli-doctor": "npm:20.0.1"
-    "@react-native-community/cli-server-api": "npm:20.0.1"
-    "@react-native-community/cli-tools": "npm:20.0.1"
-    "@react-native-community/cli-types": "npm:20.0.1"
-    chalk: "npm:^4.1.2"
+    "@react-native-community/cli-clean": "npm:20.1.0"
+    "@react-native-community/cli-config": "npm:20.1.0"
+    "@react-native-community/cli-doctor": "npm:20.1.0"
+    "@react-native-community/cli-server-api": "npm:20.1.0"
+    "@react-native-community/cli-tools": "npm:20.1.0"
+    "@react-native-community/cli-types": "npm:20.1.0"
     commander: "npm:^9.4.1"
     deepmerge: "npm:^4.3.0"
     execa: "npm:^5.0.0"
     find-up: "npm:^5.0.0"
     fs-extra: "npm:^8.1.0"
     graceful-fs: "npm:^4.1.3"
+    picocolors: "npm:^1.1.1"
     prompts: "npm:^2.4.2"
     semver: "npm:^7.5.2"
   bin:
     rnc-cli: build/bin.js
-  checksum: 10c0/70fab833b60ba73d8afb95715ae390695b2fe4831bd70ba65cc3362bf9790f95ffe789ff019d14faf951e1d153dea3e31527efc73fc1f4ffe6f03c5b6583835a
+  checksum: 10c0/f3fa43fc8c170ba291ae81e796f4ac35956e143bf1094f15f91061b93835ed0665749ca11da91df7fbfcdd96ee32fc16da6cab60adef1a21022195aa1947bd5d
   languageName: node
   linkType: hard
 
@@ -3704,10 +3627,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/assets-registry@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/assets-registry@npm:0.83.0-rc.4"
-  checksum: 10c0/4147e3e9c6f004740d2e81c5ab045b677d4665cfbbcc45393a2adb37e90f01ae8baebc662feb20d674a5c0ef6091a80a9671f65700b7ef271265085c7c3b3095
+"@react-native/assets-registry@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/assets-registry@npm:0.84.0-rc.1"
+  checksum: 10c0/da75e38d0500fea1f03462140d8161803e1452da209413158e18688e2f8cc8075d60e96fc8cb0795cf170a73c5de2e24b4d9adc7ec63eeb4b509ee2f3e94fa12
   languageName: node
   linkType: hard
 
@@ -3718,19 +3641,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/babel-plugin-codegen@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/babel-plugin-codegen@npm:0.83.0-rc.4"
+"@react-native/babel-plugin-codegen@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/babel-plugin-codegen@npm:0.84.0-rc.1"
   dependencies:
     "@babel/traverse": "npm:^7.25.3"
-    "@react-native/codegen": "npm:0.83.0-rc.4"
-  checksum: 10c0/206c82a9cccf2284028d82701f4d3cf6fa9018c9b55b0e9483685ed17c673bc51b5d85c3427b7ff72afd3cc7b7c228dfc13e25c9ffa4e44df045b07850dacb6c
+    "@react-native/codegen": "npm:0.84.0-rc.1"
+  checksum: 10c0/4249f97c5827f09092ac18f3c3abd0ee529a7be8f0a38fb98819c70027649314d22f6d0ff61513a40e360235c03caf93dc177d7d6a0bf3c62ab5dc9b65888b44
   languageName: node
   linkType: hard
 
-"@react-native/babel-preset@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/babel-preset@npm:0.83.0-rc.4"
+"@react-native/babel-preset@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/babel-preset@npm:0.84.0-rc.1"
   dependencies:
     "@babel/core": "npm:^7.25.2"
     "@babel/plugin-proposal-export-default-from": "npm:^7.24.7"
@@ -3738,27 +3661,19 @@ __metadata:
     "@babel/plugin-syntax-export-default-from": "npm:^7.24.7"
     "@babel/plugin-syntax-nullish-coalescing-operator": "npm:^7.8.3"
     "@babel/plugin-syntax-optional-chaining": "npm:^7.8.3"
-    "@babel/plugin-transform-arrow-functions": "npm:^7.24.7"
     "@babel/plugin-transform-async-generator-functions": "npm:^7.25.4"
     "@babel/plugin-transform-async-to-generator": "npm:^7.24.7"
     "@babel/plugin-transform-block-scoping": "npm:^7.25.0"
     "@babel/plugin-transform-class-properties": "npm:^7.25.4"
     "@babel/plugin-transform-classes": "npm:^7.25.4"
-    "@babel/plugin-transform-computed-properties": "npm:^7.24.7"
     "@babel/plugin-transform-destructuring": "npm:^7.24.8"
     "@babel/plugin-transform-flow-strip-types": "npm:^7.25.2"
     "@babel/plugin-transform-for-of": "npm:^7.24.7"
-    "@babel/plugin-transform-function-name": "npm:^7.25.1"
-    "@babel/plugin-transform-literals": "npm:^7.25.2"
-    "@babel/plugin-transform-logical-assignment-operators": "npm:^7.24.7"
     "@babel/plugin-transform-modules-commonjs": "npm:^7.24.8"
     "@babel/plugin-transform-named-capturing-groups-regex": "npm:^7.24.7"
     "@babel/plugin-transform-nullish-coalescing-operator": "npm:^7.24.7"
-    "@babel/plugin-transform-numeric-separator": "npm:^7.24.7"
-    "@babel/plugin-transform-object-rest-spread": "npm:^7.24.7"
     "@babel/plugin-transform-optional-catch-binding": "npm:^7.24.7"
     "@babel/plugin-transform-optional-chaining": "npm:^7.24.8"
-    "@babel/plugin-transform-parameters": "npm:^7.24.7"
     "@babel/plugin-transform-private-methods": "npm:^7.24.7"
     "@babel/plugin-transform-private-property-in-object": "npm:^7.24.7"
     "@babel/plugin-transform-react-display-name": "npm:^7.24.7"
@@ -3767,44 +3682,40 @@ __metadata:
     "@babel/plugin-transform-react-jsx-source": "npm:^7.24.7"
     "@babel/plugin-transform-regenerator": "npm:^7.24.7"
     "@babel/plugin-transform-runtime": "npm:^7.24.7"
-    "@babel/plugin-transform-shorthand-properties": "npm:^7.24.7"
-    "@babel/plugin-transform-spread": "npm:^7.24.7"
-    "@babel/plugin-transform-sticky-regex": "npm:^7.24.7"
     "@babel/plugin-transform-typescript": "npm:^7.25.2"
     "@babel/plugin-transform-unicode-regex": "npm:^7.24.7"
-    "@babel/template": "npm:^7.25.0"
-    "@react-native/babel-plugin-codegen": "npm:0.83.0-rc.4"
+    "@react-native/babel-plugin-codegen": "npm:0.84.0-rc.1"
     babel-plugin-syntax-hermes-parser: "npm:0.32.0"
     babel-plugin-transform-flow-enums: "npm:^0.0.2"
     react-refresh: "npm:^0.14.0"
   peerDependencies:
     "@babel/core": "*"
-  checksum: 10c0/6293027e81b3c4a29923a07c15d34fa26a7fa39ad605e922fa454632dbab8fe34e74f0b441594d160536a7fdf1bafc07660f19320183af0a094730d545910bf5
+  checksum: 10c0/4af7342b315f59141d948e4f43efa80a1b3c348f30ab07153a56d939336e76fe30a841db178c7d35991c5e00d6525a2eb63a80ab368b55a4e29d5980aefb38a5
   languageName: node
   linkType: hard
 
-"@react-native/codegen@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/codegen@npm:0.83.0-rc.4"
+"@react-native/codegen@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/codegen@npm:0.84.0-rc.1"
   dependencies:
     "@babel/core": "npm:^7.25.2"
     "@babel/parser": "npm:^7.25.3"
-    glob: "npm:^7.1.1"
     hermes-parser: "npm:0.32.0"
     invariant: "npm:^2.2.4"
     nullthrows: "npm:^1.1.1"
+    tinyglobby: "npm:^0.2.15"
     yargs: "npm:^17.6.2"
   peerDependencies:
     "@babel/core": "*"
-  checksum: 10c0/8715dde03d5f862690918bf8872612dd663bd998b452820f0b2d5691aa3ac4b12c9423c7b99d6031409ca20d629a4632c871ae28df7bb662c7df4c81b6694498
+  checksum: 10c0/6bd16c184f83c547c15b56587c124e666121384d03e59a827553d56d90c74702060823d7c44371744bb8b6849938a62d4d8be1b731bd8a997aa641288094294a
   languageName: node
   linkType: hard
 
-"@react-native/community-cli-plugin@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/community-cli-plugin@npm:0.83.0-rc.4"
+"@react-native/community-cli-plugin@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/community-cli-plugin@npm:0.84.0-rc.1"
   dependencies:
-    "@react-native/dev-middleware": "npm:0.83.0-rc.4"
+    "@react-native/dev-middleware": "npm:0.84.0-rc.1"
     debug: "npm:^4.4.0"
     invariant: "npm:^2.2.4"
     metro: "npm:^0.83.3"
@@ -3819,34 +3730,35 @@ __metadata:
       optional: true
     "@react-native/metro-config":
       optional: true
-  checksum: 10c0/be1351834c98901caaff6e6f9e941db95875c461bc4e0c159b1cf0d375728d494950841aed1cbaee98bb18ecfe351c7801e03e8a6c1af5f0efe10e9a31d5a6ad
+  checksum: 10c0/ed13eca2ba4254b09883963989cc0abb8d3562eb98ebf4b442afb264b0514360e6c5d2b4f6d775a630d917777f9081efa7fa1d21cb3c6cabb519276ff76fa621
   languageName: node
   linkType: hard
 
-"@react-native/debugger-frontend@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/debugger-frontend@npm:0.83.0-rc.4"
-  checksum: 10c0/fa7898666b80948e39c4b7b2950e9b4eee203ed92311ecaf965fc812ea37ddf3a8bb11e627db27dd1f921481f8d5b075e601f2a78c7b6c2bdf2a18d9fe862859
+"@react-native/debugger-frontend@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/debugger-frontend@npm:0.84.0-rc.1"
+  checksum: 10c0/527cb27c871940fa8eff175de391e6db2015e3b499be4d9e638068031b83ddee507525391ed92c381406dd1a54c4949216e2b692939dee769cebabc1860d3316
   languageName: node
   linkType: hard
 
-"@react-native/debugger-shell@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/debugger-shell@npm:0.83.0-rc.4"
+"@react-native/debugger-shell@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/debugger-shell@npm:0.84.0-rc.1"
   dependencies:
     cross-spawn: "npm:^7.0.6"
+    debug: "npm:^4.4.0"
     fb-dotslash: "npm:0.5.8"
-  checksum: 10c0/09ae7f2135aa91745005662164dc88a0d04cb5474b3bbb1f38d2b0652d579ad20b24bc3e716c15baeeae3e6069b979608157dc059b03eefcdb05ffde320c6a93
+  checksum: 10c0/9b80445a2865045375ff5b9ae0773eb7e7fe3670e99b43afa5ac197b3c82029b33fc87e6824d32cf07439677cefffe4bd2d851f3a306af5931dc242617df66fc
   languageName: node
   linkType: hard
 
-"@react-native/dev-middleware@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/dev-middleware@npm:0.83.0-rc.4"
+"@react-native/dev-middleware@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/dev-middleware@npm:0.84.0-rc.1"
   dependencies:
     "@isaacs/ttlcache": "npm:^1.4.1"
-    "@react-native/debugger-frontend": "npm:0.83.0-rc.4"
-    "@react-native/debugger-shell": "npm:0.83.0-rc.4"
+    "@react-native/debugger-frontend": "npm:0.84.0-rc.1"
+    "@react-native/debugger-shell": "npm:0.84.0-rc.1"
     chrome-launcher: "npm:^0.15.2"
     chromium-edge-launcher: "npm:^0.2.0"
     connect: "npm:^3.6.5"
@@ -3856,17 +3768,17 @@ __metadata:
     open: "npm:^7.0.3"
     serve-static: "npm:^1.16.2"
     ws: "npm:^7.5.10"
-  checksum: 10c0/c6e9203c64fd6dea7057335cb0d2179fa60ea620265f1bb23578cf52f54f4b3954d1fe2336db04fa0b89dfe076f404ba360059a10aedd472c8df4d4dee8140d3
+  checksum: 10c0/35094c8040f964bd6b42773da8cf4187bdee59bead503ead425fd04ce22b89254ff350ff8879d511cff0f7f7e2e9763aafe800f40b074c40778e5918caf8180a
   languageName: node
   linkType: hard
 
-"@react-native/eslint-config@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/eslint-config@npm:0.83.0-rc.4"
+"@react-native/eslint-config@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/eslint-config@npm:0.84.0-rc.1"
   dependencies:
     "@babel/core": "npm:^7.25.2"
     "@babel/eslint-parser": "npm:^7.25.1"
-    "@react-native/eslint-plugin": "npm:0.83.0-rc.4"
+    "@react-native/eslint-plugin": "npm:0.84.0-rc.1"
     "@typescript-eslint/eslint-plugin": "npm:^8.36.0"
     "@typescript-eslint/parser": "npm:^8.36.0"
     eslint-config-prettier: "npm:^8.5.0"
@@ -3875,58 +3787,58 @@ __metadata:
     eslint-plugin-jest: "npm:^29.0.1"
     eslint-plugin-react: "npm:^7.30.1"
     eslint-plugin-react-hooks: "npm:^7.0.1"
-    eslint-plugin-react-native: "npm:^4.0.0"
+    eslint-plugin-react-native: "npm:^5.0.0"
   peerDependencies:
-    eslint: ">=8"
+    eslint: ^8.0.0 || ^9.0.0
     prettier: ">=2"
-  checksum: 10c0/5a99637039a6f214adfaa9317b8fd9eb2d3b11421959eff03fa6a5febff9704c6cb1228787cd727a67c40a2ee34848e4ffe896716be2803178a6b9212a87e8d4
+  checksum: 10c0/b7379d0e8592e82e94d545e359a490e52bf4a03341ba27941607bf477f0eae6b53fd54018ad98f70c0b96a5d1b1365da8086549781e741f1a0a9a73cd36259ae
   languageName: node
   linkType: hard
 
-"@react-native/eslint-plugin@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/eslint-plugin@npm:0.83.0-rc.4"
-  checksum: 10c0/16f4408d45cbc05aa78f04f0d6ed496a08633c92227c523b678846fe8d6cf01ca61c60318aa54f10cd15c99602b1ba633f5b1be07043f3bbbfd5526a3fdec214
+"@react-native/eslint-plugin@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/eslint-plugin@npm:0.84.0-rc.1"
+  checksum: 10c0/16b65b3e5991ea8063ae9b2362c7f3ac6df792325c049786ce6c21ea8d7de4d0a4e15aff688da0689a00a2d80add712f240102fd31751561a99b3ff8a89b6c16
   languageName: node
   linkType: hard
 
-"@react-native/gradle-plugin@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/gradle-plugin@npm:0.83.0-rc.4"
-  checksum: 10c0/43ad45b571adef22328cf00e4c2293d66415785cb79f9f58ddf6b5ccd035bd6b1e0e3ee33cfd4f7ae9ff45abe087ac089e9d89ebd24e7705d3093b21b265fd25
+"@react-native/gradle-plugin@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/gradle-plugin@npm:0.84.0-rc.1"
+  checksum: 10c0/54623d7ab7e6eb17fad242e95b110bc3950be2d0b83d5bce88abad8cb71e05f7cb4534c1f0cbbe44ccef6c5943c811316e5cb6363386a58f2a08405ca06447f5
   languageName: node
   linkType: hard
 
-"@react-native/js-polyfills@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/js-polyfills@npm:0.83.0-rc.4"
-  checksum: 10c0/df4e75894205c9a3a8a8ada84817ab57eb648bd568a1ec5e17fa106f369b94be00006113ae9e7e969a05ebd548e997ae02ebf4e9bf78c5ad5240e35ed44aff73
+"@react-native/js-polyfills@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/js-polyfills@npm:0.84.0-rc.1"
+  checksum: 10c0/8d0e0bba3c67cfea439847211f9d44a8b1ad96cdd5b65658eb73f031d14a52ac3a464af54e9f655f121c523b7fb59658239687eaef7d3ee1a509e62b128920d3
   languageName: node
   linkType: hard
 
-"@react-native/metro-babel-transformer@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/metro-babel-transformer@npm:0.83.0-rc.4"
+"@react-native/metro-babel-transformer@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/metro-babel-transformer@npm:0.84.0-rc.1"
   dependencies:
     "@babel/core": "npm:^7.25.2"
-    "@react-native/babel-preset": "npm:0.83.0-rc.4"
+    "@react-native/babel-preset": "npm:0.84.0-rc.1"
     hermes-parser: "npm:0.32.0"
     nullthrows: "npm:^1.1.1"
   peerDependencies:
     "@babel/core": "*"
-  checksum: 10c0/4828811525619715fddd867f7c6d769a89a0c79689b5e28b1616125271865062dc00bb65aa27061c8e277df3ebd3e0a0332cdbb9dd484d0e37717298e97f2624
+  checksum: 10c0/9e3494eb71fffb85d75000896174414394cd8fa9cabf6ee44a70fdf6df2b1d823e90de39fd5c348e05468110910c9f12c64ca0e301d5125af50882ca0d69f3e2
   languageName: node
   linkType: hard
 
-"@react-native/metro-config@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/metro-config@npm:0.83.0-rc.4"
+"@react-native/metro-config@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/metro-config@npm:0.84.0-rc.1"
   dependencies:
-    "@react-native/js-polyfills": "npm:0.83.0-rc.4"
-    "@react-native/metro-babel-transformer": "npm:0.83.0-rc.4"
+    "@react-native/js-polyfills": "npm:0.84.0-rc.1"
+    "@react-native/metro-babel-transformer": "npm:0.84.0-rc.1"
     metro-config: "npm:^0.83.3"
     metro-runtime: "npm:^0.83.3"
-  checksum: 10c0/51cdbf0664cc095e854178a116972430cf2f68cf7a1f2357fec7c68e3da8bd214dd9faefa53fd4f86ab4cfa8c34515b15fb83bbd846aa1db4294b7abbe527df5
+  checksum: 10c0/5e94a9410eec96f57c446a3e015ccb99a1acdef9f6226c064f0ad1d4de25f73bb9e47ef1c79f5c49696d404ac61cc03db45d46d0b1c5cf0483517e0d35053bb6
   languageName: node
   linkType: hard
 
@@ -3937,10 +3849,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/normalize-colors@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/normalize-colors@npm:0.83.0-rc.4"
-  checksum: 10c0/47a7dbdf403f6fc7c594d427aba93bde98dfac72095d3b67586e949109316f6f48bb3082e52ae8a8f321a3c37f540fd1bbab2382ec6672b639de10d038786290
+"@react-native/normalize-colors@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/normalize-colors@npm:0.84.0-rc.1"
+  checksum: 10c0/cfd1d7905fcdbd479b7b0b4078980bb2313a1fac0511d8d711e33683c85617598b1d5ea80a58c235009fb06480a0937ad0173601e472c9d04c59b7dd4244de5c
   languageName: node
   linkType: hard
 
@@ -3951,16 +3863,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/typescript-config@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/typescript-config@npm:0.83.0-rc.4"
-  checksum: 10c0/6acdc85d5c7cedd747eb5832a2b3a0beae8ec4e3a58701f32b7c7c5d625a967bb18a30a435a3732e07b0eadae36d12b3db984844359b5af6e3b992eb8abcdb3c
+"@react-native/typescript-config@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/typescript-config@npm:0.84.0-rc.1"
+  checksum: 10c0/2467f7b0c90d870633ef71fa060c409f00de9a3578f129e646aca7a7a176fe5094c1b7ba87f0a1f5906f2f36b3c695bafb9057d3fc8555b25520f517ccdfcc7b
   languageName: node
   linkType: hard
 
-"@react-native/virtualized-lists@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "@react-native/virtualized-lists@npm:0.83.0-rc.4"
+"@react-native/virtualized-lists@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "@react-native/virtualized-lists@npm:0.84.0-rc.1"
   dependencies:
     invariant: "npm:^2.2.4"
     nullthrows: "npm:^1.1.1"
@@ -3971,7 +3883,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10c0/9a3f8a01d8bde6f6cc3db76033d91d0fe4a9c0263deefcd4dd4512df1ed67beac8b7c1ea9306aff9c7a521def84d966e6ee60666bff0b940ad7f7b61d56df9d4
+  checksum: 10c0/0467997af2f7e96aef9e906dbf280a40495f67b7423ec6cef9f4c2c6af029955ecf401230e93644ff0a6c0f396fe1464bc6baa2436206bfe76970d450c554ffa
   languageName: node
   linkType: hard
 
@@ -5958,7 +5870,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.2":
+"chalk@npm:^4.0.0, chalk@npm:^4.1.0":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -7621,14 +7533,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-native@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "eslint-plugin-react-native@npm:4.1.0"
+"eslint-plugin-react-native@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "eslint-plugin-react-native@npm:5.0.0"
   dependencies:
     eslint-plugin-react-native-globals: "npm:^0.1.1"
   peerDependencies:
-    eslint: ^3.17.0 || ^4 || ^5 || ^6 || ^7 || ^8
-  checksum: 10c0/9aedccde6227b78bad7c243844aca0860fca2dccd635e91e745bcd617c1e7fb889fa212917cf7b56860335a147fc7c8dc339d1976330ec4f896fe9156b35b162
+    eslint: ^3.17.0 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9
+  checksum: 10c0/c7c927bc743abf0cb367cc64fea5b28b28ea0c58be2990cab858a050b4855e89d90513afa44d73012c9fd670810ad0da2ac72e3e4bdfedf0ce0cbb65e901af7f
   languageName: node
   linkType: hard
 
@@ -8088,6 +8000,18 @@ __metadata:
   dependencies:
     bser: "npm:2.1.1"
   checksum: 10c0/feae89ac148adb8f6ae8ccd87632e62b13563e6fb114cacb5265c51f585b17e2e268084519fb2edd133872f1d47a18e6bfd7e5e08625c0d41b93149694187581
+  languageName: node
+  linkType: hard
+
+"fdir@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "fdir@npm:6.5.0"
+  peerDependencies:
+    picomatch: ^3 || ^4
+  peerDependenciesMeta:
+    picomatch:
+      optional: true
+  checksum: 10c0/e345083c4306b3aed6cb8ec551e26c36bab5c511e99ea4576a16750ddc8d3240e63826cc624f5ae17ad4dc82e68a253213b60d556c11bfad064b7607847ed07f
   languageName: node
   linkType: hard
 
@@ -8874,10 +8798,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hermes-compiler@npm:0.14.0":
-  version: 0.14.0
-  resolution: "hermes-compiler@npm:0.14.0"
-  checksum: 10c0/672036528448e8af5895c9d8c5dfd6012b76e92a5a187caf3143925e358bfc81b993a0cd50bbae7518c01fe6dc4fdc882e25cd623219a4d33f56d5f7abe6918b
+"hermes-compiler@npm:250829098.0.6":
+  version: 250829098.0.6
+  resolution: "hermes-compiler@npm:250829098.0.6"
+  checksum: 10c0/ca565183f28fb6ee079ba1232ab005be8a2af49ac0db45e912b23a90cc44e8202a1f808a059d6c1601bcc9b976caac356639dc59d7eb5897cb2ecb1ef3661a23
   languageName: node
   linkType: hard
 
@@ -13079,6 +13003,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"picomatch@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "picomatch@npm:4.0.3"
+  checksum: 10c0/9582c951e95eebee5434f59e426cddd228a7b97a0161a375aed4be244bd3fe8e3a31b846808ea14ef2c8a2527a6eeab7b3946a67d5979e81694654f939473ae2
+  languageName: node
+  linkType: hard
+
 "pidtree@npm:0.6.0":
   version: 0.6.0
   resolution: "pidtree@npm:0.6.0"
@@ -13474,10 +13405,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^19.2.1":
-  version: 19.2.1
-  resolution: "react-is@npm:19.2.1"
-  checksum: 10c0/0ebeaedb4ff615055cbcd758c7e22ba9644e21110adbd293dd1aada3591abf7399152a786cd120e324c10706d75e28c2130c27d1b9b5ae637aef4c52f4d17a91
+"react-is@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react-is@npm:19.2.3"
+  checksum: 10c0/2b54c422c21b8dbd68a435a1cce21ecd5b6f06f48659531f7d53dd7368365da5a67e946f352fb2010d11ca40658aa67bec90995f0f1ec5556c0f71dbffe54994
   languageName: node
   linkType: hard
 
@@ -13594,13 +13525,13 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.25.2"
     "@babel/eslint-parser": "npm:7.22.15"
-    "@react-native-community/cli": "npm:20.0.1"
-    "@react-native-community/cli-platform-android": "npm:20.0.0"
-    "@react-native-community/cli-platform-ios": "npm:20.0.0"
-    "@react-native/babel-preset": "npm:0.83.0-rc.4"
-    "@react-native/eslint-config": "npm:0.83.0-rc.4"
-    "@react-native/metro-config": "npm:0.83.0-rc.4"
-    "@react-native/typescript-config": "npm:0.83.0-rc.4"
+    "@react-native-community/cli": "npm:20.1.0"
+    "@react-native-community/cli-platform-android": "npm:20.1.0"
+    "@react-native-community/cli-platform-ios": "npm:20.1.0"
+    "@react-native/babel-preset": "npm:0.84.0-rc.1"
+    "@react-native/eslint-config": "npm:0.84.0-rc.1"
+    "@react-native/metro-config": "npm:0.84.0-rc.1"
+    "@react-native/typescript-config": "npm:0.84.0-rc.1"
     "@react-navigation/native": "npm:^5.8.0"
     "@react-navigation/stack": "npm:^5.10.0"
     "@types/jest": "npm:^29.5.13"
@@ -13621,16 +13552,16 @@ __metadata:
     jest: "npm:^29.6.3"
     lint-staged: "npm:^14.0.1"
     prettier: "npm:^2.8.8"
-    react: "npm:^19.2.0"
+    react: "npm:19.2.3"
     react-dom: "npm:^19.1.0"
     react-freeze: "npm:^1.0.0"
-    react-native: "npm:0.83.0-rc.4"
+    react-native: "npm:0.84.0-rc.1"
     react-native-builder-bob: "npm:^0.23.2"
     react-native-gesture-handler: "npm:^2.28.0"
     react-native-reanimated: "npm:^3.19.0"
     react-native-safe-area-context: "npm:5.6.0"
     react-native-windows: "npm:^0.64.8"
-    react-test-renderer: "npm:^19.2.0"
+    react-test-renderer: "npm:19.2.3"
     release-it: "npm:^15.6.0"
     shelljs: "npm:^0.9.2"
     typescript: "npm:^5.8.3"
@@ -13686,18 +13617,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native@npm:0.83.0-rc.4":
-  version: 0.83.0-rc.4
-  resolution: "react-native@npm:0.83.0-rc.4"
+"react-native@npm:0.84.0-rc.1":
+  version: 0.84.0-rc.1
+  resolution: "react-native@npm:0.84.0-rc.1"
   dependencies:
     "@jest/create-cache-key-function": "npm:^29.7.0"
-    "@react-native/assets-registry": "npm:0.83.0-rc.4"
-    "@react-native/codegen": "npm:0.83.0-rc.4"
-    "@react-native/community-cli-plugin": "npm:0.83.0-rc.4"
-    "@react-native/gradle-plugin": "npm:0.83.0-rc.4"
-    "@react-native/js-polyfills": "npm:0.83.0-rc.4"
-    "@react-native/normalize-colors": "npm:0.83.0-rc.4"
-    "@react-native/virtualized-lists": "npm:0.83.0-rc.4"
+    "@react-native/assets-registry": "npm:0.84.0-rc.1"
+    "@react-native/codegen": "npm:0.84.0-rc.1"
+    "@react-native/community-cli-plugin": "npm:0.84.0-rc.1"
+    "@react-native/gradle-plugin": "npm:0.84.0-rc.1"
+    "@react-native/js-polyfills": "npm:0.84.0-rc.1"
+    "@react-native/normalize-colors": "npm:0.84.0-rc.1"
+    "@react-native/virtualized-lists": "npm:0.84.0-rc.1"
     abort-controller: "npm:^3.0.0"
     anser: "npm:^1.4.9"
     ansi-regex: "npm:^5.0.0"
@@ -13706,8 +13637,7 @@ __metadata:
     base64-js: "npm:^1.5.1"
     commander: "npm:^12.0.0"
     flow-enums-runtime: "npm:^0.0.6"
-    glob: "npm:^7.1.1"
-    hermes-compiler: "npm:0.14.0"
+    hermes-compiler: "npm:250829098.0.6"
     invariant: "npm:^2.2.4"
     jest-environment-node: "npm:^29.7.0"
     memoize-one: "npm:^5.0.0"
@@ -13722,18 +13652,19 @@ __metadata:
     scheduler: "npm:0.27.0"
     semver: "npm:^7.1.3"
     stacktrace-parser: "npm:^0.1.10"
+    tinyglobby: "npm:^0.2.15"
     whatwg-fetch: "npm:^3.0.0"
     ws: "npm:^7.5.10"
     yargs: "npm:^17.6.2"
   peerDependencies:
     "@types/react": ^19.1.1
-    react: ^19.2.0
+    react: ^19.2.3
   peerDependenciesMeta:
     "@types/react":
       optional: true
   bin:
     react-native: cli.js
-  checksum: 10c0/737ee549f8c33935623d6cff54a1c651e11c843a779a4592eb5fa947210ae01f279b28264fe383bfdcfaf8cb5b6d6d40a8678fe1deb7363a2e99ea25ee26d7f5
+  checksum: 10c0/d35814637f8fb9059f57fb75f92d16c9e350066c428dc3da26abf00e6322a1c00440659b570c392715fb6e74be683a5346c784ae634d11e7410822cfd00aa49a
   languageName: node
   linkType: hard
 
@@ -13751,22 +13682,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-test-renderer@npm:^19.2.0":
-  version: 19.2.1
-  resolution: "react-test-renderer@npm:19.2.1"
+"react-test-renderer@npm:19.2.3":
+  version: 19.2.3
+  resolution: "react-test-renderer@npm:19.2.3"
   dependencies:
-    react-is: "npm:^19.2.1"
+    react-is: "npm:^19.2.3"
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.1
-  checksum: 10c0/4f9fbc460dcade554dd5fbee9264400092030cc6d0a00b7e0970f63757a69c9484c395680dd5af0edb449245737aa4a0c7db865caa93fa7925a16f88ad1cd47e
+    react: ^19.2.3
+  checksum: 10c0/842b82239dbddbc536083a6260c3e1b0507c02a3400bd05879fc19160468fd0f8ab79fec5dceffa6113b131835cc7621212f8415b46ea5156ab66bbfd7e24297
   languageName: node
   linkType: hard
 
-"react@npm:^19.2.0":
-  version: 19.2.1
-  resolution: "react@npm:19.2.1"
-  checksum: 10c0/2b5eaf407abb3db84090434c20d6c5a8e447ab7abcd8fe9eaf1ddc299babcf31284ee9db7ea5671d21c85ac5298bd632fa1a7da1ed78d5b368a537f5e1cd5d62
+"react@npm:19.2.3":
+  version: 19.2.3
+  resolution: "react@npm:19.2.3"
+  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
   languageName: node
   linkType: hard
 
@@ -15455,6 +15386,16 @@ __metadata:
   version: 2.3.8
   resolution: "through@npm:2.3.8"
   checksum: 10c0/4b09f3774099de0d4df26d95c5821a62faee32c7e96fb1f4ebd54a2d7c11c57fe88b0a0d49cf375de5fee5ae6bf4eb56dbbf29d07366864e2ee805349970d3cc
+  languageName: node
+  linkType: hard
+
+"tinyglobby@npm:^0.2.15":
+  version: 0.2.15
+  resolution: "tinyglobby@npm:0.2.15"
+  dependencies:
+    fdir: "npm:^6.5.0"
+    picomatch: "npm:^4.0.3"
+  checksum: 10c0/869c31490d0d88eedb8305d178d4c75e7463e820df5a9b9d388291daf93e8b1eb5de1dad1c1e139767e4269fe75f3b10d5009b2cc14db96ff98986920a186844
   languageName: node
   linkType: hard
 
