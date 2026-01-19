@@ -10,7 +10,10 @@ export type KeyList = Record<keyof any, undefined>;
 
 const UC_REGEX = /[A-Z][^A-Z]+/g;
 
-export function ucsplit(str: string) {
+/**
+ * Splits a string into words based on uppercase letters
+ */
+export function splitOnUpperCase(str: string) {
   if (str.length === 0) {
     return '';
   }

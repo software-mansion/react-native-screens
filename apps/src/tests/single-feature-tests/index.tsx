@@ -12,11 +12,11 @@ import SplitHostScenarios from './split-host';
 import SplitScreenScenarios from './split-screen';
 import StackHostScenarios from './stack-host';
 import StackScreenScenarios from './stack-screen';
-import { Scenario, ucsplit } from '../shared/helpers';
+import { Scenario, splitOnUpperCase } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 import ScenariosScreen from '../shared/ScenarioScreen';
 
-const COMPONENTS_SCENARIOS: Record<string, Scenario[]> = {
+const COMPONENT_SCENARIOS: Record<string, Scenario[]> = {
   BottomTabs: BottomTabsScenarios,
   BottomTabsScreen: BottomTabsScreenScenarios,
   SplitHost: SplitHostScenarios,
@@ -25,15 +25,15 @@ const COMPONENTS_SCENARIOS: Record<string, Scenario[]> = {
   StackScreen: StackScreenScenarios,
 } as const;
 
-type ParamsList = { [k: keyof typeof COMPONENTS_SCENARIOS]: undefined } & {
+type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
   Home: undefined;
 };
 
 function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {Object.entries(COMPONENTS_SCENARIOS).map(([key]) => (
-        <ScenarioButton key={key} title={ucsplit(key)} route={key} />
+      {Object.entries(COMPONENT_SCENARIOS).map(([key]) => (
+        <ScenarioButton key={key} title={splitOnUpperCase(key)} route={key} />
       ))}
     </ScrollView>
   );
@@ -55,12 +55,12 @@ export default function App() {
               headerTitle: 'Scenarios',
             }}
           />
-          {Object.entries(COMPONENTS_SCENARIOS).map(([key, scenarios]) => (
+          {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarios]) => (
             <Stack.Screen name={key}>
               {() => (
                 <ScenariosScreen
                   key={key}
-                  title={ucsplit(key)}
+                  title={splitOnUpperCase(key)}
                   scenarios={scenarios}
                 />
               )}
