@@ -15,6 +15,7 @@ import React, {
   useReducer,
 } from 'react';
 import { KeyList } from './helpers';
+import { ViewProps } from 'react-native';
 
 type StackScreenConfig<S extends KeyList> = RouteConfigProps<
   S,
@@ -114,7 +115,7 @@ function StackAutoconfig() {
 }
 
 function StackConfigProvider(props: {
-  children: ReactNode | ReactNode[];
+  children: ViewProps['children'];
   screens: Record<string, ComponentType>;
 }) {
   const [config, dispatch] = useReducer(

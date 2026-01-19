@@ -12,6 +12,7 @@ import React, {
 } from 'react';
 import { TabsHostProps } from 'react-native-screens';
 import { KeyList } from './helpers';
+import { ViewProps } from 'react-native';
 
 type StaticTabScreenProps<S extends KeyList> = Omit<
   TabConfiguration['tabScreenProps'],
@@ -132,7 +133,7 @@ function TabsAutoconfig() {
 }
 
 function TabsConfigProvider(props: {
-  children: ReactNode | ReactNode[];
+  children: ViewProps['children'];
   tabs: Record<string, ComponentType>;
 }) {
   const [config, dispatch] = useReducer(reduce, makeInitialConfig(props.tabs));
