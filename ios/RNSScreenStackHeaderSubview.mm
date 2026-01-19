@@ -278,6 +278,10 @@ RNS_IGNORE_SUPER_CALL_END
       // 2. Set content hugging priority for RNSScreenStackHeaderSubview.
       [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
       [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+      
+      // 3. Set compression resistance to prevent UIKit from shrinking the subview below its intrinsic size.
+      [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+      [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 
       _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
     } else
