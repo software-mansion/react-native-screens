@@ -12,19 +12,19 @@ import OrientationScenarios from './orientation';
 import ScrollViewScenarios from './scroll-view';
 import ScenariosScreen from '../shared/ScenarioScreen';
 
-const COMPONENTS_SCENARIOS: Record<string, Scenario[]> = {
+const COMPONENT_SCENARIOS: Record<string, Scenario[]> = {
   Orientation: OrientationScenarios,
   ScrollView: ScrollViewScenarios,
 } as const;
 
-type ParamsList = { [k: keyof typeof COMPONENTS_SCENARIOS]: undefined } & {
+type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
   Home: undefined;
 };
 
 function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {Object.entries(COMPONENTS_SCENARIOS).map(([key]) => (
+      {Object.entries(COMPONENT_SCENARIOS).map(([key]) => (
         <ScenarioButton key={key} title={splitOnUpperCase(key)} route={key} />
       ))}
     </ScrollView>
@@ -47,7 +47,7 @@ export default function App() {
               headerTitle: 'Scenarios',
             }}
           />
-          {Object.entries(COMPONENTS_SCENARIOS).map(([key, scenarios]) => (
+          {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarios]) => (
             <Stack.Screen name={key}>
               {() => (
                 <ScenariosScreen
