@@ -5,7 +5,7 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Scenario, ucsplit } from '../shared/helpers';
+import { Scenario, splitOnUpperCase } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 
 import OrientationScenarios from './orientation';
@@ -25,7 +25,7 @@ function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       {Object.entries(COMPONENTS_SCENARIOS).map(([key]) => (
-        <ScenarioButton key={key} title={ucsplit(key)} route={key} />
+        <ScenarioButton key={key} title={splitOnUpperCase(key)} route={key} />
       ))}
     </ScrollView>
   );
@@ -52,7 +52,7 @@ export default function App() {
               {() => (
                 <ScenariosScreen
                   key={key}
-                  title={ucsplit(key)}
+                  title={splitOnUpperCase(key)}
                   scenarios={scenarios}
                 />
               )}

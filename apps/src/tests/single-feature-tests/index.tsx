@@ -12,7 +12,7 @@ import SplitHostScenarios from './split-host';
 import SplitScreenScenarios from './split-screen';
 import StackHostScenarios from './stack-host';
 import StackScreenScenarios from './stack-screen';
-import { Scenario, ucsplit } from '../shared/helpers';
+import { Scenario, splitOnUpperCase } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 import ScenariosScreen from '../shared/ScenarioScreen';
 
@@ -33,7 +33,7 @@ function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       {Object.entries(COMPONENT_SCENARIOS).map(([key]) => (
-        <ScenarioButton key={key} title={ucsplit(key)} route={key} />
+        <ScenarioButton key={key} title={splitOnUpperCase(key)} route={key} />
       ))}
     </ScrollView>
   );
@@ -60,7 +60,7 @@ export default function App() {
               {() => (
                 <ScenariosScreen
                   key={key}
-                  title={ucsplit(key)}
+                  title={splitOnUpperCase(key)}
                   scenarios={scenarios}
                 />
               )}
