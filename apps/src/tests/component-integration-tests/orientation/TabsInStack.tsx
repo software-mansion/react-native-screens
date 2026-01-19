@@ -9,11 +9,11 @@ import {
 } from '../../shared/TabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
 import {
-  createStackConfig,
+  createAutoConfiguredStack,
   findStackScreenOptions,
   useDispatchStackConfig,
   useStackConfig,
-} from '../../shared/StackConfigProvider';
+} from '../../shared/contexts/stack-config';
 
 type StackParamList = {
   Screen1: undefined;
@@ -84,7 +84,9 @@ function TabsScreen() {
   );
 }
 
-const Stack = createStackConfig<StackParamList>({ Screen1: TabsScreen });
+const Stack = createAutoConfiguredStack<StackParamList>({
+  Screen1: TabsScreen,
+});
 
 export default function TabsAndStack() {
   return (

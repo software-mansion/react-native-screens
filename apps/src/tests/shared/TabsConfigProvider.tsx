@@ -111,6 +111,11 @@ export function useTabsConfig<
   S extends KeyList = {},
 >(): StaticTabsContainerProps<S> {
   const config = useContext(ConfigContext);
+
+  if (!config) {
+    throw new Error('useTabsConfig must be used within a TabsConfigProvider');
+  }
+
   return config as StaticTabsContainerProps<S>;
 }
 
@@ -123,6 +128,13 @@ export function useDispatchTabsConfig<S extends KeyList = {}>(): Dispatch<
   TabConfigUpdate<S>
 > {
   const dispatch = useContext(ConfigDispatchContext);
+
+  if (!dispatch) {
+    throw new Error(
+      'useDispatchTabsConfig must be used within a ConfigDispatchContext',
+    );
+  }
+
   return dispatch;
 }
 
