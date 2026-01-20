@@ -161,6 +161,12 @@
 #endif
     }
     [_touchHandler attachToView:_container];
+
+    // Called here in case the attempt to show the container failed
+    // in `didMoveToWindow`, as it happens e.g. in case where a `fullScreenModal`
+    // is in presntation. This assumes that this method is called after
+    // `didMoveToWindow`.
+    [self maybeShow];
   }
 }
 
@@ -172,10 +178,17 @@
   }
 }
 
+//- (void)applicationDidBecomeActiveNotificatio
+
 - (void)maybeShow
 {
   UIWindow *window = [self window];
-  if (![[window subviews] containsObject:self]) {
+
+  if (window == nil) {
+    window = RCTKeyWindow();
+  }
+
+  if (![[window subviews] containsObject:_container]) {
     [window addSubview:_container];
   }
 }
