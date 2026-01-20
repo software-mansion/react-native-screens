@@ -1,11 +1,9 @@
 import LongText from '../../../shared/LongText';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import {
-  createTabsConfig,
-  useDispatchTabsConfig,
-} from '../../shared/TabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
+import { useDispatchTabsConfig } from '../../shared/hooks/tabs-config';
+import { createAutoConfiguredTabs } from '../../shared/tabs';
 
 type TabsParamList = {
   Tab1: undefined;
@@ -102,7 +100,7 @@ function ConfigScreen() {
   );
 }
 
-const Tabs = createTabsConfig<TabsParamList>({
+const Tabs = createAutoConfiguredTabs<TabsParamList>({
   Tab1: ConfigScreen,
   Tab2: DummyScreen,
 });

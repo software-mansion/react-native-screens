@@ -46,3 +46,10 @@ export function useDispatchStackConfig<S extends KeyList = {}>(): Dispatch<
 
   return dispatch;
 }
+
+export default function useStackConfigState<S extends KeyList = {}>(): [
+  StackScreenConfig<S>[],
+  Dispatch<StackConfigUpdate<S>>,
+] {
+  return [useStackConfig(), useDispatchStackConfig()];
+}

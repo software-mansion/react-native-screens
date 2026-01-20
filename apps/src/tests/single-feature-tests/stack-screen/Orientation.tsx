@@ -1,20 +1,18 @@
 import { SettingsPicker } from '../../../shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
+import useStackConfigState from '../../shared/hooks/stack-config';
 import {
   createAutoConfiguredStack,
   findStackScreenOptions,
-  useDispatchStackConfig,
-  useStackConfig,
-} from '../../shared/contexts/stack-config';
+} from '../../shared/stack';
 
 type StackParamList = {
   Screen1: undefined;
 };
 
 function ConfigScreen() {
-  const config = useStackConfig<StackParamList>();
-  const dispatch = useDispatchStackConfig<StackParamList>();
+  const [config, dispatch] = useStackConfigState<StackParamList>();
 
   return (
     <ScrollView style={{ padding: 40 }}>
