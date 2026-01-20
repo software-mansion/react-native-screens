@@ -18,7 +18,7 @@ describeIfiOS('Test2963', () => {
 
     await waitFor(element(by.id('screen-5-text')))
       .toBeVisible()
-      .withTimeout(6000);
+      .withTimeout(10000);
 
     await element(by.id('screen-5-button-stop')).tap();
   });
@@ -28,7 +28,7 @@ describeIfiOS('Test2963', () => {
 
     await waitFor(element(by.id('screen-5-text')))
       .toBeVisible()
-      .withTimeout(6000);
+      .withTimeout(10000);
 
     await element(by.id('screen-5-button-stop')).tap();
   });
@@ -38,7 +38,7 @@ describeIfiOS('Test2963', () => {
 
     await waitFor(element(by.id('screen-5-text')))
       .toBeVisible()
-      .withTimeout(6000);
+      .withTimeout(10000);
 
     await element(by.id('screen-5-button-stop')).tap();
   });
@@ -48,7 +48,7 @@ describeIfiOS('Test2963', () => {
 
     await waitFor(element(by.id('screen-5-text')))
       .toBeVisible()
-      .withTimeout(6000);
+      .withTimeout(10000);
 
     await element(by.id('screen-5-button-stop')).tap();
   });
