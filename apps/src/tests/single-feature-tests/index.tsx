@@ -39,9 +39,9 @@ function HomeScreen() {
   );
 }
 
-export default function App() {
-  const Stack = createNativeStackNavigator<ParamsList>();
+const Stack = createNativeStackNavigator<ParamsList>();
 
+export default function App() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>

@@ -24,12 +24,12 @@ function ScenarioSelect(props: { scenarios: Scenario[] }) {
   );
 }
 
+const Stack = createNativeStackNavigator();
+
 export default function ScenariosScreen(props: {
   title: string;
   scenarios: Scenario[];
 }) {
-  const Stack = createNativeStackNavigator();
-
   return (
     <NavigationIndependentTree>
       <NavigationContainer>

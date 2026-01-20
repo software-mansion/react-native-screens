@@ -3,9 +3,10 @@ import { useStackConfig } from '../../hooks/stack-config';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationIndependentTree } from '@react-navigation/native';
 
+const Stack = createNativeStackNavigator();
+
 export function StackAutoconfig() {
   const config = useStackConfig();
-  const Stack = createNativeStackNavigator();
 
   return (
     <NavigationIndependentTree>

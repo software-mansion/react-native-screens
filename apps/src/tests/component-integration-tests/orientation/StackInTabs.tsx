@@ -2,10 +2,7 @@ import { SettingsPicker } from '../../../shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { DummyScreen } from '../../shared/DummyScreens';
-import {
-  useDispatchStackConfig,
-  useStackConfig,
-} from '../../shared/hooks/stack-config';
+import useStackConfigState from '../../shared/hooks/stack-config';
 import {
   createAutoConfiguredStack,
   findStackScreenOptions,
@@ -28,8 +25,7 @@ type TabsParamsList = {
 function ConfigScreen() {
   const [tabsConfig, tabsDispatch] = useTabsConfigState<TabsParamsList>();
 
-  const stackConfig = useStackConfig<StackParamsList>();
-  const stackDispatch = useDispatchStackConfig<StackParamsList>();
+  const [stackConfig, stackDispatch] = useStackConfigState<StackParamsList>();
 
   return (
     <ScrollView style={{ padding: 40 }}>
