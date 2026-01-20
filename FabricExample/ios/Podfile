@@ -14,6 +14,10 @@ prepare_react_native_project!
 # From 0.76 new arch is enabled by default, we just want to have it explicitly set and for consistency with Example app
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 
+# Disable precompiled binaries for RN core
+ENV['RCT_USE_RN_DEP'] = '0'
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
