@@ -178,8 +178,6 @@
   }
 }
 
-//- (void)applicationDidBecomeActiveNotificatio
-
 - (void)maybeShow
 {
   UIWindow *window = [self window];
