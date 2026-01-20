@@ -1,19 +1,17 @@
 import { SettingsPicker } from '../../../shared/SettingsPicker';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import {
-  createTabsConfig,
-  findTabScreenOptions,
-  useTabsConfig,
-  useDispatchTabsConfig,
-} from '../../shared/TabsConfigProvider';
 import { DummyScreen } from '../../shared/DummyScreens';
+import useTabsConfigState from '../../shared/hooks/tabs-config';
+import useStackConfigState from '../../shared/hooks/stack-config';
 import {
   createAutoConfiguredStack,
   findStackScreenOptions,
-  useDispatchStackConfig,
-  useStackConfig,
-} from '../../shared/contexts/stack-config';
+} from '../../shared/stack';
+import {
+  createAutoConfiguredTabs,
+  findTabScreenOptions,
+} from '../../shared/tabs';
 
 type StackParamList = {
   Screen1: undefined;
@@ -25,11 +23,8 @@ type TabsParamList = {
 };
 
 function ConfigScreen() {
-  const tabsConfig = useTabsConfig<TabsParamList>();
-  const tabsDispatch = useDispatchTabsConfig<TabsParamList>();
-
-  const stackConfig = useStackConfig<StackParamList>();
-  const stackDispatch = useDispatchStackConfig<StackParamList>();
+  const [tabsConfig, tabsDispatch] = useTabsConfigState<TabsParamList>();
+  const [stackConfig, stackDispatch] = useStackConfigState<StackParamList>();
 
   return (
     <ScrollView style={{ padding: 40 }}>
@@ -71,7 +66,7 @@ function ConfigScreen() {
   );
 }
 
-const Tabs = createTabsConfig<TabsParamList>({
+const Tabs = createAutoConfiguredTabs<TabsParamList>({
   Tab1: ConfigScreen,
   Tab2: DummyScreen,
 });

@@ -1,19 +1,15 @@
 import { SettingsSwitch } from '../../../shared/SettingsSwitch';
 import React from 'react';
 import { ScrollView } from 'react-native';
-import {
-  createTabsConfig,
-  useTabsConfig,
-  useDispatchTabsConfig,
-} from '../../shared/TabsConfigProvider';
+import useTabsConfigState from '../../shared/hooks/tabs-config';
+import { createAutoConfiguredTabs } from '../../shared/tabs';
 
 type TabsParamList = {
   Tab1: undefined;
 };
 
 function ConfigScreen() {
-  const config = useTabsConfig<TabsParamList>();
-  const dispatch = useDispatchTabsConfig<TabsParamList>();
+  const [config, dispatch] = useTabsConfigState<TabsParamList>();
 
   return (
     <ScrollView style={{ padding: 40 }}>
@@ -28,7 +24,7 @@ function ConfigScreen() {
   );
 }
 
-const Tabs = createTabsConfig<TabsParamList>({ Tab1: ConfigScreen });
+const Tabs = createAutoConfiguredTabs<TabsParamList>({ Tab1: ConfigScreen });
 
 export default function BottomAccessory() {
   return (
