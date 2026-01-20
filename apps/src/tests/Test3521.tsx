@@ -63,6 +63,8 @@ function ModalScreen({ showOverlay }: { showOverlay: () => void }) {
 
 // 2. The Home Screen (just to open the modal)
 function HomeScreen({ navigation }: any) {
+  const [overlayVisible, setOverlayVisible] = useState(false);
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Test 3321: Sibling Structure</Text>
@@ -70,6 +72,19 @@ function HomeScreen({ navigation }: any) {
         title="Open Full Screen Modal"
         onPress={() => navigation.navigate('Modal')}
       />
+      <Button
+        title="Open FullWindowOverlay"
+        color={Colors.RedDark100}
+        onPress={() => setOverlayVisible(true)}
+      />
+
+      {overlayVisible && (
+        <FullWindowOverlay>
+          <FullWindowOverlayContents
+            closeOverlay={() => setOverlayVisible(false)}
+          />
+        </FullWindowOverlay>
+      )}
     </View>
   );
 }
