@@ -818,15 +818,9 @@ RNS_IGNORE_SUPER_CALL_END
 
     // Use RNSViewInteractionManager util to find a suitable subtree to disable interations on,
     // starting from reactSuperview, because on Paper, self is not attached yet.
-    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
-  }
-}
-
-- (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
-{
-  if (@available(iOS 26, *)) {
-    // Disable interactions to disallow multiple modals dismissed at once; see willMoveToWindow
-    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
+    if (![self isPresentedAsNativeModal]) {
+      [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
+    }
   }
 
 #if !RCT_NEW_ARCH_ENABLED
