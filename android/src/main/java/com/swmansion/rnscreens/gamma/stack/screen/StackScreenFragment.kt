@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack
+package com.swmansion.rnscreens.gamma.stack.screen
 
 import android.os.Bundle
 import android.view.LayoutInflater

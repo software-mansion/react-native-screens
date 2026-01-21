@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack
+package com.swmansion.rnscreens.gamma.stack.host
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -8,27 +8,15 @@ import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
-import com.swmansion.rnscreens.gamma.common.container.ContainerInterface
-import com.swmansion.rnscreens.gamma.common.container.ContainerUpdateScheduler
+import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.utils.RNSLog
-
-private class StackHostSignals(var childrenChanged: Boolean = false) {
-    fun reset() {
-        childrenChanged = false
-    }
-}
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // should never be restored
 class StackHost(
     private val reactContext: ThemedReactContext,
-) : ViewGroup(reactContext), ContainerInterface<StackHostSignals>, UIManagerListener {
+) : ViewGroup(reactContext), UIManagerListener {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
-
-    private val signals = StackHostSignals()
-
-    private val updateManager = UpdateManager(ContainerUpdateScheduler<StackHost>())
-
     private val container = StackContainer(reactContext)
 
     init {
@@ -49,28 +37,18 @@ class StackHost(
     ) {
         renderedScreens.add(index, stackScreen)
         container.addScreen(stackScreen)
-//        updateManager.onChildrenChange(signals)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
         renderedScreens.removeAt(index)
-//        updateManager.onChildrenChange(signals)
     }
 
     internal fun unmountReactSubview(reactSubview: StackScreen) {
         renderedScreens.remove(reactSubview)
-//        updateManager.onChildrenChange(signals)
     }
 
     internal fun unmountAllReactSubviews() {
         renderedScreens.clear()
-//        updateManager.onChildrenChange(signals)
-    }
-
-
-    override fun update() {
-        RNSLog.d(TAG, "Running update")
-        signals.reset()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -100,13 +78,6 @@ class StackHost(
     override fun didDispatchMountItems(uiManager: UIManager) = Unit
 
     override fun didScheduleMountItems(uiManager: UIManager) = Unit
-
-    private inner class UpdateManager(val scheduler: ContainerUpdateScheduler<StackHost>) {
-        fun onChildrenChange(signals: StackHostSignals) {
-            signals.childrenChanged = true
-            scheduler.postContainerUpdateIfNeeded(this@StackHost)
-        }
-    }
 
     companion object {
         const val TAG = "StackHost"

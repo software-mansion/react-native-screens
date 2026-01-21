@@ -1,16 +1,17 @@
-package com.swmansion.rnscreens.gamma.stack
+package com.swmansion.rnscreens.gamma.stack.host
 
 import android.view.View
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.viewmanagers.RNSScreenStackHostManagerDelegate
-import com.facebook.react.viewmanagers.RNSScreenStackHostManagerInterface
+import com.facebook.react.viewmanagers.RNSStackHostManagerDelegate
+import com.facebook.react.viewmanagers.RNSStackHostManagerInterface
+import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
 @ReactModule(name = StackHostViewManager.REACT_CLASS)
-class StackHostViewManager : ViewGroupManager<StackHost>(), RNSScreenStackHostManagerInterface<StackHost> {
-    private val delegate: ViewManagerDelegate<StackHost> = RNSScreenStackHostManagerDelegate<StackHost, StackHostViewManager>(this)
+class StackHostViewManager : ViewGroupManager<StackHost>(), RNSStackHostManagerInterface<StackHost> {
+    private val delegate: ViewManagerDelegate<StackHost> = RNSStackHostManagerDelegate<StackHost, StackHostViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
@@ -37,6 +38,6 @@ class StackHostViewManager : ViewGroupManager<StackHost>(), RNSScreenStackHostMa
     }
 
     companion object {
-        const val REACT_CLASS = "RNSScreenStackHost"
+        const val REACT_CLASS = "RNSStackHost"
     }
 }

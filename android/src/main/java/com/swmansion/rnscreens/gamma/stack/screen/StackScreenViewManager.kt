@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack
+package com.swmansion.rnscreens.gamma.stack.screen
 
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -16,10 +16,7 @@ class StackScreenViewManager : ViewGroupManager<StackScreen>(), RNSStackScreenMa
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackScreen(reactContext)
 
-    override fun setMaxLifecycleState(
-        view: StackScreen?,
-        value: Int
-    ) {
+    override fun setActivityMode(view: StackScreen?, value: String?) {
     }
 
     override fun setScreenKey(

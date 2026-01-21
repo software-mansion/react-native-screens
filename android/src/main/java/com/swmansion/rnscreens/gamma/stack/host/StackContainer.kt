@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.stack
+package com.swmansion.rnscreens.gamma.stack.host
 
 import android.content.Context
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.gamma.helpers.createTransactionWithReordering
+import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
+import com.swmansion.rnscreens.gamma.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.utils.RNSLog
 
 interface StackContainerDelegate {
