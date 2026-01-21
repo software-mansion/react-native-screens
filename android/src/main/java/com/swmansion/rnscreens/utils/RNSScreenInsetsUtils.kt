@@ -26,7 +26,10 @@ object RNSScreenInsetsUtils {
      * 3. Return the lastKnownTopInset (if anything earlier has failed, we're assuming that insets are rather constant
      *    across Screens).
      */
-    internal fun getEstimatedTopInset(reactContext: ReactContext, screen: Screen?): Int {
+    internal fun getEstimatedTopInset(
+        reactContext: ReactContext,
+        screen: Screen?,
+    ): Int {
         // 1. Try reading from the Activity's DecorView.
         // This is the most reliable source if the Activity is currently focused and attached.
         val activity = reactContext.currentActivity
@@ -43,7 +46,7 @@ object RNSScreenInsetsUtils {
         // 2. Fallback: Try reading from the Screen view itself.
         // Useful during activity recreation where the context might not have the activity
         // reference updated yet, but the view is already part of a layout pass.
-        if(screen != null) {
+        if (screen != null) {
             val windowInsets = ViewCompat.getRootWindowInsets(screen as View)
             val systemInset = windowInsets?.let { getTopInset(it) } ?: 0
 
@@ -70,9 +73,9 @@ object RNSScreenInsetsUtils {
     /**
      * Calculates the top inset value specifically for System Bars and Cutouts.
      */
-    private fun getTopInset(insetsCompat: WindowInsetsCompat): Int {
-        return insetsCompat.getInsets(
-            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-        ).top
-    }
+    private fun getTopInset(insetsCompat: WindowInsetsCompat): Int =
+        insetsCompat
+            .getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
+            ).top
 }
