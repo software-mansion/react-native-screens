@@ -28,4 +28,8 @@ class StackScreenFragment(internal val stackScreen: StackScreen) : Fragment() {
     override fun onStop() {
         super.onStop()
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
 }

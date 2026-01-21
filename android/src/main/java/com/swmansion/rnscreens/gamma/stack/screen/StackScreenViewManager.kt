@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
+import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -16,13 +17,19 @@ class StackScreenViewManager : ViewGroupManager<StackScreen>(), RNSStackScreenMa
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackScreen(reactContext)
 
-    override fun setActivityMode(view: StackScreen?, value: String?) {
+    override fun setActivityMode(view: StackScreen, value: String?) {
+        when (value) {
+            "attached" -> view.activityMode = StackScreen.ActivityMode.ATTACHED
+            "detached" -> view.activityMode = StackScreen.ActivityMode.DETACHED
+            else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid activity mode: $value.")
+        }
     }
 
     override fun setScreenKey(
-        view: StackScreen?,
+        view: StackScreen,
         value: String?
     ) {
+        view.screenKey = value
     }
 
     companion object {

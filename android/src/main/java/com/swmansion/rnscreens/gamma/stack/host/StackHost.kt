@@ -10,6 +10,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.utils.RNSLog
+import java.lang.ref.WeakReference
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // should never be restored
@@ -36,19 +37,38 @@ class StackHost(
         index: Int,
     ) {
         renderedScreens.add(index, stackScreen)
-        container.addScreen(stackScreen)
+        stackScreen.stackHost = WeakReference(this)
+        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
+            container.addScreen(stackScreen)
+        }
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
-        renderedScreens.removeAt(index)
+        val removedScreen = renderedScreens.removeAt(index)
+        if (removedScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
+            container.removeScreen(removedScreen)
+        }
     }
 
     internal fun unmountReactSubview(reactSubview: StackScreen) {
         renderedScreens.remove(reactSubview)
+        if (reactSubview.activityMode == StackScreen.ActivityMode.ATTACHED) {
+            container.removeScreen(reactSubview)
+        }
     }
 
     internal fun unmountAllReactSubviews() {
+        renderedScreens.reversed().forEach {
+            container.removeScreen(it)
+        }
         renderedScreens.clear()
+    }
+
+    internal fun stackScreenChangedActivityMode(stackScreen: StackScreen) {
+        when (stackScreen.activityMode) {
+            StackScreen.ActivityMode.DETACHED -> container.removeScreen(stackScreen)
+            StackScreen.ActivityMode.ATTACHED -> container.addScreen(stackScreen)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

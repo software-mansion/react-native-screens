@@ -3,9 +3,31 @@ package com.swmansion.rnscreens.gamma.stack.screen
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import com.facebook.react.uimanager.ThemedReactContext
+import com.swmansion.rnscreens.gamma.stack.host.StackHost
+import java.lang.ref.WeakReference
+import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor") // should never be restored
 class StackScreen(private val reactContext: ThemedReactContext) : ViewGroup(reactContext) {
+    enum class ActivityMode {
+        DETACHED,
+        ATTACHED
+    }
+
+    internal var stackHost: WeakReference<StackHost?> = WeakReference(null)
+
+    var activityMode: ActivityMode by Delegates.observable(ActivityMode.DETACHED) { _, _, _ ->
+        stackHost.get()?.stackScreenChangedActivityMode(this)
+    }
+
+    var screenKey: String? = null
+        set(value) {
+            require(
+                field == null
+            ) { "[RNScreens] StackScreen can't change its screenKey." }
+            field = value
+        }
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
     }
 }

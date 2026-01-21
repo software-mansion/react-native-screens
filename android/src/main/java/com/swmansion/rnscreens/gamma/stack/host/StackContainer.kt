@@ -11,17 +11,21 @@ import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.utils.RNSLog
 
-interface StackContainerDelegate {
-
-}
+interface StackContainerDelegate
 
 sealed class StackOperation
 
-class AddOperation(val screen: StackScreen) : StackOperation()
-class PopOperation() : StackOperation()
+class AddOperation(
+    val screen: StackScreen,
+) : StackOperation()
 
+class PopOperation(
+    val screen: StackScreen,
+) : StackOperation()
 
-class StackContainer(context: Context) : CoordinatorLayout(context) {
+class StackContainer(
+    context: Context,
+) : CoordinatorLayout(context) {
     private var fragmentManager: FragmentManager? = null
 
     private val stackScreenFragments: MutableList<StackScreenFragment> = arrayListOf()
@@ -45,7 +49,8 @@ class StackContainer(context: Context) : CoordinatorLayout(context) {
      * Call this function to trigger container update
      */
     fun performContainerUpdateIfNeeded() {
-        val fragmentManager = checkNotNull(fragmentManager) { "[RNScreens] Fragment manager was null during stack container update" }
+        val fragmentManager =
+            checkNotNull(fragmentManager) { "[RNScreens] Fragment manager was null during stack container update" }
         performOperations(fragmentManager, false)
     }
 
@@ -54,39 +59,71 @@ class StackContainer(context: Context) : CoordinatorLayout(context) {
     }
 
     fun removeScreen(stackScreen: StackScreen) {
-        pendingOperationQueue.add(PopOperation())
+        pendingOperationQueue.add(PopOperation(stackScreen))
     }
 
-    private fun performOperations(fragmentManager: FragmentManager, commitSync: Boolean = false) {
+    private fun performOperations(
+        fragmentManager: FragmentManager,
+        commitSync: Boolean = false,
+    ) {
         val transaction = fragmentManager.createTransactionWithReordering()
-        pendingOperationQueue.forEach { operation -> performOperation(transaction, operation) }
+        pendingOperationQueue.forEach { operation -> performOperation(fragmentManager, transaction, operation) }
+
+        // TODO: refactor + should every push be added as separate back stack entry to maintain history?
+        val lastPushScreenKey =
+            pendingOperationQueue
+                .reversed()
+                .filter { it is AddOperation }
+                .map { operation -> (operation as AddOperation).screen.screenKey }
+                .firstOrNull()
+
         pendingOperationQueue.clear()
 
-        transaction.addToBackStack(null)
+        // Pop operation does not use transaction
+        if (!transaction.isEmpty) {
+            require(lastPushScreenKey != null) { "[RNScreens] Expected non-null screenKey for back stack entry." }
+            transaction.addToBackStack(lastPushScreenKey)
 
-        if (commitSync) {
-            transaction.commitNowAllowingStateLoss()
-        } else {
-            transaction.commitAllowingStateLoss()
+            if (commitSync) {
+                // TODO: will not work with back stack
+                transaction.commitNowAllowingStateLoss()
+            } else {
+                transaction.commitAllowingStateLoss()
+            }
         }
-
     }
 
-    private fun performOperation(transaction: FragmentTransaction, operation: StackOperation) {
+    private fun performOperation(
+        fragmentManager: FragmentManager,
+        transaction: FragmentTransaction,
+        operation: StackOperation,
+    ) {
         when (operation) {
             is AddOperation -> performAddOperation(transaction, operation)
-            is PopOperation -> performPopOperation(transaction, operation)
+            is PopOperation -> performPopOperation(fragmentManager, operation)
         }
     }
 
-    private fun performAddOperation(transaction: FragmentTransaction, operation: AddOperation) {
+    private fun performAddOperation(
+        transaction: FragmentTransaction,
+        operation: AddOperation,
+    ) {
         val associatedFragment = StackScreenFragment(operation.screen)
         stackScreenFragments.add(associatedFragment)
         transaction.add(this.id, associatedFragment)
     }
 
-    private fun performPopOperation(transaction: FragmentTransaction, operation: PopOperation) {
+    private fun performPopOperation(
+        fragmentManager: FragmentManager,
+        operation: PopOperation,
+    ) {
+        val backStackEntryCount = fragmentManager.backStackEntryCount
+        require(backStackEntryCount > 0) { "[RNScreens] Back stack must not be empty." }
 
+        val lastBackStackEntry = fragmentManager.getBackStackEntryAt(backStackEntryCount - 1)
+        require(lastBackStackEntry.name == operation.screen.screenKey) { "[RNScreens] Popping is supported only for top screen." }
+
+        fragmentManager.popBackStack(lastBackStackEntry.name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
     companion object {
