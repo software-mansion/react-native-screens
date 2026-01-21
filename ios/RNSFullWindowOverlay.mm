@@ -183,6 +183,8 @@
   UIWindow *window = [self window];
 
   if (window == nil) {
+    // This fallback might return wrong window in case of multi-window
+    // apps e.g. on iPad.
     window = RCTKeyWindow();
   }
 
