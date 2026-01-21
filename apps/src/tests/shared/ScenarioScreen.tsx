@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ScrollView } from 'react-native';
 import { Scenario } from './helpers';
 import { ScenarioButton } from './ScenarioButton';
@@ -24,12 +24,12 @@ function ScenarioSelect(props: { scenarios: Scenario[] }) {
   );
 }
 
-const Stack = createNativeStackNavigator();
-
 export default function ScenariosScreen(props: {
   title: string;
   scenarios: Scenario[];
 }) {
+  const Stack = useMemo(() => createNativeStackNavigator(), []);
+
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
