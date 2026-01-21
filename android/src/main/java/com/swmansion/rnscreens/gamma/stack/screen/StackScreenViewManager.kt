@@ -17,6 +17,11 @@ class StackScreenViewManager : ViewGroupManager<StackScreen>(), RNSStackScreenMa
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackScreen(reactContext)
 
+    override fun addEventEmitters(reactContext: ThemedReactContext, view: StackScreen) {
+        super.addEventEmitters(reactContext, view)
+        view.onViewManagerAddEventEmitters()
+    }
+
     override fun setActivityMode(view: StackScreen, value: String?) {
         when (value) {
             "attached" -> view.activityMode = StackScreen.ActivityMode.ATTACHED

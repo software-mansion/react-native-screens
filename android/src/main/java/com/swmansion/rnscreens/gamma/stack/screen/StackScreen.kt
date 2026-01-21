@@ -8,10 +8,12 @@ import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor") // should never be restored
-class StackScreen(private val reactContext: ThemedReactContext) : ViewGroup(reactContext) {
+class StackScreen(
+    private val reactContext: ThemedReactContext,
+) : ViewGroup(reactContext) {
     enum class ActivityMode {
         DETACHED,
-        ATTACHED
+        ATTACHED,
     }
 
     internal var stackHost: WeakReference<StackHost?> = WeakReference(null)
@@ -23,11 +25,25 @@ class StackScreen(private val reactContext: ThemedReactContext) : ViewGroup(reac
     var screenKey: String? = null
         set(value) {
             require(
-                field == null
+                field == null,
             ) { "[RNScreens] StackScreen can't change its screenKey." }
             field = value
         }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    internal lateinit var eventEmitter: StackScreenEventEmitter
+
+    internal fun onViewManagerAddEventEmitters() {
+        // When this is called from View Manager the view tag is already set
+        check(id != NO_ID) { "[RNScreens] StackScreen must have its tag set when registering event emitters" }
+        eventEmitter = StackScreenEventEmitter(reactContext, id)
+    }
+
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
     }
 }
