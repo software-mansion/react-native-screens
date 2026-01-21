@@ -16,7 +16,8 @@ import java.lang.ref.WeakReference
 @SuppressLint("ViewConstructor") // should never be restored
 class StackHost(
     private val reactContext: ThemedReactContext,
-) : ViewGroup(reactContext), UIManagerListener {
+) : ViewGroup(reactContext),
+    UIManagerListener {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext)
 
@@ -36,10 +37,15 @@ class StackHost(
         stackScreen: StackScreen,
         index: Int,
     ) {
-        renderedScreens.add(index, stackScreen)
-        stackScreen.stackHost = WeakReference(this)
-        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            container.addScreen(stackScreen)
+        if (renderedScreens.contains(stackScreen)) {
+            renderedScreens.remove(stackScreen)
+            renderedScreens.add(index, stackScreen)
+        } else {
+            renderedScreens.add(index, stackScreen)
+            stackScreen.stackHost = WeakReference(this)
+            if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
+                container.addScreen(stackScreen)
+            }
         }
     }
 
@@ -71,7 +77,10 @@ class StackHost(
         }
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         container.measure(widthMeasureSpec, heightMeasureSpec)
     }
@@ -85,7 +94,6 @@ class StackHost(
     ) {
         container.layout(l, t, r, b)
     }
-
 
     override fun didMountItems(uiManager: UIManager) {
         container.performContainerUpdateIfNeeded()
