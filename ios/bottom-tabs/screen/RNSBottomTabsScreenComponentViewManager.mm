@@ -32,9 +32,9 @@ RCT_EXPORT_VIEW_PROPERTY(scrollEdgeAppearance, NSDictionary);
 
 RCT_EXPORT_VIEW_PROPERTY(iconType, RNSBottomTabsIconType);
 RCT_EXPORT_VIEW_PROPERTY(iconImageSource, RCTImageSource);
-RCT_EXPORT_VIEW_PROPERTY(iconSfSymbolName, NSString);
+RCT_EXPORT_VIEW_PROPERTY(iconResourceName, NSString);
 RCT_EXPORT_VIEW_PROPERTY(selectedIconImageSource, RCTImageSource);
-RCT_EXPORT_VIEW_PROPERTY(selectedIconSfSymbolName, NSString);
+RCT_EXPORT_VIEW_PROPERTY(selectedIconResourceName, NSString);
 
 RCT_EXPORT_VIEW_PROPERTY(overrideScrollViewContentInsetAdjustmentBehavior, BOOL);
 
