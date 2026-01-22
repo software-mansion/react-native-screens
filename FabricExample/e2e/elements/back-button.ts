@@ -1,6 +1,7 @@
 import { device, element, by } from 'detox';
-import { getIOSVersion } from '../../../scripts/e2e/ios-devices.js';
-import isVersionEqualOrHigherThan from '../helpers/isVersionEqualOrHigherThan.js';
+import isVersionEqualOrHigherThan from '../helpers/isVersionEqualOrHigherThan';
+
+const { getIOSVersion } = require('../../../scripts/e2e/ios-devices.js');
 
 const IOS_BAR_BUTTON_TYPE = '_UIButtonBarButton';
 const backButtonElement = element(by.id('BackButton'));
