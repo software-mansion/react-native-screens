@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectLegacyTestScreen } from '../e2e-utils';
-import { tapBarBackButton } from '../component-objects/back-button';
+import { tapBarBackButton } from '../elements/back-button';
 
 describe('Test432', () => {
   beforeAll(async () => {
