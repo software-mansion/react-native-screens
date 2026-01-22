@@ -2,7 +2,7 @@ import { device, expect, element, by } from 'detox';
 
 describe('Bottom tabs and native stack', () => {
   beforeEach(async () => {
-    await device.launchApp({ newInstance: true });
+    await device.reloadReactNative();
   });
 
   it('should go to main screen and back', async () => {

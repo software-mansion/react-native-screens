@@ -36,7 +36,7 @@ const awaitClassicalEventBehavior = async () => {
 
 describe('Events', () => {
   beforeEach(async () => {
-    await device.launchApp({ newInstance: true });
+    await device.reloadReactNative();
 
     await waitFor(element(by.id('root-screen-playground-Events')))
       .toBeVisible()
