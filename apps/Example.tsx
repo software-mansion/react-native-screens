@@ -6,10 +6,7 @@ import {
   Platform,
   useColorScheme,
 } from 'react-native';
-import {
-  NavigationContainer,
-  useTheme,
-} from '@react-navigation/native';
+import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNRestart from 'react-native-restart';
@@ -33,7 +30,10 @@ import BarButtonItems from './src/screens/BarButtonItems';
 
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ScreensDarkTheme, ScreensLightTheme } from './src/shared/styling/adapter/react-navigation';
+import {
+  ScreensDarkTheme,
+  ScreensLightTheme,
+} from './src/shared/styling/adapter/react-navigation';
 
 import LegacyTestsScreen from './src/tests/LegacyTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
@@ -203,21 +203,23 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           key="SingleFeatureTests"
           testID="root-screen-single-feature-tests"
           title="Single Feature Tests"
-          onPress={() => navigation.navigate("SingleFeatureTests")}
+          onPress={() => navigation.navigate('SingleFeatureTests')}
         />
-        <ThemedText style={styles.label}>Component Integration Tests</ThemedText>
+        <ThemedText style={styles.label}>
+          Component Integration Tests
+        </ThemedText>
         <ListItem
           key="ComponentIntegrationTests"
           testID="root-screen-component-integration-tests"
           title="Component Integration Tests"
-          onPress={() => navigation.navigate("ComponentIntegrationTests")}
+          onPress={() => navigation.navigate('ComponentIntegrationTests')}
         />
         <ThemedText style={styles.label}>Legacy Tests</ThemedText>
         <ListItem
           key="LegacyTests"
           testID="root-screen-legacy-tests"
           title="Legacy Tests"
-          onPress={() => navigation.navigate("LegacyTests")}
+          onPress={() => navigation.navigate('LegacyTests')}
         />
       </ScrollView>
     </SafeAreaView>
@@ -238,14 +240,16 @@ const ExampleApp = (): React.JSX.Element => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetectorProvider>
         <ThemeToggle.Provider value={{ toggleTheme }}>
-          <NavigationContainer theme={isDark ? ScreensDarkTheme : ScreensLightTheme}>
+          <NavigationContainer
+            theme={isDark ? ScreensDarkTheme : ScreensLightTheme}>
             <Stack.Navigator
               screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
               <Stack.Screen
                 name="Main"
                 options={{
-                  title: `${Platform.isTV ? '📺' : '📱'
-                    } React Native Screens Examples`,
+                  title: `${
+                    Platform.isTV ? '📺' : '📱'
+                  } React Native Screens Examples`,
                 }}
                 component={MainScreen}
               />

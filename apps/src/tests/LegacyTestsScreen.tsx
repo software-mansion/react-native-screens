@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer, NavigationIndependentTree, NavigationProp } from '@react-navigation/native';
-import * as Tests from './legacy-tests'
+import {
+  NavigationContainer,
+  NavigationIndependentTree,
+  NavigationProp,
+} from '@react-navigation/native';
+import * as Tests from './legacy-tests';
 import { ScrollView, StyleSheet, useColorScheme } from 'react-native';
 import { ListItem, SettingsSwitch } from '../shared';
-import { ScreensDarkTheme, ScreensLightTheme } from '../shared/styling/adapter/react-navigation';
+import {
+  ScreensDarkTheme,
+  ScreensLightTheme,
+} from '../shared/styling/adapter/react-navigation';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -35,32 +42,33 @@ type LegacyTestStackParamList = {
   [P in keyof typeof SCREENS]: undefined;
 };
 
-const issueRegex = /Test(?<issue>\d+)(?<case>.*)/
+const issueRegex = /Test(?<issue>\d+)(?<case>.*)/;
 
-const screens = Object.keys(SCREENS)
-  .sort((name1, name2) => {
-    const spec1 = issueRegex.exec(name1)?.groups
-    const spec2 = issueRegex.exec(name2)?.groups
+const screens = Object.keys(SCREENS).sort((name1, name2) => {
+  const spec1 = issueRegex.exec(name1)?.groups;
+  const spec2 = issueRegex.exec(name2)?.groups;
 
-    const testNumber1 = parseInt(spec1?.issue as string)
-    const testNumber2 = parseInt(spec2?.issue as string)
+  const testNumber1 = parseInt(spec1?.issue as string);
+  const testNumber2 = parseInt(spec2?.issue as string);
 
-    if (Number.isNaN(testNumber1) && Number.isNaN(testNumber2)) {
-      return 0;
-    } else if (Number.isNaN(testNumber1)) {
-      return 1;
-    } else if (Number.isNaN(testNumber2)) {
-      return -1;
-    } else if (testNumber1 !== testNumber2) {
-      return testNumber1 - testNumber2;
-    } else if ((spec1?.case as string) < (spec2?.case as string)) {
-      return -1;
-    } else {
-      return (spec1?.case as string) > (spec2?.case as string) ? 1 : 0;
-    }
-  })
+  if (Number.isNaN(testNumber1) && Number.isNaN(testNumber2)) {
+    return 0;
+  } else if (Number.isNaN(testNumber1)) {
+    return 1;
+  } else if (Number.isNaN(testNumber2)) {
+    return -1;
+  } else if (testNumber1 !== testNumber2) {
+    return testNumber1 - testNumber2;
+  } else if ((spec1?.case as string) < (spec2?.case as string)) {
+    return -1;
+  } else {
+    return (spec1?.case as string) > (spec2?.case as string) ? 1 : 0;
+  }
+});
 
-function MainScreen (props: { navigation: NavigationProp<LegacyTestStackParamList> }) {
+function MainScreen(props: {
+  navigation: NavigationProp<LegacyTestStackParamList>;
+}) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [searchBarEnabled, setSearchBarEnabled] = React.useState(false);
 
@@ -70,7 +78,7 @@ function MainScreen (props: { navigation: NavigationProp<LegacyTestStackParamLis
     if (searchBarEnabled) {
       navigation.setOptions({
         headerSearchBarOptions: {
-          onChangeText: (event) => setSearchQuery(event.nativeEvent.text),
+          onChangeText: event => setSearchQuery(event.nativeEvent.text),
         },
       });
     } else {
@@ -100,19 +108,19 @@ function MainScreen (props: { navigation: NavigationProp<LegacyTestStackParamLis
           onValueChange={() => setSearchBarEnabled(!searchBarEnabled)}
           testID="legacy-tests-search-bar"
         />
-          {filteredTests.map(name => (
-            <ListItem
-              key={name}
-              testID={`legacy-tests-${name}`}
-              title={SCREENS[name].title}
-              onPress={() => navigation.navigate(name)}
-              disabled={false}
-            />
-          ))}
+        {filteredTests.map(name => (
+          <ListItem
+            key={name}
+            testID={`legacy-tests-${name}`}
+            title={SCREENS[name].title}
+            onPress={() => navigation.navigate(name)}
+            disabled={false}
+          />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 function LegacyTests() {
   const scheme = useColorScheme();
@@ -124,7 +132,8 @@ function LegacyTests() {
 
   return (
     <NavigationIndependentTree>
-      <NavigationContainer theme={isDark ? ScreensDarkTheme : ScreensLightTheme}>
+      <NavigationContainer
+        theme={isDark ? ScreensDarkTheme : ScreensLightTheme}>
         <Stack.Navigator
           screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
           <Stack.Screen
@@ -144,7 +153,7 @@ function LegacyTests() {
       </NavigationContainer>
     </NavigationIndependentTree>
   );
-};
+}
 
 const styles = StyleSheet.create({
   label: {
