@@ -65,7 +65,6 @@ export default function App() {
             contentStyle: {
               backgroundColor: Colors.YellowLight40,
             },
-            // TODO(@t0maboro) - add `sheetDefaultResizeAnimationEnabled` prop here when possible
           }}
         />
       </Stack.Navigator>
@@ -89,11 +88,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
     gap: 20,
-  },
-  formSheetTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
   },
   text: {
     fontSize: 16,
