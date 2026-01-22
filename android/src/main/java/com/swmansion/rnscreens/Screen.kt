@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
@@ -161,10 +162,13 @@ class Screen(
                 }
 
                 if (isInitial) {
+                    Log.d("tomaboro", "setupInitialSheetContentHeight")
                     setupInitialSheetContentHeight(sheetBehavior, height)
                 } else if (sheetDefaultResizeAnimationEnabled) {
+                    Log.d("tomaboro", "updateSheetContentHeightWithAnimation")
                     updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
                 } else {
+                    Log.d("tomaboro", "updateSheetContentHeightWithoutAnimation")
                     updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
                 }
             }
@@ -205,10 +209,11 @@ class Screen(
              * After animation, we just need to send a notification that ShadowTree state should be updated,
              * as the positioning of pressables has changed due to the Y translation manipulation.
              */
-            this.translationY = delta
+            val initialTranslationY = this.translationY
+            this.translationY += delta
             this
                 .animate()
-                .translationY(0f)
+                .translationY(initialTranslationY)
                 .withStartAction {
                     behavior.updateMetrics(newHeight)
                     layout(this.left, this.bottom - newHeight, this.right, this.bottom)
@@ -240,14 +245,15 @@ class Screen(
              * After animation, we need to send a notification that ShadowTree state should be updated,
              * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
              */
+            val initialTranslationY = this.translationY
             this
                 .animate()
-                .translationY(-delta)
+                .translationY(initialTranslationY - delta)
                 .withStartAction {
                     behavior.updateMetrics(newHeight)
                 }.withEndAction {
                     layout(this.left, this.bottom - newHeight, this.right, this.bottom)
-                    this.translationY = 0f
+                    this.translationY = initialTranslationY
                     // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
                     // internal offsets with the new maxHeight. This prevents the sheet from snapping back
                     // to its old position when the user starts a gesture.
