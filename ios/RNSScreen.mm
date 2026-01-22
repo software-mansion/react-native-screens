@@ -822,7 +822,10 @@ RNS_IGNORE_SUPER_CALL_END
       [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
     }
   }
+}
 
+- (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
+{
 #if !RCT_NEW_ARCH_ENABLED
   // On Paper, we need to call both "cancel" and "reset" here because RN's gesture
   // recognizer does not handle the scenario when it gets cancelled by other top
