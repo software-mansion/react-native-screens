@@ -320,7 +320,8 @@ class Screen(
         val maxAvailableVerticalSpace =
             this.fragment
                 ?.asScreenStackFragment()
-                ?.resolveMaxFormSheetHeight() ?: return targetHeight
+                ?.sheetDelegate
+                ?.tryResolveMaxFormSheetHeight() ?: return targetHeight
 
         // Please note that currentTranslationY is rather < 0 here.
         // The translation is included in constraining the available space, because the FormSheet can have some offset, e.g. to
