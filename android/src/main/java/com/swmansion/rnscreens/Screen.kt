@@ -210,7 +210,9 @@ class Screen(
                 ?.asScreenStackFragment()
                 ?.resolveMaxFormSheetHeight() ?: return
 
-        // Please note that the translation here is rather < 0
+        // Please note that currentTranslationY is rather < 0 here
+        // The translation is included in constraining the available space, because the FormSheet can have some offset, e.g. to
+        // avoid the keyboard.
         val clampedOldHeight = oldHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
         val clampedNewHeight = newHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
         val visibleDelta = (clampedNewHeight - clampedOldHeight).toFloat()
