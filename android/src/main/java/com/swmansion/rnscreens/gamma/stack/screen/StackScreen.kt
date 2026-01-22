@@ -16,6 +16,13 @@ class StackScreen(
         ATTACHED,
     }
 
+    internal var isNativelyDismissed = false
+        set(value) {
+            require(value) {
+                "[RNScreens] Natively dismissed StackScreen must remain dismissed."
+            }
+            field = true
+        }
     internal var stackHost: WeakReference<StackHost?> = WeakReference(null)
 
     var activityMode: ActivityMode by Delegates.observable(ActivityMode.DETACHED) { _, _, _ ->

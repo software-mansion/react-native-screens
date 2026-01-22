@@ -10,8 +10,7 @@ import com.swmansion.rnscreens.gamma.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.utils.RNSLog
-
-interface StackContainerDelegate
+import java.lang.ref.WeakReference
 
 sealed class StackOperation
 
@@ -25,6 +24,7 @@ class PopOperation(
 
 class StackContainer(
     context: Context,
+    private val delegate: WeakReference<StackContainerDelegate>,
 ) : CoordinatorLayout(context) {
     private var fragmentManager: FragmentManager? = null
 
@@ -56,11 +56,11 @@ class StackContainer(
         }
     }
 
-    fun addScreen(stackScreen: StackScreen) {
+    fun enqueueAddOperation(stackScreen: StackScreen) {
         pendingOperationQueue.add(AddOperation(stackScreen))
     }
 
-    fun removeScreen(stackScreen: StackScreen) {
+    fun enqueuePopOperation(stackScreen: StackScreen) {
         pendingOperationQueue.add(PopOperation(stackScreen))
     }
 
@@ -110,7 +110,7 @@ class StackContainer(
         transaction: FragmentTransaction,
         operation: AddOperation,
     ) {
-        val associatedFragment = StackScreenFragment(operation.screen)
+        val associatedFragment = StackScreenFragment(WeakReference(this), operation.screen)
         stackScreenFragments.add(associatedFragment)
         transaction.add(this.id, associatedFragment)
     }
@@ -126,6 +126,10 @@ class StackContainer(
         require(lastBackStackEntry.name == operation.screen.screenKey) { "[RNScreens] Popping is supported only for top screen." }
 
         fragmentManager.popBackStack(lastBackStackEntry.name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }
+
+    internal fun onFragmentDestroyView(fragment: StackScreenFragment) {
+        delegate.get()?.onNativeDismiss(fragment.stackScreen)
     }
 
     companion object {

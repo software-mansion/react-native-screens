@@ -17,9 +17,11 @@ import java.lang.ref.WeakReference
 class StackHost(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
-    UIManagerListener {
+    UIManagerListener,
+    StackContainerDelegate
+{
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
-    private val container = StackContainer(reactContext)
+    private val container = StackContainer(reactContext, WeakReference(this))
 
     init {
         addView(container)
@@ -39,37 +41,47 @@ class StackHost(
     ) {
         renderedScreens.add(index, stackScreen)
         stackScreen.stackHost = WeakReference(this)
-        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            container.addScreen(stackScreen)
-        }
+        enqueueAddOperationToContainerIfNeeded(stackScreen)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
         val removedScreen = renderedScreens.removeAt(index)
-        if (removedScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            container.removeScreen(removedScreen)
-        }
+        enqueuePopOperationToContainerIfNeeded(removedScreen)
     }
 
     internal fun unmountReactSubview(reactSubview: StackScreen) {
         renderedScreens.remove(reactSubview)
-        if (reactSubview.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            container.removeScreen(reactSubview)
-        }
+        enqueuePopOperationToContainerIfNeeded(reactSubview)
     }
 
     internal fun unmountAllReactSubviews() {
         renderedScreens.asReversed().forEach {
-            container.removeScreen(it)
+            enqueuePopOperationToContainerIfNeeded(it)
         }
         renderedScreens.clear()
     }
 
+    private fun enqueueAddOperationToContainerIfNeeded(stackScreen: StackScreen) {
+        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
+            container.enqueueAddOperation(stackScreen)
+        }
+    }
+
+    private fun enqueuePopOperationToContainerIfNeeded(stackScreen: StackScreen) {
+        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED && !stackScreen.isNativelyDismissed) {
+            container.enqueuePopOperation(stackScreen)
+        }
+    }
+
     internal fun stackScreenChangedActivityMode(stackScreen: StackScreen) {
         when (stackScreen.activityMode) {
-            StackScreen.ActivityMode.DETACHED -> container.removeScreen(stackScreen)
-            StackScreen.ActivityMode.ATTACHED -> container.addScreen(stackScreen)
+            StackScreen.ActivityMode.DETACHED -> container.enqueuePopOperation(stackScreen)
+            StackScreen.ActivityMode.ATTACHED -> container.enqueueAddOperation(stackScreen)
         }
+    }
+
+    override fun onNativeDismiss(stackScreen: StackScreen) {
+        stackScreen.isNativelyDismissed = true
     }
 
     override fun onMeasure(
