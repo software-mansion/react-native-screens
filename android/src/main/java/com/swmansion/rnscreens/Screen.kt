@@ -224,6 +224,9 @@ class Screen(
              * expanding exactly at the maxHeight, preventing the header from being pushed
              * off-screen or causing layout synchronization issues with the CoordinatorLayout.
              */
+
+            // TODO:(@t0maboro) - this still doesn't work when the newHeight is larger than maxHeight (independently of initialTranslationY)
+            // The work will be continued in: https://github.com/software-mansion/react-native-screens-labs/issues/802
             val overflow = (newHeight - initialTranslationY - maxHeight).coerceAtLeast(0f)
             val targetTranslationY = initialTranslationY + overflow
             this
