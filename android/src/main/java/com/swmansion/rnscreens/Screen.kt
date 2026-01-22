@@ -197,7 +197,7 @@ class Screen(
          * WHY OVERFLOW MATTERS:
          * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
          * If the new content height exceeds this limit (by its size or keyboard offset), simply
-         * animating translationY back to 'initialTranslationY' would attempt to render the sheet
+         * animating translationY back to 'currentTranslationY' would attempt to render the sheet
          * larger than the screen.
          *
          * We need to have constraint height inside the container's bounds.
