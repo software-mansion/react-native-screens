@@ -115,7 +115,7 @@ class SheetDelegate(
     }
 
     internal fun updateBottomSheetMetrics(behavior: BottomSheetBehavior<Screen>) {
-        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        val containerHeight = tryResolveMaxFormSheetHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -152,7 +152,7 @@ class SheetDelegate(
         keyboardState: KeyboardState = KeyboardNotVisible,
         selectedDetentIndex: Int = lastStableDetentIndex,
     ): BottomSheetBehavior<Screen> {
-        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        val containerHeight = tryResolveMaxFormSheetHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -295,7 +295,7 @@ class SheetDelegate(
     // Otherwise, it shifts the sheet as high as possible, even if it means part of its content
     // will remain hidden behind the keyboard.
     internal fun computeSheetOffsetYWithIMEPresent(keyboardHeight: Int): Int {
-        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        val containerHeight = tryResolveMaxFormSheetHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -372,18 +372,25 @@ class SheetDelegate(
         @BottomSheetBehavior.State state: Int,
     ) = state == BottomSheetBehavior.STATE_HIDDEN
 
+    internal fun tryResolveMaxFormSheetHeight(): Int? =
+        if (screen.sheetShouldOverflowTopInset) {
+            tryResolveContainerHeight()
+        } else {
+            tryResolveSafeAreaSpaceForSheet()
+        }
+
     /**
      * This method tries to resolve the maximum height available for the sheet content,
      * accounting for the system top inset.
      */
-    internal fun tryResolveSafeAreaSpaceForSheet(): Int? = tryResolveContainerHeight()?.let { it - lastTopInset }
+    private fun tryResolveSafeAreaSpaceForSheet(): Int? = tryResolveContainerHeight()?.let { it - lastTopInset }
 
     /**
      * This method might return slightly different values depending on code path,
      * but during testing I've found this effect negligible. For practical purposes
      * this is acceptable.
      */
-    internal fun tryResolveContainerHeight(): Int? {
+    private fun tryResolveContainerHeight(): Int? {
         screen.container?.let { return it.height }
 
         val context = screen.reactContext

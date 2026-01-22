@@ -210,7 +210,8 @@ class Screen(
             val maxHeight =
                 this.fragment
                     ?.asScreenStackFragment()
-                    ?.resolveMaxFormSheetHeight()
+                    ?.sheetDelegate
+                    ?.tryResolveMaxFormSheetHeight()
                     ?.toFloat()
                     ?: return
             /*
