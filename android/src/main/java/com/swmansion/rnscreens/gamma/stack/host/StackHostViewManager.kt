@@ -10,7 +10,9 @@ import com.facebook.react.viewmanagers.RNSStackHostManagerInterface
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
 @ReactModule(name = StackHostViewManager.REACT_CLASS)
-class StackHostViewManager : ViewGroupManager<StackHost>(), RNSStackHostManagerInterface<StackHost> {
+class StackHostViewManager :
+    ViewGroupManager<StackHost>(),
+    RNSStackHostManagerInterface<StackHost> {
     private val delegate: ViewManagerDelegate<StackHost> = RNSStackHostManagerDelegate<StackHost, StackHostViewManager>(this)
 
     override fun getName() = REACT_CLASS
@@ -19,23 +21,40 @@ class StackHostViewManager : ViewGroupManager<StackHost>(), RNSStackHostManagerI
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackHost(reactContext)
 
-    override fun addView(parent: StackHost, child: View, index: Int) {
+    override fun addView(
+        parent: StackHost,
+        child: View,
+        index: Int,
+    ) {
         require(child is StackScreen) { "[RNScreens] Attempt to attach child that is not of type ${StackScreen::javaClass.name}" }
         parent.mountReactSubviewAt(child, index)
     }
 
-    override fun removeView(parent: StackHost, view: View) {
+    override fun removeView(
+        parent: StackHost,
+        view: View,
+    ) {
         require(view is StackScreen) { "[RNScreens] Attempt to attach child that is not of type ${StackScreen::javaClass.name}" }
         parent.unmountReactSubview(view)
     }
 
-    override fun removeViewAt(parent: StackHost, index: Int) {
+    override fun removeViewAt(
+        parent: StackHost,
+        index: Int,
+    ) {
         parent.unmountReactSubviewAt(index)
     }
 
     override fun removeAllViews(parent: StackHost) {
         parent.unmountAllReactSubviews()
     }
+
+    override fun getChildAt(
+        parent: StackHost,
+        index: Int,
+    ): View? = parent.renderedScreens.getOrNull(index)
+
+    override fun getChildCount(parent: StackHost): Int = parent.renderedScreens.size
 
     companion object {
         const val REACT_CLASS = "RNSStackHost"
