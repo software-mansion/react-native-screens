@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectLegacyTestScreen } from '../e2e-utils';
 
 async function testDetentsVisibility(
   testCaseName: string,
@@ -37,7 +37,7 @@ describeIfiOS('Test2543', () => {
   });
 
   it('Test2543 should exist', async () => {
-    await selectTestScreen('Test2543');
+    await selectLegacyTestScreen('Test2543');
   });
 
   it('formSheet with 2 detents, initial first, should allow changing detents', async () => {

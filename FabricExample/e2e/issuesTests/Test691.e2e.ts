@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectLegacyTestScreen } from '../e2e-utils';
 
 // issue related to iOS modal behavior
 describeIfiOS('Test691', () => {
@@ -8,7 +8,7 @@ describeIfiOS('Test691', () => {
   });
 
   it('Test691 should exist', async () => {
-    await selectTestScreen('Test691');
+    await selectLegacyTestScreen('Test691');
   });
 
   it('modal on tab1 should open', async () => {

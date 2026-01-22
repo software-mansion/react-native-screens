@@ -5,8 +5,8 @@ import {
   NavigationProp,
 } from '@react-navigation/native';
 import * as Tests from './legacy-tests';
-import { ScrollView, StyleSheet, useColorScheme } from 'react-native';
-import { ListItem, SettingsSwitch } from '../shared';
+import { ScrollView, useColorScheme } from 'react-native';
+import { ListItem } from '../shared';
 import {
   ScreensDarkTheme,
   ScreensLightTheme,
@@ -70,24 +70,21 @@ function MainScreen(props: {
   navigation: NavigationProp<LegacyTestStackParamList>;
 }) {
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [searchBarEnabled, setSearchBarEnabled] = React.useState(false);
 
   const { navigation } = props;
 
   React.useLayoutEffect(() => {
-    if (searchBarEnabled) {
-      navigation.setOptions({
-        headerSearchBarOptions: {
-          onChangeText: event => setSearchQuery(event.nativeEvent.text),
-        },
-      });
-    } else {
-      setSearchQuery('');
-      navigation.setOptions({
-        headerSearchBarOptions: undefined,
-      });
-    }
-  }, [navigation, searchBarEnabled]);
+    navigation.setOptions({
+      headerSearchBarOptions: {
+        onChangeText: event => setSearchQuery(event.nativeEvent.text),
+        placement: 'stacked',
+        hideNavigationBar: false,
+        obscureBackground: false,
+        autoCapitalize: 'none',
+        hideWhenScrolling: false,
+      },
+    });
+  }, [navigation]);
 
   const searchFilter = React.useCallback(
     (name: string) =>
@@ -99,26 +96,19 @@ function MainScreen(props: {
   const filteredTests = screens.filter(searchFilter);
 
   return (
-    <SafeAreaView edges={{ top: 'off', bottom: 'maximum' }}>
-      <ScrollView testID="legacy-tests-scrollview">
-        <SettingsSwitch
-          style={styles.switch}
-          label="Search bar"
-          value={searchBarEnabled}
-          onValueChange={() => setSearchBarEnabled(!searchBarEnabled)}
-          testID="legacy-tests-search-bar"
+    <ScrollView
+      testID="legacy-tests-scrollview"
+      contentInsetAdjustmentBehavior="automatic">
+      {filteredTests.map(name => (
+        <ListItem
+          key={name}
+          testID={`legacy-tests-${name}`}
+          title={SCREENS[name].title}
+          onPress={() => navigation.navigate(name)}
+          disabled={false}
         />
-        {filteredTests.map(name => (
-          <ListItem
-            key={name}
-            testID={`legacy-tests-${name}`}
-            title={SCREENS[name].title}
-            onPress={() => navigation.navigate(name)}
-            disabled={false}
-          />
-        ))}
-      </ScrollView>
-    </SafeAreaView>
+      ))}
+    </ScrollView>
   );
 }
 
@@ -154,16 +144,5 @@ function LegacyTests() {
     </NavigationIndependentTree>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 15,
-    margin: 10,
-    marginTop: 15,
-  },
-  switch: {
-    marginTop: 15,
-  },
-});
 
 export default LegacyTests;
