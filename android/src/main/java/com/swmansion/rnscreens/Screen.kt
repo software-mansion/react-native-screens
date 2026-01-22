@@ -207,9 +207,28 @@ class Screen(
              */
             val initialTranslationY = this.translationY
             this.translationY += delta
+            val maxHeight =
+                this.fragment
+                    ?.asScreenStackFragment()
+                    ?.resolveMaxFormSheetHeight()
+                    ?.toFloat()
+                    ?: return
+            /*
+             * WHY OVERFLOW IS NEEDED:
+             * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
+             * If the new content height exceeds this limit, simply animating translationY back to
+             * 'initialTranslationY' would attempt to render the sheet larger than the screen.
+             *
+             * The 'overflow' calculates the excess height beyond the container's bounds.
+             * By adding this overflow to our target translation, we ensure the sheet stops
+             * expanding exactly at the maxHeight, preventing the header from being pushed
+             * off-screen or causing layout synchronization issues with the CoordinatorLayout.
+             */
+            val overflow = (newHeight - initialTranslationY - maxHeight).coerceAtLeast(0f)
+            val targetTranslationY = initialTranslationY + overflow
             this
                 .animate()
-                .translationY(initialTranslationY)
+                .translationY(targetTranslationY)
                 .withStartAction {
                     behavior.updateMetrics(newHeight)
                     layout(this.left, this.bottom - newHeight, this.right, this.bottom)
@@ -242,9 +261,10 @@ class Screen(
              * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
              */
             val initialTranslationY = this.translationY
+            val targetTranslationY = initialTranslationY - delta
             this
                 .animate()
-                .translationY(initialTranslationY - delta)
+                .translationY(targetTranslationY)
                 .withStartAction {
                     behavior.updateMetrics(newHeight)
                 }.withEndAction {

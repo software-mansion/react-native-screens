@@ -353,6 +353,19 @@ class ScreenStackFragment :
         return sheetDelegate.createSheetExitAnimator(sheetAnimationContext)
     }
 
+    internal fun resolveMaxFormSheetHeight(): Int? {
+        if (screen.usesFormSheetPresentation()) {
+            val sheetDelegate = requireSheetDelegate()
+            return if (screen.sheetShouldOverflowTopInset) {
+                sheetDelegate.tryResolveContainerHeight()
+            } else {
+                sheetDelegate
+                    .tryResolveSafeAreaSpaceForSheet()
+            }
+        }
+        return null
+    }
+
     private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
 
     private fun resolveBackgroundColor(screen: Screen): Int? {

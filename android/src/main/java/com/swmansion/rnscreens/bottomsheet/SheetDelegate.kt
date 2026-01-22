@@ -376,14 +376,14 @@ class SheetDelegate(
      * This method tries to resolve the maximum height available for the sheet content,
      * accounting for the system top inset.
      */
-    private fun tryResolveSafeAreaSpaceForSheet(): Int? = tryResolveContainerHeight()?.let { it - lastTopInset }
+    internal fun tryResolveSafeAreaSpaceForSheet(): Int? = tryResolveContainerHeight()?.let { it - lastTopInset }
 
     /**
      * This method might return slightly different values depending on code path,
      * but during testing I've found this effect negligible. For practical purposes
      * this is acceptable.
      */
-    private fun tryResolveContainerHeight(): Int? {
+    internal fun tryResolveContainerHeight(): Int? {
         screen.container?.let { return it.height }
 
         val context = screen.reactContext
