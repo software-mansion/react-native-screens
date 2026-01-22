@@ -205,10 +205,34 @@ class Screen(
              * After animation, we just need to send a notification that ShadowTree state should be updated,
              * as the positioning of pressables has changed due to the Y translation manipulation.
              */
-            this.translationY = delta
+            val initialTranslationY = this.translationY
+            this.translationY += delta
+            val maxHeight =
+                this.fragment
+                    ?.asScreenStackFragment()
+                    ?.sheetDelegate
+                    ?.tryResolveMaxFormSheetHeight()
+                    ?.toFloat()
+                    ?: return
+            /*
+             * WHY OVERFLOW IS NEEDED:
+             * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
+             * If the new content height exceeds this limit, simply animating translationY back to
+             * 'initialTranslationY' would attempt to render the sheet larger than the screen.
+             *
+             * The 'overflow' calculates the excess height beyond the container's bounds.
+             * By adding this overflow to our target translation, we ensure the sheet stops
+             * expanding exactly at the maxHeight, preventing the header from being pushed
+             * off-screen or causing layout synchronization issues with the CoordinatorLayout.
+             */
+
+            // TODO:(@t0maboro) - this still doesn't work when the newHeight is larger than maxHeight (independently of initialTranslationY)
+            // The work will be continued in: https://github.com/software-mansion/react-native-screens-labs/issues/802
+            val overflow = (newHeight - initialTranslationY - maxHeight).coerceAtLeast(0f)
+            val targetTranslationY = initialTranslationY + overflow
             this
                 .animate()
-                .translationY(0f)
+                .translationY(targetTranslationY)
                 .withStartAction {
                     behavior.updateMetrics(newHeight)
                     layout(this.left, this.bottom - newHeight, this.right, this.bottom)
@@ -240,14 +264,16 @@ class Screen(
              * After animation, we need to send a notification that ShadowTree state should be updated,
              * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
              */
+            val initialTranslationY = this.translationY
+            val targetTranslationY = initialTranslationY - delta
             this
                 .animate()
-                .translationY(-delta)
+                .translationY(targetTranslationY)
                 .withStartAction {
                     behavior.updateMetrics(newHeight)
                 }.withEndAction {
                     layout(this.left, this.bottom - newHeight, this.right, this.bottom)
-                    this.translationY = 0f
+                    this.translationY = initialTranslationY
                     // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
                     // internal offsets with the new maxHeight. This prevents the sheet from snapping back
                     // to its old position when the user starts a gesture.
