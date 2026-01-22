@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import { Button, View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
