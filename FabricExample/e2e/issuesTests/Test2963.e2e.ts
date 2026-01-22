@@ -1,5 +1,5 @@
 import { device, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectLegacyTestScreen } from '../e2e-utils';
 
 // issue related to iOS
 describeIfiOS('Test2963', () => {
@@ -8,7 +8,7 @@ describeIfiOS('Test2963', () => {
   });
 
   it('Test2963 should exist', async () => {
-    await selectTestScreen('Test2963');
+    await selectLegacyTestScreen('Test2963');
   });
 
   it('pushing more than 4 modals with header from interval should be possible', async () => {

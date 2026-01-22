@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectLegacyTestScreen } from '../e2e-utils';
 import { tapBarBackButton } from '../component-objects/back-button';
 
 // Detox currently supports orientation only on iOS
@@ -9,7 +9,7 @@ describeIfiOS('Test528', () => {
   });
 
   it('Test528 should exist', async () => {
-    await selectTestScreen('Test528');
+    await selectLegacyTestScreen('Test528');
   });
 
   it('headerRight button should be visible after orientation change', async () => {

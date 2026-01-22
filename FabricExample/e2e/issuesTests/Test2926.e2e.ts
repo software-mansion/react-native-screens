@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectLegacyTestScreen } from '../e2e-utils';
 import { tapBarBackButton } from '../component-objects/back-button';
 
 // PR related to iOS search bar
@@ -9,7 +9,7 @@ describeIfiOS('Test2926', () => {
   });
 
   it('Test2926 should exist', async () => {
-    await selectTestScreen('Test2926');
+    await selectLegacyTestScreen('Test2926');
   });
 
   it('searchBar should be initially visible', async () => {
