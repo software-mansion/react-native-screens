@@ -28,6 +28,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.SheetDetents
+import com.swmansion.rnscreens.bottomsheet.fitToContentsSheetHeight
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.updateMetrics
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
@@ -152,7 +153,7 @@ class Screen(
         val sheetBehavior = sheetBehavior
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents() && sheetBehavior != null) {
-                val oldHeight = sheetBehavior.maxHeight
+                val oldHeight = sheetBehavior.fitToContentsSheetHeight()
                 val isInitial = oldHeight == 0
                 val heightChanged = oldHeight != height
 
@@ -182,12 +183,15 @@ class Screen(
         }
     }
 
+    /**
+     * This should be used only with sheet in `fitToContents` mode.
+     */
     private fun updateSheetContentHeightWithAnimation(
         behavior: BottomSheetBehavior<Screen>,
         oldHeight: Int,
         newHeight: Int,
     ) {
-        val keyboardOffset = this.translationY
+        val currentTranslationY = this.translationY
 
         /*
          * WHY OVERFLOW MATTERS:
@@ -201,13 +205,14 @@ class Screen(
          * expanding exactly at the maxHeight, preventing from being pushed
          * off-screen or causing layout synchronization issues with the CoordinatorLayout.
          */
-        val maxHeight =
+        val maxAvailableVerticalSpace =
             this.fragment
                 ?.asScreenStackFragment()
                 ?.resolveMaxFormSheetHeight() ?: return
 
-        val clampedOldHeight = oldHeight.coerceAtMost((maxHeight + keyboardOffset).toInt())
-        val clampedNewHeight = newHeight.coerceAtMost((maxHeight + keyboardOffset).toInt())
+        // Please note that the translation here is rather < 0
+        val clampedOldHeight = oldHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
+        val clampedNewHeight = newHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
         val visibleDelta = (clampedNewHeight - clampedOldHeight).toFloat()
 
         if (visibleDelta == 0f) return
@@ -232,7 +237,7 @@ class Screen(
             this.translationY += visibleDelta
             this
                 .animate()
-                .translationY(keyboardOffset)
+                .translationY(currentTranslationY)
                 .withStartAction {
                     behavior.updateMetrics(clampedNewHeight)
                     layout(this.left, this.bottom - clampedNewHeight, this.right, this.bottom)
@@ -264,7 +269,7 @@ class Screen(
              * After animation, we need to send a notification that ShadowTree state should be updated,
              * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
              */
-            val targetTranslationY = keyboardOffset - visibleDelta
+            val targetTranslationY = currentTranslationY - visibleDelta
             this
                 .animate()
                 .translationY(targetTranslationY)
@@ -272,7 +277,7 @@ class Screen(
                     behavior.updateMetrics(clampedNewHeight)
                 }.withEndAction {
                     layout(this.left, this.bottom - clampedNewHeight, this.right, this.bottom)
-                    this.translationY = keyboardOffset
+                    this.translationY = currentTranslationY
                     // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
                     // internal offsets with the new maxHeight. This prevents the sheet from snapping back
                     // to its old position when the user starts a gesture.
