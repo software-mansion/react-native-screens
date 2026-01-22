@@ -29,13 +29,18 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
       const ShadowTreeCommitOptions & /*commitOptions*/) noexcept override;
 
  private:
-  static inline bool isHorizontal_(const RootProps &props) {
-    const auto &layoutConstraints = props.layoutConstraints;
-    const float width = layoutConstraints.maximumSize.width;
-    const float height = layoutConstraints.maximumSize.height;
+  static inline bool _screenSizeChanged(
+      const RootProps &oldProps,
+      const RootProps &newProps) {
+    const auto &newLayoutConstraints = newProps.layoutConstraints;
+    const auto &oldLayoutConstraints = oldProps.layoutConstraints;
 
-    return width > height;
-  };
+    return (
+        newLayoutConstraints.maximumSize.width !=
+            oldLayoutConstraints.maximumSize.width ||
+        newLayoutConstraints.maximumSize.height !=
+            oldLayoutConstraints.maximumSize.width);
+  }
 
   static RootShadowNode::Unshared newRootShadowNodeWithScreenFrameSizesReset(
       RootShadowNode::Unshared rootShadowNode);
