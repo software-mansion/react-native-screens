@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-} from 'react-native';
+import { Button, View, Text, StyleSheet, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -46,17 +40,12 @@ const FormSheetScreen = ({
 
   return (
     <View style={styles.formSheetContainer}>
-      <TextInput
-        style={styles.input}
-        autoFocus
-      />
+      <TextInput style={styles.input} autoFocus />
       <PressableWithFeedback>
         <Text style={styles.text}>Test Pressable</Text>
       </PressableWithFeedback>
       <View style={styles.rectangle} />
-      {showSecondRectangle && (
-        <View style={styles.rectangle} />
-      )}
+      {showSecondRectangle && <View style={styles.rectangle} />}
       <Button title="Dismiss" onPress={() => navigation.goBack()} />
     </View>
   );
