@@ -11,7 +11,7 @@ class StackScreenFragment(internal val stackScreen: StackScreen) : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = stackScreen
+    ): View = stackScreen
 
     override fun onStart() {
         stackScreen.eventEmitter.emitOnWillAppear()

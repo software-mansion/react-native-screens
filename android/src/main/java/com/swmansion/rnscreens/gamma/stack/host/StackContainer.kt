@@ -49,9 +49,11 @@ class StackContainer(
      * Call this function to trigger container update
      */
     fun performContainerUpdateIfNeeded() {
-        val fragmentManager =
-            checkNotNull(fragmentManager) { "[RNScreens] Fragment manager was null during stack container update" }
-        performOperations(fragmentManager, false)
+        if (pendingOperationQueue.isNotEmpty()) {
+            val fragmentManager =
+                checkNotNull(fragmentManager) { "[RNScreens] Fragment manager was null during stack container update" }
+            performOperations(fragmentManager, false)
+        }
     }
 
     fun addScreen(stackScreen: StackScreen) {

@@ -37,15 +37,10 @@ class StackHost(
         stackScreen: StackScreen,
         index: Int,
     ) {
-        if (renderedScreens.contains(stackScreen)) {
-            renderedScreens.remove(stackScreen)
-            renderedScreens.add(index, stackScreen)
-        } else {
-            renderedScreens.add(index, stackScreen)
-            stackScreen.stackHost = WeakReference(this)
-            if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-                container.addScreen(stackScreen)
-            }
+        renderedScreens.add(index, stackScreen)
+        stackScreen.stackHost = WeakReference(this)
+        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
+            container.addScreen(stackScreen)
         }
     }
 
@@ -64,7 +59,7 @@ class StackHost(
     }
 
     internal fun unmountAllReactSubviews() {
-        renderedScreens.reversed().forEach {
+        renderedScreens.asReversed().forEach {
             container.removeScreen(it)
         }
         renderedScreens.clear()
