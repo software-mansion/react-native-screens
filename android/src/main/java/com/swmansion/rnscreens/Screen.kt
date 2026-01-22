@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
-import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
@@ -162,13 +161,10 @@ class Screen(
                 }
 
                 if (isInitial) {
-                    Log.d("tomaboro", "setupInitialSheetContentHeight")
                     setupInitialSheetContentHeight(sheetBehavior, height)
                 } else if (sheetDefaultResizeAnimationEnabled) {
-                    Log.d("tomaboro", "updateSheetContentHeightWithAnimation")
                     updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
                 } else {
-                    Log.d("tomaboro", "updateSheetContentHeightWithoutAnimation")
                     updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
                 }
             }
