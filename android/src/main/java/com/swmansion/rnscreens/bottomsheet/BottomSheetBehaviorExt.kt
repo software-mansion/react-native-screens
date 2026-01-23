@@ -60,3 +60,9 @@ internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     maxAllowedHeight?.let { this.maxHeight = maxAllowedHeight }
     return this
 }
+
+internal fun <T : View> BottomSheetBehavior<T>.fitToContentsSheetHeight(): Int {
+    // In fitToContents only a single detent is allowed, and the actual
+    // sheet height is stored in this field.
+    return this.maxHeight
+}

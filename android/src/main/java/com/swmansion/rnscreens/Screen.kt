@@ -28,6 +28,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.SheetDetents
+import com.swmansion.rnscreens.bottomsheet.fitToContentsSheetHeight
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
 import com.swmansion.rnscreens.bottomsheet.updateMetrics
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
@@ -152,7 +153,7 @@ class Screen(
         val sheetBehavior = sheetBehavior
         if (usesFormSheetPresentation()) {
             if (isSheetFitToContents() && sheetBehavior != null) {
-                val oldHeight = sheetBehavior.maxHeight
+                val oldHeight = sheetBehavior.fitToContentsSheetHeight()
                 val isInitial = oldHeight == 0
                 val heightChanged = oldHeight != height
 
@@ -182,13 +183,35 @@ class Screen(
         }
     }
 
+    /**
+     * This should be used only with sheet in `fitToContents` mode.
+     */
     private fun updateSheetContentHeightWithAnimation(
         behavior: BottomSheetBehavior<Screen>,
         oldHeight: Int,
         newHeight: Int,
     ) {
-        val delta = (newHeight - oldHeight).toFloat()
-        val isContentExpanding = delta > 0
+        val currentTranslationY = this.translationY
+
+        /*
+         * WHY OVERFLOW MATTERS:
+         * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
+         * If the new content height exceeds this limit (by its size or keyboard offset), simply
+         * animating translationY back to 'currentTranslationY' would attempt to render the sheet
+         * larger than the screen.
+         *
+         * We need to have constraint height inside the container's bounds.
+         * By including this overflow to our animation, we ensure the sheet stops
+         * expanding exactly at the maxHeight, preventing from being pushed
+         * off-screen or causing layout synchronization issues with the CoordinatorLayout.
+         */
+        val clampedOldHeight = resolveClampedHeight(oldHeight, currentTranslationY)
+        val clampedNewHeight = resolveClampedHeight(newHeight, currentTranslationY)
+        val visibleDelta = (clampedNewHeight - clampedOldHeight).toFloat()
+
+        if (visibleDelta == 0f) return
+
+        val isContentExpanding = visibleDelta > 0
 
         if (isContentExpanding) {
             /*
@@ -205,37 +228,13 @@ class Screen(
              * After animation, we just need to send a notification that ShadowTree state should be updated,
              * as the positioning of pressables has changed due to the Y translation manipulation.
              */
-            val initialTranslationY = this.translationY
-            this.translationY += delta
-            val maxHeight =
-                this.fragment
-                    ?.asScreenStackFragment()
-                    ?.sheetDelegate
-                    ?.tryResolveMaxFormSheetHeight()
-                    ?.toFloat()
-                    ?: return
-            /*
-             * WHY OVERFLOW IS NEEDED:
-             * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
-             * If the new content height exceeds this limit, simply animating translationY back to
-             * 'initialTranslationY' would attempt to render the sheet larger than the screen.
-             *
-             * The 'overflow' calculates the excess height beyond the container's bounds.
-             * By adding this overflow to our target translation, we ensure the sheet stops
-             * expanding exactly at the maxHeight, preventing the header from being pushed
-             * off-screen or causing layout synchronization issues with the CoordinatorLayout.
-             */
-
-            // TODO:(@t0maboro) - this still doesn't work when the newHeight is larger than maxHeight (independently of initialTranslationY)
-            // The work will be continued in: https://github.com/software-mansion/react-native-screens-labs/issues/802
-            val overflow = (newHeight - initialTranslationY - maxHeight).coerceAtLeast(0f)
-            val targetTranslationY = initialTranslationY + overflow
+            this.translationY += visibleDelta
             this
                 .animate()
-                .translationY(targetTranslationY)
+                .translationY(currentTranslationY)
                 .withStartAction {
-                    behavior.updateMetrics(newHeight)
-                    layout(this.left, this.bottom - newHeight, this.right, this.bottom)
+                    behavior.updateMetrics(clampedNewHeight)
+                    layout(this.left, this.bottom - clampedNewHeight, this.right, this.bottom)
                 }.withEndAction {
                     // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
                     // internal offsets with the new maxHeight. This prevents the sheet from snapping back
@@ -264,16 +263,15 @@ class Screen(
              * After animation, we need to send a notification that ShadowTree state should be updated,
              * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
              */
-            val initialTranslationY = this.translationY
-            val targetTranslationY = initialTranslationY - delta
+            val targetTranslationY = currentTranslationY - visibleDelta
             this
                 .animate()
                 .translationY(targetTranslationY)
                 .withStartAction {
-                    behavior.updateMetrics(newHeight)
+                    behavior.updateMetrics(clampedNewHeight)
                 }.withEndAction {
-                    layout(this.left, this.bottom - newHeight, this.right, this.bottom)
-                    this.translationY = initialTranslationY
+                    layout(this.left, this.bottom - clampedNewHeight, this.right, this.bottom)
+                    this.translationY = currentTranslationY
                     // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
                     // internal offsets with the new maxHeight. This prevents the sheet from snapping back
                     // to its old position when the user starts a gesture.
@@ -292,14 +290,16 @@ class Screen(
          * This allows custom animators in RN to work, as we do not interfere with these animations
          * and we're just reacting to the sheet's content size changes.
          */
-        behavior.updateMetrics(height)
-        layout(this.left, this.bottom - height, this.right, this.bottom)
+        val clampedHeight = resolveClampedHeight(height, this.translationY)
+        behavior.updateMetrics(clampedHeight)
+        layout(this.left, this.bottom - clampedHeight, this.right, this.bottom)
+
         // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
         // internal offsets with the new maxHeight. This prevents the sheet from snapping back
         // to its old position when the user starts a gesture.
         parent.requestLayout()
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            updateScreenSizeFabric(width, height, top + translationY.toInt())
+            updateScreenSizeFabric(width, clampedHeight, top + translationY.toInt())
         }
     }
 
@@ -311,6 +311,22 @@ class Screen(
         // During the initial call in `onCreateView`, insets are not yet available,
         // so we need to request an additional layout pass later to account for them.
         requestLayout()
+    }
+
+    private fun resolveClampedHeight(
+        targetHeight: Int,
+        currentTranslationY: Float,
+    ): Int {
+        val maxAvailableVerticalSpace =
+            this.fragment
+                ?.asScreenStackFragment()
+                ?.sheetDelegate
+                ?.tryResolveMaxFormSheetHeight() ?: return targetHeight
+
+        // Please note that currentTranslationY is rather < 0 here.
+        // The translation is included in constraining the available space, because the FormSheet can have some offset, e.g. to
+        // avoid the keyboard.
+        return targetHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
     }
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
