@@ -39,7 +39,7 @@ class RNSScreenShadowNodeCommitHook : public UIManagerCommitHook {
         newLayoutConstraints.maximumSize.width !=
             oldLayoutConstraints.maximumSize.width ||
         newLayoutConstraints.maximumSize.height !=
-            oldLayoutConstraints.maximumSize.width);
+            oldLayoutConstraints.maximumSize.height);
   }
 
   static RootShadowNode::Unshared newRootShadowNodeWithScreenFrameSizesReset(
