@@ -94,7 +94,7 @@ class Screen(
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
     var sheetShouldOverflowTopInset = false
-    var sheetDefaultResizeAnimationEnabled = true
+    var sheetResizeAnimationEnabled = true
 
     /**
      * On Paper, when using form sheet presentation we want to delay enter transition in order
@@ -163,7 +163,7 @@ class Screen(
 
                 if (isInitial) {
                     setupInitialSheetContentHeight(sheetBehavior, height)
-                } else if (sheetDefaultResizeAnimationEnabled) {
+                } else if (sheetResizeAnimationEnabled) {
                     updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
                 } else {
                     updateSheetContentHeightWithoutAnimation(sheetBehavior, height)

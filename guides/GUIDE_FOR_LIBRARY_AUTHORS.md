@@ -260,7 +260,7 @@ When set to `false`, the sheet's layout will be constrained by the inset from th
 
 Defaults to `false`.
 
-### `sheetDefaultResizeAnimationEnabled` (Android only)
+### `sheetResizeAnimationEnabled` (Android only)
 
 Whether the default native animation should be used when the sheet's with `fitToContents` content size changes.
 

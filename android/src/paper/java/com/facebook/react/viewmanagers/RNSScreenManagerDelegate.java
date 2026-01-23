@@ -53,8 +53,8 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
       case "sheetShouldOverflowTopInset":
         mViewManager.setSheetShouldOverflowTopInset(view, value == null ? false : (boolean) value);
         break;
-      case "sheetDefaultResizeAnimationEnabled":
-        mViewManager.setSheetDefaultResizeAnimationEnabled(view, value == null ? true : (boolean) value);
+      case "sheetResizeAnimationEnabled":
+        mViewManager.setSheetResizeAnimationEnabled(view, value == null ? true : (boolean) value);
         break;
       case "customAnimationOnSwipe":
         mViewManager.setCustomAnimationOnSwipe(view, value == null ? false : (boolean) value);
