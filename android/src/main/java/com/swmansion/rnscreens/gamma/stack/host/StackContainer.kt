@@ -84,7 +84,11 @@ class StackContainer(
         // Pop operation does not use transaction
         if (!transaction.isEmpty) {
             require(lastPushScreenKey != null) { "[RNScreens] Expected non-null screenKey for back stack entry." }
-            transaction.addToBackStack(lastPushScreenKey)
+
+            // don't add root to back stack to handle exiting from app.
+            if (fragmentManager.fragments.isNotEmpty()) {
+                transaction.addToBackStack(lastPushScreenKey)
+            }
 
             if (commitSync) {
                 // TODO: will not work with back stack
