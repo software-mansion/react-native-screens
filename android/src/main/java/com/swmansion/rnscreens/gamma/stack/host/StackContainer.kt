@@ -133,7 +133,7 @@ class StackContainer(
     }
 
     internal fun onFragmentDestroyView(fragment: StackScreenFragment) {
-        delegate.get()?.onNativeDismiss(fragment.stackScreen)
+        delegate.get()?.onDismiss(fragment.stackScreen)
     }
 
     companion object {
