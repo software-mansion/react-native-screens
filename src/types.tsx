@@ -22,6 +22,9 @@ export type SearchBarCommands = {
   setText: (text: string) => void;
   cancelSearch: () => void;
 };
+export type SheetCommands = {
+  setDetent: (index: number) => void;
+};
 
 export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
 export type StackPresentationTypes =
@@ -526,6 +529,14 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   sheetDefaultResizeAnimationEnabled?: boolean;
+  /**
+   * Reference to imperatively modify screen with presentation `formSheet`.
+   *
+   * Currently supported operations are:
+   *
+   * * `setDetent` - set the current detent index for the sheet
+   */
+  sheetRef?: React.RefObject<SheetCommands>;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

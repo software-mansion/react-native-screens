@@ -1218,6 +1218,13 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
+- (void)setDetent:(NSInteger)index
+{
+  UISheetPresentationControllerDetentIdentifier nextIdent = [[NSNumber numberWithInteger:index] stringValue];
+
+  [self setSelectedDetentForSheet:_controller.sheetPresentationController to:nextIdent animate:YES];
+}
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
 
 /**
@@ -1533,6 +1540,11 @@ RNS_IGNORE_SUPER_CALL_END
     [self updateFormSheetPresentationStyle];
   }
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
+}
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSScreenHandleCommand(self, commandName, args);
 }
 
 #pragma mark - Paper specific
@@ -2280,6 +2292,13 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
+}
+RCT_EXPORT_METHOD(setDetent : (NSNumber *_Nonnull)reactTag index : (NSNumber *)index)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSScreenView *screen = viewRegistry[reactTag];
+    [screen setDetent:index];
+  }];
 }
 #endif
 
