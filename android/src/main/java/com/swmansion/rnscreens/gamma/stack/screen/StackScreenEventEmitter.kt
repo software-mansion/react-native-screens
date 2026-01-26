@@ -33,8 +33,8 @@ internal class StackScreenEventEmitter(
             StackScreenDismissEvent(
                 surfaceId,
                 viewTag,
-                isNativeDismiss
-            )
+                isNativeDismiss,
+            ),
         )
     }
 

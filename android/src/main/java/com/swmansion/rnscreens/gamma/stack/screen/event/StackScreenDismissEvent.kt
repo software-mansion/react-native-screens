@@ -8,7 +8,7 @@ import com.swmansion.rnscreens.gamma.common.NamingAwareEventType
 class StackScreenDismissEvent(
     surfaceId: Int,
     viewId: Int,
-    val isNativeDismiss: Boolean
+    val isNativeDismiss: Boolean,
 ) : Event<StackScreenDismissEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
@@ -18,9 +18,10 @@ class StackScreenDismissEvent(
     // All events for a given view can be coalesced.
     override fun getCoalescingKey(): Short = 0
 
-    override fun getEventData(): WritableMap = Arguments.createMap().apply {
-        putBoolean(EVENT_KEY_IS_NATIVE_DISMISS, isNativeDismiss)
-    }
+    override fun getEventData(): WritableMap =
+        Arguments.createMap().apply {
+            putBoolean(EVENT_KEY_IS_NATIVE_DISMISS, isNativeDismiss)
+        }
 
     companion object : NamingAwareEventType {
         const val EVENT_NAME = "topDismiss"

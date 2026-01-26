@@ -18,8 +18,7 @@ class StackHost(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     UIManagerListener,
-    StackContainerDelegate
-{
+    StackContainerDelegate {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this))
 

@@ -9,20 +9,29 @@ import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 
 @ReactModule(name = StackScreenViewManager.REACT_CLASS)
-class StackScreenViewManager : ViewGroupManager<StackScreen>(), RNSStackScreenManagerInterface<StackScreen> {
+class StackScreenViewManager :
+    ViewGroupManager<StackScreen>(),
+    RNSStackScreenManagerInterface<StackScreen> {
     private val delegate: ViewManagerDelegate<StackScreen> = RNSStackScreenManagerDelegate<StackScreen, StackScreenViewManager>(this)
 
     override fun getName() = REACT_CLASS
+
     override fun getDelegate() = delegate
 
     override fun createViewInstance(reactContext: ThemedReactContext) = StackScreen(reactContext)
 
-    override fun addEventEmitters(reactContext: ThemedReactContext, view: StackScreen) {
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: StackScreen,
+    ) {
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
     }
 
-    override fun setActivityMode(view: StackScreen, value: String?) {
+    override fun setActivityMode(
+        view: StackScreen,
+        value: String?,
+    ) {
         when (value) {
             "attached" -> view.activityMode = StackScreen.ActivityMode.ATTACHED
             "detached" -> view.activityMode = StackScreen.ActivityMode.DETACHED
@@ -32,7 +41,7 @@ class StackScreenViewManager : ViewGroupManager<StackScreen>(), RNSStackScreenMa
 
     override fun setScreenKey(
         view: StackScreen,
-        value: String?
+        value: String?,
     ) {
         view.screenKey = value
     }

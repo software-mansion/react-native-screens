@@ -8,11 +8,14 @@ import androidx.fragment.app.Fragment
 import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import java.lang.ref.WeakReference
 
-class StackScreenFragment(internal val stackContainer: WeakReference<StackContainer>, internal val stackScreen: StackScreen) : Fragment() {
+class StackScreenFragment(
+    internal val stackContainer: WeakReference<StackContainer>,
+    internal val stackScreen: StackScreen,
+) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View = stackScreen
 
     override fun onStart() {
