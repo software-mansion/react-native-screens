@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.swmansion.rnscreens.gamma.stack.host.StackContainer
 import java.lang.ref.WeakReference
 
-class StackScreenFragment(
+internal class StackScreenFragment(
     internal val stackContainer: WeakReference<StackContainer>,
     internal val stackScreen: StackScreen,
 ) : Fragment() {

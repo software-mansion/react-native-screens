@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.host
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentManager
@@ -12,17 +13,18 @@ import com.swmansion.rnscreens.gamma.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 
-sealed class StackOperation
+internal sealed class StackOperation
 
-class AddOperation(
+internal class AddOperation(
     val screen: StackScreen,
 ) : StackOperation()
 
-class PopOperation(
+internal class PopOperation(
     val screen: StackScreen,
 ) : StackOperation()
 
-class StackContainer(
+@SuppressLint("ViewConstructor")  // Only we construct this view, it is never inflated.
+internal class StackContainer(
     context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,
 ) : CoordinatorLayout(context) {
@@ -48,7 +50,7 @@ class StackContainer(
     /**
      * Call this function to trigger container update
      */
-    fun performContainerUpdateIfNeeded() {
+    internal fun performContainerUpdateIfNeeded() {
         if (pendingOperationQueue.isNotEmpty()) {
             val fragmentManager =
                 checkNotNull(fragmentManager) { "[RNScreens] Fragment manager was null during stack container update" }
@@ -56,11 +58,11 @@ class StackContainer(
         }
     }
 
-    fun enqueueAddOperation(stackScreen: StackScreen) {
+    internal fun enqueueAddOperation(stackScreen: StackScreen) {
         pendingOperationQueue.add(AddOperation(stackScreen))
     }
 
-    fun enqueuePopOperation(stackScreen: StackScreen) {
+    internal fun enqueuePopOperation(stackScreen: StackScreen) {
         pendingOperationQueue.add(PopOperation(stackScreen))
     }
 

@@ -5,7 +5,7 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.NamingAwareEventType
 
-class StackScreenDismissEvent(
+internal class StackScreenDismissEvent(
     surfaceId: Int,
     viewId: Int,
     val isNativeDismiss: Boolean,

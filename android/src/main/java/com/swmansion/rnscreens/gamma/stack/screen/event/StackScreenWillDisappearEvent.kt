@@ -5,7 +5,7 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.NamingAwareEventType
 
-class StackScreenWillDisappearEvent(
+internal class StackScreenWillDisappearEvent(
     surfaceId: Int,
     viewId: Int,
 ) : Event<StackScreenWillDisappearEvent>(surfaceId, viewId),

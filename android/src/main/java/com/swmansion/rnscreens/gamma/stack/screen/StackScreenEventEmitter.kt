@@ -12,23 +12,23 @@ internal class StackScreenEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
 ) : BaseEventEmitter(reactContext, viewTag) {
-    fun emitOnWillAppear() {
+    internal fun emitOnWillAppear() {
         reactEventDispatcher.dispatchEvent(StackScreenWillAppearEvent(surfaceId, viewTag))
     }
 
-    fun emitOnDidAppear() {
+    internal fun emitOnDidAppear() {
         reactEventDispatcher.dispatchEvent(StackScreenDidAppearEvent(surfaceId, viewTag))
     }
 
-    fun emitOnWillDisappear() {
+    internal fun emitOnWillDisappear() {
         reactEventDispatcher.dispatchEvent(StackScreenWillDisappearEvent(surfaceId, viewTag))
     }
 
-    fun emitOnDidDisappear() {
+    internal fun emitOnDidDisappear() {
         reactEventDispatcher.dispatchEvent(StackScreenDidDisappearEvent(surfaceId, viewTag))
     }
 
-    fun emitOnDismiss(isNativeDismiss: Boolean) {
+    internal fun emitOnDismiss(isNativeDismiss: Boolean) {
         reactEventDispatcher.dispatchEvent(
             StackScreenDismissEvent(
                 surfaceId,
