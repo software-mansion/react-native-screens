@@ -10,6 +10,7 @@ internal class StackScreenDismissEvent(
     val isNativeDismiss: Boolean,
 ) : StackScreenLifecycleEvent<StackScreenDismissEvent>(surfaceId, viewId) {
     override fun getEventName() = EVENT_NAME
+
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
 
     override fun getEventData(): WritableMap =
@@ -24,6 +25,7 @@ internal class StackScreenDismissEvent(
         private const val EVENT_KEY_IS_NATIVE_DISMISS = "isNativeDismiss"
 
         override fun getEventName() = EVENT_NAME
+
         override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
     }
 }

@@ -23,7 +23,7 @@ internal class PopOperation(
     val screen: StackScreen,
 ) : StackOperation()
 
-@SuppressLint("ViewConstructor")  // Only we construct this view, it is never inflated.
+@SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 internal class StackContainer(
     context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,

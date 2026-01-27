@@ -7,6 +7,7 @@ internal class StackScreenWillDisappearEvent(
     viewId: Int,
 ) : StackScreenLifecycleEvent<StackScreenWillDisappearEvent>(surfaceId, viewId) {
     override fun getEventName() = EVENT_NAME
+
     override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
 
     companion object : NamingAwareEventType {
@@ -14,6 +15,7 @@ internal class StackScreenWillDisappearEvent(
         const val EVENT_REGISTRATION_NAME = "onWillDisappear"
 
         override fun getEventName() = EVENT_NAME
+
         override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
     }
 }
