@@ -1,5 +1,6 @@
 import type {
   NavigationAction,
+  NavigationActionBatch,
   NavigationActionNativePop,
   NavigationActionPop,
   NavigationActionPopCompleted,
@@ -32,6 +33,9 @@ export function navigationStateReducer(
     }
     case 'preload': {
       return navigationActionPreloadHandler(state, action);
+    }
+    case 'batch': {
+      return navigationActionBatchHandler(state, action);
     }
   }
 
@@ -220,6 +224,13 @@ function navigationActionPreloadHandler(
   // that won't result in problems on native platform.
   // More info: https://github.com/software-mansion/react-native-screens/pull/3531.
   return [...state, createRouteFromConfig(routeConfig)];
+}
+
+function navigationActionBatchHandler(
+  state: StackState,
+  action: NavigationActionBatch,
+): StackState {
+  return action.actions.reduce(navigationStateReducer, state);
 }
 
 function createRouteFromConfig(config: StackRouteConfig): StackRoute {

@@ -26,6 +26,7 @@ export type PopActionMethod = (routeKey: string) => void;
 export type PopCompletedActionMethod = (routeKey: string) => void;
 export type PopNativeActionMethod = (routeKey: string) => void;
 export type PreloadActionMethod = (routeName: string) => void;
+export type BatchActionMethod = (actions: BatchableNavigationAction[]) => void;
 
 export type NavigationActionMethods = {
   pushAction: PushActionMethod;
@@ -33,6 +34,7 @@ export type NavigationActionMethods = {
   popCompletedAction: PopCompletedActionMethod;
   popNativeAction: PopNativeActionMethod;
   preloadAction: PreloadActionMethod;
+  batchAction: BatchActionMethod;
 };
 
 export type StackState = StackRoute[];
@@ -67,13 +69,24 @@ export type NavigationActionPreload = {
   ctx: NavigationActionContext;
 };
 
+export type NavigationActionBatch = {
+  type: 'batch';
+  actions: Exclude<NavigationAction, NavigationActionBatch>[];
+};
+
 export type NavigationActionContext = {
   routeConfigs: StackRouteConfig[];
 };
+
+export type BatchableNavigationAction =
+  | Omit<NavigationActionPush, 'ctx'>
+  | Omit<NavigationActionPop, 'ctx'>
+  | Omit<NavigationActionPreload, 'ctx'>;
 
 export type NavigationAction =
   | NavigationActionPush
   | NavigationActionPop
   | NavigationActionPopCompleted
   | NavigationActionNativePop
-  | NavigationActionPreload;
+  | NavigationActionPreload
+  | NavigationActionBatch;
