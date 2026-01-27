@@ -98,10 +98,7 @@ internal class StackContainer(
         val backStackEntryCount = fragmentManager.backStackEntryCount
         require(backStackEntryCount > 0) { "[RNScreens] Back stack must not be empty." }
 
-        val lastBackStackEntry = fragmentManager.getBackStackEntryAt(backStackEntryCount - 1)
-        require(lastBackStackEntry.name == operation.screen.screenKey) { "[RNScreens] Popping is supported only for top screen." }
-
-        fragmentManager.popBackStack(lastBackStackEntry.name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        fragmentManager.popBackStack(operation.screen.screenKey, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
     internal fun onFragmentDestroyView(fragment: StackScreenFragment) {
