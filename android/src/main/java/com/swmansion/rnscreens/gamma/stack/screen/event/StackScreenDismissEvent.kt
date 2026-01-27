@@ -8,11 +8,12 @@ internal class StackScreenDismissEvent(
     surfaceId: Int,
     viewId: Int,
     val isNativeDismiss: Boolean,
-) : StackScreenLifecycleEvent<StackScreenDismissEvent>(surfaceId, viewId) {
-    override fun getEventName() = EVENT_NAME
-
-    override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
-
+) : StackScreenLifecycleEvent<StackScreenDismissEvent>(
+        surfaceId,
+        viewId,
+        EVENT_NAME,
+        EVENT_REGISTRATION_NAME,
+    ) {
     override fun getEventData(): WritableMap =
         Arguments.createMap().apply {
             putBoolean(EVENT_KEY_IS_NATIVE_DISMISS, isNativeDismiss)

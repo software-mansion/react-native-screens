@@ -5,11 +5,12 @@ import com.swmansion.rnscreens.gamma.common.NamingAwareEventType
 internal class StackScreenDidAppearEvent(
     surfaceId: Int,
     viewId: Int,
-) : StackScreenLifecycleEvent<StackScreenDidAppearEvent>(surfaceId, viewId) {
-    override fun getEventName() = EVENT_NAME
-
-    override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
-
+) : StackScreenLifecycleEvent<StackScreenDidAppearEvent>(
+        surfaceId,
+        viewId,
+        EVENT_NAME,
+        EVENT_REGISTRATION_NAME,
+    ) {
     companion object : NamingAwareEventType {
         const val EVENT_NAME = "topDidAppear"
         const val EVENT_REGISTRATION_NAME = "onDidAppear"

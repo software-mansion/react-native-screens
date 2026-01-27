@@ -5,11 +5,12 @@ import com.swmansion.rnscreens.gamma.common.NamingAwareEventType
 internal class StackScreenWillDisappearEvent(
     surfaceId: Int,
     viewId: Int,
-) : StackScreenLifecycleEvent<StackScreenWillDisappearEvent>(surfaceId, viewId) {
-    override fun getEventName() = EVENT_NAME
-
-    override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
-
+) : StackScreenLifecycleEvent<StackScreenWillDisappearEvent>(
+        surfaceId,
+        viewId,
+        EVENT_NAME,
+        EVENT_REGISTRATION_NAME,
+    ) {
     companion object : NamingAwareEventType {
         const val EVENT_NAME = "topWillDisappear"
         const val EVENT_REGISTRATION_NAME = "onWillDisappear"
