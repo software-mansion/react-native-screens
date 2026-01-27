@@ -1,4 +1,5 @@
 #include "RNSScreenShadowNode.h"
+#include <android/log.h>
 
 namespace facebook {
 namespace react {
@@ -87,6 +88,14 @@ void RNSScreenShadowNode::appendChild(
   YogaLayoutableShadowNode::appendChild(child);
 #ifdef ANDROID
   const auto &stateData = getStateData();
+
+  __android_log_print(
+      ANDROID_LOG_INFO,
+      "SCREENS",
+      "rev = %d, before headerHeight frameSize.width = %f, frameSize.height = %f",
+      revision_,
+      stateData.frameSize.width,
+      stateData.frameSize.height);
   if (stateData.frameSize.width == 0 || stateData.frameSize.height == 0) {
     // This code path should be executed only on the very first (few)
     // layout(s), when we haven't received state update from JVM side yet.
@@ -106,6 +115,13 @@ void RNSScreenShadowNode::appendChild(
           : findHeaderHeight(
                 headerProps.titleFontSize, headerProps.title.empty())
                 .value_or(0.f);
+
+      __android_log_print(
+          ANDROID_LOG_INFO,
+          "SCREENS",
+          "rev = %d, headerHeight = %f",
+          revision_,
+          headerHeight);
 
       screenShadowNode.setPadding({0, 0, 0, headerHeight});
       screenShadowNode.setHeaderHeight(headerHeight);
@@ -145,6 +161,18 @@ void RNSScreenShadowNode::applyFrameCorrections() {
   layoutMetrics_.frame.size.height -= lastKnownHeaderHeight *
       headerCorrectionModes.check(
           FrameCorrectionModes::Mode::FrameHeightCorrection);
+
+  __android_log_print(
+      ANDROID_LOG_INFO,
+      "SCREENS",
+      "rev = %d, apply frame correction %d %d frame.size.width = %f, frame.size.height = %f",
+      revision_,
+      headerCorrectionModes.check(
+          FrameCorrectionModes::Mode::FrameOriginCorrection),
+      headerCorrectionModes.check(
+          FrameCorrectionModes::Mode::FrameHeightCorrection),
+      layoutMetrics_.frame.size.width,
+      layoutMetrics_.frame.size.height);
 }
 
 void RNSScreenShadowNode::setHeaderHeight(float headerHeight) {
