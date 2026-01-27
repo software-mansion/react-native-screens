@@ -19,6 +19,9 @@ type ScenarioConfig = {
 
   // Those operations will be performed after clicking a button.
   transition: BatchableNavigationAction[];
+
+  // This is the route key that we expect to be at the top at the end of the scenario.
+  expectedFinalRouteKey: string;
 };
 
 type TestContextType = {
@@ -49,6 +52,7 @@ const SCENARIOS: ScenarioConfig[] = [
       { type: 'push', routeName: 'G' },
       { type: 'push', routeName: 'E' },
     ],
+    expectedFinalRouteKey: 'r-E-5',
   },
 ];
 
@@ -68,7 +72,9 @@ function MenuScreen() {
         <Text style={{ fontSize: 24, marginBottom: 20 }}>Select Scenario</Text>
         <ScrollView contentContainerStyle={{ gap: 10 }}>
           {SCENARIOS.map(scenario => (
-            <View key={scenario.id} style={{ borderWidth: 1, padding: 10 }}>
+            <View
+              key={scenario.id}
+              style={{ borderWidth: 1, padding: 10, borderRadius: 8 }}>
               <Text style={{ marginBottom: 10 }}>{scenario.description}</Text>
               <Button
                 title="Run Setup"
@@ -98,6 +104,8 @@ function TemplateScreen() {
   const scenario = SCENARIOS.find(s => s.id === testContext?.activeScenarioId);
 
   const canPerformTransition = scenario && !testContext?.scenarioFinished;
+  const matchesExpectation =
+    navigation.routeKey === scenario?.expectedFinalRouteKey;
 
   const performTransition = () => {
     if (canPerformTransition) {
@@ -119,14 +127,43 @@ function TemplateScreen() {
       </Text>
 
       <View style={{ gap: 10 }}>
-        {canPerformTransition ? (
+        {canPerformTransition && (
           <Button
             title="Perform Transition Action"
             onPress={performTransition}
             color="green"
           />
-        ) : (
-          <Text>Scenario has ended. Verify results and restart the test.</Text>
+        )}
+        {scenario && !canPerformTransition && (
+          <View
+            style={{
+              padding: 15,
+              backgroundColor: matchesExpectation
+                ? Colors.GreenLight40
+                : Colors.RedLight40,
+              borderColor: matchesExpectation
+                ? Colors.GreenDark120
+                : Colors.RedDark120,
+              borderWidth: 1,
+              borderRadius: 8,
+            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: matchesExpectation
+                  ? Colors.GreenDark120
+                  : Colors.RedDark120,
+              }}>
+              {matchesExpectation ? '✅ TEST PASSED' : '❌ TEST FAILED'}
+            </Text>
+
+            <Text style={{ marginTop: 8 }}>
+              {matchesExpectation
+                ? `Correctly landed on ${scenario.expectedFinalRouteKey} - this only means that final top screen is correct. Make sure that the entire hierarchy is correct. `
+                : `This screen is ${navigation.routeKey}, but expected ${scenario.expectedFinalRouteKey} as the final screen. Make sure that the test screen was restarted before running the scenario. If you performed native pop, this message is not valid.`}
+            </Text>
+          </View>
         )}
       </View>
     </View>
