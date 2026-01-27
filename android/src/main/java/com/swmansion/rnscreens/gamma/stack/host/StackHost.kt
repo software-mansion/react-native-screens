@@ -73,7 +73,8 @@ class StackHost(
 
     private fun addPopOperationIfNeeded(stackScreen: StackScreen) {
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED && !stackScreen.isNativelyDismissed) {
-            throw IllegalStateException("[RNScreens] Screens must be dismissed by setting activityMode to 'detached' or native pop.")
+            // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
+            containerUpdateScheduler.addPopOperation(stackScreen)
         }
     }
 

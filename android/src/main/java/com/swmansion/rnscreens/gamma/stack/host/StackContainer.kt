@@ -95,10 +95,22 @@ internal class StackContainer(
         fragmentManager: FragmentManager,
         operation: PopOperation,
     ) {
-        val backStackEntryCount = fragmentManager.backStackEntryCount
-        require(backStackEntryCount > 0) { "[RNScreens] Back stack must not be empty." }
+        val associatedFragment = stackScreenFragments.find { it.stackScreen === operation.screen }
+        require(associatedFragment != null) {
+            "[RNScreens] Unable to find a fragment to pop."
+        }
 
-        fragmentManager.popBackStack(operation.screen.screenKey, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        val backStackEntryCount = fragmentManager.backStackEntryCount
+        if (backStackEntryCount > 0) {
+            fragmentManager.popBackStack(operation.screen.screenKey, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        } else {
+            // When fast refresh is used on root screen, we need to remove the screen manually.
+            val transaction = fragmentManager.createTransactionWithReordering()
+            transaction.remove(associatedFragment)
+            transaction.commitNowAllowingStateLoss()
+        }
+
+        stackScreenFragments.remove(associatedFragment)
     }
 
     internal fun onFragmentDestroyView(fragment: StackScreenFragment) {
