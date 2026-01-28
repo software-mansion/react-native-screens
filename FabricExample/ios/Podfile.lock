@@ -1743,6 +1743,27 @@ PODS:
     - React-utils (= 0.84.0-rc.1)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.84.0-rc.1)
+  - ReactNavigation (8.0.0-alpha.3):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - RNGestureHandler (2.29.1):
     - hermes-engine
     - RCTRequired
@@ -2025,6 +2046,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
+  - "ReactNavigation (from `../node_modules/@react-navigation/native`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -2179,6 +2201,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeDependencies:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
+  ReactNavigation:
+    :path: "../node_modules/@react-navigation/native"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -2192,7 +2216,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   FBLazyVector: 338ed69636904cd70e9d5105526467c7b929c1d4
-  hermes-engine: c3fade8ae5ce23f29a01372acdcce8e0437e9984
+  hermes-engine: f6455302f94b29e87ff2ab5f0bb0c3b7b7d2a8df
   RCTDeprecation: 33a05e66fc1a11e2951bd16136e2ce94f311efe2
   RCTRequired: 0674ae0bedf47acb16062d9e1a6ba29394c022ba
   RCTSwiftUI: bf8adc14f68efd97fc40efd52b2d7ae223877c44
@@ -2263,10 +2287,11 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 9c1667bc43d8a73352d85a469679bb36a4b2a8a7
   ReactCodegen: 1768a327a5d7c186ac95936c1e49bf5af540fc17
   ReactCommon: 20c9e7fdb2957c694e8d3471430e3eaa86567f66
-  ReactNativeDependencies: dcff10826a4c394a5f452ffc88e3dbf95a03207a
+  ReactNativeDependencies: 50ac6a8be5c681f39feb4570f4c0ebd9c342f6a0
+  ReactNavigation: 08b0bfdd2c6055326fabf5810998790f956acd75
   RNGestureHandler: f080747d181c86d346827ba389209e1afb528628
   RNReanimated: ecef5a2762be20bc8090045a0fe574da9d5d6f8e
-  RNScreens: cf790008c91f78f3d2d8f04ec8daa561b8fa1d97
+  RNScreens: aae08713cce5fdfd76f5d089553ca1ea9e5f15e9
   RNWorklets: 67500a3686a9402d2352b65447729bf25fa1282b
   Yoga: b424d5df74684853feaf06fdbc368c37364ed2e4
 

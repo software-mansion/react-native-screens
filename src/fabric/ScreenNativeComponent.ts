@@ -1,7 +1,10 @@
 'use client';
 
-import { codegenNativeComponent } from 'react-native';
-import type { CodegenTypes as CT, ViewProps, ColorValue } from 'react-native';
+import {
+  codegenNativeCommands,
+  codegenNativeComponent,
+  type HostComponent,
+ CodegenTypes as CT, ViewProps, ColorValue } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type ScreenEvent = Readonly<{}>;
@@ -119,6 +122,19 @@ export interface NativeProps extends ViewProps {
     true
   >;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+interface NativeCommands {
+  setDetent: (
+    viewRef: React.ComponentRef<ComponentType>,
+    index: CT.Int32,
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['setDetent'],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {
   interfaceOnly: true,

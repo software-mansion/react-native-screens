@@ -15,6 +15,7 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
 import com.swmansion.rnscreens.bottomsheet.SheetDetents
+import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
@@ -441,6 +442,15 @@ open class ScreenViewManager :
         )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate
+
+    override fun setDetent(
+        view: Screen?,
+        index: Int,
+    ) {
+        view?.sheetBehavior?.apply {
+            state = SheetUtils.sheetStateFromDetentIndex(index, view.sheetDetents.count)
+        }
+    }
 
     companion object {
         const val REACT_CLASS = "RNSScreen"
