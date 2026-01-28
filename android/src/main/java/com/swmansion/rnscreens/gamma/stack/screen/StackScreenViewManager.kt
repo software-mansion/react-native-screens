@@ -43,6 +43,9 @@ class StackScreenViewManager :
         view: StackScreen,
         value: String?,
     ) {
+        requireNotNull(value) {
+            "[RNScreens] screenKey must not be null."
+        }
         view.screenKey = value
     }
 

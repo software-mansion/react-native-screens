@@ -76,7 +76,7 @@ internal class StackContainer(
         // TODO: refactor + should every push be added as separate back stack entry to maintain history?
         val lastPushScreenKey =
             pendingOperationQueue
-                .reversed()
+                .asReversed()
                 .filter { it is AddOperation }
                 .map { operation -> (operation as AddOperation).screen.screenKey }
                 .firstOrNull()

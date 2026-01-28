@@ -25,8 +25,10 @@ class StackScreen(
         }
     internal var stackHost: WeakReference<StackHost?> = WeakReference(null)
 
-    var activityMode: ActivityMode by Delegates.observable(ActivityMode.DETACHED) { _, _, _ ->
-        stackHost.get()?.stackScreenChangedActivityMode(this)
+    var activityMode: ActivityMode by Delegates.observable(ActivityMode.DETACHED) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            stackHost.get()?.stackScreenChangedActivityMode(this)
+        }
     }
 
     var screenKey: String? = null
@@ -51,6 +53,5 @@ class StackScreen(
         t: Int,
         r: Int,
         b: Int,
-    ) {
-    }
+    ) = Unit
 }

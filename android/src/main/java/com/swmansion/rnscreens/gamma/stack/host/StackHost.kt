@@ -26,7 +26,11 @@ class StackHost(
         addView(container)
 
         // We're adding ourselves during a batch, therefore we expect to receive its finalization callbacks
-        UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)?.addUIManagerEventListener(this)
+        val uiManager =
+            checkNotNull(UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)) {
+                "[RNScreens] UIManager must not be null."
+            }
+        uiManager.addUIManagerEventListener(this)
     }
 
     override fun onAttachedToWindow() {
