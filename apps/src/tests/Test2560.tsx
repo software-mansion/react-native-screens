@@ -15,28 +15,37 @@ import {
 import Colors from '../shared/styling/Colors';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 
-const USE_ANIMATED_COMPONENT = false;
-
 type StackParamList = {
   Home: undefined;
-  FormSheet: undefined;
+  FormSheet: { useAnimated: boolean };
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const HomeScreen = ({ navigation }: NativeStackScreenProps<StackParamList>) => (
-  <View style={styles.screen}>
-    <Text style={styles.title}>Home Screen</Text>
-    <Button
-      title="Open Form Sheet"
-      onPress={() => navigation.navigate('FormSheet')}
-    />
-  </View>
-);
+const HomeScreen = ({ navigation }: NativeStackScreenProps<StackParamList>) => {
+  const [useAnimated, setUseAnimated] = useState(false);
+
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.title}>Home Screen</Text>
+      <Button
+        title="Open Form Sheet"
+        onPress={() => navigation.navigate('FormSheet', { useAnimated })}
+      />
+      <Button
+        title={`Using custom animation: ${useAnimated ? 'YES' : 'NO'}`}
+        onPress={() => setUseAnimated(prev => !prev)}
+      />
+    </View>
+  );
+};
 
 const FormSheetScreen = ({
   navigation,
-}: NativeStackScreenProps<StackParamList>) => {
+  route,
+}: NativeStackScreenProps<StackParamList, 'FormSheet'>) => {
+  const { useAnimated } = route.params;
+
   const [showTopView, setShowTopView] = useState(false);
   const [showBottomView, setShowBottomView] = useState(false);
   const [rectangleHeight, setRectangleHeight] = useState(200);
@@ -71,7 +80,7 @@ const FormSheetScreen = ({
         </View>
       )}
       <Text style={styles.formSheetTitle}>Form Sheet Content</Text>
-      {USE_ANIMATED_COMPONENT ? (
+      {useAnimated ? (
         <Animated.View
           style={[styles.rectangle, { height: animatedRectangleHeight }]}
         />
@@ -83,7 +92,7 @@ const FormSheetScreen = ({
         title={showTopView ? 'Hide Top View' : 'Show Top View'}
         onPress={toggleTopView}
       />
-      {USE_ANIMATED_COMPONENT ? (
+      {useAnimated ? (
         <Button
           title={`Toggle Animated Rectangle Height (Current: ${currentAnimatedRectangleHeight.current}px)`}
           onPress={toggleAnimatedRectangleHeight}
@@ -118,14 +127,14 @@ export default function App() {
         <Stack.Screen
           name="FormSheet"
           component={FormSheetScreen}
-          options={{
+          options={({ route }) => ({
             presentation: 'formSheet',
             sheetAllowedDetents: 'fitToContents',
             contentStyle: {
               backgroundColor: Colors.YellowLight40,
             },
-            // TODO(@t0maboro) - add `sheetDefaultResizeAnimationEnabled` prop here when possible
-          }}
+            sheetResizeAnimationEnabled: !route.params.useAnimated,
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>
