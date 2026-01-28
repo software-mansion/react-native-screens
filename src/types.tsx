@@ -473,7 +473,7 @@ export interface ScreenProps extends ViewProps {
    * These are provided solely for **temporary** backward compatibility and are destined for removal in future versions.
    *
    * @remark
-   * When showing the keyboard for small detent, the system will temporarily resize the sheet above the
+   * (iOS only) When showing the keyboard for small detent, the system will temporarily resize the sheet above the
    * defined detent, always showing dimming background, even if the user hasn't expanded it manually
    * over the sheetLargestUndimmedDetentIndex value.
    *
