@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+export { default as Test0000 } from './Test0000';
 export { default as Test42 } from './Test42'; // [E2E skipped]: can't check orientation, unclear problem description
 export { default as Test111 } from './Test111'; // [E2E skipped]: can't check flickering
 export { default as Test263 } from './Test263'; // [E2E skipped]: example differs from PR, even if changed the problem still occurs

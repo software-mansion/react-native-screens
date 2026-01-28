@@ -1,6 +1,7 @@
 #ifdef ANDROID
 
 #include "RNSScreenShadowNodeCommitHook.h"
+#include <android/log.h>
 #include <stack>
 
 namespace facebook {
@@ -35,6 +36,7 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
   // Check if screen area has changed size (either because of orientation
   // change, or application resize with floating window / split screen)
   if (_screenSizeChanged(*oldRootProps, *newRootProps)) {
+    __android_log_print(ANDROID_LOG_INFO, "SCREENS", "screenSizeChanged");
     return newRootShadowNodeWithScreenFrameSizesReset(newRootShadowNode);
   }
 
@@ -50,11 +52,26 @@ RNSScreenShadowNodeCommitHook::newRootShadowNodeWithScreenFrameSizesReset(
   for (auto screen : screens) {
     const auto rootShadowNodeClone = rootShadowNode->cloneTree(
         screen->getFamily(), [](const ShadowNode &oldShadowNode) {
+          __android_log_print(
+              ANDROID_LOG_INFO,
+              "SCREENS",
+              "rev = %d, cloning",
+              oldShadowNode.revision_);
           auto clone = oldShadowNode.clone({.state = oldShadowNode.getState()});
           auto screenNode = static_pointer_cast<RNSScreenShadowNode>(clone);
           auto yogaNode = static_pointer_cast<YogaLayoutableShadowNode>(clone);
+          __android_log_print(
+              ANDROID_LOG_INFO,
+              "SCREENS",
+              "rev = %d, cloned successfully",
+              screenNode->revision_);
 
           screenNode->resetFrameSizeState();
+          screenNode->getFrameCorrectionModes().set(
+              FrameCorrectionModes::Mode(
+                  FrameCorrectionModes::Mode::FrameHeightCorrection |
+                  FrameCorrectionModes::Mode::FrameOriginCorrection));
+          screenNode->applyFrameCorrections();
           yogaNode->setSize({YGUndefined, YGUndefined});
 
           return clone;

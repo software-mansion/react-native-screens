@@ -5,6 +5,7 @@
 #include <react/renderer/uimanager/UIManager.h>
 #include "RNSScreenShadowNodeCommitHook.h"
 #endif // ANDROID
+#include <android/log.h>
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/rnscreens/utils/RectUtil.h>
@@ -67,6 +68,15 @@ class RNSScreenComponentDescriptor final
           std::make_shared<RNSScreenShadowNodeCommitHook>(contextContainer_);
     }
 
+    __android_log_print(
+        ANDROID_LOG_INFO,
+        "SCREENS",
+        "state.frameSize.width = %f, state.frameSize.height = %f contentOffset.x, = %f, contentOffset.y = %f",
+        stateData.frameSize.width,
+        stateData.frameSize.height,
+        stateData.contentOffset.x,
+        stateData.contentOffset.y);
+
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       // When we receive dimensions from JVM side we can remove padding used for
       // correction, and we can stop applying height and offset corrections for
@@ -94,20 +104,39 @@ class RNSScreenComponentDescriptor final
       }
 #endif
 
+      __android_log_print(
+          ANDROID_LOG_INFO,
+          "SCREENS",
+          "rev = %d, reset frame correction modes; frameSize.width = %f, frameSize.height = %f",
+          screenShadowNode.revision_,
+          stateData.frameSize.width,
+          stateData.frameSize.height);
+
       screenShadowNode.setPadding({0, 0, 0, 0});
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameHeightCorrection);
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameOriginCorrection);
-      layoutableShadowNode.setSize(
-          Size{stateData.frameSize.width, stateData.frameSize.height});
+      //      layoutableShadowNode.setSize(
+      //          Size{stateData.frameSize.width, stateData.frameSize.height});
     } else if (
+        __android_log_print(
+            ANDROID_LOG_INFO,
+            "SCREENS",
+            "rev = %d, set size to undefined; frameSize.width = %f, frameSize.height = %f",
+            screenShadowNode.revision_,
+            stateData.frameSize.width,
+            stateData.frameSize.height);
         stateData.frameSize.width == 0 && stateData.frameSize.height == 0) {
       // Reset YogaNode so it recalculates its layout. Useful for the case
       // when native orientation changes and react has not been notified yet.
       // The if condition holds true on first render and when it is reset inside
       // RNSScreenShadowNodeCommitHook.
       layoutableShadowNode.setSize({YGUndefined, YGUndefined});
+      //      screenShadowNode.getFrameCorrectionModes().set(
+      //          FrameCorrectionModes::Mode(
+      //              FrameCorrectionModes::Mode::FrameHeightCorrection |
+      //                  FrameCorrectionModes::Mode::FrameOriginCorrection));
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {

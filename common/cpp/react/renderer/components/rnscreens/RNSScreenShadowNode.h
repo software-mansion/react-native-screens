@@ -4,6 +4,7 @@
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
+#include <react/renderer/core/LayoutConstraints.h>
 #include <react/renderer/core/LayoutContext.h>
 #include "FrameCorrectionModes.h"
 #include "RNSScreenState.h"
@@ -41,9 +42,15 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 #ifdef ANDROID
   void resetFrameSizeState();
 
- private:
   void applyFrameCorrections();
 
+  void layoutTree(
+      facebook::react::LayoutContext layoutContext,
+      facebook::react::LayoutConstraints layoutConstraints) override {
+    YogaLayoutableShadowNode::layoutTree(layoutContext, layoutConstraints);
+  }
+
+ private:
   StateData &getStateDataMutable();
 #endif // ANDROID
 };
