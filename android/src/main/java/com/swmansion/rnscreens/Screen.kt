@@ -595,27 +595,21 @@ class Screen(
             return
         }
         isBeingRemoved = false
-        endTransitionRecursive(this)
+        endViewTransition()
     }
 
-    private fun endTransitionRecursive(parent: ViewGroup) {
-        parent.children.forEach { childView ->
-            parent.endViewTransition(childView)
+    private val transitioningViews = mutableListOf<Pair<ViewGroup, View>>()
 
-            if (childView is ScreenStackHeaderConfig) {
-                endTransitionRecursive(childView.toolbar)
-            }
-
-            if (childView is ViewGroup) {
-                endTransitionRecursive(childView)
-            }
-        }
-    }
-
+    /**
+     * Called when a screen gets removed. This is to mark all children as in transition,
+     * so they are not removed from the view hierarchy until endRemovalTransition is called.
+     * This is needed for the screen transition animation to work properly (otherwise the children
+     * would instantly disappear from the screen).
+     */
     private fun startTransitionRecursive(parent: ViewGroup?) {
-        parent?.let {
-            for (i in 0 until it.childCount) {
-                val child = it.getChildAt(i)
+        parent?.let { parentView ->
+            for (i in 0 until parentView.childCount) {
+                val child = parentView.getChildAt(i)
 
                 if (parent is SwipeRefreshLayout && child is ImageView) {
                     // SwipeRefreshLayout class which has CircleImageView as a child,
@@ -624,9 +618,12 @@ class Screen(
                     // wrong index if we called `startViewTransition` on the views on new arch.
                     // We add a simple View to bump the number of children to make it work.
                     // TODO: find a better way to handle this scenario
-                    it.addView(View(context), i)
+                    parentView.addView(View(context), i)
                 } else {
-                    child?.let { view -> it.startViewTransition(view) }
+                    child?.let { childView ->
+                        parentView.startViewTransition(childView)
+                        transitioningViews.add(Pair(parentView, childView))
+                    }
                 }
 
                 if (child is ScreenStackHeaderConfig) {
@@ -640,6 +637,21 @@ class Screen(
                 }
             }
         }
+    }
+
+    /**
+     * Called when the removal transition is finished. This will clear the transition state
+     * from all children and allow them to be removed from the view hierarchy and their mParent
+     * field to be set to null.
+     */
+    private fun endViewTransition() {
+        // IMPORTANT: Reverse order is needed, inner children first!
+        // Otherwise parents will call dispatchOnDetachedFromWindow on all their children,
+        // which will cause endViewTransition to have no effect on them anymore.
+        transitioningViews.asReversed().forEach { (parent, child) ->
+            parent.endViewTransition(child)
+        }
+        transitioningViews.clear()
     }
 
     // We do not want to perform any action, therefore do not need to override the associated method.

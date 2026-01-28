@@ -73,6 +73,10 @@ class ScreenStack(
     }
 
     override fun endViewTransition(view: View) {
+        if (view is ScreensCoordinatorLayout) {
+            view.fragment.screen.endRemovalTransition()
+        }
+
         super.endViewTransition(view)
 
         disappearingTransitioningChildren.remove(view)
