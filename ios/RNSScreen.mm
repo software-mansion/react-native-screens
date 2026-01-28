@@ -1511,8 +1511,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (parentVC == nil && [self isKindOfClass:RNSModalScreen.class]) {
     // If we're in modal presentation, we don't want to set the frame from RN,
-    // as the available space is most likely restriced & differs from what Yoga
-    // resolves during firt layout. We want to rely on native layout here.
+    // as the available space is most likely restricted & differs from what Yoga
+    // resolves during first layout. We want to rely on native layout here.
     return;
   }
 
