@@ -1,5 +1,7 @@
 import React from 'react';
 import {
+  BatchableNavigationAction,
+  BatchActionMethod,
   NavigationAction,
   NavigationActionContext,
   NavigationActionMethods,
@@ -60,6 +62,18 @@ export function useStackOperationMethods(
     [dispatch, actionContext],
   );
 
+  const batchAction: BatchActionMethod = React.useCallback(
+    (actions: BatchableNavigationAction[]) => {
+      const actionsWithContext = actions.map(action => ({
+        ...action,
+        ctx: actionContext,
+      }));
+
+      dispatch({ type: 'batch', actions: actionsWithContext });
+    },
+    [dispatch, actionContext],
+  );
+
   const aggregateValue = React.useMemo(() => {
     return {
       pushAction,
@@ -67,6 +81,7 @@ export function useStackOperationMethods(
       popCompletedAction,
       popNativeAction,
       preloadAction,
+      batchAction,
     };
   }, [
     pushAction,
@@ -74,6 +89,7 @@ export function useStackOperationMethods(
     popCompletedAction,
     popNativeAction,
     preloadAction,
+    batchAction,
   ]);
 
   return aggregateValue;
