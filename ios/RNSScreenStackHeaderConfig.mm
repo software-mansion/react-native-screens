@@ -576,6 +576,7 @@ RNS_IGNORE_SUPER_CALL_END
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
   if (shouldHide) {
+    [navctr setNavigationBarHidden:true animated:animated];
     navitem.title = config.title;
 
     // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
@@ -594,6 +595,8 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.largeTitleDisplayMode =
       config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
 #endif
+
+  [navctr setNavigationBarHidden:false animated:animated];
 
   UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
   navitem.standardAppearance = appearance;
