@@ -162,6 +162,7 @@ export { default as Test3282 } from './Test3282';
 export { default as Test3288 } from './Test3288';
 export { default as Test3336 } from './Test3336';
 export { default as Test3342 } from './Test3342';
+export { default as Test3345 } from './Test3345';
 export { default as Test3346 } from './Test3346';
 export { default as Test3369 } from './Test3369';
 export { default as Test3379 } from './Test3379';
@@ -195,4 +196,3 @@ export { default as TestBottomTabsOrientation } from './TestBottomTabsOrientatio
 export { default as TestScreenStack } from './TestScreenStack';
 export { default as TestSplit } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
-export { default as Test3345 } from './Test3345';
