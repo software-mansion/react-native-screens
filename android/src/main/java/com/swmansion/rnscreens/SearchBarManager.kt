@@ -78,6 +78,14 @@ class SearchBarManager :
         view.shouldOverrideBackButton = disableBackButtonOverride != true
     }
 
+    @ReactProp(name = "searchShowAsAction")
+    override fun setShowAsAction(
+        view: SearchBarView,
+        showAsAction: String?,
+    ) {
+        view.setShowAsAction(showAsAction)
+    }
+
     @ReactProp(name = "inputType")
     override fun setInputType(
         view: SearchBarView,
