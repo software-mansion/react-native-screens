@@ -45,13 +45,20 @@ internal class StackContainer(
             checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
                 "[RNScreens] Nullish fragment manager - can't run container operations"
             }
+
+        // We run container update to handle any pending updates requested before container was
+        // attached to window.
+        performContainerUpdateIfNeeded()
     }
 
     /**
      * Call this function to trigger container update
      */
     internal fun performContainerUpdateIfNeeded() {
-        if (pendingOperationQueue.isNotEmpty()) {
+        // If container update is requested before container is attached to window, we ignore
+        // the call because we don't have valid fragmentManager yet.
+        // Update will be eventually executed in onAttachedToWindow().
+        if (pendingOperationQueue.isNotEmpty() && isAttachedToWindow) {
             val fragmentManager =
                 checkNotNull(fragmentManager) { "[RNScreens] Fragment manager was null during stack container update" }
             performOperations(fragmentManager, false)
