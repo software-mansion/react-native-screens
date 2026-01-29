@@ -102,7 +102,10 @@ internal class StackContainer(
 
         val backStackEntryCount = fragmentManager.backStackEntryCount
         if (backStackEntryCount > 0) {
-            fragmentManager.popBackStack(operation.screen.screenKey, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            fragmentManager.popBackStack(
+                operation.screen.screenKey,
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
         } else {
             // When fast refresh is used on root screen, we need to remove the screen manually.
             val transaction = fragmentManager.createTransactionWithReordering()
@@ -114,7 +117,7 @@ internal class StackContainer(
     }
 
     internal fun onFragmentDestroyView(fragment: StackScreenFragment) {
-        delegate.get()?.onDismiss(fragment.stackScreen)
+        delegate.get()?.onScreenDismiss(fragment.stackScreen)
     }
 
     companion object {

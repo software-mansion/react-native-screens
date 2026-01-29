@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.common
+package com.swmansion.rnscreens.gamma.common.event
 
 internal interface NamingAwareEventType {
     /**

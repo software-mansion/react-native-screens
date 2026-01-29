@@ -1,7 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.gamma.common.BaseEventEmitter
+import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.gamma.tabs.event.TabsHostNativeFocusChangeEvent
 
 internal class TabsHostEventEmitter(

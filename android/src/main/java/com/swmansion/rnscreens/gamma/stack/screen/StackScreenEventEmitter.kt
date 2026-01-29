@@ -1,7 +1,8 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.gamma.common.BaseEventEmitter
+import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
+import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDismissEvent
@@ -11,20 +12,20 @@ import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenWillDisappear
 internal class StackScreenEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
-) : BaseEventEmitter(reactContext, viewTag) {
-    internal fun emitOnWillAppear() {
+) : BaseEventEmitter(reactContext, viewTag), ViewAppearanceEventEmitter {
+    override fun emitOnWillAppear() {
         reactEventDispatcher.dispatchEvent(StackScreenWillAppearEvent(surfaceId, viewTag))
     }
 
-    internal fun emitOnDidAppear() {
+    override fun emitOnDidAppear() {
         reactEventDispatcher.dispatchEvent(StackScreenDidAppearEvent(surfaceId, viewTag))
     }
 
-    internal fun emitOnWillDisappear() {
+    override fun emitOnWillDisappear() {
         reactEventDispatcher.dispatchEvent(StackScreenWillDisappearEvent(surfaceId, viewTag))
     }
 
-    internal fun emitOnDidDisappear() {
+    override fun emitOnDidDisappear() {
         reactEventDispatcher.dispatchEvent(StackScreenDidDisappearEvent(surfaceId, viewTag))
     }
 

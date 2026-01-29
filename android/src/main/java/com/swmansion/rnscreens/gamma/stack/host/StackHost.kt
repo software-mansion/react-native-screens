@@ -85,11 +85,7 @@ class StackHost(
         }
     }
 
-    override fun onDismiss(stackScreen: StackScreen) {
-        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            stackScreen.isNativelyDismissed = true
-        }
-    }
+    override fun onScreenDismiss(stackScreen: StackScreen) = Unit
 
     override fun onMeasure(
         widthMeasureSpec: Int,
