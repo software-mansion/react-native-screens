@@ -35,7 +35,7 @@ import {
   ScreensLightTheme,
 } from './src/shared/styling/adapter/react-navigation';
 
-import LegacyTestsScreen from './src/tests/LegacyTestsScreen';
+import IssueTestsScreen from './src/tests/IssueTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
 import ComponentIntegrationTests from './src/tests/component-integration-tests';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -142,7 +142,7 @@ type RootStackParamList = {
   Tests: undefined;
   SingleFeatureTests: undefined;
   ComponentIntegrationTests: undefined;
-  LegacyTests: undefined;
+  IssueTests: undefined;
 } & {
   [P in keyof typeof SCREENS]: undefined;
 };
@@ -214,12 +214,12 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           title="Component Integration Tests"
           onPress={() => navigation.navigate('ComponentIntegrationTests')}
         />
-        <ThemedText style={styles.label}>Legacy Tests</ThemedText>
+        <ThemedText style={styles.label}>Issue Tests</ThemedText>
         <ListItem
-          key="LegacyTests"
-          testID="root-screen-legacy-tests"
-          title="Legacy Tests"
-          onPress={() => navigation.navigate('LegacyTests')}
+          key="IssueTests"
+          testID="root-screen-issue-tests"
+          title="Issue Tests"
+          onPress={() => navigation.navigate('IssueTests')}
         />
       </ScrollView>
     </SafeAreaView>
@@ -274,10 +274,10 @@ const ExampleApp = (): React.JSX.Element => {
                 component={ComponentIntegrationTests}
               />
               <Stack.Screen
-                key="LegacyTests"
-                name="LegacyTests"
+                key="IssueTests"
+                name="IssueTests"
                 options={{ headerShown: false }}
-                component={LegacyTestsScreen}
+                component={IssueTestsScreen}
               />
             </Stack.Navigator>
           </NavigationContainer>

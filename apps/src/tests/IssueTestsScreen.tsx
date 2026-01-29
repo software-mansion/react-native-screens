@@ -4,7 +4,7 @@ import {
   NavigationIndependentTree,
   NavigationProp,
 } from '@react-navigation/native';
-import * as Tests from './legacy-tests';
+import * as Tests from './issue-tests';
 import { ScrollView, StyleSheet, useColorScheme } from 'react-native';
 import { ListItem, SettingsSwitch } from '../shared';
 import {
@@ -36,7 +36,7 @@ Object.keys(Tests).forEach(testName => {
   };
 });
 
-type LegacyTestStackParamList = {
+type IssueTestsStackParamList = {
   Main: undefined;
 } & {
   [P in keyof typeof SCREENS]: undefined;
@@ -67,7 +67,7 @@ const screens = Object.keys(SCREENS).sort((name1, name2) => {
 });
 
 function MainScreen(props: {
-  navigation: NavigationProp<LegacyTestStackParamList>;
+  navigation: NavigationProp<IssueTestsStackParamList>;
 }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [searchBarEnabled, setSearchBarEnabled] = React.useState(false);
@@ -100,18 +100,18 @@ function MainScreen(props: {
 
   return (
     <SafeAreaView edges={{ top: 'off', bottom: 'maximum' }}>
-      <ScrollView testID="legacy-tests-scrollview">
+      <ScrollView testID="issue-tests-scrollview">
         <SettingsSwitch
           style={styles.switch}
           label="Search bar"
           value={searchBarEnabled}
           onValueChange={() => setSearchBarEnabled(!searchBarEnabled)}
-          testID="legacy-tests-search-bar"
+          testID="issue-tests-search-bar"
         />
         {filteredTests.map(name => (
           <ListItem
             key={name}
-            testID={`legacy-tests-${name}`}
+            testID={`issue-tests-${name}`}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
             disabled={false}
@@ -122,11 +122,11 @@ function MainScreen(props: {
   );
 }
 
-function LegacyTests() {
+function IssueTests() {
   const scheme = useColorScheme();
   const [isDark, setIsDark] = useState(scheme === 'dark');
 
-  const Stack = createNativeStackNavigator<LegacyTestStackParamList>();
+  const Stack = createNativeStackNavigator<IssueTestsStackParamList>();
 
   useEffect(() => setIsDark(scheme === 'dark'), [scheme]);
 
@@ -138,7 +138,7 @@ function LegacyTests() {
           screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
           <Stack.Screen
             name="Main"
-            options={{ title: 'Legacy Tests' }}
+            options={{ title: 'Issue Tests' }}
             component={MainScreen}
           />
           {Object.keys(SCREENS).map(name => (
@@ -166,4 +166,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LegacyTests;
+export default IssueTests;
