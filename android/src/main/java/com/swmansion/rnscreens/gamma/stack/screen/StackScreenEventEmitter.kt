@@ -12,7 +12,8 @@ import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenWillDisappear
 internal class StackScreenEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
-) : BaseEventEmitter(reactContext, viewTag), ViewAppearanceEventEmitter {
+) : BaseEventEmitter(reactContext, viewTag),
+    ViewAppearanceEventEmitter {
     override fun emitOnWillAppear() {
         reactEventDispatcher.dispatchEvent(StackScreenWillAppearEvent(surfaceId, viewTag))
     }
