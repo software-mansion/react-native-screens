@@ -4,6 +4,7 @@ import React from 'react';
 import { Button, FlatList, ScrollView, Text, TextInput, View } from 'react-native';
 import PressableWithFeedback from '../shared/PressableWithFeedback';
 import { Spacer } from '../shared';
+import { type SheetCommands } from '../../../src/types';
 
 type ItemData = {
   id: number,
@@ -57,12 +58,20 @@ function Second({ navigation }: RouteProps<'Second'>) {
 }
 
 function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
+  const sheetRef = React.useRef<SheetCommands>(null);
+
+  React.useEffect(() => {
+    navigation.setOptions({ sheetRef });
+  }, [navigation]);
+
   return (
     // When using `fitToContents` you can't use flex: 1. It is you who must provide
     // the content size - you can't rely on parent size here.
     <View style={{ backgroundColor: 'lightgreen', flex: 1 }}>
       <View style={{ paddingTop: 20 }}>
         <Button title="Go back" onPress={() => navigation.goBack()} />
+        <Button title="Set Detent 0" onPress={() => sheetRef.current?.setDetent(0)} />
+        <Button title="Set Detent 1" onPress={() => sheetRef.current?.setDetent(1)} />
         <Button title="Open Second" onPress={() => navigation.navigate('Second')} />
         <Button title="Open SecondFormSheet" onPress={() => navigation.navigate('SecondFormSheet')} />
         <PressableWithFeedback>

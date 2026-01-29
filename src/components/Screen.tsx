@@ -16,6 +16,7 @@ import {
 // Native components
 import ScreenNativeComponent, {
   NativeProps as ScreenNativeComponentProps,
+  Commands as ScreenNativeCommands,
 } from '../fabric/ScreenNativeComponent';
 import ModalScreenNativeComponent, {
   NativeProps as ModalScreenNativeComponentProps,
@@ -38,6 +39,8 @@ const AnimatedNativeScreen = Animated.createAnimatedComponent(
 const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
   ModalScreenNativeComponent,
 );
+const NativeScreenCommands: SheetCommandsType =
+  ScreenNativeCommands as SheetCommandsType;
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
@@ -64,6 +67,10 @@ interface ViewConfig extends View {
     };
   };
 }
+
+type SheetCommandsType = {
+  setDetent: (viewRef: ViewConfig, index: number) => void;
+};
 
 export const InnerScreen = React.forwardRef<View, ScreenProps>(
   function InnerScreen(props, ref) {
@@ -100,6 +107,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       sheetInitialDetentIndex = 0,
       sheetShouldOverflowTopInset = false,
       sheetDefaultResizeAnimationEnabled = true,
+      sheetRef,
       // Other
       screenId,
       stackPresentation,
@@ -109,6 +117,28 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       onWillAppear,
       onWillDisappear,
     } = rest;
+
+    React.useImperativeHandle(sheetRef, () => ({
+      setDetent: index => {
+        _callMethodWithRef(viewRef =>
+          NativeScreenCommands.setDetent(viewRef, index),
+        );
+      },
+    }));
+
+    const _callMethodWithRef = React.useCallback(
+      (method: (ref: ViewConfig) => void) => {
+        const viewRef = innerRef.current;
+        if (viewRef) {
+          method(viewRef);
+        } else {
+          console.warn(
+            'Reference to native screen component has not been updated yet',
+          );
+        }
+      },
+      [innerRef],
+    );
 
     if (enabled && isNativePlatformSupported) {
       const resolvedSheetAllowedDetents =
