@@ -23,6 +23,8 @@ internal class StackContainer(
 
     private val pendingPopOperations: MutableList<PopOperation> = arrayListOf()
     private val pendingPushOperations: MutableList<PushOperation> = arrayListOf()
+    private val hasPendingOperations: Boolean
+        get() = pendingPushOperations.isNotEmpty() || pendingPopOperations.isNotEmpty()
 
     init {
         id = ViewIdGenerator.generateViewId()
@@ -49,7 +51,7 @@ internal class StackContainer(
         // If container update is requested before container is attached to window, we ignore
         // the call because we don't have valid fragmentManager yet.
         // Update will be eventually executed in onAttachedToWindow().
-        if ((pendingPopOperations.isNotEmpty() || pendingPushOperations.isNotEmpty()) && isAttachedToWindow) {
+        if (hasPendingOperations && isAttachedToWindow) {
             val fragmentManager =
                 checkNotNull(fragmentManager) { "[RNScreens] Fragment manager was null during stack container update" }
             performOperations(fragmentManager)
@@ -104,7 +106,7 @@ internal class StackContainer(
         if (backStackEntryCount > 0) {
             fragmentManager.popBackStack(
                 operation.screen.screenKey,
-                FragmentManager.POP_BACK_STACK_INCLUSIVE
+                FragmentManager.POP_BACK_STACK_INCLUSIVE,
             )
         } else {
             // When fast refresh is used on root screen, we need to remove the screen manually.
