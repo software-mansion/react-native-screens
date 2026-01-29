@@ -30,6 +30,9 @@ class MainActivity : ReactActivity() {
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
     // opt out of having 80% opacity over 3-button navigation
-    getWindow().setNavigationBarContrastEnforced(false)
+    // supported for API level 29 or higher
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+      getWindow().setNavigationBarContrastEnforced(false)
+    }
   }
 }
