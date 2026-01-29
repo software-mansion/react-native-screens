@@ -668,26 +668,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
-  /// We collect only active (non-dismissed) screen controllers.
-  /// This is necessary because when a Screen is dismissed natively, its state is sent **asynchronously** to JS.
-  /// As a result, JS might send a delayed update back to native when multiple screens are being dismissed quickly.
-  /// Since view recycling is disabled, once we detect that a screen has been removed from the view hierarchy,
-  /// it won't be reused. This allows us to safely filter out dismissed screens from screens coming from JS state via
-  /// `controllers`.
-  NSMutableArray<UIViewController *> *activeControllers = [NSMutableArray arrayWithCapacity:controllers.count];
-
-  for (UIViewController *vc in controllers) {
-    BOOL isScreen = [vc isKindOfClass:[RNSScreen class]];
-    if (isScreen) {
-      auto screen = (RNSScreen *)vc;
-      if (!screen.isRemovedFromParent) {
-        [activeControllers addObject:vc];
-      }
-    }
-  }
-
   // when there is no change we return immediately
-  if ([_controller.viewControllers isEqualToArray:activeControllers]) {
+  if ([_controller.viewControllers isEqualToArray:controllers]) {
     return;
   }
 
@@ -718,7 +700,7 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  UIViewController *top = activeControllers.lastObject;
+  UIViewController *top = controllers.lastObject;
 #ifdef RCT_NEW_ARCH_ENABLED
   UIViewController *previousTop = _controller.topViewController;
 #else
@@ -733,14 +715,14 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (firstTimePush) {
     // nothing pushed yet
-    [_controller setViewControllers:activeControllers animated:NO];
+    [_controller setViewControllers:controllers animated:NO];
   } else if (top != previousTop) {
-    if (![activeControllers containsObject:previousTop]) {
+    if (![controllers containsObject:previousTop]) {
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
-        // setting new activeControllers with animation does `push` animation by default
+        // setting new controllers with animation does `push` animation by default
 #ifdef RCT_NEW_ARCH_ENABLED
         // This is a workaround for the case, when in the app we're trying to do `replace` action on screens, when
         // there's already ongoing transition to some screen. In such case, we're making the snapshot, but we're trying
@@ -748,15 +730,15 @@ RNS_IGNORE_SUPER_CALL_END
         // _UIParallaxDimmingView instead). At the moment of RN 0.74 we can't queue the unmounts for such situation
         // either, so we need to turn off animations, when the view is not yet mounted, but it will appear after the
         // transition of previous replacement.
-        [_controller setViewControllers:activeControllers animated:previousTop.view.window != nil];
+        [_controller setViewControllers:controllers animated:previousTop.view.window != nil];
 #else
-        [_controller setViewControllers:activeControllers animated:YES];
+        [_controller setViewControllers:controllers animated:YES];
 #endif // RCT_NEW_ARCH_ENABLED
       } else {
         // last top controller is no longer on stack
-        // in this case we set the activeControllers stack to the new list with
+        // in this case we set the controllers stack to the new list with
         // added the last top element to it and perform (animated) pop
-        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:activeControllers];
+        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
         [newControllers addObject:previousTop];
         [_controller setViewControllers:newControllers animated:NO];
         [_controller popViewControllerAnimated:YES];
@@ -765,7 +747,7 @@ RNS_IGNORE_SUPER_CALL_END
       // new top controller is not on the stack
       // in such case we update the stack except from the last element with
       // no animation and do animated push of the last item
-      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:activeControllers];
+      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
 
       [_controller setViewControllers:newControllers animated:NO];
@@ -773,11 +755,11 @@ RNS_IGNORE_SUPER_CALL_END
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
-      [_controller setViewControllers:activeControllers animated:NO];
+      [_controller setViewControllers:controllers animated:NO];
     }
   } else {
     // change wasn't on the top of the stack. We don't need animation.
-    [_controller setViewControllers:activeControllers animated:NO];
+    [_controller setViewControllers:controllers animated:NO];
   }
 }
 
@@ -786,7 +768,15 @@ RNS_IGNORE_SUPER_CALL_END
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
-    if (!screen.dismissed && screen.controller != nil && screen.activityState != RNSActivityStateInactive) {
+    /// For synchronizing the state with JS `screen.controller.isRemovedFromParent` was added.
+    /// We collect only active (non-dismissed) screen controllers.
+    /// This is necessary because when a Screen is dismissed natively, its state is sent **asynchronously** to JS.
+    /// As a result, JS might send a delayed update back to native when multiple screens are being dismissed quickly.
+    /// Since view recycling is disabled, once we detect that a screen has been removed from the view hierarchy,
+    /// it won't be reused. This allows us to safely filter out dismissed screens from screens coming from JS state via
+    /// `controllers`.
+    if (!screen.dismissed && screen.controller != nil && screen.activityState != RNSActivityStateInactive &&
+        !screen.controller.isRemovedFromParent) {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
