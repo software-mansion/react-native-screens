@@ -768,21 +768,22 @@ RNS_IGNORE_SUPER_CALL_END
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
-    /// For synchronizing the state with JS `screen.controller.isRemovedFromParent` was added.
-    /// We collect only active (non-dismissed) screen controllers.
-    /// This is necessary because when a Screen is dismissed natively, its state is sent **asynchronously** to JS.
-    /// As a result, JS might send a delayed update back to native when multiple screens are being dismissed quickly.
-    /// Since view recycling is disabled, once we detect that a screen has been removed from the view hierarchy,
-    /// it won't be reused. This allows us to safely filter out dismissed screens from screens coming from JS state via
-    /// `controllers`.
-    if (!screen.dismissed && screen.controller != nil && screen.activityState != RNSActivityStateInactive &&
-        !screen.controller.isRemovedFromParent) {
+    if (!screen.dismissed && screen.controller != nil && screen.activityState != RNSActivityStateInactive) {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
       } else {
         if (screen.stackPresentation == RNSScreenStackPresentationPush) {
-          [pushControllers addObject:screen.controller];
+          /// For synchronizing the state with JS `screen.controller.isRemovedFromParent` was added.
+          /// We collect only active (non-dismissed) screen controllers.
+          /// This is necessary because when a Screen is dismissed natively, its state is sent **asynchronously** to JS.
+          /// As a result, JS might send a delayed update back to native when multiple screens are being dismissed
+          /// quickly. Since view recycling is disabled, once we detect that a screen has been removed from the view
+          /// hierarchy, it won't be reused. This allows us to safely filter out dismissed screens from screens coming
+          /// from JS state via `controllers`.
+          if (!screen.controller.isRemovedFromParent) {
+            [pushControllers addObject:screen.controller];
+          }
         } else {
           [modalControllers addObject:screen.controller];
         }
