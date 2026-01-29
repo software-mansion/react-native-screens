@@ -400,14 +400,14 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
     ///
     func maybeSetupInspector(_ inspectors: [RNSSplitViewScreenComponentView]) {
       #if !os(tvOS)
-      if #available(iOS 26.0, *) {
-        let inspector = inspectors.first
-        if inspector != nil {
-          let inspectorViewController = RNSSplitViewNavigationController(
-            rootViewController: inspector!.controller)
-          setViewController(inspectorViewController, for: .inspector)
+        if #available(iOS 26.0, *) {
+          let inspector = inspectors.first
+          if inspector != nil {
+            let inspectorViewController = RNSSplitViewNavigationController(
+              rootViewController: inspector!.controller)
+            setViewController(inspectorViewController, for: .inspector)
+          }
         }
-      }
       #endif
     }
 
@@ -419,9 +419,9 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
     ///
     func maybeShowInspector() {
       #if !os(tvOS)
-      if #available(iOS 26.0, *) {
-        show(.inspector)
-      }
+        if #available(iOS 26.0, *) {
+          show(.inspector)
+        }
       #endif
     }
 
@@ -433,9 +433,9 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
     ///
     func maybeHideInspector() {
       #if !os(tvOS)
-      if #available(iOS 26.0, *) {
-        hide(.inspector)
-      }
+        if #available(iOS 26.0, *) {
+          hide(.inspector)
+        }
       #endif
     }
   }
@@ -479,20 +479,20 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
         // On the other hand, maybe dedicated event related to the inspector would be a better approach.
         // For now I am leaving it, but feel free to drop this method if there's any reason that `onDidDisappear` works better.
         #if !os(tvOS)
-        if column != .inspector {
-          return
-        }
+          if column != .inspector {
+            return
+          }
         #endif
 
         // `didHide` for modal is called on finger down for dismiss, what is problematic, because we can cancel dismissing modal.
         // In this scenario, the modal inspector might receive an invalid state and will deviate from the JS value.
         // Therefore, for event emissions, we need to ensure that the view was detached from the view hierarchy, by checking its window.
         #if !os(tvOS)
-        if let inspectorViewController = viewController(for: .inspector) {
-          if inspectorViewController.view.window == nil {
-            reactEventEmitter.emitOnHideInspector()
+          if let inspectorViewController = viewController(for: .inspector) {
+            if inspectorViewController.view.window == nil {
+              reactEventEmitter.emitOnHideInspector()
+            }
           }
-        }
         #endif
       }
     }
