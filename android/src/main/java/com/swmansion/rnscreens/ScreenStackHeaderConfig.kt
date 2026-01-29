@@ -431,10 +431,17 @@ class ScreenStackHeaderConfig(
         config: ScreenStackHeaderConfig,
     ) : CustomToolbar(context, config) {
         override fun showOverflowMenu(): Boolean {
-            (context.applicationContext as ReactApplication)
-                .reactNativeHost
-                .reactInstanceManager
-                .showDevOptionsDialog()
+            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                (context.applicationContext as ReactApplication)
+                    .reactHost
+                    ?.devSupportManager
+                    ?.showDevOptionsDialog()
+            } else {
+                (context.applicationContext as ReactApplication)
+                    .reactNativeHost
+                    .reactInstanceManager
+                    .showDevOptionsDialog()
+            }
             return true
         }
     }
