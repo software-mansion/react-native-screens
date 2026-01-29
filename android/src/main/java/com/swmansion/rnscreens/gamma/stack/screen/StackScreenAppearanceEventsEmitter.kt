@@ -5,14 +5,17 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 
-internal class StackScreenAppearanceEventsEmitter(screenLifecycle: Lifecycle, private val appearanceEventEmitter: ViewAppearanceEventEmitter) : LifecycleEventObserver {
+internal class StackScreenAppearanceEventsEmitter(
+    screenLifecycle: Lifecycle,
+    private val appearanceEventEmitter: ViewAppearanceEventEmitter,
+) : LifecycleEventObserver {
     init {
         screenLifecycle.addObserver(this)
     }
 
     override fun onStateChanged(
         source: LifecycleOwner,
-        event: Lifecycle.Event
+        event: Lifecycle.Event,
     ) {
         when (event) {
             Lifecycle.Event.ON_START -> appearanceEventEmitter.emitOnWillAppear()
