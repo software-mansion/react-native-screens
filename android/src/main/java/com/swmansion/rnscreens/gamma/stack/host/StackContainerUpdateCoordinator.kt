@@ -2,9 +2,11 @@ package com.swmansion.rnscreens.gamma.stack.host
 
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 
-internal class StackHostContainerUpdateScheduler {
+internal class StackContainerUpdateCoordinator {
     private val pendingPushOperations: MutableList<PushOperation> = arrayListOf()
     private val pendingPopOperations: MutableList<PopOperation> = arrayListOf()
+    private val hasPendingOperations: Boolean
+        get() = pendingPushOperations.isNotEmpty() || pendingPopOperations.isNotEmpty()
 
     internal fun addPushOperation(stackScreen: StackScreen) {
         pendingPushOperations.add(PushOperation(stackScreen))
@@ -18,7 +20,7 @@ internal class StackHostContainerUpdateScheduler {
         container: StackContainer,
         renderedScreens: List<StackScreen>,
     ) {
-        if (pendingPopOperations.isEmpty() && pendingPushOperations.isEmpty()) {
+        if (!hasPendingOperations) {
             return
         }
 

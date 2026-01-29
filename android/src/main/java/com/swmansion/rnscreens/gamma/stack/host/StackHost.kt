@@ -21,7 +21,7 @@ class StackHost(
     StackContainerDelegate {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this))
-    private val containerUpdateScheduler = StackHostContainerUpdateScheduler()
+    private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
 
     init {
         addView(container)
@@ -67,21 +67,21 @@ class StackHost(
 
     private fun addPushOperationIfNeeded(stackScreen: StackScreen) {
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            containerUpdateScheduler.addPushOperation(stackScreen)
+            containerUpdateCoordinator.addPushOperation(stackScreen)
         }
     }
 
     private fun addPopOperationIfNeeded(stackScreen: StackScreen) {
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED && !stackScreen.isNativelyDismissed) {
             // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
-            containerUpdateScheduler.addPopOperation(stackScreen)
+            containerUpdateCoordinator.addPopOperation(stackScreen)
         }
     }
 
     internal fun stackScreenChangedActivityMode(stackScreen: StackScreen) {
         when (stackScreen.activityMode) {
-            StackScreen.ActivityMode.DETACHED -> containerUpdateScheduler.addPopOperation(stackScreen)
-            StackScreen.ActivityMode.ATTACHED -> containerUpdateScheduler.addPushOperation(stackScreen)
+            StackScreen.ActivityMode.DETACHED -> containerUpdateCoordinator.addPopOperation(stackScreen)
+            StackScreen.ActivityMode.ATTACHED -> containerUpdateCoordinator.addPushOperation(stackScreen)
         }
     }
 
@@ -106,7 +106,7 @@ class StackHost(
     }
 
     override fun didMountItems(uiManager: UIManager) {
-        containerUpdateScheduler.executePendingOperationsIfNeeded(container, renderedScreens)
+        containerUpdateCoordinator.executePendingOperationsIfNeeded(container, renderedScreens)
     }
 
     override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
