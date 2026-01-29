@@ -65,7 +65,9 @@ class RNSSplitViewAppearanceApplicator {
     // Step 1 - general settings
     splitViewController.displayModeButtonVisibility = splitView.displayModeButtonVisibility
     splitViewController.preferredSplitBehavior = splitView.preferredSplitBehavior
-    splitViewController.primaryBackgroundStyle = splitView.primaryBackgroundStyle
+    #if !os(tvOS)
+      splitViewController.primaryBackgroundStyle = splitView.primaryBackgroundStyle
+    #endif
     splitViewController.presentsWithGesture = splitView.presentsWithGesture
     splitViewController.primaryEdge = splitView.primaryEdge
     splitViewController.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton
@@ -79,7 +81,7 @@ class RNSSplitViewAppearanceApplicator {
       minWidth: splitView.minimumSupplementaryColumnWidth,
       maxWidth: splitView.maximumSupplementaryColumnWidth)
 
-    #if compiler(>=6.2)
+    #if compiler(>=6.2) && !os(tvOS)
       if #available(iOS 26.0, *) {
         validateColumnConstraints(
           minWidth: splitView.minimumInspectorColumnWidth,
@@ -126,7 +128,7 @@ class RNSSplitViewAppearanceApplicator {
         splitView.preferredSupplementaryColumnWidthOrFraction
     }
 
-    #if compiler(>=6.2)
+    #if compiler(>=6.2) && !os(tvOS)
       if #available(iOS 26.0, *) {
         if splitView.minimumSecondaryColumnWidth >= 0 {
           splitViewController.minimumSecondaryColumnWidth = splitView.minimumSecondaryColumnWidth
