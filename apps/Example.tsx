@@ -198,23 +198,19 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
             disabled={!isPlatformReady(name)}
           />
         ))}
-        <ThemedText style={styles.label}>Single Feature Tests</ThemedText>
+        <ThemedText style={styles.label}>Tests</ThemedText>
         <ListItem
           key="SingleFeatureTests"
           testID="root-screen-single-feature-tests"
           title="Single Feature Tests"
           onPress={() => navigation.navigate('SingleFeatureTests')}
         />
-        <ThemedText style={styles.label}>
-          Component Integration Tests
-        </ThemedText>
         <ListItem
           key="ComponentIntegrationTests"
           testID="root-screen-component-integration-tests"
           title="Component Integration Tests"
           onPress={() => navigation.navigate('ComponentIntegrationTests')}
         />
-        <ThemedText style={styles.label}>Issue Tests</ThemedText>
         <ListItem
           key="IssueTests"
           testID="root-screen-issue-tests"
