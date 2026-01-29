@@ -36,6 +36,8 @@ type AutoCapitalizeType =
 
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 
+type SearchShowAsAction = 'default' | 'always' | 'collapse';
+
 export interface NativeProps extends ViewProps {
   onSearchFocus?: CT.DirectEventHandler<SearchBarEvent> | null;
   onSearchBlur?: CT.DirectEventHandler<SearchBarEvent> | null;
@@ -58,6 +60,7 @@ export interface NativeProps extends ViewProps {
   // Android only
   autoFocus?: CT.WithDefault<boolean, false>;
   disableBackButtonOverride?: boolean;
+  showAsAction?: WithDefault<SearchShowAsAction, 'default'>
   // TODO: consider creating enum here
   inputType?: string;
   onClose?: CT.DirectEventHandler<SearchBarEvent> | null;

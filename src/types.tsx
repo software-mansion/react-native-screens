@@ -84,6 +84,7 @@ export type HeaderSubviewTypes =
   | 'left'
   | 'center'
   | 'searchBar';
+export type SearchShowAsAction = 'default' | 'always' | 'collapse';
 
 export type HeaderHeightChangeEventType = {
   headerHeight: number;
@@ -891,6 +892,16 @@ export interface SearchBarProps {
    * @platform ios
    */
   tintColor?: ColorValue;
+  /**
+   * @platform android
+   *
+   * Controls the behavior of SearchView on the Toolbar/ActionBar. When set to `collapse`,
+   * clicking 'Up' for the first time takes the focus from the SearchView, and current screen
+   * is popped on the second click. When set to `default` or `always`, current screen is dismissed immediately.
+   * This is equivalent to setting android's `showAsAction` to `SHOW_AS_ACTION_ALWAYS`
+   * or `SHOW_AS_ACTION_ALWAYS | SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW`.
+   */
+  showAsAction?: SearchShowAsAction;
   /**
    * The text to be used instead of default `Cancel` button text
    *
