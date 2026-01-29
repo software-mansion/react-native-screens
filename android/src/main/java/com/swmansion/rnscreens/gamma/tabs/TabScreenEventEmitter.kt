@@ -1,7 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.gamma.common.BaseEventEmitter
+import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.gamma.tabs.TabScreenEventEmitter.Companion.TAG
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent

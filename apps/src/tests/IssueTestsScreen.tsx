@@ -48,8 +48,8 @@ const screens = Object.keys(SCREENS).sort((name1, name2) => {
   const spec1 = issueRegex.exec(name1)?.groups;
   const spec2 = issueRegex.exec(name2)?.groups;
 
-  const testNumber1 = parseInt(spec1?.issue as string);
-  const testNumber2 = parseInt(spec2?.issue as string);
+  const testNumber1 = parseInt(spec1?.issue as string, 10);
+  const testNumber2 = parseInt(spec2?.issue as string, 10);
 
   if (Number.isNaN(testNumber1) && Number.isNaN(testNumber2)) {
     return 0;

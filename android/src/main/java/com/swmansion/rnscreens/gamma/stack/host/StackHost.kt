@@ -21,6 +21,7 @@ class StackHost(
     StackContainerDelegate {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this))
+    private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
 
     init {
         addView(container)
@@ -44,50 +45,47 @@ class StackHost(
     ) {
         renderedScreens.add(index, stackScreen)
         stackScreen.stackHost = WeakReference(this)
-        enqueueAddOperationToContainerIfNeeded(stackScreen)
+        addPushOperationIfNeeded(stackScreen)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
         val removedScreen = renderedScreens.removeAt(index)
-        enqueuePopOperationToContainerIfNeeded(removedScreen)
+        addPopOperationIfNeeded(removedScreen)
     }
 
     internal fun unmountReactSubview(reactSubview: StackScreen) {
         renderedScreens.remove(reactSubview)
-        enqueuePopOperationToContainerIfNeeded(reactSubview)
+        addPopOperationIfNeeded(reactSubview)
     }
 
     internal fun unmountAllReactSubviews() {
         renderedScreens.asReversed().forEach {
-            enqueuePopOperationToContainerIfNeeded(it)
+            addPopOperationIfNeeded(it)
         }
         renderedScreens.clear()
     }
 
-    private fun enqueueAddOperationToContainerIfNeeded(stackScreen: StackScreen) {
+    private fun addPushOperationIfNeeded(stackScreen: StackScreen) {
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            container.enqueueAddOperation(stackScreen)
+            containerUpdateCoordinator.addPushOperation(stackScreen)
         }
     }
 
-    private fun enqueuePopOperationToContainerIfNeeded(stackScreen: StackScreen) {
+    private fun addPopOperationIfNeeded(stackScreen: StackScreen) {
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED && !stackScreen.isNativelyDismissed) {
-            container.enqueuePopOperation(stackScreen)
+            // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
+            containerUpdateCoordinator.addPopOperation(stackScreen)
         }
     }
 
     internal fun stackScreenChangedActivityMode(stackScreen: StackScreen) {
         when (stackScreen.activityMode) {
-            StackScreen.ActivityMode.DETACHED -> container.enqueuePopOperation(stackScreen)
-            StackScreen.ActivityMode.ATTACHED -> container.enqueueAddOperation(stackScreen)
+            StackScreen.ActivityMode.DETACHED -> containerUpdateCoordinator.addPopOperation(stackScreen)
+            StackScreen.ActivityMode.ATTACHED -> containerUpdateCoordinator.addPushOperation(stackScreen)
         }
     }
 
-    override fun onDismiss(stackScreen: StackScreen) {
-        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            stackScreen.isNativelyDismissed = true
-        }
-    }
+    override fun onScreenDismiss(stackScreen: StackScreen) = Unit
 
     override fun onMeasure(
         widthMeasureSpec: Int,
@@ -108,7 +106,7 @@ class StackHost(
     }
 
     override fun didMountItems(uiManager: UIManager) {
-        container.performContainerUpdateIfNeeded()
+        containerUpdateCoordinator.executePendingOperationsIfNeeded(container, renderedScreens)
     }
 
     override fun willDispatchViewUpdates(uiManager: UIManager) = Unit

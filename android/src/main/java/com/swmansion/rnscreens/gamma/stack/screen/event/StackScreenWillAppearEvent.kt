@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.gamma.stack.screen.event
 
-import com.swmansion.rnscreens.gamma.common.NamingAwareEventType
+import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 
 internal class StackScreenWillAppearEvent(
     surfaceId: Int,

@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.common
+package com.swmansion.rnscreens.gamma.common.event
 
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper

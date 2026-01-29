@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.screen
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
@@ -45,6 +46,16 @@ class StackScreen(
         // When this is called from View Manager the view tag is already set
         check(id != NO_ID) { "[RNScreens] StackScreen must have its tag set when registering event emitters" }
         eventEmitter = StackScreenEventEmitter(reactContext, id)
+    }
+
+    internal fun createAppearanceEventsEmitter(viewLifecycleOwner: LifecycleOwner) =
+        StackScreenAppearanceEventsEmitter(viewLifecycleOwner.lifecycle, eventEmitter)
+
+    internal fun onDismiss() {
+        if (activityMode == ActivityMode.ATTACHED) {
+            isNativelyDismissed = true
+        }
+        eventEmitter.emitOnDismiss(isNativelyDismissed)
     }
 
     override fun onLayout(
