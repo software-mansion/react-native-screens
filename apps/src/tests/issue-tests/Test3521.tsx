@@ -3,7 +3,7 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Colors from '../shared/styling/Colors';
+import Colors from '../../shared/styling/Colors';
 
 const Stack = createNativeStackNavigator();
 

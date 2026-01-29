@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import Colors from '../shared/styling/Colors';
+import Colors from '../../shared/styling/Colors';
 
 type StackParamList = {
   Home: undefined;

@@ -3,8 +3,8 @@ import React from 'react';
 import {
   BottomTabsContainer,
   type TabConfiguration,
-} from '../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
-import { CenteredLayoutView } from '../shared/CenteredLayoutView';
+} from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
+import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { Text } from 'react-native';
 
 function makeTab(title: string, description: string) {
