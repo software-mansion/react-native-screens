@@ -4,6 +4,7 @@ const RNS_SYNCHRONOUS_HEADER_CONFIG_STATE_UPDATES_DEFAULT = false;
 const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
 const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
+const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = false;
 
 // TODO: Migrate freeze here
 
@@ -54,6 +55,8 @@ const _featureFlags = {
       RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT,
     androidResetScreenShadowStateOnOrientationChangeEnabled:
       RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
+    iosPreventReattachmentOfDismissedScreens:
+      RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
   },
   stable: {},
 };
@@ -105,6 +108,11 @@ const androidResetScreenShadowStateOnOrientationChangeAccessor =
     'androidResetScreenShadowStateOnOrientationChangeEnabled',
     RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
   );
+const iosPreventReattachmentOfDismissedScreensAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'iosPreventReattachmentOfDismissedScreens',
+    RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
+  );
 
 /**
  * Exposes configurable global behaviour of the library.
@@ -147,6 +155,12 @@ export const featureFlags = {
       value: boolean,
     ) {
       androidResetScreenShadowStateOnOrientationChangeAccessor.set(value);
+    },
+    get iosPreventReattachmentOfDismissedScreens() {
+      return iosPreventReattachmentOfDismissedScreensAccessor.get();
+    },
+    set iosPreventReattachmentOfDismissedScreens(value: boolean) {
+      iosPreventReattachmentOfDismissedScreensAccessor.set(value);
     },
   },
   /**

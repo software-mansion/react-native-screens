@@ -774,6 +774,16 @@ RNS_IGNORE_SUPER_CALL_END
         [pushControllers addObject:screen.controller];
       } else {
         if (screen.stackPresentation == RNSScreenStackPresentationPush) {
+          /// For synchronizing the state with JS `screen.controller.isRemovedFromParent` was added.
+          /// We collect only active (non-dismissed) screen controllers.
+          /// This is necessary because when a Screen is dismissed natively, its state is sent **asynchronously** to JS.
+          /// As a result, JS might send a delayed update back to native when multiple screens are being dismissed
+          /// quickly. Since view recycling is disabled, once we detect that a screen has been removed from the view
+          /// hierarchy, it won't be reused. This allows us to safely filter out dismissed screens from screens coming
+          /// from JS state via `controllers`.
+          if (_iosPreventReattachmentOfDismissedScreens && screen.controller.isRemovedFromParent) {
+            continue;
+          }
           [pushControllers addObject:screen.controller];
         } else {
           [modalControllers addObject:screen.controller];
@@ -1362,6 +1372,20 @@ RNS_IGNORE_SUPER_CALL_END
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
+
+- (void)updateProps:(const facebook::react::Props::Shared &)props
+           oldProps:(const facebook::react::Props::Shared &)oldProps
+{
+  const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenStackProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenStackProps>(props);
+
+  if (newScreenProps.iosPreventReattachmentOfDismissedScreens !=
+      oldScreenProps.iosPreventReattachmentOfDismissedScreens) {
+    [self setIosPreventReattachmentOfDismissedScreens:newScreenProps.iosPreventReattachmentOfDismissedScreens];
+  }
+
+  [super updateProps:props oldProps:oldProps];
+}
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {

@@ -43,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL customAnimation;
 @property (nonatomic) BOOL disableSwipeBack;
 
+@property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedScreens;
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;

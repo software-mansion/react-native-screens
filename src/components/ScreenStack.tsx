@@ -15,6 +15,7 @@ import warnOnce from 'warn-once';
 import ScreenStackNativeComponent, {
   NativeProps,
 } from '../fabric/ScreenStackNativeComponent';
+import featureFlags from '../flags';
 
 const assertGHProvider = (
   ScreenGestureDetector: (
@@ -93,6 +94,14 @@ function ScreenStack(props: ScreenStackProps) {
         currentScreenId={currentScreenId}>
         <ScreenStackNativeComponent
           {...rest}
+          /**
+           * This flag is temporary, for ensuring that we're not breaking any basic flow just
+           * before Expo SDK release, we may consider removing it after releasing
+           * react-native-screens@4.21.
+           */
+          iosPreventReattachmentOfDismissedScreens={
+            featureFlags.experiment.iosPreventReattachmentOfDismissedScreens
+          }
           /**
            * This messy override is to conform NativeProps used by codegen and
            * our Public API. To see reasoning go to this PR:
