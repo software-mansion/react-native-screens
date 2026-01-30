@@ -39,7 +39,8 @@ namespace react = facebook::react;
   if (_reactEventEmitter != nullptr) {
     _reactEventEmitter->onNativeFocusChange(
         {.tabKey = RCTStringFromNSString(payload.tabKey),
-         .repeatedSelectionHandledBySpecialEffect = payload.repeatedSelectionHandledBySpecialEffect});
+         .repeatedSelectionHandledBySpecialEffect =
+             static_cast<bool>(payload.repeatedSelectionHandledBySpecialEffect)});
     return YES;
   } else {
     RCTLogWarn(@"[RNScreens] Skipped OnNativeFocusChange event emission due to nullish emitter");
