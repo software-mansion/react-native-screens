@@ -367,7 +367,16 @@ class ScreenStack(
     private fun performDraw(op: DrawingOp) {
         // Canvas parameter can not be null here https://developer.android.com/reference/android/view/ViewGroup#drawChild(android.graphics.Canvas,%20android.view.View,%20long)
         // So if we are passing null here, we would crash anyway
-        super.drawChild(op.canvas!!, op.child, op.drawingTime)
+        try {
+            super.drawChild(op.canvas!!, op.child, op.drawingTime)
+        } catch (e: IllegalStateException) {
+            // Catch IllegalStateException from views that are being recycled
+            // This can happen during navigation transitions when views are destroyed but still queued for drawing
+            // Silently ignore - the view is being recycled and shouldn't be drawn
+        } catch (e: RuntimeException) {
+            // Also catch RuntimeException which might wrap IllegalStateException
+            // Silently ignore - the view is being recycled
+        }
     }
 
     // Can't use `drawingOpPool.removeLast` here due to issues with static name resolution in Android SDK 35+.
