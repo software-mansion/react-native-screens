@@ -2,8 +2,11 @@ package com.swmansion.rnscreens.gamma.stack.screen
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
+import com.swmansion.rnscreens.ext.findFragmentOrNull
+import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.stack.host.StackHost
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -11,7 +14,7 @@ import kotlin.properties.Delegates
 @SuppressLint("ViewConstructor") // should never be restored
 class StackScreen(
     private val reactContext: ThemedReactContext,
-) : ViewGroup(reactContext) {
+) : ViewGroup(reactContext), FragmentProviding {
     enum class ActivityMode {
         DETACHED,
         ATTACHED,
@@ -65,4 +68,8 @@ class StackScreen(
         r: Int,
         b: Int,
     ) = Unit
+
+    override fun getAssociatedFragment(): Fragment? = this.findFragmentOrNull()?.also {
+        check(it is StackScreenFragment) { "[RNScreens] Unexpected fragment type: ${it.javaClass.simpleName}"}
+    }
 }

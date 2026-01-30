@@ -197,3 +197,4 @@ export { default as TestBottomTabsOrientation } from './TestBottomTabsOrientatio
 export { default as TestScreenStack } from './TestScreenStack';
 export { default as TestSplit } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
+export { default as TestStackNesting } from './TestStackNesting';
