@@ -19,7 +19,14 @@ internal class StackContainer(
 ) : CoordinatorLayout(context) {
     private var fragmentManager: FragmentManager? = null
 
-    private val stackScreenFragments: MutableList<StackScreenFragment> = arrayListOf()
+    /**
+     * Describes most up-to-date view of the stack. It might be different from
+     * state kept by FragmentManager as this data structure is updated immediately,
+     * while operations on fragment manager are scheduled.
+     *
+     * FIXME: In case of native-pop, this might be out of date!
+     */
+    private val stackModel: MutableList<StackScreenFragment> = arrayListOf()
 
     private val pendingPopOperations: MutableList<PopOperation> = arrayListOf()
     private val pendingPushOperations: MutableList<PushOperation> = arrayListOf()
@@ -67,6 +74,8 @@ internal class StackContainer(
     }
 
     private fun performOperations(fragmentManager: FragmentManager) {
+        // TODO: Handle case when we have pop & push of the same screen in single batch.
+
         pendingPopOperations.forEach { performPopOperation(fragmentManager, it) }
         pendingPushOperations.forEach { performPushOperation(fragmentManager, it) }
 
@@ -81,7 +90,7 @@ internal class StackContainer(
         val transaction = fragmentManager.createTransactionWithReordering()
 
         val associatedFragment = StackScreenFragment(WeakReference(this), operation.screen)
-        stackScreenFragments.add(associatedFragment)
+        stackModel.add(associatedFragment)
 
         transaction.add(this.id, associatedFragment)
 
@@ -97,7 +106,7 @@ internal class StackContainer(
         fragmentManager: FragmentManager,
         operation: PopOperation,
     ) {
-        val associatedFragment = stackScreenFragments.find { it.stackScreen === operation.screen }
+        val associatedFragment = stackModel.find { it.stackScreen === operation.screen }
         require(associatedFragment != null) {
             "[RNScreens] Unable to find a fragment to pop."
         }
@@ -115,7 +124,7 @@ internal class StackContainer(
             transaction.commitNowAllowingStateLoss()
         }
 
-        stackScreenFragments.remove(associatedFragment)
+        stackModel.remove(associatedFragment)
     }
 
     internal fun onFragmentDestroyView(fragment: StackScreenFragment) {
