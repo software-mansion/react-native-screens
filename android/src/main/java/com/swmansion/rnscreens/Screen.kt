@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
+import android.os.Build
 import android.os.Parcelable
 import android.util.SparseArray
 import android.view.MotionEvent
@@ -12,6 +13,7 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
@@ -541,6 +543,35 @@ class Screen(
     fun changeAccessibilityMode(mode: Int) {
         this.importantForAccessibility = mode
         this.headerConfig?.toolbar?.importantForAccessibility = mode
+    }
+
+    // Accepts one of 3 focusable flags and one of 3 descendantFocusability flags.
+    // https://developer.android.com/reference/android/view/View#setFocusable(int)
+    // https://developer.android.com/reference/android/view/ViewGroup#setDescendantFocusability(int)
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun changeFocusability(
+        focusable: Int,
+        descendantFocusability: Int,
+    ) {
+        this.focusable = focusable
+        this.headerConfig?.toolbar?.focusable = focusable
+
+        this.descendantFocusability = descendantFocusability
+        this.headerConfig?.toolbar?.descendantFocusability = descendantFocusability
+    }
+
+    // Accepts boolean for focusability and one of 3 descendantFocusability flags.
+    // This method is provided for compatibility reasons only (SDK_API <= 25).
+    // https://developer.android.com/reference/android/view/ViewGroup#setDescendantFocusability(int)
+    fun changeFocusabilityCompat(
+        focusable: Boolean,
+        descendantFocusability: Int,
+    ) {
+        this.setFocusable(focusable)
+        this.headerConfig?.toolbar?.setFocusable(focusable)
+
+        this.descendantFocusability = descendantFocusability
+        this.headerConfig?.toolbar?.descendantFocusability = descendantFocusability
     }
 
     var statusBarStyle: String? = null
