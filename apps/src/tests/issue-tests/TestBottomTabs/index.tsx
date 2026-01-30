@@ -17,47 +17,48 @@ enableFreeze(true);
 internalEnableDetailedBottomTabsLogging();
 
 const TAB_CONFIGS: TabConfiguration[] = [
-  {
-    tabScreenProps: {
-      scrollEdgeAppearance: {
-        tabBarBackgroundColor: Colors.NavyLight100,
-        stacked: {
-          normal: {
-            tabBarItemIconColor: Colors.NavyLight60,
-          },
-          selected: {
-            tabBarItemIconColor: Colors.NavyLight20,
-            tabBarItemTitleFontColor: Colors.NavyLight20,
-          },
-        },
-      },
-      testID: 'tab-screen-1-id',
-      accessibilityLabel: 'First Tab Screen',
-      tabBarItemTestID: 'tab-item-1-id',
-      tabBarItemAccessibilityLabel: 'First Tab Item',
-      tabKey: 'Tab1',
-      title: 'Tab1',
-      isFocused: true,
-      icon: {
-        ios: {
-          type: 'sfSymbol',
-          name: 'house.fill',
-        },
-        android: {
-          type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
-        },
-      },
-      selectedIcon: {
-        type: 'sfSymbol',
-        name: 'house.fill',
-      },
-    },
-    component: Tab1,
-  },
+  // {
+  //   tabScreenProps: {
+  //     scrollEdgeAppearance: {
+  //       tabBarBackgroundColor: Colors.NavyLight100,
+  //       stacked: {
+  //         normal: {
+  //           tabBarItemIconColor: Colors.NavyLight60,
+  //         },
+  //         selected: {
+  //           tabBarItemIconColor: Colors.NavyLight20,
+  //           tabBarItemTitleFontColor: Colors.NavyLight20,
+  //         },
+  //       },
+  //     },
+  //     testID: 'tab-screen-1-id',
+  //     accessibilityLabel: 'First Tab Screen',
+  //     tabBarItemTestID: 'tab-item-1-id',
+  //     tabBarItemAccessibilityLabel: 'First Tab Item',
+  //     tabKey: 'Tab1',
+  //     title: 'Tab1',
+  //     isFocused: true,
+  //     icon: {
+  //       ios: {
+  //         type: 'sfSymbol',
+  //         name: 'house.fill',
+  //       },
+  //       android: {
+  //         type: 'imageSource',
+  //         imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+  //       },
+  //     },
+  //     selectedIcon: {
+  //       type: 'sfSymbol',
+  //       name: 'house.fill',
+  //     },
+  //   },
+  //   component: Tab1,
+  // },
   {
     tabScreenProps: {
       tabKey: 'Tab2',
+      isFocused: true,
       badgeValue: 'NEW',
       testID: 'tab-screen-2-id',
       accessibilityLabel: 'Second Tab Screen',
@@ -112,7 +113,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       icon: {
         ios: {
           type: 'templateSource',
-          templateSource: require('../../../../assets/variableIcons/icon.png'),
+          templateSource: require('../../../../assets/variableIcons/react-logo.png'),
         },
         android: {
           type: 'drawableResource',
@@ -121,7 +122,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       selectedIcon: {
         type: 'templateSource',
-        templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        templateSource: require('../../../../assets/variableIcons/react-logo.png'),
       },
       title: 'Tab2',
     },
@@ -159,12 +160,12 @@ const TAB_CONFIGS: TabConfiguration[] = [
       icon: {
         shared: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon.png'),
+          imageSource: require('../../../../assets/variableIcons/react-logo.png'),
         },
       },
       selectedIcon: {
         type: 'imageSource',
-        imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        imageSource: require('../../../../assets/variableIcons/react-logo.png'),
       },
       title: 'Tab3',
       // systemItem: 'search', // iOS specific
