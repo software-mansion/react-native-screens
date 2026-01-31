@@ -128,6 +128,9 @@ internal class StackContainer(
     }
 
     internal fun onFragmentDestroyView(fragment: StackScreenFragment) {
+        if (stackModel.remove(fragment) && !fragment.stackScreen.isNativelyDismissed) {
+            Log.e(TAG, "[RNScreens] StackContainer natively popped a screen that was not in model!")
+        }
         delegate.get()?.onScreenDismiss(fragment.stackScreen)
     }
 
