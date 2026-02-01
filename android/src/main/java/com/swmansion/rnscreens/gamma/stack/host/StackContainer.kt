@@ -17,8 +17,10 @@ import java.lang.ref.WeakReference
 internal class StackContainer(
     context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,
-) : CoordinatorLayout(context), FragmentManager.OnBackStackChangedListener {
+) : CoordinatorLayout(context),
+    FragmentManager.OnBackStackChangedListener {
     private var fragmentManager: FragmentManager? = null
+
     private fun requireFragmentManager(): FragmentManager =
         checkNotNull(fragmentManager) { "[RNScreens] Attempt to use nullish FragmentManager" }
 
@@ -101,9 +103,10 @@ internal class StackContainer(
         // before we commit all the transactions, FragmentManager will handle that for us.
 
         pendingPopOperations.forEach { operation ->
-            val fragment = checkNotNull(stackModel.find { it.stackScreen === operation.screen }) {
-                "[RNScreens] Unable to find a fragment to pop"
-            }
+            val fragment =
+                checkNotNull(stackModel.find { it.stackScreen === operation.screen }) {
+                    "[RNScreens] Unable to find a fragment to pop"
+                }
 
             check(stackModel.size > 1) {
                 "[RNScreens] Attempt to pop last screen from the stack"
@@ -123,12 +126,12 @@ internal class StackContainer(
                     newFragment,
                     containerViewId = this.id,
                     addToBackStack = stackModel.isNotEmpty(),
-                )
+                ),
             )
             stackModel.add(newFragment)
         }
 
-        check(stackModel.isNotEmpty()) { "[RNScreen] Stack should never be empty after updates" }
+        check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
 
         // Top fragment is the primary navigation fragment.
         fragmentOps.add(SetPrimaryNavFragmentOp(stackModel.last()))
@@ -141,8 +144,8 @@ internal class StackContainer(
 
     private fun onNativeFragmentPop(fragment: StackScreenFragment) {
         Log.d(TAG, "StackContainer [$id] natively removed fragment ${fragment.stackScreen.screenKey}")
-        require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model"}
-        check(stackModel.isNotEmpty()) { "[RNScreen] Stack model should not be empty after a native pop" }
+        require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
+        check(stackModel.isNotEmpty()) { "[RNScreens] Stack model should not be empty after a native pop" }
 
         val fragmentManager = requireFragmentManager()
         if (fragmentManager.primaryNavigationFragment === fragment) {
@@ -150,7 +153,7 @@ internal class StackContainer(
             // will have invalid state, pointing to the dismissed fragment.
             fragmentOpExecutor.executeOperations(
                 fragmentManager,
-                listOf(SetPrimaryNavFragmentOp(stackModel.last()))
+                listOf(SetPrimaryNavFragmentOp(stackModel.last())),
             )
         }
     }
@@ -173,7 +176,10 @@ internal class StackContainer(
     // This is called before the special effects (animations) are dispatched, however mid transaction!
     // Therefore make sure to not execute any action that might cause synchronous transaction synchronously
     // from this callback.
-    override fun onBackStackChangeCommitted(fragment: Fragment, pop: Boolean) {
+    override fun onBackStackChangeCommitted(
+        fragment: Fragment,
+        pop: Boolean,
+    ) {
         if (fragment !is StackScreenFragment) {
             Log.w(TAG, "[RNScreens] Unexpected type of fragment: ${fragment.javaClass.simpleName}")
             return
@@ -185,7 +191,6 @@ internal class StackContainer(
             }
         }
     }
-
 
     companion object {
         const val TAG = "StackContainer"
