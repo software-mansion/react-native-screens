@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.gamma.stack.host
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.ViewGroup
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
@@ -75,6 +76,8 @@ class StackHost(
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED && !stackScreen.isNativelyDismissed) {
             // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
             containerUpdateCoordinator.addPopOperation(stackScreen)
+        } else {
+            Log.d(TAG, "Ignoring pop operation of ${stackScreen.screenKey}, already not attached or natively dismissed")
         }
     }
 
@@ -85,7 +88,11 @@ class StackHost(
         }
     }
 
-    override fun onScreenDismiss(stackScreen: StackScreen) = Unit
+    override fun onScreenDismiss(stackScreen: StackScreen) {
+        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
+            stackScreen.isNativelyDismissed = true
+        }
+    }
 
     override fun onMeasure(
         widthMeasureSpec: Int,
