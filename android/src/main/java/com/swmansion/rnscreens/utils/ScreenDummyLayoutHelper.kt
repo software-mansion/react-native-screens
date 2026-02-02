@@ -179,7 +179,7 @@ internal class ScreenDummyLayoutHelper(
         }
 
         val topLevelDecorView = requireActivity().window.decorView
-        val topInset = getDecorViewTopInset(topLevelDecorView)
+        val topInset = RNSScreenInsetsUtils.getEstimatedTopInset(requireReactContext(), null)
 
         // These dimensions are not accurate, as they do include navigation bar, however
         // it is ok for our purposes.

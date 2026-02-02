@@ -38,7 +38,7 @@ import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
-import com.swmansion.rnscreens.utils.getDecorViewTopInset
+import com.swmansion.rnscreens.utils.RNSScreenInsetsUtils
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -357,12 +357,7 @@ class Screen(
             val height = b - t
 
             if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
-                val topLevelDecorView =
-                    requireNotNull(
-                        reactContext.currentActivity?.window?.decorView,
-                    ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
-
-                val topInset = getDecorViewTopInset(topLevelDecorView)
+                val topInset = RNSScreenInsetsUtils.getEstimatedTopInset(reactContext, this)
                 val correctedHeight = height - topInset
                 val correctedOffsetY = t + topInset
 
