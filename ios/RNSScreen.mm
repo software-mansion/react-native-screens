@@ -1895,6 +1895,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // Since view recycling is disabled, we can rely on a flag indicating that the controller
     // has been removed from the hierarchy, as it will not be reused.
     _isRemovedFromParent = YES;
+  } else {
+    _isRemovedFromParent = NO;
   }
 
   [super didMoveToParentViewController:parent];
