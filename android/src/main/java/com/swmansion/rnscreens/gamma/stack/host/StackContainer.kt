@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
-import com.swmansion.rnscreens.gamma.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.utils.RNSLog
@@ -17,15 +17,17 @@ import java.lang.ref.WeakReference
 internal class StackContainer(
     context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,
-) : CoordinatorLayout(context) {
+) : CoordinatorLayout(context),
+    FragmentManager.OnBackStackChangedListener {
     private var fragmentManager: FragmentManager? = null
+
+    private fun requireFragmentManager(): FragmentManager =
+        checkNotNull(fragmentManager) { "[RNScreens] Attempt to use nullish FragmentManager" }
 
     /**
      * Describes most up-to-date view of the stack. It might be different from
      * state kept by FragmentManager as this data structure is updated immediately,
      * while operations on fragment manager are scheduled.
-     *
-     * FIXME: In case of native-pop, this might be out of date!
      */
     private val stackModel: MutableList<StackScreenFragment> = arrayListOf()
 
@@ -33,6 +35,8 @@ internal class StackContainer(
     private val pendingPushOperations: MutableList<PushOperation> = arrayListOf()
     private val hasPendingOperations: Boolean
         get() = pendingPushOperations.isNotEmpty() || pendingPopOperations.isNotEmpty()
+
+    private val fragmentOpExecutor: FragmentOperationExecutor = FragmentOperationExecutor()
 
     init {
         id = ViewIdGenerator.generateViewId()
@@ -42,14 +46,26 @@ internal class StackContainer(
         RNSLog.d(TAG, "StackContainer [$id] attached to window")
         super.onAttachedToWindow()
 
-        fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }
+        setupFragmentManger()
 
         // We run container update to handle any pending updates requested before container was
         // attached to window.
         performContainerUpdateIfNeeded()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        requireFragmentManager().removeOnBackStackChangedListener(this)
+        fragmentManager = null
+    }
+
+    internal fun setupFragmentManger() {
+        fragmentManager =
+            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
+                "[RNScreens] Nullish fragment manager - can't run container operations"
+            }.also {
+                it.addOnBackStackChangedListener(this)
+            }
     }
 
     /**
@@ -60,9 +76,7 @@ internal class StackContainer(
         // the call because we don't have valid fragmentManager yet.
         // Update will be eventually executed in onAttachedToWindow().
         if (hasPendingOperations && isAttachedToWindow) {
-            val fragmentManager =
-                checkNotNull(fragmentManager) { "[RNScreens] Fragment manager was null during stack container update" }
-            performOperations(fragmentManager)
+            performOperations(requireFragmentManager())
         }
     }
 
@@ -75,64 +89,107 @@ internal class StackContainer(
     }
 
     private fun performOperations(fragmentManager: FragmentManager) {
-        // TODO: Handle case when we have pop & push of the same screen in single batch.
+        val fragmentOps = applyOperationsAndComputeFragmentManagerOperations()
+        fragmentOpExecutor.executeOperations(fragmentManager, fragmentOps, flushSync = false)
 
-        pendingPopOperations.forEach { performPopOperation(fragmentManager, it) }
-        pendingPushOperations.forEach { performPushOperation(fragmentManager, it) }
+        dumpStackModel()
+    }
+
+    private fun applyOperationsAndComputeFragmentManagerOperations(): List<FragmentOperation> {
+        val fragmentOps = mutableListOf<FragmentOperation>()
+
+        // Handle pop operations first.
+        // We don't care about pop/push duplicates, as long as we don't let the main loop progress
+        // before we commit all the transactions, FragmentManager will handle that for us.
+
+        pendingPopOperations.forEach { operation ->
+            val fragment =
+                checkNotNull(stackModel.find { it.stackScreen === operation.screen }) {
+                    "[RNScreens] Unable to find a fragment to pop"
+                }
+
+            check(stackModel.size > 1) {
+                "[RNScreens] Attempt to pop last screen from the stack"
+            }
+
+            fragmentOps.add(PopBackStackOp(fragment))
+
+            check(stackModel.removeAt(stackModel.lastIndex) === fragment) {
+                "[RNScreens] Attempt to pop non-top screen"
+            }
+        }
+
+        pendingPushOperations.forEach { operation ->
+            val newFragment = createFragmentForScreen(operation.screen)
+            fragmentOps.add(
+                AddOp(
+                    newFragment,
+                    containerViewId = this.id,
+                    addToBackStack = stackModel.isNotEmpty(),
+                ),
+            )
+            stackModel.add(newFragment)
+        }
+
+        check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
+
+        // Top fragment is the primary navigation fragment.
+        fragmentOps.add(SetPrimaryNavFragmentOp(stackModel.last()))
 
         pendingPopOperations.clear()
         pendingPushOperations.clear()
+
+        return fragmentOps
     }
 
-    private fun performPushOperation(
-        fragmentManager: FragmentManager,
-        operation: PushOperation,
-    ) {
-        val transaction = fragmentManager.createTransactionWithReordering()
+    private fun onNativeFragmentPop(fragment: StackScreenFragment) {
+        Log.d(TAG, "StackContainer [$id] natively removed fragment ${fragment.stackScreen.screenKey}")
+        require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
+        check(stackModel.isNotEmpty()) { "[RNScreens] Stack model should not be empty after a native pop" }
 
-        val associatedFragment = StackScreenFragment(WeakReference(this), operation.screen)
-        stackModel.add(associatedFragment)
-
-        transaction.add(this.id, associatedFragment)
-
-        // Don't add root screen to back stack to handle exiting from app.
-        if (fragmentManager.fragments.isNotEmpty()) {
-            transaction.addToBackStack(operation.screen.screenKey)
-        }
-
-        transaction.commitAllowingStateLoss()
-    }
-
-    private fun performPopOperation(
-        fragmentManager: FragmentManager,
-        operation: PopOperation,
-    ) {
-        val associatedFragment = stackModel.find { it.stackScreen === operation.screen }
-        require(associatedFragment != null) {
-            "[RNScreens] Unable to find a fragment to pop."
-        }
-
-        val backStackEntryCount = fragmentManager.backStackEntryCount
-        if (backStackEntryCount > 0) {
-            fragmentManager.popBackStack(
-                operation.screen.screenKey,
-                FragmentManager.POP_BACK_STACK_INCLUSIVE,
+        val fragmentManager = requireFragmentManager()
+        if (fragmentManager.primaryNavigationFragment === fragment) {
+            // We need to update the primary navigation fragment, otherwise the fragment manager
+            // will have invalid state, pointing to the dismissed fragment.
+            fragmentOpExecutor.executeOperations(
+                fragmentManager,
+                listOf(SetPrimaryNavFragmentOp(stackModel.last())),
             )
-        } else {
-            // When fast refresh is used on root screen, we need to remove the screen manually.
-            val transaction = fragmentManager.createTransactionWithReordering()
-            transaction.remove(associatedFragment)
-            transaction.commitNowAllowingStateLoss()
         }
-
-        stackModel.remove(associatedFragment)
     }
 
-    internal fun onFragmentDestroyView(fragment: StackScreenFragment) {
-        if (stackModel.remove(fragment) && !fragment.stackScreen.isNativelyDismissed) {
-            Log.e(TAG, "[RNScreens] StackContainer natively popped a screen that was not in model!")
+    private fun dumpStackModel() {
+        Log.d(TAG, "StackContainer [$id] MODEL BEGIN")
+        stackModel.forEach {
+            Log.d(TAG, "${it.stackScreen.screenKey}")
         }
-        delegate.get()?.onScreenDismiss(fragment.stackScreen)
+    }
+
+    private fun createFragmentForScreen(screen: StackScreen): StackScreenFragment =
+        StackScreenFragment(screen).also {
+            Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
+        }
+
+    // This is called after special effects (animations) are dispatched
+    override fun onBackStackChanged() = Unit
+
+    // This is called before the special effects (animations) are dispatched, however mid transaction!
+    // Therefore make sure to not execute any action that might cause synchronous transaction synchronously
+    // from this callback.
+    override fun onBackStackChangeCommitted(
+        fragment: Fragment,
+        pop: Boolean,
+    ) {
+        if (fragment !is StackScreenFragment) {
+            Log.w(TAG, "[RNScreens] Unexpected type of fragment: ${fragment.javaClass.simpleName}")
+            return
+        }
+        if (pop) {
+            delegate.get()?.onScreenDismiss(fragment.stackScreen)
+            if (stackModel.contains(fragment)) {
+                onNativeFragmentPop(fragment)
+            }
+        }
     }
 
     companion object {
