@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.stack.host
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentManager
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
