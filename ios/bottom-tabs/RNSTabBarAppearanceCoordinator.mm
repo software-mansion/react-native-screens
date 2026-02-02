@@ -136,8 +136,8 @@
     tabBarItem.image = image;
   }
 
-  // We request a layout pass, because the tab bar might have been attached to the window
-  // before the image was assigned.
+  // A layout pass is required because the image might be loaded asynchronously,
+  // after the tab bar has already been attached to the window.
   UIViewController *parent = screenView.controller.parentViewController;
   if ([parent isKindOfClass:[UITabBarController class]]) {
     UITabBarController *tabBarVC = (UITabBarController *)parent;
