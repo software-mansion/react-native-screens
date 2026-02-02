@@ -382,8 +382,9 @@ class TabsHost(
     private fun updateSelectedTab() {
         val newFocusedTab = currentFocusedTab
 
-        check(requireFragmentManager.fragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
-        val oldFocusedTab = requireFragmentManager.fragments.firstOrNull()
+        val tabFragments = requireFragmentManager.fragments.filterIsInstance<TabScreenFragment>()
+        check(tabFragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
+        val oldFocusedTab = tabFragments.firstOrNull()
 
         if (newFocusedTab === oldFocusedTab) {
             return
