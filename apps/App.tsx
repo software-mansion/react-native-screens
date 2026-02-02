@@ -1,7 +1,7 @@
 import React from 'react';
 import { enableFreeze } from 'react-native-screens';
 import Example from './Example';
-// import * as Test from './src/tests';
+// import * as Test from './src/tests/issue-tests';
 
 enableFreeze(true);
 
