@@ -142,7 +142,6 @@
   if ([parent isKindOfClass:[UITabBarController class]]) {
     UITabBarController *tabBarVC = (UITabBarController *)parent;
     [tabBarVC.tabBar setNeedsLayout];
-    [tabBarVC.tabBar layoutIfNeeded];
   }
 }
 
