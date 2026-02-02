@@ -15,7 +15,7 @@ import Colors from '../../shared/styling/Colors';
 
 enableFreeze(true);
 
-const ICON = require('../../../assets/variableIcons/globe.png');
+const ICON = require('../../../assets/variableIcons/globe_oversized.png');
 
 function makeTab(title: string) {
   return function Tab() {
