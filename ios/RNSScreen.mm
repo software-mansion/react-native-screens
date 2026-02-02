@@ -1620,6 +1620,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
+  BOOL _isRemovedFromParent;
 }
 
 #pragma mark - Common
@@ -1630,6 +1631,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     self.view = view;
     _fakeView = [UIView new];
     _shouldNotify = YES;
+    _isRemovedFromParent = NO;
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
@@ -1887,6 +1889,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  if (parent == nil) {
+    // Since view recycling is disabled, we can rely on a flag indicating that the controller
+    // has been removed from the hierarchy, as it will not be reused.
+    _isRemovedFromParent = YES;
+  } else {
+    _isRemovedFromParent = NO;
+  }
+
+  [super didMoveToParentViewController:parent];
+}
+
 - (id)findFirstResponder:(UIView *)parent
 {
   if (parent.isFirstResponder) {
@@ -1899,6 +1914,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   }
   return nil;
+}
+
+// This method allows us to check whether the Screen has been dismissed;
+// works reliably, because of disabled view recycling.
+- (BOOL)isRemovedFromParent
+{
+  return _isRemovedFromParent;
 }
 
 #pragma mark - transition progress related methods
