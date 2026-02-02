@@ -1,3 +1,4 @@
+import type { StackScreenActivityMode } from 'react-native-screens/experimental';
 import type {
   NavigationAction,
   NavigationActionBatch,
@@ -92,9 +93,7 @@ function navigationActionPushHandler(
     );
   }
 
-  const newRoute = createRouteFromConfig(newRouteConfig);
-  newRoute.activityMode = 'attached';
-
+  const newRoute = createRouteFromConfig(newRouteConfig, 'attached');
   return getNewStateAfterPush(state, newRoute);
 }
 
@@ -233,10 +232,13 @@ function navigationActionBatchHandler(
   return action.actions.reduce(navigationStateReducer, state);
 }
 
-function createRouteFromConfig(config: StackRouteConfig): StackRoute {
+function createRouteFromConfig(
+  config: StackRouteConfig,
+  activityMode: StackScreenActivityMode = 'detached',
+): StackRoute {
   return {
     ...config,
-    activityMode: 'detached',
+    activityMode,
     routeKey: generateRouteKeyForRouteName(config.name),
   };
 }
@@ -263,8 +265,7 @@ function getNewStateAfterPush(
 export function determineFirstRoute(
   routeConfigs: StackRouteConfig[],
 ): StackState {
-  const firstRoute = createRouteFromConfig(routeConfigs[0]);
-  firstRoute.activityMode = 'attached';
+  const firstRoute = createRouteFromConfig(routeConfigs[0], 'attached');
   return [firstRoute];
 }
 
