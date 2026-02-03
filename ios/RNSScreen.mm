@@ -2097,6 +2097,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreen *)vc).screenView.screenOrientation;
   }
+  if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+    return UIInterfaceOrientationMaskAll;
+  }
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
