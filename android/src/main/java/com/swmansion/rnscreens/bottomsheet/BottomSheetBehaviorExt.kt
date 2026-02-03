@@ -19,6 +19,7 @@ internal fun <T : View> BottomSheetBehavior<T>.updateMetrics(
 internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(
     maxAllowedHeight: Int? = null,
     forceExpandedState: Boolean = true,
+    enableManualInsetsAdjustmentWorkaround: Boolean? = null,
 ): BottomSheetBehavior<T> {
     this.skipCollapsed = true
     this.isFitToContents = true
@@ -28,6 +29,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(
     maxAllowedHeight?.let {
         this.maxHeight = maxAllowedHeight
     }
+    enableManualInsetsAdjustmentWorkaround?.let { this.isGestureInsetBottomIgnored = enableManualInsetsAdjustmentWorkaround }
     return this
 }
 
@@ -35,12 +37,14 @@ internal fun <T : View> BottomSheetBehavior<T>.useTwoDetents(
     @BottomSheetBehavior.StableState state: Int? = null,
     firstHeight: Int? = null,
     maxAllowedHeight: Int? = null,
+    enableManualInsetsAdjustmentWorkaround: Boolean? = null,
 ): BottomSheetBehavior<T> {
     this.skipCollapsed = false
     this.isFitToContents = true
     state?.let { this.state = state }
     firstHeight?.let { this.peekHeight = firstHeight }
     maxAllowedHeight?.let { this.maxHeight = maxAllowedHeight }
+    enableManualInsetsAdjustmentWorkaround?.let { this.isGestureInsetBottomIgnored = enableManualInsetsAdjustmentWorkaround }
     return this
 }
 
@@ -50,6 +54,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     maxAllowedHeight: Int? = null,
     halfExpandedRatio: Float? = null,
     expandedOffsetFromTop: Int? = null,
+    enableManualInsetsAdjustmentWorkaround: Boolean? = null,
 ): BottomSheetBehavior<T> {
     this.skipCollapsed = false
     this.isFitToContents = false
@@ -58,6 +63,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     halfExpandedRatio?.let { this.halfExpandedRatio = halfExpandedRatio }
     expandedOffsetFromTop?.let { this.expandedOffset = expandedOffsetFromTop }
     maxAllowedHeight?.let { this.maxHeight = maxAllowedHeight }
+    enableManualInsetsAdjustmentWorkaround?.let { this.isGestureInsetBottomIgnored = enableManualInsetsAdjustmentWorkaround }
     return this
 }
 

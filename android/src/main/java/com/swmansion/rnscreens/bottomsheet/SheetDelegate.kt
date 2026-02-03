@@ -178,7 +178,7 @@ class SheetDelegate(
                                 } else {
                                     screen.sheetDetents.maxAllowedHeight(containerHeight)
                                 }
-                            useSingleDetent(maxAllowedHeight = height)
+                            useSingleDetent(maxAllowedHeight = height, enableManualInsetsAdjustmentWorkaround = screen.sheetShouldOverflowTopInset)
                         }
 
                     2 ->
@@ -189,6 +189,7 @@ class SheetDelegate(
                                 ),
                             firstHeight = screen.sheetDetents.firstHeight(containerHeight),
                             maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
+                            enableManualInsetsAdjustmentWorkaround = screen.sheetShouldOverflowTopInset
                         )
 
                     3 ->
@@ -201,6 +202,7 @@ class SheetDelegate(
                             halfExpandedRatio = screen.sheetDetents.halfExpandedRatio(),
                             maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
                             expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight, lastTopInset),
+                            enableManualInsetsAdjustmentWorkaround = screen.sheetShouldOverflowTopInset
                         )
 
                     else -> throw IllegalStateException(
@@ -263,13 +265,14 @@ class SheetDelegate(
                                 } else {
                                     screen.sheetDetents.maxAllowedHeight(containerHeight)
                                 }
-                            useSingleDetent(maxAllowedHeight = height, forceExpandedState = false)
+                            useSingleDetent(maxAllowedHeight = height, forceExpandedState = false, enableManualInsetsAdjustmentWorkaround = screen.sheetShouldOverflowTopInset)
                         }
 
                     2 ->
                         behavior.useTwoDetents(
                             firstHeight = screen.sheetDetents.firstHeight(containerHeight),
                             maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
+                            enableManualInsetsAdjustmentWorkaround = screen.sheetShouldOverflowTopInset
                         )
 
                     3 ->
@@ -278,6 +281,7 @@ class SheetDelegate(
                             halfExpandedRatio = screen.sheetDetents.halfExpandedRatio(),
                             maxAllowedHeight = screen.sheetDetents.maxAllowedHeight(containerHeight),
                             expandedOffsetFromTop = screen.sheetDetents.expandedOffsetFromTop(containerHeight, lastTopInset),
+                            enableManualInsetsAdjustmentWorkaround = screen.sheetShouldOverflowTopInset
                         )
 
                     else -> throw IllegalStateException(
