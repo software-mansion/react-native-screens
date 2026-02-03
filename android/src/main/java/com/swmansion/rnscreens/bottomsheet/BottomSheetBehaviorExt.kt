@@ -29,7 +29,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useSingleDetent(
     maxAllowedHeight?.let {
         this.maxHeight = maxAllowedHeight
     }
-    enableManualInsetsAdjustmentWorkaround?.let { this.isGestureInsetBottomIgnored = enableManualInsetsAdjustmentWorkaround }
+    maybeApplyManualInsetsAdjustmentWorkaround(enableManualInsetsAdjustmentWorkaround)
     return this
 }
 
@@ -44,7 +44,7 @@ internal fun <T : View> BottomSheetBehavior<T>.useTwoDetents(
     state?.let { this.state = state }
     firstHeight?.let { this.peekHeight = firstHeight }
     maxAllowedHeight?.let { this.maxHeight = maxAllowedHeight }
-    enableManualInsetsAdjustmentWorkaround?.let { this.isGestureInsetBottomIgnored = enableManualInsetsAdjustmentWorkaround }
+    maybeApplyManualInsetsAdjustmentWorkaround(enableManualInsetsAdjustmentWorkaround)
     return this
 }
 
@@ -63,8 +63,27 @@ internal fun <T : View> BottomSheetBehavior<T>.useThreeDetents(
     halfExpandedRatio?.let { this.halfExpandedRatio = halfExpandedRatio }
     expandedOffsetFromTop?.let { this.expandedOffset = expandedOffsetFromTop }
     maxAllowedHeight?.let { this.maxHeight = maxAllowedHeight }
-    enableManualInsetsAdjustmentWorkaround?.let { this.isGestureInsetBottomIgnored = enableManualInsetsAdjustmentWorkaround }
+    maybeApplyManualInsetsAdjustmentWorkaround(enableManualInsetsAdjustmentWorkaround)
     return this
+}
+
+private fun <T : View> BottomSheetBehavior<T>.maybeApplyManualInsetsAdjustmentWorkaround(enableManualInsetsAdjustmentWorkaround: Boolean?) {
+    /**
+     * WORKAROUND: We manually control 'isGestureInsetBottomIgnored' to bypass the internal
+     * 'setWindowInsetsListener' logic in BottomSheetBehavior.
+     *
+     * The default implementation of 'setWindowInsetsListener' performs wide-ranging
+     * adjustments, including calculating 'insetTop' from system bars. This internal
+     * 'insetTop' value can trigger unwanted top padding during the layout pass.
+     *
+     * By using the 'sheetShouldOverflowTopInset' prop, we're taking full responsibility for
+     * handling both status bar coverage and avoidance. Enabling this workaround
+     * prevents the system from interfering with our custom overflow logic,
+     * ensuring the sheet renders correctly in both states.
+     */
+    enableManualInsetsAdjustmentWorkaround?.let {
+        this.isGestureInsetBottomIgnored = it
+    }
 }
 
 internal fun <T : View> BottomSheetBehavior<T>.fitToContentsSheetHeight(): Int {
