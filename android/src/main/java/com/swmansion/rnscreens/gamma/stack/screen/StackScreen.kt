@@ -14,7 +14,8 @@ import kotlin.properties.Delegates
 @SuppressLint("ViewConstructor") // should never be restored
 class StackScreen(
     private val reactContext: ThemedReactContext,
-) : ViewGroup(reactContext), FragmentProviding {
+) : ViewGroup(reactContext),
+    FragmentProviding {
     enum class ActivityMode {
         DETACHED,
         ATTACHED,
@@ -69,7 +70,8 @@ class StackScreen(
         b: Int,
     ) = Unit
 
-    override fun getAssociatedFragment(): Fragment? = this.findFragmentOrNull()?.also {
-        check(it is StackScreenFragment) { "[RNScreens] Unexpected fragment type: ${it.javaClass.simpleName}"}
-    }
+    override fun getAssociatedFragment(): Fragment? =
+        this.findFragmentOrNull()?.also {
+            check(it is StackScreenFragment) { "[RNScreens] Unexpected fragment type: ${it.javaClass.simpleName}" }
+        }
 }
