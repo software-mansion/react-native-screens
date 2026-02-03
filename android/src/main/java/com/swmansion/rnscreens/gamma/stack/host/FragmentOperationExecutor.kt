@@ -8,7 +8,7 @@ internal class FragmentOperationExecutor {
     internal fun executeOperations(
         fragmentManager: FragmentManager,
         ops: List<FragmentOperation>,
-        flushSync: Boolean = false
+        flushSync: Boolean = false,
     ) {
         ops.forEach { it.execute(fragmentManager, this) }
 
@@ -17,7 +17,10 @@ internal class FragmentOperationExecutor {
         }
     }
 
-    internal fun executeAddOp(fragmentManager: FragmentManager, op: AddOp) {
+    internal fun executeAddOp(
+        fragmentManager: FragmentManager,
+        op: AddOp,
+    ) {
         fragmentManager.createTransactionWithReordering().let { tx ->
             tx.add(op.containerViewId, op.fragment)
             if (op.addToBackStack) {
@@ -27,25 +30,37 @@ internal class FragmentOperationExecutor {
         }
     }
 
-    internal fun executePopBackStackOp(fragmentManager: FragmentManager, op: PopBackStackOp) {
+    internal fun executePopBackStackOp(
+        fragmentManager: FragmentManager,
+        op: PopBackStackOp,
+    ) {
         fragmentManager.popBackStack(
             op.fragment.stackScreen.screenKey,
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
+            FragmentManager.POP_BACK_STACK_INCLUSIVE,
         )
     }
 
-    internal fun executeRemoveOp(fragmentManager: FragmentManager, op: RemoveOp) {
+    internal fun executeRemoveOp(
+        fragmentManager: FragmentManager,
+        op: RemoveOp,
+    ) {
         fragmentManager.createTransactionWithReordering().let { tx ->
             tx.remove(op.fragment)
             commitTransaction(tx, op.allowStateLoss, op.flushSync)
         }
     }
 
-    internal fun executeFlushOp(fragmentManager: FragmentManager, op: FlushNowOp) {
+    internal fun executeFlushOp(
+        fragmentManager: FragmentManager,
+        op: FlushNowOp,
+    ) {
         fragmentManager.executePendingTransactions()
     }
 
-    internal fun executeSetPrimaryNavFragmentOp(fragmentManager: FragmentManager, op: SetPrimaryNavFragmentOp) {
+    internal fun executeSetPrimaryNavFragmentOp(
+        fragmentManager: FragmentManager,
+        op: SetPrimaryNavFragmentOp,
+    ) {
         fragmentManager.createTransactionWithReordering().let { tx ->
             tx.setPrimaryNavigationFragment(op.fragment)
             commitTransaction(tx, allowStateLoss = true, flushSync = false)
@@ -55,7 +70,7 @@ internal class FragmentOperationExecutor {
     private fun commitTransaction(
         tx: FragmentTransaction,
         allowStateLoss: Boolean,
-        flushSync: Boolean = false
+        flushSync: Boolean = false,
     ) {
         if (flushSync) {
             commitSync(tx, allowStateLoss)
@@ -64,7 +79,10 @@ internal class FragmentOperationExecutor {
         }
     }
 
-    private fun commitAsync(tx: FragmentTransaction, allowStateLoss: Boolean) {
+    private fun commitAsync(
+        tx: FragmentTransaction,
+        allowStateLoss: Boolean,
+    ) {
         if (allowStateLoss) {
             tx.commitAllowingStateLoss()
         } else {
@@ -72,7 +90,10 @@ internal class FragmentOperationExecutor {
         }
     }
 
-    private fun commitSync(tx: FragmentTransaction, allowStateLoss: Boolean) {
+    private fun commitSync(
+        tx: FragmentTransaction,
+        allowStateLoss: Boolean,
+    ) {
         if (allowStateLoss) {
             tx.commitNowAllowingStateLoss()
         } else {
