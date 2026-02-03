@@ -2,6 +2,7 @@ import React from 'react';
 import {
   BatchableNavigationAction,
   BatchActionMethod,
+  ClearEffectsActionMethod,
   NavigationAction,
   NavigationActionContext,
   NavigationActionMethods,
@@ -74,6 +75,10 @@ export function useStackOperationMethods(
     [dispatch, actionContext],
   );
 
+  const clearEffectsAction: ClearEffectsActionMethod = React.useCallback(() => {
+    dispatch({ type: 'clear-effects', ctx: actionContext });
+  }, [dispatch, actionContext]);
+
   const aggregateValue = React.useMemo(() => {
     return {
       pushAction,
@@ -82,6 +87,7 @@ export function useStackOperationMethods(
       popNativeAction,
       preloadAction,
       batchAction,
+      clearEffectsAction,
     };
   }, [
     pushAction,
@@ -90,6 +96,7 @@ export function useStackOperationMethods(
     popNativeAction,
     preloadAction,
     batchAction,
+    clearEffectsAction,
   ]);
 
   return aggregateValue;

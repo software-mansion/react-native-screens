@@ -2,11 +2,14 @@ import type { StackScreenActivityMode } from 'react-native-screens/experimental'
 import type {
   NavigationAction,
   NavigationActionBatch,
+  NavigationActionClearEffects,
   NavigationActionNativePop,
   NavigationActionPop,
   NavigationActionPopCompleted,
   NavigationActionPreload,
   NavigationActionPush,
+  StackNavigationEffect,
+  StackNavigationState,
   StackRoute,
   StackRouteConfig,
   StackState,
@@ -16,9 +19,9 @@ import { generateID } from './utils/id-generator';
 const NOT_FOUND_INDEX = -1;
 
 export function navigationStateReducer(
-  state: StackState,
+  state: StackNavigationState,
   action: NavigationAction,
-): StackState {
+): StackNavigationState {
   switch (action.type) {
     case 'push': {
       return navigationActionPushHandler(state, action);
@@ -38,6 +41,9 @@ export function navigationStateReducer(
     case 'batch': {
       return navigationActionBatchHandler(state, action);
     }
+    case 'clear-effects': {
+      return navigationActionClearEffectsHandler(state, action);
+    }
   }
 
   // @ts-ignore
@@ -47,9 +53,9 @@ export function navigationStateReducer(
 }
 
 export function navigationStateReducerWithLogging(
-  state: StackState,
+  state: StackNavigationState,
   action: NavigationAction,
-): StackState {
+): StackNavigationState {
   console.debug(`[Stack] Handling action: ${JSON.stringify(action)}`);
   console.debug(`[Stack] BEFORE state: ${JSON.stringify(state, undefined, 2)}`);
   const newState = navigationStateReducer(state, action);
@@ -64,23 +70,24 @@ export function navigationStateReducerWithLogging(
 }
 
 function navigationActionPushHandler(
-  state: StackState,
+  state: StackNavigationState,
   action: NavigationActionPush,
-): StackState {
+): StackNavigationState {
   // 1 - Check whether the route is already rendered
-  const renderedRouteIndex = state.findIndex(
+  const stack = state.stack;
+  const renderedRouteIndex = stack.findIndex(
     route =>
       route.name === action.routeName && route.activityMode === 'detached',
   );
 
   if (renderedRouteIndex !== NOT_FOUND_INDEX) {
-    const route = state[renderedRouteIndex];
+    const route = stack[renderedRouteIndex];
 
     console.info(`[Stack] Route ${route.name} already rendered, attaching it`);
-    const newState = state.toSpliced(renderedRouteIndex, 1);
+    const newStack = stack.toSpliced(renderedRouteIndex, 1);
     const routeCopy = { ...route };
     routeCopy.activityMode = 'attached';
-    return getNewStateAfterPush(newState, routeCopy);
+    return stackNavStateWithStack(state, applyPushToStack(newStack, routeCopy));
   }
 
   // 2 - Try to render new route
@@ -94,17 +101,19 @@ function navigationActionPushHandler(
   }
 
   const newRoute = createRouteFromConfig(newRouteConfig, 'attached');
-  return getNewStateAfterPush(state, newRoute);
+  return stackNavStateWithStack(state, applyPushToStack(state.stack, newRoute));
 }
 
 function navigationActionPopHandler(
-  state: StackState,
+  state: StackNavigationState,
   action: NavigationActionPop,
-): StackState {
+): StackNavigationState {
   // FIXME: We have a problem here. We can not really determine, which route is currently at the very top!
   // For now let's just accept routeKey as param here.
 
-  const attachedCount = state.reduce((count, route) => {
+  const stack = state.stack;
+
+  const attachedCount = stack.reduce((count, route) => {
     if (route.activityMode === 'attached') {
       return count + 1;
     } else {
@@ -116,10 +125,20 @@ function navigationActionPopHandler(
     console.warn(
       `[Stack] Can not perform pop action on route: ${action.routeKey} - at least one route must be present`,
     );
-    return state;
+    if (
+      state.effects.findIndex(effect => effect.type === 'pop-container') !==
+      NOT_FOUND_INDEX
+    ) {
+      // If there is already a pop-container effect, do nothing
+      return state;
+    }
+    return stackNavStateWithEffects(
+      state,
+      applyPopContainerToEffects(state.effects, { type: 'pop-container' }),
+    );
   }
 
-  const routeIndex = state.findIndex(
+  const routeIndex = stack.findIndex(
     route => route.routeKey === action.routeKey,
   );
   if (routeIndex === NOT_FOUND_INDEX) {
@@ -129,7 +148,7 @@ function navigationActionPopHandler(
     return state;
   }
 
-  const route = state[routeIndex];
+  const route = stack[routeIndex];
 
   if (route.activityMode === 'detached') {
     console.warn(
@@ -138,21 +157,22 @@ function navigationActionPopHandler(
     return state;
   }
 
-  const newState = [...state];
+  const newStack = [...stack];
   // NOTE: This modifies existing state, possibly impacting calculations done before new state is updated.
   // Consider doing deep copy of the state here.
   // EDIT: not sure really whether this is really a problem or not, since the updates are queued
   // and the original state won't be immediatelly affected.
   route.activityMode = 'detached';
 
-  return newState;
+  return stackNavStateWithStack(state, newStack);
 }
 
 function navigationActionPopCompletedHandler(
-  state: StackState,
+  state: StackNavigationState,
   action: NavigationActionPopCompleted,
-): StackState {
-  const routeIndex = state.findIndex(
+): StackNavigationState {
+  const stack = state.stack;
+  const routeIndex = stack.findIndex(
     route => route.routeKey === action.routeKey,
   );
   if (routeIndex === NOT_FOUND_INDEX) {
@@ -162,7 +182,7 @@ function navigationActionPopCompletedHandler(
     return state;
   }
 
-  const route = state[routeIndex];
+  const route = stack[routeIndex];
   if (route.activityMode !== 'detached') {
     console.warn(`[Stack] Popped non-detached route!`);
   }
@@ -171,21 +191,22 @@ function navigationActionPopCompletedHandler(
 
   // Let's remove the route from the state
   // TODO: Consider adding option for keeping it in state.
-  const newState = state.toSpliced(routeIndex, 1);
-  return newState;
+  const newStack = stack.toSpliced(routeIndex, 1);
+  return stackNavStateWithStack(state, newStack);
 }
 
 function navigationActionNativePopHandler(
-  state: StackState,
+  state: StackNavigationState,
   action: NavigationActionNativePop,
-): StackState {
-  if (state.length <= 1) {
+): StackNavigationState {
+  const stack = state.stack;
+  if (stack.length <= 1) {
     throw new Error(
       '[Stack] action: "pop-native" can not be performed with less than 2 routes!',
     );
   }
 
-  const routeIndex = state.findIndex(
+  const routeIndex = stack.findIndex(
     route => route.routeKey === action.routeKey,
   );
   if (routeIndex === NOT_FOUND_INDEX) {
@@ -195,19 +216,19 @@ function navigationActionNativePopHandler(
     return state;
   }
 
-  const route = state[routeIndex];
+  const route = stack[routeIndex];
   if (route.activityMode === 'detached') {
     console.warn('[Stack] natively popped route has "detached" state');
   }
 
-  const newState = state.toSpliced(routeIndex, 1);
-  return newState;
+  const newStack = stack.toSpliced(routeIndex, 1);
+  return stackNavStateWithStack(state, newStack);
 }
 
 function navigationActionPreloadHandler(
-  state: StackState,
+  state: StackNavigationState,
   action: NavigationActionPreload,
-): StackState {
+): StackNavigationState {
   const routeConfig = action.ctx.routeConfigs.find(
     config => config.name === action.routeName,
   );
@@ -222,13 +243,14 @@ function navigationActionPreloadHandler(
   // Preloaded routes are kept at the end of the list to allow order manipulations
   // that won't result in problems on native platform.
   // More info: https://github.com/software-mansion/react-native-screens/pull/3531.
-  return [...state, createRouteFromConfig(routeConfig)];
+  const newStack = [...state.stack, createRouteFromConfig(routeConfig)];
+  return stackNavStateWithStack(state, newStack);
 }
 
 function navigationActionBatchHandler(
-  state: StackState,
+  state: StackNavigationState,
   action: NavigationActionBatch,
-): StackState {
+): StackNavigationState {
   return action.actions.reduce(navigationStateReducer, state);
 }
 
@@ -243,12 +265,19 @@ function createRouteFromConfig(
   };
 }
 
+function navigationActionClearEffectsHandler(
+  state: StackNavigationState,
+  _action: NavigationActionClearEffects,
+): StackNavigationState {
+  if (state.effects.length === 0) {
+    return state;
+  }
+  return stackNavStateWithEffects(state, []);
+}
+
 // Ensures correct order of screens (attached first, detached at the end).
 // This will help with state restoration but WILL NOT help with inspector.
-function getNewStateAfterPush(
-  state: StackState,
-  newRoute: StackRoute,
-): StackState {
+function applyPushToStack(state: StackState, newRoute: StackRoute): StackState {
   const lastAttachedIndex = state.findLastIndex(
     route => route.activityMode === 'attached',
   );
@@ -262,13 +291,43 @@ function getNewStateAfterPush(
   return state.toSpliced(lastAttachedIndex + 1, 0, newRoute);
 }
 
-export function determineFirstRoute(
+function applyPopContainerToEffects(
+  effects: StackNavigationEffect[],
+  newEffect: StackNavigationEffect,
+): StackNavigationEffect[] {
+  return effects.concat(newEffect);
+}
+
+export function determineInitialNavigationState(
   routeConfigs: StackRouteConfig[],
-): StackState {
+): StackNavigationState {
   const firstRoute = createRouteFromConfig(routeConfigs[0], 'attached');
-  return [firstRoute];
+  return {
+    stack: [firstRoute],
+    effects: [],
+  };
 }
 
 function generateRouteKeyForRouteName(routeName: string): string {
   return `r-${routeName}-${generateID()}`;
+}
+
+function stackNavStateWithStack(
+  navState: StackNavigationState,
+  newStack: StackState,
+): StackNavigationState {
+  return {
+    ...navState,
+    stack: newStack,
+  };
+}
+
+function stackNavStateWithEffects(
+  navState: StackNavigationState,
+  newEffects: StackNavigationEffect[],
+): StackNavigationState {
+  return {
+    ...navState,
+    effects: newEffects,
+  };
 }
