@@ -33,7 +33,6 @@ export type TabBarMinimizeBehavior =
 // iOS-specific
 export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
-// iOS-specific
 export type DirectionType = 'rtl' | 'ltr';
 
 export type TabsHostNativeContainerStyleProps = {
@@ -281,9 +280,7 @@ export interface TabsHostProps {
    *
    * Automatically detected from I18nManager.isRTL but can be overridden.
    *
-   * @default 'ltr'
-   *
-   * @platform ios
+   * @platform android, ios
    */
   direction?: DirectionType;
   // #endregion iOS-only
