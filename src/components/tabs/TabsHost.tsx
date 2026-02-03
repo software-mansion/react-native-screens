@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import {
+  I18nManager,
   Platform,
   StyleSheet,
   findNodeHandle,
@@ -66,6 +67,7 @@ function TabsHost(props: TabsHostProps) {
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={experimentalControlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
+      direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredProps}>
