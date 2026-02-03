@@ -1,3 +1,7 @@
+/**
+ * #3601 - Allow for native navigation in nested stacks
+ * #3612 - Add capability to pop nested container
+ */
 import React from 'react';
 
 import {
