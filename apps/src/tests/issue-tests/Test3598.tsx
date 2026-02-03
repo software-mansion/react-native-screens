@@ -10,7 +10,7 @@ import {
   type TabConfiguration,
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
-import { Text } from 'react-native';
+import { I18nManager, Text } from 'react-native';
 import { Button } from '../../shared';
 
 function makeTab(
@@ -23,7 +23,7 @@ function makeTab(
       <CenteredLayoutView>
         <Text>{title}</Text>
         <Button
-          title={`Change mode (currently ${controllerMode})`}
+          title={'Direction is ' + (I18nManager.isRTL ? 'RTL' : 'LTR')}
           onPress={() => {
             switch (controllerMode) {
               case 'automatic':
@@ -90,7 +90,6 @@ function App() {
         setConfig,
       }}>
       <BottomTabsContainer
-        direction="rtl"
         tabConfigs={TAB_CONFIGS}
         tabBarControllerMode={controllerMode}
       />
