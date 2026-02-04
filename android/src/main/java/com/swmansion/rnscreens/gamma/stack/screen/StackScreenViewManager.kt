@@ -28,6 +28,15 @@ class StackScreenViewManager :
         view.onViewManagerAddEventEmitters()
     }
 
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> =
+        mutableMapOf(
+            makeEventRegistrationInfo(StackScreenWillAppearEvent),
+            makeEventRegistrationInfo(StackScreenWillDisappearEvent),
+            makeEventRegistrationInfo(StackScreenDidAppearEvent),
+            makeEventRegistrationInfo(StackScreenDidDisappearEvent),
+            makeEventRegistrationInfo(StackScreenDismissEvent),
+        )
+
     override fun setActivityMode(
         view: StackScreen,
         value: String?,
