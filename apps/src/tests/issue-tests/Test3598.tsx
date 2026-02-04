@@ -13,31 +13,12 @@ import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { I18nManager, Text } from 'react-native';
 import { Button } from '../../shared';
 
-function makeTab(
-  title: string,
-  controllerMode: TabBarControllerMode,
-  setControllerMode: (mode: TabBarControllerMode) => void,
-) {
+function makeTab(title: string) {
   return function Tab() {
     return (
       <CenteredLayoutView>
         <Text>{title}</Text>
-        <Button
-          title={'Direction is ' + (I18nManager.isRTL ? 'RTL' : 'LTR')}
-          onPress={() => {
-            switch (controllerMode) {
-              case 'automatic':
-                setControllerMode('tabBar');
-                break;
-              case 'tabBar':
-                setControllerMode('tabSidebar');
-                break;
-              default:
-                setControllerMode('automatic');
-                break;
-            }
-          }}
-        />
+        <Button title={'Direction is ' + (I18nManager.isRTL ? 'RTL' : 'LTR')} />
       </CenteredLayoutView>
     );
   };
@@ -47,9 +28,6 @@ function App() {
   const [config, setConfig] = React.useState<Configuration>(
     DEFAULT_GLOBAL_CONFIGURATION,
   );
-
-  const [controllerMode, setControllerMode] =
-    useState<TabBarControllerMode>('automatic');
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
@@ -63,9 +41,8 @@ function App() {
             name: 'sun.max',
           },
         },
-        iconResourceName: 'sunny',
       },
-      component: makeTab('Tab 1', controllerMode, setControllerMode),
+      component: makeTab('Tab 1'),
     },
     {
       tabScreenProps: {
@@ -77,9 +54,8 @@ function App() {
             name: 'snow',
           },
         },
-        iconResourceName: 'mode_cool',
       },
-      component: makeTab('Tab 2', controllerMode, setControllerMode),
+      component: makeTab('Tab 2'),
     },
   ];
 
@@ -89,10 +65,7 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer
-        tabConfigs={TAB_CONFIGS}
-        tabBarControllerMode={controllerMode}
-      />
+      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }
