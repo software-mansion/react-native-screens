@@ -22,7 +22,6 @@ private fun getTopInset(insetsCompat: WindowInsetsCompat): Int =
             WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
         ).top
 
-
 internal fun isSoftKeyboardVisible(decorView: View): Boolean? {
     val insetsCompat = ViewCompat.getRootWindowInsets(decorView) ?: return null
 
