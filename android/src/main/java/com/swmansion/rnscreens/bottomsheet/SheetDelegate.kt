@@ -28,7 +28,7 @@ import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
-import com.swmansion.rnscreens.utils.isSoftKeyboardVisible
+import com.swmansion.rnscreens.utils.isSoftKeyboardVisibleOrNull
 
 class SheetDelegate(
     val screen: Screen,
@@ -136,7 +136,7 @@ class SheetDelegate(
 
         activity.currentFocus?.let { focusedView ->
             activity.window?.decorView.let { decorView ->
-                if (isSoftKeyboardVisible(decorView!!) == true) {
+                if (isSoftKeyboardVisibleOrNull(decorView!!) == true) {
                     viewToRestoreFocus = focusedView
                 }
             }
