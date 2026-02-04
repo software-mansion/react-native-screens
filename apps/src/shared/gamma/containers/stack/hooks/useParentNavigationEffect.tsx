@@ -1,6 +1,6 @@
 import React from 'react';
 import { StackNavigationContext } from '../contexts/StackNavigationContext';
-import {
+import type {
   NavigationActionMethods,
   StackNavigationEffect,
 } from '../StackContainer.types';
