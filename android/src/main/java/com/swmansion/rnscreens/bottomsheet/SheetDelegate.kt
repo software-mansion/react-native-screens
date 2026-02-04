@@ -7,6 +7,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Build
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -137,10 +138,13 @@ class SheetDelegate(
             screen.reactContext.currentActivity?.window?.decorView.let { decorView ->
                 if (isSoftKeyboardVisible(decorView!!) == true) {
                     viewToRestoreFocus = focusedView
-                    focusedView.clearFocus()
                 }
             }
 
+            // Note: There's no good reason that Screen should be direct target for focus, we're rather
+            // prefer its children to gain it.
+            screen.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+            screen.requestFocus()
             inputMethodManager?.hideSoftInputFromWindow(focusedView.windowToken, 0)
         }
     }
