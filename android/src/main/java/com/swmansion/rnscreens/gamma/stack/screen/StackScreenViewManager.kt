@@ -7,6 +7,13 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
+import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidAppearEvent
+import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidDisappearEvent
+import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDismissEvent
+import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenNativeDismissPreventedEvent
+import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenWillAppearEvent
+import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenWillDisappearEvent
 
 @ReactModule(name = StackScreenViewManager.REACT_CLASS)
 class StackScreenViewManager :
@@ -35,6 +42,7 @@ class StackScreenViewManager :
             makeEventRegistrationInfo(StackScreenDidAppearEvent),
             makeEventRegistrationInfo(StackScreenDidDisappearEvent),
             makeEventRegistrationInfo(StackScreenDismissEvent),
+            makeEventRegistrationInfo(StackScreenNativeDismissPreventedEvent),
         )
 
     override fun setActivityMode(
@@ -56,6 +64,10 @@ class StackScreenViewManager :
             "[RNScreens] screenKey must not be null."
         }
         view.screenKey = value
+    }
+
+    override fun setPreventNativeDismiss(view: StackScreen, value: Boolean) {
+        view.isPreventNativeDismissEnabled = value
     }
 
     companion object {

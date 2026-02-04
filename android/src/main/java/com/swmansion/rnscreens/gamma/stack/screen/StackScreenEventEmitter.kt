@@ -6,6 +6,7 @@ import com.swmansion.rnscreens.gamma.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenDismissEvent
+import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenNativeDismissPreventedEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.stack.screen.event.StackScreenWillDisappearEvent
 
@@ -37,6 +38,15 @@ internal class StackScreenEventEmitter(
                 viewTag,
                 isNativeDismiss,
             ),
+        )
+    }
+
+    internal fun emitOnNativeDismissPrevented() {
+        reactEventDispatcher.dispatchEvent(
+            StackScreenNativeDismissPreventedEvent(
+                surfaceId,
+                viewTag
+            )
         )
     }
 

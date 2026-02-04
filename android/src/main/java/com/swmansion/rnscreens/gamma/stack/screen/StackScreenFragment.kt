@@ -12,6 +12,14 @@ internal class StackScreenFragment(
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
+    // This holds the screen strongly for now. Beware of retain cycle
+    private val preventNativeDismissBackPressedCallback = PreventNativeDismissCallback(this, false, stackScreen)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(preventNativeDismissBackPressedCallback)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,5 +43,6 @@ internal class StackScreenFragment(
         super.onDestroy()
         Log.i("StackScreenFragment", "onDestroy")
         stackScreen.onDismiss()
+        preventNativeDismissBackPressedCallback.remove()
     }
 }

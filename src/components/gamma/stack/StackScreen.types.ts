@@ -29,4 +29,8 @@ export type StackScreenProps = {
 
   onDismiss?: (screenKey: string) => void;
   onNativeDismiss?: (screenKey: string) => void;
+  onNativeDismissPrevented?: StackScreenEventHandler;
+
+  // Configuration
+  preventNativeDismiss?: boolean;
 };

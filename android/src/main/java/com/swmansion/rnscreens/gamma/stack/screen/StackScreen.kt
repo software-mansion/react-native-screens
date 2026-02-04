@@ -21,6 +21,12 @@ class StackScreen(
         ATTACHED,
     }
 
+    internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            preventNativeDismissChangeObserver?.preventNativeDismissChanged(newValue)
+        }
+    }
+
     internal var isNativelyDismissed = false
         set(value) {
             require(value) {
@@ -46,6 +52,11 @@ class StackScreen(
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
+    /**
+     * Use this to set/unset the observer.
+     */
+    internal var preventNativeDismissChangeObserver: PreventNativeDismissChangeObserver? = null
+
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
         check(id != NO_ID) { "[RNScreens] StackScreen must have its tag set when registering event emitters" }
@@ -60,6 +71,10 @@ class StackScreen(
             isNativelyDismissed = true
         }
         eventEmitter.emitOnDismiss(isNativelyDismissed)
+    }
+
+    internal fun onNativeDismissPrevented() {
+        eventEmitter.emitOnNativeDismissPrevented()
     }
 
     override fun onLayout(
