@@ -6,11 +6,11 @@ internal class StackScreenNativeDismissPreventedEvent(
     surfaceId: Int,
     viewId: Int,
 ) : StackScreenLifecycleEvent<StackScreenNativeDismissPreventedEvent>(
-    surfaceId,
-    viewId,
-    EVENT_NAME,
-    EVENT_REGISTRATION_NAME
-) {
+        surfaceId,
+        viewId,
+        EVENT_NAME,
+        EVENT_REGISTRATION_NAME,
+    ) {
     companion object : NamingAwareEventType {
         const val EVENT_NAME = "topNativeDismissPrevented"
         const val EVENT_REGISTRATION_NAME = "onNativeDismissPrevented"

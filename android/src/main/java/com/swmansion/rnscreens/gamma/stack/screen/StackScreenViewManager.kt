@@ -66,7 +66,10 @@ class StackScreenViewManager :
         view.screenKey = value
     }
 
-    override fun setPreventNativeDismiss(view: StackScreen, value: Boolean) {
+    override fun setPreventNativeDismiss(
+        view: StackScreen,
+        value: Boolean,
+    ) {
         view.isPreventNativeDismissEnabled = value
     }
 

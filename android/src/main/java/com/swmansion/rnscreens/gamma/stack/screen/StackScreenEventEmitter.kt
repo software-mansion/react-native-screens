@@ -45,8 +45,8 @@ internal class StackScreenEventEmitter(
         reactEventDispatcher.dispatchEvent(
             StackScreenNativeDismissPreventedEvent(
                 surfaceId,
-                viewTag
-            )
+                viewTag,
+            ),
         )
     }
 
