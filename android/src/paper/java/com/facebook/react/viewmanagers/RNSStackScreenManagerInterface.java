@@ -16,4 +16,5 @@ import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 public interface RNSStackScreenManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setActivityMode(T view, @Nullable String value);
   void setScreenKey(T view, @Nullable String value);
+  void setPreventNativeDismiss(T view, boolean value);
 }
