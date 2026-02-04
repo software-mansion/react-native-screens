@@ -63,6 +63,11 @@ class SheetDelegate(
         checkNotNull(screen.reactContext.currentActivity) { "[RNScreens] Attempt to access activity on detached context" }
             .window.decorView
 
+    private var viewToRestoreFocus: View? = null
+
+    private val inputMethodManager: InputMethodManager?
+        get() = screen.reactContext.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+
     init {
         assert(screen.fragment is ScreenStackFragment) { "[RNScreens] Sheets are supported only in native stack" }
         screen.fragment!!.lifecycle.addObserver(this)
@@ -77,11 +82,17 @@ class SheetDelegate(
         event: Lifecycle.Event,
     ) {
         when (event) {
+            Lifecycle.Event.ON_CREATE -> handleHostFragmentOnCreate()
             Lifecycle.Event.ON_START -> handleHostFragmentOnStart()
             Lifecycle.Event.ON_RESUME -> handleHostFragmentOnResume()
             Lifecycle.Event.ON_PAUSE -> handleHostFragmentOnPause()
+            Lifecycle.Event.ON_DESTROY -> handleHostFragmentOnDestroy()
             else -> Unit
         }
+    }
+
+    private fun handleHostFragmentOnCreate() {
+        preserveBackgroundFocus()
     }
 
     private fun handleHostFragmentOnStart() {
@@ -94,6 +105,10 @@ class SheetDelegate(
 
     private fun handleHostFragmentOnPause() {
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
+    }
+
+    private fun handleHostFragmentOnDestroy() {
+        restoreBackgroundFocus()
     }
 
     private fun onSheetStateChanged(newState: Int) {
@@ -112,6 +127,25 @@ class SheetDelegate(
         if (shouldDismissSheetInState(newState)) {
             stackFragment.dismissSelf()
         }
+    }
+
+    private fun preserveBackgroundFocus() {
+        val activity = screen.reactContext.currentActivity ?: return
+
+        activity.currentFocus?.let { focusedView ->
+            inputMethodManager?.hideSoftInputFromWindow(focusedView.windowToken, 0)
+
+            viewToRestoreFocus = focusedView
+        }
+    }
+
+    private fun restoreBackgroundFocus() {
+        viewToRestoreFocus?.let { view ->
+            view.requestFocus()
+
+            inputMethodManager?.showSoftInput(view, 0)
+        }
+        viewToRestoreFocus = null
     }
 
     internal fun updateBottomSheetMetrics(behavior: BottomSheetBehavior<Screen>) {
@@ -555,9 +589,7 @@ class SheetDelegate(
                     // I want to be polite here and request focus before dismissing the keyboard,
                     // however even if it fails I want to try to hide the keyboard. This sometimes works...
                     bottomSheet.requestFocus()
-                    val imm =
-                        screen.reactContext.getSystemService(InputMethodManager::class.java)
-                    imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
+                    inputMethodManager?.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
                 }
             }
         }
