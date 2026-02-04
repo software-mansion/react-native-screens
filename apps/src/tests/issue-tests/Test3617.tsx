@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    width: 100,
-    height: 20,
+    width: '80%',
+    height: 50,
     borderWidth: 2,
   },
 });
