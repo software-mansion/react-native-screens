@@ -87,7 +87,7 @@ function navigationActionPushHandler(
     const newStack = stack.toSpliced(renderedRouteIndex, 1);
     const routeCopy = { ...route };
     routeCopy.activityMode = 'attached';
-    return stackNavStateWithStack(state, applyPushToStack(newStack, routeCopy));
+    return stackNavStateWithStack(state, applyPush(newStack, routeCopy));
   }
 
   // 2 - Try to render new route
@@ -101,7 +101,7 @@ function navigationActionPushHandler(
   }
 
   const newRoute = createRouteFromConfig(newRouteConfig, 'attached');
-  return stackNavStateWithStack(state, applyPushToStack(state.stack, newRoute));
+  return stackNavStateWithStack(state, applyPush(state.stack, newRoute));
 }
 
 function navigationActionPopHandler(
@@ -134,7 +134,7 @@ function navigationActionPopHandler(
     }
     return stackNavStateWithEffects(
       state,
-      applyPopContainerToEffects(state.effects, { type: 'pop-container' }),
+      applyEffect(state.effects, { type: 'pop-container' }),
     );
   }
 
@@ -277,7 +277,7 @@ function navigationActionClearEffectsHandler(
 
 // Ensures correct order of screens (attached first, detached at the end).
 // This will help with state restoration but WILL NOT help with inspector.
-function applyPushToStack(state: StackState, newRoute: StackRoute): StackState {
+function applyPush(state: StackState, newRoute: StackRoute): StackState {
   const lastAttachedIndex = state.findLastIndex(
     route => route.activityMode === 'attached',
   );
@@ -291,7 +291,7 @@ function applyPushToStack(state: StackState, newRoute: StackRoute): StackState {
   return state.toSpliced(lastAttachedIndex + 1, 0, newRoute);
 }
 
-function applyPopContainerToEffects(
+function applyEffect(
   effects: StackNavigationEffect[],
   newEffect: StackNavigationEffect,
 ): StackNavigationEffect[] {
