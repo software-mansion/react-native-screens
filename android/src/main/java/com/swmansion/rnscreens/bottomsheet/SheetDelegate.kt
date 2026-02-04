@@ -152,7 +152,6 @@ class SheetDelegate(
     private fun restoreBackgroundFocus() {
         viewToRestoreFocus?.let { view ->
             view.requestFocus()
-
             inputMethodManager?.showSoftInput(view, 0)
         }
         viewToRestoreFocus = null

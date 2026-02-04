@@ -11,6 +11,7 @@ type StackParamList = {
   Home: undefined;
   FormSheet: undefined;
   FormSheetWithAutoFocus: undefined;
+  FormSheetWoFocusable: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -21,7 +22,7 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<StackParamList>) => {
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Home Screen</Text>
-      <Text style={styles.text}>Is focused? {isFocused ? "YES" : "NO"}</Text>
+      <Text style={styles.text}>Is focused? {isFocused ? 'YES' : 'NO'}</Text>
       <TextInput
         style={[
           styles.input,
@@ -38,8 +39,12 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<StackParamList>) => {
         onPress={() => navigation.navigate('FormSheet')}
       />
       <Button
-        title="Open Form Sheet (with autoFocus)"
+        title="Open Form Sheet (w/ autoFocus)"
         onPress={() => navigation.navigate('FormSheetWithAutoFocus')}
+      />
+      <Button
+        title="Open Form Sheet (w/o focusable)"
+        onPress={() => navigation.navigate('FormSheetWoFocusable')}
       />
     </View>
   );
@@ -58,10 +63,22 @@ const FormSheetScreenWithAutoFocus = () => {
   return (
     <View style={styles.formSheetContainer}>
       <View style={styles.rectangle} />
-      <TextInput style={styles.input} autoFocus placeholder="Enter text in FormSheet" />
+      <TextInput
+        style={styles.input}
+        autoFocus
+        placeholder="Enter text in FormSheet"
+      />
     </View>
   );
 };
+
+function FormSheetWoFocusable() {
+  return (
+    <View style={styles.formSheetContainer} focusable={false}>
+      <View style={styles.rectangle} focusable={false} />
+    </View>
+  );
+}
 
 export default function App() {
   return (
@@ -83,6 +100,18 @@ export default function App() {
         <Stack.Screen
           name="FormSheetWithAutoFocus"
           component={FormSheetScreenWithAutoFocus}
+          options={{
+            presentation: 'formSheet',
+            sheetAllowedDetents: 'fitToContents',
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: Colors.YellowLight40,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="FormSheetWoFocusable"
+          component={FormSheetWoFocusable}
           options={{
             presentation: 'formSheet',
             sheetAllowedDetents: 'fitToContents',
