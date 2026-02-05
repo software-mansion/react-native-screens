@@ -8,13 +8,13 @@ const BottomTabsScenarios: Scenario[] = [
     name: 'bottomAccessory',
     key: 'bottomAccessory',
     platforms: ['ios'],
-    screen: BottomAccessory,
+    AppComponent: BottomAccessory,
   },
   {
     name: 'tabBarHidden',
     key: 'tabBarHidden',
     platforms: ['ios', 'android'],
-    screen: TabBarHidden,
+    AppComponent: TabBarHidden,
   },
 ];
 

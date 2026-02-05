@@ -15,7 +15,7 @@ const scenario: Scenario = {
   details:
     'Test prevent native dismiss behavior in simple single-stack scenario',
   platforms: ['android'],
-  screen: App,
+  AppComponent: App,
 };
 
 export default scenario;

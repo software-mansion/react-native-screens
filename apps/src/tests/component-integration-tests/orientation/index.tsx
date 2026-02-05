@@ -8,7 +8,7 @@ const OrientationScenarios: Scenario[] = [
     details:
       'Configuration in Stack contained within TabScreen always takes precedence',
     key: 'StackInTabs',
-    screen: StackInTabs,
+    AppComponent: StackInTabs,
     platforms: ['ios'],
   },
   {
@@ -16,7 +16,7 @@ const OrientationScenarios: Scenario[] = [
     details:
       'Configuration in Tabs contained within StackScreen should have precedence over configuraton in Stack contained within TabScreen',
     key: 'TabsInStack',
-    screen: TabsInStack,
+    AppComponent: TabsInStack,
     platforms: ['ios'],
   },
 ];

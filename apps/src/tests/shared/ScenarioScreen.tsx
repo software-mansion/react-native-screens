@@ -44,7 +44,7 @@ export default function ScenariosScreen(props: {
             }}>
             {() => <ScenarioSelect scenarios={props.scenarios} />}
           </Stack.Screen>
-          {props.scenarios.map(({ name, key, screen }) => (
+          {props.scenarios.map(({ name, key, AppComponent: screen }) => (
             <Stack.Screen name={name} key={key} component={screen} />
           ))}
         </Stack.Navigator>

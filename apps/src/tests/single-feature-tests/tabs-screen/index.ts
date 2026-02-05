@@ -5,7 +5,7 @@ const BottomTabsScreenScenarios: Scenario[] = [
   {
     name: 'orientation',
     key: 'orientation',
-    screen: Orientation,
+    AppComponent: Orientation,
     platforms: ['ios', 'android'],
   },
 ];

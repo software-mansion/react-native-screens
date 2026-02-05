@@ -15,7 +15,7 @@ const scenario: Scenario = {
   details:
     'Observe behavior of prevent native dismiss depending on configuration of nested stack hosting screen',
   platforms: ['android'],
-  screen: App,
+  AppComponent: App,
 };
 
 export default scenario;
