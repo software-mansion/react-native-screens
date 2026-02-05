@@ -26,7 +26,7 @@ internal class StackScreenFragment(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(
-            preventNativeDismissBackPressedCallback
+            preventNativeDismissBackPressedCallback,
         )
     }
 

@@ -9,11 +9,10 @@ import androidx.lifecycle.LifecycleOwner
 internal class PreventNativeDismissCallback(
     lifecycleOwner: LifecycleOwner,
     private val screen: StackScreen,
-    canBeEnabled: Boolean
+    canBeEnabled: Boolean,
 ) : OnBackPressedCallback(false),
     LifecycleEventObserver,
     PreventNativeDismissChangeObserver {
-
     /**
      * A kill-switch whether this callback can even be enabled or not. If set to false,
      * no matter other conditions this callback won't be enabled.
@@ -30,7 +29,6 @@ internal class PreventNativeDismissCallback(
     init {
         lifecycleOwner.lifecycle.addObserver(this)
     }
-
 
     override fun handleOnBackPressed() {
         Log.i("RNScreens", "PreventNativeDismissCallback called for screen ${screen.screenKey}")

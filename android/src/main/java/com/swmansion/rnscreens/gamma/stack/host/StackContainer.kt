@@ -135,9 +135,11 @@ internal class StackContainer(
 
         // Top fragment is the primary navigation fragment.
         val topStackFragment = stackModel.last()
-        fragmentOps.add(SetPrimaryNavFragmentOp(topStackFragment, {
-            updateTopFragment()
-        }))
+        fragmentOps.add(
+            SetPrimaryNavFragmentOp(topStackFragment, {
+                updateTopFragment()
+            }),
+        )
 
         pendingPopOperations.clear()
         pendingPushOperations.clear()
@@ -156,9 +158,11 @@ internal class StackContainer(
         // will have invalid state, pointing to the dismissed fragment.
         fragmentOpExecutor.executeOperations(
             fragmentManager,
-            listOf(SetPrimaryNavFragmentOp(stackModel.last(), {
-                updateTopFragment()
-            })),
+            listOf(
+                SetPrimaryNavFragmentOp(stackModel.last(), {
+                    updateTopFragment()
+                }),
+            ),
         )
     }
 
