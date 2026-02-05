@@ -35,12 +35,6 @@ class PreventNativeDismissCallback(
                 this.isEnabled = screen.isPreventNativeDismissEnabled
             }
 
-            Lifecycle.Event.ON_RESUME -> {
-            }
-
-            Lifecycle.Event.ON_PAUSE -> {
-            }
-
             Lifecycle.Event.ON_STOP -> {
                 this.isEnabled = false
             }
