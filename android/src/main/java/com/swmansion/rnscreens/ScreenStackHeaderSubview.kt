@@ -18,7 +18,7 @@ class ScreenStackHeaderSubview(
      */
     private var isReactSizeSet = false
 
-    var type = Type.RIGHT
+    var type = Type.LEFT
 
     val config: ScreenStackHeaderConfig?
         get() = (parent as? CustomToolbar)?.config
