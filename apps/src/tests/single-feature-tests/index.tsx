@@ -10,8 +10,8 @@ import BottomTabsScenarios from './tabs-host';
 import BottomTabsScreenScenarios from './tabs-screen';
 import SplitHostScenarios from './split-host';
 import SplitScreenScenarios from './split-screen';
-import StackHostScenarios from './stack-host';
-import StackScreenScenarios from './stack-screen';
+import StackV5Scenarios from './stack-v5';
+import StackV4Scenarios from './stack-v4';
 import { Scenario, splitOnUpperCase } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 import ScenariosScreen from '../shared/ScenarioScreen';
@@ -21,8 +21,8 @@ export const COMPONENT_SCENARIOS: Record<string, Scenario[]> = {
   BottomTabsScreen: BottomTabsScreenScenarios,
   SplitHost: SplitHostScenarios,
   SplitScreen: SplitScreenScenarios,
-  StackHost: StackHostScenarios,
-  StackScreen: StackScreenScenarios,
+  StackV5: StackV5Scenarios,
+  StackV4: StackV4Scenarios,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
