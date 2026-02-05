@@ -1,13 +1,10 @@
-import { Scenario } from '../../shared/helpers';
-import Orientation from './Orientation';
+import type { ScenarioGroup } from '../../shared/helpers';
+import Orientation from './stack-v4-orientation';
 
-const StackScreenScenarios: Scenario[] = [
-  {
-    name: 'orientation',
-    key: 'orientation',
-    AppComponent: Orientation,
-    platforms: ['ios', 'android'],
-  },
-];
+const StackV4ScenarioGroup: ScenarioGroup = {
+  name: 'Stack v4',
+  details: 'Single feature tests for Stack v4',
+  scenarios: [Orientation],
+};
 
-export default StackScreenScenarios;
+export default StackV4ScenarioGroup;

@@ -9,7 +9,7 @@ import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import Colors from '../../../shared/styling/Colors';
 import { ToastProvider, useToast } from '../../../shared';
 
-const scenario: Scenario = {
+const SCENARIO: Scenario = {
   name: 'Prevent native dismiss - single stack',
   key: 'prevent-native-dismiss-single-stack',
   details:
@@ -18,7 +18,7 @@ const scenario: Scenario = {
   AppComponent: App,
 };
 
-export default scenario;
+export default SCENARIO;
 
 export function App() {
   return (

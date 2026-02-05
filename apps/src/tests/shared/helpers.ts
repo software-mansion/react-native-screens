@@ -28,19 +28,16 @@ export interface Scenario {
   AppComponent: React.ComponentType;
 }
 
-export type KeyList = Record<keyof any, undefined>;
-
-const UC_REGEX = /[A-Z][^A-Z]+/g;
-
-/**
- * Splits a string into words based on uppercase letters
- */
-export function splitOnUpperCase(str: string) {
-  if (str.length === 0) {
-    return '';
-  }
-
-  const matches = [...str.matchAll(UC_REGEX)];
-
-  return matches.map(m => m.at(0) ?? '').join(' ');
+export interface ScenarioGroup {
+  /**
+   * Name of this scenario group
+   */
+  name: string;
+  /**
+   * Additional description of what this group of scenarios is related to.
+   */
+  details?: string;
+  scenarios: Scenario[];
 }
+
+export type KeyList = Record<keyof any, undefined>;

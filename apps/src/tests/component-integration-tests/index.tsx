@@ -10,7 +10,7 @@ import { ScenarioButton } from '../shared/ScenarioButton';
 
 import OrientationScenarios from './orientation';
 import ScrollViewScenarios from './scroll-view';
-import ScenariosScreen from '../shared/ScenarioScreen';
+import ScenarioSelectionScreen from '../shared/ScenarioScreen';
 
 const COMPONENT_SCENARIOS: Record<string, Scenario[]> = {
   Orientation: OrientationScenarios,
@@ -50,7 +50,7 @@ export default function App() {
           {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarios]) => (
             <Stack.Screen name={key}>
               {() => (
-                <ScenariosScreen
+                <ScenarioSelectionScreen
                   key={key}
                   title={splitOnUpperCase(key)}
                   scenarios={scenarios}
