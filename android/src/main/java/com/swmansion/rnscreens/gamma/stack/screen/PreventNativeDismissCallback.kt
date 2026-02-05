@@ -6,19 +6,34 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 
-class PreventNativeDismissCallback(
+internal class PreventNativeDismissCallback(
     lifecycleOwner: LifecycleOwner,
-    enabled: Boolean,
     private val screen: StackScreen,
-) : OnBackPressedCallback(enabled),
+    canBeEnabled: Boolean
+) : OnBackPressedCallback(false),
     LifecycleEventObserver,
     PreventNativeDismissChangeObserver {
+
+    /**
+     * A kill-switch whether this callback can even be enabled or not. If set to false,
+     * no matter other conditions this callback won't be enabled.
+     */
+    internal var canBeEnabled: Boolean = canBeEnabled
+        set(value) {
+            field = value
+            determineEnabledStatus()
+        }
+
+    private val shouldBeEnabled
+        get() = canBeEnabled && screen.isPreventNativeDismissEnabled
+
     init {
         lifecycleOwner.lifecycle.addObserver(this)
     }
 
+
     override fun handleOnBackPressed() {
-        Log.i("RNScreens", "PreventNativeDismissCallback called")
+        Log.i("RNScreens", "PreventNativeDismissCallback called for screen ${screen.screenKey}")
         screen.onNativeDismissPrevented()
     }
 
@@ -32,7 +47,7 @@ class PreventNativeDismissCallback(
             }
 
             Lifecycle.Event.ON_START -> {
-                this.isEnabled = screen.isPreventNativeDismissEnabled
+                determineEnabledStatus()
             }
 
             Lifecycle.Event.ON_STOP -> {
@@ -50,6 +65,10 @@ class PreventNativeDismissCallback(
     }
 
     override fun preventNativeDismissChanged(newValue: Boolean) {
-        this.isEnabled = newValue
+        determineEnabledStatus()
+    }
+
+    private fun determineEnabledStatus() {
+        this.isEnabled = shouldBeEnabled
     }
 }
