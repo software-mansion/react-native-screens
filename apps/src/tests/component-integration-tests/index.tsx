@@ -5,16 +5,16 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Scenario, splitOnUpperCase } from '../shared/helpers';
+import { ScenarioGroup } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 
-import OrientationScenarios from './orientation';
-import ScrollViewScenarios from './scroll-view';
+import OrientationScenarioGroup from './orientation';
+import ScrollViewScenarioGroup from './scroll-view';
 import ScenarioSelectionScreen from '../shared/ScenarioScreen';
 
-const COMPONENT_SCENARIOS: Record<string, Scenario[]> = {
-  Orientation: OrientationScenarios,
-  ScrollView: ScrollViewScenarios,
+const COMPONENT_SCENARIOS: Record<string, ScenarioGroup> = {
+  Orientation: OrientationScenarioGroup,
+  ScrollView: ScrollViewScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
@@ -24,8 +24,8 @@ type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
 function HomeScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
-      {Object.entries(COMPONENT_SCENARIOS).map(([key]) => (
-        <ScenarioButton key={key} title={splitOnUpperCase(key)} route={key} />
+      {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
+        <ScenarioButton key={key} title={scenarioGroup.name} route={key} />
       ))}
     </ScrollView>
   );
@@ -47,13 +47,12 @@ export default function App() {
               headerTitle: 'Scenarios',
             }}
           />
-          {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarios]) => (
+          {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
             <Stack.Screen name={key}>
               {() => (
                 <ScenarioSelectionScreen
                   key={key}
-                  title={splitOnUpperCase(key)}
-                  scenarios={scenarios}
+                  scenarioGroup={scenarioGroup}
                 />
               )}
             </Stack.Screen>
