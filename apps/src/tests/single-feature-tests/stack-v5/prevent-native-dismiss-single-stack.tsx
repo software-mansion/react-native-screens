@@ -78,6 +78,7 @@ function AScreen() {
       <RouteInformation routeName="A" />
       <PreventNativeDismissInfo />
       <NavigationButtons isPopEnabled={true} />
+      <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );
 }
@@ -88,6 +89,7 @@ function BScreen() {
       <RouteInformation routeName="B" />
       <PreventNativeDismissInfo />
       <NavigationButtons isPopEnabled={true} />
+      <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );
 }
@@ -117,6 +119,21 @@ function NavigationButtons(props: { isPopEnabled: boolean }) {
         />
       )}
     </>
+  );
+}
+
+function TogglePreventNativeDismiss() {
+  const navigation = useStackNavigationContext();
+
+  return (
+    <Button
+      title="Toggle Prevent Native Dismiss"
+      onPress={() =>
+        navigation.setRouteOptions(navigation.routeKey, {
+          preventNativeDismiss: !navigation.routeOptions.preventNativeDismiss,
+        })
+      }
+    />
   );
 }
 
