@@ -179,9 +179,9 @@ internal class StackContainer(
         }
 
     private fun updateTopFragment() {
-        // This assumes that only our fragments are present in fragment manager
+        // We try to handle situation where other fragments might be present.
         val fragments = requireFragmentManager().fragments.filterIsInstance<StackScreenFragment>()
-        check(fragments.isNotEmpty()) { "[RNScreens] Empty fragment manager while attmpting to update top fragment" }
+        check(fragments.isNotEmpty()) { "[RNScreens] Empty fragment manager while attempting to update top fragment" }
         fragments.forEach { it.onResignTopFragment() }
         fragments.last().onBecomeTopFragment()
     }
