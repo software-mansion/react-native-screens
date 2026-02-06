@@ -135,8 +135,8 @@ class SheetDelegate(
         val activity = screen.reactContext.currentActivity ?: return
 
         activity.currentFocus?.let { focusedView ->
-            activity.window?.decorView.let { decorView ->
-                if (isSoftKeyboardVisibleOrNull(decorView!!) == true) {
+            activity.window?.decorView?.let { decorView ->
+                if (isSoftKeyboardVisibleOrNull(decorView) == true) {
                     viewToRestoreFocus = focusedView
                 }
             }
