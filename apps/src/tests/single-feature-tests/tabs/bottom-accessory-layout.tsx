@@ -4,6 +4,17 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { DummyScreen } from '../../shared/DummyScreens';
 import { useDispatchTabsConfig } from '../../shared/hooks/tabs-config';
 import { createAutoConfiguredTabs } from '../../shared/tabs';
+import type { Scenario } from '../../shared/helpers';
+
+const SCENARIO: Scenario = {
+  name: 'Bottom Accessory',
+  key: 'bottom-accessory-layout',
+  details: 'Test tabs bottom accessory with various contents',
+  platforms: ['ios'],
+  AppComponent: App,
+};
+
+export default SCENARIO;
 
 type TabsParamList = {
   Tab1: undefined;
@@ -81,6 +92,7 @@ function ConfigScreen() {
       type: 'tabBar',
       config: { bottomAccessory: ACCESSORY_VARIANTS[selected].content },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
 
   return (
@@ -105,7 +117,7 @@ const Tabs = createAutoConfiguredTabs<TabsParamList>({
   Tab2: DummyScreen,
 });
 
-export default function BottomAccessory() {
+export function App() {
   return (
     <Tabs.Provider>
       <Tabs.Autoconfig />

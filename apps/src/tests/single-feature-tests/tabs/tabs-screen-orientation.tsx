@@ -7,6 +7,16 @@ import {
   createAutoConfiguredTabs,
   findTabScreenOptions,
 } from '../../shared/tabs';
+import { Scenario } from '../../shared/helpers';
+
+const SCENARIO: Scenario = {
+  name: 'Tabs Screen Orientation',
+  key: 'tabs-screen-orientation',
+  AppComponent: App,
+  platforms: ['ios', 'android'],
+};
+
+export default SCENARIO;
 
 type TabParamList = {
   Tab1: undefined;
@@ -46,7 +56,7 @@ const Tabs = createAutoConfiguredTabs<TabParamList>({
   Tab2: DummyScreen,
 });
 
-export default function Orientation() {
+export function App() {
   return (
     <Tabs.Provider>
       <Tabs.Autoconfig />

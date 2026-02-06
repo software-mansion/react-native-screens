@@ -12,6 +12,18 @@ import {
   createAutoConfiguredTabs,
   findTabScreenOptions,
 } from '../../shared/tabs';
+import { Scenario } from '../../shared/helpers';
+
+const SCENARIO: Scenario = {
+  name: 'TabsInStack',
+  details:
+    'Configuration in Tabs contained within StackScreen should have precedence over configuraton in Stack contained within TabScreen',
+  key: 'cit-orientation-tabs-in-stack',
+  AppComponent: Apps,
+  platforms: ['ios'],
+};
+
+export default SCENARIO;
 
 type StackParamList = {
   Screen1: undefined;
@@ -83,7 +95,7 @@ const Stack = createAutoConfiguredStack<StackParamList>({
   Screen1: TabsScreen,
 });
 
-export default function TabsAndStack() {
+export function Apps() {
   return (
     <Stack.Provider>
       <Stack.Autoconfig />

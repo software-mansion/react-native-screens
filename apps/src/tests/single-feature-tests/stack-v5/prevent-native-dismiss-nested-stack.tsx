@@ -9,16 +9,16 @@ import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import Colors from '../../../shared/styling/Colors';
 import { ToastProvider, useToast } from '../../../shared';
 
-const scenario: Scenario = {
+const SCENARIO: Scenario = {
   name: 'Prevent native dismiss - nested stack',
   key: 'prevent-native-dismiss-nested-stack',
   details:
     'Observe behavior of prevent native dismiss depending on configuration of nested stack hosting screen',
   platforms: ['android'],
-  screen: App,
+  AppComponent: App,
 };
 
-export default scenario;
+export default SCENARIO;
 
 export function App() {
   return (

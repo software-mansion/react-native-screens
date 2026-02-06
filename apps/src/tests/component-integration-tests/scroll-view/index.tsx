@@ -1,5 +1,9 @@
-import { Scenario } from '../../shared/helpers';
+import { ScenarioGroup } from '../../shared/helpers';
 
-const ScrollViewScenarios: Scenario[] = [];
+const ScrollViewScenarioGroup: ScenarioGroup = {
+  name: 'ScrollView integration tests',
+  details: 'Tests related to integration of our components with ScrollView',
+  scenarios: [],
+};
 
-export default ScrollViewScenarios;
+export default ScrollViewScenarioGroup;
