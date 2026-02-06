@@ -29,6 +29,9 @@ public class RNSStackScreenManagerDelegate<T extends View, U extends BaseViewMan
       case "screenKey":
         mViewManager.setScreenKey(view, value == null ? null : (String) value);
         break;
+      case "preventNativeDismiss":
+        mViewManager.setPreventNativeDismiss(view, value == null ? false : (boolean) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }

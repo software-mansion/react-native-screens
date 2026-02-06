@@ -64,6 +64,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
         ({ Component, options, activityMode, routeKey }) => {
           const stackNavigationContext: StackNavigationContextPayload = {
             routeKey,
+            routeOptions: { ...options },
             push: navMethods.pushAction,
             pop: navMethods.popAction,
             preload: navMethods.preloadAction,

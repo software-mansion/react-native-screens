@@ -134,7 +134,12 @@ internal class StackContainer(
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
 
         // Top fragment is the primary navigation fragment.
-        fragmentOps.add(SetPrimaryNavFragmentOp(stackModel.last()))
+        val topStackFragment = stackModel.last()
+        fragmentOps.add(
+            SetPrimaryNavFragmentOp(topStackFragment, {
+                updateTopFragment()
+            }),
+        )
 
         pendingPopOperations.clear()
         pendingPushOperations.clear()
@@ -148,14 +153,17 @@ internal class StackContainer(
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack model should not be empty after a native pop" }
 
         val fragmentManager = requireFragmentManager()
-        if (fragmentManager.primaryNavigationFragment === fragment) {
-            // We need to update the primary navigation fragment, otherwise the fragment manager
-            // will have invalid state, pointing to the dismissed fragment.
-            fragmentOpExecutor.executeOperations(
-                fragmentManager,
-                listOf(SetPrimaryNavFragmentOp(stackModel.last())),
-            )
-        }
+        check(fragmentManager.primaryNavigationFragment === fragment) { "[RNScreens] primaryNavFragment should be the one popped" }
+        // We need to update the primary navigation fragment, otherwise the fragment manager
+        // will have invalid state, pointing to the dismissed fragment.
+        fragmentOpExecutor.executeOperations(
+            fragmentManager,
+            listOf(
+                SetPrimaryNavFragmentOp(stackModel.last(), {
+                    updateTopFragment()
+                }),
+            ),
+        )
     }
 
     private fun dumpStackModel() {
@@ -169,6 +177,14 @@ internal class StackContainer(
         StackScreenFragment(screen).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
+
+    private fun updateTopFragment() {
+        // We try to handle situation where other fragments might be present.
+        val fragments = requireFragmentManager().fragments.filterIsInstance<StackScreenFragment>()
+        check(fragments.isNotEmpty()) { "[RNScreens] Empty fragment manager while attempting to update top fragment" }
+        fragments.forEach { it.onResignTopFragment() }
+        fragments.last().onBecomeTopFragment()
+    }
 
     // This is called after special effects (animations) are dispatched
     override fun onBackStackChanged() = Unit

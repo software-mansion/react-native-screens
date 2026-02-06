@@ -16,7 +16,7 @@ import { Scenario, splitOnUpperCase } from '../shared/helpers';
 import { ScenarioButton } from '../shared/ScenarioButton';
 import ScenariosScreen from '../shared/ScenarioScreen';
 
-const COMPONENT_SCENARIOS: Record<string, Scenario[]> = {
+export const COMPONENT_SCENARIOS: Record<string, Scenario[]> = {
   BottomTabs: BottomTabsScenarios,
   BottomTabsScreen: BottomTabsScreenScenarios,
   SplitHost: SplitHostScenarios,

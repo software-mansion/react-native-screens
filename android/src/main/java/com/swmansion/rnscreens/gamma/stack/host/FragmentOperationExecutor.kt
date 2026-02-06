@@ -63,6 +63,9 @@ internal class FragmentOperationExecutor {
     ) {
         fragmentManager.createTransactionWithReordering().let { tx ->
             tx.setPrimaryNavigationFragment(op.fragment)
+            if (op.onCommitCallback != null) {
+                tx.runOnCommit(op.onCommitCallback)
+            }
             commitTransaction(tx, allowStateLoss = true, flushSync = false)
         }
     }
