@@ -1,24 +1,12 @@
-import { Scenario } from '../../shared/helpers';
-import StackInTabs from './StackInTabs';
-import TabsInStack from './TabsInStack';
+import { ScenarioGroup } from '../../shared/helpers';
+import StackInTabs from './orientation-stack-in-tabs';
+import TabsInStack from './orientation-tabs-in-stack';
 
-const OrientationScenarios: Scenario[] = [
-  {
-    name: 'StackInTabs',
-    details:
-      'Configuration in Stack contained within TabScreen always takes precedence',
-    key: 'StackInTabs',
-    screen: StackInTabs,
-    platforms: ['ios'],
-  },
-  {
-    name: 'TabsInStack',
-    details:
-      'Configuration in Tabs contained within StackScreen should have precedence over configuraton in Stack contained within TabScreen',
-    key: 'TabsInStack',
-    screen: TabsInStack,
-    platforms: ['ios'],
-  },
-];
+const OrientationScenarios: ScenarioGroup = {
+  name: 'Orientation tests',
+  details:
+    'Test interaction between different components when orientation changes',
+  scenarios: [StackInTabs, TabsInStack],
+};
 
 export default OrientationScenarios;

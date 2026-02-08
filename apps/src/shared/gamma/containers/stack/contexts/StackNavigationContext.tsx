@@ -4,10 +4,12 @@ import type {
   PopActionMethod,
   PreloadActionMethod,
   PushActionMethod,
+  StackRouteOptions,
 } from '../StackContainer.types';
 
 export type StackNavigationContextPayload = {
   routeKey: string;
+  routeOptions: StackRouteOptions;
   push: PushActionMethod;
   pop: PopActionMethod;
   preload: PreloadActionMethod;

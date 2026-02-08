@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ScrollView } from 'react-native';
-import { Scenario } from './helpers';
+import { Scenario, ScenarioGroup } from './helpers';
 import { ScenarioButton } from './ScenarioButton';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -24,9 +24,8 @@ function ScenarioSelect(props: { scenarios: Scenario[] }) {
   );
 }
 
-export default function ScenariosScreen(props: {
-  title: string;
-  scenarios: Scenario[];
+export default function ScenarioSelectionScreen(props: {
+  scenarioGroup: ScenarioGroup;
 }) {
   const Stack = useMemo(() => createNativeStackNavigator(), []);
 
@@ -40,12 +39,12 @@ export default function ScenariosScreen(props: {
             options={{
               headerShown: true,
               headerLargeTitleEnabled: true,
-              headerTitle: props.title,
+              headerTitle: props.scenarioGroup.name,
             }}>
-            {() => <ScenarioSelect scenarios={props.scenarios} />}
+            {() => <ScenarioSelect scenarios={props.scenarioGroup.scenarios} />}
           </Stack.Screen>
-          {props.scenarios.map(({ name, key, screen }) => (
-            <Stack.Screen name={name} key={key} component={screen} />
+          {props.scenarioGroup.scenarios.map(({ key, AppComponent }) => (
+            <Stack.Screen name={key} key={key} component={AppComponent} />
           ))}
         </Stack.Navigator>
       </NavigationContainer>

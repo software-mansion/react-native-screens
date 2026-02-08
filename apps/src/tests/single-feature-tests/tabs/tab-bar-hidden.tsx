@@ -3,6 +3,16 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import useTabsConfigState from '../../shared/hooks/tabs-config';
 import { createAutoConfiguredTabs } from '../../shared/tabs';
+import { Scenario } from '../../shared/helpers';
+
+const SCENARIO: Scenario = {
+  name: 'Tab Bar Hidden',
+  key: 'tab-bar-hidden',
+  platforms: ['ios', 'android'],
+  AppComponent: App,
+};
+
+export default SCENARIO;
 
 type TabsParamList = {
   Tab1: undefined;
@@ -26,7 +36,7 @@ function ConfigScreen() {
 
 const Tabs = createAutoConfiguredTabs<TabsParamList>({ Tab1: ConfigScreen });
 
-export default function BottomAccessory() {
+export function App() {
   return (
     <Tabs.Provider>
       <Tabs.Autoconfig />

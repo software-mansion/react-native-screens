@@ -59,6 +59,7 @@ internal class FlushNowOp : FragmentOperation() {
 
 internal class SetPrimaryNavFragmentOp(
     val fragment: StackScreenFragment,
+    val onCommitCallback: Runnable? = null,
 ) : FragmentOperation() {
     override fun execute(
         fragmentManager: FragmentManager,

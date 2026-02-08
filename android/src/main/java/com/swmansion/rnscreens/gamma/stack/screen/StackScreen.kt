@@ -14,10 +14,17 @@ import kotlin.properties.Delegates
 @SuppressLint("ViewConstructor") // should never be restored
 class StackScreen(
     private val reactContext: ThemedReactContext,
-) : ViewGroup(reactContext), FragmentProviding {
+) : ViewGroup(reactContext),
+    FragmentProviding {
     enum class ActivityMode {
         DETACHED,
         ATTACHED,
+    }
+
+    internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            preventNativeDismissChangeObserver?.preventNativeDismissChanged(newValue)
+        }
     }
 
     internal var isNativelyDismissed = false
@@ -45,6 +52,11 @@ class StackScreen(
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
+    /**
+     * Use this to set/unset the observer.
+     */
+    internal var preventNativeDismissChangeObserver: PreventNativeDismissChangeObserver? = null
+
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
         check(id != NO_ID) { "[RNScreens] StackScreen must have its tag set when registering event emitters" }
@@ -61,6 +73,10 @@ class StackScreen(
         eventEmitter.emitOnDismiss(isNativelyDismissed)
     }
 
+    internal fun onNativeDismissPrevented() {
+        eventEmitter.emitOnNativeDismissPrevented()
+    }
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
@@ -69,7 +85,8 @@ class StackScreen(
         b: Int,
     ) = Unit
 
-    override fun getAssociatedFragment(): Fragment? = this.findFragmentOrNull()?.also {
-        check(it is StackScreenFragment) { "[RNScreens] Unexpected fragment type: ${it.javaClass.simpleName}"}
-    }
+    override fun getAssociatedFragment(): Fragment? =
+        this.findFragmentOrNull()?.also {
+            check(it is StackScreenFragment) { "[RNScreens] Unexpected fragment type: ${it.javaClass.simpleName}" }
+        }
 }

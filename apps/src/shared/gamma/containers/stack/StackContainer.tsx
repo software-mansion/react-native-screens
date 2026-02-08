@@ -3,11 +3,11 @@ import { Stack } from 'react-native-screens/experimental';
 import type {
   NavigationAction,
   StackContainerProps,
+  StackNavigationState,
   StackRouteConfig,
-  StackState,
 } from './StackContainer.types';
 import {
-  determineFirstRoute,
+  determineInitialNavigationState,
   navigationStateReducerWithLogging,
 } from './reducer';
 import { useStackOperationMethods } from './hooks/useStackOperationMethods';
@@ -19,20 +19,25 @@ import {
   type NativeComponentGenericRef,
   useRenderDebugInfo,
 } from 'react-native-screens/private';
+import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
 
 export function StackContainer({ routeConfigs }: StackContainerProps) {
   useSanitizeRouteConfigs(routeConfigs);
 
-  const [stackState, navActionDispatch]: [
-    StackState,
+  const [stackNavState, navActionDispatch]: [
+    StackNavigationState,
     React.Dispatch<NavigationAction>,
   ] = React.useReducer(
     navigationStateReducerWithLogging,
     routeConfigs,
-    determineFirstRoute,
+    determineInitialNavigationState,
   );
 
   const navMethods = useStackOperationMethods(navActionDispatch, routeConfigs);
+
+  // If reducer produced a parent action, we need to dispatch it
+  // as an effect, because we can not modify the state during the render phase.
+  useParentNavigationEffect(navMethods, stackNavState.effects);
 
   const hostRef =
     useRenderDebugInfo<NativeComponentGenericRef>('StackContainer');
@@ -55,29 +60,32 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
 
   return (
     <Stack.Host ref={hostRef}>
-      {stackState.map(({ Component, options, activityMode, routeKey }) => {
-        const stackNavigationContext: StackNavigationContextPayload = {
-          routeKey,
-          push: navMethods.pushAction,
-          pop: navMethods.popAction,
-          preload: navMethods.preloadAction,
-          batch: navMethods.batchAction,
-        };
+      {stackNavState.stack.map(
+        ({ Component, options, activityMode, routeKey }) => {
+          const stackNavigationContext: StackNavigationContextPayload = {
+            routeKey,
+            routeOptions: { ...options },
+            push: navMethods.pushAction,
+            pop: navMethods.popAction,
+            preload: navMethods.preloadAction,
+            batch: navMethods.batchAction,
+          };
 
-        return (
-          <Stack.Screen
-            key={routeKey}
-            {...options}
-            activityMode={activityMode}
-            screenKey={routeKey}
-            onDismiss={onScreenDismissed}
-            onNativeDismiss={onScreenNativelyDismissed}>
-            <StackNavigationContext.Provider value={stackNavigationContext}>
-              <Component />
-            </StackNavigationContext.Provider>
-          </Stack.Screen>
-        );
-      })}
+          return (
+            <Stack.Screen
+              key={routeKey}
+              {...options}
+              activityMode={activityMode}
+              screenKey={routeKey}
+              onDismiss={onScreenDismissed}
+              onNativeDismiss={onScreenNativelyDismissed}>
+              <StackNavigationContext.Provider value={stackNavigationContext}>
+                <Component />
+              </StackNavigationContext.Provider>
+            </Stack.Screen>
+          );
+        },
+      )}
     </Stack.Host>
   );
 }
