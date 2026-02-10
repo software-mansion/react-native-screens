@@ -5,6 +5,7 @@ const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
 const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
 const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = true;
+const RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION = true;
 
 // TODO: Migrate freeze here
 
@@ -57,6 +58,8 @@ const _featureFlags = {
       RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
     iosPreventReattachmentOfDismissedScreens:
       RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
+    ios26AllowInteractionsDuringTransition:
+      RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
   },
   stable: {},
 };
@@ -113,6 +116,11 @@ const iosPreventReattachmentOfDismissedScreensAccessor =
     'iosPreventReattachmentOfDismissedScreens',
     RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
   );
+const ios26AllowInteractionsDuringTransitionAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'ios26AllowInteractionsDuringTransition',
+    RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
+  );
 
 /**
  * Exposes configurable global behaviour of the library.
@@ -161,6 +169,12 @@ export const featureFlags = {
     },
     set iosPreventReattachmentOfDismissedScreens(value: boolean) {
       iosPreventReattachmentOfDismissedScreensAccessor.set(value);
+    },
+    get ios26AllowInteractionsDuringTransition() {
+      return ios26AllowInteractionsDuringTransitionAccessor.get();
+    },
+    set ios26AllowInteractionsDuringTransition(value: boolean) {
+      ios26AllowInteractionsDuringTransitionAccessor.set(value);
     },
   },
   /**
