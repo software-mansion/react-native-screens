@@ -95,7 +95,7 @@ function useSanitizeRouteConfigs(
   routeConfigs?: StackRouteConfig[] | undefined | null,
 ) {
   if (!routeConfigs || routeConfigs.length === 0) {
-    throw new Error('[RNScreens] There must be at least one route configured');
+    throw new Error('[Stack] There must be at least one route configured');
   }
 
   // Do not recompute in case the routeConfigs have not changed
@@ -106,6 +106,6 @@ function useSanitizeRouteConfigs(
   }, [routeConfigs]);
 
   if (!areNamesUnique) {
-    throw new Error('[RNScreens] All routes must have unique names');
+    throw new Error('[Stack] All routes must have unique names');
   }
 }
