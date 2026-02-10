@@ -78,7 +78,6 @@ function AScreen() {
       <RouteInformation routeName="A" />
       <PreventNativeDismissInfo />
       <NavigationButtons isPopEnabled={true} />
-      <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );
 }
