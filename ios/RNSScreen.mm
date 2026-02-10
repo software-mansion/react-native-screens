@@ -1416,9 +1416,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
-  if (newScreenProps.ios26AllowInteractionsDuringTransition != oldScreenProps.ios26AllowInteractionsDuringTransition) {
-    [RNSScreenView.viewInteractionManagerInstance setDisabled:newScreenProps.ios26AllowInteractionsDuringTransition];
-  }
+  [RNSScreenView.viewInteractionManagerInstance setDisabled:newScreenProps.ios26AllowInteractionsDuringTransition];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {

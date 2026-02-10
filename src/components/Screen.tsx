@@ -277,6 +277,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
             androidResetScreenShadowStateOnOrientationChangeEnabled={
               featureFlags.experiment
                 .androidResetScreenShadowStateOnOrientationChangeEnabled
+            }
+            ios26AllowInteractionsDuringTransition={
+              featureFlags.experiment.ios26AllowInteractionsDuringTransition
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
