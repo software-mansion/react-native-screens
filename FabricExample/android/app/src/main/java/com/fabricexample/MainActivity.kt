@@ -25,6 +25,15 @@ class MainActivity : ReactActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
     super.onCreate(savedInstanceState)
+
+    try {
+      val field = ReactActivity::class.java.getDeclaredField("mBackPressedCallback")
+      field.isAccessible = true
+      val callback = field.get(this) as androidx.activity.OnBackPressedCallback
+      callback.isEnabled = false // <--- KILL SWITCH
+    } catch (e: Exception) {
+      e.printStackTrace()
+    }
   }
 
   override fun onAttachedToWindow() {
