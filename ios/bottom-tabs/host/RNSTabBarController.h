@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Might return null in cases where the controller view hierararchy is not attached to parent.
  */
-@property (nonatomic, readonly, nullable) RNSBottomTabsHostComponentView *tabsHostComponentView;
+@property (nonatomic, weak, readonly, nullable) RNSBottomTabsHostComponentView *tabsHostComponentView;
 
 /**
  * Tab bar appearance coordinator. If you need to update tab bar appearance avoid using this one directly. Send the

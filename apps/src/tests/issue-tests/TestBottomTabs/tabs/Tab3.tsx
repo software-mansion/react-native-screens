@@ -1,8 +1,14 @@
 import PressableWithFeedback from '../../../../shared/PressableWithFeedback';
 import React from 'react';
-import { ScrollView, Text } from 'react-native';
+import { Platform, ScrollView, Text } from 'react-native';
+import { useBottomTabBarHeight } from 'react-native-screens';
 
 export function Tab3() {
+  const tabBarHeight = useBottomTabBarHeight();
+  // Android native tabs are drawn above content, so we offset the list bottom
+  // by the reported tab bar height to keep the last item reachable.
+  const bottomOffset = Platform.OS === 'android' ? Math.max(tabBarHeight, 0) : 0;
+
   return (
     <ScrollView
       contentContainerStyle={{
@@ -10,6 +16,7 @@ export function Tab3() {
         height: 'auto',
         gap: 15,
         paddingHorizontal: 30,
+        paddingBottom: bottomOffset,
       }}>
       {[...Array(30).keys()].map(index => (
         <PressableWithFeedback

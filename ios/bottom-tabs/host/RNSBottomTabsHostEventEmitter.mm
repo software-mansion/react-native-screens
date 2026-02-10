@@ -60,4 +60,28 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
+- (BOOL)emitOnTabBarHeightChange:(OnTabBarHeightChangePayload)payload
+{
+#if RCT_NEW_ARCH_ENABLED
+  if (_reactEventEmitter != nullptr) {
+    _reactEventEmitter->onTabBarHeightChange(
+        {.height = static_cast<double>(payload.height)});
+    return YES;
+  } else {
+    RCTLogWarn(@"[RNScreens] Skipped OnTabBarHeightChange event emission due to nullish emitter");
+    return NO;
+  }
+#else
+  if (self.onTabBarHeightChange) {
+    self.onTabBarHeightChange(@{
+      @"height" : @(payload.height),
+    });
+    return YES;
+  } else {
+    RCTLogWarn(@"[RNScreens] Skipped OnTabBarHeightChange event emission due to nullish emitter");
+    return NO;
+  }
+#endif // RCT_NEW_ARCH_ENABLED
+}
+
 @end

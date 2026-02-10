@@ -275,6 +275,13 @@ namespace react = facebook::react;
                                   .repeatedSelectionHandledBySpecialEffect = repeatedSelectionHandledBySpecialEffect}];
 }
 
+- (BOOL)emitOnTabBarHeightChangeWithHeight:(CGFloat)height
+{
+  return [_reactEventEmitter
+      emitOnTabBarHeightChange:OnTabBarHeightChangePayload{
+                                   .height = height}];
+}
+
 #pragma mark - RCTComponentViewProtocol
 #if RCT_NEW_ARCH_ENABLED
 
@@ -313,6 +320,7 @@ namespace react = facebook::react;
     {
       _controller.tabBar.hidden = _tabBarHidden;
     }
+    [self emitOnTabBarHeightChangeWithHeight:_tabBarHidden ? 0 : _controller.tabBar.frame.size.height];
   }
 
   if (newComponentProps.nativeContainerBackgroundColor != oldComponentProps.nativeContainerBackgroundColor) {
@@ -500,6 +508,7 @@ RNS_IGNORE_SUPER_CALL_END
   {
     _controller.tabBar.hidden = _tabBarHidden;
   }
+  [self emitOnTabBarHeightChangeWithHeight:_tabBarHidden ? 0 : _controller.tabBar.frame.size.height];
 }
 
 - (void)setNativeContainerBackgroundColor:(UIColor *_Nullable)nativeContainerBackgroundColor
@@ -547,6 +556,11 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setOnNativeFocusChange:(RCTDirectEventBlock)onNativeFocusChange
 {
   [self.reactEventEmitter setOnNativeFocusChange:onNativeFocusChange];
+}
+
+- (void)setOnTabBarHeightChange:(RCTDirectEventBlock)onTabBarHeightChange
+{
+  [self.reactEventEmitter setOnTabBarHeightChange:onTabBarHeightChange];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED

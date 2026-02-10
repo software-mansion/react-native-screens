@@ -6,6 +6,7 @@
 
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
+  CGFloat _lastEmittedTabBarHeight;
 
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _isControllerFlushBlockScheduled;
@@ -18,6 +19,7 @@
     _tabScreenControllers = nil;
     _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
     _tabsHostComponentView = nil;
+    _lastEmittedTabBarHeight = -1;
 
 #if !RCT_NEW_ARCH_ENABLED
     _isControllerFlushBlockScheduled = NO;
@@ -37,6 +39,29 @@
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
   RNSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
+}
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  [self emitTabBarHeightChangeIfNeeded];
+}
+
+- (void)emitTabBarHeightChangeIfNeeded
+{
+  RNSBottomTabsHostComponentView *tabsHostComponentView = self.tabsHostComponentView;
+  if (tabsHostComponentView == nil || tabsHostComponentView.window == nil || self.view.window == nil) {
+    return;
+  }
+
+  CGFloat height = tabsHostComponentView.tabBarHidden ? 0 : self.tabBar.frame.size.height;
+
+  if (_lastEmittedTabBarHeight == height) {
+    return;
+  }
+
+  _lastEmittedTabBarHeight = height;
+  [tabsHostComponentView emitOnTabBarHeightChangeWithHeight:height];
 }
 
 #pragma mark-- Signals

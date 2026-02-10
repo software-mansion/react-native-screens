@@ -15,6 +15,10 @@ type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
+export type NativeTabBarHeightChangeEvent = {
+  height: CT.Double;
+};
+
 type TabBarItemLabelVisibilityMode =
   | 'auto'
   | 'selected'
@@ -32,6 +36,7 @@ type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: CT.DirectEventHandler<NativeFocusChangeEvent>;
+  onTabBarHeightChange?: CT.DirectEventHandler<NativeTabBarHeightChangeEvent>;
 
   // General
   tabBarHidden?: CT.WithDefault<boolean, false>;
