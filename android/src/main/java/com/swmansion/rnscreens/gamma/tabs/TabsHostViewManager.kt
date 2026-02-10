@@ -10,6 +10,7 @@ import com.facebook.react.viewmanagers.RNSBottomTabsManagerDelegate
 import com.facebook.react.viewmanagers.RNSBottomTabsManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.event.TabsHostNativeFocusChangeEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabsHostTabBarHeightChangeEvent
 
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
 class TabsHostViewManager :
@@ -54,6 +55,7 @@ class TabsHostViewManager :
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             makeEventRegistrationInfo(TabsHostNativeFocusChangeEvent),
+            makeEventRegistrationInfo(TabsHostTabBarHeightChangeEvent),
         )
 
     override fun addEventEmitters(

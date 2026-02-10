@@ -62,4 +62,8 @@ export { default as useTransitionProgress } from './useTransitionProgress';
 /**
  * EXPERIMENTAL API BELOW. MIGHT CHANGE W/O ANY NOTICE
  */
-export { default as Tabs } from './components/tabs';
+export {
+  default as Tabs,
+  BottomTabBarHeightContext,
+  useBottomTabBarHeight,
+} from './components/tabs';

@@ -1317,5 +1317,7 @@ export interface GestureProviderProps extends GestureProps {
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }
 
-export type * from './components/tabs';
+export type * from './components/tabs/TabsHost.types';
+export type * from './components/tabs/TabsScreen.types';
+export type { TabsAccessoryEnvironment } from './components/tabs/TabsAccessory.types';
 export type * from './components/shared/types';

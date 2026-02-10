@@ -41,6 +41,7 @@ RCT_REMAP_VIEW_PROPERTY(tabBarControllerMode, tabBarControllerModeFromRNSTabBarC
 #pragma mark - LEGACY Events
 
 RCT_EXPORT_VIEW_PROPERTY(onNativeFocusChange, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onTabBarHeightChange, RCTDirectEventBlock);
 
 #endif
 
