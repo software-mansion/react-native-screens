@@ -4,33 +4,35 @@
 #import <React/RCTImageComponentView.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
+#import <ReactCommon/TurboModuleUtils.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <react/utils/ManagedObjectWrapper.h>
 #import <rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #import "UINavigationBar+RNSUtility.h"
-#ifndef NDEBUG
-#import <react/utils/ManagedObjectWrapper.h>
-#endif // !NDEBUG
 #else
 #import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import <utility>
 #endif
 #import <React/RCTBridge.h>
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
+#import "RNSBackBarButtonItem.h"
+#import "RNSBarButtonItem.h"
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
-#import "RNSUIBarButtonItem.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -79,9 +81,7 @@ static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   /// Whether a react subview has been added / removed in current transaction. This flag is reset after each react
   /// transaction via RCTMountingTransactionObserving protocol.
   bool _addedReactSubviewsInCurrentTransaction;
-#ifndef NDEBUG
-  RCTImageLoader *imageLoader;
-#endif // !NDEBUG
+  RCTImageLoader *_imageLoader;
 #else
   NSDirectionalEdgeInsets _lastHeaderInsets;
   __weak RCTBridge *_bridge;
@@ -169,19 +169,17 @@ RNS_IGNORE_SUPER_CALL_END
         continue;
       }
 
-      // we wrap the headerLeft/Right component in a UIBarButtonItem
-      // so we need to hit test subviews from left to right, because of the view flattening
-      UIView *headerComponent = nil;
-      for (UIView *headerComponentSubview in subview.subviews) {
+      // We wrap the headerLeft/Right component in a UIBarButtonItem
+      // so we need to hit test subviews, because of the view flattening
+      // (we match RCTViewComponentView implementation).
+      for (UIView *headerComponentSubview in [subview.subviews reverseObjectEnumerator]) {
         CGPoint convertedPoint = [self convertPoint:point toView:headerComponentSubview];
         UIView *hitTestResult = [headerComponentSubview hitTest:convertedPoint withEvent:event];
 
         if (hitTestResult != nil) {
-          headerComponent = hitTestResult;
+          return hitTestResult;
         }
       }
-
-      return headerComponent;
     }
   }
   return nil;
@@ -234,7 +232,14 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newState != _lastSendState) {
     _lastSendState = newState;
-    _state->updateState(std::move(newState));
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
   }
 }
 
@@ -373,7 +378,9 @@ RNS_IGNORE_SUPER_CALL_END
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-#ifndef RCT_NEW_ARCH_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
+        RCTImageLoader *imageLoader = _imageLoader;
+#else
         RCTImageLoader *imageLoader = [_bridge moduleForClass:[RCTImageLoader class]];
 #endif // !RCT_NEW_ARCH_ENABLED
         image = [imageLoader.imageCache
@@ -428,8 +435,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-+ (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc
-                                    withConfig:(RNSScreenStackHeaderConfig *)config API_AVAILABLE(ios(13.0))
++ (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
@@ -453,11 +459,18 @@ RNS_IGNORE_SUPER_CALL_END
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  if (config.blurEffect != RNSBlurEffectStyleNone) {
-    appearance.backgroundEffect =
-        [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
-  } else {
-    appearance.backgroundEffect = nil;
+  switch (config.blurEffect) {
+    case RNSBlurEffectStyleNone:
+      appearance.backgroundEffect = nil;
+      break;
+
+    case RNSBlurEffectStyleSystemDefault:
+      RCTLogError(@"[RNScreens] ScreenStack does not support RNSBlurEffectStyleSystemDefault.");
+      break;
+
+    default:
+      appearance.backgroundEffect =
+          [UIBlurEffect effectWithStyle:[RNSConvert tryConvertRNSBlurEffectStyleToUIBlurEffectStyle:config.blurEffect]];
   }
 
   if (config.hideShadow) {
@@ -545,8 +558,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   NSUInteger currentIndex = [navctr.viewControllers indexOfObject:vc];
-  UINavigationItem *prevItem =
-      currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
+  UIViewController *prevVC = currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1] : nil;
+  UINavigationItem *prevItem = currentIndex > 0 ? prevVC.navigationItem : nil;
 
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
@@ -554,23 +567,26 @@ RNS_IGNORE_SUPER_CALL_END
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
     // the screen underneath navigation controllers
-    vc.edgesForExtendedLayout = UIRectEdgeNone;
+    vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
   } else {
     // system default is UIRectEdgeAll
     vc.edgesForExtendedLayout = UIRectEdgeAll;
   }
 
-  [navctr setNavigationBarHidden:shouldHide animated:animated];
-
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
   if (shouldHide) {
     navitem.title = config.title;
+
+    // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
+    [navctr setNavigationBarHidden:YES animated:animated];
     return;
   }
 
+  navctr.navigationBar.overrideUserInterfaceStyle = config.userInterfaceStyle;
+
 #if !TARGET_OS_TV
-  [config configureBackItem:prevItem];
+  [config configureBackItem:prevItem withPrevVC:prevVC];
 
   if (config.largeTitle) {
     navctr.navigationBar.prefersLargeTitles = YES;
@@ -610,10 +626,11 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.scrollEdgeAppearance = scrollEdgeAppearance;
 #if !TARGET_OS_TV
   navitem.hidesBackButton = config.hideBackButton;
+  navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
-  navitem.leftBarButtonItem = nil;
-  navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
+  navitem.leftBarButtonItems = nil;
+  navitem.rightBarButtonItems = nil;
 
 #if !TARGET_OS_TV
   // We want to set navitem.searchController to nil only if we are sure
@@ -626,16 +643,17 @@ RNS_IGNORE_SUPER_CALL_END
     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-#if !TARGET_OS_TV
-        navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
-#endif
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.leftBarButtonItem = buttonItem;
+        NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
+        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
+        [mutableItems addObject:[subview getUIBarButtonItem]];
+        navitem.leftBarButtonItems = mutableItems;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.rightBarButtonItem = buttonItem;
+        NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
+        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
+        [mutableItems addObject:[subview getUIBarButtonItem]];
+        navitem.rightBarButtonItems = mutableItems;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
@@ -657,12 +675,30 @@ RNS_IGNORE_SUPER_CALL_END
           searchBarPresent = true;
           navitem.searchController = searchBar.controller;
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
           if (@available(iOS 16.0, *)) {
             navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
 #endif /* Check for iOS 16.0 */
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+          if (@available(iOS 26.0, *)) {
+            // On iOS 26 beta 6, we observe that search bar is buggy if we change the configuration
+            // of search bar multiple times. Sometimes, when `stacked` search bar is enabled for root screen,
+            // it does not show up. It's because we're calling *this* method 2 additional times before
+            // UIKit does, in order to handle some other bugs. Only for the third time, UIKit "wants" to
+            // integrate the search bar - we suspect that this final "reconfiguration" causes the bug.
+            // Setting searchBarPlacementAllowsToolbarIntegration to NO fixes the issue without changing
+            // older stack logic and shouldn't impact users negatively - if user wants `stacked` placement,
+            // the search bar should not be integrated anyway. We should monitor if workaround is still
+            // necessary in next iOS versions and remove it when the bug gets fixed.
+            // More details: https://github.com/software-mansion/react-native-screens/pull/3168
+            if (navitem.preferredSearchBarPlacement != UINavigationItemSearchBarPlacementStacked) {
+              navitem.searchBarPlacementAllowsToolbarIntegration = searchBar.allowToolbarIntegration;
+            } else {
+              navitem.searchBarPlacementAllowsToolbarIntegration = NO;
+            }
+          }
+#endif /* Check for iOS 26.0 */
 #endif /* !TARGET_OS_TV */
         }
         break;
@@ -682,6 +718,15 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
+  navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
+                                                withCurrentItems:navitem.leftBarButtonItems];
+  navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                 withCurrentItems:navitem.rightBarButtonItems];
+
+  // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
+  // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
+  RCTAssert(shouldHide == NO, @"[RNScreens] RNSScreenStackHeaderConfig: expected shouldHide to be NO.");
+  [navctr setNavigationBarHidden:NO animated:animated];
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
@@ -714,7 +759,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)configureBackItem:(nullable UINavigationItem *)prevItem API_UNAVAILABLE(tvos)
+- (void)configureBackItem:(nullable UINavigationItem *)prevItem
+               withPrevVC:(nullable UIViewController *)prevVC API_UNAVAILABLE(tvos)
 {
 #if !TARGET_OS_TV
   if (prevItem == nil) {
@@ -725,16 +771,25 @@ RNS_IGNORE_SUPER_CALL_END
 
   const auto isBackTitleBlank = [NSString rnscreens_isBlankOrNull:config.backTitle] == YES;
   NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+
+  // If previous screen controller was recreated (e.g. when you go back to tab with stack that has multiple screens),
+  // its navigationItem may not have any information from screen's headerConfig, including the title.
+  // If this is the case, we attempt to extract the title from previous screen's config directly.
+  if (resolvedBackTitle == nil && [prevVC isKindOfClass:[RNSScreen class]]) {
+    RNSScreen *prevScreen = static_cast<RNSScreen *>(prevVC);
+    resolvedBackTitle = prevScreen.screenView.findHeaderConfig.title;
+  }
+
   prevItem.backButtonTitle = resolvedBackTitle;
   // This has any effect only in case the `backBarButtonItem` is not set.
   // We apply it before we configure the back item, because it might get overriden.
   prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
 
   if (config.isBackTitleVisible) {
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
-                                                                                style:UIBarButtonItemStylePlain
-                                                                               target:nil
-                                                                               action:nil];
+    RNSBackBarButtonItem *backBarButtonItem = [[RNSBackBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                                    style:UIBarButtonItemStylePlain
+                                                                                   target:nil
+                                                                                   action:nil];
     auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
@@ -795,6 +850,76 @@ RNS_IGNORE_SUPER_CALL_END
     [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
         setSemanticContentAttribute:self.direction];
   }
+}
+
+- (NSArray<UIBarButtonItem *> *)barButtonItemsFromConfigs:(NSArray<NSDictionary<NSString *, id> *> *)dicts
+                                         withCurrentItems:(NSArray<UIBarButtonItem *> *)currentItems
+{
+  if (dicts.count == 0) {
+    return currentItems;
+  }
+  NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:currentItems.count + dicts.count];
+  [items addObjectsFromArray:currentItems];
+  for (NSUInteger i = 0; i < dicts.count; i++) {
+    NSDictionary *dict = dicts[i];
+    if (dict[@"buttonId"] || dict[@"menu"]) {
+      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithConfig:dict
+          action:^(NSString *buttonId) {
+#if RCT_NEW_ARCH_ENABLED
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && buttonId) {
+              eventEmitter->onPressHeaderBarButtonItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
+                      .buttonId = std::string([buttonId UTF8String])});
+            }
+#else
+            if (self.onPressHeaderBarButtonItem && buttonId) {
+              self.onPressHeaderBarButtonItem(@{@"buttonId" : buttonId});
+            }
+#endif
+          }
+          menuAction:^(NSString *menuId) {
+#if RCT_NEW_ARCH_ENABLED
+            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+                self->_eventEmitter);
+            if (eventEmitter && menuId) {
+              eventEmitter->onPressHeaderBarButtonMenuItem(
+                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
+                      .menuId = std::string([menuId UTF8String])});
+            }
+#else
+            if (self.onPressHeaderBarButtonMenuItem && menuId) {
+              self.onPressHeaderBarButtonMenuItem(@{@"menuId" : menuId});
+            }
+#endif
+          }
+#if RCT_NEW_ARCH_ENABLED
+          imageLoader:_imageLoader];
+#else
+          imageLoader:_bridge.imageLoader];
+#endif
+      NSNumber *index = dict[@"index"];
+      if (index.integerValue < items.count) {
+        [items insertObject:item atIndex:index.integerValue];
+      } else {
+        [items addObject:item];
+      }
+    } else if (dict[@"spacing"]) {
+      UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                            target:nil
+                                                                            action:nil];
+      NSNumber *spacingValue = dict[@"spacing"];
+      item.width = [spacingValue doubleValue];
+      NSNumber *index = dict[@"index"];
+      if (index.integerValue < items.count) {
+        [items insertObject:item atIndex:index.integerValue];
+      } else {
+        [items addObject:item];
+      }
+    }
+  }
+  return items;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -881,16 +1006,26 @@ RNS_IGNORE_SUPER_CALL_END
     // This code should be kept in sync with analogous switch statement in
     // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
     switch (childComponentView.type) {
-      case RNSScreenStackHeaderSubviewTypeLeft:
-        navitem.leftBarButtonItem.customView = snapshot;
+      case RNSScreenStackHeaderSubviewTypeLeft: {
+        for (UIBarButtonItem *item in navitem.leftBarButtonItems) {
+          if (item.customView == childComponentView) {
+            item.customView = snapshot;
+          }
+        }
         break;
+      }
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle:
         navitem.titleView = snapshot;
         break;
-      case RNSScreenStackHeaderSubviewTypeRight:
-        navitem.rightBarButtonItem.customView = snapshot;
+      case RNSScreenStackHeaderSubviewTypeRight: {
+        for (UIBarButtonItem *item in navitem.rightBarButtonItems) {
+          if (item.customView == childComponentView) {
+            item.customView = snapshot;
+          }
+        }
         break;
+      }
       case RNSScreenStackHeaderSubviewTypeSearchBar:
       case RNSScreenStackHeaderSubviewTypeBackButton:
         break;
@@ -1010,6 +1145,10 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _backButtonDisplayMode =
       [RNSConvert UINavigationItemBackButtonDisplayModeFromCppEquivalent:newScreenProps.backButtonDisplayMode];
 
+  if (newScreenProps.userInterfaceStyle != oldScreenProps.userInterfaceStyle) {
+    _userInterfaceStyle = [RNSConvert UIUserInterfaceStyleFromCppEquivalent:newScreenProps.userInterfaceStyle];
+  }
+
   if (newScreenProps.direction != oldScreenProps.direction) {
     _direction = [RNSConvert UISemanticContentAttributeFromCppEquivalent:newScreenProps.direction];
   }
@@ -1027,11 +1166,37 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
 
+  if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {
+    const auto &vec = newScreenProps.headerLeftBarButtonItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _headerLeftBarButtonItems = array;
+  }
+
+  if (newScreenProps.headerRightBarButtonItems != oldScreenProps.headerRightBarButtonItems) {
+    const auto &vec = newScreenProps.headerRightBarButtonItems;
+    NSMutableArray<NSDictionary<NSString *, id> *> *array = [NSMutableArray arrayWithCapacity:vec.size()];
+    for (const auto &item : vec) {
+      NSDictionary *dict = [RNSConvert idFromFollyDynamic:item];
+      if ([dict isKindOfClass:[NSDictionary class]]) {
+        [array addObject:dict];
+      }
+    }
+    _headerRightBarButtonItems = array;
+  }
+
   [self updateViewControllerIfNeeded];
 
   if (needsNavigationControllerLayout) {
     [self layoutNavigationControllerView];
   }
+
+  _synchronousShadowStateUpdatesEnabled = newScreenProps.synchronousShadowStateUpdatesEnabled;
 
   _initialPropsSet = YES;
   _props = std::static_pointer_cast<react::RNSScreenStackHeaderConfigProps const>(props);
@@ -1043,11 +1208,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
            oldState:(const facebook::react::State::Shared &)oldState
 {
   _state = std::static_pointer_cast<const react::RNSScreenStackHeaderConfigShadowNode::ConcreteState>(state);
-#ifndef NDEBUG
   if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
-    imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+    _imageLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
-#endif // !NDEBUG
 }
 
 #else
@@ -1080,6 +1243,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 }
 
 #endif
+
 @end
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1133,8 +1297,13 @@ RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
+RCT_EXPORT_VIEW_PROPERTY(userInterfaceStyle, UIUserInterfaceStyle)
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(headerLeftBarButtonItems, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(headerRightBarButtonItems, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonItem, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onPressHeaderBarButtonMenuItem, RCTDirectEventBlock);
 
 @end
 
@@ -1180,40 +1349,6 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @implementation RCTConvert (RNSScreenStackHeader)
 
-+ (NSMutableDictionary *)blurEffectsForIOSVersion
-{
-  NSMutableDictionary *blurEffects = [NSMutableDictionary new];
-  [blurEffects addEntriesFromDictionary:@{
-    @"none" : @(RNSBlurEffectStyleNone),
-    @"extraLight" : @(RNSBlurEffectStyleExtraLight),
-    @"light" : @(RNSBlurEffectStyleLight),
-    @"dark" : @(RNSBlurEffectStyleDark),
-    @"regular" : @(RNSBlurEffectStyleRegular),
-    @"prominent" : @(RNSBlurEffectStyleProminent),
-  }];
-
-#if !TARGET_OS_TV
-  [blurEffects addEntriesFromDictionary:@{
-    @"systemUltraThinMaterial" : @(RNSBlurEffectStyleSystemUltraThinMaterial),
-    @"systemThinMaterial" : @(RNSBlurEffectStyleSystemThinMaterial),
-    @"systemMaterial" : @(RNSBlurEffectStyleSystemMaterial),
-    @"systemThickMaterial" : @(RNSBlurEffectStyleSystemThickMaterial),
-    @"systemChromeMaterial" : @(RNSBlurEffectStyleSystemChromeMaterial),
-    @"systemUltraThinMaterialLight" : @(RNSBlurEffectStyleSystemUltraThinMaterialLight),
-    @"systemThinMaterialLight" : @(RNSBlurEffectStyleSystemThinMaterialLight),
-    @"systemMaterialLight" : @(RNSBlurEffectStyleSystemMaterialLight),
-    @"systemThickMaterialLight" : @(RNSBlurEffectStyleSystemThickMaterialLight),
-    @"systemChromeMaterialLight" : @(RNSBlurEffectStyleSystemChromeMaterialLight),
-    @"systemUltraThinMaterialDark" : @(RNSBlurEffectStyleSystemUltraThinMaterialDark),
-    @"systemThinMaterialDark" : @(RNSBlurEffectStyleSystemThinMaterialDark),
-    @"systemMaterialDark" : @(RNSBlurEffectStyleSystemMaterialDark),
-    @"systemThickMaterialDark" : @(RNSBlurEffectStyleSystemThickMaterialDark),
-    @"systemChromeMaterialDark" : @(RNSBlurEffectStyleSystemChromeMaterialDark),
-  }];
-#endif
-  return blurEffects;
-}
-
 RCT_ENUM_CONVERTER(
     UISemanticContentAttribute,
     (@{
@@ -1232,7 +1367,5 @@ RCT_ENUM_CONVERTER(
     }),
     UINavigationItemBackButtonDisplayModeDefault,
     integerValue)
-
-RCT_ENUM_CONVERTER(RNSBlurEffectStyle, ([self blurEffectsForIOSVersion]), RNSBlurEffectStyleNone, integerValue)
 
 @end

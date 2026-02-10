@@ -32,25 +32,27 @@ const FirstScreen = ({ navigation }: FirstScreenProps): React.JSX.Element => {
   const [statusBarHidden, setStatusBarHidden] = useState(false);
   const [statusBarAnimation, setStatusBarAnimation] =
     useState<StatusBarAnimation>('fade');
-  const [statusBarTranslucent, setStatusBarTranslucent] = useState(true);
-  const [statusBarBackgroundColor, setStatusBarBackgroundColor] =
-    useState('gray');
+  // This prop has been deprecated.
+  // const [statusBarTranslucent, setStatusBarTranslucent] = useState(true);
+  // This prop has been deprecated.
+  // const [statusBarBackgroundColor, setStatusBarBackgroundColor] =
+  // useState('gray');
 
   useLayoutEffect(() => {
     navigation.setOptions({
       statusBarStyle,
       statusBarHidden,
       statusBarAnimation,
-      statusBarTranslucent,
-      statusBarBackgroundColor,
+      // statusBarTranslucent, // This prop has been deprecated.
+      // statusBarBackgroundColor, // This prop has been deprecated.
     });
   }, [
     navigation,
     statusBarStyle,
     statusBarHidden,
     statusBarAnimation,
-    statusBarTranslucent,
-    statusBarBackgroundColor,
+    // statusBarTranslucent, // This prop has been deprecated.
+    // statusBarBackgroundColor, // This prop has been deprecated.
   ]);
 
   return (
@@ -72,6 +74,7 @@ const FirstScreen = ({ navigation }: FirstScreenProps): React.JSX.Element => {
         onValueChange={setStatusBarAnimation}
         items={['fade', 'none', 'slide']}
       />
+      {/* These props have been deprecated.
       <Text style={styles.heading}>Android only</Text>
       <SettingsSwitch
         label="Status bar translucent"
@@ -83,7 +86,7 @@ const FirstScreen = ({ navigation }: FirstScreenProps): React.JSX.Element => {
         value={statusBarBackgroundColor}
         onValueChange={setStatusBarBackgroundColor}
         items={['red', 'green', 'blue', 'gray']}
-      />
+      />*/}
       <Button
         title="Go to second screen"
         onPress={() => navigation.navigate('Second')}

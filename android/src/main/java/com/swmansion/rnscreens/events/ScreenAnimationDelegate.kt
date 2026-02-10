@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.events
 
 import android.animation.Animator
-import android.util.Log
 import com.swmansion.rnscreens.ScreenStackFragmentWrapper
 
 // The goal is to make this universal delegate for handling animation progress related logic.
@@ -13,7 +12,7 @@ class ScreenAnimationDelegate(
 ) : Animator.AnimatorListener {
     enum class AnimationType {
         ENTER,
-        EXIT
+        EXIT,
     }
 
     private var currentState: LifecycleState = LifecycleState.INITIALIZED

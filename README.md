@@ -35,6 +35,7 @@ Please note that the override code should not be placed inside `MainActivityDele
 
 ```java
 import android.os.Bundle;
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory;
 
 public class MainActivity extends ReactActivity {
 
@@ -43,7 +44,8 @@ public class MainActivity extends ReactActivity {
     //react-native-screens override
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(null);
+        getSupportFragmentManager().setFragmentFactory(new RNScreensFragmentFactory());
+        super.onCreate(savedInstanceState);
     }
 
     public static class MainActivityDelegate extends ReactActivityDelegate {
@@ -59,6 +61,7 @@ public class MainActivity extends ReactActivity {
 
 ```kotlin
 import android.os.Bundle;
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory;
 
 class MainActivity: ReactActivity() {
 
@@ -66,7 +69,8 @@ class MainActivity: ReactActivity() {
 
     //react-native-screens override
     override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(null);
+      supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
+      super.onCreate(savedInstanceState);
     }
 }
 ```
@@ -109,26 +113,33 @@ Screens are already integrated with the React Native's most popular navigation l
 Below we present tables with mapping of the library version to the last supported react-native version. These tables are for the `4.x` line of the library. For compat tables 
 of `3.x` line please see [readme on the `3.x` branch](https://github.com/software-mansion/react-native-screens/tree/3.x?tab=readme-ov-file#supported-react-native-version).
 
-### Support for Paper
+### Support for Fabric
 
-Paper is the default rendering system for React Native versions prior to 0.76.
+[Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's default rendering system since 0.76.
+
+Here's a table with summary of supported `react-native` versions:
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.19.0+         | 0.81.0+              |
+| 4.14.0+         | 0.79.0+              |
+| 4.5.0+          | 0.77.0+              |
+| 4.0.0+          | 0.76.0+              |
+
+### Support for Paper
+
+Paper is the legacy rendering system. 
+
+Here's a table with summary of supported `react-native` versions with old architecture turned on:
+
+| library version | react-native version |
+| --------------- | -------------------- |
+| 4.19.0+         | 0.80.0+              |
+| 4.14.0+         | 0.79.0+              |
 | 4.9.0+          | 0.76.0+              |
 | 4.5.0+          | 0.74.0+              |
 | 4.0.0+          | 0.72.0+              |
 
-### Support for Fabric
-
-[Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system.
-
-Here's a table with summary of supported `react-native` versions when Fabric is turned on.
-
-| library version | react-native version |
-| --------------- | -------------------- |
-| 4.5.0+          | 0.77.0+              |
-| 4.0.0+          | 0.76.0+              |
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
@@ -224,6 +235,7 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 | [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843)             | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
 | [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)                 | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
 | [`onScroll` and `onMomentumScrollEnd` of previous screen triggered in bottom tabs](https://github.com/software-mansion/react-native-screens/issues/1183) | [explanation](https://github.com/software-mansion/react-native-screens/issues/1183#issuecomment-949313111)  |
+| [SplitView doesn't clear the blur under primary column after switching to color with `opacity: 0`](https://github.com/software-mansion/react-native-screens/issues/3327) | [workarounds](https://github.com/software-mansion/react-native-screens/issues/3327#issuecomment-3432488799) |
 
 ## Contributing
 

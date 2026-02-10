@@ -4,7 +4,10 @@ import androidx.fragment.app.FragmentTransaction
 import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen.StackAnimation
 
-internal fun FragmentTransaction.setTweenAnimations(stackAnimation: StackAnimation, shouldUseOpenAnimation: Boolean) {
+internal fun FragmentTransaction.setTweenAnimations(
+    stackAnimation: StackAnimation,
+    shouldUseOpenAnimation: Boolean,
+) {
     if (shouldUseOpenAnimation) {
         when (stackAnimation) {
             StackAnimation.DEFAULT ->

@@ -34,7 +34,6 @@ interface ScreenFragmentWrapper :
      */
     fun isTranslucent(): Boolean
 
-
     // Helpers
     fun tryGetActivity(): Activity?
 

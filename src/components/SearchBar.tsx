@@ -2,7 +2,10 @@
 
 import React from 'react';
 import { SearchBarCommands, SearchBarProps } from '../types';
-import { isSearchBarAvailableForCurrentPlatform } from '../utils';
+import {
+  parseBooleanToOptionalBooleanNativeProp,
+  isSearchBarAvailableForCurrentPlatform,
+} from '../utils';
 import { View } from 'react-native';
 
 // Native components
@@ -13,10 +16,10 @@ import SearchBarNativeComponent, {
   SearchButtonPressedEvent,
   ChangeTextEvent,
 } from '../fabric/SearchBarNativeComponent';
-import { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
+import type { CodegenTypes as CT } from 'react-native';
 
 const NativeSearchBar: React.ComponentType<
-  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands> }
+  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands | null> }
 > &
   typeof NativeSearchBarCommands =
   SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
@@ -24,7 +27,7 @@ const NativeSearchBar: React.ComponentType<
 const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
 
-type NativeSearchBarRef = React.ElementRef<typeof NativeSearchBar>;
+type NativeSearchBarRef = React.ComponentRef<typeof NativeSearchBar>;
 
 type SearchBarCommandsType = {
   blur: (viewRef: NativeSearchBarRef) => void;
@@ -39,7 +42,7 @@ function SearchBar(
   props: SearchBarProps,
   forwardedRef: React.Ref<SearchBarCommands>,
 ) {
-  const searchBarRef = React.useRef<SearchBarCommands | null>(null);
+  const searchBarRef = React.useRef<SearchBarCommands>(null);
 
   React.useImperativeHandle(forwardedRef, () => ({
     blur: () => {
@@ -85,21 +88,49 @@ function SearchBar(
     return View as unknown as React.ReactNode;
   }
 
+  // This is necessary only for legacy architecture (Paper).
+  const parsedProps = parseUndefinedPropsToSystemDefault(props);
+
+  const {
+    obscureBackground,
+    hideNavigationBar,
+    onFocus,
+    onBlur,
+    onSearchButtonPress,
+    onCancelButtonPress,
+    onChangeText,
+    ...rest
+  } = parsedProps;
+
   return (
     <NativeSearchBar
       ref={searchBarRef}
-      {...props}
-      onSearchFocus={props.onFocus as DirectEventHandler<SearchBarEvent>}
-      onSearchBlur={props.onBlur as DirectEventHandler<SearchBarEvent>}
+      {...rest}
+      obscureBackground={parseBooleanToOptionalBooleanNativeProp(
+        obscureBackground,
+      )}
+      hideNavigationBar={parseBooleanToOptionalBooleanNativeProp(
+        hideNavigationBar,
+      )}
+      onSearchFocus={onFocus as CT.DirectEventHandler<SearchBarEvent>}
+      onSearchBlur={onBlur as CT.DirectEventHandler<SearchBarEvent>}
       onSearchButtonPress={
-        props.onSearchButtonPress as DirectEventHandler<SearchButtonPressedEvent>
+        onSearchButtonPress as CT.DirectEventHandler<SearchButtonPressedEvent>
       }
       onCancelButtonPress={
-        props.onCancelButtonPress as DirectEventHandler<SearchBarEvent>
+        onCancelButtonPress as CT.DirectEventHandler<SearchBarEvent>
       }
-      onChangeText={props.onChangeText as DirectEventHandler<ChangeTextEvent>}
+      onChangeText={onChangeText as CT.DirectEventHandler<ChangeTextEvent>}
     />
   );
+}
+
+// This function is necessary for legacy architecture (Paper) to ensure
+// consistent behavior for props with `systemDefault` option.
+function parseUndefinedPropsToSystemDefault(
+  props: SearchBarProps,
+): SearchBarProps {
+  return { ...props, autoCapitalize: props.autoCapitalize ?? 'systemDefault' };
 }
 
 export default React.forwardRef<SearchBarCommands, SearchBarProps>(SearchBar);

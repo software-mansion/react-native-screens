@@ -12,10 +12,12 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ColorPropConverter;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
+@SuppressWarnings("deprecation")
 public class RNSScreenStackHeaderConfigManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSScreenStackHeaderConfigManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSScreenStackHeaderConfigManagerDelegate(U viewManager) {
     super(viewManager);
@@ -106,6 +108,18 @@ public class RNSScreenStackHeaderConfigManagerDelegate<T extends View, U extends
         break;
       case "topInsetEnabled":
         mViewManager.setTopInsetEnabled(view, value == null ? false : (boolean) value);
+        break;
+      case "headerLeftBarButtonItems":
+        mViewManager.setHeaderLeftBarButtonItems(view, (ReadableArray) value);
+        break;
+      case "headerRightBarButtonItems":
+        mViewManager.setHeaderRightBarButtonItems(view, (ReadableArray) value);
+        break;
+      case "synchronousShadowStateUpdatesEnabled":
+        mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
+        break;
+      case "userInterfaceStyle":
+        mViewManager.setUserInterfaceStyle(view, (String) value);
         break;
       default:
         super.setProperty(view, propName, value);

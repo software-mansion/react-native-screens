@@ -15,6 +15,7 @@ import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
+@SuppressWarnings("deprecation")
 public class RNSScreenContentWrapperManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSScreenContentWrapperManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSScreenContentWrapperManagerDelegate(U viewManager) {
     super(viewManager);

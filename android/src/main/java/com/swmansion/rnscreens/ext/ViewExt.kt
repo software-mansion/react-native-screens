@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.ext
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 
 internal fun View.parentAsView() = this.parent as? View
 
@@ -37,3 +39,10 @@ internal fun View.maybeBgColor(): Int? {
 }
 
 internal fun View.asViewGroupOrNull(): ViewGroup? = this as? ViewGroup
+
+internal fun View.findFragmentOrNull(): Fragment? =
+    try {
+        this.findFragment()
+    } catch (_: IllegalStateException) {
+        null
+    }

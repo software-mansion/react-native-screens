@@ -131,8 +131,8 @@ object SheetUtils {
 
 fun Screen.isSheetFitToContents(): Boolean =
     stackPresentation === Screen.StackPresentation.FORM_SHEET &&
-        sheetDetents.count() == 1 &&
-        sheetDetents.first() == Screen.SHEET_FIT_TO_CONTENTS
+        sheetDetents.count == 1 &&
+        sheetDetents.shortest() == SheetDetents.SHEET_FIT_TO_CONTENTS
 
 fun Screen.usesFormSheetPresentation(): Boolean = stackPresentation === Screen.StackPresentation.FORM_SHEET
 
@@ -143,6 +143,16 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
     // This is used only for formSheet presentation, because we use value animators
     // there. Tween animations have some magic way to make this work (maybe they
     // postpone the transition internally, dunno).
+    //
+    // On Fabric, system insets are applied after the initial layout pass. However,
+    // the BottomSheet height might be measured earlier due to internal BottomSheet logic
+    // or layout callbacks, before those insets are applied.
+    // To ensure the BottomSheet height respects the top inset we delay starting the enter
+    // transition until both layout and insets are fully applied.
+
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !this.sheetShouldOverflowTopInset && this.usesFormSheetPresentation()) {
+        return true
+    }
 
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED || !this.usesFormSheetPresentation()) {
         return false

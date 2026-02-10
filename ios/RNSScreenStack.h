@@ -1,3 +1,5 @@
+#pragma once
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #else
@@ -5,11 +7,23 @@
 #import <React/RCTViewManager.h>
 #endif
 
+#import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
+
+#if !TARGET_OS_TV
+#import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate>
+@interface RNSNavigationController : UINavigationController <
+                                         RNSViewControllerDelegate,
+                                         RNSBottomTabsSpecialEffectsSupporting
+#if !TARGET_OS_TV
+                                         ,
+                                         RNSOrientationProviding
+#endif // !TARGET_OS_TV
+                                         >
 
 @end
 
@@ -28,6 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL customAnimation;
 @property (nonatomic) BOOL disableSwipeBack;
+
+@property (nonatomic, readwrite) BOOL iosPreventReattachmentOfDismissedScreens;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

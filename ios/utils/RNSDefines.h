@@ -39,3 +39,14 @@
 #define RNS_REACT_SCROLL_VIEW_COMPONENT RCTScrollView
 
 #endif
+
+#pragma mark - SDK availability utility
+
+#define RNS_IPHONE_OS_VERSION_AVAILABLE(v)                              \
+  (defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_##v) && \
+   __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_##v)
+
+#pragma mark - Availability utils
+
+#define RNS_BOTTOM_ACCESSORY_AVAILABLE \
+  RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION

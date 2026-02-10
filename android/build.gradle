@@ -38,6 +38,10 @@ def isNewArchitectureEnabled() {
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
 
+def areDebugLogsEnabled() {
+    return project.hasProperty("rnsDebugLogsEnabled") && project.rnsDebugLogsEnabled == "true"
+}
+
 def resolveReactNativeDirectory() {
     def userDefinedRnDirPath = safeAppExtGet("REACT_NATIVE_NODE_MODULES_DIR", null)
     if (userDefinedRnDirPath != null) {
@@ -127,6 +131,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
+        buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
@@ -188,22 +193,6 @@ android {
                     "src/paper/java",
                 ]
             }
-
-            // Background color resolving
-            if (REACT_NATIVE_MINOR_VERSION <= 74) {
-                srcDirs += "src/versioned/backgroundcolor/74"
-            } else if (REACT_NATIVE_MINOR_VERSION <= 76) {
-                srcDirs += "src/versioned/backgroundcolor/76"
-            } else {
-                srcDirs += "src/versioned/backgroundcolor/latest"
-            }
-
-            // Native only classes that use PointerEvents
-            if (REACT_NATIVE_MINOR_VERSION <= 77) {
-                srcDirs += "src/versioned/pointerevents/77"
-            } else {
-                srcDirs += "src/versioned/pointerevents/latest"
-            }
         }
         res {
             if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
@@ -231,7 +220,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.6.1'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.android.material:material:1.13.0'
     implementation "androidx.core:core-ktx:1.8.0"
 
     constraints {

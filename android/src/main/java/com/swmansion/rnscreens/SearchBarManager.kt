@@ -44,7 +44,7 @@ class SearchBarManager :
     ) {
         view.autoCapitalize =
             when (autoCapitalize) {
-                null, "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
+                null, "systemDefault", "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
                 "words" -> SearchBarView.SearchBarAutoCapitalize.WORDS
                 "sentences" -> SearchBarView.SearchBarAutoCapitalize.SENTENCES
                 "characters" -> SearchBarView.SearchBarAutoCapitalize.CHARACTERS
@@ -55,11 +55,11 @@ class SearchBarManager :
     }
 
     @ReactProp(name = "autoFocus")
-    fun setAutoFocus(
+    override fun setAutoFocus(
         view: SearchBarView,
-        autoFocus: Boolean?,
+        autoFocus: Boolean,
     ) {
-        view.autoFocus = autoFocus ?: false
+        view.autoFocus = autoFocus
     }
 
     @ReactProp(name = "barTintColor", customType = "Color")
@@ -184,7 +184,7 @@ class SearchBarManager :
     }
 
     override fun cancelSearch(view: SearchBarView?) {
-        view?.handleFocusJsRequest()
+        view?.handleCancelSearchJsRequest()
     }
 
     // iOS only
@@ -196,6 +196,13 @@ class SearchBarManager :
         logNotAvailable("setPlacement")
     }
 
+    override fun setAllowToolbarIntegration(
+        view: SearchBarView,
+        value: Boolean,
+    ) {
+        logNotAvailable("allowToolbarIntegration")
+    }
+
     override fun setHideWhenScrolling(
         view: SearchBarView?,
         value: Boolean,
@@ -205,14 +212,14 @@ class SearchBarManager :
 
     override fun setObscureBackground(
         view: SearchBarView?,
-        value: Boolean,
+        value: String?,
     ) {
-        logNotAvailable("hideNavigationBar")
+        logNotAvailable("obscureBackground")
     }
 
     override fun setHideNavigationBar(
         view: SearchBarView?,
-        value: Boolean,
+        value: String?,
     ) {
         logNotAvailable("hideNavigationBar")
     }

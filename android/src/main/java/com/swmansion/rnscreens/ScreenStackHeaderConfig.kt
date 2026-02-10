@@ -24,10 +24,10 @@ import kotlin.math.max
 
 class ScreenStackHeaderConfig(
     context: Context,
-    private val pointerEventsImpl: ReactPointerEventsView
-) : FabricEnabledHeaderConfigViewGroup(context), ReactPointerEventsView by pointerEventsImpl {
-
-    constructor(context: Context): this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
+    private val pointerEventsImpl: ReactPointerEventsView,
+) : FabricEnabledHeaderConfigViewGroup(context),
+    ReactPointerEventsView by pointerEventsImpl {
+    constructor(context: Context) : this(context, pointerEventsImpl = PointerEventsBoxNoneImpl())
 
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
@@ -45,9 +45,6 @@ class ScreenStackHeaderConfig(
     private var isShadowHidden = false
     private var isDestroyed = false
     private var backButtonInCustomView = false
-    var isTopInsetEnabled = true
-        private set
-
     private var tintColor = 0
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
@@ -96,6 +93,8 @@ class ScreenStackHeaderConfig(
                 defaultStartInsetWithNavigation
             }
 
+    val headerHeightUpdateProxy = ScreenStackHeaderHeightUpdateProxy()
+
     fun destroy() {
         isDestroyed = true
     }
@@ -128,6 +127,8 @@ class ScreenStackHeaderConfig(
                 ?: contentInsetStartEstimation
 
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
+
+        headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
 
         // Note that implementation of the callee differs between architectures.
         updateHeaderConfigState(
@@ -219,6 +220,7 @@ class ScreenStackHeaderConfig(
             if (toolbar.parent != null) {
                 screenFragment?.removeToolbar()
             }
+            headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
             return
         }
 
@@ -344,6 +346,8 @@ class ScreenStackHeaderConfig(
             }
             i++
         }
+
+        headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
     }
 
     private fun maybeUpdate() {
@@ -399,10 +403,6 @@ class ScreenStackHeaderConfig(
         tintColor = color
     }
 
-    fun setTopInsetEnabled(topInsetEnabled: Boolean) {
-        isTopInsetEnabled = topInsetEnabled
-    }
-
     fun setBackgroundColor(color: Int?) {
         backgroundColor = color
     }
@@ -436,10 +436,17 @@ class ScreenStackHeaderConfig(
         config: ScreenStackHeaderConfig,
     ) : CustomToolbar(context, config) {
         override fun showOverflowMenu(): Boolean {
-            (context.applicationContext as ReactApplication)
-                .reactNativeHost
-                .reactInstanceManager
-                .showDevOptionsDialog()
+            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                (context.applicationContext as ReactApplication)
+                    .reactHost
+                    ?.devSupportManager
+                    ?.showDevOptionsDialog()
+            } else {
+                (context.applicationContext as ReactApplication)
+                    .reactNativeHost
+                    .reactInstanceManager
+                    .showDevOptionsDialog()
+            }
             return true
         }
     }

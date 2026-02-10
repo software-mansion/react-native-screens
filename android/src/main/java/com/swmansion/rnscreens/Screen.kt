@@ -8,6 +8,7 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
@@ -26,19 +27,26 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.SheetDetents
+import com.swmansion.rnscreens.bottomsheet.fitToContentsSheetHeight
 import com.swmansion.rnscreens.bottomsheet.isSheetFitToContents
+import com.swmansion.rnscreens.bottomsheet.updateMetrics
 import com.swmansion.rnscreens.bottomsheet.useSingleDetent
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.ext.parentAsViewGroup
+import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.utils.getDecorViewTopInset
+import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(
     val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
-    ScreenContentWrapper.OnLayoutCallback {
+    ScreenContentWrapper.OnLayoutCallback,
+    FragmentProviding {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
@@ -47,6 +55,8 @@ class Screen(
 
     val reactEventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+
+    var insetsApplied = false
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -78,18 +88,22 @@ class Screen(
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
 
-    // We want to make sure here that at least one value is present in this array all the time.
-    // TODO: Model this with custom data structure to guarantee that this invariant is not violated.
-    var sheetDetents = mutableListOf(1.0)
+    var sheetDetents: SheetDetents = SheetDetents(listOf(1.0))
     var sheetLargestUndimmedDetentIndex: Int = -1
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
+    var sheetShouldOverflowTopInset = false
+    var sheetDefaultResizeAnimationEnabled = true
 
     /**
-     * When using form sheet presentation we want to delay enter transition **on Paper** in order
+     * On Paper, when using form sheet presentation we want to delay enter transition in order
      * to wait for initial layout from React, otherwise the animator-based animation will look
-     * glitchy. *This is not needed on Fabric*.
+     * glitchy.
+     *
+     * On Fabric, the view layout is completed before window insets are applied.
+     * To ensure the BottomSheet correctly respects insets during its enter transition,
+     * we delay the transition until both layout and insets have been applied.
      */
     var shouldTriggerPostponedTransitionAfterLayout = false
 
@@ -120,6 +134,8 @@ class Screen(
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
     }
 
+    override fun getAssociatedFragment(): Fragment? = fragment
+
     /**
      * ScreenContentWrapper notifies us here on it's layout. It is essential for implementing
      * `fitToContents` for formSheets, as this is first entry point where we can acquire
@@ -134,9 +150,24 @@ class Screen(
     ) {
         val height = bottom - top
 
+        val sheetBehavior = sheetBehavior
         if (usesFormSheetPresentation()) {
-            if (isSheetFitToContents()) {
-                sheetBehavior?.useSingleDetent(height)
+            if (isSheetFitToContents() && sheetBehavior != null) {
+                val oldHeight = sheetBehavior.fitToContentsSheetHeight()
+                val isInitial = oldHeight == 0
+                val heightChanged = oldHeight != height
+
+                if (!heightChanged) {
+                    return
+                }
+
+                if (isInitial) {
+                    setupInitialSheetContentHeight(sheetBehavior, height)
+                } else if (sheetDefaultResizeAnimationEnabled) {
+                    updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
+                } else {
+                    updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
+                }
             }
 
             if (!BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -150,6 +181,152 @@ class Screen(
                 }
             }
         }
+    }
+
+    /**
+     * This should be used only with sheet in `fitToContents` mode.
+     */
+    private fun updateSheetContentHeightWithAnimation(
+        behavior: BottomSheetBehavior<Screen>,
+        oldHeight: Int,
+        newHeight: Int,
+    ) {
+        val currentTranslationY = this.translationY
+
+        /*
+         * WHY OVERFLOW MATTERS:
+         * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
+         * If the new content height exceeds this limit (by its size or keyboard offset), simply
+         * animating translationY back to 'currentTranslationY' would attempt to render the sheet
+         * larger than the screen.
+         *
+         * We need to have constraint height inside the container's bounds.
+         * By including this overflow to our animation, we ensure the sheet stops
+         * expanding exactly at the maxHeight, preventing from being pushed
+         * off-screen or causing layout synchronization issues with the CoordinatorLayout.
+         */
+        val clampedOldHeight = resolveClampedHeight(oldHeight, currentTranslationY)
+        val clampedNewHeight = resolveClampedHeight(newHeight, currentTranslationY)
+        val visibleDelta = (clampedNewHeight - clampedOldHeight).toFloat()
+
+        if (visibleDelta == 0f) return
+
+        val isContentExpanding = visibleDelta > 0
+
+        if (isContentExpanding) {
+            /*
+             * Expanding content animation:
+             *
+             * Before animation, we're updating the SheetBehavior - the maximum height is the new
+             * content height, then we're forcing a layout pass. This ensures the view calculates
+             * with its new bounds when the animation starts.
+             *
+             * In the animation, we're translating the Screen back to it's (newly calculated) origin
+             * position, providing an impression that FormSheet expands. It already has the final size,
+             * but some content is not yet visible on the screen.
+             *
+             * After animation, we just need to send a notification that ShadowTree state should be updated,
+             * as the positioning of pressables has changed due to the Y translation manipulation.
+             */
+            this.translationY += visibleDelta
+            this
+                .animate()
+                .translationY(currentTranslationY)
+                .withStartAction {
+                    behavior.updateMetrics(clampedNewHeight)
+                    layout(this.left, this.bottom - clampedNewHeight, this.right, this.bottom)
+                }.withEndAction {
+                    // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+                    // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+                    // to its old position when the user starts a gesture.
+                    parent.requestLayout()
+                    onSheetYTranslationChanged()
+                }.start()
+        } else {
+            /*
+             * Shrinking content animation:
+             *
+             * Before the animation, our Screen translationY is 0 - because its actual layout and visual position are equal.
+             *
+             * Before the animation, I'm updating sheet metrics to the target value - it won't update until the next layout pass,
+             * which is controlled by end action. This is done deliberately, to allow catching the case when quick combination
+             * of shrink & expand animation is detected.
+             *
+             * In the animation, we're translating the Screen down by the calculated height delta to the position (which will
+             * be new absolute 0 for the Screen, after ending the transition), providing an impression that FormSheet shrinks.
+             * FormSheet's size remains unchanged during the whole animation, therefore there is no view clipping.
+             *
+             * After animation, we can update the layout: the maximum FormSheet height is updated and we're forcing
+             * another layout pass. Additionally, since the actual layout and the target position are equal,
+             * we can reset translationY to 0.
+             *
+             * After animation, we need to send a notification that ShadowTree state should be updated,
+             * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
+             */
+            val targetTranslationY = currentTranslationY - visibleDelta
+            this
+                .animate()
+                .translationY(targetTranslationY)
+                .withStartAction {
+                    behavior.updateMetrics(clampedNewHeight)
+                }.withEndAction {
+                    layout(this.left, this.bottom - clampedNewHeight, this.right, this.bottom)
+                    this.translationY = currentTranslationY
+                    // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+                    // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+                    // to its old position when the user starts a gesture.
+                    parent.requestLayout()
+                    onSheetYTranslationChanged()
+                }.start()
+        }
+    }
+
+    private fun updateSheetContentHeightWithoutAnimation(
+        behavior: BottomSheetBehavior<Screen>,
+        height: Int,
+    ) {
+        /*
+         * We're just updating sheets height and forcing Screen layout to be updated immediately.
+         * This allows custom animators in RN to work, as we do not interfere with these animations
+         * and we're just reacting to the sheet's content size changes.
+         */
+        val clampedHeight = resolveClampedHeight(height, this.translationY)
+        behavior.updateMetrics(clampedHeight)
+        layout(this.left, this.bottom - clampedHeight, this.right, this.bottom)
+
+        // Force a layout pass on the CoordinatorLayout to synchronize BottomSheetBehavior's
+        // internal offsets with the new maxHeight. This prevents the sheet from snapping back
+        // to its old position when the user starts a gesture.
+        parent.requestLayout()
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            updateScreenSizeFabric(width, clampedHeight, top + translationY.toInt())
+        }
+    }
+
+    private fun setupInitialSheetContentHeight(
+        behavior: BottomSheetBehavior<Screen>,
+        height: Int,
+    ) {
+        behavior.useSingleDetent(height)
+        // During the initial call in `onCreateView`, insets are not yet available,
+        // so we need to request an additional layout pass later to account for them.
+        requestLayout()
+    }
+
+    private fun resolveClampedHeight(
+        targetHeight: Int,
+        currentTranslationY: Float,
+    ): Int {
+        val maxAvailableVerticalSpace =
+            this.fragment
+                ?.asScreenStackFragment()
+                ?.sheetDelegate
+                ?.tryResolveMaxFormSheetHeight() ?: return targetHeight
+
+        // Please note that currentTranslationY is rather < 0 here.
+        // The translation is included in constraining the available space, because the FormSheet can have some offset, e.g. to
+        // avoid the keyboard.
+        return targetHeight.coerceAtMost((maxAvailableVerticalSpace + currentTranslationY).toInt())
     }
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
@@ -179,16 +356,32 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            dispatchShadowStateUpdate(width, height, t)
+            if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
+                val topLevelDecorView =
+                    requireNotNull(
+                        reactContext.currentActivity?.window?.decorView,
+                    ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
 
-            // FormSheet has no header in current model.
-            notifyHeaderHeightChange(t)
+                val topInset = getDecorViewTopInset(topLevelDecorView)
+                val correctedHeight = height - topInset
+                val correctedOffsetY = t + topInset
+
+                dispatchShadowStateUpdate(width, correctedHeight, correctedOffsetY)
+            } else {
+                dispatchShadowStateUpdate(width, height, t)
+            }
         }
     }
 
     internal fun onBottomSheetBehaviorDidLayout(coordinatorLayoutDidChange: Boolean) {
         if (!usesFormSheetPresentation() || !isNativeStackScreen) {
             return
+        }
+
+        if (isSheetFitToContents()) {
+            // The maxHeight may have changed due to incoming top inset.
+            // Force a layout pass to sync BottomSheetBehavior's internal offsets with the new value.
+            requestLayout()
         }
 
         if (coordinatorLayoutDidChange) {
@@ -205,7 +398,16 @@ class Screen(
         }
     }
 
-    private fun triggerPostponedEnterTransitionIfNeeded() {
+    // On Fabric, the view layout is completed before window insets are applied.
+    // To ensure the BottomSheet correctly respects insets during its enter transition,
+    // we delay the transition until both layout and insets have been applied.
+    internal fun requestTriggeringPostponedEnterTransition() {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && !sheetShouldOverflowTopInset) {
+            shouldTriggerPostponedTransitionAfterLayout = true
+        }
+    }
+
+    internal fun triggerPostponedEnterTransitionIfNeeded() {
         if (shouldTriggerPostponedTransitionAfterLayout) {
             shouldTriggerPostponedTransitionAfterLayout = false
             // This will trigger enter transition only if one was requested by ScreenStack
@@ -365,78 +567,6 @@ class Screen(
             fragmentWrapper?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect because " +
-            "edge-to-edge is enabled by default and the status bar is always translucent.",
-    )
-    var isStatusBarTranslucent: Boolean? = null
-        set(statusBarTranslucent) {
-            if (statusBarTranslucent != null) {
-                ScreenWindowTraits.applyDidSetStatusBarAppearance()
-            }
-            field = statusBarTranslucent
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setTranslucent(
-                    this,
-                    it.tryGetActivity(),
-                    it.tryGetContext(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For apps targeting SDK 35 or above this prop has no effect because " +
-            "edge-to-edge is enabled by default and the status bar is always translucent.",
-    )
-    var statusBarColor: Int? = null
-        set(statusBarColor) {
-            if (statusBarColor != null) {
-                ScreenWindowTraits.applyDidSetStatusBarAppearance()
-            }
-            field = statusBarColor
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setColor(
-                    this,
-                    it.tryGetActivity(),
-                    it.tryGetContext(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
-    )
-    var navigationBarColor: Int? = null
-        set(navigationBarColor) {
-            if (navigationBarColor != null) {
-                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
-            }
-            field = navigationBarColor
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setNavigationBarColor(
-                    this,
-                    it.tryGetActivity(),
-                )
-            }
-        }
-
-    @Deprecated(
-        "For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default. ",
-    )
-    var isNavigationBarTranslucent: Boolean? = null
-        set(navigationBarTranslucent) {
-            if (navigationBarTranslucent != null) {
-                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
-            }
-            field = navigationBarTranslucent
-            fragmentWrapper?.let {
-                ScreenWindowTraits.setNavigationBarTranslucent(
-                    this,
-                    it.tryGetActivity(),
-                )
-            }
-        }
-
     var isNavigationBarHidden: Boolean? = null
         set(navigationBarHidden) {
             if (navigationBarHidden != null) {
@@ -523,12 +653,18 @@ class Screen(
             super.onTouchEvent(event)
         }
 
-    private fun notifyHeaderHeightChange(headerHeight: Int) {
+    internal fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
         UIManagerHelper
             .getEventDispatcherForReactTag(screenContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
+            ?.dispatchEvent(
+                HeaderHeightChangeEvent(
+                    surfaceId,
+                    id,
+                    PixelUtil.toDIPFromPixel(headerHeight.toFloat()).toDouble(),
+                ),
+            )
     }
 
     internal fun onSheetDetentChanged(
@@ -539,8 +675,21 @@ class Screen(
         // There is no need to update shadow state for transient sheet states -
         // we are unsure of the exact sheet position anyway.
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
-            updateScreenSizeFabric(width, height, top)
+            onSheetYTranslationChanged()
         }
+    }
+
+    internal fun onSheetYTranslationChanged() {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // Translation is relative to the bottom edge, therefore it returns negative values.
+            updateScreenSizeFabric(width, height, top + translationY.toInt())
+        }
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        insetsApplied = true
+
+        return super.onApplyWindowInsets(insets)
     }
 
     override fun onAttachedToWindow() {
@@ -586,7 +735,7 @@ class Screen(
             return
         }
         (background as? MaterialShapeDrawable?)?.let {
-            val resolvedCornerRadius = PixelUtil.toDIPFromPixel(sheetCornerRadius)
+            val resolvedCornerRadius = max(PixelUtil.toDIPFromPixel(sheetCornerRadius), 0f)
             it.shapeAppearanceModel =
                 ShapeAppearanceModel
                     .Builder()
@@ -629,23 +778,14 @@ class Screen(
 
     enum class WindowTraits {
         ORIENTATION,
-        COLOR,
         STYLE,
-        TRANSLUCENT,
         HIDDEN,
         ANIMATED,
-        NAVIGATION_BAR_COLOR,
-        NAVIGATION_BAR_TRANSLUCENT,
         NAVIGATION_BAR_HIDDEN,
     }
 
     companion object {
         const val TAG = "Screen"
-
-        /**
-         * This value describes value in sheet detents array that will be treated as `fitToContents` option.
-         */
-        const val SHEET_FIT_TO_CONTENTS = -1.0
     }
 }
 

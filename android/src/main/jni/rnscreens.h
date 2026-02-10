@@ -21,6 +21,8 @@
 #include <react/renderer/components/rnscreens/RNSScreenStackHeaderSubviewComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSScreenStackHeaderConfigComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSFullWindowOverlayComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/RNSBottomTabsComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/RNSSafeAreaViewComponentDescriptor.h>
 
 namespace facebook {
 namespace react {

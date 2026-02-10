@@ -1,17 +1,5 @@
 name: Test iOS e2e - new architecture
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/ios-e2e-test-fabric.yml'
-      - 'RNScreens.podspec'
-      - 'package.json'
-      - 'ios/**'
-      - 'common/**'
-      - 'FabricExample/**'
-      - 'src/**'
-  push:
-    branches:
-      - main
   workflow_dispatch:
 jobs:
   test:

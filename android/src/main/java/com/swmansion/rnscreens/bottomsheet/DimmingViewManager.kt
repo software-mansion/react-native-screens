@@ -48,7 +48,10 @@ class DimmingViewManager(
     /**
      * Ask the manager whether it will apply non-zero alpha for sheet at given detent index.
      */
-    fun willDimForDetentIndex(screen: Screen, index: Int) = index > screen.sheetLargestUndimmedDetentIndex
+    fun willDimForDetentIndex(
+        screen: Screen,
+        index: Int,
+    ) = index > screen.sheetLargestUndimmedDetentIndex
 
     fun invalidate(behavior: BottomSheetBehavior<Screen>?) {
         dimmingViewCallback?.let { callback -> behavior?.removeBottomSheetCallback(callback) }
@@ -71,7 +74,7 @@ class DimmingViewManager(
             computeOffsetFromDetentIndex(
                 (screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(
                     0,
-                    screen.sheetDetents.count() - 1,
+                    screen.sheetDetents.count - 1,
                 ),
             )
 
@@ -96,7 +99,7 @@ class DimmingViewManager(
                     computeOffsetFromDetentIndex(
                         (screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(
                             0,
-                            screen.sheetDetents.count() - 1,
+                            screen.sheetDetents.count - 1,
                         ),
                     )
                 assert(firstDimmedOffset >= largestUndimmedOffset) {
@@ -121,7 +124,7 @@ class DimmingViewManager(
          * at given index in the detents array.
          */
         private fun computeOffsetFromDetentIndex(index: Int): Float =
-            when (screen.sheetDetents.size) {
+            when (screen.sheetDetents.count) {
                 1 -> // Only 1 detent present in detents array
                     when (index) {
                         -1 -> -1F // hidden
@@ -165,7 +168,10 @@ class DimmingViewManager(
             }
         }
 
-    private fun requireBottomSheetCallback(screen: Screen, forceCreation: Boolean = false): BottomSheetCallback {
+    private fun requireBottomSheetCallback(
+        screen: Screen,
+        forceCreation: Boolean = false,
+    ): BottomSheetCallback {
         if (dimmingViewCallback == null || forceCreation) {
             dimmingViewCallback = AnimateDimmingViewCallback(screen, dimmingView, maxAlpha)
         }

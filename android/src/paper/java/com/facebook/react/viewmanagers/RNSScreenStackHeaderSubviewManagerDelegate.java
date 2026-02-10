@@ -15,6 +15,7 @@ import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
+@SuppressWarnings("deprecation")
 public class RNSScreenStackHeaderSubviewManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSScreenStackHeaderSubviewManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
   public RNSScreenStackHeaderSubviewManagerDelegate(U viewManager) {
     super(viewManager);
@@ -24,6 +25,12 @@ public class RNSScreenStackHeaderSubviewManagerDelegate<T extends View, U extend
     switch (propName) {
       case "type":
         mViewManager.setType(view, (String) value);
+        break;
+      case "hidesSharedBackground":
+        mViewManager.setHidesSharedBackground(view, value == null ? false : (boolean) value);
+        break;
+      case "synchronousShadowStateUpdatesEnabled":
+        mViewManager.setSynchronousShadowStateUpdatesEnabled(view, value == null ? false : (boolean) value);
         break;
       default:
         super.setProperty(view, propName, value);

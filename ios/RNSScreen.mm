@@ -12,6 +12,7 @@
 #import <React/RCTRootComponentView.h>
 #import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -28,9 +29,15 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 
+#import "RNSConversions.h"
+#import "RNSSafeAreaViewComponentView.h"
+#import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScrollViewFinder.h"
+#import "RNSScrollViewHelper.h"
+#import "RNSTabBarController.h"
 
 #import "RNSDefines.h"
 #import "UIView+RNSUtility.h"
@@ -68,6 +75,7 @@ struct ContentWrapperBox {
   CGFloat _sheetContentHeight;
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
+  BOOL _shouldUpdateScrollEdgeEffects;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -92,6 +100,7 @@ struct ContentWrapperBox {
 {
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const react::RNSScreenProps>();
+    _snapshotAfterUpdates = NO;
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     _contentWrapperBox = {};
@@ -125,7 +134,9 @@ struct ContentWrapperBox {
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
   _activityState = RNSActivityStateUndefined;
+  _fullScreenSwipeEnabled = RNSOptionalBooleanUndefined;
   _fullScreenSwipeShadowEnabled = YES;
+  _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
@@ -134,6 +145,29 @@ struct ContentWrapperBox {
 #ifdef RCT_NEW_ARCH_ENABLED
   _markedForUnmountInCurrentTransaction = NO;
 #endif // RCT_NEW_ARCH_ENABLED
+}
+
++ (RNSViewInteractionManager *)viewInteractionManagerInstance
+{
+  static RNSViewInteractionManager *manager = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    manager = [[RNSViewInteractionManager alloc] init];
+  });
+
+  return manager;
+}
+
+- (BOOL)getFullScreenSwipeShadowEnabled
+{
+  if (@available(iOS 26, *)) {
+    // fullScreenSwipeShadow is tied to RNSPanGestureRecognizer, which, on iOS 26, is used only for custom animations,
+    // and replaced with native interactiveContentPopGestureRecognizer for everything else.
+    // We want them to look similar and native-like, so it should default to `YES`.
+    return YES;
+  }
+
+  return _fullScreenSwipeShadowEnabled;
 }
 
 - (UIViewController *)reactViewController
@@ -168,7 +202,15 @@ RNS_IGNORE_SUPER_CALL_END
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
-    _state->updateState(std::move(newState));
+
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
@@ -252,8 +294,7 @@ RNS_IGNORE_SUPER_CALL_END
   switch (stackPresentation) {
     case RNSScreenStackPresentationModal:
       _controller.modalPresentationStyle = UIModalPresentationAutomatic;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_17_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_17_0 && !TARGET_OS_TV
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0) && !TARGET_OS_TV
       if (@available(iOS 18.0, *)) {
         UISheetPresentationController *sheetController = _controller.sheetPresentationController;
         if (sheetController != nil) {
@@ -263,7 +304,7 @@ RNS_IGNORE_SUPER_CALL_END
               @"[RNScreens] sheetPresentationController is null when attempting to set prefersPageSizing for modal");
         }
       }
-#endif
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0) && !TARGET_OS_TV
       break;
 
     case RNSScreenStackPresentationPageSheet:
@@ -425,6 +466,45 @@ RNS_IGNORE_SUPER_CALL_END
 }
 #endif
 
+- (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _bottomScrollEdgeEffect = bottomScrollEdgeEffect;
+}
+
+- (void)setLeftScrollEdgeEffect:(RNSScrollEdgeEffect)leftScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _leftScrollEdgeEffect = leftScrollEdgeEffect;
+}
+
+- (void)setRightScrollEdgeEffect:(RNSScrollEdgeEffect)rightScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _rightScrollEdgeEffect = rightScrollEdgeEffect;
+}
+
+- (void)setTopScrollEdgeEffect:(RNSScrollEdgeEffect)topScrollEdgeEffect
+{
+  _shouldUpdateScrollEdgeEffects = YES;
+  _topScrollEdgeEffect = topScrollEdgeEffect;
+}
+
+- (BOOL)isFullScreenSwipeEffectivelyEnabled
+{
+  switch (_fullScreenSwipeEnabled) {
+    case RNSOptionalBooleanTrue:
+      return YES;
+    case RNSOptionalBooleanFalse:
+      return NO;
+    case RNSOptionalBooleanUndefined:
+      if (@available(iOS 26, *)) {
+        return YES;
+      }
+      return NO;
+  }
+}
+
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (UIView *)reactSuperview
 {
@@ -454,8 +534,7 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-#if !TARGET_OS_TV && !TARGET_OS_VISION && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (@available(iOS 16.0, *)) {
     UISheetPresentationController *sheetController = _controller.sheetPresentationController;
     if (sheetController == nil) {
@@ -470,7 +549,7 @@ RNS_IGNORE_SUPER_CALL_END
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
     }
   }
-#endif // Check for iOS >= 16 && !TARGET_OS_TV
+#endif // Check for iOS >= 16 && !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 - (void)addSubview:(UIView *)view
@@ -602,10 +681,11 @@ RNS_IGNORE_SUPER_CALL_END
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    int index = newDetentIndex;
+    int index = static_cast<int>(newDetentIndex);
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onSheetDetentChanged(
-            react::RNSScreenEventEmitter::OnSheetDetentChanged{.index = index, .isStable = isStable});
+            react::RNSScreenEventEmitter::OnSheetDetentChanged{
+                .index = index, .isStable = static_cast<bool>(isStable)});
   }
 #else
   if (self.onSheetDetentChanged) {
@@ -627,7 +707,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   RNSHeaderHeightChangeEvent *event =
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
-                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                   reactTag:[NSNumber numberWithInteger:self.tag]
                                                headerHeight:headerHeight];
   [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
@@ -707,11 +787,12 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
-            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+        ->onTransitionProgress(
+            react::RNSScreenEventEmitter::OnTransitionProgress{
+                .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
-                                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                                   reactTag:[NSNumber numberWithInteger:self.tag]
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
@@ -727,10 +808,27 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 }
 
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+  if (@available(iOS 26, *)) {
+    // In iOS 26, as soon as another screen appears in transition, it is interactable
+    // To avoid glitches resulting from clicking buttons mid transition, we temporarily disable all interactions
+    // Disabling interactions for parent navigation controller won't be enough in case of nested stack
+    // Furthermore, a stack put inside a modal will exist in an entirely different hierarchy
+
+    // Use RNSViewInteractionManager util to find a suitable subtree to disable interations on,
+    // starting from reactSuperview, because on Paper, self is not attached yet.
+    if (![self isPresentedAsNativeModal]) {
+      [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
+    }
+  }
+}
+
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
-  // We need to call both "cancel" and "reset" here because RN's gesture recognizer
-  // does not handle the scenario when it gets cancelled by other top
+#if !RCT_NEW_ARCH_ENABLED
+  // On Paper, we need to call both "cancel" and "reset" here because RN's gesture
+  // recognizer does not handle the scenario when it gets cancelled by other top
   // level gesture recognizer. In this case by the modal dismiss gesture.
   // Because of that, at the moment when this method gets called the React's
   // gesture recognizer is already in FAILED state but cancel events never gets
@@ -739,13 +837,9 @@ RNS_IGNORE_SUPER_CALL_END
   // pulling down starting at some touchable item. Without "reset" the touchable
   // will never go back from highlighted state even when the modal start sliding
   // down.
-#ifdef RCT_NEW_ARCH_ENABLED
-  [_touchHandler setEnabled:NO];
-  [_touchHandler setEnabled:YES];
-#else
   [_touchHandler cancel];
-#endif
   [_touchHandler reset];
+#endif // !RCT_NEW_ARCH_ENABLED
 }
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
@@ -758,6 +852,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions; see presentationControllerWillDismiss
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
+
   // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
   // with usePreventRemove API of react-navigation v7.
   [self notifyGestureCancel];
@@ -768,6 +867,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions; see presentationControllerWillDismiss
+    // Dismissed screen doesn't hold a reference to window, but presentingViewController.view does
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
+
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
     [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:) withObject:presentationController];
   }
@@ -795,7 +900,8 @@ RNS_IGNORE_SUPER_CALL_END
   // Step 1: Query registered content wrapper for the scrollview.
   RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
 
-  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [contentWrapper childRCTScrollViewComponent];
+  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+          [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
       scrollViewComponent != nil) {
     return scrollViewComponent;
   }
@@ -808,6 +914,20 @@ RNS_IGNORE_SUPER_CALL_END
       return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
     }
   }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  // Fallback 2: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
+  if (@available(iOS 26.0, *)) {
+    UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
+    if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+      for (UIView *subview in maybeSafeAreaView.subviews) {
+        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+          return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+        }
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   return nil;
 }
@@ -840,17 +960,22 @@ RNS_IGNORE_SUPER_CALL_END
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-- (void)invalidate
+- (void)invalidateImpl
 {
   _controller = nil;
   [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
 
+#ifndef RCT_NEW_ARCH_ENABLED
+- (void)invalidate
+{
+  [self invalidateImpl];
+}
+#endif
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
-- (void)setPropertyForSheet:(UISheetPresentationController *)sheet
-                  withBlock:(void (^)(void))block
-                    animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setPropertyForSheet:(UISheetPresentationController *)sheet withBlock:(void (^)(void))block animate:(BOOL)animate
 {
   if (animate) {
     [sheet animateChanges:block];
@@ -861,7 +986,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setAllowedDetentsForSheet:(UISheetPresentationController *)sheet
                                to:(NSArray<UISheetPresentationControllerDetent *> *)detents
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                          animate:(BOOL)animate
 {
   [self setPropertyForSheet:sheet
                   withBlock:^{
@@ -872,7 +997,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setSelectedDetentForSheet:(UISheetPresentationController *)sheet
                                to:(UISheetPresentationControllerDetentIdentifier)detent
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                          animate:(BOOL)animate
 {
   if (sheet.selectedDetentIdentifier != detent) {
     [self setPropertyForSheet:sheet
@@ -883,9 +1008,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setCornerRadiusForSheet:(UISheetPresentationController *)sheet
-                             to:(CGFloat)radius
-                        animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setCornerRadiusForSheet:(UISheetPresentationController *)sheet to:(CGFloat)radius animate:(BOOL)animate
 {
   if (sheet.preferredCornerRadius != radius) {
     [self setPropertyForSheet:sheet
@@ -897,9 +1020,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setGrabberVisibleForSheet:(UISheetPresentationController *)sheet
-                               to:(BOOL)visible
-                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+- (void)setGrabberVisibleForSheet:(UISheetPresentationController *)sheet to:(BOOL)visible animate:(BOOL)animate
 {
   if (sheet.prefersGrabberVisible != visible) {
     [self setPropertyForSheet:sheet
@@ -912,7 +1033,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setLargestUndimmedDetentForSheet:(UISheetPresentationController *)sheet
                                       to:(UISheetPresentationControllerDetentIdentifier)detent
-                                 animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+                                 animate:(BOOL)animate
 {
   if (sheet.largestUndimmedDetentIdentifier != detent) {
     [self setPropertyForSheet:sheet
@@ -923,14 +1044,10 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
 - (NSInteger)detentIndexFromDetentIdentifier:(UISheetPresentationControllerDetentIdentifier)identifier
-    API_AVAILABLE(ios(15.0))
 {
   // We first check if we are running on iOS 16+ as the API is different
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
   if (_sheetAllowedDetents.count > 0) {
     // We should be running on custom detents in this case, thus identifier should be a stringified number.
     return identifier.integerValue;
@@ -955,12 +1072,11 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
-    (UISheetPresentationController *)sheetPresentationController API_AVAILABLE(ios(15.0))
+    (UISheetPresentationController *)sheetPresentationController
 {
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
 }
-#endif // iOS 15 check
 
 /**
  * Updates settings for sheet presentation controller.
@@ -974,135 +1090,125 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
-  int firstDimmedDetentIndex = _sheetAllowedDetents.count;
+  int firstDimmedDetentIndex = static_cast<int>(_sheetAllowedDetents.count);
 
   // Whether we use system (iOS 15) detents or custom (iOS 16+).
   // Custom detents are in use if we are on iOS 16+ and we have at least single detent
   // defined in the detents array. In any other case we do use system defined detents.
   bool systemDetentsInUse = false;
 
-  if (@available(iOS 15.0, *)) {
-    UISheetPresentationController *sheet = _controller.sheetPresentationController;
-    if (sheet == nil) {
-      return;
-    }
-    sheet.delegate = self;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-    if (@available(iOS 16.0, *)) {
-      if (_sheetAllowedDetents.count > 0) {
-        if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
-          // This is `fitToContents` case, where sheet should be just high to display its contents.
-          // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
-          // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
-          // actual content. The update will be triggered once our child is mounted and laid out by React.
-          // Fabric: no nested stack: in this very moment our children are already mounted & laid out. In the very end
-          // of this method, after all other configuration is applied we trigger content wrapper to send us update on
-          // its frame. Fabric: nested stack: we wait until nested content wrapper registers itself with this view and
-          // then update the dimensions.
-        } else {
-          [self setAllowedDetentsForSheet:sheet
-                                       to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents]
-                                  animate:NO];
-        }
+  UISheetPresentationController *sheet = _controller.sheetPresentationController;
+  if (sheet == nil) {
+    return;
+  }
+  sheet.delegate = self;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    if (_sheetAllowedDetents.count > 0) {
+      if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
+        // This is `fitToContents` case, where sheet should be just high to display its contents.
+        // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
+        // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
+        // actual content. The update will be triggered once our child is mounted and laid out by React.
+        // Fabric: no nested stack: in this very moment our children are already mounted & laid out. In the very end
+        // of this method, after all other configuration is applied we trigger content wrapper to send us update on
+        // its frame. Fabric: nested stack: we wait until nested content wrapper registers itself with this view and
+        // then update the dimensions.
+      } else {
+        [self setAllowedDetentsForSheet:sheet to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents] animate:NO];
       }
-    } else
+    }
+  } else
 #endif // Check for iOS >= 16
-    {
-      systemDetentsInUse = true;
-      if (_sheetAllowedDetents.count == 0) {
+  {
+    systemDetentsInUse = true;
+    if (_sheetAllowedDetents.count == 0) {
+      [self setAllowedDetentsForSheet:sheet
+                                   to:@[
+                                     UISheetPresentationControllerDetent.mediumDetent,
+                                     UISheetPresentationControllerDetent.largeDetent
+                                   ]
+                              animate:YES];
+    } else if (_sheetAllowedDetents.count >= 2) {
+      float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
+      float secondDetentFraction = _sheetAllowedDetents[1].floatValue;
+      firstDimmedDetentIndex = 2;
+
+      if (firstDetentFraction < secondDetentFraction) {
         [self setAllowedDetentsForSheet:sheet
                                      to:@[
                                        UISheetPresentationControllerDetent.mediumDetent,
                                        UISheetPresentationControllerDetent.largeDetent
                                      ]
                                 animate:YES];
-      } else if (_sheetAllowedDetents.count >= 2) {
-        float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
-        float secondDetentFraction = _sheetAllowedDetents[1].floatValue;
-        firstDimmedDetentIndex = 2;
-
-        if (firstDetentFraction < secondDetentFraction) {
-          [self setAllowedDetentsForSheet:sheet
-                                       to:@[
-                                         UISheetPresentationControllerDetent.mediumDetent,
-                                         UISheetPresentationControllerDetent.largeDetent
-                                       ]
-                                  animate:YES];
-        } else {
-          RCTLogError(@"[RNScreens] The values in sheetAllowedDetents array must be sorted");
-        }
       } else {
-        float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
-        if (firstDetentFraction == SHEET_FIT_TO_CONTENTS) {
-          RCTLogError(@"[RNScreens] Unsupported on iOS versions below 16");
-        } else if (firstDetentFraction < 1.0) {
-          [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
-          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
-        } else {
-          [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.largeDetent ] animate:YES];
-          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-        }
-      }
-    }
-
-    // Handle initial detent on the first update.
-    if (!_sheetHasInitialDetentSet) {
-      if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-        if (@available(iOS 16.0, *)) {
-          UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
-          [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
-        } else
-#endif // Check for iOS >= 16
-        {
-          if (_sheetInitialDetent < 2) {
-            [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-          } else {
-            RCTLogError(
-                @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
-          }
-        }
-      } else if (_sheetInitialDetent != 0) {
-        RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
-      }
-      _sheetHasInitialDetentSet = true;
-    }
-
-    sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
-    [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
-    [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
-
-    // lud - largest undimmed detent
-    // First we try to take value from the prop or default.
-    int ludIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
-    // Rationalize the value in case the user set something that did not make sense.
-    ludIndex = ludIndex >= firstDimmedDetentIndex ? firstDimmedDetentIndex - 1 : ludIndex;
-    if (ludIndex == SHEET_LARGEST_UNDIMMED_DETENT_NONE) {
-      [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
-    } else if (ludIndex >= 0) {
-      if (systemDetentsInUse) {
-        // We're on iOS 15 or do not have custom detents specified by the user.
-        if (firstDimmedDetentIndex == 0 || (firstDimmedDetentIndex == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
-          // There are no detents specified or there is exactly one & it is less than 1.0 we default to medium.
-          [self setLargestUndimmedDetentForSheet:sheet
-                                              to:UISheetPresentationControllerDetentIdentifierMedium
-                                         animate:YES];
-        } else {
-          [self setLargestUndimmedDetentForSheet:sheet
-                                              to:UISheetPresentationControllerDetentIdentifierLarge
-                                         animate:YES];
-        }
-      } else {
-        // We're on iOS 16+ & have custom detents.
-        [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:ludIndex].stringValue animate:YES];
+        RCTLogError(@"[RNScreens] The values in sheetAllowedDetents array must be sorted");
       }
     } else {
-      RCTLogError(@"[RNScreens] Value of sheetLargestUndimmedDetent prop must be >= -1");
+      float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
+      if (firstDetentFraction == SHEET_FIT_TO_CONTENTS) {
+        RCTLogError(@"[RNScreens] Unsupported on iOS versions below 16");
+      } else if (firstDetentFraction < 1.0) {
+        [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
+        [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
+      } else {
+        [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.largeDetent ] animate:YES];
+        [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+      }
     }
+  }
+
+  // Handle initial detent on the first update.
+  if (!_sheetHasInitialDetentSet) {
+    if (_sheetInitialDetent > 0 && _sheetInitialDetent < _sheetAllowedDetents.count) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+      if (@available(iOS 16.0, *)) {
+        UISheetPresentationControllerDetent *detent = sheet.detents[_sheetInitialDetent];
+        [self setSelectedDetentForSheet:sheet to:detent.identifier animate:YES];
+      } else
+#endif // Check for iOS >= 16
+      {
+        if (_sheetInitialDetent < 2) {
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        } else {
+          RCTLogError(
+              @"[RNScreens] sheetInitialDetent out of bounds, on iOS versions below 16 sheetAllowedDetents is ignored in favor of an array of two system-defined detents");
+        }
+      }
+    } else if (_sheetInitialDetent != 0) {
+      RCTLogError(@"[RNScreens] sheetInitialDetent out of bounds for sheetAllowedDetents array");
+    }
+    _sheetHasInitialDetentSet = true;
+  }
+
+  sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
+  [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
+  [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
+
+  // lud - largest undimmed detent
+  // First we try to take value from the prop or default.
+  int ludIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
+  // Rationalize the value in case the user set something that did not make sense.
+  ludIndex = ludIndex >= firstDimmedDetentIndex ? firstDimmedDetentIndex - 1 : ludIndex;
+  if (ludIndex == SHEET_LARGEST_UNDIMMED_DETENT_NONE) {
+    [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+  } else if (ludIndex >= 0) {
+    if (systemDetentsInUse) {
+      // We're on iOS 15 or do not have custom detents specified by the user.
+      if (firstDimmedDetentIndex == 0 || (firstDimmedDetentIndex == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
+        // There are no detents specified or there is exactly one & it is less than 1.0 we default to medium.
+        [self setLargestUndimmedDetentForSheet:sheet
+                                            to:UISheetPresentationControllerDetentIdentifierMedium
+                                       animate:YES];
+      } else {
+        [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+      }
+    } else {
+      // We're on iOS 16+ & have custom detents.
+      [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:ludIndex].stringValue animate:YES];
+    }
+  } else {
+    RCTLogError(@"[RNScreens] Value of sheetLargestUndimmedDetent prop must be >= -1");
   }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1110,11 +1216,9 @@ RNS_IGNORE_SUPER_CALL_END
   // out.
   [self->_contentWrapperBox.contentWrapper triggerDelegateUpdate];
 #endif // RCT_NEW_ARCH_ENABLED
-#endif // Check for iOS >= 15
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
 
 /**
  * Creates array of detent objects based on provided `values` & `resolver`. Since we need to name the detents to be able
@@ -1129,7 +1233,7 @@ RNS_IGNORE_SUPER_CALL_END
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
       [NSMutableArray arrayWithCapacity:values.count];
   [values enumerateObjectsUsingBlock:^(NSNumber *value, NSUInteger index, BOOL *stop) {
-    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithInt:index] stringValue];
+    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithUnsignedInteger:index] stringValue];
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
@@ -1163,6 +1267,64 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // Check for iOS >= 16
 
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
+
+#pragma mark - RNSScrollViewBehaviorOverriding
+
+- (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
+{
+  // RNSScreenView does not have a property to control this behavior.
+  // It looks for parent that conforms to RNSScrollViewBehaviorOverriding to determine
+  // if it should override ScrollView's behavior.
+
+  // As this method is called when RNSScreen willMoveToParentViewController
+  // and view does not have superView yet, we need to use reactSuperViews.
+  UIView *parent = [self reactSuperview];
+
+  while (parent != nil) {
+    if ([parent respondsToSelector:@selector(shouldOverrideScrollViewContentInsetAdjustmentBehavior)]) {
+      id<RNSScrollViewBehaviorOverriding> overrideProvider = static_cast<id<RNSScrollViewBehaviorOverriding>>(parent);
+      return [overrideProvider shouldOverrideScrollViewContentInsetAdjustmentBehavior];
+    }
+    parent = [parent reactSuperview];
+  }
+
+  return NO;
+}
+
+- (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
+{
+  if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
+    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+  }
+}
+
+- (void)updateContentScrollViewEdgeEffectsIfExists
+{
+  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
+                                      withProvider:self];
+}
+
+#pragma mark - RNSSafeAreaProviding
+
+- (UIEdgeInsets)providerSafeAreaInsets
+{
+  return self.safeAreaInsets;
+}
+
+- (void)dispatchSafeAreaDidChangeNotification
+{
+  [NSNotificationCenter.defaultCenter postNotificationName:RNSSafeAreaDidChange object:self userInfo:nil];
+}
+
+#pragma mark - RNSSafeAreaProviding related methods
+
+// TODO: register for UIKeyboard notifications
+
+- (void)safeAreaInsetsDidChange
+{
+  [super safeAreaInsetsDidChange];
+  [self dispatchSafeAreaDidChangeNotification];
+}
 
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1229,7 +1391,8 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
-  [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+  _fullScreenSwipeEnabled =
+      [RNSConvert RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:newScreenProps.fullScreenSwipeEnabled];
 
   [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
 
@@ -1250,6 +1413,8 @@ RNS_IGNORE_SUPER_CALL_END
   [self setActivityStateOrNil:[NSNumber numberWithFloat:newScreenProps.activityState]];
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
+
+  [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
@@ -1309,6 +1474,26 @@ RNS_IGNORE_SUPER_CALL_END
     [self setScreenId:RCTNSStringFromStringNilIfEmpty(newScreenProps.screenId)];
   }
 
+  if (newScreenProps.bottomScrollEdgeEffect != oldScreenProps.bottomScrollEdgeEffect) {
+    [self setBottomScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenBottomScrollEdgeEffectCppEquivalent:
+                                                    newScreenProps.bottomScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.leftScrollEdgeEffect != oldScreenProps.leftScrollEdgeEffect) {
+    [self setLeftScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenLeftScrollEdgeEffectCppEquivalent:
+                                                  newScreenProps.leftScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.rightScrollEdgeEffect != oldScreenProps.rightScrollEdgeEffect) {
+    [self setRightScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenRightScrollEdgeEffectCppEquivalent:
+                                                   newScreenProps.rightScrollEdgeEffect]];
+  }
+
+  if (newScreenProps.topScrollEdgeEffect != oldScreenProps.topScrollEdgeEffect) {
+    [self setTopScrollEdgeEffect:[RNSConvert RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
+                                                 newScreenProps.topScrollEdgeEffect]];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1323,6 +1508,14 @@ RNS_IGNORE_SUPER_CALL_END
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
+
+  if (parentVC == nil && [self isKindOfClass:RNSModalScreen.class]) {
+    // If we're in modal presentation, we don't want to set the frame from RN,
+    // as the available space is most likely restricted & differs from what Yoga
+    // resolves during first layout. We want to rely on native layout here.
+    return;
+  }
+
   if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
@@ -1338,6 +1531,11 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
+  if (_shouldUpdateScrollEdgeEffects) {
+    [self updateContentScrollViewEdgeEffectsIfExists];
+    _shouldUpdateScrollEdgeEffects = NO;
+  }
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];
@@ -1362,6 +1560,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
+
+  if (_shouldUpdateScrollEdgeEffects) {
+    // see finalizeUpdates() for Fabric
+    [self updateContentScrollViewEdgeEffectsIfExists];
+    _shouldUpdateScrollEdgeEffects = NO;
+  }
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
     [self updateFormSheetPresentationStyle];
@@ -1415,6 +1620,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
+  BOOL _isRemovedFromParent;
 }
 
 #pragma mark - Common
@@ -1425,6 +1631,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     self.view = view;
     _fakeView = [UIView new];
     _shouldNotify = YES;
+    _isRemovedFromParent = NO;
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
@@ -1499,6 +1706,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  if (@available(iOS 26, *)) {
+    // Reenable interactions, see willMoveToWindow
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
     // we are going forward or dismissing without swipe
@@ -1535,10 +1746,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   _isSwiping = NO;
   _shouldNotify = YES;
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-  [self traverseForScrollView:self.screenView];
-#endif
+
+  if (@available(iOS 26, *)) {
+    // Reenable interactions, see willMoveToWindow
+    [RNSScreenView.viewInteractionManagerInstance enableInteractionsForLastSubtree];
+  }
 }
 
 - (void)viewDidLayoutSubviews
@@ -1551,13 +1763,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
   // screen size
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
+  BOOL isTabScreen = [self.parentViewController isKindOfClass:RNSTabBarController.class];
 
   // Calculate header height on modal open
   if (self.screenView.isPresentedAsNativeModal) {
     [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
   }
 
-  if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
+  if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
 #else
@@ -1670,7 +1883,23 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     if (responder != nil) {
       _previousFirstResponder = responder;
     }
+  } else {
+    [self.screenView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    [self.screenView updateContentScrollViewEdgeEffectsIfExists];
   }
+}
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  if (parent == nil) {
+    // Since view recycling is disabled, we can rely on a flag indicating that the controller
+    // has been removed from the hierarchy, as it will not be reused.
+    _isRemovedFromParent = YES;
+  } else {
+    _isRemovedFromParent = NO;
+  }
+
+  [super didMoveToParentViewController:parent];
 }
 
 - (id)findFirstResponder:(UIView *)parent
@@ -1687,24 +1916,42 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return nil;
 }
 
+// This method allows us to check whether the Screen has been dismissed;
+// works reliably, because of disabled view recycling.
+- (BOOL)isRemovedFromParent
+{
+  return _isRemovedFromParent;
+}
+
 #pragma mark - transition progress related methods
 
 - (void)setupProgressNotification
 {
   if (self.transitionCoordinator != nil) {
+    if (!self.transitionCoordinator.isAnimated) {
+      // If the transition is not animated, there is no point to set up animation
+      // and completion callbacks. This helps prevent issues with dismissed modals having
+      // "artifical animation duration" instead of being removed instantly.
+      // See: https://github.com/software-mansion/react-native-screens/pull/3189/
+      return;
+    }
+
     _fakeView.alpha = 0.0;
+
+    auto animation = ^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+      [[context containerView] addSubview:self->_fakeView];
+      self->_fakeView.alpha = 1.0;
+      self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+      [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    };
+
     [self.transitionCoordinator
-        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [[context containerView] addSubview:self->_fakeView];
-          self->_fakeView.alpha = 1.0;
-          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        }
-        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self->_animationTimer setPaused:YES];
-          [self->_animationTimer invalidate];
-          [self->_fakeView removeFromSuperview];
-        }];
+        animateAlongsideTransition:animation
+                        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                          [self->_animationTimer setPaused:YES];
+                          [self->_animationTimer invalidate];
+                          [self->_fakeView removeFromSuperview];
+                        }];
   }
 }
 
@@ -1850,6 +2097,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreen *)vc).screenView.screenOrientation;
   }
+  if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+    return UIInterfaceOrientationMaskAll;
+  }
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
@@ -1892,29 +2142,27 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // In that case default iOS header will be shown. To fix this we hide header when the screens that appears has header
   // hidden and search bar was active on previous screen. We need to do it asynchronously, because default header is
   // added after viewWillAppear.
-  if (@available(iOS 13.0, *)) {
-    NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
+  NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
 
-    // we need to check whether reactSubviews array is empty, because on Fabric child nodes are unmounted first ->
-    // reactSubviews array may be empty
-    RNSScreenStackHeaderConfig *config = [self.screenView findHeaderConfig];
-    if (currentIndex > 0 && config != nil) {
-      UINavigationItem *prevNavigationItem =
-          [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
-      BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
+  // we need to check whether reactSubviews array is empty, because on Fabric child nodes are unmounted first ->
+  // reactSubviews array may be empty
+  RNSScreenStackHeaderConfig *config = [self.screenView findHeaderConfig];
+  if (currentIndex > 0 && config != nil) {
+    UINavigationItem *prevNavigationItem =
+        [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
+    BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
 #ifdef RCT_NEW_ARCH_ENABLED
-      BOOL shouldHideHeader = !config.show;
+    BOOL shouldHideHeader = !config.show;
 #else
-      BOOL shouldHideHeader = config.hide;
+    BOOL shouldHideHeader = config.hide;
 #endif
 
-      if (wasSearchBarActive && shouldHideHeader) {
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-          [self.navigationController setNavigationBarHidden:YES animated:NO];
-        });
-      }
+    if (wasSearchBarActive && shouldHideHeader) {
+      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
+      dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+        [self.navigationController setNavigationBarHidden:YES animated:NO];
+      });
     }
   }
 #endif
@@ -1946,6 +2194,26 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [super presentViewController:viewControllerToPresent animated:flag completion:completion];
 }
 
+#pragma mark - RNSOrientationProviding
+
+#if !TARGET_OS_TV
+
+- (RNSOrientation)evaluateOrientation
+{
+  if ([self.childViewControllers.lastObject respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> child = static_cast<id<RNSOrientationProviding>>(self.childViewControllers.lastObject);
+    RNSOrientation childOrientation = [child evaluateOrientation];
+
+    if (childOrientation != RNSOrientationInherit) {
+      return childOrientation;
+    }
+  }
+
+  return rnscreens::conversion::RNSOrientationFromUIInterfaceOrientationMask([self supportedInterfaceOrientations]);
+}
+
+#endif // !TARGET_OS_TV
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
@@ -1954,7 +2222,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIView *superView = self.view.superview;
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window != nil) {
-    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    auto afterUpdates = self.screenView.snapshotAfterUpdates;
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:afterUpdates];
     snapshot.frame = self.view.frame;
     [self.view removeFromSuperview];
     self.view = snapshot;
@@ -1962,33 +2231,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
-#else
-#pragma mark - Paper specific
-
-- (void)traverseForScrollView:(UIView *)view
-{
-  if (![[self.view valueForKey:@"_bridge"] valueForKey:@"_jsThread"]) {
-    // we don't want to send `scrollViewDidEndDecelerating` event to JS before the JS thread is ready
-    return;
-  }
-
-  if ([NSStringFromClass([view class]) isEqualToString:@"AVPlayerView"]) {
-    // Traversing through AVPlayerView is an uncommon edge case that causes the disappearing screen
-    // to an excessive traversal through all video player elements
-    // (e.g., for react-native-video, this includes all controls and additional video views).
-    // Thus, we want to avoid unnecessary traversals through these views.
-    return;
-  }
-
-  if ([view isKindOfClass:[UIScrollView class]] &&
-      ([[(UIScrollView *)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)])) {
-    [[(UIScrollView *)view delegate] scrollViewDidEndDecelerating:(id)view];
-  }
-  [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-    [self traverseForScrollView:obj];
-  }];
-}
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
@@ -1999,7 +2242,7 @@ RCT_EXPORT_MODULE()
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, RNSOptionalBoolean);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
@@ -2011,6 +2254,10 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(screenId, NSString);
+RCT_EXPORT_VIEW_PROPERTY(bottomScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(leftScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(rightScrollEdgeEffect, RNSScrollEdgeEffect);
+RCT_EXPORT_VIEW_PROPERTY(topScrollEdgeEffect, RNSScrollEdgeEffect);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);

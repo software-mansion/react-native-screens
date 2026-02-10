@@ -4,6 +4,7 @@
 #include <react/fabric/JFabricUIManager.h>
 #include "RNSScreenRemovalListener.h"
 
+#include <mutex>
 #include <string>
 
 namespace rnscreens {
@@ -13,6 +14,8 @@ using namespace facebook::jni;
 class NativeProxy : public jni::HybridClass<NativeProxy> {
  public:
   std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
+  std::vector<std::weak_ptr<const facebook::react::MountingCoordinator>>
+      coordinatorsWithMountingOverrides_;
   static auto constexpr kJavaDescriptor =
       "Lcom/swmansion/rnscreens/NativeProxy;";
   static jni::local_ref<jhybriddata> initHybrid(
@@ -23,6 +26,8 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
   friend HybridBase;
   jni::global_ref<NativeProxy::javaobject> javaPart_;
 
+  std::mutex coordinatorsMutex_;
+
   explicit NativeProxy(jni::alias_ref<NativeProxy::javaobject> jThis);
 
   void nativeAddMutationsListener(
@@ -30,6 +35,11 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
           fabricUIManager);
 
   void invalidateNative();
+
+  void cleanupExpiredMountingCoordinators();
+  void addMountingCoordinatorIfNeeded(
+      const std::shared_ptr<const facebook::react::MountingCoordinator>
+          &coordinator);
 };
 
 } // namespace rnscreens

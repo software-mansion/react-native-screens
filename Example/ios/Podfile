@@ -5,6 +5,9 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+require_relative '../../scripts/ios/rns_update_info_plist'
+require_relative '../../scripts/ios/rns_set_swift_compilation_flags'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
@@ -34,5 +37,26 @@ target 'ScreensExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    project_path = File.join(__dir__, 'ScreensExample.xcodeproj')
+    info_plist_path = File.join(__dir__, 'ScreensExample', 'Info.plist')
+
+    if ENV['RNS_USE_SCENE_DELEGATE'] == '1'
+      rns_add_scene_manifest_to_info_plist(
+        info_plist_path: info_plist_path
+      )
+      rns_set_swift_active_compilation_flag(
+        project_path: project_path,
+        flag: 'RNS_USE_SCENE_DELEGATE'
+      )
+    else
+      rns_remove_scene_manifest_from_info_plist(
+        info_plist_path: info_plist_path
+      )
+      rns_unset_swift_active_compilation_flag(
+        project_path: project_path,
+        flag: 'RNS_USE_SCENE_DELEGATE'
+      )
+    end
   end
 end

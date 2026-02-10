@@ -39,6 +39,12 @@ function getVersion(args, packageJsonPath) {
       throw new Error('Cannot set nightly version on a nightly version');
     }
 
+    if (IS_NIGHTLY) {
+      // increment minor version for nightly build
+      const [major, minor,] = newVersion.split('.');
+      newVersion = `${major}.${parseInt(minor)+1}.0`;
+    }
+
     const dateIdentifier = new Date()
       .toISOString()
       .slice(0, -5)
@@ -51,7 +57,7 @@ function getVersion(args, packageJsonPath) {
     const shortCommit = currentCommit.slice(0, 9);
 
     newVersion = `${
-      currentVersion.split('-')[0]
+      newVersion.split('-')[0]
     }-nightly-${dateIdentifier}-${shortCommit}`;
   }
 

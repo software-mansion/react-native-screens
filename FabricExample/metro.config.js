@@ -9,7 +9,7 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const fs = require('fs');
 const path = require('path');
-const exclusionList = require('metro-config/src/defaults/exclusionList');
+const exclusionList = require('metro-config/private/defaults/exclusionList').default;
 const escape = require('escape-string-regexp');
 
 const libPackage = require('../package.json');
@@ -49,6 +49,7 @@ const modules = [
   '@react-navigation/native',
   '@react-navigation/stack',
   'react-native-reanimated',
+  'react-native-worklets',
   'react-native-safe-area-context',
   'react-native-gesture-handler',
   ...Object.keys(libPackage.peerDependencies),

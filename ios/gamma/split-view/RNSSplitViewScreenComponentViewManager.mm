@@ -1,0 +1,7 @@
+#import "RNSSplitViewScreenComponentViewManager.h"
+
+@implementation RNSSplitViewScreenComponentViewManager
+
+RCT_EXPORT_MODULE(RNSSplitViewScreenComponentViewManager)
+
+@end

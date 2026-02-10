@@ -1,3 +1,5 @@
+#pragma once
+
 #import <React/RCTEventDispatcherProtocol.h>
 
 @interface RNSHeaderHeightChangeEvent : NSObject <RCTEvent>

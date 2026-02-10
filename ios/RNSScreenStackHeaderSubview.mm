@@ -4,6 +4,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -19,10 +20,17 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSScreenStackHeaderSubview {
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
   react::RNSScreenStackHeaderSubviewShadowNode::ConcreteState::Shared _state;
   CGRect _lastScheduledFrame;
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
+#if !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  CGSize _lastReactFrameSize;
+#endif // !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  // TODO: Refactor this, so that we don't keep reference here at all.
+  // Currently this likely creates retain cycle between subview & the bar button item.
+  UIBarButtonItem *_barButtonItem;
+  BOOL _hidesSharedBackground;
 }
 
 #pragma mark - Common
@@ -83,7 +91,7 @@ namespace react = facebook::react;
 
 - (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView
 {
-  [self updateShadowStateInContextOfAncestorView:ancestorView withFrame:self.frame];
+  [self updateShadowStateInContextOfAncestorView:ancestorView withFrame:self.bounds];
 }
 
 - (void)updateShadowStateWithFrame:(CGRect)frame
@@ -95,7 +103,15 @@ namespace react = facebook::react;
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState =
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
-    _state->updateState(std::move(newState));
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
+
     _lastScheduledFrame = frame;
   }
 }
@@ -125,16 +141,13 @@ namespace react = facebook::react;
 
 #pragma mark - RCTComponentViewProtocol
 
-- (void)prepareForRecycle
-{
-  [super prepareForRecycle];
-}
-
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
   const auto &newHeaderSubviewProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewProps>(props);
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
+  [self setHidesSharedBackground:newHeaderSubviewProps.hidesSharedBackground];
+  [self setSynchronousShadowStateUpdatesEnabled:newHeaderSubviewProps.synchronousShadowStateUpdatesEnabled];
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -160,7 +173,18 @@ RNS_IGNORE_SUPER_CALL_BEGIN
         NSStringFromCGRect(frame),
         self);
   } else {
-    self.bounds = CGRect{CGPointZero, frame.size};
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    if (self.needsAutoLayout) {
+      BOOL sizeHasChanged = _layoutMetrics.frame.size != layoutMetrics.frame.size;
+      _layoutMetrics = layoutMetrics;
+      if (sizeHasChanged) {
+        [self invalidateIntrinsicContentSize];
+      }
+    } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    {
+      self.bounds = CGRect{CGPointZero, frame.size};
+    }
     [self layoutNavigationBar];
   }
 }
@@ -184,11 +208,120 @@ RNS_IGNORE_SUPER_CALL_END
   // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
   // makes UINavigationBar the only one to control the position of header content.
   if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
-    [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    if (self.needsAutoLayout) {
+      _lastReactFrameSize = frame.size;
+      [self invalidateIntrinsicContentSize];
+    } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    {
+      [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    }
     [self layoutNavigationBar];
   }
 }
+
 #endif // RCT_NEW_ARCH_ENABLED
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+// Starting from iOS 26, to center left and right subviews inside liquid glass backdrop,
+// we need to use auto layout. To make Yoga's layout work with auto layout, we pass information
+// from Yoga via `intrinsicContentSize`.
+- (BOOL)needsAutoLayout
+{
+  BOOL needsAutoLayout = NO;
+  if (@available(iOS 26.0, *)) {
+    needsAutoLayout = _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight;
+  }
+  return needsAutoLayout;
+}
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+#pragma mark - UIBarButtonItem specific
+
+- (UIBarButtonItem *)getUIBarButtonItem
+{
+  RCTAssert(
+      _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight,
+      @"[RNScreens] Unexpected subview type.");
+
+  if (_barButtonItem == nil) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    if (@available(iOS 26.0, *)) {
+      // Starting from iOS 26, UIBarButtonItem's customView is streched to have at least 36 width.
+      // Stretching RNSScreenStackHeaderSubview means that its subviews are aligned to left instead
+      // of the center. To mitigate this, we add a wrapper view that will center
+      // RNSScreenStackHeaderSubview inside of itself.
+      UIView *wrapperView = [UIView new];
+      wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
+
+      self.translatesAutoresizingMaskIntoConstraints = NO;
+      [wrapperView addSubview:self];
+
+      [self.centerXAnchor constraintEqualToAnchor:wrapperView.centerXAnchor].active = YES;
+      [self.centerYAnchor constraintEqualToAnchor:wrapperView.centerYAnchor].active = YES;
+
+      // To prevent UIKit from stretching subviews to all available width, we need to:
+      // 1. Set width of wrapperView to match RNSScreenStackHeaderSubview BUT when
+      //    RNSScreenStackHeaderSubview's width is smaller that minimal required 36 width, it breaks
+      //    UIKit's constraint. That's why we need to lower the priority of the constraint.
+      NSLayoutConstraint *widthEqual = [wrapperView.widthAnchor constraintEqualToAnchor:self.widthAnchor];
+      widthEqual.priority = UILayoutPriorityDefaultHigh;
+      widthEqual.active = YES;
+
+      NSLayoutConstraint *heightEqual = [wrapperView.heightAnchor constraintEqualToAnchor:self.heightAnchor];
+      heightEqual.priority = UILayoutPriorityDefaultHigh;
+      heightEqual.active = YES;
+
+      // 2. Set content hugging priority for RNSScreenStackHeaderSubview.
+      [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+      [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+      
+      // 3. Set compression resistance to prevent UIKit from shrinking the subview below its intrinsic size.
+      [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+      [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+
+      _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
+    } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    {
+      _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self];
+    }
+    [self configureBarButtonItem];
+  }
+
+  return _barButtonItem;
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (CGSize)intrinsicContentSize
+{
+#if RCT_NEW_ARCH_ENABLED
+  return RCTCGSizeFromSize(_layoutMetrics.frame.size);
+#else // RCT_NEW_ARCH_ENABLED
+  return _lastReactFrameSize;
+#endif // RCT_NEW_ARCH_ENABLED
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+- (void)configureBarButtonItem
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (_barButtonItem != nil) {
+      [_barButtonItem setHidesSharedBackground:_hidesSharedBackground];
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
+
+- (void)setHidesSharedBackground:(BOOL)hidesSharedBackground
+{
+  _hidesSharedBackground = hidesSharedBackground;
+  [self configureBarButtonItem];
+}
 
 @end
 
@@ -197,6 +330,7 @@ RNS_IGNORE_SUPER_CALL_END
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
+RCT_EXPORT_VIEW_PROPERTY(hidesSharedBackground, BOOL)
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

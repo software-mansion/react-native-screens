@@ -9,12 +9,19 @@ import {
 import warnOnce from 'warn-once';
 
 import DebugContainer from './DebugContainer';
-import { ScreenProps, ScreenStackHeaderConfigProps } from '../types';
+import {
+  ScreenProps,
+  ScreenStackHeaderConfigProps,
+  StackPresentationTypes,
+} from '../types';
 import { ScreenStackHeaderConfig } from './ScreenStackHeaderConfig';
 import Screen from './Screen';
 import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
+import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
+import SafeAreaView from './safe-area/SafeAreaView';
+import { featureFlags } from '../flags';
 
 type Props = Omit<
   ScreenProps,
@@ -36,6 +43,7 @@ function ScreenStackItem(
     contentStyle,
     style,
     screenId,
+    onHeaderHeightChange,
     // eslint-disable-next-line camelcase
     unstable_sheetFooter,
     ...rest
@@ -47,39 +55,81 @@ function ScreenStackItem(
 
   React.useImperativeHandle(ref, () => currentScreenRef.current!);
 
+  const stackPresentationWithDefault = stackPresentation ?? 'push';
+  const headerConfigHiddenWithDefault = headerConfig?.hidden ?? false;
+
   const isHeaderInModal =
     Platform.OS === 'android'
       ? false
-      : stackPresentation !== 'push' && headerConfig?.hidden === false;
+      : stackPresentationWithDefault !== 'push' &&
+        headerConfigHiddenWithDefault === false;
 
-  const headerHiddenPreviousRef = React.useRef(headerConfig?.hidden);
+  const headerHiddenPreviousRef = React.useRef(headerConfigHiddenWithDefault);
 
   React.useEffect(() => {
     warnOnce(
       Platform.OS !== 'android' &&
-        stackPresentation !== 'push' &&
-        headerHiddenPreviousRef.current !== headerConfig?.hidden,
+        stackPresentationWithDefault !== 'push' &&
+        headerHiddenPreviousRef.current !== headerConfigHiddenWithDefault,
       `Dynamically changing header's visibility in modals will result in remounting the screen and losing all local state.`,
     );
 
-    headerHiddenPreviousRef.current = headerConfig?.hidden;
-  }, [headerConfig?.hidden, stackPresentation]);
+    headerHiddenPreviousRef.current = headerConfigHiddenWithDefault;
+  }, [headerConfigHiddenWithDefault, stackPresentationWithDefault]);
+
+  const hasEdgeEffects =
+    rest?.scrollEdgeEffects === undefined ||
+    Object.values(rest.scrollEdgeEffects).some(
+      propValue => propValue !== 'hidden',
+    );
+  const hasBlurEffect =
+    headerConfig?.blurEffect !== undefined &&
+    headerConfig.blurEffect !== 'none';
+
+  warnOnce(
+    hasEdgeEffects &&
+      hasBlurEffect &&
+      Platform.OS === 'ios' &&
+      parseInt(Platform.Version, 10) >= 26,
+    '[RNScreens] Using both `blurEffect` and `scrollEdgeEffects` simultaneously may cause overlapping effects.',
+  );
+
+  const debugContainerStyle = getPositioningStyle(
+    sheetAllowedDetents,
+    stackPresentationWithDefault,
+  );
+
+  // For iOS, we need to extract background color and apply it to Screen
+  // due to the safe area inset at the bottom of ScreenContentWrapper
+  let internalScreenStyle;
+
+  if (
+    stackPresentationWithDefault === 'formSheet' &&
+    Platform.OS === 'ios' &&
+    contentStyle
+  ) {
+    const { screenStyles, contentWrapperStyles } =
+      extractScreenStyles(contentStyle);
+    internalScreenStyle = screenStyles;
+    contentStyle = contentWrapperStyles;
+  }
+
+  const shouldUseSafeAreaView =
+    Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
 
   const content = (
     <>
       <DebugContainer
-        style={[
-          stackPresentation === 'formSheet'
-            ? Platform.OS === 'ios'
-              ? styles.absolute
-              : sheetAllowedDetents === 'fitToContents'
-              ? null
-              : styles.container
-            : styles.container,
-          contentStyle,
-        ]}
-        stackPresentation={stackPresentation ?? 'push'}>
-        {children}
+        contentStyle={contentStyle}
+        style={debugContainerStyle}
+        stackPresentation={stackPresentationWithDefault}>
+        {shouldUseSafeAreaView ? (
+          <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+            {children}
+          </SafeAreaView>
+        ) : (
+          children
+        )}
       </DebugContainer>
       {/**
        * `HeaderConfig` needs to be the direct child of `Screen` without any intermediate `View`
@@ -94,23 +144,11 @@ function ScreenStackItem(
        */}
       <ScreenStackHeaderConfig {...headerConfig} />
       {/* eslint-disable-next-line camelcase */}
-      {stackPresentation === 'formSheet' && unstable_sheetFooter && (
+      {stackPresentationWithDefault === 'formSheet' && unstable_sheetFooter && (
         <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
       )}
     </>
   );
-
-  // We take backgroundColor from contentStyle and apply it on Screen.
-  // This allows to workaround one issue with truncated
-  // content with formSheet presentation.
-  let internalScreenStyle;
-
-  if (stackPresentation === 'formSheet' && contentStyle) {
-    const flattenContentStyles = StyleSheet.flatten(contentStyle);
-    internalScreenStyle = {
-      backgroundColor: flattenContentStyles?.backgroundColor,
-    };
-  }
 
   return (
     <Screen
@@ -138,10 +176,11 @@ function ScreenStackItem(
       activityState={activityState}
       shouldFreeze={shouldFreeze}
       screenId={screenId}
-      stackPresentation={stackPresentation}
+      stackPresentation={stackPresentationWithDefault}
       hasLargeHeader={headerConfig?.largeTitle ?? false}
       sheetAllowedDetents={sheetAllowedDetents}
       style={[style, internalScreenStyle]}
+      onHeaderHeightChange={isHeaderInModal ? undefined : onHeaderHeightChange}
       {...rest}>
       {isHeaderInModal ? (
         <ScreenStack style={styles.container}>
@@ -151,7 +190,8 @@ function ScreenStackItem(
             activityState={activityState}
             shouldFreeze={shouldFreeze}
             hasLargeHeader={headerConfig?.largeTitle ?? false}
-            style={StyleSheet.absoluteFill}>
+            style={StyleSheet.absoluteFill}
+            onHeaderHeightChange={onHeaderHeightChange}>
             {content}
           </Screen>
         </ScreenStack>
@@ -164,11 +204,97 @@ function ScreenStackItem(
 
 export default React.forwardRef(ScreenStackItem);
 
+function getPositioningStyle(
+  allowedDetents: ScreenProps['sheetAllowedDetents'],
+  presentation: StackPresentationTypes,
+) {
+  const isIOS = Platform.OS === 'ios';
+  const rnMinorVersion = Platform.constants.reactNativeVersion.minor;
+
+  if (presentation !== 'formSheet') {
+    return styles.container;
+  }
+
+  if (isIOS) {
+    if (
+      allowedDetents !== 'fitToContents' &&
+      rnMinorVersion >= 82 &&
+      featureFlags.experiment.synchronousScreenUpdatesEnabled
+    ) {
+      return styles.container;
+    } else {
+      return styles.absoluteWithNoBottom;
+    }
+  }
+
+  /**
+   * Note: `bottom: 0` is intentionally excluded from these styles for two reasons:
+   *
+   * 1. Omitting the bottom constraint ensures the Yoga layout engine does not dynamically
+   * recalculate the Screen and content size during animations.
+   *
+   * 2. Including `bottom: 0` with 'position: absolute' would force
+   * the component to anchor itself to an ancestor's bottom edge. This creates
+   * a dependency on the ancestor's size, whereas 'fitToContents' requires the
+   * FormSheet's dimensions to be derived strictly from its children.
+   *
+   * It was tested reliably only on Android.
+   */
+  if (allowedDetents === 'fitToContents') {
+    return styles.absoluteWithNoBottom;
+  }
+
+  return styles.container;
+}
+
+type SplitStyleResult = {
+  screenStyles: {
+    backgroundColor?: ViewStyle['backgroundColor'];
+  };
+  contentWrapperStyles: StyleProp<ViewStyle>;
+};
+
+// TODO: figure out whether other styles, like borders, filters, etc.
+// shouldn't be applied on the Screen level on iOS due to the inset.
+function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
+  const flatStyle = StyleSheet.flatten(style);
+
+  const { backgroundColor, ...contentWrapperStyles } = flatStyle as ViewStyle;
+
+  const screenStyles = {
+    backgroundColor,
+  };
+
+  return {
+    screenStyles,
+    contentWrapperStyles,
+  };
+}
+
+function getSafeAreaEdges(
+  headerConfig?: ScreenStackHeaderConfigProps,
+): SafeAreaViewProps['edges'] {
+  if (Platform.OS !== 'ios' || parseInt(Platform.Version, 10) < 26) {
+    return {};
+  }
+
+  let defaultEdges: SafeAreaViewProps['edges'];
+  if (headerConfig?.translucent || headerConfig?.hidden) {
+    defaultEdges = {};
+  } else {
+    defaultEdges = {
+      top: true,
+    };
+  }
+
+  return defaultEdges;
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  absolute: {
+  absoluteWithNoBottom: {
     position: 'absolute',
     top: 0,
     start: 0,

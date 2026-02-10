@@ -67,7 +67,7 @@ What you can do is ask the owner of an issue for such details or try provide the
 
 ## Contributing to Code
 
-Submitting Pull Requests that resolve issues is great way to contribute to Screens. If you eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
+Submitting Pull Requests that resolve issues is a great way to contribute to Screens. If you are eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup.
 
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
@@ -107,9 +107,10 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-4. `cd Example` or `cd FabricExample`
-5. `yarn`
-6. `(cd ios && pod install && cd ../)`
+3. `cd Example` or `cd FabricExample`
+4. `yarn`
+5. `rbenv exec bundle install`
+6. `(cd ios && rbenv exec bundle exec pod install && cd ../)`
 7. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
 
 and open `react-native-screens/Example/ios/ScreensExample.xcworkspace` with XCode.
@@ -121,6 +122,16 @@ To find the native source code of `react-native-screens` navigate to `Pods > Dev
 ### Fabric
 
 Codegen introduced by the [new architecture](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/codegen.md) is fired automatically for iOS while runing `pod install` or when runing `FabricExample` in Android Studio. Developer can also run it manually by going into `./FabricExample/android` and running `./gradlew generateCodegenArtifactsFromSchema`. In both cases it is important to copy changed files from `/android/build/generated/source/codegen/java/com/facebook/react/viewmanagers/` to `android/src/paper/java/com/facebook/react/viewmanagers/`, so the interfaces are in sync for Paper architecture.
+
+### Project Gamma
+
+If you wish to work on next major, 5.0 version of Screens (codename: "Project Gamma") or just test the new components you need to do some additional configuration.
+
+"Project Gamma" files are excluded from regular library builds, therefore any usage of "Gamma" components will crash in runtime when React Native discovers that 
+component implementation is missing. To include the implementation files **you need to set `RNS_GAMMA_ENABLED` environment variable to `1` before installing pods**.
+
+Recommended approach is to set up [direnv](https://direnv.net/) as suggested [here](https://github.com/software-mansion/react-native-screens-labs/pull/197/files), 
+so that you don't have to do this manually each time. 
 
 ### Preparing Pull Request
 

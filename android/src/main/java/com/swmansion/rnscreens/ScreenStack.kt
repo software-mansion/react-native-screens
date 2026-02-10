@@ -22,6 +22,7 @@ class ScreenStack(
 ) : ScreenContainer(context) {
     private val stack = ArrayList<ScreenStackFragmentWrapper>()
     private val dismissedWrappers: MutableSet<ScreenStackFragmentWrapper> = HashSet()
+    private var preloadedWrappers: List<ScreenFragmentWrapper> = ArrayList()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
@@ -108,6 +109,22 @@ class ScreenStack(
         super.removeScreenAt(index)
     }
 
+    // When there is more then one active screen on stack,
+    // pops the screen, so that only one remains
+    // Returns true when any screen was popped
+    // When there was only one screen on stack returns false
+    fun popToRoot(): Boolean {
+        val rootIndex = screenWrappers.indexOfFirst { it.screen.activityState != Screen.ActivityState.INACTIVE }
+        val lastActiveIndex = screenWrappers.indexOfLast { it.screen.activityState != Screen.ActivityState.INACTIVE }
+        if (rootIndex >= 0 && lastActiveIndex > rootIndex) {
+            for (screenIndex in (rootIndex + 1)..lastActiveIndex) {
+                notifyScreenDetached(screenWrappers[screenIndex].screen)
+            }
+            return true
+        }
+        return false
+    }
+
     override fun removeAllScreens() {
         dismissedWrappers.clear()
         super.removeAllScreens()
@@ -148,7 +165,9 @@ class ScreenStack(
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
 
-        val newTopAlreadyInStack = stack.contains(newTop)
+        // We don't count preloaded screen as "already in stack" until it appears with state == ON_TOP
+        // See https://github.com/software-mansion/react-native-screens/pull/3062
+        val newTopAlreadyInStack = stack.contains(newTop) && !preloadedWrappers.contains(newTop)
         val topScreenWillChange = newTop !== topScreenWrapper
 
         if (newTop != null && !newTopAlreadyInStack) {
@@ -262,6 +281,18 @@ class ScreenStack(
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
+
+            // All screens that were displayed at some point in time should, confusingly,
+            // have state set to ON_TOP == 2, and the ones that were preloaded should have state INACTIVE == 0
+            // There could be special cases that I didn't know of at the time of writing,
+            // and the list could contain some other inactive screens that were not being preloaded
+            // but we are only really interested in and check the INACTIVE screens that are above
+            // newTop screen, which ARE the preloaded ones
+            preloadedWrappers =
+                screenWrappers
+                    .asSequence()
+                    .filter { it.screen.activityState == Screen.ActivityState.INACTIVE }
+                    .toList()
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
             transaction.commitNowAllowingStateLoss()

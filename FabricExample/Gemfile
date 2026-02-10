@@ -13,3 +13,6 @@ gem 'bigdecimal'
 gem 'logger'
 gem 'benchmark'
 gem 'mutex_m'
+
+# Necessary for the helper script regarding multi-window support in our applications
+gem 'plist'

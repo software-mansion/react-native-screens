@@ -45,6 +45,7 @@ const PressableWithFeedback = React.forwardRef((props: PressableProps, ref: Forw
   return (
     <View ref={ref} style={[contentsStyle]}>
       <Pressable
+        {...props}
         onPressIn={onPressInCallback}
         onPress={onPressCallback}
         onPressOut={onPressOutCallback}

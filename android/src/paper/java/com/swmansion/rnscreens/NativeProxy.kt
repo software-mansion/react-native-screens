@@ -6,6 +6,8 @@ class NativeProxy {
     // do nothing on Paper
     fun nativeAddMutationsListener(fabricUIManager: FabricUIManager) = Unit
 
+    fun cleanupExpiredMountingCoordinators() = Unit
+
     fun invalidateNative() = Unit
 
     companion object {

@@ -11,9 +11,10 @@ package com.facebook.react.viewmanagers;
 
 import android.view.View;
 import androidx.annotation.Nullable;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 
-
-public interface RNSScreenStackHeaderConfigManagerInterface<T extends View>  {
+public interface RNSScreenStackHeaderConfigManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setBackgroundColor(T view, @Nullable Integer value);
   void setBackTitle(T view, @Nullable String value);
   void setBackTitleFontFamily(T view, @Nullable String value);
@@ -42,4 +43,8 @@ public interface RNSScreenStackHeaderConfigManagerInterface<T extends View>  {
   void setBackButtonInCustomView(T view, boolean value);
   void setBlurEffect(T view, @Nullable String value);
   void setTopInsetEnabled(T view, boolean value);
+  void setHeaderLeftBarButtonItems(T view, @Nullable ReadableArray value);
+  void setHeaderRightBarButtonItems(T view, @Nullable ReadableArray value);
+  void setSynchronousShadowStateUpdatesEnabled(T view, boolean value);
+  void setUserInterfaceStyle(T view, @Nullable String value);
 }

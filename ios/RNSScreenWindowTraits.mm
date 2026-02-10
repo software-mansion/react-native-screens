@@ -128,8 +128,7 @@
       }
     }
     if (newOrientation != UIInterfaceOrientationUnknown) {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
       if (@available(iOS 16.0, *)) {
         NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
 

@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - main-labs
     paths:
       - 'android/**'
       - 'common/**'
@@ -13,6 +14,7 @@ on:
   push:
     branches:
       - main
+      - main-labs
   workflow_dispatch:
 jobs:
   build:
@@ -20,6 +22,7 @@ jobs:
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
+      RNS_GAMMA_ENABLED: 1
     concurrency:
       group: android-fabric-${{ github.ref }}
       cancel-in-progress: true

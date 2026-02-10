@@ -15,6 +15,7 @@ Then you can run this application by `yarn android` or from Android Studio.
 
 ### iOS
 
-To run on iOS first go to `FabricExample/ios` and run `pod install`. This will install pods for Fabric architecture.
-
-Then in `FabricExample` run `yarn ios` or run application from Xcode.
+To run on iOS:
+- Navigate to the `FabricExample` directory and install Ruby dependencies: `rbenv exec bundle install`
+- Then, navigate to the `FabricExample/ios` subdirectory and install CocoaPods: `rbenv exec bundle exec pod install`
+- Then in `FabricExample` run `yarn ios` or run application from Xcode.

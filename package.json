@@ -1,6 +1,6 @@
 {
   "name": "react-native-screens",
-  "version": "4.11.1",
+  "version": "4.23.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn && yarn build && cd ../)",
@@ -9,14 +9,17 @@
     "test:unit": "jest --passWithNoTests",
     "format-js": "prettier --write --list-different './{src,Example}/**/*.{js,ts,tsx}'",
     "format-android": "node ./scripts/format-android.js",
-    "format-ios": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.cpp\" -o -iname \"*.mm\" | xargs clang-format -i",
+    "format-ios-swift": "sh scripts/swift-format-helper.sh format",
+    "format-ios-cpp": "find ios/ -iname \"*.h\" -o -iname \"*.m\" -o -iname \"*.cpp\" -o -iname \"*.mm\" | xargs clang-format -i",
+    "format-ios": "yarn format-ios-swift && yarn format-ios-cpp",
     "format-common": "find common/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format-cpp": "find cpp/ -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format-android-cpp": "find android/src/main/cpp -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format": "yarn format-js && yarn format-android && yarn format-ios && yarn format-common && yarn format-cpp && yarn format-android-cpp",
     "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
-    "lint": "yarn lint-js && yarn lint-android",
+    "lint-swift": "sh scripts/swift-format-helper.sh lint",
+    "lint": "yarn lint-js && yarn lint-android && yarn lint-swift",
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install",
     "architectures-consistency-check": "node ./scripts/codegen-check-consistency.js",
@@ -34,6 +37,8 @@
     "native-stack/",
     "gesture-handler/",
     "reanimated/",
+    "private/",
+    "experimental/",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
     "android/src/main/cpp/",
@@ -69,7 +74,6 @@
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
   "dependencies": {
     "react-freeze": "^1.0.0",
-    "react-native-is-edge-to-edge": "^1.1.7",
     "warn-once": "^0.1.0"
   },
   "peerDependencies": {
@@ -79,22 +83,21 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "7.22.15",
-    "@react-native-community/cli": "18.0.0",
-    "@react-native-community/cli-platform-android": "18.0.0",
-    "@react-native-community/cli-platform-ios": "18.0.0",
-    "@react-native/babel-preset": "0.79.1",
-    "@react-native/eslint-config": "0.79.1",
-    "@react-native/metro-config": "0.79.1",
-    "@react-native/typescript-config": "0.79.1",
+    "@react-native-community/cli": "20.1.0",
+    "@react-native-community/cli-platform-android": "20.1.0",
+    "@react-native-community/cli-platform-ios": "20.1.0",
+    "@react-native/babel-preset": "0.84.0-rc.1",
+    "@react-native/eslint-config": "0.84.0-rc.1",
+    "@react-native/metro-config": "0.84.0-rc.1",
+    "@react-native/typescript-config": "0.84.0-rc.1",
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^29.5.13",
-    "@types/react": "^19.1.0",
+    "@types/react": "^19.2.0",
     "@types/react-test-renderer": "^19.1.0",
     "@types/shelljs": "^0",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
-    "clang-format": "^1.8.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-config-standard": "^17.1.0",
@@ -107,30 +110,28 @@
     "jest": "^29.6.3",
     "lint-staged": "^14.0.1",
     "prettier": "^2.8.8",
-    "react": "^19.1.0",
+    "react": "19.2.3",
     "react-dom": "^19.1.0",
-    "react-native": "0.80.0-rc.5",
+    "react-native": "0.84.0-rc.1",
     "react-native-builder-bob": "^0.23.2",
-    "react-native-gesture-handler": "^2.22.0",
-    "react-native-reanimated": "3.16.7",
-    "react-native-safe-area-context": "5.1.0",
+    "react-native-gesture-handler": "^2.28.0",
+    "react-native-reanimated": "^3.19.0",
+    "react-native-safe-area-context": "5.6.0",
     "react-native-windows": "^0.64.8",
-    "react-test-renderer": "^19.1.0",
+    "react-test-renderer": "19.2.3",
     "release-it": "^15.6.0",
     "shelljs": "^0.9.2",
-    "typescript": "5.4.3"
-  },
-  "resolutions": {
-    "@types/react": "^18.2.72"
+    "typescript": "^5.8.3"
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
+    "FabricExample/ios/**/*.swift": "yarn format-ios-swift",
     "src/**/*.{js,ts,tsx}": "yarn lint-js",
     "common/**/*.{h,cpp}": "yarn format-common",
     "cpp/**/*.{h,cpp}": "yarn format-cpp",
     "android/src/main/cpp/.{cpp, h}": "yarn format-android-cpp",
     "android/**/*.kt": "yarn format-android",
-    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios",
+    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios-cpp",
     "src/fabric/*.ts": "yarn sync-architectures"
   },
   "react-native-builder-bob": {
@@ -159,19 +160,6 @@
       "javaPackageName": "com.swmansion.rnscreens"
     },
     "ios": {
-      "componentProvider": {
-        "RNSFullWindowOverlay": "RNSFullWindowOverlay",
-        "RNSModalScreen": "RNSModalScreen",
-        "RNSScreenContainer": "RNSScreenContainerView",
-        "RNSScreenContentWrapper": "RNSScreenContentWrapper",
-        "RNSScreenFooter": "RNSScreenFooter",
-        "RNSScreen": "RNSScreenView",
-        "RNSScreenNavigationContainer": "RNSScreenNavigationContainerView",
-        "RNSScreenStackHeaderConfig": "RNSScreenStackHeaderConfig",
-        "RNSScreenStackHeaderSubview": "RNSScreenStackHeaderSubview",
-        "RNSScreenStack": "RNSScreenStackView",
-        "RNSSearchBar": "RNSSearchBar"
-      },
       "components": {
         "RNSFullWindowOverlay": {
           "className": "RNSFullWindowOverlay"
@@ -205,6 +193,33 @@
         },
         "RNSSearchBar": {
           "className": "RNSSearchBar"
+        },
+        "RNSStackScreen": {
+          "className": "RNSStackScreenComponentView"
+        },
+        "RNSStackHost": {
+          "className": "RNSStackHostComponentView"
+        },
+        "RNSBottomTabsScreen": {
+          "className": "RNSBottomTabsScreenComponentView"
+        },
+        "RNSBottomTabs": {
+          "className": "RNSBottomTabsHostComponentView"
+        },
+        "RNSBottomTabsAccessory": {
+          "className": "RNSBottomTabsAccessoryComponentView"
+        },
+        "RNSBottomTabsAccessoryContent": {
+          "className": "RNSBottomTabsAccessoryContentComponentView"
+        },
+        "RNSSplitViewHost": {
+          "className": "RNSSplitViewHostComponentView"
+        },
+        "RNSSplitViewScreen": {
+          "className": "RNSSplitViewScreenComponentView"
+        },
+        "RNSSafeAreaView": {
+          "className": "RNSSafeAreaViewComponentView"
         }
       }
     }

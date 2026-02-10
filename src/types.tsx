@@ -7,8 +7,12 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
+  ImageSourcePropType,
 } from 'react-native';
-import { NativeStackNavigatorProps } from './native-stack/types';
+import type {
+  ScrollEdgeEffect,
+  UserInterfaceStyle,
+} from './components/shared/types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -98,7 +102,50 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
-export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+export type SearchBarPlacement =
+  | 'automatic'
+  | 'inline' // deprecated starting from iOS 26
+  | 'stacked'
+  | 'integrated'
+  | 'integratedButton'
+  | 'integratedCentered';
+
+export type PlatformIconShared = {
+  type: 'imageSource';
+  imageSource: ImageSourcePropType;
+};
+
+export type PlatformIconIOSSfSymbol = {
+  type: 'sfSymbol';
+  name: string;
+};
+
+export type PlatformIconIOSXcasset = {
+  type: 'xcasset';
+  name: string;
+};
+
+export type PlatformIconIOS =
+  | PlatformIconIOSSfSymbol
+  | PlatformIconIOSXcasset
+  | {
+      type: 'templateSource';
+      templateSource: ImageSourcePropType;
+    }
+  | PlatformIconShared;
+
+export type PlatformIconAndroid =
+  | {
+      type: 'drawableResource';
+      name: string;
+    }
+  | PlatformIconShared;
+
+export interface PlatformIcon {
+  ios?: PlatformIconIOS;
+  android?: PlatformIconAndroid;
+  shared?: PlatformIconShared;
+}
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -132,9 +179,16 @@ export interface ScreenProps extends ViewProps {
    */
   freezeOnBlur?: boolean;
   /**
-   * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
-   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
-   * Defaults to `false`.
+   * Boolean indicating whether the swipe gesture should work on whole screen. The behavior depends on iOS version.
+   *
+   * For iOS prior to 26, swiping with this option results in the same transition animation as `simple_push` by default.
+   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation
+   * is not achievable due to usage of custom recognizer.
+   *
+   * For iOS 26 and up, native `interactiveContentPopGestureRecognizer` is used, and this prop controls whether it should
+   * be enabled or not.
+   *
+   * When not set, it defaults to `false` on iOS < 26 and `true` for iOS >= 26.
    *
    * @platform ios
    */
@@ -145,6 +199,9 @@ export interface ScreenProps extends ViewProps {
    * default iOS shadow. Defaults to `true`.
    *
    * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
+   *
+   * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
+   * to the legacy implementation when handling custom animations, but we assume `true` for shadows.
    *
    * @platform ios
    */
@@ -182,25 +239,51 @@ export interface ScreenProps extends ViewProps {
    */
   nativeBackButtonDismissalEnabled?: boolean;
   /**
-   * Sets the navigation bar color. Defaults to initial status bar color.
+   * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
+   * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
+   * for the specified edge of the ScrollView.
    *
-   * @platform android
+   * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+   * the ScrollView will use only the innermost one's config.
    *
-   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect and is subject to removal in the future.
-   *  For SDK below 35 this works only with specific app setup.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
+   * **Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
+   *
+   * Edge effects can be configured for each edge separately. The following values are currently supported:
+   *
+   * - `automatic` - the automatic scroll edge effect style,
+   * - `hard` - a scroll edge effect with a hard cutoff and dividing line,
+   * - `soft` - a soft-edged scroll edge effect,
+   * - `hidden` - no scroll edge effect.
+   *
+   * The supported values correspond to the `UIScrollEdgeEffect`'s `style` and `isHidden` props
+   * in the official UIKit documentation:
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect|UIScrollEdgeEffect}
+   *
+   * @default `automatic` for each edge
+   *
+   * @platform ios
+   *
+   * @supported iOS 26 or higher
+   */
+  scrollEdgeEffects?: {
+    bottom: ScrollEdgeEffect;
+    left: ScrollEdgeEffect;
+    right: ScrollEdgeEffect;
+    top: ScrollEdgeEffect;
+  };
+  /**
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
+   *
+   * For all apps targeting Android SDK 35 or above this prop has no effect.
+   * See: https://developer.android.com/reference/android/view/Window#setNavigationBarColor(int)
    */
   navigationBarColor?: ColorValue;
   /**
-   * Boolean indicating whether the content should be visible behind the navigation bar. Defaults to `false`.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
-   *  We expect that in future SDKs this option will be enforced.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
+   * For all apps targeting Android SDK 35 or above edge-to-edge is enabled by default.
+   * See: https://developer.android.com/about/versions/15/behavior-changes-15#window-insets
    */
   navigationBarTranslucent?: boolean;
   /**
@@ -295,7 +378,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
-   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
+   * - "default" - resolves to "all" without "portrait_down" on iPhone devices, "all" on iPad devices. On Android, this lets the system decide the best orientation.
    * - "all" – all orientations are permitted
    * - "portrait" – portrait orientations are permitted
    * - "portrait_up" – right-side portrait orientation is permitted
@@ -389,6 +472,11 @@ export interface ScreenProps extends ViewProps {
    *
    * These are provided solely for **temporary** backward compatibility and are destined for removal in future versions.
    *
+   * @remark
+   * On iOS, the native implementation might resize the the sheet w/o explicitly changing the detent level, e.g. in case of keyboard appearance.
+   * In case after such resize the sheet exceeds height for which in regular scenario a dimming view would be applied - it will be applied,
+   * even if the detent has not effectively been changed.
+   *
    * Defaults to `none`, indicating that the dimming view should be always present.
    */
   sheetLargestUndimmedDetentIndex?:
@@ -410,6 +498,39 @@ export interface ScreenProps extends ViewProps {
    * Defaults to `0` - which represents first detent in the detents array.
    */
   sheetInitialDetentIndex?: number | 'last';
+  /**
+   * Whether the sheet content should be rendered behind the Status Bar or display cutouts.
+   *
+   * When set to `true`, the sheet will extend to the physical edges of the stack,
+   * allowing content to be visible behind the status bar or display cutouts.
+   * Detent ratios in sheetAllowedDetents will be measured relative to the full stack height.
+   *
+   * When set to `false`, the sheet's layout will be constrained by the inset from the top
+   * and the detent ratios will then be measured relative to the adjusted height (excluding the top inset).
+   * This means that sheetAllowedDetents will result in different sheet heights depending on this prop.
+   *
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
+  sheetShouldOverflowTopInset?: boolean;
+  /**
+   * Whether the default native animation should be used when the sheet's with
+   * `fitToContents` content size changes.
+   *
+   * When set to `true`, the sheet uses internal logic to synchronize size updates and
+   * translation animations during entry, exit, or content updates. This ensures a smooth
+   * transition for standard, static content mounting/unmounting.
+   *
+   * When set to `false`, the internal animation and translation logic is ignored. This
+   * allows the sheet to adjust its size dynamically based on the current dimensions of
+   * the content provided by the developer, allowing implementing custom resizing animations.
+   *
+   * Defaults to `true`.
+   *
+   * @platform android
+   */
+  sheetDefaultResizeAnimationEnabled?: boolean;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
@@ -448,14 +569,10 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarAnimation?: 'none' | 'fade' | 'slide';
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above this prop has no effect.
-   *  For SDK below 35 this works only with specific app setup.
-   *  This prop is subject to removal in the future.
-   *  See: https://developer.android.com/reference/android/view/Window#setStatusBarColor(int)
+   * For all apps targeting Android SDK 35 or above this prop has no effect.
+   * See: https://developer.android.com/reference/android/view/Window#setStatusBarColor(int)
    */
   statusBarColor?: ColorValue;
   /**
@@ -469,12 +586,10 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
   /**
-   * Sets the translucency of the status bar. Defaults to `false`.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this point loses relevance.
-   *  It is expected that the edge-to-edge will be enforced in future SDKs: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
+   * For all apps targeting Android SDK 35 or above edge-to-edge mode on Android is enabled by default and this prop loses relevance.
+   * See: https://developer.android.com/about/versions/15/behavior-changes-15#ux.
    */
   statusBarTranslucent?: boolean;
   /**
@@ -489,7 +604,7 @@ export interface ScreenProps extends ViewProps {
   swipeDirection?: SwipeDirectionTypes;
   /**
    * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
-   * The duration of `default` and `flip` transitions isn't customizable.
+   * For screens with `default` and `flip` transitions, and, as of now, for screens with `presentation` set to `modal`, `formSheet`, `pageSheet` (regardless of transition), the duration isn't customizable.
    *
    * @platform ios
    */
@@ -522,8 +637,13 @@ export interface ScreenContainerProps extends ViewProps {
 }
 
 export interface GestureDetectorBridge {
+  /**
+   * Callback to attach into ScreenStack's useEffect() from ScreenGestureDetector that wraps the stack.
+   *
+   * @param stackRef holds a reference to an instance of ScreenStackNativeComponent
+   */
   stackUseEffectCallback: (
-    stackRef: React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>,
+    stackRef: React.MutableRefObject<React.Ref<View>>,
   ) => void;
 }
 
@@ -571,6 +691,9 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   backTitleVisible?: boolean;
   /**
    * Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
+   *
+   * **Note:** Using both `blurEffect` and `scrollEdgeEffects` (>= iOS 26) simultaneously may cause overlapping effects.
+   *
    * @platform ios
    */
   blurEffect?: BlurEffectTypes;
@@ -602,6 +725,18 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @platform ios
    */
   backButtonDisplayMode?: BackButtonDisplayMode;
+  /**
+   * Array of UIBarButtomItems to the left side of the header.
+   *
+   * @platform ios
+   */
+  headerLeftBarButtonItems?: HeaderBarButtonItem[];
+  /**
+   * Array of UIBarButtomItems to the right side of the header.
+   *
+   * @platform ios
+   */
+  headerRightBarButtonItems?: HeaderBarButtonItem[];
   /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
@@ -680,22 +815,36 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   titleFontWeight?: string;
   /**
-   * A flag to that lets you opt out of insetting the header. You may want to
-   * set this to `false` if you use an opaque status bar. Defaults to `true`.
-   * Only supported on Android. Insets are always applied on iOS because the
-   * header cannot be opaque.
+   * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
-   * @platform android
-   *
-   * @deprecated For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
-   *  and it is expected that the edge-to-edge will be enforced in future SDKs - therefore this prop
-   *  loses its relevance and will be removed at some point in the future.
+   * For apps targeting Android SDK 35 or above edge-to-edge mode is enabled by default
+   * therefore this prop loses its relevance.
    */
   topInsetEnabled?: boolean;
   /**
    * Boolean indicating whether the navigation bar is translucent.
    */
   translucent?: boolean;
+  /**
+   * Allows to override system appearance for the navigation bar.
+   *
+   * Does not support dynamic changes to the prop value for the currently visible screen.
+   *
+   * Please note that this prop is marked as **experimental** and might be subject to breaking changes or even removal.
+   *
+   * The following values are currently supported:
+   * - `unspecified` - an unspecified interface style,
+   * - `light` - the light interface style,
+   * - `dark` - the dark interface style.
+   *
+   * The supported values correspond to the official UIKit documentation:
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle|UIUserInterfaceStyle}
+   *
+   * @default unspecified
+   * @platform ios
+   */
+  experimental_userInterfaceStyle?: UserInterfaceStyle;
 }
 
 export interface SearchBarProps {
@@ -711,12 +860,21 @@ export interface SearchBarProps {
    * * `cancelSearch` - cancel search in search bar.
    * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
    */
-  ref?: React.RefObject<SearchBarCommands>;
+  ref?: React.RefObject<SearchBarCommands | null>;
 
   /**
-   * The auto-capitalization behavior
+   * The auto-capitalization behavior.
+   *
+   * Defaults to `systemDefault`:
+   * - on Android, it is the same as `none`,
+   * - on iOS, it is the same as `sentences`.
    */
-  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  autoCapitalize?:
+    | 'systemDefault'
+    | 'none'
+    | 'words'
+    | 'sentences'
+    | 'characters';
   /**
    * Automatically focuses search bar on mount
    *
@@ -736,6 +894,9 @@ export interface SearchBarProps {
   /**
    * The text to be used instead of default `Cancel` button text
    *
+   * @deprecated Starting from iOS 26, cancel button does not have any text,
+   * therefore this prop has no longer any effect.
+   *
    * @platform ios
    */
   cancelButtonText?: string;
@@ -746,7 +907,13 @@ export interface SearchBarProps {
    */
   disableBackButtonOverride?: boolean;
   /**
-   * Indicates whether to hide the navigation bar
+   * Indicates whether to hide the navigation bar.
+   *
+   * If value is `undefined`, uses native behavior:
+   * - on iOS versions prior to 26, value is `true`,
+   * - starting from iOS 26, value is determined by context.
+   *
+   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
    *
    * @platform ios
    */
@@ -757,7 +924,6 @@ export interface SearchBarProps {
    * @platform ios
    */
   hideWhenScrolling?: boolean;
-
   /**
    * Sets type of the input. Defaults to `text`.
    *
@@ -765,7 +931,15 @@ export interface SearchBarProps {
    */
   inputType?: 'text' | 'phone' | 'number' | 'email';
   /**
-   * Indicates whether to obscure the underlying content
+   * Indicates whether to obscure the underlying content.
+   *
+   * If value is `undefined`, uses native behavior:
+   * - on iOS, value is `false`,
+   * - on tvOS, value is `true`.
+   *
+   * Restoring native behavior after setting the value to `true` or `false` is unsupported.
+   *
+   * @platform ios
    */
   obscureBackground?: boolean;
   /**
@@ -816,14 +990,46 @@ export interface SearchBarProps {
    * Supported values:
    *
    * * `automatic` - the search bar is placed according to current layout
-   * * `inline` - the search bar is placed on the trailing edge of navigation bar
    * * `stacked` - the search bar is placed below the other content in navigation bar
+   * * `integrated` - (>= iOS 26) the search bar is placed on the trailing edge of navigation bar. On iPhone,
+   *   it may be integrated into the toolbar
+   * * `integratedButton` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
+   *   the inactive search bar is always shown as a button even when space permits a search field
+   * * `integratedCentered` - (>= iOS 26) the search bar has the same placement as `integrated`, except that
+   *   in the regular width on iPad, the search bar is centered in the navigation bar. Only
+   *   respected in special cases, described in UIKit documentation
    *
-   * Defaults to `stacked`
+   * There is also legacy & **deprecated** prop value available:
+   *
+   *  * `inline` - the search bar is placed on the trailing edge of navigation bar
+   *
+   * Starting from iOS 26, `inline` is the same as `integrated`. It is provided for backward
+   * compatibility and is destined for removal in future versions.
+   *
+   * For iOS versions prior to 26, `integrated`, `integratedButton`, `integratedCentered` are
+   * the same as `inline`.
+   *
+   * Defaults to `automatic`.
+   *
+   * Complete list of possible search bar placements is available in the official UIKit documentation:
+   * @see {@link https://developer.apple.com/documentation/uikit/uinavigationitem/searchbarplacement-swift.enum|UINavigationItem.SearchBarPlacement}
    *
    * @platform iOS (>= 16.0)
    */
   placement?: SearchBarPlacement;
+  /**
+   * Indicates whether the system can place the search bar among other toolbar items on iPhone.
+   *
+   * Set this prop to `false` to prevent the search bar from appearing in the toolbar when
+   * `placement` is `automatic`, `integrated`, `integratedButton` or `integratedCentered`.
+   *
+   * Defaults to `true`.
+   * When `placement` is set to `stacked`, this property's value will be overridden with `false`
+   * to circumvent a UIKit native bug that prevents the search bar from appearing on the root screen.
+   *
+   * @platform iOS (>= 26.0)
+   */
+  allowToolbarIntegration?: boolean;
   /**
    * The search field text color
    */
@@ -848,6 +1054,203 @@ export interface SearchBarProps {
    */
   shouldShowHintSearchIcon?: boolean;
 }
+
+export interface ScreenStackHeaderSubviewProps {
+  /**
+   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only applicable to type="right" and type="left" subviews.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+   */
+  hidesSharedBackground?: boolean;
+}
+
+interface SharedHeaderBarButtonItem {
+  /**
+   * Position of the item in the navigation items array.
+   */
+  index?: number;
+  /**
+   * Title of the item.
+   */
+  title?: string;
+  /**
+   * Style for the item label.
+   */
+  titleStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    color?: ColorValue;
+  };
+  /**
+   * Icon for the item
+   */
+  icon?: PlatformIconIOS;
+  /**
+   * The variant of the item.
+   * "Prominent" only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.property
+   */
+  variant?: 'plain' | 'done' | 'prominent';
+  /**
+   * The tint color to apply to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/tintcolor
+   */
+  tintColor?: ColorValue;
+  /**
+   * A Boolean value that indicates whether the item is in a disabled state.
+   */
+  disabled?: boolean;
+  /**
+   * The width of the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/width
+   */
+  width?: number;
+  /**
+   * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
+   */
+  hidesSharedBackground?: boolean;
+  /**
+   * A boolean value indicating whether this item can share a background with other items in a navigation bar or a toolbar.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
+   */
+  sharesBackground?: boolean;
+  /**
+   * An identifier used to match items across transitions in a navigation bar or toolbar.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
+   */
+  identifier?: string;
+  /**
+   * A badge to be rendered on a item.
+   * Only available from iOS 26.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitembadge
+   */
+  badge?: {
+    /**
+     * The text to display in the badge.
+     */
+    value: string;
+    /**
+     * Style of the badge.
+     */
+    style?: {
+      color?: ColorValue;
+      backgroundColor?: ColorValue;
+      fontFamily?: string;
+      fontSize?: number;
+      fontWeight?: string;
+    };
+  };
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+}
+
+export interface HeaderBarButtonItemWithAction
+  extends SharedHeaderBarButtonItem {
+  type: 'button';
+  onPress: () => void;
+  /**
+   * A Boolean value that indicates whether the item is in a selected state.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/isselected
+   */
+  selected?: boolean;
+}
+
+export interface HeaderBarButtonItemMenuAction {
+  type: 'action';
+  title?: string;
+  subtitle?: string;
+  onPress: () => void;
+  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
+  /**
+   * State of the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/state
+   */
+  state?: 'on' | 'off' | 'mixed';
+  /**
+   * Indicates whether to apply disabled style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/disabled
+   */
+  disabled?: boolean;
+  /**
+   * Indicates whether to apply destructive style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/destructive
+   */
+  destructive?: boolean;
+  /**
+   * Indicates whether to apply hidden style to the item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/hidden
+   */
+  hidden?: boolean;
+  /**
+   * Indicates whether to keep the menu presented after firing the element’s action.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
+   */
+  keepsMenuPresented?: boolean;
+  /**
+   * Discoverability label of the menu item.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uiaction/discoverabilitytitle
+   */
+  discoverabilityLabel?: string;
+}
+
+export interface HeaderBarButtonItemSubmenu {
+  type: 'submenu';
+  title?: string;
+  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
+  items: HeaderBarButtonItemWithMenu['menu']['items'];
+  displayInline?: boolean;
+  destructive?: boolean;
+  singleSelection?: boolean;
+  displayAsPalette?: boolean;
+}
+
+export interface HeaderBarButtonItemWithMenu extends SharedHeaderBarButtonItem {
+  type: 'menu';
+  menu: {
+    title?: string;
+    items: (HeaderBarButtonItemMenuAction | HeaderBarButtonItemSubmenu)[];
+    singleSelection?: boolean;
+    displayAsPalette?: boolean;
+  };
+  /**
+   * A Boolean value that indicates whether the button title should indicate selection or not.
+   * Only available from iOS 15.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/changesselectionasprimaryaction
+   */
+  changesSelectionAsPrimaryAction?: boolean;
+}
+
+export interface HeaderBarButtonItemSpacing {
+  type: 'spacing';
+  spacing: number;
+}
+
+export type HeaderBarButtonItem =
+  | HeaderBarButtonItemWithAction
+  | HeaderBarButtonItemWithMenu
+  | HeaderBarButtonItemSpacing;
 
 /**
  * Custom Screen Transition
@@ -913,3 +1316,6 @@ export interface GestureProviderProps extends GestureProps {
   children?: React.ReactNode;
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }
+
+export type * from './components/tabs';
+export type * from './components/shared/types';

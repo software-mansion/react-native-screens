@@ -13,9 +13,9 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 
-
-public interface RNSScreenManagerInterface<T extends View>  {
+public interface RNSScreenManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setScreenId(T view, @Nullable String value);
   void setSheetAllowedDetents(T view, @Nullable ReadableArray value);
   void setSheetLargestUndimmedDetent(T view, int value);
@@ -24,8 +24,10 @@ public interface RNSScreenManagerInterface<T extends View>  {
   void setSheetExpandsWhenScrolledToEdge(T view, boolean value);
   void setSheetInitialDetent(T view, int value);
   void setSheetElevation(T view, int value);
+  void setSheetShouldOverflowTopInset(T view, boolean value);
+  void setSheetDefaultResizeAnimationEnabled(T view, boolean value);
   void setCustomAnimationOnSwipe(T view, boolean value);
-  void setFullScreenSwipeEnabled(T view, boolean value);
+  void setFullScreenSwipeEnabled(T view, @Nullable String value);
   void setFullScreenSwipeShadowEnabled(T view, boolean value);
   void setHomeIndicatorHidden(T view, boolean value);
   void setPreventNativeDismiss(T view, boolean value);
@@ -48,4 +50,10 @@ public interface RNSScreenManagerInterface<T extends View>  {
   void setNavigationBarTranslucent(T view, boolean value);
   void setNavigationBarHidden(T view, boolean value);
   void setNativeBackButtonDismissalEnabled(T view, boolean value);
+  void setBottomScrollEdgeEffect(T view, @Nullable String value);
+  void setLeftScrollEdgeEffect(T view, @Nullable String value);
+  void setRightScrollEdgeEffect(T view, @Nullable String value);
+  void setTopScrollEdgeEffect(T view, @Nullable String value);
+  void setSynchronousShadowStateUpdatesEnabled(T view, boolean value);
+  void setAndroidResetScreenShadowStateOnOrientationChangeEnabled(T view, boolean value);
 }

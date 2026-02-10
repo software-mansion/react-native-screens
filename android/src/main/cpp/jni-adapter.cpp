@@ -96,12 +96,12 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_swmansion_rnscreens_ScreensModule_nativeUninstall(
-        JNIEnv *env,
-        jobject thiz) {
-    if (globalThis != nullptr) {
-        env->DeleteGlobalRef(globalThis);
-        globalThis = nullptr;
-    }
+    JNIEnv *env,
+    jobject thiz) {
+  if (globalThis != nullptr) {
+    env->DeleteGlobalRef(globalThis);
+    globalThis = nullptr;
+  }
 }
 
 void JNICALL JNI_OnUnload(JavaVM *jvm, void *) {

@@ -9,7 +9,10 @@ typealias BoundaryValueProviderFn = (Number?) -> Float?
  * not use boundary values used during value animator construction. This allows to defer computation
  * of animator boundary values to the moment when animation starts.
  */
-class ExternalBoundaryValuesEvaluator(val startValueProvider: BoundaryValueProviderFn, val endValueProvider: BoundaryValueProviderFn) : FloatEvaluator() {
+class ExternalBoundaryValuesEvaluator(
+    val startValueProvider: BoundaryValueProviderFn,
+    val endValueProvider: BoundaryValueProviderFn,
+) : FloatEvaluator() {
     var startValueCache: Number? = null
     var endValueCache: Number? = null
 
@@ -27,7 +30,11 @@ class ExternalBoundaryValuesEvaluator(val startValueProvider: BoundaryValueProvi
         return endValueCache
     }
 
-    override fun evaluate(fraction: Float, startValue: Number?, endValue: Number?): Float? {
+    override fun evaluate(
+        fraction: Float,
+        startValue: Number?,
+        endValue: Number?,
+    ): Float? {
         val realStartValue = getStartValue(startValue)
         val realEndValue = getEndValue(endValue)
         if (realStartValue == null || realEndValue == null) {
