@@ -146,6 +146,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
       case "androidResetScreenShadowStateOnOrientationChangeEnabled":
         mViewManager.setAndroidResetScreenShadowStateOnOrientationChangeEnabled(view, value == null ? true : (boolean) value);
         break;
+      case "ios26AllowInteractionsDuringTransition":
+        mViewManager.setIos26AllowInteractionsDuringTransition(view, value == null ? true : (boolean) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }

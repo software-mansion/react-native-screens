@@ -1597,6 +1597,11 @@ RNS_IGNORE_SUPER_CALL_END
   // subviews
 }
 
+- (void)setIos26AllowInteractionsDuringTransition:(BOOL)value
+{
+  [RNSScreenView.viewInteractionManagerInstance setDisabled:value];
+}
+
 #endif
 
 @end
