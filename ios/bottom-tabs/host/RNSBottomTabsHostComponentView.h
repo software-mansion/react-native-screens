@@ -76,11 +76,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)emitOnNativeFocusChangeRequestSelectedTabScreen:(nonnull RNSBottomTabsScreenComponentView *)tabScreen
                 repeatedSelectionHandledBySpecialEffect:(BOOL)repeatedSelectionHandledBySpecialEffect;
+- (BOOL)emitOnTabBarHeightChangeWithHeight:(CGFloat)height;
 
 #if !RCT_NEW_ARCH_ENABLED
 #pragma mark - LEGACY Event blocks
 
 @property (nonatomic, copy) RCTDirectEventBlock onNativeFocusChange;
+@property (nonatomic, copy) RCTDirectEventBlock onTabBarHeightChange;
 
 #endif
 

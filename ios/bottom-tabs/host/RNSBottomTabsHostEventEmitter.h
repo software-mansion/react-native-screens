@@ -1,6 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import <CoreGraphics/CoreGraphics.h>
 
 // Hide C++ symbols from C compiler used when building Swift module
 #if defined(__cplusplus) && RCT_NEW_ARCH_ENABLED
@@ -20,16 +21,25 @@ struct OnNativeFocusChangePayload {
   NSString *_Nonnull tabKey;
   BOOL repeatedSelectionHandledBySpecialEffect;
 };
+
+struct OnTabBarHeightChangePayload {
+  CGFloat height;
+};
 #else
 typedef struct {
   NSString *_Nonnull tabKey;
   BOOL repeatedSelectionHandledBySpecialEffect;
 } OnNativeFocusChangePayload;
+
+typedef struct {
+  CGFloat height;
+} OnTabBarHeightChangePayload;
 #endif
 
 @interface RNSBottomTabsHostEventEmitter : NSObject
 
 - (BOOL)emitOnNativeFocusChange:(OnNativeFocusChangePayload)payload;
+- (BOOL)emitOnTabBarHeightChange:(OnTabBarHeightChangePayload)payload;
 
 @end
 
@@ -47,6 +57,7 @@ typedef struct {
 #pragma mark - LEGACY Event emitter blocks
 
 @property (nonatomic, copy) RCTDirectEventBlock onNativeFocusChange;
+@property (nonatomic, copy) RCTDirectEventBlock onTabBarHeightChange;
 
 #endif // RCT_NEW_ARCH_ENABLED
 

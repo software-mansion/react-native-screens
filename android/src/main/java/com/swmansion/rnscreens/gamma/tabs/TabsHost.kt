@@ -13,6 +13,7 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
@@ -159,6 +160,7 @@ class TabsHost(
     private var lastAppliedUiMode: Int? = null
 
     private var isLayoutEnqueued: Boolean = false
+    private var lastEmittedTabBarHeightInPx: Int? = null
 
     private var interfaceInsetsChangeListener: SafeAreaView? = null
 
@@ -252,12 +254,7 @@ class TabsHost(
         addView(contentView)
         addView(bottomNavigationView)
 
-        bottomNavigationView.addOnLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            RNSLog.d(
-                TAG,
-                "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}",
-            )
-        }
+        bottomNavigationView.addOnLayoutChangeListener(this)
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             RNSLog.d(TAG, "Item selected $item")
@@ -484,16 +481,12 @@ class TabsHost(
             }
 
     override fun setOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
-        if (interfaceInsetsChangeListener == null) {
-            bottomNavigationView.addOnLayoutChangeListener(this)
-        }
         interfaceInsetsChangeListener = listener
     }
 
     override fun removeOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
         if (interfaceInsetsChangeListener == listener) {
             interfaceInsetsChangeListener = null
-            bottomNavigationView.removeOnLayoutChangeListener(this)
         }
     }
 
@@ -523,6 +516,7 @@ class TabsHost(
         // When this is called from View Manager the view tag is already set
         check(id != NO_ID) { "[RNScreens] TabsHost must have its tag set when registering event emitters" }
         eventEmitter = TabsHostEventEmitter(reactContext, id)
+        updateInterfaceInsets()
     }
 
     override fun onLayoutChange(
@@ -540,6 +534,11 @@ class TabsHost(
             "[RNScreens] TabsHost's onLayoutChange expects BottomNavigationView, received $view instead"
         }
 
+        RNSLog.d(
+            TAG,
+            "BottomNavigationView layout changed {$left, $top} {${right - left}, ${bottom - top}}",
+        )
+
         val oldHeight = oldBottom - oldTop
         val newHeight = bottom - top
 
@@ -554,6 +553,24 @@ class TabsHost(
         interfaceInsetsChangeListener?.apply {
             this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, height.toFloat()))
         }
+
+        emitTabBarHeightChangeIfNeeded(height)
+    }
+
+    private fun emitTabBarHeightChangeIfNeeded(heightInPx: Int) {
+        if (!::eventEmitter.isInitialized) {
+            return
+        }
+
+        if (heightInPx == lastEmittedTabBarHeightInPx) {
+            return
+        }
+
+        lastEmittedTabBarHeightInPx = heightInPx
+
+        eventEmitter.emitOnTabBarHeightChange(
+            PixelUtil.toDIPFromPixel(heightInPx.toFloat()).toDouble(),
+        )
     }
 
     companion object {

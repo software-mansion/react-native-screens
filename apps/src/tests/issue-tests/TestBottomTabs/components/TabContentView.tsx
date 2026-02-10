@@ -1,5 +1,6 @@
 import React from 'react';
 import { type ViewProps, View, Text, Button } from 'react-native';
+import { useBottomTabBarHeight } from 'react-native-screens';
 import ConfigWrapperContext from '../../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import { someExtensiveComputation } from '../utils';
 import { TabConfigurationSummary } from './TabConfigurationSummary';
@@ -14,12 +15,7 @@ export function TabContentView(props: TabContentViewProps) {
   const { selectNextTab, tabKey, message, ...viewProps } = props;
 
   const configWrapper = React.useContext(ConfigWrapperContext);
-
-  console.log(
-    `TabContentView render with config: ${JSON.stringify(
-      configWrapper.config,
-    )}`,
-  );
+  const tabBarHeight = useBottomTabBarHeight();
 
   if (configWrapper.config.heavyTabRender) {
     someExtensiveComputation();
@@ -28,6 +24,13 @@ export function TabContentView(props: TabContentViewProps) {
   return (
     <View {...viewProps}>
       {message !== undefined && <Text>{message}</Text>}
+      <Text testID={`tab-bar-height-label-${tabKey}`}>
+        Tab bar height: {tabBarHeight.toFixed(2)}
+      </Text>
+      <Text testID={`tab-bar-height-state-${tabKey}`}>
+        {tabBarHeight > 0 ? 'ready' : 'pending'}
+      </Text>
+      <Text testID={`tab-bar-height-value-${tabKey}`}>{tabBarHeight}</Text>
       <TabConfigurationSummary tabKey={tabKey} />
       <Button title="Next tab" onPress={selectNextTab} />
       <Button

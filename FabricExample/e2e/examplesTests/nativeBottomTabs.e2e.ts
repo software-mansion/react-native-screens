@@ -14,6 +14,9 @@ describe('Native BottomTabs', () => {
     await expect(
       element(by.id('tab-screen-1-id')),
     ).toBeVisible();
+    await expect(
+      element(by.id('tab-bar-height-state-Tab1')),
+    ).toHaveText('ready');
   });
 
   it('should use tab id to navigate to third tab screen', async () => {

@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.tabs
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.gamma.tabs.event.TabsHostNativeFocusChangeEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabsHostTabBarHeightChangeEvent
 
 internal class TabsHostEventEmitter(
     reactContext: ReactContext,
@@ -20,6 +21,16 @@ internal class TabsHostEventEmitter(
                 tabKey,
                 tabNumber,
                 repeatedSelectionHandledBySpecialEffect,
+            ),
+        )
+    }
+
+    fun emitOnTabBarHeightChange(tabBarHeight: Double) {
+        reactEventDispatcher.dispatchEvent(
+            TabsHostTabBarHeightChangeEvent(
+                surfaceId,
+                viewTag,
+                tabBarHeight,
             ),
         )
     }
