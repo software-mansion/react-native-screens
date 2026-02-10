@@ -2,6 +2,8 @@
 
 @interface RNSViewInteractionManager : NSObject
 
+@property (nonatomic) BOOL disabled;
+
 - (instancetype)init;
 
 /**
