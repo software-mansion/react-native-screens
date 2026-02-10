@@ -4,6 +4,7 @@ import type {
   PopActionMethod,
   PreloadActionMethod,
   PushActionMethod,
+  SetRouteOptionsActionMethod,
   StackRouteOptions,
 } from '../StackContainer.types';
 
@@ -14,6 +15,7 @@ export type StackNavigationContextPayload = {
   pop: PopActionMethod;
   preload: PreloadActionMethod;
   batch: BatchActionMethod;
+  setRouteOptions: SetRouteOptionsActionMethod;
 };
 
 export const StackNavigationContext =

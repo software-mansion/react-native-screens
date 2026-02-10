@@ -25,6 +25,19 @@ class MainActivity : ReactActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
     super.onCreate(savedInstanceState)
+
+    // Remove this once we have sensible workaround to disable the react callback.
+    // Currently it prevents fragment manager's callback from triggering, blocking
+    // native-pop & predictive back gesture.
+    // See: https://github.com/software-mansion/react-native-screens/pull/3630
+    try {
+      val field = ReactActivity::class.java.getDeclaredField("mBackPressedCallback")
+      field.isAccessible = true
+      val callback = field.get(this) as androidx.activity.OnBackPressedCallback
+      callback.isEnabled = false // <--- KILL SWITCH
+    } catch (e: Exception) {
+      e.printStackTrace()
+    }
   }
 
   override fun onAttachedToWindow() {

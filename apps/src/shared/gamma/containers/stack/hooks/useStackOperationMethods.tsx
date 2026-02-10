@@ -11,7 +11,9 @@ import {
   PopNativeActionMethod,
   PreloadActionMethod,
   PushActionMethod,
+  SetRouteOptionsActionMethod as SetRouteOptionsActionMethod,
   StackRouteConfig,
+  StackRouteOptions,
 } from '../StackContainer.types';
 
 export function useStackOperationMethods(
@@ -79,6 +81,13 @@ export function useStackOperationMethods(
     dispatch({ type: 'clear-effects', ctx: actionContext });
   }, [dispatch, actionContext]);
 
+  const setRouteOptions: SetRouteOptionsActionMethod = React.useCallback(
+    (routeKey: string, options: Partial<StackRouteOptions>) => {
+      dispatch({ type: 'set-options', routeKey, options, ctx: actionContext });
+    },
+    [dispatch, actionContext],
+  );
+
   const aggregateValue = React.useMemo(() => {
     return {
       pushAction,
@@ -88,6 +97,7 @@ export function useStackOperationMethods(
       preloadAction,
       batchAction,
       clearEffectsAction,
+      setRouteOptions,
     };
   }, [
     pushAction,
@@ -97,6 +107,7 @@ export function useStackOperationMethods(
     preloadAction,
     batchAction,
     clearEffectsAction,
+    setRouteOptions,
   ]);
 
   return aggregateValue;
