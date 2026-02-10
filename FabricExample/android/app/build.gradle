@@ -125,7 +125,7 @@ dependencies {
         // https://github.com/wix/Detox/issues/2848
         exclude group: 'com.google.android.material'
     }
-    implementation "androidx.appcompat:appcompat:1.6.1" // Detox
+    implementation "androidx.appcompat:appcompat:1.7.1" // Detox
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
