@@ -37,6 +37,7 @@ internal class StackContainer(
         get() = pendingPushOperations.isNotEmpty() || pendingPopOperations.isNotEmpty()
 
     private val fragmentOpExecutor: FragmentOperationExecutor = FragmentOperationExecutor()
+    private val fragmentOps: MutableList<FragmentOperation> = arrayListOf()
 
     init {
         id = ViewIdGenerator.generateViewId()
@@ -89,18 +90,38 @@ internal class StackContainer(
     }
 
     private fun performOperations(fragmentManager: FragmentManager) {
-        val fragmentOps = applyOperationsAndComputeFragmentManagerOperations()
+        applyOperationsAndComputeFragmentManagerOperations()
         fragmentOpExecutor.executeOperations(fragmentManager, fragmentOps, flushSync = false)
 
         dumpStackModel()
     }
 
-    private fun applyOperationsAndComputeFragmentManagerOperations(): List<FragmentOperation> {
-        val fragmentOps = mutableListOf<FragmentOperation>()
+    private fun applyOperationsAndComputeFragmentManagerOperations() {
+        fragmentOps.clear()
 
         // Handle pop operations first.
         // We don't care about pop/push duplicates, as long as we don't let the main loop progress
         // before we commit all the transactions, FragmentManager will handle that for us.
+
+        if (hasPendingOperations) {
+            // Top fragment is the primary navigation fragment. If we're going to change anything
+            // in stack model, then we also should update top fragment.
+            //
+            // This is added before other operations, to make sure that they are correctly classified
+            // as pop/non-pop by fragment manager.
+            // This relies on Fragment Manager internal behavior obviously. It classifies
+            // whole batch of transactions as "pop" (argument later passed to `onBackStackChange` commited)
+            // when last operation of the batch is "pop". Empty commit with only onCommit callback
+            // attached is not a "pop" commit, therefore JS-pop commits have not been properly
+            // recognized.
+            fragmentOps.add(
+                OnCommitCallbackFragmentOp(
+                    { updateTopFragment() },
+                    allowStateLoss = true,
+                    flushSync = false,
+                )
+            )
+        }
 
         pendingPopOperations.forEach { operation ->
             val fragment =
@@ -121,8 +142,9 @@ internal class StackContainer(
 
         pendingPushOperations.forEach { operation ->
             val newFragment = createFragmentForScreen(operation.screen)
+
             fragmentOps.add(
-                AddOp(
+                AddAndSetAsPrimaryOp(
                     newFragment,
                     containerViewId = this.id,
                     addToBackStack = stackModel.isNotEmpty(),
@@ -133,37 +155,13 @@ internal class StackContainer(
 
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
 
-        // Top fragment is the primary navigation fragment.
-        val topStackFragment = stackModel.last()
-        fragmentOps.add(
-            SetPrimaryNavFragmentOp(topStackFragment, {
-                updateTopFragment()
-            }),
-        )
-
         pendingPopOperations.clear()
         pendingPushOperations.clear()
-
-        return fragmentOps
     }
 
     private fun onNativeFragmentPop(fragment: StackScreenFragment) {
-        Log.d(TAG, "StackContainer [$id] natively removed fragment ${fragment.stackScreen.screenKey}")
         require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack model should not be empty after a native pop" }
-
-        val fragmentManager = requireFragmentManager()
-        check(fragmentManager.primaryNavigationFragment === fragment) { "[RNScreens] primaryNavFragment should be the one popped" }
-        // We need to update the primary navigation fragment, otherwise the fragment manager
-        // will have invalid state, pointing to the dismissed fragment.
-        fragmentOpExecutor.executeOperations(
-            fragmentManager,
-            listOf(
-                SetPrimaryNavFragmentOp(stackModel.last(), {
-                    updateTopFragment()
-                }),
-            ),
-        )
     }
 
     private fun dumpStackModel() {
@@ -200,8 +198,14 @@ internal class StackContainer(
             Log.w(TAG, "[RNScreens] Unexpected type of fragment: ${fragment.javaClass.simpleName}")
             return
         }
-        if (pop) {
-            delegate.get()?.onScreenDismiss(fragment.stackScreen)
+
+        // This callback is called for every fragment involved in the back stack change, even
+        // if its not added or removed, but e.g. set as a primary navigation fragment, hence
+        // we need to check whether the fragment is actually being removed.
+        // I avoid using `pop` parameter here, because transaction might not be classified as `pop`
+        // and still include fragment removal operations.
+        if (fragment.isRemoving) {
+            delegate.get()?.onScreenDismissCommitted(fragment.stackScreen)
             if (stackModel.contains(fragment)) {
                 onNativeFragmentPop(fragment)
             }

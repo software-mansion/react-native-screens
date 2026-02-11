@@ -10,7 +10,7 @@ internal sealed class FragmentOperation {
     )
 }
 
-internal class AddOp(
+internal class AddAndSetAsPrimaryOp(
     val fragment: StackScreenFragment,
     val containerViewId: Int,
     val addToBackStack: Boolean,
@@ -20,7 +20,7 @@ internal class AddOp(
         fragmentManager: FragmentManager,
         executor: FragmentOperationExecutor,
     ) {
-        executor.executeAddOp(fragmentManager, this)
+        executor.executeAddAndSetAsPrimaryOp(fragmentManager, this)
     }
 }
 
@@ -57,14 +57,15 @@ internal class FlushNowOp : FragmentOperation() {
     }
 }
 
-internal class SetPrimaryNavFragmentOp(
-    val fragment: StackScreenFragment,
-    val onCommitCallback: Runnable? = null,
+internal class OnCommitCallbackFragmentOp(
+    val onCommitCallback: Runnable,
+    val allowStateLoss: Boolean = true,
+    val flushSync: Boolean = false,
 ) : FragmentOperation() {
     override fun execute(
         fragmentManager: FragmentManager,
         executor: FragmentOperationExecutor,
     ) {
-        executor.executeSetPrimaryNavFragmentOp(fragmentManager, this)
+        executor.executeOnCommitCallbackOp(fragmentManager, this)
     }
 }

@@ -88,7 +88,7 @@ class StackHost(
         }
     }
 
-    override fun onScreenDismiss(stackScreen: StackScreen) {
+    override fun onScreenDismissCommitted(stackScreen: StackScreen) {
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
             stackScreen.isNativelyDismissed = true
         }
