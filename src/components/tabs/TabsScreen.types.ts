@@ -8,7 +8,6 @@ import type {
 } from 'react-native';
 import type {
   PlatformIcon,
-  PlatformIconIOS,
   UserInterfaceStyle,
   ScrollEdgeEffect,
 } from '../../types';
@@ -343,7 +342,7 @@ export interface TabsScreenProps {
    *
    *   Remarks: Requires passing a drawable to resources via Android Studio.
    *
-   * On iOS, if no `selectedIcon` is provided, this icon will also
+   * If no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.
    *
    * @platform android, ios
@@ -509,9 +508,9 @@ export interface TabsScreenProps {
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
-   * @platform ios
+   * @platform android, ios
    */
-  selectedIcon?: PlatformIconIOS;
+  selectedIcon?: PlatformIcon;
   /**
    * @summary System-provided tab bar item with predefined icon and title
    *
