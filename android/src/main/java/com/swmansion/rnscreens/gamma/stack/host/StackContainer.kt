@@ -119,7 +119,7 @@ internal class StackContainer(
                     { updateTopFragment() },
                     allowStateLoss = true,
                     flushSync = false,
-                )
+                ),
             )
         }
 

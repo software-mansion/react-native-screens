@@ -63,7 +63,8 @@ internal class FragmentOperationExecutor {
         op: OnCommitCallbackFragmentOp,
     ) {
         commitTransaction(
-            fragmentManager.createTransactionWithReordering()
+            fragmentManager
+                .createTransactionWithReordering()
                 .runOnCommit(op.onCommitCallback),
             allowStateLoss = op.allowStateLoss,
             flushSync = op.flushSync,
