@@ -315,22 +315,36 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
 
 function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
-  selectedIcon: PlatformIconIOS | undefined,
+  selectedIcon: PlatformIcon | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconResourceName?: string;
+  // android
+  selectedImageIconResource?: ImageSourcePropType;
+  selectedDrawableIconResourceName?: string;
+  // iOS
   selectedIconImageSource?: ImageSourcePropType;
   selectedIconResourceName?: string;
 } {
   if (Platform.OS === 'android') {
-    const androidNativeProps = parseAndroidIconToNativeProps(
-      icon?.android || icon?.shared,
+    const { imageIconResource, drawableIconResourceName } =
+      parseAndroidIconToNativeProps(icon?.android || icon?.shared);
+
+    const {
+      imageIconResource: selectedImageIconResource,
+      drawableIconResourceName: selectedDrawableIconResourceName,
+    } = parseAndroidIconToNativeProps(
+      selectedIcon?.android || selectedIcon?.shared,
     );
+
     return {
-      ...androidNativeProps,
+      imageIconResource,
+      drawableIconResourceName,
+      selectedImageIconResource,
+      selectedDrawableIconResourceName,
     };
   }
 
@@ -342,7 +356,7 @@ function parseIconsToNativeProps(
       iconImageSource: selectedIconImageSource,
       iconResourceName: selectedIconResourceName,
       iconType: selectedIconType,
-    } = parseIOSIconToNativeProps(selectedIcon);
+    } = parseIOSIconToNativeProps(selectedIcon?.ios || selectedIcon?.shared);
 
     if (
       iconType !== undefined &&

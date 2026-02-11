@@ -44,8 +44,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
       selectedIcon: {
-        type: 'xcasset',
-        name: 'custom-icon-fill',
+        ios: {
+          type: 'xcasset',
+          name: 'custom-icon-fill',
+        }
       },
     },
     component: makeTab(
