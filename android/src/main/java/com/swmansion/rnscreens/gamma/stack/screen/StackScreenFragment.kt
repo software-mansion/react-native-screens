@@ -1,13 +1,12 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
-import android.animation.Animator
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.android.material.transition.MaterialSharedAxis
+import androidx.transition.Slide
 
 internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
@@ -30,23 +29,14 @@ internal class StackScreenFragment(
         requireActivity().onBackPressedDispatcher.addCallback(
             preventNativeDismissBackPressedCallback,
         )
-        val transitionDuration = 1200L
-        enterTransition =
-            MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-                duration = transitionDuration
-            }
-        exitTransition =
-            MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-                duration = transitionDuration
-            }
-        returnTransition =
-            MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                duration = transitionDuration
-            }
-        reenterTransition =
-            MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                duration = transitionDuration
-            }
+
+        allowEnterTransitionOverlap = true
+        allowReturnTransitionOverlap = true
+
+        enterTransition = Slide(Gravity.RIGHT)
+        exitTransition = Slide(Gravity.LEFT)
+        returnTransition = Slide(Gravity.RIGHT)
+        reenterTransition = Slide(Gravity.LEFT)
     }
 
     override fun onCreateView(
@@ -70,38 +60,8 @@ internal class StackScreenFragment(
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i("StackScreenFragment", "onDestroy")
         stackScreen.onDismiss()
         preventNativeDismissBackPressedCallback.remove()
-    }
-
-    override fun onCreateAnimator(
-        transit: Int,
-        enter: Boolean,
-        nextAnim: Int,
-    ): Animator? {
-        Log.w("RNScreens", "StackScreenFragment onCreateAnimator ${stackScreen.screenKey}")
-        return super.onCreateAnimator(transit, enter, nextAnim)
-//        return if (enter) {
-//            val animator = ValueAnimator.ofFloat(-stackScreen.width.toFloat(), 0f).apply {
-//                duration = 800
-//                interpolator = FastOutSlowInInterpolator()
-//                addUpdateListener { animator ->
-//                    val animValue = animator.animatedValue as Float
-//                    stackScreen.translationX = animValue
-//                }
-//            }
-//            animator
-//        } else {
-//            val animator = ValueAnimator.ofFloat(0f, stackScreen.width.toFloat()).apply {
-//                duration = 800
-//                addUpdateListener { animator ->
-//                    val animValue = animator.animatedValue as Float
-//                    stackScreen.translationX = animValue
-//                }
-//            }
-//            animator
-//        }
     }
 
     /**
