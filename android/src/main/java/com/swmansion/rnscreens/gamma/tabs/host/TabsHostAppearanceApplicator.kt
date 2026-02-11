@@ -160,8 +160,10 @@ class TabsHostAppearanceApplicator(
             menuItem.title = tabsScreen.tabTitle
         }
 
-        if (menuItem.icon != tabsScreen.icon) {
-            menuItem.icon = tabsScreen.icon
+        val targetIcon = if (tabScreen.isFocusedTab) tabScreen.selectedIcon else tabScreen.icon
+
+        if (menuItem.icon != targetIcon) {
+            menuItem.icon = targetIcon
         }
     }
 
