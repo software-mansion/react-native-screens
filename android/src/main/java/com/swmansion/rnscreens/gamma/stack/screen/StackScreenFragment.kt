@@ -30,10 +30,23 @@ internal class StackScreenFragment(
         requireActivity().onBackPressedDispatcher.addCallback(
             preventNativeDismissBackPressedCallback,
         )
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
-        returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        val transitionDuration = 1200L
+        enterTransition =
+            MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
+                duration = transitionDuration
+            }
+        exitTransition =
+            MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
+                duration = transitionDuration
+            }
+        returnTransition =
+            MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+                duration = transitionDuration
+            }
+        reenterTransition =
+            MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+                duration = transitionDuration
+            }
     }
 
     override fun onCreateView(
