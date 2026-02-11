@@ -21,6 +21,10 @@ class StackScreen(
         ATTACHED,
     }
 
+    init {
+        isTransitionGroup = true
+    }
+
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             preventNativeDismissChangeObserver?.preventNativeDismissChanged(newValue)
