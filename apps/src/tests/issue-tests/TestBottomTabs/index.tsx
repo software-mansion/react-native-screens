@@ -45,7 +45,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
         android: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('../../../../assets/variableIcons/icon.png'),
         },
       },
       selectedIcon: {
@@ -132,8 +132,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
         android: {
           type: 'drawableResource',
-          // TODO: @t0maboro - better example
-          name: 'custom_home_icon',
+          name: 'sym_call_incoming',
         }
       },
       title: 'Tab2',
