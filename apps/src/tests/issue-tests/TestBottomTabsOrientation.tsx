@@ -92,14 +92,8 @@ function makeTabConfigs(
           },
         },
         selectedIcon: {
-          ios: {
-            type: 'sfSymbol',
-            name: 'house.fill',
-          },
-          android: {
-            type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-          }
+          type: 'sfSymbol',
+          name: 'house.fill',
         },
         orientation: tabsOrientations.home.tabScreen,
       },
@@ -123,14 +117,8 @@ function makeTabConfigs(
           },
         },
         selectedIcon: {
-          ios: {
-            type: 'templateSource',
-            templateSource: require('../../../assets/variableIcons/icon_fill.png'),
-          },
-          android: {
-            type: 'drawableResource',
-            name: 'sym_call_missed',
-          }
+          type: 'templateSource',
+          templateSource: require('../../../assets/variableIcons/icon_fill.png'),
         },
         orientation: tabsOrientations.portrait.tabScreen,
       },
@@ -149,10 +137,8 @@ function makeTabConfigs(
           },
         },
         selectedIcon: {
-          shared: {
-            type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-          }
+          type: 'imageSource',
+          imageSource: require('../../../assets/variableIcons/icon_fill.png'),
         },
         orientation: tabsOrientations.landscape.tabScreen,
       },
