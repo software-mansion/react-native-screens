@@ -1,7 +1,7 @@
 import { device, element, by } from 'detox';
 import isVersionEqualOrHigherThan from '../helpers/isVersionEqualOrHigherThan';
 
-const { getIOSVersion } = require('../../../scripts/e2e/ios-devices.js');
+const { getIOSVersionNumber } = require('../../../scripts/e2e/ios-devices.js');
 
 const IOS_BAR_BUTTON_TYPE = '_UIButtonBarButton';
 const backButtonElement = element(by.id('BackButton'));
@@ -16,7 +16,7 @@ export async function tapBarBackButton() {
 }
 
 async function getIOSBackButton() {
-  const iosVersion = getIOSVersion().replace('iOS', '').trim();
+  const iosVersion = getIOSVersionNumber();
   if (isVersionEqualOrHigherThan(iosVersion, '26.0')) {
     const elementsByAttributes =
       (await backButtonElement.getAttributes()) as unknown as {
