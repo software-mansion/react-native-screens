@@ -44,7 +44,7 @@ open class CustomToolbar(
     // As CustomToolbar is responsible for handling insets in Stack, we store what insets should
     // be passed to Screen in this property. It's used by ScreensCoordinatorLayout in overriden
     // dispatchApplyWindowInsets.
-    var screenInsets = WindowInsetsCompat.CONSUMED
+    internal var screenInsets = WindowInsetsCompat.CONSUMED
 
     private var shouldApplyLayoutCorrectionForTopInset = false
 
