@@ -505,7 +505,7 @@ export interface TabsScreenProps {
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
-   * Supports the same values as `icon` property for iOS.
+   * Supports the same values as `icon` property for given platform.
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
