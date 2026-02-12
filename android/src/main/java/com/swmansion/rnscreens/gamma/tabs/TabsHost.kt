@@ -12,6 +12,7 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -19,6 +20,7 @@ import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.gamma.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.safearea.EdgeInsets
 import com.swmansion.rnscreens.safearea.SafeAreaProvider
 import com.swmansion.rnscreens.safearea.SafeAreaView
@@ -380,24 +382,46 @@ class TabsHost(
     }
 
     private fun updateSelectedTab() {
+        val tabFragments = requireFragmentManager.fragments.filterIsInstance<TabScreenFragment>()
+
+        if (tabFragments.size != tabScreenFragments.size) {
+            val tx = requireFragmentManager.createTransactionWithReordering()
+            tabFragments.forEach {
+                tx.remove(it)
+            }
+            tabScreenFragments.forEach {
+                tx.add(contentView.id, it)
+                tx.setMaxLifecycle(it, Lifecycle.State.CREATED)
+//                tx.hide(it)
+            }
+            tx.commitNowAllowingStateLoss()
+        }
+
         val newFocusedTab = currentFocusedTab
 
-        val tabFragments = requireFragmentManager.fragments.filterIsInstance<TabScreenFragment>()
-        check(tabFragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
-        val oldFocusedTab = tabFragments.firstOrNull()
+//        check(tabFragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
+        val visibleFragments = tabFragments.filter { it.isVisible }
+        check(visibleFragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
+
+        val oldFocusedTab = visibleFragments.firstOrNull { it.isVisible }
 
         if (newFocusedTab === oldFocusedTab) {
             return
         }
 
         requireFragmentManager
-            .beginTransaction()
-            .setReorderingAllowed(true)
+            .createTransactionWithReordering()
             .apply {
                 if (oldFocusedTab != null) {
-                    this.remove(oldFocusedTab)
+//                    this.remove(oldFocusedTab)
+                    this.hide(oldFocusedTab)
                 }
-                this.add(contentView.id, newFocusedTab)
+//                this.add(contentView.id, newFocusedTab)
+                if (newFocusedTab.isHidden) {
+                    this.show(newFocusedTab)
+                } else {
+                    this.setMaxLifecycle(newFocusedTab, Lifecycle.State.RESUMED)
+                }
             }.commitNowAllowingStateLoss()
     }
 
