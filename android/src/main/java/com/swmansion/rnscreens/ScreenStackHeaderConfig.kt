@@ -32,6 +32,7 @@ class ScreenStackHeaderConfig(
 
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
+
     // named this way to avoid conflict with platform's isHidden
     var isHeaderHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
