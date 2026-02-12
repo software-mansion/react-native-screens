@@ -127,6 +127,9 @@ UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisib
 
 std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode);
 
+UISplitViewControllerColumn SplitViewTopColumnForCollapsingFromHostProp(
+    react::RNSSplitViewHostTopColumnForCollapsing topColumnForCollapsing);
+
 RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitViewHostOrientation orientation);
 
 #pragma mark SplitViewScreen props

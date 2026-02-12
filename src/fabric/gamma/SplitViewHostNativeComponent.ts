@@ -1,7 +1,11 @@
 'use client';
 
-import type { CodegenTypes as CT, ViewProps } from 'react-native';
-import { codegenNativeComponent } from 'react-native';
+import type {
+  CodegenTypes as CT,
+  ViewProps,
+  HostComponent,
+} from 'react-native';
+import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -39,6 +43,11 @@ type SplitViewOrientation =
 
 type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
+type SplitViewTopColumnForCollapsing =
+  | 'primary'
+  | 'supplementary'
+  | 'secondary';
+
 interface ColumnMetrics {
   minimumPrimaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
   maximumPrimaryColumnWidth?: CT.WithDefault<CT.Float, -1.0>;
@@ -73,6 +82,13 @@ interface NativeProps extends ViewProps {
     'default'
   >;
 
+  // Behavior
+
+  topColumnForCollapsing?: CT.WithDefault<
+    SplitViewTopColumnForCollapsing,
+    'primary'
+  >;
+
   // Interactions
 
   presentsWithGesture?: CT.WithDefault<boolean, true>;
@@ -85,5 +101,18 @@ interface NativeProps extends ViewProps {
   onExpand?: CT.DirectEventHandler<GenericEmptyEvent>;
   onInspectorHide?: CT.DirectEventHandler<GenericEmptyEvent>;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+interface NativeCommands {
+  showColumn: (
+    viewRef: React.ElementRef<ComponentType>,
+    column: string,
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['showColumn'],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSSplitViewHost', {});
