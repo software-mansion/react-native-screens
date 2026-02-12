@@ -36,6 +36,7 @@ import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
+import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.parentAsViewGroup
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.utils.getDecorViewTopInset
@@ -356,7 +357,7 @@ class Screen(
             val width = r - l
             val height = b - t
 
-            if (!insetsApplied && headerConfig?.isHeaderHidden == false && headerConfig?.isHeaderTranslucent == false) {
+            if (shouldReadInsetsEarlyFromDecorView()) {
                 val topLevelDecorView =
                     requireNotNull(
                         reactContext.currentActivity?.window?.decorView,
@@ -371,6 +372,31 @@ class Screen(
                 dispatchShadowStateUpdate(width, height, t)
             }
         }
+    }
+
+    private fun shouldReadInsetsEarlyFromDecorView(): Boolean {
+        if (insetsApplied ||
+            headerConfig?.isHeaderHidden == true ||
+            headerConfig?.isHeaderTranslucent == true
+        ) {
+            return false
+        }
+
+        // This is a heuristic - if a screen with non-translucent header is above us, we assume that
+        // it will handle the insets. If so, we don't want to read insets from DecorView as they
+        // would be accounted for more than once.
+        var current = parentAsView()
+        while (current != null) {
+            if (current is Screen &&
+                current.headerConfig?.isHeaderHidden == false &&
+                current.headerConfig?.isHeaderTranslucent == false
+            ) {
+                return false
+            }
+            current = current.parentAsView()
+        }
+
+        return true
     }
 
     internal fun onBottomSheetBehaviorDidLayout(coordinatorLayoutDidChange: Boolean) {
