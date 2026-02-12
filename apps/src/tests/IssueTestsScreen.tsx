@@ -5,7 +5,7 @@ import {
   NavigationProp,
 } from '@react-navigation/native';
 import * as Tests from './issue-tests';
-import { ScrollView, StyleSheet, useColorScheme } from 'react-native';
+import { ScrollView, useColorScheme } from 'react-native';
 import { ListItem } from '../shared';
 import {
   ScreensDarkTheme,
@@ -104,7 +104,6 @@ function MainScreen(props: {
           testID={`issue-tests-${name}`}
           title={SCREENS[name].title}
           onPress={() => navigation.navigate(name)}
-          disabled={false}
         />
       ))}
     </ScrollView>
