@@ -277,6 +277,14 @@ open class ScreenViewManager :
         view?.sheetShouldOverflowTopInset = sheetShouldOverflowTopInset
     }
 
+    @ReactProp(name = "sheetDefaultResizeAnimationEnabled")
+    override fun setSheetDefaultResizeAnimationEnabled(
+        view: Screen?,
+        sheetDefaultResizeAnimationEnabled: Boolean,
+    ) {
+        view?.sheetDefaultResizeAnimationEnabled = sheetDefaultResizeAnimationEnabled
+    }
+
     // mark: iOS-only
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(

@@ -40,6 +40,19 @@ namespace react = facebook::react;
   }
 }
 
+// `RCTViewComponentView` uses this deprecated callback to invalidate layer when trait collection
+// `hasDifferentColorAppearanceComparedToTraitCollection`. This updates opacity which breaks our
+// content view switching workaround. To mitigate this, we update content view visibility after
+// RCTViewComponentView handles the change. We need to use the same deprecated callback as it's
+// called after callbacks registered via the new API.
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+  [super traitCollectionDidChange:previousTraitCollection];
+  if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+    [_accessoryView.helper handleContentViewVisibilityForEnvironmentIfNeeded];
+  }
+}
+
 #endif // RNS_BOTTOM_ACCESSORY_AVAILABLE && REACT_NATIVE_VERSION_MINOR >= 82
 
 #if RCT_NEW_ARCH_ENABLED

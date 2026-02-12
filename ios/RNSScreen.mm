@@ -30,6 +30,7 @@
 #import <React/RCTUIManagerUtils.h>
 
 #import "RNSConversions.h"
+#import "RNSSafeAreaViewComponentView.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
@@ -817,17 +818,14 @@ RNS_IGNORE_SUPER_CALL_END
 
     // Use RNSViewInteractionManager util to find a suitable subtree to disable interations on,
     // starting from reactSuperview, because on Paper, self is not attached yet.
-    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
+    if (![self isPresentedAsNativeModal]) {
+      [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
+    }
   }
 }
 
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
-  if (@available(iOS 26, *)) {
-    // Disable interactions to disallow multiple modals dismissed at once; see willMoveToWindow
-    [RNSScreenView.viewInteractionManagerInstance disableInteractionsForSubtreeWith:self.reactSuperview];
-  }
-
 #if !RCT_NEW_ARCH_ENABLED
   // On Paper, we need to call both "cancel" and "reset" here because RN's gesture
   // recognizer does not handle the scenario when it gets cancelled by other top
@@ -902,7 +900,8 @@ RNS_IGNORE_SUPER_CALL_END
   // Step 1: Query registered content wrapper for the scrollview.
   RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
 
-  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent = [contentWrapper childRCTScrollViewComponent];
+  if (RNS_REACT_SCROLL_VIEW_COMPONENT *_Nullable scrollViewComponent =
+          [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
       scrollViewComponent != nil) {
     return scrollViewComponent;
   }
@@ -915,6 +914,20 @@ RNS_IGNORE_SUPER_CALL_END
       return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(firstSubview);
     }
   }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  // Fallback 2: Search through RNSSafeAreaViewComponentView subviews (iOS 26+ workaround with modified hierarchy)
+  if (@available(iOS 26.0, *)) {
+    UIView *maybeSafeAreaView = contentWrapper.subviews.firstObject;
+    if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
+      for (UIView *subview in maybeSafeAreaView.subviews) {
+        if ([subview isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
+          return static_cast<RNS_REACT_SCROLL_VIEW_COMPONENT *>(subview);
+        }
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   return nil;
 }
@@ -1495,6 +1508,14 @@ RNS_IGNORE_SUPER_CALL_END
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
+
+  if (parentVC == nil && [self isKindOfClass:RNSModalScreen.class]) {
+    // If we're in modal presentation, we don't want to set the frame from RN,
+    // as the available space is most likely restricted & differs from what Yoga
+    // resolves during first layout. We want to rely on native layout here.
+    return;
+  }
+
   if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
@@ -1599,6 +1620,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
+  BOOL _isRemovedFromParent;
 }
 
 #pragma mark - Common
@@ -1609,6 +1631,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     self.view = view;
     _fakeView = [UIView new];
     _shouldNotify = YES;
+    _isRemovedFromParent = NO;
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
@@ -1866,6 +1889,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+  if (parent == nil) {
+    // Since view recycling is disabled, we can rely on a flag indicating that the controller
+    // has been removed from the hierarchy, as it will not be reused.
+    _isRemovedFromParent = YES;
+  } else {
+    _isRemovedFromParent = NO;
+  }
+
+  [super didMoveToParentViewController:parent];
+}
+
 - (id)findFirstResponder:(UIView *)parent
 {
   if (parent.isFirstResponder) {
@@ -1878,6 +1914,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   }
   return nil;
+}
+
+// This method allows us to check whether the Screen has been dismissed;
+// works reliably, because of disabled view recycling.
+- (BOOL)isRemovedFromParent
+{
+  return _isRemovedFromParent;
 }
 
 #pragma mark - transition progress related methods
@@ -2053,6 +2096,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreen *)vc).screenView.screenOrientation;
+  }
+  if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+    return UIInterfaceOrientationMaskAll;
   }
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }

@@ -1,10 +1,9 @@
 import React from 'react';
 import { Platform, type NativeSyntheticEvent } from 'react-native';
 import {
-  BottomTabs,
-  BottomTabsProps,
-  BottomTabsScreen,
-  BottomTabsScreenProps,
+  Tabs,
+  TabsHostProps,
+  TabsScreenProps,
   NativeFocusChangeEvent,
 } from 'react-native-screens';
 import SafeAreaView from '../../../../../../src/components/safe-area/SafeAreaView';
@@ -12,12 +11,12 @@ import type { SafeAreaViewProps } from '../../../../../../src/components/safe-ar
 import ConfigWrapperContext from './ConfigWrapperContext';
 
 export interface TabConfiguration {
-  tabScreenProps: BottomTabsScreenProps;
+  tabScreenProps: TabsScreenProps;
   component: React.ComponentType;
   safeAreaConfiguration?: SafeAreaViewProps;
 }
 
-export type BottomTabsContainerProps = BottomTabsProps & {
+export type BottomTabsContainerProps = TabsHostProps & {
   tabConfigs: TabConfiguration[];
 };
 
@@ -76,7 +75,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
   );
 
   return (
-    <BottomTabs
+    <Tabs.Host
       // Use controlled bottom tabs by default, but allow to overwrite if user wants to
       onNativeFocusChange={onNativeFocusChangeCallback}
       experimentalControlNavigationStateInJS={
@@ -93,16 +92,16 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
         );
 
         return (
-          <BottomTabsScreen
+          <Tabs.Screen
             key={tabKey}
             {...tabConfig.tabScreenProps}
             isFocused={isFocused} // notice that the value passed by user is overriden here!
           >
             {getContent(tabConfig)}
-          </BottomTabsScreen>
+          </Tabs.Screen>
         );
       })}
-    </BottomTabs>
+    </Tabs.Host>
   );
 }
 

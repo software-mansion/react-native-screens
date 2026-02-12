@@ -79,7 +79,7 @@ class TabScreenViewManager :
         value: ReadableMap?,
     ) = Unit
 
-    override fun setIconSfSymbolName(
+    override fun setIconResourceName(
         view: TabScreen?,
         value: String?,
     ) = Unit
@@ -89,7 +89,7 @@ class TabScreenViewManager :
         value: ReadableMap?,
     ) = Unit
 
-    override fun setSelectedIconSfSymbolName(
+    override fun setSelectedIconResourceName(
         view: TabScreen?,
         value: String?,
     ) = Unit
@@ -180,6 +180,22 @@ class TabScreenViewManager :
         view: TabScreen?,
         value: String?,
     ) = Unit
+
+    @ReactProp(name = "tabBarItemTestID")
+    override fun setTabBarItemTestID(
+        view: TabScreen,
+        value: String?,
+    ) {
+        view.tabBarItemTestID = value
+    }
+
+    @ReactProp(name = "tabBarItemAccessibilityLabel")
+    override fun setTabBarItemAccessibilityLabel(
+        view: TabScreen,
+        value: String?,
+    ) {
+        view.tabBarItemAccessibilityLabel = value
+    }
 
     // Android specific
     @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")

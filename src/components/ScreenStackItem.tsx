@@ -21,6 +21,7 @@ import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
 import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import SafeAreaView from './safe-area/SafeAreaView';
+import { featureFlags } from '../flags';
 
 type Props = Omit<
   ScreenProps,
@@ -208,18 +209,39 @@ function getPositioningStyle(
   presentation: StackPresentationTypes,
 ) {
   const isIOS = Platform.OS === 'ios';
+  const rnMinorVersion = Platform.constants.reactNativeVersion.minor;
 
   if (presentation !== 'formSheet') {
     return styles.container;
   }
 
   if (isIOS) {
-    return styles.absolute;
+    if (
+      allowedDetents !== 'fitToContents' &&
+      rnMinorVersion >= 82 &&
+      featureFlags.experiment.synchronousScreenUpdatesEnabled
+    ) {
+      return styles.container;
+    } else {
+      return styles.absoluteWithNoBottom;
+    }
   }
 
-  // Other platforms, tested reliably only on Android
+  /**
+   * Note: `bottom: 0` is intentionally excluded from these styles for two reasons:
+   *
+   * 1. Omitting the bottom constraint ensures the Yoga layout engine does not dynamically
+   * recalculate the Screen and content size during animations.
+   *
+   * 2. Including `bottom: 0` with 'position: absolute' would force
+   * the component to anchor itself to an ancestor's bottom edge. This creates
+   * a dependency on the ancestor's size, whereas 'fitToContents' requires the
+   * FormSheet's dimensions to be derived strictly from its children.
+   *
+   * It was tested reliably only on Android.
+   */
   if (allowedDetents === 'fitToContents') {
-    return {};
+    return styles.absoluteWithNoBottom;
   }
 
   return styles.container;
@@ -272,7 +294,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  absolute: {
+  absoluteWithNoBottom: {
     position: 'absolute',
     top: 0,
     start: 0,

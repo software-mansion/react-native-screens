@@ -411,18 +411,27 @@ open class ScreenContainer(
             // attach newly activated screens
             var addedBefore = false
             val pendingFront: ArrayList<ScreenFragmentWrapper> = ArrayList()
-
             for (fragmentWrapper in screenWrappers) {
-                val activityState = getActivityState(fragmentWrapper)
-                if (activityState !== ActivityState.INACTIVE && !fragmentWrapper.fragment.isAdded) {
-                    addedBefore = true
-                    attachScreen(it, fragmentWrapper.fragment)
-                } else if (activityState !== ActivityState.INACTIVE && addedBefore) {
-                    // we detach the screen and then reattach it later to make it appear on front
-                    detachScreen(it, fragmentWrapper.fragment)
-                    pendingFront.add(fragmentWrapper)
-                }
                 fragmentWrapper.screen.setTransitioning(transitioning)
+
+                val activityState = getActivityState(fragmentWrapper)
+                if (activityState == ActivityState.INACTIVE) {
+                    continue
+                }
+
+                if (fragmentWrapper.fragment.isAdded) {
+                    if (addedBefore) {
+                        detachScreen(it, fragmentWrapper.fragment)
+                        pendingFront.add(fragmentWrapper)
+                    }
+                } else {
+                    if (addedBefore) {
+                        pendingFront.add(fragmentWrapper)
+                    } else {
+                        addedBefore = true
+                        attachScreen(it, fragmentWrapper.fragment)
+                    }
+                }
             }
 
             for (screenFragment in pendingFront) {

@@ -180,7 +180,8 @@ Allows for the customization of the type of animation to use when this screen re
 
 Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
 
-- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
+- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc), with
+exception for iPad devices, where it resolves to [UIInterfaceOrientationMaskAll](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/all?language=objc). On Android, this lets the system decide the best orientation.
 - `all`
 - `portrait`
 - `portrait_up`
@@ -259,6 +260,16 @@ When set to `true`, the sheet will extend to the physical edges of the stack, al
 When set to `false`, the sheet's layout will be constrained by the inset from the top and the detent ratios will then be measured relative to the adjusted height (excluding the top inset). This means that sheetAllowedDetents will result in different sheet heights depending on this prop.
 
 Defaults to `false`.
+
+### `sheetDefaultResizeAnimationEnabled` (Android only)
+
+Whether the default native animation should be used when the sheet's with `fitToContents` content size changes.
+
+When set to `true`, the sheet uses internal logic to synchronize size updates and translation animations during entry, exit, or content updates. This ensures a smooth transition for standard, static content mounting/unmounting.
+
+When set to `false`, the internal animation and translation logic is ignored. This allows the sheet to adjust its size dynamically based on the current dimensions of the content provided by the developer, allowing implementing custom resizing animations.
+
+Defaults to `true`.
 
 ### `stackAnimation`
 

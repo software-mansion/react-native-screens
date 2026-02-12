@@ -21,6 +21,8 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View> extends Vie
   void setTitle(T view, @Nullable String value);
   void setIsTitleUndefined(T view, boolean value);
   void setBadgeValue(T view, @Nullable String value);
+  void setTabBarItemTestID(T view, @Nullable String value);
+  void setTabBarItemAccessibilityLabel(T view, @Nullable String value);
   void setOrientation(T view, @Nullable String value);
   void setDrawableIconResourceName(T view, @Nullable String value);
   void setImageIconResource(T view, @Nullable ReadableMap value);
@@ -30,9 +32,9 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View> extends Vie
   void setScrollEdgeAppearance(T view, Dynamic value);
   void setIconType(T view, @Nullable String value);
   void setIconImageSource(T view, @Nullable ReadableMap value);
-  void setIconSfSymbolName(T view, @Nullable String value);
+  void setIconResourceName(T view, @Nullable String value);
   void setSelectedIconImageSource(T view, @Nullable ReadableMap value);
-  void setSelectedIconSfSymbolName(T view, @Nullable String value);
+  void setSelectedIconResourceName(T view, @Nullable String value);
   void setSystemItem(T view, @Nullable String value);
   void setSpecialEffects(T view, @Nullable ReadableMap value);
   void setOverrideScrollViewContentInsetAdjustmentBehavior(T view, boolean value);

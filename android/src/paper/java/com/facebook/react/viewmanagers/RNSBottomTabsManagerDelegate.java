@@ -24,6 +24,12 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
+      case "tabBarHidden":
+        mViewManager.setTabBarHidden(view, value == null ? false : (boolean) value);
+        break;
+      case "nativeContainerBackgroundColor":
+        mViewManager.setNativeContainerBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
       case "tabBarBackgroundColor":
         mViewManager.setTabBarBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
@@ -74,9 +80,6 @@ public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewMana
         break;
       case "tabBarControllerMode":
         mViewManager.setTabBarControllerMode(view, (String) value);
-        break;
-      case "tabBarHidden":
-        mViewManager.setTabBarHidden(view, value == null ? false : (boolean) value);
         break;
       case "controlNavigationStateInJS":
         mViewManager.setControlNavigationStateInJS(view, value == null ? false : (boolean) value);

@@ -58,9 +58,13 @@
                fromScreenView:(RNSBottomTabsScreenComponentView *)screenView
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
-  if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
-    if (screenView.iconSfSymbolName != nil) {
-      tabBarItem.image = [UIImage systemImageNamed:screenView.iconSfSymbolName];
+  if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol || screenView.iconType == RNSBottomTabsIconTypeXcasset) {
+    if (screenView.iconResourceName != nil) {
+      if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
+        tabBarItem.image = [UIImage systemImageNamed:screenView.iconResourceName];
+      } else {
+        tabBarItem.image = [UIImage imageNamed:screenView.iconResourceName];
+      }
     } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
       // Restore default system item icon
       UITabBarSystemItem systemItem =
@@ -70,8 +74,12 @@
       tabBarItem.image = nil;
     }
 
-    if (screenView.selectedIconSfSymbolName != nil) {
-      tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconSfSymbolName];
+    if (screenView.selectedIconResourceName != nil) {
+      if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
+        tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName];
+      } else {
+        tabBarItem.selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
+      }
     } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
       // Restore default system item icon
       UITabBarSystemItem systemItem =
@@ -89,7 +97,10 @@
                                  withImageLoader:imageLoader
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
-                                   tabBarItem.image = image;
+                                   [self updateTabBarItem:tabBarItem
+                                                withImage:image
+                                               isSelected:NO
+                                            forScreenView:screenView];
                                  }];
     } else {
       tabBarItem.image = nil;
@@ -101,13 +112,39 @@
                                  withImageLoader:imageLoader
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
-                                   tabBarItem.selectedImage = image;
+                                   [self updateTabBarItem:tabBarItem
+                                                withImage:image
+                                               isSelected:YES
+                                            forScreenView:screenView];
                                  }];
     } else {
       tabBarItem.selectedImage = nil;
     }
   } else {
     RCTLogWarn(@"[RNScreens] unable to load tab bar item icons: imageLoader should not be nil");
+  }
+}
+
+- (void)updateTabBarItem:(UITabBarItem *)tabBarItem
+               withImage:(UIImage *)image
+              isSelected:(BOOL)isSelected
+           forScreenView:(RNSBottomTabsScreenComponentView *)screenView
+{
+  if (isSelected) {
+    tabBarItem.selectedImage = image;
+  } else {
+    tabBarItem.image = image;
+  }
+
+  // A layout pass is required because the image might be loaded asynchronously,
+  // after the tab bar has already been attached to the window.
+  // This code handles case where image passed by the user is not
+  // of appropriate size & needs to be readjusted. W/o additional
+  // layout here the icon would be displayed with original dimensions.
+  UIViewController *parent = screenView.controller.parentViewController;
+  if ([parent isKindOfClass:[UITabBarController class]]) {
+    UITabBarController *tabBarVC = (UITabBarController *)parent;
+    [tabBarVC.tabBar setNeedsLayout];
   }
 }
 

@@ -59,6 +59,7 @@ namespace react = facebook::react;
 - (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
+- (BOOL)isRemovedFromParent;
 
 @end
 

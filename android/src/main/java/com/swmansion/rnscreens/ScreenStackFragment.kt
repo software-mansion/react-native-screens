@@ -52,7 +52,7 @@ class KeyboardVisible(
 class ScreenStackFragment :
     ScreenFragment,
     ScreenStackFragmentWrapper {
-    private var appBarLayout: AppBarLayout? = null
+    private var appBarLayout: CustomAppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
@@ -204,7 +204,7 @@ class ScreenStackFragment :
 
         if (!screen.usesFormSheetPresentation()) {
             appBarLayout =
-                context?.let { AppBarLayout(it) }?.apply {
+                context?.let { CustomAppBarLayout(it) }?.apply {
                     // By default AppBarLayout will have a background color set but since we cover the whole layout
                     // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
                     // role. On top of that it breaks screens animations when alfa offscreen compositing is off
@@ -279,6 +279,12 @@ class ScreenStackFragment :
                             sheetDelegate.handleKeyboardInsetsProgress(insets)
                         }
                         return insets
+                    }
+
+                    override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                        super.onEnd(animation)
+
+                        screen.onSheetYTranslationChanged()
                     }
                 }
 

@@ -18,10 +18,12 @@ NS_ASSUME_NONNULL_BEGIN
 #if defined(__cplusplus)
 struct OnNativeFocusChangePayload {
   NSString *_Nonnull tabKey;
+  BOOL repeatedSelectionHandledBySpecialEffect;
 };
 #else
 typedef struct {
   NSString *_Nonnull tabKey;
+  BOOL repeatedSelectionHandledBySpecialEffect;
 } OnNativeFocusChangePayload;
 #endif
 

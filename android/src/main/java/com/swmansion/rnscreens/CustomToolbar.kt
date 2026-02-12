@@ -46,9 +46,30 @@ open class CustomToolbar(
     // dispatchApplyWindowInsets.
     var screenInsets = WindowInsetsCompat.CONSUMED
 
+    private var shouldApplyLayoutCorrectionForTopInset = false
+
     private var isForceShadowStateUpdateOnLayoutRequested = false
 
     private var isLayoutEnqueued = false
+
+    init {
+        // Ensure ActionMenuView is initialized as soon as the Toolbar is created.
+        //
+        // Android measures Toolbar height based on the tallest child view.
+        // During the first measurement:
+        // 1. The Toolbar is created but not yet added to the action bar via `activity.setSupportActionBar(toolbar)`
+        //    (typically called in `onUpdate` method from `ScreenStackHeaderConfig`).
+        // 2. At this moment, the title view may exist, but ActionMenuView (which may be taller) hasn't been added yet.
+        // 3. This causes the initial height calculation to be based on the title view, potentially too small.
+        // 4. When ActionMenuView is eventually attached, the Toolbar might need to re-layout due to the size change.
+        //
+        // By referencing the menu here, we trigger `ensureMenu`, which creates and attaches ActionMenuView early.
+        // This guarantees that all size-dependent children are present during the first layout pass,
+        // resulting in correct height determination from the beginning.
+        // More details: https://github.com/software-mansion/react-native-screens-labs/issues/564.
+        menu
+    }
+
     private val layoutCallback: Choreographer.FrameCallback =
         object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
@@ -79,6 +100,17 @@ open class CustomToolbar(
 
     override fun requestLayout() {
         super.requestLayout()
+
+        val maybeAppBarLayout = parent as? CustomAppBarLayout
+        maybeAppBarLayout?.let {
+            if (shouldApplyLayoutCorrectionForTopInset && !it.isInLayout) {
+                // In `applyToolbarLayoutCorrection`, we call and immediate layout on AppBarLayout
+                // to update it right away and avoid showing a potentially wrong UI state.
+                it.applyToolbarLayoutCorrection(paddingTop)
+                shouldApplyLayoutCorrectionForTopInset = false
+            }
+        }
+
         val softInputMode =
             (context as ThemedReactContext)
                 .currentActivity
@@ -246,6 +278,7 @@ open class CustomToolbar(
         right: Int,
         bottom: Int,
     ) {
+        shouldApplyLayoutCorrectionForTopInset = true
         requestForceShadowStateUpdateOnLayout()
         setPadding(left, top, right, bottom)
     }

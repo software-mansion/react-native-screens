@@ -4,15 +4,11 @@
  */
 
 // Types
-export * from './types';
+export type * from './types';
 
 // Components
 
-export { default as ScreenStackHost } from '../components/gamma/stack/ScreenStackHost';
-export {
-  default as StackScreen,
-  StackScreenLifecycleState,
-} from '../components/gamma/stack/StackScreen';
-export { default as SplitViewHost } from '../components/gamma/split-view/SplitViewHost';
-export { default as SplitViewScreen } from '../components/gamma/split-view/SplitViewScreen';
+export { default as Stack } from '../components/gamma/stack';
+
+export { default as Split } from '../components/gamma/split';
 export { default as SafeAreaView } from '../components/safe-area/SafeAreaView';

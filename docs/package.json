@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@docusaurus/core": "3.7.0",
+    "@docusaurus/plugin-google-tag-manager": "3.7.0",
     "@docusaurus/preset-classic": "3.7.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",

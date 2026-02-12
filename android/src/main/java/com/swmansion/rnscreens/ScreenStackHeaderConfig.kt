@@ -234,12 +234,6 @@ class ScreenStackHeaderConfig(
             screenFragment?.setToolbar(toolbar)
         }
 
-        // Ensure that menuView is created. With current support action bar logic, this sometimes
-        // does not happen when nested stacks are used. MenuView is necessary for correct header
-        // height calculation. More details:
-        // https://github.com/software-mansion/react-native-screens-labs/issues/564
-        toolbar.menu
-
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
         val actionBar = requireNotNull(activity.supportActionBar)
@@ -443,10 +437,17 @@ class ScreenStackHeaderConfig(
         config: ScreenStackHeaderConfig,
     ) : CustomToolbar(context, config) {
         override fun showOverflowMenu(): Boolean {
-            (context.applicationContext as ReactApplication)
-                .reactNativeHost
-                .reactInstanceManager
-                .showDevOptionsDialog()
+            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                (context.applicationContext as ReactApplication)
+                    .reactHost
+                    ?.devSupportManager
+                    ?.showDevOptionsDialog()
+            } else {
+                (context.applicationContext as ReactApplication)
+                    .reactNativeHost
+                    .reactInstanceManager
+                    .showDevOptionsDialog()
+            }
             return true
         }
     }

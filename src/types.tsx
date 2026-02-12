@@ -9,7 +9,6 @@ import {
   ColorValue,
   ImageSourcePropType,
 } from 'react-native';
-import { NativeStackNavigatorProps } from './native-stack/types';
 import type {
   ScrollEdgeEffect,
   UserInterfaceStyle,
@@ -121,8 +120,14 @@ export type PlatformIconIOSSfSymbol = {
   name: string;
 };
 
+export type PlatformIconIOSXcasset = {
+  type: 'xcasset';
+  name: string;
+};
+
 export type PlatformIconIOS =
   | PlatformIconIOSSfSymbol
+  | PlatformIconIOSXcasset
   | {
       type: 'templateSource';
       templateSource: ImageSourcePropType;
@@ -373,7 +378,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
-   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
+   * - "default" - resolves to "all" without "portrait_down" on iPhone devices, "all" on iPad devices. On Android, this lets the system decide the best orientation.
    * - "all" – all orientations are permitted
    * - "portrait" – portrait orientations are permitted
    * - "portrait_up" – right-side portrait orientation is permitted
@@ -467,6 +472,11 @@ export interface ScreenProps extends ViewProps {
    *
    * These are provided solely for **temporary** backward compatibility and are destined for removal in future versions.
    *
+   * @remark
+   * On iOS, the native implementation might resize the the sheet w/o explicitly changing the detent level, e.g. in case of keyboard appearance.
+   * In case after such resize the sheet exceeds height for which in regular scenario a dimming view would be applied - it will be applied,
+   * even if the detent has not effectively been changed.
+   *
    * Defaults to `none`, indicating that the dimming view should be always present.
    */
   sheetLargestUndimmedDetentIndex?:
@@ -504,6 +514,23 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   sheetShouldOverflowTopInset?: boolean;
+  /**
+   * Whether the default native animation should be used when the sheet's with
+   * `fitToContents` content size changes.
+   *
+   * When set to `true`, the sheet uses internal logic to synchronize size updates and
+   * translation animations during entry, exit, or content updates. This ensures a smooth
+   * transition for standard, static content mounting/unmounting.
+   *
+   * When set to `false`, the internal animation and translation logic is ignored. This
+   * allows the sheet to adjust its size dynamically based on the current dimensions of
+   * the content provided by the developer, allowing implementing custom resizing animations.
+   *
+   * Defaults to `true`.
+   *
+   * @platform android
+   */
+  sheetDefaultResizeAnimationEnabled?: boolean;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
@@ -610,8 +637,13 @@ export interface ScreenContainerProps extends ViewProps {
 }
 
 export interface GestureDetectorBridge {
+  /**
+   * Callback to attach into ScreenStack's useEffect() from ScreenGestureDetector that wraps the stack.
+   *
+   * @param stackRef holds a reference to an instance of ScreenStackNativeComponent
+   */
   stackUseEffectCallback: (
-    stackRef: React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>,
+    stackRef: React.MutableRefObject<React.Ref<View>>,
   ) => void;
 }
 
@@ -828,7 +860,7 @@ export interface SearchBarProps {
    * * `cancelSearch` - cancel search in search bar.
    * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
    */
-  ref?: React.RefObject<SearchBarCommands>;
+  ref?: React.RefObject<SearchBarCommands | null>;
 
   /**
    * The auto-capitalization behavior.
@@ -1143,7 +1175,7 @@ export interface HeaderBarButtonItemMenuAction {
   title?: string;
   subtitle?: string;
   onPress: () => void;
-  icon?: PlatformIconIOSSfSymbol;
+  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
   /**
    * State of the item.
    *
@@ -1185,7 +1217,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string;
-  icon?: PlatformIconIOSSfSymbol;
+  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean;
   destructive?: boolean;
@@ -1285,6 +1317,5 @@ export interface GestureProviderProps extends GestureProps {
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
 }
 
-export * from './components/bottom-tabs/BottomTabs.types';
-export * from './components/bottom-tabs/BottomTabsScreen.types';
-export * from './components/shared/types';
+export type * from './components/tabs';
+export type * from './components/shared/types';

@@ -7,6 +7,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Build
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -27,6 +28,7 @@ import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.events.ScreenAnimationDelegate
 import com.swmansion.rnscreens.events.ScreenEventEmitter
 import com.swmansion.rnscreens.transition.ExternalBoundaryValuesEvaluator
+import com.swmansion.rnscreens.utils.isSoftKeyboardVisibleOrNull
 
 class SheetDelegate(
     val screen: Screen,
@@ -63,6 +65,11 @@ class SheetDelegate(
         checkNotNull(screen.reactContext.currentActivity) { "[RNScreens] Attempt to access activity on detached context" }
             .window.decorView
 
+    private var viewToRestoreFocus: View? = null
+
+    private val inputMethodManager: InputMethodManager?
+        get() = screen.reactContext.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+
     init {
         assert(screen.fragment is ScreenStackFragment) { "[RNScreens] Sheets are supported only in native stack" }
         screen.fragment!!.lifecycle.addObserver(this)
@@ -77,11 +84,17 @@ class SheetDelegate(
         event: Lifecycle.Event,
     ) {
         when (event) {
+            Lifecycle.Event.ON_CREATE -> handleHostFragmentOnCreate()
             Lifecycle.Event.ON_START -> handleHostFragmentOnStart()
             Lifecycle.Event.ON_RESUME -> handleHostFragmentOnResume()
             Lifecycle.Event.ON_PAUSE -> handleHostFragmentOnPause()
+            Lifecycle.Event.ON_DESTROY -> handleHostFragmentOnDestroy()
             else -> Unit
         }
+    }
+
+    private fun handleHostFragmentOnCreate() {
+        preserveBackgroundFocus()
     }
 
     private fun handleHostFragmentOnStart() {
@@ -94,6 +107,10 @@ class SheetDelegate(
 
     private fun handleHostFragmentOnPause() {
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
+    }
+
+    private fun handleHostFragmentOnDestroy() {
+        restoreBackgroundFocus()
     }
 
     private fun onSheetStateChanged(newState: Int) {
@@ -114,8 +131,34 @@ class SheetDelegate(
         }
     }
 
+    private fun preserveBackgroundFocus() {
+        val activity = screen.reactContext.currentActivity ?: return
+
+        activity.currentFocus?.let { focusedView ->
+            activity.window?.decorView?.let { decorView ->
+                if (isSoftKeyboardVisibleOrNull(decorView) == true) {
+                    viewToRestoreFocus = focusedView
+                }
+            }
+
+            // Note: There's no good reason that Screen should be direct target for focus, we're rather
+            // prefer its children to gain it.
+            screen.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+            screen.requestFocus()
+            inputMethodManager?.hideSoftInputFromWindow(focusedView.windowToken, 0)
+        }
+    }
+
+    private fun restoreBackgroundFocus() {
+        viewToRestoreFocus?.let { view ->
+            view.requestFocus()
+            inputMethodManager?.showSoftInput(view, 0)
+        }
+        viewToRestoreFocus = null
+    }
+
     internal fun updateBottomSheetMetrics(behavior: BottomSheetBehavior<Screen>) {
-        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        val containerHeight = tryResolveMaxFormSheetHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -152,7 +195,7 @@ class SheetDelegate(
         keyboardState: KeyboardState = KeyboardNotVisible,
         selectedDetentIndex: Int = lastStableDetentIndex,
     ): BottomSheetBehavior<Screen> {
-        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        val containerHeight = tryResolveMaxFormSheetHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
@@ -295,14 +338,17 @@ class SheetDelegate(
     // Otherwise, it shifts the sheet as high as possible, even if it means part of its content
     // will remain hidden behind the keyboard.
     internal fun computeSheetOffsetYWithIMEPresent(keyboardHeight: Int): Int {
-        val containerHeight = if (screen.sheetShouldOverflowTopInset) tryResolveContainerHeight() else tryResolveSafeAreaSpaceForSheet()
+        val containerHeight = tryResolveMaxFormSheetHeight()
         check(containerHeight != null) {
             "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
         }
 
         if (screen.isSheetFitToContents()) {
             val contentHeight = screen.contentWrapper?.height ?: 0
-            val offsetFromTop = containerHeight - contentHeight
+            val offsetFromTop = maxOf(containerHeight - contentHeight, 0)
+            // If the content is higher than the Screen, offsetFromTop becomes negative.
+            // In such cases, we return 0 because a negative translation would shift the Screen
+            // to the bottom, which is not intended.
             return minOf(offsetFromTop, keyboardHeight)
         }
 
@@ -368,6 +414,13 @@ class SheetDelegate(
     private fun shouldDismissSheetInState(
         @BottomSheetBehavior.State state: Int,
     ) = state == BottomSheetBehavior.STATE_HIDDEN
+
+    internal fun tryResolveMaxFormSheetHeight(): Int? =
+        if (screen.sheetShouldOverflowTopInset) {
+            tryResolveContainerHeight()
+        } else {
+            tryResolveSafeAreaSpaceForSheet()
+        }
 
     /**
      * This method tries to resolve the maximum height available for the sheet content,
@@ -519,6 +572,8 @@ class SheetDelegate(
 
                 override fun onAnimationEnd(animation: Animator) {
                     isSheetAnimationInProgress = false
+
+                    screen.onSheetYTranslationChanged()
                 }
             },
         )
@@ -543,9 +598,7 @@ class SheetDelegate(
                     // I want to be polite here and request focus before dismissing the keyboard,
                     // however even if it fails I want to try to hide the keyboard. This sometimes works...
                     bottomSheet.requestFocus()
-                    val imm =
-                        screen.reactContext.getSystemService(InputMethodManager::class.java)
-                    imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
+                    inputMethodManager?.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
                 }
             }
         }

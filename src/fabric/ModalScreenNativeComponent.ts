@@ -1,43 +1,35 @@
 'use client';
 
-// eslint-disable-next-line @react-native/no-deep-imports
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ViewProps, ColorValue } from 'react-native';
-import type {
-  DirectEventHandler,
-  WithDefault,
-  Int32,
-  Float,
-  Double,
-} from 'react-native/Libraries/Types/CodegenTypes';
+import { codegenNativeComponent } from 'react-native';
+import type { CodegenTypes as CT, ViewProps, ColorValue } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type ScreenEvent = Readonly<{}>;
 
 type ScreenDismissedEvent = Readonly<{
-  dismissCount: Int32;
+  dismissCount: CT.Int32;
 }>;
 
 type TransitionProgressEvent = Readonly<{
-  progress: Double;
-  closing: Int32;
-  goingForward: Int32;
+  progress: CT.Double;
+  closing: CT.Int32;
+  goingForward: CT.Int32;
 }>;
 
 type HeaderHeightChangeEvent = Readonly<{
-  headerHeight: Double;
+  headerHeight: CT.Double;
 }>;
 
 type SheetDetentChangedEvent = Readonly<{
-  index: Int32;
+  index: CT.Int32;
   isStable: boolean;
 }>;
 
 type GestureResponseDistanceType = Readonly<{
-  start: Float;
-  end: Float;
-  top: Float;
-  bottom: Float;
+  start: CT.Float;
+  end: CT.Float;
+  top: CT.Float;
+  bottom: CT.Float;
 }>;
 
 type StackPresentation =
@@ -70,32 +62,33 @@ type ReplaceAnimation = 'pop' | 'push';
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 
 export interface NativeProps extends ViewProps {
-  onAppear?: DirectEventHandler<ScreenEvent>;
-  onDisappear?: DirectEventHandler<ScreenEvent>;
-  onDismissed?: DirectEventHandler<ScreenDismissedEvent>;
-  onNativeDismissCancelled?: DirectEventHandler<ScreenDismissedEvent>;
-  onWillAppear?: DirectEventHandler<ScreenEvent>;
-  onWillDisappear?: DirectEventHandler<ScreenEvent>;
-  onHeaderHeightChange?: DirectEventHandler<HeaderHeightChangeEvent>;
-  onTransitionProgress?: DirectEventHandler<TransitionProgressEvent>;
-  onGestureCancel?: DirectEventHandler<ScreenEvent>;
-  onHeaderBackButtonClicked?: DirectEventHandler<ScreenEvent>;
-  onSheetDetentChanged?: DirectEventHandler<SheetDetentChangedEvent>;
-  screenId?: WithDefault<string, ''>;
+  onAppear?: CT.DirectEventHandler<ScreenEvent>;
+  onDisappear?: CT.DirectEventHandler<ScreenEvent>;
+  onDismissed?: CT.DirectEventHandler<ScreenDismissedEvent>;
+  onNativeDismissCancelled?: CT.DirectEventHandler<ScreenDismissedEvent>;
+  onWillAppear?: CT.DirectEventHandler<ScreenEvent>;
+  onWillDisappear?: CT.DirectEventHandler<ScreenEvent>;
+  onHeaderHeightChange?: CT.DirectEventHandler<HeaderHeightChangeEvent>;
+  onTransitionProgress?: CT.DirectEventHandler<TransitionProgressEvent>;
+  onGestureCancel?: CT.DirectEventHandler<ScreenEvent>;
+  onHeaderBackButtonClicked?: CT.DirectEventHandler<ScreenEvent>;
+  onSheetDetentChanged?: CT.DirectEventHandler<SheetDetentChangedEvent>;
+  screenId?: CT.WithDefault<string, ''>;
   sheetAllowedDetents?: number[];
-  sheetLargestUndimmedDetent?: WithDefault<Int32, -1>;
-  sheetGrabberVisible?: WithDefault<boolean, false>;
-  sheetCornerRadius?: WithDefault<Float, -1.0>;
-  sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>;
-  sheetInitialDetent?: WithDefault<Int32, 0>;
-  sheetElevation?: WithDefault<Int32, 24>;
-  sheetShouldOverflowTopInset?: WithDefault<boolean, false>;
+  sheetLargestUndimmedDetent?: CT.WithDefault<CT.Int32, -1>;
+  sheetGrabberVisible?: CT.WithDefault<boolean, false>;
+  sheetCornerRadius?: CT.WithDefault<CT.Float, -1.0>;
+  sheetExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, false>;
+  sheetInitialDetent?: CT.WithDefault<CT.Int32, 0>;
+  sheetElevation?: CT.WithDefault<CT.Int32, 24>;
+  sheetShouldOverflowTopInset?: CT.WithDefault<boolean, false>;
+  sheetDefaultResizeAnimationEnabled?: CT.WithDefault<boolean, true>;
   customAnimationOnSwipe?: boolean;
-  fullScreenSwipeEnabled?: WithDefault<OptionalBoolean, 'undefined'>;
-  fullScreenSwipeShadowEnabled?: WithDefault<boolean, true>;
+  fullScreenSwipeEnabled?: CT.WithDefault<OptionalBoolean, 'undefined'>;
+  fullScreenSwipeShadowEnabled?: CT.WithDefault<boolean, true>;
   homeIndicatorHidden?: boolean;
   preventNativeDismiss?: boolean;
-  gestureEnabled?: WithDefault<boolean, true>;
+  gestureEnabled?: CT.WithDefault<boolean, true>;
   statusBarColor?: ColorValue;
   statusBarHidden?: boolean;
   screenOrientation?: string;
@@ -103,18 +96,18 @@ export interface NativeProps extends ViewProps {
   statusBarStyle?: string;
   statusBarTranslucent?: boolean;
   gestureResponseDistance?: GestureResponseDistanceType;
-  stackPresentation?: WithDefault<StackPresentation, 'push'>;
-  stackAnimation?: WithDefault<StackAnimation, 'default'>;
-  transitionDuration?: WithDefault<Int32, 500>;
-  replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>;
-  swipeDirection?: WithDefault<SwipeDirection, 'horizontal'>;
+  stackPresentation?: CT.WithDefault<StackPresentation, 'push'>;
+  stackAnimation?: CT.WithDefault<StackAnimation, 'default'>;
+  transitionDuration?: CT.WithDefault<CT.Int32, 500>;
+  replaceAnimation?: CT.WithDefault<ReplaceAnimation, 'pop'>;
+  swipeDirection?: CT.WithDefault<SwipeDirection, 'horizontal'>;
   hideKeyboardOnSwipe?: boolean;
-  activityState?: WithDefault<Float, -1.0>;
+  activityState?: CT.WithDefault<CT.Float, -1.0>;
   navigationBarColor?: ColorValue;
   navigationBarTranslucent?: boolean;
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
-  synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
+  synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSModalScreen', {
