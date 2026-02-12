@@ -8,6 +8,7 @@ import type {
 } from 'react-native';
 import type {
   PlatformIcon,
+  PlatformIconIOS,
   UserInterfaceStyle,
   ScrollEdgeEffect,
 } from '../../types';
@@ -508,9 +509,12 @@ export interface TabsScreenProps {
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
+   * @remark Initially, it was supported only on iOS, therefore, we need to
+   * keep PlatformIconIOS type for a backward compatibility.
+   *
    * @platform android, ios
    */
-  selectedIcon?: PlatformIcon;
+  selectedIcon?: PlatformIcon | PlatformIconIOS;
   /**
    * @summary System-provided tab bar item with predefined icon and title
    *

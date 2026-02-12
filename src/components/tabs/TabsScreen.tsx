@@ -315,7 +315,7 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
 
 function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
-  selectedIcon: PlatformIcon | undefined,
+  selectedIcon: PlatformIcon | PlatformIconIOS | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
@@ -333,18 +333,19 @@ function parseIconsToNativeProps(
     const { imageIconResource, drawableIconResourceName } =
       parseAndroidIconToNativeProps(icon?.android || icon?.shared);
 
-    const {
-      imageIconResource: selectedImageIconResource,
-      drawableIconResourceName: selectedDrawableIconResourceName,
-    } = parseAndroidIconToNativeProps(
-      selectedIcon?.android || selectedIcon?.shared,
-    );
+    const androidSelectedSource =
+      (selectedIcon as PlatformIcon)?.android ||
+      (selectedIcon as PlatformIcon)?.shared;
+    const selectedIconProps = androidSelectedSource
+      ? parseAndroidIconToNativeProps(androidSelectedSource)
+      : {};
 
     return {
       imageIconResource,
       drawableIconResourceName,
-      selectedImageIconResource,
-      selectedDrawableIconResourceName,
+      selectedImageIconResource: selectedIconProps.imageIconResource,
+      selectedDrawableIconResourceName:
+        selectedIconProps.drawableIconResourceName,
     };
   }
 
@@ -352,11 +353,17 @@ function parseIconsToNativeProps(
     const { iconImageSource, iconResourceName, iconType } =
       parseIOSIconToNativeProps(icon?.ios || icon?.shared);
 
+    // Fallback to PlatformIconIOS for backward compatibility
+    const iosSelectedSource =
+      (selectedIcon as PlatformIcon)?.ios ||
+      (selectedIcon as PlatformIcon)?.shared ||
+      (selectedIcon as PlatformIconIOS);
+
     const {
       iconImageSource: selectedIconImageSource,
       iconResourceName: selectedIconResourceName,
       iconType: selectedIconType,
-    } = parseIOSIconToNativeProps(selectedIcon?.ios || selectedIcon?.shared);
+    } = parseIOSIconToNativeProps(iosSelectedSource);
 
     if (
       iconType !== undefined &&
