@@ -124,7 +124,7 @@
     "typescript": "^5.8.3"
   },
   "lint-staged": {
-    "{src,FabricExample}/**/*.{js,ts,tsx}": "yarn format-js",
+    "src/**/*.{js,ts,tsx}": "yarn format-js",
     "FabricExample/ios/**/*.swift": "yarn format-ios-swift",
     "src/**/*.{js,ts,tsx}": "yarn lint-js",
     "common/**/*.{h,cpp}": "yarn format-common",
