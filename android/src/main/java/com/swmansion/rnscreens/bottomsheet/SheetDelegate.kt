@@ -141,9 +141,6 @@ class SheetDelegate(
                 }
             }
 
-            // Note: There's no good reason that Screen should be direct target for focus, we're rather
-            // prefer its children to gain it.
-            screen.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
             screen.requestFocus()
             inputMethodManager?.hideSoftInputFromWindow(focusedView.windowToken, 0)
         }

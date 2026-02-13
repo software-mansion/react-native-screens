@@ -278,7 +278,6 @@ class ScreenStack(
                 transaction.add(id, newTop.fragment)
             }
 
-            val previousTopScreen: Screen? = topScreenWrapper?.screen
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.asSequence().map { it as ScreenStackFragmentWrapper })
@@ -296,12 +295,6 @@ class ScreenStack(
                     .toList()
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
-
-            // When form sheet is pushed to the top of the stack, we need to make sure that keyboard
-            // focus doesn't stay on the previous screen. We don't use requestFocus on newTop's
-            // screen because if there is an input field in the form sheet, it works as if autoFocus
-            // was enabled on the input field instead of focusing e.g. button above the input.
-            previousTopScreen?.clearFocus()
 
             transaction.commitNowAllowingStateLoss()
         }
@@ -345,9 +338,9 @@ class ScreenStack(
 
         topScreen?.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_AUTO)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            topScreen?.changeFocusability(FOCUSABLE_AUTO, FOCUS_BEFORE_DESCENDANTS)
+            topScreen?.changeFocusability(FOCUSABLE_AUTO, FOCUS_AFTER_DESCENDANTS)
         } else {
-            topScreen?.changeFocusabilityCompat(true, FOCUS_BEFORE_DESCENDANTS)
+            topScreen?.changeFocusabilityCompat(true, FOCUS_AFTER_DESCENDANTS)
         }
     }
 

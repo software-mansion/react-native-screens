@@ -549,7 +549,7 @@ class Screen(
     // https://developer.android.com/reference/android/view/View#setFocusable(int)
     // https://developer.android.com/reference/android/view/ViewGroup#setDescendantFocusability(int)
     @RequiresApi(Build.VERSION_CODES.O)
-    fun changeFocusability(
+    internal fun changeFocusability(
         focusable: Int,
         descendantFocusability: Int,
     ) {
@@ -563,7 +563,7 @@ class Screen(
     // Accepts boolean for focusability and one of 3 descendantFocusability flags.
     // This method is provided for compatibility reasons only (SDK_API <= 25).
     // https://developer.android.com/reference/android/view/ViewGroup#setDescendantFocusability(int)
-    fun changeFocusabilityCompat(
+    internal fun changeFocusabilityCompat(
         focusable: Boolean,
         descendantFocusability: Int,
     ) {
