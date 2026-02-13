@@ -1187,11 +1187,7 @@ export interface HeaderBarButtonItemMenuAction {
   title?: string;
   subtitle?: string;
   onPress: () => void;
-  icon?:
-    | PlatformIconIOSSfSymbol
-    | PlatformIconIOSXcasset
-    | PlatformIconIOSXcassetTinted
-    | PlatformIconIOSXcassetOriginal;
+  icon?: PlatformIconIOS;
   /**
    * State of the item.
    *
@@ -1233,11 +1229,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string;
-  icon?:
-    | PlatformIconIOSSfSymbol
-    | PlatformIconIOSXcasset
-    | PlatformIconIOSXcassetTinted
-    | PlatformIconIOSXcassetOriginal;
+  icon?: PlatformIconIOS;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean;
   destructive?: boolean;

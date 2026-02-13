@@ -22,6 +22,16 @@ const prepareMenu = (
       const xcassetOriginalName =
         iconType === 'xcassetOriginal' ? menuItem.icon?.name : undefined;
 
+      let imageSource, templateSource;
+      if (iconType === 'imageSource' && menuItem.icon?.type === 'imageSource') {
+        imageSource = Image.resolveAssetSource(menuItem.icon.imageSource);
+      } else if (
+        iconType === 'templateSource' &&
+        menuItem.icon?.type === 'templateSource'
+      ) {
+        templateSource = Image.resolveAssetSource(menuItem.icon.templateSource);
+      }
+
       if (menuItem.type === 'submenu') {
         return {
           ...menuItem,
@@ -29,6 +39,8 @@ const prepareMenu = (
           xcassetName,
           xcassetTintedName,
           xcassetOriginalName,
+          imageSource,
+          templateSource,
           ...prepareMenu(menuItem, menuIndex, side),
         };
       }
@@ -38,6 +50,8 @@ const prepareMenu = (
         xcassetName,
         xcassetTintedName,
         xcassetOriginalName,
+        imageSource,
+        templateSource,
         menuId: `${menuIndex}-${index}-${side}`,
       };
     }),

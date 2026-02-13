@@ -480,6 +480,7 @@ export default function BarButtonItemsExample() {
             {
               type: 'menu',
               label: 'Menu',
+              tintColor: 'red',
               menu: {
                 label: 'Context menu',
                 items: [
@@ -496,13 +497,35 @@ export default function BarButtonItemsExample() {
                     label: 'Tinted Xcasset',
                     icon: { type: 'xcassetTinted', name: 'custom-icon-fill' },
                     type: 'action',
+                    destructive: true,
                     onPress: () => Alert.alert('Tinted Xcasset pressed'),
                   },
                   {
                     label: 'Original Xcasset',
                     icon: { type: 'xcassetOriginal', name: 'custom-icon-fill' },
                     type: 'action',
+                    destructive: true,
                     onPress: () => Alert.alert('Original Xcasset pressed'),
+                  },
+                  {
+                    label: 'Image Source',
+                    icon: {
+                      type: 'imageSource',
+                      imageSource: require('../../assets/search_black.png'),
+                    },
+                    type: 'action',
+                    destructive: true,
+                    onPress: () => Alert.alert('Image Source pressed'),
+                  },
+                  {
+                    label: 'Template Source',
+                    icon: {
+                      type: 'templateSource',
+                      templateSource: require('../../assets/search_black.png'),
+                    },
+                    destructive: true,
+                    type: 'action',
+                    onPress: () => Alert.alert('Template Source pressed'),
                   },
                   {
                     label: 'Action 2',
@@ -512,6 +535,28 @@ export default function BarButtonItemsExample() {
                     disabled: true,
                     discoverabilityLabel: 'Disabled Action',
                     onPress: () => Alert.alert('Action 2 pressed'),
+                  },
+                  {
+                    label: 'Image Submenu',
+                    displayInline: true,
+                    icon: {
+                      type: 'imageSource',
+                      imageSource: require('../../assets/search_black.png'),
+                    },
+                    type: 'submenu',
+                    items: [
+                      {
+                        label: 'Sub Image Action',
+                        type: 'action',
+                        icon: {
+                          type: 'templateSource',
+                          templateSource:
+                            require('../../assets/search_black.png'),
+                        },
+                        onPress: () =>
+                          Alert.alert('Sub Image Action pressed'),
+                      },
+                    ],
                   },
                   {
                     label: 'Submenu',
