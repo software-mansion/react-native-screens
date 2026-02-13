@@ -17,12 +17,30 @@ const prepareMenu = (
         iconType === 'sfSymbol' ? menuItem.icon?.name : undefined;
       const xcassetName =
         iconType === 'xcasset' ? menuItem.icon?.name : undefined;
+      const xcassetTintedName =
+        iconType === 'xcassetTinted' ? menuItem.icon?.name : undefined;
+      const xcassetOriginalName =
+        iconType === 'xcassetOriginal' ? menuItem.icon?.name : undefined;
+
+      let imageSource, templateSource;
+      if (iconType === 'imageSource' && menuItem.icon?.type === 'imageSource') {
+        imageSource = Image.resolveAssetSource(menuItem.icon.imageSource);
+      } else if (
+        iconType === 'templateSource' &&
+        menuItem.icon?.type === 'templateSource'
+      ) {
+        templateSource = Image.resolveAssetSource(menuItem.icon.templateSource);
+      }
 
       if (menuItem.type === 'submenu') {
         return {
           ...menuItem,
           sfSymbolName,
           xcassetName,
+          xcassetTintedName,
+          xcassetOriginalName,
+          imageSource,
+          templateSource,
           ...prepareMenu(menuItem, menuIndex, side),
         };
       }
@@ -30,6 +48,10 @@ const prepareMenu = (
         ...menuItem,
         sfSymbolName,
         xcassetName,
+        xcassetTintedName,
+        xcassetOriginalName,
+        imageSource,
+        templateSource,
         menuId: `${menuIndex}-${index}-${side}`,
       };
     }),
@@ -71,6 +93,10 @@ export const prepareHeaderBarButtonItems = (
       templateSource,
       sfSymbolName: item.icon?.type === 'sfSymbol' ? item.icon.name : undefined,
       xcassetName: item.icon?.type === 'xcasset' ? item.icon.name : undefined,
+      xcassetTintedName:
+        item.icon?.type === 'xcassetTinted' ? item.icon.name : undefined,
+      xcassetOriginalName:
+        item.icon?.type === 'xcassetOriginal' ? item.icon.name : undefined,
       titleStyle,
       tintColor,
       badge,

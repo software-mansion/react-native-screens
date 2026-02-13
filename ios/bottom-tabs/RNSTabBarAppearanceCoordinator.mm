@@ -58,12 +58,20 @@
                fromScreenView:(RNSBottomTabsScreenComponentView *)screenView
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
-  if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol || screenView.iconType == RNSBottomTabsIconTypeXcasset) {
+  if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol || screenView.iconType == RNSBottomTabsIconTypeXcasset ||
+      screenView.iconType == RNSBottomTabsIconTypeXcassetTinted ||
+      screenView.iconType == RNSBottomTabsIconTypeXcassetOriginal) {
     if (screenView.iconResourceName != nil) {
       if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
         tabBarItem.image = [UIImage systemImageNamed:screenView.iconResourceName];
       } else {
-        tabBarItem.image = [UIImage imageNamed:screenView.iconResourceName];
+        UIImage *image = [UIImage imageNamed:screenView.iconResourceName];
+        if (screenView.iconType == RNSBottomTabsIconTypeXcassetTinted) {
+          image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        } else if (screenView.iconType == RNSBottomTabsIconTypeXcassetOriginal) {
+          image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        }
+        tabBarItem.image = image;
       }
     } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
       // Restore default system item icon
@@ -78,7 +86,13 @@
       if (screenView.iconType == RNSBottomTabsIconTypeSfSymbol) {
         tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName];
       } else {
-        tabBarItem.selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
+        UIImage *image = [UIImage imageNamed:screenView.selectedIconResourceName];
+        if (screenView.iconType == RNSBottomTabsIconTypeXcassetTinted) {
+          image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        } else if (screenView.iconType == RNSBottomTabsIconTypeXcassetOriginal) {
+          image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        }
+        tabBarItem.selectedImage = image;
       }
     } else if (screenView.systemItem != RNSBottomTabsScreenSystemItemNone) {
       // Restore default system item icon
@@ -138,8 +152,8 @@
 
   // A layout pass is required because the image might be loaded asynchronously,
   // after the tab bar has already been attached to the window.
-  // This code handles case where image passed by the user is not 
-  // of appropriate size & needs to be readjusted. W/o additional 
+  // This code handles case where image passed by the user is not
+  // of appropriate size & needs to be readjusted. W/o additional
   // layout here the icon would be displayed with original dimensions.
   UIViewController *parent = screenView.controller.parentViewController;
   if ([parent isKindOfClass:[UITabBarController class]]) {

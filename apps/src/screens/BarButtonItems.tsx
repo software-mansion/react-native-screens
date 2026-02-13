@@ -17,6 +17,11 @@ const demoScreens = [
   { name: 'PlainButtonDemo', title: 'Plain Button' },
   { name: 'IconButtonDemo', title: 'Icon Button' },
   { name: 'XcassetIconButtonDemo', title: 'Xcasset Icon Button' },
+  { name: 'XcassetTintedIconButtonDemo', title: 'Xcasset Tinted Icon Button' },
+  {
+    name: 'XcassetOriginalIconButtonDemo',
+    title: 'Xcasset Original Icon Button',
+  },
   { name: 'SystemIconButtonDemo', title: 'System Icon Button' },
   { name: 'MenuButtonDemo', title: 'Menu Button' },
   { name: 'BadgeButtonDemo', title: 'Badge Button' },
@@ -65,6 +70,8 @@ const DemoScreenContent = () => (
 const PlainButtonDemo = DemoScreenContent;
 const IconButtonDemo = DemoScreenContent;
 const XcassetIconButtonDemo = DemoScreenContent;
+const XcassetTintedIconButtonDemo = DemoScreenContent;
+const XcassetOriginalIconButtonDemo = DemoScreenContent;
 const MenuButtonDemo = DemoScreenContent;
 const BadgeButtonDemo = DemoScreenContent;
 const DisabledButtonDemo = DemoScreenContent;
@@ -143,7 +150,46 @@ export default function BarButtonItemsExample() {
                 name: 'custom-icon-fill',
               },
               label: 'Xcasset',
+              tintColor: 'red',
               onPress: () => Alert.alert('Icon Xcasset pressed'),
+            },
+          ],
+        }}
+      />
+      <Stack.Screen
+        name="XcassetTintedIconButtonDemo"
+        component={XcassetTintedIconButtonDemo}
+        options={{
+          title: 'Xcasset Tinted Icon',
+          unstable_headerRightItems: () => [
+            {
+              type: 'button',
+              icon: {
+                type: 'xcassetTinted',
+                name: 'custom-icon-fill',
+              },
+              label: 'Tinted',
+              tintColor: 'red',
+              onPress: () => Alert.alert('Xcasset Tinted pressed'),
+            },
+          ],
+        }}
+      />
+      <Stack.Screen
+        name="XcassetOriginalIconButtonDemo"
+        component={XcassetOriginalIconButtonDemo}
+        options={{
+          title: 'Xcasset Original Icon',
+          unstable_headerRightItems: () => [
+            {
+              type: 'button',
+              icon: {
+                type: 'xcassetOriginal',
+                name: 'custom-icon-fill',
+              },
+              label: 'Original',
+              tintColor: 'red',
+              onPress: () => Alert.alert('Xcasset Original pressed'),
             },
           ],
         }}
@@ -434,6 +480,7 @@ export default function BarButtonItemsExample() {
             {
               type: 'menu',
               label: 'Menu',
+              tintColor: 'red',
               menu: {
                 label: 'Context menu',
                 items: [
@@ -447,6 +494,40 @@ export default function BarButtonItemsExample() {
                     onPress: () => Alert.alert('Action 1 pressed'),
                   },
                   {
+                    label: 'Tinted Xcasset',
+                    icon: { type: 'xcassetTinted', name: 'custom-icon-fill' },
+                    type: 'action',
+                    destructive: true,
+                    onPress: () => Alert.alert('Tinted Xcasset pressed'),
+                  },
+                  {
+                    label: 'Original Xcasset',
+                    icon: { type: 'xcassetOriginal', name: 'custom-icon-fill' },
+                    type: 'action',
+                    destructive: true,
+                    onPress: () => Alert.alert('Original Xcasset pressed'),
+                  },
+                  {
+                    label: 'Image Source',
+                    icon: {
+                      type: 'imageSource',
+                      imageSource: require('../../assets/search_black.png'),
+                    },
+                    type: 'action',
+                    destructive: true,
+                    onPress: () => Alert.alert('Image Source pressed'),
+                  },
+                  {
+                    label: 'Template Source',
+                    icon: {
+                      type: 'templateSource',
+                      templateSource: require('../../assets/search_black.png'),
+                    },
+                    destructive: true,
+                    type: 'action',
+                    onPress: () => Alert.alert('Template Source pressed'),
+                  },
+                  {
                     label: 'Action 2',
                     icon: { type: 'sfSymbol', name: 'square.and.arrow.up' },
                     type: 'action',
@@ -454,6 +535,28 @@ export default function BarButtonItemsExample() {
                     disabled: true,
                     discoverabilityLabel: 'Disabled Action',
                     onPress: () => Alert.alert('Action 2 pressed'),
+                  },
+                  {
+                    label: 'Image Submenu',
+                    displayInline: true,
+                    icon: {
+                      type: 'imageSource',
+                      imageSource: require('../../assets/search_black.png'),
+                    },
+                    type: 'submenu',
+                    items: [
+                      {
+                        label: 'Sub Image Action',
+                        type: 'action',
+                        icon: {
+                          type: 'templateSource',
+                          templateSource:
+                            require('../../assets/search_black.png'),
+                        },
+                        onPress: () =>
+                          Alert.alert('Sub Image Action pressed'),
+                      },
+                    ],
                   },
                   {
                     label: 'Submenu',

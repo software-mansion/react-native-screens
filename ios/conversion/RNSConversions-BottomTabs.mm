@@ -230,6 +230,10 @@ RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIc
       return RNSBottomTabsIconTypeSfSymbol;
     case Xcasset:
       return RNSBottomTabsIconTypeXcasset;
+    case XcassetTinted:
+      return RNSBottomTabsIconTypeXcassetTinted;
+    case XcassetOriginal:
+      return RNSBottomTabsIconTypeXcassetOriginal;
   }
 }
 
@@ -241,6 +245,9 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
 
   switch (iconType) {
     case RNSBottomTabsIconTypeSfSymbol:
+    case RNSBottomTabsIconTypeXcasset:
+    case RNSBottomTabsIconTypeXcassetTinted:
+    case RNSBottomTabsIconTypeXcassetOriginal:
       iconImageSource = nil;
       break;
 

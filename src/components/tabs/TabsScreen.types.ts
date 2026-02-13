@@ -332,6 +332,12 @@ export interface TabsScreenProps {
    *   Uses an SF Symbol with the specified name.
    * - `{ type: 'xcasset', name }`
    *   Uses asset from Xcassets.
+   * - `{ type: 'xcassetTinted', name }`
+   *   Uses asset from Xcassets with `UIImageRenderingModeAlwaysTemplate`
+   *   (icon respects tint color).
+   * - `{ type: 'xcassetOriginal', name }`
+   *   Uses asset from Xcassets with `UIImageRenderingModeAlwaysOriginal`
+   *   (icon renders with its original colors).
    * - `{ type: 'templateSource', templateSource }`
    *   Uses the provided image as a template image.
    *   The icon color will depend on the current state
