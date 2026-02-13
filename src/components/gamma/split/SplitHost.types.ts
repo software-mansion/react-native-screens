@@ -114,6 +114,12 @@ export interface SplitColumnMetrics {
    */
   preferredInspectorColumnWidthOrFraction?: number;
 }
+export type SplitColumn = 'primary' | 'supplementary' | 'secondary';
+
+export type SplitHostCommands = {
+  show: (column: SplitColumn) => void;
+};
+
 export interface SplitHostProps extends ViewProps {
   children?: React.ReactNode;
 
@@ -306,4 +312,19 @@ export interface SplitHostProps extends ViewProps {
    * @summary Determines whether a button to toggle to and from secondaryOnly display mode is visible.
    */
   showSecondaryToggleButton?: boolean;
+  /**
+   * @summary Specifies which column should be shown when the split view collapses to a single column.
+   *
+   * When the split view transitions from an expanded to a collapsed layout (e.g. rotating an iPad to portrait),
+   * this prop determines which column becomes the top (visible) column.
+   *
+   * The following values are currently supported:
+   *
+   * - `primary` - the primary sidebar is shown
+   * - `supplementary` - the supplementary sidebar is shown
+   * - `secondary` - the secondary (main content) column is shown
+   *
+   * @default primary
+   */
+  topColumnForCollapsing?: SplitColumn;
 }
