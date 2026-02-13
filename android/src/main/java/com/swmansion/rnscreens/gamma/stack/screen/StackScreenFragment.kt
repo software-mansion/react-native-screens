@@ -18,16 +18,15 @@ internal class StackScreenFragment(
      * Since each StackScreenFragment owns a PreventNativeDismissCallback & adds it to the
      * OnBackPressedDispatcher the callback should be enabled only when the top fragment is this fragment.
      */
-    private val preventNativeDismissBackPressedCallback =
-        PreventNativeDismissCallback(this, stackScreen, canBeEnabled = true)
+    private var preventNativeDismissBackPressedCallback: PreventNativeDismissCallback? = null
+    private val requireNativeDismissBackPressedCallback
+        get() = checkNotNull(preventNativeDismissBackPressedCallback) { "[RNScreens] Attempt to require nullish OnBackPressedCallback" }
 
     private var isTopFragment: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(
-            preventNativeDismissBackPressedCallback,
-        )
+        setupPreventNativeDismissCallback()
     }
 
     override fun onCreateView(
@@ -53,11 +52,12 @@ internal class StackScreenFragment(
         super.onDestroy()
         Log.i("StackScreenFragment", "onDestroy")
         stackScreen.onDismiss()
-        preventNativeDismissBackPressedCallback.remove()
+        teardownPreventNativeDismissCallback()
     }
 
     /**
      * Notifies this fragment that it has become "top fragment" in its fragment manager.
+     * Call this only if the lifecycle of the fragment is at least at CREATED.
      *
      * This function should be idempotent.
      */
@@ -65,11 +65,12 @@ internal class StackScreenFragment(
         if (isTopFragment) return
 
         isTopFragment = true
-        preventNativeDismissBackPressedCallback.canBeEnabled = true
+        requireNativeDismissBackPressedCallback.canBeEnabled = true
     }
 
     /**
      * Notifies this fragment that it is not longer the "top fragment" in its fragment manager.
+     * Call this only if the lifecycle of the fragment is at least at CREATED.
      *
      * This function should be idempotent.
      */
@@ -77,6 +78,19 @@ internal class StackScreenFragment(
         if (!isTopFragment) return
 
         isTopFragment = false
-        preventNativeDismissBackPressedCallback.canBeEnabled = false
+        requireNativeDismissBackPressedCallback.canBeEnabled = false
+    }
+
+    private fun setupPreventNativeDismissCallback() {
+        preventNativeDismissBackPressedCallback =
+            PreventNativeDismissCallback(this, stackScreen, canBeEnabled = false)
+        requireActivity().onBackPressedDispatcher.addCallback(
+            requireNativeDismissBackPressedCallback,
+        )
+    }
+
+    private fun teardownPreventNativeDismissCallback() {
+        requireNativeDismissBackPressedCallback.remove()
+        preventNativeDismissBackPressedCallback = null
     }
 }
