@@ -1,11 +1,12 @@
 package com.swmansion.rnscreens.gamma.stack.screen
 
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.transition.Slide
 
 internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
@@ -28,6 +29,14 @@ internal class StackScreenFragment(
         requireActivity().onBackPressedDispatcher.addCallback(
             preventNativeDismissBackPressedCallback,
         )
+
+        allowEnterTransitionOverlap = true
+        allowReturnTransitionOverlap = true
+
+        enterTransition = Slide(Gravity.RIGHT)
+        exitTransition = Slide(Gravity.LEFT)
+        returnTransition = Slide(Gravity.RIGHT)
+        reenterTransition = Slide(Gravity.LEFT)
     }
 
     override fun onCreateView(
@@ -51,7 +60,6 @@ internal class StackScreenFragment(
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i("StackScreenFragment", "onDestroy")
         stackScreen.onDismiss()
         preventNativeDismissBackPressedCallback.remove()
     }
