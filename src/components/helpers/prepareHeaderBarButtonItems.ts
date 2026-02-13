@@ -18,11 +18,23 @@ const prepareMenu = (
       const xcassetName =
         iconType === 'xcasset' ? menuItem.icon?.name : undefined;
 
+      let imageSource, templateSource;
+      if (iconType === 'imageSource' && menuItem.icon?.type === 'imageSource') {
+        imageSource = Image.resolveAssetSource(menuItem.icon.imageSource);
+      } else if (
+        iconType === 'templateSource' &&
+        menuItem.icon?.type === 'templateSource'
+      ) {
+        templateSource = Image.resolveAssetSource(menuItem.icon.templateSource);
+      }
+
       if (menuItem.type === 'submenu') {
         return {
           ...menuItem,
           sfSymbolName,
           xcassetName,
+          imageSource,
+          templateSource,
           ...prepareMenu(menuItem, menuIndex, side),
         };
       }
@@ -30,6 +42,8 @@ const prepareMenu = (
         ...menuItem,
         sfSymbolName,
         xcassetName,
+        imageSource,
+        templateSource,
         menuId: `${menuIndex}-${index}-${side}`,
       };
     }),

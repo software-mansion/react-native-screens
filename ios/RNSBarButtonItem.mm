@@ -130,7 +130,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   if (@available(tvOS 17.0, *)) {
     NSDictionary *menu = dict[@"menu"];
     if (menu) {
-      self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction];
+      self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction imageLoader:imageLoader];
     }
   }
 #endif
@@ -145,7 +145,9 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   return self;
 }
 
-+ (UIMenu *)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
++ (UIMenu *)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict
+                    menuAction:(RNSBarButtonMenuItemAction)menuAction
+                   imageLoader:(RCTImageLoader *)imageLoader
 {
   NSArray *items = dict[@"items"];
   NSMutableArray<UIMenuElement *> *elements = [NSMutableArray new];
@@ -153,10 +155,10 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
     for (NSDictionary *item in items) {
       NSString *menuId = item[@"menuId"];
       if (menuId) {
-        UIAction *actionItem = [self createActionItemFromConfig:item menuAction:menuAction];
+        UIAction *actionItem = [self createActionItemFromConfig:item menuAction:menuAction imageLoader:imageLoader];
         [elements addObject:actionItem];
       } else {
-        UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
+        UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction imageLoader:imageLoader];
         if (childMenu) {
           [elements addObject:childMenu];
         }
@@ -174,6 +176,21 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
     image = [UIImage imageNamed:xcassetName];
   }
 
+  NSDictionary *imageSourceObj = dict[@"imageSource"];
+  NSDictionary *templateSourceObj = dict[@"templateSource"];
+  if (image == nil && (imageSourceObj != nil || templateSourceObj != nil)) {
+    BOOL isTemplate = imageSourceObj != nil ? NO : YES;
+    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
+    __block UIImage *loadedImage = nil;
+    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
+                                                 withImageLoader:imageLoader
+                                                      asTemplate:isTemplate
+                                                 completionBlock:^(UIImage *img) {
+                                                   loadedImage = img;
+                                                 }];
+    image = loadedImage;
+  }
+
   return [UIMenu menuWithTitle:title
                          image:image
                     identifier:nil
@@ -181,7 +198,9 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                       children:elements];
 }
 
-+ (UIAction *)createActionItemFromConfig:(NSDictionary *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
++ (UIAction *)createActionItemFromConfig:(NSDictionary *)dict
+                              menuAction:(RNSBarButtonMenuItemAction)menuAction
+                             imageLoader:(RCTImageLoader *)imageLoader
 {
   NSString *menuId = dict[@"menuId"];
   NSString *title = dict[@"title"];
@@ -201,6 +220,19 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                                               handler:^(__kindof UIAction *_Nonnull a) {
                                                 menuAction(menuId);
                                               }];
+
+  NSDictionary *imageSourceObj = dict[@"imageSource"];
+  NSDictionary *templateSourceObj = dict[@"templateSource"];
+  if (image == nil && (imageSourceObj != nil || templateSourceObj != nil)) {
+    BOOL isTemplate = imageSourceObj != nil ? NO : YES;
+    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
+    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
+                                                 withImageLoader:imageLoader
+                                                      asTemplate:isTemplate
+                                                 completionBlock:^(UIImage *img) {
+                                                   actionElement.image = img;
+                                                 }];
+  }
 
   NSString *discoverabilityLabel = dict[@"discoverabilityLabel"];
   if (discoverabilityLabel != nil) {
