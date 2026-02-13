@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
 
 // issue fixed only on iOS at the moment
 describeIfiOS('Test2877', () => {
@@ -8,7 +8,7 @@ describeIfiOS('Test2877', () => {
   });
 
   it('Test2877 should exist', async () => {
-    await selectTestScreen('Test2877');
+    await selectIssueTestScreen('Test2877');
   });
 
   it('formSheet should open without hidden content', async () => {

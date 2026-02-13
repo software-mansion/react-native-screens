@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../e2e-utils';
 
 const awaitValidEventBehavior = async () => {
   await expect(
@@ -64,7 +64,7 @@ const awaitValidEventBehavior = async () => {
 describe('Test593', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await selectTestScreen('Test593');
+    await selectIssueTestScreen('Test593');
   });
 
   it('should run transitionStart & transitionEnd opening events', async () => {

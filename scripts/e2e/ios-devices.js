@@ -36,7 +36,15 @@ function getIOSVersion() {
   return DEFAULT_IOS_VERSION;
 }
 
+/**
+ * @return { string } iOS version number (e.g. 26.2)
+ */
+function getIOSVersionNumber() {
+  return getIOSVersion().replace('iOS', '').trim();
+}
+
 module.exports = {
   resolveAppleSimulatorName,
   getIOSVersion,
+  getIOSVersionNumber,
 };

@@ -4,7 +4,7 @@ const AndroidDeviceUtil = require('./android-devices');
 const isRunningCI = process.env.CI != null;
 
 // Assumes that local development is done on arm64-v8a.
-const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
+const apkBuildArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 // test-butler requires AOSP emulator image, which is not available to download for arm64-v8a in Android Studio SDK Manager, therefore
 // it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
 const testButlerApkPath = isRunningCI
@@ -76,13 +76,13 @@ function commonDetoxConfigFactory(applicationName) {
       'android.debug': {
         type: 'android.apk',
         binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
-        build: `cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${apkBulidArchitecture} && cd ..`,
+        build: `cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${apkBuildArchitecture} && cd ..`,
         reversePorts: [8081],
       },
       'android.release': {
         type: 'android.apk',
         binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
-        build: `cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${apkBulidArchitecture} && cd ..`,
+        build: `cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${apkBuildArchitecture} && cd ..`,
       },
     },
     devices: {

@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
 
 // issue related to iOS native back button
 describeIfiOS('Test654', () => {
@@ -9,7 +9,7 @@ describeIfiOS('Test654', () => {
   });
 
   it('Test654 should exist', async () => {
-    await selectTestScreen('Test654');
+    await selectIssueTestScreen('Test654');
   });
 
   it('back button should be visible on Second screen', async () => {
