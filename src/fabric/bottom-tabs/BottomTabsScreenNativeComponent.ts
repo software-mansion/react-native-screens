@@ -12,7 +12,13 @@ import type {
 import { UnsafeMixed } from './codegenUtils';
 
 // iOS-specific: SFSymbol, image as a template usage
-export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcasset';
+export type IconType =
+  | 'image'
+  | 'template'
+  | 'sfSymbol'
+  | 'xcasset'
+  | 'xcassetTinted'
+  | 'xcassetOriginal';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;

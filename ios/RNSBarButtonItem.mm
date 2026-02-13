@@ -26,6 +26,8 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   NSDictionary *templateSourceObj = dict[@"templateSource"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
   NSString *xcassetName = dict[@"xcassetName"];
+  NSString *xcassetTintedName = dict[@"xcassetTintedName"];
+  NSString *xcassetOriginalName = dict[@"xcassetOriginalName"];
 
   if (imageSourceObj != nil || templateSourceObj != nil) {
     BOOL isTemplate = imageSourceObj != nil ? NO : YES;
@@ -41,6 +43,10 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
     self.image = [UIImage systemImageNamed:sfSymbolName];
   } else if (xcassetName != nil) {
     self.image = [UIImage imageNamed:xcassetName];
+  } else if (xcassetTintedName != nil) {
+    self.image = [[UIImage imageNamed:xcassetTintedName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  } else if (xcassetOriginalName != nil) {
+    self.image = [[UIImage imageNamed:xcassetOriginalName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
   }
 
   if (title != nil) {
@@ -166,12 +172,18 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
   NSString *xcassetName = dict[@"xcassetName"];
+  NSString *xcassetTintedName = dict[@"xcassetTintedName"];
+  NSString *xcassetOriginalName = dict[@"xcassetOriginalName"];
 
-  UIImage* image = nil;
+  UIImage *image = nil;
   if (sfSymbolName != nil) {
     image = [UIImage systemImageNamed:sfSymbolName];
   } else if (xcassetName != nil) {
     image = [UIImage imageNamed:xcassetName];
+  } else if (xcassetTintedName != nil) {
+    image = [[UIImage imageNamed:xcassetTintedName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  } else if (xcassetOriginalName != nil) {
+    image = [[UIImage imageNamed:xcassetOriginalName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
   }
 
   return [UIMenu menuWithTitle:title
@@ -187,12 +199,18 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   NSString *title = dict[@"title"];
   NSString *sfSymbolName = dict[@"sfSymbolName"];
   NSString *xcassetName = dict[@"xcassetName"];
+  NSString *xcassetTintedName = dict[@"xcassetTintedName"];
+  NSString *xcassetOriginalName = dict[@"xcassetOriginalName"];
 
   UIImage *image = nil;
   if (sfSymbolName != nil) {
     image = [UIImage systemImageNamed:sfSymbolName];
   } else if (xcassetName != nil) {
     image = [UIImage imageNamed:xcassetName];
+  } else if (xcassetTintedName != nil) {
+    image = [[UIImage imageNamed:xcassetTintedName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  } else if (xcassetOriginalName != nil) {
+    image = [[UIImage imageNamed:xcassetOriginalName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
   }
 
   UIAction *actionElement = [UIAction actionWithTitle:title

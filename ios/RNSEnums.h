@@ -130,6 +130,8 @@ typedef NS_ENUM(NSInteger, RNSBottomTabsIconType) {
   RNSBottomTabsIconTypeTemplate,
   RNSBottomTabsIconTypeSfSymbol,
   RNSBottomTabsIconTypeXcasset,
+  RNSBottomTabsIconTypeXcassetTinted,
+  RNSBottomTabsIconTypeXcassetOriginal,
 };
 
 #if !RCT_NEW_ARCH_ENABLED

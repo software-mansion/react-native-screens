@@ -306,9 +306,19 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
       iconType: 'xcasset',
       iconResourceName: icon.name,
     };
+  } else if (icon.type === 'xcassetTinted') {
+    return {
+      iconType: 'xcassetTinted',
+      iconResourceName: icon.name,
+    };
+  } else if (icon.type === 'xcassetOriginal') {
+    return {
+      iconType: 'xcassetOriginal',
+      iconResourceName: icon.name,
+    };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource`, `templateSource` or `xcasset`.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource`, `templateSource`, `xcasset`, `xcassetTinted` or `xcassetOriginal`.',
     );
   }
 }

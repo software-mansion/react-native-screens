@@ -125,9 +125,21 @@ export type PlatformIconIOSXcasset = {
   name: string;
 };
 
+export type PlatformIconIOSXcassetTinted = {
+  type: 'xcassetTinted';
+  name: string;
+};
+
+export type PlatformIconIOSXcassetOriginal = {
+  type: 'xcassetOriginal';
+  name: string;
+};
+
 export type PlatformIconIOS =
   | PlatformIconIOSSfSymbol
   | PlatformIconIOSXcasset
+  | PlatformIconIOSXcassetTinted
+  | PlatformIconIOSXcassetOriginal
   | {
       type: 'templateSource';
       templateSource: ImageSourcePropType;
@@ -1175,7 +1187,11 @@ export interface HeaderBarButtonItemMenuAction {
   title?: string;
   subtitle?: string;
   onPress: () => void;
-  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
+  icon?:
+    | PlatformIconIOSSfSymbol
+    | PlatformIconIOSXcasset
+    | PlatformIconIOSXcassetTinted
+    | PlatformIconIOSXcassetOriginal;
   /**
    * State of the item.
    *
@@ -1201,7 +1217,7 @@ export interface HeaderBarButtonItemMenuAction {
    */
   hidden?: boolean;
   /**
-   * Indicates whether to keep the menu presented after firing the element’s action.
+   * Indicates whether to keep the menu presented after firing the element's action.
    *
    * Read more: https://developer.apple.com/documentation/uikit/uimenuelement/attributes/keepsmenupresented
    */
@@ -1217,7 +1233,11 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string;
-  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
+  icon?:
+    | PlatformIconIOSSfSymbol
+    | PlatformIconIOSXcasset
+    | PlatformIconIOSXcassetTinted
+    | PlatformIconIOSXcassetOriginal;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean;
   destructive?: boolean;

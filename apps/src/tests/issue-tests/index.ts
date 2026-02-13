@@ -187,6 +187,7 @@ export { default as TestScreenAnimation } from './TestScreenAnimation';
 // export { default as TestScreenAnimationV5 } from './TestScreenAnimationV5';
 export { default as TestHeader } from './TestHeader';
 export { default as TestPreload } from './TestPreload';
+export { default as TestXcassetRenderingModes } from './TestXcassetRenderingModes';
 export { default as TestActivityStateProgression } from './TestActivityStateProgression';
 export { default as TestHeaderTitle } from './TestHeaderTitle';
 export { default as TestHeaderHeight } from './TestHeaderHeight';
