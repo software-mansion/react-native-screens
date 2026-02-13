@@ -1416,6 +1416,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
 
+  [RNSScreenView.viewInteractionManagerInstance setDisabled:newScreenProps.ios26AllowInteractionsDuringTransition];
+
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -1593,6 +1595,11 @@ RNS_IGNORE_SUPER_CALL_END
   // the screen dimensions and we wait for the screen VC to update and then we
   // pass the dimensions to ui view manager to take into account when laying out
   // subviews
+}
+
+- (void)setIos26AllowInteractionsDuringTransition:(BOOL)value
+{
+  [RNSScreenView.viewInteractionManagerInstance setDisabled:value];
 }
 
 #endif

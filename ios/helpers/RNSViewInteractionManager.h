@@ -2,6 +2,12 @@
 
 @interface RNSViewInteractionManager : NSObject
 
+/**
+ * The behavior is controlled by `ios26AllowInteractionsDuringTransition` feature flag.
+ * The default is `true`, which means that `disableInteractions`/`enableInteractions` do nothing.
+ */
+@property (nonatomic) BOOL disabled;
+
 - (instancetype)init;
 
 /**
