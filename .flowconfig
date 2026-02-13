@@ -13,6 +13,9 @@
 ; Ignore polyfills
 .*/Libraries/polyfills/.*
 
+; Ignore any possible duplicates from within our Example folder
+.*/Example/node_modules/.*
+
 [include]
 
 [libs]
