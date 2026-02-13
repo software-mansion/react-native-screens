@@ -343,7 +343,7 @@ export interface TabsScreenProps {
    *
    *   Remarks: Requires passing a drawable to resources via Android Studio.
    *
-   * On iOS, if no `selectedIcon` is provided, this icon will also
+   * If no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.
    *
    * @platform android, ios
@@ -505,13 +505,16 @@ export interface TabsScreenProps {
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
-   * Supports the same values as `icon` property for iOS.
+   * Supports the same values as `icon` property for given platform.
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
-   * @platform ios
+   * @remark Initially, it was supported only on iOS, therefore, we need to
+   * keep PlatformIconIOS type for a backward compatibility.
+   *
+   * @platform android, ios
    */
-  selectedIcon?: PlatformIconIOS;
+  selectedIcon?: PlatformIcon | PlatformIconIOS;
   /**
    * @summary System-provided tab bar item with predefined icon and title
    *
