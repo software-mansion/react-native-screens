@@ -315,17 +315,7 @@ class ScreenStack(
 
                         // Keyboard navigation focus is separate from screen reader focus, that's
                         // why we need to use focusable and descendantFocusability.
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            fragmentWrapper.screen.changeFocusability(
-                                NOT_FOCUSABLE,
-                                FOCUS_BLOCK_DESCENDANTS,
-                            )
-                        } else {
-                            fragmentWrapper.screen.changeFocusabilityCompat(
-                                false,
-                                FOCUS_BLOCK_DESCENDANTS,
-                            )
-                        }
+                        changeScreenFocusability(fragmentWrapper.screen, false)
 
                         // don't change a11y below non-transparent screens
                         if (fragmentWrapper == visibleBottom) {
@@ -337,10 +327,20 @@ class ScreenStack(
         }
 
         topScreen?.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_AUTO)
+        topScreen?.let { changeScreenFocusability(it, true) }
+    }
+
+    private fun changeScreenFocusability(
+        screen: Screen,
+        focusable: Boolean,
+    ) {
+        val descendantFocusability = if (focusable) FOCUS_AFTER_DESCENDANTS else FOCUS_BLOCK_DESCENDANTS
+
+        // On API >= 26, we use FOCUSABLE_AUTO.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            topScreen?.changeFocusability(FOCUSABLE_AUTO, FOCUS_AFTER_DESCENDANTS)
+            screen.changeFocusability(if (focusable) FOCUSABLE_AUTO else NOT_FOCUSABLE, descendantFocusability)
         } else {
-            topScreen?.changeFocusabilityCompat(true, FOCUS_AFTER_DESCENDANTS)
+            screen.changeFocusabilityCompat(focusable, descendantFocusability)
         }
     }
 
