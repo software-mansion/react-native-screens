@@ -1,0 +1,20 @@
+# From e2e/issuesTests/Test432.e2e.ts
+appId: org.reactjs.native.example.FabricExample
+name: Test432 header visibility
+---
+- launchApp
+- tapOn:
+    id: "root-screen-switch-search-bar"
+- inputText: "Test432"
+- tapOn:
+    id: "root-screen-tests-Test432"
+- assertVisible:
+    id: "home-headerRight"
+- tapOn:
+    id: "home-button-go-to-details"
+- assertVisible:
+    id: "details-headerRight-red"
+- tapOn:
+    id: "BackButton"
+- assertVisible:
+    id: "home-headerRight"

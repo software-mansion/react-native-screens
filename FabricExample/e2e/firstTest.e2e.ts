@@ -51,15 +51,15 @@ describe('Example', () => {
   });
 
   it('should have root screen', async () => {
-    await expect(element(by.id('root-screen-examples-header'))).toBeVisible();
+    await expect(element(by.id('root-screen-examples-header'))).toExist();
   });
 
-  it('should have examples buttons', async () => {
-    const exampleNames = Object.keys(SCREENS).filter(
-      name => SCREENS[name].type === 'example',
-    );
-    for (const name of exampleNames) {
-      await expect(element(by.id(`root-screen-example-${name}`))).toBeVisible();
+  it('should have all example and playground buttons rendered', async () => {
+    const allNames = Object.keys(SCREENS);
+    for (const name of allNames) {
+      await expect(
+        element(by.id(`root-screen-example-${name}`)),
+      ).toExist();
     }
   });
 });

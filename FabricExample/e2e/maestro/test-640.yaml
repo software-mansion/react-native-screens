@@ -1,0 +1,18 @@
+# From e2e/issuesTests/Test640.e2e.ts
+appId: org.reactjs.native.example.FabricExample
+name: Test640 modal refresh
+---
+- launchApp
+- tapOn:
+    id: "root-screen-switch-search-bar"
+- inputText: "Test640"
+- tapOn:
+    id: "root-screen-tests-Test640"
+- tapOn:
+    id: "home-button-go-to-modal"
+- assertVisible:
+    text: "Scroll to 4"
+- tapOn:
+    text: "Scroll to 4"
+- assertNotVisible:
+    id: "home-button-go-to-modal"

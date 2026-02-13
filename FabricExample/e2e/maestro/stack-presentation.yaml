@@ -1,0 +1,33 @@
+# Maestro flow from e2e/examplesTests/stackPresentation.e2e.ts
+appId: org.reactjs.native.example.FabricExample
+name: Simple Stack Presentation
+---
+- launchApp
+
+# Should go to main screen
+- assertVisible:
+    id: "root-screen-example-StackPresentation"
+- tapOn:
+    id: "root-screen-example-StackPresentation"
+- assertVisible:
+    id: "stack-presentation-root-scroll-view"
+
+# Should push form screen
+- tapOn:
+    id: "stack-presentation-push-button"
+- assertVisible:
+    id: "stack-presentation-form-screen-go-back-button"
+- tapOn:
+    id: "stack-presentation-form-screen-go-back-button"
+- assertVisible:
+    id: "stack-presentation-root-scroll-view"
+
+# Should open modal
+- tapOn:
+    id: "stack-presentation-modal-button"
+- assertVisible:
+    id: "stack-presentation-modal-screen-go-back-button"
+- tapOn:
+    id: "stack-presentation-modal-screen-go-back-button"
+- assertVisible:
+    id: "stack-presentation-root-scroll-view"

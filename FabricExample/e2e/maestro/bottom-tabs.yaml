@@ -1,0 +1,32 @@
+# From e2e/examplesTests/bottomTabs.e2e.ts (simplified; no multiTap/label assertions)
+appId: org.reactjs.native.example.FabricExample
+name: Bottom tabs and native stack
+---
+- launchApp
+
+- assertVisible:
+    id: "root-screen-example-BottomTabsAndStack"
+- tapOn:
+    id: "root-screen-example-BottomTabsAndStack"
+- assertVisible:
+    id: "bottom-tabs-A-more-details-button"
+
+# Go to details
+- tapOn:
+    id: "bottom-tabs-A-more-details-button"
+- assertVisible:
+    id: "bottom-tabs-A-more-details-button"
+
+# Back (iOS nav bar back button)
+- tapOn:
+    id: "BackButton"
+
+# Switch tabs
+- tapOn:
+    id: "bottom-tabs-B-tab"
+- assertVisible:
+    id: "bottom-tabs-B-header-right-id"
+- tapOn:
+    id: "bottom-tabs-A-tab"
+- assertVisible:
+    id: "bottom-tabs-A-header-right-id"

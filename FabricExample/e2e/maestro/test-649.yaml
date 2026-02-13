@@ -1,0 +1,20 @@
+# From e2e/issuesTests/Test649.e2e.ts (iOS large title)
+appId: org.reactjs.native.example.FabricExample
+name: Test649 large title
+---
+- launchApp
+- tapOn:
+    id: "root-screen-switch-search-bar"
+- inputText: "Test649"
+- tapOn:
+    id: "root-screen-tests-Test649"
+- assertVisible:
+    text: "First"
+- tapOn:
+    id: "first-button-go-to-second"
+- assertVisible:
+    text: "Second"
+- tapOn:
+    id: "second-button-go-to-first"
+- assertVisible:
+    text: "First"

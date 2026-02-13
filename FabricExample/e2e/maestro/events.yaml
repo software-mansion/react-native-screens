@@ -1,0 +1,27 @@
+# From e2e/examplesTests/events.e2e.ts (minimal: open Events, assert transition events exist)
+appId: org.reactjs.native.example.FabricExample
+name: Events playground
+---
+- launchApp
+
+# Scroll to Events playground (id may be root-screen-playground-Events)
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-Events"
+    direction: DOWN
+- tapOn:
+    id: "root-screen-playground-Events"
+
+# Basic transition events
+- assertVisible:
+    text: "1. Main | transitionStart | opening"
+- assertVisible:
+    text: "2. Main | transitionEnd | opening"
+
+# Go to Chats and back
+- tapOn:
+    id: "events-go-to-chats"
+- tapOn:
+    id: "BackButton"
+- assertVisible:
+    text: "9. Chats | transitionStart | closing"

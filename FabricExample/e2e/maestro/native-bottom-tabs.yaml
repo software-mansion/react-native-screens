@@ -1,0 +1,27 @@
+# From e2e/examplesTests/nativeBottomTabs.e2e.ts
+appId: org.reactjs.native.example.FabricExample
+name: Native Bottom Tabs
+---
+- launchApp
+
+# selectTestScreen('TestBottomTabs'): open search, type, tap result
+- tapOn:
+    id: "root-screen-switch-search-bar"
+- inputText: "TestBottomTabs"
+- tapOn:
+    id: "root-screen-tests-TestBottomTabs"
+
+- assertVisible:
+    id: "tab-screen-1-id"
+
+# Navigate to third tab by id
+- tapOn:
+    id: "tab-item-3-id"
+- assertVisible:
+    id: "tab-screen-3-id"
+
+# Navigate to second tab by label
+- tapOn:
+    text: "Second Tab Item"
+- assertVisible:
+    text: "Second Tab Screen"

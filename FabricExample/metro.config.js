@@ -9,8 +9,17 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const fs = require('fs');
 const path = require('path');
-const exclusionList = require('metro-config/private/defaults/exclusionList').default;
 const escape = require('escape-string-regexp');
+
+// Inlined from metro-config defaults (package exports don't expose the path)
+function exclusionList(additionalExclusions) {
+  const list = [/\/__tests__\/.*/];
+  const patterns = (additionalExclusions || []).concat(list);
+  const escaped = patterns.map(p =>
+    p instanceof RegExp ? p.source.replace(/\/|\\\//g, '\\' + path.sep) : escape(String(p))
+  );
+  return new RegExp('(' + escaped.join('|') + ')$');
+}
 
 const libPackage = require('../package.json');
 const appPackage = require('./package.json');

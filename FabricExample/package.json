@@ -11,6 +11,11 @@
     "build-e2e-ios": "detox build --configuration ios.sim.release",
     "build-e2e-android": "detox build --configuration android.emu.release",
     "test-e2e-ios": "detox test --configuration ios.sim.release --take-screenshots failing",
+    "test-e2e-ios-watch": "detox test --configuration ios.sim.release --reuse --take-screenshots failing",
+    "test-e2e-maestro": "maestro test e2e/maestro/",
+    "test-e2e-maestro-first": "maestro test e2e/maestro/first-test.yaml",
+    "test-e2e-maestro-simple-stack": "maestro test e2e/maestro/simple-native-stack.yaml",
+    "test-e2e-maestro-stack-presentation": "maestro test e2e/maestro/stack-presentation.yaml",
     "test-e2e-android": "detox test --configuration android.emu.release --take-screenshots failing",
     "postinstall": "patch-package"
   },

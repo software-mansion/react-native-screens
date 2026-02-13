@@ -1,0 +1,18 @@
+# From e2e/issuesTests/Test654.e2e.ts (iOS back button) - enable RTL first in app
+appId: org.reactjs.native.example.FabricExample
+name: Test654 back button
+---
+- launchApp
+- tapOn:
+    id: "root-screen-switch-rtl"
+- tapOn:
+    id: "root-screen-switch-search-bar"
+- inputText: "Test654"
+- tapOn:
+    id: "root-screen-tests-Test654"
+- tapOn:
+    id: "first-button-go-to-second"
+- assertVisible:
+    id: "chevron.backward"
+- tapOn:
+    id: "BackButton"

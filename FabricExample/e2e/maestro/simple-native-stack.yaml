@@ -1,0 +1,25 @@
+# Maestro flow from e2e/examplesTests/simpleNativeStack.e2e.ts
+appId: org.reactjs.native.example.FabricExample
+name: Simple Native Stack
+---
+- launchApp
+
+# Should go to main screen
+- assertVisible:
+    id: "root-screen-example-SimpleNativeStack"
+- tapOn:
+    id: "root-screen-example-SimpleNativeStack"
+- assertVisible:
+    id: "simple-native-stack-go-to-detail"
+
+# Should go to detail screen
+- tapOn:
+    id: "simple-native-stack-go-to-detail"
+- assertVisible:
+    id: "simple-native-stack-detail-go-back"
+
+# Should go back to main screen
+- tapOn:
+    id: "simple-native-stack-detail-go-back"
+- assertVisible:
+    id: "simple-native-stack-go-to-detail"

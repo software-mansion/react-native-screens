@@ -1,0 +1,15 @@
+# Maestro flow equivalent of e2e/firstTest.e2e.ts (root + 4 example buttons; Detox uses toExist for all 9)
+appId: org.reactjs.native.example.FabricExample
+name: First Test - Root screen and examples
+---
+- launchApp
+- assertVisible:
+    id: "root-screen-examples-header"
+- assertVisible:
+    id: "root-screen-example-SimpleNativeStack"
+- assertVisible:
+    id: "root-screen-example-StackPresentation"
+- assertVisible:
+    id: "root-screen-example-BottomTabsAndStack"
+- assertVisible:
+    id: "root-screen-example-Modals"

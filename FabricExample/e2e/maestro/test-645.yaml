@@ -1,0 +1,10 @@
+# From e2e/issuesTests/Test645.e2e.ts (simplified)
+appId: org.reactjs.native.example.FabricExample
+name: Test645
+---
+- launchApp
+- tapOn:
+    id: "root-screen-switch-search-bar"
+- inputText: "Test645"
+- tapOn:
+    id: "root-screen-tests-Test645"

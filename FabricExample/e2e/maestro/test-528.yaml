@@ -1,0 +1,18 @@
+# From e2e/issuesTests/Test528.e2e.ts (orientation - iOS)
+appId: org.reactjs.native.example.FabricExample
+name: Test528 orientation
+---
+- launchApp
+- tapOn:
+    id: "root-screen-switch-search-bar"
+- inputText: "Test528"
+- tapOn:
+    id: "root-screen-tests-Test528"
+- assertVisible:
+    text: "Custom Button"
+- setOrientation: landscape
+- assertVisible:
+    text: "Custom Button"
+- setOrientation: portrait
+- assertVisible:
+    text: "Custom Button"
