@@ -48,7 +48,7 @@ const testButlerApkPath = isRunningCI
  * Example: `RNS_IOS_VERSION="iOS 18.6" RNS_APPLE_SIM_NAME="iPhone 17 Pro" yarn test-e2e-ios` will fail
  * as iPhone 17 Pro was released with iOS 26
  *
- * @param {string} applicationName name (FabricExample / ScreensExample)
+ * @param {string} applicationName name (FabricExample)
  * @returns {Detox.DetoxConfig}
  */
 function commonDetoxConfigFactory(applicationName) {

@@ -12,7 +12,7 @@ const pressBack = async () => {
 
 const awaitClassicalEventBehavior = async () => {
   if (device.getPlatform() === 'ios') {
-    // The order of events in this test differs from the Paper version of the same test.
+    // The order of events in this test differs from Paper.
     // Please see https://github.com/software-mansion/react-native-screens/pull/2785 for details.
     await expect(
       element(by.text('9. Chats | transitionStart | closing')),
