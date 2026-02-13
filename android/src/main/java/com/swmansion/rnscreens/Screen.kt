@@ -708,6 +708,11 @@ class Screen(
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && isStable) {
             onSheetYTranslationChanged()
         }
+
+        // When detent changes, dimming might also change. If so, we need to update a11y.
+        if (isNativeStackScreen) {
+            (container as ScreenStack).updateA11yForVisibleScreens()
+        }
     }
 
     internal fun onSheetYTranslationChanged() {
