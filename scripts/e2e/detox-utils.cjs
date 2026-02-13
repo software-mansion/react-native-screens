@@ -8,7 +8,7 @@ const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 // test-butler requires AOSP emulator image, which is not available to download for arm64-v8a in Android Studio SDK Manager, therefore
 // it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
 const testButlerApkPath = isRunningCI
-  ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk']
+  ? ['../FabricExample/e2e/test-butler-app-2.2.1.apk']
   : undefined;
 
 /**
@@ -40,7 +40,7 @@ const testButlerApkPath = isRunningCI
  * * `RNS_IOS_VERSION` env var can be specified to request particular iOS version
  * for the given simulator. Note that required SDK & simulators must be installed.
  * Example: RNS_IOS_VERSION="iOS 26.1"
- * 
+ *
  * * Remember:
  * Device versions are assigned to iOS versions.
  * That means running a version that has never been available
