@@ -358,7 +358,7 @@ class ScreenStack(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             screen.changeFocusability(
                 if (focusable) FOCUSABLE_AUTO else NOT_FOCUSABLE,
-                descendantFocusability
+                descendantFocusability,
             )
         } else {
             screen.changeFocusabilityCompat(focusable, descendantFocusability)
