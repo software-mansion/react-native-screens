@@ -77,6 +77,10 @@ class TabScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
+    var selectedIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+    }
+
     var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
     var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
 
