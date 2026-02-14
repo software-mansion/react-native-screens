@@ -26,10 +26,10 @@ internal class ScreenDummyLayoutHelper(
 ) : LifecycleEventListener {
     // The state required to compute header dimensions. We want this on instance rather than on class
     // for context access & being tied to instance lifetime.
-    private lateinit var coordinatorLayout: CoordinatorLayout
-    private lateinit var appBarLayout: AppBarLayout
-    private lateinit var dummyContentView: View
-    private lateinit var toolbar: Toolbar
+    private var coordinatorLayout: CoordinatorLayout? = null
+    private var appBarLayout: AppBarLayout? = null
+    private var dummyContentView: View? = null
+    private var toolbar: Toolbar? = null
     private var defaultFontSize: Float = 0f
     private var defaultContentInsetStartWithNavigation: Int = 0
 
@@ -53,10 +53,11 @@ internal class ScreenDummyLayoutHelper(
         }
 
         weakInstance = WeakReference(this)
-
-        if (!(reactContext.hasCurrentActivity() && maybeInitDummyLayoutWithHeader(reactContext))) {
-            reactContext.addLifecycleEventListener(this)
+        if (reactContext.hasCurrentActivity()) {
+            maybeInitDummyLayoutWithHeader(reactContext)
         }
+        // Register listener for cleanup resources(context, views, etc) at onHostDestroy
+        reactContext.addLifecycleEventListener(this)
     }
 
     /**
@@ -126,10 +127,10 @@ internal class ScreenDummyLayoutHelper(
             }
 
         // We know the title text view will be there, cause we've just set title.
-        defaultFontSize = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)!!.textSize
-        defaultContentInsetStartWithNavigation = toolbar.contentInsetStartWithNavigation
+        defaultFontSize = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar!!)!!.textSize
+        defaultContentInsetStartWithNavigation = toolbar!!.contentInsetStartWithNavigation
 
-        appBarLayout.addView(toolbar)
+        appBarLayout!!.addView(toolbar)
 
         dummyContentView =
             View(contextWithTheme).apply {
@@ -140,7 +141,7 @@ internal class ScreenDummyLayoutHelper(
                     )
             }
 
-        coordinatorLayout.apply {
+        coordinatorLayout!!.apply {
             addView(appBarLayout)
             addView(dummyContentView)
         }
@@ -174,47 +175,51 @@ internal class ScreenDummyLayoutHelper(
             }
         }
 
-        if (cache.hasKey(CacheKey(fontSize, isTitleEmpty))) {
-            return cache.headerHeight
+        synchronized(this) {
+            val coordinator = coordinatorLayout ?: return 0.0f
+            val appBar = appBarLayout ?: return 0.0f
+            val toolBar = toolbar ?: return 0.0f
+
+            if (cache.hasKey(CacheKey(fontSize, isTitleEmpty))) {
+                return cache.headerHeight
+            }
+
+            val topLevelDecorView = requireActivity().window.decorView
+            val topInset = getDecorViewTopInset(topLevelDecorView)
+
+            // These dimensions are not accurate, as they do include navigation bar, however
+            // it is ok for our purposes.
+            val decorViewWidth = topLevelDecorView.width
+            val decorViewHeight = topLevelDecorView.height
+
+            val widthMeasureSpec =
+                View.MeasureSpec.makeMeasureSpec(decorViewWidth, View.MeasureSpec.EXACTLY)
+            val heightMeasureSpec =
+                View.MeasureSpec.makeMeasureSpec(decorViewHeight, View.MeasureSpec.EXACTLY)
+
+            if (isTitleEmpty) {
+                toolBar.title = ""
+                toolBar.contentInsetStartWithNavigation = 0
+            } else {
+                toolBar.title = DEFAULT_HEADER_TITLE
+                toolBar.contentInsetStartWithNavigation = defaultContentInsetStartWithNavigation
+            }
+
+            val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolBar)
+            textView?.textSize = if (fontSize != FONT_SIZE_UNSET) {
+                fontSize.toFloat()
+            } else {
+                defaultFontSize
+            }
+
+            coordinatorLayout?.measure(widthMeasureSpec, heightMeasureSpec)
+            coordinatorLayout?.layout(0, 0, decorViewWidth, decorViewHeight)
+
+            val totalAppBarLayoutHeight = appBar.height.toFloat() + topInset
+            val headerHeight = PixelUtil.toDIPFromPixel(totalAppBarLayoutHeight)
+            cache = CacheEntry(CacheKey(fontSize, isTitleEmpty), headerHeight)
+            return headerHeight
         }
-
-        val topLevelDecorView = requireActivity().window.decorView
-        val topInset = getDecorViewTopInset(topLevelDecorView)
-
-        // These dimensions are not accurate, as they do include navigation bar, however
-        // it is ok for our purposes.
-        val decorViewWidth = topLevelDecorView.width
-        val decorViewHeight = topLevelDecorView.height
-
-        val widthMeasureSpec =
-            View.MeasureSpec.makeMeasureSpec(decorViewWidth, View.MeasureSpec.EXACTLY)
-        val heightMeasureSpec =
-            View.MeasureSpec.makeMeasureSpec(decorViewHeight, View.MeasureSpec.EXACTLY)
-
-        if (isTitleEmpty) {
-            toolbar.title = ""
-            toolbar.contentInsetStartWithNavigation = 0
-        } else {
-            toolbar.title = DEFAULT_HEADER_TITLE
-            toolbar.contentInsetStartWithNavigation = defaultContentInsetStartWithNavigation
-        }
-
-        val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)
-        textView?.textSize =
-            if (fontSize != FONT_SIZE_UNSET) fontSize.toFloat() else defaultFontSize
-
-        coordinatorLayout.measure(widthMeasureSpec, heightMeasureSpec)
-
-        // It seems that measure pass would be enough, however I'm not certain whether there are no
-        // scenarios when layout violates measured dimensions.
-        coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
-
-        // Include the top inset to account for the extra padding manually applied to the CustomToolbar.
-        val totalAppBarLayoutHeight = appBarLayout.height.toFloat() + topInset
-
-        val headerHeight = PixelUtil.toDIPFromPixel(totalAppBarLayoutHeight)
-        cache = CacheEntry(CacheKey(fontSize, isTitleEmpty), headerHeight)
-        return headerHeight
     }
 
     private fun requireReactContext(lazyMessage: (() -> Any)? = null): ReactApplicationContext =
@@ -253,21 +258,27 @@ internal class ScreenDummyLayoutHelper(
     private var isLayoutInitialized = false
 
     override fun onHostResume() {
-        // This is the earliest we have guarantee that the context has a reference to an activity.
         val reactContext = requireReactContext { "[RNScreens] ReactContext missing in onHostResume! This should not happen." }
 
         // There are some exotic edge cases where activity might not be present in context
         // at this point, e.g. when reloading RN in development after an error was reported with redbox.
-        if (maybeInitDummyLayoutWithHeader(reactContext)) {
+        if (!maybeInitDummyLayoutWithHeader(reactContext)) {
             reactContext.removeLifecycleEventListener(this)
-        } else {
-            Log.w(TAG, "[RNScreens] Failed to initialise dummy layout in onHostResume.")
         }
     }
 
     override fun onHostPause() = Unit
 
     override fun onHostDestroy() {
+        synchronized(this) {
+            coordinatorLayout = null
+            appBarLayout = null
+            dummyContentView = null
+            toolbar = null
+            cache = CacheEntry.EMPTY
+            isLayoutInitialized = false
+
+        }
         reactContextRef.get()?.removeLifecycleEventListener(this)
     }
 }
