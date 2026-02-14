@@ -313,24 +313,51 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
   }
 }
 
+function parseAndroidSelectedIconToNativeProps(icon: PlatformIconAndroid | undefined): {
+	selectedIconImageSource?: ImageResolvedAssetSource;
+	selectedIconResourceName?: string;
+} {
+	if (!icon) {
+		return {};
+	}
+	if (icon.type === 'imageSource') {
+		const parsedIconResource = Image.resolveAssetSource(icon.imageSource);
+		if (!parsedIconResource) {
+			console.error('[RNScreens] failed to resolve an asset for bottom tab selected icon');
+		}
+		return {
+			selectedIconImageSource: parsedIconResource || undefined,
+		};
+	} else if (icon.type === 'drawableResource') {
+		return {
+			selectedIconResourceName: icon.name,
+		};
+	}
+	return {};
+}
+
 function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
-  selectedIcon: PlatformIconIOS | undefined,
+  selectedIcon: PlatformIconIOS | PlatformIconAndroid | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconResourceName?: string;
-  selectedIconImageSource?: ImageSourcePropType;
+  selectedIconImageSource?: ImageResolvedAssetSource | ImageSourcePropType;
   selectedIconResourceName?: string;
 } {
   if (Platform.OS === 'android') {
     const androidNativeProps = parseAndroidIconToNativeProps(
       icon?.android || icon?.shared,
     );
+    const androidSelectedIconNativeProps = parseAndroidSelectedIconToNativeProps(
+      (selectedIcon as PlatformIconAndroid) || undefined,
+    );
     return {
       ...androidNativeProps,
+      ...androidSelectedIconNativeProps,
     };
   }
 
@@ -342,7 +369,7 @@ function parseIconsToNativeProps(
       iconImageSource: selectedIconImageSource,
       iconResourceName: selectedIconResourceName,
       iconType: selectedIconType,
-    } = parseIOSIconToNativeProps(selectedIcon);
+    } = parseIOSIconToNativeProps(selectedIcon as PlatformIconIOS | undefined);
 
     if (
       iconType !== undefined &&

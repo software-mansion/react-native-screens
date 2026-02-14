@@ -87,7 +87,12 @@ class TabScreenViewManager :
     override fun setSelectedIconImageSource(
         view: TabScreen?,
         value: ReadableMap?,
-    ) = Unit
+    ) {
+        val uri = value?.getString("uri")
+        if (uri != null && view != null) {
+            loadTabImage(view.context, uri, view, isSelectedIcon = true)
+        }
+    }
 
     override fun setSelectedIconResourceName(
         view: TabScreen?,
