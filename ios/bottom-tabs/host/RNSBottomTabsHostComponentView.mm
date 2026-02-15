@@ -352,6 +352,12 @@ namespace react = facebook::react;
       }
   }
 
+  if (newComponentProps.direction != oldComponentProps.direction) {
+    _direction = [RNSConvert UISemanticContentAttributeFromBottomTabsDirection:newComponentProps.direction];
+    _controller.view.semanticContentAttribute = _direction;
+    _controller.tabBar.semanticContentAttribute = _direction;
+  }
+
   // Super call updates _props pointer. We should NOT update it before calling super.
   [super updateProps:props oldProps:oldProps];
 }
@@ -542,6 +548,13 @@ RNS_IGNORE_SUPER_CALL_END
     if (tabBarControllerMode != RNSTabBarControllerModeAutomatic) {
       RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
     }
+}
+
+- (void)setDirection:(UISemanticContentAttribute)direction
+{
+  _direction = direction;
+  _controller.view.semanticContentAttribute = _direction;
+  _controller.tabBar.semanticContentAttribute = _direction;
 }
 
 - (void)setOnNativeFocusChange:(RCTDirectEventBlock)onNativeFocusChange
