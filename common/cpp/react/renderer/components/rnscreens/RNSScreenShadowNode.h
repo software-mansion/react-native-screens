@@ -4,8 +4,10 @@
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
+#include <react/renderer/core/LayoutConstraints.h>
 #include <react/renderer/core/LayoutContext.h>
 #include "FrameCorrectionModes.h"
+#include "RNSScreenStackHeaderConfigShadowNode.h"
 #include "RNSScreenState.h"
 
 namespace facebook {
@@ -41,10 +43,16 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 #ifdef ANDROID
   void resetFrameSizeState();
 
+  void applyHeaderPadding();
+
  private:
   void applyFrameCorrections();
 
   StateData &getStateDataMutable();
+
+  void doApplyHeaderPadding(
+      std::optional<const std::reference_wrapper<
+          const std::shared_ptr<const ShadowNode>>>);
 #endif // ANDROID
 };
 

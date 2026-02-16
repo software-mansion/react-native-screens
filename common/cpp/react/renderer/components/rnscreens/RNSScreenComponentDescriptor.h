@@ -108,6 +108,7 @@ class RNSScreenComponentDescriptor final
       // The if condition holds true on first render and when it is reset inside
       // RNSScreenShadowNodeCommitHook.
       layoutableShadowNode.setSize({YGUndefined, YGUndefined});
+      screenShadowNode.applyHeaderPadding();
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
