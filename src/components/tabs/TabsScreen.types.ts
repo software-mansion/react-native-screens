@@ -107,13 +107,6 @@ export interface AndroidTabsAppearance {
    * @platform android
    */
   disabled?: AndroidTabsScreenItemStateAppearance;
-
-  /**
-   * @summary Specifies the ripple color when an item is touched.
-   *
-   * @platform android
-   */
-  tabBarItemRippleColor?: ColorValue;
 }
 
 export interface AndroidTabsScreenItemStateAppearance {
@@ -179,6 +172,13 @@ export interface AndroidTabsScreenItemStateAppearance {
    * @platform android
    */
   tabBarItemActiveIndicatorColor?: ColorValue;
+
+  /**
+   * @summary Specifies the ripple color when an item is touched.
+   *
+   * @platform android
+   */
+  tabBarItemRippleColor?: ColorValue;
 }
 
 // iOS-specific
