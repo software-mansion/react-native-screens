@@ -162,6 +162,14 @@ export interface AndroidTabsScreenItemStateAppearance {
    */
   tabBarItemIconColor?: ColorValue;
   /**
+   * @summary Specifies if the active indicator should be used.
+   *
+   * @default true
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorEnabled?: boolean;
+  /**
    * @summary Specifies the background color of the active indicator.
    *
    * @platform android
