@@ -350,6 +350,19 @@ export interface TabsScreenProps {
    */
   icon?: PlatformIcon;
   /**
+   * @summary Specifies the icon for tab bar item when it is selected.
+   *
+   * Supports the same values as `icon` property for given platform.
+   *
+   * To use `selectedIcon`, `icon` must also be provided.
+   *
+   * @remark Initially, it was supported only on iOS, therefore, we need to
+   * keep PlatformIconIOS type for a backward compatibility.
+   *
+   * @platform android, ios
+   */
+  selectedIcon?: PlatformIcon | PlatformIconIOS;
+  /**
    * @summary Specifies which special effects (also known as microinteractions)
    * are enabled for the tab screen.
    *
@@ -502,19 +515,6 @@ export interface TabsScreenProps {
    * @platform ios
    */
   scrollEdgeAppearance?: TabsScreenAppearance;
-  /**
-   * @summary Specifies the icon for tab bar item when it is selected.
-   *
-   * Supports the same values as `icon` property for given platform.
-   *
-   * To use `selectedIcon`, `icon` must also be provided.
-   *
-   * @remark Initially, it was supported only on iOS, therefore, we need to
-   * keep PlatformIconIOS type for a backward compatibility.
-   *
-   * @platform android, ios
-   */
-  selectedIcon?: PlatformIcon | PlatformIconIOS;
   /**
    * @summary System-provided tab bar item with predefined icon and title
    *
