@@ -49,7 +49,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateShadowStateInContextOfAncestorView:(nullable UIView *)ancestorView withFrame:(CGRect)frame;
 #endif
 
+/**
+ * Returns UIBarButtonItem associated with this subview. If it doesn't exist, UIBarButtonItem is created.
+ * UIBarButtonItem is strongly retained by RNSScreenStackHeaderSubview. It must be cleared via
+ * `invalidateUIBarButtonItem` to prevent memory leak.
+ */
 - (UIBarButtonItem *)getUIBarButtonItem;
+
+/**
+ * Clears reference to UIBarButtonItem. It must be called when UIBarButtonItem is no longer needed to prevent memory
+ * leak.
+ */
+- (void)invalidateUIBarButtonItem;
 
 @end
 

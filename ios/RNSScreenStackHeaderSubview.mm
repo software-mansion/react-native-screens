@@ -27,8 +27,8 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   CGSize _lastReactFrameSize;
 #endif // !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  // TODO: Refactor this, so that we don't keep reference here at all.
-  // Currently this likely creates retain cycle between subview & the bar button item.
+  // This is a strong reference to UIBarButtonItem which creates a retain cycle.
+  // It must be cleared via `invalidateUIBarButtonItem` method.
   UIBarButtonItem *_barButtonItem;
   BOOL _hidesSharedBackground;
 }
@@ -278,21 +278,32 @@ RNS_IGNORE_SUPER_CALL_END
       // 2. Set content hugging priority for RNSScreenStackHeaderSubview.
       [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
       [self setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-      
+
       // 3. Set compression resistance to prevent UIKit from shrinking the subview below its intrinsic size.
       [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
       [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 
+      // This creates a retain cycle. The reference must be later cleared via `invalidateUIBarButtonItem` method.
       _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
     } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     {
+      // This creates a retain cycle. The reference must be later cleared via `invalidateUIBarButtonItem` method.
       _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self];
     }
     [self configureBarButtonItem];
   }
 
   return _barButtonItem;
+}
+
+- (void)invalidateUIBarButtonItem
+{
+  if (_type != RNSScreenStackHeaderSubviewTypeLeft && _type != RNSScreenStackHeaderSubviewTypeRight) {
+    return;
+  }
+
+  _barButtonItem = nil;
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
