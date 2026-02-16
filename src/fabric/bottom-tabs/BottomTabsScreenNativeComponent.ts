@@ -53,6 +53,38 @@ export type Appearance = {
   tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
 };
 
+type TabBarItemLabelVisibilityMode =
+  | 'auto'
+  | 'selected'
+  | 'labeled'
+  | 'unlabeled';
+
+export type ItemAppearanceAndroid = {
+  tabBarBackgroundColor?: ColorValue;
+  tabBarItemTitleFontFamily?: string;
+  tabBarItemTitleFontSize?: CT.Float;
+  tabBarItemTitleFontWeight?: string;
+  tabBarItemTitleFontStyle?: string;
+  tabBarItemTitleFontColor?: ColorValue;
+  tabBarItemIconColor?: ColorValue;
+  tabBarItemActiveIndicatorColor?: ColorValue;
+  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
+  tabBarItemRippleColor?: ColorValue;
+  tabBarItemBadgeTextColor?: ColorValue;
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+  tabBarItemLabelVisibilityMode?: CT.WithDefault<
+    TabBarItemLabelVisibilityMode,
+    'auto'
+  >;
+};
+
+export type AppearanceAndroid = {
+  normal?: ItemAppearanceAndroid;
+  selected?: ItemAppearanceAndroid;
+  focused?: ItemAppearanceAndroid;
+  disabled?: ItemAppearanceAndroid;
+};
+
 type BlurEffect =
   | 'none'
   | 'systemDefault'
@@ -134,8 +166,9 @@ export interface NativeProps extends ViewProps {
   // Android-specific image handling
   drawableIconResourceName?: string;
   imageIconResource?: ImageSource;
-  tabBarItemBadgeTextColor?: ColorValue;
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+
+  // Android-specific
+  standardAppearanceAndroid?: UnsafeMixed<AppearanceAndroid>;
 
   // iOS-specific
   standardAppearance?: UnsafeMixed<Appearance>;
