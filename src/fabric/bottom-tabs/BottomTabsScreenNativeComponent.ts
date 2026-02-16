@@ -60,22 +60,14 @@ type TabBarItemLabelVisibilityMode =
   | 'unlabeled';
 
 export type ItemAppearanceAndroid = {
-  tabBarBackgroundColor?: ColorValue;
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: CT.Float;
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
   tabBarItemTitleFontColor?: ColorValue;
   tabBarItemIconColor?: ColorValue;
-  tabBarItemActiveIndicatorColor?: ColorValue;
-  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
-  tabBarItemRippleColor?: ColorValue;
   tabBarItemBadgeTextColor?: ColorValue;
   tabBarItemBadgeBackgroundColor?: ColorValue;
-  tabBarItemLabelVisibilityMode?: CT.WithDefault<
-    TabBarItemLabelVisibilityMode,
-    'auto'
-  >;
 };
 
 export type AppearanceAndroid = {
@@ -83,6 +75,15 @@ export type AppearanceAndroid = {
   selected?: ItemAppearanceAndroid;
   focused?: ItemAppearanceAndroid;
   disabled?: ItemAppearanceAndroid;
+
+  tabBarBackgroundColor?: ColorValue;
+  tabBarItemRippleColor?: ColorValue;
+  tabBarItemActiveIndicatorColor?: ColorValue;
+  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
+  tabBarItemLabelVisibilityMode?: CT.WithDefault<
+    TabBarItemLabelVisibilityMode,
+    'auto'
+  >;
 };
 
 type BlurEffect =

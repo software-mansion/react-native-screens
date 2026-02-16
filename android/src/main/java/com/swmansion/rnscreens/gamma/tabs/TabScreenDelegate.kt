@@ -4,6 +4,8 @@ import android.content.res.Configuration
 import androidx.fragment.app.Fragment
 
 internal interface TabScreenDelegate {
+    fun onAppearanceChanged(tabScreen: TabScreen)
+
     fun onTabFocusChangedFromJS(
         tabScreen: TabScreen,
         isFocused: Boolean,

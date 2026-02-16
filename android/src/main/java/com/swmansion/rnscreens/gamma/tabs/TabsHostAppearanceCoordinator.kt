@@ -14,9 +14,11 @@ class TabsHostAppearanceCoordinator(
     private val appearanceApplicator = TabsHostAppearanceApplicator(context, bottomNavigationView)
 
     fun updateTabAppearance(tabsHost: TabsHost) {
-        appearanceApplicator.updateSharedAppearance(tabsHost)
+        val activeTabScreen = tabsHost.currentFocusedTabOrNull?.tabScreen
+
+        appearanceApplicator.updateSharedAppearance(tabsHost, activeTabScreen)
         updateMenuItems()
-        appearanceApplicator.updateFontStyles(tabsHost) // It needs to be updated after updateMenuItems
+        appearanceApplicator.updateFontStyles(tabsHost, activeTabScreen) // It needs to be updated after updateMenuItems
     }
 
     private fun updateMenuItems() {

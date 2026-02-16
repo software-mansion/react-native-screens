@@ -156,6 +156,9 @@ class TabsHost(
     private val currentFocusedTab: TabScreenFragment
         get() = checkNotNull(tabScreenFragments.find { it.tabScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
 
+    internal val currentFocusedTabOrNull: TabScreenFragment?
+        get() = tabScreenFragments.find { it.tabScreen.isFocusedTab }
+
     private var lastAppliedUiMode: Int? = null
 
     private var isLayoutEnqueued: Boolean = false
@@ -166,62 +169,6 @@ class TabsHost(
         TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabScreenFragments)
-
-    var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemActiveIndicatorColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var isTabBarItemActiveIndicatorEnabled: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemIconColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontFamily: String? by Delegates.observable<String?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemIconColorActive: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontColorActive: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontSize: Float? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontSizeActive: Float? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontWeight: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontStyle: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemRippleColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemLabelVisibilityMode: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
 
     var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -333,6 +280,15 @@ class TabsHost(
         containerUpdateCoordinator.let {
             it.invalidateAll()
             it.postContainerUpdateIfNeeded()
+        }
+    }
+
+    override fun onAppearanceChanged(tabScreen: TabScreen) {
+        if (tabScreen.isFocusedTab) {
+            containerUpdateCoordinator.let {
+                it.invalidateNavigationMenu()
+                it.postContainerUpdateIfNeeded()
+            }
         }
     }
 

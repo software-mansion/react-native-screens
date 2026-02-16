@@ -20,18 +20,18 @@ const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       standardAppearanceAndroid: {
+        tabBarBackgroundColor: Colors.NavyLight100,
+        tabBarItemRippleColor: Colors.WhiteTransparentDark,
+        tabBarItemLabelVisibilityMode: "auto",
+        tabBarItemActiveIndicatorColor: Colors.GreenLight40,
+        tabBarItemActiveIndicatorEnabled: true,
         normal: {
-          tabBarBackgroundColor: Colors.NavyLight100,
-          tabBarItemActiveIndicatorColor: Colors.GreenLight40,
-          tabBarItemActiveIndicatorEnabled: true,
           tabBarItemIconColor: Colors.BlueLight100,
           tabBarItemTitleFontColor:Colors .BlueLight40,
           tabBarItemTitleFontSize: 10,
-          tabBarItemRippleColor: Colors.WhiteTransparentDark,
           tabBarItemTitleFontFamily: "monospace",
           tabBarItemTitleFontStyle: "italic",
           tabBarItemTitleFontWeight: "700",
-          tabBarItemLabelVisibilityMode: "auto"
         },
         selected: {
           tabBarItemIconColor: Colors.GreenLight100,

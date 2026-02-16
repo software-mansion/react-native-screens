@@ -1,7 +1,10 @@
 package com.swmansion.rnscreens.gamma.tabs
 
+import android.graphics.Color
+import android.util.Log
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.ReadableType
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -60,14 +63,6 @@ class TabScreenViewManager :
         view: TabScreen,
         value: Dynamic,
     ) = Unit
-
-    @ReactProp(name = "tabBarItemBadgeBackgroundColor", customType = "Color")
-    override fun setTabBarItemBadgeBackgroundColor(
-        view: TabScreen,
-        value: Int?,
-    ) {
-        view.tabBarItemBadgeBackgroundColor = value
-    }
 
     override fun setIconType(
         view: TabScreen?,
@@ -198,13 +193,6 @@ class TabScreenViewManager :
     }
 
     // Android specific
-    @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
-    override fun setTabBarItemBadgeTextColor(
-        view: TabScreen,
-        value: Int?,
-    ) {
-        view.tabBarItemBadgeTextColor = value
-    }
 
     @ReactProp(name = "drawableIconResourceName")
     override fun setDrawableIconResourceName(
@@ -238,6 +226,87 @@ class TabScreenViewManager :
         if (uri != null) {
             loadTabImage(view.context, uri, view)
         }
+    }
+
+    @ReactProp(name = "standardAppearanceAndroid")
+    override fun setStandardAppearanceAndroid(
+        view: TabScreen,
+        value: Dynamic?,
+    ) {
+        if (value == null || value.isNull) {
+            view.appearance = null
+            return
+        }
+        val map = if (value.type == ReadableType.Map) value.asMap() else null
+
+        if (map == null) {
+            view.appearance = null
+            return
+        }
+
+        view.appearance = parseAndroidTabsAppearance(map)
+    }
+
+    private fun ReadableMap.getOptionalBoolean(key: String): Boolean? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.Boolean) getBoolean(key) else null
+    }
+
+    private fun ReadableMap.getOptionalString(key: String): String? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.String) getString(key) else null
+    }
+
+    private fun ReadableMap.getOptionalFloat(key: String): Float? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.Number) getDouble(key).toFloat() else null
+    }
+
+    /**
+     * Safely retrieves a Color.
+     * Supports both Integer (processed color) and String (hex/name) values.
+     */
+    private fun ReadableMap.getOptionalColor(key: String): Int? {
+        if (!hasKey(key) || isNull(key)) return null
+
+        return try {
+            when (getType(key)) {
+                ReadableType.Number -> getInt(key)
+                ReadableType.String -> Color.parseColor(getString(key))
+                else -> null
+            }
+        } catch (e: Exception) {
+            Log.w(REACT_CLASS, "[RNScreens] Could not parse color for key '$key': ${e.message}")
+            null
+        }
+    }
+
+    private fun parseAndroidTabsAppearance(map: ReadableMap): AndroidTabsAppearance =
+        AndroidTabsAppearance(
+            normal = if (map.hasKey("normal")) parseStateAppearance(map.getMap("normal")) else null,
+            selected = if (map.hasKey("selected")) parseStateAppearance(map.getMap("selected")) else null,
+            focused = if (map.hasKey("focused")) parseStateAppearance(map.getMap("focused")) else null,
+            disabled = if (map.hasKey("disabled")) parseStateAppearance(map.getMap("disabled")) else null,
+
+            tabBarBackgroundColor = map.getOptionalColor("tabBarBackgroundColor"),
+            tabBarItemRippleColor = map.getOptionalColor("tabBarItemRippleColor"),
+            tabBarItemActiveIndicatorColor = map.getOptionalColor("tabBarItemActiveIndicatorColor"),
+            tabBarItemActiveIndicatorEnabled = map.getOptionalBoolean(key = "tabBarItemActiveIndicatorEnabled"),
+            tabBarItemLabelVisibilityMode = map.getOptionalString("tabBarItemLabelVisibilityMode"),
+        )
+
+    private fun parseStateAppearance(map: ReadableMap?): AndroidTabsScreenItemStateAppearance? {
+        if (map == null) return null
+        return AndroidTabsScreenItemStateAppearance(
+            tabBarItemTitleFontFamily = map.getOptionalString("tabBarItemTitleFontFamily"),
+            tabBarItemTitleFontSize = map.getOptionalFloat("tabBarItemTitleFontSize"),
+            tabBarItemTitleFontWeight = map.getOptionalString("tabBarItemTitleFontWeight"),
+            tabBarItemTitleFontStyle = map.getOptionalString("tabBarItemTitleFontStyle"),
+            tabBarItemTitleFontColor = map.getOptionalColor("tabBarItemTitleFontColor"),
+            tabBarItemIconColor = map.getOptionalColor("tabBarItemIconColor"),
+            tabBarItemBadgeBackgroundColor = map.getOptionalColor("tabBarItemBadgeBackgroundColor"),
+            tabBarItemBadgeTextColor = map.getOptionalColor("tabBarItemBadgeTextColor"),
+        )
     }
 
     companion object {

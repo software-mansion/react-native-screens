@@ -30,6 +30,12 @@ class TabScreen(
 
     internal lateinit var eventEmitter: TabScreenEventEmitter
 
+    var appearance: AndroidTabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            tabScreenDelegate.get()?.onAppearanceChanged(this)
+        }
+    }
+
     var tabKey: String? = null
         set(value) {
             field =
