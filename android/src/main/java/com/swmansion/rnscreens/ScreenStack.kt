@@ -8,9 +8,9 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
+import com.swmansion.rnscreens.bottomsheet.sheetShouldUseDimmingView
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
-import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ReverseFromIndex
 import com.swmansion.rnscreens.stack.views.ReverseOrder
@@ -335,13 +335,10 @@ class ScreenStack(
 
     private fun shouldDisableFocusabilityForVisibleScreens(): Boolean {
         topScreenWrapper?.let {
-            if (it.screen.usesFormSheetPresentation()) {
-                val screenStackFragment = it.fragment.asScreenStackFragment()
-                screenStackFragment.sheetDelegate?.let { delegate ->
-                    return delegate.lastStableDetentIndex > it.screen.sheetLargestUndimmedDetentIndex
-                }
+            return if (it.screen.usesFormSheetPresentation()) {
+                it.screen.sheetShouldUseDimmingView()
             } else {
-                return it.isTranslucent()
+                it.isTranslucent()
             }
         }
         return false
