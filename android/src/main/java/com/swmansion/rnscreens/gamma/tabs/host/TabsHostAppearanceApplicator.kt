@@ -162,7 +162,6 @@ class TabsHostAppearanceApplicator(
 
         val targetIcon =
             if (tabScreen.isFocusedTab) {
-                // Fallback to tabScreen.icon for backward compatibility
                 tabScreen.selectedIcon ?: tabScreen.icon
             } else {
                 tabScreen.icon
