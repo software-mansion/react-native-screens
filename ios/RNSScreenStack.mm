@@ -1379,8 +1379,7 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenStackProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenStackProps>(props);
 
-  if (newScreenProps.iosPreventReattachmentOfDismissedScreens !=
-      oldScreenProps.iosPreventReattachmentOfDismissedScreens) {
+  if (newScreenProps.iosPreventReattachmentOfDismissedScreens != _iosPreventReattachmentOfDismissedScreens) {
     [self setIosPreventReattachmentOfDismissedScreens:newScreenProps.iosPreventReattachmentOfDismissedScreens];
   }
 
