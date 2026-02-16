@@ -11,9 +11,6 @@ require_relative '../../scripts/ios/rns_set_swift_compilation_flags'
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# From 0.76 new arch is enabled by default, we just want to have it explicitly set and for consistency with Example app
-ENV['RCT_NEW_ARCH_ENABLED'] = '1'
-
 # Disable precompiled binaries for RN core
 ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
 

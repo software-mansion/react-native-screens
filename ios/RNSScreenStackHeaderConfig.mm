@@ -38,8 +38,8 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-static constexpr auto DEFAULT_TITLE_FONT_SIZE = @17;
-static constexpr auto DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
+static NSNumber *const DEFAULT_TITLE_FONT_SIZE = @17;
+static NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 #if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data
