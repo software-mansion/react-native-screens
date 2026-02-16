@@ -38,6 +38,11 @@ function StackSetup() {
           Component: RedScreen,
           options: {},
         },
+        {
+          name: 'NestedHost',
+          Component: NestedHostScreen,
+          options: {},
+        },
       ]}
     />
   );
@@ -48,7 +53,7 @@ function HomeScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
       <StackNavigationButtons
         isPopEnabled={false}
-        routeNames={['Blue', 'Red']}
+        routeNames={['Blue', 'Red', 'NestedHost']}
       />
     </CenteredLayoutView>
   );
@@ -59,7 +64,7 @@ function BlueScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
       <StackNavigationButtons
         isPopEnabled={true}
-        routeNames={['Red', 'Blue']}
+        routeNames={['Red', 'Blue', 'NestedHost']}
       />
     </CenteredLayoutView>
   );
@@ -70,7 +75,64 @@ function RedScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
       <StackNavigationButtons
         isPopEnabled={true}
-        routeNames={['Blue', 'Red']}
+        routeNames={['Blue', 'Red', 'NestedHost']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedHostScreen() {
+  return (
+    <StackContainer
+      routeConfigs={[
+        {
+          name: 'NestedHome',
+          Component: NestedHomeScreen,
+          options: {},
+        },
+        {
+          name: 'NestedBlue',
+          Component: NestedBlueScreen,
+          options: {},
+        },
+        {
+          name: 'NestedRed',
+          Component: NestedRedScreen,
+          options: {},
+        },
+      ]}
+    />
+  );
+}
+
+function NestedHomeScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={true}
+        routeNames={['NestedBlue', 'NestedRed']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedBlueScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={true}
+        routeNames={['NestedRed', 'NestedBlue']}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function NestedRedScreen() {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
+      <StackNavigationButtons
+        isPopEnabled={true}
+        routeNames={['NestedBlue', 'NestedRed']}
       />
     </CenteredLayoutView>
   );
