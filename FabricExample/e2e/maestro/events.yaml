@@ -1,27 +1,228 @@
-# From e2e/examplesTests/events.e2e.ts (minimal: open Events, assert transition events exist)
+# Mirror of e2e/examplesTests/events.e2e.ts (same 9 its; header back = BackButton, native back = pressKey)
+# Event order: iOS classical 9–16; Android 9–12. This flow asserts iOS order; Android differs per Detox.
 appId: org.reactjs.native.example.FabricExample
 name: Events playground
 ---
 - launchApp
-
-# Scroll to Events playground (id may be root-screen-playground-Events)
+# beforeEach: scroll to Events
 - scrollUntilVisible:
     element:
       id: "root-screen-playground-Events"
     direction: DOWN
+
+# it('should Events playground exist')
+- assertVisible:
+    id: "root-screen-playground-Events"
 - tapOn:
     id: "root-screen-playground-Events"
 
-# Basic transition events
+# it('should run transitionStart & transitionEnd opening events')
 - assertVisible:
     text: "1. Main | transitionStart | opening"
 - assertVisible:
     text: "2. Main | transitionEnd | opening"
 
-# Go to Chats and back
+# it('should go back from Chats using header button and run opening & closing events in correct order')
 - tapOn:
     id: "events-go-to-chats"
 - tapOn:
     id: "BackButton"
 - assertVisible:
     text: "9. Chats | transitionStart | closing"
+- assertVisible:
+    text: "10. Privacy | transitionStart | closing"
+- assertVisible:
+    text: "11. Main | transitionStart | opening"
+- assertVisible:
+    text: "12. Privacy | beforeRemove"
+- assertVisible:
+    text: "13. Chats | beforeRemove"
+- assertVisible:
+    text: "14. Chats | transitionEnd | closing"
+- assertVisible:
+    text: "15. Privacy | transitionEnd | closing"
+- assertVisible:
+    text: "16. Main | transitionEnd | opening"
+
+# Back to root for next tests
+- tapOn:
+    id: "BackButton"
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-Events"
+    direction: DOWN
+
+# it('should use "none" animation, go back from Chats using header button...')
+- tapOn:
+    id: "root-screen-playground-Events"
+- tapOn:
+    id: "events-stack-animation-picker"
+- tapOn:
+    id: "stack-animation-none"
+- tapOn:
+    id: "events-go-to-chats"
+- tapOn:
+    id: "BackButton"
+- assertVisible:
+    text: "9. Chats | transitionStart | closing"
+- assertVisible:
+    text: "10. Privacy | transitionStart | closing"
+- assertVisible:
+    text: "11. Main | transitionStart | opening"
+- assertVisible:
+    text: "12. Privacy | beforeRemove"
+- assertVisible:
+    text: "13. Chats | beforeRemove"
+- assertVisible:
+    text: "14. Chats | transitionEnd | closing"
+- assertVisible:
+    text: "15. Privacy | transitionEnd | closing"
+- assertVisible:
+    text: "16. Main | transitionEnd | opening"
+
+- tapOn:
+    id: "BackButton"
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-Events"
+    direction: DOWN
+
+# it('should use "slide_from_bottom" animation, go to Chats and run opening & closing events...')
+- tapOn:
+    id: "root-screen-playground-Events"
+- tapOn:
+    id: "events-stack-animation-picker"
+- tapOn:
+    id: "stack-animation-slide_from_bottom"
+- tapOn:
+    id: "events-go-to-chats"
+- assertVisible:
+    text: "3. Main | transitionStart | closing"
+- assertVisible:
+    text: "4. Chats | transitionStart | opening"
+- assertVisible:
+    text: "5. Privacy | transitionStart | opening"
+- assertVisible:
+    text: "6. Main | transitionEnd | closing"
+- assertVisible:
+    text: "7. Chats | transitionEnd | opening"
+- assertVisible:
+    text: "8. Privacy | transitionEnd | opening"
+
+# it('should use "slide_from_bottom" animation, go back from Chats using header button...')
+- tapOn:
+    id: "BackButton"
+- assertVisible:
+    text: "9. Chats | transitionStart | closing"
+- assertVisible:
+    text: "10. Privacy | transitionStart | closing"
+- assertVisible:
+    text: "11. Main | transitionStart | opening"
+- assertVisible:
+    text: "12. Privacy | beforeRemove"
+- assertVisible:
+    text: "13. Chats | beforeRemove"
+- assertVisible:
+    text: "14. Chats | transitionEnd | closing"
+- assertVisible:
+    text: "15. Privacy | transitionEnd | closing"
+- assertVisible:
+    text: "16. Main | transitionEnd | opening"
+
+- tapOn:
+    id: "BackButton"
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-Events"
+    direction: DOWN
+
+# it('should go back from Chats using native way...')
+- tapOn:
+    id: "root-screen-playground-Events"
+- tapOn:
+    id: "events-go-to-chats"
+- pressKey: back
+- assertVisible:
+    text: "9. Chats | transitionStart | closing"
+- assertVisible:
+    text: "10. Privacy | transitionStart | closing"
+- assertVisible:
+    text: "11. Main | transitionStart | opening"
+- assertVisible:
+    text: "12. Privacy | beforeRemove"
+- assertVisible:
+    text: "13. Chats | beforeRemove"
+- assertVisible:
+    text: "14. Chats | transitionEnd | closing"
+- assertVisible:
+    text: "15. Privacy | transitionEnd | closing"
+- assertVisible:
+    text: "16. Main | transitionEnd | opening"
+
+- tapOn:
+    id: "BackButton"
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-Events"
+    direction: DOWN
+
+# it('should use "none" animation, go back from Chats using native way...')
+- tapOn:
+    id: "root-screen-playground-Events"
+- tapOn:
+    id: "events-stack-animation-picker"
+- tapOn:
+    id: "stack-animation-none"
+- tapOn:
+    id: "events-go-to-chats"
+- pressKey: back
+- assertVisible:
+    text: "9. Chats | transitionStart | closing"
+- assertVisible:
+    text: "10. Privacy | transitionStart | closing"
+- assertVisible:
+    text: "11. Main | transitionStart | opening"
+- assertVisible:
+    text: "12. Privacy | beforeRemove"
+- assertVisible:
+    text: "13. Chats | beforeRemove"
+- assertVisible:
+    text: "14. Chats | transitionEnd | closing"
+- assertVisible:
+    text: "15. Privacy | transitionEnd | closing"
+- assertVisible:
+    text: "16. Main | transitionEnd | opening"
+
+- tapOn:
+    id: "BackButton"
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-Events"
+    direction: DOWN
+
+# it('should use "slide_from_bottom" animation, go back from Chats using native way...')
+- tapOn:
+    id: "root-screen-playground-Events"
+- tapOn:
+    id: "events-stack-animation-picker"
+- tapOn:
+    id: "stack-animation-slide_from_bottom"
+- tapOn:
+    id: "events-go-to-chats"
+- pressKey: back
+- assertVisible:
+    text: "9. Chats | transitionStart | closing"
+- assertVisible:
+    text: "10. Privacy | transitionStart | closing"
+- assertVisible:
+    text: "11. Main | transitionStart | opening"
+- assertVisible:
+    text: "12. Privacy | beforeRemove"
+- assertVisible:
+    text: "13. Chats | beforeRemove"
+- assertVisible:
+    text: "14. Chats | transitionEnd | closing"
+- assertVisible:
+    text: "15. Privacy | transitionEnd | closing"
+- assertVisible:
+    text: "16. Main | transitionEnd | opening"

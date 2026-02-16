@@ -1,19 +1,29 @@
-# From e2e/issuesTests/Test649.e2e.ts (iOS large title)
+# Mirror of e2e/issuesTests/Test649.e2e.ts (iOS; same 3 its; Detox uses withAncestor(_UINavigationBarLargeTitleView) and toBeVisible(100) / not.toBeVisible(100))
 appId: org.reactjs.native.example.FabricExample
 name: Test649 large title
 ---
 - launchApp
+# it('Test649 should exist')
+- scrollUntilVisible:
+    element:
+      id: "root-screen-issue-tests"
+    direction: DOWN
 - tapOn:
-    id: "root-screen-switch-search-bar"
+    id: "root-screen-issue-tests"
+- tapOn:
+    id: "issue-tests-search-bar"
 - inputText: "Test649"
 - tapOn:
-    id: "root-screen-tests-Test649"
+    id: "issue-tests-Test649"
+# it('header large title "First" should be fully visible')
 - assertVisible:
     text: "First"
+# it('header title "Second" should not be a large title') — Detox: .not.toBeVisible(100) with ancestor
 - tapOn:
     id: "first-button-go-to-second"
 - assertVisible:
     text: "Second"
+# it('header large title "First" should be fully visible after coming back from Second')
 - tapOn:
     id: "second-button-go-to-first"
 - assertVisible:

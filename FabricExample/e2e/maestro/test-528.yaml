@@ -1,18 +1,37 @@
-# From e2e/issuesTests/Test528.e2e.ts (orientation - iOS)
+# Mirror of e2e/issuesTests/Test528.e2e.ts (iOS; same 3 its; setOrientation landscape/portrait -> LANDSCAPE_LEFT/PORTRAIT)
 appId: org.reactjs.native.example.FabricExample
 name: Test528 orientation
 ---
 - launchApp
+# it('Test528 should exist')
+- scrollUntilVisible:
+    element:
+      id: "root-screen-issue-tests"
+    direction: DOWN
 - tapOn:
-    id: "root-screen-switch-search-bar"
+    id: "root-screen-issue-tests"
+- tapOn:
+    id: "issue-tests-search-bar"
 - inputText: "Test528"
 - tapOn:
-    id: "root-screen-tests-Test528"
+    id: "issue-tests-Test528"
+# it('headerRight button should be visible after orientation change')
 - assertVisible:
     text: "Custom Button"
-- setOrientation: landscape
+- setOrientation: LANDSCAPE_LEFT
 - assertVisible:
     text: "Custom Button"
-- setOrientation: portrait
+- setOrientation: PORTRAIT
+- assertVisible:
+    text: "Custom Button"
+# it('headerRight button should be visible after coming back from horizontal screen')
+- tapOn:
+    text: "Go to Screen 2"
+- setOrientation: LANDSCAPE_LEFT
+- tapOn:
+    id: "BackButton"
+- assertVisible:
+    text: "Custom Button"
+- setOrientation: PORTRAIT
 - assertVisible:
     text: "Custom Button"

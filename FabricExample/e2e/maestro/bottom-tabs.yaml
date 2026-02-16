@@ -1,9 +1,10 @@
-# From e2e/examplesTests/bottomTabs.e2e.ts (simplified; no multiTap/label assertions)
+# Mirror of e2e/examplesTests/bottomTabs.e2e.ts (same 6 its; toHaveLabel -> assertVisible text, multiTap(2) -> doubleTapOn)
+# Detox beforeEach reloadReactNative; we run as one flow from launch.
 appId: org.reactjs.native.example.FabricExample
 name: Bottom tabs and native stack
 ---
 - launchApp
-
+# it('should go to main screen and back')
 - assertVisible:
     id: "root-screen-example-BottomTabsAndStack"
 - tapOn:
@@ -11,22 +12,50 @@ name: Bottom tabs and native stack
 - assertVisible:
     id: "bottom-tabs-A-more-details-button"
 
-# Go to details
+# it('should go to details screen')
 - tapOn:
     id: "bottom-tabs-A-more-details-button"
 - assertVisible:
-    id: "bottom-tabs-A-more-details-button"
+    text: "More details 1"
 
-# Back (iOS nav bar back button)
+# it('should go to details screen and back') — back via header (Detox: _UIButtonBarButton / pressBack)
 - tapOn:
     id: "BackButton"
+- assertVisible:
+    text: "More details 0"
 
-# Switch tabs
+# it('should go between tabs')
 - tapOn:
     id: "bottom-tabs-B-tab"
 - assertVisible:
     id: "bottom-tabs-B-header-right-id"
+- assertVisible:
+    text: "B"
 - tapOn:
     id: "bottom-tabs-A-tab"
 - assertVisible:
     id: "bottom-tabs-A-header-right-id"
+- assertVisible:
+    text: "A"
+
+# it('should go to first screen on double tap on a tab')
+- tapOn:
+    id: "bottom-tabs-A-more-details-button"
+- assertVisible:
+    text: "More details 1"
+- doubleTapOn:
+    id: "bottom-tabs-A-tab"
+- assertVisible:
+    text: "More details 0"
+
+# it('should keep stack state on tab change') — skip commented tap A / assert More details 2
+- tapOn:
+    id: "bottom-tabs-A-more-details-button"
+- tapOn:
+    id: "bottom-tabs-A-more-details-button"
+- assertVisible:
+    text: "More details 2"
+- tapOn:
+    id: "bottom-tabs-B-tab"
+- assertVisible:
+    text: "More details 0"

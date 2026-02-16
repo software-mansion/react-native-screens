@@ -1,20 +1,73 @@
-# From e2e/issuesTests/Test432.e2e.ts
+# Mirror of e2e/issuesTests/Test432.e2e.ts (same 4 its; toBeVisible(100) -> assertVisible; back: BackButton / pressKey; modal: swipe down / pressKey)
 appId: org.reactjs.native.example.FabricExample
 name: Test432 header visibility
 ---
 - launchApp
+# it('Test432 should exist')
+- scrollUntilVisible:
+    element:
+      id: "root-screen-issue-tests"
+    direction: DOWN
 - tapOn:
-    id: "root-screen-switch-search-bar"
+    id: "root-screen-issue-tests"
+- tapOn:
+    id: "issue-tests-search-bar"
 - inputText: "Test432"
 - tapOn:
-    id: "root-screen-tests-Test432"
+    id: "issue-tests-Test432"
+
+# it('headerRight element should be fully visible')
 - assertVisible:
     id: "home-headerRight"
+
+# it('headerRight elements should toggle and stay fully visible')
 - tapOn:
     id: "home-button-go-to-details"
 - assertVisible:
     id: "details-headerRight-red"
 - tapOn:
+    id: "details-button-toggle-subviews"
+- assertVisible:
+    id: "details-headerRight-green"
+- tapOn:
+    id: "details-button-toggle-subviews"
+- assertVisible:
+    id: "details-headerRight-red"
+- tapOn:
     id: "BackButton"
+- assertVisible:
+    id: "home-headerRight"
+
+# it('headerLeft and headerRight elements should toggle and stay fully visible')
+- tapOn:
+    id: "home-button-go-to-info"
+- assertVisible:
+    id: "info-headerRight-green-1"
+- tapOn:
+    id: "info-button-toggle-subviews"
+- assertVisible:
+    id: "info-headerRight-green-1"
+- assertVisible:
+    id: "info-headerRight-green-2"
+- assertVisible:
+    id: "info-headerLeft-red"
+- tapOn:
+    id: "info-button-toggle-subviews"
+- assertVisible:
+    id: "info-headerRight-green-1"
+- tapOn:
+    id: "BackButton"
+- assertVisible:
+    id: "home-headerRight"
+
+# it('headerRight element on modal should be fully visible') — iOS: swipe down on settings-text; Android: pressBack
+- tapOn:
+    id: "home-button-show-settings"
+- assertVisible:
+    id: "settings-headerRight"
+- swipe:
+    from:
+      id: "settings-text"
+    direction: DOWN
 - assertVisible:
     id: "home-headerRight"

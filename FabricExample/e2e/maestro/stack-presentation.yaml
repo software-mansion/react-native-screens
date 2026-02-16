@@ -1,10 +1,9 @@
-# Maestro flow from e2e/examplesTests/stackPresentation.e2e.ts
+# Mirror of e2e/examplesTests/stackPresentation.e2e.ts (same 3 its)
 appId: org.reactjs.native.example.FabricExample
 name: Simple Stack Presentation
 ---
 - launchApp
-
-# Should go to main screen
+# it('should go to main screen')
 - assertVisible:
     id: "root-screen-example-StackPresentation"
 - tapOn:
@@ -12,7 +11,7 @@ name: Simple Stack Presentation
 - assertVisible:
     id: "stack-presentation-root-scroll-view"
 
-# Should push form screen
+# it('should push form screen')
 - tapOn:
     id: "stack-presentation-push-button"
 - assertVisible:
@@ -22,7 +21,7 @@ name: Simple Stack Presentation
 - assertVisible:
     id: "stack-presentation-root-scroll-view"
 
-# Should open modal
+# it('should open modal')
 - tapOn:
     id: "stack-presentation-modal-button"
 - assertVisible:

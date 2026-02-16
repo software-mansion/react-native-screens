@@ -1,10 +1,14 @@
-# Maestro flow equivalent of e2e/firstTest.e2e.ts (root + 4 example buttons; Detox uses toExist for all 9)
+# Mirror of e2e/firstTest.e2e.ts
+# Detox: toExist() root-screen-examples-header; toExist() root-screen-example-${name} for all 9 keys in SCREENS.
+# App uses root-screen-playground-* for playground items so we assert those IDs for the 5 playground buttons.
 appId: org.reactjs.native.example.FabricExample
 name: First Test - Root screen and examples
 ---
 - launchApp
+# it('should have root screen')
 - assertVisible:
     id: "root-screen-examples-header"
+# it('should have all example and playground buttons rendered') - 4 example + 5 playground
 - assertVisible:
     id: "root-screen-example-SimpleNativeStack"
 - assertVisible:
@@ -13,3 +17,23 @@ name: First Test - Root screen and examples
     id: "root-screen-example-BottomTabsAndStack"
 - assertVisible:
     id: "root-screen-example-Modals"
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-HeaderOptions"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-StatusBar"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-Animations"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-Orientation"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      id: "root-screen-playground-SearchBar"
+    direction: DOWN

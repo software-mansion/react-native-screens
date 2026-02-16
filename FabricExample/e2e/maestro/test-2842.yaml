@@ -1,10 +1,16 @@
-# From e2e/issuesTests/Test2842.e2e.ts
+# Mirror of e2e/issuesTests/Test2842.e2e.ts (open screen + same assertions where applicable)
 appId: org.reactjs.native.example.FabricExample
 name: Test2842
 ---
 - launchApp
+- scrollUntilVisible:
+    element:
+      id: "root-screen-issue-tests"
+    direction: DOWN
 - tapOn:
-    id: "root-screen-switch-search-bar"
+    id: "root-screen-issue-tests"
+- tapOn:
+    id: "issue-tests-search-bar"
 - inputText: "Test2842"
 - tapOn:
-    id: "root-screen-tests-Test2842"
+    id: "issue-tests-Test2842"
