@@ -34,8 +34,6 @@ internal class ScreenDummyLayoutHelper(
     private lateinit var toolbar: Toolbar
     private var defaultFontSize: Float = 0f
     private var defaultContentInsetStartWithNavigation: Int = 0
-
-    // LRU with size 1
     private var cache: CacheEntry = CacheEntry.EMPTY
 
     // We do not want to be responsible for the context lifecycle. If it's null, we're fine.
@@ -89,6 +87,8 @@ internal class ScreenDummyLayoutHelper(
             }
 
         synchronized(this) {
+        Log.d("SCREENS", "ScreenDummyLayoutHelper // activity id ${reactContext.currentActivity}")
+
             // The layout could have been initialised when this thread waited for access to critical section.
             if (isLayoutInitialized) {
                 return true
@@ -178,12 +178,17 @@ internal class ScreenDummyLayoutHelper(
 
         val activity = requireActivity()
 
+        Log.d("SCREENS", "orientation = %d".format(activity.resources.configuration.orientation))
+
         if (cache.hasKey(CacheKey(fontSize, isTitleEmpty, activity.resources.configuration.orientation))) {
             return cache.headerHeight
         }
 
         val topLevelDecorView = activity.window.decorView
         val topInset = getCachedTopInset()
+
+        Log.d("SCREENS", "ScreenDummyLayoutHelper // decorView.width = %d, decorView.height = %d".format(topLevelDecorView.width, topLevelDecorView.height))
+        Log.d("SCREENS", "ScreenDummyLayoutHelper // topInset = %d".format(topInset))
 
         // These dimensions are not accurate, as they do include navigation bar, however
         // it is ok for our purposes.

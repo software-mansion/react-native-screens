@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.text.TextUtils
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
@@ -128,6 +129,7 @@ class ScreenStackHeaderConfig(
 
         val contentInsetEnd = toolbar.currentContentInsetEnd + toolbar.paddingEnd
 
+        Log.d("SCREENS", "ScreenStackHeaderConfig // onNativeToolbarLayout")
         headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
 
         // Note that implementation of the callee differs between architectures.
@@ -342,6 +344,7 @@ class ScreenStackHeaderConfig(
             i++
         }
 
+        Log.d("SCREENS", "ScreenStackHeaderConfig.onUpdate")
         headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
     }
 

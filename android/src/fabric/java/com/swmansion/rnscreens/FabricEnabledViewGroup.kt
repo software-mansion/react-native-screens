@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.annotation.UiThread
 import com.facebook.react.bridge.ReactContext
@@ -49,6 +50,19 @@ abstract class FabricEnabledViewGroup(
         ) {
             return
         }
+
+        Log.d(
+            "SCREENS",
+            "FabricEnabledViewGroup // updateState lastWidth = %f, lastHeight = %f, lastHeader = %f, newWidth = %f, newHeight = %f, newHeader = %f"
+                .format(
+                    lastWidth,
+                    lastHeight,
+                    lastHeaderHeight,
+                    realWidth,
+                    realHeight,
+                    realHeaderHeight,
+                ),
+        )
 
         lastWidth = realWidth
         lastHeight = realHeight

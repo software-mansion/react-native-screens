@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.Choreographer
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -116,6 +117,8 @@ open class CustomToolbar(
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
         val unhandledInsets = super.onApplyWindowInsets(insets)
 
+        Log.d("SCREENS", "onApplyWindowInsets")
+
         // There are few UI modes we could be running in
         //
         // 1. legacy non edge-to-edge mode,
@@ -153,6 +156,7 @@ open class CustomToolbar(
         val newInsets = InsetsCompat.add(horizontalInsets, verticalInsets)
 
         if (lastInsets != newInsets) {
+            Log.d("SCREENS", "applyExactPadding lastInsets.top = %d, newInsets.top = %d".format(lastInsets.top, newInsets.top))
             lastInsets = newInsets
             applyExactPadding(
                 lastInsets.left,
@@ -173,6 +177,10 @@ open class CustomToolbar(
         b: Int,
     ) {
         super.onLayout(hasSizeChanged, l, t, r, b)
+
+        Log.d("SCREENS", "CustomToolbar // onLayout hasSizeChanged = %b, l = %d, t = %d, r = %d, b = %d".format(
+            hasSizeChanged, l, t, r, b
+        ))
 
         config.onNativeToolbarLayout(
             this,

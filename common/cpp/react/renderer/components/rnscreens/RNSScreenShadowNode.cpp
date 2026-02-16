@@ -1,4 +1,6 @@
 #include "RNSScreenShadowNode.h"
+#include <yoga/node/Node.h>
+#include "YLSN.h"
 
 namespace facebook {
 namespace react {
@@ -107,6 +109,15 @@ void RNSScreenShadowNode::appendChild(
 }
 
 void RNSScreenShadowNode::layout(facebook::react::LayoutContext layoutContext) {
+  yoga::Node yogaNode = ((YLSN *)this)->yogaNode_;
+  float padding = yogaNode.style().padding(yoga::Edge::Bottom).value().unwrap();
+  __android_log_print(
+      ANDROID_LOG_INFO,
+      "SCREENS",
+      "RNSScreenShadowNode // origin.y = %f height = %f, padding = %f",
+      layoutMetrics_.frame.origin.y,
+      layoutMetrics_.frame.size.height,
+      padding);
   YogaLayoutableShadowNode::layout(layoutContext);
 
 #ifdef ANDROID
@@ -160,6 +171,12 @@ void RNSScreenShadowNode::doApplyHeaderPadding(
       ? 0.f
       : findHeaderHeight(headerProps.titleFontSize, headerProps.title.empty())
             .value_or(0.f);
+
+  __android_log_print(
+      ANDROID_LOG_INFO,
+      "SCREENS",
+      "RNSScreenShadowNode // doApplyHeaderPadding headerHeight = %f",
+      headerHeight);
 
   auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(*this);
   screenShadowNode.setPadding({0, 0, 0, headerHeight});
