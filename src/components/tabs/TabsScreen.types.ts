@@ -75,6 +75,112 @@ export type TabsScreenOrientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
+// Android-specific
+export interface AndroidTabsAppearance {
+  /**
+   * Specifies the tab bar item appearance when it's enabled and unselected.
+   *
+   * @platform android
+   */
+  normal?: AndroidTabsScreenItemStateAppearance;
+
+  /**
+   * Specifies the tab bar item appearance when it's selected.
+   * Maps to Android `state_checked=true`.
+   *
+   * @platform android
+   */
+  selected?: AndroidTabsScreenItemStateAppearance;
+
+  /**
+   * Specifies the tab bar item appearance when it's focused.
+   * Maps to Android `state_focused=true` (Used mostly for Keyboard navigation).
+   *
+   * @platform android
+   */
+  focused?: AndroidTabsScreenItemStateAppearance;
+
+  /**
+   * Specifies the tab bar item appearance when it's disabled.
+   * Maps to Android `state_enabled=false`.
+   *
+   * @platform android
+   */
+  disabled?: AndroidTabsScreenItemStateAppearance;
+
+  /**
+   * @summary Specifies the ripple color when an item is touched.
+   *
+   * @platform android
+   */
+  tabBarItemRippleColor?: ColorValue;
+}
+
+export interface AndroidTabsScreenItemStateAppearance {
+  /**
+   * @summary Specifies the font family used for the title.
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
+
+  /**
+   * @summary Specifies the font size used for the title.
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontSize?: TextStyle['fontSize'];
+
+  /**
+   * @summary Specifies the font weight used for the title.
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
+
+  /**
+   * @summary Specifies the font style (italic/normal).
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+
+  /**
+   * @summary Specifies the text color.
+   *
+   * @platform android
+   */
+  tabBarItemTitleFontColor?: TextStyle['color'];
+
+  /**
+   * @summary Specifies the icon tint color.
+   *
+   * @platform android
+   */
+  tabBarItemIconColor?: ColorValue;
+
+  /**
+   * @summary Specifies the background color of the badge.
+   *
+   * @platform android
+   */
+  tabBarItemBadgeBackgroundColor?: ColorValue;
+
+  /**
+   * @summary Specifies the text color of the badge.
+   *
+   * @platform android
+   */
+  tabBarItemBadgeTextColor?: ColorValue;
+
+  /**
+   * @summary Specifies the color of the "Active Indicator" pill.
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorColor?: ColorValue;
+}
+
 // iOS-specific
 export interface TabsScreenAppearance {
   /**
@@ -417,17 +523,14 @@ export interface TabsScreenProps {
 
   // #region Android-only
   /**
-   * @summary Specifies the color of the text in the badge.
+   * @summary Specifies the standard tab bar appearance.
+   *
+   * Allows to customize the appearance depending on the tab bar item state
+   * (normal, selected, focused, disabled). Configuration for the Bottom Navigation View.
    *
    * @platform android
    */
-  tabBarItemBadgeTextColor?: ColorValue;
-  /**
-   * @summary Specifies the background color of the badge.
-   *
-   * @platform android
-   */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+  standardAppearanceAndroid?: AndroidTabsAppearance;
   // #endregion Android-only
 
   // #region iOS-only
