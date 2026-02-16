@@ -36,6 +36,21 @@ export {
   ScreenStackHeaderSearchBarView,
 } from './components/ScreenStackHeaderConfig';
 
+export {
+  Bar,
+  type BarBadge,
+  type BarBadgeStyle,
+  type BarIcon,
+  type BarItemPlacement,
+  type BarItemProps,
+  type BarItemVariant,
+  type BarMenuActionProps,
+  type BarMenuProps,
+  type BarMenuSubmenuProps,
+  type BarProps,
+  type BarTitleStyle,
+} from './components/Bar';
+
 export { default as SearchBar } from './components/SearchBar';
 export { default as ScreenContainer } from './components/ScreenContainer';
 export { default as ScreenStack } from './components/ScreenStack';
