@@ -163,8 +163,9 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
 }
 
 fun Screen.sheetShouldUseDimmingView(): Boolean {
-    val currentDetentIndex = fragment?.asScreenStackFragment()?.sheetDelegate?.lastStableDetentIndex
-        ?: sheetInitialDetentIndex
+    val currentDetentIndex =
+        fragment?.asScreenStackFragment()?.sheetDelegate?.lastStableDetentIndex
+            ?: sheetInitialDetentIndex
     return currentDetentIndex > sheetLargestUndimmedDetentIndex
 }
 
