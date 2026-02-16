@@ -932,6 +932,7 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
 {
   [_reactSubviews removeObject:subview];
+  [subview invalidateUIBarButtonItem];
 }
 RNS_IGNORE_SUPER_CALL_END
 
@@ -967,11 +968,11 @@ RNS_IGNORE_SUPER_CALL_END
     // For explanation of why we can make a snapshot here despite the fact that our children are already
     // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
     [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
-    [(RNSScreenStackHeaderSubview *)childComponentView invalidateUIBarButtonItem];
   }
 
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+  [(RNSScreenStackHeaderSubview *)childComponentView invalidateUIBarButtonItem];
 
   if (!isGoingToBeRemoved) {
     [self updateViewControllerIfNeeded];
