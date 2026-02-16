@@ -19,6 +19,26 @@ internalEnableDetailedBottomTabsLogging();
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
+      standardAppearanceAndroid: {
+        normal: {
+          tabBarBackgroundColor: Colors.NavyLight100,
+          tabBarItemActiveIndicatorColor: Colors.GreenLight40,
+          tabBarItemActiveIndicatorEnabled: true,
+          tabBarItemIconColor: Colors.BlueLight100,
+          tabBarItemTitleFontColor:Colors .BlueLight40,
+          tabBarItemTitleFontSize: 10,
+          tabBarItemRippleColor: Colors.WhiteTransparentDark,
+          tabBarItemTitleFontFamily: "monospace",
+          tabBarItemTitleFontStyle: "italic",
+          tabBarItemTitleFontWeight: "700",
+          tabBarItemLabelVisibilityMode: "auto"
+        },
+        selected: {
+          tabBarItemIconColor: Colors.GreenLight100,
+          tabBarItemTitleFontColor: Colors.GreenLight40,
+          tabBarItemTitleFontSize: 15,
+        }
+      },
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyLight100,
         stacked: {
@@ -108,7 +128,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
           },
         },
       },
-      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+      standardAppearanceAndroid: {
+        normal: {
+          tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
+        },
+      },
       icon: {
         ios: {
           type: 'templateSource',
@@ -142,8 +166,12 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemTestID: 'tab-item-3-id',
       tabBarItemAccessibilityLabel: 'Third Tab Item',
       scrollEdgeEffects: { bottom: 'hard' },
-      tabBarItemBadgeBackgroundColor: Colors.RedDark40,
-      tabBarItemBadgeTextColor: Colors.RedDark120,
+      standardAppearanceAndroid: {
+        normal: {
+          tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+          tabBarItemBadgeTextColor: Colors.RedDark120,
+        }
+      },
       standardAppearance: {
         stacked: {
           normal: {
@@ -220,21 +248,7 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarBackgroundColor={Colors.NavyLight100}
-        tabBarItemActiveIndicatorColor={Colors.GreenLight40}
-        tabBarItemActiveIndicatorEnabled={true}
         tabBarTintColor={Colors.YellowLight100}
-        tabBarItemIconColor={Colors.BlueLight100}
-        tabBarItemTitleFontColor={Colors.BlueLight40}
-        tabBarItemIconColorActive={Colors.GreenLight100}
-        tabBarItemTitleFontColorActive={Colors.GreenLight40}
-        tabBarItemTitleFontSize={10}
-        tabBarItemTitleFontSizeActive={15}
-        tabBarItemRippleColor={Colors.WhiteTransparentDark}
-        tabBarItemTitleFontFamily="monospace"
-        tabBarItemTitleFontStyle="italic"
-        tabBarItemTitleFontWeight="700"
-        tabBarItemLabelVisibilityMode="auto"
         tabBarMinimizeBehavior="onScrollDown"
       />
     </ConfigWrapperContext.Provider>
