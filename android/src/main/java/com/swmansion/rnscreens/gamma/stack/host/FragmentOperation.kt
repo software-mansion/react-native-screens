@@ -57,7 +57,7 @@ internal class FlushNowOp : FragmentOperation() {
     }
 }
 
-internal class OnCommitCallbackFragmentOp(
+internal class OnCommitCallbackOp(
     val onCommitCallback: Runnable,
     val allowStateLoss: Boolean = true,
     val flushSync: Boolean = false,

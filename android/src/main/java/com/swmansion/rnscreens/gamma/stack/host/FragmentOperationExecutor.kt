@@ -60,7 +60,7 @@ internal class FragmentOperationExecutor {
 
     internal fun executeOnCommitCallbackOp(
         fragmentManager: FragmentManager,
-        op: OnCommitCallbackFragmentOp,
+        op: OnCommitCallbackOp,
     ) {
         commitTransaction(
             fragmentManager

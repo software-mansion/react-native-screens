@@ -130,7 +130,7 @@ internal class StackContainer(
             // attached is not a "pop" commit, therefore JS-pop commits have not been properly
             // recognized.
             fragmentOps.add(
-                OnCommitCallbackFragmentOp(
+                OnCommitCallbackOp(
                     { updateTopFragment() },
                     allowStateLoss = true,
                     flushSync = false,
