@@ -7,8 +7,8 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.RNSBottomTabsScreenManagerDelegate
-import com.facebook.react.viewmanagers.RNSBottomTabsScreenManagerInterface
+import com.facebook.react.viewmanagers.RNSTabsScreenManagerDelegate
+import com.facebook.react.viewmanagers.RNSTabsScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
@@ -17,11 +17,11 @@ import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.utils.RNSLog
 
-@ReactModule(name = TabScreenViewManager.REACT_CLASS)
-class TabScreenViewManager :
+@ReactModule(name = TabsScreenViewManager.REACT_CLASS)
+class TabsScreenViewManager :
     ViewGroupManager<TabScreen>(),
-    RNSBottomTabsScreenManagerInterface<TabScreen> {
-    private val delegate: ViewManagerDelegate<TabScreen> = RNSBottomTabsScreenManagerDelegate<TabScreen, TabScreenViewManager>(this)
+    RNSTabsScreenManagerInterface<TabScreen> {
+    private val delegate: ViewManagerDelegate<TabScreen> = RNSTabsScreenManagerDelegate<TabScreen, TabsScreenViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
@@ -241,6 +241,6 @@ class TabScreenViewManager :
     }
 
     companion object {
-        const val REACT_CLASS = "RNSBottomTabsScreen"
+        const val REACT_CLASS = "RNSTabsScreen"
     }
 }

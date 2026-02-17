@@ -17,8 +17,8 @@ import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
 
 @SuppressWarnings("deprecation")
-public class RNSBottomTabsManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSBottomTabsManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
-  public RNSBottomTabsManagerDelegate(U viewManager) {
+public class RNSTabsHostManagerDelegate<T extends View, U extends BaseViewManager<T, ? extends LayoutShadowNode> & RNSTabsHostManagerInterface<T>> extends BaseViewManagerDelegate<T, U> {
+  public RNSTabsHostManagerDelegate(U viewManager) {
     super(viewManager);
   }
   @Override
