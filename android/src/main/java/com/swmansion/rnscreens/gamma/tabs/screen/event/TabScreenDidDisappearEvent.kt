@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.tabs.event
+package com.swmansion.rnscreens.gamma.tabs.screen.event
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap

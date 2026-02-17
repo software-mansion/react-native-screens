@@ -1,12 +1,12 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.screen
 
 import com.facebook.react.bridge.ReactContext
 import com.swmansion.rnscreens.gamma.common.event.BaseEventEmitter
-import com.swmansion.rnscreens.gamma.tabs.TabScreenEventEmitter.Companion.TAG
-import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
+import com.swmansion.rnscreens.gamma.tabs.screen.TabScreenEventEmitter.Companion.TAG
+import com.swmansion.rnscreens.gamma.tabs.screen.event.TabScreenDidAppearEvent
+import com.swmansion.rnscreens.gamma.tabs.screen.event.TabScreenDidDisappearEvent
+import com.swmansion.rnscreens.gamma.tabs.screen.event.TabScreenWillAppearEvent
+import com.swmansion.rnscreens.gamma.tabs.screen.event.TabScreenWillDisappearEvent
 import com.swmansion.rnscreens.utils.RNSLog
 
 internal class TabScreenEventEmitter(
