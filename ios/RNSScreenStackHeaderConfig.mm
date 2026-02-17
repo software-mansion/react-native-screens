@@ -38,8 +38,8 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-static NSNumber *const DEFAULT_TITLE_FONT_SIZE = @17;
-static NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
+static const NSNumber *const DEFAULT_TITLE_FONT_SIZE = @17;
+static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 #if !defined(RCT_NEW_ARCH_ENABLED)
 // Some RN private method hacking below. Couldn't figure out better way to access image data
@@ -488,7 +488,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 
     NSString *family = config.titleFontFamily ?: nil;
-    NSNumber *size = config.titleFontSize ?: DEFAULT_TITLE_FONT_SIZE;
+    NSNumber *size = config.titleFontSize ?: [DEFAULT_TITLE_FONT_SIZE copy];
     NSString *weight = config.titleFontWeight ?: nil;
     if (family || weight) {
       attrs[NSFontAttributeName] = [RCTFont updateFont:nil
@@ -516,7 +516,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
 
     NSString *largeFamily = config.largeTitleFontFamily ?: nil;
-    NSNumber *largeSize = config.largeTitleFontSize ?: DEFAULT_TITLE_LARGE_FONT_SIZE;
+    NSNumber *largeSize = config.largeTitleFontSize ?: [DEFAULT_TITLE_LARGE_FONT_SIZE copy];
     NSString *largeWeight = config.largeTitleFontWeight ?: nil;
     if (largeFamily || largeWeight) {
       largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil
