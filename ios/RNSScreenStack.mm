@@ -259,6 +259,7 @@ namespace react = facebook::react;
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
   _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
+  _iosPreventReattachmentOfDismissedScreens = YES;
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
@@ -1379,7 +1380,8 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenStackProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenStackProps>(props);
 
-  if (newScreenProps.iosPreventReattachmentOfDismissedScreens != _iosPreventReattachmentOfDismissedScreens) {
+  if (newScreenProps.iosPreventReattachmentOfDismissedScreens !=
+      oldScreenProps.iosPreventReattachmentOfDismissedScreens) {
     [self setIosPreventReattachmentOfDismissedScreens:newScreenProps.iosPreventReattachmentOfDismissedScreens];
   }
 
