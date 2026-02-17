@@ -1,5 +1,5 @@
 #import "RNSViewInteractionManager.h"
-#import "RNSBottomTabsScreenComponentView.h"
+#import "RNSTabsScreenComponentView.h"
 #import "RNSViewInteractionAware.h"
 
 @implementation RNSViewInteractionManager {
