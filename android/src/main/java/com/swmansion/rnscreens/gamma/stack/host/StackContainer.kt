@@ -208,6 +208,8 @@ internal class StackContainer(
         fragments.forEach { it.onResignTopFragment() }
         fragments.last().onBecomeTopFragment()
 
+        // This assumes that the updateTopFragment is called already after primary nav frag. is updated.
+        // If this needs to be changed in the future, just remove this assertion.
         check(fragmentManager.primaryNavigationFragment === fragments.last()) {
             "[RNScreens] Top fragment different from primary navigation fragment"
         }
