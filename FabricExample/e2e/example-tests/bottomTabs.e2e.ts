@@ -82,7 +82,6 @@ describe('Bottom tabs and native stack', () => {
       element(by.id('bottom-tabs-B-more-details-button')),
     ).toHaveLabel('More details 0');
 
-
     // TODO(kkafar): For some reason tapping the button here hangs test runner.
     // The app itself stays fully responsive & in valid state (the expectation
     // defined below should succeed).

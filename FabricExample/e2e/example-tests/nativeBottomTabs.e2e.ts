@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../e2e-utils';
 
 describe('Native BottomTabs', () => {
   beforeAll(async () => {
@@ -7,13 +7,11 @@ describe('Native BottomTabs', () => {
   });
 
   it('should select TestBottomTabs', async () => {
-    await selectTestScreen('TestBottomTabs');
+    await selectIssueTestScreen('TestBottomTabs');
   });
 
   it('should initially display first tab', async () => {
-    await expect(
-      element(by.id('tab-screen-1-id')),
-    ).toBeVisible();
+    await expect(element(by.id('tab-screen-1-id'))).toBeVisible();
   });
 
   it('should use tab id to navigate to third tab screen', async () => {
@@ -21,9 +19,7 @@ describe('Native BottomTabs', () => {
     await expect(tabElement).toBeVisible();
     await tabElement.tap();
 
-    await expect(
-      element(by.id('tab-screen-3-id')),
-    ).toBeVisible();
+    await expect(element(by.id('tab-screen-3-id'))).toBeVisible();
   });
 
   it('should use tab label to navigate to second tab screen', async () => {
@@ -31,8 +27,6 @@ describe('Native BottomTabs', () => {
     await expect(tabElement).toBeVisible();
     await tabElement.tap();
 
-    await expect(
-      element(by.label('Second Tab Screen')),
-    ).toBeVisible();
+    await expect(element(by.label('Second Tab Screen'))).toBeVisible();
   });
 });

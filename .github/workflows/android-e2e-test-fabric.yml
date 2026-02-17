@@ -1,5 +1,18 @@
 name: Test Android e2e - new architecture
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/android-e2e-test-fabric.yml'
+      - 'package.json'
+      - 'android/**'
+      - 'common/**'
+      - 'FabricExample/**'
+      - 'src/**'
+  push:
+    branches:
+      - main
   workflow_dispatch:
 jobs:
   test:

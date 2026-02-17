@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../e2e-utils';
 
 describe('Test640', () => {
   beforeAll(async () => {
@@ -7,7 +7,7 @@ describe('Test640', () => {
   });
 
   it('Test640 should exist', async () => {
-    await selectTestScreen('Test640');
+    await selectIssueTestScreen('Test640');
   });
 
   it('scrolling down on modal should not close the modal but activate refresh', async () => {

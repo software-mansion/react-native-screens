@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
 
 async function testDetentsVisibility(
   testCaseName: string,
@@ -37,7 +37,7 @@ describeIfiOS('Test2543', () => {
   });
 
   it('Test2543 should exist', async () => {
-    await selectTestScreen('Test2543');
+    await selectIssueTestScreen('Test2543');
   });
 
   it('formSheet with 2 detents, initial first, should allow changing detents', async () => {
@@ -47,13 +47,13 @@ describeIfiOS('Test2543', () => {
     await testDetentsVisibility('TwoDetentsInitialFirst', true, false, false);
 
     const header = element(by.id('TwoDetentsInitialFirst-text-header'));
-    await header.swipe('up', 'fast', 0.25);
+    await header.swipe('up', 'slow', 0.25);
     await testDetentsVisibility('TwoDetentsInitialFirst', true, true, false);
 
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility('TwoDetentsInitialFirst', true, false, false);
 
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility('TwoDetentsInitialFirst', false, false, false);
   });
 
@@ -64,13 +64,13 @@ describeIfiOS('Test2543', () => {
     await testDetentsVisibility('TwoDetentsInitialSecond', true, true, false);
 
     const header = element(by.id('TwoDetentsInitialSecond-text-header'));
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility('TwoDetentsInitialSecond', true, false, false);
 
-    await header.swipe('up', 'fast', 0.25);
+    await header.swipe('up', 'slow', 0.25);
     await testDetentsVisibility('TwoDetentsInitialSecond', true, true, false);
 
-    await header.swipe('down', 'fast', 0.5);
+    await header.swipe('down', 'slow', 0.5);
     await testDetentsVisibility('TwoDetentsInitialSecond', false, false, false);
   });
 
@@ -86,22 +86,22 @@ describeIfiOS('Test2543', () => {
     await testDetentsVisibility('ThreeDetentsInitialFirst', true, false, false);
 
     const header = element(by.id('ThreeDetentsInitialFirst-text-header'));
-    await header.swipe('up', 'fast', 0.25);
+    await header.swipe('up', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialFirst', true, true, false);
 
-    await header.swipe('up', 'fast', 0.25);
+    await header.swipe('up', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialFirst', true, true, true);
 
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialFirst', true, true, false);
 
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialFirst', true, false, false);
 
-    await header.swipe('up', 'fast', 0.5);
+    await header.swipe('up', 'slow', 0.5);
     await testDetentsVisibility('ThreeDetentsInitialFirst', true, true, true);
 
-    await header.swipe('down', 'fast', 0.5);
+    await header.swipe('down', 'slow', 0.75);
     await testDetentsVisibility(
       'ThreeDetentsInitialFirst',
       false,
@@ -122,7 +122,7 @@ describeIfiOS('Test2543', () => {
     await testDetentsVisibility('ThreeDetentsInitialSecond', true, true, false);
 
     const header = element(by.id('ThreeDetentsInitialSecond-text-header'));
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility(
       'ThreeDetentsInitialSecond',
       true,
@@ -130,16 +130,16 @@ describeIfiOS('Test2543', () => {
       false,
     );
 
-    await header.swipe('up', 'fast', 0.25);
+    await header.swipe('up', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialSecond', true, true, false);
 
-    await header.swipe('up', 'fast', 0.25);
+    await header.swipe('up', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialSecond', true, true, true);
 
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialSecond', true, true, false);
 
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility(
       'ThreeDetentsInitialSecond',
       true,
@@ -147,10 +147,10 @@ describeIfiOS('Test2543', () => {
       false,
     );
 
-    await header.swipe('up', 'fast', 0.5);
+    await header.swipe('up', 'slow', 0.5);
     await testDetentsVisibility('ThreeDetentsInitialSecond', true, true, true);
 
-    await header.swipe('down', 'fast', 0.5);
+    await header.swipe('down', 'slow', 0.75);
     await testDetentsVisibility(
       'ThreeDetentsInitialSecond',
       false,
@@ -171,25 +171,25 @@ describeIfiOS('Test2543', () => {
     await testDetentsVisibility('ThreeDetentsInitialThird', true, true, true);
 
     const header = element(by.id('ThreeDetentsInitialThird-text-header'));
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialThird', true, true, false);
 
-    await header.swipe('down', 'fast', 0.25);
+    await header.swipe('down', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialThird', true, false, false);
 
-    await header.swipe('up', 'fast', 0.25);
+    await header.swipe('up', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialThird', true, true, false);
 
-    await header.swipe('up', 'fast', 0.25);
+    await header.swipe('up', 'slow', 0.25);
     await testDetentsVisibility('ThreeDetentsInitialThird', true, true, true);
 
-    await header.swipe('down', 'fast', 0.4);
+    await header.swipe('down', 'slow', 0.5);
     await testDetentsVisibility('ThreeDetentsInitialThird', true, false, false);
 
-    await header.swipe('up', 'fast', 0.5);
+    await header.swipe('up', 'slow', 0.5);
     await testDetentsVisibility('ThreeDetentsInitialThird', true, true, true);
 
-    await header.swipe('down', 'fast', 0.75);
+    await header.swipe('down', 'slow', 0.75);
     await testDetentsVisibility(
       'ThreeDetentsInitialThird',
       false,

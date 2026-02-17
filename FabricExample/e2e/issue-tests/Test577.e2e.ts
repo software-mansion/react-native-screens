@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectTestScreen } from '../e2e-utils';
+import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
 
 // Detox currently supports orientation only on iOS
 describeIfiOS('Test577', () => {
@@ -8,7 +8,7 @@ describeIfiOS('Test577', () => {
   });
 
   it('Test577 should exist', async () => {
-    await selectTestScreen('Test577');
+    await selectIssueTestScreen('Test577');
   });
 
   it('does not display content underneath modal with gesture disabled when attempting to close it', async () => {

@@ -11,45 +11,40 @@ const pressBack = async () => {
 };
 
 const awaitClassicalEventBehavior = async () => {
-  if (device.getPlatform() === 'ios') {
-    // The order of events in this test differs from Paper.
-    // Please see https://github.com/software-mansion/react-native-screens/pull/2785 for details.
-    await expect(
-      element(by.text('9. Chats | transitionStart | closing')),
-    ).toExist();
-    await expect(
-      element(by.text('10. Privacy | transitionStart | closing')),
-    ).toExist();
-    await expect(
-      element(by.text('11. Main | transitionStart | opening')),
-    ).toExist();
-    await expect(element(by.text('12. Privacy | beforeRemove'))).toExist();
-    await expect(element(by.text('13. Chats | beforeRemove'))).toExist();
-    await expect(
-      element(by.text('14. Chats | transitionEnd | closing')),
-    ).toExist();
-    await expect(
-      element(by.text('15. Privacy | transitionEnd | closing')),
-    ).toExist();
-    await expect(
-      element(by.text('16. Main | transitionEnd | opening')),
-    ).toExist();
-  } else {
-    await expect(element(by.text('9. Privacy | beforeRemove'))).toExist();
-    await expect(element(by.text('10. Chats | beforeRemove'))).toExist();
-    await expect(
-      element(by.text('11. Main | transitionStart | opening')),
-    ).toExist();
-    await expect(
-      element(by.text('12. Main | transitionEnd | opening')),
-    ).toExist();
+  // The order of events in this test differs from Paper.
+  // Please see https://github.com/software-mansion/react-native-screens/pull/2785 for details.
+  const expectedEvents =
+    device.getPlatform() === 'ios'
+      ? [
+          '9. Chats | transitionStart | closing',
+          '10. Privacy | transitionStart | closing',
+          '11. Main | transitionStart | opening',
+          '12. Privacy | beforeRemove',
+          '13. Chats | beforeRemove',
+          '14. Chats | transitionEnd | closing',
+          '15. Privacy | transitionEnd | closing',
+          '16. Main | transitionEnd | opening',
+        ]
+      : [
+          '9. Privacy | beforeRemove',
+          '10. Chats | beforeRemove',
+          '11. Main | transitionStart | opening',
+          '12. Main | transitionEnd | opening',
+        ];
+
+  // Wait for the last event to appear before asserting event order
+  await waitFor(element(by.text(expectedEvents.at(-1)!)))
+    .toExist()
+    .withTimeout(5000);
+
+  for (const expectedEventNotification of expectedEvents) {
+    await expect(element(by.text(expectedEventNotification))).toExist();
   }
 };
 
 describe('Events', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    // await device.launchApp({ newInstance: true });
 
     await waitFor(element(by.id('root-screen-playground-Events')))
       .toBeVisible()

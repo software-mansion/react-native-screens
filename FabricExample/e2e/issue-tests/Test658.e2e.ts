@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '../e2e-utils';
 
 async function checkScreenVisibility(visible: boolean[]) {
   for (const [index, shouldBeVisible] of visible.entries()) {
@@ -23,7 +23,7 @@ describe('Test658', () => {
   });
 
   it('Test658 should exist', async () => {
-    await selectTestScreen('Test658');
+    await selectIssueTestScreen('Test658');
   });
 
   it('modals should hide content behind', async () => {
