@@ -117,7 +117,7 @@ class StackHost(
         if (measuredWidth != container.measuredWidth || measuredHeight != container.measuredHeight) {
             container.measure(
                 MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY),
             )
         }
         container.layout(left, top, right, bottom)
