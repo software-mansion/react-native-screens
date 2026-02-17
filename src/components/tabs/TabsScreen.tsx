@@ -315,7 +315,7 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
 
 function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
-  selectedIcon: PlatformIcon | PlatformIconIOS | undefined,
+  selectedIcon: PlatformIcon | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
