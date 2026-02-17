@@ -177,6 +177,14 @@ internal class StackContainer(
     private fun onNativeFragmentPop(fragment: StackScreenFragment) {
         require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack model should not be empty after a native pop" }
+
+        val fragmentManager = requireFragmentManager()
+
+        // The primary navigation fragment should be updated when popping backstack by FragmentManager
+        // reversing the back stack record. At this point we need to just update the top fragment.
+        check(requireFragmentManager().primaryNavigationFragment !== fragment) {
+            "[RNScreens] Primary navigation fragment not updated by native pop"
+        }
         updateTopFragment()
     }
 
@@ -194,10 +202,15 @@ internal class StackContainer(
 
     private fun updateTopFragment() {
         // We try to handle situation where other fragments might be present.
-        val fragments = requireFragmentManager().fragments.filterIsInstance<StackScreenFragment>()
+        val fragmentManager = requireFragmentManager()
+        val fragments = fragmentManager.fragments.filterIsInstance<StackScreenFragment>()
         check(fragments.isNotEmpty()) { "[RNScreens] Empty fragment manager while attempting to update top fragment" }
         fragments.forEach { it.onResignTopFragment() }
         fragments.last().onBecomeTopFragment()
+
+        check(fragmentManager.primaryNavigationFragment === fragments.last()) {
+            "[RNScreens] Top fragment different from primary navigation fragment"
+        }
     }
 
     /**
