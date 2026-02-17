@@ -353,11 +353,9 @@ function parseIconsToNativeProps(
     const { iconImageSource, iconResourceName, iconType } =
       parseIOSIconToNativeProps(icon?.ios || icon?.shared);
 
-    // Fallback to PlatformIconIOS for backward compatibility
     const iosSelectedSource =
       (selectedIcon as PlatformIcon)?.ios ||
-      (selectedIcon as PlatformIcon)?.shared ||
-      (selectedIcon as PlatformIconIOS);
+      (selectedIcon as PlatformIcon)?.shared;
 
     const {
       iconImageSource: selectedIconImageSource,
