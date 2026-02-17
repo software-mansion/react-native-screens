@@ -296,6 +296,7 @@ class TabScreenViewManager :
             tabBarItemTitleFontSize = map.getOptionalFloat("tabBarItemTitleFontSize"),
             tabBarItemTitleFontWeight = map.getOptionalString("tabBarItemTitleFontWeight"),
             tabBarItemTitleFontStyle = map.getOptionalString("tabBarItemTitleFontStyle"),
+            tabBarSelectedItemTitleFontSize = map.getOptionalFloat("tabBarSelectedItemTitleFontSize"),
         )
 
     private fun parseStateAppearance(map: ReadableMap?): AndroidTabsScreenItemStateAppearance? {

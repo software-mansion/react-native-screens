@@ -23,6 +23,7 @@ const DEFAULT_ANDROID_APPEARANCE: AndroidTabsAppearance = {
   tabBarItemActiveIndicatorColor: Colors.GreenLight40,
   tabBarItemActiveIndicatorEnabled: true,
   tabBarItemTitleFontSize: 10,
+  tabBarSelectedItemTitleFontSize: 15,
   tabBarItemTitleFontWeight: '400',
   tabBarItemTitleFontFamily: 'monospace',
   tabBarItemTitleFontStyle: 'italic',

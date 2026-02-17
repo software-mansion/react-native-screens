@@ -84,6 +84,7 @@ export type AppearanceAndroid = {
   tabBarItemTitleFontSize?: CT.Float;
   tabBarItemTitleFontWeight?: string;
   tabBarItemTitleFontStyle?: string;
+  tabBarSelectedItemTitleFontSize?: CT.Float;
 };
 
 type BlurEffect =

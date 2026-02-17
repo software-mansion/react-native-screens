@@ -172,6 +172,14 @@ export interface AndroidTabsAppearance {
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
   /**
+   * @summary Specifies the font size used for the title of each tab bar item in active state.
+   *
+   * The size is represented in scale-independent pixels (sp).
+   *
+   * @platform android
+   */
+  tabBarSelectedItemTitleFontSize?: TextStyle['fontSize'];
+  /**
    * @summary Specifies the font weight used for the title of each tab bar item.
    *
    * @platform android

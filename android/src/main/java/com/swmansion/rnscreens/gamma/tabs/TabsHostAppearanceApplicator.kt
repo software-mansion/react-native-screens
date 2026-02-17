@@ -29,6 +29,7 @@ data class AndroidTabsAppearance(
     val tabBarItemTitleFontSize: Float? = null,
     val tabBarItemTitleFontWeight: String? = null,
     val tabBarItemTitleFontStyle: String? = null,
+    val tabBarSelectedItemTitleFontSize: Float? = null,
 )
 
 data class AndroidTabsScreenItemStateAppearance(
@@ -155,10 +156,8 @@ class TabsHostAppearanceApplicator(
         val appearance = activeTabScreen?.appearance
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
-        // TODO: @t0maboro - add selected support
         fun resolveTypeface(
             appearance: AndroidTabsAppearance?,
-            isSelected: Boolean,
         ): android.graphics.Typeface {
             val isFontStyleItalic = appearance?.tabBarItemTitleFontStyle == "italic"
 
@@ -184,13 +183,8 @@ class TabsHostAppearanceApplicator(
             val smallLabel =
                 menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
 
-            val normalTypeface = resolveTypeface(
+            val fontFamily = resolveTypeface(
                 appearance,
-                false
-            )
-            val selectedTypeface = resolveTypeface(
-                appearance,
-                true
             )
 
             /*
@@ -206,16 +200,16 @@ class TabsHostAppearanceApplicator(
                 appearance?.tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
                     ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
             val largeFontSize =
-                appearance?.tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                appearance?.tabBarSelectedItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
                     ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
 
             // Inactive
             smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, smallFontSize)
-            smallLabel.typeface = normalTypeface
+            smallLabel.typeface = fontFamily
 
             // Active
             largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, largeFontSize)
-            largeLabel.typeface = selectedTypeface
+            largeLabel.typeface = fontFamily
         }
     }
 
