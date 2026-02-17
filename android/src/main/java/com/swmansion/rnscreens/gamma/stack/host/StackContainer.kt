@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.swmansion.rnscreens.ext.isMeasured
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreen
@@ -23,6 +24,11 @@ internal class StackContainer(
 
     private fun requireFragmentManager(): FragmentManager =
         checkNotNull(fragmentManager) { "[RNScreens] Attempt to use nullish FragmentManager" }
+
+    /**
+     * Will crash in case parent does not implement StackContainerParent interface.
+     */
+    private fun containerParentOrNull(): StackContainerParent? = this.parent as StackContainerParent?
 
     /**
      * Describes most up-to-date view of the stack. It might be different from
@@ -48,6 +54,15 @@ internal class StackContainer(
         super.onAttachedToWindow()
 
         setupFragmentManger()
+
+        // Following line works with a couple of assumptions.
+        // First, that this view is laid out by our parent view, which is a component view.
+        // Component views on new architecture receive their first layout after the view hierarchy is
+        // assembled and attached to window. Note, that in case of screen views & their subtrees
+        // (including nested containers) this does not hold. The container is updated later, therefore
+        // the views are attached to window much later ==> their isLaidOut returns false, breaking
+        // transitions & animations.
+        updateLaidOutFlagIfNeededAndPossible()
 
         // We run container update to handle any pending updates requested before container was
         // attached to window.
@@ -182,6 +197,16 @@ internal class StackContainer(
         check(fragments.isNotEmpty()) { "[RNScreens] Empty fragment manager while attempting to update top fragment" }
         fragments.forEach { it.onResignTopFragment() }
         fragments.last().onBecomeTopFragment()
+    }
+
+    /**
+     * If this.isLaidOut == false, then SpecialEffectsController won't perform animations / transitions.
+     * This function tries to ensure that the container is laid out if it already has layout information.
+     */
+    private fun updateLaidOutFlagIfNeededAndPossible() {
+        if (isAttachedToWindow && isMeasured() && !isLaidOut && !isInLayout) {
+            containerParentOrNull()?.layoutContainerNow(this)
+        }
     }
 
     // This is called after special effects (animations) are dispatched

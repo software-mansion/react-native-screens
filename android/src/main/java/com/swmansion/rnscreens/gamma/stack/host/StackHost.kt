@@ -15,11 +15,12 @@ import java.lang.ref.WeakReference
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // should never be restored
-class StackHost(
+internal class StackHost(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     UIManagerListener,
-    StackContainerDelegate {
+    StackContainerDelegate,
+    StackContainerParent {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this))
     private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
@@ -110,6 +111,16 @@ class StackHost(
         b: Int,
     ) {
         container.layout(l, t, r, b)
+    }
+
+    override fun layoutContainerNow(container: StackContainer) {
+        if (measuredWidth != container.measuredWidth || measuredHeight != container.measuredHeight) {
+            container.measure(
+                MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
+            )
+        }
+        container.layout(left, top, right, bottom)
     }
 
     override fun didMountItems(uiManager: UIManager) {
