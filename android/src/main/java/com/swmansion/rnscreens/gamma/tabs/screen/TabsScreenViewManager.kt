@@ -10,11 +10,11 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabScreenDidDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabScreenWillAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabScreenWillDisappearEvent
-import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.utils.RNSLog
 
 @ReactModule(name = TabsScreenViewManager.REACT_CLASS)
