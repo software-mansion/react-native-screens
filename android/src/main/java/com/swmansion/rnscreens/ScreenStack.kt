@@ -308,7 +308,7 @@ class ScreenStack(
     internal fun updateA11yForVisibleScreens() {
         if (screenWrappers.size > 1 && currentVisibleBottom != null) {
             topScreenWrapper?.let {
-                val shouldDisableFocusability = shouldDisableFocusabilityForVisibleScreens()
+                val shouldDisableFocusability = shouldDisableFocusabilityBeneathTopScreen()
                 val screenFragmentsBeneathTop =
                     screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
                 // go from the top of the stack excluding the top screen
@@ -333,7 +333,7 @@ class ScreenStack(
         topScreen?.let { changeScreenFocusability(it, true) }
     }
 
-    private fun shouldDisableFocusabilityForVisibleScreens(): Boolean {
+    private fun shouldDisableFocusabilityBeneathTopScreen(): Boolean {
         topScreenWrapper?.let {
             return if (it.screen.usesFormSheetPresentation()) {
                 it.screen.sheetShouldUseDimmingView()
