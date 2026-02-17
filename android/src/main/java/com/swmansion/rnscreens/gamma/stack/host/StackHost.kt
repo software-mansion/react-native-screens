@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // should never be restored
-internal class StackHost(
+class StackHost(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     UIManagerListener,
@@ -113,7 +113,7 @@ internal class StackHost(
         container.layout(l, t, r, b)
     }
 
-    override fun layoutContainerNow(container: StackContainer) {
+    override fun layoutContainerNow() {
         if (measuredWidth != container.measuredWidth || measuredHeight != container.measuredHeight) {
             container.measure(
                 MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),

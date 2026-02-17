@@ -205,7 +205,7 @@ internal class StackContainer(
      */
     private fun updateLaidOutFlagIfNeededAndPossible() {
         if (isAttachedToWindow && isMeasured() && !isLaidOut && !isInLayout) {
-            containerParentOrNull()?.layoutContainerNow(this)
+            containerParentOrNull()?.layoutContainerNow()
         }
     }
 
