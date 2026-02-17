@@ -28,7 +28,7 @@ namespace react = facebook::react;
   CGSize _lastReactFrameSize;
 #endif // !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   // This is a strong reference to UIBarButtonItem which creates a retain cycle.
-  // It must be cleared via `invalidateUIBarButtonItem` method.
+  // The cycle is cleared via `invalidateUIBarButtonItem` method, called by `invalidate` callback.
   UIBarButtonItem *_barButtonItem;
   BOOL _hidesSharedBackground;
 }
@@ -223,6 +223,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 #endif // RCT_NEW_ARCH_ENABLED
 
+// Used by both Fabric & Paper
+- (void)invalidate
+{
+  [self invalidateUIBarButtonItem];
+}
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 // Starting from iOS 26, to center left and right subviews inside liquid glass backdrop,
@@ -283,12 +289,10 @@ RNS_IGNORE_SUPER_CALL_END
       [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
       [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 
-      // This creates a retain cycle. The reference must be later cleared via `invalidateUIBarButtonItem` method.
       _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:wrapperView];
     } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     {
-      // This creates a retain cycle. The reference must be later cleared via `invalidateUIBarButtonItem` method.
       _barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self];
     }
     [self configureBarButtonItem];

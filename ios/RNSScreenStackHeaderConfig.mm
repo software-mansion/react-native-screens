@@ -932,7 +932,6 @@ RNS_IGNORE_SUPER_CALL_BEGIN
 - (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
 {
   [_reactSubviews removeObject:subview];
-  [subview invalidateUIBarButtonItem];
 }
 RNS_IGNORE_SUPER_CALL_END
 
@@ -972,7 +971,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
-  [(RNSScreenStackHeaderSubview *)childComponentView invalidateUIBarButtonItem];
 
   if (!isGoingToBeRemoved) {
     [self updateViewControllerIfNeeded];
