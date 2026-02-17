@@ -177,6 +177,7 @@ internal class StackContainer(
     private fun onNativeFragmentPop(fragment: StackScreenFragment) {
         require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack model should not be empty after a native pop" }
+        updateTopFragment()
     }
 
     private fun dumpStackModel() {
