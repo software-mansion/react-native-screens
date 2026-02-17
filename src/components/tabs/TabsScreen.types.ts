@@ -157,9 +157,6 @@ export interface AndroidTabsAppearance {
    * @platform android
    */
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
-}
-
-export interface AndroidTabsScreenItemStateAppearance {
   /**
    * @summary Specifies the font family used for the title of each tab bar item.
    *
@@ -186,6 +183,9 @@ export interface AndroidTabsScreenItemStateAppearance {
    * @platform android
    */
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
+}
+
+export interface AndroidTabsScreenItemStateAppearance {
   /**
    * @summary Specifies the font color used for the title of each tab bar item.
    *

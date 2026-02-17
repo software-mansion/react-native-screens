@@ -1,43 +1,54 @@
 import React from 'react';
 
-import { enableFreeze } from 'react-native-screens';
+import { AndroidTabsAppearance, enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext'
+} from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
   BottomTabsContainer,
   type TabConfiguration,
-} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer'
+} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
-import Colors from '../../../shared/styling/Colors'
+import Colors from '../../../shared/styling/Colors';
 import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
 
 enableFreeze(true);
 internalEnableDetailedBottomTabsLogging();
 
+const DEFAULT_ANDROID_APPEARANCE: AndroidTabsAppearance = {
+  tabBarBackgroundColor: Colors.NavyLight100,
+  tabBarItemRippleColor: Colors.WhiteTransparentDark,
+  tabBarItemLabelVisibilityMode: 'labeled',
+  tabBarItemActiveIndicatorColor: Colors.GreenLight40,
+  tabBarItemActiveIndicatorEnabled: true,
+  tabBarItemTitleFontSize: 10,
+  tabBarItemTitleFontWeight: '400',
+  tabBarItemTitleFontFamily: 'monospace',
+  tabBarItemTitleFontStyle: 'italic',
+  normal: {
+    tabBarItemIconColor: Colors.BlueLight100,
+    tabBarItemTitleFontColor: Colors.BlueLight40,
+  },
+  selected: {
+    tabBarItemIconColor: Colors.GreenLight100,
+    tabBarItemTitleFontColor: Colors.GreenLight40,
+  },
+  focused: {
+    tabBarItemIconColor: Colors.RedDark100,
+    tabBarItemTitleFontColor: Colors.RedDark40,
+  },
+  disabled: {
+    tabBarItemIconColor: Colors.LightOffNavy,
+    tabBarItemTitleFontColor: Colors.LightOffNavy,
+  },
+};
+
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
       standardAppearanceAndroid: {
-        tabBarBackgroundColor: Colors.NavyLight100,
-        tabBarItemRippleColor: Colors.WhiteTransparentDark,
-        tabBarItemLabelVisibilityMode: "auto",
-        tabBarItemActiveIndicatorColor: Colors.GreenLight40,
-        tabBarItemActiveIndicatorEnabled: true,
-        normal: {
-          tabBarItemIconColor: Colors.BlueLight100,
-          tabBarItemTitleFontColor:Colors .BlueLight40,
-          tabBarItemTitleFontSize: 10,
-          tabBarItemTitleFontFamily: "monospace",
-          tabBarItemTitleFontStyle: "italic",
-          tabBarItemTitleFontWeight: "700",
-        },
-        selected: {
-          tabBarItemIconColor: Colors.GreenLight100,
-          tabBarItemTitleFontColor: Colors.GreenLight40,
-          tabBarItemTitleFontSize: 15,
-        }
+        ...DEFAULT_ANDROID_APPEARANCE,
       },
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyLight100,
@@ -83,6 +94,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Second Tab Screen',
       tabBarItemTestID: 'tab-item-2-id',
       tabBarItemAccessibilityLabel: 'Second Tab Item',
+      standardAppearanceAndroid: {
+        ...DEFAULT_ANDROID_APPEARANCE,
+      },
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyDark140,
         stacked: {
@@ -128,11 +142,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
           },
         },
       },
-      standardAppearanceAndroid: {
-        normal: {
-          tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
-        },
-      },
       icon: {
         ios: {
           type: 'templateSource',
@@ -167,10 +176,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemAccessibilityLabel: 'Third Tab Item',
       scrollEdgeEffects: { bottom: 'hard' },
       standardAppearanceAndroid: {
-        normal: {
-          tabBarItemBadgeBackgroundColor: Colors.RedDark40,
-          tabBarItemBadgeTextColor: Colors.RedDark120,
-        }
+        ...DEFAULT_ANDROID_APPEARANCE,
       },
       standardAppearance: {
         stacked: {
@@ -208,6 +214,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',
       tabBarItemAccessibilityLabel: 'Fourth Tab Item',
+      standardAppearanceAndroid: {
+        ...DEFAULT_ANDROID_APPEARANCE,
+      },
       icon: {
         ios: {
           type: 'sfSymbol',

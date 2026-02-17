@@ -25,13 +25,13 @@ data class AndroidTabsAppearance(
     val tabBarItemActiveIndicatorColor: Int? = null,
     val tabBarItemActiveIndicatorEnabled: Boolean? = null,
     val tabBarItemLabelVisibilityMode: String? = null,
-)
-
-data class AndroidTabsScreenItemStateAppearance(
     val tabBarItemTitleFontFamily: String? = null,
     val tabBarItemTitleFontSize: Float? = null,
     val tabBarItemTitleFontWeight: String? = null,
     val tabBarItemTitleFontStyle: String? = null,
+)
+
+data class AndroidTabsScreenItemStateAppearance(
     val tabBarItemTitleFontColor: Int? = null,
     val tabBarItemIconColor: Int? = null,
     val tabBarItemBadgeTextColor: Int? = null,
@@ -69,8 +69,8 @@ class TabsHostAppearanceApplicator(
 
         val states = arrayOf(
             intArrayOf(-android.R.attr.state_enabled), // disabled
-            intArrayOf(android.R.attr.state_focused),  // focused
             intArrayOf(android.R.attr.state_checked),  // selected
+            intArrayOf(android.R.attr.state_focused),  // focused
             intArrayOf()                               // normal
         )
 
@@ -80,14 +80,14 @@ class TabsHostAppearanceApplicator(
             com.google.android.material.R.attr.colorOnSurfaceVariant
         )
 
-        val fontFocusedColor = resolveColor(
-            appearance?.focused?.tabBarItemTitleFontColor,
-            com.google.android.material.R.attr.colorOnSurface
-        )
-
         val fontSelectedColor = resolveColor(
             appearance?.selected?.tabBarItemTitleFontColor,
             com.google.android.material.R.attr.colorSecondary
+        )
+
+        val fontFocusedColor = resolveColor(
+            appearance?.focused?.tabBarItemTitleFontColor,
+            com.google.android.material.R.attr.colorOnSurface
         )
 
         val fontNormalColor = resolveColor(
@@ -95,7 +95,7 @@ class TabsHostAppearanceApplicator(
             com.google.android.material.R.attr.colorOnSurfaceVariant
         )
 
-        val fontColors = intArrayOf(fontDisabledColor, fontFocusedColor, fontSelectedColor, fontNormalColor)
+        val fontColors = intArrayOf(fontDisabledColor, fontSelectedColor, fontFocusedColor, fontNormalColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
 
         // Icon color
@@ -104,13 +104,13 @@ class TabsHostAppearanceApplicator(
             com.google.android.material.R.attr.colorOnSurfaceVariant
         )
 
-        val iconFocusedColor = resolveColor(
-            appearance?.focused?.tabBarItemIconColor,
+        val iconSelectedColor = resolveColor(
+            appearance?.selected?.tabBarItemIconColor,
             com.google.android.material.R.attr.colorOnSecondaryContainer
         )
 
-        val iconSelectedColor = resolveColor(
-            appearance?.selected?.tabBarItemIconColor,
+        val iconFocusedColor = resolveColor(
+            appearance?.focused?.tabBarItemIconColor,
             com.google.android.material.R.attr.colorOnSecondaryContainer
         )
 
@@ -119,7 +119,7 @@ class TabsHostAppearanceApplicator(
             com.google.android.material.R.attr.colorOnSurfaceVariant
         )
 
-        val iconColors = intArrayOf(iconDisabledColor, iconFocusedColor, iconSelectedColor, iconNormalColor)
+        val iconColors = intArrayOf(iconDisabledColor, iconSelectedColor, iconFocusedColor, iconNormalColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
         // LabelVisibilityMode
@@ -155,23 +155,25 @@ class TabsHostAppearanceApplicator(
         val appearance = activeTabScreen?.appearance
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
+        // TODO: @t0maboro - add selected support
         fun resolveTypeface(
-            state: AndroidTabsScreenItemStateAppearance?,
+            appearance: AndroidTabsAppearance?,
+            isSelected: Boolean,
         ): android.graphics.Typeface {
-            val isFontStyleItalic = state?.tabBarItemTitleFontStyle == "italic"
+            val isFontStyleItalic = appearance?.tabBarItemTitleFontStyle == "italic"
 
             // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
             // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
             // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
             val fontWeight =
-                if (state?.tabBarItemTitleFontWeight ==
+                if (appearance?.tabBarItemTitleFontWeight ==
                     "bold"
                 ) {
                     700
                 } else {
-                    state?.tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
+                    appearance?.tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
                 }
-            val fontFamilyName = state?.tabBarItemTitleFontFamily ?: ""
+            val fontFamilyName = appearance?.tabBarItemTitleFontFamily ?: ""
 
             return ReactFontManager.getInstance().getTypeface(fontFamilyName, fontWeight, isFontStyleItalic, context.assets)
         }
@@ -182,12 +184,13 @@ class TabsHostAppearanceApplicator(
             val smallLabel =
                 menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
 
-            // TODO: @t0maboro - what about other appearance types?
             val normalTypeface = resolveTypeface(
-                appearance?.normal
+                appearance,
+                false
             )
             val selectedTypeface = resolveTypeface(
-                appearance?.selected,
+                appearance,
+                true
             )
 
             /*
@@ -200,10 +203,10 @@ class TabsHostAppearanceApplicator(
                 `allowFontScaling` prop.
              */
             val smallFontSize =
-                appearance?.normal?.tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                appearance?.tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
                     ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
             val largeFontSize =
-                appearance?.selected?.tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                appearance?.tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
                     ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
 
             // Inactive

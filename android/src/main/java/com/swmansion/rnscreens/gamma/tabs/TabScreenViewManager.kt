@@ -287,21 +287,20 @@ class TabScreenViewManager :
             selected = if (map.hasKey("selected")) parseStateAppearance(map.getMap("selected")) else null,
             focused = if (map.hasKey("focused")) parseStateAppearance(map.getMap("focused")) else null,
             disabled = if (map.hasKey("disabled")) parseStateAppearance(map.getMap("disabled")) else null,
-
             tabBarBackgroundColor = map.getOptionalColor("tabBarBackgroundColor"),
             tabBarItemRippleColor = map.getOptionalColor("tabBarItemRippleColor"),
             tabBarItemActiveIndicatorColor = map.getOptionalColor("tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = map.getOptionalBoolean(key = "tabBarItemActiveIndicatorEnabled"),
             tabBarItemLabelVisibilityMode = map.getOptionalString("tabBarItemLabelVisibilityMode"),
+            tabBarItemTitleFontFamily = map.getOptionalString("tabBarItemTitleFontFamily"),
+            tabBarItemTitleFontSize = map.getOptionalFloat("tabBarItemTitleFontSize"),
+            tabBarItemTitleFontWeight = map.getOptionalString("tabBarItemTitleFontWeight"),
+            tabBarItemTitleFontStyle = map.getOptionalString("tabBarItemTitleFontStyle"),
         )
 
     private fun parseStateAppearance(map: ReadableMap?): AndroidTabsScreenItemStateAppearance? {
         if (map == null) return null
         return AndroidTabsScreenItemStateAppearance(
-            tabBarItemTitleFontFamily = map.getOptionalString("tabBarItemTitleFontFamily"),
-            tabBarItemTitleFontSize = map.getOptionalFloat("tabBarItemTitleFontSize"),
-            tabBarItemTitleFontWeight = map.getOptionalString("tabBarItemTitleFontWeight"),
-            tabBarItemTitleFontStyle = map.getOptionalString("tabBarItemTitleFontStyle"),
             tabBarItemTitleFontColor = map.getOptionalColor("tabBarItemTitleFontColor"),
             tabBarItemIconColor = map.getOptionalColor("tabBarItemIconColor"),
             tabBarItemBadgeBackgroundColor = map.getOptionalColor("tabBarItemBadgeBackgroundColor"),
