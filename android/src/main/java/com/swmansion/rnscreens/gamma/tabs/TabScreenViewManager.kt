@@ -1,7 +1,7 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-import android.graphics.Color
 import android.util.Log
+import androidx.core.graphics.toColorInt
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
@@ -272,7 +272,7 @@ class TabScreenViewManager :
         return try {
             when (getType(key)) {
                 ReadableType.Number -> getInt(key)
-                ReadableType.String -> Color.parseColor(getString(key))
+                ReadableType.String -> getString(key)?.toColorInt()
                 else -> null
             }
         } catch (e: Exception) {

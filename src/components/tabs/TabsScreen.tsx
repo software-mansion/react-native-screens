@@ -19,6 +19,7 @@ import BottomTabsScreenNativeComponent, {
   type Appearance,
   type ItemAppearance,
   type ItemStateAppearance,
+  type ItemStateAppearanceAndroid,
 } from '../../fabric/bottom-tabs/BottomTabsScreenNativeComponent';
 import { featureFlags } from '../../flags';
 import type {
@@ -27,6 +28,8 @@ import type {
   TabsScreenItemStateAppearance,
   TabsScreenProps,
   EmptyObject,
+  AndroidTabsAppearance,
+  AndroidTabsScreenItemStateAppearance,
 } from './TabsScreen.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type {
@@ -63,6 +66,7 @@ function TabsScreen(props: TabsScreenProps) {
     icon,
     selectedIcon,
     standardAppearance,
+    standardAppearanceAndroid,
     scrollEdgeAppearance,
     scrollEdgeEffects,
     // eslint-disable-next-line camelcase -- we use sneak case experimental prefix
@@ -139,6 +143,9 @@ function TabsScreen(props: TabsScreenProps) {
       {...iconProps}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
+      standardAppearanceAndroid={mapAndroidAppearanceToNativeProp(
+        standardAppearanceAndroid,
+      )}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
@@ -218,6 +225,63 @@ function mapItemStateAppearanceToNativeProp(
       tabBarItemTitleFontWeight !== undefined
         ? String(tabBarItemTitleFontWeight)
         : undefined,
+  };
+}
+
+function mapAndroidAppearanceToNativeProp(
+  appearance?: AndroidTabsAppearance,
+): NativeProps['standardAppearanceAndroid'] {
+  if (!appearance) return undefined;
+
+  const {
+    normal,
+    selected,
+    focused,
+    disabled,
+    tabBarItemRippleColor,
+    tabBarBackgroundColor,
+    tabBarItemActiveIndicatorColor,
+    tabBarItemTitleFontWeight,
+  } = appearance;
+
+  return {
+    ...appearance,
+    normal: mapAndroidItemStateAppearanceToNativeProp(normal),
+    selected: mapAndroidItemStateAppearanceToNativeProp(selected),
+    focused: mapAndroidItemStateAppearanceToNativeProp(focused),
+    disabled: mapAndroidItemStateAppearanceToNativeProp(disabled),
+    tabBarItemRippleColor: processColor(tabBarItemRippleColor),
+    tabBarBackgroundColor: processColor(tabBarBackgroundColor),
+    tabBarItemActiveIndicatorColor: processColor(
+      tabBarItemActiveIndicatorColor,
+    ),
+    tabBarItemTitleFontWeight:
+      tabBarItemTitleFontWeight !== undefined
+        ? String(tabBarItemTitleFontWeight)
+        : undefined,
+  };
+}
+
+function mapAndroidItemStateAppearanceToNativeProp(
+  itemStateAppearance?: AndroidTabsScreenItemStateAppearance,
+): ItemStateAppearanceAndroid | undefined {
+  if (!itemStateAppearance) return undefined;
+
+  const {
+    tabBarItemTitleFontColor,
+    tabBarItemIconColor,
+    tabBarItemBadgeBackgroundColor,
+    tabBarItemBadgeTextColor,
+  } = itemStateAppearance;
+
+  return {
+    ...itemStateAppearance,
+    tabBarItemTitleFontColor: processColor(tabBarItemTitleFontColor),
+    tabBarItemIconColor: processColor(tabBarItemIconColor),
+    tabBarItemBadgeBackgroundColor: processColor(
+      tabBarItemBadgeBackgroundColor,
+    ),
+    tabBarItemBadgeTextColor: processColor(tabBarItemBadgeTextColor),
   };
 }
 

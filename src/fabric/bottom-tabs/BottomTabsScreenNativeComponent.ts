@@ -3,7 +3,6 @@
 import { codegenNativeComponent } from 'react-native';
 import type {
   CodegenTypes as CT,
-  ColorValue,
   ImageSource,
   ProcessedColorValue,
   ViewProps,
@@ -59,11 +58,11 @@ type TabBarItemLabelVisibilityMode =
   | 'labeled'
   | 'unlabeled';
 
-type ItemStateAppearanceAndroid = {
-  tabBarItemTitleFontColor?: ColorValue;
-  tabBarItemIconColor?: ColorValue;
-  tabBarItemBadgeTextColor?: ColorValue;
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+export type ItemStateAppearanceAndroid = {
+  tabBarItemTitleFontColor?: ProcessedColorValue | null;
+  tabBarItemIconColor?: ProcessedColorValue | null;
+  tabBarItemBadgeTextColor?: ProcessedColorValue | null;
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
 };
 
 export type AppearanceAndroid = {
@@ -72,9 +71,9 @@ export type AppearanceAndroid = {
   focused?: ItemStateAppearanceAndroid;
   disabled?: ItemStateAppearanceAndroid;
 
-  tabBarBackgroundColor?: ColorValue;
-  tabBarItemRippleColor?: ColorValue;
-  tabBarItemActiveIndicatorColor?: ColorValue;
+  tabBarBackgroundColor?: ProcessedColorValue | null;
+  tabBarItemRippleColor?: ProcessedColorValue | null;
+  tabBarItemActiveIndicatorColor?: ProcessedColorValue | null;
   tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
   tabBarItemLabelVisibilityMode?: CT.WithDefault<
     TabBarItemLabelVisibilityMode,
