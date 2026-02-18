@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
@@ -350,6 +351,7 @@ class Screen(
         r: Int,
         b: Int,
     ) {
+        Log.d("SCREENS", "Screen // onLayout top = %d, width = %d, height = %d".format(t, r - l, b - t));
         // In case of form sheet we get layout notification a bit later, in `onBottomSheetBehaviorDidLayout`
         // after the attached behaviour laid out this view.
         if (changed && isNativeStackScreen && !usesFormSheetPresentation()) {

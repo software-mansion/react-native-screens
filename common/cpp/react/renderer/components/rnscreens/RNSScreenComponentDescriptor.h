@@ -5,6 +5,7 @@
 #include <react/renderer/uimanager/UIManager.h>
 #include "RNSScreenShadowNodeCommitHook.h"
 #endif // ANDROID
+#include <android/log.h>
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/rnscreens/utils/RectUtil.h>
@@ -45,6 +46,10 @@ class RNSScreenComponentDescriptor final
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
             shadowNode.getState());
     auto stateData = state->getData();
+
+    __android_log_print(
+        ANDROID_LOG_INFO, "SCREENS", "RNSScreenComponentDescriptor // adopt");
+
 #ifdef ANDROID
     // get
     // featureFlags.experiment.androidResetScreenShadowStateOnOrientationChange
@@ -108,6 +113,7 @@ class RNSScreenComponentDescriptor final
       // The if condition holds true on first render and when it is reset inside
       // RNSScreenShadowNodeCommitHook.
       layoutableShadowNode.setSize({YGUndefined, YGUndefined});
+      screenShadowNode.applyHeaderPadding();
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {

@@ -1,6 +1,8 @@
 package com.fabricexample
 
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -14,6 +16,11 @@ class MainActivity : ReactActivity() {
    * rendering of the component.
    */
   override fun getMainComponentName(): String = "FabricExample"
+
+  override fun onConfigurationChanged(configuration: Configuration) {
+    super.onConfigurationChanged(configuration)
+    Log.d("SCREENS", "activity id ${this} orientation = ${configuration.orientation}")
+  }
 
   /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]

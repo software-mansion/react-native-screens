@@ -2,6 +2,8 @@ package com.swmansion.rnscreens.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.os.Build
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -32,8 +34,6 @@ internal class ScreenDummyLayoutHelper(
     private lateinit var toolbar: Toolbar
     private var defaultFontSize: Float = 0f
     private var defaultContentInsetStartWithNavigation: Int = 0
-
-    // LRU with size 1
     private var cache: CacheEntry = CacheEntry.EMPTY
 
     // We do not want to be responsible for the context lifecycle. If it's null, we're fine.
@@ -87,6 +87,8 @@ internal class ScreenDummyLayoutHelper(
             }
 
         synchronized(this) {
+        Log.d("SCREENS", "ScreenDummyLayoutHelper // activity id ${reactContext.currentActivity}")
+
             // The layout could have been initialised when this thread waited for access to critical section.
             if (isLayoutInitialized) {
                 return true
@@ -174,12 +176,19 @@ internal class ScreenDummyLayoutHelper(
             }
         }
 
-        if (cache.hasKey(CacheKey(fontSize, isTitleEmpty))) {
+        val activity = requireActivity()
+
+        Log.d("SCREENS", "orientation = %d".format(activity.resources.configuration.orientation))
+
+        if (cache.hasKey(CacheKey(fontSize, isTitleEmpty, activity.resources.configuration.orientation))) {
             return cache.headerHeight
         }
 
-        val topLevelDecorView = requireActivity().window.decorView
-        val topInset = getDecorViewTopInset(topLevelDecorView)
+        val topLevelDecorView = activity.window.decorView
+        val topInset = getCachedTopInset()
+
+        Log.d("SCREENS", "ScreenDummyLayoutHelper // decorView.width = %d, decorView.height = %d".format(topLevelDecorView.width, topLevelDecorView.height))
+        Log.d("SCREENS", "ScreenDummyLayoutHelper // topInset = %d".format(topInset))
 
         // These dimensions are not accurate, as they do include navigation bar, however
         // it is ok for our purposes.
@@ -213,8 +222,19 @@ internal class ScreenDummyLayoutHelper(
         val totalAppBarLayoutHeight = appBarLayout.height.toFloat() + topInset
 
         val headerHeight = PixelUtil.toDIPFromPixel(totalAppBarLayoutHeight)
-        cache = CacheEntry(CacheKey(fontSize, isTitleEmpty), headerHeight)
         return headerHeight
+    }
+
+    private fun getCachedTopInset(): Int {
+        requireActivity().let {
+            // If build version allows, use insets retrieved from window manager
+            // They are correctly updated and available during orientation change
+            // which prevents content from jumping when calculating new layout
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                getWindowManagerTopInset(it)
+            else
+                getDecorViewTopInset(it.window.decorView)
+        }
     }
 
     private fun requireReactContext(lazyMessage: (() -> Any)? = null): ReactApplicationContext =
@@ -275,6 +295,7 @@ internal class ScreenDummyLayoutHelper(
 private data class CacheKey(
     val fontSize: Int,
     val isTitleEmpty: Boolean,
+    val orientation: Int,
 )
 
 private class CacheEntry(
@@ -284,6 +305,6 @@ private class CacheEntry(
     fun hasKey(key: CacheKey) = cacheKey.fontSize != Int.MIN_VALUE && cacheKey == key
 
     companion object {
-        val EMPTY = CacheEntry(CacheKey(Int.MIN_VALUE, false), 0f)
+        val EMPTY = CacheEntry(CacheKey(Int.MIN_VALUE, false, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT), 0f)
     }
 }

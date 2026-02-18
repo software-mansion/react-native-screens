@@ -35,6 +35,10 @@ RootShadowNode::Unshared RNSScreenShadowNodeCommitHook::shadowTreeWillCommit(
   // Check if screen area has changed size (either because of orientation
   // change, or application resize with floating window / split screen)
   if (_screenSizeChanged(*oldRootProps, *newRootProps)) {
+    __android_log_print(
+        ANDROID_LOG_INFO,
+        "SCREENS",
+        "RNSScreenShadowNodeCommitHook // orientation change detected");
     return newRootShadowNodeWithScreenFrameSizesReset(newRootShadowNode);
   }
 

@@ -1,4 +1,6 @@
 #include "RNSScreenShadowNode.h"
+#include <yoga/node/Node.h>
+#include "YLSN.h"
 
 namespace facebook {
 namespace react {
@@ -96,19 +98,7 @@ void RNSScreenShadowNode::appendChild(
     // During creation of the shadow node children are not attached yet.
     // We also do not want to set any padding in case.
     if (headerConfigChildOpt) {
-      const auto &headerConfigChild = headerConfigChildOpt->get();
-      const auto &headerProps =
-          *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(
-              headerConfigChild->getProps());
-
-      const auto headerHeight = headerProps.hidden
-          ? 0.f
-          : findHeaderHeight(
-                headerProps.titleFontSize, headerProps.title.empty())
-                .value_or(0.f);
-
-      screenShadowNode.setPadding({0, 0, 0, headerHeight});
-      screenShadowNode.setHeaderHeight(headerHeight);
+      doApplyHeaderPadding(headerConfigChildOpt);
       screenShadowNode.getFrameCorrectionModes().set(
           FrameCorrectionModes::Mode(
               FrameCorrectionModes::Mode::FrameHeightCorrection |
@@ -119,6 +109,15 @@ void RNSScreenShadowNode::appendChild(
 }
 
 void RNSScreenShadowNode::layout(facebook::react::LayoutContext layoutContext) {
+  yoga::Node yogaNode = ((YLSN *)this)->yogaNode_;
+  float padding = yogaNode.style().padding(yoga::Edge::Bottom).value().unwrap();
+  __android_log_print(
+      ANDROID_LOG_INFO,
+      "SCREENS",
+      "RNSScreenShadowNode // origin.y = %f height = %f, padding = %f",
+      layoutMetrics_.frame.origin.y,
+      layoutMetrics_.frame.size.height,
+      padding);
   YogaLayoutableShadowNode::layout(layoutContext);
 
 #ifdef ANDROID
@@ -146,6 +145,43 @@ void RNSScreenShadowNode::applyFrameCorrections() {
       headerCorrectionModes.check(
           FrameCorrectionModes::Mode::FrameHeightCorrection);
 }
+
+void RNSScreenShadowNode::applyHeaderPadding() {
+  auto headerConfigChildOpt = findHeaderConfigChild(*this);
+
+  if (headerConfigChildOpt) {
+    doApplyHeaderPadding(headerConfigChildOpt);
+  }
+};
+
+void RNSScreenShadowNode::doApplyHeaderPadding(
+    std::optional<
+        const std::reference_wrapper<const std::shared_ptr<const ShadowNode>>>
+        headerConfigRef) {
+  if (!headerConfigRef) {
+    return;
+  }
+
+  const auto &headerConfigChild = headerConfigRef->get();
+  const auto &headerProps =
+      *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(
+          headerConfigChild->getProps());
+
+  const auto headerHeight = headerProps.hidden
+      ? 0.f
+      : findHeaderHeight(headerProps.titleFontSize, headerProps.title.empty())
+            .value_or(0.f);
+
+  __android_log_print(
+      ANDROID_LOG_INFO,
+      "SCREENS",
+      "RNSScreenShadowNode // doApplyHeaderPadding headerHeight = %f",
+      headerHeight);
+
+  auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(*this);
+  screenShadowNode.setPadding({0, 0, 0, headerHeight});
+  screenShadowNode.setHeaderHeight(headerHeight);
+};
 
 void RNSScreenShadowNode::setHeaderHeight(float headerHeight) {
   getStateDataMutable().setHeaderHeight(headerHeight);
