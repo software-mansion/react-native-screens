@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.tabs
 
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.size
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -27,11 +28,13 @@ class TabsHostAppearanceCoordinator(
             bottomNavigationView.menu.clear()
         }
 
-        val activeTabScreen = tabsHost.currentFocusedTab.tabScreen
         tabScreenFragments.forEachIndexed { index, fragment ->
+            val activeTabScreen = tabsHost.currentFocusedTab.tabScreen
             val menuItem = bottomNavigationView.menu.getOrCreateMenuItem(index, fragment.tabScreen)
             check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
             updateMenuItemAppearance(menuItem, fragment.tabScreen, activeTabScreen)
+
+            setupTabFocusListener(index, menuItem, tabsHost, fragment.tabScreen)
         }
     }
 
@@ -42,6 +45,37 @@ class TabsHostAppearanceCoordinator(
     ) {
         appearanceApplicator.updateMenuItemAppearance(menuItem, tabScreen)
         appearanceApplicator.updateBadgeAppearance(menuItem, tabScreen, activeTabScreen)
+    }
+
+    private fun setupTabFocusListener(
+        index: Int,
+        menuItem: MenuItem,
+        tabsHost: TabsHost,
+        tabScreen: TabScreen,
+    ) {
+        val menuView = bottomNavigationView.getChildAt(0) as? ViewGroup ?: return
+        val itemView = menuView.getChildAt(index)
+        val badge = bottomNavigationView.getBadge(menuItem.itemId)
+
+        if (itemView == null || badge == null) {
+            return
+        }
+
+        if (itemView.onFocusChangeListener == null) {
+            itemView.setOnFocusChangeListener { _, hasFocus ->
+                appearanceApplicator.updateBadgeStyle(
+                    badge,
+                    hasFocus,
+                    tabScreen,
+                    tabsHost.currentFocusedTab.tabScreen,
+                    menuItem
+                )
+            }
+        }
+    }
+
+    companion object {
+        const val TAG = "TabsHostAppearanceCoordinator"
     }
 }
 

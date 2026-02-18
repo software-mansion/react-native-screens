@@ -11,6 +11,7 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.uimanager.PixelUtil
+import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 
@@ -244,16 +245,6 @@ class TabsHostAppearanceApplicator(
         activeTabScreen: TabScreen,
     ) {
         val menuItemIndex = bottomNavigationView.menu.children.indexOf(menuItem)
-        val menuView = bottomNavigationView.getChildAt(0) as ViewGroup
-        val itemView = menuView.getChildAt(menuItemIndex)
-
-        // TODO: @t0maboro - should we override some listeners here?
-        if (itemView.onFocusChangeListener == null) {
-            itemView.setOnFocusChangeListener { _, _ ->
-                updateBadgeAppearance(menuItem, tabScreen, activeTabScreen)
-            }
-        }
-
         val badgeValue = tabScreen.badgeValue
 
         if (badgeValue == null) {
@@ -277,37 +268,57 @@ class TabsHostAppearanceApplicator(
             badge.text = badgeValue
         }
 
+        val menuView = bottomNavigationView.getChildAt(0) as ViewGroup
+        val itemView = menuView.getChildAt(menuItemIndex)
+
+        updateBadgeStyle(badge, itemView.isFocused, tabScreen, activeTabScreen, menuItem)
+    }
+
+    fun updateBadgeStyle(
+        badge: BadgeDrawable,
+        isFocused: Boolean,
+        tabScreen: TabScreen,
+        activeTabScreen: TabScreen,
+        menuItem: MenuItem,
+    ) {
         val isSelected = tabScreen == activeTabScreen
         val isEnabled = menuItem.isEnabled
-        val isFocused = itemView.isFocused
+        val appearance = activeTabScreen.appearance
 
-        // Styling
-        val appearance = tabScreen.appearance
+        fun resolveStateColor(
+            disabledColor: Int?,
+            focusedColor: Int?,
+            selectedColor: Int?,
+            normalColor: Int?,
+            defaultAttr: Int,
+        ): Int {
+            val colorRaw =
+                when {
+                    !isEnabled -> disabledColor
+                    isFocused -> focusedColor
+                    isSelected -> selectedColor
+                    else -> normalColor
+                }
+            return colorRaw ?: resolveColorAttr(defaultAttr)
+        }
 
-        val badgeTextColorRaw =
-            when {
-                !isEnabled -> appearance?.disabled?.tabBarItemBadgeTextColor
-                isFocused -> appearance?.focused?.tabBarItemBadgeTextColor
-                isSelected -> appearance?.selected?.tabBarItemBadgeTextColor
-                else -> appearance?.normal?.tabBarItemBadgeTextColor
-            }
-
-        val badgeTextColor =
-            badgeTextColorRaw
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
-
-        badge.badgeTextColor = badgeTextColor
-
-        val badgeBackgroundColorRaw =
-            when {
-                !isEnabled -> appearance?.disabled?.tabBarItemBadgeBackgroundColor
-                isFocused -> appearance?.focused?.tabBarItemBadgeBackgroundColor
-                isSelected -> appearance?.selected?.tabBarItemBadgeBackgroundColor
-                else -> appearance?.normal?.tabBarItemBadgeBackgroundColor
-            }
+        badge.badgeTextColor =
+            resolveStateColor(
+                disabledColor = appearance?.disabled?.tabBarItemBadgeTextColor,
+                focusedColor = appearance?.focused?.tabBarItemBadgeTextColor,
+                selectedColor = appearance?.selected?.tabBarItemBadgeTextColor,
+                normalColor = appearance?.normal?.tabBarItemBadgeTextColor,
+                defaultAttr = com.google.android.material.R.attr.colorOnError,
+            )
 
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
-        badge.backgroundColor = badgeBackgroundColorRaw
-            ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
+        badge.backgroundColor =
+            resolveStateColor(
+                disabledColor = appearance?.disabled?.tabBarItemBadgeBackgroundColor,
+                focusedColor = appearance?.focused?.tabBarItemBadgeBackgroundColor,
+                selectedColor = appearance?.selected?.tabBarItemBadgeBackgroundColor,
+                normalColor = appearance?.normal?.tabBarItemBadgeBackgroundColor,
+                defaultAttr = androidx.appcompat.R.attr.colorError,
+            )
     }
 }
