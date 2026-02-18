@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.children
 import androidx.core.view.isVisible
-import androidx.transition.TransitionManager
 import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -62,8 +61,6 @@ class TabsHostAppearanceApplicator(
         tabsHost: TabsHost,
         activeTabScreen: TabScreen?,
     ) {
-        disableAnimations()
-
         val appearance = activeTabScreen?.appearance
 
         bottomNavigationView.isVisible = !tabsHost.tabBarHidden
@@ -169,8 +166,6 @@ class TabsHostAppearanceApplicator(
         tabsHost: TabsHost,
         activeTabScreen: TabScreen?,
     ) {
-        disableAnimations()
-
         val appearance = activeTabScreen?.appearance
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
@@ -234,8 +229,6 @@ class TabsHostAppearanceApplicator(
         menuItem: MenuItem,
         tabScreen: TabScreen,
     ) {
-        disableAnimations()
-
         if (menuItem.title != tabScreen.tabTitle) {
             menuItem.title = tabScreen.tabTitle
         }
@@ -250,8 +243,6 @@ class TabsHostAppearanceApplicator(
         tabScreen: TabScreen,
         activeTabScreen: TabScreen,
     ) {
-        disableAnimations()
-
         val menuItemIndex = bottomNavigationView.menu.children.indexOf(menuItem)
         val menuView = bottomNavigationView.getChildAt(0) as ViewGroup
         val itemView = menuView.getChildAt(menuItemIndex)
@@ -318,13 +309,5 @@ class TabsHostAppearanceApplicator(
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
         badge.backgroundColor = badgeBackgroundColorRaw
             ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
-    }
-
-    // TODO: @t0maboro - do we need it?
-    private fun disableAnimations() {
-        val menuView = bottomNavigationView.getChildAt(0) as? ViewGroup
-        if (menuView != null) {
-            TransitionManager.beginDelayedTransition(menuView, null)
-        }
     }
 }
