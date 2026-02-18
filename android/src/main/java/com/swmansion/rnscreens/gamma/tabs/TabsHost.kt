@@ -153,11 +153,8 @@ class TabsHost(
 
     private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
 
-    private val currentFocusedTab: TabScreenFragment
+    internal val currentFocusedTab: TabScreenFragment
         get() = checkNotNull(tabScreenFragments.find { it.tabScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
-
-    internal val currentFocusedTabOrNull: TabScreenFragment?
-        get() = tabScreenFragments.find { it.tabScreen.isFocusedTab }
 
     private var lastAppliedUiMode: Int? = null
 
@@ -304,7 +301,8 @@ class TabsHost(
 
     override fun onMenuItemAttributesChange(tabScreen: TabScreen) {
         getMenuItemForTabScreen(tabScreen)?.let { menuItem ->
-            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabScreen)
+            val activeTabScreen = currentFocusedTab.tabScreen
+            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabScreen, activeTabScreen)
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabScreen)
         }
     }

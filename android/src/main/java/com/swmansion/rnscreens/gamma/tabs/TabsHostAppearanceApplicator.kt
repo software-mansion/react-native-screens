@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.transition.TransitionManager
 import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -36,7 +37,7 @@ data class AndroidTabsScreenItemStateAppearance(
     val tabBarItemTitleFontColor: Int? = null,
     val tabBarItemIconColor: Int? = null,
     val tabBarItemBadgeTextColor: Int? = null,
-    val tabBarItemBadgeBackgroundColor: Int? = null
+    val tabBarItemBadgeBackgroundColor: Int? = null,
 )
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
@@ -46,7 +47,7 @@ class TabsHostAppearanceApplicator(
 ) {
     private fun resolveColor(
         color: Int?,
-        attr: Int
+        attr: Int,
     ): Int {
         if (color != null) return color
 
@@ -55,11 +56,14 @@ class TabsHostAppearanceApplicator(
         return typedValue.data
     }
 
-    private fun resolveColorAttr(attr: Int): Int {
-        return resolveColor(null, attr)
-    }
+    private fun resolveColorAttr(attr: Int): Int = resolveColor(null, attr)
 
-    fun updateSharedAppearance(tabsHost: TabsHost, activeTabScreen: TabScreen?) {
+    fun updateSharedAppearance(
+        tabsHost: TabsHost,
+        activeTabScreen: TabScreen?,
+    ) {
+        disableAnimations()
+
         val appearance = activeTabScreen?.appearance
 
         bottomNavigationView.isVisible = !tabsHost.tabBarHidden
@@ -68,59 +72,68 @@ class TabsHostAppearanceApplicator(
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorSurfaceContainer),
         )
 
-        val states = arrayOf(
-            intArrayOf(-android.R.attr.state_enabled), // disabled
-            intArrayOf(android.R.attr.state_checked),  // selected
-            intArrayOf(android.R.attr.state_focused),  // focused
-            intArrayOf()                               // normal
-        )
+        val states =
+            arrayOf(
+                intArrayOf(-android.R.attr.state_enabled), // disabled
+                intArrayOf(android.R.attr.state_focused), // focused
+                intArrayOf(android.R.attr.state_checked), // selected
+                intArrayOf(), // normal
+            )
 
         // Font color
-        val fontDisabledColor = resolveColor(
-            appearance?.disabled?.tabBarItemTitleFontColor,
-            com.google.android.material.R.attr.colorOnSurfaceVariant
-        )
+        val fontDisabledColor =
+            resolveColor(
+                appearance?.disabled?.tabBarItemTitleFontColor,
+                com.google.android.material.R.attr.colorOnSurfaceVariant,
+            )
 
-        val fontSelectedColor = resolveColor(
-            appearance?.selected?.tabBarItemTitleFontColor,
-            com.google.android.material.R.attr.colorSecondary
-        )
+        val fontFocusedColor =
+            resolveColor(
+                appearance?.focused?.tabBarItemTitleFontColor,
+                com.google.android.material.R.attr.colorOnSurface,
+            )
 
-        val fontFocusedColor = resolveColor(
-            appearance?.focused?.tabBarItemTitleFontColor,
-            com.google.android.material.R.attr.colorOnSurface
-        )
+        val fontSelectedColor =
+            resolveColor(
+                appearance?.selected?.tabBarItemTitleFontColor,
+                com.google.android.material.R.attr.colorSecondary,
+            )
 
-        val fontNormalColor = resolveColor(
-            appearance?.normal?.tabBarItemTitleFontColor,
-            com.google.android.material.R.attr.colorOnSurfaceVariant
-        )
+        val fontNormalColor =
+            resolveColor(
+                appearance?.normal?.tabBarItemTitleFontColor,
+                com.google.android.material.R.attr.colorOnSurfaceVariant,
+            )
 
-        val fontColors = intArrayOf(fontDisabledColor, fontSelectedColor, fontFocusedColor, fontNormalColor)
+        val fontColors = intArrayOf(fontDisabledColor, fontFocusedColor, fontSelectedColor, fontNormalColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
 
         // Icon color
-        val iconDisabledColor = resolveColor(
-            appearance?.disabled?.tabBarItemIconColor,
-            com.google.android.material.R.attr.colorOnSurfaceVariant
-        )
+        val iconDisabledColor =
+            resolveColor(
+                appearance?.disabled?.tabBarItemIconColor,
+                com.google.android.material.R.attr.colorOnSurfaceVariant,
+            )
 
-        val iconSelectedColor = resolveColor(
-            appearance?.selected?.tabBarItemIconColor,
-            com.google.android.material.R.attr.colorOnSecondaryContainer
-        )
+        val iconFocusedColor =
+            resolveColor(
+                appearance?.focused?.tabBarItemIconColor,
+                com.google.android.material.R.attr.colorOnSecondaryContainer,
+            )
 
-        val iconFocusedColor = resolveColor(
-            appearance?.focused?.tabBarItemIconColor,
-            com.google.android.material.R.attr.colorOnSecondaryContainer
-        )
+        val iconSelectedColor =
+            resolveColor(
+                appearance?.selected?.tabBarItemIconColor,
+                com.google.android.material.R.attr.colorOnSecondaryContainer,
+            )
 
-        val iconNormalColor = resolveColor(
-            appearance?.normal?.tabBarItemIconColor,
-            com.google.android.material.R.attr.colorOnSurfaceVariant
-        )
+        val iconNormalColor =
+            resolveColor(
+                appearance?.normal?.tabBarItemIconColor,
+                com.google.android.material.R.attr.colorOnSurfaceVariant,
+            )
 
-        val iconColors = intArrayOf(iconDisabledColor, iconSelectedColor, iconFocusedColor, iconNormalColor)
+        val iconColors = intArrayOf(iconDisabledColor, iconFocusedColor, iconSelectedColor, iconNormalColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
 
         // LabelVisibilityMode
@@ -137,7 +150,7 @@ class TabsHostAppearanceApplicator(
         bottomNavigationView.labelVisibilityMode = visibilityMode
 
         // Ripple color
-        val rippleColor = 
+        val rippleColor =
             appearance?.tabBarItemRippleColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.itemRippleColor)
         bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
@@ -147,18 +160,21 @@ class TabsHostAppearanceApplicator(
             appearance?.tabBarItemActiveIndicatorColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorSecondaryContainer)
 
-        bottomNavigationView.isItemActiveIndicatorEnabled = 
+        bottomNavigationView.isItemActiveIndicatorEnabled =
             appearance?.tabBarItemActiveIndicatorEnabled ?: true
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
     }
 
-    fun updateFontStyles(tabsHost: TabsHost, activeTabScreen: TabScreen?) {
+    fun updateFontStyles(
+        tabsHost: TabsHost,
+        activeTabScreen: TabScreen?,
+    ) {
+        disableAnimations()
+
         val appearance = activeTabScreen?.appearance
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
-        fun resolveTypeface(
-            appearance: AndroidTabsAppearance?,
-        ): android.graphics.Typeface {
+        fun resolveTypeface(appearance: AndroidTabsAppearance?): android.graphics.Typeface {
             val isFontStyleItalic = appearance?.tabBarItemTitleFontStyle == "italic"
 
             // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
@@ -183,9 +199,10 @@ class TabsHostAppearanceApplicator(
             val smallLabel =
                 menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
 
-            val fontFamily = resolveTypeface(
-                appearance,
-            )
+            val fontFamily =
+                resolveTypeface(
+                    appearance,
+                )
 
             /*
                 Short explanation about computations we're doing below.
@@ -217,6 +234,8 @@ class TabsHostAppearanceApplicator(
         menuItem: MenuItem,
         tabScreen: TabScreen,
     ) {
+        disableAnimations()
+
         if (menuItem.title != tabScreen.tabTitle) {
             menuItem.title = tabScreen.tabTitle
         }
@@ -229,8 +248,21 @@ class TabsHostAppearanceApplicator(
     fun updateBadgeAppearance(
         menuItem: MenuItem,
         tabScreen: TabScreen,
+        activeTabScreen: TabScreen,
     ) {
+        disableAnimations()
+
         val menuItemIndex = bottomNavigationView.menu.children.indexOf(menuItem)
+        val menuView = bottomNavigationView.getChildAt(0) as ViewGroup
+        val itemView = menuView.getChildAt(menuItemIndex)
+
+        // TODO: @t0maboro - should we override some listeners here?
+        if (itemView.onFocusChangeListener == null) {
+            itemView.setOnFocusChangeListener { _, _ ->
+                updateBadgeAppearance(menuItem, tabScreen, activeTabScreen)
+            }
+        }
+
         val badgeValue = tabScreen.badgeValue
 
         if (badgeValue == null) {
@@ -254,14 +286,45 @@ class TabsHostAppearanceApplicator(
             badge.text = badgeValue
         }
 
+        val isSelected = tabScreen == activeTabScreen
+        val isEnabled = menuItem.isEnabled
+        val isFocused = itemView.isFocused
+
         // Styling
-        badge.badgeTextColor =
-            tabScreen.tabBarItemBadgeTextColor
+        val appearance = tabScreen.appearance
+
+        val badgeTextColorRaw =
+            when {
+                !isEnabled -> appearance?.disabled?.tabBarItemBadgeTextColor
+                isFocused -> appearance?.focused?.tabBarItemBadgeTextColor
+                isSelected -> appearance?.selected?.tabBarItemBadgeTextColor
+                else -> appearance?.normal?.tabBarItemBadgeTextColor
+            }
+
+        val badgeTextColor =
+            badgeTextColorRaw
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
 
+        badge.badgeTextColor = badgeTextColor
+
+        val badgeBackgroundColorRaw =
+            when {
+                !isEnabled -> appearance?.disabled?.tabBarItemBadgeBackgroundColor
+                isFocused -> appearance?.focused?.tabBarItemBadgeBackgroundColor
+                isSelected -> appearance?.selected?.tabBarItemBadgeBackgroundColor
+                else -> appearance?.normal?.tabBarItemBadgeBackgroundColor
+            }
+
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
-        badge.backgroundColor =
-            tabScreen.tabBarItemBadgeBackgroundColor
-                ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
+        badge.backgroundColor = badgeBackgroundColorRaw
+            ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
+    }
+
+    // TODO: @t0maboro - do we need it?
+    private fun disableAnimations() {
+        val menuView = bottomNavigationView.getChildAt(0) as? ViewGroup
+        if (menuView != null) {
+            TransitionManager.beginDelayedTransition(menuView, null)
+        }
     }
 }
