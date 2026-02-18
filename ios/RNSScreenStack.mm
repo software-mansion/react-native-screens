@@ -1561,6 +1561,7 @@ Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(iosPreventReattachmentOfDismissedScreens, BOOL);
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
