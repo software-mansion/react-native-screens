@@ -178,8 +178,6 @@ internal class StackContainer(
         require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack model should not be empty after a native pop" }
 
-        val fragmentManager = requireFragmentManager()
-
         // The primary navigation fragment should be updated when popping backstack by FragmentManager
         // reversing the back stack record. At this point we need to just update the top fragment.
         check(requireFragmentManager().primaryNavigationFragment !== fragment) {
