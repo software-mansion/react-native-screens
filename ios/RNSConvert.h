@@ -17,9 +17,6 @@ namespace react = facebook::react;
 + (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigDirection)direction;
 
-+ (UISemanticContentAttribute)UISemanticContentAttributeFromBottomTabsDirection:
-    (react::RNSBottomTabsDirection)direction;
-
 + (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode;
 

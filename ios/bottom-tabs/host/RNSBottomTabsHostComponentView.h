@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL experimental_controlNavigationStateInJS;
 
-@property (nonatomic) UISemanticContentAttribute direction;
+@property (nonatomic, readonly) UISemanticContentAttribute directionMode;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 @property (nonatomic, readonly) UITabBarMinimizeBehavior tabBarMinimizeBehavior API_AVAILABLE(ios(26.0));

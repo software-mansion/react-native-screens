@@ -17,6 +17,7 @@ import { bottomTabsDebugLog } from '../../private/logging';
 import TabsAccessory from './TabsAccessory';
 import { TabsAccessoryEnvironment } from './TabsAccessory.types';
 import TabsAccessoryContent from './TabsAccessoryContent';
+import { isIOS26OrHigher } from '../helpers/PlatformUtils';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -63,18 +64,17 @@ function TabsHost(props: TabsHostProps) {
 
   return (
     <BottomTabsNativeComponent
-      style={styles.fillParent}
+      style={[styles.fillParent, styles.forceLtrForIOS26]}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={experimentalControlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
-      direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+      directionMode={I18nManager.isRTL ? 'rtl' : 'ltr'}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredProps}>
       {filteredProps.children}
       {bottomAccessory &&
-        Platform.OS === 'ios' &&
-        parseInt(Platform.Version, 10) >= 26 &&
+        isIOS26OrHigher &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
           <TabsAccessory>
             <TabsAccessoryContent environment="regular">
@@ -103,5 +103,10 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+  },
+  // For TabsBottomAccessory layout to work correctly, we need to use
+  // `ltr`. We restore direction in children views.
+  forceLtrForIOS26: {
+    direction: isIOS26OrHigher ? 'ltr' : undefined,
   },
 });

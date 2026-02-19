@@ -352,10 +352,13 @@ namespace react = facebook::react;
       }
   }
 
-  if (newComponentProps.direction != oldComponentProps.direction) {
-    _direction = [RNSConvert UISemanticContentAttributeFromBottomTabsDirection:newComponentProps.direction];
-    _controller.view.semanticContentAttribute = _direction;
-    _controller.tabBar.semanticContentAttribute = _direction;
+  if (newComponentProps.directionMode != oldComponentProps.directionMode) {
+    _directionMode =
+        rnscreens::conversion::UISemanticContentAttributeFromTabsHostCppEquivalent(newComponentProps.directionMode);
+    _controller.view.semanticContentAttribute = _directionMode;
+    _controller.tabBar.semanticContentAttribute = _directionMode;
+    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ _controller.tabBar.class ]]
+        setSemanticContentAttribute:_directionMode];
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
@@ -550,11 +553,12 @@ RNS_IGNORE_SUPER_CALL_END
     }
 }
 
-- (void)setDirection:(UISemanticContentAttribute)direction
+- (void)setDirectionMode:(UISemanticContentAttribute)directionMode
 {
-  _direction = direction;
-  _controller.view.semanticContentAttribute = _direction;
-  _controller.tabBar.semanticContentAttribute = _direction;
+  _directionMode = directionMode _controller.view.semanticContentAttribute = _directionMode;
+  _controller.tabBar.semanticContentAttribute = _directionMode;
+  [[UIView appearanceWhenContainedInInstancesOfClasses:@[ _controller.tabBar.class ]]
+      setSemanticContentAttribute:_directionMode];
 }
 
 - (void)setOnNativeFocusChange:(RCTDirectEventBlock)onNativeFocusChange

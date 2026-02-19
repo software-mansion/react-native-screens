@@ -3,6 +3,7 @@
 import React from 'react';
 import { Freeze } from 'react-freeze';
 import {
+  I18nManager,
   Image,
   ImageResolvedAssetSource,
   Platform,
@@ -34,6 +35,7 @@ import type {
   PlatformIconAndroid,
   PlatformIconIOS,
 } from '../../types';
+import { isIOS26OrHigher } from '../helpers/PlatformUtils';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -130,7 +132,11 @@ function TabsScreen(props: TabsScreenProps) {
   return (
     <BottomTabsScreenNativeComponent
       collapsable={false}
-      style={[style, styles.fillParent]}
+      style={[
+        style,
+        styles.fillParent,
+        styles.directionFromI18nManagerForIOS26,
+      ]}
       onWillAppear={onWillAppearCallback}
       onDidAppear={onDidAppearCallback}
       onWillDisappear={onWillDisappearCallback}
@@ -378,5 +384,14 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+  },
+  // This style is needed on iOS 26+ to bring back valid direction as we're forcing
+  // `ltr` in TabsHost to ensure correct TabsBottomAccessory layout.
+  directionFromI18nManagerForIOS26: {
+    direction: isIOS26OrHigher
+      ? I18nManager.isRTL
+        ? 'rtl'
+        : 'ltr'
+      : undefined,
   },
 });

@@ -21,19 +21,6 @@
   }
 }
 
-+ (UISemanticContentAttribute)UISemanticContentAttributeFromBottomTabsDirection:
-    (react::RNSBottomTabsDirection)direction
-{
-  switch (direction) {
-    using enum react::RNSBottomTabsDirection;
-
-    case Rtl:
-      return UISemanticContentAttributeForceRightToLeft;
-    case Ltr:
-      return UISemanticContentAttributeForceLeftToRight;
-  }
-}
-
 + (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode
 {
