@@ -5,7 +5,6 @@ import SplitViewHostNativeComponent, {
 } from '../../../fabric/gamma/SplitViewHostNativeComponent';
 import type {
   SplitDisplayMode,
-  SplitHostCommands,
   SplitHostProps,
   SplitBehavior,
 } from './SplitHost.types';
@@ -43,15 +42,12 @@ const isValidDisplayModeForSplitBehavior = (
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function SplitHost(
-  props: SplitHostProps,
-  forwardedRef: React.Ref<SplitHostCommands>,
-) {
+function SplitHost({ ref, ...props }: SplitHostProps) {
   const { preferredDisplayMode, preferredSplitBehavior } = props;
   const nativeRef = React.useRef<NativeRef>(null);
 
   React.useImperativeHandle(
-    forwardedRef,
+    ref,
     () => ({
       show: column => {
         if (nativeRef.current) {
@@ -117,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.forwardRef<SplitHostCommands, SplitHostProps>(SplitHost);
+export default SplitHost;

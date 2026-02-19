@@ -114,14 +114,15 @@ export interface SplitColumnMetrics {
    */
   preferredInspectorColumnWidthOrFraction?: number;
 }
-export type SplitColumn = 'primary' | 'supplementary' | 'secondary';
+export type SplitNavigableColumn = 'primary' | 'supplementary' | 'secondary';
 
 export type SplitHostCommands = {
-  show: (column: SplitColumn) => void;
+  show: (column: SplitNavigableColumn) => void;
 };
 
 export interface SplitHostProps extends ViewProps {
   children?: React.ReactNode;
+  ref?: React.Ref<SplitHostCommands>;
 
   /**
    * @summary An object describing bounds for column widths.
@@ -326,5 +327,5 @@ export interface SplitHostProps extends ViewProps {
    *
    * @default primary
    */
-  topColumnForCollapsing?: SplitColumn;
+  topColumnForCollapsing?: SplitNavigableColumn;
 }
