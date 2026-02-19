@@ -2276,6 +2276,7 @@ RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onSheetDetentChanged, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(ios26AllowInteractionsDuringTransition, BOOL);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
