@@ -5,6 +5,7 @@ const RNS_SYNCHRONOUS_HEADER_SUBVIEW_STATE_UPDATES_DEFAULT = false;
 const RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT =
   true;
 const RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS = true;
+const RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION = true;
 
 // TODO: Migrate freeze here
 
@@ -57,6 +58,8 @@ const _featureFlags = {
       RNS_ANDROID_RESET_SCREEN_SHADOW_STATE_ON_ORIENTATION_CHANGE_DEFAULT,
     iosPreventReattachmentOfDismissedScreens:
       RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
+    ios26AllowInteractionsDuringTransition:
+      RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
   },
   stable: {},
 };
@@ -113,6 +116,11 @@ const iosPreventReattachmentOfDismissedScreensAccessor =
     'iosPreventReattachmentOfDismissedScreens',
     RNS_IOS_PREVENT_REATTACHMENT_OF_DISMISSED_SCREENS,
   );
+const ios26AllowInteractionsDuringTransitionAccessor =
+  createExperimentalFeatureFlagAccessor(
+    'ios26AllowInteractionsDuringTransition',
+    RNS_IOS_26_ALLOW_INTERACTIONS_DURING_TRANSITION,
+  );
 
 /**
  * Exposes configurable global behaviour of the library.
@@ -156,11 +164,28 @@ export const featureFlags = {
     ) {
       androidResetScreenShadowStateOnOrientationChangeAccessor.set(value);
     },
+    /**
+     * Enables the fix for native / JS state desynchronization in Stack. On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3584
+     */
     get iosPreventReattachmentOfDismissedScreens() {
       return iosPreventReattachmentOfDismissedScreensAccessor.get();
     },
     set iosPreventReattachmentOfDismissedScreens(value: boolean) {
       iosPreventReattachmentOfDismissedScreensAccessor.set(value);
+    },
+    /**
+     * Disables the behavior that blocks interactions during Stack Screen transition.
+     * The application should immediately react to user gestures, dismissing more screens at once, etc.
+     * Use only with `iosPreventReattachmentOfDismissedScreens = true` to enable the fix
+     * for native / JS state desynchronization. On by default.
+     * PR: https://github.com/software-mansion/react-native-screens/pull/3631
+     */
+    get ios26AllowInteractionsDuringTransition() {
+      return ios26AllowInteractionsDuringTransitionAccessor.get();
+    },
+    set ios26AllowInteractionsDuringTransition(value: boolean) {
+      ios26AllowInteractionsDuringTransitionAccessor.set(value);
     },
   },
   /**
