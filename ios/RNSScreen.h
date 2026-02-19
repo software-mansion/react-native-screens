@@ -152,7 +152,6 @@ namespace react = facebook::react;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 @property (nonatomic, copy) RCTDirectEventBlock onGestureCancel;
 @property (nonatomic, copy) RCTDirectEventBlock onSheetDetentChanged;
-@property (nonatomic) BOOL ios26AllowInteractionsDuringTransition;
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;
