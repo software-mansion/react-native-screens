@@ -4,11 +4,11 @@ const AndroidDeviceUtil = require('./android-devices');
 const isRunningCI = process.env.CI != null;
 
 // Assumes that local development is done on arm64-v8a.
-const apkBulidArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
+const apkBuildArchitecture = isRunningCI ? 'x86_64' : 'arm64-v8a';
 // test-butler requires AOSP emulator image, which is not available to download for arm64-v8a in Android Studio SDK Manager, therefore
 // it is assumed here that arm64-v8a AOSP emulator is not available in local setup.
 const testButlerApkPath = isRunningCI
-  ? ['../Example/e2e/apps/test-butler-app-2.2.1.apk']
+  ? ['../FabricExample/e2e/test-butler-app-2.2.1.apk']
   : undefined;
 
 /**
@@ -40,7 +40,7 @@ const testButlerApkPath = isRunningCI
  * * `RNS_IOS_VERSION` env var can be specified to request particular iOS version
  * for the given simulator. Note that required SDK & simulators must be installed.
  * Example: RNS_IOS_VERSION="iOS 26.1"
- * 
+ *
  * * Remember:
  * Device versions are assigned to iOS versions.
  * That means running a version that has never been available
@@ -48,7 +48,7 @@ const testButlerApkPath = isRunningCI
  * Example: `RNS_IOS_VERSION="iOS 18.6" RNS_APPLE_SIM_NAME="iPhone 17 Pro" yarn test-e2e-ios` will fail
  * as iPhone 17 Pro was released with iOS 26
  *
- * @param {string} applicationName name (FabricExample / ScreensExample)
+ * @param {string} applicationName name (FabricExample)
  * @returns {Detox.DetoxConfig}
  */
 function commonDetoxConfigFactory(applicationName) {
@@ -76,13 +76,13 @@ function commonDetoxConfigFactory(applicationName) {
       'android.debug': {
         type: 'android.apk',
         binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
-        build: `cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${apkBulidArchitecture} && cd ..`,
+        build: `cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${apkBuildArchitecture} && cd ..`,
         reversePorts: [8081],
       },
       'android.release': {
         type: 'android.apk',
         binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
-        build: `cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${apkBulidArchitecture} && cd ..`,
+        build: `cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${apkBuildArchitecture} && cd ..`,
       },
     },
     devices: {

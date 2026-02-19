@@ -8,6 +8,7 @@ import {
 import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import Colors from '../../../shared/styling/Colors';
 import { ToastProvider, useToast } from '../../../shared';
+import { StackNavigationButtons } from '../../shared/components/stack-v5/StackNavigationButtons';
 
 const SCENARIO: Scenario = {
   name: 'Prevent native dismiss - single stack',
@@ -67,7 +68,7 @@ function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="Home" />
-      <NavigationButtons isPopEnabled={false} />
+      <StackNavigationButtons isPopEnabled={false} routeNames={['A', 'B']} />
     </CenteredLayoutView>
   );
 }
@@ -77,7 +78,7 @@ function AScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
       <PreventNativeDismissInfo />
-      <NavigationButtons isPopEnabled={true} />
+      <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
     </CenteredLayoutView>
   );
 }
@@ -87,7 +88,8 @@ function BScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
       <RouteInformation routeName="B" />
       <PreventNativeDismissInfo />
-      <NavigationButtons isPopEnabled={true} />
+      <StackNavigationButtons isPopEnabled={true} routeNames={['A', 'B']} />
+      <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );
 }
@@ -103,20 +105,18 @@ function RouteInformation(props: { routeName: string }) {
   );
 }
 
-function NavigationButtons(props: { isPopEnabled: boolean }) {
+function TogglePreventNativeDismiss() {
   const navigation = useStackNavigationContext();
 
   return (
-    <>
-      <Button title="Push A" onPress={() => navigation.push('A')} />
-      <Button title="Push B" onPress={() => navigation.push('B')} />
-      {props.isPopEnabled && (
-        <Button
-          title="Pop"
-          onPress={() => navigation.pop(navigation.routeKey)}
-        />
-      )}
-    </>
+    <Button
+      title="Toggle Prevent Native Dismiss"
+      onPress={() =>
+        navigation.setRouteOptions(navigation.routeKey, {
+          preventNativeDismiss: !navigation.routeOptions.preventNativeDismiss,
+        })
+      }
+    />
   );
 }
 

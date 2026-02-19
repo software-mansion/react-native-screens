@@ -7,7 +7,7 @@ import type { CodegenTypes as CT, ViewProps } from 'react-native';
 type FinishTransitioningEvent = Readonly<{}>;
 
 export interface NativeProps extends ViewProps {
-  iosPreventReattachmentOfDismissedScreens?: CT.WithDefault<boolean, false>;
+  iosPreventReattachmentOfDismissedScreens?: CT.WithDefault<boolean, true>;
 
   onFinishTransitioning?: CT.DirectEventHandler<FinishTransitioningEvent>;
 }

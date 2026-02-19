@@ -8,6 +8,7 @@ import {
 import { CenteredLayoutView } from '../../../shared/CenteredLayoutView';
 import Colors from '../../../shared/styling/Colors';
 import { ToastProvider, useToast } from '../../../shared';
+import { StackNavigationButtons } from '../../shared/components/stack-v5/StackNavigationButtons';
 
 const SCENARIO: Scenario = {
   name: 'Prevent native dismiss - nested stack',
@@ -75,7 +76,7 @@ function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="Home" />
-      <NavigationButtons
+      <StackNavigationButtons
         isPopEnabled={false}
         routeNames={['A', 'B', 'NestedStack']}
       />
@@ -88,7 +89,10 @@ function AScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <RouteInformation routeName="A" />
       <PreventNativeDismissInfo />
-      <NavigationButtons isPopEnabled routeNames={['A', 'B', 'NestedStack']} />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['A', 'B', 'NestedStack']}
+      />
     </CenteredLayoutView>
   );
 }
@@ -98,7 +102,11 @@ function BScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
       <RouteInformation routeName="B" />
       <PreventNativeDismissInfo />
-      <NavigationButtons isPopEnabled routeNames={['A', 'B', 'NestedStack']} />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['A', 'B', 'NestedStack']}
+      />
+      <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );
 }
@@ -153,7 +161,11 @@ function NestedHomeScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="NestedHome" />
       <PreventNativeDismissInfo />
-      <NavigationButtons isPopEnabled routeNames={['NestedA', 'NestedB']} />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['NestedA', 'NestedB']}
+      />
+      <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );
 }
@@ -163,7 +175,10 @@ function NestedAScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="NestedA" />
       <PreventNativeDismissInfo />
-      <NavigationButtons isPopEnabled routeNames={['NestedA', 'NestedB']} />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['NestedA', 'NestedB']}
+      />
     </CenteredLayoutView>
   );
 }
@@ -173,7 +188,11 @@ function NestedBScreen() {
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <RouteInformation routeName="NestedB" />
       <PreventNativeDismissInfo />
-      <NavigationButtons isPopEnabled routeNames={['NestedA', 'NestedB']} />
+      <StackNavigationButtons
+        isPopEnabled
+        routeNames={['NestedA', 'NestedB']}
+      />
+      <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );
 }
@@ -189,28 +208,18 @@ function RouteInformation(props: { routeName: string }) {
   );
 }
 
-function NavigationButtons(props: {
-  routeNames: string[];
-  isPopEnabled: boolean;
-}) {
+function TogglePreventNativeDismiss() {
   const navigation = useStackNavigationContext();
 
   return (
-    <>
-      {props.routeNames.map(routeName => (
-        <Button
-          key={routeName}
-          title={`Push ${routeName}`}
-          onPress={() => navigation.push(routeName)}
-        />
-      ))}
-      {props.isPopEnabled && (
-        <Button
-          title="Pop"
-          onPress={() => navigation.pop(navigation.routeKey)}
-        />
-      )}
-    </>
+    <Button
+      title="Toggle Prevent Native Dismiss"
+      onPress={() =>
+        navigation.setRouteOptions(navigation.routeKey, {
+          preventNativeDismiss: !navigation.routeOptions.preventNativeDismiss,
+        })
+      }
+    />
   );
 }
 

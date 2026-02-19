@@ -73,9 +73,10 @@ class SheetDetents(
     internal fun expandedOffsetFromTop(
         containerHeight: Int,
         topInset: Int = 0,
+        shouldOverflowTopInset: Boolean = false,
     ): Int {
         if (count < 3) throw IllegalStateException("[RNScreens] At least 3 detents required for expandedOffsetFromTop.")
-        return ((1 - at(2)) * containerHeight).toInt() + topInset
+        return ((1 - at(2)) * containerHeight).toInt() + (if (shouldOverflowTopInset) 0 else topInset)
     }
 
     internal fun peekHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
