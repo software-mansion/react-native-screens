@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.gamma.tabs
 
 import android.content.res.Configuration
 import android.os.Build
-import android.view.Choreographer
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
-import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
@@ -83,14 +81,14 @@ class TabsHost(
 
         fun runContainerUpdate() {
             isUpdatePending = false
-            if (isSelectedTabInvalidated) {
-                isSelectedTabInvalidated = false
-                this@TabsHost.updateSelectedTab()
-            }
             if (isBottomNavigationMenuInvalidated) {
                 isBottomNavigationMenuInvalidated = false
                 this@TabsHost.updateBottomNavigationViewAppearance()
                 a11yCoordinator.setA11yPropertiesToAllTabItems()
+            }
+            if (isSelectedTabInvalidated) {
+                isSelectedTabInvalidated = false
+                this@TabsHost.updateSelectedTab()
             }
         }
     }
@@ -159,6 +157,14 @@ class TabsHost(
     private var lastAppliedUiMode: Int? = null
 
     private var isLayoutEnqueued: Boolean = false
+
+    private val measureAndLayoutRunnable =
+        Runnable {
+            isLayoutEnqueued = false
+            if (width > 0 && height > 0) {
+                forceSubtreeMeasureAndLayoutPass()
+            }
+        }
 
     private var interfaceInsetsChangeListener: SafeAreaView? = null
 
@@ -326,11 +332,6 @@ class TabsHost(
         if (bottomNavigationView.selectedItemId != selectedTabScreenFragmentId) {
             bottomNavigationView.selectedItemId = selectedTabScreenFragmentId
         }
-
-        post {
-            refreshLayout()
-            RNSLog.d(TAG, "BottomNavigationView request layout")
-        }
     }
 
     private fun updateSelectedTab() {
@@ -355,30 +356,24 @@ class TabsHost(
             }.commitNowAllowingStateLoss()
     }
 
-    private val layoutCallback =
-        Choreographer.FrameCallback {
-            isLayoutEnqueued = false
-            forceSubtreeMeasureAndLayoutPass()
-        }
-
-    private fun refreshLayout() {
-        @Suppress("SENSELESS_COMPARISON") // layoutCallback can be null here since this method can be called in init
-        if (!isLayoutEnqueued && layoutCallback != null) {
+    override fun requestLayout() {
+        super.requestLayout()
+        if (!isLayoutEnqueued) {
             isLayoutEnqueued = true
-            // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
-            // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-            ReactChoreographer
-                .getInstance()
-                .postFrameCallback(
-                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                    layoutCallback,
-                )
+            post(measureAndLayoutRunnable)
         }
     }
 
-    override fun requestLayout() {
-        super.requestLayout()
-        refreshLayout()
+    override fun onSizeChanged(
+        w: Int,
+        h: Int,
+        oldw: Int,
+        oldh: Int,
+    ) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (w > 0 && h > 0) {
+            post(measureAndLayoutRunnable)
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {

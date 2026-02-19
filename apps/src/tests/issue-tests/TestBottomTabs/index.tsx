@@ -100,6 +100,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         tabBarItemRippleColor: Colors.PurpleDarkTransparent,
         tabBarBackgroundColor: Colors.PurpleDark100,
         tabBarItemActiveIndicatorColor: Colors.RedDark100,
+        tabBarItemLabelVisibilityMode: 'labeled',
         normal: {
           tabBarItemIconColor: Colors.GreenDark100,
           tabBarItemTitleFontColor: Colors.GreenDark40,
@@ -199,7 +200,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       scrollEdgeEffects: { bottom: 'hard' },
       standardAppearanceAndroid: {
         ...DEFAULT_ANDROID_APPEARANCE,
-        // tabBarItemActiveIndicatorEnabled: false,
+        tabBarItemActiveIndicatorEnabled: false,
         tabBarItemLabelVisibilityMode: 'auto',
       },
       standardAppearance: {
@@ -241,7 +242,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       standardAppearanceAndroid: {
         ...DEFAULT_ANDROID_APPEARANCE,
         tabBarItemTitleFontSize: 14,
-        tabBarSelectedItemTitleFontSize: 18,
+        tabBarSelectedItemTitleFontSize: 36,
         tabBarItemTitleFontWeight: 400,
         tabBarItemTitleFontStyle: 'normal',
       },
