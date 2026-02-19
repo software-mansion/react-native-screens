@@ -1597,6 +1597,8 @@ RNS_IGNORE_SUPER_CALL_END
   // subviews
 }
 
+// Opt-in/-out of interaction disabling on transition
+// See: https://github.com/software-mansion/react-native-screens/pull/3631
 - (void)setIos26AllowInteractionsDuringTransition:(BOOL)value
 {
   [RNSScreenView.viewInteractionManagerInstance setDisabled:value];
