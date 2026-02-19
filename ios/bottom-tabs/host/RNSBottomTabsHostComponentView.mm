@@ -555,7 +555,8 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)setDirectionMode:(UISemanticContentAttribute)directionMode
 {
-  _directionMode = directionMode _controller.view.semanticContentAttribute = _directionMode;
+  _directionMode = directionMode;
+  _controller.view.semanticContentAttribute = _directionMode;
   _controller.tabBar.semanticContentAttribute = _directionMode;
   [[UIView appearanceWhenContainedInInstancesOfClasses:@[ _controller.tabBar.class ]]
       setSemanticContentAttribute:_directionMode];
