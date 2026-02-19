@@ -88,6 +88,7 @@ static const CGFloat epsilon = 1e-6;
   _preferredInspectorColumnWidthOrFraction = -1.0;
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
+  _hasCustomTopColumnForCollapsing = NO;
   _topColumnForCollapsingColumn = UISplitViewControllerColumnPrimary;
 
   _orientation = RNSOrientationInherit;
@@ -319,8 +320,10 @@ RNS_IGNORE_SUPER_CALL_END
   // No appearance update needed — topColumnForCollapsingColumn is read on-demand by the delegate callback
   // splitViewController(_:topColumnForCollapsingToProposedTopColumn:), not pushed to the controller.
   if (oldComponentProps.topColumnForCollapsing != newComponentProps.topColumnForCollapsing) {
-    _topColumnForCollapsingColumn =
+    auto column =
         rnscreens::conversion::SplitViewTopColumnForCollapsingFromHostProp(newComponentProps.topColumnForCollapsing);
+    _hasCustomTopColumnForCollapsing = column.has_value();
+    _topColumnForCollapsingColumn = column.value_or(UISplitViewControllerColumnPrimary);
   }
 
   if (oldComponentProps.orientation != newComponentProps.orientation) {

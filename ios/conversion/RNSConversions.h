@@ -4,6 +4,7 @@
 #import <React/RCTImageSource.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
+#import <optional>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 
@@ -127,7 +128,7 @@ UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisib
 
 std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode);
 
-UISplitViewControllerColumn SplitViewTopColumnForCollapsingFromHostProp(
+std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHostProp(
     react::RNSSplitViewHostTopColumnForCollapsing topColumnForCollapsing);
 
 RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitViewHostOrientation orientation);

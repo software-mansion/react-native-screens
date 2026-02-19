@@ -319,13 +319,13 @@ export interface SplitHostProps extends ViewProps {
    * When the split view transitions from an expanded to a collapsed layout (e.g. rotating an iPad to portrait),
    * this prop determines which column becomes the top (visible) column.
    *
+   * When not set, the system default behavior is used.
+   *
    * The following values are currently supported:
    *
    * - `primary` - the primary sidebar is shown
    * - `supplementary` - the supplementary sidebar is shown
    * - `secondary` - the secondary (main content) column is shown
-   *
-   * @default primary
    */
   topColumnForCollapsing?: SplitNavigableColumn;
 }

@@ -547,6 +547,9 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
     _ svc: UISplitViewController,
     topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
   ) -> UISplitViewController.Column {
-    return splitViewHostComponentView.topColumnForCollapsingColumn
+    if splitViewHostComponentView.hasCustomTopColumnForCollapsing {
+      return splitViewHostComponentView.topColumnForCollapsingColumn
+    }
+    return proposedTopColumn
   }
 }

@@ -44,6 +44,7 @@ type SplitViewOrientation =
 type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
 type SplitViewTopColumnForCollapsing =
+  | 'default'
   | 'primary'
   | 'supplementary'
   | 'secondary';
@@ -86,7 +87,7 @@ interface NativeProps extends ViewProps {
 
   topColumnForCollapsing?: CT.WithDefault<
     SplitViewTopColumnForCollapsing,
-    'primary'
+    'default'
   >;
 
   // Interactions

@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL presentsWithGesture;
 @property (nonatomic, readonly) BOOL showSecondaryToggleButton;
 @property (nonatomic, readonly) BOOL showInspector;
+@property (nonatomic, readonly) BOOL hasCustomTopColumnForCollapsing;
 @property (nonatomic, readonly) UISplitViewControllerColumn topColumnForCollapsingColumn;
 
 @property (nonatomic, readonly) double minimumPrimaryColumnWidth;
