@@ -1,41 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { TabBarControllerMode } from 'react-native-screens';
-import ConfigWrapperContext, {
-  type Configuration,
-  DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
   BottomTabsContainer,
   type TabConfiguration,
 } from '../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
 import { I18nManager, Text } from 'react-native';
-import { Button } from '../../shared';
 
 function makeTab(title: string) {
   return function Tab() {
     return (
       <CenteredLayoutView>
         <Text>{title}</Text>
-        <Button title={'Direction is ' + (I18nManager.isRTL ? 'RTL' : 'LTR')} />
+        <Text style={{ fontWeight: 'bold' }}>
+          {'Direction is ' + (I18nManager.isRTL ? 'RTL' : 'LTR')}
+        </Text>
       </CenteredLayoutView>
     );
   };
 }
 
 function App() {
-  const [config, setConfig] = React.useState<Configuration>(
-    DEFAULT_GLOBAL_CONFIGURATION,
-  );
-
   const TAB_CONFIGS: TabConfiguration[] = [
     {
       tabScreenProps: {
         tabKey: 'Tab1',
         title: 'قائمة ١',
-        freezeContents: false,
         icon: {
+          android: {
+            type: 'drawableResource',
+            name: 'sym_call_missed',
+          },
           ios: {
             type: 'sfSymbol',
             name: 'sun.max',
@@ -49,6 +44,10 @@ function App() {
         tabKey: 'Tab2',
         title: 'قائمة ٢',
         icon: {
+          android: {
+            type: 'drawableResource',
+            name: 'sym_call_incoming',
+          },
           ios: {
             type: 'sfSymbol',
             name: 'snow',
@@ -59,15 +58,7 @@ function App() {
     },
   ];
 
-  return (
-    <ConfigWrapperContext.Provider
-      value={{
-        config,
-        setConfig,
-      }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
-    </ConfigWrapperContext.Provider>
-  );
+  return <BottomTabsContainer tabConfigs={TAB_CONFIGS} />;
 }
 
 export default App;
