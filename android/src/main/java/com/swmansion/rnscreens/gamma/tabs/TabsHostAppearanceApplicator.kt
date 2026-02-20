@@ -16,33 +16,29 @@ import com.google.android.material.navigation.NavigationBarView
 
 data class AndroidTabsAppearance(
     val backgroundColor: Int? = null,
-
     val itemColors: BottomNavItemColors? = null,
-
     val activeIndicator: ActiveIndicatorAppearance? = null,
-
     val itemRippleColor: Int? = null,
     val labelVisibilityMode: String? = null,
-
     val typography: TypographyAppearance? = null,
-    val badge: BadgeAppearance? = null
+    val badge: BadgeAppearance? = null,
 )
 
 data class BottomNavItemColors(
     val normal: ItemStateColors? = null,
     val selected: ItemStateColors? = null,
     val disabled: ItemStateColors? = null,
-    val focused: ItemStateColors? = null
+    val focused: ItemStateColors? = null,
 )
 
 data class ItemStateColors(
     val iconColor: Int? = null,
-    val titleColor: Int? = null
+    val titleColor: Int? = null,
 )
 
 data class ActiveIndicatorAppearance(
     val enabled: Boolean? = null,
-    val color: Int? = null
+    val color: Int? = null,
 )
 
 data class TypographyAppearance(
@@ -50,12 +46,12 @@ data class TypographyAppearance(
     val fontSizeSmall: Float? = null,
     val fontSizeLarge: Float? = null,
     val fontWeight: String? = null,
-    val fontStyle: String? = null
+    val fontStyle: String? = null,
 )
 
 data class BadgeAppearance(
     val textColor: Int? = null,
-    val backgroundColor: Int? = null
+    val backgroundColor: Int? = null,
 )
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
@@ -197,12 +193,19 @@ class TabsHostAppearanceApplicator(
                 with SP, if there will be a need for skipping scale, the we should introduce similar
                 `allowFontScaling` prop.
              */
-            // TODO: @t0maboro - should have activeFontSize
             val smallFontSize =
-                tabBarAppearance?.typography?.fontSizeSmall?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                tabBarAppearance
+                    ?.typography
+                    ?.fontSizeSmall
+                    ?.takeIf { it > 0 }
+                    ?.let { PixelUtil.toPixelFromSP(it) }
                     ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
             val largeFontSize =
-                tabBarAppearance?.typography?.fontSizeLarge?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                tabBarAppearance
+                    ?.typography
+                    ?.fontSizeLarge
+                    ?.takeIf { it > 0 }
+                    ?.let { PixelUtil.toPixelFromSP(it) }
                     ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
 
             // Inactive
@@ -231,7 +234,7 @@ class TabsHostAppearanceApplicator(
     fun updateBadgeAppearance(
         menuItem: MenuItem,
         tabScreen: TabScreen,
-        badgeAppearance: BadgeAppearance?
+        badgeAppearance: BadgeAppearance?,
     ) {
         val menuItemIndex = bottomNavigationView.menu.children.indexOf(menuItem)
         val badgeValue = tabScreen.badgeValue
