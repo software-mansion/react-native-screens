@@ -105,11 +105,11 @@ function TabsScreen(props: TabsScreenProps) {
     [onDidDisappear],
   );
 
-  // bottomTabsDebugLog(
-  //   `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
-  //     rest.tabKey
-  //   } isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
-  // );
+  bottomTabsDebugLog(
+    `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
+      rest.tabKey
+    } isFocused: ${isFocused}`,
+  );
 
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
