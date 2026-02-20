@@ -105,7 +105,28 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Second Tab Screen',
       tabBarItemTestID: 'tab-item-2-id',
       tabBarItemAccessibilityLabel: 'Second Tab Item',
-      standardAppearanceAndroid: DEFAULT_APPEARANCE_ANDROID,
+      standardAppearanceAndroid: {
+        ...DEFAULT_APPEARANCE_ANDROID,
+        backgroundColor: Colors.PurpleDark100,
+        itemRippleColor: Colors.PurpleDark40,
+        itemColors: {
+          normal: {
+            iconColor: Colors.YellowDark100,
+            titleColor: Colors.YellowDark40,
+          },
+          selected: {
+            iconColor: Colors.RedDark100,
+            titleColor: Colors.RedDark40,
+          },
+          focused: {
+            iconColor: Colors.RedLight100,
+            titleColor: Colors.RedLight40,
+          }
+        },
+        activeIndicator: {
+          color: Colors.PurpleDark120,
+        }
+      },
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyDark140,
         stacked: {
@@ -190,7 +211,13 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemTestID: 'tab-item-3-id',
       tabBarItemAccessibilityLabel: 'Third Tab Item',
       scrollEdgeEffects: { bottom: 'hard' },
-      standardAppearanceAndroid: DEFAULT_APPEARANCE_ANDROID,
+      standardAppearanceAndroid: {
+        ...DEFAULT_APPEARANCE_ANDROID,
+        badge: {
+          textColor: Colors.GreenDark120,
+          backgroundColor: Colors.GreenDark40,
+        }
+      },
       standardAppearance: {
         stacked: {
           normal: {
