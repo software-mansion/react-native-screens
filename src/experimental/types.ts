@@ -8,3 +8,5 @@ export * from '../components/gamma/split/SplitHost.types';
 export * from '../components/gamma/split/SplitScreen.types';
 export * from '../components/gamma/stack/StackScreen.types';
 export * from '../components/safe-area/SafeAreaView.types';
+
+// export type * from '../components/gamma/scroll-view-marker';
