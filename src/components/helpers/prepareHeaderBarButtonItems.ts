@@ -19,12 +19,9 @@ const prepareMenu = (
         iconType === 'xcasset' ? menuItem.icon?.name : undefined;
 
       let imageSource, templateSource;
-      if (iconType === 'imageSource' && menuItem.icon?.type === 'imageSource') {
+      if (menuItem.icon?.type === 'imageSource') {
         imageSource = Image.resolveAssetSource(menuItem.icon.imageSource);
-      } else if (
-        iconType === 'templateSource' &&
-        menuItem.icon?.type === 'templateSource'
-      ) {
+      } else if (menuItem.icon?.type === 'templateSource') {
         templateSource = Image.resolveAssetSource(menuItem.icon.templateSource);
       }
 

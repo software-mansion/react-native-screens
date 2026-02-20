@@ -21,28 +21,13 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
     return self;
   }
 
+  [[self class] resolveImageFromConfig:dict
+                           imageLoader:imageLoader
+                       completionBlock:^(UIImage *img) {
+                         self.image = img;
+                       }];
+
   NSString *title = dict[@"title"];
-  NSDictionary *imageSourceObj = dict[@"imageSource"];
-  NSDictionary *templateSourceObj = dict[@"templateSource"];
-  NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetName = dict[@"xcassetName"];
-
-  if (imageSourceObj != nil || templateSourceObj != nil) {
-    BOOL isTemplate = imageSourceObj != nil ? NO : YES;
-    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
-
-    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
-                                                 withImageLoader:imageLoader
-                                                      asTemplate:isTemplate
-                                                 completionBlock:^(UIImage *image) {
-                                                   self.image = image;
-                                                 }];
-  } else if (sfSymbolName != nil) {
-    self.image = [UIImage systemImageNamed:sfSymbolName];
-  } else if (xcassetName != nil) {
-    self.image = [UIImage imageNamed:xcassetName];
-  }
-
   if (title != nil) {
     self.title = title;
 
@@ -145,6 +130,37 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   return self;
 }
 
++ (void)resolveImageFromConfig:(NSDictionary *)dict
+                   imageLoader:(RCTImageLoader *)imageLoader
+               completionBlock:(void (^)(UIImage *_Nullable))completionBlock
+{
+  NSString *sfSymbolName = dict[@"sfSymbolName"];
+  if (sfSymbolName != nil) {
+    completionBlock([UIImage systemImageNamed:sfSymbolName]);
+    return;
+  }
+
+  NSString *xcassetName = dict[@"xcassetName"];
+  if (xcassetName != nil) {
+    completionBlock([UIImage imageNamed:xcassetName]);
+    return;
+  }
+
+  NSDictionary *imageSourceObj = dict[@"imageSource"];
+  NSDictionary *templateSourceObj = dict[@"templateSource"];
+  if (imageSourceObj != nil || templateSourceObj != nil) {
+    BOOL isTemplate = imageSourceObj == nil;
+    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
+    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
+                                                 withImageLoader:imageLoader
+                                                      asTemplate:isTemplate
+                                                 completionBlock:completionBlock];
+    return;
+  }
+
+  completionBlock(nil);
+}
+
 + (UIMenu *)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict
                     menuAction:(RNSBarButtonMenuItemAction)menuAction
                    imageLoader:(RCTImageLoader *)imageLoader
@@ -165,33 +181,14 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
       }
     }
   }
-  NSString *title = dict[@"title"];
-  NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetName = dict[@"xcassetName"];
+  __block UIImage *image = nil;
+  [self resolveImageFromConfig:dict
+                   imageLoader:imageLoader
+               completionBlock:^(UIImage *img) {
+                 image = img;
+               }];
 
-  UIImage* image = nil;
-  if (sfSymbolName != nil) {
-    image = [UIImage systemImageNamed:sfSymbolName];
-  } else if (xcassetName != nil) {
-    image = [UIImage imageNamed:xcassetName];
-  }
-
-  NSDictionary *imageSourceObj = dict[@"imageSource"];
-  NSDictionary *templateSourceObj = dict[@"templateSource"];
-  if (image == nil && (imageSourceObj != nil || templateSourceObj != nil)) {
-    BOOL isTemplate = imageSourceObj != nil ? NO : YES;
-    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
-    __block UIImage *loadedImage = nil;
-    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
-                                                 withImageLoader:imageLoader
-                                                      asTemplate:isTemplate
-                                                 completionBlock:^(UIImage *img) {
-                                                   loadedImage = img;
-                                                 }];
-    image = loadedImage;
-  }
-
-  return [UIMenu menuWithTitle:title
+  return [UIMenu menuWithTitle:dict[@"title"]
                          image:image
                     identifier:nil
                        options:RNSMakeUIMenuOptionsFromConfig(dict)
@@ -203,36 +200,19 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                              imageLoader:(RCTImageLoader *)imageLoader
 {
   NSString *menuId = dict[@"menuId"];
-  NSString *title = dict[@"title"];
-  NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetName = dict[@"xcassetName"];
 
-  UIImage *image = nil;
-  if (sfSymbolName != nil) {
-    image = [UIImage systemImageNamed:sfSymbolName];
-  } else if (xcassetName != nil) {
-    image = [UIImage imageNamed:xcassetName];
-  }
-
-  UIAction *actionElement = [UIAction actionWithTitle:title
-                                                image:image
+  UIAction *actionElement = [UIAction actionWithTitle:dict[@"title"]
+                                                image:nil
                                            identifier:nil
                                               handler:^(__kindof UIAction *_Nonnull a) {
                                                 menuAction(menuId);
                                               }];
 
-  NSDictionary *imageSourceObj = dict[@"imageSource"];
-  NSDictionary *templateSourceObj = dict[@"templateSource"];
-  if (image == nil && (imageSourceObj != nil || templateSourceObj != nil)) {
-    BOOL isTemplate = imageSourceObj != nil ? NO : YES;
-    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
-    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
-                                                 withImageLoader:imageLoader
-                                                      asTemplate:isTemplate
-                                                 completionBlock:^(UIImage *img) {
-                                                   actionElement.image = img;
-                                                 }];
-  }
+  [self resolveImageFromConfig:dict
+                   imageLoader:imageLoader
+               completionBlock:^(UIImage *img) {
+                 actionElement.image = img;
+               }];
 
   NSString *discoverabilityLabel = dict[@"discoverabilityLabel"];
   if (discoverabilityLabel != nil) {
