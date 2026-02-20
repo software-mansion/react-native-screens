@@ -474,8 +474,8 @@ RNS_IGNORE_SUPER_CALL_END
   // overrideScrollViewBehavior and updateContentScrollViewEdgeEffects use first descendant chain
   // from screen to find ScrollView, that's why we're only interested in child mounted at index 0.
   if (index == 0) {
-    // If the props were not set before the first child was mounted,
-    // we defer the override behavior application until props are set.
+    // Before the props are set (first render) defer acting to after
+    // we receive props, as user might have decided to disable this feature.
     if (_isOverrideScrollViewContentInsetAdjustmentBehaviorSet) {
       [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
     } else {
