@@ -485,4 +485,19 @@ UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
   }
 }
 
+UISemanticContentAttribute UISemanticContentAttributeFromTabsHostCppEquivalent(
+    react::RNSBottomTabsDirectionMode directionMode)
+{
+  using enum facebook::react::RNSBottomTabsDirectionMode;
+  switch (directionMode) {
+    case Ltr:
+      return UISemanticContentAttributeForceLeftToRight;
+    case Rtl:
+      return UISemanticContentAttributeForceRightToLeft;
+    default:
+      RCTLogError(@"[RNScreens] unsupported direction mode");
+      break;
+  }
+}
+
 }; // namespace rnscreens::conversion

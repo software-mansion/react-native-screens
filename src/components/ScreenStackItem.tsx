@@ -22,6 +22,7 @@ import { FooterComponent } from './ScreenFooter';
 import { SafeAreaViewProps } from './safe-area/SafeAreaView.types';
 import SafeAreaView from './safe-area/SafeAreaView';
 import { featureFlags } from '../flags';
+import { isIOS26OrHigher } from './helpers/PlatformUtils';
 
 type Props = Omit<
   ScreenProps,
@@ -87,10 +88,7 @@ function ScreenStackItem(
     headerConfig.blurEffect !== 'none';
 
   warnOnce(
-    hasEdgeEffects &&
-      hasBlurEffect &&
-      Platform.OS === 'ios' &&
-      parseInt(Platform.Version, 10) >= 26,
+    hasEdgeEffects && hasBlurEffect && isIOS26OrHigher,
     '[RNScreens] Using both `blurEffect` and `scrollEdgeEffects` simultaneously may cause overlapping effects.',
   );
 
@@ -114,8 +112,7 @@ function ScreenStackItem(
     contentStyle = contentWrapperStyles;
   }
 
-  const shouldUseSafeAreaView =
-    Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+  const shouldUseSafeAreaView = isIOS26OrHigher;
 
   const content = (
     <>
