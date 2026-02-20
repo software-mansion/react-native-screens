@@ -305,7 +305,7 @@ class TabsHost(
 
     override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
         getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
-            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabsScreen)
+            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabsScreen, currentFocusedTab.tabScreen.appearance)
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
         }
     }

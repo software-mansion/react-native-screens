@@ -55,14 +55,6 @@ class TabsScreen(
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 
-    var tabBarItemBadgeTextColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemBadgeBackgroundColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
     // Accessibility
     var tabBarItemTestID: String? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
