@@ -39,7 +39,8 @@ const DEFAULT_APPEARANCE_ANDROID: AndroidTabsAppearance = {
     color: Colors.GreenLight40,
   },
   typography: {
-    fontSize: 10,
+    fontSizeSmall: 10,
+    fontSizeLarge: 16,
     fontFamily: 'monospace',
     fontStyle: 'italic',
     fontWeight: 700,
