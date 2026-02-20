@@ -105,7 +105,7 @@ namespace react = facebook::react;
 @property (nonatomic) BOOL hideKeyboardOnSwipe;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic) BOOL preventNativeDismiss;
-@property (nonatomic, retain) RNSScreen *controller;
+@property (nonatomic, weak) RNSScreen *controller;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
 @property (nonatomic) int activityState;
 @property (nonatomic, nullable) NSString *screenId;
@@ -213,6 +213,11 @@ namespace react = facebook::react;
  * tree.
  */
 - (BOOL)registerContentWrapper:(nonnull RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
+
+/**
+ * Sets the retained controller to break the retain cycle.
+ */
+- (void)setRetainedController:(RNSScreen *_Nullable)controller;
 
 @end
 
