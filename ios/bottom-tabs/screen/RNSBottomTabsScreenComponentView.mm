@@ -32,6 +32,9 @@ namespace react = facebook::react;
 
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   BOOL _isOverrideScrollViewContentInsetAdjustmentBehaviorSet;
+  // Tracks that the first child was mounted before props were set.
+  // The pending override will be applied once updateProps runs.
+  BOOL _needsScrollViewBehaviorOverride;
 #if !RCT_NEW_ARCH_ENABLED
   BOOL _tabItemNeedsAppearanceUpdate;
   BOOL _tabScreenOrientationNeedsUpdate;
@@ -372,6 +375,12 @@ RNS_IGNORE_SUPER_CALL_END
   // enabling us to warn users that dynamic changes are not supported.
   _isOverrideScrollViewContentInsetAdjustmentBehaviorSet = YES;
 
+  // Apply deferred scroll view override if a child was mounted before props arrived
+  if (_needsScrollViewBehaviorOverride) {
+    [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    _needsScrollViewBehaviorOverride = NO;
+  }
+
   if (newComponentProps.systemItem != oldComponentProps.systemItem) {
     _systemItem = rnscreens::conversion::RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
         newComponentProps.systemItem);
@@ -465,7 +474,13 @@ RNS_IGNORE_SUPER_CALL_END
   // overrideScrollViewBehavior and updateContentScrollViewEdgeEffects use first descendant chain
   // from screen to find ScrollView, that's why we're only interested in child mounted at index 0.
   if (index == 0) {
-    [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    // Before the props are set (first render) defer acting to after
+    // we receive props, as user might have decided to disable this feature.
+    if (_isOverrideScrollViewContentInsetAdjustmentBehaviorSet) {
+      [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+    } else {
+      _needsScrollViewBehaviorOverride = YES;
+    }
     [self updateContentScrollViewEdgeEffectsIfExists];
   }
 }
