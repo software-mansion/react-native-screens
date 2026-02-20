@@ -242,6 +242,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',
       tabBarItemAccessibilityLabel: 'Fourth Tab Item',
+      standardAppearanceAndroid: {
+        ...DEFAULT_APPEARANCE_ANDROID,
+      },
       icon: {
         ios: {
           type: 'sfSymbol',
