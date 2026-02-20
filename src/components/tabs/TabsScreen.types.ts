@@ -152,13 +152,21 @@ export interface TypographyAppearanceAndroid {
    */
   fontFamily?: TextStyle['fontFamily'];
   /**
-   * @summary Specifies the font size used for the title of each tab bar item.
+   * @summary Specifies the font size used for the title unselected tab bar items.
    *
    * The size is represented in scale-independent pixels (sp).
    *
    * @platform android
    */
-  fontSize?: TextStyle['fontSize'];
+  fontSizeSmall?: TextStyle['fontSize'];
+  /**
+   * @summary Specifies the font size used for the title of selected tab bar item.
+   *
+   * The size is represented in scale-independent pixels (sp).
+   *
+   * @platform android
+   */
+  fontSizeLarge?: TextStyle['fontSize'];
   /**
    * @summary Specifies the font weight used for the title of each tab bar item.
    *

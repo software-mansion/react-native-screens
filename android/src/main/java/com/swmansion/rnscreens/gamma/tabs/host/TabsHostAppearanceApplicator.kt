@@ -50,7 +50,8 @@ data class ActiveIndicatorAppearance(
 
 data class TypographyAppearance(
     val fontFamily: String? = null,
-    val fontSize: Float? = null,
+    val fontSizeSmall: Float? = null,
+    val fontSizeLarge: Float? = null,
     val fontWeight: String? = null,
     val fontStyle: String? = null
 )
@@ -201,10 +202,10 @@ class TabsHostAppearanceApplicator(
              */
             // TODO: @t0maboro - should have activeFontSize
             val smallFontSize =
-                tabBarAppearance?.typography?.fontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                tabBarAppearance?.typography?.fontSizeSmall?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
                     ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
             val largeFontSize =
-                tabBarAppearance?.typography?.fontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                tabBarAppearance?.typography?.fontSizeLarge?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
                     ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
 
             // Inactive

@@ -300,7 +300,6 @@ class TabsScreenViewManager :
             backgroundColor = map.getOptionalColor("backgroundColor"),
             itemRippleColor = map.getOptionalColor("itemRippleColor"),
             labelVisibilityMode = map.getOptionalString("labelVisibilityMode"),
-
             itemColors = if (map.hasKey("itemColors")) parseBottomNavItemColors(map.getMap("itemColors")) else null,
             activeIndicator = if (map.hasKey("activeIndicator")) parseActiveIndicator(map.getMap("activeIndicator")) else null,
             typography = if (map.hasKey("typography")) parseTypography(map.getMap("typography")) else null,
@@ -337,7 +336,8 @@ class TabsScreenViewManager :
         if (map == null) return null
         return TypographyAppearance(
             fontFamily = map.getOptionalString("fontFamily"),
-            fontSize = map.getOptionalFloat("fontSize"),
+            fontSizeSmall = map.getOptionalFloat("fontSizeSmall"),
+            fontSizeLarge = map.getOptionalFloat("fontSizeLarge"),
             fontWeight = map.getOptionalString("fontWeight"),
             fontStyle = map.getOptionalString("fontStyle"),
         )

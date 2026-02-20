@@ -77,7 +77,8 @@ export type ActiveIndicatorAppearanceAndroid = {
 
 export type TypographyAppearanceAndroid = {
   fontFamily?: string;
-  fontSize?: CT.Float;
+  fontSizeSmall?: CT.Float;
+  fontSizeLarge?: CT.Float;
   fontWeight?: string;
   fontStyle?: string;
 };
