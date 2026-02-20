@@ -1,7 +1,10 @@
 package com.swmansion.rnscreens.gamma.tabs.screen
 
+import android.util.Log
+import androidx.core.graphics.toColorInt
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.ReadableType
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -60,14 +63,6 @@ class TabsScreenViewManager :
         view: TabsScreen,
         value: Dynamic,
     ) = Unit
-
-    @ReactProp(name = "tabBarItemBadgeBackgroundColor", customType = "Color")
-    override fun setTabBarItemBadgeBackgroundColor(
-        view: TabsScreen,
-        value: Int?,
-    ) {
-        view.tabBarItemBadgeBackgroundColor = value
-    }
 
     override fun setIconType(
         view: TabsScreen?,
@@ -198,13 +193,6 @@ class TabsScreenViewManager :
     }
 
     // Android specific
-    @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
-    override fun setTabBarItemBadgeTextColor(
-        view: TabsScreen,
-        value: Int?,
-    ) {
-        view.tabBarItemBadgeTextColor = value
-    }
 
     @ReactProp(name = "drawableIconResourceName")
     override fun setDrawableIconResourceName(
@@ -257,6 +245,110 @@ class TabsScreenViewManager :
         if (uri != null) {
             loadTabImage(view.context, uri, view, true)
         }
+    }
+
+    @ReactProp(name = "standardAppearanceAndroid")
+    override fun setStandardAppearanceAndroid(
+        view: TabScreen,
+        value: Dynamic?,
+    ) {
+        if (value == null || value.isNull) {
+            view.appearance = null
+            return
+        }
+        val map = if (value.type == ReadableType.Map) value.asMap() else null
+
+        if (map == null) {
+            view.appearance = null
+            return
+        }
+
+        view.appearance = parseAndroidTabsAppearance(map)
+    }
+
+    private fun ReadableMap.getOptionalBoolean(key: String): Boolean? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.Boolean) getBoolean(key) else null
+    }
+
+    private fun ReadableMap.getOptionalString(key: String): String? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.String) getString(key) else null
+    }
+
+    private fun ReadableMap.getOptionalFloat(key: String): Float? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.Number) getDouble(key).toFloat() else null
+    }
+
+    private fun ReadableMap.getOptionalColor(key: String): Int? {
+        if (!hasKey(key) || isNull(key)) return null
+        return try {
+            when (getType(key)) {
+                ReadableType.Number -> getInt(key)
+                ReadableType.String -> getString(key)?.toColorInt()
+                else -> null
+            }
+        } catch (e: Exception) {
+            Log.w("RNScreens", "[RNScreens] Could not parse color for key '$key': ${e.message}")
+            null
+        }
+    }
+
+    private fun parseAndroidTabsAppearance(map: ReadableMap): AndroidTabsAppearance =
+        AndroidTabsAppearance(
+            backgroundColor = map.getOptionalColor("backgroundColor"),
+            itemRippleColor = map.getOptionalColor("itemRippleColor"),
+            labelVisibilityMode = map.getOptionalString("labelVisibilityMode"),
+
+            itemColors = if (map.hasKey("itemColors")) parseBottomNavItemColors(map.getMap("itemColors")) else null,
+            activeIndicator = if (map.hasKey("activeIndicator")) parseActiveIndicator(map.getMap("activeIndicator")) else null,
+            typography = if (map.hasKey("typography")) parseTypography(map.getMap("typography")) else null,
+            badge = if (map.hasKey("badge")) parseBadge(map.getMap("badge")) else null,
+        )
+
+    private fun parseBottomNavItemColors(map: ReadableMap?): BottomNavItemColors? {
+        if (map == null) return null
+        return BottomNavItemColors(
+            normal = if (map.hasKey("normal")) parseItemStateColors(map.getMap("normal")) else null,
+            selected = if (map.hasKey("selected")) parseItemStateColors(map.getMap("selected")) else null,
+            focused = if (map.hasKey("focused")) parseItemStateColors(map.getMap("focused")) else null,
+            disabled = if (map.hasKey("disabled")) parseItemStateColors(map.getMap("disabled")) else null,
+        )
+    }
+
+    private fun parseItemStateColors(map: ReadableMap?): ItemStateColors? {
+        if (map == null) return null
+        return ItemStateColors(
+            titleColor = map.getOptionalColor("titleColor"),
+            iconColor = map.getOptionalColor("iconColor"),
+        )
+    }
+
+    private fun parseActiveIndicator(map: ReadableMap?): ActiveIndicatorAppearance? {
+        if (map == null) return null
+        return ActiveIndicatorAppearance(
+            color = map.getOptionalColor("color"),
+            enabled = map.getOptionalBoolean("enabled"),
+        )
+    }
+
+    private fun parseTypography(map: ReadableMap?): TypographyAppearance? {
+        if (map == null) return null
+        return TypographyAppearance(
+            fontFamily = map.getOptionalString("fontFamily"),
+            fontSize = map.getOptionalFloat("fontSize"),
+            fontWeight = map.getOptionalString("fontWeight"),
+            fontStyle = map.getOptionalString("fontStyle"),
+        )
+    }
+
+    private fun parseBadge(map: ReadableMap?): BadgeAppearance? {
+        if (map == null) return null
+        return BadgeAppearance(
+            backgroundColor = map.getOptionalColor("backgroundColor"),
+            textColor = map.getOptionalColor("textColor"),
+        )
     }
 
     companion object {

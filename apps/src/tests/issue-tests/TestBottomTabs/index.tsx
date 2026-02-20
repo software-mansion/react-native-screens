@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { enableFreeze } from 'react-native-screens';
+import { AndroidTabsAppearance, enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -16,9 +16,44 @@ import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/pr
 enableFreeze(true);
 internalEnableDetailedBottomTabsLogging();
 
+const DEFAULT_APPEARANCE_ANDROID: AndroidTabsAppearance = {
+  backgroundColor: Colors.NavyLight100,
+  itemRippleColor: Colors.WhiteTransparentDark,
+  labelVisibilityMode: 'auto',
+  itemColors: {
+    normal: {
+      iconColor: Colors.BlueLight100,
+      titleColor: Colors.BlueLight40,
+    },
+    selected: {
+      iconColor: Colors.GreenLight100,
+      titleColor: Colors.GreenLight40,
+    },
+    focused: {
+      iconColor: Colors.YellowDark100,
+      titleColor: Colors.YellowDark40,
+    }
+  },
+  activeIndicator: {
+    enabled: true,
+    color: Colors.GreenLight40,
+  },
+  typography: {
+    fontSize: 10,
+    fontFamily: 'monospace',
+    fontStyle: 'italic',
+    fontWeight: 700,
+  },
+  badge: {
+    textColor: Colors.RedDark120,
+    backgroundColor: Colors.RedDark40,
+  }
+}
+
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
+      standardAppearanceAndroid: DEFAULT_APPEARANCE_ANDROID,
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyLight100,
         stacked: {
@@ -69,6 +104,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Second Tab Screen',
       tabBarItemTestID: 'tab-item-2-id',
       tabBarItemAccessibilityLabel: 'Second Tab Item',
+      standardAppearanceAndroid: DEFAULT_APPEARANCE_ANDROID,
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyDark140,
         stacked: {
@@ -114,7 +150,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
           },
         },
       },
-      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       icon: {
         ios: {
           type: 'templateSource',
@@ -154,8 +189,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemTestID: 'tab-item-3-id',
       tabBarItemAccessibilityLabel: 'Third Tab Item',
       scrollEdgeEffects: { bottom: 'hard' },
-      tabBarItemBadgeBackgroundColor: Colors.RedDark40,
-      tabBarItemBadgeTextColor: Colors.RedDark120,
+      standardAppearanceAndroid: DEFAULT_APPEARANCE_ANDROID,
       standardAppearance: {
         stacked: {
           normal: {
@@ -240,21 +274,7 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarBackgroundColor={Colors.NavyLight100}
-        tabBarItemActiveIndicatorColor={Colors.GreenLight40}
-        tabBarItemActiveIndicatorEnabled={true}
         tabBarTintColor={Colors.YellowLight100}
-        tabBarItemIconColor={Colors.BlueLight100}
-        tabBarItemTitleFontColor={Colors.BlueLight40}
-        tabBarItemIconColorActive={Colors.GreenLight100}
-        tabBarItemTitleFontColorActive={Colors.GreenLight40}
-        tabBarItemTitleFontSize={10}
-        tabBarItemTitleFontSizeActive={15}
-        tabBarItemRippleColor={Colors.WhiteTransparentDark}
-        tabBarItemTitleFontFamily="monospace"
-        tabBarItemTitleFontStyle="italic"
-        tabBarItemTitleFontWeight="700"
-        tabBarItemLabelVisibilityMode="auto"
         tabBarMinimizeBehavior="onScrollDown"
       />
     </ConfigWrapperContext.Provider>

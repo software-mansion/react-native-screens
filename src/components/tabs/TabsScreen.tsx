@@ -24,6 +24,12 @@ import type {
   TabsScreenItemStateAppearance,
   TabsScreenProps,
   EmptyObject,
+  AndroidTabsAppearance,
+  BottomNavItemColorsAndroid,
+  ItemStateColorsAndroid,
+  ActiveIndicatorAppearanceAndroid,
+  TypographyAppearanceAndroid,
+  BadgeAppearanceAndroid,
 } from './TabsScreen.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type {
@@ -57,6 +63,7 @@ function TabsScreen(props: TabsScreenProps) {
     icon,
     selectedIcon,
     standardAppearance,
+    standardAppearanceAndroid,
     scrollEdgeAppearance,
     scrollEdgeEffects,
     // eslint-disable-next-line camelcase -- we use sneak case experimental prefix
@@ -124,6 +131,9 @@ function TabsScreen(props: TabsScreenProps) {
       isFocused={isFocused}
       {...iconProps}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
+      standardAppearanceAndroid={mapAndroidAppearanceToNativeProp(
+        standardAppearanceAndroid,
+      )}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
@@ -160,6 +170,83 @@ function mapAppearanceToNativeProp(
     compactInline: mapItemAppearanceToNativeProp(compactInline),
     tabBarBackgroundColor: processColor(tabBarBackgroundColor),
     tabBarShadowColor: processColor(tabBarShadowColor),
+  };
+}
+
+export function mapAndroidAppearanceToNativeProp(
+  appearance?: AndroidTabsAppearance,
+) {
+  if (!appearance) return undefined;
+
+  const {
+    backgroundColor,
+    itemRippleColor,
+    labelVisibilityMode,
+    itemColors,
+    activeIndicator,
+    typography,
+    badge,
+  } = appearance;
+
+  return {
+    backgroundColor: processColor(backgroundColor),
+    itemRippleColor: processColor(itemRippleColor),
+    labelVisibilityMode,
+    itemColors: mapBottomNavItemColors(itemColors),
+    activeIndicator: mapActiveIndicator(activeIndicator),
+    typography: mapTypography(typography),
+    badge: mapBadge(badge),
+  };
+}
+
+function mapBottomNavItemColors(colors?: BottomNavItemColorsAndroid) {
+  if (!colors) return undefined;
+
+  return {
+    normal: mapItemStateColors(colors.normal),
+    selected: mapItemStateColors(colors.selected),
+    focused: mapItemStateColors(colors.focused),
+    disabled: mapItemStateColors(colors.disabled),
+  };
+}
+
+function mapItemStateColors(stateColors?: ItemStateColorsAndroid) {
+  if (!stateColors) return undefined;
+
+  return {
+    titleColor: processColor(stateColors.titleColor),
+    iconColor: processColor(stateColors.iconColor),
+  };
+}
+
+function mapActiveIndicator(indicator?: ActiveIndicatorAppearanceAndroid) {
+  if (!indicator) return undefined;
+
+  return {
+    ...indicator,
+    color: processColor(indicator.color),
+  };
+}
+
+function mapTypography(typography?: TypographyAppearanceAndroid) {
+  if (!typography) return undefined;
+
+  return {
+    ...typography,
+    fontWeight:
+      typography.fontWeight !== undefined
+        ? String(typography.fontWeight)
+        : undefined,
+  };
+}
+
+function mapBadge(badge?: BadgeAppearanceAndroid) {
+  if (!badge) return undefined;
+
+  return {
+    ...badge,
+    backgroundColor: processColor(badge.backgroundColor),
+    textColor: processColor(badge.textColor),
   };
 }
 

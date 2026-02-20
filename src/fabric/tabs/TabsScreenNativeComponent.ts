@@ -3,7 +3,6 @@
 import { codegenNativeComponent } from 'react-native';
 import type {
   CodegenTypes as CT,
-  ColorValue,
   ImageSource,
   ProcessedColorValue,
   ViewProps,
@@ -51,6 +50,55 @@ export type Appearance = {
   tabBarBackgroundColor?: ProcessedColorValue | null;
   tabBarShadowColor?: ProcessedColorValue | null;
   tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
+};
+
+type TabBarItemLabelVisibilityMode =
+  | 'auto'
+  | 'selected'
+  | 'labeled'
+  | 'unlabeled';
+
+export type ItemStateColorsAndroid = {
+  iconColor?: ProcessedColorValue | null;
+  titleColor?: ProcessedColorValue | null;
+};
+
+export type BottomNavItemColorsAndroid = {
+  normal?: ItemStateColorsAndroid;
+  selected?: ItemStateColorsAndroid;
+  focused?: ItemStateColorsAndroid;
+  disabled?: ItemStateColorsAndroid;
+};
+
+export type ActiveIndicatorAppearanceAndroid = {
+  color?: ProcessedColorValue | null;
+  enabled?: CT.WithDefault<boolean, true>;
+};
+
+export type TypographyAppearanceAndroid = {
+  fontFamily?: string;
+  fontSize?: CT.Float;
+  fontWeight?: string;
+  fontStyle?: string;
+};
+
+export type BadgeAppearanceAndroid = {
+  textColor?: ProcessedColorValue | null;
+  backgroundColor?: ProcessedColorValue | null;
+};
+
+export type AppearanceAndroid = {
+  tabBarBackgroundColor?: ProcessedColorValue | null;
+  tabBarItemRippleColor?: ProcessedColorValue | null;
+  tabBarItemLabelVisibilityMode?: CT.WithDefault<
+    TabBarItemLabelVisibilityMode,
+    'auto'
+  >;
+
+  itemColors?: BottomNavItemColorsAndroid;
+  activeIndicator?: ActiveIndicatorAppearanceAndroid;
+  typography?: TypographyAppearanceAndroid;
+  badge?: BadgeAppearanceAndroid;
 };
 
 type BlurEffect =
@@ -138,10 +186,10 @@ export interface NativeProps extends ViewProps {
   selectedDrawableIconResourceName?: string;
   selectedImageIconResource?: ImageSource;
 
-  tabBarItemBadgeTextColor?: ColorValue;
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+  // Android-specific appearance
+  standardAppearanceAndroid?: UnsafeMixed<AppearanceAndroid>;
 
-  // iOS-specific
+  // iOS-specific appearance
   standardAppearance?: UnsafeMixed<Appearance>;
   scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
