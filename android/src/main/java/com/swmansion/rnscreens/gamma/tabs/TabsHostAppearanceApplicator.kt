@@ -230,6 +230,7 @@ class TabsHostAppearanceApplicator(
     fun updateBadgeAppearance(
         menuItem: MenuItem,
         tabScreen: TabScreen,
+        badgeAppearance: BadgeAppearance?
     ) {
         val menuItemIndex = bottomNavigationView.menu.children.indexOf(menuItem)
         val badgeValue = tabScreen.badgeValue
@@ -257,12 +258,12 @@ class TabsHostAppearanceApplicator(
 
         // Styling
         badge.badgeTextColor =
-            tabScreen.tabBarItemBadgeTextColor
+            badgeAppearance?.textColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
 
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
         badge.backgroundColor =
-            tabScreen.tabBarItemBadgeBackgroundColor
+            badgeAppearance?.backgroundColor
                 ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
     }
 }

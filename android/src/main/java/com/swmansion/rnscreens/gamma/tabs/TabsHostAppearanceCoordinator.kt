@@ -15,28 +15,30 @@ class TabsHostAppearanceCoordinator(
 
     fun updateTabAppearance(tabsHost: TabsHost) {
         appearanceApplicator.updateSharedAppearance(tabsHost)
-        updateMenuItems()
+        updateMenuItems(tabsHost)
         appearanceApplicator.updateFontStyles(tabsHost) // It needs to be updated after updateMenuItems
     }
 
-    private fun updateMenuItems() {
+    private fun updateMenuItems(tabsHost: TabsHost) {
         if (bottomNavigationView.menu.size != tabScreenFragments.size) {
             // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
             bottomNavigationView.menu.clear()
         }
         tabScreenFragments.forEachIndexed { index, fragment ->
+            val appearance = tabsHost.currentFocusedTab.tabScreen.appearance
             val menuItem = bottomNavigationView.menu.getOrCreateMenuItem(index, fragment.tabScreen)
             check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
-            updateMenuItemAppearance(menuItem, fragment.tabScreen)
+            updateMenuItemAppearance(menuItem, fragment.tabScreen, appearance)
         }
     }
 
     fun updateMenuItemAppearance(
         menuItem: MenuItem,
         tabScreen: TabScreen,
+        appearance: AndroidTabsAppearance?,
     ) {
         appearanceApplicator.updateMenuItemAppearance(menuItem, tabScreen)
-        appearanceApplicator.updateBadgeAppearance(menuItem, tabScreen)
+        appearanceApplicator.updateBadgeAppearance(menuItem, tabScreen, appearance?.badge)
     }
 }
 
