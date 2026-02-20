@@ -125,11 +125,11 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
 
 } API_UNAVAILABLE(watchos);
 
-typedef NS_ENUM(NSInteger, RNSBottomTabsIconType) {
-  RNSBottomTabsIconTypeImage,
-  RNSBottomTabsIconTypeTemplate,
-  RNSBottomTabsIconTypeSfSymbol,
-  RNSBottomTabsIconTypeXcasset,
+typedef NS_ENUM(NSInteger, RNSTabsIconType) {
+  RNSTabsIconTypeImage,
+  RNSTabsIconTypeTemplate,
+  RNSTabsIconTypeSfSymbol,
+  RNSTabsIconTypeXcasset,
 };
 
 #if !RCT_NEW_ARCH_ENABLED
@@ -163,20 +163,20 @@ typedef NS_ENUM(NSInteger, RNSOrientation) {
   RNSOrientationLandscapeRight,
 };
 
-typedef NS_ENUM(NSInteger, RNSBottomTabsScreenSystemItem) {
-  RNSBottomTabsScreenSystemItemNone,
-  RNSBottomTabsScreenSystemItemBookmarks,
-  RNSBottomTabsScreenSystemItemContacts,
-  RNSBottomTabsScreenSystemItemDownloads,
-  RNSBottomTabsScreenSystemItemFavorites,
-  RNSBottomTabsScreenSystemItemFeatured,
-  RNSBottomTabsScreenSystemItemHistory,
-  RNSBottomTabsScreenSystemItemMore,
-  RNSBottomTabsScreenSystemItemMostRecent,
-  RNSBottomTabsScreenSystemItemMostViewed,
-  RNSBottomTabsScreenSystemItemRecents,
-  RNSBottomTabsScreenSystemItemSearch,
-  RNSBottomTabsScreenSystemItemTopRated
+typedef NS_ENUM(NSInteger, RNSTabsScreenSystemItem) {
+  RNSTabsScreenSystemItemNone,
+  RNSTabsScreenSystemItemBookmarks,
+  RNSTabsScreenSystemItemContacts,
+  RNSTabsScreenSystemItemDownloads,
+  RNSTabsScreenSystemItemFavorites,
+  RNSTabsScreenSystemItemFeatured,
+  RNSTabsScreenSystemItemHistory,
+  RNSTabsScreenSystemItemMore,
+  RNSTabsScreenSystemItemMostRecent,
+  RNSTabsScreenSystemItemMostViewed,
+  RNSTabsScreenSystemItemRecents,
+  RNSTabsScreenSystemItemSearch,
+  RNSTabsScreenSystemItemTopRated
 };
 
 typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
@@ -185,7 +185,7 @@ typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
   RNSOptionalBooleanFalse
 };
 
-typedef NS_ENUM(NSInteger, RNSBottomTabsAccessoryEnvironment) {
-  RNSBottomTabsAccessoryEnvironmentRegular,
-  RNSBottomTabsAccessoryEnvironmentInline
+typedef NS_ENUM(NSInteger, RNSTabsBottomAccessoryEnvironment) {
+  RNSTabsBottomAccessoryEnvironmentRegular,
+  RNSTabsBottomAccessoryEnvironmentInline
 };

@@ -13,13 +13,13 @@ import {
   type NativeSyntheticEvent,
 } from 'react-native';
 import { freezeEnabled } from '../../core';
-import BottomTabsScreenNativeComponent, {
+import TabsScreenNativeComponent, {
   type IconType,
   type NativeProps,
   type Appearance,
   type ItemAppearance,
   type ItemStateAppearance,
-} from '../../fabric/bottom-tabs/BottomTabsScreenNativeComponent';
+} from '../../fabric/tabs/TabsScreenNativeComponent';
 import { featureFlags } from '../../flags';
 import type {
   TabsScreenAppearance,
@@ -128,7 +128,7 @@ function TabsScreen(props: TabsScreenProps) {
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
   return (
-    <BottomTabsScreenNativeComponent
+    <TabsScreenNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
       onWillAppear={onWillAppearCallback}
@@ -152,7 +152,7 @@ function TabsScreen(props: TabsScreenProps) {
       <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
         {rest.children}
       </Freeze>
-    </BottomTabsScreenNativeComponent>
+    </TabsScreenNativeComponent>
   );
 }
 
