@@ -83,6 +83,7 @@ class TabsHostAppearanceApplicator(
             )
 
         // Font color
+        // Defaults from spec: https://m3.material.io/components/navigation-bar/specs
         val fontDisabledColor =
             tabBarAppearance?.itemColors?.disabled?.titleColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurface)
@@ -93,7 +94,7 @@ class TabsHostAppearanceApplicator(
 
         val fontSelectedColor =
             tabBarAppearance?.itemColors?.selected?.titleColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurface)
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorSecondary)
 
         val fontNormalColor =
             tabBarAppearance?.itemColors?.normal?.titleColor
@@ -103,6 +104,7 @@ class TabsHostAppearanceApplicator(
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
 
         // Icon color
+        // Defaults from spec: https://m3.material.io/components/navigation-bar/specs
         val iconDisabledColor =
             tabBarAppearance?.itemColors?.disabled?.iconColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurface)
