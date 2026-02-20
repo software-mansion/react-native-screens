@@ -3,6 +3,7 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import "RNSConversions.h"
 #import "RNSDefines.h"
@@ -16,7 +17,7 @@ static const CGFloat epsilon = 1e-6;
 #define COLUMN_METRIC_CHANGED(OLD, NEW, PROPERTY_NAME, EPSILON) \
   (fabs((OLD).columnMetrics.PROPERTY_NAME - (NEW).columnMetrics.PROPERTY_NAME) > (EPSILON))
 
-@interface RNSSplitViewHostComponentView () <RCTMountingTransactionObserving>
+@interface RNSSplitViewHostComponentView () <RCTMountingTransactionObserving, RCTRNSSplitViewHostViewProtocol>
 @end
 
 @implementation RNSSplitViewHostComponentView {
@@ -86,6 +87,9 @@ static const CGFloat epsilon = 1e-6;
   _maximumInspectorColumnWidth = -1.0;
   _preferredInspectorColumnWidthOrFraction = -1.0;
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  _hasCustomTopColumnForCollapsing = NO;
+  _topColumnForCollapsingColumn = UISplitViewControllerColumnPrimary;
 
   _orientation = RNSOrientationInherit;
 
@@ -313,6 +317,15 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
+  // No appearance update needed — topColumnForCollapsingColumn is read on-demand by the delegate callback
+  // splitViewController(_:topColumnForCollapsingToProposedTopColumn:), not pushed to the controller.
+  if (oldComponentProps.topColumnForCollapsing != newComponentProps.topColumnForCollapsing) {
+    auto column =
+        rnscreens::conversion::SplitViewTopColumnForCollapsingFromHostProp(newComponentProps.topColumnForCollapsing);
+    _hasCustomTopColumnForCollapsing = column.has_value();
+    _topColumnForCollapsingColumn = column.value_or(UISplitViewControllerColumnPrimary);
+  }
+
   if (oldComponentProps.orientation != newComponentProps.orientation) {
     _needsSplitViewOrientationUpdate = true;
     _orientation = rnscreens::conversion::RNSOrientationFromRNSSplitViewHostOrientation(newComponentProps.orientation);
@@ -378,6 +391,22 @@ RNS_IGNORE_SUPER_CALL_END
   [super updateEventEmitter:eventEmitter];
   [_reactEventEmitter
       updateEventEmitter:std::static_pointer_cast<const react::RNSSplitViewHostEventEmitter>(eventEmitter)];
+}
+
+#pragma mark - Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSSplitViewHostHandleCommand(self, commandName, args);
+}
+
+- (void)showColumn:(NSString *)column
+{
+  if (_controller == nil) {
+    RCTLogWarn(@"[RNScreens] showColumn called before SplitView controller was initialized. Command ignored.");
+    return;
+  }
+  [_controller showColumnNamed:column];
 }
 
 #pragma mark - Events
