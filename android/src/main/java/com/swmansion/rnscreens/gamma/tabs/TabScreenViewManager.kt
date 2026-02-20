@@ -214,6 +214,14 @@ class TabScreenViewManager :
         view.drawableIconResourceName = value
     }
 
+    @ReactProp(name = "selectedDrawableIconResourceName")
+    override fun setSelectedDrawableIconResourceName(
+        view: TabScreen,
+        value: String?,
+    ) {
+        view.selectedDrawableIconResourceName = value
+    }
+
     override fun setOrientation(
         view: TabScreen,
         value: String?,
@@ -236,7 +244,18 @@ class TabScreenViewManager :
     ) {
         val uri = value?.getString("uri")
         if (uri != null) {
-            loadTabImage(view.context, uri, view)
+            loadTabImage(view.context, uri, view, false)
+        }
+    }
+
+    @ReactProp(name = "selectedImageIconResource")
+    override fun setSelectedImageIconResource(
+        view: TabScreen,
+        value: ReadableMap?,
+    ) {
+        val uri = value?.getString("uri")
+        if (uri != null) {
+            loadTabImage(view.context, uri, view, true)
         }
     }
 

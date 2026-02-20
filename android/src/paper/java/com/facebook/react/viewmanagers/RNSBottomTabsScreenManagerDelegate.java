@@ -56,6 +56,12 @@ public class RNSBottomTabsScreenManagerDelegate<T extends View, U extends BaseVi
       case "imageIconResource":
         mViewManager.setImageIconResource(view, (ReadableMap) value);
         break;
+      case "selectedDrawableIconResourceName":
+        mViewManager.setSelectedDrawableIconResourceName(view, value == null ? null : (String) value);
+        break;
+      case "selectedImageIconResource":
+        mViewManager.setSelectedImageIconResource(view, (ReadableMap) value);
+        break;
       case "tabBarItemBadgeTextColor":
         mViewManager.setTabBarItemBadgeTextColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;

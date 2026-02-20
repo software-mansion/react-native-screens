@@ -45,12 +45,18 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
         android: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('../../../../assets/variableIcons/icon.png'),
         },
       },
       selectedIcon: {
-        type: 'sfSymbol',
-        name: 'house.fill',
+        ios: {
+          type: 'sfSymbol',
+          name: 'house.fill',
+        }, 
+        android: {
+          type: 'imageSource',
+          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        }
       },
     },
     component: Tab1,
@@ -120,8 +126,14 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
       selectedIcon: {
-        type: 'templateSource',
-        templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        ios: {
+          type: 'templateSource',
+          templateSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        },
+        android: {
+          type: 'drawableResource',
+          name: 'sym_call_incoming',
+        }
       },
       title: 'Tab2',
     },
@@ -163,8 +175,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
       selectedIcon: {
-        type: 'imageSource',
-        imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        shared: {
+          type: 'imageSource',
+          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        }
       },
       title: 'Tab3',
       // systemItem: 'search', // iOS specific
@@ -191,8 +205,14 @@ const TAB_CONFIGS: TabConfiguration[] = [
         },
       },
       selectedIcon: {
-        type: 'sfSymbol',
-        name: 'rectangle.stack.fill',
+        ios: {
+          type: 'sfSymbol',
+          name: 'rectangle.stack.fill',
+        },
+        android: {
+          type: 'drawableResource',
+          name: 'custom_home_icon',
+        },
       },
       title: 'Tab4',
       systemItem: 'search', // iOS specific
