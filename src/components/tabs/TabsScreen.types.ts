@@ -284,14 +284,6 @@ export interface TabsScreenProps {
   children?: ViewProps['children'];
   style?: StyleProp<Pick<ViewStyle, 'backgroundColor'>>;
   /**
-   * @summary Defines what should be rendered when tab screen is frozen.
-   *
-   * @see {@link https://github.com/software-mansion/react-freeze|`react-freeze`'s GitHub repository} for more information about `react-freeze`.
-   *
-   * @platform android, ios
-   */
-  placeholder?: React.ReactNode | undefined;
-  /**
    * @summary Title of the tab screen, displayed in the tab bar item.
    *
    * @platform android, ios
@@ -379,14 +371,6 @@ export interface TabsScreenProps {
       scrollToTop?: boolean;
     };
   };
-  /**
-   * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
-   *
-   * @default undefined
-   *
-   * @platform android, ios
-   */
-  freezeContents?: boolean;
   // #endregion General
 
   // #region Accessibility
