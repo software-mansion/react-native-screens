@@ -28,8 +28,7 @@ public interface RNSTabsScreenManagerInterface<T extends View> extends ViewManag
   void setImageIconResource(T view, @Nullable ReadableMap value);
   void setSelectedDrawableIconResourceName(T view, @Nullable String value);
   void setSelectedImageIconResource(T view, @Nullable ReadableMap value);
-  void setTabBarItemBadgeTextColor(T view, @Nullable Integer value);
-  void setTabBarItemBadgeBackgroundColor(T view, @Nullable Integer value);
+  void setStandardAppearanceAndroid(T view, Dynamic value);
   void setStandardAppearance(T view, Dynamic value);
   void setScrollEdgeAppearance(T view, Dynamic value);
   void setIconType(T view, @Nullable String value);
