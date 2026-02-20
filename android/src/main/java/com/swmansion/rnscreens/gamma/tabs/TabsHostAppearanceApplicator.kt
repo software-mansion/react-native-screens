@@ -26,14 +26,13 @@ data class AndroidTabsAppearance(
     val tabBarItemActiveIndicatorColor: Int? = null,
     val tabBarItemActiveIndicatorEnabled: Boolean? = null,
     val tabBarItemLabelVisibilityMode: String? = null,
+)
+
+data class AndroidTabsScreenItemStateAppearance(
     val tabBarItemTitleFontFamily: String? = null,
     val tabBarItemTitleFontSize: Float? = null,
     val tabBarItemTitleFontWeight: String? = null,
     val tabBarItemTitleFontStyle: String? = null,
-    val tabBarSelectedItemTitleFontSize: Float? = null,
-)
-
-data class AndroidTabsScreenItemStateAppearance(
     val tabBarItemTitleFontColor: Int? = null,
     val tabBarItemIconColor: Int? = null,
     val tabBarItemBadgeTextColor: Int? = null,
@@ -167,38 +166,50 @@ class TabsHostAppearanceApplicator(
         tabsHost: TabsHost,
         activeTabScreen: TabScreen?,
     ) {
-        val appearance = activeTabScreen?.appearance
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
-        fun resolveTypeface(appearance: AndroidTabsAppearance?): android.graphics.Typeface {
-            val isFontStyleItalic = appearance?.tabBarItemTitleFontStyle == "italic"
+        // activeTabScreen determines font styles for the entire tabBar
+        val appearance = activeTabScreen?.appearance
+
+        for (i in 0 until bottomNavigationMenuView.childCount) {
+            val itemView = bottomNavigationMenuView.getChildAt(i)
+            val menuItem = bottomNavigationView.menu.getItem(i)
+
+            val isSelected = menuItem.isChecked
+            val isEnabled = menuItem.isEnabled
+            val isFocused = itemView.isFocused
+
+            val stateAppearance = when {
+                !isEnabled -> appearance?.disabled
+                isFocused -> appearance?.focused
+                isSelected -> appearance?.selected
+                else -> appearance?.normal
+            }
+            
+            // TODO: @t0maboro - fallback should be material object with defaults
+            val fallback = appearance?.normal
+
+            val fontStyle = stateAppearance?.tabBarItemTitleFontStyle ?: fallback?.tabBarItemTitleFontStyle
+            val isFontStyleItalic = fontStyle == "italic"
 
             // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
             // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
             // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
-            val fontWeight =
-                if (appearance?.tabBarItemTitleFontWeight ==
-                    "bold"
-                ) {
-                    700
-                } else {
-                    appearance?.tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
-                }
-            val fontFamilyName = appearance?.tabBarItemTitleFontFamily ?: ""
+            val fontWeightRaw = stateAppearance?.tabBarItemTitleFontWeight ?: fallback?.tabBarItemTitleFontWeight
+            val fontWeight = if (fontWeightRaw == "bold") {
+                700
+            } else {
+                fontWeightRaw?.toIntOrNull() ?: 400
+            }
 
-            return ReactFontManager.getInstance().getTypeface(fontFamilyName, fontWeight, isFontStyleItalic, context.assets)
-        }
+            val fontFamilyName = stateAppearance?.tabBarItemTitleFontFamily ?: fallback?.tabBarItemTitleFontFamily ?: ""
 
-        for (menuItem in bottomNavigationMenuView.children) {
-            val largeLabel =
-                menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_large_label_view)
-            val smallLabel =
-                menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
-
-            val fontFamily =
-                resolveTypeface(
-                    appearance,
-                )
+            val typeface = ReactFontManager.getInstance().getTypeface(
+                fontFamilyName,
+                fontWeight,
+                isFontStyleItalic,
+                context.assets
+            )
 
             /*
                 Short explanation about computations we're doing below.
@@ -209,20 +220,19 @@ class TabsHostAppearanceApplicator(
                 with SP, if there will be a need for skipping scale, the we should introduce similar
                 `allowFontScaling` prop.
              */
-            val smallFontSize =
-                appearance?.tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
-                    ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
-            val largeFontSize =
-                appearance?.tabBarSelectedItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
-                    ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+            val fontSizeSp = stateAppearance?.tabBarItemTitleFontSize ?: fallback?.tabBarItemTitleFontSize
+            val fontSizePx = fontSizeSp?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
 
-            // Inactive
-            smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, smallFontSize)
-            smallLabel.typeface = fontFamily
-
-            // Active
-            largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, largeFontSize)
-            largeLabel.typeface = fontFamily
+            if (isSelected) {
+                val largeLabel = itemView.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_large_label_view)
+                largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSizePx)
+                largeLabel.typeface = typeface
+            } else {
+                val smallLabel = itemView.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
+                smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSizePx)
+                smallLabel.typeface = typeface
+            }
         }
     }
 

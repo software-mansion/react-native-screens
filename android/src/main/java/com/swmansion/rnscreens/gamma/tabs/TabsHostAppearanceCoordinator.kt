@@ -63,11 +63,14 @@ class TabsHostAppearanceCoordinator(
 
         if (itemView.onFocusChangeListener == null) {
             itemView.setOnFocusChangeListener { _, hasFocus ->
+                val activeTabScreen = tabsHost.currentFocusedTab.tabScreen
+                appearanceApplicator.updateSharedAppearance(tabsHost, activeTabScreen)
+                appearanceApplicator.updateFontStyles(tabsHost, activeTabScreen)
                 appearanceApplicator.updateBadgeStyle(
                     badge,
                     hasFocus,
                     tabScreen,
-                    tabsHost.currentFocusedTab.tabScreen,
+                    activeTabScreen,
                     menuItem
                 )
             }

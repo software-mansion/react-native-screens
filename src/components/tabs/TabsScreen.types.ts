@@ -157,6 +157,9 @@ export interface AndroidTabsAppearance {
    * @platform android
    */
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode;
+}
+
+export interface AndroidTabsScreenItemStateAppearance {
   /**
    * @summary Specifies the font family used for the title of each tab bar item.
    *
@@ -172,14 +175,6 @@ export interface AndroidTabsAppearance {
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
   /**
-   * @summary Specifies the font size used for the title of each tab bar item in active state.
-   *
-   * The size is represented in scale-independent pixels (sp).
-   *
-   * @platform android
-   */
-  tabBarSelectedItemTitleFontSize?: TextStyle['fontSize'];
-  /**
    * @summary Specifies the font weight used for the title of each tab bar item.
    *
    * @platform android
@@ -191,9 +186,6 @@ export interface AndroidTabsAppearance {
    * @platform android
    */
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
-}
-
-export interface AndroidTabsScreenItemStateAppearance {
   /**
    * @summary Specifies the font color used for the title of each tab bar item.
    *

@@ -22,20 +22,27 @@ const DEFAULT_ANDROID_APPEARANCE: AndroidTabsAppearance = {
   tabBarItemLabelVisibilityMode: 'auto',
   tabBarItemActiveIndicatorColor: Colors.GreenLight40,
   tabBarItemActiveIndicatorEnabled: true,
-  tabBarItemTitleFontSize: 10,
-  tabBarSelectedItemTitleFontSize: 15,
-  tabBarItemTitleFontWeight: 700,
-  tabBarItemTitleFontFamily: 'monospace',
-  tabBarItemTitleFontStyle: 'italic',
   normal: {
+    tabBarItemTitleFontSize: 10,
+    tabBarItemTitleFontWeight: 400,
+    tabBarItemTitleFontFamily: 'monospace',
+    tabBarItemTitleFontStyle: 'italic',
     tabBarItemIconColor: Colors.BlueLight100,
     tabBarItemTitleFontColor: Colors.BlueLight40,
   },
   selected: {
+    tabBarItemTitleFontSize: 16,
+    tabBarItemTitleFontWeight: 700,
+    tabBarItemTitleFontFamily: 'monospace',
+    tabBarItemTitleFontStyle: 'italic',
     tabBarItemIconColor: Colors.GreenLight100,
     tabBarItemTitleFontColor: Colors.GreenLight40,
   },
   focused: {
+    tabBarItemTitleFontSize: 10,
+    tabBarItemTitleFontWeight: 700,
+    tabBarItemTitleFontFamily: 'monospace',
+    tabBarItemTitleFontStyle: 'italic',
     tabBarItemIconColor: Colors.RedDark100,
     tabBarItemTitleFontColor: Colors.RedDark40,
   },
@@ -102,18 +109,21 @@ const TAB_CONFIGS: TabConfiguration[] = [
         tabBarItemActiveIndicatorColor: Colors.RedDark100,
         tabBarItemLabelVisibilityMode: 'labeled',
         normal: {
+          ...DEFAULT_ANDROID_APPEARANCE.normal,
           tabBarItemIconColor: Colors.GreenDark100,
           tabBarItemTitleFontColor: Colors.GreenDark40,
           tabBarItemBadgeBackgroundColor: Colors.YellowDark100,
           tabBarItemBadgeTextColor: Colors.YellowDark40,
         },
         selected: {
+          ...DEFAULT_ANDROID_APPEARANCE.selected,
           tabBarItemIconColor: Colors.YellowDark100,
           tabBarItemTitleFontColor: Colors.YellowDark40,
           tabBarItemBadgeBackgroundColor: Colors.NavyDark100,
           tabBarItemBadgeTextColor: Colors.NavyDark40,
         },
         focused: {
+          ...DEFAULT_ANDROID_APPEARANCE.focused,
           tabBarItemIconColor: Colors.YellowLight100,
           tabBarItemTitleFontColor: Colors.YellowLight40,
           tabBarItemBadgeBackgroundColor: Colors.RedDark100,
@@ -241,10 +251,16 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemAccessibilityLabel: 'Fourth Tab Item',
       standardAppearanceAndroid: {
         ...DEFAULT_ANDROID_APPEARANCE,
-        tabBarItemTitleFontSize: 14,
-        tabBarSelectedItemTitleFontSize: 36,
-        tabBarItemTitleFontWeight: 400,
-        tabBarItemTitleFontStyle: 'normal',
+        normal: {
+          ...DEFAULT_ANDROID_APPEARANCE.normal,
+          tabBarItemTitleFontSize: 14,
+          tabBarItemTitleFontWeight: 400,
+          tabBarItemTitleFontStyle: 'normal',
+        },
+        selected: {
+          ...DEFAULT_ANDROID_APPEARANCE.selected,
+          tabBarItemTitleFontSize: 36,
+        }
       },
       icon: {
         ios: {

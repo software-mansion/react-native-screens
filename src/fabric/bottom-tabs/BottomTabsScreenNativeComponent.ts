@@ -59,6 +59,10 @@ type TabBarItemLabelVisibilityMode =
   | 'unlabeled';
 
 export type ItemStateAppearanceAndroid = {
+  tabBarItemTitleFontFamily?: string;
+  tabBarItemTitleFontSize?: CT.Float;
+  tabBarItemTitleFontWeight?: string;
+  tabBarItemTitleFontStyle?: string;
   tabBarItemTitleFontColor?: ProcessedColorValue | null;
   tabBarItemIconColor?: ProcessedColorValue | null;
   tabBarItemBadgeTextColor?: ProcessedColorValue | null;
@@ -79,11 +83,6 @@ export type AppearanceAndroid = {
     TabBarItemLabelVisibilityMode,
     'auto'
   >;
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: CT.Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
-  tabBarSelectedItemTitleFontSize?: CT.Float;
 };
 
 type BlurEffect =

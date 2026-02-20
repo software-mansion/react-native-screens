@@ -292,16 +292,15 @@ class TabScreenViewManager :
             tabBarItemActiveIndicatorColor = map.getOptionalColor("tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = map.getOptionalBoolean(key = "tabBarItemActiveIndicatorEnabled"),
             tabBarItemLabelVisibilityMode = map.getOptionalString("tabBarItemLabelVisibilityMode"),
-            tabBarItemTitleFontFamily = map.getOptionalString("tabBarItemTitleFontFamily"),
-            tabBarItemTitleFontSize = map.getOptionalFloat("tabBarItemTitleFontSize"),
-            tabBarItemTitleFontWeight = map.getOptionalString("tabBarItemTitleFontWeight"),
-            tabBarItemTitleFontStyle = map.getOptionalString("tabBarItemTitleFontStyle"),
-            tabBarSelectedItemTitleFontSize = map.getOptionalFloat("tabBarSelectedItemTitleFontSize"),
         )
 
     private fun parseStateAppearance(map: ReadableMap?): AndroidTabsScreenItemStateAppearance? {
         if (map == null) return null
         return AndroidTabsScreenItemStateAppearance(
+            tabBarItemTitleFontFamily = map.getOptionalString("tabBarItemTitleFontFamily"),
+            tabBarItemTitleFontSize = map.getOptionalFloat("tabBarItemTitleFontSize"),
+            tabBarItemTitleFontWeight = map.getOptionalString("tabBarItemTitleFontWeight"),
+            tabBarItemTitleFontStyle = map.getOptionalString("tabBarItemTitleFontStyle"),
             tabBarItemTitleFontColor = map.getOptionalColor("tabBarItemTitleFontColor"),
             tabBarItemIconColor = map.getOptionalColor("tabBarItemIconColor"),
             tabBarItemBadgeBackgroundColor = map.getOptionalColor("tabBarItemBadgeBackgroundColor"),

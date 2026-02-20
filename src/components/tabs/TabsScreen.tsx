@@ -241,7 +241,6 @@ function mapAndroidAppearanceToNativeProp(
     tabBarItemRippleColor,
     tabBarBackgroundColor,
     tabBarItemActiveIndicatorColor,
-    tabBarItemTitleFontWeight,
   } = appearance;
 
   return {
@@ -255,10 +254,6 @@ function mapAndroidAppearanceToNativeProp(
     tabBarItemActiveIndicatorColor: processColor(
       tabBarItemActiveIndicatorColor,
     ),
-    tabBarItemTitleFontWeight:
-      tabBarItemTitleFontWeight !== undefined
-        ? String(tabBarItemTitleFontWeight)
-        : undefined,
   };
 }
 
@@ -272,6 +267,7 @@ function mapAndroidItemStateAppearanceToNativeProp(
     tabBarItemIconColor,
     tabBarItemBadgeBackgroundColor,
     tabBarItemBadgeTextColor,
+    tabBarItemTitleFontWeight,
   } = itemStateAppearance;
 
   return {
@@ -282,6 +278,10 @@ function mapAndroidItemStateAppearanceToNativeProp(
       tabBarItemBadgeBackgroundColor,
     ),
     tabBarItemBadgeTextColor: processColor(tabBarItemBadgeTextColor),
+    tabBarItemTitleFontWeight:
+      tabBarItemTitleFontWeight !== undefined
+        ? String(tabBarItemTitleFontWeight)
+        : undefined,
   };
 }
 
