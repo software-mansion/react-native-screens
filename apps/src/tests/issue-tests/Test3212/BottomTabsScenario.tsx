@@ -37,7 +37,6 @@ export function BottomTabsScenario() {
                 component: ConfigComponent,
                 tabScreenProps: { tabKey: 'config', title: 'Config' },
               },
-              // Using `freezeContents` for testing purposes, to make the ScrollView searching algorithm's success verifiable
               {
                 component: ScrollViewTemplate,
                 tabScreenProps: {
