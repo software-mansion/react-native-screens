@@ -30,6 +30,12 @@ class TabScreen(
 
     internal lateinit var eventEmitter: TabScreenEventEmitter
 
+    var appearance: AndroidTabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            tabScreenDelegate.get()?.onAppearanceChanged(this)
+        }
+    }
+
     var tabKey: String? = null
         set(value) {
             field =
@@ -46,14 +52,6 @@ class TabScreen(
 
     // Badge
     var badgeValue: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemBadgeTextColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemBadgeBackgroundColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 

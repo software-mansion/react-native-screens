@@ -26,8 +26,7 @@ public interface RNSBottomTabsScreenManagerInterface<T extends View> extends Vie
   void setOrientation(T view, @Nullable String value);
   void setDrawableIconResourceName(T view, @Nullable String value);
   void setImageIconResource(T view, @Nullable ReadableMap value);
-  void setTabBarItemBadgeTextColor(T view, @Nullable Integer value);
-  void setTabBarItemBadgeBackgroundColor(T view, @Nullable Integer value);
+  void setStandardAppearanceAndroid(T view, Dynamic value);
   void setStandardAppearance(T view, Dynamic value);
   void setScrollEdgeAppearance(T view, Dynamic value);
   void setIconType(T view, @Nullable String value);

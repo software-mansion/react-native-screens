@@ -15,12 +15,6 @@ type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
-type TabBarItemLabelVisibilityMode =
-  | 'auto'
-  | 'selected'
-  | 'labeled'
-  | 'unlabeled';
-
 type TabBarMinimizeBehavior =
   | 'automatic'
   | 'never'
@@ -39,25 +33,6 @@ export interface NativeProps extends ViewProps {
 
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
-
-  // Android-specific
-  tabBarBackgroundColor?: ColorValue;
-  tabBarItemTitleFontFamily?: string;
-  tabBarItemTitleFontSize?: CT.Float;
-  tabBarItemTitleFontSizeActive?: CT.Float;
-  tabBarItemTitleFontWeight?: string;
-  tabBarItemTitleFontStyle?: string;
-  tabBarItemTitleFontColor?: ColorValue;
-  tabBarItemTitleFontColorActive?: ColorValue;
-  tabBarItemIconColor?: ColorValue;
-  tabBarItemIconColorActive?: ColorValue;
-  tabBarItemActiveIndicatorColor?: ColorValue;
-  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
-  tabBarItemRippleColor?: ColorValue;
-  tabBarItemLabelVisibilityMode?: CT.WithDefault<
-    TabBarItemLabelVisibilityMode,
-    'auto'
-  >;
 
   // iOS-specific
   tabBarTintColor?: ColorValue;
