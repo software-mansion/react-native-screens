@@ -138,8 +138,8 @@
 
   // A layout pass is required because the image might be loaded asynchronously,
   // after the tab bar has already been attached to the window.
-  // This code handles case where image passed by the user is not 
-  // of appropriate size & needs to be readjusted. W/o additional 
+  // This code handles case where image passed by the user is not
+  // of appropriate size & needs to be readjusted. W/o additional
   // layout here the icon would be displayed with original dimensions.
   UIViewController *parent = screenView.controller.parentViewController;
   if ([parent isKindOfClass:[UITabBarController class]]) {

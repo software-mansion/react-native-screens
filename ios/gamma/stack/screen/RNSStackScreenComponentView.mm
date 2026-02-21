@@ -7,6 +7,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSScrollViewMarkerComponentView.h"
 #import "RNSStackHostComponentView.h"
 
 #import "Swift-Bridging.h"
@@ -16,11 +17,16 @@ namespace react = facebook::react;
 @interface RNSStackScreenComponentView () <RCTMountingTransactionObserving>
 @end
 
+@interface RNSStackScreenComponentView () <RNSScrollViewSeeking>
+@end
+
 #pragma mark - View implementation
 
 @implementation RNSStackScreenComponentView {
   RNSStackScreenController *_Nonnull _controller;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
+
+  UIScrollView *_Nullable _contentScrollView;
 
   // Flags
   BOOL _hasUpdatedActivityMode;
@@ -68,9 +74,21 @@ namespace react = facebook::react;
   dispatch_async(dispatch_get_main_queue(), ^{
     auto strongSelf = weakSelf;
     if (strongSelf) {
+      [strongSelf->_controller setContentScrollView:nil forEdge:NSDirectionalRectEdgeTop];
       strongSelf->_controller = nil;
+      strongSelf->_contentScrollView = nil;
     }
   });
+}
+
+#pragma mark - RNSScrollViewSeeking
+
+- (void)registerDescendantScrollView:(nonnull UIScrollView *)scrollView
+                          fromMarker:(nonnull RNSScrollViewMarkerComponentView *)marker
+{
+  NSLog(@"REGISTER THE SCROLLVIEWW");
+  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeTop];
+  _contentScrollView = scrollView;
 }
 
 #pragma mark - Events
