@@ -1,4 +1,5 @@
-#import <React/RCTMountingTransactionObserving.h>
+#pragma once
+
 #import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSScrollViewMarkerComponentView : RNSReactBaseView <RCTMountingTransactionObserving>
+@interface RNSScrollViewMarkerComponentView : RNSReactBaseView
 
 @end
 

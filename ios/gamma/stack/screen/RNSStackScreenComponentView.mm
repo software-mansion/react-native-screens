@@ -87,7 +87,7 @@ namespace react = facebook::react;
                           fromMarker:(nonnull RNSScrollViewMarkerComponentView *)marker
 {
   NSLog(@"REGISTER THE SCROLLVIEWW");
-  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeTop];
+  //  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeTop];
   _contentScrollView = scrollView;
 }
 
