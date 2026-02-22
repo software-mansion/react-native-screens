@@ -673,7 +673,12 @@ RNS_IGNORE_SUPER_CALL_END
 #if !TARGET_OS_TV
           RNSSearchBar *searchBar = subview.subviews[0];
           searchBarPresent = true;
-          navitem.searchController = searchBar.controller;
+          // Only assign searchController if it changed to avoid UIKit re-activating the search bar
+          // and triggering the keyboard to appear unexpectedly (e.g. when pressing a header menu button
+          // after the search bar was previously focused and dismissed).
+          if (navitem.searchController != searchBar.controller) {
+            navitem.searchController = searchBar.controller;
+          }
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
           if (@available(iOS 16.0, *)) {

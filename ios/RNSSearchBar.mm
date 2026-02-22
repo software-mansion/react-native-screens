@@ -342,6 +342,7 @@ namespace react = facebook::react;
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
 {
   _controller.searchBar.text = @"";
+  [_controller.searchBar resignFirstResponder];
   [self resignFirstResponder];
   [self hideCancelButton];
 
