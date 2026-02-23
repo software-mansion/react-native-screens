@@ -272,7 +272,15 @@ class TabsScreenViewManager :
             itemRippleColor = appearance.getOptionalColor("itemRippleColor"),
             labelVisibilityMode = appearance.getOptionalString("labelVisibilityMode"),
             itemColors = if (appearance.hasKey("itemColors")) parseBottomNavItemAppearanceStates(appearance.getMap("itemColors")) else null,
-            activeIndicator = if (appearance.hasKey("activeIndicator")) parseActiveIndicator(appearance.getMap("activeIndicator")) else null,
+            activeIndicator =
+                if (appearance.hasKey(
+                        "activeIndicator",
+                    )
+                ) {
+                    parseActiveIndicator(appearance.getMap("activeIndicator"))
+                } else {
+                    null
+                },
             typography = if (appearance.hasKey("typography")) parseTypography(appearance.getMap("typography")) else null,
             badge = if (appearance.hasKey("badge")) parseBadge(appearance.getMap("badge")) else null,
         )
