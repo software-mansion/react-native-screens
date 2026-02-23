@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.content.res.Configuration
 import android.os.Build
@@ -14,11 +14,15 @@ import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
+import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenDelegate
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 import com.swmansion.rnscreens.safearea.EdgeInsets
 import com.swmansion.rnscreens.safearea.SafeAreaProvider
 import com.swmansion.rnscreens.safearea.SafeAreaView
@@ -122,7 +126,7 @@ class TabsHost(
     private val wrappedContext =
         ContextThemeWrapper(
             reactContext,
-            com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
+            R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
     private val bottomNavigationView: BottomNavigationView =
@@ -444,15 +448,15 @@ class TabsHost(
             // update the appearance when user toggles between dark/light mode
             when (uiMode) {
                 Configuration.UI_MODE_NIGHT_YES -> {
-                    wrappedContext.setTheme(com.google.android.material.R.style.Theme_Material3_Dark_NoActionBar)
+                    wrappedContext.setTheme(R.style.Theme_Material3_Dark_NoActionBar)
                 }
 
                 Configuration.UI_MODE_NIGHT_NO -> {
-                    wrappedContext.setTheme(com.google.android.material.R.style.Theme_Material3_Light_NoActionBar)
+                    wrappedContext.setTheme(R.style.Theme_Material3_Light_NoActionBar)
                 }
 
                 else -> {
-                    wrappedContext.setTheme(com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
+                    wrappedContext.setTheme(R.style.Theme_Material3_DayNight_NoActionBar)
                 }
             }
 
