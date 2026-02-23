@@ -24,7 +24,7 @@ public class RNSScreenStackManagerDelegate<T extends View, U extends BaseViewMan
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
       case "iosPreventReattachmentOfDismissedScreens":
-        mViewManager.setIosPreventReattachmentOfDismissedScreens(view, value == null ? false : (boolean) value);
+        mViewManager.setIosPreventReattachmentOfDismissedScreens(view, value == null ? true : (boolean) value);
         break;
       default:
         super.setProperty(view, propName, value);

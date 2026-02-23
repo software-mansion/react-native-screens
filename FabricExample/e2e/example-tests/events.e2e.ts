@@ -1,0 +1,187 @@
+import { device, expect, element, by } from 'detox';
+
+const pressBack = async () => {
+  if (device.getPlatform() === 'android') {
+    await device.pressBack();
+  } else if (device.getPlatform() === 'ios') {
+    await element(by.traits(['button']))
+      .atIndex(0)
+      .tap();
+  }
+};
+
+const awaitClassicalEventBehavior = async () => {
+  // The order of events in this test differs from Paper.
+  // Please see https://github.com/software-mansion/react-native-screens/pull/2785 for details.
+  const expectedEvents =
+    device.getPlatform() === 'ios'
+      ? [
+          '9. Chats | transitionStart | closing',
+          '10. Privacy | transitionStart | closing',
+          '11. Main | transitionStart | opening',
+          '12. Privacy | beforeRemove',
+          '13. Chats | beforeRemove',
+          '14. Chats | transitionEnd | closing',
+          '15. Privacy | transitionEnd | closing',
+          '16. Main | transitionEnd | opening',
+        ]
+      : [
+          '9. Privacy | beforeRemove',
+          '10. Chats | beforeRemove',
+          '11. Main | transitionStart | opening',
+          '12. Main | transitionEnd | opening',
+        ];
+
+  // Wait for the last event to appear before asserting event order
+  await waitFor(element(by.text(expectedEvents.at(-1)!)))
+    .toExist()
+    .withTimeout(5000);
+
+  for (const expectedEventNotification of expectedEvents) {
+    await expect(element(by.text(expectedEventNotification))).toExist();
+  }
+};
+
+describe('Events', () => {
+  beforeEach(async () => {
+    await device.reloadReactNative();
+
+    await waitFor(element(by.id('root-screen-playground-Events')))
+      .toBeVisible()
+      .whileElement(by.id('root-screen-examples-scrollview'))
+      .scroll(300, 'down', NaN, 0.85);
+  });
+
+  it('should Events playground exist', async () => {
+    await expect(element(by.id('root-screen-playground-Events'))).toBeVisible();
+    await element(by.id('root-screen-playground-Events')).tap();
+  });
+
+  it('should run transitionStart & transitionEnd opening events', async () => {
+    await element(by.id('root-screen-playground-Events')).tap();
+
+    await expect(
+      element(by.text('1. Main | transitionStart | opening')),
+    ).toExist();
+    await expect(
+      element(by.text('2. Main | transitionEnd | opening')),
+    ).toExist();
+  });
+
+  it('should go back from Chats using header button and run opening & closing events in correct order ', async () => {
+    await element(by.id('root-screen-playground-Events')).tap();
+
+    await element(by.id('events-go-to-chats')).tap();
+    if (device.getPlatform() === 'ios') {
+      await element(by.type('_UIButtonBarButton')).tap();
+    } else {
+      await element(
+        by.type('androidx.appcompat.widget.AppCompatImageButton'),
+      ).tap();
+    }
+
+    await awaitClassicalEventBehavior();
+  });
+
+  it('should use "none" animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
+    await element(by.id('root-screen-playground-Events')).tap();
+
+    await element(by.id('events-stack-animation-picker')).tap();
+    await element(by.id('stack-animation-none')).tap();
+
+    await element(by.id('events-go-to-chats')).tap();
+
+    if (device.getPlatform() === 'ios') {
+      await element(by.type('_UIButtonBarButton')).tap();
+    } else {
+      await element(
+        by.type('androidx.appcompat.widget.AppCompatImageButton'),
+      ).tap();
+    }
+
+    await awaitClassicalEventBehavior();
+  });
+
+  it('should use "slide_from_bottom" animation, go to Chats and run opening & closing events in correct order ', async () => {
+    await element(by.id('root-screen-playground-Events')).tap();
+
+    await element(by.id('events-stack-animation-picker')).tap();
+    await element(by.id('stack-animation-slide_from_bottom')).tap();
+
+    await element(by.id('events-go-to-chats')).tap();
+
+    await expect(
+      element(by.text('3. Main | transitionStart | closing')),
+    ).toExist();
+    await expect(
+      element(by.text('4. Chats | transitionStart | opening')),
+    ).toExist();
+    await expect(
+      element(by.text('5. Privacy | transitionStart | opening')),
+    ).toExist();
+    await expect(
+      element(by.text('6. Main | transitionEnd | closing')),
+    ).toExist();
+    await expect(
+      element(by.text('7. Chats | transitionEnd | opening')),
+    ).toExist();
+    await expect(
+      element(by.text('8. Privacy | transitionEnd | opening')),
+    ).toExist();
+  });
+
+  it('should use "slide_from_bottom" animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
+    await element(by.id('root-screen-playground-Events')).tap();
+
+    await element(by.id('events-stack-animation-picker')).tap();
+    await element(by.id('stack-animation-slide_from_bottom')).tap();
+
+    await element(by.id('events-go-to-chats')).tap();
+
+    if (device.getPlatform() === 'ios') {
+      await element(by.type('_UIButtonBarButton')).tap();
+    } else {
+      await element(
+        by.type('androidx.appcompat.widget.AppCompatImageButton'),
+      ).tap();
+    }
+
+    await awaitClassicalEventBehavior();
+  });
+
+  it('should go back from Chats using native way and run opening & closing events in correct order ', async () => {
+    await element(by.id('root-screen-playground-Events')).tap();
+
+    await element(by.id('events-go-to-chats')).tap();
+
+    await pressBack();
+
+    await awaitClassicalEventBehavior();
+  });
+
+  it('should use "none" animation, go back from Chats using native way and run opening & closing events in correct order ', async () => {
+    await element(by.id('root-screen-playground-Events')).tap();
+
+    await element(by.id('events-stack-animation-picker')).tap();
+    await element(by.id('stack-animation-none')).tap();
+
+    await element(by.id('events-go-to-chats')).tap();
+
+    await pressBack();
+
+    await awaitClassicalEventBehavior();
+  });
+
+  it('should use "slide_from_bottom" animation, go back from Chats using native way and run opening & closing events in correct order ', async () => {
+    await element(by.id('root-screen-playground-Events')).tap();
+
+    await element(by.id('events-stack-animation-picker')).tap();
+    await element(by.id('stack-animation-slide_from_bottom')).tap();
+
+    await element(by.id('events-go-to-chats')).tap();
+
+    await pressBack();
+
+    await awaitClassicalEventBehavior();
+  });
+});

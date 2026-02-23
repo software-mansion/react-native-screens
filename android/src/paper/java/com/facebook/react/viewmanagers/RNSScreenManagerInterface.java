@@ -56,4 +56,5 @@ public interface RNSScreenManagerInterface<T extends View> extends ViewManagerWi
   void setTopScrollEdgeEffect(T view, @Nullable String value);
   void setSynchronousShadowStateUpdatesEnabled(T view, boolean value);
   void setAndroidResetScreenShadowStateOnOrientationChangeEnabled(T view, boolean value);
+  void setIos26AllowInteractionsDuringTransition(T view, boolean value);
 }

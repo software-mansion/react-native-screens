@@ -399,7 +399,7 @@ export interface ScreenProps extends ViewProps {
    * There is also possibility to specify `fitToContents` literal, which intents to set the sheet height
    * to the height of its contents. On iOS `fitToContents` currently also includes small padding accounting for bottom inset.
    *
-   * Please note that the array **must** be sorted in ascending order. This invariant is verified only in developement mode,
+   * Please note that the array **must** be sorted in ascending order. This invariant is verified only in development mode,
    * where violation results in error.
    *
    * **Android is limited to up 3 values in the array** -- any surplus values, beside first three are ignored.
@@ -1175,7 +1175,7 @@ export interface HeaderBarButtonItemMenuAction {
   title?: string;
   subtitle?: string;
   onPress: () => void;
-  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
+  icon?: PlatformIconIOS;
   /**
    * State of the item.
    *
@@ -1217,7 +1217,7 @@ export interface HeaderBarButtonItemMenuAction {
 export interface HeaderBarButtonItemSubmenu {
   type: 'submenu';
   title?: string;
-  icon?: PlatformIconIOSSfSymbol | PlatformIconIOSXcasset;
+  icon?: PlatformIconIOS;
   items: HeaderBarButtonItemWithMenu['menu']['items'];
   displayInline?: boolean;
   destructive?: boolean;
