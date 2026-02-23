@@ -1,10 +1,12 @@
 import type { ScenarioGroup } from '../../shared/helpers';
 import Orientation from './stack-v4-orientation';
 
-const StackV4ScenarioGroup: ScenarioGroup = {
+const scenarios = { Orientation };
+
+const StackV4ScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
   name: 'Stack v4',
   details: 'Single feature tests for Stack v4',
-  scenarios: [Orientation],
+  scenarios,
 };
 
 export default StackV4ScenarioGroup;
