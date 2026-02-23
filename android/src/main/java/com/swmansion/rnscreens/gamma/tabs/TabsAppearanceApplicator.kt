@@ -37,8 +37,8 @@ class TabsAppearanceApplicator(
     private val states =
         arrayOf(
             intArrayOf(-android.R.attr.state_enabled), // disabled
-            intArrayOf(android.R.attr.state_focused), // focused
             intArrayOf(android.R.attr.state_selected), // selected
+            intArrayOf(android.R.attr.state_focused), // focused
             intArrayOf(), // normal
         )
 
@@ -103,7 +103,7 @@ class TabsAppearanceApplicator(
             tabBarAppearance?.itemColors?.normal?.titleColor
                 ?: resolveColorAttr(R.attr.colorSecondary)
 
-        val newFontColors = intArrayOf(fontDisabledColor, fontFocusedColor, fontSelectedColor, fontNormalColor)
+        val newFontColors = intArrayOf(fontDisabledColor, fontSelectedColor, fontFocusedColor, fontNormalColor)
         lastFontColors =
             updatePropsIfArrayChanged(lastFontColors, newFontColors) {
                 bottomNavigationView.itemTextColor = ColorStateList(states, newFontColors)
@@ -127,7 +127,7 @@ class TabsAppearanceApplicator(
             tabBarAppearance?.itemColors?.normal?.iconColor
                 ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
 
-        val newIconColors = intArrayOf(iconDisabledColor, iconFocusedColor, iconSelectedColor, iconNormalColor)
+        val newIconColors = intArrayOf(iconDisabledColor, iconSelectedColor, iconFocusedColor, iconNormalColor)
         lastIconColors =
             updatePropsIfArrayChanged(lastIconColors, newIconColors) {
                 bottomNavigationView.itemIconTintList = ColorStateList(states, newIconColors)
