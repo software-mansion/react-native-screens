@@ -106,7 +106,7 @@ export interface BottomNavItemColorsAndroid {
   normal?: ItemStateColorsAndroid;
   /**
    * Specifies the tab bar item colors when it's selected.
-   * Maps to Android `state_checked=true`.
+   * Maps to Android `state_selected=true`.
    *
    * @platform android
    */
