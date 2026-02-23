@@ -271,7 +271,7 @@ class TabsAppearanceApplicator(
         }
     }
 
-    fun updateBadgeAppearance(
+    internal fun updateBadgeAppearance(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         badgeAppearance: BadgeAppearance?,

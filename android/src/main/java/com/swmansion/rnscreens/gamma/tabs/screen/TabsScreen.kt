@@ -30,7 +30,7 @@ class TabsScreen(
 
     internal lateinit var eventEmitter: TabsScreenEventEmitter
 
-    var appearance: AndroidTabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
+    internal var appearance: AndroidTabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             tabScreenDelegate.get()?.onAppearanceChanged(this)
         }

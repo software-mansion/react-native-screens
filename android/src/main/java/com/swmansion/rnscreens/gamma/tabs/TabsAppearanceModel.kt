@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.gamma.tabs
 
-data class AndroidTabsAppearance(
+internal data class AndroidTabsAppearance(
     val backgroundColor: Int? = null,
     val itemColors: BottomNavItemColors? = null,
     val activeIndicator: ActiveIndicatorAppearance? = null,
@@ -10,24 +10,24 @@ data class AndroidTabsAppearance(
     val badge: BadgeAppearance? = null,
 )
 
-data class BottomNavItemColors(
+internal data class BottomNavItemColors(
     val normal: ItemStateColors? = null,
     val selected: ItemStateColors? = null,
     val disabled: ItemStateColors? = null,
     val focused: ItemStateColors? = null,
 )
 
-data class ItemStateColors(
+internal data class ItemStateColors(
     val iconColor: Int? = null,
     val titleColor: Int? = null,
 )
 
-data class ActiveIndicatorAppearance(
+internal data class ActiveIndicatorAppearance(
     val enabled: Boolean? = null,
     val color: Int? = null,
 )
 
-data class TypographyAppearance(
+internal data class TypographyAppearance(
     val fontFamily: String? = null,
     val fontSizeSmall: Float? = null,
     val fontSizeLarge: Float? = null,
@@ -35,7 +35,7 @@ data class TypographyAppearance(
     val fontStyle: String? = null,
 )
 
-data class BadgeAppearance(
+internal data class BadgeAppearance(
     val textColor: Int? = null,
     val backgroundColor: Int? = null,
 )

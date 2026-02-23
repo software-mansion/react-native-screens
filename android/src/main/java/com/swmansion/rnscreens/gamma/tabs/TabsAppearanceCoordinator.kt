@@ -34,7 +34,7 @@ class TabsAppearanceCoordinator(
         }
     }
 
-    fun updateMenuItemAppearance(
+    internal fun updateMenuItemAppearance(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         appearance: AndroidTabsAppearance?,
