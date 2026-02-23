@@ -200,17 +200,17 @@
         "RNSStackHost": {
           "className": "RNSStackHostComponentView"
         },
-        "RNSBottomTabsScreen": {
-          "className": "RNSBottomTabsScreenComponentView"
+        "RNSTabsScreen": {
+          "className": "RNSTabsScreenComponentView"
         },
-        "RNSBottomTabs": {
-          "className": "RNSBottomTabsHostComponentView"
+        "RNSTabsHost": {
+          "className": "RNSTabsHostComponentView"
         },
-        "RNSBottomTabsAccessory": {
-          "className": "RNSBottomTabsAccessoryComponentView"
+        "RNSTabsBottomAccessory": {
+          "className": "RNSTabsBottomAccessoryComponentView"
         },
-        "RNSBottomTabsAccessoryContent": {
-          "className": "RNSBottomTabsAccessoryContentComponentView"
+        "RNSTabsBottomAccessoryContent": {
+          "className": "RNSTabsBottomAccessoryContentComponentView"
         },
         "RNSSplitViewHost": {
           "className": "RNSSplitViewHostComponentView"

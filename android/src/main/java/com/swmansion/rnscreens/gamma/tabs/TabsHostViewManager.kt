@@ -6,16 +6,16 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.RNSBottomTabsManagerDelegate
-import com.facebook.react.viewmanagers.RNSBottomTabsManagerInterface
+import com.facebook.react.viewmanagers.RNSTabsHostManagerDelegate
+import com.facebook.react.viewmanagers.RNSTabsHostManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.event.TabsHostNativeFocusChangeEvent
 
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
 class TabsHostViewManager :
     ViewGroupManager<TabsHost>(),
-    RNSBottomTabsManagerInterface<TabsHost> {
-    private val delegate: ViewManagerDelegate<TabsHost> = RNSBottomTabsManagerDelegate<TabsHost, TabsHostViewManager>(this)
+    RNSTabsHostManagerInterface<TabsHost> {
+    private val delegate: ViewManagerDelegate<TabsHost> = RNSTabsHostManagerDelegate<TabsHost, TabsHostViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
@@ -28,7 +28,7 @@ class TabsHostViewManager :
         child: View,
         index: Int,
     ) {
-        require(child is TabScreen) { "[RNScreens] Attempt to attach child that is not of type ${TabScreen::javaClass.name}" }
+        require(child is TabsScreen) { "[RNScreens] Attempt to attach child that is not of type ${TabsScreen::javaClass.name}" }
         parent.mountReactSubviewAt(child, index)
     }
 
@@ -36,7 +36,7 @@ class TabsHostViewManager :
         parent: TabsHost,
         child: View,
     ) {
-        require(child is TabScreen) { "[RNScreens] Attempt to detach child that is not of type ${TabScreen::javaClass.name}" }
+        require(child is TabsScreen) { "[RNScreens] Attempt to detach child that is not of type ${TabsScreen::javaClass.name}" }
         parent.unmountReactSubview(child)
     }
 
@@ -217,6 +217,6 @@ class TabsHostViewManager :
     }
 
     companion object {
-        const val REACT_CLASS = "RNSBottomTabs"
+        const val REACT_CLASS = "RNSTabsHost"
     }
 }

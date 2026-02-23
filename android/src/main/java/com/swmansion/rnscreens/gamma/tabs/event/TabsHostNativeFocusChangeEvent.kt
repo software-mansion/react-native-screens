@@ -11,7 +11,7 @@ class TabsHostNativeFocusChangeEvent(
     val tabKey: String,
     val tabNumber: Int,
     val repeatedSelectionHandledBySpecialEffect: Boolean,
-) : Event<TabScreenDidAppearEvent>(surfaceId, viewId),
+) : Event<TabsScreenDidAppearEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
 
