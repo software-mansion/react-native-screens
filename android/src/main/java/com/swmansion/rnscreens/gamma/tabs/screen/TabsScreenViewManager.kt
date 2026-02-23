@@ -216,7 +216,7 @@ class TabsScreenViewManager :
 
     @ReactProp(name = "selectedDrawableIconResourceName")
     override fun setSelectedDrawableIconResourceName(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) {
         view.selectedDrawableIconResourceName = value
@@ -250,7 +250,7 @@ class TabsScreenViewManager :
 
     @ReactProp(name = "selectedImageIconResource")
     override fun setSelectedImageIconResource(
-        view: TabScreen,
+        view: TabsScreen,
         value: ReadableMap?,
     ) {
         val uri = value?.getString("uri")

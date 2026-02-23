@@ -162,13 +162,13 @@ class TabsHostAppearanceApplicator(
         }
 
         val targetIcon =
-            if (tabScreen.selectedIcon != null && tabScreen.icon != null) {
+            if (tabsScreen.selectedIcon != null && tabsScreen.icon != null) {
                 StateListDrawable().apply {
-                    addState(intArrayOf(android.R.attr.state_checked), tabScreen.selectedIcon?.mutate())
-                    addState(intArrayOf(), tabScreen.icon?.mutate())
+                    addState(intArrayOf(android.R.attr.state_checked), tabsScreen.selectedIcon?.mutate())
+                    addState(intArrayOf(), tabsScreen.icon?.mutate())
                 }
             } else {
-                tabScreen.icon
+                tabsScreen.icon
             }
 
         if (menuItem.icon != targetIcon) {

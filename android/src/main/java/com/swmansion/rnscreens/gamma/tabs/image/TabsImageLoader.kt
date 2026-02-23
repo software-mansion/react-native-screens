@@ -22,7 +22,7 @@ import java.util.Locale
 internal fun loadTabImage(
     context: Context,
     uri: String,
-    view: TabScreen,
+    view: TabsScreen,
     isSelected: Boolean,
 ) {
     // Since image loading might happen on a background thread
