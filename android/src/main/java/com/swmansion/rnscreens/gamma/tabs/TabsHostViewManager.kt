@@ -28,7 +28,7 @@ class TabsHostViewManager :
         child: View,
         index: Int,
     ) {
-        require(child is TabScreen) { "[RNScreens] Attempt to attach child that is not of type ${TabScreen::javaClass.name}" }
+        require(child is TabsScreen) { "[RNScreens] Attempt to attach child that is not of type ${TabsScreen::javaClass.name}" }
         parent.mountReactSubviewAt(child, index)
     }
 
@@ -36,7 +36,7 @@ class TabsHostViewManager :
         parent: TabsHost,
         child: View,
     ) {
-        require(child is TabScreen) { "[RNScreens] Attempt to detach child that is not of type ${TabScreen::javaClass.name}" }
+        require(child is TabsScreen) { "[RNScreens] Attempt to detach child that is not of type ${TabsScreen::javaClass.name}" }
         parent.unmountReactSubview(child)
     }
 

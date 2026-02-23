@@ -7,32 +7,32 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
-class TabScreenFragment(
-    internal val tabScreen: TabScreen,
+class TabsScreenFragment(
+    internal val tabsScreen: TabsScreen,
 ) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = tabScreen
+    ): View = tabsScreen
 
     override fun onStart() {
-        tabScreen.eventEmitter.emitOnWillAppear()
+        tabsScreen.eventEmitter.emitOnWillAppear()
         super.onStart()
     }
 
     override fun onResume() {
-        tabScreen.eventEmitter.emitOnDidAppear()
+        tabsScreen.eventEmitter.emitOnDidAppear()
         super.onResume()
     }
 
     override fun onPause() {
-        tabScreen.eventEmitter.emitOnWillDisappear()
+        tabsScreen.eventEmitter.emitOnWillDisappear()
         super.onPause()
     }
 
     override fun onStop() {
-        tabScreen.eventEmitter.emitOnDidDisappear()
+        tabsScreen.eventEmitter.emitOnDidDisappear()
         super.onStop()
     }
 
@@ -40,6 +40,6 @@ class TabScreenFragment(
         super.onConfigurationChanged(newConfig)
 
         // Handle theme change through RN's Appearance.setColorScheme
-        tabScreen.onFragmentConfigurationChange(this, newConfig)
+        tabsScreen.onFragmentConfigurationChange(this, newConfig)
     }
 }

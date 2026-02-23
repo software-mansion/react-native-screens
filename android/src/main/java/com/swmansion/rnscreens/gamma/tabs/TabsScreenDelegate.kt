@@ -3,25 +3,25 @@ package com.swmansion.rnscreens.gamma.tabs
 import android.content.res.Configuration
 import androidx.fragment.app.Fragment
 
-internal interface TabScreenDelegate {
+internal interface TabsScreenDelegate {
     fun onTabFocusChangedFromJS(
-        tabScreen: TabScreen,
+        tabsScreen: TabsScreen,
         isFocused: Boolean,
     )
 
-    fun onMenuItemAttributesChange(tabScreen: TabScreen)
+    fun onMenuItemAttributesChange(tabsScreen: TabsScreen)
 
     /**
      * **If a fragment is associated with the tab screen**, notify the delegate that the fragment
      * got configuration update.
      */
     fun onFragmentConfigurationChange(
-        tabScreen: TabScreen,
+        tabsScreen: TabsScreen,
         config: Configuration,
     )
 
     /**
      * This returns fragment **if one is associated with given tab screen**.
      */
-    fun getFragmentForTabScreen(tabScreen: TabScreen): Fragment?
+    fun getFragmentForTabsScreen(tabsScreen: TabsScreen): Fragment?
 }

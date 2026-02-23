@@ -10,41 +10,41 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidAppearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabScreenDidDisappearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillAppearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabScreenWillDisappearEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabsScreenDidAppearEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabsScreenDidDisappearEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabsScreenWillAppearEvent
+import com.swmansion.rnscreens.gamma.tabs.event.TabsScreenWillDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.utils.RNSLog
 
 @ReactModule(name = TabsScreenViewManager.REACT_CLASS)
 class TabsScreenViewManager :
-    ViewGroupManager<TabScreen>(),
-    RNSTabsScreenManagerInterface<TabScreen> {
-    private val delegate: ViewManagerDelegate<TabScreen> = RNSTabsScreenManagerDelegate<TabScreen, TabsScreenViewManager>(this)
+    ViewGroupManager<TabsScreen>(),
+    RNSTabsScreenManagerInterface<TabsScreen> {
+    private val delegate: ViewManagerDelegate<TabsScreen> = RNSTabsScreenManagerDelegate<TabsScreen, TabsScreenViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
     var context: ThemedReactContext? = null
 
-    override fun createViewInstance(reactContext: ThemedReactContext): TabScreen {
+    override fun createViewInstance(reactContext: ThemedReactContext): TabsScreen {
         RNSLog.d(REACT_CLASS, "createViewInstance")
-        return TabScreen(reactContext)
+        return TabsScreen(reactContext)
     }
 
     override fun getDelegate() = delegate
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
-            makeEventRegistrationInfo(TabScreenWillAppearEvent),
-            makeEventRegistrationInfo(TabScreenDidAppearEvent),
-            makeEventRegistrationInfo(TabScreenWillDisappearEvent),
-            makeEventRegistrationInfo(TabScreenDidDisappearEvent),
+            makeEventRegistrationInfo(TabsScreenWillAppearEvent),
+            makeEventRegistrationInfo(TabsScreenDidAppearEvent),
+            makeEventRegistrationInfo(TabsScreenWillDisappearEvent),
+            makeEventRegistrationInfo(TabsScreenDidDisappearEvent),
         )
 
     override fun addEventEmitters(
         reactContext: ThemedReactContext,
-        view: TabScreen,
+        view: TabsScreen,
     ) {
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
@@ -52,61 +52,61 @@ class TabsScreenViewManager :
 
     // These should be ignored or another component, dedicated for Android should be used
     override fun setStandardAppearance(
-        view: TabScreen,
+        view: TabsScreen,
         value: Dynamic,
     ) = Unit
 
     override fun setScrollEdgeAppearance(
-        view: TabScreen,
+        view: TabsScreen,
         value: Dynamic,
     ) = Unit
 
     @ReactProp(name = "tabBarItemBadgeBackgroundColor", customType = "Color")
     override fun setTabBarItemBadgeBackgroundColor(
-        view: TabScreen,
+        view: TabsScreen,
         value: Int?,
     ) {
         view.tabBarItemBadgeBackgroundColor = value
     }
 
     override fun setIconType(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: String?,
     ) = Unit
 
     override fun setIconImageSource(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: ReadableMap?,
     ) = Unit
 
     override fun setIconResourceName(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: String?,
     ) = Unit
 
     override fun setSelectedIconImageSource(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: ReadableMap?,
     ) = Unit
 
     override fun setSelectedIconResourceName(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: String?,
     ) = Unit
 
     // Annotation is Paper only
     @ReactProp(name = "isFocused")
     override fun setIsFocused(
-        view: TabScreen,
+        view: TabsScreen,
         value: Boolean,
     ) {
-        RNSLog.d(REACT_CLASS, "TabScreen [${view.id}] setIsFocused $value")
+        RNSLog.d(REACT_CLASS, "TabsScreen [${view.id}] setIsFocused $value")
         view.isFocusedTab = value
     }
 
     @ReactProp(name = "tabKey")
     override fun setTabKey(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) {
         view.tabKey = value
@@ -114,7 +114,7 @@ class TabsScreenViewManager :
 
     @ReactProp(name = "badgeValue")
     override fun setBadgeValue(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) {
         view.badgeValue = value
@@ -122,20 +122,20 @@ class TabsScreenViewManager :
 
     @ReactProp(name = "title")
     override fun setTitle(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) {
         view.tabTitle = value
     }
 
     override fun setIsTitleUndefined(
-        view: TabScreen,
+        view: TabsScreen,
         value: Boolean,
     ) = Unit
 
     @ReactProp(name = "specialEffects")
     override fun setSpecialEffects(
-        view: TabScreen,
+        view: TabsScreen,
         value: ReadableMap?,
     ) {
         var scrollToTop = true
@@ -157,33 +157,33 @@ class TabsScreenViewManager :
     }
 
     override fun setOverrideScrollViewContentInsetAdjustmentBehavior(
-        view: TabScreen,
+        view: TabsScreen,
         value: Boolean,
     ) = Unit
 
     override fun setBottomScrollEdgeEffect(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: String?,
     ) = Unit
 
     override fun setLeftScrollEdgeEffect(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: String?,
     ) = Unit
 
     override fun setRightScrollEdgeEffect(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: String?,
     ) = Unit
 
     override fun setTopScrollEdgeEffect(
-        view: TabScreen?,
+        view: TabsScreen?,
         value: String?,
     ) = Unit
 
     @ReactProp(name = "tabBarItemTestID")
     override fun setTabBarItemTestID(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) {
         view.tabBarItemTestID = value
@@ -191,7 +191,7 @@ class TabsScreenViewManager :
 
     @ReactProp(name = "tabBarItemAccessibilityLabel")
     override fun setTabBarItemAccessibilityLabel(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) {
         view.tabBarItemAccessibilityLabel = value
@@ -200,7 +200,7 @@ class TabsScreenViewManager :
     // Android specific
     @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
     override fun setTabBarItemBadgeTextColor(
-        view: TabScreen,
+        view: TabsScreen,
         value: Int?,
     ) {
         view.tabBarItemBadgeTextColor = value
@@ -208,30 +208,30 @@ class TabsScreenViewManager :
 
     @ReactProp(name = "drawableIconResourceName")
     override fun setDrawableIconResourceName(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) {
         view.drawableIconResourceName = value
     }
 
     override fun setOrientation(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) = Unit
 
     override fun setSystemItem(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) = Unit
 
     override fun setUserInterfaceStyle(
-        view: TabScreen,
+        view: TabsScreen,
         value: String?,
     ) = Unit
 
     @ReactProp(name = "imageIconResource")
     override fun setImageIconResource(
-        view: TabScreen,
+        view: TabsScreen,
         value: ReadableMap?,
     ) {
         val uri = value?.getString("uri")

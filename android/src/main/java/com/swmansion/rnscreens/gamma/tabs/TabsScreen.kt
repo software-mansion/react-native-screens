@@ -14,7 +14,7 @@ import kotlin.properties.Delegates
 /**
  * React Component view.
  */
-class TabScreen(
+class TabsScreen(
     val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     FragmentProviding {
@@ -26,9 +26,9 @@ class TabScreen(
         b: Int,
     ) = Unit
 
-    private var tabScreenDelegate: WeakReference<TabScreenDelegate> = WeakReference(null)
+    private var tabsScreenDelegate: WeakReference<TabsScreenDelegate> = WeakReference(null)
 
-    internal lateinit var eventEmitter: TabScreenEventEmitter
+    internal lateinit var eventEmitter: TabsScreenEventEmitter
 
     var tabKey: String? = null
         set(value) {
@@ -90,7 +90,7 @@ class TabScreen(
     }
 
     override fun onAttachedToWindow() {
-        RNSLog.d(TAG, "TabScreen [$id] attached to window")
+        RNSLog.d(TAG, "TabsScreen [$id] attached to window")
         super.onAttachedToWindow()
     }
 
@@ -102,24 +102,24 @@ class TabScreen(
             }
         }
 
-    internal fun setTabScreenDelegate(delegate: TabScreenDelegate?) {
-        tabScreenDelegate = WeakReference(delegate)
+    internal fun setTabsScreenDelegate(delegate: TabsScreenDelegate?) {
+        tabsScreenDelegate = WeakReference(delegate)
     }
 
-    override fun getAssociatedFragment(): Fragment? = tabScreenDelegate.get()?.getFragmentForTabScreen(this)
+    override fun getAssociatedFragment(): Fragment? = tabsScreenDelegate.get()?.getFragmentForTabsScreen(this)
 
     private fun onTabFocusChangedFromJS() {
-        tabScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
+        tabsScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
     }
 
     private fun onMenuItemAttributesChange() {
-        tabScreenDelegate.get()?.onMenuItemAttributesChange(this)
+        tabsScreenDelegate.get()?.onMenuItemAttributesChange(this)
     }
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
-        check(id != NO_ID) { "[RNScreens] TabScreen must have its tag set when registering event emitters" }
-        eventEmitter = TabScreenEventEmitter(reactContext, id)
+        check(id != NO_ID) { "[RNScreens] TabsScreen must have its tag set when registering event emitters" }
+        eventEmitter = TabsScreenEventEmitter(reactContext, id)
     }
 
     /**
@@ -129,13 +129,13 @@ class TabScreen(
      * e.g. theme update from JS via Appearance.setColorScheme.
      */
     internal fun onFragmentConfigurationChange(
-        fragment: TabScreenFragment,
+        fragment: TabsScreenFragment,
         config: Configuration,
     ) {
-        tabScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
+        tabsScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
     }
 
     companion object {
-        const val TAG = "TabScreen"
+        const val TAG = "TabsScreen"
     }
 }

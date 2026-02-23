@@ -28,7 +28,7 @@ import kotlin.properties.Delegates
 class TabsHost(
     val reactContext: ThemedReactContext,
 ) : FrameLayout(reactContext),
-    TabScreenDelegate,
+    TabsScreenDelegate,
     SafeAreaProvider,
     View.OnLayoutChangeListener {
     /**
@@ -99,13 +99,13 @@ class TabsHost(
         fun handleRepeatedTabSelection(): Boolean {
             val contentView = this@TabsHost.contentView
             val selectedTabFragment = this@TabsHost.currentFocusedTab
-            if (selectedTabFragment.tabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
+            if (selectedTabFragment.tabsScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
                 val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(contentView)
                 if (screenStack != null && screenStack.popToRoot()) {
                     return true
                 }
             }
-            if (selectedTabFragment.tabScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+            if (selectedTabFragment.tabsScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
                 val scrollView = ViewFinder.findScrollViewInFirstDescendantChain(contentView)
                 if (scrollView != null && scrollView.scrollY > 0) {
                     scrollView.smoothScrollTo(scrollView.scrollX, 0)
@@ -151,10 +151,10 @@ class TabsHost(
     private val requireFragmentManager
         get() = checkNotNull(fragmentManager) { "[RNScreens] Nullish fragment manager" }
 
-    private val tabScreenFragments: MutableList<TabScreenFragment> = arrayListOf()
+    private val tabsScreenFragments: MutableList<TabsScreenFragment> = arrayListOf()
 
-    private val currentFocusedTab: TabScreenFragment
-        get() = checkNotNull(tabScreenFragments.find { it.tabScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
+    private val currentFocusedTab: TabsScreenFragment
+        get() = checkNotNull(tabsScreenFragments.find { it.tabsScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
 
     private var lastAppliedUiMode: Int? = null
 
@@ -163,9 +163,9 @@ class TabsHost(
     private var interfaceInsetsChangeListener: SafeAreaView? = null
 
     private val appearanceCoordinator =
-        TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabScreenFragments)
+        TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabsScreenFragments)
 
-    private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabScreenFragments)
+    private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsScreenFragments)
 
     var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
         updateNavigationMenuIfNeeded(oldValue, newValue)
@@ -264,7 +264,7 @@ class TabsHost(
             val fragment = getFragmentForMenuItemId(item.itemId)
             val repeatedSelectionHandledBySpecialEffect =
                 if (fragment == currentFocusedTab) specialEffectsHandler.handleRepeatedTabSelection() else false
-            val tabKey = fragment?.tabScreen?.tabKey ?: "undefined"
+            val tabKey = fragment?.tabsScreen?.tabKey ?: "undefined"
             eventEmitter.emitOnNativeFocusChange(
                 tabKey,
                 item.itemId,
@@ -291,16 +291,16 @@ class TabsHost(
     }
 
     internal fun mountReactSubviewAt(
-        tabScreen: TabScreen,
+        tabsScreen: TabsScreen,
         index: Int,
     ) {
         require(index < bottomNavigationView.maxItemCount) {
-            "[RNScreens] Attempt to insert TabScreen at index $index; BottomNavigationView supports at most ${bottomNavigationView.maxItemCount} items"
+            "[RNScreens] Attempt to insert TabsScreen at index $index; BottomNavigationView supports at most ${bottomNavigationView.maxItemCount} items"
         }
 
-        val tabScreenFragment = TabScreenFragment(tabScreen)
-        tabScreenFragments.add(index, tabScreenFragment)
-        tabScreen.setTabScreenDelegate(this)
+        val tabsScreenFragment = TabsScreenFragment(tabsScreen)
+        tabsScreenFragments.add(index, tabsScreenFragment)
+        tabsScreen.setTabsScreenDelegate(this)
         containerUpdateCoordinator.let {
             it.invalidateAll()
             it.postContainerUpdateIfNeeded()
@@ -308,8 +308,8 @@ class TabsHost(
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
-        tabScreenFragments.removeAt(index).also { fragment ->
-            fragment.tabScreen.setTabScreenDelegate(null)
+        tabsScreenFragments.removeAt(index).also { fragment ->
+            fragment.tabsScreen.setTabsScreenDelegate(null)
             containerUpdateCoordinator.let {
                 it.invalidateAll()
                 it.postContainerUpdateIfNeeded()
@@ -317,9 +317,9 @@ class TabsHost(
         }
     }
 
-    internal fun unmountReactSubview(reactSubview: TabScreen) {
-        tabScreenFragments.removeIf { it.tabScreen === reactSubview }.takeIf { it }?.let {
-            reactSubview.setTabScreenDelegate(null)
+    internal fun unmountReactSubview(reactSubview: TabsScreen) {
+        tabsScreenFragments.removeIf { it.tabsScreen === reactSubview }.takeIf { it }?.let {
+            reactSubview.setTabsScreenDelegate(null)
             containerUpdateCoordinator.let {
                 it.invalidateAll()
                 it.postContainerUpdateIfNeeded()
@@ -328,8 +328,8 @@ class TabsHost(
     }
 
     internal fun unmountAllReactSubviews() {
-        tabScreenFragments.forEach { it.tabScreen.setTabScreenDelegate(null) }
-        tabScreenFragments.clear()
+        tabsScreenFragments.forEach { it.tabsScreen.setTabsScreenDelegate(null) }
+        tabsScreenFragments.clear()
         containerUpdateCoordinator.let {
             it.invalidateAll()
             it.postContainerUpdateIfNeeded()
@@ -337,7 +337,7 @@ class TabsHost(
     }
 
     override fun onTabFocusChangedFromJS(
-        tabScreen: TabScreen,
+        tabsScreen: TabsScreen,
         isFocused: Boolean,
     ) {
         containerUpdateCoordinator.let {
@@ -346,17 +346,17 @@ class TabsHost(
         }
     }
 
-    override fun onMenuItemAttributesChange(tabScreen: TabScreen) {
-        getMenuItemForTabScreen(tabScreen)?.let { menuItem ->
-            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabScreen)
-            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabScreen)
+    override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
+        getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
+            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabsScreen)
+            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
         }
     }
 
-    override fun getFragmentForTabScreen(tabScreen: TabScreen): TabScreenFragment? = tabScreenFragments.find { it.tabScreen === tabScreen }
+    override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? = tabsScreenFragments.find { it.tabsScreen === tabsScreen }
 
     override fun onFragmentConfigurationChange(
-        tabScreen: TabScreen,
+        tabsScreen: TabsScreen,
         config: Configuration,
     ) {
         this.onConfigurationChanged(config)
@@ -367,10 +367,10 @@ class TabsHost(
 
         appearanceCoordinator.updateTabAppearance(this)
 
-        val selectedTabScreenFragmentId =
-            checkNotNull(getSelectedTabScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
-        if (bottomNavigationView.selectedItemId != selectedTabScreenFragmentId) {
-            bottomNavigationView.selectedItemId = selectedTabScreenFragmentId
+        val selectedTabsScreenFragmentId =
+            checkNotNull(getSelectedTabsScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
+        if (bottomNavigationView.selectedItemId != selectedTabsScreenFragmentId) {
+            bottomNavigationView.selectedItemId = selectedTabsScreenFragmentId
         }
 
         post {
@@ -382,7 +382,7 @@ class TabsHost(
     private fun updateSelectedTab() {
         val newFocusedTab = currentFocusedTab
 
-        val tabFragments = requireFragmentManager.fragments.filterIsInstance<TabScreenFragment>()
+        val tabFragments = requireFragmentManager.fragments.filterIsInstance<TabsScreenFragment>()
         check(tabFragments.size <= 1) { "[RNScreens] There can be only a single focused tab" }
         val oldFocusedTab = tabFragments.firstOrNull()
 
@@ -466,18 +466,18 @@ class TabsHost(
         layout(left, top, right, bottom)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabScreenFragment? = tabScreenFragments.getOrNull(itemId)
+    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? = tabsScreenFragments.getOrNull(itemId)
 
-    private fun getSelectedTabScreenFragmentId(): Int? {
-        if (tabScreenFragments.isEmpty()) {
+    private fun getSelectedTabsScreenFragmentId(): Int? {
+        if (tabsScreenFragments.isEmpty()) {
             return null
         }
-        return checkNotNull(tabScreenFragments.indexOfFirst { it.tabScreen.isFocusedTab }) { "[RNScreens] There must be a focused tab" }
+        return checkNotNull(tabsScreenFragments.indexOfFirst { it.tabsScreen.isFocusedTab }) { "[RNScreens] There must be a focused tab" }
     }
 
-    private fun getMenuItemForTabScreen(tabScreen: TabScreen): MenuItem? =
-        tabScreenFragments
-            .indexOfFirst { it.tabScreen === tabScreen }
+    private fun getMenuItemForTabsScreen(tabsScreen: TabsScreen): MenuItem? =
+        tabsScreenFragments
+            .indexOfFirst { it.tabsScreen === tabsScreen }
             .takeIf { it != -1 }
             ?.let { index ->
                 bottomNavigationView.menu.findItem(index)

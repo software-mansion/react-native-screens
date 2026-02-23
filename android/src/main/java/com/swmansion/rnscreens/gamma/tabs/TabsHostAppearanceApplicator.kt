@@ -152,23 +152,23 @@ class TabsHostAppearanceApplicator(
 
     fun updateMenuItemAppearance(
         menuItem: MenuItem,
-        tabScreen: TabScreen,
+        tabsScreen: TabsScreen,
     ) {
-        if (menuItem.title != tabScreen.tabTitle) {
-            menuItem.title = tabScreen.tabTitle
+        if (menuItem.title != tabsScreen.tabTitle) {
+            menuItem.title = tabsScreen.tabTitle
         }
 
-        if (menuItem.icon != tabScreen.icon) {
-            menuItem.icon = tabScreen.icon
+        if (menuItem.icon != tabsScreen.icon) {
+            menuItem.icon = tabsScreen.icon
         }
     }
 
     fun updateBadgeAppearance(
         menuItem: MenuItem,
-        tabScreen: TabScreen,
+        tabsScreen: TabsScreen,
     ) {
         val menuItemIndex = bottomNavigationView.menu.children.indexOf(menuItem)
-        val badgeValue = tabScreen.badgeValue
+        val badgeValue = tabsScreen.badgeValue
 
         if (badgeValue == null) {
             val badge = bottomNavigationView.getBadge(menuItemIndex)
@@ -193,12 +193,12 @@ class TabsHostAppearanceApplicator(
 
         // Styling
         badge.badgeTextColor =
-            tabScreen.tabBarItemBadgeTextColor
+            tabsScreen.tabBarItemBadgeTextColor
                 ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
 
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
         badge.backgroundColor =
-            tabScreen.tabBarItemBadgeBackgroundColor
+            tabsScreen.tabBarItemBadgeBackgroundColor
                 ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
     }
 }

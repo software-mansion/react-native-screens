@@ -5,10 +5,10 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.gamma.common.event.NamingAwareEventType
 
-class TabScreenWillAppearEvent(
+class TabsScreenDidAppearEvent(
     surfaceId: Int,
     viewId: Int,
-) : Event<TabScreenWillAppearEvent>(surfaceId, viewId),
+) : Event<TabsScreenDidAppearEvent>(surfaceId, viewId),
     NamingAwareEventType {
     override fun getEventName() = EVENT_NAME
 
@@ -20,8 +20,8 @@ class TabScreenWillAppearEvent(
     override fun getEventData(): WritableMap? = Arguments.createMap()
 
     companion object : NamingAwareEventType {
-        const val EVENT_NAME = "topWillAppear"
-        const val EVENT_REGISTRATION_NAME = "onWillAppear"
+        const val EVENT_NAME = "topDidAppear"
+        const val EVENT_REGISTRATION_NAME = "onDidAppear"
 
         override fun getEventName() = EVENT_NAME
 
