@@ -355,10 +355,19 @@ namespace react = facebook::react;
   if (newComponentProps.directionMode != oldComponentProps.directionMode) {
     _directionMode =
         rnscreens::conversion::UISemanticContentAttributeFromTabsHostCppEquivalent(newComponentProps.directionMode);
-    _controller.view.semanticContentAttribute = _directionMode;
-    _controller.tabBar.semanticContentAttribute = _directionMode;
-    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ _controller.tabBar.class ]]
-        setSemanticContentAttribute:_directionMode];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+    if (@available(iOS 17.0, *)) {
+      _controller.traitOverrides.layoutDirection = _directionMode == UISemanticContentAttributeForceRightToLeft
+          ? UITraitEnvironmentLayoutDirectionRightToLeft
+          : UITraitEnvironmentLayoutDirectionLeftToRight;
+    } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+    {
+      _controller.view.semanticContentAttribute = _directionMode;
+      _controller.tabBar.semanticContentAttribute = _directionMode;
+      [[UIView appearanceWhenContainedInInstancesOfClasses:@[ _controller.tabBar.class ]]
+          setSemanticContentAttribute:_directionMode];
+    }
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
@@ -556,10 +565,19 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setDirectionMode:(UISemanticContentAttribute)directionMode
 {
   _directionMode = directionMode;
-  _controller.view.semanticContentAttribute = _directionMode;
-  _controller.tabBar.semanticContentAttribute = _directionMode;
-  [[UIView appearanceWhenContainedInInstancesOfClasses:@[ _controller.tabBar.class ]]
-      setSemanticContentAttribute:_directionMode];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    _controller.traitOverrides.layoutDirection = _directionMode == UISemanticContentAttributeForceRightToLeft
+        ? UITraitEnvironmentLayoutDirectionRightToLeft
+        : UITraitEnvironmentLayoutDirectionLeftToRight;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  {
+    _controller.view.semanticContentAttribute = _directionMode;
+    _controller.tabBar.semanticContentAttribute = _directionMode;
+    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ _controller.tabBar.class ]]
+        setSemanticContentAttribute:_directionMode];
+  }
 }
 
 - (void)setOnNativeFocusChange:(RCTDirectEventBlock)onNativeFocusChange
