@@ -321,7 +321,7 @@ class TabsAppearanceApplicator(
 
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
         val oldBadgeBackgroundColor: Int =
-            lastBadgeTextColors[menuItemIndex]
+            lastBadgeBackgroundColors[menuItemIndex]
                 ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
         val newBadgeBackgroundColor =
             badgeAppearance?.backgroundColor
