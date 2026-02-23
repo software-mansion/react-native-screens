@@ -6,6 +6,7 @@ import type {
   ViewProps,
 } from 'react-native';
 import type { TabsAccessoryEnvironment } from './TabsAccessory.types';
+import type { UserInterfaceStyle } from '../shared/types';
 
 export type TabAccessoryComponentFactory = (
   environment: TabsAccessoryEnvironment,
@@ -273,6 +274,27 @@ export interface TabsHostProps {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode;
+  /**
+   * @summary Overrides the user interface style for the tab bar controller.
+   *
+   * This allows enforcing a specific appearance (light or dark) for the tab bar
+   * regardless of the system setting. Useful when the app uses a light background
+   * in dark mode (or vice versa) to prevent the tab bar from briefly flashing
+   * with the wrong style during navigation.
+   *
+   * The following values are currently supported:
+   *
+   * - `unspecified` - inherits the system user interface style (default)
+   * - `light` - forces the light interface style
+   * - `dark` - forces the dark interface style
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle|UIUserInterfaceStyle}
+   *
+   * @default unspecified
+   *
+   * @platform ios
+   */
+  userInterfaceStyle?: UserInterfaceStyle;
   // #endregion iOS-only
 
   // #region Experimental support

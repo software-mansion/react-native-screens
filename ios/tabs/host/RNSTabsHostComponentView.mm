@@ -113,6 +113,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
+  _userInterfaceStyle = UIUserInterfaceStyleUnspecified;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -352,6 +353,12 @@ namespace react = facebook::react;
       }
   }
 
+  if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {
+    _userInterfaceStyle =
+        rnscreens::conversion::UIUserInterfaceStyleFromTabsHostCppEquivalent(newComponentProps.userInterfaceStyle);
+    _controller.overrideUserInterfaceStyle = _userInterfaceStyle;
+  }
+
   // Super call updates _props pointer. We should NOT update it before calling super.
   [super updateProps:props oldProps:oldProps];
 }
@@ -542,6 +549,12 @@ RNS_IGNORE_SUPER_CALL_END
     if (tabBarControllerMode != RNSTabBarControllerModeAutomatic) {
       RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
     }
+}
+
+- (void)setUserInterfaceStyle:(UIUserInterfaceStyle)userInterfaceStyle
+{
+  _userInterfaceStyle = userInterfaceStyle;
+  _controller.overrideUserInterfaceStyle = _userInterfaceStyle;
 }
 
 - (void)setOnNativeFocusChange:(RCTDirectEventBlock)onNativeFocusChange

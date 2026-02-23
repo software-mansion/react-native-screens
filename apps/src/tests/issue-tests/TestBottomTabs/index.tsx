@@ -236,6 +236,7 @@ function App() {
         tabBarItemTitleFontWeight="700"
         tabBarItemLabelVisibilityMode="auto"
         tabBarMinimizeBehavior="onScrollDown"
+        userInterfaceStyle="light"
       />
     </ConfigWrapperContext.Provider>
   );

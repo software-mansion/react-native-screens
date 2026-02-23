@@ -96,6 +96,9 @@ NSString *_Nullable RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAcc
 UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
     react::RNSTabsScreenUserInterfaceStyle userInterfaceStyle);
 
+UIUserInterfaceStyle UIUserInterfaceStyleFromTabsHostCppEquivalent(
+    react::RNSTabsHostUserInterfaceStyle userInterfaceStyle);
+
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
     RNSTabsIconType iconType);
