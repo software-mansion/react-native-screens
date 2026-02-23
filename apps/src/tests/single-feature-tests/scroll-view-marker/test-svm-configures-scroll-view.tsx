@@ -45,8 +45,7 @@ function ContentScreen() {
         scrollEdgeEffects={{ top: 'hard' }}>
         <ScrollView
           style={[styles.fillParent]}
-          contentInsetAdjustmentBehavior="automatic"
-          contentContainerStyle={{ width: '100%', height: '100%' }}>
+          contentInsetAdjustmentBehavior="automatic">
           {Array.from({ length: 12 }).map((_, index) => {
             return (
               <Rectangle
