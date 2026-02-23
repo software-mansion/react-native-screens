@@ -713,8 +713,8 @@ class Screen(
         // are handled for form sheet depending on dimming view (if dimming view is present, the
         // background screen is not focusable). When detent changes, dimming view might also change.
         // That's why we're requesting update of a11y from ScreenStack (which handles those props).
-        check(isNativeStackScreen) { "[RNScreens] Expected native stack screen." }
-        (container as ScreenStack).updateA11yForVisibleScreens()
+        check(container is ScreenStack?) { "[RNScreens] Expected native stack screen." }
+        (container as ScreenStack?)?.updateA11yForVisibleScreens()
     }
 
     internal fun onSheetYTranslationChanged() {
