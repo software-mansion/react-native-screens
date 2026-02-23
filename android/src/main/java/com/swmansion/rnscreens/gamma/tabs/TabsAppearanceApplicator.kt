@@ -42,24 +42,24 @@ class TabsAppearanceApplicator(
             intArrayOf(), // normal
         )
 
-    private inline fun <T> applyPropIfChanged(
+    private inline fun <T> updatePropIfChanged(
         oldValue: T,
         newValue: T,
-        apply: (T) -> Unit,
+        updateFn: (T) -> Unit,
     ): T {
         if (oldValue != newValue) {
-            apply(newValue)
+            updateFn(newValue)
         }
         return newValue
     }
 
-    private inline fun applyPropsIfArrayChanged(
+    private inline fun updatePropsIfArrayChanged(
         oldValue: IntArray?,
         newValue: IntArray,
-        apply: (IntArray) -> Unit,
+        updateFn: (IntArray) -> Unit,
     ): IntArray {
         if (oldValue == null || !oldValue.contentEquals(newValue)) {
-            apply(newValue)
+            updateFn(newValue)
         }
         return newValue
     }
@@ -73,7 +73,7 @@ class TabsAppearanceApplicator(
     fun updateSharedAppearance(tabsHost: TabsHost) {
         val tabBarAppearance = tabsHost.currentFocusedTab.tabScreen.appearance
 
-        applyPropIfChanged(bottomNavigationView.isVisible, !tabsHost.tabBarHidden) {
+        updatePropIfChanged(bottomNavigationView.isVisible, !tabsHost.tabBarHidden) {
             bottomNavigationView.isVisible = !tabsHost.tabBarHidden
         }
 
@@ -81,7 +81,7 @@ class TabsAppearanceApplicator(
             tabBarAppearance?.backgroundColor
                 ?: resolveColorAttr(R.attr.colorSurfaceContainer)
         lastBackgroundColor =
-            applyPropIfChanged(lastBackgroundColor, newBackgroundColor) {
+            updatePropIfChanged(lastBackgroundColor, newBackgroundColor) {
                 bottomNavigationView.setBackgroundColor(newBackgroundColor)
             }
 
@@ -105,7 +105,7 @@ class TabsAppearanceApplicator(
 
         val newFontColors = intArrayOf(fontDisabledColor, fontFocusedColor, fontSelectedColor, fontNormalColor)
         lastFontColors =
-            applyPropsIfArrayChanged(lastFontColors, newFontColors) {
+            updatePropsIfArrayChanged(lastFontColors, newFontColors) {
                 bottomNavigationView.itemTextColor = ColorStateList(states, newFontColors)
             }
 
@@ -129,7 +129,7 @@ class TabsAppearanceApplicator(
 
         val newIconColors = intArrayOf(iconDisabledColor, iconFocusedColor, iconSelectedColor, iconNormalColor)
         lastIconColors =
-            applyPropsIfArrayChanged(lastIconColors, newIconColors) {
+            updatePropsIfArrayChanged(lastIconColors, newIconColors) {
                 bottomNavigationView.itemIconTintList = ColorStateList(states, newIconColors)
             }
 
@@ -144,7 +144,7 @@ class TabsAppearanceApplicator(
                 else -> NavigationBarView.LABEL_VISIBILITY_AUTO
             }
         lastLabelVisibilityMode =
-            applyPropIfChanged(lastLabelVisibilityMode, newVisibilityMode) {
+            updatePropIfChanged(lastLabelVisibilityMode, newVisibilityMode) {
                 bottomNavigationView.labelVisibilityMode = newVisibilityMode
             }
 
@@ -153,7 +153,7 @@ class TabsAppearanceApplicator(
             tabBarAppearance?.itemRippleColor
                 ?: resolveColorAttr(R.attr.itemRippleColor)
         lastRippleColor =
-            applyPropIfChanged(lastRippleColor, newRippleColor) {
+            updatePropIfChanged(lastRippleColor, newRippleColor) {
                 bottomNavigationView.itemRippleColor = ColorStateList.valueOf(newRippleColor)
             }
 
@@ -162,13 +162,13 @@ class TabsAppearanceApplicator(
             tabBarAppearance?.activeIndicator?.color
                 ?: resolveColorAttr(R.attr.colorSecondaryContainer)
         lastActiveIndicatorColor =
-            applyPropIfChanged(lastActiveIndicatorColor, newActiveIndicatorColor) {
+            updatePropIfChanged(lastActiveIndicatorColor, newActiveIndicatorColor) {
                 bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(newActiveIndicatorColor)
             }
 
         val newIsActiveIndicatorEnabled = tabBarAppearance?.activeIndicator?.enabled ?: true
         lastIsActiveIndicatorEnabled =
-            applyPropIfChanged(lastIsActiveIndicatorEnabled, newIsActiveIndicatorEnabled) {
+            updatePropIfChanged(lastIsActiveIndicatorEnabled, newIsActiveIndicatorEnabled) {
                 bottomNavigationView.isItemActiveIndicatorEnabled = newIsActiveIndicatorEnabled
             }
     }
@@ -231,18 +231,18 @@ class TabsAppearanceApplicator(
                 menuItem.findViewById<TextView>(R.id.navigation_bar_item_small_label_view)
 
             // Inactive
-            applyPropIfChanged(smallLabel.textSize, newSmallFontSize) {
+            updatePropIfChanged(smallLabel.textSize, newSmallFontSize) {
                 smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSmallFontSize)
             }
-            applyPropIfChanged(smallLabel.typeface, newFontFamily) {
+            updatePropIfChanged(smallLabel.typeface, newFontFamily) {
                 smallLabel.typeface = newFontFamily
             }
 
             // Active
-            applyPropIfChanged(largeLabel.textSize, newLargeFontSize) {
+            updatePropIfChanged(largeLabel.textSize, newLargeFontSize) {
                 largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, newLargeFontSize)
             }
-            applyPropIfChanged(largeLabel.typeface, newFontFamily) {
+            updatePropIfChanged(largeLabel.typeface, newFontFamily) {
                 largeLabel.typeface = newFontFamily
             }
         }
@@ -252,7 +252,7 @@ class TabsAppearanceApplicator(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
     ) {
-        applyPropIfChanged(menuItem.title, tabsScreen.tabTitle) {
+        updatePropIfChanged(menuItem.title, tabsScreen.tabTitle) {
             menuItem.title = tabsScreen.tabTitle
         }
 
@@ -266,7 +266,7 @@ class TabsAppearanceApplicator(
                 tabsScreen.icon
             }
 
-        applyPropIfChanged(menuItem.icon, targetIcon) {
+        updatePropIfChanged(menuItem.icon, targetIcon) {
             menuItem.icon = targetIcon
         }
     }
@@ -294,7 +294,7 @@ class TabsAppearanceApplicator(
         badge.isVisible = true
 
         lastBadgeValues[menuItemIndex] =
-            applyPropIfChanged(lastBadgeValues[menuItemIndex], badgeValue) { newValue ->
+            updatePropIfChanged(lastBadgeValues[menuItemIndex], badgeValue) { newValue ->
                 val badgeValueNumber = newValue?.toIntOrNull()
 
                 badge.clearText()
@@ -312,7 +312,7 @@ class TabsAppearanceApplicator(
             badgeAppearance?.textColor
                 ?: resolveColorAttr(R.attr.colorOnError)
         lastBadgeTextColors[menuItemIndex] =
-            applyPropIfChanged(lastBadgeTextColors[menuItemIndex], newBadgeTextColor) {
+            updatePropIfChanged(lastBadgeTextColors[menuItemIndex], newBadgeTextColor) {
                 badge.badgeTextColor = newBadgeTextColor
             } as Int
 
@@ -321,7 +321,7 @@ class TabsAppearanceApplicator(
             badgeAppearance?.backgroundColor
                 ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
         lastBadgeBackgroundColors[menuItemIndex] =
-            applyPropIfChanged(lastBadgeBackgroundColors[menuItemIndex], newBadgeBackgroundColor) {
+            updatePropIfChanged(lastBadgeBackgroundColors[menuItemIndex], newBadgeBackgroundColor) {
                 badge.backgroundColor = newBadgeBackgroundColor
             } as Int
     }
