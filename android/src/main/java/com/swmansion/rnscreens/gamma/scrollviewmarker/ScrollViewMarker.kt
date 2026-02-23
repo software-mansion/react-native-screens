@@ -15,9 +15,10 @@ import com.facebook.react.views.view.ReactViewGroup
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // Should never be inflated / restored
-class ScrollViewMarker(private val reactContext: ThemedReactContext) : ReactViewGroup(reactContext),
+class ScrollViewMarker(
+    private val reactContext: ThemedReactContext,
+) : ReactViewGroup(reactContext),
     UIManagerListener {
-
     init {
         // We're adding ourselves during a batch, therefore we expect to receive its finalization callbacks
         val uiManager =
@@ -59,13 +60,7 @@ class ScrollViewMarker(private val reactContext: ThemedReactContext) : ReactView
 
     private fun registerWithSeekingAncestor() {
         val scrollView = findScrollView()
-        val seekingParent = findSeekingParent()
-
-        if (seekingParent == null) {
-            return
-        }
-
-        seekingParent.registerScrollView(this, scrollView)
+        findSeekingParent()?.registerScrollView(this, scrollView)
     }
 
     private fun maybeRegisterWithSeekingAncestor() {
@@ -84,8 +79,10 @@ class ScrollViewMarker(private val reactContext: ThemedReactContext) : ReactView
     }
 
     override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
-    override fun willMountItems(uiManager: UIManager) = Unit
-    override fun didDispatchMountItems(uiManager: UIManager) = Unit
-    override fun didScheduleMountItems(uiManager: UIManager) = Unit
 
+    override fun willMountItems(uiManager: UIManager) = Unit
+
+    override fun didDispatchMountItems(uiManager: UIManager) = Unit
+
+    override fun didScheduleMountItems(uiManager: UIManager) = Unit
 }
