@@ -5,15 +5,17 @@ import OverrideScrollViewContentInsetScenario from './override-scroll-view-conte
 import TabBarHiddenScenario from './tab-bar-hidden';
 import TabsScreenOrientationScenario from './tabs-screen-orientation';
 
-const TabsScenarioGroup: ScenarioGroup = {
+const scenarios = {
+  BottomAccessoryScenario,
+  OverrideScrollViewContentInsetScenario,
+  TabBarHiddenScenario,
+  TabsScreenOrientationScenario,
+};
+
+const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
   name: 'Tabs',
   details: 'Single feature tests for tabs',
-  scenarios: [
-    BottomAccessoryScenario,
-    OverrideScrollViewContentInsetScenario,
-    TabBarHiddenScenario,
-    TabsScreenOrientationScenario,
-  ],
+  scenarios,
 };
 
 export default TabsScenarioGroup;
