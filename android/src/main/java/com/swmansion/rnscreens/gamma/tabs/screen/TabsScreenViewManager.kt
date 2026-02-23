@@ -249,7 +249,7 @@ class TabsScreenViewManager :
 
     @ReactProp(name = "standardAppearanceAndroid")
     override fun setStandardAppearanceAndroid(
-        view: TabScreen,
+        view: TabsScreen,
         value: Dynamic?,
     ) {
         if (value == null || value.isNull) {

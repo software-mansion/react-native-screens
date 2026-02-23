@@ -32,7 +32,7 @@ class TabsScreen(
 
     internal var appearance: AndroidTabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            tabScreenDelegate.get()?.onAppearanceChanged(this)
+            tabsScreenDelegate.get()?.onAppearanceChanged(this)
         }
     }
 

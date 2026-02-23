@@ -27,7 +27,7 @@ class TabsAppearanceCoordinator(
             bottomNavigationView.menu.clear()
         }
         tabsScreenFragments.forEachIndexed { index, fragment ->
-            val appearance = tabsHost.currentFocusedTab.tabScreen.appearance
+            val appearance = tabsHost.currentFocusedTab.tabsScreen.appearance
             val menuItem = bottomNavigationView.menu.getOrCreateMenuItem(index, fragment.tabsScreen)
             check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
             updateMenuItemAppearance(menuItem, fragment.tabsScreen, appearance)

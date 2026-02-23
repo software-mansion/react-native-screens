@@ -71,7 +71,7 @@ class TabsAppearanceApplicator(
     }
 
     fun updateSharedAppearance(tabsHost: TabsHost) {
-        val tabBarAppearance = tabsHost.currentFocusedTab.tabScreen.appearance
+        val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
 
         updatePropIfChanged(bottomNavigationView.isVisible, !tabsHost.tabBarHidden) {
             bottomNavigationView.isVisible = !tabsHost.tabBarHidden
@@ -174,7 +174,7 @@ class TabsAppearanceApplicator(
     }
 
     fun updateFontStyles(tabsHost: TabsHost) {
-        val tabBarAppearance = tabsHost.currentFocusedTab.tabScreen.appearance
+        val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
 
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 

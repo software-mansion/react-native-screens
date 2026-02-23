@@ -284,7 +284,7 @@ class TabsHost(
         }
     }
 
-    override fun onAppearanceChanged(tabScreen: TabScreen) {
+    override fun onAppearanceChanged(tabScreen: TabsScreen) {
         if (tabScreen.isFocusedTab) {
             containerUpdateCoordinator.let {
                 it.invalidateNavigationMenu()
@@ -305,7 +305,7 @@ class TabsHost(
 
     override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
         getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
-            val appearance = currentFocusedTab.tabScreen.appearance
+            val appearance = currentFocusedTab.tabsScreen.appearance
             appearanceCoordinator.updateMenuItemAppearance(menuItem, tabsScreen, appearance)
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
         }
