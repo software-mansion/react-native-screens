@@ -22,6 +22,48 @@ class TabsHostAppearanceApplicator(
     private val context: ContextThemeWrapper,
     private val bottomNavigationView: BottomNavigationView,
 ) {
+    private var lastBackgroundColor: Int? = null
+    private var lastFontColors: IntArray? = null
+    private var lastIconColors: IntArray? = null
+    private var lastLabelVisibilityMode: Int? = null
+    private var lastRippleColor: Int? = null
+    private var lastActiveIndicatorColor: Int? = null
+    private var lastIsActiveIndicatorEnabled: Boolean? = null
+
+    private val lastBadgeValues = mutableMapOf<Int, String?>()
+    private val lastBadgeTextColors = mutableMapOf<Int, Int>()
+    private val lastBadgeBackgroundColors = mutableMapOf<Int, Int>()
+
+    private val states =
+        arrayOf(
+            intArrayOf(-android.R.attr.state_enabled), // disabled
+            intArrayOf(android.R.attr.state_focused), // focused
+            intArrayOf(android.R.attr.state_selected), // selected
+            intArrayOf(), // normal
+        )
+
+    private inline fun <T> applyPropIfChanged(
+        oldValue: T,
+        newValue: T,
+        apply: (T) -> Unit,
+    ): T {
+        if (oldValue != newValue) {
+            apply(newValue)
+        }
+        return newValue
+    }
+
+    private inline fun applyPropsIfArrayChanged(
+        oldValue: IntArray?,
+        newValue: IntArray,
+        apply: (IntArray) -> Unit,
+    ): IntArray {
+        if (oldValue == null || !oldValue.contentEquals(newValue)) {
+            apply(newValue)
+        }
+        return newValue
+    }
+
     private fun resolveColorAttr(attr: Int): Int {
         val typedValue = TypedValue()
         context.theme.resolveAttribute(attr, typedValue, true)
@@ -31,19 +73,17 @@ class TabsHostAppearanceApplicator(
     fun updateSharedAppearance(tabsHost: TabsHost) {
         val tabBarAppearance = tabsHost.currentFocusedTab.tabScreen.appearance
 
-        bottomNavigationView.isVisible = !tabsHost.tabBarHidden
-        bottomNavigationView.setBackgroundColor(
-            tabBarAppearance?.backgroundColor
-                ?: resolveColorAttr(R.attr.colorSurfaceContainer),
-        )
+        applyPropIfChanged(bottomNavigationView.isVisible, !tabsHost.tabBarHidden) {
+            bottomNavigationView.isVisible = !tabsHost.tabBarHidden
+        }
 
-        val states =
-            arrayOf(
-                intArrayOf(-android.R.attr.state_enabled), // disabled
-                intArrayOf(android.R.attr.state_focused), // focused
-                intArrayOf(android.R.attr.state_selected), // selected
-                intArrayOf(), // normal
-            )
+        val newBackgroundColor =
+            tabBarAppearance?.backgroundColor
+                ?: resolveColorAttr(R.attr.colorSurfaceContainer)
+        lastBackgroundColor =
+            applyPropIfChanged(lastBackgroundColor, newBackgroundColor) {
+                bottomNavigationView.setBackgroundColor(newBackgroundColor)
+            }
 
         // Font color
         // Defaults from spec: https://m3.material.io/components/navigation-bar/specs
@@ -63,8 +103,11 @@ class TabsHostAppearanceApplicator(
             tabBarAppearance?.itemColors?.normal?.titleColor
                 ?: resolveColorAttr(R.attr.colorSecondary)
 
-        val fontColors = intArrayOf(fontDisabledColor, fontFocusedColor, fontSelectedColor, fontNormalColor)
-        bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
+        val newFontColors = intArrayOf(fontDisabledColor, fontFocusedColor, fontSelectedColor, fontNormalColor)
+        lastFontColors =
+            applyPropsIfArrayChanged(lastFontColors, newFontColors) {
+                bottomNavigationView.itemTextColor = ColorStateList(states, newFontColors)
+            }
 
         // Icon color
         // Defaults from spec: https://m3.material.io/components/navigation-bar/specs
@@ -84,36 +127,50 @@ class TabsHostAppearanceApplicator(
             tabBarAppearance?.itemColors?.normal?.iconColor
                 ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
 
-        val iconColors = intArrayOf(iconDisabledColor, iconFocusedColor, iconSelectedColor, iconNormalColor)
-        bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
+        val newIconColors = intArrayOf(iconDisabledColor, iconFocusedColor, iconSelectedColor, iconNormalColor)
+        lastIconColors =
+            applyPropsIfArrayChanged(lastIconColors, newIconColors) {
+                bottomNavigationView.itemIconTintList = ColorStateList(states, newIconColors)
+            }
 
         // LabelVisibilityMode
         // From docs: can be one of LABEL_VISIBILITY_AUTO, LABEL_VISIBILITY_SELECTED, LABEL_VISIBILITY_LABELED, or LABEL_VISIBILITY_UNLABELED
 
-        val visibilityMode =
+        val newVisibilityMode =
             when (tabBarAppearance?.labelVisibilityMode) {
                 "selected" -> NavigationBarView.LABEL_VISIBILITY_SELECTED
                 "labeled" -> NavigationBarView.LABEL_VISIBILITY_LABELED
                 "unlabeled" -> NavigationBarView.LABEL_VISIBILITY_UNLABELED
                 else -> NavigationBarView.LABEL_VISIBILITY_AUTO
             }
-
-        bottomNavigationView.labelVisibilityMode = visibilityMode
+        lastLabelVisibilityMode =
+            applyPropIfChanged(lastLabelVisibilityMode, newVisibilityMode) {
+                bottomNavigationView.labelVisibilityMode = newVisibilityMode
+            }
 
         // Ripple color
-        val rippleColor =
+        val newRippleColor =
             tabBarAppearance?.itemRippleColor
                 ?: resolveColorAttr(R.attr.itemRippleColor)
-        bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
+        lastRippleColor =
+            applyPropIfChanged(lastRippleColor, newRippleColor) {
+                bottomNavigationView.itemRippleColor = ColorStateList.valueOf(newRippleColor)
+            }
 
         // Active Indicator
-        val activeIndicatorColor =
+        val newActiveIndicatorColor =
             tabBarAppearance?.activeIndicator?.color
                 ?: resolveColorAttr(R.attr.colorSecondaryContainer)
+        lastActiveIndicatorColor =
+            applyPropIfChanged(lastActiveIndicatorColor, newActiveIndicatorColor) {
+                bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(newActiveIndicatorColor)
+            }
 
-        bottomNavigationView.isItemActiveIndicatorEnabled =
-            tabBarAppearance?.activeIndicator?.enabled ?: true
-        bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
+        val newIsActiveIndicatorEnabled = tabBarAppearance?.activeIndicator?.enabled ?: true
+        lastIsActiveIndicatorEnabled =
+            applyPropIfChanged(lastIsActiveIndicatorEnabled, newIsActiveIndicatorEnabled) {
+                bottomNavigationView.isItemActiveIndicatorEnabled = newIsActiveIndicatorEnabled
+            }
     }
 
     fun updateFontStyles(tabsHost: TabsHost) {
@@ -121,65 +178,73 @@ class TabsHostAppearanceApplicator(
 
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
+        val newIsFontStyleItalic = tabBarAppearance?.typography?.fontStyle == "italic"
+
+        // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
+        // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
+        // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
+        val newFontWeight =
+            if (tabBarAppearance?.typography?.fontWeight ==
+                "bold"
+            ) {
+                700
+            } else {
+                tabBarAppearance?.typography?.fontWeight?.toIntOrNull() ?: 400
+            }
+
+        val newFontFamily =
+            ReactFontManager.getInstance().getTypeface(
+                tabBarAppearance?.typography?.fontFamily ?: "",
+                newFontWeight,
+                newIsFontStyleItalic,
+                context.assets,
+            )
+
+        /*
+            Short explanation about computations we're doing below.
+            R.dimen, has defined value in SP, getDimension converts it to pixels, and by default
+            TextView.setTextSize accepts SP, so the size is multiplied by density twice. Thus we need
+            to convert both values to pixels and make sure that setTextSizes is about that.
+            The Text tag in RN uses SP or DP based on `allowFontScaling` prop. For now we're going
+            with SP, if there will be a need for skipping scale, the we should introduce similar
+            `allowFontScaling` prop.
+         */
+        val newSmallFontSize =
+            tabBarAppearance
+                ?.typography
+                ?.fontSizeSmall
+                ?.takeIf { it > 0 }
+                ?.let { PixelUtil.toPixelFromSP(it) }
+                ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+        val newLargeFontSize =
+            tabBarAppearance
+                ?.typography
+                ?.fontSizeLarge
+                ?.takeIf { it > 0 }
+                ?.let { PixelUtil.toPixelFromSP(it) }
+                ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+
         for (menuItem in bottomNavigationMenuView.children) {
             val largeLabel =
                 menuItem.findViewById<TextView>(R.id.navigation_bar_item_large_label_view)
             val smallLabel =
                 menuItem.findViewById<TextView>(R.id.navigation_bar_item_small_label_view)
 
-            val isFontStyleItalic = tabBarAppearance?.typography?.fontStyle == "italic"
-
-            // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
-            // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
-            // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
-            val fontWeight =
-                if (tabBarAppearance?.typography?.fontWeight ==
-                    "bold"
-                ) {
-                    700
-                } else {
-                    tabBarAppearance?.typography?.fontWeight?.toIntOrNull() ?: 400
-                }
-
-            val fontFamily =
-                ReactFontManager.getInstance().getTypeface(
-                    tabBarAppearance?.typography?.fontFamily ?: "",
-                    fontWeight,
-                    isFontStyleItalic,
-                    context.assets,
-                )
-
-            /*
-                Short explanation about computations we're doing below.
-                R.dimen, has defined value in SP, getDimension converts it to pixels, and by default
-                TextView.setTextSize accepts SP, so the size is multiplied by density twice. Thus we need
-                to convert both values to pixels and make sure that setTextSizes is about that.
-                The Text tag in RN uses SP or DP based on `allowFontScaling` prop. For now we're going
-                with SP, if there will be a need for skipping scale, the we should introduce similar
-                `allowFontScaling` prop.
-             */
-            val smallFontSize =
-                tabBarAppearance
-                    ?.typography
-                    ?.fontSizeSmall
-                    ?.takeIf { it > 0 }
-                    ?.let { PixelUtil.toPixelFromSP(it) }
-                    ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
-            val largeFontSize =
-                tabBarAppearance
-                    ?.typography
-                    ?.fontSizeLarge
-                    ?.takeIf { it > 0 }
-                    ?.let { PixelUtil.toPixelFromSP(it) }
-                    ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
-
             // Inactive
-            smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, smallFontSize)
-            smallLabel.typeface = fontFamily
+            applyPropIfChanged(smallLabel.textSize, newSmallFontSize) {
+                smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSmallFontSize)
+            }
+            applyPropIfChanged(smallLabel.typeface, newFontFamily) {
+                smallLabel.typeface = newFontFamily
+            }
 
             // Active
-            largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, largeFontSize)
-            largeLabel.typeface = fontFamily
+            applyPropIfChanged(largeLabel.textSize, newLargeFontSize) {
+                largeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, newLargeFontSize)
+            }
+            applyPropIfChanged(largeLabel.typeface, newFontFamily) {
+                largeLabel.typeface = newFontFamily
+            }
         }
     }
 
@@ -187,7 +252,7 @@ class TabsHostAppearanceApplicator(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
     ) {
-        if (menuItem.title != tabsScreen.tabTitle) {
+        applyPropIfChanged(menuItem.title, tabsScreen.tabTitle) {
             menuItem.title = tabsScreen.tabTitle
         }
 
@@ -201,7 +266,7 @@ class TabsHostAppearanceApplicator(
                 tabsScreen.icon
             }
 
-        if (menuItem.icon != targetIcon) {
+        applyPropIfChanged(menuItem.icon, targetIcon) {
             menuItem.icon = targetIcon
         }
     }
@@ -215,34 +280,49 @@ class TabsHostAppearanceApplicator(
         val badgeValue = tabsScreen.badgeValue
 
         if (badgeValue == null) {
+            if (lastBadgeValues[menuItemIndex] != null || !lastBadgeValues.containsKey(menuItemIndex)) {
+                lastBadgeValues[menuItemIndex] = null
+            }
+
             val badge = bottomNavigationView.getBadge(menuItemIndex)
             badge?.isVisible = false
 
             return
         }
 
-        val badgeValueNumber = badgeValue.toIntOrNull()
-
         val badge = bottomNavigationView.getOrCreateBadge(menuItemIndex)
         badge.isVisible = true
 
-        badge.clearText()
-        badge.clearNumber()
+        lastBadgeValues[menuItemIndex] =
+            applyPropIfChanged(lastBadgeValues[menuItemIndex], badgeValue) { newValue ->
+                val badgeValueNumber = newValue?.toIntOrNull()
 
-        if (badgeValueNumber != null) {
-            badge.number = badgeValueNumber
-        } else if (badgeValue != "") {
-            badge.text = badgeValue
-        }
+                badge.clearText()
+                badge.clearNumber()
+
+                if (badgeValueNumber != null) {
+                    badge.number = badgeValueNumber
+                } else if (newValue != "") {
+                    badge.text = newValue
+                }
+            }
 
         // Styling
-        badge.badgeTextColor =
+        val newBadgeTextColor =
             badgeAppearance?.textColor
                 ?: resolveColorAttr(R.attr.colorOnError)
+        lastBadgeTextColors[menuItemIndex] =
+            applyPropIfChanged(lastBadgeTextColors[menuItemIndex], newBadgeTextColor) {
+                badge.badgeTextColor = newBadgeTextColor
+            } as Int
 
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
-        badge.backgroundColor =
+        val newBadgeBackgroundColor =
             badgeAppearance?.backgroundColor
                 ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
+        lastBadgeBackgroundColors[menuItemIndex] =
+            applyPropIfChanged(lastBadgeBackgroundColors[menuItemIndex], newBadgeBackgroundColor) {
+                badge.backgroundColor = newBadgeBackgroundColor
+            } as Int
     }
 }
