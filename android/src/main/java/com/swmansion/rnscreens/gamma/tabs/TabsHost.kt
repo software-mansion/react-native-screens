@@ -353,7 +353,11 @@ class TabsHost(
         }
     }
 
-    override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? = tabsScreenFragments.find { it.tabsScreen === tabsScreen }
+    override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? =
+        tabsScreenFragments.find {
+            it.tabsScreen ===
+                tabsScreen
+        }
 
     override fun onFragmentConfigurationChange(
         tabsScreen: TabsScreen,
