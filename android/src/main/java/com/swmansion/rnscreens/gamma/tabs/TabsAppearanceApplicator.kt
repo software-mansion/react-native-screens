@@ -310,7 +310,7 @@ class TabsAppearanceApplicator(
         // Styling
         val oldBadgeTextColor: Int =
             lastBadgeTextColors[menuItemIndex]
-                ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
+                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
         val newBadgeTextColor =
             badgeAppearance?.textColor
                 ?: resolveColorAttr(R.attr.colorOnError)
