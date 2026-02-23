@@ -9,8 +9,8 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsHostManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsHostManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.host.event.TabsHostNativeFocusChangeEvent
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @ReactModule(name = TabsHostViewManager.REACT_CLASS)
 class TabsHostViewManager :
