@@ -1,5 +1,5 @@
 import { ScenarioGroup } from '../../shared/helpers';
-import TestSvmDetectsScrollView from './test-svm-detects-scroll-view';
+import TestSvmDetectsScrollView from './test-svm-configures-scroll-view';
 
 const ScrollViewMarkerScenarioGroup: ScenarioGroup = {
   name: 'ScrollViewMarker scenarios',

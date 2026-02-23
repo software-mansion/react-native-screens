@@ -8,7 +8,7 @@ import Colors from '../../../shared/styling/Colors';
 import { generateNextColor } from '../../../shared/utils/color-generator';
 
 const SCENARIO: Scenario = {
-  name: 'SVM configures ScrollView',
+  name: 'Basic functionality',
   key: 'test-svm-configures-scroll-view',
   details: 'Basic functionality of the ScrollViewMarker component',
   platforms: ['ios'],
