@@ -18,7 +18,7 @@ import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
-class TabsHostAppearanceApplicator(
+class TabsAppearanceApplicator(
     private val context: ContextThemeWrapper,
     private val bottomNavigationView: BottomNavigationView,
 ) {

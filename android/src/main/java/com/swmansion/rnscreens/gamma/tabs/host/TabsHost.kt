@@ -167,7 +167,7 @@ class TabsHost(
     private var interfaceInsetsChangeListener: SafeAreaView? = null
 
     private val appearanceCoordinator =
-        TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabsScreenFragments)
+        TabsAppearanceCoordinator(wrappedContext, bottomNavigationView, tabsScreenFragments)
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsScreenFragments)
 

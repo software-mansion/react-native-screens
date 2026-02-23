@@ -8,12 +8,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 
-class TabsHostAppearanceCoordinator(
+class TabsAppearanceCoordinator(
     context: ContextThemeWrapper,
     private val bottomNavigationView: BottomNavigationView,
     private val tabsScreenFragments: MutableList<TabsScreenFragment>,
 ) {
-    private val appearanceApplicator = TabsHostAppearanceApplicator(context, bottomNavigationView)
+    private val appearanceApplicator = TabsAppearanceApplicator(context, bottomNavigationView)
 
     fun updateTabAppearance(tabsHost: TabsHost) {
         appearanceApplicator.updateSharedAppearance(tabsHost)
