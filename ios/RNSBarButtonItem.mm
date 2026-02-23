@@ -21,28 +21,13 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
     return self;
   }
 
+  [[self class] resolveImageFromConfig:dict
+                           imageLoader:imageLoader
+                       completionBlock:^(UIImage *img) {
+                         self.image = img;
+                       }];
+
   NSString *title = dict[@"title"];
-  NSDictionary *imageSourceObj = dict[@"imageSource"];
-  NSDictionary *templateSourceObj = dict[@"templateSource"];
-  NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetName = dict[@"xcassetName"];
-
-  if (imageSourceObj != nil || templateSourceObj != nil) {
-    BOOL isTemplate = imageSourceObj != nil ? NO : YES;
-    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
-
-    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
-                                                 withImageLoader:imageLoader
-                                                      asTemplate:isTemplate
-                                                 completionBlock:^(UIImage *image) {
-                                                   self.image = image;
-                                                 }];
-  } else if (sfSymbolName != nil) {
-    self.image = [UIImage systemImageNamed:sfSymbolName];
-  } else if (xcassetName != nil) {
-    self.image = [UIImage imageNamed:xcassetName];
-  }
-
   if (title != nil) {
     self.title = title;
 
@@ -130,7 +115,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   if (@available(tvOS 17.0, *)) {
     NSDictionary *menu = dict[@"menu"];
     if (menu) {
-      self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction];
+      self.menu = [[self class] initUIMenuWithDict:menu menuAction:menuAction imageLoader:imageLoader];
     }
   }
 #endif
@@ -145,7 +130,40 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   return self;
 }
 
-+ (UIMenu *)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
++ (void)resolveImageFromConfig:(NSDictionary *)dict
+                   imageLoader:(RCTImageLoader *)imageLoader
+               completionBlock:(void (^)(UIImage *_Nullable))completionBlock
+{
+  NSString *sfSymbolName = dict[@"sfSymbolName"];
+  if (sfSymbolName != nil) {
+    completionBlock([UIImage systemImageNamed:sfSymbolName]);
+    return;
+  }
+
+  NSString *xcassetName = dict[@"xcassetName"];
+  if (xcassetName != nil) {
+    completionBlock([UIImage imageNamed:xcassetName]);
+    return;
+  }
+
+  NSDictionary *imageSourceObj = dict[@"imageSource"];
+  NSDictionary *templateSourceObj = dict[@"templateSource"];
+  if (imageSourceObj != nil || templateSourceObj != nil) {
+    BOOL isTemplate = imageSourceObj == nil;
+    NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
+    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
+                                                 withImageLoader:imageLoader
+                                                      asTemplate:isTemplate
+                                                 completionBlock:completionBlock];
+    return;
+  }
+
+  completionBlock(nil);
+}
+
++ (UIMenu *)initUIMenuWithDict:(NSDictionary<NSString *, id> *)dict
+                    menuAction:(RNSBarButtonMenuItemAction)menuAction
+                   imageLoader:(RCTImageLoader *)imageLoader
 {
   NSArray *items = dict[@"items"];
   NSMutableArray<UIMenuElement *> *elements = [NSMutableArray new];
@@ -153,54 +171,48 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
     for (NSDictionary *item in items) {
       NSString *menuId = item[@"menuId"];
       if (menuId) {
-        UIAction *actionItem = [self createActionItemFromConfig:item menuAction:menuAction];
+        UIAction *actionItem = [self createActionItemFromConfig:item menuAction:menuAction imageLoader:imageLoader];
         [elements addObject:actionItem];
       } else {
-        UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction];
+        UIMenu *childMenu = [self initUIMenuWithDict:item menuAction:menuAction imageLoader:imageLoader];
         if (childMenu) {
           [elements addObject:childMenu];
         }
       }
     }
   }
-  NSString *title = dict[@"title"];
-  NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetName = dict[@"xcassetName"];
+  __block UIImage *image = nil;
+  [self resolveImageFromConfig:dict
+                   imageLoader:imageLoader
+               completionBlock:^(UIImage *img) {
+                 image = img;
+               }];
 
-  UIImage *image = nil;
-  if (sfSymbolName != nil) {
-    image = [UIImage systemImageNamed:sfSymbolName];
-  } else if (xcassetName != nil) {
-    image = [UIImage imageNamed:xcassetName];
-  }
-
-  return [UIMenu menuWithTitle:title
+  return [UIMenu menuWithTitle:dict[@"title"]
                          image:image
                     identifier:nil
                        options:RNSMakeUIMenuOptionsFromConfig(dict)
                       children:elements];
 }
 
-+ (UIAction *)createActionItemFromConfig:(NSDictionary *)dict menuAction:(RNSBarButtonMenuItemAction)menuAction
++ (UIAction *)createActionItemFromConfig:(NSDictionary *)dict
+                              menuAction:(RNSBarButtonMenuItemAction)menuAction
+                             imageLoader:(RCTImageLoader *)imageLoader
 {
   NSString *menuId = dict[@"menuId"];
-  NSString *title = dict[@"title"];
-  NSString *sfSymbolName = dict[@"sfSymbolName"];
-  NSString *xcassetName = dict[@"xcassetName"];
 
-  UIImage *image = nil;
-  if (sfSymbolName != nil) {
-    image = [UIImage systemImageNamed:sfSymbolName];
-  } else if (xcassetName != nil) {
-    image = [UIImage imageNamed:xcassetName];
-  }
-
-  UIAction *actionElement = [UIAction actionWithTitle:title
-                                                image:image
+  UIAction *actionElement = [UIAction actionWithTitle:dict[@"title"]
+                                                image:nil
                                            identifier:nil
                                               handler:^(__kindof UIAction *_Nonnull a) {
                                                 menuAction(menuId);
                                               }];
+
+  [self resolveImageFromConfig:dict
+                   imageLoader:imageLoader
+               completionBlock:^(UIImage *img) {
+                 actionElement.image = img;
+               }];
 
   NSString *discoverabilityLabel = dict[@"discoverabilityLabel"];
   if (discoverabilityLabel != nil) {
