@@ -192,25 +192,25 @@ export function mapAndroidAppearanceToNativeProp(
     backgroundColor: processColor(backgroundColor),
     itemRippleColor: processColor(itemRippleColor),
     labelVisibilityMode,
-    itemColors: mapBottomNavItemColors(itemColors),
-    activeIndicator: mapActiveIndicator(activeIndicator),
-    typography: mapTypography(typography),
-    badge: mapBadge(badge),
+    itemColors: mapBottomNavItemColorsAndroid(itemColors),
+    activeIndicator: mapActiveIndicatorAndroid(activeIndicator),
+    typography: mapTypographyAndroid(typography),
+    badge: mapBadgeAndroid(badge),
   };
 }
 
-function mapBottomNavItemColors(colors?: BottomNavItemColorsAndroid) {
+function mapBottomNavItemColorsAndroid(colors?: BottomNavItemColorsAndroid) {
   if (!colors) return undefined;
 
   return {
-    normal: mapItemStateColors(colors.normal),
-    selected: mapItemStateColors(colors.selected),
-    focused: mapItemStateColors(colors.focused),
-    disabled: mapItemStateColors(colors.disabled),
+    normal: mapItemStateColorsAndroid(colors.normal),
+    selected: mapItemStateColorsAndroid(colors.selected),
+    focused: mapItemStateColorsAndroid(colors.focused),
+    disabled: mapItemStateColorsAndroid(colors.disabled),
   };
 }
 
-function mapItemStateColors(stateColors?: ItemStateColorsAndroid) {
+function mapItemStateColorsAndroid(stateColors?: ItemStateColorsAndroid) {
   if (!stateColors) return undefined;
 
   return {
@@ -219,7 +219,9 @@ function mapItemStateColors(stateColors?: ItemStateColorsAndroid) {
   };
 }
 
-function mapActiveIndicator(indicator?: ActiveIndicatorAppearanceAndroid) {
+function mapActiveIndicatorAndroid(
+  indicator?: ActiveIndicatorAppearanceAndroid,
+) {
   if (!indicator) return undefined;
 
   return {
@@ -228,7 +230,7 @@ function mapActiveIndicator(indicator?: ActiveIndicatorAppearanceAndroid) {
   };
 }
 
-function mapTypography(typography?: TypographyAppearanceAndroid) {
+function mapTypographyAndroid(typography?: TypographyAppearanceAndroid) {
   if (!typography) return undefined;
 
   return {
@@ -240,7 +242,7 @@ function mapTypography(typography?: TypographyAppearanceAndroid) {
   };
 }
 
-function mapBadge(badge?: BadgeAppearanceAndroid) {
+function mapBadgeAndroid(badge?: BadgeAppearanceAndroid) {
   if (!badge) return undefined;
 
   return {
