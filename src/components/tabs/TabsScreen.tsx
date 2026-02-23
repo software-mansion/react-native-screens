@@ -15,6 +15,7 @@ import TabsScreenNativeComponent, {
   type IconType,
   type NativeProps,
   type Appearance,
+  type AppearanceAndroid,
   type ItemAppearance,
   type ItemStateAppearance,
 } from '../../fabric/tabs/TabsScreenNativeComponent';
@@ -175,7 +176,7 @@ function mapAppearanceToNativeProp(
 
 export function mapAndroidAppearanceToNativeProp(
   appearance?: AndroidTabsAppearance,
-) {
+): AppearanceAndroid | undefined {
   if (!appearance) return undefined;
 
   const {
@@ -189,9 +190,9 @@ export function mapAndroidAppearanceToNativeProp(
   } = appearance;
 
   return {
-    backgroundColor: processColor(backgroundColor),
-    itemRippleColor: processColor(itemRippleColor),
-    labelVisibilityMode,
+    tabBarBackgroundColor: processColor(backgroundColor),
+    tabBarItemRippleColor: processColor(itemRippleColor),
+    tabBarItemLabelVisibilityMode: labelVisibilityMode,
     itemColors: mapBottomNavItemColorsAndroid(itemColors),
     activeIndicator: mapActiveIndicatorAndroid(activeIndicator),
     typography: mapTypographyAndroid(typography),

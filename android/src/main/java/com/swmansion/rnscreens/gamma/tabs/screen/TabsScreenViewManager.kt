@@ -268,9 +268,9 @@ class TabsScreenViewManager :
 
     private fun parseAndroidTabsAppearance(appearance: ReadableMap): AndroidTabsAppearance =
         AndroidTabsAppearance(
-            backgroundColor = appearance.getOptionalColor("backgroundColor"),
-            itemRippleColor = appearance.getOptionalColor("itemRippleColor"),
-            labelVisibilityMode = appearance.getOptionalString("labelVisibilityMode"),
+            backgroundColor = appearance.getOptionalColor("tabBarBackgroundColor"),
+            itemRippleColor = appearance.getOptionalColor("tabBarItemRippleColor"),
+            labelVisibilityMode = appearance.getOptionalString("tabBarItemLabelVisibilityMode"),
             itemColors = if (appearance.hasKey("itemColors")) parseBottomNavItemAppearanceStates(appearance.getMap("itemColors")) else null,
             activeIndicator =
                 if (appearance.hasKey(
