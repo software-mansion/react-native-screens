@@ -10,7 +10,11 @@ import { generateNextColor } from '../../../shared/utils/color-generator';
 const SCENARIO: Scenario = {
   name: 'Basic functionality',
   key: 'test-svm-configures-scroll-view',
-  details: 'Basic functionality of the ScrollViewMarker component',
+  details:
+    'Allows to test the basic functionality of ScrollViewMarker component.' +
+    'It utilizes the StackContainer, to allow for observation of edge effects' +
+    'applied to the container edges. On Android this test serves only as a setup' +
+    'for native debugging.',
   platforms: ['ios'],
   AppComponent: App,
 };
