@@ -308,21 +308,27 @@ class TabsAppearanceApplicator(
             }
 
         // Styling
+        val oldBadgeTextColor: Int =
+            lastBadgeTextColors[menuItemIndex]
+                ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
         val newBadgeTextColor =
             badgeAppearance?.textColor
                 ?: resolveColorAttr(R.attr.colorOnError)
         lastBadgeTextColors[menuItemIndex] =
-            updatePropIfChanged(lastBadgeTextColors[menuItemIndex], newBadgeTextColor) {
+            updatePropIfChanged(oldBadgeTextColor, newBadgeTextColor) {
                 badge.badgeTextColor = newBadgeTextColor
-            } as Int
+            }
 
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
+        val oldBadgeBackgroundColor: Int =
+            lastBadgeTextColors[menuItemIndex]
+                ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
         val newBadgeBackgroundColor =
             badgeAppearance?.backgroundColor
                 ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
         lastBadgeBackgroundColors[menuItemIndex] =
-            updatePropIfChanged(lastBadgeBackgroundColors[menuItemIndex], newBadgeBackgroundColor) {
+            updatePropIfChanged(oldBadgeBackgroundColor, newBadgeBackgroundColor) {
                 badge.backgroundColor = newBadgeBackgroundColor
-            } as Int
+            }
     }
 }
