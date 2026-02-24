@@ -56,8 +56,8 @@ function App() {
       tabScreenProps: {
         tabKey: 'Tab1',
         title: 'Tab 1',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'sun.max',
           },
@@ -73,8 +73,8 @@ function App() {
       tabScreenProps: {
         tabKey: 'Tab2',
         title: 'Tab 2',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'snow',
           },

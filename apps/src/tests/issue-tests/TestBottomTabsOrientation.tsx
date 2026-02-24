@@ -81,27 +81,27 @@ function makeTabConfigs(
         tabKey: 'Auto',
         title: 'Auto',
         isFocused: true,
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'house.fill',
           },
-          android: {
+          selectedIcon: {
+            type: 'sfSymbol',
+            name: 'house.fill',
+          },
+          orientation: tabsOrientations.home.tabScreen,
+        },
+        android: {
+          icon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
+          selectedIcon: {
             type: 'imageSource',
             imageSource: require('../../../assets/variableIcons/icon_fill.png'),
           },
         },
-        selectedIcon: {
-          ios: {
-            type: 'sfSymbol',
-            name: 'house.fill',
-          },
-          android: {
-            type: 'imageSource',
-            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
-          },
-        },
-        orientation: tabsOrientations.home.tabScreen,
       },
       component: tabsOrientations.home.stackScreen
         ? () => <TabElement orientation={tabsOrientations.home.stackScreen} />
@@ -111,28 +111,27 @@ function makeTabConfigs(
       tabScreenProps: {
         tabKey: 'Portrait',
         title: 'Portrait',
-        tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'templateSource',
             templateSource: require('../../../assets/variableIcons/icon.png'),
           },
-          android: {
-            type: 'drawableResource',
-            name: 'sym_call_missed',
-          },
-        },
-        selectedIcon: {
-          ios: {
+          selectedIcon: {
             type: 'templateSource',
             templateSource: require('../../../assets/variableIcons/icon_fill.png'),
           },
-          android: {
+          orientation: tabsOrientations.portrait.tabScreen,
+        },
+        android: {
+          icon: {
+            type: 'drawableResource',
+            name: 'sym_call_missed',
+          },
+          selectedIcon: {
             type: 'drawableResource',
             name: 'sym_call_missed',
           },
         },
-        orientation: tabsOrientations.portrait.tabScreen,
       },
       component: () => (
         <TabElement orientation={tabsOrientations.portrait.stackScreen} />
@@ -142,19 +141,27 @@ function makeTabConfigs(
       tabScreenProps: {
         tabKey: 'Landscape',
         title: 'Landscape',
-        icon: {
-          shared: {
+        ios: {
+          icon: {
             type: 'imageSource',
             imageSource: require('../../../assets/variableIcons/icon.png'),
           },
+          selectedIcon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon_fill.png'),
+          },
+          orientation: tabsOrientations.landscape.tabScreen,
         },
-        selectedIcon: {
-          shared: {
+        android: {
+          icon: {
+            type: 'imageSource',
+            imageSource: require('../../../assets/variableIcons/icon.png'),
+          },
+          selectedIcon: {
             type: 'imageSource',
             imageSource: require('../../../assets/variableIcons/icon_fill.png'),
           }
         },
-        orientation: tabsOrientations.landscape.tabScreen,
       },
       component: () => (
         <TabElement orientation={tabsOrientations.landscape.stackScreen} />

@@ -20,7 +20,7 @@ const ICON = require('../../../assets/variableIcons/globe_oversized.png');
 function makeTab(title: string) {
   return function Tab() {
     return (
-      <CenteredLayoutView style={{backgroundColor: Colors.PurpleLight60}}>
+      <CenteredLayoutView style={{ backgroundColor: Colors.PurpleLight60 }}>
         <Text>{title}</Text>
       </CenteredLayoutView>
     );
@@ -32,8 +32,14 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab1',
       title: 'Tab 1',
-      icon: {
-        shared: {
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: ICON,
+        },
+      },
+      android: {
+        icon: {
           type: 'imageSource',
           imageSource: ICON,
         },
@@ -45,8 +51,14 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       title: 'Tab 2',
-      icon: {
-        shared: {
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: ICON,
+        },
+      },
+      android: {
+        icon: {
           type: 'imageSource',
           imageSource: ICON,
         },
@@ -58,7 +70,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab3',
       title: 'Tab 3',
-      systemItem: 'search',
+      ios: {
+        systemItem: 'search',
+      },
     },
     component: makeTab('Tab 3'),
   },

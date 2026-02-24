@@ -204,8 +204,8 @@ function TabsStackComponent() {
       tabScreenProps: {
         tabKey: 'main',
         title: 'Main',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'house',
           },
@@ -217,8 +217,8 @@ function TabsStackComponent() {
       tabScreenProps: {
         tabKey: 'another',
         title: 'Another',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'ellipsis',
           },
@@ -230,13 +230,13 @@ function TabsStackComponent() {
       tabScreenProps: {
         tabKey: 'examples',
         title: 'Search',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'magnifyingglass',
           },
+          systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
         },
-        systemItem: searchBarConfig.useSystemItem ? 'search' : undefined,
       },
       component: () => ExamplesStackComponent({ showMenu: false }),
     },
