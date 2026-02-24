@@ -601,7 +601,8 @@ export interface TabsScreenProps {
    * @summary Specifies the standard tab bar appearance.
    *
    * Allows to customize the appearance depending on the tab bar item state
-   * (normal, selected, focused, disabled). Configuration for the Bottom Navigation View.
+   * (normal, selected, focused, disabled). Configuration for the Bottom Navigation View
+   * is determined by the currently active TabScreen.
    *
    * @platform android
    */
