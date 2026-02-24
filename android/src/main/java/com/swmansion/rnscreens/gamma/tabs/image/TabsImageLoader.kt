@@ -16,7 +16,7 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.CloseableStaticBitmap
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.swmansion.rnscreens.gamma.tabs.TabsScreen
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import java.util.Locale
 
 internal fun loadTabImage(

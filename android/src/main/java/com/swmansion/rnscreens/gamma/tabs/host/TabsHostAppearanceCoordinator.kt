@@ -1,10 +1,12 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.size
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 
 class TabsHostAppearanceCoordinator(
     context: ContextThemeWrapper,
