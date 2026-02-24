@@ -1,3 +1,3 @@
 export type * from './ScrollViewMarker.types';
 
-export { ScrollViewMarker } from './ScrollViewMarker';
+export { default as ScrollViewMarker } from './ScrollViewMarker';

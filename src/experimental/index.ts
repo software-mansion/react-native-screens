@@ -13,4 +13,4 @@ export { default as Stack } from '../components/gamma/stack';
 export { default as Split } from '../components/gamma/split';
 export { default as SafeAreaView } from '../components/safe-area/SafeAreaView';
 
-export { ScrollViewMarker } from '../components/gamma/scroll-view-marker/ScrollViewMarker';
+export { default as ScrollViewMarker } from '../components/gamma/scroll-view-marker/ScrollViewMarker';
