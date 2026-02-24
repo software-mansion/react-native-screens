@@ -196,7 +196,7 @@ export interface BadgeAppearanceAndroid {
   textColor?: ColorValue;
 }
 
-export interface AndroidTabsAppearance {
+export interface TabsAppearanceAndroid {
   /**
    * @summary Specifies the background color for the entire tab bar.
    *
@@ -597,7 +597,7 @@ export interface TabsScreenProps {
    *
    * @platform android
    */
-  standardAppearanceAndroid?: AndroidTabsAppearance;
+  standardAppearanceAndroid?: TabsAppearanceAndroid;
   // #endregion Android-only
 
   // #region iOS-only

@@ -25,7 +25,7 @@ import type {
   TabsScreenItemStateAppearance,
   TabsScreenProps,
   EmptyObject,
-  AndroidTabsAppearance,
+  TabsAppearanceAndroid,
   BottomNavItemColorsAndroid,
   ItemStateColorsAndroid,
   ActiveIndicatorAppearanceAndroid,
@@ -175,7 +175,7 @@ function mapAppearanceToNativeProp(
 }
 
 export function mapAndroidAppearanceToNativeProp(
-  appearance?: AndroidTabsAppearance,
+  appearance?: TabsAppearanceAndroid,
 ): AppearanceAndroid | undefined {
   if (!appearance) return undefined;
 

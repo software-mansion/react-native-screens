@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AndroidTabsAppearance, enableFreeze } from 'react-native-screens';
+import { TabsAppearanceAndroid, enableFreeze } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -16,7 +16,7 @@ import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/pr
 enableFreeze(true);
 internalEnableDetailedBottomTabsLogging();
 
-const DEFAULT_APPEARANCE_ANDROID: AndroidTabsAppearance = {
+const DEFAULT_APPEARANCE_ANDROID: TabsAppearanceAndroid = {
   backgroundColor: Colors.NavyLight100,
   itemRippleColor: Colors.WhiteTransparentDark,
   labelVisibilityMode: 'auto',
