@@ -28,16 +28,19 @@ internal class ScreensCoordinatorLayout(
 
     // We override dispatchApplyWindowInsets to ensure correct order and flow of inset consumption.
     override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
-        val appBarLayout = getChildAt(1)
-        val screen = getChildAt(0)
+        val maybeAppBarLayout = getChildAt(1)
+        val maybeScreen = getChildAt(0)
 
         // We use custom logic only in regular stack screen (and not e.g. in form sheets).
         val shouldUseCustomDispatch =
-            childCount == 2 && screen is Screen && appBarLayout is AppBarLayout
+            childCount == 2 && maybeScreen is Screen && maybeAppBarLayout is AppBarLayout
 
         if (!shouldUseCustomDispatch) {
             return super.dispatchApplyWindowInsets(insets)
         }
+
+        val appBarLayout: AppBarLayout = maybeAppBarLayout
+        val screen: Screen = maybeScreen
 
         // First, we dispatch insets to AppBarLayout and possibly CustomToolbar.
         appBarLayout.dispatchApplyWindowInsets(insets)

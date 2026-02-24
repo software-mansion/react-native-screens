@@ -30,19 +30,10 @@ open class CustomToolbar(
 ) : Toolbar(context),
     OnApplyWindowInsetsListener,
     View.OnApplyWindowInsetsListener {
-    // Due to edge-to-edge enforcement starting from Android SDK 35, isTopInsetEnabled prop has been
-    // removed. Previously, shouldAvoidDisplayCutout, shouldApplyTopInset would directly return the
-    // value of isTopInsetEnabled. Now, the values of shouldAvoidDisplayCutout, shouldApplyTopInse
-    // are hard-coded to true (which was the value used previously for isTopInsetEnabled when
-    // edge-to-edge was enabled: https://github.com/software-mansion/react-native-screens/pull/2464/files#diff-bd1164595b04f44490738b8183f84a625c0e7552a4ae70bfefcdf3bca4d37fc7R34).
-    private val shouldAvoidDisplayCutout = true
-
-    private val shouldApplyTopInset = true
-
     private var lastInsets = Insets.NONE
 
     // As CustomToolbar is responsible for handling insets in Stack, we store what insets should
-    // be passed to Screen in this property. It's used by ScreensCoordinatorLayout in overriden
+    // be passed to Screen in this property. It's used by ScreensCoordinatorLayout in overridden
     // dispatchApplyWindowInsets.
     internal var screenInsets = WindowInsetsCompat.CONSUMED
 
@@ -68,6 +59,18 @@ open class CustomToolbar(
         // resulting in correct height determination from the beginning.
         // More details: https://github.com/software-mansion/react-native-screens-labs/issues/564.
         menu
+
+        // In order to consume display cutout insets on API 27-29, we can't use root window insets
+        // aware WindowInsetsCompat because they always return display cutout insets from root view.
+        // That's why we manually convert platform WindowInsets to WindowInsetsCompat (without
+        // supplying information about the view that is used by WindowInsetsCompat to find the root
+        // view) in View's OnApplyWindowInsetsListener, use ViewCompat listener and return insets
+        // converted back to platform WindowInsets.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+            setOnApplyWindowInsetsListener(this)
+        } else {
+            ViewCompat.setOnApplyWindowInsetsListener(this, this)
+        }
     }
 
     private val layoutCallback: Choreographer.FrameCallback =
@@ -83,20 +86,6 @@ open class CustomToolbar(
                 layout(left, top, right, bottom)
             }
         }
-
-    init {
-        // In order to consume display cutout insets on API 27-29, we can't use root window insets
-        // aware WindowInsetsCompat because they always return display cutout insets from root view.
-        // That's why we manually convert platform WindowInsets to WindowInsetsCompat (without
-        // supplying information about the view that is used by WindowInsetsCompat to find the root
-        // view) in View's OnApplyWindowInsetsListener, use ViewCompat listener and return insets
-        // converted back to platform WindowInsets.
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
-            setOnApplyWindowInsetsListener(this)
-        } else {
-            ViewCompat.setOnApplyWindowInsetsListener(this, this)
-        }
-    }
 
     override fun requestLayout() {
         super.requestLayout()
@@ -184,7 +173,7 @@ open class CustomToolbar(
         val verticalInsets =
             Insets.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
+                max(cutoutInsets.top, systemBarInsets.top),
                 0,
                 max(cutoutInsets.bottom, 0),
             )
@@ -206,12 +195,17 @@ open class CustomToolbar(
                     .Builder(unhandledInsets)
                     .setInsets(
                         WindowInsetsCompat.Type.displayCutout(),
-                        Insets.of(cutoutInsets.left, 0, cutoutInsets.right, cutoutInsets.bottom),
+                        Insets.of(
+                            cutoutInsets.left,
+                            0,
+                            cutoutInsets.right,
+                            cutoutInsets.bottom,
+                        ),
                     ).setInsets(
                         WindowInsetsCompat.Type.systemBars(),
                         Insets.of(
                             systemBarInsets.left,
-                            if (shouldApplyTopInset) 0 else systemBarInsets.top,
+                            0,
                             systemBarInsets.right,
                             systemBarInsets.bottom,
                         ),
@@ -234,7 +228,7 @@ open class CustomToolbar(
                     WindowInsetsCompat.Type.systemBars(),
                     Insets.of(
                         0,
-                        if (shouldApplyTopInset) 0 else systemBarInsets.top,
+                        0,
                         0,
                         systemBarInsets.bottom,
                     ),
@@ -284,6 +278,6 @@ open class CustomToolbar(
     }
 
     private fun requestForceShadowStateUpdateOnLayout() {
-        isForceShadowStateUpdateOnLayoutRequested = shouldAvoidDisplayCutout
+        isForceShadowStateUpdateOnLayoutRequested = true
     }
 }
