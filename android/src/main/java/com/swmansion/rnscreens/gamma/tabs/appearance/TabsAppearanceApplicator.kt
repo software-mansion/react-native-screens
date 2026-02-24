@@ -216,14 +216,14 @@ class TabsAppearanceApplicator(
                 ?.fontSizeSmall
                 ?.takeIf { it > 0 }
                 ?.let { PixelUtil.toPixelFromSP(it) }
-                ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+                ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
         val newLargeFontSize =
             tabBarAppearance
                 ?.typography
                 ?.fontSizeLarge
                 ?.takeIf { it > 0 }
                 ?.let { PixelUtil.toPixelFromSP(it) }
-                ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+                ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
 
         for (menuItem in bottomNavigationMenuView.children) {
             val largeLabel =
@@ -311,7 +311,7 @@ class TabsAppearanceApplicator(
         // Styling
         val oldBadgeTextColor: Int =
             lastBadgeTextColors[menuItemIndex]
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
+                ?: resolveColorAttr(R.attr.colorOnError)
         val newBadgeTextColor =
             badgeAppearance?.textColor
                 ?: resolveColorAttr(R.attr.colorOnError)
