@@ -68,7 +68,9 @@ export default function BottomTabsComponent() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarMinimizeBehavior={config.tabBarMinimizeBehavior}
+        ios={{
+          tabBarMinimizeBehavior: config.tabBarMinimizeBehavior,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

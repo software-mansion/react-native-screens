@@ -322,8 +322,10 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarTintColor={Colors.YellowLight100}
-        tabBarMinimizeBehavior="onScrollDown"
+        ios={{
+          tabBarTintColor: Colors.YellowLight100,
+          tabBarMinimizeBehavior: 'onScrollDown',
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

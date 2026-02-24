@@ -96,7 +96,9 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarControllerMode={controllerMode}
+        ios={{
+          tabBarControllerMode: controllerMode,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

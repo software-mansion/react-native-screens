@@ -228,13 +228,13 @@ function Tabs() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarMinimizeBehavior={bottomAccessoryConfig.tabBarMinimizeBehavior}
-        bottomAccessory={
-          bottomAccessoryConfig.shown
+        ios={{
+          tabBarMinimizeBehavior: bottomAccessoryConfig.tabBarMinimizeBehavior,
+          bottomAccessory: bottomAccessoryConfig.shown
             ? environment =>
                 getBottomAccessory(environment, bottomAccessoryConfig)
-            : undefined
-        }
+            : undefined,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );
