@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.tabs.host
+package com.swmansion.rnscreens.gamma.tabs.appearance
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
@@ -15,7 +15,7 @@ import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
-import com.swmansion.rnscreens.gamma.tabs.appearance.BadgeAppearance
+import com.swmansion.rnscreens.gamma.tabs.host.TabsHost
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values

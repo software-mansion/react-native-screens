@@ -20,6 +20,7 @@ import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenDelegate
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
