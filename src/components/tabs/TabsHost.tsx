@@ -8,9 +8,9 @@ import {
   findNodeHandle,
   type NativeSyntheticEvent,
 } from 'react-native';
-import BottomTabsNativeComponent, {
-  type NativeProps as BottomTabsNativeComponentProps,
-} from '../../fabric/bottom-tabs/BottomTabsNativeComponent';
+import TabsHostNativeComponent, {
+  type NativeProps as TabsHostNativeComponentProps,
+} from '../../fabric/tabs/TabsHostNativeComponent';
 import featureFlags from '../../flags';
 import type { TabsHostProps, NativeFocusChangeEvent } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
@@ -35,7 +35,7 @@ function TabsHost(props: TabsHostProps) {
   } = props;
 
   const componentNodeRef =
-    React.useRef<React.Component<BottomTabsNativeComponentProps>>(null);
+    React.useRef<React.Component<TabsHostNativeComponentProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 
   React.useEffect(() => {
@@ -63,7 +63,7 @@ function TabsHost(props: TabsHostProps) {
     useState<TabsAccessoryEnvironment>('regular');
 
   return (
-    <BottomTabsNativeComponent
+    <TabsHostNativeComponent
       style={[styles.fillParent, styles.forceLtrForIOS26]}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={experimentalControlNavigationStateInJS}
@@ -92,7 +92,7 @@ function TabsHost(props: TabsHostProps) {
             {bottomAccessory(bottomAccessoryEnvironment)}
           </TabsAccessory>
         ))}
-    </BottomTabsNativeComponent>
+    </TabsHostNativeComponent>
   );
 }
 

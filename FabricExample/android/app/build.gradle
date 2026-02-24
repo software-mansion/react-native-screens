@@ -72,6 +72,10 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+def isGammaEnabled() {
+    return project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "true"
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -84,6 +88,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         testBuildType System.getProperty('testBuildType', 'release') // Detox
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox
     }

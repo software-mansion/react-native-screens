@@ -7,8 +7,8 @@
 #import <React/RCTViewManager.h>
 #endif
 
-#import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
+#import "RNSTabsSpecialEffectsSupporting.h"
 
 #if !TARGET_OS_TV
 #import "RNSOrientationProviding.h"
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSNavigationController : UINavigationController <
                                          RNSViewControllerDelegate,
-                                         RNSBottomTabsSpecialEffectsSupporting
+                                         RNSTabsSpecialEffectsSupporting
 #if !TARGET_OS_TV
                                          ,
                                          RNSOrientationProviding

@@ -223,6 +223,42 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     #endif
   }
 
+  ///
+  /// @brief Programmatically shows a specific column identified by its string name.
+  ///
+  /// Maps the string column name to the corresponding `UISplitViewController.Column` and calls `show(_:)`.
+  ///
+  /// @param columnName A string representing the column to show: `"primary"`, `"supplementary"`, or `"secondary"`.
+  ///
+  @objc
+  public func showColumnNamed(_ columnName: String) {
+    guard let column = splitViewColumnFromString(columnName) else {
+      assertionFailure("[RNScreens] Unknown column name: \(columnName)")
+      return
+    }
+
+    show(column)
+  }
+
+  ///
+  /// @brief Maps a string column name to its corresponding `UISplitViewController.Column` value.
+  ///
+  /// @param name The column name string: `"primary"`, `"supplementary"`, or `"secondary"`.
+  /// @return The corresponding `UISplitViewController.Column`, or `nil` if the name is not recognized.
+  ///
+  private func splitViewColumnFromString(_ name: String) -> UISplitViewController.Column? {
+    switch name {
+    case "primary":
+      return .primary
+    case "supplementary":
+      return .supplementary
+    case "secondary":
+      return .secondary
+    default:
+      return nil
+    }
+  }
+
   // MARK: ReactMountingTransactionObserving
 
   ///
@@ -505,5 +541,15 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
     if self.displayMode != displayMode {
       reactEventEmitter.emitOnDisplayModeWillChange(from: self.displayMode, to: displayMode)
     }
+  }
+
+  public func splitViewController(
+    _ svc: UISplitViewController,
+    topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
+  ) -> UISplitViewController.Column {
+    if splitViewHostComponentView.hasCustomTopColumnForCollapsing {
+      return splitViewHostComponentView.topColumnForCollapsingColumn
+    }
+    return proposedTopColumn
   }
 }

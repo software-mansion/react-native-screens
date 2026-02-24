@@ -4,6 +4,7 @@
 #import <React/RCTImageSource.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
+#import <optional>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 
@@ -34,8 +35,8 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
-UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSBottomTabsTabBarMinimizeBehavior(
-    react::RNSBottomTabsTabBarMinimizeBehavior tabBarMinimizeBehavior);
+UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
+    react::RNSTabsHostTabBarMinimizeBehavior tabBarMinimizeBehavior);
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
@@ -48,8 +49,8 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
-UITabBarControllerMode UITabBarControllerModeFromRNSBottomTabsTabBarControllerMode(
-    react::RNSBottomTabsTabBarControllerMode tabBarControllerMode);
+UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
+    react::RNSTabsHostTabBarControllerMode tabBarControllerMode);
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarControllerMode);
@@ -57,49 +58,49 @@ UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabB
 
 #endif // Check for iOS >= 18
 
-RNSBottomTabsIconType RNSBottomTabsIconTypeFromIcon(react::RNSBottomTabsScreenIconType iconType);
+RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIconType iconType);
 
-RNSBottomTabsScreenSystemItem RNSBottomTabsScreenSystemItemFromReactRNSBottomTabsScreenSystemItem(
-    react::RNSBottomTabsScreenSystemItem systemItem);
+RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
+    react::RNSTabsScreenSystemItem systemItem);
 
-UITabBarSystemItem RNSBottomTabsScreenSystemItemToUITabBarSystemItem(RNSBottomTabsScreenSystemItem systemItem);
+UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem);
 
-RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenBottomScrollEdgeEffectCppEquivalent(
-    react::RNSBottomTabsScreenBottomScrollEdgeEffect edgeEffect);
-RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenLeftScrollEdgeEffectCppEquivalent(
-    react::RNSBottomTabsScreenLeftScrollEdgeEffect edgeEffect);
-RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenRightScrollEdgeEffectCppEquivalent(
-    react::RNSBottomTabsScreenRightScrollEdgeEffect edgeEffect);
-RNSScrollEdgeEffect RNSBottomTabsScrollEdgeEffectFromBottomTabsScreenTopScrollEdgeEffectCppEquivalent(
-    react::RNSBottomTabsScreenTopScrollEdgeEffect edgeEffect);
+RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenBottomScrollEdgeEffectCppEquivalent(
+    react::RNSTabsScreenBottomScrollEdgeEffect edgeEffect);
+RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenLeftScrollEdgeEffectCppEquivalent(
+    react::RNSTabsScreenLeftScrollEdgeEffect edgeEffect);
+RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenRightScrollEdgeEffectCppEquivalent(
+    react::RNSTabsScreenRightScrollEdgeEffect edgeEffect);
+RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenTopScrollEdgeEffectCppEquivalent(
+    react::RNSTabsScreenTopScrollEdgeEffect edgeEffect);
 
-#if RNS_BOTTOM_ACCESSORY_AVAILABLE
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
-std::optional<react::RNSBottomTabsAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
-RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment);
+std::optional<react::RNSTabsBottomAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
+RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment);
 
 #if REACT_NATIVE_VERSION_MINOR >= 82
-RNSBottomTabsAccessoryEnvironment RNSBottomTabsAccessoryEnvironmentFromCppEquivalent(
-    react::RNSBottomTabsAccessoryContentEnvironment environment);
+RNSTabsBottomAccessoryEnvironment RNSTabsBottomAccessoryEnvironmentFromCppEquivalent(
+    react::RNSTabsBottomAccessoryContentEnvironment environment);
 #endif // REACT_NATIVE_VERSION_MINOR >= 82
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
-NSString *_Nullable RNSBottomTabsAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
+NSString *_Nullable RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(
     UITabAccessoryEnvironment environment);
 #endif // RCT_NEW_ARCH_ENABLED
 
-#endif // RNS_BOTTOM_ACCESSORY_AVAILABLE
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-UIUserInterfaceStyle UIUserInterfaceStyleFromBottomTabsScreenCppEquivalent(
-    react::RNSBottomTabsScreenUserInterfaceStyle userInterfaceStyle);
+UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
+    react::RNSTabsScreenUserInterfaceStyle userInterfaceStyle);
 
 RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
     const facebook::react::ImageSource *imageSource,
-    RNSBottomTabsIconType iconType);
+    RNSTabsIconType iconType);
 
-RNSOrientation RNSOrientationFromRNSBottomTabsScreenOrientation(react::RNSBottomTabsScreenOrientation orientation);
+RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenOrientation orientation);
 
 #if !TARGET_OS_TV
 UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrientation orientation);
@@ -129,6 +130,9 @@ UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisib
     react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility);
 
 std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode);
+
+std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHostProp(
+    react::RNSSplitViewHostTopColumnForCollapsing topColumnForCollapsing);
 
 RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitViewHostOrientation orientation);
 

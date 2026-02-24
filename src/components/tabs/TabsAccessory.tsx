@@ -1,5 +1,5 @@
 import React from 'react';
-import BottomTabsAccessoryNativeComponent from '../../fabric/bottom-tabs/BottomTabsAccessoryNativeComponent';
+import TabsBottomAccessoryNativeComponent from '../../fabric/tabs/TabsBottomAccessoryNativeComponent';
 import { TabsAccessoryProps } from './TabsAccessory.types';
 import { I18nManager, StyleSheet } from 'react-native';
 import { isIOS26OrHigher } from '../helpers/PlatformUtils';
@@ -9,7 +9,7 @@ import { isIOS26OrHigher } from '../helpers/PlatformUtils';
  */
 export default function TabsAccessory(props: TabsAccessoryProps) {
   return (
-    <BottomTabsAccessoryNativeComponent
+    <TabsBottomAccessoryNativeComponent
       {...props}
       collapsable={false}
       style={[
