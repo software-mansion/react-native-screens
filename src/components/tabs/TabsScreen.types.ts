@@ -113,7 +113,7 @@ export interface BottomNavItemColorsAndroid {
   selected?: ItemStateColorsAndroid;
   /**
    * Specifies the tab bar item colors when it's focused.
-   * Maps to Android `state_focused=true` (Used mostly for Keyboard navigation).
+   * Maps to Android `state_focused=true` (Used mostly for keyboard navigation).
    *
    * @platform android
    */
