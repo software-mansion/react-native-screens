@@ -228,7 +228,6 @@ export interface AndroidTabsAppearance {
    * @platform android
    */
   labelVisibilityMode?: TabBarItemLabelVisibilityMode;
-
   /**
    * @summary Specifies the colors of the icon and title for different item states.
    *
