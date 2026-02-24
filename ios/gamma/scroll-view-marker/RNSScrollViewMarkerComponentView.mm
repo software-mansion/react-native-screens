@@ -108,8 +108,11 @@ namespace react = facebook::react;
   [seekingAncestor registerDescendantScrollView:scrollView fromMarker:self];
 }
 
-- (void)configureScrollView:(nonnull UIScrollView *)scrollView
+- (void)configureScrollView:(nullable UIScrollView *)scrollView
 {
+  if (scrollView == nil) {
+    return;
+  }
   [RNSScrollEdgeEffectApplicator applyToScrollView:scrollView withProvider:self];
 }
 
