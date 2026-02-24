@@ -156,7 +156,7 @@ export interface TypographyAppearanceAndroid {
    */
   fontFamily?: TextStyle['fontFamily'];
   /**
-   * @summary Specifies the font size used for the title unselected tab bar items.
+   * @summary Specifies the font size used for the title of unselected tab bar items.
    *
    * The size is represented in scale-independent pixels (sp).
    *
