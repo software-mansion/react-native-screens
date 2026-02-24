@@ -19,7 +19,8 @@ class StackHost(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     UIManagerListener,
-    StackContainerDelegate {
+    StackContainerDelegate,
+    StackContainerParent {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this))
     private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
@@ -88,7 +89,7 @@ class StackHost(
         }
     }
 
-    override fun onScreenDismiss(stackScreen: StackScreen) {
+    override fun onScreenDismissCommitted(stackScreen: StackScreen) {
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
             stackScreen.isNativelyDismissed = true
         }
@@ -110,6 +111,16 @@ class StackHost(
         b: Int,
     ) {
         container.layout(l, t, r, b)
+    }
+
+    override fun layoutContainerNow() {
+        if (measuredWidth != container.measuredWidth || measuredHeight != container.measuredHeight) {
+            container.measure(
+                MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY),
+            )
+        }
+        container.layout(left, top, right, bottom)
     }
 
     override fun didMountItems(uiManager: UIManager) {

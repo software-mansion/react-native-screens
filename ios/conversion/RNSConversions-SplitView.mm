@@ -145,6 +145,24 @@ RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitView
   }
 }
 
+std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHostProp(
+    facebook::react::RNSSplitViewHostTopColumnForCollapsing topColumnForCollapsing)
+{
+  using enum facebook::react::RNSSplitViewHostTopColumnForCollapsing;
+
+  switch (topColumnForCollapsing) {
+    case Primary:
+      return UISplitViewControllerColumnPrimary;
+    case Supplementary:
+      return UISplitViewControllerColumnSupplementary;
+    case Secondary:
+      return UISplitViewControllerColumnSecondary;
+    case Default:
+    default:
+      return std::nullopt;
+  }
+}
+
 #pragma mark SplitViewScreen props
 
 RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(

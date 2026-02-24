@@ -259,6 +259,7 @@ namespace react = facebook::react;
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
   _sinkEventsPanGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
+  _iosPreventReattachmentOfDismissedScreens = YES;
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
@@ -867,7 +868,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)rnscreens_disableInteractions
 {
   // When transitioning between screens, disable interactions on stack subview which wraps the screens
-  // and sink all gesture events. This should work for nested stacks and stack inside bottom tabs, inside stack.
+  // and sink all gesture events. This should work for nested stacks and stack inside tabs, inside stack.
   self.subviews[0].userInteractionEnabled = NO;
   [self addGestureRecognizer:_sinkEventsPanGestureRecognizer];
 }
@@ -1560,6 +1561,7 @@ Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(iosPreventReattachmentOfDismissedScreens, BOOL);
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

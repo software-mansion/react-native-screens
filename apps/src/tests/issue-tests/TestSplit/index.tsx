@@ -5,6 +5,7 @@ import SplitBaseApp from './SplitBaseApp';
 import SplitOrientation from './SplitOrientation';
 import SplitPerfApp from './SplitPerfApp';
 import SplitPrimaryBackgroundStyle from './SplitPrimaryBackgroundStyle';
+import SplitShowColumn from './SplitShowColumn';
 import {
   SplitWithNestedStack,
   SplitWithNativeStackBase,

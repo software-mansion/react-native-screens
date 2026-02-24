@@ -1,10 +1,24 @@
 name: Test iOS e2e - new architecture
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/ios-e2e-test-fabric.yml'
+      - 'RNScreens.podspec'
+      - 'package.json'
+      - 'ios/**'
+      - 'common/**'
+      - 'FabricExample/**'
+      - 'src/**'
+  push:
+    branches:
+      - main
   workflow_dispatch:
 jobs:
   test:
-    runs-on: macos-14
-    timeout-minutes: 60
+    runs-on: macos-26
+    timeout-minutes: 90
     env:
       WORKING_DIRECTORY: FabricExample
     concurrency:
@@ -21,7 +35,7 @@ jobs:
       - name: Use latest stable Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.1'
+          xcode-version: '26.2'
       - name: Get Xcode version
         run: xcodebuild -version
       - name: Install AppleSimulatorUtils

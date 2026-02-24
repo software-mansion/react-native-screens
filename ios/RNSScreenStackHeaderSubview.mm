@@ -27,8 +27,8 @@ namespace react = facebook::react;
 #if !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   CGSize _lastReactFrameSize;
 #endif // !RCT_NEW_ARCH_ENABLED && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  // TODO: Refactor this, so that we don't keep reference here at all.
-  // Currently this likely creates retain cycle between subview & the bar button item.
+  // This is a strong reference to UIBarButtonItem which creates a retain cycle.
+  // The cycle is cleared via `invalidateUIBarButtonItem` method, called by `invalidate` callback.
   UIBarButtonItem *_barButtonItem;
   BOOL _hidesSharedBackground;
 }
@@ -223,6 +223,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 #endif // RCT_NEW_ARCH_ENABLED
 
+// Used by both Fabric & Paper
+- (void)invalidate
+{
+  [self invalidateUIBarButtonItem];
+}
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 // Starting from iOS 26, to center left and right subviews inside liquid glass backdrop,
@@ -293,6 +299,15 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   return _barButtonItem;
+}
+
+- (void)invalidateUIBarButtonItem
+{
+  if (_type != RNSScreenStackHeaderSubviewTypeLeft && _type != RNSScreenStackHeaderSubviewTypeRight) {
+    return;
+  }
+
+  _barButtonItem = nil;
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
