@@ -3,10 +3,13 @@ package com.swmansion.rnscreens.gamma.tabs.appearance
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.drawable.StateListDrawable
+import android.graphics.Color
+import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -65,9 +68,18 @@ class TabsAppearanceApplicator(
         return newValue
     }
 
-    private fun resolveColorAttr(attr: Int): Int {
+    private fun resolveColorAttr(
+        attr: Int,
+        @ColorInt defaultColor: Int = Color.TRANSPARENT,
+    ): Int {
         val typedValue = TypedValue()
-        context.theme.resolveAttribute(attr, typedValue, true)
+        val resolved = context.theme.resolveAttribute(attr, typedValue, true)
+
+        if (!resolved) {
+            Log.w(TAG, "[RNScreens] Failed to resolve color attribute. Falling back to Color.TRANSPARENT.")
+            return defaultColor
+        }
+
         return typedValue.data
     }
 
@@ -331,5 +343,9 @@ class TabsAppearanceApplicator(
             updatePropIfChanged(oldBadgeBackgroundColor, newBadgeBackgroundColor) {
                 badge.backgroundColor = newBadgeBackgroundColor
             }
+    }
+
+    companion object {
+        const val TAG = "TabsAppearanceApplicator"
     }
 }
