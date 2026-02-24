@@ -13,6 +13,12 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.tabs.ActiveIndicatorAppearance
+import com.swmansion.rnscreens.gamma.tabs.AndroidTabsAppearance
+import com.swmansion.rnscreens.gamma.tabs.BadgeAppearance
+import com.swmansion.rnscreens.gamma.tabs.BottomNavItemColors
+import com.swmansion.rnscreens.gamma.tabs.ItemStateColors
+import com.swmansion.rnscreens.gamma.tabs.TypographyAppearance
 import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidDisappearEvent

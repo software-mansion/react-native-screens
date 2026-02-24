@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
+import com.swmansion.rnscreens.gamma.tabs.AndroidTabsAppearance
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates

@@ -15,6 +15,7 @@ import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import com.swmansion.rnscreens.gamma.tabs.BadgeAppearance
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
