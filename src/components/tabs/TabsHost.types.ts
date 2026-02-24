@@ -11,15 +11,19 @@ export type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
-// iOS-specific
+// #region iOS-specific helpers
+
 export type TabBarMinimizeBehavior =
   | 'automatic'
   | 'never'
   | 'onScrollDown'
   | 'onScrollUp';
 
-// iOS-specific
 export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
+
+// #endregion iOS-specific helpers
+
+// #region General helpers
 
 export type TabsHostNativeContainerStyleProps = {
   /**
@@ -30,41 +34,11 @@ export type TabsHostNativeContainerStyleProps = {
   backgroundColor?: ColorValue;
 };
 
-export interface TabsHostProps {
-  // #region Events
-  /**
-   * A callback that gets invoked when user requests change of focused tab screen.
-   *
-   * @platform android, ios
-   */
-  onNativeFocusChange?: (
-    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
-  ) => void;
-  // #endregion Events
+// #endregion General helpers
 
-  // #region General
-  children?: ViewProps['children'];
-  /**
-   * @summary Hides the tab bar.
-   *
-   * @default false
-   *
-   * @platform android, ios
-   */
-  tabBarHidden?: boolean;
-  /**
-   * @summary Allows for native container view customization.
-   *
-   * On Android, style is applied to `FrameLayout` that wraps currently focused screen
-   * and `BottomNavigationView`. On iOS, style is applied to `UITabBarController`'s
-   * view.
-   *
-   * @platform android, ios
-   */
-  nativeContainerStyle?: TabsHostNativeContainerStyleProps;
-  // #endregion General
+// #region Platform Interfaces
 
-  // #region iOS-only
+export interface TabsHostIOSProps {
   /**
    * @summary Specifies the color used for selected tab's text and icon color.
    *
@@ -151,7 +125,36 @@ export interface TabsHostProps {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode;
-  // #endregion iOS-only
+}
+
+// Predefined for the future use-cases.
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TabsHostAndroidProps {}
+
+// #endregion Platform Interfaces
+
+export interface TabsHostBaseProps {
+  // #region General
+  children?: ViewProps['children'];
+  /**
+   * @summary Hides the tab bar.
+   *
+   * @default false
+   *
+   * @platform android, ios
+   */
+  tabBarHidden?: boolean;
+  /**
+   * @summary Allows for native container view customization.
+   *
+   * On Android, style is applied to `FrameLayout` that wraps currently focused screen
+   * and `BottomNavigationView`. On iOS, style is applied to `UITabBarController`'s
+   * view.
+   *
+   * @platform android, ios
+   */
+  nativeContainerStyle?: TabsHostNativeContainerStyleProps;
+  // #endregion General
 
   // #region Experimental support
   /**
@@ -172,4 +175,20 @@ export interface TabsHostProps {
    */
   experimentalControlNavigationStateInJS?: boolean;
   // #endregion Experimental support
+
+  // #region Events
+  /**
+   * A callback that gets invoked when user requests change of focused tab screen.
+   *
+   * @platform android, ios
+   */
+  onNativeFocusChange?: (
+    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
+  ) => void;
+  // #endregion Events
+}
+
+export interface TabsHostProps extends TabsHostBaseProps {
+  ios?: TabsHostIOSProps;
+  android?: TabsHostAndroidProps;
 }

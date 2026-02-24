@@ -1,21 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  findNodeHandle,
-  type NativeSyntheticEvent,
-} from 'react-native';
-import TabsHostNativeComponent, {
-  type NativeProps as TabsHostNativeComponentProps,
-} from '../../fabric/tabs/TabsHostNativeComponent';
-import featureFlags from '../../flags';
-import type { TabsHostProps, NativeFocusChangeEvent } from './TabsHost.types';
+import { Platform, StyleSheet } from 'react-native';
+import TabsHostNativeComponent from '../../fabric/tabs/TabsHostNativeComponent';
+import type { TabsHostProps } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import TabsAccessory from './TabsAccessory';
 import { TabsAccessoryEnvironment } from './TabsAccessory.types';
 import TabsAccessoryContent from './TabsAccessoryContent';
+import { useTabsHost } from './useTabsHost';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -23,39 +16,14 @@ import TabsAccessoryContent from './TabsAccessoryContent';
 function TabsHost(props: TabsHostProps) {
   bottomTabsDebugLog(`TabsHost render`);
 
+  // android props are safely dropped
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { ios, android, nativeContainerStyle, ...baseProps } = props;
   const {
-    onNativeFocusChange,
-    experimentalControlNavigationStateInJS = featureFlags.experiment
-      .controlledBottomTabs,
-    bottomAccessory,
-    nativeContainerStyle,
-    ...filteredProps
-  } = props;
-
-  const componentNodeRef =
-    React.useRef<React.Component<TabsHostNativeComponentProps>>(null);
-  const componentNodeHandle = React.useRef<number>(-1);
-
-  React.useEffect(() => {
-    if (componentNodeRef.current != null) {
-      componentNodeHandle.current =
-        findNodeHandle(componentNodeRef.current) ?? -1;
-    } else {
-      componentNodeHandle.current = -1;
-    }
-  }, []);
-
-  const onNativeFocusChangeCallback = React.useCallback(
-    (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => {
-      bottomTabsDebugLog(
-        `TabsHost [${
-          componentNodeHandle.current ?? -1
-        }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
-      );
-      onNativeFocusChange?.(event);
-    },
-    [onNativeFocusChange],
-  );
+    componentNodeRef,
+    experimentalControlNavigationStateInJS,
+    onNativeFocusChangeCallback,
+  } = useTabsHost(baseProps);
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
     useState<TabsAccessoryEnvironment>('regular');
@@ -68,18 +36,22 @@ function TabsHost(props: TabsHostProps) {
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
-      {...filteredProps}>
-      {filteredProps.children}
-      {bottomAccessory &&
+      {...baseProps}
+      // iOS-specific
+      tabBarTintColor={ios?.tabBarTintColor}
+      tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
+      tabBarControllerMode={ios?.tabBarControllerMode}>
+      {baseProps.children}
+      {ios?.bottomAccessory &&
         Platform.OS === 'ios' &&
         parseInt(Platform.Version, 10) >= 26 &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
           <TabsAccessory>
             <TabsAccessoryContent environment="regular">
-              {bottomAccessory('regular')}
+              {ios?.bottomAccessory('regular')}
             </TabsAccessoryContent>
             <TabsAccessoryContent environment="inline">
-              {bottomAccessory('inline')}
+              {ios?.bottomAccessory('inline')}
             </TabsAccessoryContent>
           </TabsAccessory>
         ) : (
@@ -87,7 +59,7 @@ function TabsHost(props: TabsHostProps) {
             onEnvironmentChange={event => {
               setBottomAccessoryEnvironment(event.nativeEvent.environment);
             }}>
-            {bottomAccessory(bottomAccessoryEnvironment)}
+            {ios?.bottomAccessory(bottomAccessoryEnvironment)}
           </TabsAccessory>
         ))}
     </TabsHostNativeComponent>
