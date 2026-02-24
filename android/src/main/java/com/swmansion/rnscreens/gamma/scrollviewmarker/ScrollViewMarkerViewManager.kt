@@ -20,6 +20,11 @@ class ScrollViewMarkerViewManager :
 
     override fun createViewInstance(reactContext: ThemedReactContext): ScrollViewMarker = ScrollViewMarker(reactContext)
 
+    override fun onDropViewInstance(view: ScrollViewMarker) {
+        super.onDropViewInstance(view)
+        view.onViewManagerDropViewInstance()
+    }
+
     // iOS only
     override fun setLeftScrollEdgeEffect(
         view: ScrollViewMarker?,

@@ -10,8 +10,8 @@ import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.common.UIManagerType
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.gamma.helpers.getFabricUIManagerNotNull
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // Should never be inflated / restored
@@ -21,11 +21,7 @@ class ScrollViewMarker(
     UIManagerListener {
     init {
         // We're adding ourselves during a batch, therefore we expect to receive its finalization callbacks
-        val uiManager =
-            checkNotNull(UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)) {
-                "[RNScreens] UIManager must not be null."
-            }
-        uiManager.addUIManagerEventListener(this)
+        UIManagerHelper.getFabricUIManagerNotNull(reactContext).addUIManagerEventListener(this)
     }
 
     private var hasAttemptedRegistration: Boolean = false
@@ -85,4 +81,8 @@ class ScrollViewMarker(
     override fun didDispatchMountItems(uiManager: UIManager) = Unit
 
     override fun didScheduleMountItems(uiManager: UIManager) = Unit
+
+    internal fun onViewManagerDropViewInstance() {
+        UIManagerHelper.getFabricUIManagerNotNull(reactContext).removeUIManagerEventListener(this)
+    }
 }
