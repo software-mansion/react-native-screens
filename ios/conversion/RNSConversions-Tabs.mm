@@ -485,9 +485,9 @@ UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
 }
 
 UISemanticContentAttribute UISemanticContentAttributeFromTabsHostCppEquivalent(
-    react::RNSBottomTabsDirectionMode directionMode)
+    react::RNSTabsHostDirectionMode directionMode)
 {
-  using enum facebook::react::RNSBottomTabsDirectionMode;
+  using enum facebook::react::RNSTabsHostDirectionMode;
   switch (directionMode) {
     case Ltr:
       return UISemanticContentAttributeForceLeftToRight;
