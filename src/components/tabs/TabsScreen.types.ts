@@ -99,27 +99,31 @@ export interface ItemStateColorsAndroid {
 
 export interface BottomNavItemColorsAndroid {
   /**
-   * Specifies the tab bar item colors when it's enabled and unselected.
+   * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
+   * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform android
    */
   normal?: ItemStateColorsAndroid;
   /**
-   * Specifies the tab bar item colors when it's selected.
+   * Defines the colors for the tab bar item that is currently active.
+   * The color scheme is determined by the configuration of the currently selected tab itself.
    * Maps to Android `state_selected=true`.
    *
    * @platform android
    */
   selected?: ItemStateColorsAndroid;
   /**
-   * Specifies the tab bar item colors when it's focused.
+   * Defines the colors for a tab bar item when it receives focus.
+   * The color scheme is determined by the configuration of the currently selected tab.
    * Maps to Android `state_focused=true` (Used mostly for keyboard navigation).
    *
    * @platform android
    */
   focused?: ItemStateColorsAndroid;
   /**
-   * Specifies the tab bar item colors when it's disabled.
+   * Defines the colors for tab bar items when they are disabled.
+   * The color scheme is determined by the configuration of the currently selected tab.
    * Maps to Android `state_enabled=false`.
    *
    * @platform android
@@ -335,25 +339,29 @@ export interface TabsScreenAppearance {
 // iOS-specific
 export interface TabsScreenItemAppearance {
   /**
-   * Specifies the tab bar item appearance when it's enabled, unselected, and not the focused item.
+   * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
+   * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
   normal?: TabsScreenItemStateAppearance;
   /**
-   * Specifies the tab bar item appearance when it's selected.
+   * Defines the colors for the tab bar item that is currently active.
+   * The color scheme is determined by the configuration of the currently selected tab itself.
    *
    * @platform ios
    */
   selected?: TabsScreenItemStateAppearance;
   /**
-   * Specifies the tab bar item appearance when it's focused.
+   * Defines the colors for a tab bar item when it receives focus.
+   * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
   focused?: TabsScreenItemStateAppearance;
   /**
-   * Specifies the tab bar item appearance when it's disabled.
+   * Defines the colors for tab bar items when they are disabled.
+   * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
