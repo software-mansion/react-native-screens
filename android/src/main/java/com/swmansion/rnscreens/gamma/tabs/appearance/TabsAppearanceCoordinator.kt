@@ -5,7 +5,7 @@ import android.view.MenuItem
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.size
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.swmansion.rnscreens.gamma.tabs.AndroidTabsAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.AndroidTabsAppearance
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 

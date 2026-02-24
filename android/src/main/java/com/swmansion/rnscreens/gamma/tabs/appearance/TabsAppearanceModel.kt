@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.appearance
 
 internal data class AndroidTabsAppearance(
     val backgroundColor: Int? = null,
