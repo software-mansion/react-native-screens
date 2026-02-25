@@ -60,7 +60,7 @@ function Home({ navigation }: StackNavigationProp) {
           1. Tap the search bar to focus it{'\n'}
           2. Dismiss the keyboard (tap Cancel or tap away){'\n'}
           3. Tap the "Menu" button in the header{'\n'}
-          4. Bug: The keyboard opens again instead of just triggering the button
+          4. Expected: The keyboard should remain dismissed and only the button press should be handled (previously, the keyboard would reopen)
         </Text>
         <Button
           title="Open Second"
