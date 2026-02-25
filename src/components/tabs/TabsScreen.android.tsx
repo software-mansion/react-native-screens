@@ -51,7 +51,7 @@ function TabsScreen(props: TabsScreenProps) {
       {...iconProps}
       {...baseProps}
       // Android-specific
-      standardAppearanceAndroid={mapAndroidAppearanceToNativeProp(
+      standardAppearanceAndroid={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}
       specialEffects={android?.specialEffects}>
@@ -115,7 +115,7 @@ function parseIconToNativeProps(icon: PlatformIconAndroid | undefined): {
   }
 }
 
-function mapAndroidAppearanceToNativeProp(
+function mapAppearanceToNativeProps(
   appearance?: TabsAppearanceAndroid,
 ): AppearanceAndroid | undefined {
   if (!appearance) return undefined;
@@ -134,25 +134,27 @@ function mapAndroidAppearanceToNativeProp(
     tabBarBackgroundColor: processColor(backgroundColor),
     tabBarItemRippleColor: processColor(itemRippleColor),
     tabBarItemLabelVisibilityMode: labelVisibilityMode,
-    itemColors: mapBottomNavItemColorsAndroid(itemColors),
-    activeIndicator: mapActiveIndicatorAndroid(activeIndicator),
-    typography: mapTypographyAndroid(typography),
-    badge: mapBadgeAndroid(badge),
+    itemColors: mapBottomNavItemColorsToNativeProps(itemColors),
+    activeIndicator: mapActiveIndicatorToNativeProps(activeIndicator),
+    typography: mapTypographyToNativeProps(typography),
+    badge: mapBadgeToNativeProps(badge),
   };
 }
 
-function mapBottomNavItemColorsAndroid(colors?: BottomNavItemColorsAndroid) {
+function mapBottomNavItemColorsToNativeProps(
+  colors?: BottomNavItemColorsAndroid,
+) {
   if (!colors) return undefined;
 
   return {
-    normal: mapItemStateColorsAndroid(colors.normal),
-    selected: mapItemStateColorsAndroid(colors.selected),
-    focused: mapItemStateColorsAndroid(colors.focused),
-    disabled: mapItemStateColorsAndroid(colors.disabled),
+    normal: mapItemStateColorsToNativeProps(colors.normal),
+    selected: mapItemStateColorsToNativeProps(colors.selected),
+    focused: mapItemStateColorsToNativeProps(colors.focused),
+    disabled: mapItemStateColorsToNativeProps(colors.disabled),
   };
 }
 
-function mapItemStateColorsAndroid(stateColors?: ItemStateColorsAndroid) {
+function mapItemStateColorsToNativeProps(stateColors?: ItemStateColorsAndroid) {
   if (!stateColors) return undefined;
 
   return {
@@ -161,7 +163,7 @@ function mapItemStateColorsAndroid(stateColors?: ItemStateColorsAndroid) {
   };
 }
 
-function mapActiveIndicatorAndroid(
+function mapActiveIndicatorToNativeProps(
   indicator?: ActiveIndicatorAppearanceAndroid,
 ) {
   if (!indicator) return undefined;
@@ -172,7 +174,7 @@ function mapActiveIndicatorAndroid(
   };
 }
 
-function mapTypographyAndroid(typography?: TypographyAppearanceAndroid) {
+function mapTypographyToNativeProps(typography?: TypographyAppearanceAndroid) {
   if (!typography) return undefined;
 
   return {
@@ -184,7 +186,7 @@ function mapTypographyAndroid(typography?: TypographyAppearanceAndroid) {
   };
 }
 
-function mapBadgeAndroid(badge?: BadgeAppearanceAndroid) {
+function mapBadgeToNativeProps(badge?: BadgeAppearanceAndroid) {
   if (!badge) return undefined;
 
   return {
