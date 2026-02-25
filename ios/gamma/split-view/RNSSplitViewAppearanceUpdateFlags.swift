@@ -1,5 +1,5 @@
 ///
-/// @brief - A collection of flags, which can be invalidated on RNSSplitViewHostController to apply proper updates to SplitView
+/// @brief - A collection of flags, which can be invalidated on RNSSplitHostController to apply proper updates to SplitView
 ///
 struct RNSSplitViewAppearanceUpdateFlags: OptionSet {
   let rawValue: UInt8

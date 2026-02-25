@@ -12,10 +12,10 @@ namespace react = facebook::react;
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * @class RNSSplitViewHostComponentEventEmitter
+ * @class RNSSplitHostComponentEventEmitter
  * @brief Responsible for emitting events from the native SplitView to the React Element Tree.
  */
-@interface RNSSplitViewHostComponentEventEmitter : NSObject
+@interface RNSSplitHostComponentEventEmitter : NSObject
 
 /**
  * @brief Emits the onCollapse event to notify associated component instance that the SplitView has collapsed.
@@ -55,14 +55,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if defined(__cplusplus)
 
-@interface RNSSplitViewHostComponentEventEmitter ()
+@interface RNSSplitHostComponentEventEmitter ()
 
 /**
  * @brief Sets the underlying C++ event emitter used for dispatching events to React.
  *
- * @param emitter A shared pointer to a RNSSplitViewHostEventEmitter instance.
+ * @param emitter A shared pointer to a RNSSplitHostEventEmitter instance.
  */
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitViewHostEventEmitter> &)emitter;
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitHostEventEmitter> &)emitter;
 
 @end
 

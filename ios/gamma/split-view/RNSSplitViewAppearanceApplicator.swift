@@ -1,7 +1,7 @@
 ///
 /// @brief - Class responsible for applying all upcoming updates to SplitView.
 ///
-/// This class is synchronizing UISplitViewController configuration props which are affecting the SplitView appearance with props passed to RNSSplitViewHostComponentView from the ElementTree.
+/// This class is synchronizing UISplitViewController configuration props which are affecting the SplitView appearance with props passed to RNSSplitHostComponentView from the ElementTree.
 ///
 class RNSSplitViewAppearanceApplicator {
   ///
@@ -14,8 +14,8 @@ class RNSSplitViewAppearanceApplicator {
   /// @param appearanceCoordinator The coordinator which is checking whether the update needs to be applied and if so, it executes the callback passed by this class.
   ///
   public func updateAppearanceIfNeeded(
-    _ splitView: RNSSplitViewHostComponentView,
-    _ splitViewController: RNSSplitViewHostController,
+    _ splitView: RNSSplitHostComponentView,
+    _ splitViewController: RNSSplitHostController,
     _ appearanceCoordinator: RNSSplitViewAppearanceCoordinator
   ) {
     appearanceCoordinator.updateIfNeeded(.generalUpdate) { [weak self] in
@@ -53,14 +53,14 @@ class RNSSplitViewAppearanceApplicator {
   ///
   /// @brief Function that applies all basic updates.
   ///
-  /// It calls all setters on RNSSplitViewHostController that doesn't require any custom logic and conditions to be met.
+  /// It calls all setters on RNSSplitHostController that doesn't require any custom logic and conditions to be met.
   ///
   /// @param splitView The view representing JS component which is sending updates.
   /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
   ///
   private func updateSplitViewConfiguration(
-    for splitView: RNSSplitViewHostComponentView,
-    withController splitViewController: RNSSplitViewHostController
+    for splitView: RNSSplitHostComponentView,
+    withController splitViewController: RNSSplitHostController
   ) {
     // Step 1 - general settings
     splitViewController.displayModeButtonVisibility = splitView.displayModeButtonVisibility
@@ -179,8 +179,8 @@ class RNSSplitViewAppearanceApplicator {
   /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
   ///
   func updateSplitViewDisplayMode(
-    for splitView: RNSSplitViewHostComponentView,
-    withController splitViewController: RNSSplitViewHostController
+    for splitView: RNSSplitHostComponentView,
+    withController splitViewController: RNSSplitHostController
   ) {
     splitViewController.preferredDisplayMode = splitView.preferredDisplayMode
   }

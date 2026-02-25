@@ -10,7 +10,7 @@ protocol RNSSplitViewNavigationControllerViewFrameObserver: AnyObject {
 }
 
 /// @class RNSSplitViewNavigationController
-/// @brief A subclass of UINavigationController, creates a view that wraps view associated with RNSSplitViewScreenController.
+/// @brief A subclass of UINavigationController, creates a view that wraps view associated with RNSSplitScreenController.
 ///
 /// This subclass is responsible for tracking when the underlying view's frame origin changes,
 /// allowing for syncing the ShadowTree layout.
@@ -24,7 +24,7 @@ public class RNSSplitViewNavigationController: UINavigationController {
   ///
   /// @brief Called after the view controller’s view has been loaded.
   ///
-  /// Sets up a frame-origin Key-Value Observer to monitor view position changes and propagate them via delegate to RNSSplitViewHostController.
+  /// Sets up a frame-origin Key-Value Observer to monitor view position changes and propagate them via delegate to RNSSplitHostController.
   ///
   override public func viewDidLoad() {
     super.viewDidLoad()

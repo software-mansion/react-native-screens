@@ -1,13 +1,13 @@
 import Foundation
 import UIKit
 
-/// @class RNSSplitViewHostController
+/// @class RNSSplitHostController
 /// @brief A controller associated with the RN native component representing SplitView host.
 ///
-/// Manages a collection of RNSSplitViewScreenComponentView instances,
+/// Manages a collection of RNSSplitScreenComponentView instances,
 /// synchronizes appearance settings with props, observes component lifecycle, and emits events.
 @objc
-public class RNSSplitViewHostController: UISplitViewController, ReactMountingTransactionObserving,
+public class RNSSplitHostController: UISplitViewController, ReactMountingTransactionObserving,
   RNSOrientationProvidingSwift
 {
   private var needsChildViewControllersUpdate = false
@@ -15,11 +15,11 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   private var splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
   private var splitViewAppearanceApplicator: RNSSplitViewAppearanceApplicator
 
-  private var reactEventEmitter: RNSSplitViewHostComponentEventEmitter {
-    return splitViewHostComponentView.reactEventEmitter()
+  private var reactEventEmitter: RNSSplitHostComponentEventEmitter {
+    return splitHostComponentView.reactEventEmitter()
   }
 
-  private let splitViewHostComponentView: RNSSplitViewHostComponentView
+  private let splitHostComponentView: RNSSplitHostComponentView
 
   /// This variable is keeping the value of how many columns were set in the initial render. It's used for validation, because SplitView doesn't support changing number of columns dynamically.
   private let fixedColumnsCount: Int
@@ -41,19 +41,19 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   /// The style for the SplitView component can be passed only in the initialization method and cannot be changed dynamically.
   ///
-  /// @param splitViewHostComponentView The view managed by this controller.
+  /// @param splitHostComponentView The view managed by this controller.
   /// @param numberOfColumns Expected number of visible columns.
   ///
   @objc public init(
-    splitViewHostComponentView: RNSSplitViewHostComponentView,
+    splitHostComponentView: RNSSplitHostComponentView,
     numberOfColumns: Int
   ) {
-    self.splitViewHostComponentView = splitViewHostComponentView
+    self.splitHostComponentView = splitHostComponentView
     self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
     self.splitViewAppearanceApplicator = RNSSplitViewAppearanceApplicator()
     self.fixedColumnsCount = numberOfColumns
 
-    super.init(style: RNSSplitViewHostController.styleByNumberOfColumns(numberOfColumns))
+    super.init(style: RNSSplitHostController.styleByNumberOfColumns(numberOfColumns))
 
     delegate = self
   }
@@ -108,7 +108,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   /// It validates constraints for SplitView hierarchy and it will crash after recognizing an invalid state,
   /// e. g. dynamically changed number of columns or number of columns that isn't between defined bounds.
-  /// If SplitView constraints are met, it attaches SplitViewScreen representatives to SplitViewHost component.
+  /// If SplitView constraints are met, it attaches SplitScreen representatives to SplitHost component.
   ///
   @objc
   public func updateChildViewControllers() {
@@ -117,9 +117,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
       "[RNScreens] Child view controller must be invalidated when update is forced!")
 
     let currentColumns = filterSubviews(
-      ofType: RNSSplitViewScreenColumnType.column, in: splitViewReactSubviews)
+      ofType: RNSSplitScreenColumnType.column, in: splitViewReactSubviews)
     let currentInspectors = filterSubviews(
-      ofType: RNSSplitViewScreenColumnType.inspector, in: splitViewReactSubviews)
+      ofType: RNSSplitScreenColumnType.inspector, in: splitViewReactSubviews)
 
     validateColumns(currentColumns)
     validateInspectors(currentInspectors)
@@ -143,7 +143,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
 
   func updateSplitViewAppearanceIfNeeded() {
     splitViewAppearanceApplicator.updateAppearanceIfNeeded(
-      self.splitViewHostComponentView, self, self.splitViewAppearanceCoordinator)
+      self.splitHostComponentView, self, self.splitViewAppearanceCoordinator)
   }
 
   ///
@@ -192,15 +192,15 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   /// @brief Filters the given subviews array by a specific column type.
   ///
   /// Iterates over the provided subviews array and returns only the elements that match
-  /// the specified RNSSplitViewScreenColumnType (e.g., .column, .inspector).
+  /// the specified RNSSplitScreenColumnType (e.g., .column, .inspector).
   ///
-  /// @param type The target RNSSplitViewScreenColumnType to filter for.
-  /// @param subviews The array of RNSSplitViewScreenComponentView elements to filter.
-  /// @return A filtered array of RNSSplitViewScreenComponentView objects with the specified column type.
+  /// @param type The target RNSSplitScreenColumnType to filter for.
+  /// @param subviews The array of RNSSplitScreenComponentView elements to filter.
+  /// @return A filtered array of RNSSplitScreenComponentView objects with the specified column type.
   ///
   func filterSubviews(
-    ofType type: RNSSplitViewScreenColumnType, in subviews: [RNSSplitViewScreenComponentView]
-  ) -> [RNSSplitViewScreenComponentView] {
+    ofType type: RNSSplitScreenColumnType, in subviews: [RNSSplitScreenComponentView]
+  ) -> [RNSSplitScreenComponentView] {
     return subviews.filter { $0.columnType == type }
   }
 
@@ -281,10 +281,10 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
     validateSplitViewHierarchy()
   }
 
-  // MARK: RNSSplitViewHostOrientationProviding
+  // MARK: RNSSplitHostOrientationProviding
   @objc
   public func evaluateOrientation() -> RNSOrientationSwift {
-    return convertToSwiftEnum(splitViewHostComponentView.orientation)
+    return convertToSwiftEnum(splitHostComponentView.orientation)
   }
 
   func convertToSwiftEnum(_ orientation: RNSOrientation) -> RNSOrientationSwift {
@@ -319,9 +319,9 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   func validateSplitViewHierarchy() {
     let columns = filterSubviews(
-      ofType: RNSSplitViewScreenColumnType.column, in: splitViewReactSubviews)
+      ofType: RNSSplitScreenColumnType.column, in: splitViewReactSubviews)
     let inspectors = filterSubviews(
-      ofType: RNSSplitViewScreenColumnType.inspector, in: splitViewReactSubviews)
+      ofType: RNSSplitScreenColumnType.inspector, in: splitViewReactSubviews)
 
     validateColumns(columns)
     validateInspectors(inspectors)
@@ -330,7 +330,7 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   /// @brief Ensures that number of columns is valid and hasn't changed dynamically.
   ///
-  func validateColumns(_ columns: [RNSSplitViewScreenComponentView]) {
+  func validateColumns(_ columns: [RNSSplitScreenComponentView]) {
     assert(
       columns.count >= minNumberOfColumns
         && columns.count <= maxNumberOfColumns,
@@ -345,23 +345,23 @@ public class RNSSplitViewHostController: UISplitViewController, ReactMountingTra
   ///
   /// @brief Ensures that at most one inspector is present.
   ///
-  func validateInspectors(_ inspectors: [RNSSplitViewScreenComponentView]) {
+  func validateInspectors(_ inspectors: [RNSSplitScreenComponentView]) {
     assert(
       inspectors.count <= maxNumberOfInspectors,
       "[RNScreens] SplitView can only have \(maxNumberOfInspectors) inspector")
   }
 }
 
-extension RNSSplitViewHostController {
+extension RNSSplitHostController {
 
   ///
-  /// @brief Gets the children RNSSplitViewScreenController instances.
+  /// @brief Gets the children RNSSplitScreenController instances.
   ///
-  /// Accesses SplitView controllers associated with presented columns. It asserts that each view controller is a navigation controller and its topViewController is of type RNSSplitViewScreenController.
+  /// Accesses SplitView controllers associated with presented columns. It asserts that each view controller is a navigation controller and its topViewController is of type RNSSplitScreenController.
   ///
-  /// @return An array of RNSSplitViewScreenController corresponding to current split view columns.
+  /// @return An array of RNSSplitScreenController corresponding to current split view columns.
   ///
-  var splitViewScreenControllers: [RNSSplitViewScreenController] {
+  var splitScreenControllers: [RNSSplitScreenController] {
     return visibleColumns.compactMap { column in
       let viewController = self.viewController(for: column)
       assert(viewController != nil, "[RNScreens] viewController for column \(column) is nil.")
@@ -371,38 +371,38 @@ extension RNSSplitViewHostController {
         splitViewNavigationController != nil,
         "[RNScreens] Expected RNSSplitViewNavigationController but got \(type(of: viewController))")
 
-      let maybeSplitViewScreenController = splitViewNavigationController?.topViewController
+      let maybeSplitScreenController = splitViewNavigationController?.topViewController
       assert(
-        maybeSplitViewScreenController != nil,
-        "[RNScreens] RNSSplitViewScreenController is nil for column \(column)")
+        maybeSplitScreenController != nil,
+        "[RNScreens] RNSSplitScreenController is nil for column \(column)")
       assert(
-        maybeSplitViewScreenController is RNSSplitViewScreenController,
-        "[RNScreens] Expected RNSSplitViewScreenController but got \(type(of: maybeSplitViewScreenController))"
+        maybeSplitScreenController is RNSSplitScreenController,
+        "[RNScreens] Expected RNSSplitScreenController but got \(type(of: maybeSplitScreenController))"
       )
 
-      return maybeSplitViewScreenController as? RNSSplitViewScreenController
+      return maybeSplitScreenController as? RNSSplitScreenController
     }
   }
 
   ///
-  /// @brief Gets all React subviews of type RNSSplitViewScreenComponentView.
+  /// @brief Gets all React subviews of type RNSSplitScreenComponentView.
   ///
-  /// Accesses all the subviews from the reactSubviews collection. It asserts that each one is a RNSSplitViewScreenComponentView.
+  /// Accesses all the subviews from the reactSubviews collection. It asserts that each one is a RNSSplitScreenComponentView.
   ///
-  /// @return An array of RNSSplitViewScreenComponentView subviews which are children of the host component view.
+  /// @return An array of RNSSplitScreenComponentView subviews which are children of the host component view.
   ///
-  var splitViewReactSubviews: [RNSSplitViewScreenComponentView] {
-    return self.splitViewHostComponentView.reactSubviews().lazy.map { subview in
+  var splitViewReactSubviews: [RNSSplitScreenComponentView] {
+    return self.splitHostComponentView.reactSubviews().lazy.map { subview in
       assert(
-        subview is RNSSplitViewScreenComponentView,
-        "[RNScreens] Expected RNSSplitViewScreenComponentView but got \(type(of: subview))")
+        subview is RNSSplitScreenComponentView,
+        "[RNScreens] Expected RNSSplitScreenComponentView but got \(type(of: subview))")
 
-      return subview as! RNSSplitViewScreenComponentView
+      return subview as! RNSSplitScreenComponentView
     }
   }
 }
 
-extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameObserver {
+extension RNSSplitHostController: RNSSplitViewNavigationControllerViewFrameObserver {
 
   ///
   /// @brief Notifies that an origin of parent RNSSplitViewNavigationController frame has changed.
@@ -414,7 +414,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
   func splitViewNavCtrlViewDidChangeFrameOrigin(
     _ splitViewNavCtrl: RNSSplitViewNavigationController
   ) {
-    for controller in self.splitViewScreenControllers {
+    for controller in self.splitScreenControllers {
       controller.columnPositioningDidChangeIn(splitViewController: self)
     }
   }
@@ -424,7 +424,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
 /// allowing the project to compile and run on iOS 18 or earlier versions.
 
 #if compiler(>=6.2)
-  extension RNSSplitViewHostController {
+  extension RNSSplitHostController {
 
     ///
     /// @brief Sets up the inspector column if available.
@@ -432,9 +432,9 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
     ///
     /// Attaches a view controller for the inspector column.
     ///
-    /// @param inspectors An array of inspector-type RNSSplitViewScreenComponentView subviews.
+    /// @param inspectors An array of inspector-type RNSSplitScreenComponentView subviews.
     ///
-    func maybeSetupInspector(_ inspectors: [RNSSplitViewScreenComponentView]) {
+    func maybeSetupInspector(_ inspectors: [RNSSplitScreenComponentView]) {
       #if !os(tvOS)
         if #available(iOS 26.0, *) {
           let inspector = inspectors.first
@@ -477,7 +477,7 @@ extension RNSSplitViewHostController: RNSSplitViewNavigationControllerViewFrameO
   }
 #endif
 
-extension RNSSplitViewHostController: UISplitViewControllerDelegate {
+extension RNSSplitHostController: UISplitViewControllerDelegate {
   public func splitViewController(
     _ svc: UISplitViewController, willShow column: UISplitViewController.Column
   ) {
@@ -547,8 +547,8 @@ extension RNSSplitViewHostController: UISplitViewControllerDelegate {
     _ svc: UISplitViewController,
     topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
   ) -> UISplitViewController.Column {
-    if splitViewHostComponentView.hasCustomTopColumnForCollapsing {
-      return splitViewHostComponentView.topColumnForCollapsingColumn
+    if splitHostComponentView.hasCustomTopColumnForCollapsing {
+      return splitHostComponentView.topColumnForCollapsingColumn
     }
     return proposedTopColumn
   }

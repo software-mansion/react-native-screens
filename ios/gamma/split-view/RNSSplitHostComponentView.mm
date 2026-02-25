@@ -1,4 +1,4 @@
-#import "RNSSplitViewHostComponentView.h"
+#import "RNSSplitHostComponentView.h"
 #import <React/RCTAssert.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
@@ -7,7 +7,7 @@
 
 #import "RNSConversions.h"
 #import "RNSDefines.h"
-#import "RNSSplitViewScreenComponentView.h"
+#import "RNSSplitScreenComponentView.h"
 #import "Swift-Bridging.h"
 
 namespace react = facebook::react;
@@ -17,13 +17,13 @@ static const CGFloat epsilon = 1e-6;
 #define COLUMN_METRIC_CHANGED(OLD, NEW, PROPERTY_NAME, EPSILON) \
   (fabs((OLD).columnMetrics.PROPERTY_NAME - (NEW).columnMetrics.PROPERTY_NAME) > (EPSILON))
 
-@interface RNSSplitViewHostComponentView () <RCTMountingTransactionObserving, RCTRNSSplitViewHostViewProtocol>
+@interface RNSSplitHostComponentView () <RCTMountingTransactionObserving, RCTRNSSplitHostViewProtocol>
 @end
 
-@implementation RNSSplitViewHostComponentView {
-  RNSSplitViewHostComponentEventEmitter *_Nonnull _reactEventEmitter;
-  RNSSplitViewHostController *_Nonnull _controller;
-  NSMutableArray<RNSSplitViewScreenComponentView *> *_Nonnull _reactSubviews;
+@implementation RNSSplitHostComponentView {
+  RNSSplitHostComponentEventEmitter *_Nonnull _reactEventEmitter;
+  RNSSplitHostController *_Nonnull _controller;
+  NSMutableArray<RNSSplitScreenComponentView *> *_Nonnull _reactSubviews;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
   bool _needsSplitViewAppearanceUpdate;
@@ -46,7 +46,7 @@ static const CGFloat epsilon = 1e-6;
 {
   [self resetProps];
 
-  _reactEventEmitter = [RNSSplitViewHostComponentEventEmitter new];
+  _reactEventEmitter = [RNSSplitHostComponentEventEmitter new];
 
   _hasModifiedReactSubviewsInCurrentTransaction = false;
   _needsSplitViewAppearanceUpdate = false;
@@ -58,7 +58,7 @@ static const CGFloat epsilon = 1e-6;
 
 - (void)resetProps
 {
-  static const auto defaultProps = std::make_shared<const react::RNSSplitViewHostProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSSplitHostProps>();
   _props = defaultProps;
 
   _preferredSplitBehavior = UISplitViewControllerSplitBehaviorAutomatic;
@@ -99,8 +99,8 @@ static const CGFloat epsilon = 1e-6;
 - (int)getNumberOfColumns
 {
   int numberOfColumns = 0;
-  for (RNSSplitViewScreenComponentView *component in _reactSubviews) {
-    if (component.columnType == RNSSplitViewScreenColumnTypeColumn) {
+  for (RNSSplitScreenComponentView *component in _reactSubviews) {
+    if (component.columnType == RNSSplitScreenColumnTypeColumn) {
       numberOfColumns++;
     }
   }
@@ -115,7 +115,7 @@ static const CGFloat epsilon = 1e-6;
   if (_controller == nil) {
     int numberOfColumns = [self getNumberOfColumns];
 
-    _controller = [[RNSSplitViewHostController alloc] initWithSplitViewHostComponentView:self
+    _controller = [[RNSSplitHostController alloc] initWithSplitHostComponentView:self
                                                                          numberOfColumns:numberOfColumns];
   }
 }
@@ -124,7 +124,7 @@ static const CGFloat epsilon = 1e-6;
 {
   [self setupController];
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil while attaching to window");
-  [self requestSplitViewHostControllerForAppearanceUpdate];
+  [self requestSplitHostControllerForAppearanceUpdate];
   [self reactAddControllerToClosestParent:_controller];
 }
 
@@ -146,17 +146,17 @@ static const CGFloat epsilon = 1e-6;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
-- (nonnull NSMutableArray<RNSSplitViewScreenComponentView *> *)reactSubviews
+- (nonnull NSMutableArray<RNSSplitScreenComponentView *> *)reactSubviews
 {
   RCTAssert(
       _reactSubviews != nil,
-      @"[RNScreens] Attempt to work with non-initialized list of RNSSplitViewScreenComponentView subviews. (for: %@)",
+      @"[RNScreens] Attempt to work with non-initialized list of RNSSplitScreenComponentView subviews. (for: %@)",
       self);
   return _reactSubviews;
 }
 RNS_IGNORE_SUPER_CALL_END
 
-- (nonnull RNSSplitViewHostController *)splitViewHostController
+- (nonnull RNSSplitHostController *)splitHostController
 {
   RCTAssert(_controller != nil, @"[RNScreens] Controller must not be nil");
   return _controller;
@@ -167,13 +167,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RCTAssert(
-      [childComponentView isKindOfClass:RNSSplitViewScreenComponentView.class],
+      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
       @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
       childComponentView.class,
-      RNSSplitViewScreenComponentView.class);
+      RNSSplitScreenComponentView.class);
 
-  auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
-  childScreen.splitViewHost = self;
+  auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
+  childScreen.splitHost = self;
   [_reactSubviews insertObject:childScreen atIndex:index];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
@@ -181,12 +181,12 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RCTAssert(
-      [childComponentView isKindOfClass:RNSSplitViewScreenComponentView.class],
+      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
       @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
       childComponentView.class,
-      RNSSplitViewScreenComponentView.class);
+      RNSSplitScreenComponentView.class);
 
-  auto *childScreen = static_cast<RNSSplitViewScreenComponentView *>(childComponentView);
+  auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
   childScreen.splitViewHost = nil;
   [_reactSubviews removeObject:childScreen];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
@@ -194,7 +194,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSSplitViewHostComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSSplitHostComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
@@ -207,8 +207,8 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitViewHostProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitHostProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitHostProps>(props);
 
   if (oldComponentProps.preferredSplitBehavior != newComponentProps.preferredSplitBehavior) {
     _needsSplitViewAppearanceUpdate = true;
@@ -328,7 +328,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldComponentProps.orientation != newComponentProps.orientation) {
     _needsSplitViewOrientationUpdate = true;
-    _orientation = rnscreens::conversion::RNSOrientationFromRNSSplitViewHostOrientation(newComponentProps.orientation);
+    _orientation = rnscreens::conversion::RNSOrientationFromRNSSplitHostOrientation(newComponentProps.orientation);
   }
 
   // This flag is set to true when showsSecondaryOnlyButton prop is assigned for the first time.
@@ -390,14 +390,14 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super updateEventEmitter:eventEmitter];
   [_reactEventEmitter
-      updateEventEmitter:std::static_pointer_cast<const react::RNSSplitViewHostEventEmitter>(eventEmitter)];
+      updateEventEmitter:std::static_pointer_cast<const react::RNSSplitHostEventEmitter>(eventEmitter)];
 }
 
 #pragma mark - Commands
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
 {
-  RCTRNSSplitViewHostHandleCommand(self, commandName, args);
+  RCTRNSSplitHostHandleCommand(self, commandName, args);
 }
 
 - (void)showColumn:(NSString *)column
@@ -411,7 +411,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Events
 
-- (nonnull RNSSplitViewHostComponentEventEmitter *)reactEventEmitter
+- (nonnull RNSSplitHostComponentEventEmitter *)reactEventEmitter
 {
   RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
   return _reactEventEmitter;
@@ -419,9 +419,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 @end
 
-Class<RCTComponentViewProtocol> RNSSplitViewHostCls(void)
+Class<RCTComponentViewProtocol> RNSSplitHostCls(void)
 {
-  return RNSSplitViewHostComponentView.class;
+  return RNSSplitHostComponentView.class;
 }
 
 #undef COLUMN_METRIC_CHANGED
