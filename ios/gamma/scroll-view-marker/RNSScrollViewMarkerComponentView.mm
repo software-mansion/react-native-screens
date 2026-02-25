@@ -59,13 +59,16 @@ namespace react = facebook::react;
  */
 - (nullable UIScrollView *)findScrollView
 {
-  for (UIView *subview in self.subviews) {
-    if ([subview isKindOfClass:RCTScrollViewComponentView.class]) {
-      return static_cast<RCTScrollViewComponentView *>(subview).scrollView;
-    }
-  }
-  RCTAssert(false, @"[RNScreens] Failed to find ScrollView"); // debug assertion only
-  return nil;
+  // It allows 0 for cases where the child is unmounted
+  RCTAssert(
+      self.subviews.count <= 1,
+      @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
+      self.subviews);
+
+  UIScrollView *_Nullable foundScrollView = [self resolveScrollViewFromChildView:self.subviews.firstObject];
+
+  RCTAssert(foundScrollView != nil, @"[RNScreens] Failed to find ScrollView"); // debug assertion only
+  return foundScrollView;
 }
 
 - (nullable id<RNSScrollViewSeeking>)findSeekingParent
@@ -86,8 +89,8 @@ namespace react = facebook::react;
     return;
   }
 
-  _hasAttemptedRegistration = YES;
   [self registerWithSeekingAncestor];
+  _hasAttemptedRegistration = YES;
 }
 
 - (void)registerWithSeekingAncestor
@@ -95,7 +98,6 @@ namespace react = facebook::react;
   UIScrollView *scrollView = [self findScrollView];
 
   if (scrollView == nil) {
-    // Should we crash the app here?
     return;
   }
 
@@ -114,6 +116,28 @@ namespace react = facebook::react;
     return;
   }
   [RNSScrollEdgeEffectApplicator applyToScrollView:scrollView withProvider:self];
+}
+
+/**
+ * Tries to resolve UIScrollView from the passed childView.
+ *
+ * Currently it supports only direct `UIScrollView` or react-native's `<ScrollView />` component.
+ */
+- (nullable UIScrollView *)resolveScrollViewFromChildView:(nullable UIView *)childView
+{
+  if (childView == nil) {
+    return nil;
+  }
+
+  if ([childView isKindOfClass:UIScrollView.class]) {
+    return static_cast<UIScrollView *>(childView);
+  }
+
+  if ([childView isKindOfClass:RCTScrollViewComponentView.class]) {
+    return static_cast<RCTScrollViewComponentView *>(childView).scrollView;
+  }
+
+  return nil;
 }
 
 #pragma mark - Override
@@ -191,6 +215,12 @@ namespace react = facebook::react;
     _needsEdgeEffectUpdate = NO;
     [self configureScrollView:[self findScrollView]];
   }
+
+  // It allows 0 for cases where the child is unmounted
+  RCTAssert(
+      self.subviews.count <= 1,
+      @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
+      self.subviews);
 
   [super finalizeUpdates:updateMask];
 }
