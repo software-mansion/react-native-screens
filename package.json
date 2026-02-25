@@ -203,7 +203,7 @@
         "RNSTabsScreenIOS": {
           "className": "RNSTabsScreenComponentView"
         },
-        "RNSTabsHost": {
+        "RNSTabsHostIOS": {
           "className": "RNSTabsHostComponentView"
         },
         "RNSTabsBottomAccessory": {

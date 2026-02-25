@@ -12,8 +12,8 @@ JSI_EXPORT extern const char RNSTabsHostComponentName[];
 
 class JSI_EXPORT RNSTabsHostShadowNode final : public ConcreteViewShadowNode<
                                                    RNSTabsHostComponentName,
-                                                   RNSTabsHostProps,
-                                                   RNSTabsHostEventEmitter,
+                                                   RNSTabsHostIOSProps,
+                                                   RNSTabsHostIOSEventEmitter,
                                                    RNSTabsHostState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;

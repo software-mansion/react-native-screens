@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
-import TabsHostNativeComponent from '../../fabric/tabs/TabsHostNativeComponent';
+import TabsHostIOSNativeComponent from '../../fabric/tabs/TabsHostIOSNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import TabsAccessory from './TabsAccessory';
@@ -39,7 +39,7 @@ function TabsHost(props: TabsHostProps) {
     useState<TabsAccessoryEnvironment>('regular');
 
   return (
-    <TabsHostNativeComponent
+    <TabsHostIOSNativeComponent
       style={styles.fillParent}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={controlNavigationStateInJS}
@@ -72,7 +72,7 @@ function TabsHost(props: TabsHostProps) {
             {ios.bottomAccessory(bottomAccessoryEnvironment)}
           </TabsAccessory>
         ))}
-    </TabsHostNativeComponent>
+    </TabsHostIOSNativeComponent>
   );
 }
 

@@ -36,7 +36,7 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
-    react::RNSTabsHostTabBarMinimizeBehavior tabBarMinimizeBehavior);
+    react::RNSTabsHostIOSTabBarMinimizeBehavior tabBarMinimizeBehavior);
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
@@ -50,7 +50,7 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
-    react::RNSTabsHostTabBarControllerMode tabBarControllerMode);
+    react::RNSTabsHostIOSTabBarControllerMode tabBarControllerMode);
 #else // RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabBarControllerMode tabBarControllerMode);

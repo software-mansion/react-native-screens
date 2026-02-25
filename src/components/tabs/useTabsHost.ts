@@ -1,6 +1,7 @@
 import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
-import type { NativeProps as TabsHostNativeComponentProps } from '../../fabric/tabs/TabsHostNativeComponent';
+// TODO: @t0maboro - move to platform-specific section
+// import type { NativeProps as TabsHostNativeComponentProps } from '../../fabric/tabs/TabsHostNativeComponent';
 import featureFlags from '../../flags';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { NativeFocusChangeEvent } from './TabsHost.types';
@@ -13,8 +14,8 @@ interface TabsHostConfig {
 }
 
 export function useTabsHost(config: TabsHostConfig) {
-  const componentNodeRef =
-    React.useRef<React.Component<TabsHostNativeComponentProps>>(null);
+  // TODO: @t0maboro - replace any with NativeProps
+  const componentNodeRef = React.useRef<React.Component<any>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 
   React.useEffect(() => {

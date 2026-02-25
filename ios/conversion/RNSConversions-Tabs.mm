@@ -144,9 +144,9 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
-    react::RNSTabsHostTabBarMinimizeBehavior tabBarMinimizeBehavior)
+    react::RNSTabsHostIOSTabBarMinimizeBehavior tabBarMinimizeBehavior)
 {
-  using enum facebook::react::RNSTabsHostTabBarMinimizeBehavior;
+  using enum facebook::react::RNSTabsHostIOSTabBarMinimizeBehavior;
 
   switch (tabBarMinimizeBehavior) {
     case Never:
@@ -184,9 +184,9 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
-    react::RNSTabsHostTabBarControllerMode tabBarControllerMode)
+    react::RNSTabsHostIOSTabBarControllerMode tabBarControllerMode)
 {
-  using enum facebook::react::RNSTabsHostTabBarControllerMode;
+  using enum facebook::react::RNSTabsHostIOSTabBarControllerMode;
 
   switch (tabBarControllerMode) {
     case Automatic:
