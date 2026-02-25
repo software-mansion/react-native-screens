@@ -12,8 +12,8 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
 {
   private var needsChildViewControllersUpdate = false
 
-  private var splitViewAppearanceCoordinator: RNSSplitViewAppearanceCoordinator
-  private var splitViewAppearanceApplicator: RNSSplitViewAppearanceApplicator
+  private var splitAppearanceCoordinator: RNSSplitAppearanceCoordinator
+  private var splitAppearanceApplicator: RNSSplitAppearanceApplicator
 
   private var reactEventEmitter: RNSSplitHostComponentEventEmitter {
     return splitHostComponentView.reactEventEmitter()
@@ -49,8 +49,8 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
     numberOfColumns: Int
   ) {
     self.splitHostComponentView = splitHostComponentView
-    self.splitViewAppearanceCoordinator = RNSSplitViewAppearanceCoordinator()
-    self.splitViewAppearanceApplicator = RNSSplitViewAppearanceApplicator()
+    self.splitAppearanceCoordinator = RNSSplitAppearanceCoordinator()
+    self.splitAppearanceApplicator = RNSSplitAppearanceApplicator()
     self.fixedColumnsCount = numberOfColumns
 
     super.init(style: RNSSplitHostController.styleByNumberOfColumns(numberOfColumns))
@@ -71,7 +71,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
 
   @objc
   public func setNeedsAppearanceUpdate() {
-    splitViewAppearanceCoordinator.needs(.generalUpdate)
+    splitAppearanceCoordinator.needs(.generalUpdate)
   }
 
   @objc
@@ -81,17 +81,17 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
     // We noticed that we can forcefully refresh navigation bar from UINavigationController level by toggling setNavigationBarHidden.
     // After some testing, it looks well and I haven't noticed any flicker - missing button is appearing naturally.
     // Please note that this is a hack rather than a solution so feel free to remove this code in case of any problems and treat the bug with toggling button as a platform's issue.
-    splitViewAppearanceCoordinator.needs(.secondaryScreenNavBarUpdate)
+    splitAppearanceCoordinator.needs(.secondaryScreenNavBarUpdate)
   }
 
   @objc
   public func setNeedsDisplayModeUpdate() {
-    splitViewAppearanceCoordinator.needs(.displayModeUpdate)
+    splitAppearanceCoordinator.needs(.displayModeUpdate)
   }
 
   @objc
   public func setNeedsOrientationUpdate() {
-    splitViewAppearanceCoordinator.needs(.orientationUpdate)
+    splitAppearanceCoordinator.needs(.orientationUpdate)
   }
 
   // MARK: Updating
@@ -125,7 +125,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
     validateInspectors(currentInspectors)
 
     let currentViewControllers = currentColumns.map {
-      RNSSplitViewNavigationController(rootViewController: $0.controller)
+      RNSSplitNavigationController(rootViewController: $0.controller)
     }
 
     viewControllers = currentViewControllers
@@ -141,9 +141,9 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
     needsChildViewControllersUpdate = false
   }
 
-  func updateSplitViewAppearanceIfNeeded() {
-    splitViewAppearanceApplicator.updateAppearanceIfNeeded(
-      self.splitHostComponentView, self, self.splitViewAppearanceCoordinator)
+  func updateSplitAppearanceIfNeeded() {
+    splitAppearanceApplicator.updateAppearanceIfNeeded(
+      self.splitHostComponentView, self, self.splitAppearanceCoordinator)
   }
 
   ///
@@ -277,7 +277,7 @@ public class RNSSplitHostController: UISplitViewController, ReactMountingTransac
   @objc
   public func reactMountingTransactionDidMount() {
     updateChildViewControllersIfNeeded()
-    updateSplitViewAppearanceIfNeeded()
+    updateSplitAppearanceIfNeeded()
     validateSplitViewHierarchy()
   }
 
@@ -366,12 +366,12 @@ extension RNSSplitHostController {
       let viewController = self.viewController(for: column)
       assert(viewController != nil, "[RNScreens] viewController for column \(column) is nil.")
 
-      let splitViewNavigationController = viewController as? RNSSplitViewNavigationController
+      let splitNavigationController = viewController as? RNSSplitNavigationController
       assert(
-        splitViewNavigationController != nil,
-        "[RNScreens] Expected RNSSplitViewNavigationController but got \(type(of: viewController))")
+        splitNavigationController != nil,
+        "[RNScreens] Expected RNSSplitNavigationController but got \(type(of: viewController))")
 
-      let maybeSplitScreenController = splitViewNavigationController?.topViewController
+      let maybeSplitScreenController = splitNavigationController?.topViewController
       assert(
         maybeSplitScreenController != nil,
         "[RNScreens] RNSSplitScreenController is nil for column \(column)")
@@ -402,17 +402,17 @@ extension RNSSplitHostController {
   }
 }
 
-extension RNSSplitHostController: RNSSplitViewNavigationControllerViewFrameObserver {
+extension RNSSplitHostController: RNSSplitNavigationControllerViewFrameObserver {
 
   ///
-  /// @brief Notifies that an origin of parent RNSSplitViewNavigationController frame has changed.
+  /// @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
   ///
   /// It iterates over children controllers and notifies them for the layout update.
   ///
   /// @param splitViewNavCtrl The navigation controller whose frame origin changed.
   ///
   func splitViewNavCtrlViewDidChangeFrameOrigin(
-    _ splitViewNavCtrl: RNSSplitViewNavigationController
+    _ splitViewNavCtrl: RNSSplitNavigationController
   ) {
     for controller in self.splitScreenControllers {
       controller.columnPositioningDidChangeIn(splitViewController: self)
@@ -439,7 +439,7 @@ extension RNSSplitHostController: RNSSplitViewNavigationControllerViewFrameObser
         if #available(iOS 26.0, *) {
           let inspector = inspectors.first
           if inspector != nil {
-            let inspectorViewController = RNSSplitViewNavigationController(
+            let inspectorViewController = RNSSplitNavigationController(
               rootViewController: inspector!.controller)
             setViewController(inspectorViewController, for: .inspector)
           }

@@ -26,10 +26,10 @@ static const CGFloat epsilon = 1e-6;
   NSMutableArray<RNSSplitScreenComponentView *> *_Nonnull _reactSubviews;
 
   bool _hasModifiedReactSubviewsInCurrentTransaction;
-  bool _needsSplitViewAppearanceUpdate;
-  bool _needsSplitViewSecondaryScreenNavBarUpdate;
-  bool _needsSplitViewDisplayModeUpdate;
-  bool _needsSplitViewOrientationUpdate;
+  bool _needsSplitAppearanceUpdate;
+  bool _needsSplitSecondaryScreenNavBarUpdate;
+  bool _needsSplitDisplayModeUpdate;
+  bool _needsSplitOrientationUpdate;
   // We need this information to warn users about dynamic changes to behavior being currently unsupported.
   bool _isShowSecondaryToggleButtonSet;
 }
@@ -49,10 +49,10 @@ static const CGFloat epsilon = 1e-6;
   _reactEventEmitter = [RNSSplitHostComponentEventEmitter new];
 
   _hasModifiedReactSubviewsInCurrentTransaction = false;
-  _needsSplitViewAppearanceUpdate = false;
-  _needsSplitViewSecondaryScreenNavBarUpdate = false;
-  _needsSplitViewDisplayModeUpdate = false;
-  _needsSplitViewOrientationUpdate = false;
+  _needsSplitAppearanceUpdate = false;
+  _needsSplitSecondaryScreenNavBarUpdate = false;
+  _needsSplitDisplayModeUpdate = false;
+  _needsSplitOrientationUpdate = false;
   _reactSubviews = [NSMutableArray new];
 }
 
@@ -210,108 +210,108 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitHostProps>(props);
 
   if (oldComponentProps.preferredSplitBehavior != newComponentProps.preferredSplitBehavior) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _preferredSplitBehavior =
         rnscreens::conversion::SplitViewPreferredSplitBehaviorFromHostProp(newComponentProps.preferredSplitBehavior);
   }
 
   if (oldComponentProps.primaryEdge != newComponentProps.primaryEdge) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _primaryEdge = rnscreens::conversion::SplitViewPrimaryEdgeFromHostProp(newComponentProps.primaryEdge);
   }
 
   if (oldComponentProps.preferredDisplayMode != newComponentProps.preferredDisplayMode) {
-    _needsSplitViewAppearanceUpdate = true;
-    _needsSplitViewDisplayModeUpdate = true;
+    _needsSplitAppearanceUpdate = true;
+    _needsSplitDisplayModeUpdate = true;
     _preferredDisplayMode =
         rnscreens::conversion::SplitViewPreferredDisplayModeFromHostProp(newComponentProps.preferredDisplayMode);
   }
 
 #if !TARGET_OS_TV
   if (oldComponentProps.primaryBackgroundStyle != newComponentProps.primaryBackgroundStyle) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _primaryBackgroundStyle =
         rnscreens::conversion::SplitViewPrimaryBackgroundStyleFromHostProp(newComponentProps.primaryBackgroundStyle);
   }
 #endif // !TARGET_OS_TV
 
   if (oldComponentProps.presentsWithGesture != newComponentProps.presentsWithGesture) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _presentsWithGesture = newComponentProps.presentsWithGesture;
   }
 
   if (oldComponentProps.showSecondaryToggleButton != newComponentProps.showSecondaryToggleButton) {
-    _needsSplitViewAppearanceUpdate = true;
-    _needsSplitViewSecondaryScreenNavBarUpdate = true;
+    _needsSplitAppearanceUpdate = true;
+    _needsSplitSecondaryScreenNavBarUpdate = true;
     _showSecondaryToggleButton = newComponentProps.showSecondaryToggleButton;
   }
 
   if (oldComponentProps.showInspector != newComponentProps.showInspector) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _showInspector = newComponentProps.showInspector;
   }
 
   if (oldComponentProps.displayModeButtonVisibility != newComponentProps.displayModeButtonVisibility) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _displayModeButtonVisibility = rnscreens::conversion::SplitViewDisplayModeButtonVisibilityFromHostProp(
         newComponentProps.displayModeButtonVisibility);
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumPrimaryColumnWidth, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _minimumPrimaryColumnWidth = newComponentProps.columnMetrics.minimumPrimaryColumnWidth;
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumPrimaryColumnWidth, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _maximumPrimaryColumnWidth = newComponentProps.columnMetrics.maximumPrimaryColumnWidth;
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredPrimaryColumnWidthOrFraction, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _preferredPrimaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredPrimaryColumnWidthOrFraction;
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSupplementaryColumnWidth, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _minimumSupplementaryColumnWidth = newComponentProps.columnMetrics.minimumSupplementaryColumnWidth;
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumSupplementaryColumnWidth, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _maximumSupplementaryColumnWidth = newComponentProps.columnMetrics.maximumSupplementaryColumnWidth;
   }
 
   if (COLUMN_METRIC_CHANGED(
           oldComponentProps, newComponentProps, preferredSupplementaryColumnWidthOrFraction, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _preferredSupplementaryColumnWidthOrFraction =
         newComponentProps.columnMetrics.preferredSupplementaryColumnWidthOrFraction;
   }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumSecondaryColumnWidth, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _minimumSecondaryColumnWidth = newComponentProps.columnMetrics.minimumSecondaryColumnWidth;
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredSecondaryColumnWidthOrFraction, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _preferredSecondaryColumnWidthOrFraction = newComponentProps.columnMetrics.preferredSecondaryColumnWidthOrFraction;
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, minimumInspectorColumnWidth, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _minimumInspectorColumnWidth = newComponentProps.columnMetrics.minimumInspectorColumnWidth;
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, maximumInspectorColumnWidth, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _maximumInspectorColumnWidth = newComponentProps.columnMetrics.maximumInspectorColumnWidth;
   }
 
   if (COLUMN_METRIC_CHANGED(oldComponentProps, newComponentProps, preferredInspectorColumnWidthOrFraction, epsilon)) {
-    _needsSplitViewAppearanceUpdate = true;
+    _needsSplitAppearanceUpdate = true;
     _preferredInspectorColumnWidthOrFraction = newComponentProps.columnMetrics.preferredInspectorColumnWidthOrFraction;
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -326,7 +326,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (oldComponentProps.orientation != newComponentProps.orientation) {
-    _needsSplitViewOrientationUpdate = true;
+    _needsSplitOrientationUpdate = true;
     _orientation = rnscreens::conversion::RNSOrientationFromRNSSplitHostOrientation(newComponentProps.orientation);
   }
 
@@ -346,23 +346,23 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)requestSplitHostControllerForAppearanceUpdate
 {
-  if (_needsSplitViewAppearanceUpdate && _controller != nil) {
-    _needsSplitViewAppearanceUpdate = false;
+  if (_needsSplitAppearanceUpdate && _controller != nil) {
+    _needsSplitAppearanceUpdate = false;
     [_controller setNeedsAppearanceUpdate];
   }
 
-  if (_needsSplitViewDisplayModeUpdate && _controller != nil) {
-    _needsSplitViewDisplayModeUpdate = false;
+  if (_needsSplitDisplayModeUpdate && _controller != nil) {
+    _needsSplitDisplayModeUpdate = false;
     [_controller setNeedsDisplayModeUpdate];
   }
 
-  if (_needsSplitViewSecondaryScreenNavBarUpdate && _controller != nil) {
-    _needsSplitViewSecondaryScreenNavBarUpdate = false;
+  if (_needsSplitSecondaryScreenNavBarUpdate && _controller != nil) {
+    _needsSplitSecondaryScreenNavBarUpdate = false;
     [_controller setNeedsSecondaryScreenNavBarUpdate];
   }
 
-  if (_needsSplitViewOrientationUpdate && _controller != nil) {
-    _needsSplitViewOrientationUpdate = false;
+  if (_needsSplitOrientationUpdate && _controller != nil) {
+    _needsSplitOrientationUpdate = false;
     [_controller setNeedsOrientationUpdate];
   }
 }

@@ -3,7 +3,7 @@
 ///
 /// This class is synchronizing UISplitViewController configuration props which are affecting the SplitView appearance with props passed to RNSSplitHostComponentView from the ElementTree.
 ///
-class RNSSplitViewAppearanceApplicator {
+class RNSSplitAppearanceApplicator {
   ///
   /// @brief Function responsible for applying all updates to SplitView in correct order
   ///
@@ -16,7 +16,7 @@ class RNSSplitViewAppearanceApplicator {
   public func updateAppearanceIfNeeded(
     _ splitView: RNSSplitHostComponentView,
     _ splitViewController: RNSSplitHostController,
-    _ appearanceCoordinator: RNSSplitViewAppearanceCoordinator
+    _ appearanceCoordinator: RNSSplitAppearanceCoordinator
   ) {
     appearanceCoordinator.updateIfNeeded(.generalUpdate) { [weak self] in
       guard let self = self
@@ -188,7 +188,7 @@ class RNSSplitViewAppearanceApplicator {
   func validateColumnConstraints(minWidth: CGFloat, maxWidth: CGFloat) {
     assert(
       minWidth <= maxWidth,
-      "[RNScreens] SplitView column constraints are invalid: minWidth \(minWidth) cannot be greater than maxWidth \(maxWidth)"
+      "[RNScreens] Split column constraints are invalid: minWidth \(minWidth) cannot be greater than maxWidth \(maxWidth)"
     )
   }
 }

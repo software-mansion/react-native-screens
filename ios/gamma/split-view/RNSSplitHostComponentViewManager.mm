@@ -2,6 +2,6 @@
 
 @implementation RNSSplitHostComponentViewManager
 
-RCT_EXPORT_MODULE(RNSSplitViewHostComponentViewManager)
+RCT_EXPORT_MODULE(RNSSplitHostComponentViewManager)
 
 @end
