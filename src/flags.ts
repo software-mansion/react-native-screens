@@ -43,13 +43,6 @@ export const compatibilityFlags = {
    * is in use or not.
    */
   usesNewAndroidHeaderHeightImplementation: true,
-
-  /**
-   * In https://github.com/software-mansion/react-native-screens/pull/3633, we added a support
-   * for `selectedIcon` prop for BottomTabs on Android. To allow backward compatibility,
-   * we expose a way to check whether the new implementation is in use or not.
-   */
-  isSelectedIconSupportedForAndroidBottomTabs: true,
 } as const;
 
 const _featureFlags = {
