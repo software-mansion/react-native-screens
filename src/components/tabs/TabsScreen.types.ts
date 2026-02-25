@@ -81,8 +81,6 @@ export interface TabsScreenAppearanceIOS {
    *
    * Tab bar items in stacked layout have the icon above the title.
    * Stacked layout is used e.g. on the iPhone in portrait orientation.
-   *
-   * @platform ios
    */
   stacked?: TabsScreenItemAppearanceIOS;
   /**
@@ -93,8 +91,6 @@ export interface TabsScreenAppearanceIOS {
    *
    * Complete list of size classes for iOS and iPadOS devices is available in Apple's Human Interface Guidelines:
    * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#iOS-iPadOS-device-size-classes|HIG: Device size classes}
-   *
-   * @platform ios
    */
   inline?: TabsScreenItemAppearanceIOS;
   /**
@@ -105,8 +101,6 @@ export interface TabsScreenAppearanceIOS {
    *
    * Complete list of size classes for iOS and iPadOS devices is available in Apple's Human Interface Guidelines:
    * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#iOS-iPadOS-device-size-classes|HIG: Device size classes}
-   *
-   * @platform ios
    */
   compactInline?: TabsScreenItemAppearanceIOS;
 
@@ -115,7 +109,6 @@ export interface TabsScreenAppearanceIOS {
    *
    * This property does not affect the tab bar starting from iOS 26.
    *
-   * @platform ios
    * @supported iOS 18 or lower
    */
   tabBarBackgroundColor?: ColorValue;
@@ -137,7 +130,6 @@ export interface TabsScreenAppearanceIOS {
    *
    * @default systemDefault
    *
-   * @platform ios
    * @supported iOS 18 or lower
    */
   tabBarBlurEffect?: TabsScreenBlurEffectIOS;
@@ -146,7 +138,6 @@ export interface TabsScreenAppearanceIOS {
    *
    * This property does not affect the tab bar starting from iOS 26.
    *
-   * @platform ios
    * @supported iOS 18 or lower
    */
   tabBarShadowColor?: ColorValue;
@@ -156,29 +147,21 @@ export interface TabsScreenItemAppearanceIOS {
   /**
    * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
    * The color scheme is determined by the configuration of the currently selected tab.
-   *
-   * @platform ios
    */
   normal?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines the colors for the tab bar item that is currently active.
    * The color scheme is determined by the configuration of the currently selected tab itself.
-   *
-   * @platform ios
    */
   selected?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines the colors for a tab bar item when it receives focus.
    * The color scheme is determined by the configuration of the currently selected tab.
-   *
-   * @platform ios
    */
   focused?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines the colors for tab bar items when they are disabled.
    * The color scheme is determined by the configuration of the currently selected tab.
-   *
-   * @platform ios
    */
   disabled?: TabsScreenItemStateAppearanceIOS;
 }
@@ -187,29 +170,21 @@ export interface TabsScreenItemStateAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of each tab bar item
    * when tab screen is selected.
-   *
-   * @platform ios
    */
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   /**
    * @summary Specifies the font size used for the title of each tab bar item
    * when tab screen is selected.
-   *
-   * @platform ios
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'];
   /**
    * @summary Specifies the font weight used for the title of each tab bar item
    * when tab screen is selected.
-   *
-   * @platform ios
    */
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
   /**
    * @summary Specifies the font style used for the title of each tab bar item
    * when tab screen is selected.
-   *
-   * @platform ios
    */
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
   /**
@@ -217,8 +192,6 @@ export interface TabsScreenItemStateAppearanceIOS {
    * when tab screen is selected.
    *
    * Overrides the color defined in `tabBarTintColor` and `tabBarItemIconColor`.
-   *
-   * @platform ios
    */
   tabBarItemTitleFontColor?: TextStyle['color'];
   /**
@@ -227,8 +200,6 @@ export interface TabsScreenItemStateAppearanceIOS {
    *
    * Depending on the iOS version and the device's interface orientation,
    * this setting may affect the alignment of the text, badge and icon.
-   *
-   * @platform ios
    */
   tabBarItemTitlePositionAdjustment?: {
     horizontal?: number;
@@ -245,15 +216,11 @@ export interface TabsScreenItemStateAppearanceIOS {
    *
    * Is overridden by `tabBarItemTitleFontColor` (for title text color).
    * Overrides `tabBarTintColor`.
-   *
-   * @platform ios
    */
   tabBarItemIconColor?: ColorValue;
   /**
    * @summary Specifies the background color of badges for each tab bar item
    * when tab screen is selected.
-   *
-   * @platform ios
    */
   tabBarItemBadgeBackgroundColor?: ColorValue;
 }
@@ -271,14 +238,10 @@ export type TabBarItemLabelVisibilityModeAndroid =
 export interface ItemStateColorsAndroid {
   /**
    * @summary Specifies the font color used for the title of each tab bar item.
-   *
-   * @platform android
    */
   titleColor?: TextStyle['color'];
   /**
    * @summary Specifies the icon color for each tab bar item.
-   *
-   * @platform android
    */
   iconColor?: ColorValue;
 }
@@ -287,32 +250,24 @@ export interface BottomNavItemColorsAndroid {
   /**
    * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
    * The color scheme is determined by the configuration of the currently selected tab.
-   *
-   * @platform android
    */
   normal?: ItemStateColorsAndroid;
   /**
    * Defines the colors for the tab bar item that is currently active.
    * The color scheme is determined by the configuration of the currently selected tab itself.
    * Maps to Android `state_selected=true`.
-   *
-   * @platform android
    */
   selected?: ItemStateColorsAndroid;
   /**
    * Defines the colors for a tab bar item when it receives focus.
    * The color scheme is determined by the configuration of the currently selected tab.
    * Maps to Android `state_focused=true` (Used mostly for keyboard navigation).
-   *
-   * @platform android
    */
   focused?: ItemStateColorsAndroid;
   /**
    * Defines the colors for tab bar items when they are disabled.
    * The color scheme is determined by the configuration of the currently selected tab.
    * Maps to Android `state_enabled=false`.
-   *
-   * @platform android
    */
   disabled?: ItemStateColorsAndroid;
 }
@@ -320,16 +275,12 @@ export interface BottomNavItemColorsAndroid {
 export interface ActiveIndicatorAppearanceAndroid {
   /**
    * @summary Specifies the background color of the active indicator.
-   *
-   * @platform android
    */
   color?: ColorValue;
   /**
    * @summary Specifies if the active indicator should be used.
    *
    * @default true
-   *
-   * @platform android
    */
   enabled?: boolean;
 }
@@ -337,36 +288,26 @@ export interface ActiveIndicatorAppearanceAndroid {
 export interface TypographyAppearanceAndroid {
   /**
    * @summary Specifies the font family used for the title of each tab bar item.
-   *
-   * @platform android
    */
   fontFamily?: TextStyle['fontFamily'];
   /**
    * @summary Specifies the font size used for the title of unselected tab bar items.
    *
    * The size is represented in scale-independent pixels (sp).
-   *
-   * @platform android
    */
   fontSizeSmall?: TextStyle['fontSize'];
   /**
    * @summary Specifies the font size used for the title of selected tab bar item.
    *
    * The size is represented in scale-independent pixels (sp).
-   *
-   * @platform android
    */
   fontSizeLarge?: TextStyle['fontSize'];
   /**
    * @summary Specifies the font weight used for the title of each tab bar item.
-   *
-   * @platform android
    */
   fontWeight?: TextStyle['fontWeight'];
   /**
    * @summary Specifies the font style used for the title of each tab bar item.
-   *
-   * @platform android
    */
   fontStyle?: TextStyle['fontStyle'];
 }
@@ -374,14 +315,10 @@ export interface TypographyAppearanceAndroid {
 export interface BadgeAppearanceAndroid {
   /**
    * @summary Specifies the background color of the badge.
-   *
-   * @platform android
    */
   backgroundColor?: ColorValue;
   /**
    * @summary Specifies the text color of the badge.
-   *
-   * @platform android
    */
   textColor?: ColorValue;
 }
@@ -389,14 +326,10 @@ export interface BadgeAppearanceAndroid {
 export interface TabsAppearanceAndroid {
   /**
    * @summary Specifies the background color for the entire tab bar.
-   *
-   * @platform android
    */
   backgroundColor?: ColorValue;
   /**
    * @summary Specifies the color of each tab bar item's ripple effect.
-   *
-   * @platform android
    */
   itemRippleColor?: ColorValue;
   /**
@@ -414,33 +347,23 @@ export interface TabsAppearanceAndroid {
    * @see {@link https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md#making-navigation-bar-accessible|Material Components documentation}
    *
    * @default auto
-   *
-   * @platform android
    */
   labelVisibilityMode?: TabBarItemLabelVisibilityModeAndroid;
 
   /**
    * @summary Specifies the colors of the icon and title for different item states.
-   *
-   * @platform android
    */
   itemColors?: BottomNavItemColorsAndroid;
   /**
    * @summary Specifies the appearance of the active indicator (pill shape behind the active icon).
-   *
-   * @platform android
    */
   activeIndicator?: ActiveIndicatorAppearanceAndroid;
   /**
    * @summary Specifies the typography (font, size, weight, style) used for the title of each tab bar item.
-   *
-   * @platform android
    */
   typography?: TypographyAppearanceAndroid;
   /**
    * @summary Specifies the appearance of the badges on the tab bar items.
-   *
-   * @platform android
    */
   badge?: BadgeAppearanceAndroid;
 }
@@ -485,9 +408,9 @@ export interface TabsScreenPropsIOS {
    * - `landscape` - tab screen supports both landscape-left and
    *   landscape-right interface orientations,
    * - `landscapeLeft` - tab screen supports landscape-left interface
-   *   orientaion,
+   *   orientation,
    * - `landscapeRight` - tab screen supports landscape-right interface
-   *   orientaion.
+   *   orientation.
    *
    * The supported values (apart from `inherit`, `portrait`, `portraitUp`,
    * `portraitDown`) correspond to the official UIKit documentation:
@@ -495,8 +418,6 @@ export interface TabsScreenPropsIOS {
    * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask|UIInterfaceOrientationMask}
    *
    * @default inherit
-   *
-   * @platform ios
    */
   orientation?: TabsScreenOrientationIOS;
   /**
@@ -504,12 +425,10 @@ export interface TabsScreenPropsIOS {
    *
    * Allows to customize the appearance depending on the tab bar item layout (stacked,
    * inline, compact inline) and state (normal, selected, focused, disabled).
-   *
-   * @platform ios
    */
   standardAppearance?: TabsScreenAppearanceIOS;
   /**
-   * @summary Specifies the tab bar appearace when edge of scrollable content aligns
+   * @summary Specifies the tab bar appearance when edge of scrollable content aligns
    * with the edge of the tab bar.
    *
    * Allows to customize the appearance depending on the tab bar item layout (stacked,
@@ -517,28 +436,14 @@ export interface TabsScreenPropsIOS {
    *
    * If this property is `undefined`, UIKit uses `standardAppearance`, modified to
    * have a transparent background.
-   *
-   * @platform ios
    */
   scrollEdgeAppearance?: TabsScreenAppearanceIOS;
   /**
    * @summary Specifies the icon for the tab bar item.
    *
-   * You can define an icon separately for each platform (in `ios` and `android`)
-   * or define a default icon in `shared`. The shared icon will be used on both
-   * platforms unless it is overridden by a platform-specific definition
-   * in `ios` or `android`.
-   *
    * Supported values:
-   *
-   * Shared (both iOS and Android):
    * - `{ type: 'imageSource', imageSource }`
    *   Uses an image from the provided resource.
-   *
-   *   Remarks: `imageSource` type doesn't support SVGs on Android.
-   *   For loading SVGs use `drawableResource` type.
-   *
-   * iOS-only:
    * - `{ type: 'sfSymbol', name }`
    *   Uses an SF Symbol with the specified name.
    * - `{ type: 'xcasset', name }`
@@ -548,26 +453,16 @@ export interface TabsScreenPropsIOS {
    *   The icon color will depend on the current state
    *   of the tab bar item and icon color-related props.
    *
-   * Android-only:
-   * - `{ type: 'drawableResource', name }`
-   *   Uses a drawable resource with the given name.
-   *
-   *   Remarks: Requires passing a drawable to resources via Android Studio.
-   *
-   * On iOS, if no `selectedIcon` is provided, this icon will also
+   * If no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.
-   *
-   * @platform android, ios
    */
   icon?: PlatformIconIOS;
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
-   * Supports the same values as `icon` property for iOS.
+   * Supports the same values as `icon` property.
    *
    * To use `selectedIcon`, `icon` must also be provided.
-   *
-   * @platform ios
    */
   selectedIcon?: PlatformIconIOS;
   /**
@@ -579,8 +474,6 @@ export interface TabsScreenPropsIOS {
    * be customized.
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
-   *
-   * @platform ios
    */
   systemItem?: TabsSystemItemIOS;
   /**
@@ -598,8 +491,6 @@ export interface TabsScreenPropsIOS {
    * `popToRoot` has priority over `scrollToTop`.
    *
    * @default All special effects are enabled by default.
-   *
-   * @platform android, ios
    */
   specialEffects?: {
     repeatedTabSelection?: {
@@ -626,8 +517,6 @@ export interface TabsScreenPropsIOS {
    * Supported only on Fabric.
    *
    * @default true
-   *
-   * @platform ios
    */
   overrideScrollViewContentInsetAdjustmentBehavior?: boolean;
   /**
@@ -651,8 +540,6 @@ export interface TabsScreenPropsIOS {
    * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect|UIScrollEdgeEffect}
    *
    * @default `automatic` for each edge
-   *
-   * @platform ios
    *
    * @supported iOS 26 or higher
    */
@@ -679,8 +566,6 @@ export interface TabsScreenPropsIOS {
    * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle|UIUserInterfaceStyle}
    *
    * @default unspecified
-   *
-   * @platform ios
    */
   experimental_userInterfaceStyle?: UserInterfaceStyle;
 }
@@ -692,47 +577,22 @@ export interface TabsScreenPropsAndroid {
    * Allows to customize the appearance depending on the tab bar item state
    * (normal, selected, focused, disabled). Configuration for the Bottom Navigation View
    * is determined by the currently active tab screen.
-   *
-   * @platform android
    */
   standardAppearance?: TabsAppearanceAndroid;
   /**
    * @summary Specifies the icon for the tab bar item.
    *
-   * You can define an icon separately for each platform (in `ios` and `android`)
-   * or define a default icon in `shared`. The shared icon will be used on both
-   * platforms unless it is overridden by a platform-specific definition
-   * in `ios` or `android`.
-   *
    * Supported values:
-   *
-   * Shared (both iOS and Android):
    * - `{ type: 'imageSource', imageSource }`
    *   Uses an image from the provided resource.
    *
    *   Remarks: `imageSource` type doesn't support SVGs on Android.
    *   For loading SVGs use `drawableResource` type.
    *
-   * iOS-only:
-   * - `{ type: 'sfSymbol', name }`
-   *   Uses an SF Symbol with the specified name.
-   * - `{ type: 'xcasset', name }`
-   *   Uses asset from Xcassets.
-   * - `{ type: 'templateSource', templateSource }`
-   *   Uses the provided image as a template image.
-   *   The icon color will depend on the current state
-   *   of the tab bar item and icon color-related props.
-   *
-   * Android-only:
    * - `{ type: 'drawableResource', name }`
    *   Uses a drawable resource with the given name.
    *
    *   Remarks: Requires passing a drawable to resources via Android Studio.
-   *
-   * On iOS, if no `selectedIcon` is provided, this icon will also
-   * be used as the selected state icon.
-   *
-   * @platform android, ios
    */
   icon?: PlatformIconAndroid;
   /**
@@ -760,8 +620,6 @@ export interface TabsScreenPropsAndroid {
    * `popToRoot` has priority over `scrollToTop`.
    *
    * @default All special effects are enabled by default.
-   *
-   * @platform android, ios
    */
   specialEffects?: {
     repeatedTabSelection?: {
@@ -790,14 +648,10 @@ export interface TabsScreenPropsBase {
    * In managed container mode, it only indicates initially selected tab.
    *
    * There should be exactly one focused screen at any given time.
-   *
-   * @platform android, ios
    */
   isFocused?: boolean;
   /**
    * @summary Identifies screen, e.g. when receiving onNativeFocusChange event.
-   *
-   * @platform android, ios
    */
   tabKey: string;
   // #endregion Control
@@ -807,8 +661,6 @@ export interface TabsScreenPropsBase {
   style?: StyleProp<Pick<ViewStyle, 'backgroundColor'>>;
   /**
    * @summary Title of the tab screen, displayed in the tab bar item.
-   *
-   * @platform android, ios
    */
   title?: string;
   /**
@@ -820,16 +672,12 @@ export interface TabsScreenPropsBase {
    * - if the string can be parsed to integer, displays the value as a number;
    * - otherwise if the string is empty, displays "small dot" badge;
    * - otherwise, displays the value as a text.
-   *
-   * @platform android, ios
    */
   badgeValue?: string;
   /**
    * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
    *
    * @default undefined
-   *
-   * @platform android, ios
    */
   freezeContents?: boolean;
   // #endregion General
@@ -859,29 +707,21 @@ export interface TabsScreenPropsBase {
   /**
    * @summary A callback that gets invoked when the tab screen will appear.
    * This is called as soon as the transition begins.
-   *
-   * @platform android, ios
    */
   onWillAppear?: TabsScreenEventHandler<EmptyObject>;
   /**
    * @summary A callback that gets invoked when the tab screen did appear.
    * This is called as soon as the transition ends.
-   *
-   * @platform android, ios
    */
   onDidAppear?: TabsScreenEventHandler<EmptyObject>;
   /**
    * @summary A callback that gets invoked when the tab screen will disappear.
    * This is called as soon as the transition begins.
-   *
-   * @platform android, ios
    */
   onWillDisappear?: TabsScreenEventHandler<EmptyObject>;
   /**
    * @summary A callback that gets invoked when the tab screen did disappear.
    * This is called as soon as the transition ends.
-   *
-   * @platform android, ios
    */
   onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
   // #endregion Events

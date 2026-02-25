@@ -28,8 +28,6 @@ export type TabBarControllerModeIOS = 'automatic' | 'tabBar' | 'tabSidebar';
 export type TabsHostNativeContainerStyleProps = {
   /**
    * @summary Specifies the background color of the native container.
-   *
-   * @platform android, ios
    */
   backgroundColor?: ColorValue;
 };
@@ -47,8 +45,6 @@ export interface TabsHostPropsIOS {
    *
    * `tabBarItemTitleFontColor` and `tabBarItemIconColor` defined on
    * TabsScreen component override this color.
-   *
-   * @platform ios
    */
   tabBarTintColor?: ColorValue;
   /**
@@ -70,7 +66,6 @@ export interface TabsHostPropsIOS {
    *
    * @default Defaults to `automatic`.
    *
-   * @platform ios
    * @supported iOS 26 or higher
    */
   tabBarMinimizeBehavior?: TabBarMinimizeBehaviorIOS;
@@ -100,7 +95,6 @@ export interface TabsHostPropsIOS {
    *
    * Available starting from iOS 26.
    *
-   * @platform iOS
    * @supported iOS 26 or higher
    */
   bottomAccessory?: TabAccessoryComponentFactory;
@@ -121,7 +115,6 @@ export interface TabsHostPropsIOS {
    *
    * @default Defaults to `automatic`.
    *
-   * @platform ios
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerModeIOS;
@@ -140,8 +133,6 @@ export interface TabsHostPropsBase {
    * @summary Hides the tab bar.
    *
    * @default false
-   *
-   * @platform android, ios
    */
   tabBarHidden?: boolean;
   /**
@@ -150,8 +141,6 @@ export interface TabsHostPropsBase {
    * On Android, style is applied to `FrameLayout` that wraps currently focused screen
    * and `BottomNavigationView`. On iOS, style is applied to `UITabBarController`'s
    * view.
-   *
-   * @platform android, ios
    */
   nativeContainerStyle?: TabsHostNativeContainerStyleProps;
   // #endregion General
@@ -170,8 +159,6 @@ export interface TabsHostPropsBase {
    * value of this prop is ignored.
    *
    * @default Defaults to `false`.
-   *
-   * @platform android, ios
    */
   experimentalControlNavigationStateInJS?: boolean;
   // #endregion Experimental support
@@ -179,8 +166,6 @@ export interface TabsHostPropsBase {
   // #region Events
   /**
    * A callback that gets invoked when user requests change of focused tab screen.
-   *
-   * @platform android, ios
    */
   onNativeFocusChange?: (
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
