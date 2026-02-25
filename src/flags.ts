@@ -43,13 +43,6 @@ export const compatibilityFlags = {
    * is in use or not.
    */
   usesNewAndroidHeaderHeightImplementation: true,
-
-  /**
-   * In https://github.com/software-mansion/react-native-screens/pull/3672, we refactored
-   * appearance props for Tabs on Android. To allow backward compatibility,
-   * we expose a way to check whether the new implementation is in use or not.
-   */
-  usesRefactoredTabsAppearanceApiAndroid: true,
 } as const;
 
 const _featureFlags = {
