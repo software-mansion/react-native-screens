@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { TabBarControllerMode } from 'react-native-screens';
+import { TabBarControllerModeIOS } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -15,8 +15,8 @@ import { Button } from '../../shared';
 
 function makeTab(
   title: string,
-  controllerMode: TabBarControllerMode,
-  setControllerMode: (mode: TabBarControllerMode) => void,
+  controllerMode: TabBarControllerModeIOS,
+  setControllerMode: (mode: TabBarControllerModeIOS) => void,
 ) {
   return function Tab() {
     return (
@@ -49,7 +49,7 @@ function App() {
   );
 
   const [controllerMode, setControllerMode] =
-    useState<TabBarControllerMode>('automatic');
+    useState<TabBarControllerModeIOS>('automatic');
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {

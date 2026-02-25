@@ -2,9 +2,9 @@ import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { NativeProps } from '../../fabric/tabs/TabsScreenNativeComponent';
-import type { TabsScreenBaseProps, EmptyObject } from './TabsScreen.types';
+import type { TabsScreenPropsBase, EmptyObject } from './TabsScreen.types';
 
-export function useTabsScreen(props: TabsScreenBaseProps) {
+export function useTabsScreen(props: TabsScreenPropsBase) {
   const componentNodeRef = React.useRef<React.Component<NativeProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 

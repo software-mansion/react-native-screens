@@ -4,11 +4,11 @@ import type { NativeProps as TabsHostNativeComponentProps } from '../../fabric/t
 import featureFlags from '../../flags';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type {
-  TabsHostBaseProps,
+  TabsHostPropsBase,
   NativeFocusChangeEvent,
 } from './TabsHost.types';
 
-export function useTabsHost(props: TabsHostBaseProps) {
+export function useTabsHost(props: TabsHostPropsBase) {
   const componentNodeRef =
     React.useRef<React.Component<TabsHostNativeComponentProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);

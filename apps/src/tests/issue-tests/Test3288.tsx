@@ -27,7 +27,7 @@ import { SettingsPicker, SettingsSwitch } from '../../shared';
 import Colors from '../../shared/styling/Colors';
 import PressableWithFeedback from '../../shared/PressableWithFeedback';
 import type {
-  TabBarMinimizeBehavior,
+  TabBarMinimizeBehaviorIOS,
   TabsAccessoryEnvironment,
 } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
@@ -36,7 +36,7 @@ type BottomAccessoryConfig = {
   shown: boolean;
   backgroundColor: ColorValue;
   shouldAdaptToEnvironment: boolean;
-  tabBarMinimizeBehavior: TabBarMinimizeBehavior;
+  tabBarMinimizeBehavior: TabBarMinimizeBehaviorIOS;
 };
 
 type BottomAccessoryContextInterface = {
@@ -94,7 +94,7 @@ function Config() {
           setConfig({ ...config, shouldAdaptToEnvironment: value })
         }
       />
-      <SettingsPicker<TabBarMinimizeBehavior>
+      <SettingsPicker<TabBarMinimizeBehaviorIOS>
         label="tabBarMinimizeBehavior"
         value={config.tabBarMinimizeBehavior}
         onValueChange={value =>

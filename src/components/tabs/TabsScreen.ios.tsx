@@ -14,9 +14,9 @@ import TabsScreenNativeComponent, {
   type ItemStateAppearance,
 } from '../../fabric/tabs/TabsScreenNativeComponent';
 import type {
-  TabsScreenAppearance,
-  TabsScreenItemAppearance,
-  TabsScreenItemStateAppearance,
+  TabsScreenAppearanceIOS,
+  TabsScreenItemAppearanceIOS,
+  TabsScreenItemStateAppearanceIOS,
   TabsScreenProps,
 } from './TabsScreen.types';
 import type { PlatformIconIOS } from '../../types';
@@ -147,7 +147,7 @@ function parseIconsToNativeProps(
 }
 
 function mapAppearanceToNativeProp(
-  appearance?: TabsScreenAppearance,
+  appearance?: TabsScreenAppearanceIOS,
 ): Appearance | undefined {
   if (!appearance) return undefined;
 
@@ -170,7 +170,7 @@ function mapAppearanceToNativeProp(
 }
 
 function mapItemAppearanceToNativeProp(
-  itemAppearance?: TabsScreenItemAppearance,
+  itemAppearance?: TabsScreenItemAppearanceIOS,
 ): ItemAppearance | undefined {
   if (!itemAppearance) return undefined;
 
@@ -186,7 +186,7 @@ function mapItemAppearanceToNativeProp(
 }
 
 function mapItemStateAppearanceToNativeProp(
-  itemStateAppearance?: TabsScreenItemStateAppearance,
+  itemStateAppearance?: TabsScreenItemStateAppearanceIOS,
 ): ItemStateAppearance | undefined {
   if (!itemStateAppearance) return undefined;
 

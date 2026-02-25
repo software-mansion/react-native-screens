@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  type TabsScreenOrientation,
+  type TabsScreenOrientationIOS,
   enableFreeze,
   ScreenOrientationTypes,
 } from 'react-native-screens';
@@ -61,7 +61,7 @@ function StackComponent(props: { orientation?: ScreenOrientationTypes }) {
 }
 
 interface TabOrientation {
-  tabScreen: TabsScreenOrientation;
+  tabScreen: TabsScreenOrientationIOS;
   stackScreen?: ScreenOrientationTypes;
 }
 

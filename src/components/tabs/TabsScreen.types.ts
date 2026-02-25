@@ -26,7 +26,7 @@ export type LifecycleStateChangeEvent = Readonly<{
 
 // #region iOS-specific helpers
 
-export type TabsScreenBlurEffect =
+export type TabsScreenBlurEffectIOS =
   | 'none'
   | 'systemDefault'
   | 'extraLight'
@@ -50,7 +50,7 @@ export type TabsScreenBlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-export type TabsSystemItem =
+export type TabsSystemItemIOS =
   | 'bookmarks'
   | 'contacts'
   | 'downloads'
@@ -64,7 +64,7 @@ export type TabsSystemItem =
   | 'search'
   | 'topRated';
 
-export type TabsScreenOrientation =
+export type TabsScreenOrientationIOS =
   | 'inherit'
   | 'all'
   | 'allButUpsideDown'
@@ -75,7 +75,7 @@ export type TabsScreenOrientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
-export interface TabsScreenAppearance {
+export interface TabsScreenAppearanceIOS {
   /**
    * @summary Specifies the appearance of tab bar items when they are in stacked layout.
    *
@@ -84,7 +84,7 @@ export interface TabsScreenAppearance {
    *
    * @platform ios
    */
-  stacked?: TabsScreenItemAppearance;
+  stacked?: TabsScreenItemAppearanceIOS;
   /**
    * @summary Specifies the appearance of tab bar items when they are in inline layout.
    *
@@ -96,7 +96,7 @@ export interface TabsScreenAppearance {
    *
    * @platform ios
    */
-  inline?: TabsScreenItemAppearance;
+  inline?: TabsScreenItemAppearanceIOS;
   /**
    * @summary Specifies the appearance of tab bar items when they are in compact inline layout.
    *
@@ -108,7 +108,7 @@ export interface TabsScreenAppearance {
    *
    * @platform ios
    */
-  compactInline?: TabsScreenItemAppearance;
+  compactInline?: TabsScreenItemAppearanceIOS;
 
   /**
    * @summary Specifies the background color for the entire tab bar when tab screen is selected.
@@ -140,7 +140,7 @@ export interface TabsScreenAppearance {
    * @platform ios
    * @supported iOS 18 or lower
    */
-  tabBarBlurEffect?: TabsScreenBlurEffect;
+  tabBarBlurEffect?: TabsScreenBlurEffectIOS;
   /**
    * @summary Specifies the shadow color for the tab bar when tab screen is selected.
    *
@@ -152,38 +152,38 @@ export interface TabsScreenAppearance {
   tabBarShadowColor?: ColorValue;
 }
 
-export interface TabsScreenItemAppearance {
+export interface TabsScreenItemAppearanceIOS {
   /**
    * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
    * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
-  normal?: TabsScreenItemStateAppearance;
+  normal?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines the colors for the tab bar item that is currently active.
    * The color scheme is determined by the configuration of the currently selected tab itself.
    *
    * @platform ios
    */
-  selected?: TabsScreenItemStateAppearance;
+  selected?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines the colors for a tab bar item when it receives focus.
    * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
-  focused?: TabsScreenItemStateAppearance;
+  focused?: TabsScreenItemStateAppearanceIOS;
   /**
    * Defines the colors for tab bar items when they are disabled.
    * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
-  disabled?: TabsScreenItemStateAppearance;
+  disabled?: TabsScreenItemStateAppearanceIOS;
 }
 
-export interface TabsScreenItemStateAppearance {
+export interface TabsScreenItemStateAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of each tab bar item
    * when tab screen is selected.
@@ -262,7 +262,7 @@ export interface TabsScreenItemStateAppearance {
 
 // #region Android-specific helpers
 
-export type TabBarItemLabelVisibilityMode =
+export type TabBarItemLabelVisibilityModeAndroid =
   | 'auto'
   | 'selected'
   | 'labeled'
@@ -417,7 +417,8 @@ export interface TabsAppearanceAndroid {
    *
    * @platform android
    */
-  labelVisibilityMode?: TabBarItemLabelVisibilityMode;
+  labelVisibilityMode?: TabBarItemLabelVisibilityModeAndroid;
+
   /**
    * @summary Specifies the colors of the icon and title for different item states.
    *
@@ -448,7 +449,7 @@ export interface TabsAppearanceAndroid {
 
 // #region Platform Interfaces
 
-export interface TabsScreenIOSProps {
+export interface TabsScreenPropsIOS {
   /**
    * @summary Specifies supported orientations for the tab screen.
    *
@@ -497,7 +498,7 @@ export interface TabsScreenIOSProps {
    *
    * @platform ios
    */
-  orientation?: TabsScreenOrientation;
+  orientation?: TabsScreenOrientationIOS;
   /**
    * @summary Specifies the standard tab bar appearance.
    *
@@ -506,7 +507,7 @@ export interface TabsScreenIOSProps {
    *
    * @platform ios
    */
-  standardAppearance?: TabsScreenAppearance;
+  standardAppearance?: TabsScreenAppearanceIOS;
   /**
    * @summary Specifies the tab bar appearace when edge of scrollable content aligns
    * with the edge of the tab bar.
@@ -519,7 +520,7 @@ export interface TabsScreenIOSProps {
    *
    * @platform ios
    */
-  scrollEdgeAppearance?: TabsScreenAppearance;
+  scrollEdgeAppearance?: TabsScreenAppearanceIOS;
   /**
    * @summary Specifies the icon for the tab bar item.
    *
@@ -581,7 +582,7 @@ export interface TabsScreenIOSProps {
    *
    * @platform ios
    */
-  systemItem?: TabsSystemItem;
+  systemItem?: TabsSystemItemIOS;
   /**
    * @summary Specifies which special effects (also known as microinteractions)
    * are enabled for the tab screen.
@@ -684,7 +685,7 @@ export interface TabsScreenIOSProps {
   experimental_userInterfaceStyle?: UserInterfaceStyle;
 }
 
-export interface TabsScreenAndroidProps {
+export interface TabsScreenPropsAndroid {
   /**
    * @summary Specifies the standard tab bar appearance.
    *
@@ -778,7 +779,7 @@ export interface TabsScreenAndroidProps {
 
 // #endregion Platform Interfaces
 
-export interface TabsScreenBaseProps {
+export interface TabsScreenPropsBase {
   // #region Control
   /**
    * @summary Determines selected tab.
@@ -886,7 +887,7 @@ export interface TabsScreenBaseProps {
   // #endregion Events
 }
 
-export interface TabsScreenProps extends TabsScreenBaseProps {
-  ios?: TabsScreenIOSProps;
-  android?: TabsScreenAndroidProps;
+export interface TabsScreenProps extends TabsScreenPropsBase {
+  ios?: TabsScreenPropsIOS;
+  android?: TabsScreenPropsAndroid;
 }

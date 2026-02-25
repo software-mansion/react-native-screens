@@ -13,13 +13,13 @@ export type NativeFocusChangeEvent = {
 
 // #region iOS-specific helpers
 
-export type TabBarMinimizeBehavior =
+export type TabBarMinimizeBehaviorIOS =
   | 'automatic'
   | 'never'
   | 'onScrollDown'
   | 'onScrollUp';
 
-export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
+export type TabBarControllerModeIOS = 'automatic' | 'tabBar' | 'tabSidebar';
 
 // #endregion iOS-specific helpers
 
@@ -38,7 +38,7 @@ export type TabsHostNativeContainerStyleProps = {
 
 // #region Platform Interfaces
 
-export interface TabsHostIOSProps {
+export interface TabsHostPropsIOS {
   /**
    * @summary Specifies the color used for selected tab's text and icon color.
    *
@@ -73,7 +73,7 @@ export interface TabsHostIOSProps {
    * @platform ios
    * @supported iOS 26 or higher
    */
-  tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+  tabBarMinimizeBehavior?: TabBarMinimizeBehaviorIOS;
   /**
    * @summary Specifies component used as bottom accessory.
    *
@@ -124,16 +124,16 @@ export interface TabsHostIOSProps {
    * @platform ios
    * @supported iOS 18 or higher
    */
-  tabBarControllerMode?: TabBarControllerMode;
+  tabBarControllerMode?: TabBarControllerModeIOS;
 }
 
 // Predefined for the future use-cases.
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TabsHostAndroidProps {}
+export interface TabsHostPropsAndroid {}
 
 // #endregion Platform Interfaces
 
-export interface TabsHostBaseProps {
+export interface TabsHostPropsBase {
   // #region General
   children?: ViewProps['children'];
   /**
@@ -188,7 +188,7 @@ export interface TabsHostBaseProps {
   // #endregion Events
 }
 
-export interface TabsHostProps extends TabsHostBaseProps {
-  ios?: TabsHostIOSProps;
-  android?: TabsHostAndroidProps;
+export interface TabsHostProps extends TabsHostPropsBase {
+  ios?: TabsHostPropsIOS;
+  android?: TabsHostPropsAndroid;
 }
