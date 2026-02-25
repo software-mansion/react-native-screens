@@ -270,6 +270,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',
       tabBarItemAccessibilityLabel: 'Fourth Tab Item',
+      specialEffects: {
+        repeatedTabSelection: {
+          popToRoot: false,
+        },
+      },
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
@@ -279,11 +284,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
         selectedIcon: {
           type: 'drawableResource',
           name: 'custom_home_icon',
-        },
-        specialEffects: {
-          repeatedTabSelection: {
-            popToRoot: false,
-          },
         },
       },
       ios: {
@@ -296,11 +296,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
           name: 'rectangle.stack.fill',
         },
         systemItem: 'search', // iOS specific
-        specialEffects: {
-          repeatedTabSelection: {
-            popToRoot: false,
-          },
-        },
       },
       title: 'Tab4',
       badgeValue: '123',

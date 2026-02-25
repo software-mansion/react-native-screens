@@ -477,34 +477,6 @@ export interface TabsScreenPropsIOS {
    */
   systemItem?: TabsSystemItemIOS;
   /**
-   * @summary Specifies which special effects (also known as microinteractions)
-   * are enabled for the tab screen.
-   *
-   * For repeated tab selection (selecting already focused tab bar item),
-   * there are 2 supported special effects:
-   * - `popToRoot` - when Stack is nested inside tab screen and repeated
-   *   selection is detected, the Stack will pop to root screen,
-   * - `scrollToTop` - when there is a ScrollView in first descendant
-   *   chain from tab screen and repeated selection is detected, ScrollView
-   *   will be scrolled to top.
-   *
-   * `popToRoot` has priority over `scrollToTop`.
-   *
-   * @default All special effects are enabled by default.
-   */
-  specialEffects?: {
-    repeatedTabSelection?: {
-      /**
-       * @default true
-       */
-      popToRoot?: boolean;
-      /**
-       * @default true
-       */
-      scrollToTop?: boolean;
-    };
-  };
-  /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`
    * to `automatic`.
@@ -605,34 +577,6 @@ export interface TabsScreenPropsAndroid {
    * @platform android, ios
    */
   selectedIcon?: PlatformIconAndroid;
-  /**
-   * @summary Specifies which special effects (also known as microinteractions)
-   * are enabled for the tab screen.
-   *
-   * For repeated tab selection (selecting already focused tab bar item),
-   * there are 2 supported special effects:
-   * - `popToRoot` - when Stack is nested inside tab screen and repeated
-   *   selection is detected, the Stack will pop to root screen,
-   * - `scrollToTop` - when there is a ScrollView in first descendant
-   *   chain from tab screen and repeated selection is detected, ScrollView
-   *   will be scrolled to top.
-   *
-   * `popToRoot` has priority over `scrollToTop`.
-   *
-   * @default All special effects are enabled by default.
-   */
-  specialEffects?: {
-    repeatedTabSelection?: {
-      /**
-       * @default true
-       */
-      popToRoot?: boolean;
-      /**
-       * @default true
-       */
-      scrollToTop?: boolean;
-    };
-  };
 }
 
 // #endregion Platform Interfaces
@@ -680,6 +624,34 @@ export interface TabsScreenPropsBase {
    * @default undefined
    */
   freezeContents?: boolean;
+  /**
+   * @summary Specifies which special effects (also known as microinteractions)
+   * are enabled for the tab screen.
+   *
+   * For repeated tab selection (selecting already focused tab bar item),
+   * there are 2 supported special effects:
+   * - `popToRoot` - when Stack is nested inside tab screen and repeated
+   *   selection is detected, the Stack will pop to root screen,
+   * - `scrollToTop` - when there is a ScrollView in first descendant
+   *   chain from tab screen and repeated selection is detected, ScrollView
+   *   will be scrolled to top.
+   *
+   * `popToRoot` has priority over `scrollToTop`.
+   *
+   * @default All special effects are enabled by default.
+   */
+  specialEffects?: {
+    repeatedTabSelection?: {
+      /**
+       * @default true
+       */
+      popToRoot?: boolean;
+      /**
+       * @default true
+       */
+      scrollToTop?: boolean;
+    };
+  };
   // #endregion General
 
   // #region Accessibility

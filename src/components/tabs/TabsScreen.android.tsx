@@ -54,7 +54,7 @@ function TabsScreen(props: TabsScreenProps) {
       standardAppearanceAndroid={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}
-      specialEffects={android?.specialEffects}>
+    >
       {baseProps.children}
     </TabsScreenNativeComponent>
   );
