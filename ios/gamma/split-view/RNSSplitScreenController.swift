@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 /// @class RNSSplitScreenController
-/// @brief A UIViewController subclass that manages a SplitView column in a UISplitViewController.
+/// @brief A UIViewController subclass that manages a Split column in a UISplitViewController.
 ///
 /// Associated with a RNSSplitScreenComponentView, it handles layout synchronization with the
 /// Shadow Tree, emits React lifecycle events, and interacts with the SplitHost hierarchy.
