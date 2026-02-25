@@ -7,12 +7,12 @@ import {
   processColor,
   type ImageSourcePropType,
 } from 'react-native';
-import TabsScreenNativeComponent, {
+import TabsScreenIOSNativeComponent, {
   type IconType,
   type Appearance,
   type ItemAppearance,
   type ItemStateAppearance,
-} from '../../fabric/tabs/TabsScreenNativeComponent';
+} from '../../fabric/tabs/TabsScreenIOSNativeComponent';
 import type {
   TabsScreenAppearanceIOS,
   TabsScreenItemAppearanceIOS,
@@ -52,7 +52,7 @@ function TabsScreen(props: TabsScreenProps) {
   const iconProps = parseIconsToNativeProps(ios?.icon, ios?.selectedIcon);
 
   return (
-    <TabsScreenNativeComponent
+    <TabsScreenIOSNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
       isFocused={isFocused}
@@ -80,7 +80,7 @@ function TabsScreen(props: TabsScreenProps) {
         ios?.overrideScrollViewContentInsetAdjustmentBehavior
       }>
       {baseProps.children}
-    </TabsScreenNativeComponent>
+    </TabsScreenIOSNativeComponent>
   );
 }
 

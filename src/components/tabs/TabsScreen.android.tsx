@@ -7,9 +7,9 @@ import {
   StyleSheet,
   processColor,
 } from 'react-native';
-import TabsScreenNativeComponent, {
+import TabsScreenAndroidNativeComponent, {
   type AppearanceAndroid,
-} from '../../fabric/tabs/TabsScreenNativeComponent';
+} from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type {
   TabsScreenProps,
   TabsAppearanceAndroid,
@@ -55,7 +55,7 @@ function TabsScreen(props: TabsScreenProps) {
   );
 
   return (
-    <TabsScreenNativeComponent
+    <TabsScreenAndroidNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
       isFocused={isFocused}
@@ -72,7 +72,7 @@ function TabsScreen(props: TabsScreenProps) {
         android?.standardAppearance,
       )}>
       {baseProps.children}
-    </TabsScreenNativeComponent>
+    </TabsScreenAndroidNativeComponent>
   );
 }
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import { bottomTabsDebugLog } from '../../private/logging';
-import type { NativeProps } from '../../fabric/tabs/TabsScreenNativeComponent';
 import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
 
 interface TabsScreenConfig {
@@ -21,7 +20,8 @@ export function useTabsScreen({
   isFocused = false,
   tabKey,
 }: TabsScreenConfig) {
-  const componentNodeRef = React.useRef<React.Component<NativeProps>>(null);
+  // TODO: @t0maboro - move to separate files and use proper nativeprops type
+  const componentNodeRef = React.useRef<React.Component<any>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 
   React.useEffect(() => {

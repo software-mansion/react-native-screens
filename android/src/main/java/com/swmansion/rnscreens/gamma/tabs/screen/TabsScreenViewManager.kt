@@ -10,8 +10,8 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.RNSTabsScreenManagerDelegate
-import com.facebook.react.viewmanagers.RNSTabsScreenManagerInterface
+import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerDelegate
+import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.gamma.tabs.appearance.ActiveIndicatorAppearance
 import com.swmansion.rnscreens.gamma.tabs.appearance.AndroidTabsAppearance
@@ -29,8 +29,8 @@ import com.swmansion.rnscreens.utils.RNSLog
 @ReactModule(name = TabsScreenViewManager.REACT_CLASS)
 class TabsScreenViewManager :
     ViewGroupManager<TabsScreen>(),
-    RNSTabsScreenManagerInterface<TabsScreen> {
-    private val delegate: ViewManagerDelegate<TabsScreen> = RNSTabsScreenManagerDelegate<TabsScreen, TabsScreenViewManager>(this)
+    RNSTabsScreenAndroidManagerInterface<TabsScreen> {
+    private val delegate: ViewManagerDelegate<TabsScreen> = RNSTabsScreenAndroidManagerDelegate<TabsScreen, TabsScreenViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
@@ -58,42 +58,6 @@ class TabsScreenViewManager :
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
     }
-
-    // These should be ignored or another component, dedicated for Android should be used
-    override fun setStandardAppearance(
-        view: TabsScreen,
-        value: Dynamic,
-    ) = Unit
-
-    override fun setScrollEdgeAppearance(
-        view: TabsScreen,
-        value: Dynamic,
-    ) = Unit
-
-    override fun setIconType(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setIconImageSource(
-        view: TabsScreen?,
-        value: ReadableMap?,
-    ) = Unit
-
-    override fun setIconResourceName(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setSelectedIconImageSource(
-        view: TabsScreen?,
-        value: ReadableMap?,
-    ) = Unit
-
-    override fun setSelectedIconResourceName(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
 
     // Annotation is Paper only
     @ReactProp(name = "isFocused")
@@ -157,31 +121,6 @@ class TabsScreenViewManager :
         view.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = scrollToTop
     }
 
-    override fun setOverrideScrollViewContentInsetAdjustmentBehavior(
-        view: TabsScreen,
-        value: Boolean,
-    ) = Unit
-
-    override fun setBottomScrollEdgeEffect(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setLeftScrollEdgeEffect(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setRightScrollEdgeEffect(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setTopScrollEdgeEffect(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
     @ReactProp(name = "tabBarItemTestID")
     override fun setTabBarItemTestID(
         view: TabsScreen,
@@ -198,8 +137,6 @@ class TabsScreenViewManager :
         view.tabBarItemAccessibilityLabel = value
     }
 
-    // Android specific
-
     @ReactProp(name = "drawableIconResourceName")
     override fun setDrawableIconResourceName(
         view: TabsScreen,
@@ -215,21 +152,6 @@ class TabsScreenViewManager :
     ) {
         view.selectedDrawableIconResourceName = value
     }
-
-    override fun setOrientation(
-        view: TabsScreen,
-        value: String?,
-    ) = Unit
-
-    override fun setSystemItem(
-        view: TabsScreen,
-        value: String?,
-    ) = Unit
-
-    override fun setUserInterfaceStyle(
-        view: TabsScreen,
-        value: String?,
-    ) = Unit
 
     @ReactProp(name = "imageIconResource")
     override fun setImageIconResource(
@@ -366,6 +288,6 @@ class TabsScreenViewManager :
     }
 
     companion object {
-        const val REACT_CLASS = "RNSTabsScreen"
+        const val REACT_CLASS = "RNSTabsScreenAndroid"
     }
 }
