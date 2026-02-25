@@ -43,7 +43,7 @@ function ContentScreen() {
         styles.fillParent,
         { backgroundColor: Colors.White },
       ]}>
-      <Text>Hello world</Text>
+      <Text>Interrupt "first descendant chain" heuristic</Text>
       <ScrollViewMarker
         style={[styles.fillParent]}
         scrollEdgeEffects={{ top: 'hard' }}>
