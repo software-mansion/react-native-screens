@@ -3,6 +3,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import TabsHostAndroidNativeComponent from '../../fabric/tabs/TabsHostAndroidNativeComponent';
+import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../fabric/tabs/TabsHostAndroidNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import { useTabsHost } from './useTabsHost';
@@ -18,6 +19,8 @@ function TabsHost(props: TabsHostProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, nativeContainerStyle, ...baseProps } = props;
 
+  const componentNodeRef =
+    React.useRef<React.Component<TabsHostAndroidNativeComponentProps>>(null);
   const {
     experimentalControlNavigationStateInJS,
     onNativeFocusChange,
@@ -25,10 +28,10 @@ function TabsHost(props: TabsHostProps) {
   } = baseProps;
 
   const {
-    componentNodeRef,
     controlNavigationStateInJS,
     onNativeFocusChangeCallback,
-  } = useTabsHost({
+  } = useTabsHost<TabsHostAndroidNativeComponentProps>({
+    componentNodeRef,
     controlNavigationStateInJS: experimentalControlNavigationStateInJS,
     onNativeFocusChange,
   });

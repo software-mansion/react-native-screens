@@ -1,27 +1,30 @@
 import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
-// TODO: @t0maboro - move to platform-specific section
-// import type { NativeProps as TabsHostNativeComponentProps } from '../../fabric/tabs/TabsHostNativeComponent';
+import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../fabric/tabs/TabsHostAndroidNativeComponent';
+import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../fabric/tabs/TabsHostIOSNativeComponent';
 import featureFlags from '../../flags';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { NativeFocusChangeEvent } from './TabsHost.types';
 
-interface TabsHostConfig {
+type PlatformNativeProps =
+  | TabsHostAndroidNativeComponentProps
+  | TabsHostIOSNativeComponentProps;
+
+interface TabsHostConfig<T> {
+  componentNodeRef: React.RefObject<React.Component<T> | null>,
   controlNavigationStateInJS?: boolean;
   onNativeFocusChange?: (
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
   ) => void;
 }
 
-export function useTabsHost(config: TabsHostConfig) {
-  // TODO: @t0maboro - replace any with NativeProps
-  const componentNodeRef = React.useRef<React.Component<any>>(null);
+export function useTabsHost<T extends PlatformNativeProps>(config: TabsHostConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
   React.useEffect(() => {
-    if (componentNodeRef.current != null) {
+    if (config.componentNodeRef.current != null) {
       componentNodeHandle.current =
-        findNodeHandle(componentNodeRef.current) ?? -1;
+        findNodeHandle(config.componentNodeRef.current) ?? -1;
     } else {
       componentNodeHandle.current = -1;
     }
@@ -44,7 +47,6 @@ export function useTabsHost(config: TabsHostConfig) {
     featureFlags.experiment.controlledBottomTabs;
 
   return {
-    componentNodeRef,
     controlNavigationStateInJS,
     onNativeFocusChangeCallback,
   };

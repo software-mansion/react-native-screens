@@ -1,9 +1,16 @@
 import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
+import type { NativeProps as TabsScreenAndroidNativeComponentProps } from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
+import type { NativeProps as TabsScreenIOSNativeComponentProps } from '../../fabric/tabs/TabsScreenIOSNativeComponent';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
 
-interface TabsScreenConfig {
+type PlatformNativeProps =
+  | TabsScreenAndroidNativeComponentProps
+  | TabsScreenIOSNativeComponentProps;
+
+interface TabsScreenConfig<T> {
+  componentNodeRef: React.RefObject<React.Component<T> | null>,
   onDidAppear?: TabsScreenEventHandler<EmptyObject>;
   onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
   onWillAppear?: TabsScreenEventHandler<EmptyObject>;
@@ -12,16 +19,15 @@ interface TabsScreenConfig {
   tabKey: string;
 }
 
-export function useTabsScreen({
+export function useTabsScreen<T extends PlatformNativeProps>({
+  componentNodeRef,
   onDidAppear,
   onDidDisappear,
   onWillAppear,
   onWillDisappear,
   isFocused = false,
   tabKey,
-}: TabsScreenConfig) {
-  // TODO: @t0maboro - move to separate files and use proper nativeprops type
-  const componentNodeRef = React.useRef<React.Component<any>>(null);
+}: TabsScreenConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
   React.useEffect(() => {

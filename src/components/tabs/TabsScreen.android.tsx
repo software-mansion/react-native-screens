@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import TabsScreenAndroidNativeComponent, {
   type AppearanceAndroid,
-} from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
+ NativeProps as TabsScreenAndroidNativeComponentProps } from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type {
   TabsScreenProps,
   TabsAppearanceAndroid,
@@ -30,6 +30,9 @@ function TabsScreen(props: TabsScreenProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, ...baseProps } = props;
 
+  const componentNodeRef =
+    React.useRef<React.Component<TabsScreenAndroidNativeComponentProps>>(null);
+
   const {
     onDidAppear,
     onDidDisappear,
@@ -40,7 +43,8 @@ function TabsScreen(props: TabsScreenProps) {
     ...filteredBaseProps
   } = baseProps;
 
-  const { componentNodeRef, lifecycleCallbacks } = useTabsScreen({
+  const { lifecycleCallbacks } = useTabsScreen<TabsScreenAndroidNativeComponentProps>({
+    componentNodeRef,
     onDidAppear,
     onDidDisappear,
     onWillAppear,

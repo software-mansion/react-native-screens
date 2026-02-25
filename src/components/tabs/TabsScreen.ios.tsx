@@ -12,7 +12,7 @@ import TabsScreenIOSNativeComponent, {
   type Appearance,
   type ItemAppearance,
   type ItemStateAppearance,
-} from '../../fabric/tabs/TabsScreenIOSNativeComponent';
+ NativeProps as TabsScreenIOSNativeComponentProps } from '../../fabric/tabs/TabsScreenIOSNativeComponent';
 import type {
   TabsScreenAppearanceIOS,
   TabsScreenItemAppearanceIOS,
@@ -30,6 +30,9 @@ function TabsScreen(props: TabsScreenProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ios, android, ...baseProps } = props;
 
+  const componentNodeRef =
+    React.useRef<React.Component<TabsScreenIOSNativeComponentProps>>(null);
+
   const {
     onDidAppear,
     onDidDisappear,
@@ -40,7 +43,8 @@ function TabsScreen(props: TabsScreenProps) {
     ...filteredBaseProps
   } = baseProps;
 
-  const { componentNodeRef, lifecycleCallbacks } = useTabsScreen({
+  const { lifecycleCallbacks } = useTabsScreen<TabsScreenIOSNativeComponentProps>({
+    componentNodeRef,
     onDidAppear,
     onDidDisappear,
     onWillAppear,
