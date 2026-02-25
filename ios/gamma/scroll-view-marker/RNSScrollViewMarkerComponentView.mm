@@ -2,6 +2,7 @@
 #import "RNSConversions-ScrollViewMarker.h"
 #import "RNSEnums.h"
 #import "RNSScrollEdgeEffectApplicator.h"
+#import "RNSScrollViewSeeking.h"
 
 #import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
