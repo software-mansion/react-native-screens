@@ -62,7 +62,7 @@ namespace react = facebook::react;
     // If the current controller’s splitViewController is of type RNSSplitHostController,
     // we know that we're still inside the RN hierarchy,
     // so there's no need to enforce additional touch event support.
-    if ([_controller isInSplitViewHostSubtree]) {
+    if ([_controller isInSplitHostSubtree]) {
       return;
     }
 

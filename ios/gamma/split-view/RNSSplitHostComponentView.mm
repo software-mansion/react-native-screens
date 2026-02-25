@@ -115,8 +115,7 @@ static const CGFloat epsilon = 1e-6;
   if (_controller == nil) {
     int numberOfColumns = [self getNumberOfColumns];
 
-    _controller = [[RNSSplitHostController alloc] initWithSplitHostComponentView:self
-                                                                         numberOfColumns:numberOfColumns];
+    _controller = [[RNSSplitHostController alloc] initWithSplitHostComponentView:self numberOfColumns:numberOfColumns];
   }
 }
 
@@ -187,7 +186,7 @@ RNS_IGNORE_SUPER_CALL_END
       RNSSplitScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
-  childScreen.splitViewHost = nil;
+  childScreen.splitHost = nil;
   [_reactSubviews removeObject:childScreen];
   _hasModifiedReactSubviewsInCurrentTransaction = true;
 }
@@ -341,11 +340,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
-  [self requestSplitViewHostControllerForAppearanceUpdate];
+  [self requestSplitHostControllerForAppearanceUpdate];
   [super finalizeUpdates:updateMask];
 }
 
-- (void)requestSplitViewHostControllerForAppearanceUpdate
+- (void)requestSplitHostControllerForAppearanceUpdate
 {
   if (_needsSplitViewAppearanceUpdate && _controller != nil) {
     _needsSplitViewAppearanceUpdate = false;
@@ -389,8 +388,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
 {
   [super updateEventEmitter:eventEmitter];
-  [_reactEventEmitter
-      updateEventEmitter:std::static_pointer_cast<const react::RNSSplitHostEventEmitter>(eventEmitter)];
+  [_reactEventEmitter updateEventEmitter:std::static_pointer_cast<const react::RNSSplitHostEventEmitter>(eventEmitter)];
 }
 
 #pragma mark - Commands
