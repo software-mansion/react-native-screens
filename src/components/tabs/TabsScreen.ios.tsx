@@ -8,11 +8,12 @@ import {
   type ImageSourcePropType,
 } from 'react-native';
 import TabsScreenIOSNativeComponent, {
-  type IconType,
-  type Appearance,
-  type ItemAppearance,
-  type ItemStateAppearance,
- NativeProps as TabsScreenIOSNativeComponentProps } from '../../fabric/tabs/TabsScreenIOSNativeComponent';
+  type IconTypeIOS,
+  type AppearanceIOS,
+  type ItemAppearanceIOS,
+  type ItemStateAppearanceIOS,
+  NativeProps as TabsScreenIOSNativeComponentProps,
+} from '../../fabric/tabs/TabsScreenIOSNativeComponent';
 import type {
   TabsScreenAppearanceIOS,
   TabsScreenItemAppearanceIOS,
@@ -89,7 +90,7 @@ function TabsScreen(props: TabsScreenProps) {
 }
 
 function parseIconToNativeProps(icon: PlatformIconIOS | undefined): {
-  iconType?: IconType;
+  iconType?: IconTypeIOS;
   iconImageSource?: ImageSourcePropType;
   iconResourceName?: string;
 } {
@@ -130,7 +131,7 @@ function parseIconsToNativeProps(
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
-  iconType?: IconType;
+  iconType?: IconTypeIOS;
   iconImageSource?: ImageSourcePropType;
   iconResourceName?: string;
   selectedIconImageSource?: ImageSourcePropType;
@@ -166,7 +167,7 @@ function parseIconsToNativeProps(
 
 function mapAppearanceToNativeProp(
   appearance?: TabsScreenAppearanceIOS,
-): Appearance | undefined {
+): AppearanceIOS | undefined {
   if (!appearance) return undefined;
 
   const {
@@ -189,7 +190,7 @@ function mapAppearanceToNativeProp(
 
 function mapItemAppearanceToNativeProp(
   itemAppearance?: TabsScreenItemAppearanceIOS,
-): ItemAppearance | undefined {
+): ItemAppearanceIOS | undefined {
   if (!itemAppearance) return undefined;
 
   const { normal, selected, focused, disabled } = itemAppearance;
@@ -205,7 +206,7 @@ function mapItemAppearanceToNativeProp(
 
 function mapItemStateAppearanceToNativeProp(
   itemStateAppearance?: TabsScreenItemStateAppearanceIOS,
-): ItemStateAppearance | undefined {
+): ItemStateAppearanceIOS | undefined {
   if (!itemStateAppearance) return undefined;
 
   const {

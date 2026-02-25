@@ -24,9 +24,9 @@ type LifecycleStateChangeEvent = Readonly<{
 
 // #region iOS-specific helpers
 
-type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
+type UserInterfaceStyleIOS = 'unspecified' | 'light' | 'dark';
 
-type BlurEffect =
+type BlurEffectIOS =
   | 'none'
   | 'systemDefault'
   | 'extraLight'
@@ -50,7 +50,7 @@ type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
-type Orientation =
+type OrientationIOS =
   | 'inherit'
   | 'all'
   | 'allButUpsideDown'
@@ -61,7 +61,7 @@ type Orientation =
   | 'landscapeLeft'
   | 'landscapeRight';
 
-type SystemItem =
+type SystemItemIOS =
   | 'none'
   | 'bookmarks'
   | 'contacts'
@@ -76,11 +76,11 @@ type SystemItem =
   | 'search'
   | 'topRated';
 
-type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+type ScrollEdgeEffectIOS = 'automatic' | 'hard' | 'soft' | 'hidden';
 
-export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcasset';
+export type IconTypeIOS = 'image' | 'template' | 'sfSymbol' | 'xcasset';
 
-export type ItemStateAppearance = {
+export type ItemStateAppearanceIOS = {
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: CT.Float;
   tabBarItemTitleFontWeight?: string;
@@ -94,21 +94,21 @@ export type ItemStateAppearance = {
   tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
 };
 
-export type ItemAppearance = {
-  normal?: ItemStateAppearance;
-  selected?: ItemStateAppearance;
-  focused?: ItemStateAppearance;
-  disabled?: ItemStateAppearance;
+export type ItemAppearanceIOS = {
+  normal?: ItemStateAppearanceIOS;
+  selected?: ItemStateAppearanceIOS;
+  focused?: ItemStateAppearanceIOS;
+  disabled?: ItemStateAppearanceIOS;
 };
 
-export type Appearance = {
-  stacked?: ItemAppearance;
-  inline?: ItemAppearance;
-  compactInline?: ItemAppearance;
+export type AppearanceIOS = {
+  stacked?: ItemAppearanceIOS;
+  inline?: ItemAppearanceIOS;
+  compactInline?: ItemAppearanceIOS;
 
   tabBarBackgroundColor?: ProcessedColorValue | null;
   tabBarShadowColor?: ProcessedColorValue | null;
-  tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
+  tabBarBlurEffect?: CT.WithDefault<BlurEffectIOS, 'systemDefault'>;
 };
 
 // #endregion iOS-specific helpers
@@ -149,15 +149,15 @@ export interface NativeProps extends ViewProps {
   // #region iOS-specific Props
 
   // Tab Config
-  orientation?: CT.WithDefault<Orientation, 'inherit'>;
-  systemItem?: CT.WithDefault<SystemItem, 'none'>;
+  orientation?: CT.WithDefault<OrientationIOS, 'inherit'>;
+  systemItem?: CT.WithDefault<SystemItemIOS, 'none'>;
 
   // Appearance
-  standardAppearance?: UnsafeMixed<Appearance>;
-  scrollEdgeAppearance?: UnsafeMixed<Appearance>;
+  standardAppearance?: UnsafeMixed<AppearanceIOS>;
+  scrollEdgeAppearance?: UnsafeMixed<AppearanceIOS>;
 
   // Icons
-  iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
+  iconType?: CT.WithDefault<IconTypeIOS, 'sfSymbol'>;
   iconImageSource?: ImageSource;
   iconResourceName?: string;
   selectedIconImageSource?: ImageSource;
@@ -168,13 +168,13 @@ export interface NativeProps extends ViewProps {
     boolean,
     true
   >;
-  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
-  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffect, 'automatic'>;
+  bottomScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffectIOS, 'automatic'>;
+  leftScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffectIOS, 'automatic'>;
+  rightScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffectIOS, 'automatic'>;
+  topScrollEdgeEffect?: CT.WithDefault<ScrollEdgeEffectIOS, 'automatic'>;
 
   // Experimental
-  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
+  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyleIOS, 'unspecified'>;
 
   // #endregion iOS-specific Props
 }

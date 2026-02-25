@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import TabsScreenAndroidNativeComponent, {
   type AppearanceAndroid,
- NativeProps as TabsScreenAndroidNativeComponentProps } from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
+  NativeProps as TabsScreenAndroidNativeComponentProps,
+} from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type {
   TabsScreenProps,
   TabsAppearanceAndroid,
@@ -72,7 +73,7 @@ function TabsScreen(props: TabsScreenProps) {
       {...iconProps}
       {...filteredBaseProps}
       // Android-specific
-      standardAppearanceAndroid={mapAppearanceToNativeProps(
+      standardAppearance={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}>
       {baseProps.children}

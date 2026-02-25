@@ -175,8 +175,8 @@ class TabsScreenViewManager :
         }
     }
 
-    @ReactProp(name = "standardAppearanceAndroid")
-    override fun setStandardAppearanceAndroid(
+    @ReactProp(name = "standardAppearance")
+    override fun setStandardAppearance(
         view: TabsScreen,
         value: Dynamic?,
     ) {

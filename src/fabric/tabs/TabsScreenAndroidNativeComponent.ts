@@ -24,7 +24,7 @@ type LifecycleStateChangeEvent = Readonly<{
 
 // #region Android-specific helpers
 
-type TabBarItemLabelVisibilityMode =
+type TabBarItemLabelVisibilityModeAndroid =
   | 'auto'
   | 'selected'
   | 'labeled'
@@ -34,7 +34,7 @@ export type AppearanceAndroid = {
   tabBarBackgroundColor?: ProcessedColorValue | null;
   tabBarItemRippleColor?: ProcessedColorValue | null;
   tabBarItemLabelVisibilityMode?: CT.WithDefault<
-    TabBarItemLabelVisibilityMode,
+    TabBarItemLabelVisibilityModeAndroid,
     'auto'
   >;
 
@@ -116,7 +116,7 @@ export interface NativeProps extends ViewProps {
   imageIconResource?: ImageSource;
 
   // Appearance
-  standardAppearanceAndroid?: UnsafeMixed<AppearanceAndroid>;
+  standardAppearance?: UnsafeMixed<AppearanceAndroid>;
 
   // #endregion Android-specific Props
 }
