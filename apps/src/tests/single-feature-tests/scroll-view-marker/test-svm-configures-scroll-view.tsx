@@ -15,7 +15,7 @@ const SCENARIO: Scenario = {
     'It utilizes the StackContainer, to allow for observation of edge effects ' +
     'applied to the container edges. On Android this test serves only as a setup ' +
     'for native debugging.',
-  platforms: ['ios'],
+  platforms: ['ios', 'android'],
   AppComponent: App,
 };
 
