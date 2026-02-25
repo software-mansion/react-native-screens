@@ -11,13 +11,13 @@ import {
   type ImageSourcePropType,
   type NativeSyntheticEvent,
 } from 'react-native';
-import BottomTabsScreenNativeComponent, {
+import TabsScreenNativeComponent, {
   type IconType,
   type NativeProps,
   type Appearance,
   type ItemAppearance,
   type ItemStateAppearance,
-} from '../../fabric/bottom-tabs/BottomTabsScreenNativeComponent';
+} from '../../fabric/tabs/TabsScreenNativeComponent';
 import type {
   TabsScreenAppearance,
   TabsScreenItemAppearance,
@@ -114,7 +114,7 @@ function TabsScreen(props: TabsScreenProps) {
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
   return (
-    <BottomTabsScreenNativeComponent
+    <TabsScreenNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
       onWillAppear={onWillAppearCallback}
@@ -136,7 +136,7 @@ function TabsScreen(props: TabsScreenProps) {
       userInterfaceStyle={experimental_userInterfaceStyle}
       {...rest}>
       {rest.children}
-    </BottomTabsScreenNativeComponent>
+    </TabsScreenNativeComponent>
   );
 }
 

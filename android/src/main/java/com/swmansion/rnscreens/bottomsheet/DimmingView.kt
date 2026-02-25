@@ -31,6 +31,7 @@ internal class DimmingView(
 
     init {
         pointerEventsProxy.pointerEventsImpl = DimmingViewPointerEventsImpl(this)
+        setFocusable(false)
     }
 
     internal val blockGestures

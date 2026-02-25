@@ -1,6 +1,6 @@
 {
   "name": "react-native-screens",
-  "version": "4.23.0",
+  "version": "4.24.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn && yarn build && cd ../)",
@@ -200,17 +200,17 @@
         "RNSStackHost": {
           "className": "RNSStackHostComponentView"
         },
-        "RNSBottomTabsScreen": {
-          "className": "RNSBottomTabsScreenComponentView"
+        "RNSTabsScreen": {
+          "className": "RNSTabsScreenComponentView"
         },
-        "RNSBottomTabs": {
-          "className": "RNSBottomTabsHostComponentView"
+        "RNSTabsHost": {
+          "className": "RNSTabsHostComponentView"
         },
-        "RNSBottomTabsAccessory": {
-          "className": "RNSBottomTabsAccessoryComponentView"
+        "RNSTabsBottomAccessory": {
+          "className": "RNSTabsBottomAccessoryComponentView"
         },
-        "RNSBottomTabsAccessoryContent": {
-          "className": "RNSBottomTabsAccessoryContentComponentView"
+        "RNSTabsBottomAccessoryContent": {
+          "className": "RNSTabsBottomAccessoryContentComponentView"
         },
         "RNSSplitViewHost": {
           "className": "RNSSplitViewHostComponentView"
