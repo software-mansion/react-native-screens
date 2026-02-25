@@ -71,7 +71,7 @@ namespace react = facebook::react;
   return foundScrollView;
 }
 
-- (nullable id<RNSScrollViewSeeking>)findSeekingParent
+- (nullable id<RNSScrollViewSeeking>)findFirstSeekingAncestor
 {
   const UIView *superview = self.superview;
   while (superview != nil) {
@@ -101,7 +101,7 @@ namespace react = facebook::react;
     return;
   }
 
-  id<RNSScrollViewSeeking> seekingAncestor = [self findSeekingParent];
+  id<RNSScrollViewSeeking> seekingAncestor = [self findFirstSeekingAncestor];
 
   if (seekingAncestor == nil) {
     return;

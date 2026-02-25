@@ -41,7 +41,7 @@ class ScrollViewMarker(
         return childScrollView as ViewGroup
     }
 
-    private fun findSeekingParent(): ScrollViewSeeking? {
+    private fun findFirstSeekingAncestor(): ScrollViewSeeking? {
         var currentView = parent
 
         while (currentView != null) {
@@ -56,7 +56,7 @@ class ScrollViewMarker(
 
     private fun registerWithSeekingAncestor() {
         val scrollView = findScrollView()
-        findSeekingParent()?.registerScrollView(this, scrollView)
+        findFirstSeekingAncestor()?.registerScrollView(this, scrollView)
     }
 
     private fun maybeRegisterWithSeekingAncestor() {
