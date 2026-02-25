@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Freeze } from 'react-freeze';
 import {
   Image,
   ImageResolvedAssetSource,
@@ -12,7 +11,6 @@ import {
   type ImageSourcePropType,
   type NativeSyntheticEvent,
 } from 'react-native';
-import { freezeEnabled } from '../../core';
 import TabsScreenNativeComponent, {
   type IconType,
   type NativeProps,
@@ -20,7 +18,6 @@ import TabsScreenNativeComponent, {
   type ItemAppearance,
   type ItemStateAppearance,
 } from '../../fabric/tabs/TabsScreenNativeComponent';
-import { featureFlags } from '../../flags';
 import type {
   TabsScreenAppearance,
   TabsScreenItemAppearance,
@@ -51,15 +48,12 @@ function TabsScreen(props: TabsScreenProps) {
     }
   }, []);
 
-  const [nativeViewIsVisible, setNativeViewIsVisible] = React.useState(false);
-
   const {
     onWillAppear,
     onDidAppear,
     onWillDisappear,
     onDidDisappear,
     isFocused = false,
-    freezeContents,
     icon,
     selectedIcon,
     standardAppearance,
@@ -71,18 +65,11 @@ function TabsScreen(props: TabsScreenProps) {
     ...rest
   } = props;
 
-  const shouldFreeze = shouldFreezeScreen(
-    nativeViewIsVisible,
-    isFocused,
-    freezeContents,
-  );
-
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
       );
-      setNativeViewIsVisible(true);
       onWillAppear?.(event);
     },
     [onWillAppear],
@@ -113,7 +100,6 @@ function TabsScreen(props: TabsScreenProps) {
       bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
       );
-      setNativeViewIsVisible(false);
       onDidDisappear?.(event);
     },
     [onDidDisappear],
@@ -122,7 +108,7 @@ function TabsScreen(props: TabsScreenProps) {
   bottomTabsDebugLog(
     `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
       rest.tabKey
-    } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
+    } isFocused: ${isFocused}`,
   );
 
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
@@ -149,9 +135,7 @@ function TabsScreen(props: TabsScreenProps) {
       // eslint-disable-next-line camelcase -- we use sneak case experimental prefix
       userInterfaceStyle={experimental_userInterfaceStyle}
       {...rest}>
-      <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
-        {rest.children}
-      </Freeze>
+      {rest.children}
     </TabsScreenNativeComponent>
   );
 }
@@ -219,27 +203,6 @@ function mapItemStateAppearanceToNativeProp(
         ? String(tabBarItemTitleFontWeight)
         : undefined,
   };
-}
-
-function shouldFreezeScreen(
-  nativeViewVisible: boolean,
-  screenFocused: boolean,
-  freezeOverride: boolean | undefined,
-) {
-  if (!freezeEnabled()) {
-    return false;
-  }
-
-  if (freezeOverride !== undefined) {
-    return freezeOverride;
-  }
-
-  if (featureFlags.experiment.controlledBottomTabs) {
-    // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
-    return !nativeViewVisible && !screenFocused;
-  }
-
-  return !nativeViewVisible;
 }
 
 function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {

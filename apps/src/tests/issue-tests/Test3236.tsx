@@ -56,14 +56,16 @@ function App() {
       tabScreenProps: {
         tabKey: 'Tab1',
         title: 'Tab 1',
-        freezeContents: false,
         icon: {
           ios: {
             type: 'sfSymbol',
             name: 'sun.max',
           },
+          android: {
+            type: 'drawableResource',
+            name: 'sunny',
+          },
         },
-        iconResourceName: 'sunny',
       },
       component: makeTab('Tab 1', controllerMode, setControllerMode),
     },
@@ -76,8 +78,11 @@ function App() {
             type: 'sfSymbol',
             name: 'snow',
           },
+          android: {
+            type: 'drawableResource',
+            name: 'mode_cool',
+          },
         },
-        iconResourceName: 'mode_cool',
       },
       component: makeTab('Tab 2', controllerMode, setControllerMode),
     },
