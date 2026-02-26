@@ -31,6 +31,9 @@ class ScrollViewMarker(
      * It'll crash in case scroll view detection fails.
      *
      * Call it only after the children have been already attached and not yet detached.
+     *
+     * This method intentionally ignores horizontal scroll views - we don't have support for "edge effects"
+     * on Android nor we have any other use for them.
      */
     private fun findScrollView(): ViewGroup {
         val childScrollView =
