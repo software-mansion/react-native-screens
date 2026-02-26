@@ -127,7 +127,7 @@ export interface TabsHostPropsAndroid {}
 // #endregion Platform interfaces
 
 export interface TabsHostPropsBase {
-  // #region General
+  // TabsHostPropsBase - General
   children?: ViewProps['children'];
   /**
    * @summary Hides the tab bar.
@@ -143,9 +143,8 @@ export interface TabsHostPropsBase {
    * view.
    */
   nativeContainerStyle?: TabsHostNativeContainerStyleProps;
-  // #endregion General
 
-  // #region Experimental support
+  // TabsHostPropsBase - Experimental support
   /**
    * @summary Experimental prop for changing container control.
    *
@@ -161,16 +160,14 @@ export interface TabsHostPropsBase {
    * @default Defaults to `false`.
    */
   experimentalControlNavigationStateInJS?: boolean;
-  // #endregion Experimental support
 
-  // #region Events
+  // TabsHostPropsBase - Events
   /**
    * A callback that gets invoked when user requests change of focused tab screen.
    */
   onNativeFocusChange?: (
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
   ) => void;
-  // #endregion Events
 }
 
 export interface TabsHostProps extends TabsHostPropsBase {
