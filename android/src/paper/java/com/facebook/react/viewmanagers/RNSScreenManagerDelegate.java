@@ -102,7 +102,7 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManager<
         mViewManager.setStackAnimation(view, (String) value);
         break;
       case "transitionDuration":
-        mViewManager.setTransitionDuration(view, value == null ? 500 : ((Double) value).intValue());
+        mViewManager.setTransitionDuration(view, value == null ? -1 : ((Double) value).intValue());
         break;
       case "replaceAnimation":
         mViewManager.setReplaceAnimation(view, (String) value);

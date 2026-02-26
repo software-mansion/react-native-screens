@@ -159,6 +159,14 @@ open class ScreenViewManager :
             }
     }
 
+    @ReactProp(name = "transitionDuration")
+    override fun setTransitionDuration(
+        view: Screen?,
+        value: Int,
+    ) {
+        view?.transitionDuration = value
+    }
+
     @ReactProp(name = "gestureEnabled", defaultBoolean = true)
     override fun setGestureEnabled(
         view: Screen,
@@ -297,10 +305,6 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
-    override fun setTransitionDuration(
-        view: Screen?,
-        value: Int,
-    ) = Unit
 
     override fun setHideKeyboardOnSwipe(
         view: Screen?,
