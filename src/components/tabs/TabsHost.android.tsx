@@ -13,6 +13,7 @@ import { useTabsHost } from './useTabsHost';
 function TabsHost(props: TabsHostProps) {
   bottomTabsDebugLog(`TabsHost render`);
 
+  // android props (even if unused for now) are extracted - these should be handled separately from base props
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, nativeContainerStyle, ...baseProps } = props;
