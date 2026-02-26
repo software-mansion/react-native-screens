@@ -54,6 +54,36 @@ struct ContentWrapperBox {
   float contentHeightErrata{0.f};
 };
 
+@interface RNSWeakProxy : NSProxy
+
+@property (nonatomic, weak, readonly) id target;
+
+- (instancetype)initWithTarget:(id)target;
+
+@end
+
+@implementation RNSWeakProxy
+
+- (instancetype)initWithTarget:(id)target
+{
+  _target = target;
+  return self;
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector
+{
+  return [_target methodSignatureForSelector:selector];
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation
+{
+  if (_target) {
+    [invocation invokeWithTarget:_target];
+  }
+}
+
+@end
+
 @interface RNSScreenView () <
     UIAdaptivePresentationControllerDelegate,
 #if !TARGET_OS_TV
@@ -70,6 +100,7 @@ struct ContentWrapperBox {
 
 @implementation RNSScreenView {
   __weak RNS_REACT_SCROLL_VIEW_COMPONENT *_sheetsScrollView;
+  RNSScreen *_retainedController;
 
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
@@ -122,7 +153,9 @@ struct ContentWrapperBox {
 
 - (void)initCommonProps
 {
-  _controller = [[RNSScreen alloc] initWithView:self];
+  RNSScreen *controller = [[RNSScreen alloc] initWithView:self];
+  _controller = controller;
+  _retainedController = controller;
   _stackPresentation = RNSScreenStackPresentationPush;
   _stackAnimation = RNSScreenStackAnimationDefault;
   _gestureEnabled = YES;
@@ -963,7 +996,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)invalidateImpl
 {
   _controller = nil;
+  _retainedController = nil;
   [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+}
+
+- (void)setRetainedController:(RNSScreen *)controller
+{
+  _retainedController = controller;
 }
 
 #ifndef RCT_NEW_ARCH_ENABLED
@@ -1893,6 +1932,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       _previousFirstResponder = responder;
     }
   } else {
+    // When moving to a parent controller, release the retained controller
+    // The parent will now hold a strong reference to this controller
+    [self.screenView setRetainedController:nil];
     [self.screenView overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
     [self.screenView updateContentScrollViewEdgeEffectsIfExists];
   }
@@ -1936,6 +1978,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)setupProgressNotification
 {
+  // Clean up any existing animation timer before setting up a new one
+  // This prevents memory leaks when viewWillDisappear is called multiple times
+  [_animationTimer invalidate];
+  _animationTimer = nil;
+
   if (self.transitionCoordinator != nil) {
     if (!self.transitionCoordinator.isAnimated) {
       // If the transition is not animated, there is no point to set up animation
@@ -1950,7 +1997,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     auto animation = ^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
       [[context containerView] addSubview:self->_fakeView];
       self->_fakeView.alpha = 1.0;
-      self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+      // Use weak proxy to prevent retain cycle between CADisplayLink and RNSScreen
+      RNSWeakProxy *weakProxy = [[RNSWeakProxy alloc] initWithTarget:self];
+      self->_animationTimer = [CADisplayLink displayLinkWithTarget:weakProxy selector:@selector(handleAnimation)];
       [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     };
 
@@ -1959,6 +2008,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
                         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
                           [self->_animationTimer setPaused:YES];
                           [self->_animationTimer invalidate];
+                          self->_animationTimer = nil;
                           [self->_fakeView removeFromSuperview];
                         }];
   }
@@ -2241,6 +2291,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
+
+- (void)dealloc
+{
+  // Clean up animation timer to prevent memory leaks
+  [_animationTimer invalidate];
+  _animationTimer = nil;
+}
 
 @end
 
