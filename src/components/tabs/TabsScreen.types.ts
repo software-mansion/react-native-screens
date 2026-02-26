@@ -586,7 +586,7 @@ export interface TabsScreenPropsAndroid {
 // #endregion Platform interfaces
 
 export interface TabsScreenPropsBase {
-  // #region Control
+  // TabsScreenPropsBase - Control
   /**
    * @summary Determines selected tab.
    *
@@ -602,9 +602,8 @@ export interface TabsScreenPropsBase {
    * @summary Identifies screen, e.g. when receiving onNativeFocusChange event.
    */
   tabKey: string;
-  // #endregion Control
 
-  // #region General
+  // TabsScreenPropsBase - General
   children?: ViewProps['children'];
   style?: StyleProp<Pick<ViewStyle, 'backgroundColor'>>;
   /**
@@ -656,9 +655,8 @@ export interface TabsScreenPropsBase {
       scrollToTop?: boolean;
     };
   };
-  // #endregion General
 
-  // #region Accessibility
+  // TabsScreenPropsBase - Accessibility
   /**
    * @summary testID for the TabsScreen
    */
@@ -677,9 +675,8 @@ export interface TabsScreenPropsBase {
    * @supported iOS, Android API level >=26
    */
   tabBarItemAccessibilityLabel?: string;
-  // #endregion Accessibility
 
-  // #region Events
+  // TabsScreenPropsBase - Events
   /**
    * @summary A callback that gets invoked when the tab screen will appear.
    * This is called as soon as the transition begins.
@@ -700,7 +697,6 @@ export interface TabsScreenPropsBase {
    * This is called as soon as the transition ends.
    */
   onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
-  // #endregion Events
 }
 
 export interface TabsScreenProps extends TabsScreenPropsBase {
