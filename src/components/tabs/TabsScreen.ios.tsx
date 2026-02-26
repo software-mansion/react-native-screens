@@ -29,8 +29,7 @@ function TabsScreen(props: TabsScreenProps) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ios, android, ...baseProps } = props;
-  const { componentNodeRef, lifecycleCallbacks } =
-    useTabsScreen(baseProps);
+  const { componentNodeRef, lifecycleCallbacks } = useTabsScreen(baseProps);
 
   const { isFocused = false, style } = baseProps;
 
