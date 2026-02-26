@@ -114,6 +114,8 @@ export interface NativeProps extends ViewProps {
   // Image handling
   drawableIconResourceName?: string;
   imageIconResource?: ImageSource;
+  selectedDrawableIconResourceName?: string;
+  selectedImageIconResource?: ImageSource;
 
   // Appearance
   standardAppearance?: UnsafeMixed<AppearanceAndroid>;
