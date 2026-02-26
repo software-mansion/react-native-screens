@@ -4,7 +4,6 @@ import React from 'react';
 import {
   Image,
   ImageResolvedAssetSource,
-  ImageSourcePropType,
   StyleSheet,
   processColor,
 } from 'react-native';
@@ -30,12 +29,14 @@ function TabsScreen(props: TabsScreenProps) {
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, ...baseProps } = props;
-  const { componentNodeRef, lifecycleCallbacks } =
-    useTabsScreen(baseProps);
+  const { componentNodeRef, lifecycleCallbacks } = useTabsScreen(baseProps);
 
   const { isFocused = false, style } = baseProps;
 
-  const iconProps = parseIconsToNativeProps(android?.icon, android?.selectedIcon);
+  const iconProps = parseIconsToNativeProps(
+    android?.icon,
+    android?.selectedIcon,
+  );
 
   return (
     <TabsScreenNativeComponent
@@ -53,8 +54,7 @@ function TabsScreen(props: TabsScreenProps) {
       // Android-specific
       standardAppearanceAndroid={mapAppearanceToNativeProps(
         android?.standardAppearance,
-      )}
-    >
+      )}>
       {baseProps.children}
     </TabsScreenNativeComponent>
   );
@@ -76,8 +76,9 @@ function parseIconsToNativeProps(
     imageIconResource: parsedIcon.imageIconResource,
     drawableIconResourceName: parsedIcon.drawableIconResourceName,
     selectedImageIconResource: parsedSelectedIcon.imageIconResource,
-    selectedDrawableIconResourceName: parsedSelectedIcon.drawableIconResourceName,
-  }
+    selectedDrawableIconResourceName:
+      parsedSelectedIcon.drawableIconResourceName,
+  };
 }
 
 function parseIconToNativeProps(icon: PlatformIconAndroid | undefined): {

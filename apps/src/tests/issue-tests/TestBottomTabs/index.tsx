@@ -60,6 +60,10 @@ const TAB_CONFIGS: TabConfiguration[] = [
           type: 'imageSource',
           imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
         },
+        selectedIcon: {
+            type: 'imageSource',
+            imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+        },
       },
       ios: {
         scrollEdgeAppearance: {
@@ -81,16 +85,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
         selectedIcon: {
           type: 'sfSymbol',
           name: 'house.fill',
-        },
-      },
-      android: {
-        icon: {
-          type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon.png'),
-        },
-        selectedIcon: {
-            type: 'imageSource',
-            imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
         },
       },
       testID: 'tab-screen-1-id',

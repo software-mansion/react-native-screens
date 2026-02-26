@@ -61,7 +61,9 @@ function App() {
             type: 'sfSymbol',
             name: 'sun.max',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'sunny',
           },
@@ -78,7 +80,9 @@ function App() {
             type: 'sfSymbol',
             name: 'snow',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'mode_cool',
           },
