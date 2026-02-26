@@ -29,9 +29,25 @@ function TabsScreen(props: TabsScreenProps) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ios, android, ...baseProps } = props;
-  const { componentNodeRef, lifecycleCallbacks } = useTabsScreen(baseProps);
 
-  const { isFocused = false, style } = baseProps;
+  const {
+    onDidAppear,
+    onDidDisappear,
+    onWillAppear,
+    onWillDisappear,
+    isFocused = false,
+    style,
+    ...filteredBaseProps
+  } = baseProps;
+
+  const { componentNodeRef, lifecycleCallbacks } = useTabsScreen({
+    onDidAppear,
+    onDidDisappear,
+    onWillAppear,
+    onWillDisappear,
+    isFocused,
+    tabKey: filteredBaseProps.tabKey,
+  });
 
   const iconProps = parseIconsToNativeProps(ios?.icon, ios?.selectedIcon);
 
@@ -47,7 +63,7 @@ function TabsScreen(props: TabsScreenProps) {
       ref={componentNodeRef}
       {...lifecycleCallbacks}
       {...iconProps}
-      {...baseProps}
+      {...filteredBaseProps}
       // iOS-specific
       standardAppearance={mapAppearanceToNativeProp(ios?.standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(

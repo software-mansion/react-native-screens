@@ -2,9 +2,25 @@ import React from 'react';
 import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import { bottomTabsDebugLog } from '../../private/logging';
 import type { NativeProps } from '../../fabric/tabs/TabsScreenNativeComponent';
-import type { TabsScreenPropsBase, EmptyObject } from './TabsScreen.types';
+import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
 
-export function useTabsScreen(props: TabsScreenPropsBase) {
+interface TabsScreenConfig {
+  onDidAppear?: TabsScreenEventHandler<EmptyObject>;
+  onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
+  onWillAppear?: TabsScreenEventHandler<EmptyObject>;
+  onWillDisappear?: TabsScreenEventHandler<EmptyObject>;
+  isFocused?: boolean;
+  tabKey: string;
+}
+
+export function useTabsScreen({
+  onDidAppear,
+  onDidDisappear,
+  onWillAppear,
+  onWillDisappear,
+  isFocused = false,
+  tabKey,
+}: TabsScreenConfig) {
   const componentNodeRef = React.useRef<React.Component<NativeProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
 
@@ -16,15 +32,6 @@ export function useTabsScreen(props: TabsScreenPropsBase) {
       componentNodeHandle.current = -1;
     }
   }, []);
-
-  const {
-    onWillAppear,
-    onDidAppear,
-    onWillDisappear,
-    onDidDisappear,
-    isFocused = false,
-    tabKey,
-  } = props;
 
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
