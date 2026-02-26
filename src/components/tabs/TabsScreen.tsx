@@ -278,22 +278,37 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
 
 function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
-  selectedIcon: PlatformIconIOS | undefined,
+  selectedIcon: PlatformIcon | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconResourceName?: string;
+  // android
+  selectedImageIconResource?: ImageSourcePropType;
+  selectedDrawableIconResourceName?: string;
+  // iOS
   selectedIconImageSource?: ImageSourcePropType;
   selectedIconResourceName?: string;
 } {
   if (Platform.OS === 'android') {
-    const androidNativeProps = parseAndroidIconToNativeProps(
-      icon?.android || icon?.shared,
-    );
+    const { imageIconResource, drawableIconResourceName } =
+      parseAndroidIconToNativeProps(icon?.android || icon?.shared);
+
+    const androidSelectedSource =
+      (selectedIcon as PlatformIcon)?.android ||
+      (selectedIcon as PlatformIcon)?.shared;
+    const selectedIconProps = androidSelectedSource
+      ? parseAndroidIconToNativeProps(androidSelectedSource)
+      : {};
+
     return {
-      ...androidNativeProps,
+      imageIconResource,
+      drawableIconResourceName,
+      selectedImageIconResource: selectedIconProps.imageIconResource,
+      selectedDrawableIconResourceName:
+        selectedIconProps.drawableIconResourceName,
     };
   }
 
@@ -301,11 +316,15 @@ function parseIconsToNativeProps(
     const { iconImageSource, iconResourceName, iconType } =
       parseIOSIconToNativeProps(icon?.ios || icon?.shared);
 
+    const iosSelectedSource =
+      (selectedIcon as PlatformIcon)?.ios ||
+      (selectedIcon as PlatformIcon)?.shared;
+
     const {
       iconImageSource: selectedIconImageSource,
       iconResourceName: selectedIconResourceName,
       iconType: selectedIconType,
-    } = parseIOSIconToNativeProps(selectedIcon);
+    } = parseIOSIconToNativeProps(iosSelectedSource);
 
     if (
       iconType !== undefined &&

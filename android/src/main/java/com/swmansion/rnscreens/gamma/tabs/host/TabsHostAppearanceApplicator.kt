@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.drawable.StateListDrawable
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -160,8 +161,18 @@ class TabsHostAppearanceApplicator(
             menuItem.title = tabsScreen.tabTitle
         }
 
-        if (menuItem.icon != tabsScreen.icon) {
-            menuItem.icon = tabsScreen.icon
+        val targetIcon =
+            if (tabsScreen.selectedIcon != null && tabsScreen.icon != null) {
+                StateListDrawable().apply {
+                    addState(intArrayOf(android.R.attr.state_checked), tabsScreen.selectedIcon?.mutate())
+                    addState(intArrayOf(), tabsScreen.icon?.mutate())
+                }
+            } else {
+                tabsScreen.icon
+            }
+
+        if (menuItem.icon != targetIcon) {
+            menuItem.icon = targetIcon
         }
     }
 
