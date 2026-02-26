@@ -34,7 +34,7 @@ export type TabsHostNativeContainerStyleProps = {
 
 // #endregion General helpers
 
-// #region Platform Interfaces
+// #region Platform interfaces
 
 export interface TabsHostPropsIOS {
   /**
@@ -124,7 +124,7 @@ export interface TabsHostPropsIOS {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TabsHostPropsAndroid {}
 
-// #endregion Platform Interfaces
+// #endregion Platform interfaces
 
 export interface TabsHostPropsBase {
   // #region General
