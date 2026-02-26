@@ -2,16 +2,16 @@ import { ReactNode } from 'react';
 import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
 import type { TabsAccessoryEnvironment } from './TabsAccessory.types';
 
-export type TabAccessoryComponentFactory = (
-  environment: TabsAccessoryEnvironment,
-) => ReactNode;
-
 export type NativeFocusChangeEvent = {
   tabKey: string;
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
 // #region iOS-specific helpers
+
+export type TabAccessoryComponentFactoryIOS = (
+  environment: TabsAccessoryEnvironment,
+) => ReactNode;
 
 export type TabBarMinimizeBehaviorIOS =
   | 'automatic'
@@ -97,7 +97,7 @@ export interface TabsHostPropsIOS {
    *
    * @supported iOS 26 or higher
    */
-  bottomAccessory?: TabAccessoryComponentFactory;
+  bottomAccessory?: TabAccessoryComponentFactoryIOS;
   /**
    * @summary Specifies the display mode for the tab bar.
    *
