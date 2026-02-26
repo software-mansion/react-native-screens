@@ -19,11 +19,21 @@ function TabsHost(props: TabsHostProps) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ios, android, nativeContainerStyle, ...baseProps } = props;
+
+  const {
+    experimentalControlNavigationStateInJS,
+    onNativeFocusChange,
+    ...filteredBaseProps
+  } = baseProps;
+
   const {
     componentNodeRef,
-    experimentalControlNavigationStateInJS,
+    controlNavigationStateInJS,
     onNativeFocusChangeCallback,
-  } = useTabsHost(baseProps);
+  } = useTabsHost({
+    controlNavigationStateInJS: experimentalControlNavigationStateInJS,
+    onNativeFocusChange,
+  });
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
     useState<TabsAccessoryEnvironment>('regular');
@@ -32,11 +42,11 @@ function TabsHost(props: TabsHostProps) {
     <TabsHostNativeComponent
       style={styles.fillParent}
       onNativeFocusChange={onNativeFocusChangeCallback}
-      controlNavigationStateInJS={experimentalControlNavigationStateInJS}
+      controlNavigationStateInJS={controlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
-      {...baseProps}
+      {...filteredBaseProps}
       // iOS-specific
       tabBarTintColor={ios?.tabBarTintColor}
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}

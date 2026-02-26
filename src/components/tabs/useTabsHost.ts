@@ -3,12 +3,16 @@ import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import type { NativeProps as TabsHostNativeComponentProps } from '../../fabric/tabs/TabsHostNativeComponent';
 import featureFlags from '../../flags';
 import { bottomTabsDebugLog } from '../../private/logging';
-import type {
-  TabsHostPropsBase,
-  NativeFocusChangeEvent,
-} from './TabsHost.types';
+import type { NativeFocusChangeEvent } from './TabsHost.types';
 
-export function useTabsHost(props: TabsHostPropsBase) {
+interface TabsHostConfig {
+  controlNavigationStateInJS?: boolean;
+  onNativeFocusChange?: (
+    event: NativeSyntheticEvent<NativeFocusChangeEvent>,
+  ) => void;
+}
+
+export function useTabsHost(config: TabsHostConfig) {
   const componentNodeRef =
     React.useRef<React.Component<TabsHostNativeComponentProps>>(null);
   const componentNodeHandle = React.useRef<number>(-1);
@@ -29,18 +33,18 @@ export function useTabsHost(props: TabsHostPropsBase) {
           componentNodeHandle.current ?? -1
         }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
       );
-      props.onNativeFocusChange?.(event);
+      config.onNativeFocusChange?.(event);
     },
-    [props.onNativeFocusChange],
+    [config.onNativeFocusChange],
   );
 
-  const experimentalControlNavigationStateInJS =
-    props.experimentalControlNavigationStateInJS ??
+  const controlNavigationStateInJS =
+    config.controlNavigationStateInJS ??
     featureFlags.experiment.controlledBottomTabs;
 
   return {
     componentNodeRef,
-    experimentalControlNavigationStateInJS,
+    controlNavigationStateInJS,
     onNativeFocusChangeCallback,
   };
 }

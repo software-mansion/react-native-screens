@@ -19,20 +19,29 @@ function TabsHost(props: TabsHostProps) {
   const { android, ios, nativeContainerStyle, ...baseProps } = props;
 
   const {
-    componentNodeRef,
     experimentalControlNavigationStateInJS,
+    onNativeFocusChange,
+    ...filteredBaseProps
+  } = baseProps;
+
+  const {
+    componentNodeRef,
+    controlNavigationStateInJS,
     onNativeFocusChangeCallback,
-  } = useTabsHost(baseProps);
+  } = useTabsHost({
+    controlNavigationStateInJS: experimentalControlNavigationStateInJS,
+    onNativeFocusChange,
+  });
 
   return (
     <TabsHostNativeComponent
       style={styles.fillParent}
       onNativeFocusChange={onNativeFocusChangeCallback}
-      controlNavigationStateInJS={experimentalControlNavigationStateInJS}
+      controlNavigationStateInJS={controlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
-      {...baseProps}>
+      {...filteredBaseProps}>
       {baseProps.children}
     </TabsHostNativeComponent>
   );
