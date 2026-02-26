@@ -129,7 +129,6 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
-  isTitleUndefined?: CT.WithDefault<boolean, true>;
   badgeValue?: string;
 
   // Accessibility
@@ -149,6 +148,7 @@ export interface NativeProps extends ViewProps {
   // #region iOS-specific Props
 
   // Tab Config
+  isTitleUndefined?: CT.WithDefault<boolean, true>;
   orientation?: CT.WithDefault<OrientationIOS, 'inherit'>;
   systemItem?: CT.WithDefault<SystemItemIOS, 'none'>;
 

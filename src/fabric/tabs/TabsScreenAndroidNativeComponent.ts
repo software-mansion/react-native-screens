@@ -92,7 +92,6 @@ export interface NativeProps extends ViewProps {
 
   // General
   title?: string | undefined | null;
-  isTitleUndefined?: CT.WithDefault<boolean, true>;
   badgeValue?: string;
 
   // Accessibility

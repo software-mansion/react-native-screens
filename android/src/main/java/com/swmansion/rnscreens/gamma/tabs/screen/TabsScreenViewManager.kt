@@ -93,11 +93,6 @@ class TabsScreenViewManager :
         view.tabTitle = value
     }
 
-    override fun setIsTitleUndefined(
-        view: TabsScreen,
-        value: Boolean,
-    ) = Unit
-
     @ReactProp(name = "specialEffects")
     override fun setSpecialEffects(
         view: TabsScreen,
