@@ -58,10 +58,10 @@ function TabsHost(props: TabsHostProps) {
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
           <TabsAccessory>
             <TabsAccessoryContent environment="regular">
-              {ios?.bottomAccessory('regular')}
+              {ios.bottomAccessory('regular')}
             </TabsAccessoryContent>
             <TabsAccessoryContent environment="inline">
-              {ios?.bottomAccessory('inline')}
+              {ios.bottomAccessory('inline')}
             </TabsAccessoryContent>
           </TabsAccessory>
         ) : (
@@ -69,7 +69,7 @@ function TabsHost(props: TabsHostProps) {
             onEnvironmentChange={event => {
               setBottomAccessoryEnvironment(event.nativeEvent.environment);
             }}>
-            {ios?.bottomAccessory(bottomAccessoryEnvironment)}
+            {ios.bottomAccessory(bottomAccessoryEnvironment)}
           </TabsAccessory>
         ))}
     </TabsHostNativeComponent>
