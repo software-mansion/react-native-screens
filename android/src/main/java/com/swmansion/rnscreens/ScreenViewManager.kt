@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
@@ -24,6 +23,7 @@ import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
+import com.swmansion.rnscreens.utils.logNotAvailable
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 open class ScreenViewManager :
@@ -97,10 +97,6 @@ open class ScreenViewManager :
     override fun onAfterUpdateTransaction(view: Screen) {
         super.onAfterUpdateTransaction(view)
         view.onFinalizePropsUpdate()
-    }
-
-    private fun logNotAvailable(propName: String) {
-        Log.w("[RNScreens]", "$propName prop is not available on Android")
     }
 
     @ReactProp(name = "activityState")

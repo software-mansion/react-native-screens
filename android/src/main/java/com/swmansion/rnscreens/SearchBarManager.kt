@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -15,6 +14,7 @@ import com.swmansion.rnscreens.events.SearchBarCloseEvent
 import com.swmansion.rnscreens.events.SearchBarFocusEvent
 import com.swmansion.rnscreens.events.SearchBarOpenEvent
 import com.swmansion.rnscreens.events.SearchBarSearchButtonPressEvent
+import com.swmansion.rnscreens.utils.logNotAvailable
 
 @ReactModule(name = SearchBarManager.REACT_CLASS)
 class SearchBarManager :
@@ -149,10 +149,6 @@ class SearchBarManager :
 
     companion object {
         const val REACT_CLASS = "RNSSearchBar"
-    }
-
-    private fun logNotAvailable(propName: String) {
-        Log.w("[RNScreens]", "$propName prop is not available on Android")
     }
 
     // NativeCommands
