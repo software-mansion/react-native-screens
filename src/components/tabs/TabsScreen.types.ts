@@ -374,7 +374,7 @@ export interface TabsAppearanceAndroid {
 
 // #endregion Android-specific helpers
 
-// #region Platform Interfaces
+// #region Platform interfaces
 
 export interface TabsScreenPropsIOS {
   /**
@@ -583,7 +583,7 @@ export interface TabsScreenPropsAndroid {
   selectedIcon?: PlatformIconAndroid;
 }
 
-// #endregion Platform Interfaces
+// #endregion Platform interfaces
 
 export interface TabsScreenPropsBase {
   // #region Control
