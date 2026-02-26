@@ -1,6 +1,6 @@
 .screens {
   position: absolute;
-  top: 2rem;
+  top: calc(3rem + 50px);
   right: 0;
   overflow: hidden;
   min-height: 55%;
@@ -10,41 +10,41 @@
 
 @media (min-width: 2920px) {
   .screens {
-    top: 3rem;
+    top: calc(3rem + 50px);
     min-height: 70%;
   }
 }
 @media (min-width: 3000px) and (min-height: 1500px) {
   .screens {
-    top: -3vh;
+    top: calc(-3vh + 50px);
     min-height: 50%;
   }
 }
 
 @media (min-width: 3000px) and (min-height: 2000px) {
   .screens {
-    top: 3vh;
+    top: calc(3vh + 50px);
     min-height: 35%;
   }
 }
 
 @media (max-width: 2000px) {
   .screens {
-    top: 4rem;
+    top: calc(4rem + 50px);
     min-height: 70%;
   }
 }
 
 @media (max-width: 1350px) {
   .screens {
-    top: 9rem;
+    top: calc(9rem + 50px);
     min-height: 60%;
   }
 }
 
 @media (max-width: 996px) {
   .screens {
-    top: 2rem;
+    top: calc(2rem + 50px);
   }
 }
 
