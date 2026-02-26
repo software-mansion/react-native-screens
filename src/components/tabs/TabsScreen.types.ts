@@ -13,6 +13,8 @@ import type {
   ScrollEdgeEffect,
 } from '../../types';
 
+// #region General helpers
+
 export type EmptyObject = Record<string, never>;
 
 export type TabsScreenEventHandler<T> = (
@@ -23,6 +25,8 @@ export type LifecycleStateChangeEvent = Readonly<{
   previousState: number;
   newState: number;
 }>;
+
+// #endregion General helpers
 
 // #region iOS-specific helpers
 

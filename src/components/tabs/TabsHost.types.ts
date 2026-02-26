@@ -2,10 +2,14 @@ import { ReactNode } from 'react';
 import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
 import type { TabsAccessoryEnvironment } from './TabsAccessory.types';
 
+// #region General helpers
+
 export type NativeFocusChangeEvent = {
   tabKey: string;
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
+
+// #endregion General helpers
 
 // #region iOS-specific helpers
 
