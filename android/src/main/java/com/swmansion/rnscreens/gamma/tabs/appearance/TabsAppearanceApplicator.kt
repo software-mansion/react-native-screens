@@ -2,8 +2,8 @@ package com.swmansion.rnscreens.gamma.tabs.appearance
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.graphics.drawable.StateListDrawable
 import android.graphics.Color
+import android.graphics.drawable.StateListDrawable
 import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
