@@ -224,8 +224,6 @@ class ScreenStackHeaderConfigViewManager :
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"
     }
 
-    // TODO: Find better way to handle platform specific props
-
     override fun setBackTitle(
         view: ScreenStackHeaderConfig?,
         value: String?,
