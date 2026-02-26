@@ -9,7 +9,7 @@ class RNSSplitAppearanceApplicator {
   ///
   /// It requests calling proper callbacks with batched SplitView updates on the AppearanceCoordinator object
   ///
-  /// @param splitHost The host representing JS component which is sending updates.
+  /// @param splitHost The view representing JS component which is sending updates.
   /// @param splitHostController The controller associated with the SplitView component which receives updates and manages the native layer.
   /// @param appearanceCoordinator The coordinator which is checking whether the update needs to be applied and if so, it executes the callback passed by this class.
   ///
@@ -55,7 +55,7 @@ class RNSSplitAppearanceApplicator {
   ///
   /// It calls all setters on RNSSplitHostController that doesn't require any custom logic and conditions to be met.
   ///
-  /// @param splitHost The host representing JS component which is sending updates.
+  /// @param splitHost The view representing JS component which is sending updates.
   /// @param splitHostController The controller associated with the SplitView component which receives updates and manages the native layer.
   ///
   private func updateSplitViewConfiguration(
@@ -175,7 +175,7 @@ class RNSSplitAppearanceApplicator {
   /// It is crucial in the case, when `preferredDisplayMode` has changed due to some transition that was executed natively, e. g. after showing/hiding a column by a swipe.
   /// In that case, any prop update incoming, would reset `preferredDisplayMode` to the state from JS, what doesn't look good.
   ///
-  /// @param splitHost The host representing JS component which is sending updates.
+  /// @param splitHost The view representing JS component which is sending updates.
   /// @param splitHostController The controller associated with the SplitView component which receives updates and manages the native layer.
   ///
   func updateSplitViewDisplayMode(
