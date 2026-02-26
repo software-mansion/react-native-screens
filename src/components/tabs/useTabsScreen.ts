@@ -10,7 +10,7 @@ type PlatformNativeProps =
   | TabsScreenIOSNativeComponentProps;
 
 interface TabsScreenConfig<T> {
-  componentNodeRef: React.RefObject<React.Component<T> | null>,
+  componentNodeRef: React.RefObject<React.Component<T> | null>;
   onDidAppear?: TabsScreenEventHandler<EmptyObject>;
   onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
   onWillAppear?: TabsScreenEventHandler<EmptyObject>;

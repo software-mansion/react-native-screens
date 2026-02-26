@@ -11,20 +11,24 @@ type PlatformNativeProps =
   | TabsHostIOSNativeComponentProps;
 
 interface TabsHostConfig<T> {
-  componentNodeRef: React.RefObject<React.Component<T> | null>,
+  componentNodeRef: React.RefObject<React.Component<T> | null>;
   controlNavigationStateInJS?: boolean;
   onNativeFocusChange?: (
     event: NativeSyntheticEvent<NativeFocusChangeEvent>,
   ) => void;
 }
 
-export function useTabsHost<T extends PlatformNativeProps>(config: TabsHostConfig<T>) {
+export function useTabsHost<T extends PlatformNativeProps>({
+  componentNodeRef,
+  controlNavigationStateInJS,
+  onNativeFocusChange,
+}: TabsHostConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
 
   React.useEffect(() => {
-    if (config.componentNodeRef.current != null) {
+    if (componentNodeRef.current != null) {
       componentNodeHandle.current =
-        findNodeHandle(config.componentNodeRef.current) ?? -1;
+        findNodeHandle(componentNodeRef.current) ?? -1;
     } else {
       componentNodeHandle.current = -1;
     }
@@ -37,17 +41,15 @@ export function useTabsHost<T extends PlatformNativeProps>(config: TabsHostConfi
           componentNodeHandle.current ?? -1
         }] onNativeFocusChange: ${JSON.stringify(event.nativeEvent)}`,
       );
-      config.onNativeFocusChange?.(event);
+      onNativeFocusChange?.(event);
     },
-    [config.onNativeFocusChange],
+    [onNativeFocusChange],
   );
 
-  const controlNavigationStateInJS =
-    config.controlNavigationStateInJS ??
-    featureFlags.experiment.controlledBottomTabs;
-
   return {
-    controlNavigationStateInJS,
+    controlNavigationStateInJS:
+      controlNavigationStateInJS ??
+      featureFlags.experiment.controlledBottomTabs,
     onNativeFocusChangeCallback,
   };
 }

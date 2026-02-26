@@ -44,15 +44,16 @@ function TabsScreen(props: TabsScreenProps) {
     ...filteredBaseProps
   } = baseProps;
 
-  const { lifecycleCallbacks } = useTabsScreen<TabsScreenIOSNativeComponentProps>({
-    componentNodeRef,
-    onDidAppear,
-    onDidDisappear,
-    onWillAppear,
-    onWillDisappear,
-    isFocused,
-    tabKey: filteredBaseProps.tabKey,
-  });
+  const { lifecycleCallbacks } =
+    useTabsScreen<TabsScreenIOSNativeComponentProps>({
+      componentNodeRef,
+      onDidAppear,
+      onDidDisappear,
+      onWillAppear,
+      onWillDisappear,
+      isFocused,
+      tabKey: filteredBaseProps.tabKey,
+    });
 
   const iconProps = parseIconsToNativeProps(ios?.icon, ios?.selectedIcon);
 

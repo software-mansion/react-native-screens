@@ -22,7 +22,7 @@ function TabsHost(props: TabsHostProps) {
   const { ios, android, nativeContainerStyle, ...baseProps } = props;
 
   const componentNodeRef =
-    React.useRef<React.Component<TabsHostIOSNativeComponentProps>>(null);  
+    React.useRef<React.Component<TabsHostIOSNativeComponentProps>>(null);
 
   const {
     experimentalControlNavigationStateInJS,
@@ -30,14 +30,12 @@ function TabsHost(props: TabsHostProps) {
     ...filteredBaseProps
   } = baseProps;
 
-  const {
-    controlNavigationStateInJS,
-    onNativeFocusChangeCallback,
-  } = useTabsHost<TabsHostIOSNativeComponentProps>({
-    componentNodeRef,
-    controlNavigationStateInJS: experimentalControlNavigationStateInJS,
-    onNativeFocusChange,
-  });
+  const { controlNavigationStateInJS, onNativeFocusChangeCallback } =
+    useTabsHost<TabsHostIOSNativeComponentProps>({
+      componentNodeRef,
+      controlNavigationStateInJS: experimentalControlNavigationStateInJS,
+      onNativeFocusChange,
+    });
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
     useState<TabsAccessoryEnvironment>('regular');
