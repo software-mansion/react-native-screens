@@ -9,13 +9,13 @@ class RNSSplitAppearanceApplicator {
   ///
   /// It requests calling proper callbacks with batched SplitView updates on the AppearanceCoordinator object
   ///
-  /// @param splitView The view representing JS component which is sending updates.
-  /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
+  /// @param splitHost The host representing JS component which is sending updates.
+  /// @param splitHostController The controller associated with the SplitView component which receives updates and manages the native layer.
   /// @param appearanceCoordinator The coordinator which is checking whether the update needs to be applied and if so, it executes the callback passed by this class.
   ///
   public func updateAppearanceIfNeeded(
-    _ splitView: RNSSplitHostComponentView,
-    _ splitViewController: RNSSplitHostController,
+    _ splitHost: RNSSplitHostComponentView,
+    _ splitHostController: RNSSplitHostController,
     _ appearanceCoordinator: RNSSplitAppearanceCoordinator
   ) {
     appearanceCoordinator.updateIfNeeded(.generalUpdate) { [weak self] in
@@ -24,7 +24,7 @@ class RNSSplitAppearanceApplicator {
         return
       }
 
-      self.updateSplitViewConfiguration(for: splitView, withController: splitViewController)
+      self.updateSplitViewConfiguration(for: splitHost, withController: splitHostController)
     }
 
     appearanceCoordinator.updateIfNeeded(.secondaryScreenNavBarUpdate) { [weak self] in
@@ -33,7 +33,7 @@ class RNSSplitAppearanceApplicator {
         return
       }
 
-      splitViewController.refreshSecondaryNavBar()
+      splitHostController.refreshSecondaryNavBar()
     }
 
     appearanceCoordinator.updateIfNeeded(.displayModeUpdate) { [weak self] in
@@ -42,7 +42,7 @@ class RNSSplitAppearanceApplicator {
         return
       }
 
-      self.updateSplitViewDisplayMode(for: splitView, withController: splitViewController)
+      self.updateSplitViewDisplayMode(for: splitHost, withController: splitHostController)
     }
 
     appearanceCoordinator.updateIfNeeded(.orientationUpdate) { [] in
@@ -55,117 +55,117 @@ class RNSSplitAppearanceApplicator {
   ///
   /// It calls all setters on RNSSplitHostController that doesn't require any custom logic and conditions to be met.
   ///
-  /// @param splitView The view representing JS component which is sending updates.
-  /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
+  /// @param splitHost The host representing JS component which is sending updates.
+  /// @param splitHostController The controller associated with the SplitView component which receives updates and manages the native layer.
   ///
   private func updateSplitViewConfiguration(
-    for splitView: RNSSplitHostComponentView,
-    withController splitViewController: RNSSplitHostController
+    for splitHost: RNSSplitHostComponentView,
+    withController splitHostController: RNSSplitHostController
   ) {
     // Step 1 - general settings
-    splitViewController.displayModeButtonVisibility = splitView.displayModeButtonVisibility
-    splitViewController.preferredSplitBehavior = splitView.preferredSplitBehavior
+    splitHostController.displayModeButtonVisibility = splitHost.displayModeButtonVisibility
+    splitHostController.preferredSplitBehavior = splitHost.preferredSplitBehavior
     #if !os(tvOS)
-      splitViewController.primaryBackgroundStyle = splitView.primaryBackgroundStyle
+      splitHostController.primaryBackgroundStyle = splitHost.primaryBackgroundStyle
     #endif
-    splitViewController.presentsWithGesture = splitView.presentsWithGesture
-    splitViewController.primaryEdge = splitView.primaryEdge
-    splitViewController.showsSecondaryOnlyButton = splitView.showSecondaryToggleButton
+    splitHostController.presentsWithGesture = splitHost.presentsWithGesture
+    splitHostController.primaryEdge = splitHost.primaryEdge
+    splitHostController.showsSecondaryOnlyButton = splitHost.showSecondaryToggleButton
 
     // Step 2.1 - validating column constraints
     validateColumnConstraints(
-      minWidth: splitView.minimumPrimaryColumnWidth,
-      maxWidth: splitView.maximumPrimaryColumnWidth)
+      minWidth: splitHost.minimumPrimaryColumnWidth,
+      maxWidth: splitHost.maximumPrimaryColumnWidth)
 
     validateColumnConstraints(
-      minWidth: splitView.minimumSupplementaryColumnWidth,
-      maxWidth: splitView.maximumSupplementaryColumnWidth)
+      minWidth: splitHost.minimumSupplementaryColumnWidth,
+      maxWidth: splitHost.maximumSupplementaryColumnWidth)
 
     #if compiler(>=6.2) && !os(tvOS)
       if #available(iOS 26.0, *) {
         validateColumnConstraints(
-          minWidth: splitView.minimumInspectorColumnWidth,
-          maxWidth: splitView.maximumInspectorColumnWidth)
+          minWidth: splitHost.minimumInspectorColumnWidth,
+          maxWidth: splitHost.maximumInspectorColumnWidth)
       }
     #endif
 
     // Step 2.2 - applying updates to columns
-    if splitView.minimumPrimaryColumnWidth >= 0 {
-      splitViewController.minimumPrimaryColumnWidth = splitView.minimumPrimaryColumnWidth
+    if splitHost.minimumPrimaryColumnWidth >= 0 {
+      splitHostController.minimumPrimaryColumnWidth = splitHost.minimumPrimaryColumnWidth
     }
 
-    if splitView.maximumPrimaryColumnWidth >= 0 {
-      splitViewController.maximumPrimaryColumnWidth = splitView.maximumPrimaryColumnWidth
+    if splitHost.maximumPrimaryColumnWidth >= 0 {
+      splitHostController.maximumPrimaryColumnWidth = splitHost.maximumPrimaryColumnWidth
     }
 
-    if splitView.preferredPrimaryColumnWidthOrFraction >= 0
-      && splitView.preferredPrimaryColumnWidthOrFraction < 1
+    if splitHost.preferredPrimaryColumnWidthOrFraction >= 0
+      && splitHost.preferredPrimaryColumnWidthOrFraction < 1
     {
-      splitViewController.preferredPrimaryColumnWidthFraction =
-        splitView.preferredPrimaryColumnWidthOrFraction
-    } else if splitView.preferredPrimaryColumnWidthOrFraction >= 1 {
-      splitViewController.preferredPrimaryColumnWidth =
-        splitView.preferredPrimaryColumnWidthOrFraction
+      splitHostController.preferredPrimaryColumnWidthFraction =
+        splitHost.preferredPrimaryColumnWidthOrFraction
+    } else if splitHost.preferredPrimaryColumnWidthOrFraction >= 1 {
+      splitHostController.preferredPrimaryColumnWidth =
+        splitHost.preferredPrimaryColumnWidthOrFraction
     }
 
-    if splitView.minimumSupplementaryColumnWidth >= 0 {
-      splitViewController.minimumSupplementaryColumnWidth =
-        splitView.minimumSupplementaryColumnWidth
+    if splitHost.minimumSupplementaryColumnWidth >= 0 {
+      splitHostController.minimumSupplementaryColumnWidth =
+        splitHost.minimumSupplementaryColumnWidth
     }
 
-    if splitView.maximumSupplementaryColumnWidth >= 0 {
-      splitViewController.maximumSupplementaryColumnWidth =
-        splitView.maximumSupplementaryColumnWidth
+    if splitHost.maximumSupplementaryColumnWidth >= 0 {
+      splitHostController.maximumSupplementaryColumnWidth =
+        splitHost.maximumSupplementaryColumnWidth
     }
 
-    if splitView.preferredSupplementaryColumnWidthOrFraction >= 0
-      && splitView.preferredSupplementaryColumnWidthOrFraction < 1
+    if splitHost.preferredSupplementaryColumnWidthOrFraction >= 0
+      && splitHost.preferredSupplementaryColumnWidthOrFraction < 1
     {
-      splitViewController.preferredSupplementaryColumnWidthFraction =
-        splitView.preferredSupplementaryColumnWidthOrFraction
-    } else if splitView.preferredSupplementaryColumnWidthOrFraction >= 1 {
-      splitViewController.preferredSupplementaryColumnWidth =
-        splitView.preferredSupplementaryColumnWidthOrFraction
+      splitHostController.preferredSupplementaryColumnWidthFraction =
+        splitHost.preferredSupplementaryColumnWidthOrFraction
+    } else if splitHost.preferredSupplementaryColumnWidthOrFraction >= 1 {
+      splitHostController.preferredSupplementaryColumnWidth =
+        splitHost.preferredSupplementaryColumnWidthOrFraction
     }
 
     #if compiler(>=6.2) && !os(tvOS)
       if #available(iOS 26.0, *) {
-        if splitView.minimumSecondaryColumnWidth >= 0 {
-          splitViewController.minimumSecondaryColumnWidth = splitView.minimumSecondaryColumnWidth
+        if splitHost.minimumSecondaryColumnWidth >= 0 {
+          splitHostController.minimumSecondaryColumnWidth = splitHost.minimumSecondaryColumnWidth
         }
 
-        if splitView.preferredSecondaryColumnWidthOrFraction >= 0
-          && splitView.preferredSecondaryColumnWidthOrFraction < 1
+        if splitHost.preferredSecondaryColumnWidthOrFraction >= 0
+          && splitHost.preferredSecondaryColumnWidthOrFraction < 1
         {
-          splitViewController.preferredSecondaryColumnWidthFraction =
-            splitView.preferredSecondaryColumnWidthOrFraction
-        } else if splitView.preferredSecondaryColumnWidthOrFraction >= 1 {
-          splitViewController.preferredSecondaryColumnWidth =
-            splitView.preferredSecondaryColumnWidthOrFraction
+          splitHostController.preferredSecondaryColumnWidthFraction =
+            splitHost.preferredSecondaryColumnWidthOrFraction
+        } else if splitHost.preferredSecondaryColumnWidthOrFraction >= 1 {
+          splitHostController.preferredSecondaryColumnWidth =
+            splitHost.preferredSecondaryColumnWidthOrFraction
         }
 
-        if splitView.minimumInspectorColumnWidth >= 0 {
-          splitViewController.minimumInspectorColumnWidth = splitView.minimumInspectorColumnWidth
+        if splitHost.minimumInspectorColumnWidth >= 0 {
+          splitHostController.minimumInspectorColumnWidth = splitHost.minimumInspectorColumnWidth
         }
 
-        if splitView.maximumInspectorColumnWidth >= 0 {
-          splitViewController.maximumInspectorColumnWidth = splitView.maximumInspectorColumnWidth
+        if splitHost.maximumInspectorColumnWidth >= 0 {
+          splitHostController.maximumInspectorColumnWidth = splitHost.maximumInspectorColumnWidth
         }
 
-        if splitView.preferredInspectorColumnWidthOrFraction >= 0
-          && splitView.preferredInspectorColumnWidthOrFraction < 1
+        if splitHost.preferredInspectorColumnWidthOrFraction >= 0
+          && splitHost.preferredInspectorColumnWidthOrFraction < 1
         {
-          splitViewController.preferredInspectorColumnWidthFraction =
-            splitView.preferredInspectorColumnWidthOrFraction
-        } else if splitView.preferredInspectorColumnWidthOrFraction >= 1 {
-          splitViewController.preferredInspectorColumnWidth =
-            splitView.preferredInspectorColumnWidthOrFraction
+          splitHostController.preferredInspectorColumnWidthFraction =
+            splitHost.preferredInspectorColumnWidthOrFraction
+        } else if splitHost.preferredInspectorColumnWidthOrFraction >= 1 {
+          splitHostController.preferredInspectorColumnWidth =
+            splitHost.preferredInspectorColumnWidthOrFraction
         }
       }
     #endif
 
     // Step 2.3 - manipulating with inspector column
-    splitViewController.toggleSplitViewInspector(splitView.showInspector)
+    splitHostController.toggleSplitViewInspector(splitHost.showInspector)
   }
 
   ///
@@ -175,14 +175,14 @@ class RNSSplitAppearanceApplicator {
   /// It is crucial in the case, when `preferredDisplayMode` has changed due to some transition that was executed natively, e. g. after showing/hiding a column by a swipe.
   /// In that case, any prop update incoming, would reset `preferredDisplayMode` to the state from JS, what doesn't look good.
   ///
-  /// @param splitView The view representing JS component which is sending updates.
-  /// @param splitViewController The controller associated with the SplitView component which receives updates and manages the native layer.
+  /// @param splitHost The host representing JS component which is sending updates.
+  /// @param splitHostController The controller associated with the SplitView component which receives updates and manages the native layer.
   ///
   func updateSplitViewDisplayMode(
-    for splitView: RNSSplitHostComponentView,
-    withController splitViewController: RNSSplitHostController
+    for splitHost: RNSSplitHostComponentView,
+    withController splitHostController: RNSSplitHostController
   ) {
-    splitViewController.preferredDisplayMode = splitView.preferredDisplayMode
+    splitHostController.preferredDisplayMode = splitHost.preferredDisplayMode
   }
 
   func validateColumnConstraints(minWidth: CGFloat, maxWidth: CGFloat) {
