@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Freeze } from 'react-freeze';
 import {
   Image,
   ImageResolvedAssetSource,
@@ -12,15 +11,13 @@ import {
   type ImageSourcePropType,
   type NativeSyntheticEvent,
 } from 'react-native';
-import { freezeEnabled } from '../../core';
-import BottomTabsScreenNativeComponent, {
+import TabsScreenNativeComponent, {
   type IconType,
   type NativeProps,
   type Appearance,
   type ItemAppearance,
   type ItemStateAppearance,
-} from '../../fabric/bottom-tabs/BottomTabsScreenNativeComponent';
-import { featureFlags } from '../../flags';
+} from '../../fabric/tabs/TabsScreenNativeComponent';
 import type {
   TabsScreenAppearance,
   TabsScreenItemAppearance,
@@ -51,15 +48,12 @@ function TabsScreen(props: TabsScreenProps) {
     }
   }, []);
 
-  const [nativeViewIsVisible, setNativeViewIsVisible] = React.useState(false);
-
   const {
     onWillAppear,
     onDidAppear,
     onWillDisappear,
     onDidDisappear,
     isFocused = false,
-    freezeContents,
     icon,
     selectedIcon,
     standardAppearance,
@@ -71,18 +65,11 @@ function TabsScreen(props: TabsScreenProps) {
     ...rest
   } = props;
 
-  const shouldFreeze = shouldFreezeScreen(
-    nativeViewIsVisible,
-    isFocused,
-    freezeContents,
-  );
-
   const onWillAppearCallback = React.useCallback(
     (event: NativeSyntheticEvent<EmptyObject>) => {
       bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
       );
-      setNativeViewIsVisible(true);
       onWillAppear?.(event);
     },
     [onWillAppear],
@@ -113,7 +100,6 @@ function TabsScreen(props: TabsScreenProps) {
       bottomTabsDebugLog(
         `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
       );
-      setNativeViewIsVisible(false);
       onDidDisappear?.(event);
     },
     [onDidDisappear],
@@ -122,13 +108,13 @@ function TabsScreen(props: TabsScreenProps) {
   bottomTabsDebugLog(
     `TabsScreen [${componentNodeHandle.current ?? -1}] render; tabKey: ${
       rest.tabKey
-    } shouldFreeze: ${shouldFreeze}, isFocused: ${isFocused} nativeViewIsVisible: ${nativeViewIsVisible}`,
+    } isFocused: ${isFocused}`,
   );
 
   const iconProps = parseIconsToNativeProps(icon, selectedIcon);
 
   return (
-    <BottomTabsScreenNativeComponent
+    <TabsScreenNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
       onWillAppear={onWillAppearCallback}
@@ -149,10 +135,8 @@ function TabsScreen(props: TabsScreenProps) {
       // eslint-disable-next-line camelcase -- we use sneak case experimental prefix
       userInterfaceStyle={experimental_userInterfaceStyle}
       {...rest}>
-      <Freeze freeze={shouldFreeze} placeholder={rest.placeholder}>
-        {rest.children}
-      </Freeze>
-    </BottomTabsScreenNativeComponent>
+      {rest.children}
+    </TabsScreenNativeComponent>
   );
 }
 
@@ -219,27 +203,6 @@ function mapItemStateAppearanceToNativeProp(
         ? String(tabBarItemTitleFontWeight)
         : undefined,
   };
-}
-
-function shouldFreezeScreen(
-  nativeViewVisible: boolean,
-  screenFocused: boolean,
-  freezeOverride: boolean | undefined,
-) {
-  if (!freezeEnabled()) {
-    return false;
-  }
-
-  if (freezeOverride !== undefined) {
-    return freezeOverride;
-  }
-
-  if (featureFlags.experiment.controlledBottomTabs) {
-    // If the tabs are JS controlled, we want to freeze only when given view is not focused && it is not currently visible
-    return !nativeViewVisible && !screenFocused;
-  }
-
-  return !nativeViewVisible;
 }
 
 function parseAndroidIconToNativeProps(icon: PlatformIconAndroid | undefined): {
@@ -315,22 +278,37 @@ function parseIOSIconToNativeProps(icon: PlatformIconIOS | undefined): {
 
 function parseIconsToNativeProps(
   icon: PlatformIcon | undefined,
-  selectedIcon: PlatformIconIOS | undefined,
+  selectedIcon: PlatformIcon | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
   iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconResourceName?: string;
+  // android
+  selectedImageIconResource?: ImageSourcePropType;
+  selectedDrawableIconResourceName?: string;
+  // iOS
   selectedIconImageSource?: ImageSourcePropType;
   selectedIconResourceName?: string;
 } {
   if (Platform.OS === 'android') {
-    const androidNativeProps = parseAndroidIconToNativeProps(
-      icon?.android || icon?.shared,
-    );
+    const { imageIconResource, drawableIconResourceName } =
+      parseAndroidIconToNativeProps(icon?.android || icon?.shared);
+
+    const androidSelectedSource =
+      (selectedIcon as PlatformIcon)?.android ||
+      (selectedIcon as PlatformIcon)?.shared;
+    const selectedIconProps = androidSelectedSource
+      ? parseAndroidIconToNativeProps(androidSelectedSource)
+      : {};
+
     return {
-      ...androidNativeProps,
+      imageIconResource,
+      drawableIconResourceName,
+      selectedImageIconResource: selectedIconProps.imageIconResource,
+      selectedDrawableIconResourceName:
+        selectedIconProps.drawableIconResourceName,
     };
   }
 
@@ -338,11 +316,15 @@ function parseIconsToNativeProps(
     const { iconImageSource, iconResourceName, iconType } =
       parseIOSIconToNativeProps(icon?.ios || icon?.shared);
 
+    const iosSelectedSource =
+      (selectedIcon as PlatformIcon)?.ios ||
+      (selectedIcon as PlatformIcon)?.shared;
+
     const {
       iconImageSource: selectedIconImageSource,
       iconResourceName: selectedIconResourceName,
       iconType: selectedIconType,
-    } = parseIOSIconToNativeProps(selectedIcon);
+    } = parseIOSIconToNativeProps(iosSelectedSource);
 
     if (
       iconType !== undefined &&

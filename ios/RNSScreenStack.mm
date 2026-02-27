@@ -868,7 +868,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)rnscreens_disableInteractions
 {
   // When transitioning between screens, disable interactions on stack subview which wraps the screens
-  // and sink all gesture events. This should work for nested stacks and stack inside bottom tabs, inside stack.
+  // and sink all gesture events. This should work for nested stacks and stack inside tabs, inside stack.
   self.subviews[0].userInteractionEnabled = NO;
   [self addGestureRecognizer:_sinkEventsPanGestureRecognizer];
 }

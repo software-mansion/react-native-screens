@@ -16,13 +16,14 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.image.CloseableStaticBitmap
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.swmansion.rnscreens.gamma.tabs.TabScreen
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import java.util.Locale
 
 internal fun loadTabImage(
     context: Context,
     uri: String,
-    view: TabScreen,
+    view: TabsScreen,
+    isSelected: Boolean,
 ) {
     // Since image loading might happen on a background thread
     // ref. https://frescolib.org/docs/intro-image-pipeline.html
@@ -30,7 +31,11 @@ internal fun loadTabImage(
     val resolvedUri = ImageSource(context, uri).getUri(context) ?: return
     loadTabImageInternal(context, resolvedUri) { drawable ->
         Handler(Looper.getMainLooper()).post {
-            view.icon = drawable
+            if (isSelected) {
+                view.selectedIcon = drawable
+            } else {
+                view.icon = drawable
+            }
         }
     }
 }

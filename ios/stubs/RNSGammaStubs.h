@@ -21,4 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitViewScreenComponentView : NSObject
 @end
 
+@interface RNSScrollViewMarkerComponentView : NSObject
+@end
+
 NS_ASSUME_NONNULL_END

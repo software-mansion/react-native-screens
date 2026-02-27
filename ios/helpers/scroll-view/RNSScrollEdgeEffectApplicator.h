@@ -10,5 +10,6 @@
 @end
 
 @interface RNSScrollEdgeEffectApplicator : NSObject
-+ (void)applyToScrollView:(UIScrollView *)scrollView withProvider:(id<RNSScrollEdgeEffectProviding>)provider;
++ (void)applyToScrollView:(nonnull UIScrollView *)scrollView
+             withProvider:(nonnull id<RNSScrollEdgeEffectProviding>)provider;
 @end
