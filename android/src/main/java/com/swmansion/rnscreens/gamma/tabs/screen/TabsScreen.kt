@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.screen
 
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
@@ -73,7 +73,17 @@ class TabsScreen(
         }
     }
 
+    var selectedDrawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            selectedIcon = getSystemDrawableResource(reactContext, newValue)
+        }
+    }
+
     var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
+        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+    }
+
+    var selectedIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 

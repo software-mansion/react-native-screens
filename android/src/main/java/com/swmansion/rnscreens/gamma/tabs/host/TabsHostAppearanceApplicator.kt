@@ -1,7 +1,8 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.drawable.StateListDrawable
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -11,8 +12,10 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.uimanager.PixelUtil
+import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 class TabsHostAppearanceApplicator(
@@ -29,7 +32,7 @@ class TabsHostAppearanceApplicator(
         bottomNavigationView.isVisible = !tabsHost.tabBarHidden
         bottomNavigationView.setBackgroundColor(
             tabsHost.tabBarBackgroundColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorSurfaceContainer),
+                ?: resolveColorAttr(R.attr.colorSurfaceContainer),
         )
 
         val states =
@@ -41,12 +44,12 @@ class TabsHostAppearanceApplicator(
         // Font color
         val fontInactiveColor =
             tabsHost.tabBarItemTitleFontColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
+                ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
 
         val fontActiveColor =
             tabsHost.tabBarItemTitleFontColorActive
                 ?: tabsHost.tabBarItemTitleFontColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorSecondary)
+                ?: resolveColorAttr(R.attr.colorSecondary)
 
         val fontColors = intArrayOf(fontInactiveColor, fontActiveColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
@@ -54,12 +57,12 @@ class TabsHostAppearanceApplicator(
         // Icon color
         val iconInactiveColor =
             tabsHost.tabBarItemIconColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSurfaceVariant)
+                ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
 
         val iconActiveColor =
             tabsHost.tabBarItemIconColorActive
                 ?: tabsHost.tabBarItemIconColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnSecondaryContainer)
+                ?: resolveColorAttr(R.attr.colorOnSecondaryContainer)
 
         val iconColors = intArrayOf(iconInactiveColor, iconActiveColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
@@ -80,13 +83,13 @@ class TabsHostAppearanceApplicator(
         // Ripple color
         val rippleColor =
             tabsHost.tabBarItemRippleColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.itemRippleColor)
+                ?: resolveColorAttr(R.attr.itemRippleColor)
         bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
 
         // Active Indicator
         val activeIndicatorColor =
             tabsHost.tabBarItemActiveIndicatorColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorSecondaryContainer)
+                ?: resolveColorAttr(R.attr.colorSecondaryContainer)
 
         bottomNavigationView.isItemActiveIndicatorEnabled =
             tabsHost.isTabBarItemActiveIndicatorEnabled
@@ -98,9 +101,9 @@ class TabsHostAppearanceApplicator(
 
         for (menuItem in bottomNavigationMenuView.children) {
             val largeLabel =
-                menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_large_label_view)
+                menuItem.findViewById<TextView>(R.id.navigation_bar_item_large_label_view)
             val smallLabel =
-                menuItem.findViewById<TextView>(com.google.android.material.R.id.navigation_bar_item_small_label_view)
+                menuItem.findViewById<TextView>(R.id.navigation_bar_item_small_label_view)
 
             val isFontStyleItalic = tabsHost.tabBarItemTitleFontStyle == "italic"
 
@@ -135,10 +138,10 @@ class TabsHostAppearanceApplicator(
              */
             val smallFontSize =
                 tabsHost.tabBarItemTitleFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
-                    ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+                    ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
             val largeFontSize =
                 tabsHost.tabBarItemTitleFontSizeActive?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
-                    ?: context.resources.getDimension(com.google.android.material.R.dimen.design_bottom_navigation_text_size)
+                    ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
 
             // Inactive
             smallLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, smallFontSize)
@@ -158,8 +161,18 @@ class TabsHostAppearanceApplicator(
             menuItem.title = tabsScreen.tabTitle
         }
 
-        if (menuItem.icon != tabsScreen.icon) {
-            menuItem.icon = tabsScreen.icon
+        val targetIcon =
+            if (tabsScreen.selectedIcon != null && tabsScreen.icon != null) {
+                StateListDrawable().apply {
+                    addState(intArrayOf(android.R.attr.state_checked), tabsScreen.selectedIcon?.mutate())
+                    addState(intArrayOf(), tabsScreen.icon?.mutate())
+                }
+            } else {
+                tabsScreen.icon
+            }
+
+        if (menuItem.icon != targetIcon) {
+            menuItem.icon = targetIcon
         }
     }
 
@@ -194,7 +207,7 @@ class TabsHostAppearanceApplicator(
         // Styling
         badge.badgeTextColor =
             tabsScreen.tabBarItemBadgeTextColor
-                ?: resolveColorAttr(com.google.android.material.R.attr.colorOnError)
+                ?: resolveColorAttr(R.attr.colorOnError)
 
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
         badge.backgroundColor =

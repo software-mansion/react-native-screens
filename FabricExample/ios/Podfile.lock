@@ -1835,7 +1835,7 @@ PODS:
     - ReactNativeDependencies
     - RNWorklets
     - Yoga
-  - RNScreens (4.23.0):
+  - RNScreens (4.24.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1856,9 +1856,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNScreens/common (= 4.23.0)
+    - RNScreens/common (= 4.24.0)
     - Yoga
-  - RNScreens/common (4.23.0):
+  - RNScreens/common (4.24.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2266,7 +2266,7 @@ SPEC CHECKSUMS:
   ReactNativeDependencies: 97ee09ffb32e629f30549f67a3ebbf71a4dff077
   RNGestureHandler: f080747d181c86d346827ba389209e1afb528628
   RNReanimated: 72296a949b2e629ed59666d445fa7ac9ab066571
-  RNScreens: 8fc4bf3a466b750a19850eb301d2290733bb703e
+  RNScreens: 3475d50b4a24a1412586be0d37876f7443ef1730
   RNWorklets: ec060e76f9d7b7786d83a233e310b2ec778fb3eb
   Yoga: b8206e6746bd28c028572774cece66d5348240c1
 

@@ -10,8 +10,8 @@ import com.facebook.react.uimanager.ViewManager
 import com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarkerViewManager
 import com.swmansion.rnscreens.gamma.stack.host.StackHostViewManager
 import com.swmansion.rnscreens.gamma.stack.screen.StackScreenViewManager
-import com.swmansion.rnscreens.gamma.tabs.TabsHostViewManager
-import com.swmansion.rnscreens.gamma.tabs.TabsScreenViewManager
+import com.swmansion.rnscreens.gamma.tabs.host.TabsHostViewManager
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager
 import com.swmansion.rnscreens.safearea.SafeAreaViewManager
 import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
 

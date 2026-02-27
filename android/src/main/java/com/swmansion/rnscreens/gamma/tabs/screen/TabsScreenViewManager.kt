@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.screen
 
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
@@ -10,11 +10,11 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.tabs.event.TabsScreenDidAppearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabsScreenDidDisappearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabsScreenWillAppearEvent
-import com.swmansion.rnscreens.gamma.tabs.event.TabsScreenWillDisappearEvent
 import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
+import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidAppearEvent
+import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidDisappearEvent
+import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenWillAppearEvent
+import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenWillDisappearEvent
 import com.swmansion.rnscreens.utils.RNSLog
 
 @ReactModule(name = TabsScreenViewManager.REACT_CLASS)
@@ -214,6 +214,14 @@ class TabsScreenViewManager :
         view.drawableIconResourceName = value
     }
 
+    @ReactProp(name = "selectedDrawableIconResourceName")
+    override fun setSelectedDrawableIconResourceName(
+        view: TabsScreen,
+        value: String?,
+    ) {
+        view.selectedDrawableIconResourceName = value
+    }
+
     override fun setOrientation(
         view: TabsScreen,
         value: String?,
@@ -236,7 +244,18 @@ class TabsScreenViewManager :
     ) {
         val uri = value?.getString("uri")
         if (uri != null) {
-            loadTabImage(view.context, uri, view)
+            loadTabImage(view.context, uri, view, false)
+        }
+    }
+
+    @ReactProp(name = "selectedImageIconResource")
+    override fun setSelectedImageIconResource(
+        view: TabsScreen,
+        value: ReadableMap?,
+    ) {
+        val uri = value?.getString("uri")
+        if (uri != null) {
+            loadTabImage(view.context, uri, view, true)
         }
     }
 

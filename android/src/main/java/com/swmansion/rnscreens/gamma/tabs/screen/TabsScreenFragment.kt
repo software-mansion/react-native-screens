@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.screen
 
 import android.content.res.Configuration
 import android.os.Bundle

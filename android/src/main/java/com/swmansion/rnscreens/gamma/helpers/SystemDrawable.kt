@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
-import com.swmansion.rnscreens.gamma.tabs.TabsScreen.Companion.TAG
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen.Companion.TAG
 
 internal fun getSystemDrawableResource(
     context: Context,

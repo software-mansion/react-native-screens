@@ -1,10 +1,12 @@
-package com.swmansion.rnscreens.gamma.tabs
+package com.swmansion.rnscreens.gamma.tabs.host
 
 import android.os.Build
 import android.view.MenuItem
 import androidx.core.view.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarItemView
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
+import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 
 class TabsHostA11yCoordinator(
     private val bottomNavigationView: BottomNavigationView,
