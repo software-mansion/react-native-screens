@@ -449,10 +449,33 @@ class ScreenStackFragment :
         }
     }
 
+    private fun isComposeView(view: View): Boolean {
+        val name = view.javaClass.name
+        return name.startsWith("androidx.compose.ui.platform.")
+    }
+
+    private fun findComposeContainer(view: View?): View? {
+        var current = view
+
+        while (current != null) {
+            if (!isComposeView(current)) return current
+            current = (current.parent as? View)
+        }
+
+        return null
+    }
+
     private fun findLastFocusedChild(): View? {
         var view: View? = screen
         while (view != null) {
-            if (view.isFocused) return view
+            if (view.isFocused) {
+                if (isComposeView(view)) {
+                    return findComposeContainer(view)
+                }
+
+                return view
+            }
+
             view = if (view is ViewGroup) view.focusedChild else null
         }
 
