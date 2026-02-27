@@ -143,6 +143,11 @@ class TabsHostViewManager :
         value: String?,
     ) = Unit
 
+    override fun setDirectionMode(
+        view: TabsHost,
+        value: String?,
+    ) = Unit
+
     @ReactProp(name = "tabBarHidden")
     override fun setTabBarHidden(
         view: TabsHost,

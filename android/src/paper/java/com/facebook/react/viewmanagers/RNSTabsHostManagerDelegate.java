@@ -30,6 +30,9 @@ public class RNSTabsHostManagerDelegate<T extends View, U extends BaseViewManage
       case "nativeContainerBackgroundColor":
         mViewManager.setNativeContainerBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
+      case "directionMode":
+        mViewManager.setDirectionMode(view, (String) value);
+        break;
       case "tabBarBackgroundColor":
         mViewManager.setTabBarBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
