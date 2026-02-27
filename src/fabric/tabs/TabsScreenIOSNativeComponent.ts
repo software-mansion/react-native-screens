@@ -80,6 +80,23 @@ type ScrollEdgeEffectIOS = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 export type IconTypeIOS = 'image' | 'template' | 'sfSymbol' | 'xcasset';
 
+export type AppearanceIOS = {
+  stacked?: ItemAppearanceIOS;
+  inline?: ItemAppearanceIOS;
+  compactInline?: ItemAppearanceIOS;
+
+  tabBarBackgroundColor?: ProcessedColorValue | null;
+  tabBarShadowColor?: ProcessedColorValue | null;
+  tabBarBlurEffect?: CT.WithDefault<BlurEffectIOS, 'systemDefault'>;
+};
+
+export type ItemAppearanceIOS = {
+  normal?: ItemStateAppearanceIOS;
+  selected?: ItemStateAppearanceIOS;
+  focused?: ItemStateAppearanceIOS;
+  disabled?: ItemStateAppearanceIOS;
+};
+
 export type ItemStateAppearanceIOS = {
   tabBarItemTitleFontFamily?: string;
   tabBarItemTitleFontSize?: CT.Float;
@@ -92,23 +109,6 @@ export type ItemStateAppearanceIOS = {
   };
   tabBarItemIconColor?: ProcessedColorValue | null;
   tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
-};
-
-export type ItemAppearanceIOS = {
-  normal?: ItemStateAppearanceIOS;
-  selected?: ItemStateAppearanceIOS;
-  focused?: ItemStateAppearanceIOS;
-  disabled?: ItemStateAppearanceIOS;
-};
-
-export type AppearanceIOS = {
-  stacked?: ItemAppearanceIOS;
-  inline?: ItemAppearanceIOS;
-  compactInline?: ItemAppearanceIOS;
-
-  tabBarBackgroundColor?: ProcessedColorValue | null;
-  tabBarShadowColor?: ProcessedColorValue | null;
-  tabBarBlurEffect?: CT.WithDefault<BlurEffectIOS, 'systemDefault'>;
 };
 
 // #endregion iOS-specific helpers

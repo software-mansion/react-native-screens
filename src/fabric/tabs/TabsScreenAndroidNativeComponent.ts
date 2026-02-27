@@ -44,24 +44,24 @@ export type AppearanceAndroid = {
   badge?: BadgeAppearanceAndroid;
 };
 
-export type ItemStateColorsAndroid = {
+type ItemStateColorsAndroid = {
   iconColor?: ProcessedColorValue | null;
   titleColor?: ProcessedColorValue | null;
 };
 
-export type BottomNavItemColorsAndroid = {
+type BottomNavItemColorsAndroid = {
   normal?: ItemStateColorsAndroid;
   selected?: ItemStateColorsAndroid;
   focused?: ItemStateColorsAndroid;
   disabled?: ItemStateColorsAndroid;
 };
 
-export type ActiveIndicatorAppearanceAndroid = {
+type ActiveIndicatorAppearanceAndroid = {
   color?: ProcessedColorValue | null;
   enabled?: CT.WithDefault<boolean, true>;
 };
 
-export type TypographyAppearanceAndroid = {
+type TypographyAppearanceAndroid = {
   fontFamily?: string;
   fontSizeSmall?: CT.Float;
   fontSizeLarge?: CT.Float;
@@ -69,7 +69,7 @@ export type TypographyAppearanceAndroid = {
   fontStyle?: string;
 };
 
-export type BadgeAppearanceAndroid = {
+type BadgeAppearanceAndroid = {
   textColor?: ProcessedColorValue | null;
   backgroundColor?: ProcessedColorValue | null;
 };
