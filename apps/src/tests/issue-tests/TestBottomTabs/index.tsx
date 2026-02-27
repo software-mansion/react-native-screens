@@ -58,7 +58,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
           type: 'imageSource',
-          imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
+          imageSource: require('../../../../assets/variableIcons/icon.png'),
         },
         selectedIcon: {
             type: 'imageSource',
@@ -264,11 +264,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',
       tabBarItemAccessibilityLabel: 'Fourth Tab Item',
-      specialEffects: {
-        repeatedTabSelection: {
-          popToRoot: false,
-        },
-      },
       android: {
         standardAppearance: DEFAULT_APPEARANCE_ANDROID,
         icon: {
@@ -293,6 +288,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
       },
       title: 'Tab4',
       badgeValue: '123',
+      specialEffects: {
+        repeatedTabSelection: {
+          popToRoot: false,
+        },
+      },
     },
     component: Tab4,
   },
