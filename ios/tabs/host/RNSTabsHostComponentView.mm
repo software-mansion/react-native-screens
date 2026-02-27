@@ -109,7 +109,7 @@ namespace react = facebook::react;
 - (void)resetProps
 {
 #if RCT_NEW_ARCH_ENABLED
-  static const auto defaultProps = std::make_shared<const react::RNSTabsHostProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSTabsHostIOSProps>();
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
@@ -291,8 +291,8 @@ namespace react = facebook::react;
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsHostProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsHostProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsHostIOSProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsHostIOSProps>(props);
 
   if (newComponentProps.controlNavigationStateInJS != oldComponentProps.controlNavigationStateInJS) {
     _experimental_controlNavigationStateInJS = newComponentProps.controlNavigationStateInJS;
@@ -334,7 +334,7 @@ namespace react = facebook::react;
       _controller.tabBarMinimizeBehavior = _tabBarMinimizeBehavior;
     } else
 #endif // Check for iOS >= 26
-      if (newComponentProps.tabBarMinimizeBehavior != react::RNSTabsHostTabBarMinimizeBehavior::Automatic) {
+      if (newComponentProps.tabBarMinimizeBehavior != react::RNSTabsHostIOSTabBarMinimizeBehavior::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarMinimizeBehavior is supported for iOS >= 26");
       }
   }
@@ -347,7 +347,7 @@ namespace react = facebook::react;
       _controller.mode = _tabBarControllerMode;
     } else
 #endif // Check for iOS >= 18
-      if (newComponentProps.tabBarControllerMode != react::RNSTabsHostTabBarControllerMode::Automatic) {
+      if (newComponentProps.tabBarControllerMode != react::RNSTabsHostIOSTabBarControllerMode::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
       }
   }
@@ -369,7 +369,7 @@ namespace react = facebook::react;
 {
   [super updateEventEmitter:eventEmitter];
 
-  const auto &castedEventEmitter = std::static_pointer_cast<const react::RNSTabsHostEventEmitter>(eventEmitter);
+  const auto &castedEventEmitter = std::static_pointer_cast<const react::RNSTabsHostIOSEventEmitter>(eventEmitter);
   [_reactEventEmitter updateEventEmitter:castedEventEmitter];
 }
 
@@ -605,7 +605,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
-Class<RCTComponentViewProtocol> RNSTabsHostCls(void)
+Class<RCTComponentViewProtocol> RNSTabsHostIOSCls(void)
 {
   return RNSTabsHostComponentView.class;
 }

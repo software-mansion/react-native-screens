@@ -3,6 +3,8 @@
 import { codegenNativeComponent } from 'react-native';
 import type { CodegenTypes as CT, ColorValue, ViewProps } from 'react-native';
 
+// #region General helpers
+
 // TODO: Report issue on RN repo, that nesting color value inside a struct does not work.
 // Generated code is ok, but the value is not passed down correctly - whatever color is set
 // host component receives RGBA(0, 0, 0, 0) anyway.
@@ -15,6 +17,10 @@ type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
+// #endregion General helpers
+
+// #region iOS-specific helpers
+
 type TabBarMinimizeBehavior =
   | 'automatic'
   | 'never'
@@ -23,7 +29,11 @@ type TabBarMinimizeBehavior =
 
 type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
+// #endregion iOS-specific helpers
+
 export interface NativeProps extends ViewProps {
+  // #region Common Props
+
   // Events
   onNativeFocusChange?: CT.DirectEventHandler<NativeFocusChangeEvent>;
 
@@ -34,17 +44,23 @@ export interface NativeProps extends ViewProps {
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.
 
-  // iOS-specific
-  tabBarTintColor?: ColorValue;
-  tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
-  tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
-
   // Control
 
   // Experimental support
   controlNavigationStateInJS?: CT.WithDefault<boolean, false>;
+
+  // #endregion Common Props
+
+  // #region iOS-specific Props
+
+  tabBarTintColor?: ColorValue;
+  tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
+  tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
+
+  // #endregion iOS-specific Props
 }
 
-export default codegenNativeComponent<NativeProps>('RNSTabsHost', {
+export default codegenNativeComponent<NativeProps>('RNSTabsHostIOS', {
   interfaceOnly: true,
+  excludedPlatforms: ['android'],
 });

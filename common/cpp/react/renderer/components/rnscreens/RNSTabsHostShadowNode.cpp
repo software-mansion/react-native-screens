@@ -2,7 +2,11 @@
 
 namespace facebook::react {
 
-extern const char RNSTabsHostComponentName[] = "RNSTabsHost";
+#if !defined(ANDROID)
+extern const char RNSTabsHostComponentName[] = "RNSTabsHostIOS";
+#else
+extern const char RNSTabsHostComponentName[] = "RNSTabsHostAndroid";
+#endif
 
 #if !defined(ANDROID)
 void RNSTabsHostShadowNode::setImageLoader(std::weak_ptr<void> imageLoader) {

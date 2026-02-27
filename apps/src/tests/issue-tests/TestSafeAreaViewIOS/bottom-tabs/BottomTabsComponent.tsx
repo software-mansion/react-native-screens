@@ -20,8 +20,8 @@ export default function BottomTabsComponent() {
       tabScreenProps: {
         tabKey: 'config',
         title: 'Config',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'gear',
           },
@@ -33,16 +33,16 @@ export default function BottomTabsComponent() {
       tabScreenProps: {
         tabKey: 'test',
         title: 'Test',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'uiwindow.split.2x1',
           },
+          systemItem:
+            config.tabBarItemSystemItem !== 'disabled'
+              ? config.tabBarItemSystemItem
+              : undefined,
         },
-        systemItem:
-          config.tabBarItemSystemItem !== 'disabled'
-            ? config.tabBarItemSystemItem
-            : undefined,
       },
       component: TestTab,
       safeAreaConfiguration: {
@@ -68,7 +68,9 @@ export default function BottomTabsComponent() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarMinimizeBehavior={config.tabBarMinimizeBehavior}
+        ios={{
+          tabBarMinimizeBehavior: config.tabBarMinimizeBehavior,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

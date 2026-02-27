@@ -144,9 +144,9 @@ UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffec
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(26.0))
 UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
-    react::RNSTabsHostTabBarMinimizeBehavior tabBarMinimizeBehavior)
+    react::RNSTabsHostIOSTabBarMinimizeBehavior tabBarMinimizeBehavior)
 {
-  using enum facebook::react::RNSTabsHostTabBarMinimizeBehavior;
+  using enum facebook::react::RNSTabsHostIOSTabBarMinimizeBehavior;
 
   switch (tabBarMinimizeBehavior) {
     case Never:
@@ -184,9 +184,9 @@ UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabBarMinimizeBehavior(
 #if RCT_NEW_ARCH_ENABLED
 API_AVAILABLE(ios(18.0))
 UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
-    react::RNSTabsHostTabBarControllerMode tabBarControllerMode)
+    react::RNSTabsHostIOSTabBarControllerMode tabBarControllerMode)
 {
-  using enum facebook::react::RNSTabsHostTabBarControllerMode;
+  using enum facebook::react::RNSTabsHostIOSTabBarControllerMode;
 
   switch (tabBarControllerMode) {
     case Automatic:
@@ -218,9 +218,9 @@ UITabBarControllerMode UITabBarControllerModeFromRNSTabBarControllerMode(RNSTabB
 
 #endif // Check for iOS >= 18
 
-RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIconType iconType)
+RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType)
 {
-  using enum facebook::react::RNSTabsScreenIconType;
+  using enum facebook::react::RNSTabsScreenIOSIconType;
   switch (iconType) {
     case Image:
       return RNSTabsIconTypeImage;
@@ -259,9 +259,9 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(
   return iconImageSource;
 }
 
-RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenOrientation orientation)
+RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenIOSOrientation orientation)
 {
-  using enum facebook::react::RNSTabsScreenOrientation;
+  using enum facebook::react::RNSTabsScreenIOSOrientation;
 
   switch (orientation) {
     case Inherit:
@@ -289,9 +289,9 @@ RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenOr
 }
 
 RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
-    react::RNSTabsScreenSystemItem systemItem)
+    react::RNSTabsScreenIOSSystemItem systemItem)
 {
-  using enum facebook::react::RNSTabsScreenSystemItem;
+  using enum facebook::react::RNSTabsScreenIOSSystemItem;
 
   switch (systemItem) {
     case None:
@@ -377,27 +377,27 @@ UITabBarSystemItem RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSyst
   }
 
 RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenBottomScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenBottomScrollEdgeEffect edgeEffect)
+    react::RNSTabsScreenIOSBottomScrollEdgeEffect edgeEffect)
 {
-  SWITCH_EDGE_EFFECT(RNSTabsScreenBottomScrollEdgeEffect);
+  SWITCH_EDGE_EFFECT(RNSTabsScreenIOSBottomScrollEdgeEffect);
 }
 
 RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenLeftScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenLeftScrollEdgeEffect edgeEffect)
+    react::RNSTabsScreenIOSLeftScrollEdgeEffect edgeEffect)
 {
-  SWITCH_EDGE_EFFECT(RNSTabsScreenLeftScrollEdgeEffect);
+  SWITCH_EDGE_EFFECT(RNSTabsScreenIOSLeftScrollEdgeEffect);
 }
 
 RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenRightScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenRightScrollEdgeEffect edgeEffect)
+    react::RNSTabsScreenIOSRightScrollEdgeEffect edgeEffect)
 {
-  SWITCH_EDGE_EFFECT(RNSTabsScreenRightScrollEdgeEffect);
+  SWITCH_EDGE_EFFECT(RNSTabsScreenIOSRightScrollEdgeEffect);
 }
 
 RNSScrollEdgeEffect RNSTabsScrollEdgeEffectFromTabsScreenTopScrollEdgeEffectCppEquivalent(
-    react::RNSTabsScreenTopScrollEdgeEffect edgeEffect)
+    react::RNSTabsScreenIOSTopScrollEdgeEffect edgeEffect)
 {
-  SWITCH_EDGE_EFFECT(RNSTabsScreenTopScrollEdgeEffect);
+  SWITCH_EDGE_EFFECT(RNSTabsScreenIOSTopScrollEdgeEffect);
 }
 
 #undef SWITCH_EDGE_EFFECT
@@ -469,9 +469,9 @@ NSString *RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvi
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
-    react::RNSTabsScreenUserInterfaceStyle userInterfaceStyle)
+    react::RNSTabsScreenIOSUserInterfaceStyle userInterfaceStyle)
 {
-  using enum facebook::react::RNSTabsScreenUserInterfaceStyle;
+  using enum facebook::react::RNSTabsScreenIOSUserInterfaceStyle;
   switch (userInterfaceStyle) {
     case Unspecified:
       return UIUserInterfaceStyleUnspecified;

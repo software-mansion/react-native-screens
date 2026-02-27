@@ -61,8 +61,10 @@ function App() {
               tabScreenProps: {
                 tabKey: 'False',
                 title: 'False',
-                overrideScrollViewContentInsetAdjustmentBehavior: false,
-                icon: { ios: { type: 'sfSymbol', name: 'xmark.circle' } },
+                ios: {
+                  overrideScrollViewContentInsetAdjustmentBehavior: false,
+                  icon: { type: 'sfSymbol', name: 'xmark.circle' },
+                },
               },
             },
             {
@@ -70,8 +72,10 @@ function App() {
               tabScreenProps: {
                 tabKey: 'True',
                 title: 'True',
-                overrideScrollViewContentInsetAdjustmentBehavior: true,
-                icon: { ios: { type: 'sfSymbol', name: 'checkmark.circle' } },
+                ios: {
+                  overrideScrollViewContentInsetAdjustmentBehavior: true,
+                  icon: { type: 'sfSymbol', name: 'checkmark.circle' },
+                },
               },
             },
             {
@@ -79,7 +83,9 @@ function App() {
               tabScreenProps: {
                 tabKey: 'Default',
                 title: 'Default',
-                icon: { ios: { type: 'sfSymbol', name: 'circle.dashed' } },
+                ios: {
+                  icon: { type: 'sfSymbol', name: 'circle.dashed' },
+                },
               },
             },
           ]}

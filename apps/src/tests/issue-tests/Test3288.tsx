@@ -27,7 +27,7 @@ import { SettingsPicker, SettingsSwitch } from '../../shared';
 import Colors from '../../shared/styling/Colors';
 import PressableWithFeedback from '../../shared/PressableWithFeedback';
 import type {
-  TabBarMinimizeBehavior,
+  TabBarMinimizeBehaviorIOS,
   TabsAccessoryEnvironment,
 } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
@@ -36,7 +36,7 @@ type BottomAccessoryConfig = {
   shown: boolean;
   backgroundColor: ColorValue;
   shouldAdaptToEnvironment: boolean;
-  tabBarMinimizeBehavior: TabBarMinimizeBehavior;
+  tabBarMinimizeBehavior: TabBarMinimizeBehaviorIOS;
 };
 
 type BottomAccessoryContextInterface = {
@@ -94,7 +94,7 @@ function Config() {
           setConfig({ ...config, shouldAdaptToEnvironment: value })
         }
       />
-      <SettingsPicker<TabBarMinimizeBehavior>
+      <SettingsPicker<TabBarMinimizeBehaviorIOS>
         label="tabBarMinimizeBehavior"
         value={config.tabBarMinimizeBehavior}
         onValueChange={value =>
@@ -138,8 +138,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab1',
       title: 'Config',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'sfSymbol',
           name: 'gear',
         },
@@ -151,8 +151,8 @@ const TAB_CONFIGS: TabConfiguration[] = [
     tabScreenProps: {
       tabKey: 'Tab2',
       title: 'Test',
-      icon: {
-        ios: {
+      ios: {
+        icon: {
           type: 'sfSymbol',
           name: 'rectangle.stack',
         },
@@ -228,13 +228,13 @@ function Tabs() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarMinimizeBehavior={bottomAccessoryConfig.tabBarMinimizeBehavior}
-        bottomAccessory={
-          bottomAccessoryConfig.shown
+        ios={{
+          tabBarMinimizeBehavior: bottomAccessoryConfig.tabBarMinimizeBehavior,
+          bottomAccessory: bottomAccessoryConfig.shown
             ? environment =>
                 getBottomAccessory(environment, bottomAccessoryConfig)
-            : undefined
-        }
+            : undefined,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );

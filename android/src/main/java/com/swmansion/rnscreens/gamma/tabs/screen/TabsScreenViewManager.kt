@@ -10,15 +10,15 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.RNSTabsScreenManagerDelegate
-import com.facebook.react.viewmanagers.RNSTabsScreenManagerInterface
+import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerDelegate
+import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.tabs.appearance.ActiveIndicatorAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabBarActiveIndicatorAppearance
 import com.swmansion.rnscreens.gamma.tabs.appearance.AndroidTabsAppearance
-import com.swmansion.rnscreens.gamma.tabs.appearance.BadgeAppearance
-import com.swmansion.rnscreens.gamma.tabs.appearance.BottomNavItemColors
-import com.swmansion.rnscreens.gamma.tabs.appearance.ItemStateColors
-import com.swmansion.rnscreens.gamma.tabs.appearance.TypographyAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabBarItemBadgeAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.ItemAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.ItemStateAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabBarItemTitleTypographyAppearance
 import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidDisappearEvent
@@ -29,8 +29,8 @@ import com.swmansion.rnscreens.utils.RNSLog
 @ReactModule(name = TabsScreenViewManager.REACT_CLASS)
 class TabsScreenViewManager :
     ViewGroupManager<TabsScreen>(),
-    RNSTabsScreenManagerInterface<TabsScreen> {
-    private val delegate: ViewManagerDelegate<TabsScreen> = RNSTabsScreenManagerDelegate<TabsScreen, TabsScreenViewManager>(this)
+    RNSTabsScreenAndroidManagerInterface<TabsScreen> {
+    private val delegate: ViewManagerDelegate<TabsScreen> = RNSTabsScreenAndroidManagerDelegate<TabsScreen, TabsScreenViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
@@ -58,42 +58,6 @@ class TabsScreenViewManager :
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
     }
-
-    // These should be ignored or another component, dedicated for Android should be used
-    override fun setStandardAppearance(
-        view: TabsScreen,
-        value: Dynamic,
-    ) = Unit
-
-    override fun setScrollEdgeAppearance(
-        view: TabsScreen,
-        value: Dynamic,
-    ) = Unit
-
-    override fun setIconType(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setIconImageSource(
-        view: TabsScreen?,
-        value: ReadableMap?,
-    ) = Unit
-
-    override fun setIconResourceName(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setSelectedIconImageSource(
-        view: TabsScreen?,
-        value: ReadableMap?,
-    ) = Unit
-
-    override fun setSelectedIconResourceName(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
 
     // Annotation is Paper only
     @ReactProp(name = "isFocused")
@@ -129,11 +93,6 @@ class TabsScreenViewManager :
         view.tabTitle = value
     }
 
-    override fun setIsTitleUndefined(
-        view: TabsScreen,
-        value: Boolean,
-    ) = Unit
-
     @ReactProp(name = "specialEffects")
     override fun setSpecialEffects(
         view: TabsScreen,
@@ -157,31 +116,6 @@ class TabsScreenViewManager :
         view.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect = scrollToTop
     }
 
-    override fun setOverrideScrollViewContentInsetAdjustmentBehavior(
-        view: TabsScreen,
-        value: Boolean,
-    ) = Unit
-
-    override fun setBottomScrollEdgeEffect(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setLeftScrollEdgeEffect(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setRightScrollEdgeEffect(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
-    override fun setTopScrollEdgeEffect(
-        view: TabsScreen?,
-        value: String?,
-    ) = Unit
-
     @ReactProp(name = "tabBarItemTestID")
     override fun setTabBarItemTestID(
         view: TabsScreen,
@@ -198,8 +132,6 @@ class TabsScreenViewManager :
         view.tabBarItemAccessibilityLabel = value
     }
 
-    // Android specific
-
     @ReactProp(name = "drawableIconResourceName")
     override fun setDrawableIconResourceName(
         view: TabsScreen,
@@ -215,21 +147,6 @@ class TabsScreenViewManager :
     ) {
         view.selectedDrawableIconResourceName = value
     }
-
-    override fun setOrientation(
-        view: TabsScreen,
-        value: String?,
-    ) = Unit
-
-    override fun setSystemItem(
-        view: TabsScreen,
-        value: String?,
-    ) = Unit
-
-    override fun setUserInterfaceStyle(
-        view: TabsScreen,
-        value: String?,
-    ) = Unit
 
     @ReactProp(name = "imageIconResource")
     override fun setImageIconResource(
@@ -253,8 +170,8 @@ class TabsScreenViewManager :
         }
     }
 
-    @ReactProp(name = "standardAppearanceAndroid")
-    override fun setStandardAppearanceAndroid(
+    @ReactProp(name = "standardAppearance")
+    override fun setStandardAppearance(
         view: TabsScreen,
         value: Dynamic?,
     ) {
@@ -277,62 +194,62 @@ class TabsScreenViewManager :
             backgroundColor = appearance.getOptionalColor("tabBarBackgroundColor"),
             itemRippleColor = appearance.getOptionalColor("tabBarItemRippleColor"),
             labelVisibilityMode = appearance.getOptionalString("tabBarItemLabelVisibilityMode"),
-            itemColors = if (appearance.hasKey("itemColors")) parseBottomNavItemAppearanceStates(appearance.getMap("itemColors")) else null,
-            activeIndicator =
+            tabBarItemStatesColors = if (appearance.hasKey("tabBarItemStatesColors")) parseBottomNavItemAppearanceStates(appearance.getMap("tabBarItemStatesColors")) else null,
+            tabBarActiveIndicatorAppearance =
                 if (appearance.hasKey(
-                        "activeIndicator",
+                        "tabBarActiveIndicatorAppearance",
                     )
                 ) {
-                    parseActiveIndicator(appearance.getMap("activeIndicator"))
+                    parseTabBarActiveIndicatorAppearance(appearance.getMap("tabBarActiveIndicatorAppearance"))
                 } else {
                     null
                 },
-            typography = if (appearance.hasKey("typography")) parseTypography(appearance.getMap("typography")) else null,
-            badge = if (appearance.hasKey("badge")) parseBadge(appearance.getMap("badge")) else null,
+            tabBarItemTitleTypography = if (appearance.hasKey("tabBarItemTitleTypography")) parseTabBarItemTitleTypography(appearance.getMap("tabBarItemTitleTypography")) else null,
+            tabBarItemBadgeAppearance = if (appearance.hasKey("tabBarItemBadgeAppearance")) parseTabBarItemBadgeAppearance(appearance.getMap("tabBarItemBadgeAppearance")) else null,
         )
 
-    private fun parseBottomNavItemAppearanceStates(appearanceStates: ReadableMap?): BottomNavItemColors? {
+    private fun parseBottomNavItemAppearanceStates(appearanceStates: ReadableMap?): ItemAppearance? {
         if (appearanceStates == null) return null
-        return BottomNavItemColors(
-            normal = if (appearanceStates.hasKey("normal")) parseItemStateColors(appearanceStates.getMap("normal")) else null,
-            selected = if (appearanceStates.hasKey("selected")) parseItemStateColors(appearanceStates.getMap("selected")) else null,
-            focused = if (appearanceStates.hasKey("focused")) parseItemStateColors(appearanceStates.getMap("focused")) else null,
-            disabled = if (appearanceStates.hasKey("disabled")) parseItemStateColors(appearanceStates.getMap("disabled")) else null,
+        return ItemAppearance(
+            normal = if (appearanceStates.hasKey("normal")) parseItemStateAppearance(appearanceStates.getMap("normal")) else null,
+            selected = if (appearanceStates.hasKey("selected")) parseItemStateAppearance(appearanceStates.getMap("selected")) else null,
+            focused = if (appearanceStates.hasKey("focused")) parseItemStateAppearance(appearanceStates.getMap("focused")) else null,
+            disabled = if (appearanceStates.hasKey("disabled")) parseItemStateAppearance(appearanceStates.getMap("disabled")) else null,
         )
     }
 
-    private fun parseItemStateColors(stateColors: ReadableMap?): ItemStateColors? {
+    private fun parseItemStateAppearance(stateColors: ReadableMap?): ItemStateAppearance? {
         if (stateColors == null) return null
-        return ItemStateColors(
-            titleColor = stateColors.getOptionalColor("titleColor"),
-            iconColor = stateColors.getOptionalColor("iconColor"),
+        return ItemStateAppearance(
+            tabBarItemTitleColor = stateColors.getOptionalColor("tabBarItemTitleColor"),
+            tabBarItemIconColor = stateColors.getOptionalColor("tabBarItemIconColor"),
         )
     }
 
-    private fun parseActiveIndicator(activeIndicatorConfig: ReadableMap?): ActiveIndicatorAppearance? {
+    private fun parseTabBarActiveIndicatorAppearance(activeIndicatorConfig: ReadableMap?): TabBarActiveIndicatorAppearance? {
         if (activeIndicatorConfig == null) return null
-        return ActiveIndicatorAppearance(
-            color = activeIndicatorConfig.getOptionalColor("color"),
-            enabled = activeIndicatorConfig.getOptionalBoolean("enabled"),
+        return TabBarActiveIndicatorAppearance(
+            tabBarActiveIndicatorColor = activeIndicatorConfig.getOptionalColor("tabBarActiveIndicatorColor"),
+            tabBarActiveIndicatorEnabled = activeIndicatorConfig.getOptionalBoolean("tabBarActiveIndicatorEnabled"),
         )
     }
 
-    private fun parseTypography(typographyConfig: ReadableMap?): TypographyAppearance? {
+    private fun parseTabBarItemTitleTypography(typographyConfig: ReadableMap?): TabBarItemTitleTypographyAppearance? {
         if (typographyConfig == null) return null
-        return TypographyAppearance(
-            fontFamily = typographyConfig.getOptionalString("fontFamily"),
-            fontSizeSmall = typographyConfig.getOptionalFloat("fontSizeSmall"),
-            fontSizeLarge = typographyConfig.getOptionalFloat("fontSizeLarge"),
-            fontWeight = typographyConfig.getOptionalString("fontWeight"),
-            fontStyle = typographyConfig.getOptionalString("fontStyle"),
+        return TabBarItemTitleTypographyAppearance(
+            tabBarItemTitleFontFamily = typographyConfig.getOptionalString("tabBarItemTitleFontFamily"),
+            tabBarItemTitleFontSizeSmall = typographyConfig.getOptionalFloat("tabBarItemTitleFontSizeSmall"),
+            tabBarItemTitleFontSizeLarge = typographyConfig.getOptionalFloat("tabBarItemTitleFontSizeLarge"),
+            tabBarItemTitleFontWeight = typographyConfig.getOptionalString("tabBarItemTitleFontWeight"),
+            tabBarItemTitleFontStyle = typographyConfig.getOptionalString("tabBarItemTitleFontStyle"),
         )
     }
 
-    private fun parseBadge(badgeConfig: ReadableMap?): BadgeAppearance? {
+    private fun parseTabBarItemBadgeAppearance(badgeConfig: ReadableMap?): TabBarItemBadgeAppearance? {
         if (badgeConfig == null) return null
-        return BadgeAppearance(
-            backgroundColor = badgeConfig.getOptionalColor("backgroundColor"),
-            textColor = badgeConfig.getOptionalColor("textColor"),
+        return TabBarItemBadgeAppearance(
+            tabBarItemBadgeBackgroundColor = badgeConfig.getOptionalColor("tabBarItemBadgeBackgroundColor"),
+            tabBarItemBadgeTextColor = badgeConfig.getOptionalColor("tabBarItemBadgeTextColor"),
         )
     }
 
@@ -366,6 +283,6 @@ class TabsScreenViewManager :
     }
 
     companion object {
-        const val REACT_CLASS = "RNSTabsScreen"
+        const val REACT_CLASS = "RNSTabsScreenAndroid"
     }
 }

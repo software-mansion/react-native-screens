@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { TabBarControllerMode } from 'react-native-screens';
+import { TabBarControllerModeIOS } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
@@ -15,8 +15,8 @@ import { Button } from '../../shared';
 
 function makeTab(
   title: string,
-  controllerMode: TabBarControllerMode,
-  setControllerMode: (mode: TabBarControllerMode) => void,
+  controllerMode: TabBarControllerModeIOS,
+  setControllerMode: (mode: TabBarControllerModeIOS) => void,
 ) {
   return function Tab() {
     return (
@@ -49,19 +49,21 @@ function App() {
   );
 
   const [controllerMode, setControllerMode] =
-    useState<TabBarControllerMode>('automatic');
+    useState<TabBarControllerModeIOS>('automatic');
 
   const TAB_CONFIGS: TabConfiguration[] = [
     {
       tabScreenProps: {
         tabKey: 'Tab1',
         title: 'Tab 1',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'sun.max',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'sunny',
           },
@@ -73,12 +75,14 @@ function App() {
       tabScreenProps: {
         tabKey: 'Tab2',
         title: 'Tab 2',
-        icon: {
-          ios: {
+        ios: {
+          icon: {
             type: 'sfSymbol',
             name: 'snow',
           },
-          android: {
+        },
+        android: {
+          icon: {
             type: 'drawableResource',
             name: 'mode_cool',
           },
@@ -96,7 +100,9 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarControllerMode={controllerMode}
+        ios={{
+          tabBarControllerMode: controllerMode,
+        }}
       />
     </ConfigWrapperContext.Provider>
   );
