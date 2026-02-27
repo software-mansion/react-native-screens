@@ -1,10 +1,10 @@
-#import "RNSSplitViewHostComponentEventEmitter.h"
+#import "RNSSplitHostComponentEventEmitter.h"
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 #import "RNSConversions.h"
 
-@implementation RNSSplitViewHostComponentEventEmitter {
-  std::shared_ptr<const react::RNSSplitViewHostEventEmitter> _reactEventEmitter;
+@implementation RNSSplitHostComponentEventEmitter {
+  std::shared_ptr<const react::RNSSplitHostEventEmitter> _reactEventEmitter;
 }
 
 - (BOOL)emitOnCollapse
@@ -54,7 +54,7 @@
   }
 }
 
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitViewHostEventEmitter> &)emitter
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitHostEventEmitter> &)emitter
 {
   _reactEventEmitter = emitter;
 }

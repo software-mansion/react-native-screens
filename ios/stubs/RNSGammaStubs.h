@@ -15,10 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSStackScreenComponentView : NSObject
 @end
 
-@interface RNSSplitViewHostComponentView : NSObject
+@interface RNSSplitHostComponentView : NSObject
 @end
 
-@interface RNSSplitViewScreenComponentView : NSObject
+@interface RNSSplitScreenComponentView : NSObject
 @end
 
 NS_ASSUME_NONNULL_END

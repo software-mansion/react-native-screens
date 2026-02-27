@@ -12,10 +12,10 @@ namespace react = facebook::react;
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * @class RNSSplitViewScreenComponentEventEmitter
- * @brief Responsible for emitting events from the native SplitViewScreen (column) to the React Element Tree.
+ * @class RNSSplitScreenComponentEventEmitter
+ * @brief Responsible for emitting events from the native SplitScreen (column) to the React Element Tree.
  */
-@interface RNSSplitViewScreenComponentEventEmitter : NSObject
+@interface RNSSplitScreenComponentEventEmitter : NSObject
 
 /**
  * @brief Emits the onWillAppear event to notify React Native.
@@ -59,9 +59,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if defined(__cplusplus)
 
-@interface RNSSplitViewScreenComponentEventEmitter ()
+@interface RNSSplitScreenComponentEventEmitter ()
 
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitViewScreenEventEmitter> &)emitter;
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitScreenEventEmitter> &)emitter;
 
 @end
 

@@ -108,34 +108,34 @@ UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrien
 RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask);
 #endif // !TARGET_OS_TV
 
-#pragma mark SplitViewHost props
+#pragma mark SplitHost props
 
 UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
-    react::RNSSplitViewHostPreferredSplitBehavior behavior);
+    react::RNSSplitHostPreferredSplitBehavior behavior);
 
-UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(react::RNSSplitViewHostPrimaryEdge primaryEdge);
+UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(react::RNSSplitHostPrimaryEdge primaryEdge);
 
 UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
-    react::RNSSplitViewHostPreferredDisplayMode displayMode);
+    react::RNSSplitHostPreferredDisplayMode displayMode);
 
 #if !TARGET_OS_TV
 UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp(
-    react::RNSSplitViewHostPrimaryBackgroundStyle primaryBackgroundStyle);
+    react::RNSSplitHostPrimaryBackgroundStyle primaryBackgroundStyle);
 #endif // !TARGET_OS_TV
 
 UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
-    react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility);
+    react::RNSSplitHostDisplayModeButtonVisibility displayModeButtonVisibility);
 
 std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode);
 
 std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHostProp(
-    react::RNSSplitViewHostTopColumnForCollapsing topColumnForCollapsing);
+    react::RNSSplitHostTopColumnForCollapsing topColumnForCollapsing);
 
-RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitViewHostOrientation orientation);
+RNSOrientation RNSOrientationFromRNSSplitHostOrientation(react::RNSSplitHostOrientation orientation);
 
-#pragma mark SplitViewScreen props
+#pragma mark SplitScreen props
 
-RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(react::RNSSplitViewScreenColumnType columnType);
+RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(react::RNSSplitScreenColumnType columnType);
 
 }; // namespace rnscreens::conversion
 
