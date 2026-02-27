@@ -484,4 +484,20 @@ UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
   }
 }
 
+UIUserInterfaceStyle UIUserInterfaceStyleFromTabsHostCppEquivalent(
+    react::RNSTabsHostUserInterfaceStyle userInterfaceStyle)
+{
+  using enum facebook::react::RNSTabsHostUserInterfaceStyle;
+  switch (userInterfaceStyle) {
+    case Unspecified:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported user interface style");
+  }
+}
+
 }; // namespace rnscreens::conversion

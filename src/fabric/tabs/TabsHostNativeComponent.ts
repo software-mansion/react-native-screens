@@ -29,6 +29,8 @@ type TabBarMinimizeBehavior =
 
 type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
+type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
+
 export interface NativeProps extends ViewProps {
   // Events
   onNativeFocusChange?: CT.DirectEventHandler<NativeFocusChangeEvent>;
@@ -63,6 +65,7 @@ export interface NativeProps extends ViewProps {
   tabBarTintColor?: ColorValue;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
+  userInterfaceStyle?: CT.WithDefault<UserInterfaceStyle, 'unspecified'>;
 
   // Control
 
