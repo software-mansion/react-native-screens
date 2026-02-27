@@ -21,13 +21,13 @@ type NativeFocusChangeEvent = {
 
 // #region iOS-specific helpers
 
-type TabBarMinimizeBehaviorIOS =
+type TabBarMinimizeBehavior =
   | 'automatic'
   | 'never'
   | 'onScrollDown'
   | 'onScrollUp';
 
-type TabBarControllerModeIOS = 'automatic' | 'tabBar' | 'tabSidebar';
+type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 // #endregion iOS-specific helpers
 
@@ -54,11 +54,8 @@ export interface NativeProps extends ViewProps {
   // #region iOS-specific Props
 
   tabBarTintColor?: ColorValue;
-  tabBarMinimizeBehavior?: CT.WithDefault<
-    TabBarMinimizeBehaviorIOS,
-    'automatic'
-  >;
-  tabBarControllerMode?: CT.WithDefault<TabBarControllerModeIOS, 'automatic'>;
+  tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
+  tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
 
   // #endregion iOS-specific Props
 }

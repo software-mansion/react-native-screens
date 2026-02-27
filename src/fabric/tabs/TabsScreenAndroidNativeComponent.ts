@@ -24,44 +24,44 @@ type LifecycleStateChangeEvent = Readonly<{
 
 // #region Android-specific helpers
 
-type TabBarItemLabelVisibilityModeAndroid =
+type TabBarItemLabelVisibilityMode =
   | 'auto'
   | 'selected'
   | 'labeled'
   | 'unlabeled';
 
-export type AppearanceAndroid = {
+export type Appearance = {
   tabBarBackgroundColor?: ProcessedColorValue | null;
   tabBarItemRippleColor?: ProcessedColorValue | null;
   tabBarItemLabelVisibilityMode?: CT.WithDefault<
-    TabBarItemLabelVisibilityModeAndroid,
+    TabBarItemLabelVisibilityMode,
     'auto'
   >;
 
-  itemColors?: BottomNavItemColorsAndroid;
-  activeIndicator?: ActiveIndicatorAppearanceAndroid;
-  typography?: TypographyAppearanceAndroid;
-  badge?: BadgeAppearanceAndroid;
+  itemColors?: BottomNavItemColors;
+  activeIndicator?: ActiveIndicatorAppearance;
+  typography?: TypographyAppearance;
+  badge?: BadgeAppearance;
 };
 
-type ItemStateColorsAndroid = {
+type ItemStateColors = {
   iconColor?: ProcessedColorValue | null;
   titleColor?: ProcessedColorValue | null;
 };
 
-type BottomNavItemColorsAndroid = {
-  normal?: ItemStateColorsAndroid;
-  selected?: ItemStateColorsAndroid;
-  focused?: ItemStateColorsAndroid;
-  disabled?: ItemStateColorsAndroid;
+type BottomNavItemColors = {
+  normal?: ItemStateColors;
+  selected?: ItemStateColors;
+  focused?: ItemStateColors;
+  disabled?: ItemStateColors;
 };
 
-type ActiveIndicatorAppearanceAndroid = {
+type ActiveIndicatorAppearance = {
   color?: ProcessedColorValue | null;
   enabled?: CT.WithDefault<boolean, true>;
 };
 
-type TypographyAppearanceAndroid = {
+type TypographyAppearance = {
   fontFamily?: string;
   fontSizeSmall?: CT.Float;
   fontSizeLarge?: CT.Float;
@@ -69,7 +69,7 @@ type TypographyAppearanceAndroid = {
   fontStyle?: string;
 };
 
-type BadgeAppearanceAndroid = {
+type BadgeAppearance = {
   textColor?: ProcessedColorValue | null;
   backgroundColor?: ProcessedColorValue | null;
 };
@@ -117,7 +117,7 @@ export interface NativeProps extends ViewProps {
   selectedImageIconResource?: ImageSource;
 
   // Appearance
-  standardAppearance?: UnsafeMixed<AppearanceAndroid>;
+  standardAppearance?: UnsafeMixed<Appearance>;
 
   // #endregion Android-specific Props
 }

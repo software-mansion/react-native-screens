@@ -8,10 +8,10 @@ import {
   type ImageSourcePropType,
 } from 'react-native';
 import TabsScreenIOSNativeComponent, {
-  type IconTypeIOS,
-  type AppearanceIOS,
-  type ItemAppearanceIOS,
-  type ItemStateAppearanceIOS,
+  type IconType,
+  type Appearance,
+  type ItemAppearance,
+  type ItemStateAppearance,
   NativeProps as TabsScreenIOSNativeComponentProps,
 } from '../../fabric/tabs/TabsScreenIOSNativeComponent';
 import type {
@@ -91,7 +91,7 @@ function TabsScreen(props: TabsScreenProps) {
 }
 
 function parseIconToNativeProps(icon: PlatformIconIOS | undefined): {
-  iconType?: IconTypeIOS;
+  iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconResourceName?: string;
 } {
@@ -132,7 +132,7 @@ function parseIconsToNativeProps(
 ): {
   imageIconResource?: ImageResolvedAssetSource;
   drawableIconResourceName?: string;
-  iconType?: IconTypeIOS;
+  iconType?: IconType;
   iconImageSource?: ImageSourcePropType;
   iconResourceName?: string;
   selectedIconImageSource?: ImageSourcePropType;
@@ -168,7 +168,7 @@ function parseIconsToNativeProps(
 
 function mapAppearanceToNativeProp(
   appearance?: TabsScreenAppearanceIOS,
-): AppearanceIOS | undefined {
+): Appearance | undefined {
   if (!appearance) return undefined;
 
   const {
@@ -191,7 +191,7 @@ function mapAppearanceToNativeProp(
 
 function mapItemAppearanceToNativeProp(
   itemAppearance?: TabsScreenItemAppearanceIOS,
-): ItemAppearanceIOS | undefined {
+): ItemAppearance | undefined {
   if (!itemAppearance) return undefined;
 
   const { normal, selected, focused, disabled } = itemAppearance;
@@ -207,7 +207,7 @@ function mapItemAppearanceToNativeProp(
 
 function mapItemStateAppearanceToNativeProp(
   itemStateAppearance?: TabsScreenItemStateAppearanceIOS,
-): ItemStateAppearanceIOS | undefined {
+): ItemStateAppearance | undefined {
   if (!itemStateAppearance) return undefined;
 
   const {

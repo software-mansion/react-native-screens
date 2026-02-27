@@ -8,7 +8,7 @@ import {
   processColor,
 } from 'react-native';
 import TabsScreenAndroidNativeComponent, {
-  type AppearanceAndroid,
+  type Appearance,
   NativeProps as TabsScreenAndroidNativeComponentProps,
 } from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type {
@@ -137,7 +137,7 @@ function parseIconToNativeProps(icon: PlatformIconAndroid | undefined): {
 
 function mapAppearanceToNativeProps(
   appearance?: TabsAppearanceAndroid,
-): AppearanceAndroid | undefined {
+): Appearance | undefined {
   if (!appearance) return undefined;
 
   const {
