@@ -30,7 +30,7 @@ jobs:
       - name: Check types
         run: yarn check-types
   lint-ios:
-    runs-on: macos-15
+    runs-on: macos-26
     concurrency:
       group: install-and-lint-ios-${{ github.ref }}
       cancel-in-progress: true
