@@ -755,7 +755,7 @@ RNS_FAILING_EVENT_GETTER(onDidDisappear);
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
-Class<RCTComponentViewProtocol> RNSTabsScreenIOS(void)
+Class<RCTComponentViewProtocol> RNSTabsScreenIOSCls(void)
 {
   return RNSTabsScreenComponentView.class;
 }

@@ -605,7 +605,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
-Class<RCTComponentViewProtocol> RNSTabsHostCls(void)
+Class<RCTComponentViewProtocol> RNSTabsHostIOSCls(void)
 {
   return RNSTabsHostComponentView.class;
 }
