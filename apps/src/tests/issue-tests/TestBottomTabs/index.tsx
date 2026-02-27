@@ -20,34 +20,34 @@ const DEFAULT_APPEARANCE_ANDROID: TabsAppearanceAndroid = {
   backgroundColor: Colors.NavyLight100,
   itemRippleColor: Colors.WhiteTransparentDark,
   labelVisibilityMode: 'auto',
-  itemColors: {
+  tabBarItemStatesColors: {
     normal: {
-      iconColor: Colors.BlueLight100,
-      titleColor: Colors.BlueLight40,
+      tabBarItemIconColor: Colors.BlueLight100,
+      tabBarItemTitleColor: Colors.BlueLight40,
     },
     selected: {
-      iconColor: Colors.GreenLight100,
-      titleColor: Colors.GreenLight40,
+      tabBarItemIconColor: Colors.GreenLight100,
+      tabBarItemTitleColor: Colors.GreenLight40,
     },
     focused: {
-      iconColor: Colors.YellowDark100,
-      titleColor: Colors.YellowDark40,
+      tabBarItemIconColor: Colors.YellowDark100,
+      tabBarItemTitleColor: Colors.YellowDark40,
     },
   },
-  activeIndicator: {
-    enabled: true,
-    color: Colors.GreenLight40,
+  tabBarActiveIndicatorAppearance: {
+    tabBarActiveIndicatorEnabled: true,
+    tabBarActiveIndicatorColor: Colors.GreenLight40,
   },
-  typography: {
-    fontSizeSmall: 10,
-    fontSizeLarge: 16,
-    fontFamily: 'monospace',
-    fontStyle: 'italic',
-    fontWeight: 700,
+  tabBarItemTitleTypography: {
+    tabBarItemTitleFontSizeSmall: 10,
+    tabBarItemTitleFontSizeLarge: 16,
+    tabBarItemTitleFontFamily: 'monospace',
+    tabBarItemTitleFontStyle: 'italic',
+    tabBarItemTitleFontWeight: 700,
   },
-  badge: {
-    textColor: Colors.RedDark120,
-    backgroundColor: Colors.RedDark40,
+  tabBarItemBadgeAppearance: {
+    tabBarItemBadgeTextColor: Colors.RedDark120,
+    tabBarItemBadgeBackgroundColor: Colors.RedDark40,
   },
 };
 
@@ -110,22 +110,22 @@ const TAB_CONFIGS: TabConfiguration[] = [
           ...DEFAULT_APPEARANCE_ANDROID,
           backgroundColor: Colors.PurpleDark100,
           itemRippleColor: Colors.PurpleDark40,
-          itemColors: {
+          tabBarItemStatesColors: {
             normal: {
-              iconColor: Colors.YellowDark100,
-              titleColor: Colors.YellowDark40,
+              tabBarItemIconColor: Colors.YellowDark100,
+              tabBarItemTitleColor: Colors.YellowDark40,
             },
             selected: {
-              iconColor: Colors.RedDark100,
-              titleColor: Colors.RedDark40,
+              tabBarItemIconColor: Colors.RedDark100,
+              tabBarItemTitleColor: Colors.RedDark40,
             },
             focused: {
-              iconColor: Colors.RedLight100,
-              titleColor: Colors.RedLight40,
+              tabBarItemIconColor: Colors.RedLight100,
+              tabBarItemTitleColor: Colors.RedLight40,
             },
           },
-          activeIndicator: {
-            color: Colors.PurpleDark120,
+          tabBarActiveIndicatorAppearance: {
+            tabBarActiveIndicatorColor: Colors.PurpleDark120,
           },
         },
         icon: {
@@ -213,9 +213,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
       android: {
         standardAppearance: {
           ...DEFAULT_APPEARANCE_ANDROID,
-          badge: {
-            textColor: Colors.GreenDark120,
-            backgroundColor: Colors.GreenDark40,
+          tabBarItemBadgeAppearance: {
+            tabBarItemBadgeTextColor: Colors.GreenDark120,
+            tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
           },
         },
         icon: {

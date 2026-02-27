@@ -2,40 +2,40 @@ package com.swmansion.rnscreens.gamma.tabs.appearance
 
 internal data class AndroidTabsAppearance(
     val backgroundColor: Int? = null,
-    val itemColors: BottomNavItemColors? = null,
-    val activeIndicator: ActiveIndicatorAppearance? = null,
+    val tabBarItemStatesColors: ItemAppearance? = null,
+    val tabBarActiveIndicatorAppearance: TabBarActiveIndicatorAppearance? = null,
     val itemRippleColor: Int? = null,
     val labelVisibilityMode: String? = null,
-    val typography: TypographyAppearance? = null,
-    val badge: BadgeAppearance? = null,
+    val tabBarItemTitleTypography: TabBarItemTitleTypographyAppearance? = null,
+    val tabBarItemBadgeAppearance: TabBarItemBadgeAppearance? = null,
 )
 
-internal data class BottomNavItemColors(
-    val normal: ItemStateColors? = null,
-    val selected: ItemStateColors? = null,
-    val disabled: ItemStateColors? = null,
-    val focused: ItemStateColors? = null,
+internal data class ItemAppearance(
+    val normal: ItemStateAppearance? = null,
+    val selected: ItemStateAppearance? = null,
+    val disabled: ItemStateAppearance? = null,
+    val focused: ItemStateAppearance? = null,
 )
 
-internal data class ItemStateColors(
-    val iconColor: Int? = null,
-    val titleColor: Int? = null,
+internal data class ItemStateAppearance(
+    val tabBarItemIconColor: Int? = null,
+    val tabBarItemTitleColor: Int? = null,
 )
 
-internal data class ActiveIndicatorAppearance(
-    val enabled: Boolean? = null,
-    val color: Int? = null,
+internal data class TabBarActiveIndicatorAppearance(
+    val tabBarActiveIndicatorEnabled: Boolean? = null,
+    val tabBarActiveIndicatorColor: Int? = null,
 )
 
-internal data class TypographyAppearance(
-    val fontFamily: String? = null,
-    val fontSizeSmall: Float? = null,
-    val fontSizeLarge: Float? = null,
-    val fontWeight: String? = null,
-    val fontStyle: String? = null,
+internal data class TabBarItemTitleTypographyAppearance(
+    val tabBarItemTitleFontFamily: String? = null,
+    val tabBarItemTitleFontSizeSmall: Float? = null,
+    val tabBarItemTitleFontSizeLarge: Float? = null,
+    val tabBarItemTitleFontWeight: String? = null,
+    val tabBarItemTitleFontStyle: String? = null,
 )
 
-internal data class BadgeAppearance(
-    val textColor: Int? = null,
-    val backgroundColor: Int? = null,
+internal data class TabBarItemBadgeAppearance(
+    val tabBarItemBadgeTextColor: Int? = null,
+    val tabBarItemBadgeBackgroundColor: Int? = null,
 )

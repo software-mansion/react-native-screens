@@ -240,92 +240,92 @@ export type TabBarItemLabelVisibilityModeAndroid =
   | 'labeled'
   | 'unlabeled';
 
-export interface ItemStateColorsAndroid {
+export interface ItemStateAppearanceAndroid {
   /**
    * @summary Specifies the font color used for the title of each tab bar item.
    */
-  titleColor?: TextStyle['color'];
+  tabBarItemTitleColor?: TextStyle['color'];
   /**
    * @summary Specifies the icon color for each tab bar item.
    */
-  iconColor?: ColorValue;
+  tabBarItemIconColor?: ColorValue;
 }
 
-export interface BottomNavItemColorsAndroid {
+export interface ItemAppearanceAndroid {
   /**
    * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
    * The color scheme is determined by the configuration of the currently selected tab.
    */
-  normal?: ItemStateColorsAndroid;
+  normal?: ItemStateAppearanceAndroid;
   /**
    * Defines the colors for the tab bar item that is currently active.
    * The color scheme is determined by the configuration of the currently selected tab itself.
    * Maps to Android `state_selected=true`.
    */
-  selected?: ItemStateColorsAndroid;
+  selected?: ItemStateAppearanceAndroid;
   /**
    * Defines the colors for a tab bar item when it receives focus.
    * The color scheme is determined by the configuration of the currently selected tab.
    * Maps to Android `state_focused=true` (Used mostly for keyboard navigation).
    */
-  focused?: ItemStateColorsAndroid;
+  focused?: ItemStateAppearanceAndroid;
   /**
    * Defines the colors for tab bar items when they are disabled.
    * The color scheme is determined by the configuration of the currently selected tab.
    * Maps to Android `state_enabled=false`.
    */
-  disabled?: ItemStateColorsAndroid;
+  disabled?: ItemStateAppearanceAndroid;
 }
 
-export interface ActiveIndicatorAppearanceAndroid {
+export interface TabBarActiveIndicatorAppearanceAndroid {
   /**
    * @summary Specifies the background color of the active indicator.
    */
-  color?: ColorValue;
+  tabBarActiveIndicatorColor?: ColorValue;
   /**
    * @summary Specifies if the active indicator should be used.
    *
    * @default true
    */
-  enabled?: boolean;
+  tabBarActiveIndicatorEnabled?: boolean;
 }
 
-export interface TypographyAppearanceAndroid {
+export interface TabBarItemTitleTypographyAppearanceAndroid {
   /**
    * @summary Specifies the font family used for the title of each tab bar item.
    */
-  fontFamily?: TextStyle['fontFamily'];
+  tabBarItemTitleFontFamily?: TextStyle['fontFamily'];
   /**
    * @summary Specifies the font size used for the title of unselected tab bar items.
    *
    * The size is represented in scale-independent pixels (sp).
    */
-  fontSizeSmall?: TextStyle['fontSize'];
+  tabBarItemTitleFontSizeSmall?: TextStyle['fontSize'];
   /**
    * @summary Specifies the font size used for the title of selected tab bar item.
    *
    * The size is represented in scale-independent pixels (sp).
    */
-  fontSizeLarge?: TextStyle['fontSize'];
+  tabBarItemTitleFontSizeLarge?: TextStyle['fontSize'];
   /**
    * @summary Specifies the font weight used for the title of each tab bar item.
    */
-  fontWeight?: TextStyle['fontWeight'];
+  tabBarItemTitleFontWeight?: TextStyle['fontWeight'];
   /**
    * @summary Specifies the font style used for the title of each tab bar item.
    */
-  fontStyle?: TextStyle['fontStyle'];
+  tabBarItemTitleFontStyle?: TextStyle['fontStyle'];
 }
 
-export interface BadgeAppearanceAndroid {
+export interface TabBarItemBadgeAppearanceAndroid {
   /**
    * @summary Specifies the background color of the badge.
    */
-  backgroundColor?: ColorValue;
+  tabBarItemBadgeBackgroundColor?: ColorValue;
   /**
    * @summary Specifies the text color of the badge.
    */
-  textColor?: ColorValue;
+  tabBarItemBadgeTextColor?: ColorValue;
 }
 
 export interface TabsAppearanceAndroid {
@@ -358,19 +358,19 @@ export interface TabsAppearanceAndroid {
   /**
    * @summary Specifies the colors of the icon and title for different item states.
    */
-  itemColors?: BottomNavItemColorsAndroid;
+  tabBarItemStatesColors?: ItemAppearanceAndroid;
   /**
    * @summary Specifies the appearance of the active indicator (pill shape behind the active icon).
    */
-  activeIndicator?: ActiveIndicatorAppearanceAndroid;
+  tabBarActiveIndicatorAppearance?: TabBarActiveIndicatorAppearanceAndroid;
   /**
-   * @summary Specifies the typography (font, size, weight, style) used for the title of each tab bar item.
+   * @summary Specifies the tabBarItemTitleTypography (font, size, weight, style) used for the title of each tab bar item.
    */
-  typography?: TypographyAppearanceAndroid;
+  tabBarItemTitleTypography?: TabBarItemTitleTypographyAppearanceAndroid;
   /**
    * @summary Specifies the appearance of the badges on the tab bar items.
    */
-  badge?: BadgeAppearanceAndroid;
+  tabBarItemBadgeAppearance?: TabBarItemBadgeAppearanceAndroid;
 }
 
 // #endregion Android-specific helpers

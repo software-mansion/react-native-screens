@@ -13,12 +13,12 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.gamma.tabs.appearance.ActiveIndicatorAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabBarActiveIndicatorAppearance
 import com.swmansion.rnscreens.gamma.tabs.appearance.AndroidTabsAppearance
-import com.swmansion.rnscreens.gamma.tabs.appearance.BadgeAppearance
-import com.swmansion.rnscreens.gamma.tabs.appearance.BottomNavItemColors
-import com.swmansion.rnscreens.gamma.tabs.appearance.ItemStateColors
-import com.swmansion.rnscreens.gamma.tabs.appearance.TypographyAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabBarItemBadgeAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.ItemAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.ItemStateAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabBarItemTitleTypographyAppearance
 import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidDisappearEvent
@@ -194,62 +194,62 @@ class TabsScreenViewManager :
             backgroundColor = appearance.getOptionalColor("tabBarBackgroundColor"),
             itemRippleColor = appearance.getOptionalColor("tabBarItemRippleColor"),
             labelVisibilityMode = appearance.getOptionalString("tabBarItemLabelVisibilityMode"),
-            itemColors = if (appearance.hasKey("itemColors")) parseBottomNavItemAppearanceStates(appearance.getMap("itemColors")) else null,
-            activeIndicator =
+            tabBarItemStatesColors = if (appearance.hasKey("tabBarItemStatesColors")) parseBottomNavItemAppearanceStates(appearance.getMap("tabBarItemStatesColors")) else null,
+            tabBarActiveIndicatorAppearance =
                 if (appearance.hasKey(
-                        "activeIndicator",
+                        "tabBarActiveIndicatorAppearance",
                     )
                 ) {
-                    parseActiveIndicator(appearance.getMap("activeIndicator"))
+                    parseTabBarActiveIndicatorAppearance(appearance.getMap("tabBarActiveIndicatorAppearance"))
                 } else {
                     null
                 },
-            typography = if (appearance.hasKey("typography")) parseTypography(appearance.getMap("typography")) else null,
-            badge = if (appearance.hasKey("badge")) parseBadge(appearance.getMap("badge")) else null,
+            tabBarItemTitleTypography = if (appearance.hasKey("tabBarItemTitleTypography")) parseTabBarItemTitleTypography(appearance.getMap("tabBarItemTitleTypography")) else null,
+            tabBarItemBadgeAppearance = if (appearance.hasKey("tabBarItemBadgeAppearance")) parseTabBarItemBadgeAppearance(appearance.getMap("tabBarItemBadgeAppearance")) else null,
         )
 
-    private fun parseBottomNavItemAppearanceStates(appearanceStates: ReadableMap?): BottomNavItemColors? {
+    private fun parseBottomNavItemAppearanceStates(appearanceStates: ReadableMap?): ItemAppearance? {
         if (appearanceStates == null) return null
-        return BottomNavItemColors(
-            normal = if (appearanceStates.hasKey("normal")) parseItemStateColors(appearanceStates.getMap("normal")) else null,
-            selected = if (appearanceStates.hasKey("selected")) parseItemStateColors(appearanceStates.getMap("selected")) else null,
-            focused = if (appearanceStates.hasKey("focused")) parseItemStateColors(appearanceStates.getMap("focused")) else null,
-            disabled = if (appearanceStates.hasKey("disabled")) parseItemStateColors(appearanceStates.getMap("disabled")) else null,
+        return ItemAppearance(
+            normal = if (appearanceStates.hasKey("normal")) parseItemStateAppearance(appearanceStates.getMap("normal")) else null,
+            selected = if (appearanceStates.hasKey("selected")) parseItemStateAppearance(appearanceStates.getMap("selected")) else null,
+            focused = if (appearanceStates.hasKey("focused")) parseItemStateAppearance(appearanceStates.getMap("focused")) else null,
+            disabled = if (appearanceStates.hasKey("disabled")) parseItemStateAppearance(appearanceStates.getMap("disabled")) else null,
         )
     }
 
-    private fun parseItemStateColors(stateColors: ReadableMap?): ItemStateColors? {
+    private fun parseItemStateAppearance(stateColors: ReadableMap?): ItemStateAppearance? {
         if (stateColors == null) return null
-        return ItemStateColors(
-            titleColor = stateColors.getOptionalColor("titleColor"),
-            iconColor = stateColors.getOptionalColor("iconColor"),
+        return ItemStateAppearance(
+            tabBarItemTitleColor = stateColors.getOptionalColor("tabBarItemTitleColor"),
+            tabBarItemIconColor = stateColors.getOptionalColor("tabBarItemIconColor"),
         )
     }
 
-    private fun parseActiveIndicator(activeIndicatorConfig: ReadableMap?): ActiveIndicatorAppearance? {
+    private fun parseTabBarActiveIndicatorAppearance(activeIndicatorConfig: ReadableMap?): TabBarActiveIndicatorAppearance? {
         if (activeIndicatorConfig == null) return null
-        return ActiveIndicatorAppearance(
-            color = activeIndicatorConfig.getOptionalColor("color"),
-            enabled = activeIndicatorConfig.getOptionalBoolean("enabled"),
+        return TabBarActiveIndicatorAppearance(
+            tabBarActiveIndicatorColor = activeIndicatorConfig.getOptionalColor("tabBarActiveIndicatorColor"),
+            tabBarActiveIndicatorEnabled = activeIndicatorConfig.getOptionalBoolean("tabBarActiveIndicatorEnabled"),
         )
     }
 
-    private fun parseTypography(typographyConfig: ReadableMap?): TypographyAppearance? {
+    private fun parseTabBarItemTitleTypography(typographyConfig: ReadableMap?): TabBarItemTitleTypographyAppearance? {
         if (typographyConfig == null) return null
-        return TypographyAppearance(
-            fontFamily = typographyConfig.getOptionalString("fontFamily"),
-            fontSizeSmall = typographyConfig.getOptionalFloat("fontSizeSmall"),
-            fontSizeLarge = typographyConfig.getOptionalFloat("fontSizeLarge"),
-            fontWeight = typographyConfig.getOptionalString("fontWeight"),
-            fontStyle = typographyConfig.getOptionalString("fontStyle"),
+        return TabBarItemTitleTypographyAppearance(
+            tabBarItemTitleFontFamily = typographyConfig.getOptionalString("tabBarItemTitleFontFamily"),
+            tabBarItemTitleFontSizeSmall = typographyConfig.getOptionalFloat("tabBarItemTitleFontSizeSmall"),
+            tabBarItemTitleFontSizeLarge = typographyConfig.getOptionalFloat("tabBarItemTitleFontSizeLarge"),
+            tabBarItemTitleFontWeight = typographyConfig.getOptionalString("tabBarItemTitleFontWeight"),
+            tabBarItemTitleFontStyle = typographyConfig.getOptionalString("tabBarItemTitleFontStyle"),
         )
     }
 
-    private fun parseBadge(badgeConfig: ReadableMap?): BadgeAppearance? {
+    private fun parseTabBarItemBadgeAppearance(badgeConfig: ReadableMap?): TabBarItemBadgeAppearance? {
         if (badgeConfig == null) return null
-        return BadgeAppearance(
-            backgroundColor = badgeConfig.getOptionalColor("backgroundColor"),
-            textColor = badgeConfig.getOptionalColor("textColor"),
+        return TabBarItemBadgeAppearance(
+            tabBarItemBadgeBackgroundColor = badgeConfig.getOptionalColor("tabBarItemBadgeBackgroundColor"),
+            tabBarItemBadgeTextColor = badgeConfig.getOptionalColor("tabBarItemBadgeTextColor"),
         )
     }
 

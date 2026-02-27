@@ -41,7 +41,7 @@ class TabsAppearanceCoordinator(
         appearance: AndroidTabsAppearance?,
     ) {
         appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen)
-        appearanceApplicator.updateBadgeAppearance(menuItem, tabsScreen, appearance?.badge)
+        appearanceApplicator.updateBadgeAppearance(menuItem, tabsScreen, appearance?.tabBarItemBadgeAppearance)
     }
 }
 

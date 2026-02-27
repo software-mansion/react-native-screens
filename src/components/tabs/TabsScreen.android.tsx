@@ -14,11 +14,11 @@ import TabsScreenAndroidNativeComponent, {
 import type {
   TabsScreenProps,
   TabsAppearanceAndroid,
-  BottomNavItemColorsAndroid,
-  ItemStateColorsAndroid,
-  ActiveIndicatorAppearanceAndroid,
-  TypographyAppearanceAndroid,
-  BadgeAppearanceAndroid,
+  ItemAppearanceAndroid,
+  ItemStateAppearanceAndroid,
+  TabBarActiveIndicatorAppearanceAndroid,
+  TabBarItemTitleTypographyAppearanceAndroid,
+  TabBarItemBadgeAppearanceAndroid,
 } from './TabsScreen.types';
 import type { PlatformIconAndroid } from '../../types';
 import { useTabsScreen } from './useTabsScreen';
@@ -144,75 +144,94 @@ function mapAppearanceToNativeProps(
     backgroundColor,
     itemRippleColor,
     labelVisibilityMode,
-    itemColors,
-    activeIndicator,
-    typography,
-    badge,
+    tabBarItemStatesColors,
+    tabBarActiveIndicatorAppearance,
+    tabBarItemTitleTypography,
+    tabBarItemBadgeAppearance,
   } = appearance;
 
   return {
     tabBarBackgroundColor: processColor(backgroundColor),
     tabBarItemRippleColor: processColor(itemRippleColor),
     tabBarItemLabelVisibilityMode: labelVisibilityMode,
-    itemColors: mapBottomNavItemColorsToNativeProps(itemColors),
-    activeIndicator: mapActiveIndicatorToNativeProps(activeIndicator),
-    typography: mapTypographyToNativeProps(typography),
-    badge: mapBadgeToNativeProps(badge),
+    tabBarItemStatesColors: mapTabBarItemAppearanceToNativeProps(
+      tabBarItemStatesColors,
+    ),
+    tabBarActiveIndicatorAppearance:
+      mapTabBarActiveIndicatorAppearanceToNativeProps(
+        tabBarActiveIndicatorAppearance,
+      ),
+    tabBarItemTitleTypography: mapTabBarItemTitleTypographyToNativeProps(
+      tabBarItemTitleTypography,
+    ),
+    tabBarItemBadgeAppearance: mapTabBarItemBadgeAppearanceToNativeProps(
+      tabBarItemBadgeAppearance,
+    ),
   };
 }
 
-function mapBottomNavItemColorsToNativeProps(
-  colors?: BottomNavItemColorsAndroid,
-) {
+function mapTabBarItemAppearanceToNativeProps(colors?: ItemAppearanceAndroid) {
   if (!colors) return undefined;
 
   return {
-    normal: mapItemStateColorsToNativeProps(colors.normal),
-    selected: mapItemStateColorsToNativeProps(colors.selected),
-    focused: mapItemStateColorsToNativeProps(colors.focused),
-    disabled: mapItemStateColorsToNativeProps(colors.disabled),
+    normal: mapItemStateAppearanceToNativeProps(colors.normal),
+    selected: mapItemStateAppearanceToNativeProps(colors.selected),
+    focused: mapItemStateAppearanceToNativeProps(colors.focused),
+    disabled: mapItemStateAppearanceToNativeProps(colors.disabled),
   };
 }
 
-function mapItemStateColorsToNativeProps(stateColors?: ItemStateColorsAndroid) {
+function mapItemStateAppearanceToNativeProps(
+  stateColors?: ItemStateAppearanceAndroid,
+) {
   if (!stateColors) return undefined;
 
   return {
-    titleColor: processColor(stateColors.titleColor),
-    iconColor: processColor(stateColors.iconColor),
+    tabBarItemTitleColor: processColor(stateColors.tabBarItemTitleColor),
+    tabBarItemIconColor: processColor(stateColors.tabBarItemIconColor),
   };
 }
 
-function mapActiveIndicatorToNativeProps(
-  indicator?: ActiveIndicatorAppearanceAndroid,
+function mapTabBarActiveIndicatorAppearanceToNativeProps(
+  indicator?: TabBarActiveIndicatorAppearanceAndroid,
 ) {
   if (!indicator) return undefined;
 
   return {
     ...indicator,
-    color: processColor(indicator.color),
+    tabBarActiveIndicatorColor: processColor(
+      indicator.tabBarActiveIndicatorColor,
+    ),
   };
 }
 
-function mapTypographyToNativeProps(typography?: TypographyAppearanceAndroid) {
-  if (!typography) return undefined;
+function mapTabBarItemTitleTypographyToNativeProps(
+  tabBarItemTitleTypography?: TabBarItemTitleTypographyAppearanceAndroid,
+) {
+  if (!tabBarItemTitleTypography) return undefined;
 
   return {
-    ...typography,
-    fontWeight:
-      typography.fontWeight !== undefined
-        ? String(typography.fontWeight)
+    ...tabBarItemTitleTypography,
+    tabBarItemTitleFontWeight:
+      tabBarItemTitleTypography.tabBarItemTitleFontWeight !== undefined
+        ? String(tabBarItemTitleTypography.tabBarItemTitleFontWeight)
         : undefined,
   };
 }
 
-function mapBadgeToNativeProps(badge?: BadgeAppearanceAndroid) {
-  if (!badge) return undefined;
+function mapTabBarItemBadgeAppearanceToNativeProps(
+  tabBarItemBadgeAppearance?: TabBarItemBadgeAppearanceAndroid,
+) {
+  if (!tabBarItemBadgeAppearance) return undefined;
 
   return {
-    ...badge,
-    backgroundColor: processColor(badge.backgroundColor),
-    textColor: processColor(badge.textColor),
+    ...tabBarItemBadgeAppearance,
+    tabBarItemBadgeBackgroundColor: processColor(
+      tabBarItemBadgeAppearance.tabBarItemBadgeBackgroundColor,
+    ),
+    tabBarItemBadgeTextColor: processColor(
+      tabBarItemBadgeAppearance.tabBarItemBadgeTextColor,
+    ),
   };
 }
 

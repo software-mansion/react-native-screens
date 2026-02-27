@@ -38,40 +38,40 @@ export type Appearance = {
     'auto'
   >;
 
-  itemColors?: BottomNavItemColors;
-  activeIndicator?: ActiveIndicatorAppearance;
-  typography?: TypographyAppearance;
-  badge?: BadgeAppearance;
+  tabBarItemStatesColors?: ItemAppearance;
+  tabBarActiveIndicatorAppearance?: TabBarActiveIndicatorAppearance;
+  tabBarItemTitleTypography?: TabBarItemTitleTypographyAppearance;
+  tabBarItemBadgeAppearance?: TabBarItemBadgeAppearance;
 };
 
-type ItemStateColors = {
-  iconColor?: ProcessedColorValue | null;
-  titleColor?: ProcessedColorValue | null;
+type ItemAppearance = {
+  normal?: ItemStateAppearance;
+  selected?: ItemStateAppearance;
+  focused?: ItemStateAppearance;
+  disabled?: ItemStateAppearance;
 };
 
-type BottomNavItemColors = {
-  normal?: ItemStateColors;
-  selected?: ItemStateColors;
-  focused?: ItemStateColors;
-  disabled?: ItemStateColors;
+type ItemStateAppearance = {
+  tabBarItemIconColor?: ProcessedColorValue | null;
+  tabBarItemTitleColor?: ProcessedColorValue | null;
 };
 
-type ActiveIndicatorAppearance = {
-  color?: ProcessedColorValue | null;
-  enabled?: CT.WithDefault<boolean, true>;
+type TabBarActiveIndicatorAppearance = {
+  tabBarActiveIndicatorColor?: ProcessedColorValue | null;
+  tabBarActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
 };
 
-type TypographyAppearance = {
-  fontFamily?: string;
-  fontSizeSmall?: CT.Float;
-  fontSizeLarge?: CT.Float;
-  fontWeight?: string;
-  fontStyle?: string;
+type TabBarItemTitleTypographyAppearance = {
+  tabBarItemTitleFontFamily?: string;
+  tabBarItemTitleFontSizeSmall?: CT.Float;
+  tabBarItemTitleFontSizeLarge?: CT.Float;
+  tabBarItemTitleFontWeight?: string;
+  tabBarItemTitleFontStyle?: string;
 };
 
-type BadgeAppearance = {
-  textColor?: ProcessedColorValue | null;
-  backgroundColor?: ProcessedColorValue | null;
+type TabBarItemBadgeAppearance = {
+  tabBarItemBadgeTextColor?: ProcessedColorValue | null;
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
 };
 
 // #endregion Android-specific helpers
