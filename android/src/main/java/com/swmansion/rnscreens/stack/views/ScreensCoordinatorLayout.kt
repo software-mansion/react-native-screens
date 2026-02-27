@@ -6,7 +6,10 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.google.android.material.appbar.AppBarLayout
+import com.swmansion.rnscreens.CustomToolbar
 import com.swmansion.rnscreens.PointerEventsBoxNoneImpl
+import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.stack.anim.ScreensAnimation
@@ -23,7 +26,40 @@ internal class ScreensCoordinatorLayout(
         PointerEventsBoxNoneImpl(),
     )
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
+    // We override dispatchApplyWindowInsets to ensure correct order and flow of inset consumption.
+    override fun dispatchApplyWindowInsets(insets: WindowInsets?): WindowInsets? {
+        val maybeAppBarLayout = getChildAt(1)
+        val maybeScreen = getChildAt(0)
+
+        // We use custom logic only in regular stack screen (and not e.g. in form sheets).
+        val shouldUseCustomDispatch =
+            childCount == 2 && maybeScreen is Screen && maybeAppBarLayout is AppBarLayout
+
+        if (!shouldUseCustomDispatch) {
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        val appBarLayout: AppBarLayout = maybeAppBarLayout
+        val screen: Screen = maybeScreen
+
+        // First, we dispatch insets to AppBarLayout and possibly CustomToolbar.
+        appBarLayout.dispatchApplyWindowInsets(insets)
+
+        // As top insets are handled in CustomToolbar, we save insets prepared for Screen in
+        // CustomToolbar.screenInsets. There isn't really any other way to pass that information.
+        // If we can, we use them (if header is hidden, there is no CustomToolbar instance).
+        val screenInsets =
+            if (appBarLayout.getChildAt(0) is CustomToolbar) {
+                (appBarLayout.getChildAt(0) as CustomToolbar).screenInsets.toWindowInsets()
+            } else {
+                insets
+            }
+
+        // Dispatch correct insets to Screen.
+        screen.dispatchApplyWindowInsets(screenInsets)
+
+        return insets
+    }
 
     private val animationListener: Animation.AnimationListener =
         object : Animation.AnimationListener {

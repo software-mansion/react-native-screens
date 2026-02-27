@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.WindowInsets
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
@@ -21,6 +22,7 @@ import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.safearea.paper.SafeAreaViewEdges
 import com.swmansion.rnscreens.safearea.paper.SafeAreaViewLocalData
+import com.swmansion.rnscreens.utils.InsetUtils
 import java.lang.ref.WeakReference
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -32,7 +34,8 @@ class SafeAreaView(
     private val reactContext: ThemedReactContext,
 ) : ReactViewGroup(reactContext),
     OnApplyWindowInsetsListener,
-    ViewTreeObserver.OnPreDrawListener {
+    ViewTreeObserver.OnPreDrawListener,
+    View.OnApplyWindowInsetsListener {
     private var provider = WeakReference<SafeAreaProvider>(null)
     private var currentInterfaceInsets: EdgeInsets = EdgeInsets.ZERO
     private var currentSystemInsets: EdgeInsets = EdgeInsets.ZERO
@@ -48,7 +51,17 @@ class SafeAreaView(
     }
 
     init {
-        ViewCompat.setOnApplyWindowInsetsListener(this, this)
+        // In order to consume display cutout insets on API 27-29, we can't use root window insets
+        // aware WindowInsetsCompat because they always return display cutout insets from root view.
+        // That's why we manually convert platform WindowInsets to WindowInsetsCompat (without
+        // supplying information about the view that is used by WindowInsetsCompat to find the root
+        // view) in View's OnApplyWindowInsetsListener, use ViewCompat listener and return insets
+        // converted back to platform WindowInsets.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+            setOnApplyWindowInsetsListener(this)
+        } else {
+            ViewCompat.setOnApplyWindowInsetsListener(this, this)
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -98,6 +111,18 @@ class SafeAreaView(
                 needsInsetsUpdate = true
             }
         }
+    }
+
+    // Wrapper used on API < 30 to correctly handle consuming display cutout insets.
+    // More details in the comment above setting the listener.
+    override fun onApplyWindowInsets(
+        v: View,
+        insets: WindowInsets,
+    ): WindowInsets {
+        val rootViewUnawareInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
+        return this
+            .onApplyWindowInsets(this, rootViewUnawareInsets)
+            .toWindowInsets() ?: InsetUtils.CONSUMED_PLATFORM_WINDOW_INSETS
     }
 
     override fun onApplyWindowInsets(
