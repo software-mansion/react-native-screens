@@ -200,10 +200,10 @@
         "RNSStackHost": {
           "className": "RNSStackHostComponentView"
         },
-        "RNSTabsScreen": {
+        "RNSTabsScreenIOS": {
           "className": "RNSTabsScreenComponentView"
         },
-        "RNSTabsHost": {
+        "RNSTabsHostIOS": {
           "className": "RNSTabsHostComponentView"
         },
         "RNSTabsBottomAccessory": {

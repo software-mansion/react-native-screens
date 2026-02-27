@@ -55,7 +55,7 @@ namespace react = facebook::react;
 - (void)initState
 {
 #if RCT_NEW_ARCH_ENABLED
-  static const auto defaultProps = std::make_shared<const react::RNSTabsScreenProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSTabsScreenIOSProps>();
   _props = defaultProps;
 #endif // RCT_NEW_ARCH_ENABLED
 
@@ -245,8 +245,8 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenIOSProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSTabsScreenIOSProps>(props);
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
@@ -458,7 +458,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super updateEventEmitter:eventEmitter];
   [_reactEventEmitter
-      updateEventEmitter:std::static_pointer_cast<const react::RNSTabsScreenEventEmitter>(eventEmitter)];
+      updateEventEmitter:std::static_pointer_cast<const react::RNSTabsScreenIOSEventEmitter>(eventEmitter)];
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -488,7 +488,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSTabsScreenComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSTabsScreenIOSComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
@@ -755,7 +755,7 @@ RNS_FAILING_EVENT_GETTER(onDidDisappear);
 #if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
-Class<RCTComponentViewProtocol> RNSTabsScreen(void)
+Class<RCTComponentViewProtocol> RNSTabsScreenIOSCls(void)
 {
   return RNSTabsScreenComponentView.class;
 }

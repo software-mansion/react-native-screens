@@ -7,12 +7,13 @@ import {
   processColor,
   type ImageSourcePropType,
 } from 'react-native';
-import TabsScreenNativeComponent, {
+import TabsScreenIOSNativeComponent, {
   type IconType,
   type Appearance,
   type ItemAppearance,
   type ItemStateAppearance,
-} from '../../fabric/tabs/TabsScreenNativeComponent';
+  NativeProps as TabsScreenIOSNativeComponentProps,
+} from '../../fabric/tabs/TabsScreenIOSNativeComponent';
 import type {
   TabsScreenAppearanceIOS,
   TabsScreenItemAppearanceIOS,
@@ -30,6 +31,9 @@ function TabsScreen(props: TabsScreenProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ios, android, ...baseProps } = props;
 
+  const componentNodeRef =
+    React.useRef<React.Component<TabsScreenIOSNativeComponentProps>>(null);
+
   const {
     onDidAppear,
     onDidDisappear,
@@ -40,19 +44,21 @@ function TabsScreen(props: TabsScreenProps) {
     ...filteredBaseProps
   } = baseProps;
 
-  const { componentNodeRef, lifecycleCallbacks } = useTabsScreen({
-    onDidAppear,
-    onDidDisappear,
-    onWillAppear,
-    onWillDisappear,
-    isFocused,
-    tabKey: filteredBaseProps.tabKey,
-  });
+  const { lifecycleCallbacks } =
+    useTabsScreen<TabsScreenIOSNativeComponentProps>({
+      componentNodeRef,
+      onDidAppear,
+      onDidDisappear,
+      onWillAppear,
+      onWillDisappear,
+      isFocused,
+      tabKey: filteredBaseProps.tabKey,
+    });
 
   const iconProps = parseIconsToNativeProps(ios?.icon, ios?.selectedIcon);
 
   return (
-    <TabsScreenNativeComponent
+    <TabsScreenIOSNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
       isFocused={isFocused}
@@ -80,7 +86,7 @@ function TabsScreen(props: TabsScreenProps) {
         ios?.overrideScrollViewContentInsetAdjustmentBehavior
       }>
       {baseProps.children}
-    </TabsScreenNativeComponent>
+    </TabsScreenIOSNativeComponent>
   );
 }
 

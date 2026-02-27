@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
-import TabsHostNativeComponent from '../../fabric/tabs/TabsHostNativeComponent';
+import TabsHostIOSNativeComponent from '../../fabric/tabs/TabsHostIOSNativeComponent';
+import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../fabric/tabs/TabsHostIOSNativeComponent';
 import type { TabsHostProps } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
 import TabsAccessory from './TabsAccessory';
@@ -20,26 +21,27 @@ function TabsHost(props: TabsHostProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ios, android, nativeContainerStyle, ...baseProps } = props;
 
+  const componentNodeRef =
+    React.useRef<React.Component<TabsHostIOSNativeComponentProps>>(null);
+
   const {
     experimentalControlNavigationStateInJS,
     onNativeFocusChange,
     ...filteredBaseProps
   } = baseProps;
 
-  const {
-    componentNodeRef,
-    controlNavigationStateInJS,
-    onNativeFocusChangeCallback,
-  } = useTabsHost({
-    controlNavigationStateInJS: experimentalControlNavigationStateInJS,
-    onNativeFocusChange,
-  });
+  const { controlNavigationStateInJS, onNativeFocusChangeCallback } =
+    useTabsHost<TabsHostIOSNativeComponentProps>({
+      componentNodeRef,
+      controlNavigationStateInJS: experimentalControlNavigationStateInJS,
+      onNativeFocusChange,
+    });
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
     useState<TabsAccessoryEnvironment>('regular');
 
   return (
-    <TabsHostNativeComponent
+    <TabsHostIOSNativeComponent
       style={styles.fillParent}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={controlNavigationStateInJS}
@@ -72,7 +74,7 @@ function TabsHost(props: TabsHostProps) {
             {ios.bottomAccessory(bottomAccessoryEnvironment)}
           </TabsAccessory>
         ))}
-    </TabsHostNativeComponent>
+    </TabsHostIOSNativeComponent>
   );
 }
 

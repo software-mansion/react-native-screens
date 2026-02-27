@@ -7,9 +7,10 @@ import {
   StyleSheet,
   processColor,
 } from 'react-native';
-import TabsScreenNativeComponent, {
-  type AppearanceAndroid,
-} from '../../fabric/tabs/TabsScreenNativeComponent';
+import TabsScreenAndroidNativeComponent, {
+  type Appearance,
+  NativeProps as TabsScreenAndroidNativeComponentProps,
+} from '../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type {
   TabsScreenProps,
   TabsAppearanceAndroid,
@@ -30,6 +31,9 @@ function TabsScreen(props: TabsScreenProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { android, ios, ...baseProps } = props;
 
+  const componentNodeRef =
+    React.useRef<React.Component<TabsScreenAndroidNativeComponentProps>>(null);
+
   const {
     onDidAppear,
     onDidDisappear,
@@ -40,14 +44,16 @@ function TabsScreen(props: TabsScreenProps) {
     ...filteredBaseProps
   } = baseProps;
 
-  const { componentNodeRef, lifecycleCallbacks } = useTabsScreen({
-    onDidAppear,
-    onDidDisappear,
-    onWillAppear,
-    onWillDisappear,
-    isFocused,
-    tabKey: filteredBaseProps.tabKey,
-  });
+  const { lifecycleCallbacks } =
+    useTabsScreen<TabsScreenAndroidNativeComponentProps>({
+      componentNodeRef,
+      onDidAppear,
+      onDidDisappear,
+      onWillAppear,
+      onWillDisappear,
+      isFocused,
+      tabKey: filteredBaseProps.tabKey,
+    });
 
   const iconProps = parseIconsToNativeProps(
     android?.icon,
@@ -55,24 +61,21 @@ function TabsScreen(props: TabsScreenProps) {
   );
 
   return (
-    <TabsScreenNativeComponent
+    <TabsScreenAndroidNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
       isFocused={isFocused}
-      isTitleUndefined={
-        baseProps.title === null || baseProps.title === undefined
-      }
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       {...lifecycleCallbacks}
       {...iconProps}
       {...filteredBaseProps}
       // Android-specific
-      standardAppearanceAndroid={mapAppearanceToNativeProps(
+      standardAppearance={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}>
       {baseProps.children}
-    </TabsScreenNativeComponent>
+    </TabsScreenAndroidNativeComponent>
   );
 }
 
@@ -134,7 +137,7 @@ function parseIconToNativeProps(icon: PlatformIconAndroid | undefined): {
 
 function mapAppearanceToNativeProps(
   appearance?: TabsAppearanceAndroid,
-): AppearanceAndroid | undefined {
+): Appearance | undefined {
   if (!appearance) return undefined;
 
   const {
