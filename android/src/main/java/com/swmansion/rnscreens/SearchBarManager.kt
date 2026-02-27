@@ -14,7 +14,6 @@ import com.swmansion.rnscreens.events.SearchBarCloseEvent
 import com.swmansion.rnscreens.events.SearchBarFocusEvent
 import com.swmansion.rnscreens.events.SearchBarOpenEvent
 import com.swmansion.rnscreens.events.SearchBarSearchButtonPressEvent
-import com.swmansion.rnscreens.utils.logNotAvailable
 
 @ReactModule(name = SearchBarManager.REACT_CLASS)
 class SearchBarManager :
@@ -188,49 +187,35 @@ class SearchBarManager :
     override fun setPlacement(
         view: SearchBarView,
         placeholder: String?,
-    ) {
-        logNotAvailable("setPlacement")
-    }
+    ) = Unit
 
     override fun setAllowToolbarIntegration(
         view: SearchBarView,
         value: Boolean,
-    ) {
-        logNotAvailable("allowToolbarIntegration")
-    }
+    ) = Unit
 
     override fun setHideWhenScrolling(
         view: SearchBarView?,
         value: Boolean,
-    ) {
-        logNotAvailable("hideWhenScrolling")
-    }
+    ) = Unit
 
     override fun setObscureBackground(
         view: SearchBarView?,
         value: String?,
-    ) {
-        logNotAvailable("obscureBackground")
-    }
+    ) = Unit
 
     override fun setHideNavigationBar(
         view: SearchBarView?,
         value: String?,
-    ) {
-        logNotAvailable("hideNavigationBar")
-    }
+    ) = Unit
 
     override fun setCancelButtonText(
         view: SearchBarView?,
         value: String?,
-    ) {
-        logNotAvailable("cancelButtonText")
-    }
+    ) = Unit
 
     override fun setTintColor(
         view: SearchBarView?,
         value: Int?,
-    ) {
-        logNotAvailable("tintColor")
-    }
+    ) = Unit
 }

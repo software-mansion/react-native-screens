@@ -16,7 +16,6 @@ import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerInterface
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
-import com.swmansion.rnscreens.utils.logNotAvailable
 import javax.annotation.Nonnull
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
@@ -224,122 +223,90 @@ class ScreenStackHeaderConfigViewManager :
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"
     }
 
+    // iOS only
+
     override fun setBackTitle(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("backTitle")
-    }
+    ) = Unit
 
     override fun setBackTitleFontFamily(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("backTitleFontFamily")
-    }
+    ) = Unit
 
     override fun setBackTitleFontSize(
         view: ScreenStackHeaderConfig?,
         value: Int,
-    ) {
-        logNotAvailable("backTitleFontSize")
-    }
+    ) = Unit
 
     override fun setBackTitleVisible(
         view: ScreenStackHeaderConfig?,
         value: Boolean,
-    ) {
-        logNotAvailable("backTitleVisible")
-    }
+    ) = Unit
 
     override fun setLargeTitle(
         view: ScreenStackHeaderConfig?,
         value: Boolean,
-    ) {
-        logNotAvailable("largeTitle")
-    }
+    ) = Unit
 
     override fun setLargeTitleFontFamily(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("largeTitleFontFamily")
-    }
+    ) = Unit
 
     override fun setLargeTitleFontSize(
         view: ScreenStackHeaderConfig?,
         value: Int,
-    ) {
-        logNotAvailable("largeTitleFontSize")
-    }
+    ) = Unit
 
     override fun setLargeTitleFontWeight(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("largeTitleFontWeight")
-    }
+    ) = Unit
 
     override fun setLargeTitleBackgroundColor(
         view: ScreenStackHeaderConfig?,
         value: Int?,
-    ) {
-        logNotAvailable("largeTitleBackgroundColor")
-    }
+    ) = Unit
 
     override fun setLargeTitleHideShadow(
         view: ScreenStackHeaderConfig?,
         value: Boolean,
-    ) {
-        logNotAvailable("largeTitleHideShadow")
-    }
+    ) = Unit
 
     override fun setLargeTitleColor(
         view: ScreenStackHeaderConfig?,
         value: Int?,
-    ) {
-        logNotAvailable("largeTitleColor")
-    }
+    ) = Unit
 
     override fun setDisableBackButtonMenu(
         view: ScreenStackHeaderConfig?,
         value: Boolean,
-    ) {
-        logNotAvailable("disableBackButtonMenu")
-    }
+    ) = Unit
 
     override fun setBackButtonDisplayMode(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("backButtonDisplayMode")
-    }
+    ) = Unit
 
     override fun setBlurEffect(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("blurEffect")
-    }
+    ) = Unit
 
     override fun setHeaderLeftBarButtonItems(
         view: ScreenStackHeaderConfig?,
         value: ReadableArray?,
-    ) {
-        logNotAvailable("headerLeftBarButtonItems")
-    }
+    ) = Unit
 
     override fun setHeaderRightBarButtonItems(
         view: ScreenStackHeaderConfig?,
         value: ReadableArray?,
-    ) {
-        logNotAvailable("headerRightBarButtonItems")
-    }
+    ) = Unit
 
     override fun setUserInterfaceStyle(
         view: ScreenStackHeaderConfig?,
         value: String?,
-    ) {
-        logNotAvailable("userInterfaceStyle")
-    }
+    ) = Unit
 }
