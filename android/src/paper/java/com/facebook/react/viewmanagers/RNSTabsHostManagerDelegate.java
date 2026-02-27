@@ -30,48 +30,6 @@ public class RNSTabsHostManagerDelegate<T extends View, U extends BaseViewManage
       case "nativeContainerBackgroundColor":
         mViewManager.setNativeContainerBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
-      case "tabBarBackgroundColor":
-        mViewManager.setTabBarBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemTitleFontFamily":
-        mViewManager.setTabBarItemTitleFontFamily(view, value == null ? null : (String) value);
-        break;
-      case "tabBarItemTitleFontSize":
-        mViewManager.setTabBarItemTitleFontSize(view, value == null ? 0f : ((Double) value).floatValue());
-        break;
-      case "tabBarItemTitleFontSizeActive":
-        mViewManager.setTabBarItemTitleFontSizeActive(view, value == null ? 0f : ((Double) value).floatValue());
-        break;
-      case "tabBarItemTitleFontWeight":
-        mViewManager.setTabBarItemTitleFontWeight(view, value == null ? null : (String) value);
-        break;
-      case "tabBarItemTitleFontStyle":
-        mViewManager.setTabBarItemTitleFontStyle(view, value == null ? null : (String) value);
-        break;
-      case "tabBarItemTitleFontColor":
-        mViewManager.setTabBarItemTitleFontColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemTitleFontColorActive":
-        mViewManager.setTabBarItemTitleFontColorActive(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemIconColor":
-        mViewManager.setTabBarItemIconColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemIconColorActive":
-        mViewManager.setTabBarItemIconColorActive(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemActiveIndicatorColor":
-        mViewManager.setTabBarItemActiveIndicatorColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemActiveIndicatorEnabled":
-        mViewManager.setTabBarItemActiveIndicatorEnabled(view, value == null ? true : (boolean) value);
-        break;
-      case "tabBarItemRippleColor":
-        mViewManager.setTabBarItemRippleColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemLabelVisibilityMode":
-        mViewManager.setTabBarItemLabelVisibilityMode(view, (String) value);
-        break;
       case "tabBarTintColor":
         mViewManager.setTabBarTintColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;

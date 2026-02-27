@@ -11,7 +11,6 @@ package com.facebook.react.viewmanagers;
 
 import android.view.View;
 import androidx.annotation.Nullable;
-import com.facebook.react.bridge.ColorPropConverter;
 import com.facebook.react.bridge.DynamicFromObject;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.BaseViewManager;
@@ -62,11 +61,8 @@ public class RNSTabsScreenManagerDelegate<T extends View, U extends BaseViewMana
       case "selectedImageIconResource":
         mViewManager.setSelectedImageIconResource(view, (ReadableMap) value);
         break;
-      case "tabBarItemBadgeTextColor":
-        mViewManager.setTabBarItemBadgeTextColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
-      case "tabBarItemBadgeBackgroundColor":
-        mViewManager.setTabBarItemBadgeBackgroundColor(view, ColorPropConverter.getColor(value, view.getContext()));
+      case "standardAppearanceAndroid":
+        mViewManager.setStandardAppearanceAndroid(view, new DynamicFromObject(value));
         break;
       case "standardAppearance":
         mViewManager.setStandardAppearance(view, new DynamicFromObject(value));

@@ -62,6 +62,13 @@ export type TabsSystemItem =
   | 'search'
   | 'topRated';
 
+// Android-specific
+export type TabBarItemLabelVisibilityMode =
+  | 'auto'
+  | 'selected'
+  | 'labeled'
+  | 'unlabeled';
+
 // Currently iOS-only
 export type TabsScreenOrientation =
   | 'inherit'
@@ -73,6 +80,183 @@ export type TabsScreenOrientation =
   | 'landscape'
   | 'landscapeLeft'
   | 'landscapeRight';
+
+// Android-specific
+export interface ItemStateColorsAndroid {
+  /**
+   * @summary Specifies the font color used for the title of each tab bar item.
+   *
+   * @platform android
+   */
+  titleColor?: TextStyle['color'];
+  /**
+   * @summary Specifies the icon color for each tab bar item.
+   *
+   * @platform android
+   */
+  iconColor?: ColorValue;
+}
+
+export interface BottomNavItemColorsAndroid {
+  /**
+   * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
+   * The color scheme is determined by the configuration of the currently selected tab.
+   *
+   * @platform android
+   */
+  normal?: ItemStateColorsAndroid;
+  /**
+   * Defines the colors for the tab bar item that is currently active.
+   * The color scheme is determined by the configuration of the currently selected tab itself.
+   * Maps to Android `state_selected=true`.
+   *
+   * @platform android
+   */
+  selected?: ItemStateColorsAndroid;
+  /**
+   * Defines the colors for a tab bar item when it receives focus.
+   * The color scheme is determined by the configuration of the currently selected tab.
+   * Maps to Android `state_focused=true` (Used mostly for keyboard navigation).
+   *
+   * @platform android
+   */
+  focused?: ItemStateColorsAndroid;
+  /**
+   * Defines the colors for tab bar items when they are disabled.
+   * The color scheme is determined by the configuration of the currently selected tab.
+   * Maps to Android `state_enabled=false`.
+   *
+   * @platform android
+   */
+  disabled?: ItemStateColorsAndroid;
+}
+
+export interface ActiveIndicatorAppearanceAndroid {
+  /**
+   * @summary Specifies the background color of the active indicator.
+   *
+   * @platform android
+   */
+  color?: ColorValue;
+  /**
+   * @summary Specifies if the active indicator should be used.
+   *
+   * @default true
+   *
+   * @platform android
+   */
+  enabled?: boolean;
+}
+
+export interface TypographyAppearanceAndroid {
+  /**
+   * @summary Specifies the font family used for the title of each tab bar item.
+   *
+   * @platform android
+   */
+  fontFamily?: TextStyle['fontFamily'];
+  /**
+   * @summary Specifies the font size used for the title of unselected tab bar items.
+   *
+   * The size is represented in scale-independent pixels (sp).
+   *
+   * @platform android
+   */
+  fontSizeSmall?: TextStyle['fontSize'];
+  /**
+   * @summary Specifies the font size used for the title of selected tab bar item.
+   *
+   * The size is represented in scale-independent pixels (sp).
+   *
+   * @platform android
+   */
+  fontSizeLarge?: TextStyle['fontSize'];
+  /**
+   * @summary Specifies the font weight used for the title of each tab bar item.
+   *
+   * @platform android
+   */
+  fontWeight?: TextStyle['fontWeight'];
+  /**
+   * @summary Specifies the font style used for the title of each tab bar item.
+   *
+   * @platform android
+   */
+  fontStyle?: TextStyle['fontStyle'];
+}
+
+export interface BadgeAppearanceAndroid {
+  /**
+   * @summary Specifies the background color of the badge.
+   *
+   * @platform android
+   */
+  backgroundColor?: ColorValue;
+  /**
+   * @summary Specifies the text color of the badge.
+   *
+   * @platform android
+   */
+  textColor?: ColorValue;
+}
+
+export interface TabsAppearanceAndroid {
+  /**
+   * @summary Specifies the background color for the entire tab bar.
+   *
+   * @platform android
+   */
+  backgroundColor?: ColorValue;
+  /**
+   * @summary Specifies the color of each tab bar item's ripple effect.
+   *
+   * @platform android
+   */
+  itemRippleColor?: ColorValue;
+  /**
+   * @summary Specifies the label visibility mode.
+   *
+   * The label visibility mode defines when the labels of each item bar should be displayed.
+   *
+   * The following values are available:
+   * - `auto` - the label behaves as in “labeled” mode when there are 3 items or less, or as in “selected” mode when there are 4 items or more
+   * - `selected` - the label is only shown on the selected navigation item
+   * - `labeled` - the label is shown on all navigation items
+   * - `unlabeled` - the label is hidden for all navigation items
+   *
+   * The supported values correspond to the official Material Components documentation:
+   * @see {@link https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md#making-navigation-bar-accessible|Material Components documentation}
+   *
+   * @default auto
+   *
+   * @platform android
+   */
+  labelVisibilityMode?: TabBarItemLabelVisibilityMode;
+  /**
+   * @summary Specifies the colors of the icon and title for different item states.
+   *
+   * @platform android
+   */
+  itemColors?: BottomNavItemColorsAndroid;
+  /**
+   * @summary Specifies the appearance of the active indicator (pill shape behind the active icon).
+   *
+   * @platform android
+   */
+  activeIndicator?: ActiveIndicatorAppearanceAndroid;
+  /**
+   * @summary Specifies the typography (font, size, weight, style) used for the title of each tab bar item.
+   *
+   * @platform android
+   */
+  typography?: TypographyAppearanceAndroid;
+  /**
+   * @summary Specifies the appearance of the badges on the tab bar items.
+   *
+   * @platform android
+   */
+  badge?: BadgeAppearanceAndroid;
+}
 
 // iOS-specific
 export interface TabsScreenAppearance {
@@ -155,25 +339,29 @@ export interface TabsScreenAppearance {
 // iOS-specific
 export interface TabsScreenItemAppearance {
   /**
-   * Specifies the tab bar item appearance when it's enabled, unselected, and not the focused item.
+   * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
+   * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
   normal?: TabsScreenItemStateAppearance;
   /**
-   * Specifies the tab bar item appearance when it's selected.
+   * Defines the colors for the tab bar item that is currently active.
+   * The color scheme is determined by the configuration of the currently selected tab itself.
    *
    * @platform ios
    */
   selected?: TabsScreenItemStateAppearance;
   /**
-   * Specifies the tab bar item appearance when it's focused.
+   * Defines the colors for a tab bar item when it receives focus.
+   * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
   focused?: TabsScreenItemStateAppearance;
   /**
-   * Specifies the tab bar item appearance when it's disabled.
+   * Defines the colors for tab bar items when they are disabled.
+   * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
@@ -410,17 +598,15 @@ export interface TabsScreenProps {
 
   // #region Android-only
   /**
-   * @summary Specifies the color of the text in the badge.
+   * @summary Specifies the standard tab bar appearance.
+   *
+   * Allows to customize the appearance depending on the tab bar item state
+   * (normal, selected, focused, disabled). Configuration for the Bottom Navigation View
+   * is determined by the currently active tab screen.
    *
    * @platform android
    */
-  tabBarItemBadgeTextColor?: ColorValue;
-  /**
-   * @summary Specifies the background color of the badge.
-   *
-   * @platform android
-   */
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+  standardAppearanceAndroid?: TabsAppearanceAndroid;
   // #endregion Android-only
 
   // #region iOS-only

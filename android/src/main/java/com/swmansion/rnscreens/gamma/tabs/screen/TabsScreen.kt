@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
 import com.swmansion.rnscreens.gamma.helpers.getSystemDrawableResource
+import com.swmansion.rnscreens.gamma.tabs.appearance.AndroidTabsAppearance
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -30,6 +31,12 @@ class TabsScreen(
 
     internal lateinit var eventEmitter: TabsScreenEventEmitter
 
+    internal var appearance: AndroidTabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            tabsScreenDelegate.get()?.onAppearanceChanged(this)
+        }
+    }
+
     var tabKey: String? = null
         set(value) {
             field =
@@ -46,14 +53,6 @@ class TabsScreen(
 
     // Badge
     var badgeValue: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemBadgeTextColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemBadgeBackgroundColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
         updateMenuItemAttributesIfNeeded(oldValue, newValue)
     }
 

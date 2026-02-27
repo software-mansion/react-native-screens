@@ -20,6 +20,7 @@ import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.gamma.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.gamma.helpers.ViewFinder
 import com.swmansion.rnscreens.gamma.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenDelegate
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
@@ -157,7 +158,7 @@ class TabsHost(
 
     private val tabsScreenFragments: MutableList<TabsScreenFragment> = arrayListOf()
 
-    private val currentFocusedTab: TabsScreenFragment
+    internal val currentFocusedTab: TabsScreenFragment
         get() = checkNotNull(tabsScreenFragments.find { it.tabsScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
 
     private var lastAppliedUiMode: Int? = null
@@ -167,65 +168,9 @@ class TabsHost(
     private var interfaceInsetsChangeListener: SafeAreaView? = null
 
     private val appearanceCoordinator =
-        TabsHostAppearanceCoordinator(wrappedContext, bottomNavigationView, tabsScreenFragments)
+        TabsAppearanceCoordinator(wrappedContext, bottomNavigationView, tabsScreenFragments)
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsScreenFragments)
-
-    var tabBarBackgroundColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemActiveIndicatorColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var isTabBarItemActiveIndicatorEnabled: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemIconColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontFamily: String? by Delegates.observable<String?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemIconColorActive: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontColor: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontColorActive: Int? by Delegates.observable<Int?>(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontSize: Float? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontSizeActive: Float? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontWeight: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemTitleFontStyle: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemRippleColor: Int? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
-
-    var tabBarItemLabelVisibilityMode: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateNavigationMenuIfNeeded(oldValue, newValue)
-    }
 
     var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -340,6 +285,15 @@ class TabsHost(
         }
     }
 
+    override fun onAppearanceChanged(tabScreen: TabsScreen) {
+        if (tabScreen.isFocusedTab) {
+            containerUpdateCoordinator.let {
+                it.invalidateNavigationMenu()
+                it.postContainerUpdateIfNeeded()
+            }
+        }
+    }
+
     override fun onTabFocusChangedFromJS(
         tabsScreen: TabsScreen,
         isFocused: Boolean,
@@ -352,7 +306,8 @@ class TabsHost(
 
     override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
         getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
-            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabsScreen)
+            val appearance = currentFocusedTab.tabsScreen.appearance
+            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabsScreen, appearance)
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
         }
     }
