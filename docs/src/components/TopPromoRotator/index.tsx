@@ -4,6 +4,12 @@ import React, { type ReactNode, useEffect, useMemo, useState } from 'react';
 import HandIcon from '../HandIcon';
 import styles from './styles.module.css';
 
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+  }
+}
+
 type Promo = {
   key: string;
   href: string;
@@ -49,6 +55,32 @@ export default function TopPromoRotator() {
   const promos = useMemo(() => PROMOS, []);
 
   const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    const existingScript = document.querySelector<HTMLScriptElement>(
+      'script[src*="www.googletagmanager.com/gtm.js?id=GTM-WV2G3SQL"]',
+    );
+
+    if (existingScript) return;
+
+    (function (w: Window, d: Document, s: string, l: string, i: string) {
+      w.dataLayer = w.dataLayer || [];
+      w.dataLayer.push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js',
+      });
+      const f = d.getElementsByTagName(s)[0] as HTMLScriptElement;
+      const j = d.createElement(s) as HTMLScriptElement;
+      const dl = l !== 'dataLayer' ? `&l=${l}` : '';
+      j.async = true;
+      j.src = `https://www.googletagmanager.com/gtm.js?id=${i}${dl}`;
+      f.parentNode?.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-WV2G3SQL');
+  }, []);
 
   useEffect(() => {
     const id = window.setInterval(() => {
