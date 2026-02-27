@@ -4,13 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.view.Choreographer
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowInsetsCompat
+import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.utils.InsetsCompat
+import com.swmansion.rnscreens.utils.getDecorViewTopInset
 import com.swmansion.rnscreens.utils.resolveInsetsOrZero
 import kotlin.math.max
 
@@ -139,13 +142,33 @@ open class CustomToolbar(
                 0,
             )
 
+        var maybeTopLevelDecorView: View? = null
+        if (context is ReactContext) {
+            val reactContext = context as ReactContext
+            maybeTopLevelDecorView =
+                requireNotNull(
+                    reactContext.currentActivity?.window?.decorView,
+                ) { "[RNScreens] DecorView is required for applying inset correction, but was null." }
+        }
+
+        // The top inset from DecorView is currently used in both Screen and ScreenDummyLayoutHelper
+        // to manually apply layout adjustments. To ensure consistent behavior between Screen and Toolbar,
+        // we should preferably handle the top inset here. Relying on unhandledInsets may be unreliable,
+        // as they could already have been consumed earlier in the layout process.
+        val topInset =
+            if (maybeTopLevelDecorView != null) {
+                getDecorViewTopInset(maybeTopLevelDecorView)
+            } else {
+                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0)
+            }
+
         // We want to handle display cutout always, no matter the HeaderConfig prop values.
         // If there are no cutout displays, we want to apply the additional padding to
         // respect the status bar.
         val verticalInsets =
             InsetsCompat.of(
                 0,
-                max(cutoutInsets.top, if (shouldApplyTopInset) systemBarInsets.top else 0),
+                topInset,
                 0,
                 max(cutoutInsets.bottom, 0),
             )
