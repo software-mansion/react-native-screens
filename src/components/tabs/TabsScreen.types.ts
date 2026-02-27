@@ -68,6 +68,7 @@ export type TabsSystemItemIOS =
   | 'search'
   | 'topRated';
 
+// Currently iOS-only
 export type TabsScreenOrientationIOS =
   | 'inherit'
   | 'all'
