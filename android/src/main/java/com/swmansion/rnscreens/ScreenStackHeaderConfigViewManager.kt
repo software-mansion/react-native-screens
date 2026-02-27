@@ -156,14 +156,6 @@ class ScreenStackHeaderConfigViewManager :
         config.setHideBackButton(hideBackButton)
     }
 
-    @ReactProp(name = "topInsetEnabled")
-    override fun setTopInsetEnabled(
-        config: ScreenStackHeaderConfig,
-        topInsetEnabled: Boolean,
-    ) {
-        logNotAvailable("topInsetEnabled")
-    }
-
     @ReactProp(name = "color", customType = "Color")
     override fun setColor(
         config: ScreenStackHeaderConfig,
@@ -293,6 +285,11 @@ class ScreenStackHeaderConfigViewManager :
     override fun setBlurEffect(
         view: ScreenStackHeaderConfig?,
         value: String?,
+    ) = Unit
+
+    override fun setTopInsetEnabled(
+        config: ScreenStackHeaderConfig,
+        topInsetEnabled: Boolean,
     ) = Unit
 
     override fun setHeaderLeftBarButtonItems(
