@@ -623,12 +623,6 @@ export interface TabsScreenPropsBase {
    */
   badgeValue?: string;
   /**
-   * @summary Allows to control whether contents of a tab screen should be frozen or not. This overrides any default behavior.
-   *
-   * @default undefined
-   */
-  freezeContents?: boolean;
-  /**
    * @summary Specifies which special effects (also known as microinteractions)
    * are enabled for the tab screen.
    *
