@@ -11,14 +11,20 @@ interface FreezeWrapperProps {
 function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
   // flag used for determining whether freeze should be enabled
   const [freezeState, setFreezeState] = React.useState(false);
+  const mountedRef = React.useRef(false);
 
   React.useEffect(() => {
-    const id = setTimeout(() => {
-      setFreezeState(freeze);
-    }, 0);
+    mountedRef.current = true;
     return () => {
-      clearTimeout(id);
+      mountedRef.current = false;
     };
+  }, []);
+
+
+  React.useEffect(() => {
+    if (mountedRef.current) {
+      setFreezeState(freeze);
+    }
   }, [freeze]);
 
   return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
