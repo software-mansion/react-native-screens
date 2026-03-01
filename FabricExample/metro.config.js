@@ -9,7 +9,8 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const fs = require('fs');
 const path = require('path');
-const exclusionList = require('metro-config/private/defaults/exclusionList').default;
+const exclusionList =
+  require('metro-config/private/defaults/exclusionList').default;
 const escape = require('escape-string-regexp');
 
 const libPackage = require('../package.json');
@@ -21,9 +22,11 @@ const appPackage = require('./package.json');
  * in `react-navigation` submodule & causes runtime issues.
  */
 function reactNavigationOptionalModuleFilter(module) {
-  return module in appPackage.dependencies === true ||
+  return (
+    module in appPackage.dependencies === true ||
     module in libPackage.devDependencies === true ||
-    module in libPackage.dependencies === true;
+    module in libPackage.dependencies === true
+  );
 }
 
 /**
@@ -32,8 +35,7 @@ function reactNavigationOptionalModuleFilter(module) {
  */
 function blockListProvider(modules, nodeModulesDir) {
   return modules.map(
-    m =>
-      new RegExp(`^${escape(path.join(nodeModulesDir, m))}\\/.*$`),
+    m => new RegExp(`^${escape(path.join(nodeModulesDir, m))}\\/.*$`),
   );
 }
 
@@ -55,7 +57,6 @@ const modules = [
   ...Object.keys(libPackage.peerDependencies),
 ];
 
-
 // Currently each `@react-navigation` package has `src/index.tsx`.
 const reactNavigationIndexExts = ['tsx', 'ts', 'js', 'jsx'];
 
@@ -66,14 +67,18 @@ const reactNavigationDuplicatedModules = [
   'react-native',
   'react-native-screens',
   'react-dom', // TODO: Consider whether this won't conflict, especially that RN 78 uses React 19 & react-navigation still uses React 18.
-].concat([
-  'react-native-safe-area-context',
-  'react-native-gesture-handler',
-].filter(reactNavigationOptionalModuleFilter));
+].concat(
+  ['react-native-safe-area-context', 'react-native-gesture-handler'].filter(
+    reactNavigationOptionalModuleFilter,
+  ),
+);
 
 const appNodeModules = path.join(appDir, 'node_modules');
 const libNodeModules = path.join(libRootDir, 'node_modules');
-const reactNavigationNodeModules = path.join(reactNavigationDir, 'node_modules');
+const reactNavigationNodeModules = path.join(
+  reactNavigationDir,
+  'node_modules',
+);
 
 const config = {
   projectRoot: appDir,
@@ -84,7 +89,14 @@ const config = {
   resolver: {
     resolverMainFields: ['react-native', 'browser', 'main'],
 
-    blockList: exclusionList(blockListProvider(modules, libNodeModules).concat(blockListProvider(reactNavigationDuplicatedModules, reactNavigationNodeModules))),
+    blockList: exclusionList(
+      blockListProvider(modules, libNodeModules).concat(
+        blockListProvider(
+          reactNavigationDuplicatedModules,
+          reactNavigationNodeModules,
+        ),
+      ),
+    ),
 
     extraNodeModules: modules.reduce((acc, name) => {
       acc[name] = path.join(__dirname, 'node_modules', name);
@@ -108,7 +120,12 @@ const config = {
     // Project node modules + directory where `react-native-screens` repo lives in + react navigation node modules.
     // These are consulted in order of definition.
     // TODO: make it so this does not depend on whether the user renamed the repo or not...
-    nodeModulesPaths: [appNodeModules, path.join(appDir, '../../'), libNodeModules, reactNavigationNodeModules],
+    nodeModulesPaths: [
+      appNodeModules,
+      path.join(appDir, '../../'),
+      libNodeModules,
+      reactNavigationNodeModules,
+    ],
 
     resolveRequest: (context, moduleName, platform) => {
       // We want to enforce that in case of react navigation the `src` files
@@ -116,7 +133,12 @@ const config = {
       if (moduleName.startsWith('@react-navigation/')) {
         for (const fileExt of reactNavigationIndexExts) {
           // App node modules contain symlink to react-navigation submodule.
-          const moduleEntryPoint = path.join(appNodeModules, moduleName, 'src', `index.${fileExt}`);
+          const moduleEntryPoint = path.join(
+            appNodeModules,
+            moduleName,
+            'src',
+            `index.${fileExt}`,
+          );
           if (fs.existsSync(moduleEntryPoint)) {
             return {
               filePath: moduleEntryPoint,
@@ -146,4 +168,3 @@ const config = {
 };
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
-

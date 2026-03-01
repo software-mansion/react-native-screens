@@ -29,5 +29,5 @@ jobs:
       - name: Close when stale
         uses: ./close-when-stale
         with:
-          close-when-stale-label: 'Close when stale'
+          close-when-stale-label: 'close-when-stale'
           days-to-close: 14

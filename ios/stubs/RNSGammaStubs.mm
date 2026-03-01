@@ -11,3 +11,6 @@
 
 @implementation RNSSplitViewScreenComponentView
 @end
+
+@implementation RNSScrollViewMarkerComponentView
+@end

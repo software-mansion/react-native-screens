@@ -8,6 +8,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EX
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.Screen
+import com.swmansion.rnscreens.ext.asScreenStackFragment
 
 object SheetUtils {
     /**
@@ -159,6 +160,13 @@ fun Screen.requiresEnterTransitionPostponing(): Boolean {
     }
     // Assumes that formSheet uses content wrapper
     return !this.isLaidOutOrHasCachedLayout() || this.contentWrapper?.isLaidOutOrHasCachedLayout() != true
+}
+
+fun Screen.sheetShouldUseDimmingView(): Boolean {
+    val currentDetentIndex =
+        fragment?.asScreenStackFragment()?.sheetDelegate?.lastStableDetentIndex
+            ?: sheetInitialDetentIndex
+    return currentDetentIndex > sheetLargestUndimmedDetentIndex
 }
 
 /**
