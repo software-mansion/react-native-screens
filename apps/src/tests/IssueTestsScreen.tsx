@@ -3,6 +3,7 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
   NavigationProp,
+  useRoute,
 } from '@react-navigation/native';
 import * as Tests from './issue-tests';
 import { ScrollView, useColorScheme } from 'react-native';
@@ -12,6 +13,7 @@ import {
   ScreensLightTheme,
 } from '../shared/styling/adapter/react-navigation';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { storage } from '../util/storage';
 
 const SCREENS: Record<
   string,
@@ -103,7 +105,13 @@ function MainScreen(props: {
           key={name}
           testID={`issue-tests-${name}`}
           title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
+          onPress={async () => {
+            navigation.navigate(name);
+            await storage.setLastVisitedScreen({
+              name,
+              parent: 'IssueTests',
+            });
+          }}
         />
       ))}
     </ScrollView>
@@ -112,6 +120,9 @@ function MainScreen(props: {
 
 function IssueTests() {
   const scheme = useColorScheme();
+  const params = useRoute().params as {
+    lastVisitedScreen: string;
+  };
   const [isDark, setIsDark] = useState(scheme === 'dark');
 
   const Stack = createNativeStackNavigator<IssueTestsStackParamList>();
@@ -123,7 +134,8 @@ function IssueTests() {
       <NavigationContainer
         theme={isDark ? ScreensDarkTheme : ScreensLightTheme}>
         <Stack.Navigator
-          screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
+          screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}
+          initialRouteName={params?.lastVisitedScreen}>
           <Stack.Screen
             name="Main"
             options={{ title: 'Issue Tests' }}

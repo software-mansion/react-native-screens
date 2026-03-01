@@ -15,6 +15,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "link:../@react-native-async-storage/async-storage/",
     "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/",
     "@react-navigation/core": "link:../react-navigation/packages/core/",
     "@react-navigation/drawer": "link:../react-navigation/packages/drawer/",

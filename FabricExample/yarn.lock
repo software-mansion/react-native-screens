@@ -2523,6 +2523,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/async-storage@link:../@react-native-async-storage/async-storage/::locator=FabricExample%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-native-async-storage/async-storage@link:../@react-native-async-storage/async-storage/::locator=FabricExample%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@react-native-community/cli-clean@npm:20.1.0":
   version: 20.1.0
   resolution: "@react-native-community/cli-clean@npm:20.1.0"
@@ -3386,6 +3392,7 @@ __metadata:
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.25.3"
     "@babel/runtime": "npm:^7.26.10"
+    "@react-native-async-storage/async-storage": "link:../@react-native-async-storage/async-storage/"
     "@react-native-community/cli": "npm:20.1.0"
     "@react-native-community/cli-platform-android": "npm:20.1.0"
     "@react-native-community/cli-platform-ios": "npm:20.1.0"

@@ -5,6 +5,8 @@ import {
   I18nManager,
   Platform,
   useColorScheme,
+  Alert,
+  DevSettings,
 } from 'react-native';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -39,6 +41,8 @@ import IssueTestsScreen from './src/tests/IssueTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
 import ComponentIntegrationTests from './src/tests/component-integration-tests';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SettingsTouchable } from './src/shared/SettingsTouchable';
+import { storage } from './src/util/storage';
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
@@ -157,6 +161,12 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const { toggleTheme } = useContext(ThemeToggle);
   const isDark = useTheme().dark;
 
+  useEffect(() => {
+    DevSettings.addMenuItem('Clear Async storage', () => {
+      storage.clear();
+    });
+  }, []);
+
   return (
     <SafeAreaView edges={{ top: 'off', bottom: 'maximum' }}>
       <ScrollView testID="root-screen-examples-scrollview">
@@ -176,6 +186,31 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           value={isDark}
           onValueChange={toggleTheme}
         />
+        <SettingsTouchable
+          label="Go to last visited screen"
+          style={styles.switch}
+          onPress={async () => {
+            const lastVisitedScreen = await storage.getLastVisitedScreen();
+
+            if (!lastVisitedScreen) {
+              Alert.alert(
+                'Please visit a screen first.',
+                'No last visited screen found',
+                [{ text: 'OK' }],
+              );
+              return;
+            }
+
+            if (lastVisitedScreen.parent) {
+              navigation.navigate(lastVisitedScreen.parent, {
+                lastVisitedScreen: lastVisitedScreen.name,
+              } as any);
+              return;
+            }
+
+            navigation.navigate(lastVisitedScreen.name);
+          }}
+        />
         <ThemedText style={styles.label} testID="root-screen-examples-header">
           Examples
         </ThemedText>
@@ -184,7 +219,12 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
             key={name}
             testID={`root-screen-example-${name}`}
             title={SCREENS[name].title}
-            onPress={() => navigation.navigate(name)}
+            onPress={async () => {
+              navigation.navigate(name);
+              await storage.setLastVisitedScreen({
+                name: name,
+              });
+            }}
             disabled={!isPlatformReady(name)}
           />
         ))}
@@ -194,7 +234,12 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
             key={name}
             testID={`root-screen-playground-${name}`}
             title={SCREENS[name].title}
-            onPress={() => navigation.navigate(name)}
+            onPress={async () => {
+              navigation.navigate(name);
+              await storage.setLastVisitedScreen({
+                name: name,
+              });
+            }}
             disabled={!isPlatformReady(name)}
           />
         ))}

@@ -1,7 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
-import { ThemedText, ThemedView } from '.';
-import Colors from './styling/Colors';
+import { ViewStyle } from 'react-native';
+import { SettingsTouchable } from './SettingsTouchable';
 
 type Props = {
   label: string;
@@ -19,25 +18,11 @@ export const SettingsSwitch = ({
   testID,
 }: Props): React.JSX.Element => {
   return (
-    <TouchableOpacity onPress={() => onValueChange(!value)} testID={testID}>
-      <ThemedView style={[styles.container, style]}>
-        <ThemedText style={styles.label}>{`${label}: ${value}`}</ThemedText>
-      </ThemedView>
-    </TouchableOpacity>
+    <SettingsTouchable
+      label={`${label}: ${value}`}
+      onPress={() => onValueChange(!value)}
+      style={style}
+      testID={testID}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    marginHorizontal: 10,
-    marginBottom: 5,
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: Colors.cardBorder,
-  },
-  label: {
-    fontSize: 15,
-  },
-});
