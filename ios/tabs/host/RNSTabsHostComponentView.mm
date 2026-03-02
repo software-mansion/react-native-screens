@@ -598,6 +598,12 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
   {
     _controller.needsLayoutDirectionUpdate = YES;
+
+    // If controller is already attached to parent VC, we should update layout direction
+    // immediately as controller updates layoutDirection only on `didMoveToParentViewController`.
+    if (_controller.parentViewController != nil) {
+      [_controller updateLayoutDirectionIfNeeded];
+    }
   }
 }
 
