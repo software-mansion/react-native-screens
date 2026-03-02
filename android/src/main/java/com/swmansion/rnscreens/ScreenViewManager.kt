@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
@@ -99,10 +98,6 @@ open class ScreenViewManager :
         view.onFinalizePropsUpdate()
     }
 
-    private fun logNotAvailable(propName: String) {
-        Log.w("[RNScreens]", "$propName prop is not available on Android")
-    }
-
     @ReactProp(name = "activityState")
     fun setActivityState(
         view: Screen,
@@ -197,14 +192,6 @@ open class ScreenViewManager :
         view.isStatusBarAnimated = animated
     }
 
-    @ReactProp(name = "statusBarColor", customType = "Color")
-    override fun setStatusBarColor(
-        view: Screen,
-        statusBarColor: Int?,
-    ) {
-        logNotAvailable("statusBarColor")
-    }
-
     @ReactProp(name = "statusBarStyle")
     override fun setStatusBarStyle(
         view: Screen,
@@ -213,36 +200,12 @@ open class ScreenViewManager :
         view.statusBarStyle = statusBarStyle
     }
 
-    @ReactProp(name = "statusBarTranslucent")
-    override fun setStatusBarTranslucent(
-        view: Screen,
-        statusBarTranslucent: Boolean,
-    ) {
-        logNotAvailable("statusBarTranslucent")
-    }
-
     @ReactProp(name = "statusBarHidden")
     override fun setStatusBarHidden(
         view: Screen,
         statusBarHidden: Boolean,
     ) {
         view.isStatusBarHidden = statusBarHidden
-    }
-
-    @ReactProp(name = "navigationBarColor", customType = "Color")
-    override fun setNavigationBarColor(
-        view: Screen,
-        navigationBarColor: Int?,
-    ) {
-        logNotAvailable("navigationBarColor")
-    }
-
-    @ReactProp(name = "navigationBarTranslucent")
-    override fun setNavigationBarTranslucent(
-        view: Screen,
-        navigationBarTranslucent: Boolean,
-    ) {
-        logNotAvailable("navigationBarTranslucent")
     }
 
     @ReactProp(name = "navigationBarHidden")
@@ -287,6 +250,26 @@ open class ScreenViewManager :
 
     // mark: iOS-only
     // these props are not available on Android, however we must override their setters
+    override fun setStatusBarColor(
+        view: Screen,
+        value: Int?,
+    ) = Unit
+
+    override fun setStatusBarTranslucent(
+        view: Screen,
+        value: Boolean,
+    ) = Unit
+
+    override fun setNavigationBarColor(
+        view: Screen,
+        value: Int?,
+    ) = Unit
+
+    override fun setNavigationBarTranslucent(
+        view: Screen,
+        value: Boolean,
+    ) = Unit
+
     override fun setFullScreenSwipeEnabled(
         view: Screen?,
         value: String?,
