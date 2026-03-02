@@ -44,3 +44,6 @@ Ankh.NoLoad
 *.binlog
 *.err
 *.wrn
+
+#NuGet packages
+packages/

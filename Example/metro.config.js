@@ -78,6 +78,10 @@ const reactNavigationNodeModules = path.join(
   'node_modules',
 );
 
+const rnwPath = fs.realpathSync(
+  path.resolve(require.resolve('react-native-windows/package.json'), '..'),
+);
+
 const config = {
   projectRoot: appDir,
   watchFolders: [libRootDir],
@@ -88,12 +92,23 @@ const config = {
     resolverMainFields: ['react-native', 'browser', 'main'],
 
     blockList: exclusionList(
-      blockListProvider(modules, libNodeModules).concat(
-        blockListProvider(
-          reactNavigationDuplicatedModules,
-          reactNavigationNodeModules,
-        ),
-      ),
+      blockListProvider(modules, libNodeModules)
+        .concat(
+          blockListProvider(
+            reactNavigationDuplicatedModules,
+            reactNavigationNodeModules,
+          ),
+        )
+        .concat([
+          // This stops "npx @react-native-community/cli run-windows" from causing the metro server to crash if its already running
+          new RegExp(
+            `${path.resolve(__dirname, 'windows').replaceAll(/[/\\]/g, '/')}.*`,
+          ),
+          // This prevents "npx @react-native-community/cli run-windows" from hitting: EBUSY: resource busy or locked, open msbuild.ProjectImports.zip or other files produced by msbuild
+          new RegExp(`${rnwPath}/build/.*`),
+          new RegExp(`${rnwPath}/target/.*`),
+          /.*\.ProjectImports\.zip/,
+        ]),
     ),
 
     extraNodeModules: modules.reduce((acc, name) => {
