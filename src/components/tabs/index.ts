@@ -3,7 +3,7 @@ import TabsScreen from './TabsScreen';
 
 export type * from './TabsHost.types';
 export type * from './TabsScreen.types';
-export type { TabsAccessoryEnvironment } from './TabsAccessory.types';
+export type { TabsBottomAccessoryEnvironment } from './TabsBottomAccessory.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
