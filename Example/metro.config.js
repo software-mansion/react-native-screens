@@ -7,8 +7,8 @@
 
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const exclusionList = require('metro-config/private/defaults/exclusionList');
 const escape = require('escape-string-regexp');
 
@@ -21,20 +21,16 @@ const appPackage = require('./package.json');
  * in `react-navigation` submodule & causes runtime issues.
  */
 function reactNavigationOptionalModuleFilter(module) {
-  return (
-    module in appPackage.dependencies === true ||
-    module in libPackage.devDependencies === true ||
-    module in libPackage.dependencies === true
-  );
+  return (module in appPackage.dependencies || module in libPackage.devDependencies || module in libPackage.dependencies);
 }
 
 /**
  * @param {Array<string>} modules
- * @param {string} nodeModulesParentDir
+ * @param {string} nodeModulesDir
  */
 function blockListProvider(modules, nodeModulesDir) {
   return modules.map(
-    m => new RegExp(`^${escape(path.join(nodeModulesDir, m))}\\/.*$`),
+    m => new RegExp(String.raw`^${escape(path.join(nodeModulesDir, m))}\/.*$`),
   );
 }
 
@@ -81,6 +77,12 @@ const reactNavigationNodeModules = path.join(
 const rnwPath = fs.realpathSync(
   path.resolve(require.resolve('react-native-windows/package.json'), '..'),
 );
+
+// Capture before merging so that the framework's resolveRequest
+// (which includes reactNativePlatformResolver injected by the CLI for out-of-tree
+// platforms like Windows) is preserved in the resolver chain.
+const defaultConfig = getDefaultConfig(__dirname);
+const frameworkResolveRequest = defaultConfig.resolver?.resolveRequest;
 
 const config = {
   projectRoot: appDir,
@@ -166,7 +168,14 @@ const config = {
         `);
       }
 
-      return context.resolveRequest(context, moduleName, platform);
+      // Delegate to the framework resolver, which includes reactNativePlatformResolver
+      // injected by the CLI. This redirects 'react-native' to 'react-native-windows'
+      // on Windows, enabling correct platform overrides (Platform.OS, etc.).
+      return (frameworkResolveRequest ?? context.resolveRequest)(
+        context,
+        moduleName,
+        platform,
+      );
     },
   },
 
@@ -180,4 +189,4 @@ const config = {
   },
 };
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+module.exports = mergeConfig(defaultConfig, config);
