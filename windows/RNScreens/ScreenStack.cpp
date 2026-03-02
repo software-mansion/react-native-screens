@@ -1,65 +1,86 @@
 #include "pch.h"
 #include "ScreenStack.h"
-#include "JSValueXaml.h"
-#include "NativeModules.h"
-
-namespace winrt {
-using namespace Microsoft::ReactNative;
-using namespace Windows::Foundation;
-using namespace Windows::Foundation::Collections;
-using namespace Microsoft::UI;
-using namespace Microsoft::UI::Xaml;
-using namespace Microsoft::UI::Xaml::Controls;
-} // namespace winrt
 
 namespace winrt::RNScreens::implementation {
-ScreenStack::ScreenStack(
-    winrt::Microsoft::ReactNative::IReactContext reactContext)
-    : m_reactContext(reactContext),
-      m_children(
-          {winrt::single_threaded_vector<Microsoft::UI::Xaml::UIElement>()}) {}
 
-void ScreenStack::addScreen(Screen &screen, int64_t) {
-  auto uiElement = screen.try_as<UIElement>();
-  if (!uiElement)
-    return;
+using namespace winrt::Microsoft::ReactNative;
 
-  m_children.Append(uiElement);
-  Content(uiElement);
-}
+// ---------------------------------------------------------------------------
+// ScreenStackEventEmitter
+// ---------------------------------------------------------------------------
+//
+// NOTE: onFinishTransitioning is not currently dispatched because native push/
+// pop transitions are not implemented on Windows. The method and its
+// infrastructure are retained so that wiring it up only requires calling
+// onFinishTransitioning() at the appropriate point in a future transition
+// implementation — no other scaffolding changes are needed.
 
-void ScreenStack::removeAllChildren() {
-  Content(nullptr);
-  m_children.Clear();
-}
-
-void ScreenStack::removeChildAt(int64_t index) {
-  m_children.RemoveAt(static_cast<uint32_t>(index));
-  onChildModified(index);
-}
-
-void ScreenStack::replaceChild(
-    winrt::Microsoft::UI::Xaml::UIElement oldChild,
-    winrt::Microsoft::UI::Xaml::UIElement newChild) {
-  uint32_t index;
-  if (!m_children.IndexOf(oldChild, index))
-    return;
-
-  m_children.SetAt(index, newChild);
-  onChildModified(index);
-}
-
-void ScreenStack::onChildModified(int64_t index) {
-  // Was it the topmost item in the stack?
-  if (index >= m_children.Size() - 1) {
-    if (m_children.Size() == 0) {
-      // Nobody left
-      Content(nullptr);
-    } else {
-      // Focus on the top item
-      auto uiElement = m_children.GetAt(m_children.Size() - 1);
-      Content(uiElement);
-    }
+struct ScreenStackEventEmitter {
+  explicit ScreenStackEventEmitter(EventEmitter const& emitter) noexcept
+      : m_emitter(emitter) {
+    assert(emitter != nullptr &&
+           "ScreenStackEventEmitter constructed with a null EventEmitter handle");
   }
+
+  void onFinishTransitioning() const noexcept {
+    if (!m_emitter) return;
+    m_emitter.DispatchEvent(
+        L"topFinishTransitioning",
+        [](IJSValueWriter const& writer) noexcept {
+          writer.WriteObjectBegin();
+          writer.WriteObjectEnd();
+        });
+  }
+
+ private:
+  EventEmitter m_emitter{nullptr};
+};
+
+// ---------------------------------------------------------------------------
+// ScreenStackUserData
+// ---------------------------------------------------------------------------
+
+struct ScreenStackUserData
+    : winrt::implements<ScreenStackUserData, winrt::Windows::Foundation::IInspectable> {
+  void UpdateEventEmitter(EventEmitter const& emitter) noexcept {
+    m_eventEmitter.emplace(emitter);
+  }
+
+  // NOTE: SetMountChildComponentViewHandler / SetUnmountChildComponentViewHandler
+  // are intentionally not registered. In the old Paper implementation, a XAML
+  // ContentControl was manually updated to show the top-of-stack child. In
+  // Fabric, JS controls which screens are in the component tree and the
+  // reconciler renders them in declaration order — no native child-management
+  // logic is required here.
+  //
+  // If activityState-driven z-ordering or explicit transition management is
+  // implemented in the future, child tracking should be added here via
+  // SetMountChildComponentViewHandler, with the vector encapsulated behind
+  // accessor methods rather than exposed as a public field.
+
+ private:
+  std::optional<ScreenStackEventEmitter> m_eventEmitter;
+};
+
+// ---------------------------------------------------------------------------
+// Registration
+// ---------------------------------------------------------------------------
+
+void RegisterRNSScreenStack(IReactPackageBuilderFabric const& fabricBuilder) noexcept {
+  fabricBuilder.AddViewComponent(
+      L"RNSScreenStack",
+      [](IReactViewComponentBuilder const& builder) noexcept {
+        builder.SetComponentViewInitializer(
+            [](ComponentView const& view) noexcept {
+              view.UserData(*winrt::make_self<ScreenStackUserData>());
+            });
+
+        builder.SetUpdateEventEmitterHandler(
+            [](ComponentView const& view, EventEmitter const& emitter) noexcept {
+              winrt::get_self<ScreenStackUserData>(view.UserData())
+                  ->UpdateEventEmitter(emitter);
+            });
+      });
 }
+
 } // namespace winrt::RNScreens::implementation

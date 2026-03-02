@@ -1,23 +1,12 @@
 #pragma once
-#include "Screen.h"
+#include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-class ScreenContainer
-    : public winrt::Microsoft::UI::Xaml::Controls::ContentControlT<
-          ScreenContainer> {
- public:
-  ScreenContainer(winrt::Microsoft::ReactNative::IReactContext reactContext);
-  void addScreen(Screen &screen, int64_t index);
-  void removeAllChildren();
-  void removeChildAt(int64_t index);
-  void replaceChild(
-      winrt::Microsoft::UI::Xaml::UIElement oldChild,
-      winrt::Microsoft::UI::Xaml::UIElement newChild);
 
-  winrt::Windows::Foundation::Collections::IVector<Microsoft::UI::Xaml::UIElement>
-      m_children;
+// RNSScreenContainer has no custom props (ScreenContainerNativeComponent.ts
+// declares `interface NativeProps extends ViewProps {}`) and no events.
+// Child visibility is managed entirely by JS and the Fabric reconciler.
+void RegisterRNSScreenContainer(
+    winrt::Microsoft::ReactNative::IReactPackageBuilderFabric const& fabricBuilder) noexcept;
 
- private:
-  winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
-};
 } // namespace winrt::RNScreens::implementation
