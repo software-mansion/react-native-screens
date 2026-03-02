@@ -1,4 +1,4 @@
 module.exports = {
   preset: 'react-native',
-  modulePathIgnorePatterns: ['Example', 'FabricExample'],
+  modulePathIgnorePatterns: ['FabricExample'],
 };
