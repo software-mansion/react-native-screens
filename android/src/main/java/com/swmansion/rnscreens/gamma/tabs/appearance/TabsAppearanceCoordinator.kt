@@ -10,19 +10,18 @@ import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 
 class TabsAppearanceCoordinator(
-    context: ContextThemeWrapper,
     private val bottomNavigationView: BottomNavigationView,
     private val tabsScreenFragments: MutableList<TabsScreenFragment>,
 ) {
-    private val appearanceApplicator = TabsAppearanceApplicator(context, bottomNavigationView)
+    private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
 
-    fun updateTabAppearance(tabsHost: TabsHost) {
-        appearanceApplicator.updateSharedAppearance(tabsHost)
-        updateMenuItems(tabsHost)
-        appearanceApplicator.updateFontStyles(tabsHost) // It needs to be updated after updateMenuItems
+    fun updateTabAppearance(context: ContextThemeWrapper, tabsHost: TabsHost) {
+        appearanceApplicator.updateSharedAppearance(context, tabsHost)
+        updateMenuItems(context, tabsHost)
+        appearanceApplicator.updateFontStyles(context, tabsHost) // It needs to be updated after updateMenuItems
     }
 
-    private fun updateMenuItems(tabsHost: TabsHost) {
+    private fun updateMenuItems(context: ContextThemeWrapper, tabsHost: TabsHost) {
         if (bottomNavigationView.menu.size != tabsScreenFragments.size) {
             // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
             bottomNavigationView.menu.clear()
@@ -31,17 +30,18 @@ class TabsAppearanceCoordinator(
         tabsScreenFragments.forEachIndexed { index, fragment ->
             val menuItem = bottomNavigationView.menu.getOrCreateMenuItem(index, fragment.tabsScreen)
             check(menuItem.itemId == index) { "[RNScreens] Illegal state: menu items are shuffled" }
-            updateMenuItemAppearance(menuItem, fragment.tabsScreen, appearance)
+            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, appearance)
         }
     }
 
     internal fun updateMenuItemAppearance(
+        context: ContextThemeWrapper,
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,
     ) {
         appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen)
-        appearanceApplicator.updateBadgeAppearance(menuItem, tabsScreen, appearance)
+        appearanceApplicator.updateBadgeAppearance(context, menuItem, tabsScreen, appearance)
     }
 }
 

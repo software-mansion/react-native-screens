@@ -21,7 +21,6 @@ import com.swmansion.rnscreens.utils.resolveColorAttr
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 class TabsAppearanceApplicator(
-    private val context: ContextThemeWrapper,
     private val bottomNavigationView: BottomNavigationView,
 ) {
     private val states =
@@ -32,7 +31,10 @@ class TabsAppearanceApplicator(
             intArrayOf(), // normal
         )
 
-    fun updateSharedAppearance(tabsHost: TabsHost) {
+    fun updateSharedAppearance(
+        context: ContextThemeWrapper,
+        tabsHost: TabsHost,
+    ) {
         val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
 
         bottomNavigationView.isVisible = !tabsHost.tabBarHidden
@@ -41,7 +43,6 @@ class TabsAppearanceApplicator(
                 ?: resolveColorAttr(context, R.attr.colorSurfaceContainer),
         )
 
-        // Font color
         // Font color
         // Defaults from spec: https://m3.material.io/components/navigation-bar/specs
         val fontDisabledColor =
@@ -112,7 +113,10 @@ class TabsAppearanceApplicator(
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
     }
 
-    fun updateFontStyles(tabsHost: TabsHost) {
+    fun updateFontStyles(
+        context: ContextThemeWrapper,
+        tabsHost: TabsHost,
+    ) {
         val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
         val bottomNavigationMenuView = bottomNavigationView.getChildAt(0) as ViewGroup
 
@@ -194,6 +198,7 @@ class TabsAppearanceApplicator(
     }
 
     internal fun updateBadgeAppearance(
+        context: ContextThemeWrapper,
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,

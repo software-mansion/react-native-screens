@@ -168,7 +168,7 @@ class TabsHost(
     private var interfaceInsetsChangeListener: SafeAreaView? = null
 
     private val appearanceCoordinator =
-        TabsAppearanceCoordinator(wrappedContext, bottomNavigationView, tabsScreenFragments)
+        TabsAppearanceCoordinator(bottomNavigationView, tabsScreenFragments)
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsScreenFragments)
 
@@ -307,7 +307,7 @@ class TabsHost(
     override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
         getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
             val appearance = currentFocusedTab.tabsScreen.appearance
-            appearanceCoordinator.updateMenuItemAppearance(menuItem, tabsScreen, appearance)
+            appearanceCoordinator.updateMenuItemAppearance(wrappedContext, menuItem, tabsScreen, appearance)
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
         }
     }
@@ -328,7 +328,7 @@ class TabsHost(
     private fun updateBottomNavigationViewAppearance() {
         RNSLog.d(TAG, "updateBottomNavigationViewAppearance")
 
-        appearanceCoordinator.updateTabAppearance(this)
+        appearanceCoordinator.updateTabAppearance(wrappedContext, this)
 
         val selectedTabsScreenFragmentId =
             checkNotNull(getSelectedTabsScreenFragmentId()) { "[RNScreens] A single selected tab must be present" }
@@ -415,7 +415,7 @@ class TabsHost(
                 }
             }
 
-            appearanceCoordinator.updateTabAppearance(this)
+            appearanceCoordinator.updateTabAppearance(wrappedContext, this)
             lastAppliedUiMode = uiMode
         }
     }
