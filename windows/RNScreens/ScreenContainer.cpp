@@ -7,9 +7,9 @@ namespace winrt {
 using namespace Microsoft::ReactNative;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
-using namespace Windows::UI;
-using namespace Windows::UI::Xaml;
-using namespace Windows::UI::Xaml::Controls;
+using namespace Microsoft::UI;
+using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Controls;
 } // namespace winrt
 
 namespace winrt::RNScreens::implementation {
@@ -17,7 +17,7 @@ ScreenContainer::ScreenContainer(
     winrt::Microsoft::ReactNative::IReactContext reactContext)
     : m_reactContext(reactContext),
       m_children(
-          {winrt::single_threaded_vector<Windows::UI::Xaml::UIElement>()}) {}
+          {winrt::single_threaded_vector<Microsoft::UI::Xaml::UIElement>()}) {}
 
 void ScreenContainer::addScreen(Screen &screen, int64_t) {
   auto uiElement = screen.try_as<UIElement>();
@@ -38,8 +38,8 @@ void ScreenContainer::removeChildAt(int64_t index) {
 }
 
 void ScreenContainer::replaceChild(
-    winrt::Windows::UI::Xaml::UIElement oldChild,
-    winrt::Windows::UI::Xaml::UIElement newChild) {
+    winrt::Microsoft::UI::Xaml::UIElement oldChild,
+    winrt::Microsoft::UI::Xaml::UIElement newChild) {
   uint32_t index;
   if (!m_children.IndexOf(oldChild, index))
     return;

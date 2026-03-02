@@ -20,24 +20,24 @@ class ScreenStackHeaderConfigViewManager
 
   // IViewManager
   winrt::hstring Name() noexcept;
-  winrt::Windows::UI::Xaml::FrameworkElement CreateView() noexcept;
+  winrt::Microsoft::UI::Xaml::FrameworkElement CreateView() noexcept;
 
   // IViewManagerRequiresNativeLayout
   bool RequiresNativeLayout();
 
   // IViewManagerWithChildren
   void AddView(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      winrt::Windows::UI::Xaml::UIElement child,
+      winrt::Microsoft::UI::Xaml::FrameworkElement parent,
+      winrt::Microsoft::UI::Xaml::UIElement child,
       int64_t index);
-  void RemoveAllChildren(winrt::Windows::UI::Xaml::FrameworkElement parent);
+  void RemoveAllChildren(winrt::Microsoft::UI::Xaml::FrameworkElement parent);
   void RemoveChildAt(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
+      winrt::Microsoft::UI::Xaml::FrameworkElement parent,
       int64_t index);
   void ReplaceChild(
-      winrt::Windows::UI::Xaml::FrameworkElement parent,
-      winrt::Windows::UI::Xaml::UIElement oldChild,
-      winrt::Windows::UI::Xaml::UIElement newChild);
+      winrt::Microsoft::UI::Xaml::FrameworkElement parent,
+      winrt::Microsoft::UI::Xaml::UIElement oldChild,
+      winrt::Microsoft::UI::Xaml::UIElement newChild);
 
   // IViewManagerWithReactContext
   winrt::Microsoft::ReactNative::IReactContext ReactContext() noexcept;
@@ -51,7 +51,7 @@ class ScreenStackHeaderConfigViewManager
   NativeProps() noexcept;
 
   void UpdateProperties(
-      winrt::Windows::UI::Xaml::FrameworkElement const &view,
+      winrt::Microsoft::UI::Xaml::FrameworkElement const &view,
       winrt::Microsoft::ReactNative::IJSValueReader const
           &propertyMapReader) noexcept;
 
@@ -66,7 +66,7 @@ class ScreenStackHeaderConfigViewManager
   Commands() noexcept;
 
   void DispatchCommand(
-      winrt::Windows::UI::Xaml::FrameworkElement const &view,
+      winrt::Microsoft::UI::Xaml::FrameworkElement const &view,
       winrt::hstring const &commandId,
       winrt::Microsoft::ReactNative::IJSValueReader const
           &commandArgsReader) noexcept;

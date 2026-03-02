@@ -2,7 +2,7 @@
 
 namespace winrt::RNScreens::implementation {
 class SearchBar
-    : public winrt::Windows::UI::Xaml::Controls::StackPanelT<
+    : public winrt::Microsoft::UI::Xaml::Controls::StackPanelT<
           SearchBar> {
  public:
   SearchBar(
