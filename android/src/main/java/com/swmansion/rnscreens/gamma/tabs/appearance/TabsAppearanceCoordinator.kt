@@ -15,13 +15,19 @@ class TabsAppearanceCoordinator(
 ) {
     private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
 
-    fun updateTabAppearance(context: ContextThemeWrapper, tabsHost: TabsHost) {
+    fun updateTabAppearance(
+        context: ContextThemeWrapper,
+        tabsHost: TabsHost,
+    ) {
         appearanceApplicator.updateSharedAppearance(context, tabsHost)
         updateMenuItems(context, tabsHost)
         appearanceApplicator.updateFontStyles(context, tabsHost) // It needs to be updated after updateMenuItems
     }
 
-    private fun updateMenuItems(context: ContextThemeWrapper, tabsHost: TabsHost) {
+    private fun updateMenuItems(
+        context: ContextThemeWrapper,
+        tabsHost: TabsHost,
+    ) {
         if (bottomNavigationView.menu.size != tabsScreenFragments.size) {
             // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
             bottomNavigationView.menu.clear()
