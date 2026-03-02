@@ -64,10 +64,11 @@ function TabsHost(props: TabsHostProps) {
 
   return (
     <TabsHostNativeComponent
-      style={styles.fillParent}
+      style={[styles.fillParent, Platform.OS === 'android' && { direction }]}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={experimentalControlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
+      // `layoutDirection` is iOS-only
       layoutDirection={direction}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}

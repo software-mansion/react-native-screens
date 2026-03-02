@@ -143,7 +143,7 @@ class TabsHostViewManager :
         value: String?,
     ) = Unit
 
-    override fun setDirectionMode(
+    override fun setLayoutDirection(
         view: TabsHost,
         value: String?,
     ) = Unit
