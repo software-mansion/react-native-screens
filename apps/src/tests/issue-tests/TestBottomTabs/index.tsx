@@ -1,24 +1,55 @@
 import React from 'react';
 
-import { enableFreeze } from 'react-native-screens';
+import {
+  enableFreeze,
+  TabsScreenAppearanceAndroid,
+} from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext'
+} from '../../../shared/gamma/containers/bottom-tabs/ConfigWrapperContext';
 import {
   BottomTabsContainer,
   type TabConfiguration,
-} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer'
+} from '../../../shared/gamma/containers/bottom-tabs/BottomTabsContainer';
 import { Tab1, Tab2, Tab3, Tab4 } from './tabs';
-import Colors from '../../../shared/styling/Colors'
+import Colors from '../../../shared/styling/Colors';
 import { internalEnableDetailedBottomTabsLogging } from 'react-native-screens/private';
 
 enableFreeze(true);
 internalEnableDetailedBottomTabsLogging();
 
+const DEFAULT_APPEARANCE_ANDROID: TabsScreenAppearanceAndroid = {
+  tabBarBackgroundColor: Colors.NavyLight100,
+  tabBarItemRippleColor: Colors.WhiteTransparentDark,
+  tabBarItemLabelVisibilityMode: 'auto',
+  normal: {
+    tabBarItemIconColor: Colors.BlueLight100,
+    tabBarItemTitleFontColor: Colors.BlueLight40,
+  },
+  selected: {
+    tabBarItemIconColor: Colors.GreenLight100,
+    tabBarItemTitleFontColor: Colors.GreenLight40,
+  },
+  focused: {
+    tabBarItemIconColor: Colors.YellowDark100,
+    tabBarItemTitleFontColor: Colors.YellowDark40,
+  },
+  tabBarItemActiveIndicatorEnabled: true,
+  tabBarItemActiveIndicatorColor: Colors.GreenLight40,
+  tabBarItemTitleSmallLabelFontSize: 10,
+  tabBarItemTitleLargeLabelFontSize: 16,
+  tabBarItemTitleFontFamily: 'monospace',
+  tabBarItemTitleFontStyle: 'italic',
+  tabBarItemTitleFontWeight: 700,
+  tabBarItemBadgeTextColor: Colors.RedDark120,
+  tabBarItemBadgeBackgroundColor: Colors.RedDark40,
+};
+
 const TAB_CONFIGS: TabConfiguration[] = [
   {
     tabScreenProps: {
+      standardAppearanceAndroid: DEFAULT_APPEARANCE_ANDROID,
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyLight100,
         stacked: {
@@ -52,11 +83,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
         ios: {
           type: 'sfSymbol',
           name: 'house.fill',
-        }, 
+        },
         android: {
           type: 'imageSource',
           imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
-        }
+        },
       },
     },
     component: Tab1,
@@ -69,6 +100,24 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Second Tab Screen',
       tabBarItemTestID: 'tab-item-2-id',
       tabBarItemAccessibilityLabel: 'Second Tab Item',
+      standardAppearanceAndroid: {
+        ...DEFAULT_APPEARANCE_ANDROID,
+        tabBarBackgroundColor: Colors.PurpleDark100,
+        tabBarItemRippleColor: Colors.PurpleDark40,
+        normal: {
+          tabBarItemIconColor: Colors.YellowDark100,
+          tabBarItemTitleFontColor: Colors.YellowDark40,
+        },
+        selected: {
+          tabBarItemIconColor: Colors.RedDark100,
+          tabBarItemTitleFontColor: Colors.RedDark40,
+        },
+        focused: {
+          tabBarItemIconColor: Colors.RedLight100,
+          tabBarItemTitleFontColor: Colors.RedLight40,
+        },
+        tabBarItemActiveIndicatorColor: Colors.PurpleDark120,
+      },
       scrollEdgeAppearance: {
         tabBarBackgroundColor: Colors.NavyDark140,
         stacked: {
@@ -114,7 +163,6 @@ const TAB_CONFIGS: TabConfiguration[] = [
           },
         },
       },
-      tabBarItemBadgeBackgroundColor: Colors.GreenDark100,
       icon: {
         ios: {
           type: 'templateSource',
@@ -133,7 +181,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         android: {
           type: 'drawableResource',
           name: 'sym_call_incoming',
-        }
+        },
       },
       title: 'Tab2',
     },
@@ -154,8 +202,11 @@ const TAB_CONFIGS: TabConfiguration[] = [
       tabBarItemTestID: 'tab-item-3-id',
       tabBarItemAccessibilityLabel: 'Third Tab Item',
       scrollEdgeEffects: { bottom: 'hard' },
-      tabBarItemBadgeBackgroundColor: Colors.RedDark40,
-      tabBarItemBadgeTextColor: Colors.RedDark120,
+      standardAppearanceAndroid: {
+        ...DEFAULT_APPEARANCE_ANDROID,
+        tabBarItemBadgeTextColor: Colors.GreenDark120,
+        tabBarItemBadgeBackgroundColor: Colors.GreenDark40,
+      },
       standardAppearance: {
         stacked: {
           normal: {
@@ -178,7 +229,7 @@ const TAB_CONFIGS: TabConfiguration[] = [
         shared: {
           type: 'imageSource',
           imageSource: require('../../../../assets/variableIcons/icon_fill.png'),
-        }
+        },
       },
       title: 'Tab3',
       // systemItem: 'search', // iOS specific
@@ -194,6 +245,9 @@ const TAB_CONFIGS: TabConfiguration[] = [
       accessibilityLabel: 'Fourth Tab Screen',
       tabBarItemTestID: 'tab-item-4-id',
       tabBarItemAccessibilityLabel: 'Fourth Tab Item',
+      standardAppearanceAndroid: {
+        ...DEFAULT_APPEARANCE_ANDROID,
+      },
       icon: {
         ios: {
           type: 'sfSymbol',
@@ -240,21 +294,7 @@ function App() {
       }}>
       <BottomTabsContainer
         tabConfigs={TAB_CONFIGS}
-        tabBarBackgroundColor={Colors.NavyLight100}
-        tabBarItemActiveIndicatorColor={Colors.GreenLight40}
-        tabBarItemActiveIndicatorEnabled={true}
         tabBarTintColor={Colors.YellowLight100}
-        tabBarItemIconColor={Colors.BlueLight100}
-        tabBarItemTitleFontColor={Colors.BlueLight40}
-        tabBarItemIconColorActive={Colors.GreenLight100}
-        tabBarItemTitleFontColorActive={Colors.GreenLight40}
-        tabBarItemTitleFontSize={10}
-        tabBarItemTitleFontSizeActive={15}
-        tabBarItemRippleColor={Colors.WhiteTransparentDark}
-        tabBarItemTitleFontFamily="monospace"
-        tabBarItemTitleFontStyle="italic"
-        tabBarItemTitleFontWeight="700"
-        tabBarItemLabelVisibilityMode="auto"
         tabBarMinimizeBehavior="onScrollDown"
       />
     </ConfigWrapperContext.Provider>

@@ -1,7 +1,10 @@
 package com.swmansion.rnscreens.gamma.tabs.screen
 
+import android.util.Log
+import androidx.core.graphics.toColorInt
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.ReadableType
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -10,6 +13,8 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenManagerInterface
 import com.swmansion.rnscreens.gamma.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.gamma.tabs.appearance.ItemStateAppearance
+import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearance
 import com.swmansion.rnscreens.gamma.tabs.image.loadTabImage
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidAppearEvent
 import com.swmansion.rnscreens.gamma.tabs.screen.event.TabsScreenDidDisappearEvent
@@ -60,14 +65,6 @@ class TabsScreenViewManager :
         view: TabsScreen,
         value: Dynamic,
     ) = Unit
-
-    @ReactProp(name = "tabBarItemBadgeBackgroundColor", customType = "Color")
-    override fun setTabBarItemBadgeBackgroundColor(
-        view: TabsScreen,
-        value: Int?,
-    ) {
-        view.tabBarItemBadgeBackgroundColor = value
-    }
 
     override fun setIconType(
         view: TabsScreen?,
@@ -198,13 +195,6 @@ class TabsScreenViewManager :
     }
 
     // Android specific
-    @ReactProp(name = "tabBarItemBadgeTextColor", customType = "Color")
-    override fun setTabBarItemBadgeTextColor(
-        view: TabsScreen,
-        value: Int?,
-    ) {
-        view.tabBarItemBadgeTextColor = value
-    }
 
     @ReactProp(name = "drawableIconResourceName")
     override fun setDrawableIconResourceName(
@@ -256,6 +246,88 @@ class TabsScreenViewManager :
         val uri = value?.getString("uri")
         if (uri != null) {
             loadTabImage(view.context, uri, view, true)
+        }
+    }
+
+    @ReactProp(name = "standardAppearanceAndroid")
+    override fun setStandardAppearanceAndroid(
+        view: TabsScreen,
+        value: Dynamic?,
+    ) {
+        if (value == null || value.isNull) {
+            view.appearance = null
+            return
+        }
+        val appearanceMap = if (value.type == ReadableType.Map) value.asMap() else null
+
+        if (appearanceMap == null) {
+            view.appearance = null
+            return
+        }
+
+        view.appearance = parseAndroidTabsAppearance(appearanceMap)
+    }
+
+    private fun parseAndroidTabsAppearance(appearance: ReadableMap): TabsAppearance =
+        TabsAppearance(
+            tabBarBackgroundColor = appearance.getOptionalColor("tabBarBackgroundColor"),
+
+            tabBarItemRippleColor = appearance.getOptionalColor("tabBarItemRippleColor"),
+
+            tabBarItemLabelVisibilityMode = appearance.getOptionalString("tabBarItemLabelVisibilityMode"),
+
+            normal = if (appearance.hasKey("normal")) parseItemStateAppearance(appearance.getMap("normal")) else null,
+            selected = if (appearance.hasKey("selected")) parseItemStateAppearance(appearance.getMap("selected")) else null,
+            focused = if (appearance.hasKey("focused")) parseItemStateAppearance(appearance.getMap("focused")) else null,
+            disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(appearance.getMap("disabled")) else null,
+
+            tabBarItemActiveIndicatorColor = appearance.getOptionalColor("tabBarItemActiveIndicatorColor"),
+            tabBarItemActiveIndicatorEnabled = appearance.getOptionalBoolean("tabBarItemActiveIndicatorEnabled"),
+
+            tabBarItemTitleFontFamily = appearance.getOptionalString("tabBarItemTitleFontFamily"),
+            tabBarItemTitleSmallLabelFontSize = appearance.getOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
+            tabBarItemTitleLargeLabelFontSize = appearance.getOptionalFloat("tabBarItemTitleLargeLabelFontSize"),
+            tabBarItemTitleFontWeight = appearance.getOptionalString("tabBarItemTitleFontWeight"),
+            tabBarItemTitleFontStyle = appearance.getOptionalString("tabBarItemTitleFontStyle"),
+
+            tabBarItemBadgeBackgroundColor = appearance.getOptionalColor("tabBarItemBadgeBackgroundColor"),
+            tabBarItemBadgeTextColor = appearance.getOptionalColor("tabBarItemBadgeTextColor"),
+        )
+
+    private fun parseItemStateAppearance(itemStateAppearance: ReadableMap?): ItemStateAppearance? {
+        if (itemStateAppearance == null) return null
+        return ItemStateAppearance(
+            tabBarItemIconColor = itemStateAppearance.getOptionalColor("tabBarItemIconColor"),
+            tabBarItemTitleFontColor = itemStateAppearance.getOptionalColor("tabBarItemTitleFontColor"),
+        )
+    }
+
+    private fun ReadableMap.getOptionalBoolean(key: String): Boolean? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.Boolean) getBoolean(key) else null
+    }
+
+    private fun ReadableMap.getOptionalString(key: String): String? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.String) getString(key) else null
+    }
+
+    private fun ReadableMap.getOptionalFloat(key: String): Float? {
+        if (!hasKey(key) || isNull(key)) return null
+        return if (getType(key) == ReadableType.Number) getDouble(key).toFloat() else null
+    }
+
+    private fun ReadableMap.getOptionalColor(key: String): Int? {
+        if (!hasKey(key) || isNull(key)) return null
+        return try {
+            when (getType(key)) {
+                ReadableType.Number -> getInt(key)
+                ReadableType.String -> getString(key)?.toColorInt()
+                else -> null
+            }
+        } catch (e: Exception) {
+            Log.w("RNScreens", "[RNScreens] Could not parse color for key '$key': ${e.message}")
+            null
         }
     }
 

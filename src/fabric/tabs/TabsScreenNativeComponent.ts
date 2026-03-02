@@ -3,7 +3,6 @@
 import { codegenNativeComponent } from 'react-native';
 import type {
   CodegenTypes as CT,
-  ColorValue,
   ImageSource,
   ProcessedColorValue,
   ViewProps,
@@ -51,6 +50,54 @@ export type Appearance = {
   tabBarBackgroundColor?: ProcessedColorValue | null;
   tabBarShadowColor?: ProcessedColorValue | null;
   tabBarBlurEffect?: CT.WithDefault<BlurEffect, 'systemDefault'>;
+};
+
+// Note: temporary, will be renamed on splitting tabs components
+type TabBarItemLabelVisibilityMode =
+  | 'auto'
+  | 'selected'
+  | 'labeled'
+  | 'unlabeled';
+
+// Note: temporary, will be renamed on splitting tabs components
+export type ItemStateAppearanceAndroid = {
+  tabBarItemTitleFontColor?: ProcessedColorValue | null;
+  tabBarItemIconColor?: ProcessedColorValue | null;
+};
+
+export type AppearanceAndroid = {
+  // TabBar - Appearance
+  tabBarBackgroundColor?: ProcessedColorValue | null;
+
+  // TabBarItem - Ripple
+  tabBarItemRippleColor?: ProcessedColorValue | null;
+
+  // TabBarItem - Label layout
+  tabBarItemLabelVisibilityMode?: CT.WithDefault<
+    TabBarItemLabelVisibilityMode,
+    'auto'
+  >;
+
+  // TabBarItem - State-dependent appearance
+  normal?: ItemStateAppearanceAndroid;
+  selected?: ItemStateAppearanceAndroid;
+  focused?: ItemStateAppearanceAndroid;
+  disabled?: ItemStateAppearanceAndroid;
+
+  // TabBarItem - Active Indicator
+  tabBarItemActiveIndicatorColor?: ProcessedColorValue | null;
+  tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
+
+  // TabBarItem - Label
+  tabBarItemTitleFontFamily?: string;
+  tabBarItemTitleSmallLabelFontSize?: CT.Float;
+  tabBarItemTitleLargeLabelFontSize?: CT.Float;
+  tabBarItemTitleFontWeight?: string;
+  tabBarItemTitleFontStyle?: string;
+
+  // TabBarItem - Badge
+  tabBarItemBadgeBackgroundColor?: ProcessedColorValue | null;
+  tabBarItemBadgeTextColor?: ProcessedColorValue | null;
 };
 
 type BlurEffect =
@@ -138,10 +185,11 @@ export interface NativeProps extends ViewProps {
   selectedDrawableIconResourceName?: string;
   selectedImageIconResource?: ImageSource;
 
-  tabBarItemBadgeTextColor?: ColorValue;
-  tabBarItemBadgeBackgroundColor?: ColorValue;
+  // Android-specific appearance
+  // Note: temporary standardAppearanceAndroid, suffix will be dropped after splitting components
+  standardAppearanceAndroid?: UnsafeMixed<AppearanceAndroid>;
 
-  // iOS-specific
+  // iOS-specific appearance
   standardAppearance?: UnsafeMixed<Appearance>;
   scrollEdgeAppearance?: UnsafeMixed<Appearance>;
 
