@@ -320,12 +320,13 @@ class TabsScreenViewManager :
                 else -> null
             }
         } catch (e: Exception) {
-            Log.w("RNScreens", "[RNScreens] Could not parse color for key '$key': ${e.message}")
+            Log.w(TAG, "[RNScreens] Could not parse color for key '$key': ${e.message}")
             null
         }
     }
 
     companion object {
         const val REACT_CLASS = "RNSTabsScreen"
+        const val TAG = "TabsScreenViewManager"
     }
 }
