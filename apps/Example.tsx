@@ -9,7 +9,6 @@ import {
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RNRestart from 'react-native-restart';
 
 import { ListItem, SettingsSwitch, ThemedText } from './src/shared';
 
@@ -28,8 +27,6 @@ import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
 import BarButtonItems from './src/screens/BarButtonItems';
 
-import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   ScreensDarkTheme,
   ScreensLightTheme,
@@ -39,6 +36,23 @@ import IssueTestsScreen from './src/tests/IssueTestsScreen';
 import SingleFeatureTests from './src/tests/single-feature-tests';
 import ComponentIntegrationTests from './src/tests/component-integration-tests';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+// react-native-gesture-handler is not supported on Windows
+// see https://github.com/software-mansion/react-native-gesture-handler/issues/3723
+const GestureHandlerRootView: React.ComponentType<{
+  style?: object;
+  children: React.ReactNode;
+}> =
+  Platform.OS === 'windows'
+    ? ({ children }) => <React.Fragment>{children}</React.Fragment>
+    : require('react-native-gesture-handler').GestureHandlerRootView;
+
+const GestureDetectorProvider: React.ComponentType<{
+  children: React.ReactNode;
+}> =
+  Platform.OS === 'windows'
+    ? ({ children }) => <React.Fragment>{children}</React.Fragment>
+    : require('react-native-screens/gesture-handler').GestureDetectorProvider;
 
 function isPlatformReady(name: keyof typeof SCREENS) {
   if (Platform.isTV) {
