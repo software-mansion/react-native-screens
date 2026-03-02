@@ -1,5 +1,6 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import <React/RCTFont.h>
+#import <React/RCTI18nUtil.h>
 #import <React/RCTImageLoader.h>
 #import "RCTConvert+RNSTabs.h"
 #import "RNSConversions.h"
@@ -20,6 +21,13 @@
 
   // Step 1 - configure host-specific appearance
   tabBar.tintColor = hostComponentView.tabBarTintColor;
+
+  // Apply RTL semantic attribute so tab items render right-to-left when the app is in RTL mode
+  if ([[RCTI18nUtil sharedInstance] isRTL]) {
+    tabBar.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+  } else {
+    tabBar.semanticContentAttribute = UISemanticContentAttributeUnspecified;
+  }
 
   // Set tint color for iPadOS tab bar. This is the official way recommended by Apple:
   // https://developer.apple.com/forums/thread/761056?answerId=798245022#798245022
