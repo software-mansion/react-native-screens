@@ -85,7 +85,7 @@ export interface TabsHostProps {
    * - `ltr` - forces left-to-right layout direction,
    * - `rtl` - forces right-to-left layout direction.
    *
-   * On Android, this property relies on `react-native`'s `styles.direction`
+   * On Android, this property relies on `react-native`'s `style.direction`
    * (which sets native Android `layoutDirection` View property). Property is
    * propagated via the view hierarchy. The value will fallback to direction
    * set on one of the parent views.
