@@ -271,25 +271,19 @@ class TabsScreenViewManager :
     private fun parseAndroidTabsAppearance(appearance: ReadableMap): TabsAppearance =
         TabsAppearance(
             tabBarBackgroundColor = appearance.getOptionalColor("tabBarBackgroundColor"),
-
             tabBarItemRippleColor = appearance.getOptionalColor("tabBarItemRippleColor"),
-
             tabBarItemLabelVisibilityMode = appearance.getOptionalString("tabBarItemLabelVisibilityMode"),
-
             normal = if (appearance.hasKey("normal")) parseItemStateAppearance(appearance.getMap("normal")) else null,
             selected = if (appearance.hasKey("selected")) parseItemStateAppearance(appearance.getMap("selected")) else null,
             focused = if (appearance.hasKey("focused")) parseItemStateAppearance(appearance.getMap("focused")) else null,
             disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(appearance.getMap("disabled")) else null,
-
             tabBarItemActiveIndicatorColor = appearance.getOptionalColor("tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = appearance.getOptionalBoolean("tabBarItemActiveIndicatorEnabled"),
-
             tabBarItemTitleFontFamily = appearance.getOptionalString("tabBarItemTitleFontFamily"),
             tabBarItemTitleSmallLabelFontSize = appearance.getOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
             tabBarItemTitleLargeLabelFontSize = appearance.getOptionalFloat("tabBarItemTitleLargeLabelFontSize"),
             tabBarItemTitleFontWeight = appearance.getOptionalString("tabBarItemTitleFontWeight"),
             tabBarItemTitleFontStyle = appearance.getOptionalString("tabBarItemTitleFontStyle"),
-
             tabBarItemBadgeBackgroundColor = appearance.getOptionalColor("tabBarItemBadgeBackgroundColor"),
             tabBarItemBadgeTextColor = appearance.getOptionalColor("tabBarItemBadgeTextColor"),
         )
