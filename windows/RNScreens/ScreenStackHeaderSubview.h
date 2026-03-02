@@ -1,24 +1,12 @@
 #pragma once
+#include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-class ScreenStackHeaderSubview
-    : public winrt::Microsoft::UI::Xaml::Controls::StackPanelT<
-          ScreenStackHeaderSubview> {
- public:
-  ScreenStackHeaderSubview(
-      winrt::Microsoft::ReactNative::IReactContext reactContext);
 
-  void addView(winrt::Microsoft::UI::Xaml::UIElement element);
-  void removeAllChildren();
-  void removeChildAt(int64_t index);
-  void replaceChild(
-      winrt::Microsoft::UI::Xaml::UIElement oldChild,
-      winrt::Microsoft::UI::Xaml::UIElement newChild);
+// TODO: Implement native header subview rendering for Windows (left/right/
+// center button slots in the navigation bar).
+// Currently a stub — subview content is rendered by JS.
+void RegisterRNSScreenStackHeaderSubview(
+    winrt::Microsoft::ReactNative::IReactPackageBuilderFabric const& fabricBuilder) noexcept;
 
-  winrt::Windows::Foundation::Collections::IVector<Microsoft::UI::Xaml::UIElement>
-      m_children;
-
- private:
-  winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
-};
 } // namespace winrt::RNScreens::implementation

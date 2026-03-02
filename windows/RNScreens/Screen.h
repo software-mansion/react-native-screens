@@ -1,70 +1,16 @@
 #pragma once
+#include "pch.h"
 
 namespace winrt::RNScreens::implementation {
 
-enum class StackPresentation { PUSH, MODAL, TRANSPARENT_MODAL, FORM_SHEET };
+// Shared registration helper used by both RNSScreen and RNSModalScreen, which
+// have identical native behavior on Windows. Centralizing the logic here
+// prevents silent divergence from copy-paste duplication.
+void RegisterScreenLike(
+    winrt::Microsoft::ReactNative::IReactPackageBuilderFabric const& fabricBuilder,
+    winrt::hstring const& componentName) noexcept;
 
-enum class StackAnimation {
-  DEFAULT,
-  NONE,
-  FADE,
-  SLIDE_FROM_BOTTOM,
-  SLIDE_FROM_RIGHT,
-  SLIDE_FROM_LEFT,
-  FADE_FROM_BOTTOM,
-  IOS_FROM_RIGHT,
-  IOS_FROM_LEFT
-};
+void RegisterRNSScreen(
+    winrt::Microsoft::ReactNative::IReactPackageBuilderFabric const& fabricBuilder) noexcept;
 
-enum class ReplaceAnimation { PUSH, POP };
-
-enum class ActivityState { INACTIVE, TRANSITIONING_OR_BELOW_TOP, ON_TOP };
-
-enum class WindowTraits {
-  ORIENTATION,
-  COLOR,
-  STYLE,
-  TRANSLUCENT,
-  HIDDEN,
-  ANIMATED
-};
-
-class Screen : public winrt::Microsoft::UI::Xaml::Controls::StackPanelT<Screen> {
- public:
-  Screen(winrt::Microsoft::ReactNative::IReactContext reactContext);
-  ~Screen();
-
-  void addView(winrt::Microsoft::UI::Xaml::UIElement element);
-  void removeAllChildren();
-  void removeChildAt(int64_t index);
-  void replaceChild(
-      winrt::Microsoft::UI::Xaml::UIElement oldChild,
-      winrt::Microsoft::UI::Xaml::UIElement newChild);
-
-  winrt::event_token onLoadingRevoker;
-  void onLoading(
-      winrt::Microsoft::UI::Xaml::FrameworkElement const &sender,
-      winrt::Windows::Foundation::IInspectable const &args);
-
-  winrt::event_token onLoadedRevoker;
-  void onLoaded(
-      winrt::Windows::Foundation::IInspectable const &sender,
-      winrt::Microsoft::UI::Xaml::RoutedEventArgs const &args);
-
-  winrt::event_token onUnloadedRevoker;
-  void onUnloaded(
-      winrt::Windows::Foundation::IInspectable const &sender,
-      winrt::Microsoft::UI::Xaml::RoutedEventArgs const &args);
-
-  void dispatchOnAppear();
-  void dispatchOnDisappear();
-  void dispatchOnWillAppear();
-  void dispatchOnWillDisappear();
-  StackAnimation GetStackAnimation() const;
-  void SetStackAnimation(StackAnimation const& animation);
-
- private:
-  winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
-  StackAnimation stackAnimation;
-};
 } // namespace winrt::RNScreens::implementation

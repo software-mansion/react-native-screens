@@ -1,19 +1,21 @@
 #include "pch.h"
 #include "SearchBar.h"
-#include "JSValueXaml.h"
-#include "NativeModules.h"
-
-namespace winrt {
-using namespace Microsoft::ReactNative;
-using namespace Windows::Foundation;
-using namespace Windows::Foundation::Collections;
-using namespace Microsoft::UI;
-using namespace Microsoft::UI::Xaml;
-using namespace Microsoft::UI::Xaml::Controls;
-} // namespace winrt
+#include "BaseProps.h"
 
 namespace winrt::RNScreens::implementation {
-SearchBar::SearchBar(
-    winrt::Microsoft::ReactNative::IReactContext reactContext)
-    : m_reactContext(reactContext) {}
+
+using namespace winrt::Microsoft::ReactNative;
+
+void RegisterRNSSearchBar(IReactPackageBuilderFabric const& fabricBuilder) noexcept {
+  fabricBuilder.AddViewComponent(
+      L"RNSSearchBar",
+      [](IReactViewComponentBuilder const& builder) noexcept {
+        builder.SetCreateProps(
+            [](ViewProps props, IComponentProps const& cloneFrom) noexcept
+            -> IComponentProps {
+              return winrt::make<BaseProps>(props, cloneFrom);
+            });
+      });
+}
+
 } // namespace winrt::RNScreens::implementation

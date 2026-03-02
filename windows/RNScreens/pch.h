@@ -20,11 +20,19 @@
 #include <winrt/base.h>
 #include <CppWinRTIncludes.h>
 #include <winrt/Microsoft.ReactNative.h>
+#include <JSValueComposition.h>
+#include <winrt/Microsoft.ReactNative.Composition.h>
 
 // C RunTime Header Files
 #include <malloc.h>
 #include <memory.h>
 #include <stdlib.h>
 #include <tchar.h>
+
+// Standard Library
+#include <algorithm>
+#include <cassert>
+#include <optional>
+#include <vector>
 
 // Reference additional headers your project requires here
