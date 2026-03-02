@@ -53,7 +53,8 @@
     "react-native.config.js",
     "README.md",
     "!**/__tests__",
-    "!android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.kt"
+    "!android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.kt",
+    "windows"
   ],
   "repository": {
     "type": "git",
@@ -75,7 +76,7 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": ">=0.82.0"
+    "react-native": ">=0.81.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -114,7 +115,7 @@
     "react-native-gesture-handler": "^3.0.1",
     "react-native-reanimated": "^3.19.0",
     "react-native-safe-area-context": "5.6.0",
-    "react-native-windows": "^0.64.8",
+    "react-native-windows": "^0.81.4",
     "react-test-renderer": "19.2.3",
     "release-it": "^15.6.0",
     "shelljs": "^0.9.2",
@@ -236,7 +237,19 @@
           "className": "RNSFormSheetContentWrapperComponentView"
         }
       }
+    },
+    "windows": {
+      "namespace": "ReactNativeScreensCodegen",
+      "outputDirectory": "windows/RNScreens/codegen",
+      "separateDataTypes": true
     }
   },
-  "packageManager": "yarn@4.1.1"
+  "packageManager": "yarn@4.1.1",
+  "react-native-windows": {
+    "init-windows": {
+      "name": "ReactNativeScreens",
+      "namespace": "ReactNativeScreens",
+      "template": "cpp-lib"
+    }
+  }
 }

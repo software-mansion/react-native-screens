@@ -1,41 +1,42 @@
 #pragma once
 
-#include "NativeModules.h"
-#include "RNScreensModule.g.h"
 #include "pch.h"
-#include "winrt/Microsoft.ReactNative.h"
+#include "resource.h"
 
-namespace winrt::RNScreens::implementation {
+#if __has_include("codegen/NativeRnScreensDataTypes.g.h")
+  #include "codegen/NativeRnScreensDataTypes.g.h"
+#endif
+// Note: The following lines use Mustache template syntax which will be processed during
+// project generation to produce standard C++ code. If existing codegen spec files are found,
+// use the actual filename; otherwise use conditional includes.
+#if __has_include("codegen/NativeRnScreensSpec.g.h")
+  #include "codegen/NativeRnScreensSpec.g.h"
+#endif
 
-class RNScreensModule : public RNScreensModuleT<RNScreensModule> {
- public:
-  RNScreensModule(Microsoft::ReactNative::IReactContext const &reactContext);
+#include "NativeModules.h"
 
-  static winrt::Windows::Foundation::Collections::IMapView<
-      winrt::hstring,
-      winrt::Microsoft::ReactNative::ViewManagerPropertyType>
-  NativeProps() noexcept;
-  void UpdateProperties(winrt::Microsoft::ReactNative::IJSValueReader const
-                            &propertyMapReader) noexcept;
+namespace winrt::ReactNativeScreens
+{
 
-  static winrt::Microsoft::ReactNative::ConstantProviderDelegate
-  ExportedCustomBubblingEventTypeConstants() noexcept;
-  static winrt::Microsoft::ReactNative::ConstantProviderDelegate
-  ExportedCustomDirectEventTypeConstants() noexcept;
+// See https://microsoft.github.io/react-native-windows/docs/native-platform for help writing native modules
 
-  static winrt::Windows::Foundation::Collections::IVectorView<winrt::hstring>
-  Commands() noexcept;
-  void DispatchCommand(
-      winrt::hstring const &commandId,
-      winrt::Microsoft::ReactNative::IJSValueReader const
-          &commandArgsReader) noexcept;
+REACT_MODULE(RnScreens)
+struct RnScreens
+{
+  // Note: Mustache template syntax below will be processed during project generation
+  // to produce standard C++ code based on detected codegen files.
+#if __has_include("codegen/NativeRnScreensSpec.g.h")
+  using ModuleSpec = ReactNativeScreensCodegen::RnScreensSpec;
+#endif
 
- private:
-  Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
+  REACT_INIT(Initialize)
+  void Initialize(React::ReactContext const &reactContext) noexcept;
+
+  REACT_SYNC_METHOD(multiply)
+  double multiply(double a, double b) noexcept;
+
+private:
+  React::ReactContext m_context;
 };
-} // namespace winrt::RNScreens::implementation
 
-namespace winrt::RNScreens::factory_implementation {
-struct RNScreensModule
-    : RNScreensModuleT<RNScreensModule, implementation::RNScreensModule> {};
-} // namespace winrt::RNScreens::factory_implementation
+} // namespace winrt::ReactNativeScreens
