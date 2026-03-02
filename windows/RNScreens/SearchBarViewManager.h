@@ -18,7 +18,7 @@ class SearchBarViewManager
 
   // IViewManager
   winrt::hstring Name() noexcept;
-  winrt::Windows::UI::Xaml::FrameworkElement CreateView() noexcept;
+  winrt::Microsoft::UI::Xaml::FrameworkElement CreateView() noexcept;
 
   // IViewManagerRequiresNativeLayout
   bool RequiresNativeLayout();
@@ -30,7 +30,7 @@ class SearchBarViewManager
   NativeProps() noexcept;
 
   void UpdateProperties(
-      winrt::Windows::UI::Xaml::FrameworkElement const &view,
+      winrt::Microsoft::UI::Xaml::FrameworkElement const &view,
       winrt::Microsoft::ReactNative::IJSValueReader const
           &propertyMapReader) noexcept;
 
@@ -46,7 +46,7 @@ class SearchBarViewManager
   Commands() noexcept;
 
   void DispatchCommand(
-      winrt::Windows::UI::Xaml::FrameworkElement const &view,
+      winrt::Microsoft::UI::Xaml::FrameworkElement const &view,
       winrt::hstring const &commandId,
       winrt::Microsoft::ReactNative::IJSValueReader const
           &commandArgsReader) noexcept;

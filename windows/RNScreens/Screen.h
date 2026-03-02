@@ -29,32 +29,32 @@ enum class WindowTraits {
   ANIMATED
 };
 
-class Screen : public winrt::Windows::UI::Xaml::Controls::StackPanelT<Screen> {
+class Screen : public winrt::Microsoft::UI::Xaml::Controls::StackPanelT<Screen> {
  public:
   Screen(winrt::Microsoft::ReactNative::IReactContext reactContext);
   ~Screen();
 
-  void addView(winrt::Windows::UI::Xaml::UIElement element);
+  void addView(winrt::Microsoft::UI::Xaml::UIElement element);
   void removeAllChildren();
   void removeChildAt(int64_t index);
   void replaceChild(
-      winrt::Windows::UI::Xaml::UIElement oldChild,
-      winrt::Windows::UI::Xaml::UIElement newChild);
+      winrt::Microsoft::UI::Xaml::UIElement oldChild,
+      winrt::Microsoft::UI::Xaml::UIElement newChild);
 
   winrt::event_token onLoadingRevoker;
   void onLoading(
-      winrt::Windows::UI::Xaml::FrameworkElement const &sender,
+      winrt::Microsoft::UI::Xaml::FrameworkElement const &sender,
       winrt::Windows::Foundation::IInspectable const &args);
 
   winrt::event_token onLoadedRevoker;
   void onLoaded(
       winrt::Windows::Foundation::IInspectable const &sender,
-      winrt::Windows::UI::Xaml::RoutedEventArgs const &args);
+      winrt::Microsoft::UI::Xaml::RoutedEventArgs const &args);
 
   winrt::event_token onUnloadedRevoker;
   void onUnloaded(
       winrt::Windows::Foundation::IInspectable const &sender,
-      winrt::Windows::UI::Xaml::RoutedEventArgs const &args);
+      winrt::Microsoft::UI::Xaml::RoutedEventArgs const &args);
 
   void dispatchOnAppear();
   void dispatchOnDisappear();

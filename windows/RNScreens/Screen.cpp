@@ -8,9 +8,9 @@ namespace winrt {
 using namespace Microsoft::ReactNative;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
-using namespace Windows::UI;
-using namespace Windows::UI::Xaml;
-using namespace Windows::UI::Xaml::Controls;
+using namespace Microsoft::UI;
+using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Controls;
 } // namespace winrt
 
 namespace winrt::RNScreens::implementation {
@@ -27,7 +27,7 @@ Screen::~Screen() {
   Unloaded(onUnloadedRevoker);
 }
 
-void Screen::addView(winrt::Windows::UI::Xaml::UIElement element) {
+void Screen::addView(winrt::Microsoft::UI::Xaml::UIElement element) {
   Children().Append(element);
 }
 
@@ -40,8 +40,8 @@ void Screen::removeChildAt(int64_t index) {
 }
 
 void Screen::replaceChild(
-    winrt::Windows::UI::Xaml::UIElement oldChild,
-    winrt::Windows::UI::Xaml::UIElement newChild) {
+    winrt::Microsoft::UI::Xaml::UIElement oldChild,
+    winrt::Microsoft::UI::Xaml::UIElement newChild) {
   uint32_t index;
   if (!Children().IndexOf(oldChild, index))
     return;
@@ -50,7 +50,7 @@ void Screen::replaceChild(
 }
 
 void Screen::onLoading(
-    winrt::Windows::UI::Xaml::FrameworkElement const &sender,
+    winrt::Microsoft::UI::Xaml::FrameworkElement const &sender,
     winrt::Windows::Foundation::IInspectable const &) {
   auto screen = sender.try_as<Screen>();
   if (!screen)
@@ -61,7 +61,7 @@ void Screen::onLoading(
 
 void Screen::onLoaded(
     winrt::Windows::Foundation::IInspectable const &sender,
-    winrt::Windows::UI::Xaml::RoutedEventArgs const &) {
+    winrt::Microsoft::UI::Xaml::RoutedEventArgs const &) {
   auto screen = sender.try_as<Screen>();
   if (!screen)
     return;
@@ -71,7 +71,7 @@ void Screen::onLoaded(
 
 void Screen::onUnloaded(
     winrt::Windows::Foundation::IInspectable const &sender,
-    winrt::Windows::UI::Xaml::RoutedEventArgs const &) {
+    winrt::Microsoft::UI::Xaml::RoutedEventArgs const &) {
   auto screen = sender.try_as<Screen>();
   if (!screen)
     return;

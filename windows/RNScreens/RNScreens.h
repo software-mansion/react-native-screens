@@ -9,9 +9,7 @@
 // Note: The following lines use Mustache template syntax which will be processed during
 // project generation to produce standard C++ code. If existing codegen spec files are found,
 // use the actual filename; otherwise use conditional includes.
-#if __has_include("codegen/NativeRnScreensSpec.g.h")
-  #include "codegen/NativeRnScreensSpec.g.h"
-#endif
+#include "codegen/NativeScreensModuleSpec.g.h"
 
 #include "NativeModules.h"
 
@@ -25,9 +23,7 @@ struct RnScreens
 {
   // Note: Mustache template syntax below will be processed during project generation
   // to produce standard C++ code based on detected codegen files.
-#if __has_include("codegen/NativeRnScreensSpec.g.h")
-  using ModuleSpec = ReactNativeScreensCodegen::RnScreensSpec;
-#endif
+  using ModuleSpec = ReactNativeScreensCodegen::ScreensModuleSpec;
 
   REACT_INIT(Initialize)
   void Initialize(React::ReactContext const &reactContext) noexcept;
