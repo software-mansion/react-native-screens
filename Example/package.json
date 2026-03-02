@@ -65,7 +65,7 @@
     "typescript": "^5.8.3"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "react-native-windows": {
     "init-windows": {
