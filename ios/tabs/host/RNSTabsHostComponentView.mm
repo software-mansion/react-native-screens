@@ -113,6 +113,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 #endif
   _tabBarTintColor = nil;
+  _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -352,9 +353,9 @@ namespace react = facebook::react;
       }
   }
 
-  if (newComponentProps.directionMode != oldComponentProps.directionMode) {
-    [self setDirectionMode:rnscreens::conversion::UISemanticContentAttributeFromTabsHostCppEquivalent(
-                               newComponentProps.directionMode)];
+  if (newComponentProps.layoutDirection != oldComponentProps.layoutDirection) {
+    [self setLayoutDirection:rnscreens::conversion::UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+                                 newComponentProps.layoutDirection)];
   }
 
   // Super call updates _props pointer. We should NOT update it before calling super.
@@ -587,21 +588,16 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)setDirectionMode:(UISemanticContentAttribute)directionMode
+- (void)setLayoutDirection:(UITraitEnvironmentLayoutDirection)layoutDirection
 {
-  _directionMode = directionMode;
+  _layoutDirection = layoutDirection;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
   if (@available(iOS 17.0, *)) {
-    _controller.traitOverrides.layoutDirection = _directionMode == UISemanticContentAttributeForceRightToLeft
-        ? UITraitEnvironmentLayoutDirectionRightToLeft
-        : UITraitEnvironmentLayoutDirectionLeftToRight;
+    _controller.traitOverrides.layoutDirection = _layoutDirection;
   } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
   {
-    _controller.view.semanticContentAttribute = _directionMode;
-    _controller.tabBar.semanticContentAttribute = _directionMode;
-    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ _controller.tabBar.class ]]
-        setSemanticContentAttribute:_directionMode];
+    _controller.needsLayoutDirectionUpdate = YES;
   }
 }
 

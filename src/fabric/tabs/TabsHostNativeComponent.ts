@@ -29,7 +29,7 @@ type TabBarMinimizeBehavior =
 
 type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
-type DirectionMode = 'rtl' | 'ltr';
+type LayoutDirection = 'inherit' | 'ltr' | 'rtl';
 
 export interface NativeProps extends ViewProps {
   // Events
@@ -41,7 +41,7 @@ export interface NativeProps extends ViewProps {
 
   // We can't use `direction` name for this prop as it's also used by
   // direction style View prop.
-  directionMode?: CT.WithDefault<DirectionMode, 'ltr'>;
+  layoutDirection?: CT.WithDefault<LayoutDirection, 'inherit'>;
 
   // Appearance
   // tabBarAppearance?: TabBarAppearance; // Does not work due to codegen issue.

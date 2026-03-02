@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import {
-  I18nManager,
   Platform,
   StyleSheet,
   findNodeHandle,
@@ -31,6 +30,7 @@ function TabsHost(props: TabsHostProps) {
       .controlledBottomTabs,
     bottomAccessory,
     nativeContainerStyle,
+    direction,
     ...filteredProps
   } = props;
 
@@ -64,11 +64,11 @@ function TabsHost(props: TabsHostProps) {
 
   return (
     <TabsHostNativeComponent
-      style={[styles.fillParent, styles.forceLtrForIOS26]}
+      style={styles.fillParent}
       onNativeFocusChange={onNativeFocusChangeCallback}
       controlNavigationStateInJS={experimentalControlNavigationStateInJS}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
-      directionMode={I18nManager.isRTL ? 'rtl' : 'ltr'}
+      layoutDirection={direction}
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredProps}>
@@ -103,10 +103,5 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-  },
-  // For TabsBottomAccessory layout to work correctly, we need to use
-  // `ltr`. We restore direction in children views.
-  forceLtrForIOS26: {
-    direction: isIOS26OrHigher ? 'ltr' : undefined,
   },
 });

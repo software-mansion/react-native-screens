@@ -484,17 +484,19 @@ UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
   }
 }
 
-UISemanticContentAttribute UISemanticContentAttributeFromTabsHostCppEquivalent(
-    react::RNSTabsHostDirectionMode directionMode)
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+    react::RNSTabsHostLayoutDirection layoutDirection)
 {
-  using enum facebook::react::RNSTabsHostDirectionMode;
-  switch (directionMode) {
+  using enum facebook::react::RNSTabsHostLayoutDirection;
+  switch (layoutDirection) {
+    case Inherit:
+      return UITraitEnvironmentLayoutDirectionUnspecified;
     case Ltr:
-      return UISemanticContentAttributeForceLeftToRight;
+      return UITraitEnvironmentLayoutDirectionLeftToRight;
     case Rtl:
-      return UISemanticContentAttributeForceRightToLeft;
+      return UITraitEnvironmentLayoutDirectionRightToLeft;
     default:
-      RCTLogError(@"[RNScreens] unsupported direction mode");
+      RCTLogError(@"[RNScreens] unsupported layout direction");
       break;
   }
 }

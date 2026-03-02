@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, type NativeSyntheticEvent } from 'react-native';
+import { I18nManager, Platform, type NativeSyntheticEvent } from 'react-native';
 import {
   Tabs,
   TabsHostProps,
@@ -81,6 +81,7 @@ export function BottomTabsContainer(props: BottomTabsContainerProps) {
       experimentalControlNavigationStateInJS={
         configWrapper.config.controlledBottomTabs
       }
+      direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
       {...restProps}>
       {tabConfigs.map(tabConfig => {
         const tabKey = tabConfig.tabScreenProps.tabKey;

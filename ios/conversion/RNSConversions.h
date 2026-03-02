@@ -108,8 +108,8 @@ UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrien
 RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask);
 #endif // !TARGET_OS_TV
 
-UISemanticContentAttribute UISemanticContentAttributeFromTabsHostCppEquivalent(
-    react::RNSTabsHostDirectionMode directionMode);
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+    react::RNSTabsHostLayoutDirection layoutDirection);
 
 #pragma mark SplitViewHost props
 

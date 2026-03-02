@@ -16,6 +16,8 @@ export type NativeFocusChangeEvent = {
   repeatedSelectionHandledBySpecialEffect: boolean;
 };
 
+export type TabsHostDirection = 'inherit' | 'ltr' | 'rtl';
+
 // Android-specific
 export type TabBarItemLabelVisibilityMode =
   | 'auto'
@@ -74,6 +76,32 @@ export interface TabsHostProps {
    * @platform android, ios
    */
   nativeContainerStyle?: TabsHostNativeContainerStyleProps;
+  /**
+   * @summary Specifies the layout direction of the native container, its views and child containers.
+   *
+   * The following values are currently supported:
+   *
+   * - `inherit` - uses parent's layout direction,
+   * - `ltr` - forces left-to-right layout direction,
+   * - `rtl` - forces right-to-left layout direction.
+   *
+   * On Android, this property relies on `react-native`'s `styles.direction`
+   * (which sets native Android `layoutDirection` View property). Property is
+   * propagated via the view hierarchy. The value will fallback to direction
+   * set on one of the parent views (eventually Android's `DecorView`).
+   *
+   * On iOS, this property sets `layoutDirection` trait override for the
+   * native tab bar controller. Property is propagated via the native trait
+   * system. The value will fallback to direction of the **native** app
+   * (`userInterfaceLayoutDirection`), potentially ignoring `react-native`'s
+   * override (e.g. when `forceRTL` is used). To mitigate this, you can pass
+   * `ltr`, `rtl` to this property depending on the value of `I18nManager.isRTL`.
+   *
+   * @default inherit
+   *
+   * @platform android, ios
+   */
+  direction?: TabsHostDirection;
   // #endregion General
 
   // #region Android-only
