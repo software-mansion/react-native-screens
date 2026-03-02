@@ -2,14 +2,11 @@ package com.swmansion.rnscreens.gamma.tabs.appearance
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.StateListDrawable
-import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -20,6 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.gamma.tabs.host.TabsHost
 import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreen
+import com.swmansion.rnscreens.utils.resolveColorAttr
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 class TabsAppearanceApplicator(
@@ -34,28 +32,13 @@ class TabsAppearanceApplicator(
             intArrayOf(), // normal
         )
 
-    private fun resolveColorAttr(
-        attr: Int,
-        @ColorInt defaultColor: Int = Color.TRANSPARENT,
-    ): Int {
-        val typedValue = TypedValue()
-        val resolved = context.theme.resolveAttribute(attr, typedValue, true)
-
-        if (!resolved) {
-            Log.w(TAG, "[RNScreens] Failed to resolve color attribute. Falling back to Color.TRANSPARENT.")
-            return defaultColor
-        }
-
-        return typedValue.data
-    }
-
     fun updateSharedAppearance(tabsHost: TabsHost) {
         val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
 
         bottomNavigationView.isVisible = !tabsHost.tabBarHidden
         bottomNavigationView.setBackgroundColor(
             tabBarAppearance?.tabBarBackgroundColor
-                ?: resolveColorAttr(R.attr.colorSurfaceContainer),
+                ?: resolveColorAttr(context, R.attr.colorSurfaceContainer),
         )
 
         // Font color
@@ -63,19 +46,19 @@ class TabsAppearanceApplicator(
         // Defaults from spec: https://m3.material.io/components/navigation-bar/specs
         val fontDisabledColor =
             tabBarAppearance?.disabled?.tabBarItemTitleFontColor
-                ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
+                ?: resolveColorAttr(context, R.attr.colorOnSurfaceVariant)
 
         val fontFocusedColor =
             tabBarAppearance?.focused?.tabBarItemTitleFontColor
-                ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
+                ?: resolveColorAttr(context, R.attr.colorOnSurfaceVariant)
 
         val fontSelectedColor =
             tabBarAppearance?.selected?.tabBarItemTitleFontColor
-                ?: resolveColorAttr(R.attr.colorOnSurface)
+                ?: resolveColorAttr(context, R.attr.colorOnSurface)
 
         val fontNormalColor =
             tabBarAppearance?.normal?.tabBarItemTitleFontColor
-                ?: resolveColorAttr(R.attr.colorSecondary)
+                ?: resolveColorAttr(context, R.attr.colorSecondary)
 
         val fontColors = intArrayOf(fontDisabledColor, fontSelectedColor, fontFocusedColor, fontNormalColor)
         bottomNavigationView.itemTextColor = ColorStateList(states, fontColors)
@@ -83,19 +66,19 @@ class TabsAppearanceApplicator(
         // Icon color
         val iconDisabledColor =
             tabBarAppearance?.disabled?.tabBarItemIconColor
-                ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
+                ?: resolveColorAttr(context, R.attr.colorOnSurfaceVariant)
 
         val iconFocusedColor =
             tabBarAppearance?.focused?.tabBarItemIconColor
-                ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
+                ?: resolveColorAttr(context, R.attr.colorOnSurfaceVariant)
 
         val iconSelectedColor =
             tabBarAppearance?.selected?.tabBarItemIconColor
-                ?: resolveColorAttr(R.attr.colorOnSecondaryContainer)
+                ?: resolveColorAttr(context, R.attr.colorOnSecondaryContainer)
 
         val iconNormalColor =
             tabBarAppearance?.normal?.tabBarItemIconColor
-                ?: resolveColorAttr(R.attr.colorOnSurfaceVariant)
+                ?: resolveColorAttr(context, R.attr.colorOnSurfaceVariant)
 
         val iconColors = intArrayOf(iconDisabledColor, iconSelectedColor, iconFocusedColor, iconNormalColor)
         bottomNavigationView.itemIconTintList = ColorStateList(states, iconColors)
@@ -116,13 +99,13 @@ class TabsAppearanceApplicator(
         // Ripple color
         val rippleColor =
             tabBarAppearance?.tabBarItemRippleColor
-                ?: resolveColorAttr(R.attr.itemRippleColor)
+                ?: resolveColorAttr(context, R.attr.itemRippleColor)
         bottomNavigationView.itemRippleColor = ColorStateList.valueOf(rippleColor)
 
         // Active Indicator
         val activeIndicatorColor =
             tabBarAppearance?.tabBarItemActiveIndicatorColor
-                ?: resolveColorAttr(R.attr.colorSecondaryContainer)
+                ?: resolveColorAttr(context, R.attr.colorSecondaryContainer)
 
         bottomNavigationView.isItemActiveIndicatorEnabled =
             tabBarAppearance?.tabBarItemActiveIndicatorEnabled ?: true
@@ -242,12 +225,12 @@ class TabsAppearanceApplicator(
         // Styling
         badge.badgeTextColor =
             appearance?.tabBarItemBadgeTextColor
-                ?: resolveColorAttr(R.attr.colorOnError)
+                ?: resolveColorAttr(context, R.attr.colorOnError)
 
         // https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#non-transitive-r-classes-referencing-library-resources-programmatically
         badge.backgroundColor =
             appearance?.tabBarItemBadgeBackgroundColor
-                ?: resolveColorAttr(androidx.appcompat.R.attr.colorError)
+                ?: resolveColorAttr(context, androidx.appcompat.R.attr.colorError)
     }
 
     companion object {
