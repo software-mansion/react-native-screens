@@ -166,7 +166,6 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           value={I18nManager.isRTL}
           onValueChange={() => {
             I18nManager.forceRTL(!I18nManager.isRTL);
-            RNRestart.Restart();
           }}
           testID="root-screen-switch-rtl"
         />

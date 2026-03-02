@@ -3279,7 +3279,6 @@ __metadata:
     react-native: "npm:react-native-tvos@0.81.0-0"
     react-native-gesture-handler: "npm:~2.28.0"
     react-native-reanimated: "npm:^4.2.0"
-    react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:5.6.0"
     react-native-screens: "link:../"
     react-native-worklets: "npm:^0.7.1"
@@ -8274,16 +8273,6 @@ __metadata:
     react-native: "*"
     react-native-worklets: ">=0.7.0"
   checksum: 10c0/29b9bbcf58c0801947357abcf8ecff2ec1e87a73854ccf390e26c20d23f0b4b5f99d524a74bb6c104c7b94127db60533797fdaa78bb602df7e91a042ce2b4d6e
-  languageName: node
-  linkType: hard
-
-"react-native-restart@npm:^0.0.27":
-  version: 0.0.27
-  resolution: "react-native-restart@npm:0.0.27"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/13ef35f98d12658e29a2c84aa68946cec6e0add946eb3a5d4ffae1fdce050bb563e269e55d9c037e47072a78bcea98f010536d9d7dd9c26eec9e7c9795bf713f
   languageName: node
   linkType: hard
 

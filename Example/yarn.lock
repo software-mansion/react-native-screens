@@ -4699,7 +4699,6 @@ __metadata:
     react-native-codegen: "npm:^0.71.3"
     react-native-gesture-handler: "npm:^2.28.0"
     react-native-reanimated: "npm:^3.19.0"
-    react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:5.6.0"
     react-native-screens: "link:../"
     react-native-windows: "npm:0.81.4"
@@ -11069,16 +11068,6 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/82f83f8cd307dbb3d0d435a7c801fa27d06265b1eed51844013682e133072e447fd15c3f12814f4bd8d4759c89ad4b1043631611284afbd8e6eb505f57af0f12
-  languageName: node
-  linkType: hard
-
-"react-native-restart@npm:^0.0.27":
-  version: 0.0.27
-  resolution: "react-native-restart@npm:0.0.27"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/13ef35f98d12658e29a2c84aa68946cec6e0add946eb3a5d4ffae1fdce050bb563e269e55d9c037e47072a78bcea98f010536d9d7dd9c26eec9e7c9795bf713f
   languageName: node
   linkType: hard
 
