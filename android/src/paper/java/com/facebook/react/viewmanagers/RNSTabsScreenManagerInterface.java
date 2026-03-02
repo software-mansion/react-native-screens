@@ -26,6 +26,8 @@ public interface RNSTabsScreenManagerInterface<T extends View> extends ViewManag
   void setOrientation(T view, @Nullable String value);
   void setDrawableIconResourceName(T view, @Nullable String value);
   void setImageIconResource(T view, @Nullable ReadableMap value);
+  void setSelectedDrawableIconResourceName(T view, @Nullable String value);
+  void setSelectedImageIconResource(T view, @Nullable ReadableMap value);
   void setTabBarItemBadgeTextColor(T view, @Nullable Integer value);
   void setTabBarItemBadgeBackgroundColor(T view, @Nullable Integer value);
   void setStandardAppearance(T view, Dynamic value);
