@@ -2,12 +2,12 @@
 
 namespace rnscreens::conversion {
 
-#pragma mark SplitViewHost props
+#pragma mark SplitHost props
 
 UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
-    facebook::react::RNSSplitViewHostPreferredSplitBehavior splitBehavior)
+    facebook::react::RNSSplitHostPreferredSplitBehavior splitBehavior)
 {
-  using enum facebook::react::RNSSplitViewHostPreferredSplitBehavior;
+  using enum facebook::react::RNSSplitHostPreferredSplitBehavior;
 
   switch (splitBehavior) {
     case Displace:
@@ -23,9 +23,9 @@ UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
 }
 
 UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
-    facebook::react::RNSSplitViewHostPrimaryEdge primaryEdge)
+    facebook::react::RNSSplitHostPrimaryEdge primaryEdge)
 {
-  using enum facebook::react::RNSSplitViewHostPrimaryEdge;
+  using enum facebook::react::RNSSplitHostPrimaryEdge;
 
   switch (primaryEdge) {
     case Trailing:
@@ -37,9 +37,9 @@ UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(
 }
 
 UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
-    facebook::react::RNSSplitViewHostPreferredDisplayMode displayMode)
+    facebook::react::RNSSplitHostPreferredDisplayMode displayMode)
 {
-  using enum facebook::react::RNSSplitViewHostPreferredDisplayMode;
+  using enum facebook::react::RNSSplitHostPreferredDisplayMode;
 
   switch (displayMode) {
     case SecondaryOnly:
@@ -62,9 +62,9 @@ UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
 
 #if !TARGET_OS_TV
 UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp(
-    facebook::react::RNSSplitViewHostPrimaryBackgroundStyle primaryBackgroundStyle)
+    facebook::react::RNSSplitHostPrimaryBackgroundStyle primaryBackgroundStyle)
 {
-  using enum facebook::react::RNSSplitViewHostPrimaryBackgroundStyle;
+  using enum facebook::react::RNSSplitHostPrimaryBackgroundStyle;
 
   switch (primaryBackgroundStyle) {
     case None:
@@ -80,9 +80,9 @@ UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp
 #endif // !TARGET_OS_TV
 
 UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
-    react::RNSSplitViewHostDisplayModeButtonVisibility displayModeButtonVisibility)
+    react::RNSSplitHostDisplayModeButtonVisibility displayModeButtonVisibility)
 {
-  using enum facebook::react::RNSSplitViewHostDisplayModeButtonVisibility;
+  using enum facebook::react::RNSSplitHostDisplayModeButtonVisibility;
 
   switch (displayModeButtonVisibility) {
     case Always:
@@ -116,9 +116,9 @@ std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDispla
   }
 }
 
-RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitViewHostOrientation orientation)
+RNSOrientation RNSOrientationFromRNSSplitHostOrientation(react::RNSSplitHostOrientation orientation)
 {
-  using enum facebook::react::RNSSplitViewHostOrientation;
+  using enum facebook::react::RNSSplitHostOrientation;
 
   switch (orientation) {
     case Inherit:
@@ -146,9 +146,9 @@ RNSOrientation RNSOrientationFromRNSSplitViewHostOrientation(react::RNSSplitView
 }
 
 std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHostProp(
-    facebook::react::RNSSplitViewHostTopColumnForCollapsing topColumnForCollapsing)
+    facebook::react::RNSSplitHostTopColumnForCollapsing topColumnForCollapsing)
 {
-  using enum facebook::react::RNSSplitViewHostTopColumnForCollapsing;
+  using enum facebook::react::RNSSplitHostTopColumnForCollapsing;
 
   switch (topColumnForCollapsing) {
     case Primary:
@@ -163,19 +163,19 @@ std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHo
   }
 }
 
-#pragma mark SplitViewScreen props
+#pragma mark SplitScreen props
 
-RNSSplitViewScreenColumnType RNSSplitViewScreenColumnTypeFromScreenProp(
-    facebook::react::RNSSplitViewScreenColumnType columnType)
+RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(
+    facebook::react::RNSSplitScreenColumnType columnType)
 {
-  using enum facebook::react::RNSSplitViewScreenColumnType;
+  using enum facebook::react::RNSSplitScreenColumnType;
 
   switch (columnType) {
     case Inspector:
-      return RNSSplitViewScreenColumnTypeInspector;
+      return RNSSplitScreenColumnTypeInspector;
     case Column:
     default:
-      return RNSSplitViewScreenColumnTypeColumn;
+      return RNSSplitScreenColumnTypeColumn;
   }
 }
 

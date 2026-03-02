@@ -1,15 +1,15 @@
-#import "RNSSplitViewScreenShadowStateProxy.h"
-#import "RNSSplitViewScreenComponentView.h"
+#import "RNSSplitScreenShadowStateProxy.h"
+#import "RNSSplitScreenComponentView.h"
 
 #import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
 #import <cxxreact/ReactNativeVersion.h>
-#import <rnscreens/RNSSplitViewScreenShadowNode.h>
+#import <rnscreens/RNSSplitScreenShadowNode.h>
 
 namespace react = facebook::react;
 
-@implementation RNSSplitViewScreenShadowStateProxy {
-  react::RNSSplitViewScreenShadowNode::ConcreteState::Shared _state;
+@implementation RNSSplitScreenShadowStateProxy {
+  react::RNSSplitScreenShadowNode::ConcreteState::Shared _state;
   CGRect _lastScheduledFrame;
 }
 
@@ -22,12 +22,12 @@ namespace react = facebook::react;
   return self;
 }
 
-- (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView
+- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView
 {
   [self updateShadowStateOfComponent:screenComponentView inContextOfAncestorView:nil];
 }
 
-- (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView
+- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView
              inContextOfAncestorView:(UIView *_Nullable)ancestorView
 {
   CGRect frame = screenComponentView.frame;
@@ -44,7 +44,7 @@ namespace react = facebook::react;
   }
 
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
-    auto newState = react::RNSSplitViewScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
+    auto newState = react::RNSSplitScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
     _state->updateState(
         std::move(newState)
     // TODO: @t0maboro - remove this compilation check once TVOSExample is upgraded to RN 82+
@@ -58,7 +58,7 @@ namespace react = facebook::react;
   }
 }
 
-- (void)updateShadowStateOfComponent:(RNSSplitViewScreenComponentView *)screenComponentView
+- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView
                            withFrame:(CGRect)frame
              inContextOfAncestorView:(nonnull UIView *)ancestorView
 {
@@ -69,7 +69,7 @@ namespace react = facebook::react;
 
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
 {
-  _state = std::static_pointer_cast<const react::RNSSplitViewScreenShadowNode::ConcreteState>(state);
+  _state = std::static_pointer_cast<const react::RNSSplitScreenShadowNode::ConcreteState>(state);
 }
 
 @end

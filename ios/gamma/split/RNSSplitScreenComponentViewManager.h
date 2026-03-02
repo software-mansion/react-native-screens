@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSSplitViewScreenComponentViewManager : RCTViewManager
+@interface RNSSplitScreenComponentViewManager : RCTViewManager
 
 @end
 

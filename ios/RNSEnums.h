@@ -85,9 +85,9 @@ typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
   RNSSearchBarPlacementIntegratedCentered,
 };
 
-typedef NS_ENUM(NSInteger, RNSSplitViewScreenColumnType) {
-  RNSSplitViewScreenColumnTypeColumn,
-  RNSSplitViewScreenColumnTypeInspector,
+typedef NS_ENUM(NSInteger, RNSSplitScreenColumnType) {
+  RNSSplitScreenColumnTypeColumn,
+  RNSSplitScreenColumnTypeInspector,
 };
 
 // Redefinition of UIBlurEffectStyle. We need to represent additional cases of `None` and `SystemDefault`.

@@ -1,7 +1,7 @@
-#import "RNSSplitViewScreenComponentView.h"
+#import "RNSSplitScreenComponentView.h"
 #import <React/RCTAssert.h>
 #import <React/RCTSurfaceTouchHandler.h>
-#import <rnscreens/RNSSplitViewScreenComponentDescriptor.h>
+#import <rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
 
@@ -9,19 +9,19 @@
 
 namespace react = facebook::react;
 
-@implementation RNSSplitViewScreenComponentView {
-  RNSSplitViewScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
-  RNSSplitViewScreenController *_Nullable _controller;
-  RNSSplitViewScreenShadowStateProxy *_Nonnull _shadowStateProxy;
+@implementation RNSSplitScreenComponentView {
+  RNSSplitScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
+  RNSSplitScreenController *_Nullable _controller;
+  RNSSplitScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
   NSMutableSet<UIView *> *_viewsForFrameCorrection;
 }
 
-- (RNSSplitViewScreenController *)controller
+- (RNSSplitScreenController *)controller
 {
   RCTAssert(
       _controller != nil,
-      @"[RNScreens] Attempt to access RNSSplitViewScreenController before RNSSplitViewScreenComponentView was initialized. (for: %@)",
+      @"[RNScreens] Attempt to access RNSSplitScreenController before RNSSplitScreenComponentView was initialized. (for: %@)",
       self);
   return _controller;
 }
@@ -40,15 +40,15 @@ namespace react = facebook::react;
   [self resetProps];
   [self setupController];
 
-  _reactEventEmitter = [RNSSplitViewScreenComponentEventEmitter new];
-  _shadowStateProxy = [RNSSplitViewScreenShadowStateProxy new];
+  _reactEventEmitter = [RNSSplitScreenComponentEventEmitter new];
+  _shadowStateProxy = [RNSSplitScreenShadowStateProxy new];
 
   _viewsForFrameCorrection = [NSMutableSet set];
 }
 
 - (void)setupController
 {
-  _controller = [[RNSSplitViewScreenController alloc] initWithSplitViewScreenComponentView:self];
+  _controller = [[RNSSplitScreenController alloc] initWithSplitScreenComponentView:self];
   _controller.view = self;
 }
 
@@ -59,10 +59,10 @@ namespace react = facebook::react;
   // In contrast, prior to iOS 26, all SplitView columns were placed under RCTSurface,
   // meaning that touches were handler by RN handlers.
   if (@available(iOS 26.0, *)) {
-    // If the current controller’s splitViewController is of type RNSSplitViewHostController,
+    // If the current controller’s splitViewController is of type RNSSplitHostController,
     // we know that we're still inside the RN hierarchy,
     // so there's no need to enforce additional touch event support.
-    if ([_controller isInSplitViewHostSubtree]) {
+    if ([_controller isInSplitHostSubtree]) {
       return;
     }
 
@@ -79,10 +79,10 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  static const auto defaultProps = std::make_shared<const react::RNSSplitViewScreenProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSSplitScreenProps>();
   _props = defaultProps;
 
-  _columnType = RNSSplitViewScreenColumnTypeColumn;
+  _columnType = RNSSplitScreenColumnTypeColumn;
 }
 
 - (void)registerForFrameCorrection:(UIView *)view
@@ -111,7 +111,7 @@ namespace react = facebook::react;
 
 #pragma mark - ShadowTreeState
 
-- (nonnull RNSSplitViewScreenShadowStateProxy *)shadowStateProxy
+- (nonnull RNSSplitScreenShadowStateProxy *)shadowStateProxy
 {
   RCTAssert(_shadowStateProxy != nil, @"[RNScreens] Attempt to access uninitialized _shadowStateProxy");
   return _shadowStateProxy;
@@ -119,7 +119,7 @@ namespace react = facebook::react;
 
 #pragma mark - Events
 
-- (nonnull RNSSplitViewScreenComponentEventEmitter *)reactEventEmitter
+- (nonnull RNSSplitScreenComponentEventEmitter *)reactEventEmitter
 {
   RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
   return _reactEventEmitter;
@@ -151,7 +151,7 @@ namespace react = facebook::react;
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSSplitViewScreenComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSSplitScreenComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
@@ -171,11 +171,11 @@ namespace react = facebook::react;
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitViewScreenProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitViewScreenProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSSplitScreenProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSSplitScreenProps>(props);
 
   if (oldComponentProps.columnType != newComponentProps.columnType) {
-    _columnType = rnscreens::conversion::RNSSplitViewScreenColumnTypeFromScreenProp(newComponentProps.columnType);
+    _columnType = rnscreens::conversion::RNSSplitScreenColumnTypeFromScreenProp(newComponentProps.columnType);
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -185,7 +185,7 @@ namespace react = facebook::react;
 {
   [super updateEventEmitter:eventEmitter];
   [_reactEventEmitter
-      updateEventEmitter:std::static_pointer_cast<const react::RNSSplitViewScreenEventEmitter>(eventEmitter)];
+      updateEventEmitter:std::static_pointer_cast<const react::RNSSplitScreenEventEmitter>(eventEmitter)];
 }
 
 - (void)invalidate
@@ -198,7 +198,7 @@ namespace react = facebook::react;
 
 @end
 
-Class<RCTComponentViewProtocol> RNSSplitViewScreenCls(void)
+Class<RCTComponentViewProtocol> RNSSplitScreenCls(void)
 {
-  return RNSSplitViewScreenComponentView.class;
+  return RNSSplitScreenComponentView.class;
 }

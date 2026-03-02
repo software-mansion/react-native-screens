@@ -1,9 +1,9 @@
-#import "RNSSplitViewScreenComponentEventEmitter.h"
+#import "RNSSplitScreenComponentEventEmitter.h"
 
 #import <React/RCTLog.h>
 
-@implementation RNSSplitViewScreenComponentEventEmitter {
-  std::shared_ptr<const react::RNSSplitViewScreenEventEmitter> _reactEventEmitter;
+@implementation RNSSplitScreenComponentEventEmitter {
+  std::shared_ptr<const react::RNSSplitScreenEventEmitter> _reactEventEmitter;
 }
 
 - (BOOL)emitOnWillAppear
@@ -50,7 +50,7 @@
   }
 }
 
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitViewScreenEventEmitter> &)emitter
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSSplitScreenEventEmitter> &)emitter
 {
   _reactEventEmitter = emitter;
 }

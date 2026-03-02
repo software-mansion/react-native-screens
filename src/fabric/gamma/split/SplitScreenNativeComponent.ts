@@ -6,11 +6,11 @@ import { codegenNativeComponent } from 'react-native';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
-type SplitViewScreenColumnType = 'column' | 'inspector';
+type SplitScreenColumnType = 'column' | 'inspector';
 
 interface NativeProps extends ViewProps {
   // Config
-  columnType?: CT.WithDefault<SplitViewScreenColumnType, 'column'>;
+  columnType?: CT.WithDefault<SplitScreenColumnType, 'column'>;
 
   // Events
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent>;
@@ -19,6 +19,6 @@ interface NativeProps extends ViewProps {
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSSplitViewScreen', {
+export default codegenNativeComponent<NativeProps>('RNSSplitScreen', {
   interfaceOnly: true,
 });

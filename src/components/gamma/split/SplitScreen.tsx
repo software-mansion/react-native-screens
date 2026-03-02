@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import SplitViewScreenNativeComponent from '../../../fabric/gamma/SplitViewScreenNativeComponent';
+import SplitScreenNativeComponent from '../../../fabric/gamma/split/SplitScreenNativeComponent';
 import { SplitScreenProps } from './SplitScreen.types';
 
 /**
@@ -8,12 +8,12 @@ import { SplitScreenProps } from './SplitScreen.types';
  */
 function Column(props: SplitScreenProps) {
   return (
-    <SplitViewScreenNativeComponent
+    <SplitScreenNativeComponent
       columnType="column"
       {...props}
       style={StyleSheet.absoluteFill}>
       {props.children}
-    </SplitViewScreenNativeComponent>
+    </SplitScreenNativeComponent>
   );
 }
 
@@ -22,12 +22,12 @@ function Column(props: SplitScreenProps) {
  */
 function Inspector(props: SplitScreenProps) {
   return (
-    <SplitViewScreenNativeComponent
+    <SplitScreenNativeComponent
       columnType="inspector"
       {...props}
       style={StyleSheet.absoluteFill}>
       {props.children}
-    </SplitViewScreenNativeComponent>
+    </SplitScreenNativeComponent>
   );
 }
 

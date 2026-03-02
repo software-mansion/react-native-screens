@@ -3,25 +3,25 @@
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
-#import "RNSSplitViewHostComponentEventEmitter.h"
+#import "RNSSplitHostComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSSplitViewHostController;
-@class RNSSplitViewScreenComponentView;
+@class RNSSplitHostController;
+@class RNSSplitScreenComponentView;
 
 /**
- * @class RNSSplitViewHostComponentView
+ * @class RNSSplitHostComponentView
  * @brief A view component representing top-level native component for SplitView.
  *
  * Responsible for managing multi-column layouts via associated native UISplitViewController.
  * Manages updates to the layout properties, column configuration, and event emission.
  */
-@interface RNSSplitViewHostComponentView : RNSReactBaseView
+@interface RNSSplitHostComponentView : RNSReactBaseView
 
-- (nonnull NSMutableArray<RNSSplitViewScreenComponentView *> *)reactSubviews;
+- (nonnull NSMutableArray<RNSSplitScreenComponentView *> *)reactSubviews;
 
-@property (nonatomic, nonnull, strong, readonly) RNSSplitViewHostController *splitViewHostController;
+@property (nonatomic, nonnull, strong, readonly) RNSSplitHostController *splitHostController;
 
 @end
 
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @category Props
  * @brief Definitions for React Native props.
  */
-@interface RNSSplitViewHostComponentView ()
+@interface RNSSplitHostComponentView ()
 
 @property (nonatomic, readonly) UISplitViewControllerSplitBehavior preferredSplitBehavior;
 @property (nonatomic, readonly) UISplitViewControllerPrimaryEdge primaryEdge;
@@ -71,9 +71,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @category Events
  * @brief APIs related to event emission to React Native.
  */
-@interface RNSSplitViewHostComponentView ()
+@interface RNSSplitHostComponentView ()
 
-- (nonnull RNSSplitViewHostComponentEventEmitter *)reactEventEmitter;
+- (nonnull RNSSplitHostComponentEventEmitter *)reactEventEmitter;
 
 @end
 

@@ -212,11 +212,11 @@
         "RNSTabsBottomAccessoryContent": {
           "className": "RNSTabsBottomAccessoryContentComponentView"
         },
-        "RNSSplitViewHost": {
-          "className": "RNSSplitViewHostComponentView"
+        "RNSSplitHost": {
+          "className": "RNSSplitHostComponentView"
         },
-        "RNSSplitViewScreen": {
-          "className": "RNSSplitViewScreenComponentView"
+        "RNSSplitScreen": {
+          "className": "RNSSplitScreenComponentView"
         },
         "RNSSafeAreaView": {
           "className": "RNSSafeAreaViewComponentView"
