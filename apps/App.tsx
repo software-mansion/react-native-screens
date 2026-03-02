@@ -1,19 +1,20 @@
 import React from 'react';
 import { enableFreeze } from 'react-native-screens';
-
-import Example from './Example';
-
-// import * as Test from './src/tests/importer';
 // import { NavigationContainer } from '@react-navigation/native';
-// const Example = Test.CIT.Orientation.scenarios.StackInTabs.AppComponent;
+
+// import { COMPONENT_SCENARIOS as Integration } from './src/tests/component-integration-tests';
+// import { COMPONENT_SCENARIOS as Feature } from './src/tests/single-feature-tests';
+// import * as Issue from './src/tests/issue-tests';
+import Example from './Example';
 
 enableFreeze(true);
 
 export default function App() {
   return <Example />;
+  // return <Issue.TestBottomTabs />;
   // return (
   //   <NavigationContainer>
-  //     <Example />
+  //     <Integration.Orientation.scenarios.StackInTabs.AppComponent />
   //   </NavigationContainer>
   // );
 }
