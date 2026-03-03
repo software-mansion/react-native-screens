@@ -10,7 +10,7 @@ void RegisterScreenLike(
     fabricBuilder,
     const hstring &componentName) noexcept;
 
-void RegisterRNSScreen(
+void RegisterScreen(
     const Microsoft::ReactNative::IReactPackageBuilderFabric &
     fabricBuilder) noexcept;
 } // namespace winrt::RNScreens::implementation

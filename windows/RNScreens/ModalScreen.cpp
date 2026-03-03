@@ -9,7 +9,7 @@ using namespace winrt::Microsoft::ReactNative;
 // Both components are containers whose screen-level semantics (presentation
 // style, animation) are managed by JS; the native side only needs to forward
 // lifecycle events.
-void RegisterRNSModalScreen(
+void RegisterModalScreen(
     const IReactPackageBuilderFabric &fabricBuilder) noexcept {
   RegisterScreenLike(fabricBuilder, L"RNSModalScreen");
 }

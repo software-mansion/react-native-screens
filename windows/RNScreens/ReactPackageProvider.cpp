@@ -26,12 +26,12 @@ void ReactPackageProvider::CreatePackage(
   if (!fabricBuilder)
     return;
 
-  RegisterRNSScreen(fabricBuilder);
-  RegisterRNSModalScreen(fabricBuilder);
-  RegisterRNSScreenStack(fabricBuilder);
-  RegisterRNSScreenContainer(fabricBuilder);
-  RegisterRNSScreenStackHeaderConfig(fabricBuilder);
-  RegisterRNSScreenStackHeaderSubview(fabricBuilder);
-  RegisterRNSSearchBar(fabricBuilder);
+  RegisterScreen(fabricBuilder);
+  RegisterModalScreen(fabricBuilder);
+  RegisterScreenStack(fabricBuilder);
+  RegisterScreenContainer(fabricBuilder);
+  RegisterScreenStackHeaderConfig(fabricBuilder);
+  RegisterScreenStackHeaderSubview(fabricBuilder);
+  RegisterSearchBar(fabricBuilder);
 }
 } // namespace winrt::ReactNativeScreens::implementation

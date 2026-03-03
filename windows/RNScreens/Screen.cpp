@@ -264,7 +264,7 @@ void RegisterScreenLike(
       });
 }
 
-void RegisterRNSScreen(
+void RegisterScreen(
     const IReactPackageBuilderFabric &fabricBuilder) noexcept {
   RegisterScreenLike(fabricBuilder, L"RNSScreen");
 }
