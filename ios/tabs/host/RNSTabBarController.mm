@@ -278,17 +278,20 @@
 - (void)updateLayoutDirectionBelowIOS17
 {
   _needsLayoutDirectionUpdateBelowIOS17 = false;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
   if (@available(iOS 17.0, *)) {
-    // no-op
-  } else {
-    RCTAssert(
-        self.parentViewController != nil,
-        @"[RNScreens] Expected non-null parent view controller for layout direction update.");
-    [self.parentViewController
-        setOverrideTraitCollection:[UITraitCollection
-                                       traitCollectionWithLayoutDirection:self.tabsHostComponentView.layoutDirection]
-            forChildViewController:self];
+    return;
   }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+
+  RCTAssert(
+      self.parentViewController != nil,
+      @"[RNScreens] Expected non-null parent view controller for layout direction update.");
+  [self.parentViewController
+      setOverrideTraitCollection:[UITraitCollection
+                                     traitCollectionWithLayoutDirection:self.tabsHostComponentView.layoutDirection]
+          forChildViewController:self];
 }
 
 #pragma mark - RNSOrientationProviding
