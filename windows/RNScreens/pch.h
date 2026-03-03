@@ -35,5 +35,3 @@
 #include <cassert>
 #include <optional>
 #include <vector>
-
-// Reference additional headers your project requires here

@@ -2,7 +2,6 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-
 // Placeholder IComponentProps for Fabric components that have no custom native
 // props on Windows yet. Satisfies the SetCreateProps contract so the framework
 // can deliver base ViewProps (layout, style) without crashing.
@@ -20,7 +19,7 @@ struct BaseProps
       const Microsoft::ReactNative::IComponentProps & /*cloneFrom*/) noexcept {
   }
 
-  static void SetProp(
+  void SetProp(
       uint32_t /*hash*/,
       hstring /*propName*/,
       Microsoft::ReactNative::IJSValueReader /*value*/) noexcept {
