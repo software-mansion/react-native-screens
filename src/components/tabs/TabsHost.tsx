@@ -13,9 +13,9 @@ import TabsHostNativeComponent, {
 import featureFlags from '../../flags';
 import type { TabsHostProps, NativeFocusChangeEvent } from './TabsHost.types';
 import { bottomTabsDebugLog } from '../../private/logging';
-import TabsAccessory from './TabsAccessory';
-import { TabsAccessoryEnvironment } from './TabsAccessory.types';
-import TabsAccessoryContent from './TabsAccessoryContent';
+import TabsBottomAccessory from './TabsBottomAccessory';
+import { TabsBottomAccessoryEnvironment } from './TabsBottomAccessory.types';
+import TabsBottomAccessoryContent from './TabsBottomAccessoryContent';
 import { isIOS26OrHigher } from '../helpers/PlatformUtils';
 
 /**
@@ -60,7 +60,7 @@ function TabsHost(props: TabsHostProps) {
   );
 
   const [bottomAccessoryEnvironment, setBottomAccessoryEnvironment] =
-    useState<TabsAccessoryEnvironment>('regular');
+    useState<TabsBottomAccessoryEnvironment>('regular');
 
   return (
     <TabsHostNativeComponent
@@ -77,21 +77,21 @@ function TabsHost(props: TabsHostProps) {
       {bottomAccessory &&
         isIOS26OrHigher &&
         (Platform.constants.reactNativeVersion.minor >= 82 ? (
-          <TabsAccessory>
-            <TabsAccessoryContent environment="regular">
+          <TabsBottomAccessory>
+            <TabsBottomAccessoryContent environment="regular">
               {bottomAccessory('regular')}
-            </TabsAccessoryContent>
-            <TabsAccessoryContent environment="inline">
+            </TabsBottomAccessoryContent>
+            <TabsBottomAccessoryContent environment="inline">
               {bottomAccessory('inline')}
-            </TabsAccessoryContent>
-          </TabsAccessory>
+            </TabsBottomAccessoryContent>
+          </TabsBottomAccessory>
         ) : (
-          <TabsAccessory
+          <TabsBottomAccessory
             onEnvironmentChange={event => {
               setBottomAccessoryEnvironment(event.nativeEvent.environment);
             }}>
             {bottomAccessory(bottomAccessoryEnvironment)}
-          </TabsAccessory>
+          </TabsBottomAccessory>
         ))}
     </TabsHostNativeComponent>
   );
