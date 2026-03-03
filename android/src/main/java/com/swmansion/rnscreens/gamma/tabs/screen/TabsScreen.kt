@@ -108,7 +108,6 @@ class TabsScreen(
         set(value) {
             if (field != value) {
                 field = value
-                onTabFocusChangedFromJS()
             }
         }
 
@@ -117,10 +116,6 @@ class TabsScreen(
     }
 
     override fun getAssociatedFragment(): Fragment? = tabsScreenDelegate.get()?.getFragmentForTabsScreen(this)
-
-    private fun onTabFocusChangedFromJS() {
-        tabsScreenDelegate.get()?.onTabFocusChangedFromJS(this, isFocusedTab)
-    }
 
     private fun onMenuItemAttributesChange() {
         tabsScreenDelegate.get()?.onMenuItemAttributesChange(this)

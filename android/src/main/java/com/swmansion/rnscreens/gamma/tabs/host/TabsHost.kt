@@ -157,8 +157,10 @@ class TabsHost(
 
     private val tabsScreenFragments: MutableList<TabsScreenFragment> = arrayListOf()
 
+    private var focusedTabIndex: Int = 0
+
     private val currentFocusedTab: TabsScreenFragment
-        get() = checkNotNull(tabsScreenFragments.find { it.tabsScreen.isFocusedTab }) { "[RNScreens] No focused tab present" }
+        get() = checkNotNull(tabsScreenFragments.getOrNull(focusedTabIndex)) { "[RNScreens] No focused tab present" }
 
     private var lastAppliedUiMode: Int? = null
 
@@ -269,6 +271,16 @@ class TabsHost(
             val repeatedSelectionHandledBySpecialEffect =
                 if (fragment == currentFocusedTab) specialEffectsHandler.handleRepeatedTabSelection() else false
             val tabKey = fragment?.tabsScreen?.tabKey ?: "undefined"
+
+            val newIndex = item.itemId
+            if (focusedTabIndex != newIndex) {
+                focusedTabIndex = newIndex
+                containerUpdateCoordinator.let {
+                    it.invalidateAll()
+                    it.postContainerUpdateIfNeeded()
+                }
+            }
+
             eventEmitter.emitOnNativeFocusChange(
                 tabKey,
                 item.itemId,
@@ -334,16 +346,6 @@ class TabsHost(
     internal fun unmountAllReactSubviews() {
         tabsScreenFragments.forEach { it.tabsScreen.setTabsScreenDelegate(null) }
         tabsScreenFragments.clear()
-        containerUpdateCoordinator.let {
-            it.invalidateAll()
-            it.postContainerUpdateIfNeeded()
-        }
-    }
-
-    override fun onTabFocusChangedFromJS(
-        tabsScreen: TabsScreen,
-        isFocused: Boolean,
-    ) {
         containerUpdateCoordinator.let {
             it.invalidateAll()
             it.postContainerUpdateIfNeeded()
@@ -480,7 +482,7 @@ class TabsHost(
         if (tabsScreenFragments.isEmpty()) {
             return null
         }
-        return checkNotNull(tabsScreenFragments.indexOfFirst { it.tabsScreen.isFocusedTab }) { "[RNScreens] There must be a focused tab" }
+        return focusedTabIndex
     }
 
     private fun getMenuItemForTabsScreen(tabsScreen: TabsScreen): MenuItem? =
