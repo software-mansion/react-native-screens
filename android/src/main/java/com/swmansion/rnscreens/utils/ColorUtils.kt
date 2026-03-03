@@ -5,7 +5,8 @@ import android.graphics.Color
 import android.util.Log
 import android.util.TypedValue
 import androidx.annotation.ColorInt
-import com.swmansion.rnscreens.gamma.tabs.appearance.TabsAppearanceApplicator.Companion.TAG
+
+private const val TAG = "RNScreensColorUtils"
 
 internal fun resolveColorAttr(
     context: Context,
