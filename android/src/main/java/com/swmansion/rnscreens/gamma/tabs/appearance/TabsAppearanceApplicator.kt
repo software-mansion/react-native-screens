@@ -1,13 +1,13 @@
 package com.swmansion.rnscreens.gamma.tabs.appearance
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.StateListDrawable
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.facebook.react.common.assets.ReactFontManager
@@ -32,7 +32,7 @@ class TabsAppearanceApplicator(
         )
 
     fun updateSharedAppearance(
-        context: ContextThemeWrapper,
+        context: Context,
         tabsHost: TabsHost,
     ) {
         val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
@@ -114,7 +114,7 @@ class TabsAppearanceApplicator(
     }
 
     fun updateFontStyles(
-        context: ContextThemeWrapper,
+        context: Context,
         tabsHost: TabsHost,
     ) {
         val tabBarAppearance = tabsHost.currentFocusedTab.tabsScreen.appearance
@@ -198,7 +198,7 @@ class TabsAppearanceApplicator(
     }
 
     internal fun updateBadgeAppearance(
-        context: ContextThemeWrapper,
+        context: Context,
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,

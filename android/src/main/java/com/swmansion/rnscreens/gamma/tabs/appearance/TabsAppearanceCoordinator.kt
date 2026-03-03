@@ -1,8 +1,8 @@
 package com.swmansion.rnscreens.gamma.tabs.appearance
 
+import android.content.Context
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.size
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.gamma.tabs.host.TabsHost
@@ -16,7 +16,7 @@ class TabsAppearanceCoordinator(
     private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
 
     fun updateTabAppearance(
-        context: ContextThemeWrapper,
+        context: Context,
         tabsHost: TabsHost,
     ) {
         appearanceApplicator.updateSharedAppearance(context, tabsHost)
@@ -25,7 +25,7 @@ class TabsAppearanceCoordinator(
     }
 
     private fun updateMenuItems(
-        context: ContextThemeWrapper,
+        context: Context,
         tabsHost: TabsHost,
     ) {
         if (bottomNavigationView.menu.size != tabsScreenFragments.size) {
@@ -41,7 +41,7 @@ class TabsAppearanceCoordinator(
     }
 
     internal fun updateMenuItemAppearance(
-        context: ContextThemeWrapper,
+        context: Context,
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,
