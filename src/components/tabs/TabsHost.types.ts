@@ -42,6 +42,8 @@ export type TabsHostNativeContainerStyleProps = {
   backgroundColor?: ColorValue;
 };
 
+export type TabsHostColorScheme = 'inherit' | 'light' | 'dark';
+
 export interface TabsHostProps {
   // #region Events
   /**
@@ -273,6 +275,14 @@ export interface TabsHostProps {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode;
+  /**
+   * @summary Specifies the color scheme used by the container and any child containers.
+   *
+   * @default inherit
+   *
+   * @platform ios
+   */
+  colorScheme?: TabsHostColorScheme;
   // #endregion iOS-only
 
   // #region Experimental support
