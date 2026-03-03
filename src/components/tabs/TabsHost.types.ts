@@ -278,6 +278,11 @@ export interface TabsHostProps {
   /**
    * @summary Specifies the color scheme used by the container and any child containers.
    *
+   * The following values are currently supported:
+   * - `inherit` - the interface style from parent,
+   * - `light` - the light interface style,
+   * - `dark` - the dark interface style.
+   *
    * @default inherit
    *
    * @platform ios
