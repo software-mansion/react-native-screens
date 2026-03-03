@@ -2,8 +2,10 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-// TODO: Implement a native search bar for Windows (AutoSuggestBox or
-// SearchBox control). Currently a stub — no native visual is rendered.
+// RNSSearchBar - stub. No native visual is rendered.
+//
+// TODO: implement using WinUI AutoSuggestBox; wire search text and cancel
+// events through a SearchBarUserData event emitter.
 void RegisterSearchBar(
     const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
   noexcept;

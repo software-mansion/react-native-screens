@@ -2,9 +2,10 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-// TODO: Implement native header subview rendering for Windows (left/right/
-// center button slots in the navigation bar).
-// Currently a stub — subview content is rendered by JS.
+// RNSScreenStackHeaderSubview - stub. Custom header content (left/right/title
+// slots) is rendered by JS.
+//
+// TODO: implement native header subview hosting.
 void RegisterScreenStackHeaderSubview(
     const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
   noexcept;

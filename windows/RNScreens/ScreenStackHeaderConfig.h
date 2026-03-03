@@ -2,9 +2,10 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-// TODO: Implement native header configuration for Windows (title text, tint
-// colors, back-button visibility, etc.).
-// Currently a stub — all header rendering is performed by JS.
+// RNSScreenStackHeaderConfig - stub. All header rendering is performed by JS.
+//
+// TODO: implement native title, tint colors, and back-button control using
+// WinUI NavigationView or a custom header ContentControl.
 void RegisterScreenStackHeaderConfig(
     const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
   noexcept;

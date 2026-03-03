@@ -2,9 +2,9 @@
 #include "pch.h"
 
 namespace winrt::RNScreens::implementation {
-// RNSScreenContainer has no custom props (ScreenContainerNativeComponent.ts
-// declares `interface NativeProps extends ViewProps {}`) and no events.
-// Child visibility is managed entirely by JS and the Fabric reconciler.
+// RNSScreenContainer - stub. No custom props or events.
+// Child visibility is controlled via activityState on each RNSScreen child,
+// set by JS navigation logic and applied natively in Screen.cpp.
 void RegisterScreenContainer(
     const Microsoft::ReactNative::IReactPackageBuilderFabric &fabricBuilder)
   noexcept;
