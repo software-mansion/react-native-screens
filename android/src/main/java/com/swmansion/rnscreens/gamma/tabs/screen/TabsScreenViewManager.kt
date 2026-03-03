@@ -253,20 +253,14 @@ class TabsScreenViewManager :
     @ReactProp(name = "standardAppearanceAndroid")
     override fun setStandardAppearanceAndroid(
         view: TabsScreen,
-        value: Dynamic?,
+        value: ReadableMap?,
     ) {
-        if (value == null || value.isNull) {
-            view.appearance = null
-            return
-        }
-        val appearanceMap = if (value.type == ReadableType.Map) value.asMap() else null
-
-        if (appearanceMap == null) {
+        if (value == null) {
             view.appearance = null
             return
         }
 
-        view.appearance = parseAndroidTabsAppearance(appearanceMap)
+        view.appearance = parseAndroidTabsAppearance(value)
     }
 
     private fun parseAndroidTabsAppearance(appearance: ReadableMap): TabsAppearance =

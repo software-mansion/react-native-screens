@@ -187,7 +187,7 @@ export interface NativeProps extends ViewProps {
 
   // Android-specific appearance
   // Note: temporary standardAppearanceAndroid, suffix will be dropped after splitting components
-  standardAppearanceAndroid?: UnsafeMixed<AppearanceAndroid>;
+  standardAppearanceAndroid?: AppearanceAndroid;
 
   // iOS-specific appearance
   standardAppearance?: UnsafeMixed<Appearance>;
