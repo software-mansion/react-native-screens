@@ -306,29 +306,29 @@ export interface TabsScreenAppearance {
 // iOS-specific
 export interface TabsScreenItemAppearance {
   /**
-   * Defines the colors for all tab bar items which are in their enabled, unselected and unfocused state.
+   * Defines appearance for all tab bar items which are in their enabled, unselected and unfocused state.
    * The color scheme is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
   normal?: TabsScreenItemStateAppearance;
   /**
-   * Defines the colors for the tab bar item that is currently active.
-   * The color scheme is determined by the configuration of the currently selected tab itself.
+   * Defines appearance for the tab bar item that is currently active.
+   * The appearance is determined by the configuration of the currently selected tab itself.
    *
    * @platform ios
    */
   selected?: TabsScreenItemStateAppearance;
   /**
-   * Defines the colors for a tab bar item when it receives focus.
-   * The color scheme is determined by the configuration of the currently selected tab.
+   * Defines appearance for a tab bar item when it receives focus.
+   * The appearance is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
   focused?: TabsScreenItemStateAppearance;
   /**
-   * Defines the colors for tab bar items when they are disabled.
-   * The color scheme is determined by the configuration of the currently selected tab.
+   * Defines appearance for tab bar items when they are disabled.
+   * The appearance is determined by the configuration of the currently selected tab.
    *
    * @platform ios
    */
