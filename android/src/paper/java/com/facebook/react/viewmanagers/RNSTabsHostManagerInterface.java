@@ -16,7 +16,6 @@ import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 public interface RNSTabsHostManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setTabBarHidden(T view, boolean value);
   void setNativeContainerBackgroundColor(T view, @Nullable Integer value);
-  void setDirectionMode(T view, @Nullable String value);
   void setTabBarBackgroundColor(T view, @Nullable Integer value);
   void setTabBarItemTitleFontFamily(T view, @Nullable String value);
   void setTabBarItemTitleFontSize(T view, float value);
